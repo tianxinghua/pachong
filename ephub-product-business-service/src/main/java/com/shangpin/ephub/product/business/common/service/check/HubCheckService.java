@@ -27,6 +27,9 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.product.business.common.dto.BrandDom;
+import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
+import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
@@ -67,6 +70,42 @@ public class HubCheckService {
 	HubBrandModelRuleController HubBrandModelRuleService;
 	@Autowired
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+	
+	public boolean getCategoryName(String categoryNo) {
+		CategoryRequestDto request = new CategoryRequestDto();
+        request.setCategoryNo(categoryNo);
+
+        HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
+
+        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
+        });
+        HubResponseDto<CategoryScreenSizeDom> body = entity.getBody();
+        if(body.getIsSuccess()){
+        	return true;
+           
+        }else{
+        	return false;
+        }
+	}
+	public boolean getBrand(String brandNo) {
+		// TODO Auto-generated method stub
+
+		BrandRequstDto request = new BrandRequstDto();
+        request.setBrandNo(brandNo);
+
+        HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
+
+        ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {
+        });
+        HubResponseDto<BrandDom> body = entity.getBody();
+        if(body.getIsSuccess()){
+        	return true;
+           
+        }else{
+        	return false;
+        }
+	}
+	
 	public HubPendingSpuCheckResult checkSpu(HubSpuPendingDto hubProduct){
 		boolean flag = false;
 		StringBuffer str = new StringBuffer();
@@ -75,7 +114,7 @@ public class HubCheckService {
 		result.setPassing(true);
 		//校验品牌
 		if(hubProduct.getHubBrandNo()!=null){
-			if(!checkHubBrand(hubProduct.getHubBrandNo())){
+			if(!getBrand(hubProduct.getHubBrandNo())){
 				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
@@ -86,7 +125,7 @@ public class HubCheckService {
 		
 		//校验品类
 		if(hubProduct.getHubCategoryNo()!=null){
-			if(!checkHubCategory(hubProduct.getHubCategoryNo())){
+			if(!getCategoryName(hubProduct.getHubCategoryNo())){
 				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 			}	

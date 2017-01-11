@@ -28,7 +28,6 @@ public class HubCheckRuleService {
 	
 	@Autowired
 	private HubProductCheckManager hubProductCheckRuleManager;
-	
 	@Autowired
 	HubCheckService hubCheckService;
 	@Autowired
@@ -40,7 +39,7 @@ public class HubCheckRuleService {
 		StringBuffer str = new StringBuffer();
 		//校验品牌
 		if(hubProduct.getBrandNo()!=null){
-			if(!hubCheckService.checkHubBrand(hubProduct.getBrandNo())){
+			if(!hubCheckService.getBrand(hubProduct.getBrandNo())){
 				str.append("品牌编号"+hubProduct.getBrandNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
@@ -51,7 +50,7 @@ public class HubCheckRuleService {
 		
 		//校验品类
 		if(hubProduct.getCategoryNo()!=null){
-			if(!hubCheckService.checkHubCategory(hubProduct.getCategoryNo())){
+			if(!hubCheckService.getCategoryName(hubProduct.getCategoryNo())){
 				str.append("品类编号"+hubProduct.getCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
