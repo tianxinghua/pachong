@@ -110,8 +110,8 @@ public class TaskImportService {
         hubSpuImportTaskCriteriaDto.setPageNo(param.getPageNo());
         hubSpuImportTaskCriteriaDto.setPageSize(param.getPageSize());
         Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria();
-        if(param.getTaskState()!=-1){
-            criteria.andTaskStateEqualTo((byte)param.getTaskState());
+        if(param.getTaskState()!=null){
+            criteria.andTaskStateEqualTo(param.getTaskState());
         }
         if(param.getImportType()!=null){
             criteria.andImportTypeEqualTo(param.getImportType());

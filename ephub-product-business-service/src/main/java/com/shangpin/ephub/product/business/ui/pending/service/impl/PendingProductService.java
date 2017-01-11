@@ -39,8 +39,6 @@ import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
-import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
@@ -49,6 +47,8 @@ import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
@@ -83,7 +83,7 @@ public class PendingProductService implements IPendingProductService{
     @Autowired
     private HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
     @Autowired
-    private HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
+    private HubPendingSpuCheckService hubPendingSpuCheckService;
     @Autowired
     private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
     @Autowired
@@ -207,7 +207,7 @@ public class PendingProductService implements IPendingProductService{
                     	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
                         hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
     				}else{
-    					HubPendingSpuCheckResult spuResult = pendingSpuCheckGateWay.checkSpu(pendingProductDto);
+    					HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
     	                if(spuResult.isPassing()){
     	                	pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
     	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
