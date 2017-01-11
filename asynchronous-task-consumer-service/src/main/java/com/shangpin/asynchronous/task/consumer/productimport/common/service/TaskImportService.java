@@ -36,6 +36,7 @@ import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
@@ -85,7 +86,7 @@ public class TaskImportService {
 
 	private static String[] hubProductTemplate = null;
 	static {
-		hubProductTemplate = TaskImportTemplate.getHubProductTemplate();
+		hubProductTemplate = HubProductDto.getHubProductTemplate();
 	}
 
 	public boolean updateHubSpuImportByTaskNo(int status, String taskNo, String processInfo, String resultFilePath) {
@@ -316,7 +317,7 @@ public class TaskImportService {
 			hubIsExist = false;
 			checkResult = "货号校验失败";
 		}
-		pendingSpuId = saveOrUpdatePendingSpu(isExist, hubPendingSpuDto, isPassing);
+		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isExist, hubPendingSpuDto, isPassing);
 		if (isPassing) {
 			map.put("taskState", "校验通过");
 		} else {
@@ -336,6 +337,13 @@ public class TaskImportService {
 		Long hubSpuId= null;
 		String checkResult = null;
 		HubSpuPendingDto isExist = null;
+		
+		// 查询是否已存在pendingSpu表中
+		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
+		if (listSpu != null && listSpu.size() > 0) {
+			isExist = listSpu.get(0);
+		}
+		
 		
 		// 校验货号
 		HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
@@ -374,12 +382,8 @@ public class TaskImportService {
 			checkResult = "货号校验失败";
 		}
 
-		// 查询是否已存在pendingSpu表中
-		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
-		if (listSpu != null && listSpu.size() > 0) {
-			isExist = listSpu.get(0);
-		}
-		pendingSpuId = saveOrUpdatePendingSpu(isExist, hubPendingSpuDto, isPassing);
+		
+		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isExist, hubPendingSpuDto, isPassing);
 		if (isPassing) {
 			map.put("taskState", "校验通过");
 		} else {
@@ -399,7 +403,7 @@ public class TaskImportService {
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getSeason());
+		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
@@ -413,6 +417,7 @@ public class TaskImportService {
 			}
 			hubPendingDto.setHubSpuPendingId(hubPendingSpuDto.getSpuPendingId());
 			log.info("pendingToHub.addSkuOrSkuSupplierMapping推送参数:{}", hubPendingDto);
+			//更新
 			pengdingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
 			
 
@@ -425,20 +430,25 @@ public class TaskImportService {
 		}
 	}
 
-	private Long saveOrUpdatePendingSpu(HubSpuPendingDto isExist, HubSpuPendingDto hubPendingSpuDto,
+	private Long saveOrUpdatePendingSpu(boolean hubIsExist,HubSpuPendingDto isExist, HubSpuPendingDto hubPendingSpuDto,
 			boolean isPassing) {
 
 		Long pengingSpuId = null;
 		
 		if(isExist!=null){
 			pengingSpuId = isExist.getSpuPendingId();
-			if(isExist.getSpuState()==SpuState.HANDLED.getIndex()){
+			if(isExist.getSpuState()==SpuState.HANDLED.getIndex()||isExist.getSpuState()==SpuState.HANDLING.getIndex()){
 				return pengingSpuId;
 			}
 		}
 		
 		if (isPassing) {
-			hubPendingSpuDto.setSpuState((byte) SpuState.HANDLING.getIndex());
+			if(hubIsExist){
+				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());	
+			}else{
+				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLING.getIndex());
+			}
+			
 		} else {
 			hubPendingSpuDto.setSpuState((byte) SpuState.INFO_PECCABLE.getIndex());
 		}
@@ -454,6 +464,7 @@ public class TaskImportService {
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuSeasonState((byte) 1);
 			hubPendingSpuDto.setUpdateTime(new Date());
+			hubPendingSpuDto.setSupplierSpuId(0l);
 			pengingSpuId = hubSpuPendingGateWay.insert(hubPendingSpuDto);
 		}
 		log.info("pengingSpuId:"+pengingSpuId);

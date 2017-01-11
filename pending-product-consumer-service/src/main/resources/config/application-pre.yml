@@ -676,7 +676,7 @@ banner:
 shangpin:
    hub:
        callAddress:
-             gmsAddProductUrl: http://qa.scmapi.shangpin.com/gms/Product/AddProduct
-             gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/GetProductSize
-             gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/GetBrands
-             gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/GetCategory
+             gmsAddProductUrl: http://scmapi.spidc1.com/gms/Product/AddProduct
+             gmsSizeUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetProductSize
+             gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
+             gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetCategory
