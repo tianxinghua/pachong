@@ -1,11 +1,11 @@
 feign.hystrix.enabled: false
 spring: 
   rabbitmq: 
-           host: 192.168.20.175
+           host: 172.20.11.50
            port: 5672
-           username: ephub-message-service-qa
-           password: ephub-message-service-qa
-           virtual-host: /ephub-message-service-qa
+           username: ephub-message-service
+           password: ephub-message-service
+           virtual-host: /ephub-message-service
   cloud: 
         consul: 
           host: localhost
@@ -13,7 +13,7 @@ spring:
           discovery: 
             prefer-agent-address: true
             prefer-ip-address: true
-            health-check-interval: 10s
+            health-check-interval: 15s
             register: false
             register-health-check: false
         stream: 
@@ -22,319 +22,319 @@ spring:
                               destination: spinnaker.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         ostorePendingProduct: 
                               destination: ostore.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         brunarossoPendingProduct: 
                               destination: brunarosso.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         stefaniaPendingProduct: 
                               destination: stefania.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         gebPendingProduct: 
                               destination: geb.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         coltortiPendingProduct: 
                               destination: coltorti.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         tonyPendingProduct: 
                               destination: tony.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         biondioniPendingProduct: 
                               destination: biondioni.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         pozzileiPendingProduct: 
                               destination: pozzilei.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         pozzileiartePendingProduct: 
                               destination: pozzileiarte.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         pozzileifortePendingProduct: 
                               destination: pozzileiforte.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         carofiglioPendingProduct: 
                               destination: carofiglio.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         genteromaPendingProduct: 
                               destination: genteroma.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         danielloPendingProduct: 
                               destination: daniello.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         italianiPendingProduct: 
                               destination: italiani.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         tufanoPendingProduct: 
                               destination: tufano.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         monnierfreresPendingProduct: 
                               destination: monnierfreres.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         eleonorabonucciPendingProduct: 
                               destination: eleonorabonucci.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         russocapriPendingProduct: 
                               destination: russocapri.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         giglioPendingProduct: 
                               destination: giglio.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         divoPendingProduct: 
                               destination: divo.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         biondiniPendingProduct: 
                               destination: biondini.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         dellogliostorePendingProduct: 
                               destination: dellogliostore.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         francescomassaPendingProduct: 
                               destination: francescomassa.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         tessabitPendingProduct: 
                               destination: tessabit.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         alducadaostaPendingProduct: 
                               destination: alducadaosta.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         sanremoPendingProduct: 
                               destination: sanremo.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         paolofiorilloPendingProduct: 
                               destination: paolofiorillo.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         viettiPendingProduct: 
                               destination: vietti.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         anielloPendingProduct: 
                               destination: aniello.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         lindelepalaisPendingProduct: 
                               destination: lindelepalais.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         pritelliPendingProduct: 
                               destination: pritelli.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         piccadillyPendingProduct: 
                               destination: piccadilly.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         velaPendingProduct: 
                               destination: vela.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         montiPendingProduct: 
                               destination: monti.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         creative99PendingProduct: 
                               destination: creative99.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         leamPendingProduct: 
                               destination: leam.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         bagheeraPendingProduct: 
                               destination: bagheera.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         papiniPendingProduct: 
                               destination: papini.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         zitafabianiPendingProduct: 
                               destination: zitafabiani.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         wisePendingProduct: 
                               destination: wise.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         basebluPendingProduct: 
                               destination: baseblu.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         raffaellonetworkPendingProduct: 
                               destination: raffaellonetwork.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         frmodaPendingProduct: 
                               destination: frmoda.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         studio69PendingProduct: 
                               destination: studio69.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         delibertiPendingProduct: 
                               destination: deliberti.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         smetsPendingProduct: 
                               destination: smets.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         sarenzaPendingProduct: 
                               destination: sarenza.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         soleplacenewPendingProduct: 
                               destination: soleplacenew.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         honestdousaPendingProduct: 
                               destination: honestdousa.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         opticalPendingProduct: 
                               destination: optical.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         tizianafaustiPendingProduct: 
                               destination: tizianafausti.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
                         theclutcherPendingProduct: 
                               destination: theclutcher.pending.product
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1                                                                                                                                                                                                                                                                                                                        
               rabbit: 
                       bindings: 
@@ -658,16 +658,16 @@ spring:
                                        republishToDlq: false                                                                                                                                                                                                                                                                                                                 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
-  mail: 
-       default-recipient: yan_xiao_bin@126.com
-       default-sender: yanxiaobin@shangpin.com
-       default-encoding: UTF-8 # Default MimeMessage encoding.
-       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-       port: 25 # SMTP server port.
-       protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
-       test-connection: false # Test that the mail server is available on startup.
+  #mail: 
+       #default-recipient: yan_xiao_bin@126.com
+       #default-sender: yanxiaobin@shangpin.com
+       #default-encoding: UTF-8 # Default MimeMessage encoding.
+       #host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       #port: 25 # SMTP server port.
+       #protocol: smtp # Protocol used by the SMTP server.
+       #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
+       #password: 123.com # Login password of the SMTP server.
+       #test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
@@ -676,7 +676,7 @@ banner:
 shangpin:
    hub:
        callAddress:
-             gmsAddProductUrl: http://qa.scmapi.shangpin.com/gms/Product/AddProduct
-             gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/GetProductSize
-             gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/GetBrands
-             gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/GetCategory
+             gmsAddProductUrl: http://scmapi.spidc1.com/gms/Product/AddProduct
+             gmsSizeUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetProductSize
+             gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
+             gmsCategoryUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetCategory
