@@ -32,6 +32,7 @@ import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
