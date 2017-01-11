@@ -100,10 +100,8 @@ public class PendingProductService implements IPendingProductService{
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
     	try {
     		pendingQuryDto.setPageSize(100000); 
-    		PendingProducts products = findPendingProducts(pendingQuryDto);
-    		products.setCreateUser(pendingQuryDto.getCreateUser());
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
+        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);
@@ -114,12 +112,8 @@ public class PendingProductService implements IPendingProductService{
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
     	try {
     		pendingQuryDto.setPageSize(100000); 
-    		PendingProducts products = new PendingProducts();
-    		products.setCreateUser(pendingQuryDto.getCreateUser());
-        	List<PendingProductDto> productList = findPengdingSpu(pendingQuryDto);
-        	products.setProduts(productList); 
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
+        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);

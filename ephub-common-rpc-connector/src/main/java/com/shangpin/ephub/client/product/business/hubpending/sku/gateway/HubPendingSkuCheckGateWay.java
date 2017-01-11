@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 
 /**
  * <p>Title:HubBrandModelRuleController.java </p>
@@ -25,4 +27,11 @@ public interface HubPendingSkuCheckGateWay {
 	 */
 	@RequestMapping(value = "/pending-sku/check-sku", method = RequestMethod.POST,consumes = "application/json")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto);
+	/**
+	 * 到处理页面导出sku异步调用
+	 * @param pendingQuryDto 查询条件
+	 * @return
+	 */
+	@RequestMapping(value = "/pending-sku/export", method = RequestMethod.POST,consumes = "application/json")
+	public PendingProducts exportPengdingSku(@RequestBody PendingQuryDto pendingQuryDto);
 }
