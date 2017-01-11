@@ -23,16 +23,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
-import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProductDto;
-import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProducts;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,13 +56,17 @@ public class ExportServiceImpl {
 	private FtpProperties ftpProperties;
 	@Autowired 
 	private HubSpuImportTaskGateWay spuImportGateway;
+	@Autowired
+	private HubPendingSpuCheckGateWay hubPendingSpuClient;
+	@Autowired
+	private HubPendingSkuCheckGateWay hubPendingSkuClient;
 
 	/**
 	 * 待处理页面导出sku
 	 * @param taskNo 任务编号
 	 * @param products
 	 */
-	public void exportSku(String taskNo,PendingProducts products){
+	public void exportSku(String taskNo,PendingQuryDto pendingQuryDto){
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -72,6 +79,7 @@ public class ExportServiceImpl {
         }
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
+        	PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
             if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                 int j = 0;
                 for(PendingProductDto product : products.getProduts()){
@@ -98,7 +106,7 @@ public class ExportServiceImpl {
 	 * @param taskNo 任务编号
 	 * @param products
 	 */
-	public void exportSpu(String taskNo,PendingProducts products){
+	public void exportSpu(String taskNo,PendingQuryDto pendingQuryDto){
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -111,6 +119,7 @@ public class ExportServiceImpl {
         }
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
+        	PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
             if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                 int j = 0;
                 for(PendingProductDto product : products.getProduts()){
