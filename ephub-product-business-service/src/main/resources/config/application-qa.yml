@@ -70,3 +70,4 @@ shangpin:
              gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetProductSize
              gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetCategory
+             scmsSupplierInfoUrl: http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=

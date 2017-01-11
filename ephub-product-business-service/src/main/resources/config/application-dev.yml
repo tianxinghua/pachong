@@ -41,12 +41,12 @@ spring:
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   ftp:
-       host: 192.168.20.110
+       host: 192.168.20.219
        port: 21
-       userName: dev
-       password: shangpin@123
-       ftpHubPath: hub/
-       ftpPendingPath: pending/
+       userName: sop@ftp  
+       password: sop@ftp
+       ftpHubPath: /hub
+       ftpPendingPath: /hub
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
@@ -59,3 +59,4 @@ shangpin:
              gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetProductSize
              gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetCategory
+             scmsSupplierInfoUrl: http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=

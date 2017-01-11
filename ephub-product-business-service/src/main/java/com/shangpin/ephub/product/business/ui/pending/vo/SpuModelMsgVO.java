@@ -14,7 +14,12 @@ import java.util.List;
 @Setter
 public class SpuModelMsgVO implements Serializable {
 
-   private Integer total;//总数
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8548826208356011450L;
+
+private Integer total;//总数
 
    private List<SpuModelVO> spuModels;
 }

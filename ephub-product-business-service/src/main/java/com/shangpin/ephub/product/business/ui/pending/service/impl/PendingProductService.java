@@ -50,7 +50,6 @@ import com.shangpin.ephub.product.business.common.service.supplier.SupplierServi
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -99,10 +98,9 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
     	try {
-    		PendingProducts products = findPendingProducts(pendingQuryDto);
-    		products.setCreateUser(pendingQuryDto.getCreateUser());
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(products)); 
+    		pendingQuryDto.setPageSize(100000); 
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
+        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);
@@ -112,12 +110,9 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
     	try {
-    		PendingProducts products = new PendingProducts();
-    		products.setCreateUser(pendingQuryDto.getCreateUser());
-        	List<PendingProductDto> productList = findPengdingSpu(pendingQuryDto);
-        	products.setProduts(productList); 
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(products)); 
+    		pendingQuryDto.setPageSize(100000); 
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex());
+        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);
@@ -462,44 +457,45 @@ public class PendingProductService implements IPendingProductService{
      * @param pendingProduct 待验证的产品，需要验证图片/品牌/颜色/货号等等是否不符合，如果不符合则需要返回
      * @param products 不符合项需要添加的List
      */
-    private void screenProduct(PendingQuryDto pendingQuryDto,PendingProductDto pendingProduct,List<PendingProductDto> products){
-        if(null != pendingQuryDto.getInconformities() && pendingQuryDto.getInconformities().size()>0){
-            for(Integer item : pendingQuryDto.getInconformities()){
-                if(item == ProductState.PICTURE_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_MODEL_STATE.getIndex()){
-
-                }else if(item == ProductState.CATGORY_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_BRAND_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_GENDER_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_SEASON_STATE.getIndex()){
-
-                }else if(item == ProductState.SPU_COLOR_STATE.getIndex()){
-
-                }else if(item == ProductState.MATERIAL_STATE.getIndex()){
-
-                }else if(item == ProductState.ORIGIN_STATE.getIndex()){
-
-                }else if(item == ProductState.SIZE_STATE.getIndex()){
-
-                }
-            }
-        }
-    }
+//    private void screenProduct(PendingQuryDto pendingQuryDto,PendingProductDto pendingProduct,List<PendingProductDto> products){
+//        if(null != pendingQuryDto.getInconformities() && pendingQuryDto.getInconformities().size()>0){
+//            for(Integer item : pendingQuryDto.getInconformities()){
+//                if(item == ProductState.PICTURE_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_MODEL_STATE.getIndex()){
+//
+//                }else if(item == ProductState.CATGORY_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_BRAND_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_GENDER_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_SEASON_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SPU_COLOR_STATE.getIndex()){
+//
+//                }else if(item == ProductState.MATERIAL_STATE.getIndex()){
+//
+//                }else if(item == ProductState.ORIGIN_STATE.getIndex()){
+//
+//                }else if(item == ProductState.SIZE_STATE.getIndex()){
+//
+//                }
+//            }
+//        }
+//    }
     /**
      * 将任务记录保存到数据库
      * @param createUser
      * @return
      */
-    private HubSpuImportTaskDto saveTaskIntoMysql(String createUser){
+    private HubSpuImportTaskDto saveTaskIntoMysql(String createUser,int taskType){
     	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
     	Date date = new Date();
 		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
 		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
 		hubSpuTask.setCreateTime(date);
+		hubSpuTask.setImportType((byte)taskType);
 		hubSpuTask.setCreateUser(createUser); 
 		hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 		hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 

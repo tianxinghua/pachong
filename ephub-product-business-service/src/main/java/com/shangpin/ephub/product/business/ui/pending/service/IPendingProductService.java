@@ -2,8 +2,6 @@ package com.shangpin.ephub.product.business.ui.pending.service;
 
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;

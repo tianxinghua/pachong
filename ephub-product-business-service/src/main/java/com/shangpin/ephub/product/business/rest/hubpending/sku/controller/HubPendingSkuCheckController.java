@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.service.HubPendingSkuCheckService;
+import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +28,8 @@ public class HubPendingSkuCheckController {
 	
 	@Autowired
 	private HubPendingSkuCheckService hubCheckRuleService;
+	@Autowired
+	private IPendingProductService pendingProductService;
 	
 	@RequestMapping(value = "/check-sku")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto){
@@ -32,6 +37,12 @@ public class HubPendingSkuCheckController {
 		
 		HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(dto);
 		return result;
+	}
+	@RequestMapping(value = "/export")
+	public PendingProducts exportPengdingSku(@RequestBody PendingQuryDto pendingQuryDto){
+		PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
+		products.setCreateUser(pendingQuryDto.getCreateUser());
+		return products;
 	}
 
 

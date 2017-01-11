@@ -51,9 +51,13 @@ public class FTPClientUtil {
 			ftp.disconnect();
 		}
 		InputStream sbs = new ByteArrayInputStream(data);
-		ftp.changeWorkingDirectory(ftpHubPatht);
+		boolean flag = ftp.changeWorkingDirectory(ftpHubPatht);
+		if(!flag){
+			 ftp.makeDirectory(ftpHubPatht);
+			 ftp.changeWorkingDirectory(ftpHubPatht);
+		}
 		ftp.storeFile(fileName, sbs);
-		ftp.quit();
+		ftp.disconnect();
 		return ftpHubPatht;
 	}
 	public static InputStream downFile(String remotePath) throws Exception{

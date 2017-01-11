@@ -12,6 +12,7 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -30,6 +31,8 @@ public class SupplierService {
     private IShangpinRedis shangpinRedis;
 	@Autowired
 	private RestTemplate httpClient;
+	@Autowired
+	private ApiAddressProperties apiAddress;
 
 	/**
      * 通过供货商编号查询供货商信息,失败返回null
@@ -50,7 +53,7 @@ public class SupplierService {
             	//调用接口获取供货商信息
                 Map<String, String> paraMap = new HashMap<>();
                 paraMap.put("supplierNo", supplierNo);
-                String url = "http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo="+supplierNo;
+                String url = apiAddress.getScmsSupplierInfoUrl()+supplierNo;
                 String reSupplierMsg = httpClient.getForObject(url, String.class);
                 SupplierDTO supplierDto = JsonUtil.deserialize2(reSupplierMsg, SupplierDTO.class);
                 try {

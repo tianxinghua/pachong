@@ -1,13 +1,9 @@
 package com.shangpin.ephub.product.business.ui.task.common.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -131,6 +127,7 @@ public class TaskImportService {
         if(total<1){
             return null;
         }
+        hubSpuImportTaskCriteriaDto.setOrderByClause("update_time desc");
         List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
         HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
         List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
