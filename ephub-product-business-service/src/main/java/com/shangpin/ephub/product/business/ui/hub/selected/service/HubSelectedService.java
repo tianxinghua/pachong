@@ -1,11 +1,13 @@
 package com.shangpin.ephub.product.business.ui.hub.selected.service;
 
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +17,13 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
@@ -44,103 +52,155 @@ public class HubSelectedService {
 	@Autowired
 	HubSpuPicGateWay hubSpuPicGateWay;
 	@Autowired
+	HubSkuPendingGateWay hubSkuPendingGateWay;
+	@Autowired
 	HubProductServiceImpl hubCommonProductServiceImpl;
 
-	public void exportExcel(List<HubWaitSelectResponseDto> list,OutputStream ouputStream) throws Exception{
-		
-		String []headers = {"品牌","货号","四级品类","颜色","材质","产地","性别","供应商","尺码","最后更新时间"};
-		String []columns = {"brandName","spuModel","categoryName","color","material","origin","gender","supplierName","size","updateTime"};
-		String title = "商品导出";
-		
-		List<Map<String, String>> result = new ArrayList<Map<String,String>>();
+	public void exportExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
+		String[] headers = { "尚品skuNo","供应商编号","供应商skuNo", "商品名称", "品牌", "货号", "四级品类", "颜色", "材质", "产地", "性别","尺码","供价","供价币种","市场价","市场价币种", "最后更新时间" };
+		String[] columns = {"spSkuNo","supplierName","supplierSkuNo","spuName", "brandName", "spuModel", "categoryName", "color", "material", "origin", "gender",
+				 "size","supplyPrice","supplyCurry","marketPrice","marketCurry", "updateTime" };
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
-		for(HubWaitSelectResponseDto response:list){
+		
+		Map<String, List<HubWaitSelectResponseDto>> mapSupplier = new HashMap<String, List<HubWaitSelectResponseDto>>();
+		for (HubWaitSelectResponseDto response : list) {
+			String supplierId = response.getSupplierId();
+			if (mapSupplier.containsKey(supplierId)) {
+				mapSupplier.get(supplierId).add(response);
+			} else {
+				List<HubWaitSelectResponseDto> listSupplier = new ArrayList<HubWaitSelectResponseDto>();
+				listSupplier.add(response);
+				mapSupplier.put(supplierId, listSupplier);
+			}
+		}
+		 HSSFWorkbook workbook = new HSSFWorkbook();
+		for (Map.Entry<String, List<HubWaitSelectResponseDto>> entry : mapSupplier.entrySet()) {
+			String supplierId = entry.getKey();
+			List<HubWaitSelectResponseDto> listSupp =  entry.getValue();
 			
+			for(HubWaitSelectResponseDto response:listSupp){
+				map = new HashMap<String, String>();
+				convertTOExcel(response,map);
+				result.add(map);
+			}
+			ExportExcelUtils.createSheet(workbook,supplierId, headers, columns, result);
+		}
+		workbook.write(ouputStream); 
+	}
+
+	private void convertTOExcel(HubWaitSelectResponseDto response, Map<String, String> map) {
+		String supplierId = response.getSupplierId();
+		String supplierSkuNo = response.getSupplierSkuNo();
+		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+		List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
+		BigDecimal supplyPrice = null;
+		BigDecimal marketPrice = null;
+		String supplyCurry = null;
+		String marketCurry = null;
+		String spSkuNo = null;
+		if (listSku != null && listSku.size() > 0) {
+			supplyPrice = listSku.get(0).getSupplyPrice();
+			marketPrice = listSku.get(0).getMarketPrice();
+			supplyCurry = listSku.get(0).getSupplyPriceCurrency();
+			marketCurry = listSku.get(0).getMarketPriceCurrencyorg();
+			spSkuNo = listSku.get(0).getSpSkuNo();
+		}
+		
+		String brandName = response.getBrandNo();
+		String supplierName = response.getSupplierNo();
+		String categoryName = response.getCategoryNo();
+		map.put("brandName", brandName);
+		map.put("supplyPrice", supplyPrice+"");
+		map.put("marketPrice", marketPrice+"");
+		map.put("supplyCurry", supplyCurry);
+		map.put("marketCurry", marketCurry);
+		map.put("spSkuNo", spSkuNo);
+		map.put("spuName", response.getSpuName());
+		map.put("supplierSkuNo", response.getSupplierSkuNo());
+		map.put("spuModel", response.getSpuModel());
+		map.put("categoryName", categoryName);
+		map.put("color", response.getHubColor());
+		map.put("material", response.getMaterial());
+		map.put("origin", response.getOrigin());
+		map.put("gender", response.getGender());
+		map.put("supplierName", supplierName);
+		map.put("size", response.getSkuSize());
+		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
+		
+	}
+
+	public void exportPicExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
+
+		String[] headers = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+				"url9", "url10" };
+		String[] columns = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+				"url9", "url10" };
+		String title = "图片导出";
+
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		Map<String, String> map = null;
+		for (HubWaitSelectResponseDto response : list) {
 			map = new HashMap<String, String>();
-			String brandName = response.getBrandNo();
-			String supplierName = response.getSupplierNo();
-			String categoryName = response.getCategoryNo();
-			map.put("brandName",brandName);
-			map.put("spuModel",response.getSpuModel());
-			map.put("categoryName", categoryName);
-			map.put("color",response.getHubColor());
-			map.put("material",response.getMaterial());
-			map.put("origin",response.getOrigin());
-			map.put("gender",response.getGender());
-			map.put("supplierName",supplierName);
-			map.put("size",response.getSkuSize());
-			map.put("updateTime",DateTimeUtil.getTime(response.getUpdateTime()));
+			Long hubSpuId = response.getSpuId();
+			String spSkuNo = response.getSpSkuNo();
+			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
+			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
+			List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
+			int i = 1;
+			if (listPic == null && listPic.size() <= 0) {
+				continue;
+			}
+			for (HubSpuPicDto pic : listPic) {
+				if (i == 11) {
+					break;
+				}
+				map.put("url" + i, pic.getSpPicUrl());
+				i++;
+			}
+			map.put("spSkuNo", spSkuNo);
+			map.put("hubSpuId", hubSpuId + "");
 			result.add(map);
 		}
 		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
 	}
-	
-	public void exportPicExcel(List<HubWaitSelectResponseDto> list,OutputStream ouputStream) throws Exception{
-			
-			String []headers = {"spSkuNo","hubSpuId","url1","url2","url3","url4","url5","url6","url7","url8","url9","url10"};
-			String []columns = {"spSkuNo","hubSpuId","url1","url2","url3","url4","url5","url6","url7","url8","url9","url10"};
-			String title = "图片导出";
-			
-			List<Map<String, String>> result = new ArrayList<Map<String,String>>();
-			Map<String, String> map = null;
-			for(HubWaitSelectResponseDto response:list){
-				map = new HashMap<String, String>();
-				Long hubSpuId = response.getSpuId();
-				String spSkuNo = response.getSpSkuNo();
-				HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
-				criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
-				List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
-				int i=1;
-				if(listPic==null&&listPic.size()<=0){
-					continue;
-				}
-				for(HubSpuPicDto pic : listPic){
-					if(i==11){
-						break;
-					}
-					map.put("url"+i, pic.getSpPicUrl());
-					i++;
-				}
-				map.put("spSkuNo",spSkuNo);
-				map.put("hubSpuId",hubSpuId+"");
-				result.add(map);
+
+	public void exportSelectPicExcel(List<HubWaitSelectStateDto> list, OutputStream ouputStream) throws Exception {
+
+		String[] headers = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+				"url9", "url10" };
+		String[] columns = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+				"url9", "url10" };
+		String title = "选中图片导出";
+
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		Map<String, String> map = null;
+		for (HubWaitSelectStateDto response : list) {
+			map = new HashMap<String, String>();
+			Long hubSpuId = response.getSpuId();
+			Long hubSkuId = response.getSkuId();
+
+			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
+			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
+			List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
+			int i = 1;
+			if (listPic == null && listPic.size() <= 0) {
+				continue;
 			}
-			ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
-		}
-	
-		public void exportSelectPicExcel(List<HubWaitSelectStateDto> list,OutputStream ouputStream) throws Exception{
-			
-			String []headers = {"spSkuNo","hubSpuId","url1","url2","url3","url4","url5","url6","url7","url8","url9","url10"};
-			String []columns = {"spSkuNo","hubSpuId","url1","url2","url3","url4","url5","url6","url7","url8","url9","url10"};
-			String title = "选中图片导出";
-			
-			List<Map<String, String>> result = new ArrayList<Map<String,String>>();
-			Map<String, String> map = null;
-			for(HubWaitSelectStateDto response:list){
-				map = new HashMap<String, String>();
-				Long hubSpuId = response.getSpuId();
-				Long hubSkuId = response.getSkuId();
-				
-				HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
-				criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
-				List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
-				int i=1;
-				if(listPic==null&&listPic.size()<=0){
-					continue;
+			for (HubSpuPicDto pic : listPic) {
+				if (i == 11) {
+					break;
 				}
-				for(HubSpuPicDto pic : listPic){
-					if(i==11){
-						break;
-					}
-					map.put("url"+i, pic.getSpPicUrl());
-					i++;
-				}
-				HubSkuDto skuDto = hubSkuGateWay.selectByPrimaryKey(hubSkuId);
-				map.put("spSkuNo",skuDto.getSpSkuNo());
-				map.put("hubSpuId",hubSpuId+"");
-				result.add(map);
+				map.put("url" + i, pic.getSpPicUrl());
+				i++;
 			}
-			ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
+			HubSkuDto skuDto = hubSkuGateWay.selectByPrimaryKey(hubSkuId);
+			map.put("spSkuNo", skuDto.getSpSkuNo());
+			map.put("hubSpuId", hubSpuId + "");
+			result.add(map);
 		}
+		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
+	}
 
 }

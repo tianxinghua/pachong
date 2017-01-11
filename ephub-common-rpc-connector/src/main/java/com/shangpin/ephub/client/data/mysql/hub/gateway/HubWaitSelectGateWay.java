@@ -31,6 +31,8 @@ public interface HubWaitSelectGateWay {
 	@RequestMapping(value = "/hub-waitselect/select-detail", method = RequestMethod.POST,consumes = "application/json")
     public List<HubWaitSelectResponseDto> selectDetail(@RequestBody HubWaitSelectDetailRequest criteria);
 	
+	@RequestMapping(value = "/hub-waitselect/select-with-page", method = RequestMethod.POST,consumes = "application/json")
+    public List<HubWaitSelectResponseDto> selectBySupplierSort(@RequestBody HubWaitSelectRequestWithPageDto criteria);
 	
 	
 }
