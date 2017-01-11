@@ -6,12 +6,12 @@ spring:
           host: localhost
           port: 8500
           discovery: 
-            #instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
-            prefer-ip-address: true
-            #ip-address: 192.168.20.110
-            #hostname: 192.168.20.110
-            port: ${server.port}
-            #healthCheckUrl: http://localhost:8007/info 
+              prefer-agent-address: true
+              prefer-ip-address: true
+              health-check-interval: 15s
+              health-check-timeout: 15s
+              register: true
+              register-health-check: true 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
@@ -44,5 +44,5 @@ shangpin:
   hub:
       fdfs:
             port: 80
-            resHost: pic.ephub.spidc1.com
+            resHost: 192.168.9.71
             groupName: group2
