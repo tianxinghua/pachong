@@ -99,6 +99,7 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
     	try {
+    		pendingQuryDto.setPageSize(100000); 
     		PendingProducts products = findPendingProducts(pendingQuryDto);
     		products.setCreateUser(pendingQuryDto.getCreateUser());
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
@@ -112,6 +113,7 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
     	try {
+    		pendingQuryDto.setPageSize(100000); 
     		PendingProducts products = new PendingProducts();
     		products.setCreateUser(pendingQuryDto.getCreateUser());
         	List<PendingProductDto> productList = findPengdingSpu(pendingQuryDto);
