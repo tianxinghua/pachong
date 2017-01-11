@@ -80,6 +80,7 @@ public class HubCheckService {
         ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
         });
         HubResponseDto<CategoryScreenSizeDom> body = entity.getBody();
+        log.info("查询categoryNo:"+categoryNo+"返回结果,{}",body);
         if(body.getIsSuccess()){
         	return true;
            
@@ -98,6 +99,7 @@ public class HubCheckService {
         ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {
         });
         HubResponseDto<BrandDom> body = entity.getBody();
+        log.info("查询brandNo:"+brandNo+"返回结果,{}",body);
         if(body.getIsSuccess()){
         	return true;
            

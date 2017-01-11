@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <redis>
 	<application>
-		<id>ep-order-service</id>
+		<id>ephub-product-business-service</id>
 		<cluster>
 			<clusterid>default</clusterid>
 			<configuration>
 				<!-- 最大的活动连接 -->
-				<maxtotal>3000</maxtotal>
+				<maxtotal>2000</maxtotal>
 				<!-- 最大的空闲连接 -->
 				<maxidle>100</maxidle>
 				<!-- 最大的等待时间 -->
@@ -27,43 +27,43 @@
 					<!--节点编号 -->
 					<id>default-node-one</id>
 					<!--Ip地址和端口 -->
-					<host>192.168.20.118</host>
-					<port>7001</port>
+					<host>172.20.30.56</host>
+					<port>9501</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-two</id>
 					<!--Ip地址和端口 -->
-					<host>192.168.20.118</host>
-					<port>7002</port>
+					<host>172.20.10.130</host>
+					<port>9502</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-three</id>
 					<!--Ip地址和端口 -->
-					<host>192.168.20.118</host>
-					<port>7003</port>
+					<host>172.20.10.131</host>
+					<port>9503</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-four</id>
 					<!--Ip地址和端口 -->
-					<host>192.168.20.118</host>
-					<port>7004</port>
+					<host>172.20.30.55</host>
+					<port>9504</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-five</id>
 					<!--Ip地址和端口 -->
-					<host>192.168.20.118</host>
-					<port>7005</port>
+					<host>172.20.10.235</host>
+					<port>9505</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-six</id>
 					<!--Ip地址和端口 -->
-					<host>192.168.20.118</host>
-					<port>7006</port>
+					<host>172.20.10.122</host>
+					<port>9506</port>
 				</redisnode>
 			</redisnodes>
 		</cluster>
