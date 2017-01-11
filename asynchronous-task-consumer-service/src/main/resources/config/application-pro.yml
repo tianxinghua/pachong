@@ -1,123 +1,82 @@
+feign.hystrix.enabled: false
 spring: 
   rabbitmq: 
-           host: 192.168.20.175
+           host: 172.20.11.49
            port: 5672
-           username: scm-message-service
-           password: scm-message-service
-           virtual-host: /scm-message-service
+           username: ephub-message-service
+           password: ephub-message-service
+           virtual-host: /ephub-message-service
   cloud: 
+        consul: 
+          host: localhost
+          port: 8500
+          discovery: 
+            prefer-agent-address: true
+            prefer-ip-address: true
+            health-check-interval: 15s
+            register: false
+            register-health-check: false
         stream: 
               bindings: 
-                        spinnakerPendingProduct: 
-                              destination: spinnaker.pending.product
+                        pendingProductImportTask: 
+                              destination: pending.product.import.task
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
-                        ostorePendingProduct: 
-                              destination: ostore.pending.product
+                        hubProductImportTask: 
+                              destination: hub.product.import.task
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
-                        brunarossoPendingProduct: 
-                              destination: brunarosso.pending.product
+                        productExportTask: 
+                              destination: product.export.task
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
-                        stefaniaPendingProduct: 
-                              destination: stefania.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        gebPendingProduct: 
-                              destination: geb.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        coltortiPendingProduct: 
-                              destination: coltorti.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        tonyPendingProduct: 
-                              destination: tony.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        biondioniPendingProduct: 
-                              destination: biondioni.pending.product
-                              group: one
-                              consumer: 
-                                       concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                 
               rabbit: 
                       bindings: 
-                            spinnakerPendingProduct: 
+                            pendingProductImportTask: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            ostorePendingProduct: 
+                            hubProductImportTask: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            brunarossoPendingProduct: 
+                            productExportTask: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            stefaniaPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            gebPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            coltortiPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            tonyPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            biondioniPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                          
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
-  mail: 
-       default-recipient: yan_xiao_bin@126.com
-       default-sender: yanxiaobin@shangpin.com
-       default-encoding: UTF-8 # Default MimeMessage encoding.
-       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-       port: 25 # SMTP server port.
-       protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
-       test-connection: true # Test that the mail server is available on startup.
+  ftp:
+       host: 172.20.10.88
+       port: 21
+       userName: ftpuser2
+       password: shangpin@123
+       ftpHubPath: /hub/
+       ftpPendingPath: /pending/
+       exportPath: /pending_export/
+       localResultPath: /usr/local/share/applications/asynchronous-task-consumer-service/ftp/
+  #mail: 
+       #default-recipient: yan_xiao_bin@126.com
+       #default-sender: yanxiaobin@shangpin.com
+       #default-encoding: UTF-8 # Default MimeMessage encoding.
+       #host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       #port: 25 # SMTP server port.
+       #protocol: smtp # Protocol used by the SMTP server.
+       #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
+       #password: 123.com # Login password of the SMTP server.
+       #test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.

@@ -127,7 +127,8 @@ public class PendingSkuImportService {
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
 		if(map.get("pendingSpuId")!=null){
-			HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));	
+			HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
+			hubPendingSpuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
 		checkPendingSku(HubPendingSkuDto,map);
 		

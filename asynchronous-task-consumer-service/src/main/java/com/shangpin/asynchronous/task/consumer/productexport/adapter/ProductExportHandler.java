@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
-import com.shangpin.asynchronous.task.consumer.productexport.pending.vo.PendingProducts;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.util.JsonUtil;
 
@@ -35,11 +35,11 @@ public class ProductExportHandler {
 	 */
 	public void productExportTask(ProductImportTask message, Map<String, Object> headers) {
 		if(!StringUtils.isEmpty(message.getData())){
-			PendingProducts products = JsonUtil.deserialize(message.getData(), PendingProducts.class);
+			PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 			if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
-				exportServiceImpl.exportSku(message.getTaskNo(),products);
+				exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
 			}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
-				exportServiceImpl.exportSpu(message.getTaskNo(),products); 
+				exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
 			}
 		}else{
 			log.error("待处理页导出请传入参数！！！"); 

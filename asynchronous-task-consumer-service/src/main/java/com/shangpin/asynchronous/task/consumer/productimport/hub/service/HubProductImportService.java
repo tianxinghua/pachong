@@ -67,9 +67,12 @@ public class HubProductImportService {
 
 	private static String[] hubKeyTemplate = null;
 	static {
-		hubKeyTemplate = TaskImportTemplate.getPendingSkuTemplate();
+		hubKeyTemplate = HubProductDto.getHubProductTemplate();
 	}
-
+	private static String[] hubValueTemplate = null;
+	static {
+		hubValueTemplate = HubProductDto.getHubProductValueTemplate();
+	}
 	// 1、更新任务表，把task_state更新成正在处理 2、从ftp下载文件并解析成对象 3、公共类校验hub数据并把校验结果写入excel
 	// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 	public void handMessage(ProductImportTask task) throws Exception {
@@ -82,13 +85,13 @@ public class HubProductImportService {
 		
 		// 2、从ftp下载文件并校验模板，并校验
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, "hub");
-		List<HubProductImportDTO> listHubProduct = excelToObject(xssfSheet);
+		List<HubProductDto> listHubProduct = excelToObject(xssfSheet);
 		// 3、公共类校验hub数据并把校验结果写入excel
 		checkAndsaveHubProduct(task.getTaskNo(), listHubProduct);
 	}
 
 	// 校验数据以及保存到hub表
-	private void checkAndsaveHubProduct(String taskNo, List<HubProductImportDTO> listHubProduct) throws Exception {
+	private void checkAndsaveHubProduct(String taskNo, List<HubProductDto> listHubProduct) throws Exception {
 
 		if (listHubProduct == null) {
 			return;
@@ -96,19 +99,16 @@ public class HubProductImportService {
 		// true全部校验成功，
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 
-		for (HubProductImportDTO product : listHubProduct) {
+		for (HubProductDto hubProductDto : listHubProduct) {
 
 			Map<String, String> map = new HashMap<String, String>();
-			HubProductDto hubProductDto = convertHubImportProduct2HupProduct(product);
-
-			map.put("taskNo", taskNo);
-			map.put("spuModel", product.getSpuModel());
 			// 校验hub
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 			if (hubProductCheckResult.isPassing() == true) {
 				Log.info("hub校验通过");
 				hubProductDto.setSpuModel(hubProductCheckResult.getResult());
-				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(product);
+				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(hubProductDto);
+				hubSpuDto.setSpuModel(hubProductCheckResult.getResult());
 				// 查询hubSpu是否存在
 				String hubSpuNo = null;
 				List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
@@ -123,30 +123,30 @@ public class HubProductImportService {
 					// 调用接口生成spuNo
 					hubSpuNo = hubSpuGateWay.getSpuNo();
 					hubSpuDto.setSpuNo(hubSpuNo);
-					Log.info("生成hubSpu:"+hubSpuNo);
+					Log.info(hubProductDto.getSpuModel()+"生成hubSpu:"+hubSpuNo);
 					hubSpuGateWay.insert(hubSpuDto);
 				}
 
-				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo, product.getSkuSize());
+				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo, hubProductDto.getSkuSize());
 				if (hubSkuList != null && hubSkuList.size() > 0) {
 					HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
 					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
 					HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(product.getSkuSize());
+					hubSku.setSkuSize(hubProductDto.getSkuSize());
 					hubSku.setUpdateTime(new Date());
 					HubSkuWithCriteriaDto.setHubSku(hubSku);
 					HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
 					hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
 				} else {
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(product.getSkuSize());
+					hubSku.setSkuSize(hubProductDto.getSkuSize());
 					hubSku.setSpuNo(hubSpuNo);
 					hubSku.setCreateTime(new Date());
 					hubSku.setDataState((byte) 1);
 					// 生成skuNo调用接口
 					String skuNo = hubSkuGateWay.createSkuNo(hubSpuNo);
-					Log.info("生成hubSku:"+skuNo);
+					Log.info(hubProductDto.getSpuModel()+"生成hubSku:"+skuNo);
 					hubSku.setSkuNo(skuNo);
 					hubSkuGateWay.insert(hubSku);
 				}
@@ -159,6 +159,8 @@ public class HubProductImportService {
 				map.put("taskState", "校验失败");
 				map.put("processInfo", hubProductCheckResult.getResult());
 			}
+			map.put("taskNo", taskNo);
+			map.put("spuModel", hubProductDto.getSpuModel());
 			listMap.add(map);
 		}
 		taskService.convertExcel(listMap, taskNo);
@@ -178,29 +180,23 @@ public class HubProductImportService {
 		return hubSpuGateWay.selectByCriteria(hubSpuCriteriaDto);
 	}
 
-	private HubSpuDto convertHubImportProduct2HupSpu(HubProductImportDTO product) {
+	private HubSpuDto convertHubImportProduct2HupSpu(HubProductDto product) {
 		HubSpuDto HubSpuDto = new HubSpuDto();
 		BeanUtils.copyProperties(product, HubSpuDto);
 		return HubSpuDto;
 	}
 
-	private HubProductDto convertHubImportProduct2HupProduct(HubProductImportDTO product) {
-
-		HubProductDto hubProductDto = new HubProductDto();
-		BeanUtils.copyProperties(product, hubProductDto);
-		return hubProductDto;
-	}
 
 	// 解析excel转换为对象
-	private List<HubProductImportDTO> excelToObject(XSSFSheet xssfSheet) throws Exception {
+	private List<HubProductDto> excelToObject(XSSFSheet xssfSheet) throws Exception {
 
 		if (xssfSheet == null) {
 			return null;
 		}
-		List<HubProductImportDTO> listHubProduct = new ArrayList<>();
+		List<HubProductDto> listHubProduct = new ArrayList<>();
 		for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
 			XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-			HubProductImportDTO product = convertSpuDTO(xssfRow);
+			HubProductDto product = convertSpuDTO(xssfRow);
 			listHubProduct.add(product);
 		}
 		return listHubProduct;
@@ -208,12 +204,12 @@ public class HubProductImportService {
 	}
 
 	@SuppressWarnings("all")
-	private static HubProductImportDTO convertSpuDTO(XSSFRow xssfRow) {
-		HubProductImportDTO item = null;
+	private static HubProductDto convertSpuDTO(XSSFRow xssfRow) {
+		HubProductDto item = null;
 		if (xssfRow != null) {
 			try {
-				item = new HubProductImportDTO();
-				String[] hubValueTemplate = item.getHubProductTemplate();
+				item = new HubProductDto();
+//				String[] hubValueTemplate = item.getHubProductValueTemplate();
 				Class c = item.getClass();
 				for (int i = 0; i < hubValueTemplate.length; i++) {
 					if (xssfRow.getCell(i) != null) {

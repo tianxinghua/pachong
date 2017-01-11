@@ -38,11 +38,12 @@ public class PictureProductConsumerServiceApplication implements ApplicationRunn
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		//InputStream resourceAsStream = this.getClass().getResourceAsStream("/banner/gtl.jpg");
-		URL url = new URL("http://img4.cache.netease.com/photo/0026/2012-11-29/8HGDQHHG3QV10026.JPG");
-		String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(url.openStream()));
-		UploadPicDto file = new UploadPicDto();
-		file.setBase64(base64);
-		String upload = uploadPicGateway.upload(file);
-		System.out.println(upload);
+//		URL url = new URL("http://www.tonyboutique.com/media/catalog/product/b/e/be08955185_960-1_1.jpg");
+//		String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(url.openStream()));
+//		UploadPicDto file = new UploadPicDto();
+//		file.setBase64(base64);
+//		file.setExtension("jpg");
+//		String upload = uploadPicGateway.upload(file);
+//		System.out.println(upload);
 	}
 }
