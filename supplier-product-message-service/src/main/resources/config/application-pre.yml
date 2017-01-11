@@ -1,10 +1,10 @@
 spring: 
   rabbitmq: 
-           host: 192.168.20.175
+           host: localhost
            port: 5672
-           username: ephub-message-service-qa
-           password: ephub-message-service-qa
-           virtual-host: /ephub-message-service-qa
+           username: ephub-message-service
+           password: ephub-message-service
+           virtual-host: /ephub-message-service
   cloud: 
         stream: 
               bindings: 
@@ -334,4 +334,4 @@ banner:
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
        image: 
-             location: classpath:banner/yan.png # Banner image file location (jpg/png can also be used).
+             location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).

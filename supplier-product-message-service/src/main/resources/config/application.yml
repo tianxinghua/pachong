@@ -1,5 +1,5 @@
 ﻿server.port: 8000
 spring:
   profiles: 
-    active: dev
+    active: pro
   application.name: supplier-product-message-service
