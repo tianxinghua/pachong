@@ -44,5 +44,5 @@ shangpin:
    hub:
        fdfs:
              port: 80
-             resHost: pic.ephub.spidc1.com
+             resHost: pic.ephub.shangpin.com
              groupName: group2
