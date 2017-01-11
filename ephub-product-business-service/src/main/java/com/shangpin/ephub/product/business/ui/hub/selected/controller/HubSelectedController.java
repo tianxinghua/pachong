@@ -98,7 +98,7 @@ public class HubSelectedController {
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();
 			if(list==null||list.size()<=0){
-				return;
+				return ;
 			}
 			HubSelectedService.exportExcel(list,ouputStream);
 			

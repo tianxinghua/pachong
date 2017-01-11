@@ -9,7 +9,12 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
@@ -19,14 +24,21 @@ import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.product.business.common.dto.BrandDom;
+import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
+import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
+import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeRequestDto;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 
@@ -43,6 +55,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HubSelectedService {
 
+	@Autowired
+	ApiAddressProperties apiAddressProperties;
+	@Autowired
+	SupplierService supplierService;
 	@Autowired
 	HubSkuSupplierMappingGateWay hubSkuSupplierMappingGateWay;
 	@Autowired
@@ -65,18 +81,29 @@ public class HubSelectedService {
 		
 		Map<String, List<HubWaitSelectResponseDto>> mapSupplier = new HashMap<String, List<HubWaitSelectResponseDto>>();
 		for (HubWaitSelectResponseDto response : list) {
-			String supplierId = response.getSupplierId();
-			if (mapSupplier.containsKey(supplierId)) {
-				mapSupplier.get(supplierId).add(response);
+			String supplierNo = response.getSupplierNo();
+			if (mapSupplier.containsKey(supplierNo)) {
+				mapSupplier.get(supplierNo).add(response);
 			} else {
 				List<HubWaitSelectResponseDto> listSupplier = new ArrayList<HubWaitSelectResponseDto>();
 				listSupplier.add(response);
-				mapSupplier.put(supplierId, listSupplier);
+				mapSupplier.put(supplierNo, listSupplier);
 			}
 		}
 		 HSSFWorkbook workbook = new HSSFWorkbook();
 		for (Map.Entry<String, List<HubWaitSelectResponseDto>> entry : mapSupplier.entrySet()) {
-			String supplierId = entry.getKey();
+			String supplierNo = entry.getKey();
+			String supplierName = null;
+			SupplierDTO supp = supplierService.getSupplier(supplierNo);
+			log.info("供应商实体：{}",supp);
+			if(supp!=null){
+				supplierName = supp.getSupplierName();
+				if(supplierName==null){
+					supplierName = supplierNo;
+				}
+			}else{
+				supplierName = supplierNo;
+			}
 			List<HubWaitSelectResponseDto> listSupp =  entry.getValue();
 			
 			for(HubWaitSelectResponseDto response:listSupp){
@@ -84,7 +111,7 @@ public class HubSelectedService {
 				convertTOExcel(response,map);
 				result.add(map);
 			}
-			ExportExcelUtils.createSheet(workbook,supplierId, headers, columns, result);
+			ExportExcelUtils.createSheet(workbook,supplierName, headers, columns, result);
 		}
 		workbook.write(ouputStream); 
 	}
@@ -108,9 +135,10 @@ public class HubSelectedService {
 			spSkuNo = listSku.get(0).getSpSkuNo();
 		}
 		
-		String brandName = response.getBrandNo();
+		String brandName = getBrand(response.getBrandNo());
 		String supplierName = response.getSupplierNo();
-		String categoryName = response.getCategoryNo();
+		String categoryName = getCategoryName(response.getCategoryNo());
+		
 		map.put("brandName", brandName);
 		map.put("supplyPrice", supplyPrice+"");
 		map.put("marketPrice", marketPrice+"");
@@ -129,6 +157,52 @@ public class HubSelectedService {
 		map.put("size", response.getSkuSize());
 		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 		
+	}
+	private String getCategoryName(String categoryNo) {
+		CategoryRequestDto request = new CategoryRequestDto();
+        request.setCategoryNo(categoryNo);
+
+        HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
+
+        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
+        });
+        HubResponseDto<CategoryScreenSizeDom> body = entity.getBody();
+        if(body.getIsSuccess()){
+            List<CategoryScreenSizeDom> resDatas = body.getResDatas();
+            if(resDatas!=null&&resDatas.size()>0){
+            	 return resDatas.get(0).getFourLevelCategoryName();
+            }else{
+            	return categoryNo;
+            }
+           
+        }else{
+        	return categoryNo;
+        }
+	}
+	@Autowired
+	    RestTemplate restTemplate;
+	private String getBrand(String brandNo) {
+		// TODO Auto-generated method stub
+
+		BrandRequstDto request = new BrandRequstDto();
+        request.setBrandNo(brandNo);
+
+        HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
+
+        ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {
+        });
+        HubResponseDto<BrandDom> body = entity.getBody();
+        if(body.getIsSuccess()){
+            List<BrandDom> resDatas = body.getResDatas();
+            if(resDatas!=null&&resDatas.size()>0){
+            	 return resDatas.get(0).getBrandCnName();
+            }else{
+            	return brandNo;
+            }
+           
+        }else{
+        	return brandNo;
+        }
 	}
 
 	public void exportPicExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
