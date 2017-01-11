@@ -394,8 +394,14 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
 
     private HubSpuPending getHubSpuPendingById(Long id){
-
-        return  hubSpuPendingMapper.selectByPrimaryKey(id);
+        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
+        criteria.createCriteria().andSpuPendingIdEqualTo(id);
+        List<HubSpuPending> hubSpuPendings = hubSpuPendingMapper.selectByExample(criteria);
+        if(null!=hubSpuPendings&&hubSpuPendings.size()>0){
+            return hubSpuPendings.get(0);
+        }else{
+            return null;
+        }
 
     }
     //更改spupending的hubspu编号 以及spuState状态
@@ -452,10 +458,13 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
         }
         //更新HUBSPU 增加图片地址
-        HubSpu hubspu=new HubSpu();
-        hubspu.setSpuId(spuId);
-        hubspu.setPicUrl(url);
-        hubSpuMapper.updateByPrimaryKeySelective(hubspu);
+        if(!"".equals(url)){
+
+            HubSpu hubspu=new HubSpu();
+            hubspu.setSpuId(spuId);
+            hubspu.setPicUrl(url);
+            hubSpuMapper.updateByPrimaryKeySelective(hubspu);
+        }
 
     }
 
