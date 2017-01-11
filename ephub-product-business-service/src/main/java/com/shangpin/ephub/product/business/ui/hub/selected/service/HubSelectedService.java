@@ -73,9 +73,9 @@ public class HubSelectedService {
 	HubProductServiceImpl hubCommonProductServiceImpl;
 
 	public void exportExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
-		String[] headers = { "尚品skuNo","供应商编号","供应商skuNo", "商品名称", "品牌", "货号", "四级品类", "颜色", "材质", "产地", "性别","尺码","供价","供价币种","市场价","市场价币种", "最后更新时间" };
-		String[] columns = {"spSkuNo","supplierName","supplierSkuNo","spuName", "brandName", "spuModel", "categoryName", "color", "material", "origin", "gender",
-				 "size","supplyPrice","supplyCurry","marketPrice","marketCurry", "updateTime" };
+		String[] headers = {"供应商编号","尚品Sku编号","门户Sku编号","供应商SKU", "商品名称","品类", "品牌", "货号","商品状态","生效价格","价格状态","操作人","供价","供价币种*","阶段供价","阶段供价生效时间","阶段供价失效时间","市场价","市场价币种","颜色", "材质", "产地", "性别","尺码" };
+		String[] columns = {"supplierNo","spSkuNo","skuNo","supplierSkuNo","spuName","categoryName", "brandName", "spuModel","productState","param1","param1","param1","supplyPrice","supplyCurry","param1","param1","param1","marketPrice","marketCurry",  "color", "material", "origin", "gender",
+				 "size"};
 		
 		Map<String, String> map = null;
 		
@@ -154,7 +154,7 @@ public class HubSelectedService {
 		map.put("material", response.getMaterial());
 		map.put("origin", response.getOrigin());
 		map.put("gender", response.getGender());
-		map.put("supplierName", supplierName);
+		map.put("supplierNo", supplierName);
 		map.put("size", response.getSkuSize());
 		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 		
