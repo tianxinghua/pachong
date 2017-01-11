@@ -538,7 +538,8 @@ public class DataServiceHandler {
 
 
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
-
+          //替换材质中的html 代码
+           spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("</br>","").replaceAll("<html>","").replaceAll("</html>",""));
            Long spuPendingId =  hubSpuPendingGateWay.insert(spuPending);
            spuPending.setSpuPendingId(spuPendingId);
 
