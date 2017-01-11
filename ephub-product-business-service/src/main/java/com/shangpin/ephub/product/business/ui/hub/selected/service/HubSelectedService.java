@@ -76,7 +76,7 @@ public class HubSelectedService {
 		String[] headers = { "尚品skuNo","供应商编号","供应商skuNo", "商品名称", "品牌", "货号", "四级品类", "颜色", "材质", "产地", "性别","尺码","供价","供价币种","市场价","市场价币种", "最后更新时间" };
 		String[] columns = {"spSkuNo","supplierName","supplierSkuNo","spuName", "brandName", "spuModel", "categoryName", "color", "material", "origin", "gender",
 				 "size","supplyPrice","supplyCurry","marketPrice","marketCurry", "updateTime" };
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		
 		Map<String, String> map = null;
 		
 		Map<String, List<HubWaitSelectResponseDto>> mapSupplier = new HashMap<String, List<HubWaitSelectResponseDto>>();
@@ -92,6 +92,7 @@ public class HubSelectedService {
 		}
 		 HSSFWorkbook workbook = new HSSFWorkbook();
 		for (Map.Entry<String, List<HubWaitSelectResponseDto>> entry : mapSupplier.entrySet()) {
+			List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 			String supplierNo = entry.getKey();
 			String supplierName = null;
 			SupplierDTO supp = supplierService.getSupplier(supplierNo);
