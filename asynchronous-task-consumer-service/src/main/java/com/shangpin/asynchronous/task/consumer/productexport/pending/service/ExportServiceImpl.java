@@ -230,7 +230,7 @@ public class ExportServiceImpl {
 				}else if("seasonName".equals(rowTemplate[i])){
 					setRowOfSeasonName(row, product, cls, i); 
 				}else if("memo".equals(rowTemplate[i])){
-					if((null != product.getPicState() && PicState.NO_PIC.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.PIC_INFO_NOT_COMPLETED.getIndex() == product.getPicState())){
+					if((null != product.getPicState() && PicState.UNHANDLED.getIndex() == product.getPicState()) || (null != product.getPicState() && PicState.HANDLE_ERROR.getIndex() == product.getPicState())){
 			            buffer = buffer.append("图片").append(comma);
 			        }
 			        if(CatgoryState.PERFECT_MATCHED.equals(product.getCatgoryState())){
