@@ -148,6 +148,6 @@ public class HubWaitSelectResponse {
 	    
 	    private String isNewSupplier;
 	    private Date updateTime;
-	    
+	    private String memo;
 	    
 }

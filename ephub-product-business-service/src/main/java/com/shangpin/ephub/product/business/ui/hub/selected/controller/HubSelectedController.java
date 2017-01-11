@@ -2,9 +2,7 @@ package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
