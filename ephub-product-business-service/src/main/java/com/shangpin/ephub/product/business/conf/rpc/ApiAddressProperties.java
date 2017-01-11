@@ -28,4 +28,6 @@ public class ApiAddressProperties {
 
 	private String gmsCategoryUrl;
 	
+	private String scmsSupplierInfoUrl;
+	
 }
