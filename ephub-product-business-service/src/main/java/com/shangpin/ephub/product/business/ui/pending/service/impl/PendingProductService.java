@@ -129,7 +129,7 @@ public class PendingProductService implements IPendingProductService{
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
-                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
                         CategoryScreenSizeDom category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
                         pendingProduct.setHubCategoryName(null != category ? category.getFourLevelCategoryName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
@@ -434,12 +434,11 @@ public class PendingProductService implements IPendingProductService{
         if(!StringUtils.isEmpty(pendingQuryDto.getHubBrandNo())){
             criteria = criteria.andHubBrandNoLike(pendingQuryDto.getHubBrandNo());
         }
-        if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason()) && !StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-            criteria = criteria.andHubSeasonEqualTo(pendingQuryDto.getHubYear()+"_"+pendingQuryDto.getHubSeason());
-        }else if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason()) && StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-            criteria = criteria.andHubSeasonLike(pendingQuryDto.getHubSeason());
-        }else if(StringUtils.isEmpty(pendingQuryDto.getHubSeason()) && !StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-            criteria = criteria.andHubSeasonLike(pendingQuryDto.getHubYear());
+        if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
+            criteria = criteria.andHubSeasonLike(pendingQuryDto.getHubSeason()+"%");
+        }
+        if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
+            criteria = criteria.andHubSeasonLike("%"+pendingQuryDto.getHubYear()+"%");
         }
         if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
             criteria = criteria.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat));
