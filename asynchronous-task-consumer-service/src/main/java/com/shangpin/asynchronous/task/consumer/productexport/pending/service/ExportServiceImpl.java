@@ -1,12 +1,12 @@
 package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
+import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -342,13 +343,17 @@ public class ExportServiceImpl {
 		BufferedImage bufferImg = null;
 		try {
 			if(!StringUtils.isEmpty(url)){
-				bufferImg = ImageIO.read(new URL(url));
-				ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();							
-				ImageIO.write(bufferImg, "jpg", byteArrayOut);
-				HSSFPatriarch patriarch = row.getSheet().createDrawingPatriarch();
-				HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 500, 255,startColumn, row.getRowNum(), startColumn, row.getRowNum());
-//				anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
-				patriarch.createPicture(anchor, row.getSheet().getWorkbook().addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+				byte[] bytes = DownloadPicTool.downImage(url);
+				if(null != bytes){
+					bufferImg = ImageIO.read(new ByteArrayInputStream(bytes));
+					ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();							
+					ImageIO.write(bufferImg, "jpg", byteArrayOut);
+					HSSFPatriarch patriarch = row.getSheet().createDrawingPatriarch();
+					HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 500, 255,startColumn, row.getRowNum(), startColumn, row.getRowNum());
+					patriarch.createPicture(anchor, row.getSheet().getWorkbook().addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
+				}else{
+					row.createCell((int)startColumn).setCellValue("图片错误");
+				}
 			}else{
 				row.createCell((int)startColumn).setCellValue("无图片");
 			}
