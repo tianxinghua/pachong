@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -69,10 +70,6 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
-import com.shangpin.pending.product.consumer.common.enumeration.DataBusinessStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectState;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
@@ -540,6 +537,18 @@ public class DataServiceHandler {
     public void savePendingSpu(HubSpuPendingDto spuPending) throws  Exception{
           //替换材质中的html 代码
            spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("</br>","").replaceAll("<html>","").replaceAll("</html>",""));
+           if(null!=spuPending.getIsCurrentSeason()){
+               if(SeasonType.SEASON_NOT_CURRENT.getIndex()==spuPending.getIsCurrentSeason().intValue()){
+                   spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
+               }
+           }
+           if(null!=spuPending.getSpuBrandState()){
+               if(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex()==spuPending.getSpuBrandState().intValue()){
+                   spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
+               }
+           }
+
+
            Long spuPendingId =  hubSpuPendingGateWay.insert(spuPending);
            spuPending.setSpuPendingId(spuPendingId);
 
