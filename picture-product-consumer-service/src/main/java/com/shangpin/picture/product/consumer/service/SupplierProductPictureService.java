@@ -1,5 +1,6 @@
 package com.shangpin.picture.product.consumer.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -48,12 +49,14 @@ public class SupplierProductPictureService {
 				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
+				InputStream inputStream = null;
 				try {
 					URL url = new URL(picUrl);
 					URLConnection openConnection = url.openConnection();
+					openConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
 					openConnection.setConnectTimeout(TIMEOUT);
 					openConnection.setReadTimeout(TIMEOUT);
-					InputStream inputStream = openConnection.getInputStream();
+					inputStream = openConnection.getInputStream();
 					String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(inputStream));
 					UploadPicDto uploadPicDto = new UploadPicDto();
 					uploadPicDto.setBase64(base64);
@@ -67,6 +70,16 @@ public class SupplierProductPictureService {
 					e.printStackTrace();
 					updateDto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
 					updateDto.setMemo("图片拉取失败");
+				} finally {
+					if (inputStream != null) {
+						try {
+							inputStream.close();
+						} catch (IOException e) {
+							log.error("关闭资源流发生异常", e);
+							e.printStackTrace();
+							throw new RuntimeException("关闭资源流发生异常");
+						}
+					}
 				}
 				updateDto.setUpdateTime(new Date());
 				supplierProductPictureManager.updateSelective(updateDto);
