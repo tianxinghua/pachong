@@ -145,7 +145,7 @@ public class TaskImportService {
                 HubTaskProductResponseDTO response = new HubTaskProductResponseDTO();
                 BeanUtils.copyProperties(dto,response);
                 response.setCreateTime(DateTimeUtil.getTime(dto.getCreateTime()));
-                response.setUpdateTime(DateTimeUtil.getTime(dto.getUpdateTime()));
+                response.setUpdateTime(DateTimeUtil.getTime(dto.getCreateTime()));
                 responseList.add(response);
             }
         }
