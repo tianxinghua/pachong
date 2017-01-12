@@ -31,13 +31,12 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
-import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
@@ -132,8 +131,8 @@ public class PendingProductService implements IPendingProductService{
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
-                        CategoryScreenSizeDom category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(null != category ? category.getFourLevelCategoryName() : pendingProduct.getHubCategoryNo());
+                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
@@ -162,8 +161,8 @@ public class PendingProductService implements IPendingProductService{
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
-                        CategoryScreenSizeDom category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(null != category ? category.getFourLevelCategoryName() : pendingProduct.getHubCategoryNo());
+                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
@@ -417,6 +416,7 @@ public class PendingProductService implements IPendingProductService{
     private HubSpuPendingCriteriaDto findhubSpuPendingCriteriaFromPendingQury(PendingQuryDto pendingQuryDto){
 
         HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
+        hubSpuPendingCriteriaDto.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(pendingQuryDto.getPageIndex()) && !StringUtils.isEmpty(pendingQuryDto.getPageSize())){
             hubSpuPendingCriteriaDto.setPageNo(pendingQuryDto.getPageIndex());
             hubSpuPendingCriteriaDto.setPageSize(pendingQuryDto.getPageSize());
