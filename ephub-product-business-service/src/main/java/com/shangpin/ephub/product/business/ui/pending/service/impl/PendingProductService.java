@@ -417,6 +417,7 @@ public class PendingProductService implements IPendingProductService{
     private HubSpuPendingCriteriaDto findhubSpuPendingCriteriaFromPendingQury(PendingQuryDto pendingQuryDto){
 
         HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
+        hubSpuPendingCriteriaDto.setOrderByClause("update_time desc");
         if(!StringUtils.isEmpty(pendingQuryDto.getPageIndex()) && !StringUtils.isEmpty(pendingQuryDto.getPageSize())){
             hubSpuPendingCriteriaDto.setPageNo(pendingQuryDto.getPageIndex());
             hubSpuPendingCriteriaDto.setPageSize(pendingQuryDto.getPageSize());
