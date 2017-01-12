@@ -277,6 +277,7 @@ public class DataServiceHandler {
         }
 
         HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         HubGenderDicCriteriaDto.Criteria criterion = criteria.createCriteria();
         if(StringUtils.isNotBlank(supplierId)){
             criterion.andSupplierIdEqualTo(supplierId);
@@ -333,8 +334,10 @@ public class DataServiceHandler {
 
         dto.setSupplierId(supplierId);
         dto.setSupplierCategory(supplierCategory);
+        dto.setSupplierGender(supplierGender);
         dto.setMappingState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         dto.setGenderDicId(null==hubGenderDicDto?null:hubGenderDicDto.getGenderDicId());
+        dto.setCreateTime(new Date());
         try {
             hubSupplierCategroyDicGateWay.insert(dto);
         } catch (Exception e) {
