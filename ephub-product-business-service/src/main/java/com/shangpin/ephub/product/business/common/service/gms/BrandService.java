@@ -37,7 +37,12 @@ public class BrandService {
 	@Autowired
     private IShangpinRedis shangpinRedis;
 	
-	public BrandDom getGmsCateGory(String brandNo){
+	/**
+	 * 通过品牌编号获取品牌信息
+	 * @param brandNo
+	 * @return
+	 */
+	public BrandDom getGmsBrand(String brandNo){
 		try {
 			if(StringUtils.isEmpty(brandNo)){
 				log.error("通过品类编号查询品类信息时，请传入有效的编号");

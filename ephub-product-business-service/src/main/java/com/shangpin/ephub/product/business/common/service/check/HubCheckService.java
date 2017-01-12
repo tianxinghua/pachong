@@ -30,14 +30,14 @@ import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRul
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
+import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeRequestDto;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 
@@ -87,7 +87,7 @@ public class HubCheckService {
         }
 	}
 	public boolean getBrand(String brandNo) {
-		BrandDom brand = brandService.getGmsCateGory(brandNo);
+		BrandDom brand = brandService.getGmsBrand(brandNo);
         if(null != brand){
         	return true;
         }else{
