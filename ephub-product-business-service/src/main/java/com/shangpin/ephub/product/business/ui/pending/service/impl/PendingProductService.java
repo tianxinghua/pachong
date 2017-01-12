@@ -185,7 +185,6 @@ public class PendingProductService implements IPendingProductService{
         try {
             HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
             criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
-            criteriaDto.setFields("sku_pending_id,hub_sku_size,sp_sku_size_state");
             return hubSkuPendingGateWay.selectByCriteria(criteriaDto);
         } catch (Exception e) {
             log.error("pending表根据spu id查询sku时出错："+e.getMessage(),e);
