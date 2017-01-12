@@ -479,7 +479,7 @@ public class PendingHandler {
         if(supplierCategoryMappingMap.containsKey(spu.getSupplierId())){
             Map<String, String> categoryMappingMap = supplierCategoryMappingMap.get(spu.getSupplierId());
 
-            if(categoryMappingMap.containsKey(spu.getHubCategoryNo().trim()+"_"+spu.getHubGender().trim())){
+            if(categoryMappingMap.containsKey(spu.getHubCategoryNo().trim().toUpperCase()+"_"+spu.getHubGender().trim().toUpperCase())){
                 //包含时转化赋值
                 categoryAndStatus = categoryMappingMap.get(spu.getHubCategoryNo().trim().toUpperCase()+"_"+spu.getHubGender().trim().toUpperCase());
                 if(categoryAndStatus.contains("_")){
@@ -1088,7 +1088,7 @@ public class PendingHandler {
      */
     private boolean  isNeedHandle(){
         int min= DateUtils.getCurrentMin();
-        if(min%60<2){
+        if(min%60<5){
             return true;
         }else{
             return false;

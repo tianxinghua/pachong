@@ -3,6 +3,7 @@ package com.shangpin.picture.product.consumer;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 import sun.misc.BASE64Encoder;
 
@@ -39,7 +40,11 @@ public class PictureProductConsumerServiceApplication implements ApplicationRunn
 	public void run(ApplicationArguments args) throws Exception {
 		//InputStream resourceAsStream = this.getClass().getResourceAsStream("/banner/gtl.jpg");
 //		URL url = new URL("http://www.tonyboutique.com/media/catalog/product/b/e/be08955185_960-1_1.jpg");
-//		String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(url.openStream()));
+//		URLConnection connection = url.openConnection();
+//		connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+//		InputStream stream = connection.getInputStream();
+//		String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(stream));
+//		stream.close();
 //		UploadPicDto file = new UploadPicDto();
 //		file.setBase64(base64);
 //		file.setExtension("jpg");
