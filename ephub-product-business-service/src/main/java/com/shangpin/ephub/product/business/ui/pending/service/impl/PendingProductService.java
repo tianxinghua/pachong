@@ -10,12 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
-import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
@@ -43,7 +37,11 @@ import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.common.dto.BrandDom;
+import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.common.service.gms.BrandService;
+import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
@@ -75,10 +73,6 @@ public class PendingProductService implements IPendingProductService{
     @Autowired
     private HubSkuPendingGateWay hubSkuPendingGateWay;
     @Autowired
-    private HubSupplierCategroyDicGateWay categroyDicGateWay;
-    @Autowired
-    private HubSupplierBrandDicGateWay brandDicGateWay;
-    @Autowired
     private SupplierService supplierService;
     @Autowired
     private HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
@@ -94,6 +88,10 @@ public class PendingProductService implements IPendingProductService{
 	private HubSpuImportTaskGateWay spuImportGateway;
     @Autowired 
     private ProductImportTaskStreamSender tastSender;
+    @Autowired
+    private BrandService brandService;
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
@@ -132,10 +130,10 @@ public class PendingProductService implements IPendingProductService{
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
-                        String categoryName = getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(!StringUtils.isEmpty(categoryName) ? categoryName : pendingProduct.getHubCategoryNo());
-                        String brandName = getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo());
-                        pendingProduct.setHubBrandName(!StringUtils.isEmpty(brandName) ? brandName : pendingProduct.getHubBrandNo());
+                        CategoryScreenSizeDom category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(null != category ? category.getFourLevelCategoryName() : pendingProduct.getHubCategoryNo());
+                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
+                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         products.add(pendingProduct);
                     }
@@ -162,10 +160,10 @@ public class PendingProductService implements IPendingProductService{
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
-                        String categoryName = getHubCategoryName(pendingProduct.getSupplierId(),pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(!StringUtils.isEmpty(categoryName) ? categoryName : pendingProduct.getHubCategoryNo());
-                        String brandName = getHubBrandName(pendingProduct.getSupplierId(),pendingProduct.getHubBrandNo());
-                        pendingProduct.setHubBrandName(!StringUtils.isEmpty(brandName) ? brandName : pendingProduct.getHubBrandNo());
+                        CategoryScreenSizeDom category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(null != category ? category.getFourLevelCategoryName() : pendingProduct.getHubCategoryNo());
+                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
+                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(hubSkus);
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
@@ -359,44 +357,44 @@ public class PendingProductService implements IPendingProductService{
     		return "";
     	}
     }
-    /**
-     * 根据门户id和品牌编号查找品牌名称
-     * @param supplierId
-     * @param hubBrandNo
-     * @return
-     */
-    private String getHubBrandName(String supplierId,String hubBrandNo){
-        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(hubBrandNo)){
-            return "";
-        }
-        HubSupplierBrandDicCriteriaDto brandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
-        brandDicCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andHubBrandNoEqualTo(hubBrandNo);
-        List<HubSupplierBrandDicDto> brandNames = brandDicGateWay.selectByCriteria(brandDicCriteriaDto);
-        if(null != brandNames && brandNames.size()>0){
-            return brandNames.get(0).getSupplierBrand();
-        }else{
-            return "";
-        }
-    }
-    /**
-     * 根据供应商门户id和品类编号查找品类名称
-     * @param supplierId
-     * @param categoryNo
-     * @return
-     */
-    private String getHubCategoryName(String supplierId,String categoryNo){
-        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(categoryNo)){
-            return "";
-        }
-        HubSupplierCategroyDicCriteriaDto categroyDicCriteriaDto = new HubSupplierCategroyDicCriteriaDto();
-        categroyDicCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andHubCategoryNoEqualTo(categoryNo);
-        List<HubSupplierCategroyDicDto> categoryNames = categroyDicGateWay.selectByCriteria(categroyDicCriteriaDto);
-        if(null != categoryNames && categoryNames.size()>0){
-            return categoryNames.get(0).getSupplierCategory();
-        }else{
-            return "";
-        }
-    }
+//    /**
+//     * 根据门户id和品牌编号查找品牌名称
+//     * @param supplierId
+//     * @param hubBrandNo
+//     * @return
+//     */
+//    private String getHubBrandName(String supplierId,String hubBrandNo){
+//        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(hubBrandNo)){
+//            return "";
+//        }
+//        HubSupplierBrandDicCriteriaDto brandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
+//        brandDicCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andHubBrandNoEqualTo(hubBrandNo);
+//        List<HubSupplierBrandDicDto> brandNames = brandDicGateWay.selectByCriteria(brandDicCriteriaDto);
+//        if(null != brandNames && brandNames.size()>0){
+//            return brandNames.get(0).getSupplierBrand();
+//        }else{
+//            return "";
+//        }
+//    }
+//    /**
+//     * 根据供应商门户id和品类编号查找品类名称
+//     * @param supplierId
+//     * @param categoryNo
+//     * @return
+//     */
+//    private String getHubCategoryName(String supplierId,String categoryNo){
+//        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(categoryNo)){
+//            return "";
+//        }
+//        HubSupplierCategroyDicCriteriaDto categroyDicCriteriaDto = new HubSupplierCategroyDicCriteriaDto();
+//        categroyDicCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andHubCategoryNoEqualTo(categoryNo);
+//        List<HubSupplierCategroyDicDto> categoryNames = categroyDicGateWay.selectByCriteria(categroyDicCriteriaDto);
+//        if(null != categoryNames && categoryNames.size()>0){
+//            return categoryNames.get(0).getSupplierCategory();
+//        }else{
+//            return "";
+//        }
+//    }
 
     /**
      * 将pendingSpu转化为pendingProduct

@@ -12,9 +12,9 @@ import org.springframework.web.client.RestTemplate;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
+import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +37,11 @@ public class CategoryService {
 	@Autowired
     private IShangpinRedis shangpinRedis;
 	
+	/**
+	 * 通过品类编号获取品类信息
+	 * @param categoryNo
+	 * @return
+	 */
 	public CategoryScreenSizeDom getGmsCateGory(String categoryNo){
 		try {
 			if(StringUtils.isEmpty(categoryNo)){
