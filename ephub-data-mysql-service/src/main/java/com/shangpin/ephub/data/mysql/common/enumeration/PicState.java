@@ -12,33 +12,33 @@ public enum PicState {
 	/**
 	 * 无图片
 	 */
-	NO_PIC((byte)0,"noPic"),
-	/**
-	 * 图片信息已完成
-	 */
-	PIC_INFO_COMPLETED((byte)1,"picInfoCompleted"),
-	/**
-	 * 图片信息未完成
-	 */
-	PIC_INFO_NOT_COMPLETED((byte)2,"picInfoNotCompleted");
+	NO_PIC(Byte.valueOf("0"),"NO_PIC"),
+    /**
+     * 处理异常
+     */
+    HANDLE_ERROR(Byte.valueOf("1"),"HANDLE_ERROR"),
+    /**
+     * 处理完成
+     */
+    HANDLED(Byte.valueOf("2"),"HANDLED");
 
 	/**
      * 数字索引标识
      */
-    private byte index;
+    private Byte index;
     /**
      * 描述信息
      */
     private String description;
     
-    PicState(byte index, String description){
+    PicState(Byte index, String description){
 		this.index = index;
 		this.description = description;
 	}
-    public byte getIndex() {
+    public Byte getIndex() {
         return index;
     }
-    public void setIndex(byte index) {
+    public void setIndex(Byte index) {
         this.index = index;
     }
     public String getDescription() {

@@ -92,10 +92,15 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         List<Long> spuPendingIds = getSpuPendIdList(auditVO);
 
         //第二步  插入新的hub SPU 记录 以及SKU 记录
-        createHubData(auditVO, spuPendingIds);
+        if(null!=spuPendingIds&&spuPendingIds.size()>0){
+            createHubData(auditVO, spuPendingIds);
+            return true;
+        }else{
+            return false;
+        }
 
 
-        return true;
+
     }
 
     @Override
@@ -429,7 +434,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
                 HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
                 criteria.createCriteria().andSupplierSpuIdEqualTo(spuPending.getSupplierSpuId())
-                        .andPicHandleStateEqualTo(PicState.PIC_INFO_COMPLETED.getIndex());
+                        .andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
                 i = hubSpuPendingPicMapper.countByExample(criteria);
                 if(i>max){
                     max = i;
