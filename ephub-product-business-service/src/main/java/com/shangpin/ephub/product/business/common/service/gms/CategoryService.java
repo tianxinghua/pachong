@@ -13,6 +13,7 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
@@ -42,7 +43,7 @@ public class CategoryService {
 	 * @param categoryNo
 	 * @return
 	 */
-	public CategoryScreenSizeDom getGmsCateGory(String categoryNo){
+	public FourLevelCategory getGmsCateGory(String categoryNo){
 		try {
 			if(StringUtils.isEmpty(categoryNo)){
 				log.error("通过品类编号查询品类信息时，请传入有效的编号");
@@ -50,13 +51,13 @@ public class CategoryService {
 			}
 	        String supplierMsg = getGmsCateGoryByRedis(categoryNo);
 	        if(!StringUtils.isEmpty(supplierMsg)){
-	        	return JsonUtil.deserialize(supplierMsg, CategoryScreenSizeDom.class);
+	        	return JsonUtil.deserialize(supplierMsg, FourLevelCategory.class);
 	        }else{
-	        	HubResponseDto<CategoryScreenSizeDom> body = getGmsCateGoryByApi(categoryNo);
+	        	HubResponseDto<FourLevelCategory> body = getGmsCateGoryByApi(categoryNo);
 	        	if(null == body || null == body.getResDatas() || body.getResDatas().size() == 0){
 	        		return null;
 	        	}else{
-	        		CategoryScreenSizeDom category = body.getResDatas().get(0);
+	        		FourLevelCategory category = body.getResDatas().get(0);
 		        	setCateGoryIntoReids(categoryNo,category);
 		        	return category;
 	        	}
@@ -71,7 +72,7 @@ public class CategoryService {
 	 * @param categoryNo
 	 * @param category
 	 */
-	public void setCateGoryIntoReids(String categoryNo, CategoryScreenSizeDom category){
+	public void setCateGoryIntoReids(String categoryNo, FourLevelCategory category){
 		try {
 			shangpinRedis.setex(GlobalConstant.REDIS_ORDER_CATEGORY_KEY+"_"+categoryNo,1000*60*5,JsonUtil.serialize(category));
 		} catch (Exception e) {
@@ -98,11 +99,11 @@ public class CategoryService {
 	 * @param categoryNo
 	 * @return
 	 */
-	public HubResponseDto<CategoryScreenSizeDom> getGmsCateGoryByApi(String categoryNo){
+	public HubResponseDto<FourLevelCategory> getGmsCateGoryByApi(String categoryNo){
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
-        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {});
+        ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
         return entity.getBody();
 	}
 }
