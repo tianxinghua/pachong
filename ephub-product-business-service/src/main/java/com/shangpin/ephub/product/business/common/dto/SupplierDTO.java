@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * 
  * <p>Title:SupplierDTO </p>
@@ -78,7 +75,7 @@ public class SupplierDTO {
 	@JsonIgnore
 	private String businessRegistration;
 	@JsonIgnore
-	private List spSupplierButtJointMapping;
+	private List<?> spSupplierButtJointMapping;
 	@JsonIgnore
 	private String supplierQualification;
 	@JsonIgnore
@@ -311,11 +308,11 @@ public class SupplierDTO {
 		this.businessRegistration = businessRegistration;
 	}
 	@JsonProperty("SpSupplierButtJointMapping")
-	public List getSpSupplierButtJointMapping() {
+	public List<?> getSpSupplierButtJointMapping() {
 		return spSupplierButtJointMapping;
 	}
 	@JsonProperty("SpSupplierButtJointMapping")
-	public void setSpSupplierButtJointMapping(List spSupplierButtJointMapping) {
+	public void setSpSupplierButtJointMapping(List<?> spSupplierButtJointMapping) {
 		this.spSupplierButtJointMapping = spSupplierButtJointMapping;
 	}
 	@JsonProperty("SupplierQualification")
