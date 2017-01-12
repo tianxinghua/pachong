@@ -79,7 +79,7 @@ public class HubCheckService {
 	BrandService brandService;
 	
 	public boolean getCategoryName(String categoryNo) {
-		CategoryScreenSizeDom category = categoryService.getGmsCateGory(categoryNo);
+		FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
         if(null != category){
         	return true;
         }else{
