@@ -30,6 +30,9 @@ import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRul
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
+import com.shangpin.ephub.product.business.common.service.gms.BrandService;
+import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
@@ -70,37 +73,23 @@ public class HubCheckService {
 	HubBrandModelRuleController HubBrandModelRuleService;
 	@Autowired
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+	@Autowired
+	CategoryService categoryService;
+	@Autowired
+	BrandService brandService;
 	
 	public boolean getCategoryName(String categoryNo) {
-		CategoryRequestDto request = new CategoryRequestDto();
-        request.setCategoryNo(categoryNo);
-
-        HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
-
-        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
-        });
-        HubResponseDto<CategoryScreenSizeDom> body = entity.getBody();
-        if(body.getIsSuccess()){
+		CategoryScreenSizeDom category = categoryService.getGmsCateGory(categoryNo);
+        if(null != category){
         	return true;
-           
         }else{
         	return false;
         }
 	}
 	public boolean getBrand(String brandNo) {
-		// TODO Auto-generated method stub
-
-		BrandRequstDto request = new BrandRequstDto();
-        request.setBrandNo(brandNo);
-
-        HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
-
-        ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {
-        });
-        HubResponseDto<BrandDom> body = entity.getBody();
-        if(body.getIsSuccess()){
+		BrandDom brand = brandService.getGmsCateGory(brandNo);
+        if(null != brand){
         	return true;
-           
         }else{
         	return false;
         }

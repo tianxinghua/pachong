@@ -21,7 +21,7 @@ public class HubImportTaskListRequestDto implements Serializable {
      * 原始文件名
      */
     private String localFileName;
-    private int taskState;
+    private Byte taskState;
     private String startDate;
     private String endDate;
     private int pageNo;

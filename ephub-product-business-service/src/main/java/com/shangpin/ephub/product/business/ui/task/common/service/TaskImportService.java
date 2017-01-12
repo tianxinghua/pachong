@@ -110,8 +110,8 @@ public class TaskImportService {
         hubSpuImportTaskCriteriaDto.setPageNo(param.getPageNo());
         hubSpuImportTaskCriteriaDto.setPageSize(param.getPageSize());
         Criteria criteria = hubSpuImportTaskCriteriaDto.createCriteria();
-        if(param.getTaskState()!=-1){
-            criteria.andTaskStateEqualTo((byte)param.getTaskState());
+        if(param.getTaskState()!=null){
+            criteria.andTaskStateEqualTo(param.getTaskState());
         }
         if(param.getImportType()!=null){
             criteria.andImportTypeEqualTo(param.getImportType());
@@ -127,7 +127,7 @@ public class TaskImportService {
         if(total<1){
             return null;
         }
-        hubSpuImportTaskCriteriaDto.setOrderByClause("update_time desc");
+        hubSpuImportTaskCriteriaDto.setOrderByClause("create_time desc");
         List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
         HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
         List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
@@ -145,7 +145,7 @@ public class TaskImportService {
                 HubTaskProductResponseDTO response = new HubTaskProductResponseDTO();
                 BeanUtils.copyProperties(dto,response);
                 response.setCreateTime(DateTimeUtil.getTime(dto.getCreateTime()));
-                response.setUpdateTime(DateTimeUtil.getTime(dto.getUpdateTime()));
+                response.setUpdateTime(DateTimeUtil.getTime(dto.getCreateTime()));
                 responseList.add(response);
             }
         }
