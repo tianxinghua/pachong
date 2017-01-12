@@ -71,9 +71,8 @@ public class HubSelectedService {
 	HubProductServiceImpl hubCommonProductServiceImpl;
 
 	public void exportExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
-		String[] headers = {"供应商编号","尚品Sku编号","门户Sku编号","供应商SKU", "商品名称","品类", "品牌", "货号","商品状态","生效价格","价格状态","操作人","供价","供价币种*","阶段供价","阶段供价生效时间","阶段供价失效时间","市场价","市场价币种","颜色", "材质", "产地", "性别","尺码" };
-		String[] columns = {"supplierNo","spSkuNo","skuNo","supplierSkuNo","spuName","categoryName", "brandName", "spuModel","productState","param1","param1","param1","supplyPrice","supplyCurry","param1","param1","param1","marketPrice","marketCurry",  "color", "material", "origin", "gender",
-				 "size"};
+		String[] headers = {"尚品Sku编号","门户Sku编号","供应商SKU", "商品名称","品类", "品牌", "货号","商品状态","生效价格","价格状态","操作人","供价*","供价币种*","阶段供价","阶段供价生效时间","阶段供价失效时间","市场价","市场价币种"};
+		String[] columns = {"spSkuNo","skuNo","supplierSkuNo","spuName","categoryName", "brandName", "spuModel","productState","param1","param1","param1","supplyPrice","supplyCurry","param1","param1","param1","marketPrice","marketCurry"};
 		
 		Map<String, String> map = null;
 		
@@ -92,25 +91,13 @@ public class HubSelectedService {
 		for (Map.Entry<String, List<HubWaitSelectResponseDto>> entry : mapSupplier.entrySet()) {
 			List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 			String supplierNo = entry.getKey();
-			String supplierName = null;
-			SupplierDTO supp = supplierService.getSupplier(supplierNo);
-			log.info("供应商实体：{}",supp);
-			if(supp!=null){
-				supplierName = supp.getSupplierName();
-				if(supplierName==null){
-					supplierName = supplierNo;
-				}
-			}else{
-				supplierName = supplierNo;
-			}
 			List<HubWaitSelectResponseDto> listSupp =  entry.getValue();
-			
 			for(HubWaitSelectResponseDto response:listSupp){
 				map = new HashMap<String, String>();
 				convertTOExcel(response,map);
 				result.add(map);
 			}
-			ExportExcelUtils.createSheet(workbook,supplierName, headers, columns, result);
+			ExportExcelUtils.createSheet(workbook,supplierNo, headers, columns, result);
 		}
 		workbook.write(ouputStream); 
 	}
@@ -134,26 +121,28 @@ public class HubSelectedService {
 			spSkuNo = listSku.get(0).getSpSkuNo();
 		}
 		
-		String brandName = getBrand(response.getBrandNo());
-		String supplierName = response.getSupplierNo();
-		String categoryName = getCategoryName(response.getCategoryNo());
-		
-		map.put("brandName", brandName);
-		map.put("supplyPrice", supplyPrice+"");
-		map.put("marketPrice", marketPrice+"");
+//		String brandName = getBrand(response.getBrandNo());
+//		String categoryName = getCategoryName(response.getCategoryNo());
+		map.put("brandName", response.getBrandNo());
+		if(supplyPrice!=null){
+			map.put("supplyPrice", supplyPrice+"");	
+		}
+		if(marketPrice!=null){
+			map.put("marketPrice", marketPrice+"");	
+		}
 		map.put("supplyCurry", supplyCurry);
 		map.put("marketCurry", marketCurry);
 		map.put("spSkuNo", spSkuNo);
 		map.put("spuName", response.getSpuName());
 		map.put("supplierSkuNo", response.getSupplierSkuNo());
 		map.put("spuModel", response.getSpuModel());
-		map.put("categoryName", categoryName);
-		map.put("color", response.getHubColor());
-		map.put("material", response.getMaterial());
-		map.put("origin", response.getOrigin());
-		map.put("gender", response.getGender());
-		map.put("supplierNo", supplierName);
-		map.put("size", response.getSkuSize());
+		map.put("categoryName", response.getCategoryNo());
+//		map.put("color", response.getHubColor());
+//		map.put("material", response.getMaterial());
+//		map.put("origin", response.getOrigin());
+//		map.put("gender", response.getGender());
+		map.put("supplierNo", response.getSupplierNo());
+//		map.put("size", response.getSkuSize());
 		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 		
 	}

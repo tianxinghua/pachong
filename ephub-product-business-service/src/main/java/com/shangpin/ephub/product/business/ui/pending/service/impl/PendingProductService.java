@@ -32,7 +32,6 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
-import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
@@ -45,6 +44,8 @@ import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.product.business.rest.hubpending.sku.service.HubPendingSkuCheckService;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -74,8 +75,9 @@ public class PendingProductService implements IPendingProductService{
     private HubSkuPendingGateWay hubSkuPendingGateWay;
     @Autowired
     private SupplierService supplierService;
-    @Autowired
-    private HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
+	
+	@Autowired
+	private HubPendingSkuCheckService hubCheckRuleService;
     @Autowired
     private HubPendingSpuCheckService hubPendingSpuCheckService;
     @Autowired
@@ -223,7 +225,7 @@ public class PendingProductService implements IPendingProductService{
                 log.info("pengdingSkus:{}",pengdingSkus);
                 if(null != pengdingSkus && pengdingSkus.size()>0){
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                        HubPendingSkuCheckResult result = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
+                        HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(hubSkuPendingDto);
                         log.info("HubPendingSkuCheckResult:{}",result);
                         if(result.isPassing()){
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
