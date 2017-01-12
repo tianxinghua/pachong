@@ -18,8 +18,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-//import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;  
@@ -53,12 +51,12 @@ public class ExportExcelUtils {
 //				anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
 				patriarch.createPicture(anchor, row.getSheet().getWorkbook().addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG));
 			}else{
-				row.createCell(startColumn).setCellValue("无图片");
+				row.createCell((int)startColumn).setCellValue("无图片");
 			}
 		} catch (Exception e) {
 			log.error("插入图片异常："+e.getMessage()); 
 			bufferImg = null;
-			row.createCell(startColumn).setCellValue("图片错误");
+			row.createCell((int)startColumn).setCellValue("图片错误");
 		}
 	}
 
