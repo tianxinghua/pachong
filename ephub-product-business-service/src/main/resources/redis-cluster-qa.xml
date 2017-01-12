@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <redis>
 	<application>
-		<id>ep-order-service</id>
+		<id>ephub-product-business-service</id>
 		<cluster>
 			<clusterid>default</clusterid>
 			<configuration>
