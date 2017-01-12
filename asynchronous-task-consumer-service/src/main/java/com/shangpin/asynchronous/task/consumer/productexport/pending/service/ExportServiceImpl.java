@@ -342,6 +342,7 @@ public class ExportServiceImpl {
 	private void insertImageToExcel(String url,HSSFRow row,short startColumn){
 		BufferedImage bufferImg = null;
 		try {
+			log.info("url: "+url); 
 			if(!StringUtils.isEmpty(url)){
 				byte[] bytes = DownloadPicTool.downImage(url);
 				if(null != bytes){
