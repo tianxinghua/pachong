@@ -47,7 +47,7 @@ public class HubWaitSelectedController {
 	/**
 	 * 待选品列表
 	 * @param dto
-	 * @return
+	 * @return 
 	 */
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse importSpuList(@RequestBody HubWaitSelectRequestWithPageDto dto){
