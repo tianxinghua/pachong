@@ -45,30 +45,58 @@ public class SupplierService {
     			log.error("通过供应商编号查询供应商信息时，请传入有效的编号");
     			return null;
     		}
-    		//先获取缓存中的数据
-            String supplierMsg = shangpinRedis.get(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo);
+            String supplierMsg = getScmsSupplierInfoByReids(supplierNo);
             if(!StringUtils.isEmpty(supplierMsg)){
             	return JsonUtil.deserialize(supplierMsg, SupplierDTO.class);
             }else{
-            	//调用接口获取供货商信息
-                Map<String, String> paraMap = new HashMap<>();
-                paraMap.put("supplierNo", supplierNo);
-                String url = apiAddress.getScmsSupplierInfoUrl()+supplierNo;
-                String reSupplierMsg = httpClient.getForObject(url, String.class);
-                SupplierDTO supplierDto = JsonUtil.deserialize2(reSupplierMsg, SupplierDTO.class);
-                try {
-                	//缓存到redis中
-                    shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,JsonUtil.serialize(supplierDto));
-    			} catch (Exception e) {
-    				log.error(supplierNo+"缓存供应商信息到redis时出错，错误信息为："+e.getMessage(),e); 
-    			}
+                SupplierDTO supplierDto = getScmsSupplierInfoByApi(supplierNo);
+                setScmsSupplierInfoToRedis(supplierNo,supplierDto);
                 return supplierDto;            
             }
 		} catch (Exception e) {
 			log.error(supplierNo+"通过supplierNo获取supplierName时出错，错误信息为："+e.getMessage(),e); 
 			return null;
 		}
-        
+    }
 
+    /**
+     * 通过api查找供应商信息
+     * @param supplierNo
+     * @return
+     * @throws Exception
+     */
+	private SupplierDTO getScmsSupplierInfoByApi(String supplierNo) throws Exception {
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("supplierNo", supplierNo);
+		String url = apiAddress.getScmsSupplierInfoUrl()+supplierNo;
+		String reSupplierMsg = httpClient.getForObject(url, String.class);
+		SupplierDTO supplierDto = JsonUtil.deserialize2(reSupplierMsg, SupplierDTO.class);
+		return supplierDto;
+	}
+    /**
+     * 将供应商信息缓存到reids
+     * @param supplierNo
+     * @param supplierDto
+     */
+    public void setScmsSupplierInfoToRedis(String supplierNo,SupplierDTO supplierDto){
+    	try {
+        	//缓存到redis中
+            shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,JsonUtil.serialize(supplierDto));
+		} catch (Exception e) {
+			log.error(supplierNo+"缓存供应商信息到redis时出错，错误信息为："+e.getMessage(),e); 
+		}
+    }
+    /**
+     * 从reids中取供应商信息
+     * @param supplierNo
+     * @return
+     */
+    public String getScmsSupplierInfoByReids(String supplierNo){
+    	try {
+    		return shangpinRedis.get(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo);
+		} catch (Exception e) {
+			log.error("通过redis获取供应商时异常："+e.getMessage(),e); 
+			return "";
+		}
     }
 }
