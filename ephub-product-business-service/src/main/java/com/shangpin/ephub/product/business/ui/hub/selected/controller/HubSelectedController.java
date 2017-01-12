@@ -57,6 +57,7 @@ public class HubSelectedController {
 			log.info("已选品查询到总数："+total);
 			if(total>0){
 				dto.setPageNo(dto.getPageNo()-1);
+				dto.setPageSize((dto.getPageNo()-1)*dto.getPageSize());
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
