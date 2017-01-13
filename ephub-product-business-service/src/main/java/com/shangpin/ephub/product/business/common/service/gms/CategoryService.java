@@ -13,9 +13,9 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -49,7 +49,6 @@ public class CategoryService {
 				return null;
 			}
 	        String supplierMsg = getGmsCateGoryByRedis(categoryNo);
-	        log.info("通过redis获取信息："+supplierMsg);
 	        if(!StringUtils.isEmpty(supplierMsg)){
 	        	return JsonUtil.deserialize(supplierMsg, FourLevelCategory.class);
 	        }else{
@@ -74,7 +73,7 @@ public class CategoryService {
 	 */
 	public void setCateGoryIntoReids(String categoryNo, FourLevelCategory category){
 		try {
-			shangpinRedis.setex(GlobalConstant.REDIS_ORDER_CATEGORY_KEY+"_"+categoryNo,1000*60*5,JsonUtil.serialize(category));
+			shangpinRedis.setex(GlobalConstant.REDIS_HUB_CATEGORY_KEY+"_"+categoryNo,1000*60*5,JsonUtil.serialize(category));
 		} catch (Exception e) {
 			log.error("缓存品类到redis时异常："+e.getMessage(),e);
 		}
@@ -87,7 +86,7 @@ public class CategoryService {
 	 */
 	public String getGmsCateGoryByRedis(String categoryNo){
 		try {
-			return shangpinRedis.get(GlobalConstant.REDIS_ORDER_CATEGORY_KEY+"_"+categoryNo);
+			return shangpinRedis.get(GlobalConstant.REDIS_HUB_CATEGORY_KEY+"_"+categoryNo);
 		} catch (Exception e) {
 			log.error("通过redis获取品类时异常："+e.getMessage(),e); 
 			return "";
@@ -100,12 +99,10 @@ public class CategoryService {
 	 * @return
 	 */
 	public HubResponseDto<FourLevelCategory> getGmsCateGoryByApi(String categoryNo){
-		log.info(categoryNo+"品类调用地址："+apiAddressProperties.getGmsCategoryUrl());
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
         ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
-    	log.info(categoryNo+"品类调用接口返回结果：",entity.getBody());
         return entity.getBody();
 	}
 }

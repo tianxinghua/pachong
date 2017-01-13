@@ -33,11 +33,12 @@ import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
+import com.shangpin.ephub.product.business.common.service.gms.SizeService;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 
@@ -77,6 +78,8 @@ public class HubCheckService {
 	CategoryService categoryService;
 	@Autowired
 	BrandService brandService;
+	@Autowired
+	SizeService sizeService;
 	
 	public boolean getCategoryName(String categoryNo) {
 		FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
@@ -245,41 +248,24 @@ public class HubCheckService {
 	}
 	
 	/**
-	 * 校验尺码
+	 * 校验尺码,校验失败返回null，成功返回  筛选尺码,国家名称:尺码值（注意符号都是英文）
 	 * @param hubSkuSize
 	 * @return
 	 */
-	public String checkHubSize(String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize) {
-		String result = null;
-        SizeRequestDto requestDto = new SizeRequestDto();
-        requestDto.setBrandNo(hubBrandNo);
-        requestDto.setCategoryNo(hubCategoryNo);
-        HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(requestDto);
-        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST,
-                requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
-                });
-        HubResponseDto<CategoryScreenSizeDom> responseDto = entity.getBody();
+	public String checkHubSize(String hubCategoryNo,String hubBrandNo,String supplierSize) {
         try {
-            List<CategoryScreenSizeDom> sizeDomList = responseDto.getResDatas();
-            if(null!=sizeDomList&&sizeDomList.size()>0){
-                List<SizeStandardItem> sizeStandardItemList = sizeDomList.get(0).getSizeStandardItemList();
-                boolean find=false;
+        	CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);
+            if(null != sizeDom){
+                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
                 for(SizeStandardItem sizeItem:sizeStandardItemList){
                     if(sizeItem.getSizeStandardValue().equals(supplierSize)){
-
-                        if(!find){
-                            result = sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue();
-                        }else{
-                            log.error("品牌：" + hubBrandNo + " 品类: " + hubCategoryNo + " 的尺码对照有错误。");
-                            result = null;
-                        }
-                        find = true;
+                        return sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue();
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error("校验尺码异常："+e.getMessage(),e);
         }
-		return result;
+		return null;
 	}
 }

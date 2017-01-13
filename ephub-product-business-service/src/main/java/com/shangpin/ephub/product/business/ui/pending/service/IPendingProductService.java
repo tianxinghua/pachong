@@ -58,7 +58,7 @@ public interface IPendingProductService {
 	 * 批量更新pending数据
 	 * @param pendingProductDto
 	 */
-	public boolean batchUpdatePendingProduct(PendingProducts pendingProducts);
+	public String batchUpdatePendingProduct(PendingProducts pendingProducts);
 	/**
 	 * 将HubSpuPendingDto更新为无法处理
 	 * @param spuPendingId
