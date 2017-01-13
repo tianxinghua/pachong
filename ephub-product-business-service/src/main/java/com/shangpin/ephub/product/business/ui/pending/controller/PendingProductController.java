@@ -52,11 +52,11 @@ public class PendingProductController {
     }
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
-        boolean result = pendingProductService.batchUpdatePendingProduct(pendingProducts);
-        if(result){
+        String result = pendingProductService.batchUpdatePendingProduct(pendingProducts);
+        if(StringUtils.isEmpty(result)){
             return HubResponse.successResp(resultSuccess);
         }else{
-            return HubResponse.errorResp(resultFail);
+            return HubResponse.errorResp(result);
         }
     }
     @RequestMapping(value="/unable-to-process",method=RequestMethod.POST)

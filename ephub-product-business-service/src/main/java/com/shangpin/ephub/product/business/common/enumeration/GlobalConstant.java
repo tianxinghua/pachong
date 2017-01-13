@@ -9,10 +9,14 @@ public interface GlobalConstant {
 	/**
 	 * 用于redis缓存品类信息的key
 	 */
-	public static final String REDIS_ORDER_CATEGORY_KEY="REDIS_HUB_CATEGORY_KEY";
+	public static final String REDIS_HUB_CATEGORY_KEY="REDIS_HUB_CATEGORY_KEY";
 	/**
 	 * 用于redis缓存品牌信息的key
 	 */
-	public static final String REDIS_ORDER_BRAND_KEY="REDIS_HUB_BRAND_KEY";
+	public static final String REDIS_HUB_BRAND_KEY="REDIS_HUB_BRAND_KEY";
+	/**
+	 * 用于redis缓存尺码信息的key
+	 */
+	public static final String REDIS_HUB_SIZE_KEY = "REDIS_HUB_SIZE_KEY";
 
 }
