@@ -28,7 +28,7 @@ public interface PendingProductSource {
 	public String BIONDIONI = "biondioniPendingProduct";
 	
 	/**
-	 * 供货商SPINNAKER通道组件配置
+	 * 供货商SPINNAKER通道组件配置 
 	 * @return 供货商SPINNAKER通道组件
 	 */
 	@Output(value = PendingProductSource.SPINNAKER)
