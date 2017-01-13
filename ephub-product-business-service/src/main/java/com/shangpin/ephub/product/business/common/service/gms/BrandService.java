@@ -13,9 +13,9 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
+import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.HubResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -73,7 +73,7 @@ public class BrandService {
 	 */
 	public void setBrandIntoReids(String brandNo, BrandDom brand){
 		try {
-			shangpinRedis.setex(GlobalConstant.REDIS_ORDER_BRAND_KEY+"_"+brandNo,1000*60*5,JsonUtil.serialize(brand));
+			shangpinRedis.setex(GlobalConstant.REDIS_HUB_BRAND_KEY+"_"+brandNo,1000*60*5,JsonUtil.serialize(brand));
 		} catch (Exception e) {
 			log.error("缓存品类到redis时异常："+e.getMessage(),e);
 		}
@@ -86,7 +86,7 @@ public class BrandService {
 	 */
 	public String getGmsBrandByRedis(String brandNo){
 		try {
-			return shangpinRedis.get(GlobalConstant.REDIS_ORDER_BRAND_KEY+"_"+brandNo);
+			return shangpinRedis.get(GlobalConstant.REDIS_HUB_BRAND_KEY+"_"+brandNo);
 		} catch (Exception e) {
 			log.error("通过redis获取品牌时异常："+e.getMessage(),e); 
 			return "";

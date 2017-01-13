@@ -15,8 +15,8 @@ public class TaskImportTemplate {
 	 }
 	 public static String[] getPendingSkuValueTemplate() {
 			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
-					"supplierSkuNo","skuName","supplierBarcode","hubColor","specification","originalProductSizeType","originalProductSizeValue","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency",
-					"marketPrice","marketPriceCurrencyorg","hubSkuSize","spuDesc"};
+					"supplierSkuNo","skuName","supplierBarcode","hubColor","specification","originalProductSizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency",
+					"marketPrice","marketPriceCurrencyorg","originalProductSizeValue","spuDesc"};
 			return temp;
 	}
 	 

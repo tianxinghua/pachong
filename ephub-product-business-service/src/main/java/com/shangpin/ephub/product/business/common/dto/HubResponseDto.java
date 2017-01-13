@@ -1,17 +1,21 @@
-package com.shangpin.ephub.product.business.service.hub.dto;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.shangpin.ephub.product.business.common.dto;
 
 import java.io.Serializable;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by lizhongren on 2016/12/31.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubResponseDto<T> implements Serializable {
-    private List<T> resDatas;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7377947555463865071L;
+	private List<T> resDatas;
     private boolean isSuccess;
     private String resMsg;
 
@@ -30,7 +34,7 @@ public class HubResponseDto<T> implements Serializable {
 
     @JsonProperty("ResDatas")
     public void setResDatas(List<T> resDatas) {
-        resDatas = resDatas;
+        this.resDatas = resDatas;
     }
     @JsonProperty("ResMsg")
     public String getResMsg() {
@@ -38,6 +42,6 @@ public class HubResponseDto<T> implements Serializable {
     }
     @JsonProperty("ResMsg")
     public void setResMsg(String resMsg) {
-        resMsg = resMsg;
+    	this.resMsg = resMsg;
     }
 }

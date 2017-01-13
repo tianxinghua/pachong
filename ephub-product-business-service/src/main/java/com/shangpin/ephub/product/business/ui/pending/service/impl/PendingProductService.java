@@ -68,6 +68,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingProductService implements IPendingProductService{
 
     private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+    private static String common = ";";
+    private static String symbol = "#";
     @Autowired
     private HubSpuPendingGateWay hubSpuPendingGateWay;
     @Autowired
@@ -185,7 +187,6 @@ public class PendingProductService implements IPendingProductService{
         try {
             HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
             criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
-            criteriaDto.setFields("sku_pending_id,hub_sku_size,sp_sku_size_state");
             return hubSkuPendingGateWay.selectByCriteria(criteriaDto);
         } catch (Exception e) {
             log.error("pending表根据spu id查询sku时出错："+e.getMessage(),e);
@@ -194,13 +195,14 @@ public class PendingProductService implements IPendingProductService{
 
     }
     @Override
-    public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
+    public String updatePendingProduct(PendingProductDto pendingProductDto){
         try {
+        	String returnStr = "";
             if(null != pendingProductDto){
     			BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
     			if(brandModelResult.isPassing()){
     				pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
-    				List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto);
+    				List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
     				if(null != hubSpus && hubSpus.size()>0){
     					convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
                     	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
@@ -213,12 +215,12 @@ public class PendingProductService implements IPendingProductService{
     	                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
     	                }else{
     	                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-    	                    throw new Exception(spuResult.getResult());
+    	                    return pendingProductDto.getSpuPendingId()+symbol+spuResult.getResult();
     	                }
     				}
         		}else{
         		     log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
-                     throw new Exception("货号校验不通过");
+        		     return pendingProductDto.getSpuPendingId()+symbol+"货号校验不通过";
         		}
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 log.info("pengdingSkus:{}",pengdingSkus);
@@ -235,31 +237,29 @@ public class PendingProductService implements IPendingProductService{
                             //回滚spu状态
                             pendingProductDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
                             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-                            throw new Exception(result.getResult());
+                            return pendingProductDto.getSpuPendingId()+symbol+result.getResult();
                         }
                     }
                 }
             }
-            return true;
+            return "";
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
-            throw new Exception(e.getMessage());
+            return pendingProductDto.getSpuPendingId()+symbol+"服务器错误";
         }
     }
     @Override
-    public boolean batchUpdatePendingProduct(PendingProducts pendingProducts){
-        try {
-            if(null != pendingProducts && null != pendingProducts.getProduts() && pendingProducts.getProduts().size()>0){
-                for(PendingProductDto pendingProductDto : pendingProducts.getProduts()){
-                    updatePendingProduct(pendingProductDto);
+    public String batchUpdatePendingProduct(PendingProducts pendingProducts){
+    	StringBuffer result = new StringBuffer();
+        if(null != pendingProducts && null != pendingProducts.getProduts() && pendingProducts.getProduts().size()>0){
+            for(PendingProductDto pendingProductDto : pendingProducts.getProduts()){
+                String singleResult = updatePendingProduct(pendingProductDto);
+                if(!StringUtils.isEmpty(singleResult)){
+                	result.append(singleResult).append(common);
                 }
             }
-            return true;
-        } catch (Exception e) {
-            log.error("待更新页面批量提交异常："+e.getMessage());
-            return false;
         }
-
+        return result.toString();
     }
     @Override
     public boolean updatePendingProductToUnableToProcess(String spuPendingId) throws Exception{
@@ -329,12 +329,13 @@ public class PendingProductService implements IPendingProductService{
     }
     /**
      * 根据品牌和货号查找hub_spu表中的记录
-     * @param hubPendingSpuDto
+     * @param spuModle
+     * @param hubBrandNo
      * @return
      */
-    private List<HubSpuDto> selectHubSpu(HubSpuPendingDto hubPendingSpuDto) {
+    private List<HubSpuDto> selectHubSpu(String spuModle,String hubBrandNo) {
 		HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
-		criteria.createCriteria().andSpuModelEqualTo(hubPendingSpuDto.getSpuModel()).andBrandNoEqualTo(hubPendingSpuDto.getHubBrandNo());
+		criteria.createCriteria().andSpuModelEqualTo(spuModle).andBrandNoEqualTo(hubBrandNo);
 		return  hubSpuGateway.selectByCriteria(criteria);
 	}
     /**
