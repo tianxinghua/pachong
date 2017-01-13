@@ -25,7 +25,7 @@ public class SpuPendingPicDto implements Serializable {
     /**
      * 图片存储的主键
      */
-    private Long  picId;
+    private Long  picId;  //现为 supplierSpuId
     /**
      * 尚品的图片链接
      */

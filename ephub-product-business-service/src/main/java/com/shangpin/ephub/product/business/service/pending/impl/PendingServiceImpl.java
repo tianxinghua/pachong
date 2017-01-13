@@ -284,6 +284,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }else{
             if(StringUtils.isNotBlank(auditVO.getSpuModel())){//单个货号更新
                 criterion.andSpuModelEqualTo(auditVO.getSpuModel()).andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+                if(StringUtils.isNotBlank(auditVO.getCategoryNo())){
+                    hubSpuPending.setHubCategoryNo(auditVO.getCategoryNo());
+                }
+
                 if(StringUtils.isNotBlank(auditVO.getColor())){
 
                     hubSpuPending.setHubColor(auditVO.getColor());

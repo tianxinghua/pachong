@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by loyalty on 16/12/23.
@@ -25,4 +26,6 @@ public class SpuModelDto implements Serializable {
    private String spuModel;//货号
 
    private String brandNo;
+
+   private List<SpuPendingPicDto> picVOs;
 }
