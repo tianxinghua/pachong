@@ -193,7 +193,7 @@ public class PendingProductService implements IPendingProductService{
 
     }
     @Override
-    public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
+    public String updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
         try {
             if(null != pendingProductDto){
     			BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
@@ -212,12 +212,12 @@ public class PendingProductService implements IPendingProductService{
     	                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
     	                }else{
     	                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-    	                    throw new Exception(spuResult.getResult());
+    	                    return pendingProductDto.getSpuPendingId()+":"+spuResult.getResult();
     	                }
     				}
         		}else{
         		     log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
-                     throw new Exception("货号校验不通过");
+        		     return pendingProductDto.getSpuPendingId()+":货号校验不通过";
         		}
                 List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
                 log.info("pengdingSkus:{}",pengdingSkus);
@@ -234,15 +234,15 @@ public class PendingProductService implements IPendingProductService{
                             //回滚spu状态
                             pendingProductDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
                             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-                            throw new Exception(result.getResult());
+                            return pendingProductDto.getSpuPendingId()+":"+result.getResult();
                         }
                     }
                 }
             }
-            return true;
+            return "";
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
-            throw new Exception(e.getMessage());
+            return pendingProductDto.getSpuPendingId()+":"+e.getMessage();
         }
     }
     @Override
