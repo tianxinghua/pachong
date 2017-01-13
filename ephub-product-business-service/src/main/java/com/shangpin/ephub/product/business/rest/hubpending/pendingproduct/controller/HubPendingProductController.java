@@ -5,9 +5,8 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCri
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.*;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -43,6 +42,9 @@ public class HubPendingProductController {
 
 	@Autowired
 	HubSkuSupplierMappingGateWay skuSupplierMappingGateWay;
+
+	@Autowired
+	HubSkuGateWay hubSkuGateWay;
 	
 	@RequestMapping(value = "/setspskuno")
 	public HubResponse<?> checkSku(@RequestBody SpSkuNoDto dto){
@@ -58,7 +60,7 @@ public class HubPendingProductController {
 	}
 
 	private void updatePendingSku(SpSkuNoDto dto) throws Exception{
-
+		//写入尚品的SKUno
 		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
 		hubSkuPending.setSpSkuNo(dto.getSkuNo());
 		hubSkuPending.setMemo(dto.getErrorReason());
@@ -66,10 +68,16 @@ public class HubPendingProductController {
 		criteria.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo())
 				.andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
 
-		//List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+
 
 		HubSkuPendingWithCriteriaDto skuCritria = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteria);
 		skuPendingGateWay.updateByCriteriaSelective(skuCritria);
+
+		List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+		HubSkuPendingDto  searchSkuPending  = null;
+		if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+			searchSkuPending = hubSkuPendingDtos.get(0);
+		}
 
 		//更新SKUSUPPLIERMAPPING 的状态
 
@@ -87,6 +95,16 @@ public class HubPendingProductController {
 		HubSkuSupplierMappingWithCriteriaDto skumappingCritria = new HubSkuSupplierMappingWithCriteriaDto(hubSkuSupplierMapping,criteriaDto);
 		skuSupplierMappingGateWay.updateByCriteriaSelective(skumappingCritria);
 
+		//修改hub_sku中的商品sku编号
+		if(null!=searchSkuPending){
+//			HubSkuCriteriaDto criteriaSku = new HubSkuCriteriaDto();
+			HubSkuDto hubSku = new HubSkuDto();
+			hubSku.setSpSkuNo(dto.getSkuNo());
+			HubSkuCriteriaDto skuCriteria = new HubSkuCriteriaDto();
+			skuCriteria.createCriteria().andSkuNoEqualTo(searchSkuPending.getHubSkuNo());
+			HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
+			hubSkuGateWay.updateByCriteriaSelective(criteriaWithSku);
+		}
 
 //		HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
 //

@@ -244,7 +244,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 for(int i =0;i<skuNoArray.length;i++){
                     List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(sizeArray[i]);
                     HubSku hubSku = insertHubSku(hubSpu, skuNoArray[i], sizeArray[i], date, hubSkuPendings);
-                    //增加SKU的映射关系
+                    //增加SKU的映射关系 并 反写hub_sku_no
                     inserSkuSupplierMapping(date, hubSkuPendings, hubSku);
 
                 }
@@ -301,6 +301,12 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             }
             hubSkuSupplierMapping.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
             hubSkuSupplierMappingMapper.insert(hubSkuSupplierMapping);
+
+            //反写hub_sku_pending
+            HubSkuPending tmp = new HubSkuPending();
+            tmp.setSkuPendingId(skuPending.getSkuPendingId());
+            tmp.setHubSkuNo(hubSku.getSkuNo());
+            hubSkuPendingMapper.updateByPrimaryKeySelective(tmp);
         }
     }
 
@@ -361,7 +367,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setSpuNo(hubSpuUtil.createHubSpuNo(0L));//插入SPU编号
         hubSpuMapper.insert(hubSpu);
 
-        //生成 spupic
+
     }
 
     private List<Long> getSpuPendIdList(SpuModelDto spuModelVO) {
