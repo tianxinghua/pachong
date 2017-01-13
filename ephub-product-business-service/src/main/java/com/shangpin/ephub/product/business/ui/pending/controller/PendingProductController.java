@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,17 +42,13 @@ public class PendingProductController {
     }
     @RequestMapping(value="/update",method=RequestMethod.POST)
     public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
-        try {
-        	log.info("更新接受到数据{}",pendingProductDto);
-        	boolean result = pendingProductService.updatePendingProduct(pendingProductDto);
-            if(result){
-                return HubResponse.successResp(resultSuccess);
-            }else{
-                return HubResponse.errorResp(resultFail);
-            }
-		} catch (Exception e) {
-			return HubResponse.errorResp(e.getMessage());
-		}
+    	log.info("更新接受到数据{}",pendingProductDto);
+    	String result = pendingProductService.updatePendingProduct(pendingProductDto);
+        if(StringUtils.isEmpty(result)){
+            return HubResponse.successResp(resultSuccess);
+        }else{
+            return HubResponse.errorResp(result); 
+        }
     }
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){

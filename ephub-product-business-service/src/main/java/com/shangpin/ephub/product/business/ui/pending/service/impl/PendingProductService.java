@@ -193,7 +193,7 @@ public class PendingProductService implements IPendingProductService{
 
     }
     @Override
-    public String updatePendingProduct(PendingProductDto pendingProductDto) throws Exception{
+    public String updatePendingProduct(PendingProductDto pendingProductDto){
         try {
             if(null != pendingProductDto){
     			BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
