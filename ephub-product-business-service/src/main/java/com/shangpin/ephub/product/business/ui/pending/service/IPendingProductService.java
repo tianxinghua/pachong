@@ -53,7 +53,7 @@ public interface IPendingProductService {
 	 * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
 	 * @param pendingProductDto
 	 */
-	public boolean updatePendingProduct(PendingProductDto pendingProductDto) throws Exception;
+	public String updatePendingProduct(PendingProductDto pendingProductDto);
 	/**
 	 * 批量更新pending数据
 	 * @param pendingProductDto
