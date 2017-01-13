@@ -438,7 +438,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 i = hubSpuPendingPicMapper.countByExample(criteria);
                 if(i>max){
                     max = i;
-                    maxCountSupplierSpuId = spuPendId;
+                    maxCountSupplierSpuId = spuPending.getSupplierSpuId();
                 }
             }
         }
