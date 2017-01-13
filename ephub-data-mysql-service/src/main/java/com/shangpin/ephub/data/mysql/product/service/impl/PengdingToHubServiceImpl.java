@@ -18,6 +18,7 @@ import com.shangpin.ephub.data.mysql.product.common.enumeration.DataStatus;
 import com.shangpin.ephub.data.mysql.product.common.enumeration.HubSpuPendigStatus;
 import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
+import com.shangpin.ephub.data.mysql.product.dto.SpuPendingPicDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
 import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
 import com.shangpin.ephub.data.mysql.sku.hub.po.HubSku;
@@ -93,13 +94,10 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
         //第二步  插入新的hub SPU 记录 以及SKU 记录
         if(null!=spuPendingIds&&spuPendingIds.size()>0){
-            createHubData(auditVO, spuPendingIds);
-            return true;
+           return  createHubData(auditVO, spuPendingIds);
         }else{
             return false;
         }
-
-
 
     }
 
@@ -129,7 +127,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         return true;
     }
 
-    private void createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) throws Exception{
+    private boolean  createHubData(SpuModelDto auditVO, List<Long> spuPendingIds) throws Exception{
         //查询是否存在
         HubSpuCriteria criteria = new HubSpuCriteria();
         criteria.createCriteria().andSpuModelEqualTo(auditVO.getSpuModel())
@@ -141,24 +139,33 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
             //根据尺码合并不同供货商的SKU信息
             setSizeSkuMap(spuPendingIds, sizeSkuMap);
-            //插入新的SPU
-            HubSpu hubSpu = new HubSpu();
-            HubSpuPending spuPending = null;
-            spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
-            if(null!=spuPending){
-                //创建hubspu
-                createHubSpu(hubSpu, spuPending);
-                //在spupending中反写spuNo以及状态
-                updatespuPending(spuPendingIds,hubSpu.getSpuNo());
-                //创建SPU图片
-                createSpuPic(spuPendingIds,hubSpu.getSpuId());
-                //插入hubSKU 和 供货商的对应关系
-                Set<String> sizeSet = sizeSkuMap.keySet();
-                log.info(sizeSet.size()+"");
-                if(sizeSet.size()>0){
-                    createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
+            if(sizeSkuMap.size()>0){
+                //插入新的SPU
+                HubSpu hubSpu = new HubSpu();
+                HubSpuPending spuPending = null;
+                spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
+                if(null!=spuPending){
+                    //创建hubspu
+                    createHubSpu(hubSpu, spuPending);
+                    //在spupending中反写spuNo以及状态
+                    updatespuPending(spuPendingIds,hubSpu.getSpuNo());
+                    //创建SPU图片
+                    createSpuPic(auditVO.getPicVOs(),spuPendingIds,hubSpu.getSpuId());
+                    //插入hubSKU 和 供货商的对应关系
+                    Set<String> sizeSet = sizeSkuMap.keySet();
+                    log.info(sizeSet.size()+"");
+                    if(sizeSet.size()>0){
+                        createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
+                    }
+                    return true;
+                }else{
+                    return false;
                 }
+            }else{ //  无尺码映射
+                return false;
+
             }
+
 
 
         }else{ //
@@ -176,6 +183,10 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 if(sizeSet.size()>0){
                     searchAndCreateHubSkuAndMapping(sizeSkuMap, hubSpu);
                 }
+                return true;
+            }else{
+                //无spu
+                return false;
             }
         }
     }
@@ -361,7 +372,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         criteriaForId.setFields("spu_pending_id");
         HubSpuPendingCriteria.Criteria criterionForId = criteriaForId.createCriteria();
         criterionForId.andSpuModelEqualTo(spuModelVO.getSpuModel()).andHubBrandNoEqualTo(spuModelVO.getBrandNo())
-                .andSpuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue());
+                .andSpuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue()) ;
+//        .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue());
         criteriaForId.setPageNo(1);
         criteriaForId.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
         List<HubSpuPending> hubSpuPendingIds = hubSpuPendingMapper.selectByExample(criteriaForId);
@@ -421,33 +433,48 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     }
 
-    private void createSpuPic(List<Long> spuPendingIds,Long spuId){
+    private void createSpuPic(List<SpuPendingPicDto> picVOs,List<Long> spuPendingIds, Long spuId){
         //循环查找最多的图片
+        List<HubSpuPendingPic> hubSpuPendingPics = null;
+        if(null!=picVOs&&picVOs.size()>0){
+            hubSpuPendingPics = new ArrayList<>();
+            for(SpuPendingPicDto dto:picVOs){
+                HubSpuPendingPic spuPendingPic = new HubSpuPendingPic();
+                spuPendingPic.setSpuPendingPicId(dto.getPicId());
+                spuPendingPic.setSpPicUrl(dto.getSpPicUrl());
+                hubSpuPendingPics.add(spuPendingPic);
+            }
+        }else{
+            int i=0;
+            int max=0;
+            Long maxCountSupplierSpuId =0L;
+            HubSpuPending spuPending = null;
+            for(Long spuPendId:spuPendingIds){
+                spuPending = this.getHubSpuPendingById(spuPendId);
+                if(null!=spuPending){
 
-        int i=0;
-        int max=0;
-        Long maxCountSupplierSpuId =0L;
-        HubSpuPending spuPending = null;
-        for(Long spuPendId:spuPendingIds){
-            spuPending = this.getHubSpuPendingById(spuPendId);
-            if(null!=spuPending){
-
-                HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
-                criteria.createCriteria().andSupplierSpuIdEqualTo(spuPending.getSupplierSpuId())
-                        .andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
-                i = hubSpuPendingPicMapper.countByExample(criteria);
-                if(i>max){
-                    max = i;
-                    maxCountSupplierSpuId = spuPending.getSupplierSpuId();
+                    HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
+                    criteria.createCriteria().andSupplierSpuIdEqualTo(spuPending.getSupplierSpuId())
+                            .andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
+                    i = hubSpuPendingPicMapper.countByExample(criteria);
+                    if(i>max){
+                        max = i;
+                        maxCountSupplierSpuId = spuPending.getSupplierSpuId();
+                    }
                 }
             }
+
+            HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
+            criteria.setPageSize(20);
+            criteria.setPageNo(1);
+            criteria.createCriteria().andSupplierSpuIdEqualTo(maxCountSupplierSpuId);
+            hubSpuPendingPics = hubSpuPendingPicMapper.selectByExample(criteria);
+
         }
 
-        HubSpuPendingPicCriteria criteria = new HubSpuPendingPicCriteria();
-        criteria.setPageSize(20);
-        criteria.setPageNo(1);
-        criteria.createCriteria().andSupplierSpuIdEqualTo(maxCountSupplierSpuId);
-        List<HubSpuPendingPic> hubSpuPendingPics = hubSpuPendingPicMapper.selectByExample(criteria);
+
+
+
         Date date = new Date();
         String url = "";
         for(HubSpuPendingPic spuPendingPic:hubSpuPendingPics){
