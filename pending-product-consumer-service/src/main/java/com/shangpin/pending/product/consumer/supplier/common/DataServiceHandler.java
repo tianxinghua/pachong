@@ -648,6 +648,13 @@ public class DataServiceHandler {
         return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
     }
 
+    public List<HubSupplierValueMappingDto> getSupplierCommonSizeValueMapping(){
+        HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+        criteria.setOrderByClause("sort_val");
+        criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+        criteria.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_ORIGIN.getIndex().byteValue());
+        return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+    }
 
     public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(String supplierId,Integer type){
         HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
@@ -656,6 +663,8 @@ public class DataServiceHandler {
         criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(type.byteValue());
         return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
     }
+
+
 
     public HubSkuDto getHubSku(String spuNo,String skuSizeId){
         HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
