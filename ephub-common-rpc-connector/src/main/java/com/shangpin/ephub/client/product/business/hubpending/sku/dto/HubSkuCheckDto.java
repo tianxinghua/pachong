@@ -20,6 +20,7 @@ public class HubSkuCheckDto implements Serializable {
 	private String categoryNo;
 	private String brandNo;
 	private String spuModel;
+	private String specificationType;
 	private String sizeType;
 	private String skuSize;
 	

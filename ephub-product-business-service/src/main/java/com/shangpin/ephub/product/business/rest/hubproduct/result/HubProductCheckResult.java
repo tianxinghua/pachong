@@ -26,8 +26,19 @@ public class HubProductCheckResult implements Serializable {
 	 * 
 	 */
 	private boolean isPassing;
+	
     /**
-     * 校验不通过记录原因，通过为空
+     * 校验不通过为空，通过为标准值
+     */
+	private String spuModel;
+	
+    /**
+     * 校验不通过为空，通过为标准值
+     */
+    private String size;
+    
+    /**
+     * 校验不通过记录原因
      */
     private String result;
 }

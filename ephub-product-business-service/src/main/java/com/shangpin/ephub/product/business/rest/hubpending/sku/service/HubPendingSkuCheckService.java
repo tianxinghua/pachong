@@ -29,13 +29,17 @@ public class HubPendingSkuCheckService {
 		StringBuffer str = new StringBuffer();
 		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 //		String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
-		String flag = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
-		if(flag!=null){
-			result.setPassing(true);
-			result.setResult(flag);
+		if("尺码".equals(hubProduct.getSpecificationType())){
+			String flag = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
+			if(flag!=null){
+				result.setPassing(true);
+				result.setResult(flag);
+			}else{
+				result.setPassing(false);
+				result.setResult("尺码不存在");
+			}
 		}else{
-			result.setPassing(false);
-			result.setResult("尺码不存在");
+			result.setPassing(true);
 		}
 		return result;
 	}
