@@ -374,15 +374,6 @@ public class PendingHandler {
         Map<String, String> seasonMap = this.getSeasonMap(spu.getSupplierId());
         boolean result = true;
         String spSeason="",seasonSign="";
-
-        if(StringUtils.isBlank(spu.getSupplierId())||StringUtils.isBlank(spu.getHubSeason())){
-           // 未有季节处理
-            result = false;
-            hubSpuPending.setSpuSeasonState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-
-            return result;
-
-        }
         if(seasonMap.containsKey(spu.getSupplierId()+"_"+ spu.getHubSeason().trim())){
             //包含时转化赋值
             spSeason = seasonMap.get(spu.getSupplierId()+"_"+ spu.getHubSeason().trim());
