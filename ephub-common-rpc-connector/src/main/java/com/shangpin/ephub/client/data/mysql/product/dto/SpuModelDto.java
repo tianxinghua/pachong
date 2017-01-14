@@ -21,11 +21,19 @@ public class SpuModelDto implements Serializable {
    /**
 	 * 
 	 */
-   private static final long serialVersionUID = 5147199192561457186L;
+    private static final long serialVersionUID = 5147199192561457186L;
 
-   private String spuModel;//货号
+    private String spuModel;//货号
 
-   private String brandNo;
+    private String brandNo;
+
+    private String material ;
+
+    private String origin;//
+
+    private String color;
+
+    private String category;
 
    private List<SpuPendingPicDto> picVOs;
 }
