@@ -10,6 +10,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.util.RegexUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             criterion.andHubBrandNoEqualTo(queryVO.getBrandNo());
         }
         if(StringUtils.isNotBlank(queryVO.getCategoryNo())){
-            criterion.andHubCategoryNoEqualTo(queryVO.getCategoryNo());
+            criterion.andHubCategoryNoLike(queryVO.getCategoryNo());
         }
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
             criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate()));
@@ -218,15 +219,27 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     public boolean audit(SpuPendingAuditVO auditVO) throws Exception {
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-        if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
 
-            hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+
+
+
+        if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
+            //状态检查
+            String judgeResult = judgeStatue(auditVO);
+            if( StringUtils.isNotBlank(judgeResult)){
+                hubSpuPending.setMemo(judgeResult);
+                auditVO.setAuditStatus(SpuStatus.SPU_WAIT_HANDLE.getIndex());
+            }else{
+
+                hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+                hubSpuPending.setMemo("");
+            }
 
         }else{
             hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
-
+            hubSpuPending.setMemo(auditVO.getMemo());
         }
-        hubSpuPending.setMemo(auditVO.getMemo());
+
         hubSpuPending.setUpdateTime(new Date());
         //设置查询条件
         HubSpuPendingCriteriaDto criteria = getHubSpuPendingCriteriaDto(auditVO, hubSpuPending);
@@ -262,6 +275,27 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
 
         return true;
+    }
+
+    public String  judgeStatue(SpuPendingAuditVO auditVO){
+        String result = "";
+        List<SpuPendingPicVO> picVOs = auditVO.getPicVOs();
+        if(null==picVOs||picVOs.size()==0){
+            result = "图片不能为空 ";
+        }
+        if(StringUtils.isBlank(auditVO.getMaterial())){
+            result = result + "材质不能为空 ";
+        }else {
+            if(RegexUtil.isLetter(auditVO.getMaterial())){
+                result = result + "材质中包含不能包含英文 ";
+            }
+        }
+        if(StringUtils.isBlank(auditVO.getOrigin())){
+            result = result + "产地不能为空";
+        }
+        return result;
+
+
     }
 
     private HubSpuPendingCriteriaDto getHubSpuPendingCriteriaDto(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending) {
