@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
@@ -311,10 +312,14 @@ public class PendingHandler {
             if(!setSeasonMapping(spu, hubSpuPending)) allStatus = false;
 
             //获取材质
-            replaceMaterial(spu, hubSpuPending);
+            if(!replaceMaterial(spu, hubSpuPending)) allStatus = false;
 
             //产地映射
             if(!setOriginMapping(spu,hubSpuPending)) allStatus = false;
+
+            //查询是否有图片
+            handlePicLink(spu,hubSpuPending);
+
 
             if(allStatus){
                 hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -1148,5 +1153,14 @@ public class PendingHandler {
 		}
 	}
 
+
+	private void handlePicLink(PendingSpu spu, HubSpuPendingDto hubSpuPending ){
+        Long supplierSpuId = spu.getSupplierSpuId();
+	    String picUrl = dataServiceHandler.getPicUrlBySupplierSpuId(supplierSpuId);
+	    if(StringUtils.isNotBlank(picUrl)){
+            hubSpuPending.setPicState(PicState.HANDLED.getIndex());
+
+        }
+    }
 
 }

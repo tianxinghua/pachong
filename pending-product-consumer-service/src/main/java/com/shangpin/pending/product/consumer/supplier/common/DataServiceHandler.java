@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +138,9 @@ public class DataServiceHandler {
 
     @Autowired
     private HubSupplierSkuGateWay supplierSkuGateWay;
+
+    @Autowired
+    private HubSpuPendingPicGateWay pendingPicGateWay;
     
     
 
@@ -728,6 +735,19 @@ public class DataServiceHandler {
         }
     }
 
+
+    public  String  getPicUrlBySupplierSpuId(Long supplierSpuId){
+        HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+        criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId)
+                .andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex());
+
+        List<HubSpuPendingPicDto> hubSpuPendingPicDtos = pendingPicGateWay.selectByCriteria(criteria);
+        if(null!=hubSpuPendingPicDtos&&hubSpuPendingPicDtos.size()>0){
+            return hubSpuPendingPicDtos.get(0).getSpPicUrl();
+        }else{
+            return "";
+        }
+    }
 
 
 
