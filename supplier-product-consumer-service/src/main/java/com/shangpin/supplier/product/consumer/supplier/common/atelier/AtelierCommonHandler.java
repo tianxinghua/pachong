@@ -103,7 +103,7 @@ public class AtelierCommonHandler extends IAtelierHandler {
 				for(String imageStr : atelierImags){
 					String[] imageArr = imageStr.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
 					Image image = new Image();
-					image.setUrl(imageArr[2]);
+					image.setUrl(imageArr[1]);
 					images.add(image);
 				}
 				return images;

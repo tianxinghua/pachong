@@ -103,12 +103,21 @@ public class HubProductImportService {
 
 			Map<String, String> map = new HashMap<String, String>();
 			// 校验hub
+			map.put("spuModel", hubProductDto.getSpuModel());
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 			if (hubProductCheckResult.isPassing() == true) {
-				Log.info("hub校验通过");
-				hubProductDto.setSpuModel(hubProductCheckResult.getResult());
+				//sizeId,sizeType:sizeValue;spuModel
+				Log.info("hub校验通过：");
+				String size = null;
+				String spuModel = hubProductCheckResult.getSpuModel();
+				if("尺码".equals(hubProductDto.getSpecificationType())){
+					size = hubProductCheckResult.getSize();
+				}
+				if(!spuModel.equals(hubProductDto.getSpuModel())){
+					map.put("spuNewModel", spuModel);	
+				}
+				hubProductDto.setSpuModel(spuModel);
 				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(hubProductDto);
-				hubSpuDto.setSpuModel(hubProductCheckResult.getResult());
 				// 查询hubSpu是否存在
 				String hubSpuNo = null;
 				List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
@@ -123,11 +132,11 @@ public class HubProductImportService {
 					// 调用接口生成spuNo
 					hubSpuNo = hubSpuGateWay.getSpuNo();
 					hubSpuDto.setSpuNo(hubSpuNo);
-					Log.info(hubProductDto.getSpuModel()+"生成hubSpu:"+hubSpuNo);
+					Log.info(spuModel+"生成hubSpu:"+hubSpuNo);
 					hubSpuGateWay.insert(hubSpuDto);
 				}
 
-				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo, hubProductDto.getSkuSize());
+				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo,size);
 				if (hubSkuList != null && hubSkuList.size() > 0) {
 					HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
 					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();

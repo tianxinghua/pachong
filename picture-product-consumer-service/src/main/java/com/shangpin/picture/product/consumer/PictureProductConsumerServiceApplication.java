@@ -1,13 +1,5 @@
 package com.shangpin.picture.product.consumer;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
-import sun.misc.BASE64Encoder;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,8 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
-import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
-import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 /**
  * <p>Title:PictureProductConsumerServiceApplication.java </p>
  * <p>Description: 图片处理消费者</p>
@@ -35,7 +26,7 @@ public class PictureProductConsumerServiceApplication implements ApplicationRunn
 	}
 
 	@Autowired
-	private UploadPicGateway uploadPicGateway;
+	private HubSpuPendingGateWay gateWay;
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		//InputStream resourceAsStream = this.getClass().getResourceAsStream("/banner/gtl.jpg");
