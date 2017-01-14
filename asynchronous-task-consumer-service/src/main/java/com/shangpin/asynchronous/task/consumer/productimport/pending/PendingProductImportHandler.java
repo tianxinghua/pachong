@@ -53,7 +53,7 @@ public class PendingProductImportHandler {
 			}
 			log.info("pending任务编号："+message.getTaskNo()+"处理结束，耗时："+(System.currentTimeMillis()-start));
 		} catch (Exception e) {
-//			taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
+			taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
 			log.error("pending任务编号："+message.getTaskNo()+"处理时发生异常",e);
 		}
 	}

@@ -120,12 +120,12 @@ public class TaskImportService {
 		File file = new File(pathFile);
 		FileOutputStream out = new FileOutputStream(file);
 
-		String[] headers = { "任务编号", "货号", "任务状态", "任务说明" };
-		String[] columns = { "taskNo", "spuModel", "taskState", "processInfo" };
+		String[] headers = { "任务编号", "货号", "任务状态", "任务说明","新货号" };
+		String[] columns = { "taskNo", "spuModel", "taskState", "processInfo","spuNewModel"};
 		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
 		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-
+		FTPClientUtil.closeFtp();
 		if (file.exists()) {
 			file.delete();
 		}
@@ -250,6 +250,7 @@ public class TaskImportService {
 
 	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
 		InputStream in = FTPClientUtil.downFile(task.getData());
+		FTPClientUtil.closeFtp();
 		if (in == null) {
 			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "从ftp下载失败数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "从ftp下载失败", null);

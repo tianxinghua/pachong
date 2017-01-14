@@ -187,6 +187,7 @@ public class PendingSkuImportService {
 		hubPendingSkuDto.setSizeType(product.getSizeType());
 		hubPendingSkuDto.setSkuSize(product.getHubSkuSize());
 		hubPendingSkuDto.setSpuModel(product.getSpuModel());
+		hubPendingSkuDto.setSpecificationType(product.getSpecificationType());
 		return hubPendingSkuDto;
 	}
 
