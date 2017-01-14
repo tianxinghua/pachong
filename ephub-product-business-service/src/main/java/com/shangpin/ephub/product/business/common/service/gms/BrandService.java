@@ -49,7 +49,6 @@ public class BrandService {
 				return null;
 			}
 	        String supplierMsg = getGmsBrandByRedis(brandNo);
-	        log.info(brandNo+"从redis获取品牌："+supplierMsg);
 	        if(!StringUtils.isEmpty(supplierMsg)){
 	        	return JsonUtil.deserialize(supplierMsg, BrandDom.class);
 	        }else{
@@ -103,10 +102,7 @@ public class BrandService {
 		BrandRequstDto request = new BrandRequstDto();
         request.setBrandNo(brandNo);
         HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
-        String url = apiAddressProperties.getGmsBrandUrl();
-        log.info("品牌调用地址："+url);
         ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {});
-        log.info(brandNo+"品牌调用接口返回数据：{}",entity.getBody());
         return entity.getBody();
 	}
 }
