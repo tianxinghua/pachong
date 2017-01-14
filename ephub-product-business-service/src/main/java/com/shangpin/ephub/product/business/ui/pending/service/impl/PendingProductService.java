@@ -513,7 +513,7 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSpuModel())){
-			criteria.andSpuModelEqualTo(pendingQuryDto.getSpuModel());
+			criteria.andSpuModelLike(pendingQuryDto.getSpuModel());
 		}
 		String hubCategoryNo = pendingQuryDto.getHubCategoryNo();
 		if(!StringUtils.isEmpty(hubCategoryNo)){
@@ -538,7 +538,12 @@ public class PendingProductService implements IPendingProductService{
 		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
 			criteria.andUpdateTimeLessThan(DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat));
 		}
-//		if(!StringUtils.isEmpty()){}
+		if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
+			criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getCategoryName())){
+			criteria.andHubCategoryNoLike("%"+pendingQuryDto.getCategoryName()+"%");
+		}
 		return criteria;
 	}
     /**
