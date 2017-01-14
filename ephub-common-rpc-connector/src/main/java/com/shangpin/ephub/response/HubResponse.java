@@ -16,6 +16,8 @@ public class HubResponse<T> extends HubBaseResponse{
 	private static final long serialVersionUID = 1L;
 
 	private T content;
+	
+	private T errorMsg;
 
 	/**
 	 * 请求成功返回的结构数据
@@ -37,6 +39,17 @@ public class HubResponse<T> extends HubBaseResponse{
 	 */
 	public static <T> HubResponse<T> errorResp(String msg){
 		return errorResp("1", msg);
+	}
+	/**
+	 * 请求失败返回的数据
+	 * @param errorMsg
+	 * @return
+	 */
+	public static <T> HubResponse<T> errorResp(T errorMsg){
+		HubResponse<T> resp = new HubResponse<>();
+		resp.setCode("1");
+		resp.setErrorMsg(errorMsg);
+		return resp;
 	}
 
 	/**

@@ -40,6 +40,7 @@ import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -249,7 +250,9 @@ public class HubCheckService {
 	
 	/**
 	 * 校验尺码,校验失败返回null，成功返回  筛选尺码,国家名称:尺码值（注意符号都是英文）
-	 * @param hubSkuSize
+	 * @param hubCategoryNo 品类编号
+	 * @param hubBrandNo 品牌编号
+	 * @param supplierSize 需要校验的尺码
 	 * @return
 	 */
 	public String checkHubSize(String hubCategoryNo,String hubBrandNo,String supplierSize) {
@@ -267,5 +270,31 @@ public class HubCheckService {
         	log.error("校验尺码异常："+e.getMessage(),e);
         }
 		return null;
+	}
+	/**
+	 * 验证尺码是否在标准库中，如果存在返回空字符串，否则返回校验不通过原因
+	 * @param hubCategoryNo
+	 * @param hubBrandNo
+	 * @param size
+	 * @return
+	 */
+	public HubSizeCheckResult hubSizeExist(String hubCategoryNo,String hubBrandNo,String size){
+		HubSizeCheckResult checkResult = new HubSizeCheckResult();
+		checkResult.setPassing(false);
+		try {
+			CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);
+			List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
+            for(SizeStandardItem sizeItem : sizeStandardItemList){
+                if((sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue()).equals(size)){
+                	checkResult.setPassing(true);
+                	return checkResult;
+                }
+            }
+            checkResult.setResult(size+"校验不通过");
+		} catch (Exception e) {
+			log.error("校验尺码是否存在时异常："+e.getMessage(),e);
+			checkResult.setResult("服务器异常");
+		}
+		return checkResult;		
 	}
 }
