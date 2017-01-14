@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
@@ -86,7 +87,6 @@ public class HubCheckRuleService {
 			str.append("尺码为空，");
 			result.setPassing(false);
 		}
-		
 		//校验性别
 		if(hubProduct.getGender()!=null){
 			if(!hubCheckService.checkHubGender(hubProduct.getGender())){
@@ -97,6 +97,17 @@ public class HubCheckRuleService {
 			str.append("性别为空，");
 			result.setPassing(false);
 		}
+		
+		if(hubProduct.getMaterial()!=null){
+			if(RegexUtil.isLetter(hubProduct.getMaterial())){
+				result.setPassing(false);
+				str.append("材质中含有英文字符："+hubProduct.getMaterial()) ;
+	        }
+		}else{
+			str.append("材质为空，");
+			result.setPassing(false);
+		}
+		
 //		//货号
 		BrandModelDto BrandModelDto = null;
 		BrandModelResult brandModelResult= null;
