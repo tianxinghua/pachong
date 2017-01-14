@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
+import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -156,11 +157,12 @@ public class ExportServiceImpl {
                         for(PendingProductDto product : products.getProduts()){
                             try {
                                 j++;
-                                //if(pendingQuryDto.getIsExportPic()){}
-                                row = sheet.createRow(j);  
-                                row.setHeight((short) 1500);
-                        		sheet.setColumnWidth(0, (36*150));
-                                insertProductSpuOfRow(row,product,rowTemplate);
+                                if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
+                                	row = sheet.createRow(j);  
+                                    row.setHeight((short) 1500);
+                            		sheet.setColumnWidth(0, (36*150));
+                                }
+                                insertProductSpuOfRow(pendingQuryDto.getIsExportPic(),row,product,rowTemplate);
                             } catch (Exception e) {
                             	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
                                 j--;
@@ -265,7 +267,7 @@ public class ExportServiceImpl {
      * @param rowTemplate 导入模板
      * @throws Exception
      */
-    private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product,String[] rowTemplate) throws Exception{		
+    private void insertProductSpuOfRow(int isExportPic,HSSFRow row,PendingProductDto product,String[] rowTemplate) throws Exception{		
 		Class<?> cls = product.getClass();
 		StringBuffer buffer = new StringBuffer();  
 		Method fieldSetMet = null;
@@ -273,7 +275,9 @@ public class ExportServiceImpl {
 		for (int i=0;i<rowTemplate.length;i++) {
 			try {
 				if("spPicUrl".equals(rowTemplate[i])){
-					insertImageToExcel(product.getSpPicUrl(),row, (short)i); 
+					if(isExportPic == IsExportPic.YES.getIndex()){
+						insertImageToExcel(product.getSpPicUrl(),row, (short)i); 
+					}
 				}else if("seasonYear".equals(rowTemplate[i])){
 					setRowOfSeasonYear(row, product, cls, i);
 				}else if("seasonName".equals(rowTemplate[i])){
