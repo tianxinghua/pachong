@@ -106,9 +106,12 @@ public class HubProductImportService {
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 			if (hubProductCheckResult.isPassing() == true) {
 				Log.info("hub校验通过");
-				hubProductDto.setSpuModel(hubProductCheckResult.getResult());
+				//sizeId,sizeType:sizeValue;spuModel
+				String result = hubProductCheckResult.getResult();
+				String size = result.split(";")[0].split(",")[1];
+				String spuModel = result.split(";")[1];
 				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(hubProductDto);
-				hubSpuDto.setSpuModel(hubProductCheckResult.getResult());
+				hubSpuDto.setSpuModel(spuModel);
 				// 查询hubSpu是否存在
 				String hubSpuNo = null;
 				List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
@@ -123,24 +126,24 @@ public class HubProductImportService {
 					// 调用接口生成spuNo
 					hubSpuNo = hubSpuGateWay.getSpuNo();
 					hubSpuDto.setSpuNo(hubSpuNo);
-					Log.info(hubProductDto.getSpuModel()+"生成hubSpu:"+hubSpuNo);
+					Log.info(hubSpuDto.getSpuModel()+"生成hubSpu:"+hubSpuNo);
 					hubSpuGateWay.insert(hubSpuDto);
 				}
 
-				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo, hubProductDto.getSkuSize());
+				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo,size);
 				if (hubSkuList != null && hubSkuList.size() > 0) {
 					HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
 					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
 					HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(hubProductDto.getSkuSize());
+					hubSku.setSkuSize(size);
 					hubSku.setUpdateTime(new Date());
 					HubSkuWithCriteriaDto.setHubSku(hubSku);
 					HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
 					hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
 				} else {
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(hubProductDto.getSkuSize());
+					hubSku.setSkuSize(size);
 					hubSku.setSpuNo(hubSpuNo);
 					hubSku.setCreateTime(new Date());
 					hubSku.setDataState((byte) 1);

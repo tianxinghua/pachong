@@ -32,6 +32,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
@@ -126,11 +127,15 @@ public class PendingSkuImportService {
 		log.info("返回的pendingSpuId:"+map.get("pendingSpuId"));
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
+		
 		if(map.get("pendingSpuId")!=null){
 			HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 			hubPendingSpuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
-		checkPendingSku(HubPendingSkuDto,map);
+		//TODO:需要修改 
+		
+		HubSkuCheckDto skuCheck = convertHubPendingProduct2PendingSkuCheck(product);
+		checkPendingSku(HubPendingSkuDto,skuCheck,map);
 		
 		if (Boolean.parseBoolean(map.get("isPassing"))) {
 			taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("hubIsExist")), map.get("hubSpuId"));
@@ -138,14 +143,15 @@ public class PendingSkuImportService {
 		
 	}
 
-	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto, Map<String, String> map) {
+	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto,HubSkuCheckDto skuCheck, Map<String, String> map) {
 		
-	
-		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuPendingDto);
+		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(skuCheck);
 		if(hubPendingSkuCheckResult.isPassing()){
 			hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
-			//TODO: 状态需要加判断
 			hubSkuPendingDto.setSpSkuSizeState((byte)1);
+			String [] result = hubPendingSkuCheckResult.getResult().split(",");
+			hubSkuPendingDto.setHubSkuSize(result[1]);
+			hubSkuPendingDto.setScreenSize(result[0]);
 		}else{
 			map.put("taskState","校验失败");
 			map.put("processInfo", map.get("processInfo")+","+hubPendingSkuCheckResult.getResult());
@@ -170,9 +176,18 @@ public class PendingSkuImportService {
 	
 
 	private HubSkuPendingDto convertHubPendingProduct2PendingSku(HubPendingProductImportDTO product) {
-		HubSkuPendingDto HubPendingSkuDto = new HubSkuPendingDto();
-		BeanUtils.copyProperties(product, HubPendingSkuDto);
-		return HubPendingSkuDto;
+		HubSkuPendingDto hubPendingSkuDto = new HubSkuPendingDto();
+		BeanUtils.copyProperties(product, hubPendingSkuDto);
+		return hubPendingSkuDto;
+	}
+	private HubSkuCheckDto convertHubPendingProduct2PendingSkuCheck(HubPendingProductImportDTO product) {
+		HubSkuCheckDto hubPendingSkuDto = new HubSkuCheckDto();
+		hubPendingSkuDto.setBrandNo(product.getHubBrandNo());
+		hubPendingSkuDto.setCategoryNo(product.getHubCategoryNo());
+		hubPendingSkuDto.setSizeType(product.getSizeType());
+		hubPendingSkuDto.setSkuSize(product.getHubSkuSize());
+		hubPendingSkuDto.setSpuModel(product.getSpuModel());
+		return hubPendingSkuDto;
 	}
 
 	private HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) {
