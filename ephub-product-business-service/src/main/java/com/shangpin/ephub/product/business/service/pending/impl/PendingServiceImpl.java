@@ -102,14 +102,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         criteria.setDistinct(true);
         criteria.setFields(" spu_model,hub_brand_no  ");
         if(StringUtils.isNotBlank(queryVO.getSpuModel())){
-            criterion.andSpuModelLike(queryVO.getSpuModel());
+            criterion.andSpuModelLike(queryVO.getSpuModel() + "%");
 
         }
         if(StringUtils.isNotBlank(queryVO.getBrandNo())){
             criterion.andHubBrandNoEqualTo(queryVO.getBrandNo());
         }
         if(StringUtils.isNotBlank(queryVO.getCategoryNo())){
-            criterion.andHubCategoryNoLike(queryVO.getCategoryNo());
+            criterion.andHubCategoryNoLike(queryVO.getCategoryNo() +"%");
         }
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
             criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate()));
