@@ -3,7 +3,6 @@ package com.shangpin.ephub.product.business.ui.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,8 +13,6 @@ import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductSer
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.response.HubResponse;
-
-import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:PendingProductController </p>
  * <p>Description: 待处理页面</p>
@@ -26,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping("/pending-product")
-@Slf4j
 public class PendingProductController {
 	
 	private static String resultSuccess = "success";
@@ -42,22 +38,11 @@ public class PendingProductController {
     }
     @RequestMapping(value="/update",method=RequestMethod.POST)
     public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
-    	log.info("更新接受到数据{}",pendingProductDto);
-    	String result = pendingProductService.updatePendingProduct(pendingProductDto);
-        if(StringUtils.isEmpty(result)){
-            return HubResponse.successResp(resultSuccess);
-        }else{
-            return HubResponse.errorResp(result); 
-        }
+    	return pendingProductService.updatePendingProduct(pendingProductDto);
     }
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
-        String result = pendingProductService.batchUpdatePendingProduct(pendingProducts);
-        if(StringUtils.isEmpty(result)){
-            return HubResponse.successResp(resultSuccess);
-        }else{
-            return HubResponse.errorResp(result);
-        }
+        return pendingProductService.batchUpdatePendingProduct(pendingProducts);
     }
     @RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
     public HubResponse<?> updateProductToUnableToProcess(@RequestBody String id){
