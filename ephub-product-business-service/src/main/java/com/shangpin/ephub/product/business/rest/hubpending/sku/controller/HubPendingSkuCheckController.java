@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.service.HubPendingSkuCheckService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -32,7 +33,7 @@ public class HubPendingSkuCheckController {
 	private IPendingProductService pendingProductService;
 	
 	@RequestMapping(value = "/check-sku")
-	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto){
+	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuCheckDto dto){
 		log.info("校验pendingSku接受到参数:{}",dto);
 		
 		HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(dto);

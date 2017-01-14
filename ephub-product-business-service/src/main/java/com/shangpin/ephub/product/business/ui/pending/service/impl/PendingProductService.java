@@ -31,6 +31,7 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
@@ -226,7 +227,8 @@ public class PendingProductService implements IPendingProductService{
                 log.info("pengdingSkus:{}",pengdingSkus);
                 if(null != pengdingSkus && pengdingSkus.size()>0){
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                        HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(hubSkuPendingDto);
+                    	HubSkuCheckDto HubSkuCheckDto = convert2CheckSku(pendingProductDto,hubSkuPendingDto.getHubSkuSize());
+                        HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(HubSkuCheckDto);
                         log.info("HubPendingSkuCheckResult:{}",result);
                         if(result.isPassing()){
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
@@ -248,7 +250,16 @@ public class PendingProductService implements IPendingProductService{
             return pendingProductDto.getSpuPendingId()+symbol+"服务器错误";
         }
     }
-    @Override
+    private HubSkuCheckDto convert2CheckSku(
+			PendingProductDto pendingProductDto,String size) {
+    	HubSkuCheckDto skuCheck = new HubSkuCheckDto();
+    	skuCheck.setBrandNo(pendingProductDto.getHubBrandNo());
+    	skuCheck.setCategoryNo(pendingProductDto.getHubCategoryNo());
+    	skuCheck.setSkuSize(size);
+    	skuCheck.setSpuModel(pendingProductDto.getSpuModel());
+		return skuCheck;
+	}
+	@Override
     public String batchUpdatePendingProduct(PendingProducts pendingProducts){
     	StringBuffer result = new StringBuffer();
         if(null != pendingProducts && null != pendingProducts.getProduts() && pendingProducts.getProduts().size()>0){

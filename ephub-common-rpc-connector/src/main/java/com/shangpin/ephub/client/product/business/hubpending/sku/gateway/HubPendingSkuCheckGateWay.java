@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 
@@ -26,7 +27,7 @@ public interface HubPendingSkuCheckGateWay {
 	 * @return 校验结果：
 	 */
 	@RequestMapping(value = "/pending-sku/check-sku", method = RequestMethod.POST,consumes = "application/json")
-	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuPendingDto dto);
+	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuCheckDto dto);
 	/**
 	 * 到处理页面导出sku异步调用
 	 * @param pendingQuryDto 查询条件
