@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
+import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
+import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
@@ -485,16 +487,14 @@ public class PendingProductService implements IPendingProductService{
         			criteria.andSpuBrandStateEqualTo(SpuBrandState.UNHANDLED.getIndex());
         		} else if(ProductState.CATGORY_STATE.getIndex() == inconformities.get(i)){
         			criteria.andCatgoryStateNotEqualTo(CatgoryState.PERFECT_MATCHED.getIndex());
-        		} else if(ProductState.PICTURE_STATE.getIndex() == inconformities.get(i)){
-        			criteria.andPicStateNotEqualTo(PicState.HANDLED.getIndex());
         		} else if(ProductState.SPU_MODEL_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuModelStateEqualTo(SpuModelState.VERIFY_FAILED.getIndex());
-        		//} else if(ProductState.MATERIAL_STATE.getIndex() == integer){
-        			//TODO 没有材质状态
+        		} else if(ProductState.MATERIAL_STATE.getIndex() == inconformities.get(i)){
+        			criteria.andMaterialStateEqualTo(MaterialState.UNHANDLED.getIndex());
         		} else if(ProductState.SPU_COLOR_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuColorStateEqualTo(SpuColorState.UNHANDLED.getIndex());
-        		//} else if(ProductState.ORIGIN_STATE.getIndex() == integer){
-        			//TODO 没有产地状态
+        		} else if(ProductState.ORIGIN_STATE.getIndex() == inconformities.get(i)){
+        			criteria.andOriginStateEqualTo(OriginState.UNHANDLED.getIndex());
         		} else if(ProductState.SPU_SEASON_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuSeasonStateEqualTo(SpuSeasonState.UNHANDLED.getIndex());
         		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
@@ -547,6 +547,13 @@ public class PendingProductService implements IPendingProductService{
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getCategoryName())){
 			criteria.andHubCategoryNoLike("%"+pendingQuryDto.getCategoryName()+"%");
+		}
+		if(-1 != pendingQuryDto.getPicState()){
+			if(0 == pendingQuryDto.getPicState()){
+				criteria.andPicStateEqualTo(PicState.UNHANDLED.getIndex());
+			}else{
+				criteria.andPicStateNotEqualTo(PicState.UNHANDLED.getIndex());
+			}
 		}
 		return criteria;
 	}
