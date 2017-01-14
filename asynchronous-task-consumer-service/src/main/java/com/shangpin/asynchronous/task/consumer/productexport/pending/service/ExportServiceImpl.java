@@ -8,9 +8,11 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -28,7 +30,10 @@ import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
@@ -61,7 +66,10 @@ public class ExportServiceImpl {
 	private HubPendingSpuCheckGateWay hubPendingSpuClient;
 	@Autowired
 	private HubPendingSkuCheckGateWay hubPendingSkuClient;
+	@Autowired
+	private HubSpuPendingGateWay hubSpuPendingGateWay;
 
+	private static final Integer PAGESIZE = 100;
 	/**
 	 * 待处理页面导出sku
 	 * @param taskNo 任务编号
@@ -80,27 +88,37 @@ public class ExportServiceImpl {
         }
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
-        	PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
-            if(null != products && null != products.getProduts() && products.getProduts().size()>0){
-                int j = 0;
-                for(PendingProductDto product : products.getProduts()){
-                    for(HubSkuPendingDto sku : product.getHubSkus()){
-                        try {
-                            j++;
-                            row = sheet.createRow(j);
-                            row.setHeight((short) 1500);
-                            insertProductSkuOfRow(row,product,sku,rowTemplate);
-                        } catch (Exception e) {
-                        	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
-                            j--;
-                        }
-                    }
-                }
-            }
-            saveAndUploadExcel(taskNo,products.getCreateUser(),wb);
+        	int totalSize = pendingQuryDto.getPageSize();//总记录数
+        	int pageCount = getPageCount(totalSize,PAGESIZE);//页数
+        	for(int i =1; i <= pageCount; i++){
+        		HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+        		criteria.setPageNo(i);
+        		criteria.setPageSize(PAGESIZE);
+				List<HubSpuPendingDto> list = hubSpuPendingGateWay.selectByCriteria(criteria);
+				if(CollectionUtils.isNotEmpty(list)){
+					for (HubSpuPendingDto hubSpuPendingDto : list) {
+						
+					}
+				}
+        	}
+        	
+            //saveAndUploadExcel(taskNo,products.getCreateUser(),wb);
         } catch (Exception e) {
             log.error("待处理页导出sku异常："+e.getMessage(),e);
         }
+	}
+	/**
+	 * 获取总页数
+	 * @param totalSize 总计路数
+	 * @param pagesize 每页记录数
+	 * @return
+	 */
+	private Integer getPageCount(Integer totalSize, Integer pageSize) {
+		if(totalSize % pageSize == 0){
+			return totalSize/pageSize;
+		}else{
+			return (totalSize/pageSize) + 1;
+		}
 	}
 	/**
 	 * 待处理页面导出spu
