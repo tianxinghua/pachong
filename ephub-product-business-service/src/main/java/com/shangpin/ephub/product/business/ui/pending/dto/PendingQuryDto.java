@@ -39,7 +39,7 @@ public class PendingQuryDto {
     /**
      * 是否导出图片
      */
-    private String isExportPic;
+    private int isExportPic;
     /**
      * 导出第几页
      */
@@ -48,4 +48,8 @@ public class PendingQuryDto {
      * 导出每页的商品数量
      */
     private String exportPageSize;
+    /**
+     * 图片状态
+     */
+    private int picState;
 }
