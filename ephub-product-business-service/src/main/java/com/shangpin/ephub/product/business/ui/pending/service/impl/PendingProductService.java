@@ -199,55 +199,48 @@ public class PendingProductService implements IPendingProductService{
         try {
         	String returnStr = "";
             if(null != pendingProductDto){
-    			BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
-    			if(brandModelResult.isPassing()){
-    				pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
-    				List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
-    				if(null != hubSpus && hubSpus.size()>0){
-    					convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
-                    	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-                        hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-    				}else{
-    					HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
-    	                if(spuResult.isPassing()){
-    	                	pendingProductDto.setSpuModel(brandModelResult.getBrandMode());
+            	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
+            	if(brandModelResult.isPassing()){
+            		if(!findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto)){
+            			HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
+            			if(spuResult.isPassing()){
     	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-    	                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-    	                }else{
-    	                    log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-    	                    return pendingProductDto.getSpuPendingId()+symbol+spuResult.getResult();
-    	                }
-    				}
-        		}else{
-        		     log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
-        		     return pendingProductDto.getSpuPendingId()+symbol+"货号校验不通过";
-        		}
-                List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
-                log.info("pengdingSkus:{}",pengdingSkus);
-                if(null != pengdingSkus && pengdingSkus.size()>0){
-                    for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                        HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(hubSkuPendingDto);
-                        log.info("HubPendingSkuCheckResult:{}",result);
-                        if(result.isPassing()){
-                        	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-                        	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
-                            hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
-                        }else{
-                            log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
-                            //回滚spu状态
-                            pendingProductDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
-                            hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-                            return pendingProductDto.getSpuPendingId()+symbol+result.getResult();
-                        }
-                    }
-                }
+            			}else{
+            				log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
+            				returnStr = pendingProductDto.getSpuPendingId()+symbol+spuResult.getResult();
+            			}
+            		}
+            	}else{
+            		log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
+            		returnStr = pendingProductDto.getSpuPendingId()+symbol+"货号校验不通过";
+            	}
+            	//TODO 校验sku
             }
-            return "";
+            hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+            return returnStr;
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
             return pendingProductDto.getSpuPendingId()+symbol+"服务器错误";
         }
     }
+    /**
+     * 能根据品牌货号从hub标准库中找到记录，则直接用标准库中的属性更新pending库
+     * @param spuModel 标准货号
+     * @param pendingProductDto 待更新的pending spu
+     * @return
+     */
+    private boolean findAndUpdatedFromHubSpu(String spuModel,PendingProductDto pendingProductDto){
+    	pendingProductDto.setSpuModel(spuModel);
+		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
+		if(null != hubSpus && hubSpus.size()>0){
+			convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
+        	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+            return true;
+		}else{
+			return false;
+		}
+    }
+    
     @Override
     public String batchUpdatePendingProduct(PendingProducts pendingProducts){
     	StringBuffer result = new StringBuffer();
