@@ -771,7 +771,7 @@ public class PendingHandler {
                 dataServiceHandler.savePendingSku(hubSkuPending);
                 //如果是待审核的 因为尺码问题 不能通过
                 if(hubSpuPending.getSpuState().intValue()==SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-                   spuPendingHandler.updateSpuStateToWaitHandle(hubSpuPending.getSpuPendingId());
+                   spuPendingHandler.updateSpuStateFromWaitAuditToWaitHandle(hubSpuPending.getSpuPendingId());
                 }
 
             }
@@ -783,7 +783,7 @@ public class PendingHandler {
                 hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
                 //如果是待审核的 因为尺码问题 不能通过
                 if(hubSpuPending.getSpuState().intValue()==SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-                    spuPendingHandler.updateSpuStateToWaitHandle(hubSpuPending.getSpuPendingId());
+                    spuPendingHandler.updateSpuStateFromWaitAuditToWaitHandle(hubSpuPending.getSpuPendingId());
                 }
             }else{
                 String[] sizeAndIdArray = hubSize.split(",");
