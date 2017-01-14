@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.atelier.AtelierCommonHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.atelier.IAtelierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.SpinnakerCommonHandler;
 
 /**
  * <p>Title:OriginalProductStreamListenerAdapter.java </p>
@@ -26,15 +23,20 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("stefaniaHandler")
 	private ISupplierHandler stefaniaHandler;	
 	@Autowired
-	private ISupplierHandler atelierCommonHandler;
+	@Qualifier("ostoreHandler")
+	private ISupplierHandler ostoreHandler;
 	@Autowired
-	private ISupplierHandler spinnakerCommonHandler;	
+	@Qualifier("brunarossoHandler")
+	private ISupplierHandler brunarossoHandler;
+	@Autowired
+	@Qualifier("spinnakerHandler")
+	private ISupplierHandler spinnakerHandler;	
 	@Autowired
 	@Qualifier("gebHandler")
 	private ISupplierHandler gebHandler;
 	@Autowired
-	@Qualifier("biondiniHandler")
-	private ISupplierHandler biondiniHandler;
+	@Qualifier("biondioniHandler")
+	private ISupplierHandler biondioniHandler;
 	@Autowired
 	@Qualifier("tonyHandler")
 	private ISupplierHandler tonyHandler;
@@ -43,22 +45,20 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler coltortiHandler;
 	
 	/**
-	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
 	public void biondioniStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		
+		biondioniHandler.handleOriginalProduct(message, headers); 
 	}
-	
 	/**
-	 * biondini供货商原始数据监听方法
+	 * brunarosso供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
-	public void biondiniStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		biondiniHandler.handleOriginalProduct(message, headers); 
+	public void brunarossoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		brunarossoHandler.handleOriginalProduct(message, headers);		
 	}
 	/**
 	 * coltorti供货商原始数据监听方法
@@ -75,8 +75,24 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void gebStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		gebHandler.handleOriginalProduct(message, headers); 
+		
 	}
-	
+	/**
+	 * ostore供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void ostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		ostoreHandler.handleOriginalProduct(message, headers);		
+	}
+	/**
+	 * spinnaker供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void spinnakerStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		spinnakerHandler.handleOriginalProduct(message, headers); 
+	}
 	/**
 	 * stefania供货商原始数据监听方法
 	 * @param message 消息体
@@ -93,26 +109,14 @@ public class OriginalProductStreamListenerAdapter {
 	public void tonyStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		tonyHandler.handleOriginalProduct(message, headers); 
 	}
-	
-	
-	/*
-	 * 以下为spinnaker系统统一处理 ，共八家供应商
-	 */
-	/**
-	 * spinnaker供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void spinnakerStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers); 
-	}
 	/**
 	 * pozzilei供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
 	public void pozzileiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * pozzileiarte供货商原始数据监听方法
@@ -120,7 +124,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pozzileiarteStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * pozzileiforte供货商原始数据监听方法
@@ -128,83 +133,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pozzileiforteStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
-	}
-	/**
-	 * vela供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void velaStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
-	}
-	/**
-	 * sanremo供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void sanremoStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
-	}
-	/**
-	 * monti供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void montiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
-	}
-	/**
-	 * papini供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void papiniStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		spinnakerCommonHandler.handleOriginalProduct(message, headers);
-	}
-
-	/*
-	 * 以下为atelier系统统一处理 ，共17家
-	 */
-	/**
-	 * ostore供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void ostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);		
-	}
-	/**
-	 * brunarosso供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void brunarossoStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);		
-	}
-	/**
-	 * studio69供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void studio69StreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * creative99供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void creative99StreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * leam供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void leamStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * carofiglio供货商原始数据监听方法
@@ -212,7 +142,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void carofiglioStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * genteroma供货商原始数据监听方法
@@ -220,7 +151,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void genteromaStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * daniello供货商原始数据监听方法
@@ -228,7 +160,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void danielloStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * italiani供货商原始数据监听方法
@@ -236,7 +169,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void italianiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * tufano供货商原始数据监听方法
@@ -244,66 +178,9 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void tufanoStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+		// TODO Auto-generated method stub
+		
 	}
-	/**
-	 * wise供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void wiseStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * lindelepalais供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void lindelepalaisStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * tessabit供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void tessabitStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * paolofiorillo供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void paolofiorilloStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * vietti供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void viettiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * russocapri供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void russocapriStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	/**
-	 * divo供货商原始数据监听方法
-	 * @param message 消息体
-	 * @param headers 消息头
-	 */
-	public void divoStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
-	}
-	
-	
 	/**
 	 * monnierfreres供货商原始数据监听方法
 	 * @param message 消息体
@@ -322,7 +199,15 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * russocapri供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void russocapriStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * giglio供货商原始数据监听方法
 	 * @param message 消息体
@@ -332,7 +217,24 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-
+	/**
+	 * divo供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void divoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * biondini供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void biondiniStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * dellogliostore供货商原始数据监听方法
 	 * @param message 消息体
@@ -351,13 +253,48 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * tessabit供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void tessabitStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * alducadaosta供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
 	public void alducadaostaStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * sanremo供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void sanremoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * paolofiorillo供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void paolofiorilloStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * vietti供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void viettiStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -370,7 +307,15 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * lindelepalais供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void lindelepalaisStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * pritelli供货商原始数据监听方法
 	 * @param message 消息体
@@ -389,7 +334,42 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * vela供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void velaStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * monti供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void montiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * creative99供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void creative99StreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * leam供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void leamStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * bagheera供货商原始数据监听方法
 	 * @param message 消息体
@@ -399,7 +379,15 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * papini供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void papiniStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * zitafabiani供货商原始数据监听方法
 	 * @param message 消息体
@@ -409,7 +397,15 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * wise供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void wiseStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * baseblu供货商原始数据监听方法
 	 * @param message 消息体
@@ -437,7 +433,15 @@ public class OriginalProductStreamListenerAdapter {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	/**
+	 * studio69供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void studio69StreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 	/**
 	 * deliberti供货商原始数据监听方法
 	 * @param message 消息体

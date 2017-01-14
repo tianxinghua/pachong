@@ -107,8 +107,7 @@ public class HubProductImportService {
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 			if (hubProductCheckResult.isPassing() == true) {
 				//sizeId,sizeType:sizeValue;spuModel
-				String result = hubProductCheckResult.getResult();
-				Log.info("hub校验通过："+result);
+				Log.info("hub校验通过：");
 				String size = null;
 				String spuModel = hubProductCheckResult.getSpuModel();
 				if("尺码".equals(hubProductDto.getSpecificationType())){
@@ -117,8 +116,8 @@ public class HubProductImportService {
 				if(!spuModel.equals(hubProductDto.getSpuModel())){
 					map.put("spuNewModel", spuModel);	
 				}
+				hubProductDto.setSpuModel(spuModel);
 				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(hubProductDto);
-				hubSpuDto.setSpuModel(spuModel);
 				// 查询hubSpu是否存在
 				String hubSpuNo = null;
 				List<HubSpuDto> hub = findHubSpuDto(hubSpuDto);
@@ -133,7 +132,7 @@ public class HubProductImportService {
 					// 调用接口生成spuNo
 					hubSpuNo = hubSpuGateWay.getSpuNo();
 					hubSpuDto.setSpuNo(hubSpuNo);
-					Log.info(hubSpuDto.getSpuModel()+"生成hubSpu:"+hubSpuNo);
+					Log.info(spuModel+"生成hubSpu:"+hubSpuNo);
 					hubSpuGateWay.insert(hubSpuDto);
 				}
 
@@ -143,14 +142,14 @@ public class HubProductImportService {
 					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
 					HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(size);
+					hubSku.setSkuSize(hubProductDto.getSkuSize());
 					hubSku.setUpdateTime(new Date());
 					HubSkuWithCriteriaDto.setHubSku(hubSku);
 					HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
 					hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
 				} else {
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(size);
+					hubSku.setSkuSize(hubProductDto.getSkuSize());
 					hubSku.setSpuNo(hubSpuNo);
 					hubSku.setCreateTime(new Date());
 					hubSku.setDataState((byte) 1);

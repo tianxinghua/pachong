@@ -127,15 +127,12 @@ public class PendingSkuImportService {
 		log.info("返回的pendingSpuId:"+map.get("pendingSpuId"));
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		
 		if(map.get("pendingSpuId")!=null){
 			HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 			hubPendingSpuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
-		//TODO:需要修改 
-		
-		HubSkuCheckDto skuCheck = convertHubPendingProduct2PendingSkuCheck(product);
-		checkPendingSku(HubPendingSkuDto,skuCheck,map);
+		HubSkuCheckDto hubSkuCheckDto =  convertHubPendingProduct2PendingSkuCheck(product);
+		checkPendingSku(HubPendingSkuDto,hubSkuCheckDto,map);
 		
 		if (Boolean.parseBoolean(map.get("isPassing"))) {
 			taskService.sendToHub(hubPendingSpuDto, Boolean.parseBoolean(map.get("hubIsExist")), map.get("hubSpuId"));
@@ -143,15 +140,14 @@ public class PendingSkuImportService {
 		
 	}
 
-	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto,HubSkuCheckDto skuCheck, Map<String, String> map) {
+	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto,HubSkuCheckDto hubSkuCheckDto, Map<String, String> map) {
 		
-		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(skuCheck);
+	
+		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
 		if(hubPendingSkuCheckResult.isPassing()){
 			hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
+			//TODO: 状态需要加判断
 			hubSkuPendingDto.setSpSkuSizeState((byte)1);
-			String [] result = hubPendingSkuCheckResult.getResult().split(",");
-			hubSkuPendingDto.setHubSkuSize(result[1]);
-			hubSkuPendingDto.setScreenSize(result[0]);
 		}else{
 			map.put("taskState","校验失败");
 			map.put("processInfo", map.get("processInfo")+","+hubPendingSkuCheckResult.getResult());

@@ -19,12 +19,13 @@ public class SpuPendingHandler {
     @Autowired
     HubSpuPendingGateWay spuPendingGateWay;
 
-    public boolean updateSpuStateToWaitHandle(Long spuPendingId){
+    public boolean updateSpuStateFromWaitAuditToWaitHandle(Long spuPendingId){
         boolean  result = true;
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
-        criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+        criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
+                .andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
         HubSpuPendingWithCriteriaDto criteriaSpu = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteria);
         spuPendingGateWay.updateByCriteriaSelective(criteriaSpu);
         return result;
