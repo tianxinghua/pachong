@@ -221,9 +221,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
 
             hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+
         }else{
             hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
+
         }
+        hubSpuPending.setMemo(auditVO.getMemo());
         hubSpuPending.setUpdateTime(new Date());
         //设置查询条件
         HubSpuPendingCriteriaDto criteria = getHubSpuPendingCriteriaDto(auditVO, hubSpuPending);

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
 
@@ -24,17 +25,16 @@ public class HubPendingSkuCheckService {
 	@Autowired
 	HubCheckService hubCheckService;
 	
-	public HubPendingSkuCheckResult checkHubPendingSku(HubSkuPendingDto hubProduct){
+	public HubPendingSkuCheckResult checkHubPendingSku(HubSkuCheckDto hubProduct){
 		StringBuffer str = new StringBuffer();
 		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 //		String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
-//		String flag = hubCheckService.checkHubSize(null,null,null,null);
-		String flag = null;
+		String flag = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
 		if(flag!=null){
 			result.setPassing(true);
 			result.setResult(flag);
 		}else{
-			result.setPassing(true);
+			result.setPassing(false);
 			result.setResult("尺码不存在");
 		}
 		return result;

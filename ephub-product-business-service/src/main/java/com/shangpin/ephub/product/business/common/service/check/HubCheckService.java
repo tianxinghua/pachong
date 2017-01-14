@@ -27,6 +27,7 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
+import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
@@ -157,6 +158,16 @@ public class HubCheckService {
 			}	
 		}else{
 			str.append("性别为空，");
+			result.setPassing(false);
+		}
+		//校验材质
+		if(hubProduct.getHubMaterial()!=null){
+			if(RegexUtil.isLetter(hubProduct.getHubMaterial())){
+				result.setPassing(false);
+				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
+	        }
+		}else{
+			str.append("材质为空，");
 			result.setPassing(false);
 		}
 		result.setResult(str.toString());
