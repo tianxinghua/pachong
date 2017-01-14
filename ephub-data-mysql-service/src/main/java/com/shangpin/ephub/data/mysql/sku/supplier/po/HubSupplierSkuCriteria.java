@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class HubSupplierSkuCriteria {
     protected String orderByClause;
 
@@ -118,7 +120,7 @@ public class HubSupplierSkuCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }

@@ -66,10 +66,10 @@
 	          and        spu.brand_no = #{brandNo}
 	 </if>
 	   <if test="null!= categoryNo">
-	           and  spu.category_no = #{categoryNo}
+	           and  spu.category_no like concat('',#{categoryNo},'%') 
 	 </if>
 	   <if test="null!= spuModel">
-	           and  spu.spu_model = #{spuModel}
+	           and  spu.spu_model like concat('',#{spuModel},'%')
 	 </if>
 	
 	   <if test="null!=startDate">
@@ -101,10 +101,10 @@
 	          and      spu.brand_no = #{brandNo}
 	 </if>
 	   <if test="null!= categoryNo">
-	            and    spu.category_no = #{categoryNo}
+	           and  spu.category_no like concat('',#{categoryNo},'%') 
 	 </if>
-	  <if test="null!= spuModel">
-	           and  spu.spu_model = #{spuModel}
+	   <if test="null!= spuModel">
+	           and  spu.spu_model like concat('',#{spuModel},'%')
 	 </if>
 	  <if test="null!=startDate">
                 and sku.update_time >=#{startDate}
