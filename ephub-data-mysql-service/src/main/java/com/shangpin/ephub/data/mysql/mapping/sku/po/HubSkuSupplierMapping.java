@@ -94,6 +94,11 @@ public class HubSkuSupplierMapping implements Serializable {
      */
     private Long version;
 
+    /**
+     * 产地
+     */
+    private String origin;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSkuSupplierMappingId() {
@@ -240,6 +245,14 @@ public class HubSkuSupplierMapping implements Serializable {
         this.version = version;
     }
 
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin == null ? null : origin.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -264,6 +277,7 @@ public class HubSkuSupplierMapping implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
+        sb.append(", origin=").append(origin);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -298,7 +312,8 @@ public class HubSkuSupplierMapping implements Serializable {
             && (this.getSupplierSkuId() == null ? other.getSupplierSkuId() == null : this.getSupplierSkuId().equals(other.getSupplierSkuId()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()));
     }
 
     @Override
@@ -323,6 +338,7 @@ public class HubSkuSupplierMapping implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getOrigin() == null) ? 0 : getOrigin().hashCode());
         return result;
     }
 }
