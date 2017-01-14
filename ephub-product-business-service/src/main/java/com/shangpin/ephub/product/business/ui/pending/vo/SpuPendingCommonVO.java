@@ -38,4 +38,6 @@ public class SpuPendingCommonVO implements Serializable{
     private String origin;//产地
 
     private String updateTime ;
+
+    private String memo;
 }
