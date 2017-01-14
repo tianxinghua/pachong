@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class HubSpuPendingCriteria {
     protected String orderByClause;
 
@@ -107,9 +109,14 @@ public class HubSpuPendingCriteria {
     }
 
     protected abstract static class GeneratedCriteria {
+    	
         protected List<Criterion> criteria;
+        
+        public void setCriteria(List<Criterion> criteria) {
+			this.criteria = criteria;
+		}
 
-        public GeneratedCriteria() {
+		public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -117,7 +124,7 @@ public class HubSpuPendingCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
