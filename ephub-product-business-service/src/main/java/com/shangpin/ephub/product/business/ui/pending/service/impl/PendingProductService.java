@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -38,20 +39,22 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.service.HubPendingSkuCheckService;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -68,17 +71,14 @@ import lombok.extern.slf4j.Slf4j;
 public class PendingProductService implements IPendingProductService{
 
     private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
-    private static String common = ";";
-    private static String symbol = "#";
     @Autowired
     private HubSpuPendingGateWay hubSpuPendingGateWay;
     @Autowired
     private HubSkuPendingGateWay hubSkuPendingGateWay;
     @Autowired
     private SupplierService supplierService;
-	
-	@Autowired
-	private HubPendingSkuCheckService hubCheckRuleService;
+    @Autowired
+	private HubCheckService hubCheckService;
     @Autowired
     private HubPendingSpuCheckService hubPendingSpuCheckService;
     @Autowired
@@ -195,9 +195,12 @@ public class PendingProductService implements IPendingProductService{
 
     }
     @Override
-    public String updatePendingProduct(PendingProductDto pendingProductDto){
-        try {
-        	String returnStr = "";
+    public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto){
+    	log.info("接收到的待校验的数据：{}",pendingProductDto);
+    	HubResponse<PendingUpdatedVo> response = new HubResponse<PendingUpdatedVo>();
+    	response.setCode("0"); //初始设置为成功
+    	PendingUpdatedVo updatedVo = null;
+    	try {
             if(null != pendingProductDto){
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
             	if(brandModelResult.isPassing()){
@@ -207,21 +210,60 @@ public class PendingProductService implements IPendingProductService{
     	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             			}else{
             				log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
-            				returnStr = pendingProductDto.getSpuPendingId()+symbol+spuResult.getResult();
+            				updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
             			}
             		}
             	}else{
             		log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
-            		returnStr = pendingProductDto.getSpuPendingId()+symbol+"货号校验不通过";
+            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
             	}
-            	//TODO 校验sku
+            	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
+                if(null != pengdingSkus && pengdingSkus.size()>0){
+                	if(null == updatedVo){
+                		updatedVo = new PendingUpdatedVo();
+                	}
+                	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
+                    for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
+                    	HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuPendingDto.getHubSkuSize());
+                        if(result.isPassing()){
+                        	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+                        	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+                        }else{
+                            log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
+                            response.setCode("1");
+                            PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
+                            skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
+                            skuUpdatedVo.setSkuResult(result.getResult());
+                            skus.add(skuUpdatedVo);
+                        }
+                        hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+                    }
+                    updatedVo.setSkus(skus); 
+                    response.setErrorMsg(updatedVo);
+                }
             }
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-            return returnStr;
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
-            return pendingProductDto.getSpuPendingId()+symbol+"服务器错误";
+            setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
         }
+    	log.info("返回的校验结果：{}",response); 
+    	return response;
+    }
+    
+    /**
+     * 设置校验失败结果
+     * @param response
+     * @param spuPengdingId
+     * @param errorMsg
+     */
+    private PendingUpdatedVo setErrorMsg(HubResponse<PendingUpdatedVo> response,Long spuPengdingId,String errorMsg){
+    	response.setCode("1");
+		PendingUpdatedVo updatedVo = new PendingUpdatedVo();
+		updatedVo.setSpuPendingId(spuPengdingId);
+		updatedVo.setSpuResult(errorMsg);
+		response.setErrorMsg(updatedVo);
+		return updatedVo;
     }
     /**
      * 能根据品牌货号从hub标准库中找到记录，则直接用标准库中的属性更新pending库
@@ -242,17 +284,23 @@ public class PendingProductService implements IPendingProductService{
     }
     
     @Override
-    public String batchUpdatePendingProduct(PendingProducts pendingProducts){
-    	StringBuffer result = new StringBuffer();
-        if(null != pendingProducts && null != pendingProducts.getProduts() && pendingProducts.getProduts().size()>0){
-            for(PendingProductDto pendingProductDto : pendingProducts.getProduts()){
-                String singleResult = updatePendingProduct(pendingProductDto);
-                if(!StringUtils.isEmpty(singleResult)){
-                	result.append(singleResult).append(common);
+    public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts){
+    	HubResponse<List<PendingUpdatedVo>> response = new HubResponse<>();
+    	response.setCode("0"); //初始设置为成功
+    	if(null != pendingProducts && null != pendingProducts.getProduts() && pendingProducts.getProduts().size()>0){
+        	List<PendingUpdatedVo> updatedVos = new ArrayList<PendingUpdatedVo>();
+        	for(PendingProductDto pendingProductDto : pendingProducts.getProduts()){
+            	HubResponse<PendingUpdatedVo> everyResponse = updatePendingProduct(pendingProductDto);
+                if("1".equals(everyResponse.getCode())){
+                	updatedVos.add(everyResponse.getErrorMsg());
                 }
             }
+        	if(updatedVos.size() > 0){
+        		response.setCode("1");
+        		response.setErrorMsg(updatedVos); 
+        	}
         }
-        return result.toString();
+        return response;
     }
     @Override
     public boolean updatePendingProductToUnableToProcess(String spuPendingId) throws Exception{
@@ -441,6 +489,9 @@ public class PendingProductService implements IPendingProductService{
         }
         if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
             criteria = criteria.andUpdateTimeLessThan(DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat));
+        }
+        if(CollectionUtils.isNotEmpty(pendingQuryDto.getInconformities())){
+        	
         }
         return hubSpuPendingCriteriaDto;
     }
