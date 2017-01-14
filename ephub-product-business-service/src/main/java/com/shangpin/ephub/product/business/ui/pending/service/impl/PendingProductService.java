@@ -107,7 +107,9 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
     	try {
-    		pendingQuryDto.setPageSize(100000); 
+    		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+            int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+            pendingQuryDto.setPageSize(total);
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
@@ -119,7 +121,9 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
     	try {
-    		pendingQuryDto.setPageSize(100000); 
+    		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+            int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+            pendingQuryDto.setPageSize(total);
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
