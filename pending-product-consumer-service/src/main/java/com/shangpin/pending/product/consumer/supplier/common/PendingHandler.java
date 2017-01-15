@@ -711,14 +711,16 @@ public class PendingHandler {
 
 			}
 
-		}
-		SpuPending spuPending = new SpuPending();
-		BeanUtils.copyProperties(spuPendingDto, spuPending);
-		if (null != hubSpuDto) {
-			spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
-		}
+			SpuPending spuPending = new SpuPending();
+			BeanUtils.copyProperties(spuPendingDto, spuPending);
+			if (null != hubSpuDto) {
+				spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
+			}
 
-		return spuPending;
+			return spuPending;
+		} else{
+			return null;
+		}
 
 	}
 
