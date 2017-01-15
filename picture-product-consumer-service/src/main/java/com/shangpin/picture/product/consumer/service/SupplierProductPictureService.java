@@ -65,6 +65,8 @@ public class SupplierProductPictureService {
 					updateDto.setSpPicUrl(spPicUrl);
 					updateDto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 					updateDto.setMemo("图片拉取成功");
+					Long supplierSpuId = picDto.getSupplierSpuId();
+					
 				} catch (Throwable e) {
 					log.error("系统拉取图片时发生异常",e);
 					e.printStackTrace();

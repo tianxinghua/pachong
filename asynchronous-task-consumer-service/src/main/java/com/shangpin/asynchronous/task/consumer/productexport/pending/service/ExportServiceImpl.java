@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
+import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -62,6 +63,9 @@ public class ExportServiceImpl {
 	@Autowired
 	private HubPendingSkuCheckGateWay hubPendingSkuClient;
 
+	private static final Integer PAGESIZE = 100;
+	
+	private static final Integer SKUPAGESIZE = 50;
 	/**
 	 * 待处理页面导出sku
 	 * @param taskNo 任务编号
@@ -80,27 +84,48 @@ public class ExportServiceImpl {
         }
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
-        	PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
-            if(null != products && null != products.getProduts() && products.getProduts().size()>0){
-                int j = 0;
-                for(PendingProductDto product : products.getProduts()){
-                    for(HubSkuPendingDto sku : product.getHubSkus()){
-                        try {
-                            j++;
-                            row = sheet.createRow(j);
-                            row.setHeight((short) 1500);
-                            insertProductSkuOfRow(row,product,sku,rowTemplate);
-                        } catch (Exception e) {
-                        	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
-                            j--;
+        	int totalSize = pendingQuryDto.getPageSize();//总记录数
+        	if(totalSize > 0){
+        		int pageCount = getPageCount(totalSize,SKUPAGESIZE);//页数
+            	for(int i =1; i <= pageCount; i++){
+            		pendingQuryDto.setPageIndex(i);
+            		pendingQuryDto.setPageSize(SKUPAGESIZE);
+            		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
+                    if(null != products && null != products.getProduts() && products.getProduts().size()>0){
+                        int j = 0;
+                        for(PendingProductDto product : products.getProduts()){
+                            for(HubSkuPendingDto sku : product.getHubSkus()){
+                                try {
+                                    j++;
+                                    row = sheet.createRow(j);
+                                    row.setHeight((short) 1500);
+                                    insertProductSkuOfRow(row,product,sku,rowTemplate);
+                                } catch (Exception e) {
+                                	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
+                                    j--;
+                                }
+                            }
                         }
                     }
-                }
-            }
-            saveAndUploadExcel(taskNo,products.getCreateUser(),wb);
+            	}
+        	}
+            saveAndUploadExcel(taskNo,pendingQuryDto.getCreateUser(),wb);
         } catch (Exception e) {
             log.error("待处理页导出sku异常："+e.getMessage(),e);
         }
+	}
+	/**
+	 * 获取总页数
+	 * @param totalSize 总计路数
+	 * @param pagesize 每页记录数
+	 * @return
+	 */
+	private Integer getPageCount(Integer totalSize, Integer pageSize) {
+		if(totalSize % pageSize == 0){
+			return totalSize/pageSize;
+		}else{
+			return (totalSize/pageSize) + 1;
+		}
 	}
 	/**
 	 * 待处理页面导出spu
@@ -120,23 +145,33 @@ public class ExportServiceImpl {
         }
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
-        	PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
-            if(null != products && null != products.getProduts() && products.getProduts().size()>0){
-                int j = 0;
-                for(PendingProductDto product : products.getProduts()){
-                    try {
-                        j++;
-                        row = sheet.createRow(j);  
-                        row.setHeight((short) 1500);
-                		sheet.setColumnWidth(0, (36*150));
-                        insertProductSpuOfRow(row,product,rowTemplate);
-                    } catch (Exception e) {
-                    	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
-                        j--;
+        	int totalSize = pendingQuryDto.getPageSize();//总记录数
+        	if(totalSize > 0){
+        		int pageCount = getPageCount(totalSize,PAGESIZE);//页数
+            	for(int i =1; i <= pageCount; i++){
+            		pendingQuryDto.setPageIndex(i);
+            		pendingQuryDto.setPageSize(PAGESIZE);
+            		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
+                    if(null != products && null != products.getProduts() && products.getProduts().size()>0){
+                        int j = 0;
+                        for(PendingProductDto product : products.getProduts()){
+                            try {
+                                j++;
+                                if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
+                                	row = sheet.createRow(j);  
+                                    row.setHeight((short) 1500);
+                            		sheet.setColumnWidth(0, (36*150));
+                                }
+                                insertProductSpuOfRow(pendingQuryDto.getIsExportPic(),row,product,rowTemplate);
+                            } catch (Exception e) {
+                            	 log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
+                                j--;
+                            }
+                        }
                     }
-                }
-            }
-            saveAndUploadExcel(taskNo,products.getCreateUser(),wb);
+            	}
+        	}
+            saveAndUploadExcel(taskNo,pendingQuryDto.getCreateUser(),wb);
         } catch (Exception e) {
             log.error("待处理页导出spu异常："+e.getMessage(),e);
         }
@@ -232,7 +267,7 @@ public class ExportServiceImpl {
      * @param rowTemplate 导入模板
      * @throws Exception
      */
-    private void insertProductSpuOfRow(HSSFRow row,PendingProductDto product,String[] rowTemplate) throws Exception{		
+    private void insertProductSpuOfRow(int isExportPic,HSSFRow row,PendingProductDto product,String[] rowTemplate) throws Exception{		
 		Class<?> cls = product.getClass();
 		StringBuffer buffer = new StringBuffer();  
 		Method fieldSetMet = null;
@@ -240,7 +275,9 @@ public class ExportServiceImpl {
 		for (int i=0;i<rowTemplate.length;i++) {
 			try {
 				if("spPicUrl".equals(rowTemplate[i])){
-					insertImageToExcel(product.getSpPicUrl(),row, (short)i); 
+					if(isExportPic == IsExportPic.YES.getIndex()){
+						insertImageToExcel(product.getSpPicUrl(),row, (short)i); 
+					}
 				}else if("seasonYear".equals(rowTemplate[i])){
 					setRowOfSeasonYear(row, product, cls, i);
 				}else if("seasonName".equals(rowTemplate[i])){

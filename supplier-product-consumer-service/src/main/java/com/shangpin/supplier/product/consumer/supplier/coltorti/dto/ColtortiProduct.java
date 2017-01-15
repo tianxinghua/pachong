@@ -45,6 +45,7 @@ public class ColtortiProduct implements Serializable{
 	private Map<String,String> group; //分类部分 group(ms5Group)->ms5_category(subgroup)
 	private Map<String,String> subgroup;
 	private Map<String,String> ms5Group;
+	@SuppressWarnings("unused")
 	private Map<String,String> category;
 	private Map<String,String> ms5Category;
 	private Map<String,Map<String,Object>> attributes;
