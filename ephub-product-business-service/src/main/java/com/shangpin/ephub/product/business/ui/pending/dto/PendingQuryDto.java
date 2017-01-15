@@ -39,7 +39,7 @@ public class PendingQuryDto {
     /**
      * 是否导出图片
      */
-    private int isExportPic;
+    private Integer isExportPic;
     /**
      * 导出第几页
      */
@@ -51,5 +51,5 @@ public class PendingQuryDto {
     /**
      * 图片状态
      */
-    private int picState;
+    private Integer picState;
 }
