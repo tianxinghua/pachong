@@ -12,7 +12,11 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public  class SpProductOrgInfoEntity implements Serializable{
-    /// <summary>
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7347139862695843329L;
+	/// <summary>
     /// 
     /// </summary>
     private long ProductOrgInfoId;

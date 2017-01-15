@@ -32,15 +32,12 @@ import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -50,7 +47,6 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月21日 下午4:06:52
  */
 @Service
-@Slf4j
 public class HubSelectedService {
 
 	@Autowired
@@ -146,6 +142,7 @@ public class HubSelectedService {
 		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 		
 	}
+	@SuppressWarnings("unused")
 	private String getCategoryName(String categoryNo) {
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
@@ -169,6 +166,7 @@ public class HubSelectedService {
 	}
 	@Autowired
 	    RestTemplate restTemplate;
+	@SuppressWarnings("unused")
 	private String getBrand(String brandNo) {
 		// TODO Auto-generated method stub
 

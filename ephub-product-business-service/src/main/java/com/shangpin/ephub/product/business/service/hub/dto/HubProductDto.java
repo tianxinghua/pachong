@@ -13,7 +13,11 @@ import java.util.List;
 @Setter
 public class HubProductDto implements Serializable {
 
-    private SpProductOrgInfoEntity ProductOrgInfo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5023771315363250619L;
+	private SpProductOrgInfoEntity ProductOrgInfo;
     private ApiProductOrgExtendDom ProductOrgInfoExtend;
 
     private List<ApiSkuOrgDom> SkuList;

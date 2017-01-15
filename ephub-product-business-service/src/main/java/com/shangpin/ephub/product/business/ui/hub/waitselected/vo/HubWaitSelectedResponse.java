@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.vo;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

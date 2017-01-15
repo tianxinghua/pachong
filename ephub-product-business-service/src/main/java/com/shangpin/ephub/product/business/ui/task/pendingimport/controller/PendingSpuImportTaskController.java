@@ -1,7 +1,5 @@
 package com.shangpin.ephub.product.business.ui.task.pendingimport.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;

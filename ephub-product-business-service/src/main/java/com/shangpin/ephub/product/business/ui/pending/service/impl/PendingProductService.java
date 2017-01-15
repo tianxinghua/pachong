@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
+import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
+import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
@@ -107,7 +109,9 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
     	try {
-    		pendingQuryDto.setPageSize(100000); 
+    		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+            int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+            pendingQuryDto.setPageSize(total);
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
@@ -119,7 +123,9 @@ public class PendingProductService implements IPendingProductService{
     @Override
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
     	try {
-    		pendingQuryDto.setPageSize(100000); 
+    		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+            int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+            pendingQuryDto.setPageSize(total);
         	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex());
         	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
@@ -473,38 +479,28 @@ public class PendingProductService implements IPendingProductService{
         }
     	List<Integer> inconformities = pendingQuryDto.getInconformities();
 		if(CollectionUtils.isNotEmpty(inconformities)){
-        	for (Integer integer : inconformities) {
-        		Criteria criteria = null;
-        		if (ProductState.SPU_GENDER_STATE.getIndex() == integer) {
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        	for (int i=0;i<inconformities.size();i++) {
+        		Criteria criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		if (ProductState.SPU_GENDER_STATE.getIndex() == inconformities.get(i)) {
         			criteria.andSpuGenderStateEqualTo(SpuGenderState.UNHANDLED.getIndex());
-        		} else if (ProductState.SPU_BRAND_STATE.getIndex() == integer) {
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		} else if (ProductState.SPU_BRAND_STATE.getIndex() == inconformities.get(i)) {
         			criteria.andSpuBrandStateEqualTo(SpuBrandState.UNHANDLED.getIndex());
-        		} else if(ProductState.CATGORY_STATE.getIndex() == integer){
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		} else if(ProductState.CATGORY_STATE.getIndex() == inconformities.get(i)){
         			criteria.andCatgoryStateNotEqualTo(CatgoryState.PERFECT_MATCHED.getIndex());
-        		} else if(ProductState.PICTURE_STATE.getIndex() == integer){
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
-        			criteria.andPicStateNotEqualTo(PicState.HANDLED.getIndex());
-        		} else if(ProductState.SPU_MODEL_STATE.getIndex() == integer){
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		} else if(ProductState.SPU_MODEL_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuModelStateEqualTo(SpuModelState.VERIFY_FAILED.getIndex());
-        		} else if(ProductState.MATERIAL_STATE.getIndex() == integer){
-        			//TODO 没有材质状态
-        		} else if(ProductState.SPU_COLOR_STATE.getIndex() == integer){
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		} else if(ProductState.MATERIAL_STATE.getIndex() == inconformities.get(i)){
+        			criteria.andMaterialStateEqualTo(MaterialState.UNHANDLED.getIndex());
+        		} else if(ProductState.SPU_COLOR_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuColorStateEqualTo(SpuColorState.UNHANDLED.getIndex());
-        		} else if(ProductState.ORIGIN_STATE.getIndex() == integer){
-        			//TODO 没有产地状态
-        		} else if(ProductState.SPU_SEASON_STATE.getIndex() == integer){
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		} else if(ProductState.ORIGIN_STATE.getIndex() == inconformities.get(i)){
+        			criteria.andOriginStateEqualTo(OriginState.UNHANDLED.getIndex());
+        		} else if(ProductState.SPU_SEASON_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuSeasonStateEqualTo(SpuSeasonState.UNHANDLED.getIndex());
-        		} else if(ProductState.SIZE_STATE.getIndex() == integer){
-        			criteria = getCriteria(pendingQuryDto, hubSpuPendingCriteriaDto);
+        		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		}
-        		if(null != criteria){
+        		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
 			}
@@ -521,7 +517,7 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSpuModel())){
-			criteria.andSpuModelEqualTo(pendingQuryDto.getSpuModel());
+			criteria.andSpuModelLike(pendingQuryDto.getSpuModel());
 		}
 		String hubCategoryNo = pendingQuryDto.getHubCategoryNo();
 		if(!StringUtils.isEmpty(hubCategoryNo)){
@@ -545,6 +541,19 @@ public class PendingProductService implements IPendingProductService{
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
 			criteria.andUpdateTimeLessThan(DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat));
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
+			criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getCategoryName())){
+			criteria.andHubCategoryNoLike("%"+pendingQuryDto.getCategoryName()+"%");
+		}
+		if(-1 != pendingQuryDto.getPicState()){
+			if(0 == pendingQuryDto.getPicState()){
+				criteria.andPicStateEqualTo(PicState.UNHANDLED.getIndex());
+			}else{
+				criteria.andPicStateNotEqualTo(PicState.UNHANDLED.getIndex());
+			}
 		}
 		return criteria;
 	}

@@ -20,6 +20,7 @@
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -83,7 +84,7 @@
     <if test="fields == null" >
       sku_supplier_mapping_id, sku_no, supplier_sku_no, barcode, supplier_id, new_spu_type, 
       supplier_select_state, supplier_no, is_new_supplier, create_time, create_user, update_time, 
-      update_user, supplier_spu_model, supplier_sku_id, memo, data_state, version
+      update_user, supplier_spu_model, supplier_sku_id, memo, data_state, version, origin
     </if>
     <if test="fields != null" >
       ${fields}
@@ -108,7 +109,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,supplier_select_state,supplier_no,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version
+    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,supplier_select_state,supplier_no,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version,origin
     from hub_sku_supplier_mapping
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </select>
@@ -131,15 +132,15 @@
       supplier_select_state, supplier_no, is_new_supplier, 
       create_time, create_user, update_time, 
       update_user, supplier_spu_model, supplier_sku_id, 
-      memo, data_state, version
-      )
+      memo, data_state, version, 
+      origin)
     values (#{skuSupplierMappingId,jdbcType=BIGINT}, #{skuNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, 
       #{barcode,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{newSpuType,jdbcType=TINYINT}, 
       #{supplierSelectState,jdbcType=TINYINT}, #{supplierNo,jdbcType=VARCHAR}, #{isNewSupplier,jdbcType=TINYINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSkuId,jdbcType=BIGINT}, 
-      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, 
+      #{origin,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
@@ -201,6 +202,9 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="origin != null" >
+        origin,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="skuSupplierMappingId != null" >
@@ -256,6 +260,9 @@
       </if>
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
+      </if>
+      <if test="origin != null" >
+        #{origin,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -322,6 +329,9 @@
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.origin != null" >
+        origin = #{record.origin,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -346,7 +356,8 @@
       supplier_sku_id = #{record.supplierSkuId,jdbcType=BIGINT},
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
-      version = #{record.version,jdbcType=BIGINT}
+      version = #{record.version,jdbcType=BIGINT},
+      origin = #{record.origin,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -405,6 +416,9 @@
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="origin != null" >
+        origin = #{origin,jdbcType=VARCHAR},
+      </if>
     </set>
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </update>
@@ -426,7 +440,8 @@
       supplier_sku_id = #{supplierSkuId,jdbcType=BIGINT},
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
-      version = #{version,jdbcType=BIGINT}
+      version = #{version,jdbcType=BIGINT},
+      origin = #{origin,jdbcType=VARCHAR}
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMappingCriteria" id="selectByExampleWithRowbounds" >

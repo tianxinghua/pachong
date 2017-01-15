@@ -117,7 +117,7 @@ public class HubSkuSupplierMappingCriteriaDto {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-
+        
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -1314,6 +1314,76 @@ public class HubSkuSupplierMappingCriteriaDto {
 
         public Criteria andVersionNotBetween(Long value1, Long value2) {
             addCriterion("version not between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIsNull() {
+            addCriterion("origin is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIsNotNull() {
+            addCriterion("origin is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginEqualTo(String value) {
+            addCriterion("origin =", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotEqualTo(String value) {
+            addCriterion("origin <>", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGreaterThan(String value) {
+            addCriterion("origin >", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGreaterThanOrEqualTo(String value) {
+            addCriterion("origin >=", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLessThan(String value) {
+            addCriterion("origin <", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLessThanOrEqualTo(String value) {
+            addCriterion("origin <=", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLike(String value) {
+            addCriterion("origin like", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotLike(String value) {
+            addCriterion("origin not like", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIn(List<String> values) {
+            addCriterion("origin in", values, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotIn(List<String> values) {
+            addCriterion("origin not in", values, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginBetween(String value1, String value2) {
+            addCriterion("origin between", value1, value2, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotBetween(String value1, String value2) {
+            addCriterion("origin not between", value1, value2, "origin");
             return (Criteria) this;
         }
     }

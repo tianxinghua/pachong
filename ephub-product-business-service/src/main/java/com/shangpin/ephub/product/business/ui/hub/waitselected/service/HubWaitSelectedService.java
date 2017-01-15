@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,6 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
-import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 
 import lombok.extern.slf4j.Slf4j;
 

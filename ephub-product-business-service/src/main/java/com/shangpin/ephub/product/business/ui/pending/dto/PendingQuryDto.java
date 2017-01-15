@@ -28,4 +28,28 @@ public class PendingQuryDto {
     private String statTime;
     private String endTime;
     private String createUser;
+    /**
+     * 品牌名称
+     */
+    private String brandName;
+    /**
+     * HUB品类
+     */
+    private String categoryName;
+    /**
+     * 是否导出图片
+     */
+    private int isExportPic;
+    /**
+     * 导出第几页
+     */
+    private String exportPageIndex;
+    /**
+     * 导出每页的商品数量
+     */
+    private String exportPageSize;
+    /**
+     * 图片状态
+     */
+    private int picState;
 }

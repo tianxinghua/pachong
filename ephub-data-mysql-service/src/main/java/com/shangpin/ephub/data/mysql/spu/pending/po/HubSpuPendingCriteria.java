@@ -109,14 +109,9 @@ public class HubSpuPendingCriteria {
     }
 
     protected abstract static class GeneratedCriteria {
-    	
         protected List<Criterion> criteria;
-        
-        public void setCriteria(List<Criterion> criteria) {
-			this.criteria = criteria;
-		}
 
-		public GeneratedCriteria() {
+        public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -2291,6 +2286,126 @@ public class HubSpuPendingCriteria {
 
         public Criteria andSpuColorStateNotBetween(Byte value1, Byte value2) {
             addCriterion("spu_color_state not between", value1, value2, "spuColorState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateIsNull() {
+            addCriterion("material_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateIsNotNull() {
+            addCriterion("material_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateEqualTo(Byte value) {
+            addCriterion("material_state =", value, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateNotEqualTo(Byte value) {
+            addCriterion("material_state <>", value, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateGreaterThan(Byte value) {
+            addCriterion("material_state >", value, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("material_state >=", value, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateLessThan(Byte value) {
+            addCriterion("material_state <", value, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateLessThanOrEqualTo(Byte value) {
+            addCriterion("material_state <=", value, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateIn(List<Byte> values) {
+            addCriterion("material_state in", values, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateNotIn(List<Byte> values) {
+            addCriterion("material_state not in", values, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateBetween(Byte value1, Byte value2) {
+            addCriterion("material_state between", value1, value2, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("material_state not between", value1, value2, "materialState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateIsNull() {
+            addCriterion("origin_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateIsNotNull() {
+            addCriterion("origin_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateEqualTo(Byte value) {
+            addCriterion("origin_state =", value, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateNotEqualTo(Byte value) {
+            addCriterion("origin_state <>", value, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateGreaterThan(Byte value) {
+            addCriterion("origin_state >", value, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("origin_state >=", value, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateLessThan(Byte value) {
+            addCriterion("origin_state <", value, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateLessThanOrEqualTo(Byte value) {
+            addCriterion("origin_state <=", value, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateIn(List<Byte> values) {
+            addCriterion("origin_state in", values, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateNotIn(List<Byte> values) {
+            addCriterion("origin_state not in", values, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateBetween(Byte value1, Byte value2) {
+            addCriterion("origin_state between", value1, value2, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("origin_state not between", value1, value2, "originState");
             return (Criteria) this;
         }
     }

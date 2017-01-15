@@ -403,7 +403,7 @@ class CreateSpuAndSkuTask implements Runnable{
         BeanUtils.copyProperties(spuModelVO,dto);
         boolean result= pengdingToHubGateWay.auditPending(dto);
         if(result){
-             this.updateHubSpuState(dto,SpuStatus.SPU_HANDLED.getIndex().byteValue());
+            this.updateHubSpuState(dto,SpuStatus.SPU_HANDLED.getIndex().byteValue());
         }else{
             this.updateHubSpuState(dto,SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
         }
@@ -414,7 +414,7 @@ class CreateSpuAndSkuTask implements Runnable{
         //获取所有的审核中的spupending数据
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andSpuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())
-        .andHubBrandNoEqualTo(spuModelDto.getBrandNo()).andSpuModelEqualTo(spuModelDto.getSpuModel());
+                .andHubBrandNoEqualTo(spuModelDto.getBrandNo()).andSpuModelEqualTo(spuModelDto.getSpuModel());
 
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(spuStatus);

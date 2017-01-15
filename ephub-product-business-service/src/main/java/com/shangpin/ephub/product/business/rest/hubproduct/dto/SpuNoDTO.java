@@ -12,7 +12,11 @@ import java.io.Serializable;
 @Setter
 public class SpuNoDTO implements Serializable {
 
-    private String spuNo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7242646103263845320L;
+	private String spuNo;
     /**
      * 如果多个 以"," 号分割 for example : 90001,90002
      */

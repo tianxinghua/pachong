@@ -1,7 +1,5 @@
 package com.shangpin.ephub.product.business.ui.task.spuimport.controller;
 
-import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;

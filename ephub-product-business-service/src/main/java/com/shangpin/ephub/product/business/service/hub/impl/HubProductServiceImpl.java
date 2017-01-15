@@ -1,6 +1,19 @@
 package com.shangpin.ephub.product.business.service.hub.impl;
 
-import com.esotericsoftware.minlog.Log;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
@@ -15,21 +28,14 @@ import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
-import com.shangpin.ephub.product.business.service.hub.dto.*;
+import com.shangpin.ephub.product.business.service.hub.dto.ApiProductOrgExtendDom;
+import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
+import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
+import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
+import com.shangpin.ephub.product.business.service.hub.dto.PlaceOrigin;
+import com.shangpin.ephub.product.business.service.hub.dto.SpProductOrgInfoEntity;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
 
 /**
  * Created by lizhongren on 2016/12/30.

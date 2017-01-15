@@ -72,25 +72,26 @@ public class HubCheckRuleService {
 		}
 		
 		//校验尺码
-		if(hubProduct.getSkuSize()!=null){
-			//String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
-			String size = null;
-			size = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
-			if(size!=null){
-				str.append(size) ;
-				result.setPassing(true);
+		if("尺码".equals(hubProduct.getSpecificationType())){
+			if(hubProduct.getSkuSize()!=null){
+				//String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
+				String size = null;
+				size = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
+				if(size!=null){
+					result.setSize(size);
+				}else{
+					str.append("尺码"+hubProduct.getSkuSize()+"不存在,") ;
+					result.setPassing(false);
+				}
 			}else{
-				str.append("尺码编号"+hubProduct.getSkuSize()+"不存在,") ;
+				str.append("尺码为空，");
 				result.setPassing(false);
 			}
-		}else{
-			str.append("尺码为空，");
-			result.setPassing(false);
 		}
 		//校验性别
 		if(hubProduct.getGender()!=null){
 			if(!hubCheckService.checkHubGender(hubProduct.getGender())){
-				str.append("性别"+hubProduct.getGender()+"不存在") ;
+				str.append("性别"+hubProduct.getGender()+"不存在,") ;
 				result.setPassing(false);
 			}	
 		}else{
@@ -117,23 +118,18 @@ public class HubCheckRuleService {
 			BrandModelDto.setHubBrandNo(hubProduct.getBrandNo());
 			BrandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
 			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
+			if(brandModelResult.isPassing()){
+				result.setSpuModel(brandModelResult.getBrandMode());
+			}else{
+				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败");
+				result.setPassing(false);
+			}
 		}else{
 			str.append("spuModel为空");
 			result.setPassing(false);
 		}
 			
-		if(brandModelResult.isPassing()){
-			if(result.isPassing()){
-				result.setResult(result.getResult()+";"+brandModelResult.getBrandMode());
-			}else{
-				result.setResult(str.toString());
-			}
-		}else{
-			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败,校验结果："+brandModelResult.getBrandMode());
-			result.setPassing(false);
-			result.setResult(str.toString());
-		}
-		
+		result.setResult(str.toString());
 		//校验产地
 		return result;
 	}

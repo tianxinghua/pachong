@@ -11,7 +11,11 @@ import java.io.Serializable;
 @Setter
 @Getter
 public   class ApiProductOrgExtendDom implements Serializable {
-    private  String Heigth;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2216591715913051494L;
+	private  String Heigth;
     /// <summary>
     /// 高-单位
     /// </summary>

@@ -12,7 +12,7 @@ import org.apache.ibatis.session.RowBounds;
  * <p>Description: </p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
- * @date 2016年12月22日 上午11:40:54
+ * @date 2017年1月14日 下午6:23:44
  */
 @Mapper
 public interface HubSpuPendingMapper {
@@ -39,8 +39,6 @@ public interface HubSpuPendingMapper {
     int updateByPrimaryKeySelective(HubSpuPending record);
 
     int updateByPrimaryKey(HubSpuPending record);
-
-
     // 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方
     int countDistinctBrandNoAndSpuModelByExample(HubSpuPendingCriteria example);
 }

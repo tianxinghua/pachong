@@ -25,6 +25,7 @@ public class HubProductDto implements Serializable {
 	private String season;
 	private String gender;
 	private String hubColor;
+	private String specificationType;
 	private String sizeType;
 	private String skuSize;
 	private String material;
