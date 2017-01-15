@@ -133,7 +133,7 @@ public class DataSverviceUtil {
                         supplierSizeMappingDtos.add(sizeMappingDto);
 
                     }
-                    shangpinRedis.setex(ConstantProperty.REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY,1000*ConstantProperty.REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_TIME,mapper.writeValueAsString(supplierValueMappingDtos));
+                    shangpinRedis.setex(ConstantProperty.REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY,1000*ConstantProperty.REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_TIME,mapper.writeValueAsString(supplierSizeMappingDtos));
                 }
             } catch (Exception e) {
                 log.error("handle size mapping error. reason :  "  + e.getMessage(),e);
@@ -158,6 +158,9 @@ public class DataSverviceUtil {
 
             Set<String> sizeSet  = getCommonSupplierSizeMapping().keySet();//sizeMap.keySet();
             for(String sizeKey:sizeSet){
+            	if(size==null){
+            		return null;
+            	}
                 if(size.indexOf(sizeKey)>=0){
                     size = size.replaceAll(sizeKey,sizeMap.get(sizeKey));
                 }

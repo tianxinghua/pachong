@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月12日 下午2:14:06
  *
  */
-@Component("biondioniHandler")
+@Component("biondiniHandler")
 @Slf4j
 public class BiondioniHandler implements ISupplierHandler {
 	

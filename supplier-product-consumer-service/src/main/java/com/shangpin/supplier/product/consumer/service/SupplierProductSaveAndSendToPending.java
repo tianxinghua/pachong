@@ -67,7 +67,7 @@ public class SupplierProductSaveAndSendToPending {
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}
 	}
@@ -90,7 +90,7 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}
 	}
@@ -114,7 +114,7 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}
 	}	
@@ -137,7 +137,7 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}
 		
@@ -161,7 +161,7 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}
 	}
@@ -179,8 +179,10 @@ public class SupplierProductSaveAndSendToPending {
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	/**
@@ -203,7 +205,7 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}
 	}
@@ -254,10 +256,12 @@ public class SupplierProductSaveAndSendToPending {
 			//发送图片
 			if(null != supplierPicture){
 				if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){
+					supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+					pictureProductService.sendSupplierPicture(supplierPicture, null); 
 					return true;
 				}
-				supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
-				pictureProductService.sendSupplierPicture(supplierPicture, null); 
+//				supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+//				pictureProductService.sendSupplierPicture(supplierPicture, null); 
 			}
 		} catch (Exception e) {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
@@ -286,7 +290,7 @@ public class SupplierProductSaveAndSendToPending {
 				}
 			}
 		}
-		if(currentSeason.containsKey(supplierSeason.trim().toUpperCase())){
+		if(currentSeason.containsKey(supplierSeason.trim().toLowerCase())){
 			return true;
 		}else{
 			return false;
