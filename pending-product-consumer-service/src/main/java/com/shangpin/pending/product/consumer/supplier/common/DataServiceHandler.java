@@ -740,6 +740,7 @@ public class DataServiceHandler {
 	}
 
 	public HubSupplierSpuDto getHubSupplierSpuBySupplierIdAndSupplierSpuNo(String supplierId,String supplierSpuNo){
+	    HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		 return null;
 	}
 
