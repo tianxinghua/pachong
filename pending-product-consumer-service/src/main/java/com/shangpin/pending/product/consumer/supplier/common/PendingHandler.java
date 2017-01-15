@@ -350,24 +350,36 @@ public class PendingHandler {
         Map<String, String> materialMap = this.getMaterialMap();
         Set<String> materialSet = materialMap.keySet();
         String supplierMaterial= "";
-        for(String material:materialSet){
-            if(StringUtils.isBlank(material)) continue;
-            if(StringUtils.isNotBlank(spu.getHubMaterial())){
+        if(StringUtils.isNotBlank(spu.getHubMaterial())){
+
+            for(String material:materialSet){
+                if(StringUtils.isBlank(material)) continue;
+
                 supplierMaterial = spu.getHubMaterial().toLowerCase();
                 if(supplierMaterial.indexOf(material.toLowerCase())>=0){
 
-                     spu.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(),
-                             materialMap.get(material)));
+                    spu.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(),
+                            materialMap.get(material)));
                 }
+
             }
-        }
-        hubSpuPending.setHubMaterial(spu.getHubMaterial());
-        //材质含有英文 返回false
-        if(RegexUtil.isLetter(hubSpuPending.getHubMaterial())){
-            return false;
+            hubSpuPending.setHubMaterial(spu.getHubMaterial());
+
+            if(RegexUtil.isLetter(hubSpuPending.getHubMaterial())){
+                hubSpuPending.setMaterialState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                //材质含有英文 返回false
+                return false;
+            }else{
+                return true;
+            }
+
         }else{
-            return true;
+            hubSpuPending.setMaterialState( PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+            //无材质　返回false
+            return false;
         }
+
+
     }
 
     public  boolean setSeasonMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
@@ -440,11 +452,14 @@ public class PendingHandler {
         if(StringUtils.isNotBlank(spu.getHubOrigin())){
             if(originMap.containsKey(spu.getHubOrigin().trim())){
                 hubSpuPending.setHubOrigin(originMap.get(spu.getHubOrigin().trim()));
+                hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
                 return true;
             }else{
+                hubSpuPending.setOriginState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
                 return false;
             }
         }else{
+            hubSpuPending.setOriginState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
             return  false;
         }
     }
