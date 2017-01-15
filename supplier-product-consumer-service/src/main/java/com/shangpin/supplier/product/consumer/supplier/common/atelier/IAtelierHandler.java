@@ -135,9 +135,10 @@ public abstract class IAtelierHandler{
 	 */
 	public boolean convertSku(String supplierId,Long supplierSpuId, AtelierSpu atelierSpu,AtelierSku atelierSku,AtelierPrice atelierPrice, HubSupplierSkuDto hubSku){
 		if(null != atelierSku){
-			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
+			hubSku.setSupplierSkuSize(atelierSku.getSize());
+			hubSku.setSupplierBarcode(atelierSku.getBarcode());
 			hubSku.setSupplierSkuNo(atelierSku.getSpuId()+"-"+atelierSku.getBarcode());
 			setProductPrice(hubSku,atelierSpu,atelierPrice);
 			hubSku.setStock(StringUtil.verifyStock(atelierSku.getStock()));

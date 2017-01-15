@@ -89,7 +89,13 @@ public class AtelierCommonHandler extends IAtelierHandler {
 		
 		if(null != atelierPrice){
 			sku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice1())));
-			sku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice2()))); 
+			String price2 = atelierPrice.getPrice2();
+			if("0".equals(price2)){
+				sku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice3())));
+			}else{
+				sku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(atelierPrice.getPrice2())));
+			}
+			 
 		}
 	}
 
