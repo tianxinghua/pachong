@@ -25,5 +25,15 @@ public class SpuModelDto implements Serializable {
 
     private String brandNo;
 
+	private String material ;
+
+	private String origin;//
+
+	private String color;
+
+	private String categoryNo;
+
+	private List<Long> spuPendingIds;
+
 	private List<SpuPendingPicDto> picVOs;
 }

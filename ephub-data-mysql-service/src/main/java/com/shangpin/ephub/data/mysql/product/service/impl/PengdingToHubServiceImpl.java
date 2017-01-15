@@ -143,7 +143,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 //插入新的SPU
                 HubSpu hubSpu = new HubSpu();
                 HubSpuPending spuPending = null;
-                spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
+                spuPending = this.getHubSpuPendingByIdAndSetValueByAuditVO(spuPendingIds.get(0),auditVO);
                 if(null!=spuPending){
                     //创建hubspu
                     createHubSpu(hubSpu, spuPending);
@@ -349,6 +349,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
         hubSpu.setCreateTime(date);
         hubSpu.setUpdateTime(date);
+        hubSpu.setCreateUser(ConstantProperty.DATA_CREATE_USER);
         hubSpu.setCategoryNo(spuPending.getHubCategoryNo());
         hubSpu.setGender(spuPending.getHubGender());
         hubSpu.setBrandNo(spuPending.getHubBrandNo());
@@ -373,22 +374,30 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     private List<Long> getSpuPendIdList(SpuModelDto spuModelVO) {
 
         //获取spuPendingID 列表 以便后续得到SKUPENDING
+        List<Long> spuPendingIds =  spuModelVO.getSpuPendingIds();
+        if(null!=spuPendingIds&&spuPendingIds.size()>0){
+            return  spuPendingIds;
+        } else{
 
-        HubSpuPendingCriteria criteriaForId = new HubSpuPendingCriteria();
-        criteriaForId.setFields("spu_pending_id");
-        HubSpuPendingCriteria.Criteria criterionForId = criteriaForId.createCriteria();
-        criterionForId.andSpuModelEqualTo(spuModelVO.getSpuModel()).andHubBrandNoEqualTo(spuModelVO.getBrandNo())
-                .andSpuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue()) ;
+            HubSpuPendingCriteria criteriaForId = new HubSpuPendingCriteria();
+            criteriaForId.setFields("spu_pending_id");
+            HubSpuPendingCriteria.Criteria criterionForId = criteriaForId.createCriteria();
+            criterionForId.andSpuModelEqualTo(spuModelVO.getSpuModel()).andHubBrandNoEqualTo(spuModelVO.getBrandNo())
+                    .andSpuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue()) ;
 //        .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue());
-        criteriaForId.setPageNo(1);
-        criteriaForId.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
-        List<HubSpuPending> hubSpuPendingIds = hubSpuPendingMapper.selectByExample(criteriaForId);
-        List<Long> pendIdList = new ArrayList<>();
-        for(HubSpuPending spuPending:hubSpuPendingIds){
-            log.info("spuPending.getSpuPendingId()= "+ spuPending.getSpuPendingId());
+            criteriaForId.setPageNo(1);
+            criteriaForId.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+            List<HubSpuPending> hubSpuPendingIds = hubSpuPendingMapper.selectByExample(criteriaForId);
+            List<Long> pendIdList = new ArrayList<>();
+            for(HubSpuPending spuPending:hubSpuPendingIds){
+                log.info("spuPending.getSpuPendingId()= "+ spuPending.getSpuPendingId());
 
-            pendIdList.add(spuPending.getSpuPendingId());
+                pendIdList.add(spuPending.getSpuPendingId());
+
+            }
+            return pendIdList;
         }
+
 //        //处理spuPending 数据
 //        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
 //        HubSpuPendingCriteria.Criteria criterion = criteria.createCriteria();
@@ -412,21 +421,33 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 //
 //
 //        hubSpuPendingMapper.updateByExampleSelective(hubSpuPending,criteria);
-        return pendIdList;
+
     }
 
 
-    private HubSpuPending getHubSpuPendingById(Long id){
-        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
-        criteria.createCriteria().andSpuPendingIdEqualTo(id);
-        List<HubSpuPending> hubSpuPendings = hubSpuPendingMapper.selectByExample(criteria);
-        if(null!=hubSpuPendings&&hubSpuPendings.size()>0){
-            return hubSpuPendings.get(0);
+    private HubSpuPending getHubSpuPendingByIdAndSetValueByAuditVO(Long id,SpuModelDto auditVO){
+//        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
+//        criteria.createCriteria().andSpuPendingIdEqualTo(id);
+//        List<HubSpuPending> hubSpuPendings = hubSpuPendingMapper.selectByExample(criteria);
+        HubSpuPending hubSpuPending = this.getHubSpuPendingById(id);
+        if(null!=hubSpuPending){
+            if(null!=auditVO&&null!=auditVO.getCategoryNo()){
+                hubSpuPending.setHubColor(auditVO.getColor());
+                hubSpuPending.setHubCategoryNo(auditVO.getCategoryNo());
+                hubSpuPending.setHubOrigin(auditVO.getOrigin());
+                hubSpuPending.setHubMaterial(auditVO.getMaterial());
+            }
+            return    hubSpuPending;
         }else{
             return null;
         }
 
     }
+
+    private HubSpuPending getHubSpuPendingById(Long id){
+       return  hubSpuPendingMapper.selectByPrimaryKey(id);
+    }
+
     //更改spupending的hubspu编号 以及spuState状态
     private void updatespuPending(List<Long> spuPendingIds,String spuNo){
         HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
