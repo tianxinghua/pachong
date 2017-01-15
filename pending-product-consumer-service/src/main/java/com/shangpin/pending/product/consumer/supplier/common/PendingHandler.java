@@ -358,7 +358,7 @@ public class PendingHandler {
 			}
 			hubSpuPending.setHubMaterial(spu.getHubMaterial());
 
-			if (RegexUtil.isLetter(hubSpuPending.getHubMaterial())) {
+			if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
 				hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				// 材质含有英文 返回false
 				return false;
