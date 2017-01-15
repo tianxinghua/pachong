@@ -1,13 +1,15 @@
 package com.shangpin.ephub.product.business.ui.pending.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Created by loyalty on 16/12/23.
  */
-@Setter
-@Getter
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SpuPendingAuditVO  extends SpuPendingVO{
 
     /**
@@ -28,8 +30,36 @@ public class SpuPendingAuditVO  extends SpuPendingVO{
 	 */
 	private boolean isMulti;
 
-
-
-
-
+	@JsonProperty("auditStatus")
+	public Integer getAuditStatus() {
+		return auditStatus;
+	}
+	@JsonProperty("auditStatus")
+	public void setAuditStatus(Integer auditStatus) {
+		this.auditStatus = auditStatus;
+	}
+	@JsonProperty("startDate")
+	public String getStartDate() {
+		return startDate;
+	}
+	@JsonProperty("startDate")
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	@JsonProperty("endDate")
+	public String getEndDate() {
+		return endDate;
+	}
+	@JsonProperty("endDate")
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	@JsonProperty("isMulti")
+	public boolean isMulti() {
+		return isMulti;
+	}
+	@JsonProperty("isMulti")
+	public void setMulti(boolean multi) {
+		isMulti = multi;
+	}
 }
