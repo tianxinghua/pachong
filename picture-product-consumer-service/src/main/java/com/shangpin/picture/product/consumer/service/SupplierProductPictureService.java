@@ -7,6 +7,9 @@ import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.picture.product.consumer.manager.SpuPicStatusServiceManager;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,12 +38,17 @@ public class SupplierProductPictureService {
 	private static final int TIMEOUT = 10*60*1000;
 	@Autowired
 	private SupplierProductPictureManager supplierProductPictureManager;
+
+	@Autowired
+	SpuPicStatusServiceManager spuPicStatusServiceManager;
 	/**
 	 * 处理供应商商品图片
 	 * @param picDtos
 	 */
 	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
+
+			Long supplierSpuId = null;
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
 				if(!supplierProductPictureManager.exists(picUrl)){
@@ -65,8 +73,8 @@ public class SupplierProductPictureService {
 					updateDto.setSpPicUrl(spPicUrl);
 					updateDto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 					updateDto.setMemo("图片拉取成功");
-					Long supplierSpuId = picDto.getSupplierSpuId();
-					
+					supplierSpuId = picDto.getSupplierSpuId();
+
 				} catch (Throwable e) {
 					log.error("系统拉取图片时发生异常",e);
 					e.printStackTrace();
@@ -85,6 +93,10 @@ public class SupplierProductPictureService {
 				}
 				updateDto.setUpdateTime(new Date());
 				supplierProductPictureManager.updateSelective(updateDto);
+			}
+
+			if(null!=supplierSpuId){
+				spuPicStatusServiceManager.updatePicStatus(supplierSpuId, CommonHandleState.HANDLED.getIndex().byteValue());
 			}
 		}
 	}
