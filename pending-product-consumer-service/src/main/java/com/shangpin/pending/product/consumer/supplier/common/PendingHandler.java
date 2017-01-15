@@ -358,7 +358,7 @@ public class PendingHandler {
 			}
 			hubSpuPending.setHubMaterial(spu.getHubMaterial());
 
-			if (RegexUtil.isLetter(hubSpuPending.getHubMaterial())) {
+			if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
 				hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				// 材质含有英文 返回false
 				return false;
@@ -711,14 +711,16 @@ public class PendingHandler {
 
 			}
 
-		}
-		SpuPending spuPending = new SpuPending();
-		BeanUtils.copyProperties(spuPendingDto, spuPending);
-		if (null != hubSpuDto) {
-			spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
-		}
+			SpuPending spuPending = new SpuPending();
+			BeanUtils.copyProperties(spuPendingDto, spuPending);
+			if (null != hubSpuDto) {
+				spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
+			}
 
-		return spuPending;
+			return spuPending;
+		} else{
+			return null;
+		}
 
 	}
 
