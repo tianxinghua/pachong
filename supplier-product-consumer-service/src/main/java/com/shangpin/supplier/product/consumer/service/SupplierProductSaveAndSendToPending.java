@@ -20,7 +20,6 @@ import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
@@ -48,7 +47,6 @@ public class SupplierProductSaveAndSendToPending {
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
 		
-	@SuppressWarnings("unused")
 	private void sendPending(String supplierName,String supplierNo,PendingProduct pendingProduct,Map<String,String> headers){
 		boolean result = supplierProductSendToPending.dispatchSupplierProduct(pendingProduct,headers);
 		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
