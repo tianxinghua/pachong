@@ -50,6 +50,7 @@ public class PendingImportTaskService {
 		Date date = new Date();
 		String systemFileName = ftpPath+sim.format(date)+task.getFileName().split(".")[1];
 		//第一步 ： 上传ftp
+		@SuppressWarnings("unused")
 		String flag = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
 		//第二步 ： 保存数据库
 		saveTask(task);

@@ -1,11 +1,9 @@
 package com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
 
 /**
  * Created by loyalty on 17/1/1.
@@ -14,7 +12,11 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SpSkuNoDto implements Serializable {
 
-    private String supplierNo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -725758204102710771L;
+	private String supplierNo;
     private String supplierId;
     private String skuNo;
     private String supplierSkuNo;//供货商SKUNO

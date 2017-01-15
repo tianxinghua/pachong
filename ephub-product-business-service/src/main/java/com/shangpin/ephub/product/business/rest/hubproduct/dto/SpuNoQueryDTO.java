@@ -11,5 +11,9 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class SpuNoQueryDTO implements Serializable {
-    private int total;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4494611202225009762L;
+	private int total;
 }

@@ -1,9 +1,6 @@
 package com.shangpin.ephub.product.business.service.hub;
 
-import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
-
-import java.util.List;
 
 /**
  * Created by lizhongren on 2016/12/30.

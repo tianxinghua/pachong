@@ -11,6 +11,10 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class PlaceOrigin implements Serializable {
-    private int PlaceOriginId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8489360827204734780L;
+	private int PlaceOriginId;
     private String PlaceOriginValue;
 }

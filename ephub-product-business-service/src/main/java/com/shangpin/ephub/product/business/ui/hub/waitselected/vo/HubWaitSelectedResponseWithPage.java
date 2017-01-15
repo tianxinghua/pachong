@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

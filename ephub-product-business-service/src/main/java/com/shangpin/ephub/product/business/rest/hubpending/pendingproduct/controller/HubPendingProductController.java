@@ -1,29 +1,30 @@
 package com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.controller;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.*;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.product.business.rest.hubpending.sku.service.HubPendingSkuCheckService;
-import com.shangpin.ephub.response.HubResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
+import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *

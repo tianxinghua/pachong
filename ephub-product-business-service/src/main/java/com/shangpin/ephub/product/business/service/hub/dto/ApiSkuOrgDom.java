@@ -13,7 +13,12 @@ import java.util.List;
 @Getter
 @Setter
 public class ApiSkuOrgDom implements Serializable {
-    /// <summary>
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -82933350872325655L;
+
+	/// <summary>
     /// SPU序号，SCM系统自增序号
     /// </summary>
     private long ProductOrgInfoId;
