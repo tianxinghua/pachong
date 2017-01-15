@@ -543,8 +543,8 @@ public class DataServiceHandler {
 	public void savePendingSpu(HubSpuPendingDto spuPending) throws Exception {
 		// 替换材质中的html 代码
 		if (StringUtils.isNotBlank(spuPending.getHubMaterial())) {
-			spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("</br>", "").replaceAll("<html>", "")
-					.replaceAll("</html>", ""));
+			spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("<br />", "\r\n").replaceAll("<html>", "")
+					.replaceAll("</html>", "").replaceAll("<br>","\r\n"));
 		}
 		if (null != spuPending.getIsCurrentSeason()) {
 			if (SeasonType.SEASON_NOT_CURRENT.getIndex() == spuPending.getIsCurrentSeason().intValue()) {
