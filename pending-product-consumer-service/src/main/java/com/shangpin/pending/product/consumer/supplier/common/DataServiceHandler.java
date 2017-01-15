@@ -10,6 +10,8 @@ import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.*;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +66,6 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
@@ -140,6 +137,9 @@ public class DataServiceHandler {
 
 	@Autowired
 	private HubSpuPendingPicGateWay pendingPicGateWay;
+
+	@Autowired
+	private HubSupplierSpuGateWay supplierSpuGateWay;
 
 	/**
 	 * 查询所有有效的供应商品牌
@@ -737,6 +737,10 @@ public class DataServiceHandler {
 		} else {
 			return "";
 		}
+	}
+
+	public HubSupplierSpuDto getHubSupplierSpuBySupplierIdAndSupplierSpuNo(String supplierId,String supplierSpuNo){
+		 return null;
 	}
 
 }

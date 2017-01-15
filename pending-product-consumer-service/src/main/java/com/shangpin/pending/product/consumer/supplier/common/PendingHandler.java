@@ -719,6 +719,7 @@ public class PendingHandler {
 
 			return spuPending;
 		} else{
+			//TODO search  supplier and insert spupending
 			return null;
 		}
 
