@@ -85,11 +85,14 @@ public class ExportServiceImpl {
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
         	int totalSize = pendingQuryDto.getPageSize();//总记录数
+        	log.info("sku导出总记录数："+totalSize); 
         	if(totalSize > 0){
         		int pageCount = getPageCount(totalSize,SKUPAGESIZE);//页数
+        		log.info("sku导出总页数："+pageCount); 
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(SKUPAGESIZE);
+            		log.info("导出sku******************查库参数：{}",pendingQuryDto); 
             		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
                     if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                         int j = 0;
@@ -146,11 +149,14 @@ public class ExportServiceImpl {
         try {
         	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
         	int totalSize = pendingQuryDto.getPageSize();//总记录数
+        	log.info("spu导出总记录数："+totalSize); 
         	if(totalSize > 0){
         		int pageCount = getPageCount(totalSize,PAGESIZE);//页数
+        		log.info("spu导出总页数："+pageCount); 
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(PAGESIZE);
+            		log.info("******************查库参数：{}",pendingQuryDto); 
             		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
                     if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                         int j = 0;
@@ -188,8 +194,11 @@ public class ExportServiceImpl {
 			file = new File(ftpProperties.getLocalResultPath()+createUser+"_" + taskNo+".xls");
 			fout = new FileOutputStream(file);  
 	        wb.write(fout); 
+	        log.info("生成文件成功！");
 	        FTPClientUtil.uploadToExportPath(file, file.getName());
+	        log.info("上传成功！");
 	        updateHubSpuImportTask(taskNo); 
+	        log.info("更新任务状态成功！"); 
 		} catch (Exception e) {
 			log.error("保存并上传ftp时异常："+e.getMessage(),e); 
 		}finally{

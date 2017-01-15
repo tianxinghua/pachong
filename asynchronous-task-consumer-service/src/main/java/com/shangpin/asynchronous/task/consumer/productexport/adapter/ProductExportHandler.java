@@ -36,6 +36,7 @@ public class ProductExportHandler {
 	public void productExportTask(ProductImportTask message, Map<String, Object> headers) {
 		if(!StringUtils.isEmpty(message.getData())){
 			PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
+			log.info("接收到导出任务："+message.getData());
 			if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
 				exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
 			}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
