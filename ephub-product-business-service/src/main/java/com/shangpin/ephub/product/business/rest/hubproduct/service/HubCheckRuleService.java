@@ -110,7 +110,7 @@ public class HubCheckRuleService {
 		}
 		
 		if(hubProduct.getMaterial()!=null){
-			if(RegexUtil.isLetter(hubProduct.getMaterial())){
+			if(!RegexUtil.excludeLetter(hubProduct.getMaterial())){
 				result.setPassing(false);
 				str.append("材质中含有英文字符："+hubProduct.getMaterial()) ;
 	        }
