@@ -107,15 +107,20 @@ public class HubProductImportService {
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
 			if (hubProductCheckResult.isPassing() == true) {
 				//sizeId,sizeType:sizeValue;spuModel
-				Log.info("hub校验通过：");
-				String size = null;
+				
+				String sizeArr = null;
 				String spuModel = hubProductCheckResult.getSpuModel();
+				String size = null;
+				String sizeId = null;
 				if("尺码".equals(hubProductDto.getSpecificationType())){
-					size = hubProductCheckResult.getSize();
+					sizeArr = hubProductCheckResult.getSize();
+					size = sizeArr.split(",")[1];
+					sizeId = sizeArr.split(",")[0];
 				}
 				if(!spuModel.equals(hubProductDto.getSpuModel())){
 					map.put("spuNewModel", spuModel);	
 				}
+				Log.info("hub校验通过，返回的尺码和货号："+sizeArr+"  "+spuModel);
 				hubProductDto.setSpuModel(spuModel);
 				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(hubProductDto);
 				// 查询hubSpu是否存在
@@ -124,35 +129,47 @@ public class HubProductImportService {
 				if (hub != null && hub.size() > 0) {
 					hubSpuNo = hub.get(0).getSpuNo();
 					hubSpuDto.setSpuId(hub.get(0).getSpuId());
+					hubSpuDto.setUpdateTime(new Date());
 					hubSpuGateWay.updateByPrimaryKeySelective(hubSpuDto);
 				} else {
 					hubSpuDto.setCreateTime(new Date());
+					hubSpuDto.setUpdateTime(new Date());
 					hubSpuDto.setDataState((byte) 1);
 					hubSpuDto.setSpuSelectState((byte) 0);
 					// 调用接口生成spuNo
 					hubSpuNo = hubSpuGateWay.getSpuNo();
 					hubSpuDto.setSpuNo(hubSpuNo);
+					hubSpuDto.setInfoFrom((byte)1);
 					Log.info(spuModel+"生成hubSpu:"+hubSpuNo);
 					hubSpuGateWay.insert(hubSpuDto);
 				}
-
+				
 				List<HubSkuDto> hubSkuList = findHubSkuDto(hubSpuNo,size);
 				if (hubSkuList != null && hubSkuList.size() > 0) {
 					HubSkuWithCriteriaDto HubSkuWithCriteriaDto = new HubSkuWithCriteriaDto();
 					HubSkuCriteriaDto HubSkuCriteriaDto = new HubSkuCriteriaDto();
-					HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
+					if(size!=null&&"尺码".equals(hubProductDto.getSpecificationType())){
+						HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(size);	
+					}else if("尺码".equals(hubProductDto.getSpecificationType())&&size==null){
+						map.put("processInfo", "hub商品已存在,");
+						continue;
+					}else{
+						HubSkuCriteriaDto.createCriteria().andSpuNoEqualTo(hubSpuNo);
+					}
+					
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(hubProductDto.getSkuSize());
 					hubSku.setUpdateTime(new Date());
 					HubSkuWithCriteriaDto.setHubSku(hubSku);
 					HubSkuWithCriteriaDto.setCriteria(HubSkuCriteriaDto);
 					hubSkuGateWay.updateByCriteriaSelective(HubSkuWithCriteriaDto);
 				} else {
 					HubSkuDto hubSku = new HubSkuDto();
-					hubSku.setSkuSize(hubProductDto.getSkuSize());
+					hubSku.setSkuSize(size);
 					hubSku.setSpuNo(hubSpuNo);
 					hubSku.setCreateTime(new Date());
+					hubSku.setUpdateTime(new Date());
 					hubSku.setDataState((byte) 1);
+					hubSku.setSkuSizeId(sizeId);
 					// 生成skuNo调用接口
 					String skuNo = hubSkuGateWay.createSkuNo(hubSpuNo);
 					Log.info(hubProductDto.getSpuModel()+"生成hubSku:"+skuNo);
@@ -177,7 +194,12 @@ public class HubProductImportService {
 
 	private List<HubSkuDto> findHubSkuDto(String hubSpuNo, String skuSize) {
 		HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
-		criteria.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(skuSize);
+		if(skuSize!=null){
+			criteria.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(skuSize);	
+		}else{
+			criteria.createCriteria().andSpuNoEqualTo(hubSpuNo);
+		}
+		
 		return hubSkuGateWay.selectByCriteria(criteria);
 	}
 

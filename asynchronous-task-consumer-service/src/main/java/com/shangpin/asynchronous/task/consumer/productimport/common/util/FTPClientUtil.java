@@ -97,7 +97,6 @@ public class FTPClientUtil {
 	}
 	public static InputStream downFile(String remotePath) throws Exception{
 		
-		FTPClient ftp = null;
 		try{
 			ftp = new FTPClient();
 			int reply;
