@@ -38,6 +38,7 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -63,9 +64,9 @@ public class ExportServiceImpl {
 	@Autowired
 	private HubPendingSkuCheckGateWay hubPendingSkuClient;
 
-	private static final Integer PAGESIZE = 100;
+	private static final Integer PAGESIZE = 50;
 	
-	private static final Integer SKUPAGESIZE = 50;
+	private static final Integer SKUPAGESIZE = 20;
 	/**
 	 * 待处理页面导出sku
 	 * @param taskNo 任务编号
@@ -92,7 +93,7 @@ public class ExportServiceImpl {
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(SKUPAGESIZE);
-            		log.info("导出sku******************查库参数：{}",pendingQuryDto); 
+            		log.info("导出sku******************查库参数：",JsonUtil.serialize(pendingQuryDto)); 
             		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
                     if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                         int j = 0;
@@ -156,7 +157,7 @@ public class ExportServiceImpl {
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(PAGESIZE);
-            		log.info("******************查库参数：{}",pendingQuryDto); 
+            		log.info("******************查库参数：",JsonUtil.serialize(pendingQuryDto)); 
             		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
                     if(null != products && null != products.getProduts() && products.getProduts().size()>0){
                         int j = 0;
@@ -194,7 +195,7 @@ public class ExportServiceImpl {
 			file = new File(ftpProperties.getLocalResultPath()+createUser+"_" + taskNo+".xls");
 			fout = new FileOutputStream(file);  
 	        wb.write(fout); 
-	        log.info("生成文件成功！");
+	        log.info(file.getName()+" 生成文件成功！");
 	        FTPClientUtil.uploadToExportPath(file, file.getName());
 	        log.info("上传成功！");
 	        updateHubSpuImportTask(taskNo); 
