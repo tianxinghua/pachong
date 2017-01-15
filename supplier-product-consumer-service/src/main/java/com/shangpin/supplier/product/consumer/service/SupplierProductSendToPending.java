@@ -7,7 +7,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.supplier.product.consumer.conf.stream.source.sender.PendingProductStreamSender;
 
