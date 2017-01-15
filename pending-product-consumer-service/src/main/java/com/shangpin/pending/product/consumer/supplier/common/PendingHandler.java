@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
@@ -719,8 +720,12 @@ public class PendingHandler {
 
 			return spuPending;
 		} else{
-			//TODO search  supplier and insert spupending
-			return null;
+			//  if can't find spupending ,  search  supplier and insert spupending
+			HubSupplierSpuDto supplierSpuDto = dataServiceHandler.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(spu.getSupplierId(), spu.getSupplierSpuNo());
+			PendingSpu tmp = new PendingSpu();
+			BeanUtils.copyProperties(supplierSpuDto,tmp);
+			SpuPending newSpuPending  = addNewSpu(tmp,headers);
+			return newSpuPending;
 		}
 
 	}
