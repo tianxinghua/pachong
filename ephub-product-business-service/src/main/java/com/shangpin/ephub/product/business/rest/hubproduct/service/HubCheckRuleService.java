@@ -71,6 +71,16 @@ public class HubCheckRuleService {
 			result.setPassing(false);
 		}
 		
+		//校验季节
+		if(hubProduct.getSeason()!=null){
+			if(!hubCheckService.checkHubSeason(hubProduct.getMarketTime()+"_"+hubProduct.getSeason())){
+				str.append("季节编号"+hubProduct.getMarketTime()+"_"+hubProduct.getSeason()+"不存在,") ;
+				result.setPassing(false);
+			}
+		}else{
+			str.append("季节为空，");
+			result.setPassing(false);
+		}
 		//校验尺码
 		if("尺码".equals(hubProduct.getSpecificationType())){
 			if(hubProduct.getSkuSize()!=null){
