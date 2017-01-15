@@ -250,7 +250,7 @@ public class TaskImportService {
 
 	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
 		InputStream in = FTPClientUtil.downFile(task.getData());
-		FTPClientUtil.closeFtp();
+//		FTPClientUtil.closeFtp();
 		if (in == null) {
 			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "从ftp下载失败数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "从ftp下载失败", null);

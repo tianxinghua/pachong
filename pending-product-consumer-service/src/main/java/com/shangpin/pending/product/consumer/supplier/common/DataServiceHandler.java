@@ -659,7 +659,7 @@ public class DataServiceHandler {
         HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
         criteria.setOrderByClause("sort_val");
         criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
-        criteria.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_ORIGIN.getIndex().byteValue());
+        criteria.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SIZE.getIndex().byteValue());
         return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
     }
 

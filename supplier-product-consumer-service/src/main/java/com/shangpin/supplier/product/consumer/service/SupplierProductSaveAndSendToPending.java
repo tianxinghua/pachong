@@ -7,7 +7,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
@@ -34,15 +38,15 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SupplierProductSaveAndSendToPending {
-
+	private static Map<String,String> currentSeason =  null;
 	@Autowired
 	private SupplierProductMysqlService supplierProductMysqlService;
-	@Autowired
-	private PendingProductStreamSender pendingProductStreamSender;
 	@Autowired
 	private PictureProductService pictureProductService;
 	@Autowired
 	SupplierProductSendToPending supplierProductSendToPending;
+	@Autowired
+	private HubSeasonDicGateWay seasonClient;
 		
 	@SuppressWarnings("unused")
 	private void sendPending(String supplierName,String supplierNo,PendingProduct pendingProduct,Map<String,String> headers){
@@ -64,8 +68,10 @@ public class SupplierProductSaveAndSendToPending {
 	
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers);
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
 	}
 	/**
 	 * spinnaker系列供应商保存数据以及发送消息给Pending
@@ -85,8 +91,10 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers);
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
 	}
 	
 	/**
@@ -107,8 +115,10 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers); 
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
 	}	
 	/**
 	 * geb供应商保存数据以及发送消息给Pending
@@ -128,8 +138,11 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers);
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
+		
 	}
 	/**
 	 * stefania供应商保存数据以及发送消息给Pending
@@ -149,8 +162,10 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers);
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
 	}
 	/**
 	 * tony供应商保存数据以及发送消息给Pending
@@ -165,8 +180,10 @@ public class SupplierProductSaveAndSendToPending {
 		
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers);
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
 	}
 	/**
 	 * coltorti供应商保存数据以及发送消息给Pending
@@ -187,8 +204,10 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		sendPending(supplierName,supplierNo,pendingProduct,headers);
+		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		if(!flag){
+			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}
 	}
 	
 	
@@ -203,7 +222,7 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param headers 消息头
 	 * @param supplierPicture 图片的消息体
 	 */
-	public void supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
+	public boolean supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
@@ -236,16 +255,45 @@ public class SupplierProductSaveAndSendToPending {
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 			//发送图片
 			if(null != supplierPicture){
+				if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){
+					return true;
+				}
 				supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
 				pictureProductService.sendSupplierPicture(supplierPicture, null); 
 			}
 		} catch (Exception e) {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
 		}
-		
+		return false;
 	}
 	
-	
+	/**
+	 * 是否当前季
+	 * @param supplierId
+	 * @param supplierSeason
+	 * @return
+	 */
+	public boolean isCurrentSeason(String supplierId,String supplierSeason){
+		if(StringUtils.isEmpty(supplierSeason)){
+			return false;
+		}
+		if(null == currentSeason){
+			currentSeason = new HashMap<String,String>();
+			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
+			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andMemoEqualTo("1");
+			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
+			if(null != dics && dics.size() > 0){
+				for(HubSeasonDicDto dic : dics){
+					currentSeason.put(dic.getSupplierSeason().trim().toLowerCase(), null);
+				}
+			}
+		}
+		if(currentSeason.containsKey(supplierSeason.trim().toUpperCase())){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	/**
 	 * 赋值Spu并返回
 	 * @param supplierId
