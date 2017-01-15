@@ -246,12 +246,12 @@ public class PendingHandler {
 		HubSpuDto hubSpuDto = null;
 
 		BeanUtils.copyProperties(spu, hubSpuPending);
-		boolean brandmapping = true;
+		boolean brandmapping = false;
 		// 首先映射品牌 ，否则无法查询SPU
 		brandmapping = setBrandMapping(spu, hubSpuPending);
 
 		// 验证货号
-		boolean spuModelJudge = true;
+		boolean spuModelJudge = false;
 		if (brandmapping) {
 			spuModelJudge = setBrandModel(spu, hubSpuPending);
 		}
@@ -363,6 +363,7 @@ public class PendingHandler {
 				// 材质含有英文 返回false
 				return false;
 			} else {
+				hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 				return true;
 			}
 
@@ -431,7 +432,7 @@ public class PendingHandler {
 	public boolean setBrandMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
 		boolean result = true;
 		Map<String, String> brandMap = this.getBrandMap();
-		if (!StringUtils.isEmpty(spu.getHubBrandNo())) {
+		if (StringUtils.isNotBlank(spu.getHubBrandNo())) {
 
 			if (brandMap.containsKey(spu.getHubBrandNo().trim().toUpperCase())) {
 				// 包含时转化赋值
@@ -444,6 +445,9 @@ public class PendingHandler {
 				dataServiceHandler.saveBrand(spu.getSupplierId(), spu.getHubBrandNo().trim());
 
 			}
+		} else{
+			result = false;
+			hubSpuPending.setSpuBrandState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 		}
 		return result;
 	}
@@ -451,11 +455,13 @@ public class PendingHandler {
 	public boolean setOriginMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
 		Map<String, String> originMap = this.getOriginMap();
 		if (StringUtils.isNotBlank(spu.getHubOrigin())) {
+
 			if (originMap.containsKey(spu.getHubOrigin().trim())) {
 				hubSpuPending.setHubOrigin(originMap.get(spu.getHubOrigin().trim()));
 				hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 				return true;
 			} else {
+				hubSpuPending.setHubOrigin(spu.getHubOrigin().trim());
 				hubSpuPending.setOriginState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				return false;
 			}
@@ -509,6 +515,10 @@ public class PendingHandler {
 					hubSpuPending.setHubCategoryNo(categoryAndStatus.substring(0, categoryAndStatus.indexOf("_")));
 					mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_") + 1));
 					hubSpuPending.setCatgoryState(mapStatus.byteValue());
+					if(hubSpuPending.getCatgoryState().intValue()!=PropertyStatus.MESSAGE_HANDLED.getIndex()){
+						//未达到4级品类
+						result = false;
+					}
 
 				} else {
 					result = false;
@@ -547,13 +557,18 @@ public class PendingHandler {
 					hubSpuPending.setSpuModel(verify.getBrandMode());
 					hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 				} else {
+					result = false;
 					hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				}
 
 			} else {
+				result = false;
 				hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 			}
 
+		}else{
+			result = false;
+			hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 		}
 
 		return result;
