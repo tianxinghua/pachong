@@ -302,7 +302,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void divoStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+ 		atelierCommonHandler.handleOriginalProduct(message, headers);	
 	}
 	
 	
