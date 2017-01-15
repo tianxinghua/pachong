@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 @Slf4j
-public abstract class IAtelierHandler implements ISupplierHandler {
+public abstract class IAtelierHandler{
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -85,7 +85,6 @@ public abstract class IAtelierHandler implements ISupplierHandler {
 	 * @param message
 	 * @param headers
 	 */
-	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers){
 		try {
 			if(!StringUtils.isEmpty(message.getData())){

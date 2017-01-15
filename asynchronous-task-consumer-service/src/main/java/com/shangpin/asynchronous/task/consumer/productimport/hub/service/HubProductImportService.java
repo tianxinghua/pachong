@@ -228,7 +228,9 @@ public class HubProductImportService {
 		for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
 			XSSFRow xssfRow = xssfSheet.getRow(rowNum);
 			HubProductDto product = convertSpuDTO(xssfRow);
-			listHubProduct.add(product);
+			if(product!=null){
+				listHubProduct.add(product);	
+			}
 		}
 		return listHubProduct;
 
@@ -257,20 +259,4 @@ public class HubProductImportService {
 		}
 		return item;
 	}
-
-	private static boolean checkFileTemplet(XSSFRow xssfRow) {
-
-		boolean flag = true;
-		for (int i = 0; i < hubKeyTemplate.length; i++) {
-			if (xssfRow.getCell(i) != null) {
-				String fieldName = xssfRow.getCell(i).toString();
-				if (!hubKeyTemplate[i].equals(fieldName)) {
-					flag = false;
-					break;
-				}
-			}
-		}
-		return flag;
-	}
-
 }
