@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SupplierProductSaveAndSendToPending {
-	private Map<String,String> currentSeason =  null;
+	
 	@Autowired
 	private SupplierProductMysqlService supplierProductMysqlService;
 	@Autowired
@@ -289,8 +289,11 @@ public class SupplierProductSaveAndSendToPending {
 		if(StringUtils.isEmpty(supplierSeason)){
 			return false;
 		}
+		Map<String,String> currentSeason =  null;
 		if(null == currentSeason){
 			currentSeason = new HashMap<String,String>();
+		}
+//		if(!currentSeason.containsKey(supplierId)){
 			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
 			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
 			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
@@ -299,7 +302,7 @@ public class SupplierProductSaveAndSendToPending {
 					currentSeason.put(dic.getSupplierSeason().trim().toLowerCase(), null);
 				}
 			}
-		}
+//		}
 		if(currentSeason.containsKey(supplierSeason.trim().toLowerCase())){
 			return true;
 		}else{
