@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
@@ -221,7 +220,7 @@ public class PendingHandler {
 		String key = MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY;
 		String value = null;
 		if (headers.containsKey(key)) {
-			value = headers.get(key).toString();
+			value =  headers.get(key).toString();
 			ObjectMapper om = new ObjectMapper();
 			PendingHeaderSpu spu = om.readValue(value, PendingHeaderSpu.class);
 			if (null != spu) {
