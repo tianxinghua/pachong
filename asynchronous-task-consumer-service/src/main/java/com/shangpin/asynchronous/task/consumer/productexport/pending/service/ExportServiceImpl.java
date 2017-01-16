@@ -103,6 +103,7 @@ public class ExportServiceImpl {
             	int j = 0;
             	for(PendingProducts products : lists){
                     for(PendingProductDto product : products.getProduts()){
+                    	log.info("该spu下共有sku数是："+product.getHubSkus().size()); 
                         for(HubSkuPendingDto sku : product.getHubSkus()){
                             try {
                                 j++;
