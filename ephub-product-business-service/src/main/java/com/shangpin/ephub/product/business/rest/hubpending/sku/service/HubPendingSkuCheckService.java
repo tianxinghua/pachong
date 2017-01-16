@@ -30,7 +30,9 @@ public class HubPendingSkuCheckService {
 		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 //		String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
 		if("尺码".equals(hubProduct.getSpecificationType())){
+			log.info("检验尺码参数：{}",hubProduct);
 			String flag = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
+		
 			if(flag!=null){
 				result.setPassing(true);
 				result.setResult(flag);
