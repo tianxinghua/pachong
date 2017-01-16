@@ -50,7 +50,9 @@ public class PendingAuditController {
 	public HubResponse<?> querySpuPending(@RequestBody SpuPendingAuditVO auditVO){
 
 		try {
-			pendingService.audit(auditVO);
+			if(!pendingService.audit(auditVO)){
+				return HubResponse.errorResp(auditVO.getMemo());
+			}
 		} catch (Exception e) {
 //			e.printStackTrace();
 			log.error("待审核失败 ：" + " reason :" +  e.getMessage(),e);

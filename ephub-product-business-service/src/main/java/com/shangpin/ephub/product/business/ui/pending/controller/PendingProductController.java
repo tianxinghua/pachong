@@ -67,4 +67,8 @@ public class PendingProductController {
             return HubResponse.errorResp(resultFail);
         }
     }
+    @RequestMapping(value="/origin",method=RequestMethod.POST)
+    public HubResponse<?> findOrigin(@RequestBody String supplierSpuId){
+    	return HubResponse.successResp(pendingProductService.findSupplierProduct(supplierSpuId)); 
+    }
 }

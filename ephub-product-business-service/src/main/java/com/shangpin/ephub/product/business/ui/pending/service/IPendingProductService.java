@@ -7,6 +7,7 @@ import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
+import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.response.HubResponse;
 
 /**
@@ -70,4 +71,10 @@ public interface IPendingProductService {
 	 * @param spuPendingIds
 	 */
 	public boolean batchUpdatePendingProductToUnableToProcess(List<String> spuPendingIds);
+	/**
+	 * 根据主键查询原始信息
+	 * @param supplierSpuId
+	 * @return
+	 */
+	public SupplierProductVo findSupplierProduct(String supplierSpuId);
 }
