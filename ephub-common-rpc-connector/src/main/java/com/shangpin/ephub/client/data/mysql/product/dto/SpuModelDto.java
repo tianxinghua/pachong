@@ -35,6 +35,14 @@ public class SpuModelDto implements Serializable {
 
     private String categoryNo;
 
+    private String spuName;
+
+    private String memo1;
+
+    private String memo2;
+
+    private String memo3;
+
     private List<Long> spuPendingIds;
 
     private List<SpuPendingPicDto> picVOs;
