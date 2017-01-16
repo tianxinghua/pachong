@@ -68,7 +68,7 @@ public class ExportServiceImpl {
 
 	private static final Integer PAGESIZE = 50;
 	
-	private static final Integer SKUPAGESIZE = 20;
+	private static final Integer SKUPAGESIZE = 50;
 	/**
 	 * 待处理页面导出sku
 	 * @param taskNo 任务编号
@@ -103,6 +103,7 @@ public class ExportServiceImpl {
             	int j = 0;
             	for(PendingProducts products : lists){
                     for(PendingProductDto product : products.getProduts()){
+                    	log.info("该spu下共有sku数是："+product.getHubSkus().size()); 
                         for(HubSkuPendingDto sku : product.getHubSkus()){
                             try {
                                 j++;

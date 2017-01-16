@@ -17,8 +17,11 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuWithCriteriaDt
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductMysqlService </p>
  * <p>Description: Supplier表的增删改查Service</p>
@@ -28,6 +31,7 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
  *
  */
 @Service
+@Slf4j
 public class SupplierProductMysqlService {
 
 	@Autowired
@@ -36,12 +40,14 @@ public class SupplierProductMysqlService {
 	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
+	 * @param supplierNo
 	 * @param hubSpu
 	 * @param pendingSpu 把hubSpu发生变化了的信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSpuChanged(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu) throws EpHubSupplierProductConsumerException{
+	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu) throws EpHubSupplierProductConsumerException{
 		try {	
+			log.info("要保存的数据======="+JsonUtil.serialize(hubSpu));
 			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
 				hubSpu.setCreateTime(new Date());
@@ -52,7 +58,7 @@ public class SupplierProductMysqlService {
 			}else{
 				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
 				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
-				boolean isChanged = comparisonHubSpu(hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
+				boolean isChanged = comparisonHubSpu(supplierNo,hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
 				if(isChanged){
 					hubSpuUpdated.setUpdateTime(new Date()); 
 					updateHubSpu(hubSpuUpdated);
@@ -238,11 +244,12 @@ public class SupplierProductMysqlService {
 	 * @param hubSpuUpdated 待更新的对象 更新本地库用
 	 * @return 发生变化则返回true,否则false
 	 */
-	private boolean comparisonHubSpu(HubSupplierSpuDto hubSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu,HubSupplierSpuDto hubSpuUpdated) throws Exception{
+	private boolean comparisonHubSpu(String supplierNo,HubSupplierSpuDto hubSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu,HubSupplierSpuDto hubSpuUpdated) throws Exception{
 		boolean isChanged = false;	
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
 		pendingSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId());
+		pendingSpu.setSupplierNo(supplierNo); 
 		
 		hubSpuUpdated.setSupplierId(hubSpu.getSupplierId());
 		hubSpuUpdated.setSupplierSpuId(hubSpu.getSupplierSpuId());
