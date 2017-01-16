@@ -50,6 +50,7 @@ public class SizeService {
 				return null;
 			}
 			String retMsg = getGmsSizeByRedis(hubBrandNo,hubCategoryNo);
+			log.info("检验尺码返回结果：",retMsg);
 			if(!StringUtils.isEmpty(retMsg)){
 				return JsonUtil.deserialize(retMsg,CategoryScreenSizeDom.class);
 			}else{
