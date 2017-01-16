@@ -567,11 +567,11 @@ public class DataServiceHandler {
 
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
 			criteria.createCriteria().andSpuPendingIdEqualTo(spuKey);
-
+			spuPending.setUpdateTime(new Date());
 			HubSpuPendingWithCriteriaDto updateByCriteriaSelective = new HubSpuPendingWithCriteriaDto(spuPending,
 					criteria);
 			hubSpuPendingGateWay.updateByCriteriaSelective(updateByCriteriaSelective);
-			hubSpuPendingGateWay.insert(spuPending);
+//			hubSpuPendingGateWay.insert(spuPending);
 		} catch (Exception e) {
 			if (e instanceof DuplicateKeyException) {
 
