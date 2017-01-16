@@ -145,8 +145,13 @@ public class PendingSkuImportService {
 	
 		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
 		if(hubPendingSkuCheckResult.isPassing()){
-			hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
-			//TODO: 状态需要加判断
+			String result = hubPendingSkuCheckResult.getResult();
+			log.info("校验尺码返回结果："+result);
+			String sizeId = result.split(".")[0];
+			String size = result.split(".")[1];
+			hubSkuPendingDto.setHubSkuSize(size);
+			hubSkuPendingDto.setScreenSize(sizeId);
+			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 			hubSkuPendingDto.setSpSkuSizeState((byte)1);
 		}else{
 			map.put("taskState","校验失败");
@@ -159,11 +164,11 @@ public class PendingSkuImportService {
 			log.info("sku:"+hubSkuPendingTempDto.getSupplierSkuNo() + "存在");
 			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
 			hubSkuPendingDto.setUpdateTime(new Date());
-			hubSkuPendingDto.setSkuState((byte) SkuState.INFO_IMPECCABLE.getIndex());
 			hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
 		}else{
 			log.info("sku:"+hubSkuPendingDto.getSupplierSkuNo() + "不存在");
 			hubSkuPendingDto.setCreateTime(new Date());
+			hubSkuPendingDto.setUpdateTime(new Date());
 			hubSkuPendingDto.setDataState((byte) 1);
 			hubSkuPendingGateWay.insert(hubSkuPendingDto);
 		}
