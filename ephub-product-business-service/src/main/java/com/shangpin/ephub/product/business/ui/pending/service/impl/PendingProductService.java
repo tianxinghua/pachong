@@ -554,7 +554,7 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSpuModel())){
-			criteria.andSpuModelLike(pendingQuryDto.getSpuModel());
+			criteria.andSpuModelLike("%"+pendingQuryDto.getSpuModel()+"%");
 		}
 		String hubCategoryNo = pendingQuryDto.getHubCategoryNo();
 		if(!StringUtils.isEmpty(hubCategoryNo)){
@@ -568,10 +568,10 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andHubBrandNoEqualTo(pendingQuryDto.getHubBrandNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
-			criteria.andHubSeasonLike(pendingQuryDto.getHubSeason()+"%");
+			criteria.andHubSeasonLike("%"+pendingQuryDto.getHubSeason()+"%");
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-			criteria.andHubSeasonLike("%"+pendingQuryDto.getHubYear()+"%");
+			criteria.andHubSeasonLike(pendingQuryDto.getHubYear()+"%");
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
 			criteria.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat));
