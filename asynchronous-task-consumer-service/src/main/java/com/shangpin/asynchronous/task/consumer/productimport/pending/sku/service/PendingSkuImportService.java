@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -141,16 +142,17 @@ public class PendingSkuImportService {
 	}
 
 	private void checkPendingSku(HubSkuPendingDto hubSkuPendingDto,HubSkuCheckDto hubSkuCheckDto, Map<String, String> map) {
-		
-	
+		log.info("pendindSku校验参数：{}",hubSkuCheckDto);
 		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
+		log.info("pendindSku校验返回结果：{}",hubPendingSkuCheckResult);
 		if(hubPendingSkuCheckResult.isPassing()){
 			String result = hubPendingSkuCheckResult.getResult();
-			log.info("校验尺码返回结果："+result);
-			String sizeId = result.split(".")[0];
-			String size = result.split(".")[1];
-			hubSkuPendingDto.setHubSkuSize(size);
-			hubSkuPendingDto.setScreenSize(sizeId);
+			if(StringUtils.isNotBlank(result)){
+				String sizeId = result.split(".")[0];
+				String size = result.split(".")[1];
+				hubSkuPendingDto.setHubSkuSize(size);
+				hubSkuPendingDto.setScreenSize(sizeId);
+			}
 			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 			hubSkuPendingDto.setSpSkuSizeState((byte)1);
 		}else{
@@ -161,12 +163,10 @@ public class PendingSkuImportService {
 		
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(), hubSkuPendingDto.getSupplierSkuNo());
 		if (hubSkuPendingTempDto != null) {
-			log.info("sku:"+hubSkuPendingTempDto.getSupplierSkuNo() + "存在");
 			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
 			hubSkuPendingDto.setUpdateTime(new Date());
 			hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
 		}else{
-			log.info("sku:"+hubSkuPendingDto.getSupplierSkuNo() + "不存在");
 			hubSkuPendingDto.setCreateTime(new Date());
 			hubSkuPendingDto.setUpdateTime(new Date());
 			hubSkuPendingDto.setDataState((byte) 1);

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -34,6 +35,8 @@ import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCh
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>
  * Title:SupplierOrderService.java
@@ -50,6 +53,7 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
  */
 @SuppressWarnings("rawtypes")
 @Service
+@Slf4j
 public class HubProductImportService {
 
 	@Autowired
@@ -104,23 +108,25 @@ public class HubProductImportService {
 			Map<String, String> map = new HashMap<String, String>();
 			// 校验hub
 			map.put("spuModel", hubProductDto.getSpuModel());
+			log.info("hub检验参数：{}",hubProductDto);
 			HubProductCheckResult hubProductCheckResult = HubProductCheckGateWay.checkProduct(hubProductDto);
+			log.info("hub校验返回结果：{}",hubProductCheckResult);
 			if (hubProductCheckResult.isPassing() == true) {
 				//sizeId,sizeType:sizeValue;spuModel
-				
 				String sizeArr = null;
 				String spuModel = hubProductCheckResult.getSpuModel();
 				String size = null;
 				String sizeId = null;
 				if("尺码".equals(hubProductDto.getSpecificationType())){
 					sizeArr = hubProductCheckResult.getSize();
-					size = sizeArr.split(",")[1];
-					sizeId = sizeArr.split(",")[0];
+					if(StringUtils.isNotBlank(sizeArr)){
+						size = sizeArr.split(",")[1];
+						sizeId = sizeArr.split(",")[0];
+					}
 				}
 				if(!spuModel.equals(hubProductDto.getSpuModel())){
 					map.put("spuNewModel", spuModel);	
 				}
-				Log.info("hub校验通过，返回的尺码和货号："+sizeArr+"  "+spuModel);
 				hubProductDto.setSpuModel(spuModel);
 				HubSpuDto hubSpuDto = convertHubImportProduct2HupSpu(hubProductDto);
 				// 查询hubSpu是否存在
