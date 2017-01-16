@@ -42,9 +42,9 @@ public class HubPendingProductImportDTO {
 	private String hubSkuSize;
 	private String hubMaterial;
 	private String hubOrigin;
-	private BigDecimal supplyPrice;
+	private String supplyPrice;
 	private String supplyPriceCurrency;
-	private BigDecimal marketPrice;
+	private String marketPrice;
 	private String marketPriceCurrencyorg;
 	private String measurement;
 	private String spuDesc;
