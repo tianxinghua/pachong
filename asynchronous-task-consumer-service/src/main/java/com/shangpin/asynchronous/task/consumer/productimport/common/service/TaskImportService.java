@@ -331,21 +331,15 @@ public class TaskImportService {
 //		map.put("isPassing",isPassing+"");
 //		map.put("hubSpuId",hubSpuId+"");
 //	}
-	public void checkPendingSpu(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
+	public void checkPendingSpu(HubSpuPendingDto isHubExist,HubPendingSkuCheckResult hubPendingSkuCheckResult,HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
 		
+		boolean skuIsPassing = hubPendingSkuCheckResult.isPassing();
 		Long pendingSpuId = null;
-		boolean isPassing = false;
+		boolean spuIsPassing = false;
 		boolean hubIsExist= false;
 		Long hubSpuId= null;
+		String hubSpuNo = null;
 		String checkResult = null;
-		HubSpuPendingDto isExist = null;
-		
-		// 查询是否已存在pendingSpu表中
-		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
-		if (listSpu != null && listSpu.size() > 0) {
-			log.info(hubPendingSpuDto.getSpuModel()+"已存在hub");
-			isExist = listSpu.get(0);
-		}
 		
 		// 校验货号
 		HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
@@ -361,9 +355,10 @@ public class TaskImportService {
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				convertHubSpuToPendingSpu(hubPendingSpuDto, list.get(0));
 				hubSpuId = list.get(0).getSpuId();
-				isPassing = true;
+				hubSpuNo = list.get(0).getSpuNo();
+				spuIsPassing = true;
 				hubIsExist = true;
-				checkResult = spuModel+"已存在选品";
+				checkResult = spuModel+"hub已存在";
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				log.info(hubPendingSpuDto.getSpuModel()+"检验pendingSpu参数：{}",hubPendingSpuDto);
@@ -371,32 +366,35 @@ public class TaskImportService {
 				log.info(hubPendingSpuDto.getSpuModel()+"检验pendingSpu结果：{}",hubPendingSpuCheckResult);
 				if (hubPendingSpuCheckResult.isPassing()) {
 					// 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
-					isPassing = true;
+					spuIsPassing = true;
 					hubIsExist = false;
 					checkResult = spuModel+"已推送待复合";
 				} else {
-					isPassing = false;
+					spuIsPassing = false;
 					hubIsExist = false;
 					checkResult = hubPendingSpuCheckResult.getResult();
 				}
 			}
 		} else {
-			isPassing = false;
+			spuIsPassing = false;
 			hubIsExist = false;
 			checkResult = "货号校验失败";
 		}
 		
-		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isExist, hubPendingSpuDto, isPassing);
-		if (isPassing) {
+		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isHubExist, hubPendingSpuDto, spuIsPassing,skuIsPassing);
+		if (spuIsPassing==true&&skuIsPassing==true) {
 			map.put("taskState", "校验通过");
+			map.put("processInfo", checkResult);
 		} else {
 			map.put("taskState", "校验失败");
+			map.put("processInfo", "spu："+checkResult+",sku:"+hubPendingSkuCheckResult.getResult());
 		}
-		map.put("processInfo", checkResult);
+	
 		map.put("pendingSpuId",pendingSpuId+"");
 		map.put("hubIsExist",hubIsExist+"");
-		map.put("isPassing",isPassing+"");
+		map.put("isPassing",spuIsPassing+"");
 		map.put("hubSpuId",hubSpuId+"");
+		map.put("hubSpuNo",hubSpuNo);
 	}
 	private void convertHubSpuToPendingSpu(HubSpuPendingDto hubPendingSpuDto, HubSpuDto hubSpuDto) {
 		hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
@@ -433,24 +431,16 @@ public class TaskImportService {
 	}
 
 	private Long saveOrUpdatePendingSpu(boolean hubIsExist,HubSpuPendingDto isExist, HubSpuPendingDto hubPendingSpuDto,
-			boolean isPassing) {
+			boolean spuIsPassing,boolean skuIsPassing) {
 
 		Long pengingSpuId = null;
 		
-		if(isExist!=null){
-			pengingSpuId = isExist.getSpuPendingId();
-			if(isExist.getSpuState()==SpuState.HANDLED.getIndex()||isExist.getSpuState()==SpuState.HANDLING.getIndex()||isExist.getSpuState()==SpuState.INFO_IMPECCABLE.getIndex()){
-				return pengingSpuId;
-			}
-		}
-		
-		if (isPassing) {
+		if (spuIsPassing==true&&skuIsPassing==true) {
 			if(hubIsExist){
 				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());	
 			}else{
 				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 			}
-			
 		} else {
 			hubPendingSpuDto.setSpuState((byte) SpuState.INFO_PECCABLE.getIndex());
 		}
