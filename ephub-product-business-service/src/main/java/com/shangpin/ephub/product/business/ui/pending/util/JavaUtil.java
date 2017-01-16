@@ -14,7 +14,10 @@ public class JavaUtil {
 	 * @param child 子类
 	 */
 	public static void fatherToChild (Object father,Object child){  
-		
+		if(null == father || null == child){
+			log.info("父类对象或子类对象不能为空");
+			return;
+		}
         if((child.getClass().getSuperclass()==father.getClass())){  
         	Class<?> fatherClass= father.getClass();  
             Field ff[]= fatherClass.getDeclaredFields();  

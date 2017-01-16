@@ -334,7 +334,7 @@ public class PendingProductService implements IPendingProductService{
     	SupplierProductVo supplierProductVo = new SupplierProductVo();
     	try {
         	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(Long.valueOf(supplierSpuId));
-        	JavaUtil.fatherToChild(supplierProductVo, spuDto);
+        	JavaUtil.fatherToChild(spuDto,supplierProductVo);
         	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(Long.valueOf(supplierSpuId));
         	if(CollectionUtils.isNotEmpty(supplierSku)){
         		supplierProductVo.setSupplierSku(supplierSku);
