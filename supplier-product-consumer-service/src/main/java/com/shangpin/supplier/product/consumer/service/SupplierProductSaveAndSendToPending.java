@@ -264,7 +264,7 @@ public class SupplierProductSaveAndSendToPending {
 			}		
 			pendingSpu.setSkus(skus);
 			pendingProduct.setData(pendingSpu);		
-			spuHead.setSkus(headSkus);		
+			spuHead.setSkus(headSkus);	
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 			//发送图片
 			if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){
