@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -19,6 +18,7 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.stefania.dto.StefItem;
@@ -51,9 +51,9 @@ public class StefaniaHandler implements ISupplierHandler{
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 					List<Image> images = converImage(stefItem.getPicture());
 					if(null == images){
-						hubSpu.setIsexistpic(PicState.NO_PIC.getIndex());
+						hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
 					}else{
-						hubSpu.setIsexistpic(PicState.PIC_INFO_COMPLETED.getIndex()); 
+						hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 					}
 					boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu);
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
