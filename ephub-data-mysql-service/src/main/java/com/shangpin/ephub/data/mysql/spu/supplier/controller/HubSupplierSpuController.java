@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.spu.supplier.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class HubSupplierSpuController {
     public List<HubSupplierSpu> selectByCriteria(@RequestBody HubSupplierSpuCriteria criteria){
     	return hubSupplierSpuService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubSupplierSpu selectByPrimaryKey(Long supplierSpuId){
+	@RequestMapping(value = "/select-by-primary-key/{supplierSpuId}")
+    public HubSupplierSpu selectByPrimaryKey(@PathVariable("supplierSpuId") Long supplierSpuId){
     	return hubSupplierSpuService.selectByPrimaryKey(supplierSpuId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
