@@ -68,7 +68,7 @@ public class ExportServiceImpl {
 
 	private static final Integer PAGESIZE = 50;
 	
-	private static final Integer SKUPAGESIZE = 20;
+	private static final Integer SKUPAGESIZE = 50;
 	/**
 	 * 待处理页面导出sku
 	 * @param taskNo 任务编号
