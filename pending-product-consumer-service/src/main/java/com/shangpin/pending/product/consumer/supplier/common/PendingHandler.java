@@ -314,7 +314,9 @@ public class PendingHandler {
 				allStatus = false;
 
 			// 查询是否有图片
-			handlePicLink(spu, hubSpuPending);
+			if(!handlePicLink(spu, hubSpuPending)){
+				allStatus = false;
+			}
 
 			if (allStatus) {
 				hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -1199,12 +1201,15 @@ public class PendingHandler {
 		}
 	}
 
-	private void handlePicLink(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
+	private boolean  handlePicLink(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
 		Long supplierSpuId = spu.getSupplierSpuId();
 		String picUrl = dataServiceHandler.getPicUrlBySupplierSpuId(supplierSpuId);
 		if (StringUtils.isNotBlank(picUrl)) {
 			hubSpuPending.setPicState(PicState.HANDLED.getIndex());
+			return true;
 
+		}else{
+			return false;
 		}
 	}
 
