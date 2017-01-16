@@ -162,14 +162,21 @@ public class PendingSkuImportService {
 
 	private void checkPendingSku(String hubSpuNo,boolean isPushToHub,HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
 			HubSkuCheckDto hubSkuCheckDto, Map<String, String> map) {
+		
+		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
+				hubSkuPendingDto.getSupplierSkuNo());
+		
 		if (hubPendingSkuCheckResult.isPassing()) {
 			String result = hubPendingSkuCheckResult.getResult();
+			String size = null;
 			if (StringUtils.isNotBlank(result)) {
 				String sizeId = result.split(",")[0];
-				String size = result.split(",")[1];
+				size = result.split(",")[1];
 				hubSkuPendingDto.setHubSkuSize(size);
 				hubSkuPendingDto.setScreenSize(sizeId);
-				
+			}
+		
+			if(hubSkuPendingTempDto!=null){
 				if(hubSpuNo!=null&&size!=null){
 					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
 					sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(size);
@@ -177,22 +184,20 @@ public class PendingSkuImportService {
 					if(listSku!=null&&listSku.size()>0){
 						log.info(hubSpuNo+"hub中已存在尺码:"+size);
 						hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
+					}else{
+						hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 					}
 				}else{
 					hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 				}
-				
 			}else{
 				hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 			}
-		
-			
 			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
 		} else {
 			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
 		}
-		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
-				hubSkuPendingDto.getSupplierSkuNo());
+		
 		if (hubSkuPendingTempDto != null) {
 			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
 			hubSkuPendingDto.setUpdateTime(new Date());
