@@ -260,15 +260,16 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
+            if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
+                //判断skupending 尺码是否符合标准
+                if (hasNohandleSkuSize(hubSpuPendingDtos)) {
 
-            //判断skupending 尺码是否符合标准
-            if(hasNohandleSkuSize(hubSpuPendingDtos)){
-
-                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
-                hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
-                updateSpuPendingState(auditVO, hubSpuPending);
-                auditVO.setMemo("尺码有未匹配的,不能审核通过");
-                return false;
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
+                    updateSpuPendingState(auditVO, hubSpuPending);
+                    auditVO.setMemo("尺码有未匹配的,不能审核通过");
+                    return false;
+                }
             }
 
             HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
