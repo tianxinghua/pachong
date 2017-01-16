@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -19,6 +18,7 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.coltorti.convert.ColtortiProductConvert;
 import com.shangpin.supplier.product.consumer.supplier.coltorti.dto.ColtortiProduct;
+import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,9 @@ public class ColtortiHandler implements ISupplierHandler {
 				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(message.getSupplierId(), p);
 				List<Image> images = ColtortiProductConvert.productPic(p);
 				if(null != images){
-					supplierSpuDto.setIsexistpic(PicState.PIC_INFO_COMPLETED.getIndex());
+					supplierSpuDto.setIsexistpic(Isexistpic.YES.getIndex());
 				}else{
-					supplierSpuDto.setIsexistpic(PicState.NO_PIC.getIndex());
+					supplierSpuDto.setIsexistpic(Isexistpic.NO.getIndex());
 				}
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p);
