@@ -551,11 +551,11 @@ public class DataServiceHandler {
 				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
 			}
 		}
-		if (null != spuPending.getSpuBrandState()) {
-			if (PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex() == spuPending.getSpuBrandState().intValue()) {
-				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
-			}
-		}
+//		if (null != spuPending.getSpuBrandState()) {
+//			if (PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex() == spuPending.getSpuBrandState().intValue()) {
+//				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
+//			}
+//		}
 
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);
