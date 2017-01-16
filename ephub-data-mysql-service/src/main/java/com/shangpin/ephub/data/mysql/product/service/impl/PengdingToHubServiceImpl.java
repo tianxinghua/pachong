@@ -351,6 +351,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setUpdateTime(date);
         hubSpu.setCreateUser(ConstantProperty.DATA_CREATE_USER);
         hubSpu.setCategoryNo(spuPending.getHubCategoryNo());
+        //
+
         hubSpu.setGender(spuPending.getHubGender());
         hubSpu.setBrandNo(spuPending.getHubBrandNo());
         String pendingSeason = spuPending.getHubSeason();
@@ -362,6 +364,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setHubColorNo(spuPending.getHubColorNo());
         hubSpu.setSpuState(DataBusinessStatus.HANDLED.getIndex().byteValue());
         hubSpu.setSpuSelectState(DataBusinessStatus.WAIT_HANDLE.getIndex().byteValue());
+
         hubSpu.setOrigin(spuPending.getHubOrigin());
         hubSpu.setMaterial(spuPending.getHubMaterial());
         hubSpu.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
@@ -436,6 +439,9 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 hubSpuPending.setHubCategoryNo(auditVO.getCategoryNo());
                 hubSpuPending.setHubOrigin(auditVO.getOrigin());
                 hubSpuPending.setHubMaterial(auditVO.getMaterial());
+                if(StringUtils.isNotBlank(auditVO.getSpuName())){
+                    hubSpuPending.setSpuName(auditVO.getSpuName());
+                }
             }
             return    hubSpuPending;
         }else{

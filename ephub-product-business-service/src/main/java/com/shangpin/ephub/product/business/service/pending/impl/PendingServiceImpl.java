@@ -13,6 +13,8 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     private TaskExecutor executor;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public SpuModelMsgVO getSpuModel(SpuPendingAuditQueryVO queryVO) {
@@ -280,6 +285,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                 SpuModelDto spuModelVO = new SpuModelDto();
                 BeanUtils.copyProperties(auditVO,spuModelVO);
+
+                //赋值spuName
+                setSpuNameToSpuModelDto(spuModelVO);
+
                 List<Long> spuPendingIdList = new ArrayList<>();
                 for(HubSpuPendingDto pendingDto:hubSpuPendingDtos ){
                     spuPendingIdList.add(pendingDto.getSpuPendingId());
@@ -317,6 +326,15 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
 
 
+
+
+    }
+
+    private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {
+        FourLevelCategory gmsCateGory = categoryService.getGmsCateGory(spuModelVO.getCategoryNo());
+        if(null!=gmsCateGory){
+            spuModelVO.setSpuName(gmsCateGory.getFourthName());
+        }
 
 
     }
