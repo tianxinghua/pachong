@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.common.service.check;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -170,6 +171,17 @@ public class HubCheckService {
 			str.append("材质为空，");
 			result.setPassing(false);
 		}
+		
+		if(StringUtils.isNotBlank(hubProduct.getHubOrigin())){
+			if(RegexUtil.isLetter(hubProduct.getHubMaterial())){
+				result.setPassing(false);
+				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
+	        }
+		}else{
+			str.append("材质为空，");
+			result.setPassing(false);
+		}
+		
 		result.setResult(str.toString());
 		//校验产地
 		return result;
