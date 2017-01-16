@@ -90,13 +90,13 @@ public class ExportServiceImpl {
         	if(totalSize > 0){
         		int pageCount = getPageCount(totalSize,SKUPAGESIZE);//页数
         		log.info("sku导出总页数："+pageCount); 
+        		int j = 0;
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(SKUPAGESIZE);
-            		log.info("导出sku******************查库参数：",JsonUtil.serialize(pendingQuryDto)); 
+            		log.info("导出sku******************查库参数："+JsonUtil.serialize(pendingQuryDto)); 
             		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
                     if(null != products && null != products.getProduts() && products.getProduts().size()>0){
-                        int j = 0;
                         for(PendingProductDto product : products.getProduts()){
                             for(HubSkuPendingDto sku : product.getHubSkus()){
                                 try {
@@ -154,13 +154,13 @@ public class ExportServiceImpl {
         	if(totalSize > 0){
         		int pageCount = getPageCount(totalSize,PAGESIZE);//页数
         		log.info("spu导出总页数："+pageCount); 
+        		int j = 0;
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(PAGESIZE);
-            		log.info("******************查库参数：",JsonUtil.serialize(pendingQuryDto)); 
+            		log.info("******************查库参数："+JsonUtil.serialize(pendingQuryDto)); 
             		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
                     if(null != products && null != products.getProduts() && products.getProduts().size()>0){
-                        int j = 0;
                         for(PendingProductDto product : products.getProduts()){
                             try {
                                 j++;
