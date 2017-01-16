@@ -30,14 +30,19 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
@@ -65,6 +70,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
+import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +111,10 @@ public class PendingProductService implements IPendingProductService{
     private BrandService brandService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private HubSupplierSpuGateWay hubSupplierSpuGateWay;
+    @Autowired
+    private HubSupplierSkuGateWay hubSupplierSkuGateWay;
 
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
@@ -265,39 +275,6 @@ public class PendingProductService implements IPendingProductService{
     	log.info("返回的校验结果：{}",response); 
     	return response;
     }
-    
-    /**
-     * 设置校验失败结果
-     * @param response
-     * @param spuPengdingId
-     * @param errorMsg
-     */
-    private PendingUpdatedVo setErrorMsg(HubResponse<PendingUpdatedVo> response,Long spuPengdingId,String errorMsg){
-    	response.setCode("1");
-		PendingUpdatedVo updatedVo = new PendingUpdatedVo();
-		updatedVo.setSpuPendingId(spuPengdingId);
-		updatedVo.setSpuResult(errorMsg);
-		response.setErrorMsg(updatedVo);
-		return updatedVo;
-    }
-    /**
-     * 能根据品牌货号从hub标准库中找到记录，则直接用标准库中的属性更新pending库
-     * @param spuModel 标准货号
-     * @param pendingProductDto 待更新的pending spu
-     * @return
-     */
-    private boolean findAndUpdatedFromHubSpu(String spuModel,PendingProductDto pendingProductDto){
-    	pendingProductDto.setSpuModel(spuModel);
-		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
-		if(null != hubSpus && hubSpus.size()>0){
-			convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
-        	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-            return true;
-		}else{
-			return false;
-		}
-    }
-    
     @Override
     public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts){
     	HubResponse<List<PendingUpdatedVo>> response = new HubResponse<>();
@@ -348,10 +325,67 @@ public class PendingProductService implements IPendingProductService{
         }
 
     }
+    @Override
+	public SupplierProductVo findSupplierProduct(String supplierSpuId) {
+    	SupplierProductVo supplierProductVo = new SupplierProductVo();
+    	try {
+        	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(Long.valueOf(supplierSpuId));
+        	JavaUtil.fatherToChild(supplierProductVo, spuDto);
+        	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(Long.valueOf(supplierSpuId));
+        	if(CollectionUtils.isNotEmpty(supplierSku)){
+        		supplierProductVo.setSupplierSku(supplierSku);
+        	}
+		} catch (Exception e) {
+			log.error("查询原始信息时异常："+e.getMessage(),e); 
+		}
+		return supplierProductVo;
+	}
 
-    /***************************************************************************************************************************/
-    //以下为内部调用私有方法
+    /***************************************************************************************************************************
+     *       以下为内部调用私有方法
     /**************************************************************************************************************************/
+    /**
+     * 查找supplier sku
+     * @param supplierSpuId
+     * @return
+     */
+    private List<HubSupplierSkuDto> findHubSupplierSkuBySpu(Long supplierSpuId) {
+		HubSupplierSkuCriteriaDto skuCriteria = new HubSupplierSkuCriteriaDto();
+    	skuCriteria.setFields("supplier_sku_size");
+    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+    	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
+	}
+    /**
+     * 设置校验失败结果
+     * @param response
+     * @param spuPengdingId
+     * @param errorMsg
+     */
+    private PendingUpdatedVo setErrorMsg(HubResponse<PendingUpdatedVo> response,Long spuPengdingId,String errorMsg){
+    	response.setCode("1");
+		PendingUpdatedVo updatedVo = new PendingUpdatedVo();
+		updatedVo.setSpuPendingId(spuPengdingId);
+		updatedVo.setSpuResult(errorMsg);
+		response.setErrorMsg(updatedVo);
+		return updatedVo;
+    }
+    /**
+     * 能根据品牌货号从hub标准库中找到记录，则直接用标准库中的属性更新pending库
+     * @param spuModel 标准货号
+     * @param pendingProductDto 待更新的pending spu
+     * @return
+     */
+    private boolean findAndUpdatedFromHubSpu(String spuModel,PendingProductDto pendingProductDto){
+    	pendingProductDto.setSpuModel(spuModel);
+		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
+		if(null != hubSpus && hubSpus.size()>0){
+			convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
+        	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+            return true;
+		}else{
+			return false;
+		}
+    }
     /**
      * 验证货号
      * @param pendingProductDto
@@ -592,4 +626,5 @@ public class PendingProductService implements IPendingProductService{
     	productImportTask.setType(type);
     	tastSender.productExportTaskStream(productImportTask, null);
     }
+	
 }
