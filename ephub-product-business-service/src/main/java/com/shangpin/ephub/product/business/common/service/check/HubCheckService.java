@@ -300,6 +300,7 @@ public class HubCheckService {
                 List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
                 for(SizeStandardItem sizeItem:sizeStandardItemList){
                     if(sizeItem.getSizeStandardValue().equals(supplierSize)){
+                    	log.info("检验尺码返回结果：{}",sizeItem);
                         return sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue();
                     }
                 }
