@@ -250,6 +250,7 @@ public class PendingProductService implements IPendingProductService{
                     for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                     	HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuPendingDto.getHubSkuSize());
                         if(result.isPassing()){
+                        	hubSkuPendingDto.setScreenSize(result.getScreenSizeStandardValueId()); 
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                         	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                         }else{
