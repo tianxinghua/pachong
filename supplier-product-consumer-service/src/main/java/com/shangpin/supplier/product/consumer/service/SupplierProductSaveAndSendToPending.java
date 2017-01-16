@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SupplierProductSaveAndSendToPending {
-	private static Map<String,String> currentSeason =  null;
+	
 	@Autowired
 	private SupplierProductMysqlService supplierProductMysqlService;
 	@Autowired
@@ -67,8 +67,10 @@ public class SupplierProductSaveAndSendToPending {
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	/**
@@ -90,8 +92,10 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	
@@ -114,8 +118,10 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}	
 	/**
@@ -137,8 +143,10 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 		
 	}
@@ -161,8 +169,10 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	/**
@@ -179,8 +189,10 @@ public class SupplierProductSaveAndSendToPending {
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	/**
@@ -203,8 +215,10 @@ public class SupplierProductSaveAndSendToPending {
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(!flag){
+		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+		}else{
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	
@@ -252,12 +266,12 @@ public class SupplierProductSaveAndSendToPending {
 			spuHead.setSkus(headSkus);		
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 			//发送图片
-			if(null != supplierPicture){
-				if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){
-					return true;
+			if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){
+				if(null != supplierPicture){
+					supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+					pictureProductService.sendSupplierPicture(supplierPicture, null); 
 				}
-				supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
-				pictureProductService.sendSupplierPicture(supplierPicture, null); 
+				return true;
 			}
 		} catch (Exception e) {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
@@ -275,18 +289,21 @@ public class SupplierProductSaveAndSendToPending {
 		if(StringUtils.isEmpty(supplierSeason)){
 			return false;
 		}
+		Map<String,String> currentSeason =  null;
 		if(null == currentSeason){
 			currentSeason = new HashMap<String,String>();
+		}
+//		if(!currentSeason.containsKey(supplierId)){
 			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
-			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andMemoEqualTo("1");
+			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
 			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
 			if(null != dics && dics.size() > 0){
 				for(HubSeasonDicDto dic : dics){
 					currentSeason.put(dic.getSupplierSeason().trim().toLowerCase(), null);
 				}
 			}
-		}
-		if(currentSeason.containsKey(supplierSeason.trim().toUpperCase())){
+//		}
+		if(currentSeason.containsKey(supplierSeason.trim().toLowerCase())){
 			return true;
 		}else{
 			return false;
