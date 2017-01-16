@@ -27,8 +27,8 @@ public class RegexUtil {
      * @param str
      * @return 如果是符合格式的字符串,返回 <b>true </b>,否则为 <b>false </b>
      */
-    public static boolean isLetter(String str) {
-        String regex = "^[A-Za-z]+$";
+    public static boolean excludeLetter(String str) {
+        String regex = "[^A-Za-z]+";
         return match(regex, str);
     }
 
@@ -41,5 +41,13 @@ public class RegexUtil {
     public static boolean isChinese(String str) {
         String regex = "^[\u4e00-\u9fa5],{0,}$";
         return match(regex, str);
+    }
+
+    public static void main(String[] args){
+        System.out.println("1234");
+        System.out.println(RegexUtil.excludeLetter("skdj"));
+        System.out.println(RegexUtil.excludeLetter(" skdj  中国 "));
+        System.out.println(RegexUtil.excludeLetter("  100%  中国 ,93 % "));
+
     }
 }

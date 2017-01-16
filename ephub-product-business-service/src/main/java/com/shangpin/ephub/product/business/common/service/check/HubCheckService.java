@@ -163,7 +163,7 @@ public class HubCheckService {
 		}
 		//校验材质
 		if(hubProduct.getHubMaterial()!=null){
-			if(RegexUtil.isLetter(hubProduct.getHubMaterial())){
+			if(!RegexUtil.excludeLetter(hubProduct.getHubMaterial())){
 				result.setPassing(false);
 				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
 	        }

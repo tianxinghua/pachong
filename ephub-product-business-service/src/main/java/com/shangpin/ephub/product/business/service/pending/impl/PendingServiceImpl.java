@@ -307,7 +307,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isBlank(auditVO.getMaterial())){
             result = result + "材质不能为空 ";
         }else {
-            if(RegexUtil.isLetter(auditVO.getMaterial())){
+            if(!RegexUtil.excludeLetter(auditVO.getMaterial())){
                 result = result + "材质中包含不能包含英文 ";
             }
         }
