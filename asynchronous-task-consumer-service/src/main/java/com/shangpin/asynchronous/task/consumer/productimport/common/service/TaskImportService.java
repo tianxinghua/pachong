@@ -259,77 +259,77 @@ public class TaskImportService {
 		return in;
 	}
 
-	public void checkPendingSpu1(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
-		Long pendingSpuId = null;
-		boolean isPassing = false;
-		boolean hubIsExist= false;
-		Long hubSpuId= null;
-		String checkResult = null;
-		HubSpuPendingDto isExist = null;
-		// 查询是否已存在pendingSpu表中
-		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
-		if (listSpu != null && listSpu.size() > 0) {
-			if (SpuState.HANDLED.getIndex() == listSpu.get(0).getSpuState()) {
-				log.info(hubPendingSpuDto.getSupplierSpuNo() + "spu状态为已处理，不再操作");
-				map.put("taskState", "校验通过");
-				map.put("processInfo", "spu状态为已处理，不再操作");
-				pendingSpuId = listSpu.get(0).getSpuPendingId();
-				hubIsExist = false;
-				isPassing = true;
-				map.put("pendingSpuId",pendingSpuId+"");
-				map.put("isSaveHub",hubIsExist+"");
-				map.put("isPassing",isPassing+"");
-				return;
-			}
-			isExist = listSpu.get(0);
-		}
-		// 校验货号
-		HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
-		BrandModelResult result = dataHandleService.checkSpuModel(hubPendingSpuDto);
-		String spuModel = null;
-		if (result.isPassing()) {
-			spuModel = result.getBrandMode();
-			// 查询货号是否已存在hubSpu中
-			hubPendingSpuDto.setSpuModel(spuModel);
-			List<HubSpuDto> list = dataHandleService.selectHubSpu(hubPendingSpuDto);
-			if (list != null && list.size() > 0) {
-				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				convertHubSpuToPendingSpu(hubPendingSpuDto, list.get(0));
-				hubSpuId = list.get(0).getSpuId();
-				isPassing = true;
-				hubIsExist = true;
-				checkResult = spuModel+"已存在选品";
-			} else {
-				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				hubPendingSpuCheckResult = pendingSpuCheckGateWay.checkSpu(hubPendingSpuDto);
-				if (hubPendingSpuCheckResult.isPassing()) {
-					// 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
-					isPassing = true;
-					hubIsExist = false;
-					checkResult = spuModel+"已推送待选品";
-				} else {
-					isPassing = false;
-					hubIsExist = false;
-					checkResult = hubPendingSpuCheckResult.getResult();
-				}
-			}
-		} else {
-			isPassing = false;
-			hubIsExist = false;
-			checkResult = "货号校验失败";
-		}
-		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isExist, hubPendingSpuDto, isPassing);
-		if (isPassing) {
-			map.put("taskState", "校验通过");
-		} else {
-			map.put("taskState", "校验失败");
-		}
-		map.put("processInfo", checkResult);
-		map.put("pendingSpuId",pendingSpuId+"");
-		map.put("hubIsExist",hubIsExist+"");
-		map.put("isPassing",isPassing+"");
-		map.put("hubSpuId",hubSpuId+"");
-	}
+//	public void checkPendingSpu1(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
+//		Long pendingSpuId = null;
+//		boolean isPassing = false;
+//		boolean hubIsExist= false;
+//		Long hubSpuId= null;
+//		String checkResult = null;
+//		HubSpuPendingDto isExist = null;
+//		// 查询是否已存在pendingSpu表中
+//		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
+//		if (listSpu != null && listSpu.size() > 0) {
+//			if (SpuState.HANDLED.getIndex() == listSpu.get(0).getSpuState()) {
+//				log.info(hubPendingSpuDto.getSupplierSpuNo() + "spu状态为已处理，不再操作");
+//				map.put("taskState", "校验通过");
+//				map.put("processInfo", "spu状态为已处理，不再操作");
+//				pendingSpuId = listSpu.get(0).getSpuPendingId();
+//				hubIsExist = false;
+//				isPassing = true;
+//				map.put("pendingSpuId",pendingSpuId+"");
+//				map.put("isSaveHub",hubIsExist+"");
+//				map.put("isPassing",isPassing+"");
+//				return;
+//			}
+//			isExist = listSpu.get(0);
+//		}
+//		// 校验货号
+//		HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
+//		BrandModelResult result = dataHandleService.checkSpuModel(hubPendingSpuDto);
+//		String spuModel = null;
+//		if (result.isPassing()) {
+//			spuModel = result.getBrandMode();
+//			// 查询货号是否已存在hubSpu中
+//			hubPendingSpuDto.setSpuModel(spuModel);
+//			List<HubSpuDto> list = dataHandleService.selectHubSpu(hubPendingSpuDto);
+//			if (list != null && list.size() > 0) {
+//				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
+//				convertHubSpuToPendingSpu(hubPendingSpuDto, list.get(0));
+//				hubSpuId = list.get(0).getSpuId();
+//				isPassing = true;
+//				hubIsExist = true;
+//				checkResult = spuModel+"已存在选品";
+//			} else {
+//				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
+//				hubPendingSpuCheckResult = pendingSpuCheckGateWay.checkSpu(hubPendingSpuDto);
+//				if (hubPendingSpuCheckResult.isPassing()) {
+//					// 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
+//					isPassing = true;
+//					hubIsExist = false;
+//					checkResult = spuModel+"已推送待选品";
+//				} else {
+//					isPassing = false;
+//					hubIsExist = false;
+//					checkResult = hubPendingSpuCheckResult.getResult();
+//				}
+//			}
+//		} else {
+//			isPassing = false;
+//			hubIsExist = false;
+//			checkResult = "货号校验失败";
+//		}
+//		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isExist, hubPendingSpuDto, isPassing);
+//		if (isPassing) {
+//			map.put("taskState", "校验通过");
+//		} else {
+//			map.put("taskState", "校验失败");
+//		}
+//		map.put("processInfo", checkResult);
+//		map.put("pendingSpuId",pendingSpuId+"");
+//		map.put("hubIsExist",hubIsExist+"");
+//		map.put("isPassing",isPassing+"");
+//		map.put("hubSpuId",hubSpuId+"");
+//	}
 	public void checkPendingSpu(HubSpuPendingDto hubPendingSpuDto, Map<String, String> map) {
 		
 		Long pendingSpuId = null;
@@ -344,7 +344,6 @@ public class TaskImportService {
 		if (listSpu != null && listSpu.size() > 0) {
 			isExist = listSpu.get(0);
 		}
-		
 		
 		// 校验货号
 		HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
@@ -370,7 +369,7 @@ public class TaskImportService {
 					// 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
 					isPassing = true;
 					hubIsExist = false;
-					checkResult = spuModel+"已推送待选品";
+					checkResult = spuModel+"已推送待复合";
 				} else {
 					isPassing = false;
 					hubIsExist = false;
@@ -422,13 +421,14 @@ public class TaskImportService {
 			pengdingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
 			
 
-		} else {
-			SpuModelDto spuModelDto = new SpuModelDto();
-			spuModelDto.setBrandNo(hubPendingSpuDto.getHubBrandNo());
-			spuModelDto.setSpuModel(hubPendingSpuDto.getSpuModel());
-			log.info("pendingToHub.auditPending推送参数:{}", spuModelDto);
-			pengdingToHubGateWay.auditPending(spuModelDto);
-		}
+		} 
+//		else {
+//			SpuModelDto spuModelDto = new SpuModelDto();
+//			spuModelDto.setBrandNo(hubPendingSpuDto.getHubBrandNo());
+//			spuModelDto.setSpuModel(hubPendingSpuDto.getSpuModel());
+//			log.info("pendingToHub.auditPending推送参数:{}", spuModelDto);
+//			pengdingToHubGateWay.auditPending(spuModelDto);
+//		}
 	}
 
 	private Long saveOrUpdatePendingSpu(boolean hubIsExist,HubSpuPendingDto isExist, HubSpuPendingDto hubPendingSpuDto,
@@ -438,7 +438,7 @@ public class TaskImportService {
 		
 		if(isExist!=null){
 			pengingSpuId = isExist.getSpuPendingId();
-			if(isExist.getSpuState()==SpuState.HANDLED.getIndex()||isExist.getSpuState()==SpuState.HANDLING.getIndex()){
+			if(isExist.getSpuState()==SpuState.HANDLED.getIndex()||isExist.getSpuState()==SpuState.HANDLING.getIndex()||isExist.getSpuState()==SpuState.INFO_IMPECCABLE.getIndex()){
 				return pengingSpuId;
 			}
 		}
@@ -447,7 +447,7 @@ public class TaskImportService {
 			if(hubIsExist){
 				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());	
 			}else{
-				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLING.getIndex());
+				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 			}
 			
 		} else {
