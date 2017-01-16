@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 17/1/7.
+ * 非数据库层的处理
  */
 @Component
 @Slf4j

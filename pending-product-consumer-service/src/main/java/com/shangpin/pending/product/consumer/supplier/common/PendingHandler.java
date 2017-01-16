@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
@@ -313,7 +314,9 @@ public class PendingHandler {
 				allStatus = false;
 
 			// 查询是否有图片
-			handlePicLink(spu, hubSpuPending);
+			if(!handlePicLink(spu, hubSpuPending)){
+				allStatus = false;
+			}
 
 			if (allStatus) {
 				hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -719,7 +722,12 @@ public class PendingHandler {
 
 			return spuPending;
 		} else{
-			return null;
+			//  if can't find spupending ,  search  supplier and insert spupending
+			HubSupplierSpuDto supplierSpuDto = dataServiceHandler.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(spu.getSupplierId(), spu.getSupplierSpuNo());
+			PendingSpu tmp = new PendingSpu();
+			BeanUtils.copyProperties(supplierSpuDto,tmp);
+			SpuPending newSpuPending  = addNewSpu(tmp,headers);
+			return newSpuPending;
 		}
 
 	}
@@ -1193,12 +1201,15 @@ public class PendingHandler {
 		}
 	}
 
-	private void handlePicLink(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
+	private boolean  handlePicLink(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
 		Long supplierSpuId = spu.getSupplierSpuId();
 		String picUrl = dataServiceHandler.getPicUrlBySupplierSpuId(supplierSpuId);
 		if (StringUtils.isNotBlank(picUrl)) {
 			hubSpuPending.setPicState(PicState.HANDLED.getIndex());
+			return true;
 
+		}else{
+			return false;
 		}
 	}
 
