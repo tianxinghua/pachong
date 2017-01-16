@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuPendingPicDto;
@@ -228,8 +229,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             //状态检查
             String judgeResult = judgeStatue(auditVO);
             if( StringUtils.isNotBlank(judgeResult)){
+                //如果不符合 直接返回
                 hubSpuPending.setMemo(judgeResult);
-                auditVO.setAuditStatus(SpuStatus.SPU_WAIT_HANDLE.getIndex());
+                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                updateSpuPendingState(auditVO, hubSpuPending);
+                auditVO.setMemo(judgeResult);
+                return false;
+
             }else{
 
                 hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
@@ -250,6 +256,16 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
 
+            //判断skupending 尺码是否符合标准
+            if(hasNohandleSkuSize(hubSpuPendingDtos)){
+
+                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
+                updateSpuPendingState(auditVO, hubSpuPending);
+                auditVO.setMemo("尺码有未匹配的,不能审核通过");
+                return false;
+            }
+
             HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
             //更新spuPending 状态
             spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
@@ -259,6 +275,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
             //只有审核通过的才处理
             if(SpuStatus.getOrderStatus(auditVO.getAuditStatus()).getIndex()==SpuStatus.SPU_HANDLED.getIndex()){
+
+
 
                 SpuModelDto spuModelVO = new SpuModelDto();
                 BeanUtils.copyProperties(auditVO,spuModelVO);
@@ -270,7 +288,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
                 executor.execute(task);
-
+                return true;
 //             //获取
 //             SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();
 //             BeanUtils.copyProperties(auditVO,queryVO);
@@ -289,13 +307,25 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 //                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
 //                 executor.execute(task);
 //             }
+            }else{
+                return true;
             }
+        }else{
+            auditVO.setMemo("未发现待审核的数据，或者状态已被改变。");
+            return false;
         }
 
 
 
 
-        return true;
+
+    }
+
+    private void updateSpuPendingState(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending) {
+        HubSpuPendingCriteriaDto errCriteria = getHubSpuPendingCriteriaDto(auditVO, hubSpuPending);
+        HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  errCriteria);
+        //更新spuPending 状态
+        spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
     }
 
     public String  judgeStatue(SpuPendingAuditVO auditVO){
@@ -381,6 +411,26 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
         skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
     }
+
+    private boolean hasNohandleSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos) {
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList)
+//                .andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue())
+        .andSpSkuSizeStateEqualTo(CommonHandleState.UNHANDLED.getIndex().byteValue());
+
+        List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
+        if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
 
 class CreateSpuAndSkuTask implements Runnable{
