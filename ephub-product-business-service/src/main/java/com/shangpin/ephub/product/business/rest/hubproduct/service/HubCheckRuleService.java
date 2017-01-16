@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.hubproduct.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class HubCheckRuleService {
 		result.setPassing(true);
 		StringBuffer str = new StringBuffer();
 		//校验品牌
-		if(hubProduct.getBrandNo()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getBrandNo())){
 			if(!hubCheckService.getBrand(hubProduct.getBrandNo())){
 				str.append("品牌编号"+hubProduct.getBrandNo()+"不存在,") ;
 				result.setPassing(false);
@@ -50,7 +51,7 @@ public class HubCheckRuleService {
 		}
 		
 		//校验品类
-		if(hubProduct.getCategoryNo()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getCategoryNo())){
 			if(!hubCheckService.getCategoryName(hubProduct.getCategoryNo())){
 				str.append("品类编号"+hubProduct.getCategoryNo()+"不存在,") ;
 				result.setPassing(false);
@@ -61,7 +62,7 @@ public class HubCheckRuleService {
 		}
 		
 		//校验颜色
-		if(hubProduct.getHubColor()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getHubColor())){
 			if(!hubCheckService.checkHubColor(hubProduct.getHubColor())){	
 				str.append("颜色"+hubProduct.getHubColor()+"不存在,") ;
 				result.setPassing(false);
@@ -72,7 +73,7 @@ public class HubCheckRuleService {
 		}
 		
 		//校验季节
-		if(hubProduct.getSeason()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getSeason())){
 			if(!hubCheckService.checkHubSeason(hubProduct.getMarketTime()+"_"+hubProduct.getSeason())){
 				str.append("季节编号"+hubProduct.getMarketTime()+"_"+hubProduct.getSeason()+"不存在,") ;
 				result.setPassing(false);
@@ -83,7 +84,7 @@ public class HubCheckRuleService {
 		}
 		//校验尺码
 		if("尺码".equals(hubProduct.getSpecificationType())){
-			if(hubProduct.getSkuSize()!=null){
+			if(StringUtils.isNoneBlank(hubProduct.getSkuSize())){
 				//String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
 				String size = null;
 				size = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
@@ -99,7 +100,7 @@ public class HubCheckRuleService {
 			}
 		}
 		//校验性别
-		if(hubProduct.getGender()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getGender())){
 			if(!hubCheckService.checkHubGender(hubProduct.getGender())){
 				str.append("性别"+hubProduct.getGender()+"不存在,") ;
 				result.setPassing(false);
@@ -109,7 +110,7 @@ public class HubCheckRuleService {
 			result.setPassing(false);
 		}
 		
-		if(hubProduct.getMaterial()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getMaterial())){
 			if(!RegexUtil.excludeLetter(hubProduct.getMaterial())){
 				result.setPassing(false);
 				str.append("材质中含有英文字符："+hubProduct.getMaterial()) ;
@@ -119,10 +120,20 @@ public class HubCheckRuleService {
 			result.setPassing(false);
 		}
 		
+		if(StringUtils.isNoneBlank(hubProduct.getOrigin())){
+			if(!hubCheckService.checkHubOrigin(hubProduct.getOrigin())){
+				str.append(",产地"+hubProduct.getOrigin()+"不存在") ;
+				result.setPassing(false);
+			}	
+		}else{
+			str.append("产地为空，");
+			result.setPassing(false);
+		}
+		
 //		//货号
 		BrandModelDto BrandModelDto = null;
 		BrandModelResult brandModelResult= null;
-		if(hubProduct.getSpuModel()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getSpuModel())){
 			BrandModelDto = new BrandModelDto();
 			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
 			BrandModelDto.setHubBrandNo(hubProduct.getBrandNo());
