@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.common.service.check;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -22,6 +23,9 @@ import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
@@ -77,6 +81,8 @@ public class HubCheckService {
 	@Autowired
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 	@Autowired
+	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
+	@Autowired
 	CategoryService categoryService;
 	@Autowired
 	BrandService brandService;
@@ -107,7 +113,7 @@ public class HubCheckService {
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		result.setPassing(true);
 		//校验品牌
-		if(hubProduct.getHubBrandNo()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getHubBrandNo())){
 			if(!getBrand(hubProduct.getHubBrandNo())){
 				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
 				result.setPassing(false);
@@ -118,7 +124,7 @@ public class HubCheckService {
 		}
 		
 		//校验品类
-		if(hubProduct.getHubCategoryNo()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getHubCategoryNo())){
 			if(!getCategoryName(hubProduct.getHubCategoryNo())){
 				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
@@ -129,7 +135,7 @@ public class HubCheckService {
 		}
 		
 		//校验颜色
-		if(hubProduct.getHubColor()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getHubColor())){
 			if(!checkHubColor(hubProduct.getHubColor())){	
 				str.append("颜色编号"+hubProduct.getHubColor()+"不存在,") ;
 				result.setPassing(false);
@@ -140,7 +146,7 @@ public class HubCheckService {
 		}
 		
 		//校验季节
-		if(hubProduct.getHubSeason()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getHubSeason())){
 			if(!checkHubSeason(hubProduct.getHubSeason())){
 				str.append("季节编号"+hubProduct.getHubSeason()+"不存在,") ;
 				result.setPassing(false);
@@ -151,7 +157,7 @@ public class HubCheckService {
 		}
 		
 		//校验性别
-		if(hubProduct.getHubGender()!=null){
+		if(StringUtils.isNoneBlank(hubProduct.getHubGender())){
 			if(!checkHubGender(hubProduct.getHubGender())){
 				str.append("性别编号"+hubProduct.getHubGender()+"不存在") ;
 				result.setPassing(false);
@@ -161,8 +167,8 @@ public class HubCheckService {
 			result.setPassing(false);
 		}
 		//校验材质
-		if(hubProduct.getHubMaterial()!=null){
-			if(RegexUtil.isLetter(hubProduct.getHubMaterial())){
+		if(StringUtils.isNoneBlank(hubProduct.getHubMaterial())){
+			if(!RegexUtil.excludeLetter(hubProduct.getHubMaterial())){
 				result.setPassing(false);
 				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
 	        }
@@ -170,11 +176,32 @@ public class HubCheckService {
 			str.append("材质为空，");
 			result.setPassing(false);
 		}
+		//校验产地
+		if(StringUtils.isNotBlank(hubProduct.getHubOrigin())){
+			if(!checkHubOrigin(hubProduct.getHubOrigin())){
+				str.append("产地"+hubProduct.getHubOrigin()+"不存在") ;
+				result.setPassing(false);
+			}	
+		}else{
+			str.append("产地为空");
+			result.setPassing(false);
+		}
+		
 		result.setResult(str.toString());
 		//校验产地
 		return result;
 	}
 
+	public boolean checkHubOrigin(String hubOrigin) {
+		
+		HubSupplierValueMappingCriteriaDto critera = new HubSupplierValueMappingCriteriaDto();
+		critera.createCriteria().andHubValTypeEqualTo((byte)3).andHubValEqualTo(hubOrigin.trim());
+		List<HubSupplierValueMappingDto> mapp = hubSupplierValueMappingGateWay.selectByCriteria(critera);
+		if(mapp!=null&&mapp.size()>0){
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * 校验品牌编号
 	 * @param brandNo

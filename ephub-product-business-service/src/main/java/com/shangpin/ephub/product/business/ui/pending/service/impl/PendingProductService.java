@@ -266,7 +266,10 @@ public class PendingProductService implements IPendingProductService{
                     response.setErrorMsg(updatedVo);
                 }
             }
-            log.info("supplierSpuId======="+pendingProductDto.getSupplierSpuId()); 
+            log.info("supplierSpuId======="+pendingProductDto.getSupplierSpuId());
+            if(0==pendingProductDto.getSupplierSpuId()){
+                pendingProductDto.setSupplierSpuId(null);
+            }
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
@@ -402,7 +405,7 @@ public class PendingProductService implements IPendingProductService{
     /**
      * 将hub_spu中的信息付给pending_spu
      * @param hubSpuDto
-     * @param pendingProductDto
+     * @param
      */
     private void convertHubSpuDtoToPendingSpu(HubSpuDto hubSpuDto,PendingProductDto hubPendingSpuDto){
     	hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
