@@ -171,8 +171,8 @@ public class ExportServiceImpl {
                     for(PendingProductDto product : products.getProduts()){
                         try {
                             j++;
+                            row = sheet.createRow(j);  
                             if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
-                            	row = sheet.createRow(j);  
                                 row.setHeight((short) 1500);
                         		sheet.setColumnWidth(0, (36*150));
                             }
