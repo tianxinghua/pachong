@@ -63,7 +63,7 @@ public class TonyHandler implements ISupplierHandler {
 				}
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-				if(success){
+				if(success && hubSkus.size() >0){
 					supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}

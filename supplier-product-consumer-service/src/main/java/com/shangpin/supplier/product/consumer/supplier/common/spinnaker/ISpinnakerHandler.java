@@ -93,7 +93,7 @@ public abstract class ISpinnakerHandler {
 						}
 						//处理图片
 						SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-						if(success){
+						if(success && hubSkus.size() >0){
 							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 						}
 						
