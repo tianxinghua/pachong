@@ -224,58 +224,63 @@ public class PendingProductService implements IPendingProductService{
     	HubResponse<PendingUpdatedVo> response = new HubResponse<PendingUpdatedVo>();
     	response.setCode("0"); //初始设置为成功
     	PendingUpdatedVo updatedVo = null;
+    	boolean pass = true; //全局用来判断整条数据是否校验通过
     	try {
             if(null != pendingProductDto){
+            	//开始校验spu
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
             	if(brandModelResult.isPassing()){
             		if(!findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto)){
             			HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
-            			if(spuResult.isPassing()){
-    	                	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-            			}else{
+            			if(!spuResult.isPassing()){
+            				pass = false ;
             				log.info("pending spu校验失败，不更新："+spuResult.getResult()+"|原始数据："+JsonUtil.serialize(pendingProductDto));
             				updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
             			}
             		}
             	}else{
+            		pass = false ;
             		log.info("pending spu校验失败，不更新：货号校验不通过。|原始数据："+JsonUtil.serialize(pendingProductDto));
             		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
             	}
+            	//开始校验sku
             	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
-                if(null != pengdingSkus && pengdingSkus.size()>0){
-                	if(null == updatedVo){
-                		updatedVo = new PendingUpdatedVo();
-                	}
-                	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
-                    for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                    	HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuPendingDto.getHubSkuSize());
-                        if(result.isPassing()){
-                        	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-                        	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
-                        }else{
-                            log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
-                            response.setCode("1");
-                            PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
-                            skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
-                            skuUpdatedVo.setSkuResult(result.getResult());
-                            skus.add(skuUpdatedVo);
-                        }
-                        hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+            	if(null == updatedVo){
+            		updatedVo = new PendingUpdatedVo();
+            	}
+            	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
+                for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
+                	HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuPendingDto.getHubSkuSize());
+                    if(result.isPassing()){
+                    	hubSkuPendingDto.setScreenSize(result.getScreenSizeStandardValueId()); 
+                    	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+                    	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+                    }else{
+                    	pass = false ;
+                        log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+JsonUtil.serialize(hubSkuPendingDto));
+                        response.setCode("1");
+                        PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
+                        skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
+                        skuUpdatedVo.setSkuResult(result.getResult());
+                        skus.add(skuUpdatedVo);
                     }
-                    updatedVo.setSkus(skus); 
-                    response.setErrorMsg(updatedVo);
+                    hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                 }
+                updatedVo.setSkus(skus); 
+                response.setErrorMsg(updatedVo);
             }
-            log.info("supplierSpuId======="+pendingProductDto.getSupplierSpuId());
             if(0==pendingProductDto.getSupplierSpuId()){
                 pendingProductDto.setSupplierSpuId(null);
+            }
+            if(pass){
+            	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
             setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
         }
-    	log.info("返回的校验结果：{}",response); 
+    	log.info("返回的校验结果：+"+JsonUtil.serialize(response)); 
     	return response;
     }
     @Override
@@ -333,7 +338,7 @@ public class PendingProductService implements IPendingProductService{
     	SupplierProductVo supplierProductVo = new SupplierProductVo();
     	try {
         	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(Long.valueOf(supplierSpuId));
-        	JavaUtil.fatherToChild(supplierProductVo, spuDto);
+        	JavaUtil.fatherToChild(spuDto,supplierProductVo);
         	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(Long.valueOf(supplierSpuId));
         	if(CollectionUtils.isNotEmpty(supplierSku)){
         		supplierProductVo.setSupplierSku(supplierSku);
@@ -554,7 +559,7 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSpuModel())){
-			criteria.andSpuModelLike(pendingQuryDto.getSpuModel());
+			criteria.andSpuModelLike("%"+pendingQuryDto.getSpuModel()+"%");
 		}
 		String hubCategoryNo = pendingQuryDto.getHubCategoryNo();
 		if(!StringUtils.isEmpty(hubCategoryNo)){
@@ -568,10 +573,10 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andHubBrandNoEqualTo(pendingQuryDto.getHubBrandNo());
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
-			criteria.andHubSeasonLike(pendingQuryDto.getHubSeason()+"%");
+			criteria.andHubSeasonLike("%"+pendingQuryDto.getHubSeason()+"%");
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-			criteria.andHubSeasonLike("%"+pendingQuryDto.getHubYear()+"%");
+			criteria.andHubSeasonLike(pendingQuryDto.getHubYear()+"%");
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
 			criteria.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat));

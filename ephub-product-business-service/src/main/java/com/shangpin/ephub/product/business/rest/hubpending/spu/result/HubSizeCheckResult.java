@@ -30,5 +30,9 @@ public class HubSizeCheckResult implements Serializable {
      * 校验不通过记录原因，通过为空
      */
     private String result;
+    /**
+     * 校验通过的话记录筛选尺码
+     */
+    private String screenSizeStandardValueId;
 
 }

@@ -13,6 +13,8 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     private TaskExecutor executor;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public SpuModelMsgVO getSpuModel(SpuPendingAuditQueryVO queryVO) {
@@ -255,15 +260,16 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
+            if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
+                //判断skupending 尺码是否符合标准
+                if (hasNohandleSkuSize(hubSpuPendingDtos)) {
 
-            //判断skupending 尺码是否符合标准
-            if(hasNohandleSkuSize(hubSpuPendingDtos)){
-
-                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
-                hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
-                updateSpuPendingState(auditVO, hubSpuPending);
-                auditVO.setMemo("尺码有未匹配的,不能审核通过");
-                return false;
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
+                    updateSpuPendingState(auditVO, hubSpuPending);
+                    auditVO.setMemo("尺码有未匹配的,不能审核通过");
+                    return false;
+                }
             }
 
             HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
@@ -280,6 +286,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                 SpuModelDto spuModelVO = new SpuModelDto();
                 BeanUtils.copyProperties(auditVO,spuModelVO);
+
+                //赋值spuName
+                setSpuNameToSpuModelDto(spuModelVO);
+
                 List<Long> spuPendingIdList = new ArrayList<>();
                 for(HubSpuPendingDto pendingDto:hubSpuPendingDtos ){
                     spuPendingIdList.add(pendingDto.getSpuPendingId());
@@ -317,6 +327,15 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
 
 
+
+
+    }
+
+    private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {
+        FourLevelCategory gmsCateGory = categoryService.getGmsCateGory(spuModelVO.getCategoryNo());
+        if(null!=gmsCateGory){
+            spuModelVO.setSpuName(gmsCateGory.getFourthName());
+        }
 
 
     }
