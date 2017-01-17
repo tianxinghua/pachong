@@ -388,7 +388,6 @@ public class PendingProductService implements IPendingProductService{
 		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 		if(null != hubSpus && hubSpus.size()>0){
 			convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
-        	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             return true;
 		}else{
 			return false;
