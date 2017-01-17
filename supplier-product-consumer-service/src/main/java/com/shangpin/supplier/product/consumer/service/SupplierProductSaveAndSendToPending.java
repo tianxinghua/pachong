@@ -66,7 +66,7 @@ public class SupplierProductSaveAndSendToPending {
 	
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -91,7 +91,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -117,7 +117,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -142,7 +142,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -168,7 +168,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -188,7 +188,7 @@ public class SupplierProductSaveAndSendToPending {
 		
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -214,7 +214,7 @@ public class SupplierProductSaveAndSendToPending {
 		 * 消息头
 		 */
 		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
+		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
 			sendPending(supplierName,supplierNo,pendingProduct,headers);	
 		}else{
@@ -226,6 +226,7 @@ public class SupplierProductSaveAndSendToPending {
 	
 	/**
 	 * 保存hubSpu以及hubSku，并且构造消息体和消息头
+	 * @param supplierNo 供应商编号
 	 * @param supplierId 供应商门户id
 	 * @param supplierName 供应商名称
 	 * @param hubSpu HubSupplierSpuDto对象
@@ -234,12 +235,12 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param headers 消息头
 	 * @param supplierPicture 图片的消息体
 	 */
-	public boolean supplierSaveAndSendToPending(String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
+	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 			//保存hubSpu到数据库
-			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(hubSpu,pendingSpu);
+			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,hubSpu,pendingSpu);
 			//开始构造消息头
 			Spu spuHead = setSpuHead(supplierId,hubSpu.getSupplierSpuNo(),productStatus.getIndex());
 			List<Sku> headSkus = new ArrayList<Sku>();		
@@ -263,7 +264,7 @@ public class SupplierProductSaveAndSendToPending {
 			}		
 			pendingSpu.setSkus(skus);
 			pendingProduct.setData(pendingSpu);		
-			spuHead.setSkus(headSkus);		
+			spuHead.setSkus(headSkus);	
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 			//发送图片
 			if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){

@@ -551,11 +551,11 @@ public class DataServiceHandler {
 				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
 			}
 		}
-		if (null != spuPending.getSpuBrandState()) {
-			if (PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex() == spuPending.getSpuBrandState().intValue()) {
-				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
-			}
-		}
+//		if (null != spuPending.getSpuBrandState()) {
+//			if (PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex() == spuPending.getSpuBrandState().intValue()) {
+//				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
+//			}
+//		}
 
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);
@@ -567,11 +567,11 @@ public class DataServiceHandler {
 
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
 			criteria.createCriteria().andSpuPendingIdEqualTo(spuKey);
-
+			spuPending.setUpdateTime(new Date());
 			HubSpuPendingWithCriteriaDto updateByCriteriaSelective = new HubSpuPendingWithCriteriaDto(spuPending,
 					criteria);
 			hubSpuPendingGateWay.updateByCriteriaSelective(updateByCriteriaSelective);
-			hubSpuPendingGateWay.insert(spuPending);
+//			hubSpuPendingGateWay.insert(spuPending);
 		} catch (Exception e) {
 			if (e instanceof DuplicateKeyException) {
 
