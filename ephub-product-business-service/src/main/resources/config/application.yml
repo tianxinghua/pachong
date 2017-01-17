@@ -1,5 +1,5 @@
 ﻿server.port: 8003
 spring: 
   profiles: 
-    active: pro
+    active: qa
   application.name: ephub-product-business-service
