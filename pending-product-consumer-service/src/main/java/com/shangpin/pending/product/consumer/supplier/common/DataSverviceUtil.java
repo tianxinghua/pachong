@@ -61,7 +61,7 @@ public class DataSverviceUtil {
     /**
      * 先进入redis查找 没有查找数据库
      * @param supplierId
-     * @return
+     * @return   返回 尚品的尺码+"," +尚品的前端的选择尺码的ＩＤ
      */
     public Map<String,String> getSupplierSizeMapping(String supplierId){
 
@@ -80,12 +80,13 @@ public class DataSverviceUtil {
             try {
                 supplierSizeMappingDtos = new ArrayList<>();
                 List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler.getHubSupplierValueMappingBySupplierIdAndType(supplierId, SupplierValueMappingType.TYPE_SIZE.getIndex());
-                if(null!=supplierSizeMappingDtos&&supplierValueMappingDtos.size()>0){
+                if(null!=supplierValueMappingDtos&&supplierValueMappingDtos.size()>0){
 
                     for(HubSupplierValueMappingDto dto:supplierValueMappingDtos){
                         SupplierSizeMappingDto sizeMappingDto = new SupplierSizeMappingDto();
                         sizeMappingDto.setSpSize(dto.getHubVal());
                         sizeMappingDto.setSupplierSize(dto.getSupplierVal());
+                        sizeMappingDto.setSpScreenSizeId(null==dto.getHubValNo()?"":dto.getHubValNo());
                         supplierSizeMappingDtos.add(sizeMappingDto);
 
                     }
@@ -102,7 +103,7 @@ public class DataSverviceUtil {
         Map<String,String> map = new HashMap<>();
         if(null!=supplierSizeMappingDtos){
             for(SupplierSizeMappingDto dto:supplierSizeMappingDtos){
-                map.put(dto.getSupplierSize(),dto.getSpSize());
+                map.put(dto.getSupplierSize(),dto.getSpSize()+","+dto.getSpScreenSizeId());
             }
         }
         return map;
@@ -125,7 +126,7 @@ public class DataSverviceUtil {
             try {
                 supplierSizeMappingDtos = new ArrayList<>();
                 List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler.getSupplierCommonSizeValueMapping();
-                if(null!=supplierSizeMappingDtos&&supplierValueMappingDtos.size()>0){
+                if(null!=supplierValueMappingDtos&&supplierValueMappingDtos.size()>0){
 
                     for(HubSupplierValueMappingDto dto:supplierValueMappingDtos){
                         SupplierSizeMappingDto sizeMappingDto = new SupplierSizeMappingDto();

@@ -17,4 +17,6 @@ public class SupplierSizeMappingDto implements Serializable {
     private String supplierSize;
 
     private String spSize;
+
+    private String  spScreenSizeId;
 }
