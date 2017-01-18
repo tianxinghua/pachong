@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.picture.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class HubSpuPendingPicController {
     public List<HubSpuPendingPic> selectByCriteria(@RequestBody HubSpuPendingPicCriteria criteria){
     	return hubSpuPendingPicService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubSpuPendingPic selectByPrimaryKey(Long spuPicId){
+	@RequestMapping(value = "/select-by-primary-key/{spuPicId}")
+    public HubSpuPendingPic selectByPrimaryKey(@PathVariable("spuPicId") Long spuPicId){
     	return hubSpuPendingPicService.selectByPrimaryKey(spuPicId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
