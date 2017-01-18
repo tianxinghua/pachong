@@ -14,20 +14,38 @@ spring:
             #instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         stream: 
               bindings: 
+                        supplierRetryPictureProduct: 
+                              destination: retry.product.picture
+                              content-type: application/json              
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        retryPictureProduct: 
+                              destination: retry.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
+                            supplierRetryPictureProduct: 
+                                  producer: 
+                                       prefix: HA.                      
                             supplierPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            retryPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                       
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 

@@ -18,15 +18,33 @@ spring:
             register-health-check: false
         stream: 
               bindings: 
+                        supplierRetryPictureProduct: 
+                              destination: retry.product.picture
+                              content-type: application/json              
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        retryPictureProduct: 
+                              destination: retry.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
+                            supplierRetryPictureProduct: 
+                                  producer: 
+                                       prefix: HA.                      
                             supplierPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            retryPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
