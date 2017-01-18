@@ -45,7 +45,7 @@ public class StefaniaHandler implements ISupplierHandler{
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
-			if(StringUtils.isEmpty(message.getData())){
+			if(!StringUtils.isEmpty(message.getData())){
 				StefProduct stefProduct = JsonUtil.deserialize(message.getData(), StefProduct.class);
 				for(StefItem stefItem :stefProduct.getItems().getItems()){
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
