@@ -104,7 +104,8 @@ public class CategoryService {
         request.setCategoryNo(categoryNo);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
         log.info("从api获取品类请求参数：{}"+apiAddressProperties.getGmsCategoryUrl(),request);
-        ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
+        String gmsCategoryUrl = apiAddressProperties.getGmsCategoryUrl();
+		ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(gmsCategoryUrl, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
         log.info("从api获取品类返回结果：{}",entity.getBody());
         return entity.getBody();
 	}

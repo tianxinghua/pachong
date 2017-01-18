@@ -79,6 +79,7 @@
       <if test="null!=endDate">
            <![CDATA[ and sku.update_time <=#{endDate}    ]]>
       </if>
+      ORDER BY update_time desc
       limit #{pageNo} , #{pageSize}
   </select>
    <select id="count" resultType="java.lang.Long" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest">
