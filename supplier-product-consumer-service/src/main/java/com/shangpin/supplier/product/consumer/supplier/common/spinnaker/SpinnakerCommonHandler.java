@@ -3,6 +3,8 @@ package com.shangpin.supplier.product.consumer.supplier.common.spinnaker;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,21 +28,28 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 public class SpinnakerCommonHandler extends ISpinnakerHandler {
 
 	@Override
-	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu) {
+	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu,String data) {
 		if(null != spu){
 			
 			String colorCode = "";
 			String colorName = "";
 			String color = sku.getColor();
-			if(color.contains("\\s+")){
-				colorCode = color.substring(0, color.indexOf("\\s+"));
-				colorName = color.substring(color.indexOf("\\s+")).trim();
+			if(color.contains(" ")){
+				String firstStr = color.substring(0, color.indexOf(" "));
+				if(hasDigit(firstStr)){
+					colorCode = firstStr;
+					colorName = color.substring(color.indexOf(" ")).trim();
+				}else{
+					colorCode = color;
+					colorName = color;
+				}
 			}else{
+				colorCode = color;
 				colorName = color;
 			}
 			
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(spu.getProduct_id()+"-"+sku.getItem_id());
+			hubSpu.setSupplierSpuNo(spu.getProduct_id()+"-"+colorCode);
 			hubSpu.setSupplierSpuModel(spu.getProduct_name()+" "+colorCode);
 			hubSpu.setSupplierSpuName(spu.getDescription());
 			hubSpu.setSupplierSpuColor(colorName);
@@ -51,6 +60,7 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSpu.setSupplierMaterial(spu.getProduct_detail());
 			hubSpu.setSupplierOrigin(spu.getProduct_MadeIn());
 			hubSpu.setSupplierSpuDesc(spu.getProduct_detail()); 
+			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;
@@ -99,6 +109,19 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			return images;
 		}
 	}
-
 	
+	/**
+	 * 判断字符串中是否含有数字
+	 * @param content
+	 * @return
+	 */
+	private boolean hasDigit(String content) {
+		boolean flag = false;
+		Pattern p = Pattern.compile(".*\\d+.*");
+		Matcher m = p.matcher(content);
+		if (m.matches())
+			flag = true;
+		return flag;
+	}
+
 }

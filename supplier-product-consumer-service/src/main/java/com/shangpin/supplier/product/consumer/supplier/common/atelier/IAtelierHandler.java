@@ -96,7 +96,7 @@ public abstract class IAtelierHandler{
 				}else{
 					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 				}
-				boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu);
+				boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				if(null != atelierDate.getSku()){				
 					AtelierPrice atelierPrice = handlePriceData(atelierDate.getPrice());
@@ -111,7 +111,7 @@ public abstract class IAtelierHandler{
 				}
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-				if(success && hubSkus.size() >0){
+				if(success){
 					supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
@@ -153,7 +153,7 @@ public abstract class IAtelierHandler{
 	 * @param atelierSpu atelier spu对象
 	 * @param hubSpu hub spu对象
 	 */
-	public boolean convertSpu(String supplierId,AtelierSpu atelierSpu,HubSupplierSpuDto hubSpu){
+	public boolean convertSpu(String supplierId,AtelierSpu atelierSpu,HubSupplierSpuDto hubSpu,String data){
 		if(null != atelierSpu){
 			
 			hubSpu.setSupplierId(supplierId);
@@ -168,6 +168,7 @@ public abstract class IAtelierHandler{
 			hubSpu.setSupplierMaterial(atelierSpu.getMaterial1()+" "+atelierSpu.getMaterial3());
 			hubSpu.setSupplierOrigin(atelierSpu.getProductOrigin());
 			hubSpu.setSupplierSpuDesc(atelierSpu.getDescription()); 
+			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

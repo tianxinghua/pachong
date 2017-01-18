@@ -59,7 +59,7 @@ public class ColtortiProductConvert {
 	 * @param p 供应商原始数据反序列化之后对应的对象
 	 * @return
 	 */
-	public static HubSupplierSpuDto product2spu(String supplierId,ColtortiProduct p){
+	public static HubSupplierSpuDto product2spu(String supplierId,ColtortiProduct p,String data){
 		HubSupplierSpuDto dto = new HubSupplierSpuDto();
 		dto.setSupplierSpuNo(p.getProductId());
 		if(p.getBrand()!=null){
@@ -85,6 +85,7 @@ public class ColtortiProductConvert {
 		dto.setSupplierSpuModel(p.getProductCode());
 		dto.setSupplierSpuColor(p.getColor()); 
 		dto.setSupplierSpuDesc(p.getDescription());
+		dto.setMemo(data);
 		return dto;
 	}
 	/**

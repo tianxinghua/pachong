@@ -1,5 +1,6 @@
 package com.shangpin.supplier.product.consumer.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -118,22 +119,35 @@ public class SupplierProductMysqlService {
 		hubSkuUpdated.setSupplierId(hubSku.getSupplierId());
 		hubSkuUpdated.setSupplierSkuNo(hubSku.getSupplierSkuNo());
 		hubSkuUpdated.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
+		BigDecimal supplierPrice = null;
+		if(hubSku.getSupplyPrice()!=null){
+			supplierPrice = hubSku.getSupplyPrice().setScale(2,BigDecimal.ROUND_HALF_UP); 
+			if(!supplierPrice.equals(hubSkuSel.getSupplyPrice())){
+				pendingSku.setSupplyPrice(supplierPrice);
+				hubSkuUpdated.setSupplyPrice(supplierPrice);
+				isChanged = true;
+			}
+		}
+		BigDecimal salesPrice = null;
+		if(hubSku.getSalesPrice()!=null){
+			salesPrice = hubSku.getSalesPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
+			if(!salesPrice.equals(hubSkuSel.getSalesPrice())){
+				pendingSku.setSalesPrice(salesPrice);
+				hubSkuUpdated.setSalesPrice(salesPrice);
+				isChanged = true;
+			}
+			
+		}
+		BigDecimal marketPrice = null;
+		if(hubSku.getMarketPrice()!=null){
+			marketPrice =  hubSku.getMarketPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
+			if(!marketPrice.equals(hubSkuSel.getMarketPrice())){
+				pendingSku.setMarketPrice(marketPrice);
+				hubSkuUpdated.setMarketPrice(marketPrice); 
+				isChanged = true;
+			}
+		}
 		
-		if(!StringUtils.isEmpty(hubSku.getSupplyPrice()) && !hubSku.getSupplyPrice().equals(hubSkuSel.getSupplyPrice())){
-			pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
-			hubSkuUpdated.setSupplyPrice(hubSku.getSupplyPrice());
-			isChanged = true;
-		}
-		if(!StringUtils.isEmpty(hubSku.getSalesPrice()) && !hubSku.getSalesPrice().equals(hubSkuSel.getSalesPrice())){
-			pendingSku.setSalesPrice(hubSku.getSalesPrice());
-			hubSkuUpdated.setSalesPrice(hubSku.getSalesPrice());
-			isChanged = true;
-		}
-		if(!StringUtils.isEmpty(hubSku.getMarketPrice()) && !hubSku.getMarketPrice().equals(hubSkuSel.getMarketPrice())){
-			pendingSku.setMarketPrice(hubSku.getMarketPrice());
-			hubSkuUpdated.setMarketPrice(hubSku.getMarketPrice()); 
-			isChanged = true;
-		}
 		return isChanged;
 	}
 	/**

@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
+import com.shangpin.asynchronous.task.consumer.util.ImageUtils;
 import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
@@ -40,7 +41,6 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
-import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +96,6 @@ public class ExportServiceImpl {
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(SKUPAGESIZE);
-            		log.info("导出sku******************查库参数："+JsonUtil.serialize(pendingQuryDto)); 
             		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
             		lists.add(products);
             	}
@@ -108,7 +107,6 @@ public class ExportServiceImpl {
                             try {
                                 j++;
                                 row = sheet.createRow(j);
-                                row.setHeight((short) 1500);
                                 insertProductSkuOfRow(row,product,sku,rowTemplate);
                             } catch (Exception e) {
                             	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
@@ -163,7 +161,6 @@ public class ExportServiceImpl {
             	for(int i =1; i <= pageCount; i++){
             		pendingQuryDto.setPageIndex(i);
             		pendingQuryDto.setPageSize(PAGESIZE);
-            		log.info("******************查库参数："+JsonUtil.serialize(pendingQuryDto)); 
             		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
             		lists.add(products);
             	}
@@ -254,7 +251,7 @@ public class ExportServiceImpl {
     		try {
     			String fileName = parSetName(rowTemplate[i]);
     			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
-            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
+            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i])){
     				//所有sku的属性
     				fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
@@ -263,7 +260,25 @@ public class ExportServiceImpl {
             		setRowOfSeasonYear(row, product, spuClazz, i);
             	}else if("seasonName".equals(rowTemplate[i])){
             		setRowOfSeasonName(row, product, spuClazz, i); 
-            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeType".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
+            	}else if("hubSkuSize".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod(fileName);
+					value = fieldSetMet.invoke(sku);
+					String size = value != null ? value.toString() : "";
+					if(size.contains(":")){
+						row.createCell(i).setCellValue(size.substring(size.indexOf(":")+1));
+					}else{
+						row.createCell(i).setCellValue(size);
+					}
+            	}else if("originalProductSizeType".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod("getHubSkuSize");
+					value = fieldSetMet.invoke(sku);
+					String size = value != null ? value.toString() : "";
+					if(size.contains(":")){
+						row.createCell(i).setCellValue(size.substring(0,size.indexOf(":")));
+					}else{
+						row.createCell(i).setCellValue("");
+					}
+            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
             		//TODO 规格类型 原尺码类型 原尺码值 从哪取值？
             		row.createCell(i).setCellValue("");
             	}else{
@@ -399,7 +414,8 @@ public class ExportServiceImpl {
 			if(!StringUtils.isEmpty(url)){
 				byte[] bytes = DownloadPicTool.downImage(url);
 				if(null != bytes){
-					bufferImg = ImageIO.read(new ByteArrayInputStream(bytes));
+					ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+					bufferImg = ImageUtils.singleScale2OfByteArrayInputStream(input, 122, 87, false);
 					ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();							
 					ImageIO.write(bufferImg, "jpg", byteArrayOut);
 					HSSFPatriarch patriarch = row.getSheet().createDrawingPatriarch();

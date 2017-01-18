@@ -48,7 +48,7 @@ public abstract class ISpinnakerHandler {
 	 * @param hubSpu hub spu
 	 * @return
 	 */
-	public abstract boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu);
+	public abstract boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu,String data);
 	
 	/**
 	 * 将原始对象转换成hub对象
@@ -84,7 +84,7 @@ public abstract class ISpinnakerHandler {
 						}else{
 							hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 						}
-						boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu);
+						boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu,message.getData());
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 						boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),sku,hubSku);
 						List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
@@ -93,7 +93,7 @@ public abstract class ISpinnakerHandler {
 						}
 						//处理图片
 						SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-						if(success && hubSkus.size() >0){
+						if(success){
 							supplierProductSaveAndSendToPending.spinnakerSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 						}
 						

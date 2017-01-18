@@ -46,7 +46,7 @@ public class BiondioniHandler implements ISupplierHandler {
 				List<Article> artList = modele.getArticleList();
 				for(Article article : artList){
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-					boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu);
+					boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu,message.getData());
 					List<QtTaille> qtys = article.getTarifMagInternet().getList();
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					for(QtTaille qty : qtys){
@@ -56,7 +56,7 @@ public class BiondioniHandler implements ISupplierHandler {
 							hubSkus.add(hubSku);
 						}
 					}
-					if(success && hubSkus.size() >0){
+					if(success){
 						supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,null);
 					}
 				}
@@ -75,7 +75,7 @@ public class BiondioniHandler implements ISupplierHandler {
 	 * @param hubSpu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,Modele modele, Article article, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
+	public boolean convertSpu(String supplierId,Modele modele, Article article, HubSupplierSpuDto hubSpu,String data) throws EpHubSupplierProductConsumerRuntimeException{
 		if(modele != null && article != null){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(modele.getNumMdle()+article.getNumArti());
@@ -88,6 +88,7 @@ public class BiondioniHandler implements ISupplierHandler {
 			hubSpu.setSupplierSeasonname(article.getSaisonArticle());
 			hubSpu.setSupplierMaterial(article.getMatière());
 //			hubSpu.setSupplierOrigin(supplierOrigin);			
+			hubSpu.setMemo(data);
 			return true;
 		}else{
 			
