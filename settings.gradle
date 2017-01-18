@@ -24,3 +24,18 @@ include 'mclabels'
 include 'mclabels-stock'
 include 'stefaniamode'
 
+
+
+include 'report'
+include 'picturedown'
+
+
+include 'project-mq'
+include 'stockMontiHK'
+include 'stockclean'
+include 'OpenTest'
+
+include 'monnierfreres'
+include 'giglio'
+
+
