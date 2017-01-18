@@ -107,7 +107,6 @@ public class ExportServiceImpl {
                             try {
                                 j++;
                                 row = sheet.createRow(j);
-                                row.setHeight((short) 1500);
                                 insertProductSkuOfRow(row,product,sku,rowTemplate);
                             } catch (Exception e) {
                             	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
@@ -252,7 +251,7 @@ public class ExportServiceImpl {
     		try {
     			String fileName = parSetName(rowTemplate[i]);
     			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
-            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
+            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i])){
     				//所有sku的属性
     				fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
@@ -261,7 +260,25 @@ public class ExportServiceImpl {
             		setRowOfSeasonYear(row, product, spuClazz, i);
             	}else if("seasonName".equals(rowTemplate[i])){
             		setRowOfSeasonName(row, product, spuClazz, i); 
-            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeType".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
+            	}else if("hubSkuSize".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod(fileName);
+					value = fieldSetMet.invoke(product);
+					String size = value != null ? value.toString() : "";
+					if(size.contains(":")){
+						row.createCell(i).setCellValue(size.substring(size.indexOf(":")+1));
+					}else{
+						row.createCell(i).setCellValue(size);
+					}
+            	}else if("originalProductSizeType".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod("getHubSkuSize");
+					value = fieldSetMet.invoke(product);
+					String size = value != null ? value.toString() : "";
+					if(size.contains(":")){
+						row.createCell(i).setCellValue(size.substring(0,size.indexOf(":")));
+					}else{
+						row.createCell(i).setCellValue("");
+					}
+            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
             		//TODO 规格类型 原尺码类型 原尺码值 从哪取值？
             		row.createCell(i).setCellValue("");
             	}else{
