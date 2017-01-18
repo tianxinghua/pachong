@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
@@ -104,7 +105,8 @@ public class BrandService {
         request.setBrandNo(brandNo);
         HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
         log.info("从api获取品牌请求参数：{}"+apiAddressProperties.getGmsBrandUrl(),request);
-        ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {});
+        String gmsBrandUrl = apiAddressProperties.getGmsBrandUrl();
+		ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(gmsBrandUrl, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {});
         log.info("从api获取品牌返回结果：{}",entity.getBody());
         return entity.getBody();
 	}

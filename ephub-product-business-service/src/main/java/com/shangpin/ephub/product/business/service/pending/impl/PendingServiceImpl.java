@@ -257,6 +257,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
             if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
                 //判断skupending 尺码是否符合标准
+                if(!hasSkuSize(hubSpuPendingDtos)){
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
+                    updateSpuPendingState(auditVO, hubSpuPending);
+                    auditVO.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
+                    return false;
+                }
                 if (hasNohandleSkuSize(hubSpuPendingDtos)) {
 
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
@@ -439,6 +446,21 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
         List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
         if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean hasSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos) {
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList);
+        int i =  skuPendingGateWay.countByCriteria(criteriaSku);
+        if(i>0){
             return true;
         }else{
             return false;
