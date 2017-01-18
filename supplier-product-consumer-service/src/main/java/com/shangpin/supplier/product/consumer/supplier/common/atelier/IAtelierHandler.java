@@ -111,7 +111,7 @@ public abstract class IAtelierHandler{
 				}
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-				if(success && hubSkus.size() >0){
+				if(success){
 					supplierProductSaveAndSendToPending.atelierSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}

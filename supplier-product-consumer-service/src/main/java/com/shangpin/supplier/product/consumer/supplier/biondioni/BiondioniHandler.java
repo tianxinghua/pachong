@@ -56,7 +56,7 @@ public class BiondioniHandler implements ISupplierHandler {
 							hubSkus.add(hubSku);
 						}
 					}
-					if(success && hubSkus.size() >0){
+					if(success){
 						supplierProductSaveAndSendToPending.biondioniSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,null);
 					}
 				}
