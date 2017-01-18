@@ -53,7 +53,11 @@ public class PictureProductService {
 			log.error(supplierPicture.getSupplierName()+":"+supplierPicture.getProductPicture().getSupplierSpuNo()+" 发送图片异常："+e.getMessage(),e); 
 		}
 	}
-	
+	/**
+	 * 判断图片是否发送，会过滤掉已完成的图片，只发送新的，或者下载失败的图片
+	 * @param supplierPicture
+	 * @return
+	 */
 	private boolean toPush(SupplierPicture supplierPicture){
 		if(null == supplierPicture || null == supplierPicture.getProductPicture() || null == supplierPicture.getProductPicture().getImages() || supplierPicture.getProductPicture().getImages().size() == 0){
 			return false;
@@ -77,10 +81,14 @@ public class PictureProductService {
 			
 		}
 	}
-	
+	/**
+	 * 查找已处理的供应商图片链接
+	 * @param supplierSpuId
+	 * @return
+	 */
 	private Map<String,String> findHubSpuPendingPics(Long supplierSpuId){
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
-		dto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
+		dto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicHandleStateEqualTo(PicState.HANDLED.getIndex()).andDataStateNotEqualTo(Byte.valueOf("0")); 
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
 			Map<String,String> retMap = new HashMap<String,String>();
