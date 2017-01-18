@@ -37,7 +37,7 @@ public class ColtortiHandler implements ISupplierHandler {
 		try {
 			if(null != message && !StringUtils.isEmpty(message.getData())){
 				ColtortiProduct p = JsonUtil.deserialize(message.getData(), ColtortiProduct.class);
-				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(message.getSupplierId(), p);
+				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(message.getSupplierId(), p,message.getData());
 				List<Image> images = ColtortiProductConvert.productPic(p);
 				if(null != images){
 					supplierSpuDto.setIsexistpic(Isexistpic.YES.getIndex());
@@ -48,9 +48,7 @@ public class ColtortiHandler implements ISupplierHandler {
 				HubSupplierSkuDto supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p);
 				hubSkus.add(supplierSkuDto);
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, supplierSpuDto, images);
-				if(hubSkus.size() >0){
-					supplierProductSaveAndSendToPending.coltortiSaveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
-				}
+				supplierProductSaveAndSendToPending.coltortiSaveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
 			}
 		} catch (Exception e) {
 			log.error("coltorti异常："+e.getMessage(),e); 

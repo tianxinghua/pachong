@@ -29,7 +29,8 @@ repositories {
 
 
 dependencies {
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.11.6-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.12.3-SNAPSHOT')
+	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
 	compile('commons-codec:commons-codec:1.10')
 	compile('commons-io:commons-io:2.5')
 	compile('org.apache.commons:commons-lang3:3.5')

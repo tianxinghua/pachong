@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.picture.product.consumer.conf.stream.source.message.RetryPicture;
 import com.shangpin.picture.product.consumer.processor.SupplierProductPictureProcessor;
 
 /**
@@ -27,6 +28,14 @@ public class PictureProductStreamListenerAdapter {
 	 */
 	public void supplierPictureProductStreamListen(SupplierPicture message, Map<String, Object> headers) {
 		supplierProductPictureProcessor.processProductPicture(message,headers);
+	}
+	/**
+	 * 监听重试拉取图片
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void supplierRetryPictureProductStreamListen(RetryPicture message, Map<String, Object> headers) {
+		supplierProductPictureProcessor.processRetryProductPicture(message, headers);
 	}
 
 }

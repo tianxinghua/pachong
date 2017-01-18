@@ -368,7 +368,7 @@ public class TaskImportService {
 					// 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
 					spuIsPassing = true;
 					hubIsExist = false;
-					checkResult = spuModel+"已推送待复合";
+					checkResult = "校验成功";
 				} else {
 					spuIsPassing = false;
 					hubIsExist = false;
