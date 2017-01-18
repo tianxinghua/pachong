@@ -1,10 +1,11 @@
 package com.shangpin.picture.product.consumer.manager;
 
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -61,6 +62,30 @@ public class SupplierProductPictureManager {
 		} else {
 			return false;
 		}
+	}
+	/**
+	 * 根据查询条件查询总记录数
+	 * @param criteria
+	 * @return
+	 */
+	public int countFailedPictureTotal(HubSpuPendingPicCriteriaDto criteria) {
+		return hubSpuPendingPicGateWay.countByCriteria(criteria);
+	}
+	/**
+	 * 根据条件查询数据
+	 * @param criteria 查询条件对象
+	 * @return 数据
+	 */
+	public List<HubSpuPendingPicDto> queryByCriteria(HubSpuPendingPicCriteriaDto criteria) {
+		return hubSpuPendingPicGateWay.selectByCriteria(criteria);
+	}
+	/**
+	 * 根据主键查询
+	 * @param spuPendingPicId 主键
+	 * @return 数据
+	 */
+	public HubSpuPendingPicDto queryById(Long spuPendingPicId) {
+		return hubSpuPendingPicGateWay.selectByPrimaryKey(spuPendingPicId);
 	}
 
 }

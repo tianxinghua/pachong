@@ -14,6 +14,7 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.message.picture.ProductPicture;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
+import com.shangpin.picture.product.consumer.conf.stream.source.message.RetryPicture;
 import com.shangpin.picture.product.consumer.e.PicHandleState;
 import com.shangpin.picture.product.consumer.service.SupplierProductPictureService;
 
@@ -40,7 +41,6 @@ public class SupplierProductPictureProcessor {
 	public void processProductPicture(SupplierPicture message, Map<String, Object> headers) {
 		long start = System.currentTimeMillis();
 		String messageId = message.getMessageId();
-		log.info("图片处理系统接收到消息数据======:{}",message);
 		if (log.isDebugEnabled()) {
 			log.debug("图片处理系统接收到消息数据======:{}",message);
 		} else {
@@ -85,5 +85,18 @@ public class SupplierProductPictureProcessor {
 			log.warn("图片处理系统接收到的消息数据中没有图片地址，消息编号为{},消息发送时间为{}",message.getMessageId(),message.getMessageDate());
 		}
 		return dtos;
+	}
+	/**
+	 * 处理重试拉取图片
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void processRetryProductPicture(RetryPicture message, Map<String, Object> headers) {
+		try {
+			supplierProductPictureService.processRetryProductPicture(message.getSpuPendingPicId());
+		} catch (Throwable e) {
+			log.error("重试拉取图片发生异常", e);
+			e.printStackTrace();
+		}
 	}
 }
