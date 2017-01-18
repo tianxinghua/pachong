@@ -42,7 +42,7 @@ public class MonnierHandler implements ISupplierHandler {
 			if(!StringUtils.isEmpty(message.getData())){
 				Item item = JsonUtil.deserialize(message.getData(), Item.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
+				boolean success = convertSpu(message.getSupplierId(),item,hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku);
@@ -96,7 +96,7 @@ public class MonnierHandler implements ISupplierHandler {
 	 * @param item 供应商原始dto
 	 * @param hubSpu hub spu表
 	 */
-	public boolean convertSpu(String supplierId,Item item, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
+	public boolean convertSpu(String supplierId,Item item, HubSupplierSpuDto hubSpu,String data) throws EpHubSupplierProductConsumerRuntimeException{
 		if(null != item){			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getProduct_id());
@@ -117,6 +117,7 @@ public class MonnierHandler implements ISupplierHandler {
 			}
 			hubSpu.setSupplierOrigin(item.getMade_in());
 			hubSpu.setSupplierSpuDesc(item.getItem_description());
+			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

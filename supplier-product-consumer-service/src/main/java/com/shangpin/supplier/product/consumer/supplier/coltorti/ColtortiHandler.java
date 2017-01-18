@@ -37,7 +37,7 @@ public class ColtortiHandler implements ISupplierHandler {
 		try {
 			if(null != message && !StringUtils.isEmpty(message.getData())){
 				ColtortiProduct p = JsonUtil.deserialize(message.getData(), ColtortiProduct.class);
-				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(message.getSupplierId(), p);
+				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(message.getSupplierId(), p,message.getData());
 				List<Image> images = ColtortiProductConvert.productPic(p);
 				if(null != images){
 					supplierSpuDto.setIsexistpic(Isexistpic.YES.getIndex());

@@ -55,7 +55,7 @@ public class StefaniaHandler implements ISupplierHandler{
 					}else{
 						hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 					}
-					boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu);
+					boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu,message.getData());
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 					boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), stefItem, hubSku);
@@ -104,7 +104,7 @@ public class StefaniaHandler implements ISupplierHandler{
 	 * @param hubSpu hub spu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,StefProduct stefProduct,StefItem stefItem,HubSupplierSpuDto hubSpu){
+	public boolean convertSpu(String supplierId,StefProduct stefProduct,StefItem stefItem,HubSupplierSpuDto hubSpu,String data){
 		if(null != stefProduct && stefItem != null){
 			String productModle = findProductModleByItemId(stefItem.getItem_id());
 			if(!StringUtils.isEmpty(productModle)){
@@ -120,6 +120,7 @@ public class StefaniaHandler implements ISupplierHandler{
 				hubSpu.setSupplierMaterial(stefProduct.getProduct_material());
 				hubSpu.setSupplierOrigin(stefProduct.getMade_in());
 				hubSpu.setSupplierSpuDesc(stefItem.getDescription());
+				hubSpu.setMemo(data);
 				return true;
 			}else{
 				return false;

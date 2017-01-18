@@ -54,7 +54,7 @@ public class TonyHandler implements ISupplierHandler {
 				}else{
 					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 				}
-				boolean success = convertSpu(message.getSupplierId(), tonyItems, hubSpu);
+				boolean success = convertSpu(message.getSupplierId(), tonyItems, hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
@@ -98,7 +98,7 @@ public class TonyHandler implements ISupplierHandler {
 	 * @param hubSpu
 	 * @return
 	 */
-	public boolean convertSpu(String supplierId,TonyItems tonyItems,HubSupplierSpuDto hubSpu){
+	public boolean convertSpu(String supplierId,TonyItems tonyItems,HubSupplierSpuDto hubSpu,String data){
 		if(null != tonyItems){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(tonyItems.getSku_parent());
@@ -111,6 +111,7 @@ public class TonyHandler implements ISupplierHandler {
 			hubSpu.setSupplierMaterial((!StringUtils.isEmpty(tonyItems.getDesc())) ? getMaterial(tonyItems.getDesc()) : getMaterial(tonyItems.getDesc_en()));
 			hubSpu.setSupplierOrigin(getOrigin(tonyItems.getDesc()));
 			hubSpu.setSupplierSpuDesc(tonyItems.getDesc());
+			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;
