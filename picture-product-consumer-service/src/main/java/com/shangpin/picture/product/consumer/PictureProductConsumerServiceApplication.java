@@ -1,10 +1,11 @@
 package com.shangpin.picture.product.consumer;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.impl.execchain.MainClientExec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -12,10 +13,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
-import com.shangpin.picture.product.consumer.e.PicHandleState;
 
 import sun.misc.BASE64Encoder;
 /**
@@ -28,6 +29,7 @@ import sun.misc.BASE64Encoder;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
+@EnableScheduling
 public class PictureProductConsumerServiceApplication implements ApplicationRunner{
 
 	
@@ -38,7 +40,8 @@ public class PictureProductConsumerServiceApplication implements ApplicationRunn
 	}
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
-//		URL url = new URL("http://213.144.71.1/FOTO/P17/DOLCEGABBANA/CD0101 AL19880304.JPG");
+//		URL url = new URL("http://b2b.officinastore.com/Scambio/Atelier/Foto/P17---ALEXANDER McQUEEN---460429F140G1000_3_P.JPG");
+//		URL url = new URL("http://b2b.officinastore.com/Scambio/Atelier/Foto/P17---ALEXANDER%20McQUEEN---460429F140G1000_3_P.JPG");
 //		URLConnection openConnection = url.openConnection();
 //		openConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
 //		openConnection.setConnectTimeout(10*60*1000);

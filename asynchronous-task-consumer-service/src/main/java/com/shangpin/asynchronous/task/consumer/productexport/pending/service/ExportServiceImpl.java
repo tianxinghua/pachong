@@ -171,8 +171,8 @@ public class ExportServiceImpl {
                             j++;
                             row = sheet.createRow(j);  
                             if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
-                                row.setHeight((short) 122);
-                        		sheet.setColumnWidth(0, 87);
+                                row.setHeight((short) 1500);
+                        		sheet.setColumnWidth(0, (36*150));
                             }
                             insertProductSpuOfRow(pendingQuryDto.getIsExportPic(),row,product,rowTemplate);
                         } catch (Exception e) {
