@@ -8,7 +8,7 @@ spring:
            virtual-host: /scm-message-service
   cloud:
         consul: 
-          host: 192.168.20.235
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
