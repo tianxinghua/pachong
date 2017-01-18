@@ -122,7 +122,7 @@ public class PendingSkuImportService {
 		taskService.convertExcel(listMap, taskNo);
 	}
 
-	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map) {
+	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map) throws Exception{
 
 		map.put("taskNo", taskNo);
 		map.put("spuModel", product.getSpuModel());
@@ -136,12 +136,12 @@ public class PendingSkuImportService {
 		// 校验spu信息
 		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
-		HubSpuPendingDto isHubExist = null;
+		HubSpuPendingDto isPendingSpuExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
 			log.info(hubPendingSpuDto.getSpuModel() + "已存在hub");
-			isHubExist = listSpu.get(0);
+			isPendingSpuExist = listSpu.get(0);
 		}
-		taskService.checkPendingSpu(isHubExist, hubPendingSkuCheckResult, hubPendingSpuDto, map);
+		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map);
 
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
@@ -160,7 +160,7 @@ public class PendingSkuImportService {
 	}
 
 	private void checkPendingSku(String hubSpuNo,boolean isPushToHub,HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-			HubSkuCheckDto hubSkuCheckDto, Map<String, String> map) {
+			HubSkuCheckDto hubSkuCheckDto, Map<String, String> map) throws Exception{
 		
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
@@ -169,10 +169,15 @@ public class PendingSkuImportService {
 			String result = hubPendingSkuCheckResult.getResult();
 			String size = null;
 			if (StringUtils.isNotBlank(result)) {
-				String sizeId = result.split(",")[0];
-				size = result.split(",")[1];
-				hubSkuPendingDto.setHubSkuSize(size);
-				hubSkuPendingDto.setScreenSize(sizeId);
+				if(result.split(",").length>1){
+					String sizeId = result.split(",")[0];
+					size = result.split(",")[1];
+					hubSkuPendingDto.setHubSkuSize(size);
+					hubSkuPendingDto.setScreenSize(sizeId);
+				}else{
+					hubSkuPendingDto.setHubSkuSize(result);
+				}
+				
 			}
 		
 			if(hubSkuPendingTempDto!=null){
@@ -209,7 +214,7 @@ public class PendingSkuImportService {
 		}
 	}
 
-	private HubSkuPendingDto convertHubPendingProduct2PendingSku(HubPendingProductImportDTO product) {
+	private HubSkuPendingDto convertHubPendingProduct2PendingSku(HubPendingProductImportDTO product) throws Exception{
 		HubSkuPendingDto hubPendingSkuDto = new HubSkuPendingDto();
 		BeanUtils.copyProperties(product, hubPendingSkuDto);
 		if(hubPendingSkuDto.getMarketPrice()!=null){
@@ -221,7 +226,7 @@ public class PendingSkuImportService {
 		return hubPendingSkuDto;
 	}
 
-	private HubSkuCheckDto convertHubPendingProduct2PendingSkuCheck(HubPendingProductImportDTO product) {
+	private HubSkuCheckDto convertHubPendingProduct2PendingSkuCheck(HubPendingProductImportDTO product) throws Exception{
 		HubSkuCheckDto hubPendingSkuDto = new HubSkuCheckDto();
 		hubPendingSkuDto.setBrandNo(product.getHubBrandNo());
 		hubPendingSkuDto.setCategoryNo(product.getHubCategoryNo());
@@ -232,7 +237,7 @@ public class PendingSkuImportService {
 		return hubPendingSkuDto;
 	}
 
-	private HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) {
+	private HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) throws Exception{
 
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
@@ -280,21 +285,21 @@ public class PendingSkuImportService {
 		return listHubProduct;
 	}
 
-	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product) {
+	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product) throws Exception{
 		HubSpuPendingDto HubPendingSpuDto = new HubSpuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSpuDto);
 		HubPendingSpuDto.setHubSeason(product.getSeasonYear() + "_" + product.getSeasonName());
 		return HubPendingSpuDto;
 	}
 
-	private static HubPendingProductImportDTO convertSpuDTO(XSSFRow xssfRow) {
+	@SuppressWarnings("unchecked")
+	private static HubPendingProductImportDTO convertSpuDTO(XSSFRow xssfRow) throws Exception{
 		HubPendingProductImportDTO item = null;
 		if (xssfRow != null) {
 			try {
 				item = new HubPendingProductImportDTO();
 				String[] hubValueTemplate = item.getHubProductTemplate();
 				Class cls = item.getClass();
-				Field[] fields = cls.getDeclaredFields();
 				for (int i=0;i<hubValueTemplate.length;i++) {
 					if(xssfRow.getCell(i)!=null){
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
@@ -346,53 +351,59 @@ public class PendingSkuImportService {
 	}
 		return item;
 	}
-
-	private static HubPendingProductImportDTO convertSpuDTO(HSSFRow xssfRow) {
+	@SuppressWarnings("unchecked")
+	private static HubPendingProductImportDTO convertSpuDTO(HSSFRow xssfRow) throws Exception{
 		HubPendingProductImportDTO item = null;
 		if (xssfRow != null) {
 			try {
 				item = new HubPendingProductImportDTO();
 				String[] hubValueTemplate = item.getHubProductTemplate();
 				Class cls = item.getClass();
-				Field[] fields = cls.getDeclaredFields();
-				int i = 0;
-				for (Field field : fields) {
-					try {
-						String fieldSetName = parSetName(field.getName());
-						@SuppressWarnings("unchecked")
-						Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());
-						if (!hubValueTemplate[i].equals(field.getName())) {
-							return null;
-						}
+				
+				for (int i=0;i<hubValueTemplate.length;i++) {
+					if(xssfRow.getCell(i)!=null){
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
-						String value = xssfRow.getCell(i).toString();
-						if (null != value && !"".equals(value)) {
-							String fieldType = field.getType().getSimpleName();
-							if ("String".equals(fieldType)) {
-								fieldSetMet.invoke(item, value);
-							} else if ("Integer".equals(fieldType) || "int".equals(fieldType)) {
-								Integer intval = Integer.parseInt(value);
-								fieldSetMet.invoke(item, intval);
-							} else if ("Long".equalsIgnoreCase(fieldType)) {
-								Long temp = Long.parseLong(value);
-								fieldSetMet.invoke(item, temp);
-							} else if ("Double".equalsIgnoreCase(fieldType)) {
-								Double temp = Double.parseDouble(value);
-								fieldSetMet.invoke(item, temp);
-							} else if ("Boolean".equalsIgnoreCase(fieldType)) {
-								Boolean temp = Boolean.parseBoolean(value);
-								fieldSetMet.invoke(item, temp);
-							} else if ("BigDecimal".equalsIgnoreCase(fieldType)) {
-								BigDecimal temp = new BigDecimal(value);
-								fieldSetMet.invoke(item, temp);
-							} else {
-								log.info("not supper type" + fieldType);
-							}
-						}
-					} catch (Exception e) {
-						continue;
+						String fieldSetName = "set" + hubValueTemplate[i].toUpperCase().charAt(0)
+								+ hubValueTemplate[i].substring(1);
+						Method setMethod = cls.getDeclaredMethod(fieldSetName, String.class);
+						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}
-					i++;
+//				for (Field field : fields) {
+//					try {
+//						String fieldSetName = parSetName(field.getName());
+//						@SuppressWarnings("unchecked")
+//						Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());
+//						if (!hubValueTemplate[i].equals(field.getName())) {
+//							return null;
+//						}
+//						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+//						String value = xssfRow.getCell(i).toString();
+//						if (null != value && !"".equals(value)) {
+//							String fieldType = field.getType().getSimpleName();
+//							if ("String".equals(fieldType)) {
+//								fieldSetMet.invoke(item, value);
+//							} else if ("Integer".equals(fieldType) || "int".equals(fieldType)) {
+//								Integer intval = Integer.parseInt(value);
+//								fieldSetMet.invoke(item, intval);
+//							} else if ("Long".equalsIgnoreCase(fieldType)) {
+//								Long temp = Long.parseLong(value);
+//								fieldSetMet.invoke(item, temp);
+//							} else if ("Double".equalsIgnoreCase(fieldType)) {
+//								Double temp = Double.parseDouble(value);
+//								fieldSetMet.invoke(item, temp);
+//							} else if ("Boolean".equalsIgnoreCase(fieldType)) {
+//								Boolean temp = Boolean.parseBoolean(value);
+//								fieldSetMet.invoke(item, temp);
+//							} else if ("BigDecimal".equalsIgnoreCase(fieldType)) {
+//								BigDecimal temp = new BigDecimal(value);
+//								fieldSetMet.invoke(item, temp);
+//							} else {
+//								log.info("not supper type" + fieldType);
+//							}
+//						}
+//					} catch (Exception e) {
+//						continue;
+//					}
 				}
 
 			} catch (Exception ex) {
@@ -402,7 +413,7 @@ public class PendingSkuImportService {
 		return item;
 	}
 
-	public static boolean checkSetMet(Method[] methods, String fieldSetMet) {
+	public static boolean checkSetMet(Method[] methods, String fieldSetMet) throws Exception{
 		for (Method met : methods) {
 			if (fieldSetMet.equals(met.getName())) {
 				return true;
@@ -411,7 +422,7 @@ public class PendingSkuImportService {
 		return false;
 	}
 
-	public static String parSetName(String fieldName) {
+	public static String parSetName(String fieldName) throws Exception{
 		if (null == fieldName || "".equals(fieldName)) {
 			return null;
 		}
