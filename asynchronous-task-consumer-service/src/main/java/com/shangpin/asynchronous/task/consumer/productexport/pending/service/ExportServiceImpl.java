@@ -171,8 +171,8 @@ public class ExportServiceImpl {
                             j++;
                             row = sheet.createRow(j);  
                             if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
-                                row.setHeight((short) 1500);
-                        		sheet.setColumnWidth(0, (36*150));
+                                row.setHeight((short) 122);
+                        		sheet.setColumnWidth(0, 87);
                             }
                             insertProductSpuOfRow(pendingQuryDto.getIsExportPic(),row,product,rowTemplate);
                         } catch (Exception e) {
@@ -262,7 +262,7 @@ public class ExportServiceImpl {
             		setRowOfSeasonName(row, product, spuClazz, i); 
             	}else if("hubSkuSize".equals(rowTemplate[i])){
             		fieldSetMet = skuClazz.getMethod(fileName);
-					value = fieldSetMet.invoke(product);
+					value = fieldSetMet.invoke(sku);
 					String size = value != null ? value.toString() : "";
 					if(size.contains(":")){
 						row.createCell(i).setCellValue(size.substring(size.indexOf(":")+1));
@@ -271,7 +271,7 @@ public class ExportServiceImpl {
 					}
             	}else if("originalProductSizeType".equals(rowTemplate[i])){
             		fieldSetMet = skuClazz.getMethod("getHubSkuSize");
-					value = fieldSetMet.invoke(product);
+					value = fieldSetMet.invoke(sku);
 					String size = value != null ? value.toString() : "";
 					if(size.contains(":")){
 						row.createCell(i).setCellValue(size.substring(0,size.indexOf(":")));
@@ -415,7 +415,7 @@ public class ExportServiceImpl {
 				byte[] bytes = DownloadPicTool.downImage(url);
 				if(null != bytes){
 					ByteArrayInputStream input = new ByteArrayInputStream(bytes);
-					bufferImg = ImageUtils.zoomScaleOfByteArrayInputStream(input, 10, false);
+					bufferImg = ImageUtils.singleScale2OfByteArrayInputStream(input, 122, 87, false);
 					ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();							
 					ImageIO.write(bufferImg, "jpg", byteArrayOut);
 					HSSFPatriarch patriarch = row.getSheet().createDrawingPatriarch();
