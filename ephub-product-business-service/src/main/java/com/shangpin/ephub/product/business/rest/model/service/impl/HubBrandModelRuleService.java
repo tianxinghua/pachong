@@ -44,7 +44,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
 		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = brandModelRuleManager.findByCriteria(criteria);
 		if (CollectionUtils.isEmpty(hubBrandModelRuleDtoList)) {
-			return null;
+			return brandMode;
 		} else {
 			String result = null;
 			for (HubBrandModelRuleDto hubBrandModelRuleDto : hubBrandModelRuleDtoList) {

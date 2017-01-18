@@ -86,6 +86,11 @@ public class HubSpuPendingPic implements Serializable {
      */
     private String supplierSpuNo;
 
+    /**
+     * 重试次数
+     */
+    private Integer retryCount;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingPicId() {
@@ -224,6 +229,14 @@ public class HubSpuPendingPic implements Serializable {
         this.supplierSpuNo = supplierSpuNo == null ? null : supplierSpuNo.trim();
     }
 
+    public Integer getRetryCount() {
+        return retryCount;
+    }
+
+    public void setRetryCount(Integer retryCount) {
+        this.retryCount = retryCount;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -247,6 +260,7 @@ public class HubSpuPendingPic implements Serializable {
         sb.append(", supplierId=").append(supplierId);
         sb.append(", supplierSpuId=").append(supplierSpuId);
         sb.append(", supplierSpuNo=").append(supplierSpuNo);
+        sb.append(", retryCount=").append(retryCount);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -280,7 +294,8 @@ public class HubSpuPendingPic implements Serializable {
             && (this.getPicHandleState() == null ? other.getPicHandleState() == null : this.getPicHandleState().equals(other.getPicHandleState()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getSupplierSpuId() == null ? other.getSupplierSpuId() == null : this.getSupplierSpuId().equals(other.getSupplierSpuId()))
-            && (this.getSupplierSpuNo() == null ? other.getSupplierSpuNo() == null : this.getSupplierSpuNo().equals(other.getSupplierSpuNo()));
+            && (this.getSupplierSpuNo() == null ? other.getSupplierSpuNo() == null : this.getSupplierSpuNo().equals(other.getSupplierSpuNo()))
+            && (this.getRetryCount() == null ? other.getRetryCount() == null : this.getRetryCount().equals(other.getRetryCount()));
     }
 
     @Override
@@ -304,6 +319,7 @@ public class HubSpuPendingPic implements Serializable {
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getSupplierSpuId() == null) ? 0 : getSupplierSpuId().hashCode());
         result = prime * result + ((getSupplierSpuNo() == null) ? 0 : getSupplierSpuNo().hashCode());
+        result = prime * result + ((getRetryCount() == null) ? 0 : getRetryCount().hashCode());
         return result;
     }
 }

@@ -1238,6 +1238,66 @@ public class HubSpuPendingPicCriteria {
             addCriterion("supplier_spu_no not between", value1, value2, "supplierSpuNo");
             return (Criteria) this;
         }
+
+        public Criteria andRetryCountIsNull() {
+            addCriterion("retry_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountIsNotNull() {
+            addCriterion("retry_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountEqualTo(Integer value) {
+            addCriterion("retry_count =", value, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountNotEqualTo(Integer value) {
+            addCriterion("retry_count <>", value, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountGreaterThan(Integer value) {
+            addCriterion("retry_count >", value, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("retry_count >=", value, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountLessThan(Integer value) {
+            addCriterion("retry_count <", value, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountLessThanOrEqualTo(Integer value) {
+            addCriterion("retry_count <=", value, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountIn(List<Integer> values) {
+            addCriterion("retry_count in", values, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountNotIn(List<Integer> values) {
+            addCriterion("retry_count not in", values, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountBetween(Integer value1, Integer value2) {
+            addCriterion("retry_count between", value1, value2, "retryCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("retry_count not between", value1, value2, "retryCount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
