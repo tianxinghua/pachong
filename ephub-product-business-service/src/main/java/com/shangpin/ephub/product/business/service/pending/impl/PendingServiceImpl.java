@@ -4,33 +4,31 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.util.RegexUtil;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
-
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
+import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
@@ -39,14 +37,11 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * Created by loyalty on 16/12/24.
  * @param
  */
 @Service
-@Slf4j
 public class PendingServiceImpl implements com.shangpin.ephub.product.business.service.pending.PendingService {
 
     @Autowired
@@ -262,6 +257,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
             if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
                 //判断skupending 尺码是否符合标准
+                if(!hasSkuSize(hubSpuPendingDtos)){
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
+                    updateSpuPendingState(auditVO, hubSpuPending);
+                    auditVO.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
+                    return false;
+                }
                 if (hasNohandleSkuSize(hubSpuPendingDtos)) {
 
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
@@ -444,6 +446,21 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
         List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
         if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean hasSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos) {
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList);
+        int i =  skuPendingGateWay.countByCriteria(criteriaSku);
+        if(i>0){
             return true;
         }else{
             return false;

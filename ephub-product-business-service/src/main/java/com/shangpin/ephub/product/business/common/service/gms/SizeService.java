@@ -81,7 +81,8 @@ public class SizeService {
         requestDto.setCategoryNo(hubCategoryNo);
         log.info("检验尺码请求api参数：{},"+apiAddressProperties.getGmsSizeUrl(),requestDto);
         HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(requestDto);
-        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST,
+        String gmsSizeUrl = apiAddressProperties.getGmsSizeUrl();
+		ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(gmsSizeUrl, HttpMethod.POST,
                 requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
                 });
         log.info("检验尺码api返回结果：{}",entity.getBody());
@@ -110,7 +111,7 @@ public class SizeService {
 	 */
 	public void setGmsSizeIntoReids(String hubBrandNo,String hubCategoryNo,CategoryScreenSizeDom categoryScreenSizeDom){
 		try {
-			log.info("尺码缓存到redis:{}",categoryScreenSizeDom);
+//			log.info("尺码缓存到redis:{}",categoryScreenSizeDom);
 			shangpinRedis.setex(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo,1000*60*5,JsonUtil.serialize(categoryScreenSizeDom));
 		} catch (Exception e) {
 			log.error("缓存尺码到redis时异常："+e.getMessage(),e);

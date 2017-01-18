@@ -31,7 +31,10 @@ import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.common.service.gms.BrandService;
+import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
@@ -49,6 +52,10 @@ import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelect
 @Service
 public class HubSelectedService {
 
+	@Autowired
+	BrandService brandService;
+	@Autowired
+	CategoryService categoryService;
 	@Autowired
 	ApiAddressProperties apiAddressProperties;
 	@Autowired
@@ -117,9 +124,9 @@ public class HubSelectedService {
 			spSkuNo = listSku.get(0).getSpSkuNo();
 		}
 		
-//		String brandName = getBrand(response.getBrandNo());
-//		String categoryName = getCategoryName(response.getCategoryNo());
-		map.put("brandName", response.getBrandNo());
+		String brandName = getBrand(response.getBrandNo());
+		String categoryName = getCategoryName(response.getCategoryNo());
+		map.put("brandName", brandName);
 		if(supplyPrice!=null){
 			map.put("supplyPrice", supplyPrice+"");	
 		}
@@ -132,7 +139,7 @@ public class HubSelectedService {
 		map.put("spuName", response.getSpuName());
 		map.put("supplierSkuNo", response.getSupplierSkuNo());
 		map.put("spuModel", response.getSpuModel());
-		map.put("categoryName", response.getCategoryNo());
+		map.put("categoryName",categoryName);
 //		map.put("color", response.getHubColor());
 //		map.put("material", response.getMaterial());
 //		map.put("origin", response.getOrigin());
@@ -142,50 +149,19 @@ public class HubSelectedService {
 		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 		
 	}
-	@SuppressWarnings("unused")
 	private String getCategoryName(String categoryNo) {
-		CategoryRequestDto request = new CategoryRequestDto();
-        request.setCategoryNo(categoryNo);
-
-        HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
-
-        ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
-        });
-        HubResponseDto<CategoryScreenSizeDom> body = entity.getBody();
-        if(body.getIsSuccess()){
-            List<CategoryScreenSizeDom> resDatas = body.getResDatas();
-            if(resDatas!=null&&resDatas.size()>0){
-            	 return resDatas.get(0).getFourLevelCategoryName();
-            }else{
-            	return categoryNo;
-            }
-           
+		FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
+        if(category!=null){
+           return category.getFourthName();
         }else{
         	return categoryNo;
         }
 	}
-	@Autowired
-	    RestTemplate restTemplate;
-	@SuppressWarnings("unused")
 	private String getBrand(String brandNo) {
 		// TODO Auto-generated method stub
-
-		BrandRequstDto request = new BrandRequstDto();
-        request.setBrandNo(brandNo);
-
-        HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
-
-        ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsBrandUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {
-        });
-        HubResponseDto<BrandDom> body = entity.getBody();
-        if(body.getIsSuccess()){
-            List<BrandDom> resDatas = body.getResDatas();
-            if(resDatas!=null&&resDatas.size()>0){
-            	 return resDatas.get(0).getBrandCnName();
-            }else{
-            	return brandNo;
-            }
-           
+		BrandDom brand = brandService.getGmsBrand(brandNo);
+        if(brand!=null){
+            return 	brand.getBrandCnName();
         }else{
         	return brandNo;
         }
@@ -193,17 +169,23 @@ public class HubSelectedService {
 
 	public void exportPicExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
 
-		String[] headers = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
-		String[] columns = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
 		String title = "图片导出";
 
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
+		Map<Long,String> mapTemp = new HashMap<Long,String>();
 		for (HubWaitSelectResponseDto response : list) {
-			map = new HashMap<String, String>();
+			
 			Long hubSpuId = response.getSpuId();
+			if(mapTemp.containsKey(hubSpuId)){
+				continue;
+			}
+			
+			map = new HashMap<String, String>();
 			String spSkuNo = response.getSpSkuNo();
 			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
 			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
@@ -212,6 +194,7 @@ public class HubSelectedService {
 			if (listPic == null || listPic.size() <= 0) {
 				continue;
 			}
+			mapTemp.put(hubSpuId, null);
 			for (HubSpuPicDto pic : listPic) {
 				if (i == 11) {
 					break;
@@ -220,7 +203,7 @@ public class HubSelectedService {
 				i++;
 			}
 			map.put("spSkuNo", spSkuNo);
-			map.put("hubSpuId", hubSpuId + "");
+			map.put("hubSpuId", "HUB-"+response.getSpuNo());
 			result.add(map);
 		}
 		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
@@ -228,19 +211,24 @@ public class HubSelectedService {
 
 	public void exportSelectPicExcel(List<HubWaitSelectStateDto> list, OutputStream ouputStream) throws Exception {
 
-		String[] headers = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
-		String[] columns = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
 		String title = "选中图片导出";
 
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
+		Map<String, String> mapTemp = new HashMap<String,String>();
 		for (HubWaitSelectStateDto response : list) {
 			map = new HashMap<String, String>();
+			
+			String spuNo = response.getSpuNo();
+			if(mapTemp.containsKey(spuNo)){
+				continue;
+			}
 			Long hubSpuId = response.getSpuId();
 			Long hubSkuId = response.getSkuId();
-
 			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
 			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
 			List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
@@ -248,6 +236,7 @@ public class HubSelectedService {
 			if (listPic == null || listPic.size() <= 0) {
 				continue;
 			}
+			mapTemp.put(spuNo, null);
 			for (HubSpuPicDto pic : listPic) {
 				if (i == 11) {
 					break;
@@ -257,7 +246,7 @@ public class HubSelectedService {
 			}
 			HubSkuDto skuDto = hubSkuGateWay.selectByPrimaryKey(hubSkuId);
 			map.put("spSkuNo", skuDto.getSpSkuNo());
-			map.put("hubSpuId", hubSpuId + "");
+			map.put("hubSpuNo", "HUB-"+skuDto.getSpuNo());
 			result.add(map);
 		}
 		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
