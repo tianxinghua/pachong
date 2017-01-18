@@ -143,7 +143,6 @@ public class PendingSkuImportService {
 		}
 		taskService.checkPendingSpu(isHubExist, hubPendingSkuCheckResult, hubPendingSpuDto, map);
 
-		log.info("返回的pendingSpuId:" + map.get("pendingSpuId"));
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
 		if (map.get("pendingSpuId") != null) {

@@ -92,6 +92,7 @@ public class SupplierProductMysqlService {
 			}else{
 				hubSku.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
 				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
+				log.info("");
 				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
 				if(isChanged){
 					hubSkuUpdated.setUpdateTime(new Date()); 

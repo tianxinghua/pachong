@@ -26,7 +26,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 public class SpinnakerCommonHandler extends ISpinnakerHandler {
 
 	@Override
-	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu) {
+	public boolean convertSpu(String supplierId, Spu spu, Sku sku, HubSupplierSpuDto hubSpu,String data) {
 		if(null != spu){
 			
 			String colorCode = "";
@@ -51,6 +51,7 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSpu.setSupplierMaterial(spu.getProduct_detail());
 			hubSpu.setSupplierOrigin(spu.getProduct_MadeIn());
 			hubSpu.setSupplierSpuDesc(spu.getProduct_detail()); 
+			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;
