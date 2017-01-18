@@ -169,9 +169,9 @@ public class HubSelectedService {
 
 	public void exportPicExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
 
-		String[] headers = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
-		String[] columns = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
 		String title = "图片导出";
 
@@ -211,9 +211,9 @@ public class HubSelectedService {
 
 	public void exportSelectPicExcel(List<HubWaitSelectStateDto> list, OutputStream ouputStream) throws Exception {
 
-		String[] headers = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
-		String[] columns = { "spSkuNo", "hubSpuId", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10" };
 		String title = "选中图片导出";
 
@@ -246,7 +246,7 @@ public class HubSelectedService {
 			}
 			HubSkuDto skuDto = hubSkuGateWay.selectByPrimaryKey(hubSkuId);
 			map.put("spSkuNo", skuDto.getSpSkuNo());
-			map.put("hubSpuId", hubSpuId + "");
+			map.put("hubSpuNo", "HUB-"+skuDto.getSpuNo());
 			result.add(map);
 		}
 		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
