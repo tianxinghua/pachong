@@ -101,8 +101,8 @@ public class TonyHandler implements ISupplierHandler {
 	public boolean convertSpu(String supplierId,TonyItems tonyItems,HubSupplierSpuDto hubSpu,String data){
 		if(null != tonyItems){
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(getSpuId(tonyItems.getSku()));
-			hubSpu.setSupplierSpuModel(getProductCode(tonyItems.getSku()));
+			hubSpu.setSupplierSpuNo(tonyItems.getSku_parent());
+			hubSpu.setSupplierSpuModel(tonyItems.getMnf_code());
 			hubSpu.setSupplierSpuColor(tonyItems.getColor());
 			hubSpu.setSupplierGender(tonyItems.getSex());
 			hubSpu.setSupplierCategoryname(tonyItems.getCat_ids());
@@ -145,25 +145,25 @@ public class TonyHandler implements ISupplierHandler {
 	 * @param skuId
 	 * @return
 	 */
-	private String getSpuId(String skuId){
-        if (skuId.contains("_")){
-            return skuId.split("_")[0];
-        } else if (skuId.contains("-")){
-            return skuId.split("-")[0];
-        }
-        return skuId;
-    }
+//	private String getSpuId(String skuId){
+//        if (skuId.contains("_")){
+//            return skuId.split("_")[0];
+//        } else if (skuId.contains("-")){
+//            return skuId.split("-")[0];
+//        }
+//        return skuId;
+//    }
 	
 	/**
 	 * 格式化供应商货号
 	 * @param skuId
 	 * @return
 	 */
-	 private String getProductCode(String skuId){
-        if (!skuId.contains("-"))
-            return skuId;
-        return skuId.split("-")[0];
-	 }
+//	 private String getProductCode(String skuId){
+//        if (!skuId.contains("-"))
+//            return skuId;
+//        return skuId.split("-")[0];
+//	 }
 	 
 	 /**
 	  * 格式化材质

@@ -126,8 +126,16 @@ public class PendingHandler {
 	 */
 	static Map<String, Byte> hubSeasonFlag = null;
 
+	ObjectMapper mapper =new ObjectMapper();
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
-		log.info("receive message :" + message.toString() + " message header :" + headers.toString());
+
+		if(null!=message){
+
+			log.info("receive message :" + mapper.writeValueAsString(message) + " message header :" + headers.toString());
+		} else{
+			log.info(" message header :" + headers.toString());
+		}
+
 
 		Map<String, Integer> messageMap = this.getMessageStatus(headers);
 
@@ -665,19 +673,16 @@ public class PendingHandler {
 
 				boolean allStatus = true;
 				// 获取品牌
-				boolean brandmapping = setBrandMapping(spu, hubSpuPending);
-				if (!brandmapping)
-					allStatus = false;
 
-				// 货号验证
-				if (brandmapping) {
-					if (!setBrandModel(spu, hubSpuPending))
-						allStatus = false;
+				if(StringUtils.isNotBlank(spu.getHubBrandNo())){
+					boolean brandmapping = setBrandMapping(spu, hubSpuPending);
 				}
-
-				if (brandmapping && null != spu.getSpuModel()) {
-					hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(spuPendingDto.getHubBrandNo(),
-							spuPendingDto.getSpuModel());
+				//验证货号必须要有品牌
+				if(StringUtils.isNotBlank(spu.getSpuModel())){
+					if(StringUtils.isBlank(spu.getHubBrandNo())){
+						spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
+					}
+					setBrandModel(spu, hubSpuPending);
 				}
 
 				// 设置性别
@@ -687,7 +692,7 @@ public class PendingHandler {
 				}
 
 				// 获取品类
-				if (StringUtils.isNotBlank(spu.getHubGender())) {
+				if (StringUtils.isNotBlank(spu.getHubCategoryNo())&&StringUtils.isNotBlank(spu.getHubGender())) {
 					if (!setCategoryMapping(spu, hubSpuPending))
 						allStatus = false;
 				}
@@ -700,15 +705,16 @@ public class PendingHandler {
 				}
 
 				// 获取季节
-
-				if (!setSeasonMapping(spu, hubSpuPending))
-					allStatus = false;
+			    if(StringUtils.isNotBlank(spu.getHubSeason())){
+					if (!setSeasonMapping(spu, hubSpuPending))
+						allStatus = false;
+				}
 
 				// 获取材质
 				if (StringUtils.isNotBlank(spu.getHubMaterial())) {
-
 					replaceMaterial(spu, hubSpuPending);
 				}
+
 
 				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), hubSpuPending);
 
@@ -725,11 +731,28 @@ public class PendingHandler {
 			//  if can't find spupending ,  search  supplier and insert spupending
 			HubSupplierSpuDto supplierSpuDto = dataServiceHandler.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(spu.getSupplierId(), spu.getSupplierSpuNo());
 			PendingSpu tmp = new PendingSpu();
-			BeanUtils.copyProperties(supplierSpuDto,tmp);
+			this.setValueFromHubSuppierSpuToPendingSpu(supplierSpuDto,tmp);
+			tmp.setSupplierNo(spu.getSupplierNo());
 			SpuPending newSpuPending  = addNewSpu(tmp,headers);
 			return newSpuPending;
 		}
 
+	}
+
+	private void setValueFromHubSuppierSpuToPendingSpu(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
+		pendingSpu.setSupplierId(hubSpu.getSupplierId());
+		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
+		pendingSpu.setSupplierSpuId(hubSpu.getSupplierSpuId());
+		pendingSpu.setHubBrandNo(hubSpu.getSupplierBrandname());
+		pendingSpu.setHubCategoryNo(hubSpu.getSupplierCategoryname());
+		pendingSpu.setHubColor(hubSpu.getSupplierSpuColor());
+		pendingSpu.setHubGender(hubSpu.getSupplierGender());
+		pendingSpu.setHubMaterial(hubSpu.getSupplierMaterial());
+		pendingSpu.setHubOrigin(hubSpu.getSupplierOrigin());
+		pendingSpu.setHubSeason(hubSpu.getSupplierSeasonname());
+		pendingSpu.setSpuDesc(hubSpu.getSupplierSpuDesc());
+		pendingSpu.setSpuModel(hubSpu.getSupplierSpuModel());
+		pendingSpu.setSpuName(hubSpu.getSupplierSpuName());
 	}
 
 	private void addNewSku(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,

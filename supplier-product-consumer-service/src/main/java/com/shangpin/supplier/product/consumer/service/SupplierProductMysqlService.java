@@ -17,11 +17,8 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuWithCriteriaDt
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
-
-import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductMysqlService </p>
  * <p>Description: Supplier表的增删改查Service</p>
@@ -31,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Service
-@Slf4j
 public class SupplierProductMysqlService {
 
 	@Autowired
@@ -47,7 +43,6 @@ public class SupplierProductMysqlService {
 	 */
 	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu) throws EpHubSupplierProductConsumerException{
 		try {	
-			log.info("要保存的数据======="+JsonUtil.serialize(hubSpu));
 			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
 				hubSpu.setCreateTime(new Date());

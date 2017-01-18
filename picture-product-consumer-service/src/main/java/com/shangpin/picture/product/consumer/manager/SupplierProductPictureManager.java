@@ -54,7 +54,7 @@ public class SupplierProductPictureManager {
 	 */
 	public boolean exists(String picUrl) {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicUrlEqualTo(picUrl).andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex());
+		criteria.createCriteria().andPicUrlEqualTo(picUrl);
 		criteria.setFields("spu_pending_pic_id");
 		if (CollectionUtils.isEmpty(hubSpuPendingPicGateWay.selectByCriteria(criteria))) {
 			return true;
