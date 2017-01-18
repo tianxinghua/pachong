@@ -144,7 +144,6 @@ public class HubSelectedController {
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();
-			  
 			HubSelectedService.exportSelectPicExcel(dto,ouputStream);
 		} catch (Exception e) {
 			log.error("导出勾选图片失败：{}",e);

@@ -19,4 +19,5 @@ public class HubWaitSelectStateDto {
 	private Long skuSupplierMappingId;
 	private Long spuId;
 	private Long skuId;
+	private String spuNo;
 }
