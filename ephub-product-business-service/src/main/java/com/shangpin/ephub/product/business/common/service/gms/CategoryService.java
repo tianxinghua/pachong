@@ -49,6 +49,7 @@ public class CategoryService {
 				return null;
 			}
 	        String supplierMsg = getGmsCateGoryByRedis(categoryNo);
+	        log.info("从redis获取品类"+supplierMsg);
 	        if(!StringUtils.isEmpty(supplierMsg)){
 	        	return JsonUtil.deserialize(supplierMsg, FourLevelCategory.class);
 	        }else{
@@ -102,7 +103,9 @@ public class CategoryService {
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
+        log.info("从api获取品类请求参数：{}"+apiAddressProperties.getGmsCategoryUrl(),request);
         ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(apiAddressProperties.getGmsCategoryUrl(), HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
+        log.info("从api获取品类返回结果：{}",entity.getBody());
         return entity.getBody();
 	}
 }

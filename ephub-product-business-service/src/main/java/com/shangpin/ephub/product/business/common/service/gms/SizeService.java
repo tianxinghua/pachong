@@ -50,7 +50,7 @@ public class SizeService {
 				return null;
 			}
 			String retMsg = getGmsSizeByRedis(hubBrandNo,hubCategoryNo);
-			log.info("检验尺码返回结果：",retMsg);
+			log.info("检验尺码从redis获取"+retMsg);
 			if(!StringUtils.isEmpty(retMsg)){
 				return JsonUtil.deserialize(retMsg,CategoryScreenSizeDom.class);
 			}else{
@@ -79,10 +79,12 @@ public class SizeService {
 		SizeRequestDto requestDto = new SizeRequestDto();
         requestDto.setBrandNo(hubBrandNo);
         requestDto.setCategoryNo(hubCategoryNo);
+        log.info("检验尺码请求api参数：{},"+apiAddressProperties.getGmsSizeUrl(),requestDto);
         HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(requestDto);
         ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(apiAddressProperties.getGmsSizeUrl(), HttpMethod.POST,
                 requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
                 });
+        log.info("检验尺码api返回结果：{}",entity.getBody());
         return entity.getBody();
 	}
 	
@@ -108,6 +110,7 @@ public class SizeService {
 	 */
 	public void setGmsSizeIntoReids(String hubBrandNo,String hubCategoryNo,CategoryScreenSizeDom categoryScreenSizeDom){
 		try {
+			log.info("尺码缓存到redis:{}",categoryScreenSizeDom);
 			shangpinRedis.setex(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo,1000*60*5,JsonUtil.serialize(categoryScreenSizeDom));
 		} catch (Exception e) {
 			log.error("缓存尺码到redis时异常："+e.getMessage(),e);

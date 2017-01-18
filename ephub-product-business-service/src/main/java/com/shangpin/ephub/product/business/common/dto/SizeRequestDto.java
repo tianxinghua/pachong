@@ -3,6 +3,9 @@ package com.shangpin.ephub.product.business.common.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.ToString;
+
+@ToString
 public class SizeRequestDto {
 
 	@JsonIgnore
