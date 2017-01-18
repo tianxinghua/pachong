@@ -642,6 +642,11 @@ public class DataServiceHandler {
 		}
 	}
 
+
+	public void updateSkuPengding(HubSkuPendingDto skuPendingDto){		;
+		hubSkuPendingGateWay.updateByPrimaryKeySelective(skuPendingDto);
+	}
+
 	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingByType(Integer type) {
 		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
 		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
