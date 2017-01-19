@@ -565,6 +565,11 @@ public class DataServiceHandler {
 	public void updatePendingSpu(Long spuKey, HubSpuPendingDto spuPending) throws Exception {
 		try {
 
+			if (StringUtils.isNotBlank(spuPending.getHubMaterial())) {
+				spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("<br />", "\r\n").replaceAll("<html>", "")
+						.replaceAll("</html>", "").replaceAll("<br>","\r\n"));
+			}
+
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
 			criteria.createCriteria().andSpuPendingIdEqualTo(spuKey);
 			spuPending.setUpdateTime(new Date());

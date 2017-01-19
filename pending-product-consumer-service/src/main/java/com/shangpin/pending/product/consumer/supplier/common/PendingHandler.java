@@ -734,8 +734,11 @@ public class PendingHandler {
 				if (StringUtils.isNotBlank(spu.getHubMaterial())) {
 					if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
 				}
-
-
+				// 产地映射
+				if (StringUtils.isNotBlank(spu.getHubOrigin())) {
+					if (!setOriginMapping(spu, updateSpuPending))
+						allStatus = false;
+				}
 				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
 			    //更新后重新赋值
 				spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
