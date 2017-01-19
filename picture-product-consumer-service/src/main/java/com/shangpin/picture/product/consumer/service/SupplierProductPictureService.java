@@ -90,7 +90,7 @@ public class SupplierProductPictureService {
 				spuPicStatusServiceManager.updatePicStatus(dto.getSupplierSpuId(), CommonHandleState.HANDLED.getIndex().byteValue());
 			}
 		} catch (Throwable e) {
-			log.error("系统拉取图片时发生异常",e);
+			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
 			dto.setMemo("图片拉取失败");
