@@ -53,7 +53,7 @@ public class MonnierHandler implements ISupplierHandler {
 					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {

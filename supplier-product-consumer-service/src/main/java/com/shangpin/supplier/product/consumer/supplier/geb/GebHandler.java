@@ -55,7 +55,7 @@ public class GebHandler implements ISupplierHandler {
 					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item.getItem_images()));
 //				}
 				if(success){
-					supplierProductSaveAndSendToPending.gebSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {
