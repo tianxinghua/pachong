@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
@@ -89,7 +90,7 @@ public class SupplierProductPictureService {
 				spuPicStatusServiceManager.updatePicStatus(dto.getSupplierSpuId(), CommonHandleState.HANDLED.getIndex().byteValue());
 			}
 		} catch (Throwable e) {
-			log.error("系统拉取图片时发生异常",e);
+			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
 			dto.setMemo("图片拉取失败");
@@ -126,13 +127,13 @@ public class SupplierProductPictureService {
 	 */
 	public void scanFailedPictureToRetry() {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull();
+		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		for (int i = 1; i <= countTotalPage(supplierProductPictureManager.countFailedPictureTotal(criteria), PAGE_SIZE); i++) {
 			HubSpuPendingPicCriteriaDto _criteria = new HubSpuPendingPicCriteriaDto();
 			_criteria.setFields("spu_pending_pic_id");
 			_criteria.setPageNo(i);
 			_criteria.setPageSize(PAGE_SIZE);
-			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull();
+			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 			List<HubSpuPendingPicDto> picDto = supplierProductPictureManager.queryByCriteria(_criteria);
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
