@@ -43,6 +43,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("coltortiHandler")
 	private ISupplierHandler coltortiHandler;
+	@Autowired
+	@Qualifier("monnierHandler")
+	private ISupplierHandler monnierfreresHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -312,8 +315,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void monnierfreresStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		monnierfreresHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * eleonorabonucci供货商原始数据监听方法
