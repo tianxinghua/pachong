@@ -42,6 +42,7 @@ public class HubPendingSkuCheckService {
 			}
 		}else{
 			result.setPassing(true);
+			result.setResult(hubProduct.getSkuSize());
 		}
 		return result;
 	}

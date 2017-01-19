@@ -202,7 +202,7 @@ public class HubSelectedService {
 				map.put("url" + i, pic.getSpPicUrl());
 				i++;
 			}
-			map.put("spSkuNo", spSkuNo);
+			map.put("hubSpuNo", spSkuNo);
 			map.put("hubSpuId", "HUB-"+response.getSpuNo());
 			result.add(map);
 		}
