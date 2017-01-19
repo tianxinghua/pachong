@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
@@ -150,8 +149,8 @@ public class PendingSpuImportService {
 			map.put("taskNo", taskNo);
 			map.put("spuModel", product.getSpuModel());
 			
-			HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
 			// 查询是否已存在pendingSpu表中
+			HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
 			List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 			HubSpuPendingDto isHubExist = null;
 			if (listSpu != null && listSpu.size() > 0) {
@@ -159,6 +158,7 @@ public class PendingSpuImportService {
 				isHubExist = listSpu.get(0);
 			}
 			
+			//如果规格为尺码，则校验spu下所有的尺码
 			boolean flag = true;
 			HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 			if(isHubExist!=null){
@@ -170,8 +170,10 @@ public class PendingSpuImportService {
 						HubSkuCheckDto hubSkuCheckDto =  convertHubPendingProduct2PendingSkuCheck(isHubExist,sku.getHubSkuSize());	
 						log.info("pendindSku校验参数：{}",hubSkuCheckDto);
 						HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
+						String result = null;
 						if(!hubPendingSkuCheckResult.isPassing()){
 							flag = false;
+							result +=sku.getHubSkuSize();
 							checkResult.setResult("尺码检验不通过:"+sku.getHubSkuSize());
 							break;
 						}
@@ -181,7 +183,6 @@ public class PendingSpuImportService {
 				}
 			}
 			// 校验sku信息
-			
 			
 			checkResult.setPassing(flag);
 			
