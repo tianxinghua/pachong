@@ -631,6 +631,17 @@ public class DataServiceHandler {
 		}
 	}
 
+	public HubSpuPendingDto getSpuPendingById(Long  id) {
+		HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+		criteria.createCriteria().andSpuPendingIdEqualTo(id);
+		List<HubSpuPendingDto> hubSpuPendingDtos = hubSpuPendingGateWay.selectByCriteria(criteria);
+		if (null != hubSpuPendingDtos && hubSpuPendingDtos.size() > 0) {
+			return hubSpuPendingDtos.get(0);
+		} else {
+			return null;
+		}
+	}
+
 	public HubSkuPendingDto getHubSkuPending(String supplierId, String supplierSkuNo) {
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);

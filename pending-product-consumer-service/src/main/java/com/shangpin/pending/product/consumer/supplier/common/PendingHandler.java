@@ -142,6 +142,7 @@ public class PendingHandler {
 		PendingSpu pendingSpu = message.getData();
 		SpuPending hubSpuPending = null;
 		Integer spuStatus = null;
+		List<PendingSku> skus = pendingSpu.getSkus();
 		if (messageMap.containsKey(pendingSpu.getSupplierId())) {
 
 			spuStatus = messageMap.get(pendingSpu.getSupplierId());
@@ -170,7 +171,7 @@ public class PendingHandler {
 			}
 		}
 
-		List<PendingSku> skus = pendingSpu.getSkus();
+
 		Integer skuStatus = 0;
 		if (null != hubSpuPending) {
 			if(null!=skus&&skus.size()>0){
@@ -677,57 +678,67 @@ public class PendingHandler {
 				}
 
 			} else {
-				HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
+				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 
-				BeanUtils.copyProperties(spu, hubSpuPending);
+				BeanUtils.copyProperties(spu, updateSpuPending);
 
 				boolean allStatus = true;
 				// 获取品牌
 
 				if(StringUtils.isNotBlank(spu.getHubBrandNo())){
-					boolean brandmapping = setBrandMapping(spu, hubSpuPending);
+					if(spuPendingDto.getSpuBrandState().intValue()==PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex()){
+						boolean brandmapping = setBrandMapping(spu, updateSpuPending);
+						if(!brandmapping){
+							allStatus =false;
+						}else{
+							spuPendingDto.setSpuBrandState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+						}
+						spuPendingDto.setHubBrandNo(updateSpuPending.getHubBrandNo());
+					}
+
 				}
 				//验证货号必须要有品牌
 				if(StringUtils.isNotBlank(spu.getSpuModel())){
 					if(StringUtils.isBlank(spu.getHubBrandNo())){
 						spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
 					}
-					setBrandModel(spu, hubSpuPending);
+					if(!setBrandModel(spu, updateSpuPending)) allStatus =false;
 				}
 
 				// 设置性别
 				if (StringUtils.isNotBlank(spu.getHubGender())) {
-					if (!setGenderMapping(spu, hubSpuPending))
+					if (!setGenderMapping(spu, updateSpuPending))
 						allStatus = false;
 				}
 
 				// 获取品类
 				if (StringUtils.isNotBlank(spu.getHubCategoryNo())&&StringUtils.isNotBlank(spu.getHubGender())) {
-					if (!setCategoryMapping(spu, hubSpuPending))
+					if (!setCategoryMapping(spu, updateSpuPending))
 						allStatus = false;
 				}
 
 				// 获取颜色
 				if (StringUtils.isNotBlank(spu.getHubColor())) {
 
-					if (!setColorMapping(spu, hubSpuPending))
+					if (!setColorMapping(spu, updateSpuPending))
 						allStatus = false;
 				}
 
 				// 获取季节
 			    if(StringUtils.isNotBlank(spu.getHubSeason())){
-					if (!setSeasonMapping(spu, hubSpuPending))
+					if (!setSeasonMapping(spu, updateSpuPending))
 						allStatus = false;
 				}
 
 				// 获取材质
 				if (StringUtils.isNotBlank(spu.getHubMaterial())) {
-					replaceMaterial(spu, hubSpuPending);
+					if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
 				}
 
 
-				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), hubSpuPending);
-
+				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
+			    //更新后重新赋值
+				spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
 			}
 
 			SpuPending spuPending = new SpuPending();
@@ -853,7 +864,7 @@ public class PendingHandler {
 			// hubspu 不存在
 
 			if ("".equals(hubSize)) {
-				if(!mappingSize) { //已匹配上
+				if(!mappingSize) { //未匹配上
 					hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 					// 如果是待审核的 因为尺码问题 不能通过
 					if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()) {
