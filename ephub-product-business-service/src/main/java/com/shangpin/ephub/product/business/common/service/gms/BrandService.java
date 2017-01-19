@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
@@ -50,7 +49,7 @@ public class BrandService {
 				return null;
 			}
 	        String supplierMsg = getGmsBrandByRedis(brandNo);
-	        log.info("从redis获取品牌"+supplierMsg);
+//	        log.info("从redis获取品牌"+supplierMsg);
 	        if(!StringUtils.isEmpty(supplierMsg)){
 	        	return JsonUtil.deserialize(supplierMsg, BrandDom.class);
 	        }else{

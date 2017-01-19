@@ -247,6 +247,8 @@ public class PendingProductService implements IPendingProductService{
             	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
             	if(null == updatedVo){
             		updatedVo = new PendingUpdatedVo();
+            		updatedVo.setSpuResult(""); 
+            		updatedVo.setSpuPendingId(pendingProductDto.getSpuPendingId()); 
             	}
             	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
                 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
