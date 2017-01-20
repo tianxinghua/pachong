@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.mysql.product.common;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +43,7 @@ public class HubSpuUtil {
         } catch (Exception e) {
 
             e.printStackTrace();
-            log.error("redis 出错，无法获取spu编号");
+            log.error("redis 出错，无法获取spu编号.reason :" + e.getMessage(),e);
             String spuNo = hubSpuMapper.getMaxSpuNo();
             tmpSpuNo = Long.valueOf(spuNo.substring(1,spuNo.length())) + 1;
         }
@@ -79,10 +80,15 @@ public class HubSpuUtil {
         } catch (Exception e) {
 
             e.printStackTrace();
-            log.error("redis 出错，无法获取sku编号");
+            log.error("redis 出错，无法获取sku编号. reason : " + e.getMessage(),e);
             String skuMaxNo = hubSkuMapper.getMaxSkuNo(spuNo);
             String tmpSku="";
-            tmpSpuNo = Long.valueOf(skuMaxNo.substring(10,skuMaxNo.length()));
+            if(StringUtils.isBlank(skuMaxNo)){
+                tmpSpuNo = 0L;
+            }else{
+                tmpSpuNo = Long.valueOf(skuMaxNo.substring(10,skuMaxNo.length()));
+            }
+
             for(int i=1;i<=total;i++){
                 tmpSpuNo  = tmpSpuNo +i;
                 tmpSku = "000" + String.valueOf(tmpSpuNo);

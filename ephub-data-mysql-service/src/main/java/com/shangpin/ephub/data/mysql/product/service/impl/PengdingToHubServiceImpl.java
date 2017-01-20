@@ -12,10 +12,7 @@ import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria
 import com.shangpin.ephub.data.mysql.picture.spu.mapper.HubSpuPicMapper;
 import com.shangpin.ephub.data.mysql.picture.spu.po.HubSpuPic;
 import com.shangpin.ephub.data.mysql.product.common.*;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.DataBusinessStatus;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.DataSelectStatus;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.DataStatus;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.HubSpuPendigStatus;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.*;
 import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuPendingPicDto;
@@ -259,7 +256,9 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSku.setSpuNo(hubSpu.getSpuNo());
         hubSku.setColor(hubSpu.getHubColor());
         hubSku.setSkuNo(skuNo);
-        hubSku.setSkuSize((String) o);
+        String sizeTypeAndSize = (String) o;
+        hubSku.setSkuSizeType(sizeTypeAndSize.substring(0,sizeTypeAndSize.indexOf(":")));
+        hubSku.setSkuSize(sizeTypeAndSize.substring(sizeTypeAndSize.indexOf(":")+1,sizeTypeAndSize.length()));
         hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
         hubSku.setCreateTime(date);
         hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
@@ -322,7 +321,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             skuPendingCriteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
             skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
                     .andSkuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue())   //spu 和 sku 状态保持一致
-                    .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue()); //尺码已映射
+                    .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue())       //尺码已映射
+                    .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());  //不过滤的才使用
             
             log.info("hubSkuPendings:{}",spuPendingId+"-"+HubSpuPendigStatus.HANDLING.getIndex().byteValue()+"-"+DataBusinessStatus.HANDLED.getIndex().byteValue());
             List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);
@@ -331,11 +331,11 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             for(HubSkuPending hubSkuPending:hubSkuPendings){
                 if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善 处理中
                     if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
-                        sizeSkuMap.get(hubSkuPending.getHubSkuSize()).add(hubSkuPending);
+                        sizeSkuMap.get(hubSkuPending.getHubSkuSizeType()+":"+hubSkuPending.getHubSkuSize()).add(hubSkuPending);
                     }else{
                         List<HubSkuPending> hubSkuPendingList = new ArrayList<>();
                         hubSkuPendingList.add(hubSkuPending);
-                        sizeSkuMap.put(hubSkuPending.getHubSkuSize(),hubSkuPendingList);
+                        sizeSkuMap.put(hubSkuPending.getHubSkuSizeType()+":"+hubSkuPending.getHubSkuSize(),hubSkuPendingList);
                     }
                 }
             }
@@ -509,17 +509,20 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
 
         Date date = new Date();
-        String url = "";
+        String url = "";  int i=0;
         for(HubSpuPendingPic spuPendingPic:hubSpuPendingPics){
             HubSpuPic hubSpuPic= new HubSpuPic();
             hubSpuPic.setCreateTime(date);
             hubSpuPic.setUpdateTime(date);
             hubSpuPic.setSpPicUrl(spuPendingPic.getSpPicUrl());
-            url = spuPendingPic.getSpPicUrl();
+            if(0==i){
+                url = spuPendingPic.getSpPicUrl();
+            }
             hubSpuPic.setSpuId(spuId);
             hubSpuPic.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
             hubSpuPic.setPicId(spuPendingPic.getSpuPendingPicId());
             hubSpuPicMapper.insert(hubSpuPic);
+            i++;
 
         }
         //更新HUBSPU 增加图片地址

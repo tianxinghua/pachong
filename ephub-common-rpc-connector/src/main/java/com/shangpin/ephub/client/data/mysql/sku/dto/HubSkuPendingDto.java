@@ -157,6 +157,7 @@ public class HubSkuPendingDto implements Serializable {
 
     private String hubSkuSizeType;
 
+
     private static final long serialVersionUID = 1L;
 
     public Long getSkuPendingId() {

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -84,6 +86,10 @@ public class HubProductServiceImpl implements HubProductService {
             for(HubProductIdDto idDto :skus){
                 skuId = idDto.getId();
                 HubSkuDto hubSkuDto = hubSkuGateWay.selectByPrimaryKey(skuId);
+
+                //设置spu中的尺码类型
+                setSpuSizeType(spSpuInfo,hubSkuDto.getSkuSize());
+
                 List<HubProductIdDto> supplierSkuMapping =  idDto.getSubProduct();
                 for(HubProductIdDto supplierIdDto :supplierSkuMapping) {
 
@@ -140,6 +146,15 @@ public class HubProductServiceImpl implements HubProductService {
         }
 
 
+    }
+
+    private void setSpuSizeType(SpProductOrgInfoEntity spSpuInfo,String sizeType) {
+        spSpuInfo.setSkuDyaAttr(1);
+        if(StringUtils.isNotBlank(sizeType)) {
+            if (sizeType.equals(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)) {
+                spSpuInfo.setSkuDyaAttr(0);
+            }
+        }
     }
 
     private ApiSkuOrgDom setScmSku(HubSpuDto hubSpuDto,HubSkuDto hubSkuDto,SpProductOrgInfoEntity spSpuInfo, HubSkuSupplierMappingDto hubSkuSupplierMappingDto) {
