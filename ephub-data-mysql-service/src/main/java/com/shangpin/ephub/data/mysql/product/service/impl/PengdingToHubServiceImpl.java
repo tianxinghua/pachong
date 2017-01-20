@@ -509,17 +509,20 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
 
         Date date = new Date();
-        String url = "";
+        String url = "";  int i=0;
         for(HubSpuPendingPic spuPendingPic:hubSpuPendingPics){
             HubSpuPic hubSpuPic= new HubSpuPic();
             hubSpuPic.setCreateTime(date);
             hubSpuPic.setUpdateTime(date);
             hubSpuPic.setSpPicUrl(spuPendingPic.getSpPicUrl());
-            url = spuPendingPic.getSpPicUrl();
+            if(0==i){
+                url = spuPendingPic.getSpPicUrl();
+            }
             hubSpuPic.setSpuId(spuId);
             hubSpuPic.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
             hubSpuPic.setPicId(spuPendingPic.getSpuPendingPicId());
             hubSpuPicMapper.insert(hubSpuPic);
+            i++;
 
         }
         //更新HUBSPU 增加图片地址
