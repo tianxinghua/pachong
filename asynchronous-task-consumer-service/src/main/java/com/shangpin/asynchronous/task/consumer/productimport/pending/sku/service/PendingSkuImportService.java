@@ -207,6 +207,9 @@ public class PendingSkuImportService {
 			hubSkuPendingDto.setHubSkuSizeType(sizeType);
 		}else{
 			hubSkuPendingDto.setHubSkuSizeType("尺寸");
+			if(hubSkuPendingDto.getHubSkuSize()==null){
+				hubSkuPendingDto.setHubSkuSize("");
+			}
 		}
 		if (hubSkuPendingTempDto != null) {
 			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
