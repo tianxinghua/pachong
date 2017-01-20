@@ -107,6 +107,7 @@ public class HubSelectedController {
 		} catch (Exception e) {
 			log.error("导出查询商品失败：{}",e);
 		}
+		
     }
 	
 
@@ -123,6 +124,7 @@ public class HubSelectedController {
 			dto.setPageSize(100000);
 			log.info("导出查询图片请求参数：{}",dto);
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
+			log.info("导出查询图片请求返回结果======{}",list.toString());
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();
@@ -133,6 +135,8 @@ public class HubSelectedController {
 		} catch (Exception e) {
 			log.error("导出查询图片获取失败：{}",e);
 		}
+		
+		log.info("===============导出查询图片请求结束===========");
     }
 	/**
 	 * 导出勾选图片

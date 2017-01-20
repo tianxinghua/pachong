@@ -77,8 +77,8 @@ public class EphubProductBusinessServiceApplicationTests {
 	public void testGetProductSize(){
 		try {
 			SizeRequestDto request = new SizeRequestDto();
-			request.setBrandNo("B0004");
-			request.setCategoryNo("A01B01C03D06");
+			request.setBrandNo("B0084");
+			request.setCategoryNo("A03B01C02D05");
 			BasicDataResponse<?> response = httpClient.postForObject(ApiAddressProperties.getGmsSizeUrl(), request, BasicDataResponse.class);
 			System.out.println(response);
 		} catch (Exception e) {
