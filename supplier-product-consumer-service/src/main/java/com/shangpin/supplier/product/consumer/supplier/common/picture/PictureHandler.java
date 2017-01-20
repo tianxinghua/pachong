@@ -29,7 +29,6 @@ import com.shangpin.supplier.product.consumer.util.UUIDGenerator;
 @Component
 public class PictureHandler {
 	
-	private static Map<String,String> currentSeason =  null;
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
 
@@ -63,14 +62,15 @@ public class PictureHandler {
 		if(StringUtils.isEmpty(supplierSeason)){
 			return false;
 		}
+		Map<String,String> currentSeason =  null;
 		if(null == currentSeason){
 			currentSeason = new HashMap<String,String>();
 			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
-			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andMemoEqualTo("1");
+			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
 			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
 			if(null != dics && dics.size() > 0){
 				for(HubSeasonDicDto dic : dics){
-					currentSeason.put(dic.getSupplierSeason().trim().toLowerCase(), null);
+					currentSeason.put(dic.getSupplierSeason().trim().toUpperCase(), null);
 				}
 			}
 		}

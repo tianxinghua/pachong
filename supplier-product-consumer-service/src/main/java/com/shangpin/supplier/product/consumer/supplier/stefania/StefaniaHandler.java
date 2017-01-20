@@ -65,7 +65,7 @@ public class StefaniaHandler implements ISupplierHandler{
 					//处理图片
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 					if(success){
-						supplierProductSaveAndSendToPending.stefaniaSaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 					}
 				}
 			}	

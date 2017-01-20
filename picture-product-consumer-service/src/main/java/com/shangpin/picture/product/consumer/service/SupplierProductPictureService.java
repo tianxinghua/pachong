@@ -57,7 +57,7 @@ public class SupplierProductPictureService {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
-				if(!supplierProductPictureManager.exists(picUrl)){
+				if(!supplierProductPictureManager.exists(picDto.getSupplierId(),picUrl)){
 					continue;
 				}
 				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据

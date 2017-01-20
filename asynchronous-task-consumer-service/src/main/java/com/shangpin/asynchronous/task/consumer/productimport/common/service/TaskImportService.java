@@ -434,9 +434,9 @@ public class TaskImportService {
 			boolean spuIsPassing,boolean skuIsPassing) {
 
 		Long pengingSpuId = null;
-		if(isPendingSpuExist!=null){
+		if(isPendingSpuExist!=null&&skuIsPassing==true){
 			if(isPendingSpuExist.getSpuState().byteValue()==SpuState.HANDLED.getIndex()||isPendingSpuExist.getSpuState().byteValue()==SpuState.HANDLING.getIndex()||isPendingSpuExist.getSpuState().byteValue()==SpuState.INFO_IMPECCABLE.getIndex()){
-				log.info("spu状态为："+isPendingSpuExist.getSpuState()+"，不更新");
+				log.info("spu货号:"+isPendingSpuExist.getSpuModel()+"状态为："+isPendingSpuExist.getSpuState()+"，不更新");
 				return isPendingSpuExist.getSpuPendingId();
 			}
 		}

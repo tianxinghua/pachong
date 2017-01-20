@@ -117,12 +117,12 @@ public class HubProductImportService {
 				String spuModel = hubProductCheckResult.getSpuModel();
 				String size = null;
 				String sizeId = null;
-				if("尺码".equals(hubProductDto.getSpecificationType())){
-					sizeArr = hubProductCheckResult.getSize();
-					if(StringUtils.isNotBlank(sizeArr)){
-						size = sizeArr.split(",")[1];
-						sizeId = sizeArr.split(",")[0];
-					}
+				sizeArr = hubProductCheckResult.getSize();
+				if(StringUtils.isNotBlank(sizeArr)&&sizeArr.split(";").length>1){
+					size = sizeArr.split(",")[1];
+					sizeId = sizeArr.split(",")[0];
+				}else{
+					size = sizeArr;
 				}
 				if(!spuModel.equals(hubProductDto.getSpuModel())){
 					map.put("spuNewModel", spuModel);	

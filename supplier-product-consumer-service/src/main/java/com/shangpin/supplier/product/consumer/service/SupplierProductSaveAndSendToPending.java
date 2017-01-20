@@ -47,182 +47,18 @@ public class SupplierProductSaveAndSendToPending {
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
 		
-	private void sendPending(String supplierName,String supplierNo,PendingProduct pendingProduct,Map<String,String> headers){
-		boolean result = supplierProductSendToPending.dispatchSupplierProduct(pendingProduct,headers);
-		log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
-		
-	}
-	
-	/**
-	 * atelier系列供应商保存数据以及发送消息给Pending
-	 * @param supplierNo 供应商编号
-	 * @param supplierId 供应商门户编号
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 */
-	public void atelierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
-	
-		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
-		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
-		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
-		}
-	}
-	/**
-	 * spinnaker系列供应商保存数据以及发送消息给Pending
-	 * @param supplierNo 供应商编号
-	 * @param supplierId 供应商门户编号
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 */
-	public void spinnakerSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
-		/**
-		 * 消息体
-		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
-		/**
-		 * 消息头
-		 */
-		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
-		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
-		}
-	}
-	
-	/**
-	 * biondioni供应商保存数据以及发送消息给Pending
-	 * @param supplierNo 供应商编号
-	 * @param supplierId 供应商门户编号
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 */
-	public void biondioniSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
-		/**
-		 * 消息体
-		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
-		/**
-		 * 消息头
-		 */
-		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
-		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
-		}
-	}	
-	/**
-	 * geb供应商保存数据以及发送消息给Pending
-	 * @param supplierNo 供应商编号
-	 * @param supplierId
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 */
-	public void gebSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
-		/**
-		 * 消息体
-		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
-		/**
-		 * 消息头
-		 */
-		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
-		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
-		}
-		
-	}
-	/**
-	 * stefania供应商保存数据以及发送消息给Pending
-	 * @param supplierNo 供应商编号
-	 * @param supplierId
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 */
-	public void stefaniaSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
-		/**
-		 * 消息体
-		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
-		/**
-		 * 消息头
-		 */
-		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
-		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
-		}
-	}
-	/**
-	 * tony供应商保存数据以及发送消息给Pending
-	 * @param supplierNo 供应商编号
-	 * @param supplierId
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 */
-	public void tonySaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException {
+	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	
 		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
 		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
+			boolean result = supplierProductSendToPending.dispatchSupplierProduct(pendingProduct,headers);
+			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
+//			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
-	/**
-	 * coltorti供应商保存数据以及发送消息给Pending
-	 * @param supplierNo
-	 * @param supplierId
-	 * @param supplierName
-	 * @param hubSpu
-	 * @param hubSkus
-	 * @param supplierPicture 图片消息体
-	 * @throws EpHubSupplierProductConsumerException
-	 */
-	public void coltortiSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
-		/**
-		 * 消息体
-		 */
-		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
-		/**
-		 * 消息头
-		 */
-		Map<String,String> headers = new HashMap<String,String>();	
-		boolean flag = supplierSaveAndSendToPending(supplierNo,supplierId, supplierName, hubSpu, hubSkus, pendingProduct, headers,supplierPicture); 
-		if(flag){
-			sendPending(supplierName,supplierNo,pendingProduct,headers);	
-		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
-		}
-	}
-	
-	
 	
 	/**
 	 * 保存hubSpu以及hubSku，并且构造消息体和消息头

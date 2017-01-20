@@ -64,7 +64,7 @@ public class TonyHandler implements ISupplierHandler {
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 				if(success){
-					supplierProductSaveAndSendToPending.tonySaveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (EpHubSupplierProductConsumerException e) {
@@ -101,6 +101,7 @@ public class TonyHandler implements ISupplierHandler {
 	public boolean convertSpu(String supplierId,TonyItems tonyItems,HubSupplierSpuDto hubSpu,String data){
 		if(null != tonyItems){
 			hubSpu.setSupplierId(supplierId);
+			hubSpu.setSupplierSpuName(tonyItems.getTitle_en());
 			hubSpu.setSupplierSpuNo(tonyItems.getSku_parent());
 			hubSpu.setSupplierSpuModel(tonyItems.getMnf_code());
 			hubSpu.setSupplierSpuColor(tonyItems.getColor());
@@ -170,16 +171,21 @@ public class TonyHandler implements ISupplierHandler {
 	  * @param desc
 	  * @return
 	  */
-	 public String getMaterial(String desc){
+	 public static String getMaterial(String desc){
         String material = "";
         if (desc == null){
             return material;
         }
-        String[] descArr = desc.split("<br>");
+        String[] descArr = desc.split("<br />");
         for (String s: descArr){
             if (s.contains("%,")){
-                material = s;
-                break;
+            	String [] ss = s.split(":");
+            	for(String sss:ss){
+            		 if (sss.contains("%,")){
+            			 material = sss.trim();
+            			 break;
+            		 }
+            	}
             } else if ( s.contains("Leather")){	                
                 material = s;
                 break;
@@ -211,18 +217,20 @@ public class TonyHandler implements ISupplierHandler {
         }
         return material;
 	 }
-	 
-	 private String getOrigin(String desc){
+	 public static String getOrigin(String desc){
 		 int index = desc.lastIndexOf("Made in");
      	if(index!=-1){
      		desc = desc.substring(desc.lastIndexOf("Made in"));
      		if(desc.indexOf("<br>")!=-1){
-     			return desc.substring(0,desc.indexOf("<br>"));
+     			return desc.substring(0,desc.indexOf("<br>")).replace("Made in", "").trim();
+     		}else if(desc.indexOf(":",1)!=-1){
+     			return desc.substring(0,desc.indexOf(":",1)).replace("Made in", "").trim();
+     		}else{
+     			return desc.substring(0).replace("Made in", "").trim();
      		}
      	}
      	return "";
 	 }
-	 
 //	 private String getProductSize(String skuId){
 //        if (!skuId.contains("_") || !skuId.contains("-"))
 //            return "";
