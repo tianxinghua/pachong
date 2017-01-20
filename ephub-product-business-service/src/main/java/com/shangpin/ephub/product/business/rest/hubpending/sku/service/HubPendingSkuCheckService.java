@@ -33,7 +33,7 @@ public class HubPendingSkuCheckService {
 		log.info("检验尺码参数：{}",hubProduct);
 		if("尺码".equals(hubProduct.getSpecificationType())||StringUtils.isBlank(hubProduct.getSpecificationType())){
 			if(StringUtils.isNotBlank(hubProduct.getSizeType())){
-				HubSizeCheckResult hubSizeExist = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
+				HubSizeCheckResult hubSizeExist = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSizeType()+":"+hubProduct.getSkuSize());
 				if(hubSizeExist.isPassing()){
 					result.setPassing(true);
 					result.setResult(hubSizeExist.getScreenSizeStandardValueId()+","+hubProduct.getSizeType()+":"+hubProduct.getSkuSize());
