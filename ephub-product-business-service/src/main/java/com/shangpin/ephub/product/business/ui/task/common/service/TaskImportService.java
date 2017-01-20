@@ -90,7 +90,6 @@ public class TaskImportService {
         productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, null);
     }
     private boolean saveTask(HubImportTaskRequestDto task,String taskNo,String ftpPath,String systemFileName,int importType) throws Exception{
-        // TODO Auto-generated method stub
         HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
         hubSpuTask.setTaskNo(taskNo);
         hubSpuTask.setTaskFtpFilePath(ftpPath+systemFileName);
@@ -103,7 +102,6 @@ public class TaskImportService {
         spuImportGateway.insert(hubSpuTask);
         return true;
     }
-
     public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param) {
 
         HubSpuImportTaskCriteriaDto hubSpuImportTaskCriteriaDto = new HubSpuImportTaskCriteriaDto();
@@ -120,14 +118,17 @@ public class TaskImportService {
             criteria.andLocalFileNameEqualTo(param.getLocalFileName());
         }
         if(!StringUtils.isEmpty(param.getStartDate())){
-            criteria.andCreateTimeBetween(DateTimeUtil.convertFormat(param.getStartDate(),dateFormat),DateTimeUtil.convertFormat(param.getEndDate(),dateFormat));
-        }
+			criteria.andCreateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(param.getStartDate()+" 00:00:00", dateFormat));
+		}
+		if(!StringUtils.isEmpty(param.getEndDate())){
+			criteria.andCreateTimeLessThan(DateTimeUtil.convertFormat(param.getEndDate()+" 00:00:00",dateFormat));
+		}
         int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
         log.info("hub任务列表查询到数量："+total);
         if(total<1){
             return null;
         }
-        hubSpuImportTaskCriteriaDto.setOrderByClause("create_time desc");
+        hubSpuImportTaskCriteriaDto.setOrderByClause("update_time desc");
         List<HubSpuImportTaskDto>  list = spuImportGateway.selectByCriteria(hubSpuImportTaskCriteriaDto);
         HubTaskProductResponseWithPageDTO hubTaskProductResponseWithPageDTO = new HubTaskProductResponseWithPageDTO();
         List<HubTaskProductResponseDTO> responseList = convertTaskDTO2ResponseDTO(list);
@@ -145,7 +146,9 @@ public class TaskImportService {
                 HubTaskProductResponseDTO response = new HubTaskProductResponseDTO();
                 BeanUtils.copyProperties(dto,response);
                 response.setCreateTime(DateTimeUtil.getTime(dto.getCreateTime()));
-                response.setUpdateTime(DateTimeUtil.getTime(dto.getCreateTime()));
+                if(dto.getUpdateTime()!=null){
+                	response.setUpdateTime(DateTimeUtil.getTime(dto.getUpdateTime()));                	
+                }
                 responseList.add(response);
             }
         }

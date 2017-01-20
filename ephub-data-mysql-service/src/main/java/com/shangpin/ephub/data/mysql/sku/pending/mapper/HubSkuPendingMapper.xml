@@ -32,6 +32,7 @@
     <result column="screen_size" property="screenSize" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="filter_flag" property="filterFlag" jdbcType="TINYINT" />
+    <result column="hub_sku_size_type" property="hubSkuSizeType" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -97,7 +98,7 @@
       market_price_currencyOrg, sales_price, sales_price_currency, supply_price, supply_price_currency, 
       supplier_barcode, hub_sku_size, stock, create_time, update_time, last_pull_time, 
       sp_sku_no, measurement, price_state, sku_state, hub_sku_no, memo, data_state, version, 
-      info_from, sp_sku_size_state, screen_size, supplier_no, filter_flag
+      info_from, sp_sku_size_state, screen_size, supplier_no, filter_flag, hub_sku_size_type
     </if>
     <if test="fields != null" >
       ${fields}
@@ -122,7 +123,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_pending_id,spu_pending_id,supplier_id,supplier_sku_no,sku_name,market_price,market_price_currencyOrg,sales_price,sales_price_currency,supply_price,supply_price_currency,supplier_barcode,hub_sku_size,stock,create_time,update_time,last_pull_time,sp_sku_no,measurement,price_state,sku_state,hub_sku_no,memo,data_state,version,info_from,sp_sku_size_state,screen_size,supplier_no,filter_flag
+    sku_pending_id,spu_pending_id,supplier_id,supplier_sku_no,sku_name,market_price,market_price_currencyOrg,sales_price,sales_price_currency,supply_price,supply_price_currency,supplier_barcode,hub_sku_size,stock,create_time,update_time,last_pull_time,sp_sku_no,measurement,price_state,sku_state,hub_sku_no,memo,data_state,version,info_from,sp_sku_size_state,screen_size,supplier_no,filter_flag,hub_sku_size_type
     from hub_sku_pending
     where sku_pending_id = #{skuPendingId,jdbcType=BIGINT}
   </select>
@@ -149,8 +150,8 @@
       measurement, price_state, sku_state, 
       hub_sku_no, memo, data_state, 
       version, info_from, sp_sku_size_state, 
-      screen_size, supplier_no, filter_flag
-      )
+      screen_size, supplier_no, filter_flag, 
+      hub_sku_size_type)
     values (#{skuPendingId,jdbcType=BIGINT}, #{spuPendingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
       #{supplierSkuNo,jdbcType=VARCHAR}, #{skuName,jdbcType=VARCHAR}, #{marketPrice,jdbcType=DECIMAL}, 
       #{marketPriceCurrencyorg,jdbcType=VARCHAR}, #{salesPrice,jdbcType=DECIMAL}, #{salesPriceCurrency,jdbcType=VARCHAR}, 
@@ -160,8 +161,8 @@
       #{measurement,jdbcType=VARCHAR}, #{priceState,jdbcType=TINYINT}, #{skuState,jdbcType=TINYINT}, 
       #{hubSkuNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
       #{version,jdbcType=BIGINT}, #{infoFrom,jdbcType=TINYINT}, #{spSkuSizeState,jdbcType=TINYINT}, 
-      #{screenSize,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{filterFlag,jdbcType=TINYINT}
-      )
+      #{screenSize,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{filterFlag,jdbcType=TINYINT}, 
+      #{hubSkuSizeType,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPending" >
     <selectKey keyColumn="sku_pending_id" keyProperty="skuPendingId" order="AFTER" resultType="long">
@@ -259,6 +260,9 @@
       <if test="filterFlag != null" >
         filter_flag,
       </if>
+      <if test="hubSkuSizeType != null" >
+        hub_sku_size_type,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="skuPendingId != null" >
@@ -350,6 +354,9 @@
       </if>
       <if test="filterFlag != null" >
         #{filterFlag,jdbcType=TINYINT},
+      </if>
+      <if test="hubSkuSizeType != null" >
+        #{hubSkuSizeType,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -452,6 +459,9 @@
       <if test="record.filterFlag != null" >
         filter_flag = #{record.filterFlag,jdbcType=TINYINT},
       </if>
+      <if test="record.hubSkuSizeType != null" >
+        hub_sku_size_type = #{record.hubSkuSizeType,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -488,7 +498,8 @@
       sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
       screen_size = #{record.screenSize,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
-      filter_flag = #{record.filterFlag,jdbcType=TINYINT}
+      filter_flag = #{record.filterFlag,jdbcType=TINYINT},
+      hub_sku_size_type = #{record.hubSkuSizeType,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -583,6 +594,9 @@
       <if test="filterFlag != null" >
         filter_flag = #{filterFlag,jdbcType=TINYINT},
       </if>
+      <if test="hubSkuSizeType != null" >
+        hub_sku_size_type = #{hubSkuSizeType,jdbcType=VARCHAR},
+      </if>
     </set>
     where sku_pending_id = #{skuPendingId,jdbcType=BIGINT}
   </update>
@@ -616,7 +630,8 @@
       sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       screen_size = #{screenSize,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
-      filter_flag = #{filterFlag,jdbcType=TINYINT}
+      filter_flag = #{filterFlag,jdbcType=TINYINT},
+      hub_sku_size_type = #{hubSkuSizeType,jdbcType=VARCHAR}
     where sku_pending_id = #{skuPendingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPendingCriteria" id="selectByExampleWithRowbounds" >
