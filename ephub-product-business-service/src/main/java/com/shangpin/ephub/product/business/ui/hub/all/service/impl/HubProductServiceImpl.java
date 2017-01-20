@@ -22,6 +22,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
@@ -93,8 +94,10 @@ public class HubProductServiceImpl implements IHubProductService {
 				if(CollectionUtils.isNotEmpty(hubSkus)){
 					for(HubSkuDto hubSku : hubSkus){
 						List<HubProductDetail> productDetails = getProductDetailsByHubSku(hubSpu,hubSku);
-						for(HubProductDetail hubProductDetail : productDetails){
-							details.add(hubProductDetail);
+						if(CollectionUtils.isNotEmpty(productDetails)){
+							for(HubProductDetail hubProductDetail : productDetails){
+								details.add(hubProductDetail);
+							}
 						}
 					}
 					hubProductDetails.setHubDetails(details);
@@ -104,6 +107,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				if(CollectionUtils.isNotEmpty(spuPics)){
 					hubProductDetails.setSpPicUrls(spuPics); 
 				}
+				log.info("ID："+spuId+"：全部hub商品页返回的数据========："+JsonUtil.serialize(hubProductDetails)); 
 				return hubProductDetails;
 			}
 		} catch (Exception e) {
@@ -208,20 +212,22 @@ public class HubProductServiceImpl implements IHubProductService {
 		
 		List<HubProductDetail> productDetails = new ArrayList<HubProductDetail>();
 		List<HubSkuSupplierMappingDto> mappings = findHubSkuSupplierMappingDtoByHubSkuNo(hubSku.getSkuNo());
-		for(HubSkuSupplierMappingDto mappingDto : mappings){
-			HubProductDetail hubProuctDetail = new HubProductDetail();
-			JavaUtil.fatherToChild(mappingDto, hubProuctDetail);
-			SupplierDTO supplierDTO = supplierService.getSupplier(mappingDto.getSupplierNo());
-			hubProuctDetail.setSupplierName(null != supplierDTO? supplierDTO.getSupplierName():"");
-			hubProuctDetail.setSkuId(hubSku.getSkuId());
-			hubProuctDetail.setSkuSize(hubSku.getSkuSize());
-			hubProuctDetail.setColor(hubSpu.getHubColor()); 
-			hubProuctDetail.setMaterial(hubSpu.getMaterial());
-			hubProuctDetail.setProductOrigin(hubSpu.getOrigin()); 
-			if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
-				hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
-			}	
-			productDetails.add(hubProuctDetail);
+		if(null != mappings && mappings.size() > 0){
+			for(HubSkuSupplierMappingDto mappingDto : mappings){
+				HubProductDetail hubProuctDetail = new HubProductDetail();
+				JavaUtil.fatherToChild(mappingDto, hubProuctDetail);
+				SupplierDTO supplierDTO = supplierService.getSupplier(mappingDto.getSupplierNo());
+				hubProuctDetail.setSupplierName(null != supplierDTO? supplierDTO.getSupplierName():"");
+				hubProuctDetail.setSkuId(hubSku.getSkuId());
+				hubProuctDetail.setSkuSize(hubSku.getSkuSize());
+				hubProuctDetail.setColor(hubSpu.getHubColor()); 
+				hubProuctDetail.setMaterial(hubSpu.getMaterial());
+				hubProuctDetail.setProductOrigin(hubSpu.getOrigin()); 
+				if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
+					hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
+				}	
+				productDetails.add(hubProuctDetail);
+			}
 		}
 		return productDetails;
 	}
