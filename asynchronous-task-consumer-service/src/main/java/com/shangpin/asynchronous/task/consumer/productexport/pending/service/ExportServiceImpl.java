@@ -252,19 +252,23 @@ public class ExportServiceImpl {
     			String fileName = parSetName(rowTemplate[i]);
     			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
             			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) 
-            			|| "hubSkuSizeType".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i]) || "specification".equals(rowTemplate[i])){
+            			|| "hubSkuSizeType".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
     				//所有sku的属性
     				fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
-					if("specification".equals(rowTemplate[i]) && "尺寸".equals(value)){
-						row.createCell(i).setCellValue("尺寸");
-					}else{
-						row.createCell(i).setCellValue(null != value ? value.toString() : "");
-					}
+					row.createCell(i).setCellValue(null != value ? value.toString() : "");
             	}else if("seasonYear".equals(rowTemplate[i])){
             		setRowOfSeasonYear(row, product, spuClazz, i);
             	}else if("seasonName".equals(rowTemplate[i])){
             		setRowOfSeasonName(row, product, spuClazz, i); 
+            	}else if("specification".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod("getHubSkuSizeType");
+					value = fieldSetMet.invoke(sku);
+					if("尺寸".equals(value)){
+						row.createCell(i).setCellValue("尺寸");
+					}else{
+						row.createCell(i).setCellValue("");
+					}
             	}else if("originalProductSizeValue".equals(rowTemplate[i]) ){
             		//原尺码类型 原尺码值 从哪取值？
             		row.createCell(i).setCellValue("");
