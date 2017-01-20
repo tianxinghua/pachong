@@ -100,6 +100,7 @@ public class HubWaitSelectedController {
 				List<HubWaitSelectedDetailResponse> arr = new ArrayList<HubWaitSelectedDetailResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedDetailResponse HubWaitSelectResponse = new HubWaitSelectedDetailResponse();
+					log.info("待选品详情的detail数据：{}",hubWaitSelectResponseDto);
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
 					arr.add(HubWaitSelectResponse);
 				}

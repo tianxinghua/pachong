@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
@@ -42,6 +43,8 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>
  * Title:SupplierOrderService.java Company: www.shangpin.com
@@ -50,6 +53,7 @@ import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelect
  * @date 2016年12月21日 下午4:06:52
  */
 @Service
+@Slf4j
 public class HubSelectedService {
 
 	@Autowired
@@ -178,18 +182,22 @@ public class HubSelectedService {
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
 		Map<Long,String> mapTemp = new HashMap<Long,String>();
+		log.info("list总大小："+list.size());
+		long start = System.currentTimeMillis();
 		for (HubWaitSelectResponseDto response : list) {
-			
+			log.info("");
 			Long hubSpuId = response.getSpuId();
 			if(mapTemp.containsKey(hubSpuId)){
 				continue;
 			}
 			
 			map = new HashMap<String, String>();
+			long start1 = System.currentTimeMillis();
 			String spSkuNo = response.getSpSkuNo();
 			HubSpuPicCriteriaDto criteria = new HubSpuPicCriteriaDto();
 			criteria.createCriteria().andSpuIdEqualTo(hubSpuId);
 			List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(criteria);
+			log.info("查询图片时间："+(System.currentTimeMillis()-start1));
 			int i = 1;
 			if (listPic == null || listPic.size() <= 0) {
 				continue;
@@ -206,7 +214,9 @@ public class HubSelectedService {
 			map.put("hubSpuNo", "HUB-"+response.getSpuNo());
 			result.add(map);
 		}
+		log.info("生成excel时间："+(System.currentTimeMillis()-start));
 		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
+		log.info("导出时间："+(System.currentTimeMillis()-start));
 	}
 
 	public void exportSelectPicExcel(List<HubWaitSelectStateDto> list, OutputStream ouputStream) throws Exception {
