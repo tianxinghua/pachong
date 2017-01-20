@@ -96,6 +96,7 @@ public class HubWaitSelectedController {
 		try {
 			log.info("待选品详情请求参数：{}",dto);
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectDetail(dto);
+				log.info("待选品详情返回list:=============》"+list.toString());
 				List<HubWaitSelectedDetailResponse> arr = new ArrayList<HubWaitSelectedDetailResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedDetailResponse HubWaitSelectResponse = new HubWaitSelectedDetailResponse();

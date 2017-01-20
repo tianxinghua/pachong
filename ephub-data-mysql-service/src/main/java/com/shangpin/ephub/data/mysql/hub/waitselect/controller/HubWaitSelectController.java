@@ -12,6 +12,8 @@ import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest;
 import com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequestWithPage;
 import com.shangpin.ephub.data.mysql.hub.waitselect.po.HubWaitSelectResponse;
 import com.shangpin.ephub.data.mysql.hub.waitselect.service.HubWaitSelectService;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>HubWaitSelectGateWay.java </p>
  * <p>Description: </p>
@@ -21,6 +23,7 @@ import com.shangpin.ephub.data.mysql.hub.waitselect.service.HubWaitSelectService
  */
 @RestController
 @RequestMapping("/hub-waitselect")
+@Slf4j
 public class HubWaitSelectController {
 
 	@Autowired
@@ -37,7 +40,10 @@ public class HubWaitSelectController {
     }
 	@RequestMapping(value = "/select-detail")
     public List<HubWaitSelectResponse> selectDetail(@RequestBody HubWaitSelectDetailRequest criteriaWithRowBounds){
-    	return hubSkuService.selectDetail(criteriaWithRowBounds);
+		log.info("待选品详情参数：{}",criteriaWithRowBounds);
+		List<HubWaitSelectResponse> list = hubSkuService.selectDetail(criteriaWithRowBounds);
+		log.info("待选品详情返回结果：{}",list);
+    	return list;
     }
 	
 }
