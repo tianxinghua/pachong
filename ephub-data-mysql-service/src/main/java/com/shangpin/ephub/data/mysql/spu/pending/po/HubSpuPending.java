@@ -10,14 +10,14 @@ public class HubSpuPending implements Serializable {
     private Long spuPendingId;
 
     /**
-     * 供应商NO
-     */
-    private String supplierNo;
-
-    /**
      * 供应商Id
      */
     private String supplierId;
+
+    /**
+     * 供应商编号
+     */
+    private String supplierNo;
 
     /**
      * 供应商Spu编号
@@ -55,17 +55,12 @@ public class HubSpuPending implements Serializable {
     private String hubSeason;
 
     /**
-     * 该款下尺码处理状态:0 未全部映射成功 ；1 全部映射成功
-     */
-    private Byte spSkuSizeState;
-
-    /**
-     * =0 信息待完善 =1 待复核对 =2 已处理(审核通过) 3：无法处理 4:过滤不处理
+     * =0 信息待完善 =1 信息已完善 待处理 2 已处理
      */
     private Byte spuState;
 
     /**
-     * =0:无图片 =1图片信息已完成 =2 图片信息未完成 
+     * =0:无图片 =1图片信息未完成 =2 图片信息已完成 
      */
     private Byte picState;
 
@@ -140,25 +135,11 @@ public class HubSpuPending implements Serializable {
      */
     private Long version;
 
-    /**
-     * 品牌状态
-     */
     private Byte spuBrandState;
 
-    /**
-     * 性别状态
-     */
     private Byte spuGenderState;
 
-    /**
-     * 上市时间及季节状态
-     */
     private Byte spuSeasonState;
-
-    /**
-     * 颜色码
-     */
-    private String hubColorNo;
 
     /**
      * 颜色
@@ -166,9 +147,16 @@ public class HubSpuPending implements Serializable {
     private String hubColor;
 
     /**
-     * 颜色映射状态
+     * 颜色码
      */
+    private String hubColorNo;
+
     private Byte spuColorState;
+
+    /**
+     * =0 未全部映射成功 =1 全部映射成功
+     */
+    private Byte spSkuSizeState;
 
     /**
      * 材质映射状态
@@ -180,6 +168,11 @@ public class HubSpuPending implements Serializable {
      */
     private Byte originState;
 
+    /**
+     * 过滤标
+     */
+    private Byte filterFlag;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
@@ -190,20 +183,20 @@ public class HubSpuPending implements Serializable {
         this.spuPendingId = spuPendingId;
     }
 
-    public String getSupplierNo() {
-        return supplierNo;
-    }
-
-    public void setSupplierNo(String supplierNo) {
-        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
-    }
-
     public String getSupplierId() {
         return supplierId;
     }
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId == null ? null : supplierId.trim();
+    }
+
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
     }
 
     public String getSupplierSpuNo() {
@@ -260,14 +253,6 @@ public class HubSpuPending implements Serializable {
 
     public void setHubSeason(String hubSeason) {
         this.hubSeason = hubSeason == null ? null : hubSeason.trim();
-    }
-
-    public Byte getSpSkuSizeState() {
-        return spSkuSizeState;
-    }
-
-    public void setSpSkuSizeState(Byte spSkuSizeState) {
-        this.spSkuSizeState = spSkuSizeState;
     }
 
     public Byte getSpuState() {
@@ -422,14 +407,6 @@ public class HubSpuPending implements Serializable {
         this.spuSeasonState = spuSeasonState;
     }
 
-    public String getHubColorNo() {
-        return hubColorNo;
-    }
-
-    public void setHubColorNo(String hubColorNo) {
-        this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
-    }
-
     public String getHubColor() {
         return hubColor;
     }
@@ -438,12 +415,28 @@ public class HubSpuPending implements Serializable {
         this.hubColor = hubColor == null ? null : hubColor.trim();
     }
 
+    public String getHubColorNo() {
+        return hubColorNo;
+    }
+
+    public void setHubColorNo(String hubColorNo) {
+        this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
+    }
+
     public Byte getSpuColorState() {
         return spuColorState;
     }
 
     public void setSpuColorState(Byte spuColorState) {
         this.spuColorState = spuColorState;
+    }
+
+    public Byte getSpSkuSizeState() {
+        return spSkuSizeState;
+    }
+
+    public void setSpSkuSizeState(Byte spSkuSizeState) {
+        this.spSkuSizeState = spSkuSizeState;
     }
 
     public Byte getMaterialState() {
@@ -462,6 +455,14 @@ public class HubSpuPending implements Serializable {
         this.originState = originState;
     }
 
+    public Byte getFilterFlag() {
+        return filterFlag;
+    }
+
+    public void setFilterFlag(Byte filterFlag) {
+        this.filterFlag = filterFlag;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -469,8 +470,8 @@ public class HubSpuPending implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", spuPendingId=").append(spuPendingId);
-        sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierSpuNo=").append(supplierSpuNo);
         sb.append(", spuModel=").append(spuModel);
         sb.append(", spuName=").append(spuName);
@@ -478,7 +479,6 @@ public class HubSpuPending implements Serializable {
         sb.append(", hubCategoryNo=").append(hubCategoryNo);
         sb.append(", hubBrandNo=").append(hubBrandNo);
         sb.append(", hubSeason=").append(hubSeason);
-        sb.append(", spSkuSizeState=").append(spSkuSizeState);
         sb.append(", spuState=").append(spuState);
         sb.append(", picState=").append(picState);
         sb.append(", isCurrentSeason=").append(isCurrentSeason);
@@ -498,11 +498,13 @@ public class HubSpuPending implements Serializable {
         sb.append(", spuBrandState=").append(spuBrandState);
         sb.append(", spuGenderState=").append(spuGenderState);
         sb.append(", spuSeasonState=").append(spuSeasonState);
-        sb.append(", hubColorNo=").append(hubColorNo);
         sb.append(", hubColor=").append(hubColor);
+        sb.append(", hubColorNo=").append(hubColorNo);
         sb.append(", spuColorState=").append(spuColorState);
+        sb.append(", spSkuSizeState=").append(spSkuSizeState);
         sb.append(", materialState=").append(materialState);
         sb.append(", originState=").append(originState);
+        sb.append(", filterFlag=").append(filterFlag);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -521,8 +523,8 @@ public class HubSpuPending implements Serializable {
         }
         HubSpuPending other = (HubSpuPending) that;
         return (this.getSpuPendingId() == null ? other.getSpuPendingId() == null : this.getSpuPendingId().equals(other.getSpuPendingId()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierSpuNo() == null ? other.getSupplierSpuNo() == null : this.getSupplierSpuNo().equals(other.getSupplierSpuNo()))
             && (this.getSpuModel() == null ? other.getSpuModel() == null : this.getSpuModel().equals(other.getSpuModel()))
             && (this.getSpuName() == null ? other.getSpuName() == null : this.getSpuName().equals(other.getSpuName()))
@@ -530,7 +532,6 @@ public class HubSpuPending implements Serializable {
             && (this.getHubCategoryNo() == null ? other.getHubCategoryNo() == null : this.getHubCategoryNo().equals(other.getHubCategoryNo()))
             && (this.getHubBrandNo() == null ? other.getHubBrandNo() == null : this.getHubBrandNo().equals(other.getHubBrandNo()))
             && (this.getHubSeason() == null ? other.getHubSeason() == null : this.getHubSeason().equals(other.getHubSeason()))
-            && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()))
             && (this.getSpuState() == null ? other.getSpuState() == null : this.getSpuState().equals(other.getSpuState()))
             && (this.getPicState() == null ? other.getPicState() == null : this.getPicState().equals(other.getPicState()))
             && (this.getIsCurrentSeason() == null ? other.getIsCurrentSeason() == null : this.getIsCurrentSeason().equals(other.getIsCurrentSeason()))
@@ -550,11 +551,13 @@ public class HubSpuPending implements Serializable {
             && (this.getSpuBrandState() == null ? other.getSpuBrandState() == null : this.getSpuBrandState().equals(other.getSpuBrandState()))
             && (this.getSpuGenderState() == null ? other.getSpuGenderState() == null : this.getSpuGenderState().equals(other.getSpuGenderState()))
             && (this.getSpuSeasonState() == null ? other.getSpuSeasonState() == null : this.getSpuSeasonState().equals(other.getSpuSeasonState()))
-            && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
             && (this.getHubColor() == null ? other.getHubColor() == null : this.getHubColor().equals(other.getHubColor()))
+            && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
             && (this.getSpuColorState() == null ? other.getSpuColorState() == null : this.getSpuColorState().equals(other.getSpuColorState()))
+            && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()))
             && (this.getMaterialState() == null ? other.getMaterialState() == null : this.getMaterialState().equals(other.getMaterialState()))
-            && (this.getOriginState() == null ? other.getOriginState() == null : this.getOriginState().equals(other.getOriginState()));
+            && (this.getOriginState() == null ? other.getOriginState() == null : this.getOriginState().equals(other.getOriginState()))
+            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()));
     }
 
     @Override
@@ -562,8 +565,8 @@ public class HubSpuPending implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getSpuPendingId() == null) ? 0 : getSpuPendingId().hashCode());
-        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierSpuNo() == null) ? 0 : getSupplierSpuNo().hashCode());
         result = prime * result + ((getSpuModel() == null) ? 0 : getSpuModel().hashCode());
         result = prime * result + ((getSpuName() == null) ? 0 : getSpuName().hashCode());
@@ -571,7 +574,6 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getHubCategoryNo() == null) ? 0 : getHubCategoryNo().hashCode());
         result = prime * result + ((getHubBrandNo() == null) ? 0 : getHubBrandNo().hashCode());
         result = prime * result + ((getHubSeason() == null) ? 0 : getHubSeason().hashCode());
-        result = prime * result + ((getSpSkuSizeState() == null) ? 0 : getSpSkuSizeState().hashCode());
         result = prime * result + ((getSpuState() == null) ? 0 : getSpuState().hashCode());
         result = prime * result + ((getPicState() == null) ? 0 : getPicState().hashCode());
         result = prime * result + ((getIsCurrentSeason() == null) ? 0 : getIsCurrentSeason().hashCode());
@@ -591,11 +593,13 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getSpuBrandState() == null) ? 0 : getSpuBrandState().hashCode());
         result = prime * result + ((getSpuGenderState() == null) ? 0 : getSpuGenderState().hashCode());
         result = prime * result + ((getSpuSeasonState() == null) ? 0 : getSpuSeasonState().hashCode());
-        result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
         result = prime * result + ((getHubColor() == null) ? 0 : getHubColor().hashCode());
+        result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
         result = prime * result + ((getSpuColorState() == null) ? 0 : getSpuColorState().hashCode());
+        result = prime * result + ((getSpSkuSizeState() == null) ? 0 : getSpSkuSizeState().hashCode());
         result = prime * result + ((getMaterialState() == null) ? 0 : getMaterialState().hashCode());
         result = prime * result + ((getOriginState() == null) ? 0 : getOriginState().hashCode());
+        result = prime * result + ((getFilterFlag() == null) ? 0 : getFilterFlag().hashCode());
         return result;
     }
 }

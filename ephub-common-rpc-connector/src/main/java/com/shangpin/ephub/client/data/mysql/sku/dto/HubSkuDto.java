@@ -76,6 +76,8 @@ public class HubSkuDto implements Serializable {
      */
     private Long version;
 
+    private String skuSizeType;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSkuId() {
@@ -198,6 +200,14 @@ public class HubSkuDto implements Serializable {
         this.version = version;
     }
 
+    public String getSkuSizeType() {
+        return skuSizeType;
+    }
+
+    public void setSkuSizeType(String skuSizeType) {
+        this.skuSizeType = skuSizeType == null ? null : skuSizeType.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -219,6 +229,7 @@ public class HubSkuDto implements Serializable {
         sb.append(", dataState=").append(dataState);
         sb.append(", spSkuNo=").append(spSkuNo);
         sb.append(", version=").append(version);
+        sb.append(", skuSizeType=").append(skuSizeType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -250,7 +261,8 @@ public class HubSkuDto implements Serializable {
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getSpSkuNo() == null ? other.getSpSkuNo() == null : this.getSpSkuNo().equals(other.getSpSkuNo()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getSkuSizeType() == null ? other.getSkuSizeType() == null : this.getSkuSizeType().equals(other.getSkuSizeType()));
     }
 
     @Override
@@ -272,6 +284,7 @@ public class HubSkuDto implements Serializable {
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getSpSkuNo() == null) ? 0 : getSpSkuNo().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getSkuSizeType() == null) ? 0 : getSkuSizeType().hashCode());
         return result;
     }
 }
