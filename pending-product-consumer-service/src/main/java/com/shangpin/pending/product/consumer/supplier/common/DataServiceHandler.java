@@ -308,7 +308,7 @@ public class DataServiceHandler {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId).andSupplierCategoryEqualTo(supplierCategory);
-		if (StringUtils.isBlank(supplierCategory)) {
+		if (StringUtils.isBlank(supplierGender)) {
 			criterion.andSupplierGenderIsNull();
 		} else {
 			criterion.andSupplierGenderEqualTo(supplierGender);
@@ -333,13 +333,14 @@ public class DataServiceHandler {
 				supplierGender)) {
 			return;
 		}
-
+		Date date = new Date();
 		dto.setSupplierId(supplierId);
 		dto.setSupplierCategory(supplierCategory);
 		dto.setSupplierGender(supplierGender);
 		dto.setMappingState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 		dto.setGenderDicId(null == hubGenderDicDto ? null : hubGenderDicDto.getGenderDicId());
-		dto.setCreateTime(new Date());
+		dto.setCreateTime(date);
+		dto.setUpdateTime(date);
 		try {
 			hubSupplierCategroyDicGateWay.insert(dto);
 		} catch (Exception e) {
@@ -564,6 +565,11 @@ public class DataServiceHandler {
 
 	public void updatePendingSpu(Long spuKey, HubSpuPendingDto spuPending) throws Exception {
 		try {
+
+			if (StringUtils.isNotBlank(spuPending.getHubMaterial())) {
+				spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("<br />", "\r\n").replaceAll("<html>", "")
+						.replaceAll("</html>", "").replaceAll("<br>","\r\n"));
+			}
 
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
 			criteria.createCriteria().andSpuPendingIdEqualTo(spuKey);
