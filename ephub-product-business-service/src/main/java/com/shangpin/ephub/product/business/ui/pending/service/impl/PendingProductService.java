@@ -277,6 +277,7 @@ public class PendingProductService implements IPendingProductService{
                         skuUpdatedVo.setSkuResult(result.getResult());
                         skus.add(skuUpdatedVo);
                     }
+					log.info("skuSizeType=="+hubSkuPendingDto.getHubSkuSizeType()+"  hubSkuSize==="+hubSkuPendingDto.getHubSkuSize()); 
                     hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                 }
                 updatedVo.setSkus(skus); 
