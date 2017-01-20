@@ -256,7 +256,9 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSku.setSpuNo(hubSpu.getSpuNo());
         hubSku.setColor(hubSpu.getHubColor());
         hubSku.setSkuNo(skuNo);
-        hubSku.setSkuSize((String) o);
+        String sizeTypeAndSize = (String) o;
+        hubSku.setSkuSizeType(sizeTypeAndSize.substring(0,sizeTypeAndSize.indexOf(":")));
+        hubSku.setSkuSize(sizeTypeAndSize.substring(sizeTypeAndSize.indexOf(":")+1,sizeTypeAndSize.length()));
         hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
         hubSku.setCreateTime(date);
         hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
@@ -329,11 +331,11 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             for(HubSkuPending hubSkuPending:hubSkuPendings){
                 if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善 处理中
                     if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
-                        sizeSkuMap.get(hubSkuPending.getHubSkuSize()).add(hubSkuPending);
+                        sizeSkuMap.get(hubSkuPending.getHubSkuSizeType()+":"+hubSkuPending.getHubSkuSize()).add(hubSkuPending);
                     }else{
                         List<HubSkuPending> hubSkuPendingList = new ArrayList<>();
                         hubSkuPendingList.add(hubSkuPending);
-                        sizeSkuMap.put(hubSkuPending.getHubSkuSize(),hubSkuPendingList);
+                        sizeSkuMap.put(hubSkuPending.getHubSkuSizeType()+":"+hubSkuPending.getHubSkuSize(),hubSkuPendingList);
                     }
                 }
             }

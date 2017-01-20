@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -147,11 +148,11 @@ public class HubProductServiceImpl implements HubProductService {
 
     }
 
-    private void setSpuSizeType(SpProductOrgInfoEntity spSpuInfo,String size) {
-        spSpuInfo.setSkuDyaAttr(0);
-        if(StringUtils.isNotBlank(size)) {
-            if (size.indexOf(":") >= 0) {
-                spSpuInfo.setSkuDyaAttr(1);
+    private void setSpuSizeType(SpProductOrgInfoEntity spSpuInfo,String sizeType) {
+        spSpuInfo.setSkuDyaAttr(1);
+        if(StringUtils.isNotBlank(sizeType)) {
+            if (sizeType.equals(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)) {
+                spSpuInfo.setSkuDyaAttr(0);
             }
         }
     }

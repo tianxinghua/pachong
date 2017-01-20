@@ -18,5 +18,9 @@ public interface GlobalConstant {
 	 * 用于redis缓存尺码信息的key
 	 */
 	public static final String REDIS_HUB_SIZE_KEY = "REDIS_HUB_SIZE_KEY";
+	/**
+	 * 尺存的标记
+	 */
+	public static final String REDIS_HUB_MEASURE_SIGN_KEY = "尺寸";
 
 }
