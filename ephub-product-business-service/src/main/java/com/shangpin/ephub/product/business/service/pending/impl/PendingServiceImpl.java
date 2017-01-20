@@ -427,6 +427,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }else{
             hubSkuPending.setSkuState(auditVO.getAuditStatus().byteValue());
         }
+
         HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
         criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
         HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
