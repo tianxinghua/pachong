@@ -12,10 +12,7 @@ import com.shangpin.ephub.data.mysql.picture.pending.po.HubSpuPendingPicCriteria
 import com.shangpin.ephub.data.mysql.picture.spu.mapper.HubSpuPicMapper;
 import com.shangpin.ephub.data.mysql.picture.spu.po.HubSpuPic;
 import com.shangpin.ephub.data.mysql.product.common.*;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.DataBusinessStatus;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.DataSelectStatus;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.DataStatus;
-import com.shangpin.ephub.data.mysql.product.common.enumeration.HubSpuPendigStatus;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.*;
 import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuPendingPicDto;
@@ -322,7 +319,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             skuPendingCriteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
             skuPendingCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
                     .andSkuStateEqualTo(HubSpuPendigStatus.HANDLING.getIndex().byteValue())   //spu 和 sku 状态保持一致
-                    .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue()); //尺码已映射
+                    .andSpSkuSizeStateEqualTo(DataBusinessStatus.HANDLED.getIndex().byteValue())       //尺码已映射
+                    .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());  //不过滤的才使用
             
             log.info("hubSkuPendings:{}",spuPendingId+"-"+HubSpuPendigStatus.HANDLING.getIndex().byteValue()+"-"+DataBusinessStatus.HANDLED.getIndex().byteValue());
             List<HubSkuPending> hubSkuPendings = hubSkuPendingMapper.selectByExample(skuPendingCriteria);

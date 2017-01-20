@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -441,7 +442,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
         criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList)
 //                .andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue())
-        .andSpSkuSizeStateEqualTo(CommonHandleState.UNHANDLED.getIndex().byteValue());
+        .andSpSkuSizeStateEqualTo(CommonHandleState.UNHANDLED.getIndex().byteValue())
+        .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());
 
         List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
         if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
