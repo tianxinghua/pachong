@@ -107,7 +107,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				if(CollectionUtils.isNotEmpty(spuPics)){
 					hubProductDetails.setSpPicUrls(spuPics); 
 				}
-				log.info("ID："+spuId+"：全部hub商品页返回的数据========："+JsonUtil.serialize(hubProductDetails)); 
+				log.info("ID："+spuId+"：全部hub商品页详情页返回的数据========："+JsonUtil.serialize(hubProductDetails)); 
 				return hubProductDetails;
 			}
 		} catch (Exception e) {
