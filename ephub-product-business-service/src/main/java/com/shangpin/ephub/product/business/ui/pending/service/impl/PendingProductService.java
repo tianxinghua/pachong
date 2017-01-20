@@ -210,6 +210,7 @@ public class PendingProductService implements IPendingProductService{
     public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId) throws Exception{
         try {
             HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
+            criteriaDto.setOrderByClause("hub_sku_size");
             criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
             return hubSkuPendingGateWay.selectByCriteria(criteriaDto);
         } catch (Exception e) {
