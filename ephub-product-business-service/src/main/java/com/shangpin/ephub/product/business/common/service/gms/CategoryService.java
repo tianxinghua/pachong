@@ -100,13 +100,15 @@ public class CategoryService {
 	 * @return
 	 */
 	public HubResponseDto<FourLevelCategory> getGmsCateGoryByApi(String categoryNo){
+		long start_categoryService = System.currentTimeMillis();
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
-        log.info("从api获取品类请求参数：{}"+apiAddressProperties.getGmsCategoryUrl(),request);
+//        log.info("从api获取品类请求参数：{}"+apiAddressProperties.getGmsCategoryUrl(),request);
         String gmsCategoryUrl = apiAddressProperties.getGmsCategoryUrl();
 		ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(gmsCategoryUrl, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
-        log.info("从api获取品类返回结果：{}",entity.getBody());
+//        log.info("从api获取品类返回结果：{}",entity.getBody());
+        log.info("--->请求品类名称接口耗时{}",System.currentTimeMillis() - start_categoryService);
         return entity.getBody();
 	}
 }
