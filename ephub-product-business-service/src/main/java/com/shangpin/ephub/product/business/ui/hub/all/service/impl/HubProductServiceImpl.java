@@ -86,7 +86,7 @@ public class HubProductServiceImpl implements IHubProductService {
 			HubSpuDto hubSpu = hubSpuClient.selectByPrimaryKey(Long.parseLong(spuId));
 			if(null != hubSpu){
 				//查询文字详情
-				HubProductDetails hubProductDetails = getHubProductDetailsFromHubSpu(hubSpu);
+				HubProductDetails hubProductDetails = convertHubProductDetailsFromHubSpu(hubSpu);
 				List<HubProductDetail> details = new ArrayList<HubProductDetail>();
 				HubSkuCriteriaDto criteriaDto = new HubSkuCriteriaDto();
 				criteriaDto.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo());
@@ -111,7 +111,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				return hubProductDetails;
 			}
 		} catch (Exception e) {
-			log.error("全部Hub商品页点击详情查询详细信息时异常："+e.getMessage()+" Id="+spuId,e);
+			log.error("全部Hub商品页点击详情查询详细信息时异常："+e.getMessage()+" ID="+spuId,e);
 		}
 		return null;
 		
@@ -190,7 +190,7 @@ public class HubProductServiceImpl implements IHubProductService {
 	 * @param hubSpu
 	 * @return
 	 */
-	private HubProductDetails getHubProductDetailsFromHubSpu(HubSpuDto hubSpu){
+	private HubProductDetails convertHubProductDetailsFromHubSpu(HubSpuDto hubSpu){
 		HubProductDetails hubProductDetails = new HubProductDetails();
 		hubProductDetails.setSpuId(hubSpu.getSpuId()); 
 		hubProductDetails.setBrandNo(hubSpu.getBrandNo());
