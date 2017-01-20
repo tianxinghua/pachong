@@ -49,7 +49,7 @@ public class CategoryService {
 				return null;
 			}
 	        String supplierMsg = getGmsCateGoryByRedis(categoryNo);
-	        log.info("从redis获取品类"+supplierMsg);
+//	        log.info("从redis获取品类"+supplierMsg);
 	        if(!StringUtils.isEmpty(supplierMsg)){
 	        	return JsonUtil.deserialize(supplierMsg, FourLevelCategory.class);
 	        }else{

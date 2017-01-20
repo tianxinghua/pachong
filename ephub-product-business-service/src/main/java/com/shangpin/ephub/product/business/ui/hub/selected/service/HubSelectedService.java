@@ -202,8 +202,8 @@ public class HubSelectedService {
 				map.put("url" + i, pic.getSpPicUrl());
 				i++;
 			}
-			map.put("hubSpuNo", spSkuNo);
-			map.put("hubSpuId", "HUB-"+response.getSpuNo());
+			map.put("spSkuNo", spSkuNo);
+			map.put("hubSpuNo", "HUB-"+response.getSpuNo());
 			result.add(map);
 		}
 		ExportExcelUtils.exportExcel(title, headers, columns, result, ouputStream);
