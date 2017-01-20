@@ -263,10 +263,19 @@ public class SupplierProductMysqlService {
 		hubSpuUpdated.setSupplierId(hubSpu.getSupplierId());
 		hubSpuUpdated.setSupplierSpuId(hubSpu.getSupplierSpuId());
 		hubSpuUpdated.setSupplierSpuNo(hubSpuSel.getSupplierSpuNo());
-		
 		if(!StringUtils.isEmpty(hubSpu.getSupplierSpuModel()) && !hubSpu.getSupplierSpuModel().equals(hubSpuSel.getSupplierSpuModel())){
 			pendingSpu.setSpuModel(hubSpu.getSupplierSpuModel());
 			hubSpuUpdated.setSupplierSpuModel(hubSpu.getSupplierSpuModel());
+			isChanged = true;
+		}
+		if(!StringUtils.isEmpty(hubSpu.getSupplierSpuName()) && !hubSpu.getSupplierSpuName().equals(hubSpuSel.getSupplierSpuName())){
+			pendingSpu.setSpuName(hubSpu.getSupplierSpuName());
+			hubSpuUpdated.setSupplierSpuName(hubSpu.getSupplierSpuName());
+			isChanged = true;
+		}
+		if(!StringUtils.isEmpty(hubSpu.getSupplierSpuDesc()) && !hubSpu.getSupplierSpuDesc().equals(hubSpuSel.getSupplierSpuDesc())){
+			pendingSpu.setSpuDesc(hubSpu.getSupplierSpuDesc());
+			hubSpuUpdated.setSupplierSpuDesc(hubSpu.getSupplierSpuDesc());
 			isChanged = true;
 		}
 		if(!StringUtils.isEmpty(hubSpu.getSupplierSpuColor()) && !hubSpu.getSupplierSpuColor().equals(hubSpuSel.getSupplierSpuColor())){

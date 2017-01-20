@@ -116,7 +116,8 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender(item.getGender());
 			hubSpu.setSupplierCategoryname(item.getType());
 			hubSpu.setSupplierBrandname(item.getBrand());
-//			hubSpu.setSupplierSeasonname(item.getSeason_year()+item.getSeason_reference());
+			hubSpu.setSupplierSeasonname("2017SS");
+			hubSpu.setSupplierGender("female");
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getManufacturer());
 			hubSpu.setSupplierSpuDesc(item.getDescription());
@@ -126,7 +127,6 @@ public class MonnierHandler implements ISupplierHandler {
 			return false;
 		}
 	}
-	
 	/**
 	 * 将geb原始dto转换成hub sku
 	 * @param supplierId
@@ -145,7 +145,7 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSku.setSupplierSkuNo(supplierSkuNo);
 			hubSku.setSupplierSkuName(item.getName());
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice_before_discount())));
-			hubSku.setMarketPriceCurrencyorg(item.getPrice_type());
+			hubSku.setMarketPriceCurrencyorg("EUR");
 			hubSku.setSupplierSkuSize(size);
 			hubSku.setStock(StringUtil.verifyStock(item.getQty()));
 			return true;

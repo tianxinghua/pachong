@@ -171,16 +171,21 @@ public class TonyHandler implements ISupplierHandler {
 	  * @param desc
 	  * @return
 	  */
-	 public String getMaterial(String desc){
+	 public static String getMaterial(String desc){
         String material = "";
         if (desc == null){
             return material;
         }
-        String[] descArr = desc.split("<br>");
+        String[] descArr = desc.split("<br />");
         for (String s: descArr){
             if (s.contains("%,")){
-                material = s;
-                break;
+            	String [] ss = s.split(":");
+            	for(String sss:ss){
+            		 if (sss.contains("%,")){
+            			 material = sss.trim();
+            			 break;
+            		 }
+            	}
             } else if ( s.contains("Leather")){	                
                 material = s;
                 break;
@@ -212,7 +217,6 @@ public class TonyHandler implements ISupplierHandler {
         }
         return material;
 	 }
-	 
 	 public static String getOrigin(String desc){
 		 int index = desc.lastIndexOf("Made in");
      	if(index!=-1){

@@ -56,7 +56,7 @@ public class SupplierProductSaveAndSendToPending {
 			boolean result = supplierProductSendToPending.dispatchSupplierProduct(pendingProduct,headers);
 			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，并发送消息队列返回结果："+result); 
 		}else{
-			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
+//			log.info("供应商："+supplierName+"编号："+supplierNo+" 保存数据成功，季节编号"+hubSpu.getSupplierSeasonname()+"非当季，未推送pending队列"); 
 		}
 	}
 	
