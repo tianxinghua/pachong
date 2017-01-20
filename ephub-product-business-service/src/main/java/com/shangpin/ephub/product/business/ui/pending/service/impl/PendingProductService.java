@@ -612,6 +612,7 @@ public class PendingProductService implements IPendingProductService{
 		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
 		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
 		hubSpuTask.setCreateTime(date);
+		hubSpuTask.setUpdateTime(date);
 		hubSpuTask.setImportType((byte)taskType);
 		hubSpuTask.setCreateUser(createUser); 
 		hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 

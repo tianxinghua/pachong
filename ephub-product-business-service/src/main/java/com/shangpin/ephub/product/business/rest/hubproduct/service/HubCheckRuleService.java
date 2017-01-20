@@ -9,6 +9,7 @@ import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRul
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckResult;
@@ -86,12 +87,12 @@ public class HubCheckRuleService {
 		if("尺码".equals(hubProduct.getSpecificationType())){
 			if(StringUtils.isNoneBlank(hubProduct.getSkuSize())){
 				//String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
-				String size = null;
-				size = hubCheckService.checkHubSize(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
-				if(size!=null){
-					result.setSize(size);
+				HubSizeCheckResult checkResult = null;
+				checkResult = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
+				if(checkResult.isPassing()){
+					result.setSize(checkResult.getScreenSizeStandardValueId()+","+hubProduct.getSizeType()+":"+hubProduct.getSkuSize());
 				}else{
-					str.append("尺码"+hubProduct.getSkuSize()+"不存在,") ;
+					str.append("尺码"+hubProduct.getSizeType()+":"+hubProduct.getSkuSize()+"不存在,") ;
 					result.setPassing(false);
 				}
 			}else{

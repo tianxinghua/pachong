@@ -117,7 +117,7 @@ public class HubSkuCriteriaDto {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-
+        
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -1144,6 +1144,76 @@ public class HubSkuCriteriaDto {
 
         public Criteria andVersionNotBetween(Long value1, Long value2) {
             addCriterion("version not between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeIsNull() {
+            addCriterion("sku_size_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeIsNotNull() {
+            addCriterion("sku_size_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeEqualTo(String value) {
+            addCriterion("sku_size_type =", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeNotEqualTo(String value) {
+            addCriterion("sku_size_type <>", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeGreaterThan(String value) {
+            addCriterion("sku_size_type >", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("sku_size_type >=", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeLessThan(String value) {
+            addCriterion("sku_size_type <", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeLessThanOrEqualTo(String value) {
+            addCriterion("sku_size_type <=", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeLike(String value) {
+            addCriterion("sku_size_type like", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeNotLike(String value) {
+            addCriterion("sku_size_type not like", value, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeIn(List<String> values) {
+            addCriterion("sku_size_type in", values, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeNotIn(List<String> values) {
+            addCriterion("sku_size_type not in", values, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeBetween(String value1, String value2) {
+            addCriterion("sku_size_type between", value1, value2, "skuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuSizeTypeNotBetween(String value1, String value2) {
+            addCriterion("sku_size_type not between", value1, value2, "skuSizeType");
             return (Criteria) this;
         }
     }

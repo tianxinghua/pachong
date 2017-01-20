@@ -155,6 +155,8 @@ public class HubSkuPending implements Serializable {
      */
     private Byte filterFlag;
 
+    private String hubSkuSizeType;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSkuPendingId() {
@@ -397,6 +399,14 @@ public class HubSkuPending implements Serializable {
         this.filterFlag = filterFlag;
     }
 
+    public String getHubSkuSizeType() {
+        return hubSkuSizeType;
+    }
+
+    public void setHubSkuSizeType(String hubSkuSizeType) {
+        this.hubSkuSizeType = hubSkuSizeType == null ? null : hubSkuSizeType.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -433,6 +443,7 @@ public class HubSkuPending implements Serializable {
         sb.append(", screenSize=").append(screenSize);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", filterFlag=").append(filterFlag);
+        sb.append(", hubSkuSizeType=").append(hubSkuSizeType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -479,7 +490,8 @@ public class HubSkuPending implements Serializable {
             && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()))
             && (this.getScreenSize() == null ? other.getScreenSize() == null : this.getScreenSize().equals(other.getScreenSize()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
-            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()));
+            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()))
+            && (this.getHubSkuSizeType() == null ? other.getHubSkuSizeType() == null : this.getHubSkuSizeType().equals(other.getHubSkuSizeType()));
     }
 
     @Override
@@ -516,6 +528,7 @@ public class HubSkuPending implements Serializable {
         result = prime * result + ((getScreenSize() == null) ? 0 : getScreenSize().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getFilterFlag() == null) ? 0 : getFilterFlag().hashCode());
+        result = prime * result + ((getHubSkuSizeType() == null) ? 0 : getHubSkuSizeType().hashCode());
         return result;
     }
 }

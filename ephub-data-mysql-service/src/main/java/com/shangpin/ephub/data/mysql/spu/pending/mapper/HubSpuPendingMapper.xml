@@ -3,8 +3,8 @@
 <mapper namespace="com.shangpin.ephub.data.mysql.spu.pending.mapper.HubSpuPendingMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     <id column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
-    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_spu_no" property="supplierSpuNo" jdbcType="VARCHAR" />
     <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
     <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
@@ -12,7 +12,6 @@
     <result column="hub_category_no" property="hubCategoryNo" jdbcType="VARCHAR" />
     <result column="hub_brand_no" property="hubBrandNo" jdbcType="VARCHAR" />
     <result column="hub_season" property="hubSeason" jdbcType="VARCHAR" />
-    <result column="sp_sku_size_state" property="spSkuSizeState" jdbcType="TINYINT" />
     <result column="spu_state" property="spuState" jdbcType="TINYINT" />
     <result column="pic_state" property="picState" jdbcType="TINYINT" />
     <result column="is_current_season" property="isCurrentSeason" jdbcType="TINYINT" />
@@ -32,11 +31,13 @@
     <result column="spu_brand_state" property="spuBrandState" jdbcType="TINYINT" />
     <result column="spu_gender_state" property="spuGenderState" jdbcType="TINYINT" />
     <result column="spu_season_state" property="spuSeasonState" jdbcType="TINYINT" />
-    <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
     <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
+    <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
     <result column="spu_color_state" property="spuColorState" jdbcType="TINYINT" />
+    <result column="sp_sku_size_state" property="spSkuSizeState" jdbcType="TINYINT" />
     <result column="material_state" property="materialState" jdbcType="TINYINT" />
     <result column="origin_state" property="originState" jdbcType="TINYINT" />
+    <result column="filter_flag" property="filterFlag" jdbcType="TINYINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -98,12 +99,12 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      spu_pending_id, supplier_no, supplier_id, supplier_spu_no, spu_model, spu_name, hub_gender, 
-      hub_category_no, hub_brand_no, hub_season, sp_sku_size_state, spu_state, pic_state, 
-      is_current_season, is_new_data, hub_material, hub_origin, create_time, update_time, 
-      spu_desc, hub_spu_no, spu_model_state, catgory_state, supplier_spu_id, memo, data_state, 
-      version, spu_brand_state, spu_gender_state, spu_season_state, hub_color_no, hub_color, 
-      spu_color_state, material_state, origin_state
+      spu_pending_id, supplier_id, supplier_no, supplier_spu_no, spu_model, spu_name, hub_gender, 
+      hub_category_no, hub_brand_no, hub_season, spu_state, pic_state, is_current_season, 
+      is_new_data, hub_material, hub_origin, create_time, update_time, spu_desc, hub_spu_no, 
+      spu_model_state, catgory_state, supplier_spu_id, memo, data_state, version, spu_brand_state, 
+      spu_gender_state, spu_season_state, hub_color, hub_color_no, spu_color_state, sp_sku_size_state, 
+      material_state, origin_state, filter_flag
     </if>
     <if test="fields != null" >
       ${fields}
@@ -128,7 +129,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_pending_id,supplier_no,supplier_id,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,sp_sku_size_state,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color_no,hub_color,spu_color_state,material_state,origin_state
+    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag
     from hub_spu_pending
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </select>
@@ -146,30 +147,32 @@
     <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
   		SELECT LAST_INSERT_ID() AS spu_pending_id
   	</selectKey>
-    insert into hub_spu_pending (spu_pending_id, supplier_no, supplier_id, 
+    insert into hub_spu_pending (spu_pending_id, supplier_id, supplier_no, 
       supplier_spu_no, spu_model, spu_name, 
       hub_gender, hub_category_no, hub_brand_no, 
-      hub_season, sp_sku_size_state, spu_state, 
-      pic_state, is_current_season, is_new_data, 
-      hub_material, hub_origin, create_time, 
-      update_time, spu_desc, hub_spu_no, 
-      spu_model_state, catgory_state, supplier_spu_id, 
-      memo, data_state, version, 
-      spu_brand_state, spu_gender_state, spu_season_state, 
-      hub_color_no, hub_color, spu_color_state, 
-      material_state, origin_state)
-    values (#{spuPendingId,jdbcType=BIGINT}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
+      hub_season, spu_state, pic_state, 
+      is_current_season, is_new_data, hub_material, 
+      hub_origin, create_time, update_time, 
+      spu_desc, hub_spu_no, spu_model_state, 
+      catgory_state, supplier_spu_id, memo, 
+      data_state, version, spu_brand_state, 
+      spu_gender_state, spu_season_state, hub_color, 
+      hub_color_no, spu_color_state, sp_sku_size_state, 
+      material_state, origin_state, filter_flag
+      )
+    values (#{spuPendingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
       #{supplierSpuNo,jdbcType=VARCHAR}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
       #{hubGender,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, #{hubBrandNo,jdbcType=VARCHAR}, 
-      #{hubSeason,jdbcType=VARCHAR}, #{spSkuSizeState,jdbcType=TINYINT}, #{spuState,jdbcType=TINYINT}, 
-      #{picState,jdbcType=TINYINT}, #{isCurrentSeason,jdbcType=TINYINT}, #{isNewData,jdbcType=TINYINT}, 
-      #{hubMaterial,jdbcType=VARCHAR}, #{hubOrigin,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{spuDesc,jdbcType=VARCHAR}, #{hubSpuNo,jdbcType=VARCHAR}, 
-      #{spuModelState,jdbcType=TINYINT}, #{catgoryState,jdbcType=TINYINT}, #{supplierSpuId,jdbcType=BIGINT}, 
-      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, 
-      #{spuBrandState,jdbcType=TINYINT}, #{spuGenderState,jdbcType=TINYINT}, #{spuSeasonState,jdbcType=TINYINT}, 
-      #{hubColorNo,jdbcType=VARCHAR}, #{hubColor,jdbcType=VARCHAR}, #{spuColorState,jdbcType=TINYINT}, 
-      #{materialState,jdbcType=TINYINT}, #{originState,jdbcType=TINYINT})
+      #{hubSeason,jdbcType=VARCHAR}, #{spuState,jdbcType=TINYINT}, #{picState,jdbcType=TINYINT}, 
+      #{isCurrentSeason,jdbcType=TINYINT}, #{isNewData,jdbcType=TINYINT}, #{hubMaterial,jdbcType=VARCHAR}, 
+      #{hubOrigin,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{spuDesc,jdbcType=VARCHAR}, #{hubSpuNo,jdbcType=VARCHAR}, #{spuModelState,jdbcType=TINYINT}, 
+      #{catgoryState,jdbcType=TINYINT}, #{supplierSpuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{spuBrandState,jdbcType=TINYINT}, 
+      #{spuGenderState,jdbcType=TINYINT}, #{spuSeasonState,jdbcType=TINYINT}, #{hubColor,jdbcType=VARCHAR}, 
+      #{hubColorNo,jdbcType=VARCHAR}, #{spuColorState,jdbcType=TINYINT}, #{spSkuSizeState,jdbcType=TINYINT}, 
+      #{materialState,jdbcType=TINYINT}, #{originState,jdbcType=TINYINT}, #{filterFlag,jdbcType=TINYINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
@@ -180,11 +183,11 @@
       <if test="spuPendingId != null" >
         spu_pending_id,
       </if>
-      <if test="supplierNo != null" >
-        supplier_no,
-      </if>
       <if test="supplierId != null" >
         supplier_id,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
       </if>
       <if test="supplierSpuNo != null" >
         supplier_spu_no,
@@ -206,9 +209,6 @@
       </if>
       <if test="hubSeason != null" >
         hub_season,
-      </if>
-      <if test="spSkuSizeState != null" >
-        sp_sku_size_state,
       </if>
       <if test="spuState != null" >
         spu_state,
@@ -267,14 +267,17 @@
       <if test="spuSeasonState != null" >
         spu_season_state,
       </if>
-      <if test="hubColorNo != null" >
-        hub_color_no,
-      </if>
       <if test="hubColor != null" >
         hub_color,
       </if>
+      <if test="hubColorNo != null" >
+        hub_color_no,
+      </if>
       <if test="spuColorState != null" >
         spu_color_state,
+      </if>
+      <if test="spSkuSizeState != null" >
+        sp_sku_size_state,
       </if>
       <if test="materialState != null" >
         material_state,
@@ -282,16 +285,19 @@
       <if test="originState != null" >
         origin_state,
       </if>
+      <if test="filterFlag != null" >
+        filter_flag,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
         #{spuPendingId,jdbcType=BIGINT},
       </if>
-      <if test="supplierNo != null" >
-        #{supplierNo,jdbcType=VARCHAR},
-      </if>
       <if test="supplierId != null" >
         #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierSpuNo != null" >
         #{supplierSpuNo,jdbcType=VARCHAR},
@@ -313,9 +319,6 @@
       </if>
       <if test="hubSeason != null" >
         #{hubSeason,jdbcType=VARCHAR},
-      </if>
-      <if test="spSkuSizeState != null" >
-        #{spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="spuState != null" >
         #{spuState,jdbcType=TINYINT},
@@ -374,20 +377,26 @@
       <if test="spuSeasonState != null" >
         #{spuSeasonState,jdbcType=TINYINT},
       </if>
-      <if test="hubColorNo != null" >
-        #{hubColorNo,jdbcType=VARCHAR},
-      </if>
       <if test="hubColor != null" >
         #{hubColor,jdbcType=VARCHAR},
       </if>
+      <if test="hubColorNo != null" >
+        #{hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="spuColorState != null" >
         #{spuColorState,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuSizeState != null" >
+        #{spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="materialState != null" >
         #{materialState,jdbcType=TINYINT},
       </if>
       <if test="originState != null" >
         #{originState,jdbcType=TINYINT},
+      </if>
+      <if test="filterFlag != null" >
+        #{filterFlag,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -403,11 +412,11 @@
       <if test="record.spuPendingId != null" >
         spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
       </if>
-      <if test="record.supplierNo != null" >
-        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
-      </if>
       <if test="record.supplierId != null" >
         supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="record.supplierSpuNo != null" >
         supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
@@ -429,9 +438,6 @@
       </if>
       <if test="record.hubSeason != null" >
         hub_season = #{record.hubSeason,jdbcType=VARCHAR},
-      </if>
-      <if test="record.spSkuSizeState != null" >
-        sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="record.spuState != null" >
         spu_state = #{record.spuState,jdbcType=TINYINT},
@@ -490,20 +496,26 @@
       <if test="record.spuSeasonState != null" >
         spu_season_state = #{record.spuSeasonState,jdbcType=TINYINT},
       </if>
-      <if test="record.hubColorNo != null" >
-        hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
-      </if>
       <if test="record.hubColor != null" >
         hub_color = #{record.hubColor,jdbcType=VARCHAR},
       </if>
+      <if test="record.hubColorNo != null" >
+        hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.spuColorState != null" >
         spu_color_state = #{record.spuColorState,jdbcType=TINYINT},
+      </if>
+      <if test="record.spSkuSizeState != null" >
+        sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="record.materialState != null" >
         material_state = #{record.materialState,jdbcType=TINYINT},
       </if>
       <if test="record.originState != null" >
         origin_state = #{record.originState,jdbcType=TINYINT},
+      </if>
+      <if test="record.filterFlag != null" >
+        filter_flag = #{record.filterFlag,jdbcType=TINYINT},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -513,8 +525,8 @@
   <update id="updateByExample" parameterType="map" >
     update hub_spu_pending
     set spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
-      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
       spu_model = #{record.spuModel,jdbcType=VARCHAR},
       spu_name = #{record.spuName,jdbcType=VARCHAR},
@@ -522,7 +534,6 @@
       hub_category_no = #{record.hubCategoryNo,jdbcType=VARCHAR},
       hub_brand_no = #{record.hubBrandNo,jdbcType=VARCHAR},
       hub_season = #{record.hubSeason,jdbcType=VARCHAR},
-      sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
       spu_state = #{record.spuState,jdbcType=TINYINT},
       pic_state = #{record.picState,jdbcType=TINYINT},
       is_current_season = #{record.isCurrentSeason,jdbcType=TINYINT},
@@ -542,11 +553,13 @@
       spu_brand_state = #{record.spuBrandState,jdbcType=TINYINT},
       spu_gender_state = #{record.spuGenderState,jdbcType=TINYINT},
       spu_season_state = #{record.spuSeasonState,jdbcType=TINYINT},
-      hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
       hub_color = #{record.hubColor,jdbcType=VARCHAR},
+      hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
       spu_color_state = #{record.spuColorState,jdbcType=TINYINT},
+      sp_sku_size_state = #{record.spSkuSizeState,jdbcType=TINYINT},
       material_state = #{record.materialState,jdbcType=TINYINT},
-      origin_state = #{record.originState,jdbcType=TINYINT}
+      origin_state = #{record.originState,jdbcType=TINYINT},
+      filter_flag = #{record.filterFlag,jdbcType=TINYINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -554,11 +567,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     update hub_spu_pending
     <set >
-      <if test="supplierNo != null" >
-        supplier_no = #{supplierNo,jdbcType=VARCHAR},
-      </if>
       <if test="supplierId != null" >
         supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierSpuNo != null" >
         supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
@@ -580,9 +593,6 @@
       </if>
       <if test="hubSeason != null" >
         hub_season = #{hubSeason,jdbcType=VARCHAR},
-      </if>
-      <if test="spSkuSizeState != null" >
-        sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="spuState != null" >
         spu_state = #{spuState,jdbcType=TINYINT},
@@ -641,14 +651,17 @@
       <if test="spuSeasonState != null" >
         spu_season_state = #{spuSeasonState,jdbcType=TINYINT},
       </if>
-      <if test="hubColorNo != null" >
-        hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
-      </if>
       <if test="hubColor != null" >
         hub_color = #{hubColor,jdbcType=VARCHAR},
       </if>
+      <if test="hubColorNo != null" >
+        hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="spuColorState != null" >
         spu_color_state = #{spuColorState,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuSizeState != null" >
+        sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       </if>
       <if test="materialState != null" >
         material_state = #{materialState,jdbcType=TINYINT},
@@ -656,13 +669,16 @@
       <if test="originState != null" >
         origin_state = #{originState,jdbcType=TINYINT},
       </if>
+      <if test="filterFlag != null" >
+        filter_flag = #{filterFlag,jdbcType=TINYINT},
+      </if>
     </set>
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     update hub_spu_pending
-    set supplier_no = #{supplierNo,jdbcType=VARCHAR},
-      supplier_id = #{supplierId,jdbcType=VARCHAR},
+    set supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
       spu_model = #{spuModel,jdbcType=VARCHAR},
       spu_name = #{spuName,jdbcType=VARCHAR},
@@ -670,7 +686,6 @@
       hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
       hub_brand_no = #{hubBrandNo,jdbcType=VARCHAR},
       hub_season = #{hubSeason,jdbcType=VARCHAR},
-      sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       spu_state = #{spuState,jdbcType=TINYINT},
       pic_state = #{picState,jdbcType=TINYINT},
       is_current_season = #{isCurrentSeason,jdbcType=TINYINT},
@@ -690,11 +705,13 @@
       spu_brand_state = #{spuBrandState,jdbcType=TINYINT},
       spu_gender_state = #{spuGenderState,jdbcType=TINYINT},
       spu_season_state = #{spuSeasonState,jdbcType=TINYINT},
-      hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
       hub_color = #{hubColor,jdbcType=VARCHAR},
+      hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
       spu_color_state = #{spuColorState,jdbcType=TINYINT},
+      sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
       material_state = #{materialState,jdbcType=TINYINT},
-      origin_state = #{originState,jdbcType=TINYINT}
+      origin_state = #{originState,jdbcType=TINYINT},
+      filter_flag = #{filterFlag,jdbcType=TINYINT}
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria" id="selectByExampleWithRowbounds" >
@@ -714,7 +731,7 @@
       limit #{startRow} , #{pageSize}
     </if>
   </select>
-    <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
+  <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
   <select id="countDistinctBrandNoAndSpuModelByExample" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria" resultType="java.lang.Integer" >
     select count(distinct spu_model,hub_brand_no) from hub_spu_pending
     <if test="_parameter != null" >
