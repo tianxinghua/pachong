@@ -258,8 +258,13 @@ public class PendingProductService implements IPendingProductService{
             	}
             	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
                 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                	HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuPendingDto.getHubSkuSize());
-                    if(result.isPassing()){
+                	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
+					HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuSize);
+                    if(hubSkuSize.contains(":")){
+                    	hubSkuPendingDto.setHubSkuSizeType(hubSkuSize.substring(0,hubSkuSize.indexOf(":")));
+                    	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));  
+                    }
+					if(result.isPassing()){
                     	hubSkuPendingDto.setScreenSize(result.getScreenSizeStandardValueId()); 
                     	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                     	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
