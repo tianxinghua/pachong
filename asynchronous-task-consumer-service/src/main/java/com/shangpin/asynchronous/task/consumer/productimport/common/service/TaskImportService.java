@@ -382,7 +382,7 @@ public class TaskImportService {
 		}
 		
 		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isPendingSpuExist, hubPendingSpuDto, spuIsPassing,skuIsPassing);
-		if (spuIsPassing==true&&skuIsPassing==true) {
+		if (spuIsPassing==true) {
 			map.put("taskState", "校验通过");
 			map.put("processInfo", checkResult);
 		} else {
@@ -421,7 +421,7 @@ public class TaskImportService {
 			//更新
 			pengdingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
 		} 
-//		else {
+//		else {尺寸、尺码
 //			SpuModelDto spuModelDto = new SpuModelDto();
 //			spuModelDto.setBrandNo(hubPendingSpuDto.getHubBrandNo());
 //			spuModelDto.setSpuModel(hubPendingSpuDto.getSpuModel());
@@ -434,13 +434,13 @@ public class TaskImportService {
 			boolean spuIsPassing,boolean skuIsPassing) {
 
 		Long pengingSpuId = null;
-		if(isPendingSpuExist!=null&&skuIsPassing==true){
+		if(isPendingSpuExist!=null){//&&skuIsPassing==true
 			if(isPendingSpuExist.getSpuState().byteValue()==SpuState.HANDLED.getIndex()||isPendingSpuExist.getSpuState().byteValue()==SpuState.HANDLING.getIndex()||isPendingSpuExist.getSpuState().byteValue()==SpuState.INFO_IMPECCABLE.getIndex()){
 				log.info("spu货号:"+isPendingSpuExist.getSpuModel()+"状态为："+isPendingSpuExist.getSpuState()+"，不更新");
 				return isPendingSpuExist.getSpuPendingId();
 			}
 		}
-		if (spuIsPassing==true&&skuIsPassing==true) {
+		if (spuIsPassing==true) {//&&skuIsPassing==true
 			if(hubIsExist){
 				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());	
 			}else{
