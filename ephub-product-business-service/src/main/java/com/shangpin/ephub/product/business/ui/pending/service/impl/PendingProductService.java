@@ -173,7 +173,7 @@ public class PendingProductService implements IPendingProductService{
     }
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
-        log.info("待处理页面查询条件："+JsonUtil.serialize(pendingQuryDto));
+    	long start = System.currentTimeMillis();
         PendingProducts pendingProducts = new PendingProducts();
         List<PendingProductDto> products = new ArrayList<PendingProductDto>();
         try {
@@ -182,7 +182,9 @@ public class PendingProductService implements IPendingProductService{
                 int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
                 log.info("待处理页面查询返回数据个数================"+total);
                 if(total>0){
+                	long start_hubSpuPendingGateWay = System.currentTimeMillis();
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
+                    log.info("--->查询数据库 hubSpuPendingGateWay.selectByCriteria耗时{}",System.currentTimeMillis()-start_hubSpuPendingGateWay); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
@@ -191,7 +193,9 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
+                        long start_hubSkuPendingGateWay = System.currentTimeMillis();
                         List<HubSkuPendingDto> hubSkus = findPendingSkuBySpuPendingId(pendingSpu.getSpuPendingId());
+                        log.info("--->查询数据库 hubSkuPendingGateWay.selectByCriteria耗时{}",System.currentTimeMillis()-start_hubSkuPendingGateWay); 
                         pendingProduct.setHubSkus(hubSkus);
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
@@ -204,6 +208,7 @@ public class PendingProductService implements IPendingProductService{
         } catch (Exception e) {
             log.error("待处理页面查询异常："+e.getMessage(),e);
         }
+        log.info("--->待处理查询总耗时{}",System.currentTimeMillis()-start); 
         return pendingProducts;
     }
     @Override

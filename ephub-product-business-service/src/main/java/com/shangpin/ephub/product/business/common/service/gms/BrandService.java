@@ -100,13 +100,15 @@ public class BrandService {
 	 * @return
 	 */
 	public HubResponseDto<BrandDom> getGmsBrandByApi(String brandNo){
+		long start = System.currentTimeMillis();
 		BrandRequstDto request = new BrandRequstDto();
         request.setBrandNo(brandNo);
         HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);
-        log.info("从api获取品牌请求参数：{}"+apiAddressProperties.getGmsBrandUrl(),request);
+//        log.info("从api获取品牌请求参数：{}"+apiAddressProperties.getGmsBrandUrl(),request);
         String gmsBrandUrl = apiAddressProperties.getGmsBrandUrl();
 		ResponseEntity<HubResponseDto<BrandDom>> entity = restTemplate.exchange(gmsBrandUrl, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<BrandDom>>() {});
-        log.info("从api获取品牌返回结果：{}",entity.getBody());
+//        log.info("从api获取品牌返回结果：{}",entity.getBody());
+		log.info("--->请求品牌名称接口耗时{}",System.currentTimeMillis() - start);
         return entity.getBody();
 	}
 }
