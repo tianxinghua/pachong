@@ -113,7 +113,7 @@ public class HubCheckService {
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		result.setPassing(true);
 		//校验品牌
-		if(StringUtils.isNoneBlank(hubProduct.getHubBrandNo())){
+		if(StringUtils.isNotBlank(hubProduct.getHubBrandNo())){
 			if(!getBrand(hubProduct.getHubBrandNo())){
 				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
 				result.setPassing(false);
@@ -287,30 +287,6 @@ public class HubCheckService {
 	}
 	
 	/**
-	 * 校验尺码,校验失败返回null，成功返回  筛选尺码,国家名称:尺码值（注意符号都是英文）
-	 * @param hubCategoryNo 品类编号
-	 * @param hubBrandNo 品牌编号
-	 * @param supplierSize 需要校验的尺码
-	 * @return
-	 */
-	public String checkHubSize(String hubCategoryNo,String hubBrandNo,String supplierSize) {
-        try {
-        	CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);
-            if(null != sizeDom){
-                List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
-                for(SizeStandardItem sizeItem:sizeStandardItemList){
-                    if(sizeItem.getSizeStandardValue().equals(supplierSize)){
-                    	log.info("检验尺码返回结果：{}",sizeItem);
-                        return sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue();
-                    }
-                }
-            }
-        } catch (Exception e) {
-        	log.error("校验尺码异常："+e.getMessage(),e);
-        }
-		return null;
-	}
-	/**
 	 * 验证尺码是否在标准库中，如果存在返回空字符串，否则返回校验不通过原因
 	 * @param hubCategoryNo
 	 * @param hubBrandNo
@@ -322,14 +298,20 @@ public class HubCheckService {
 		checkResult.setPassing(false);
 		try {
 			CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);
-			List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
-            for(SizeStandardItem sizeItem : sizeStandardItemList){
-                if((sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue()).equals(size)){
-                	checkResult.setPassing(true);
-                	return checkResult;
-                }
-            }
-            checkResult.setResult(size+"校验不通过");
+			if(sizeDom!=null){
+				List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
+	            for(SizeStandardItem sizeItem : sizeStandardItemList){
+	                if((sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue()).equals(size)){
+	                	checkResult.setPassing(true);
+	                	checkResult.setScreenSizeStandardValueId(String.valueOf(sizeItem.getScreenSizeStandardValueId()));
+	                	return checkResult;
+	                }
+	            }
+	            checkResult.setResult(size+"校验不通过");
+			}else{
+				  checkResult.setResult(size+"在scm中未查到记录");
+			}
+			
 		} catch (Exception e) {
 			log.error("校验尺码是否存在时异常："+e.getMessage(),e);
 			checkResult.setResult("服务器异常");
