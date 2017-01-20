@@ -207,76 +207,6 @@ public class HubSpuPendingCriteriaDto {
             return (Criteria) this;
         }
 
-        public Criteria andSupplierNoIsNull() {
-            addCriterion("supplier_no is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoIsNotNull() {
-            addCriterion("supplier_no is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoEqualTo(String value) {
-            addCriterion("supplier_no =", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoNotEqualTo(String value) {
-            addCriterion("supplier_no <>", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoGreaterThan(String value) {
-            addCriterion("supplier_no >", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoGreaterThanOrEqualTo(String value) {
-            addCriterion("supplier_no >=", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoLessThan(String value) {
-            addCriterion("supplier_no <", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoLessThanOrEqualTo(String value) {
-            addCriterion("supplier_no <=", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoLike(String value) {
-            addCriterion("supplier_no like", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoNotLike(String value) {
-            addCriterion("supplier_no not like", value, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoIn(List<String> values) {
-            addCriterion("supplier_no in", values, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoNotIn(List<String> values) {
-            addCriterion("supplier_no not in", values, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoBetween(String value1, String value2) {
-            addCriterion("supplier_no between", value1, value2, "supplierNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSupplierNoNotBetween(String value1, String value2) {
-            addCriterion("supplier_no not between", value1, value2, "supplierNo");
-            return (Criteria) this;
-        }
-
         public Criteria andSupplierIdIsNull() {
             addCriterion("supplier_id is null");
             return (Criteria) this;
@@ -344,6 +274,76 @@ public class HubSpuPendingCriteriaDto {
 
         public Criteria andSupplierIdNotBetween(String value1, String value2) {
             addCriterion("supplier_id not between", value1, value2, "supplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoIsNull() {
+            addCriterion("supplier_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoIsNotNull() {
+            addCriterion("supplier_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoEqualTo(String value) {
+            addCriterion("supplier_no =", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotEqualTo(String value) {
+            addCriterion("supplier_no <>", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoGreaterThan(String value) {
+            addCriterion("supplier_no >", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_no >=", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoLessThan(String value) {
+            addCriterion("supplier_no <", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoLessThanOrEqualTo(String value) {
+            addCriterion("supplier_no <=", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoLike(String value) {
+            addCriterion("supplier_no like", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotLike(String value) {
+            addCriterion("supplier_no not like", value, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoIn(List<String> values) {
+            addCriterion("supplier_no in", values, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotIn(List<String> values) {
+            addCriterion("supplier_no not in", values, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoBetween(String value1, String value2) {
+            addCriterion("supplier_no between", value1, value2, "supplierNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNoNotBetween(String value1, String value2) {
+            addCriterion("supplier_no not between", value1, value2, "supplierNo");
             return (Criteria) this;
         }
 
@@ -834,66 +834,6 @@ public class HubSpuPendingCriteriaDto {
 
         public Criteria andHubSeasonNotBetween(String value1, String value2) {
             addCriterion("hub_season not between", value1, value2, "hubSeason");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateIsNull() {
-            addCriterion("sp_sku_size_state is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateIsNotNull() {
-            addCriterion("sp_sku_size_state is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateEqualTo(Byte value) {
-            addCriterion("sp_sku_size_state =", value, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateNotEqualTo(Byte value) {
-            addCriterion("sp_sku_size_state <>", value, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateGreaterThan(Byte value) {
-            addCriterion("sp_sku_size_state >", value, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateGreaterThanOrEqualTo(Byte value) {
-            addCriterion("sp_sku_size_state >=", value, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateLessThan(Byte value) {
-            addCriterion("sp_sku_size_state <", value, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateLessThanOrEqualTo(Byte value) {
-            addCriterion("sp_sku_size_state <=", value, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateIn(List<Byte> values) {
-            addCriterion("sp_sku_size_state in", values, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateNotIn(List<Byte> values) {
-            addCriterion("sp_sku_size_state not in", values, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateBetween(Byte value1, Byte value2) {
-            addCriterion("sp_sku_size_state between", value1, value2, "spSkuSizeState");
-            return (Criteria) this;
-        }
-
-        public Criteria andSpSkuSizeStateNotBetween(Byte value1, Byte value2) {
-            addCriterion("sp_sku_size_state not between", value1, value2, "spSkuSizeState");
             return (Criteria) this;
         }
 
@@ -2087,76 +2027,6 @@ public class HubSpuPendingCriteriaDto {
             return (Criteria) this;
         }
 
-        public Criteria andHubColorNoIsNull() {
-            addCriterion("hub_color_no is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoIsNotNull() {
-            addCriterion("hub_color_no is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoEqualTo(String value) {
-            addCriterion("hub_color_no =", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotEqualTo(String value) {
-            addCriterion("hub_color_no <>", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoGreaterThan(String value) {
-            addCriterion("hub_color_no >", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoGreaterThanOrEqualTo(String value) {
-            addCriterion("hub_color_no >=", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoLessThan(String value) {
-            addCriterion("hub_color_no <", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoLessThanOrEqualTo(String value) {
-            addCriterion("hub_color_no <=", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoLike(String value) {
-            addCriterion("hub_color_no like", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotLike(String value) {
-            addCriterion("hub_color_no not like", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoIn(List<String> values) {
-            addCriterion("hub_color_no in", values, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotIn(List<String> values) {
-            addCriterion("hub_color_no not in", values, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoBetween(String value1, String value2) {
-            addCriterion("hub_color_no between", value1, value2, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotBetween(String value1, String value2) {
-            addCriterion("hub_color_no not between", value1, value2, "hubColorNo");
-            return (Criteria) this;
-        }
-
         public Criteria andHubColorIsNull() {
             addCriterion("hub_color is null");
             return (Criteria) this;
@@ -2227,6 +2097,76 @@ public class HubSpuPendingCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andHubColorNoIsNull() {
+            addCriterion("hub_color_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIsNotNull() {
+            addCriterion("hub_color_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoEqualTo(String value) {
+            addCriterion("hub_color_no =", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotEqualTo(String value) {
+            addCriterion("hub_color_no <>", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoGreaterThan(String value) {
+            addCriterion("hub_color_no >", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoGreaterThanOrEqualTo(String value) {
+            addCriterion("hub_color_no >=", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLessThan(String value) {
+            addCriterion("hub_color_no <", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLessThanOrEqualTo(String value) {
+            addCriterion("hub_color_no <=", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLike(String value) {
+            addCriterion("hub_color_no like", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotLike(String value) {
+            addCriterion("hub_color_no not like", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIn(List<String> values) {
+            addCriterion("hub_color_no in", values, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotIn(List<String> values) {
+            addCriterion("hub_color_no not in", values, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoBetween(String value1, String value2) {
+            addCriterion("hub_color_no between", value1, value2, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotBetween(String value1, String value2) {
+            addCriterion("hub_color_no not between", value1, value2, "hubColorNo");
+            return (Criteria) this;
+        }
+
         public Criteria andSpuColorStateIsNull() {
             addCriterion("spu_color_state is null");
             return (Criteria) this;
@@ -2284,6 +2224,66 @@ public class HubSpuPendingCriteriaDto {
 
         public Criteria andSpuColorStateNotBetween(Byte value1, Byte value2) {
             addCriterion("spu_color_state not between", value1, value2, "spuColorState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateIsNull() {
+            addCriterion("sp_sku_size_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateIsNotNull() {
+            addCriterion("sp_sku_size_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state =", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateNotEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state <>", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateGreaterThan(Byte value) {
+            addCriterion("sp_sku_size_state >", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state >=", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateLessThan(Byte value) {
+            addCriterion("sp_sku_size_state <", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateLessThanOrEqualTo(Byte value) {
+            addCriterion("sp_sku_size_state <=", value, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateIn(List<Byte> values) {
+            addCriterion("sp_sku_size_state in", values, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateNotIn(List<Byte> values) {
+            addCriterion("sp_sku_size_state not in", values, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateBetween(Byte value1, Byte value2) {
+            addCriterion("sp_sku_size_state between", value1, value2, "spSkuSizeState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuSizeStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("sp_sku_size_state not between", value1, value2, "spSkuSizeState");
             return (Criteria) this;
         }
 
@@ -2404,6 +2404,66 @@ public class HubSpuPendingCriteriaDto {
 
         public Criteria andOriginStateNotBetween(Byte value1, Byte value2) {
             addCriterion("origin_state not between", value1, value2, "originState");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIsNull() {
+            addCriterion("filter_flag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIsNotNull() {
+            addCriterion("filter_flag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagEqualTo(Byte value) {
+            addCriterion("filter_flag =", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotEqualTo(Byte value) {
+            addCriterion("filter_flag <>", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagGreaterThan(Byte value) {
+            addCriterion("filter_flag >", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagGreaterThanOrEqualTo(Byte value) {
+            addCriterion("filter_flag >=", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagLessThan(Byte value) {
+            addCriterion("filter_flag <", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagLessThanOrEqualTo(Byte value) {
+            addCriterion("filter_flag <=", value, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagIn(List<Byte> values) {
+            addCriterion("filter_flag in", values, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotIn(List<Byte> values) {
+            addCriterion("filter_flag not in", values, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagBetween(Byte value1, Byte value2) {
+            addCriterion("filter_flag between", value1, value2, "filterFlag");
+            return (Criteria) this;
+        }
+
+        public Criteria andFilterFlagNotBetween(Byte value1, Byte value2) {
+            addCriterion("filter_flag not between", value1, value2, "filterFlag");
             return (Criteria) this;
         }
     }

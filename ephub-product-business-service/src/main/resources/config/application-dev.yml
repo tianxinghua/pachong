@@ -1,4 +1,8 @@
-feign.hystrix.enabled: false
+feign.hystrix.enabled: true
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 25000
+ribbon:
+  ConnectTimeout: 25000
+  ReadTimeout: 25000
 spring: 
   rabbitmq: 
            host: 192.168.20.175

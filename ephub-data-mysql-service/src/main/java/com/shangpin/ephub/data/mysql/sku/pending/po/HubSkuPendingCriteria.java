@@ -2089,6 +2089,76 @@ public class HubSkuPendingCriteria {
             addCriterion("filter_flag not between", value1, value2, "filterFlag");
             return (Criteria) this;
         }
+
+        public Criteria andHubSkuSizeTypeIsNull() {
+            addCriterion("hub_sku_size_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeIsNotNull() {
+            addCriterion("hub_sku_size_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeEqualTo(String value) {
+            addCriterion("hub_sku_size_type =", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeNotEqualTo(String value) {
+            addCriterion("hub_sku_size_type <>", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeGreaterThan(String value) {
+            addCriterion("hub_sku_size_type >", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("hub_sku_size_type >=", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeLessThan(String value) {
+            addCriterion("hub_sku_size_type <", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeLessThanOrEqualTo(String value) {
+            addCriterion("hub_sku_size_type <=", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeLike(String value) {
+            addCriterion("hub_sku_size_type like", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeNotLike(String value) {
+            addCriterion("hub_sku_size_type not like", value, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeIn(List<String> values) {
+            addCriterion("hub_sku_size_type in", values, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeNotIn(List<String> values) {
+            addCriterion("hub_sku_size_type not in", values, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeBetween(String value1, String value2) {
+            addCriterion("hub_sku_size_type between", value1, value2, "hubSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubSkuSizeTypeNotBetween(String value1, String value2) {
+            addCriterion("hub_sku_size_type not between", value1, value2, "hubSkuSizeType");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
