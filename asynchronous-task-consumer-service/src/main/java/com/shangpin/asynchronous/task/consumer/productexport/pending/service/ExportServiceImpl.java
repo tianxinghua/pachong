@@ -251,7 +251,8 @@ public class ExportServiceImpl {
     		try {
     			String fileName = parSetName(rowTemplate[i]);
     			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
-            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i])){
+            			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) 
+            			|| "hubSkuSizeType".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
     				//所有sku的属性
     				fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
@@ -260,26 +261,16 @@ public class ExportServiceImpl {
             		setRowOfSeasonYear(row, product, spuClazz, i);
             	}else if("seasonName".equals(rowTemplate[i])){
             		setRowOfSeasonName(row, product, spuClazz, i); 
-            	}else if("hubSkuSize".equals(rowTemplate[i])){
-            		fieldSetMet = skuClazz.getMethod(fileName);
+            	}else if("specification".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod("getHubSkuSizeType");
 					value = fieldSetMet.invoke(sku);
-					String size = value != null ? value.toString() : "";
-					if(size.contains(":")){
-						row.createCell(i).setCellValue(size.substring(size.indexOf(":")+1));
-					}else{
-						row.createCell(i).setCellValue(size);
-					}
-            	}else if("originalProductSizeType".equals(rowTemplate[i])){
-            		fieldSetMet = skuClazz.getMethod("getHubSkuSize");
-					value = fieldSetMet.invoke(sku);
-					String size = value != null ? value.toString() : "";
-					if(size.contains(":")){
-						row.createCell(i).setCellValue(size.substring(0,size.indexOf(":")));
+					if("尺寸".equals(value)){
+						row.createCell(i).setCellValue("尺寸");
 					}else{
 						row.createCell(i).setCellValue("");
 					}
-            	}else if("specification".equals(rowTemplate[i]) || "originalProductSizeValue".equals(rowTemplate[i]) ){
-            		//TODO 规格类型 原尺码类型 原尺码值 从哪取值？
+            	}else if("originalProductSizeValue".equals(rowTemplate[i]) ){
+            		//原尺码类型 原尺码值 从哪取值？
             		row.createCell(i).setCellValue("");
             	}else{
             		//所有spu的属性
