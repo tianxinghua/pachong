@@ -31,7 +31,7 @@ spring:
                               destination: retry.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 2
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit: 
                       bindings: 

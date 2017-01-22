@@ -39,7 +39,7 @@ import sun.misc.BASE64Encoder;
 @Slf4j
 public class SupplierProductPictureService {
 
-	private static final int TIMEOUT = 10*60*1000;
+	private static final int TIMEOUT = 45*60*1000;
 	
 	@Autowired
 	private SupplierProductPictureManager supplierProductPictureManager;
