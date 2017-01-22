@@ -179,9 +179,13 @@ public class PendingSkuImportService {
 				}
 			}
 			if(hubSkuPendingTempDto!=null){
-				if(hubSpuNo!=null&&size!=null){
+				if(hubSpuNo!=null){
 					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
-					sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize());
+					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
+					}else{
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo);
+					}
 					List<HubSkuDto> listSku = hubSkuGateWay.selectByCriteria(sku);
 					if(listSku!=null&&listSku.size()>0){
 						log.info(hubSpuNo+"hub中已存在尺码:"+size);
