@@ -284,10 +284,6 @@ public class PendingProductService implements IPendingProductService{
                 		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                 	}else{
-                		if(hubSkuSize.contains(":")){
-                        	hubSkuPendingDto.setHubSkuSizeType(hubSkuSize.substring(0,hubSkuSize.indexOf(":")));
-                        	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));  
-                        }
                         HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuSize);
     					if(result.isPassing()){
                         	hubSkuPendingDto.setScreenSize(result.getScreenSizeStandardValueId()); 
@@ -301,6 +297,10 @@ public class PendingProductService implements IPendingProductService{
                             skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
                             skuUpdatedVo.setSkuResult(result.getResult());
                             skus.add(skuUpdatedVo);
+                        }
+    					if(hubSkuSize.contains(":")){
+                        	hubSkuPendingDto.setHubSkuSizeType(hubSkuSize.substring(0,hubSkuSize.indexOf(":")));
+                        	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));  
                         }
                 	}
                     hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
