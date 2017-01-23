@@ -46,6 +46,11 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("monnierHandler")
 	private ISupplierHandler monnierfreresHandler;
+
+
+	@Autowired
+	@Qualifier("eleonoraHandler")
+	private ISupplierHandler eleonoraHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -323,7 +328,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void eleonorabonucciStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		eleonoraHandler.handleOriginalProduct(message, headers);
 		
 	}
 	
