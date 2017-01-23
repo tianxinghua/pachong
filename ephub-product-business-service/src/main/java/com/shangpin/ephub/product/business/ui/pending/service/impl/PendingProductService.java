@@ -276,6 +276,7 @@ public class PendingProductService implements IPendingProductService{
             	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
                 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                 	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
+                	log.info("从页面接收到的尺码信息===="+hubSkuSize); 
                 	if(hubSkuSize.startsWith("排除")){
                 		hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
