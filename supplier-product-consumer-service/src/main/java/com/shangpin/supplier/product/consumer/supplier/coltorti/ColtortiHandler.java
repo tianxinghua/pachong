@@ -1,8 +1,10 @@
 package com.shangpin.supplier.product.consumer.supplier.coltorti;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,8 +47,24 @@ public class ColtortiHandler implements ISupplierHandler {
 					supplierSpuDto.setIsexistpic(Isexistpic.NO.getIndex());
 				}
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-				HubSupplierSkuDto supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p);
-				hubSkus.add(supplierSkuDto);
+				HubSupplierSkuDto supplierSkuDto = null;
+				if(p.getScalars()!=null && p.getScalars().size()>0){
+					Iterator<Entry<String,String>> iterator = p.getScalars().entrySet().iterator();
+					while(iterator.hasNext()){
+						Entry<String,String> map = iterator.next();
+						String size = map.getValue();
+						String sizeCode = map.getKey();
+						supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p,size,sizeCode);
+						hubSkus.add(supplierSkuDto);
+					}
+				}else if(!StringUtils.isEmpty(p.getSizeKeyValue())){//用于经过尺码拆分后的新产品
+					int idx=p.getSizeKeyValue().lastIndexOf("#");
+					String size =  p.getSizeKeyValue().substring(idx+1);
+					String sizeCode = p.getSizeKeyValue().substring(idx+1);
+					supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p,size,sizeCode);
+					hubSkus.add(supplierSkuDto);
+				}
+				
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, supplierSpuDto, images);
 				supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
 			}

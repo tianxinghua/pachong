@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.picture.image.Image;
@@ -30,11 +28,11 @@ public class ColtortiProductConvert {
 	 * @param p 供应商原始数据反序列化之后对应的对象
 	 * @return
 	 */
-	public static HubSupplierSkuDto product2sku(String supplierId,ColtortiProduct p){
+	public static HubSupplierSkuDto product2sku(String supplierId,ColtortiProduct p,String size,String sizeCode){
 		HubSupplierSkuDto dto = new HubSupplierSkuDto();
 		dto.setSupplierId(supplierId);
 		dto.setCreateTime(new Date());
-		dto.setSupplierSkuNo(p.getSkuId());
+		
 		dto.setMarketPrice(p.getPrice()==null?new BigDecimal(0): new BigDecimal(p.getPrice()));
 		if(null!=p.getDiscountRate()){
 			dto.setSupplyPrice(dto.getMarketPrice().multiply(new BigDecimal(100-p.getDiscountRate()))
@@ -45,12 +43,8 @@ public class ColtortiProductConvert {
 		}
 		dto.setMarketPriceCurrencyorg("EUR");
 		dto.setStock(p.getStock()==null ? 0 : p.getStock());
-		if(p.getScalars()!=null && p.getScalars().size()>0)
-			dto.setSupplierSkuSize(p.getScalars().entrySet().iterator().next().getValue());
-		else if(StringUtils.isNotEmpty(p.getSizeKeyValue())){//用于经过尺码拆分后的新产品
-			int idx=p.getSizeKeyValue().lastIndexOf("#");
-			dto.setSupplierSkuSize(p.getSizeKeyValue().substring(idx+1));
-		}
+		dto.setSupplierSkuSize(size);
+		dto.setSupplierSkuNo(p.getSkuId()+"#"+sizeCode);
 		return dto;
 	}
 	/**
@@ -61,7 +55,7 @@ public class ColtortiProductConvert {
 	 */
 	public static HubSupplierSpuDto product2spu(String supplierId,ColtortiProduct p,String data){
 		HubSupplierSpuDto dto = new HubSupplierSpuDto();
-		dto.setSupplierSpuNo(p.getProductId());
+		dto.setSupplierSpuNo(p.getSkuId());
 		if(p.getBrand()!=null){
 			Entry<String, String> entry=p.getBrand().entrySet().iterator().next();
 			String brand=entry.getValue();
@@ -82,7 +76,7 @@ public class ColtortiProductConvert {
 		dto.setSupplierId(supplierId);
 		dto.setSupplierOrigin(p.getMadIn());
 		dto.setSupplierMaterial(p.getMaterial());
-		dto.setSupplierSpuModel(p.getProductCode());
+		dto.setSupplierSpuModel(p.getProductCode()+" "+p.getColorCode());
 		dto.setSupplierSpuColor(p.getColor()); 
 		dto.setSupplierSpuDesc(p.getDescription());
 		dto.setMemo(data);

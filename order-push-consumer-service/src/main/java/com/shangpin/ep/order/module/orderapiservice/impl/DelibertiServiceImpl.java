@@ -47,7 +47,6 @@ public class DelibertiServiceImpl implements IOrderService {
 					String skuDetail[]  = detail[0].split("-");
 					if(null==skuDetail){
 					}else{
-						
 						String json = HttpUtil45.get("http://gicos.it/outsrc.php?do=products&cart="+skuDetail[0], new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2),null);
 						logger.info(skuDetail[0]+"的库存查询结果:"+json);
 						boolean flag = true;
@@ -78,12 +77,14 @@ public class DelibertiServiceImpl implements IOrderService {
 							}
 						}
 						if(flag){
+							String sku = skuDetail[0];
+							String sizeValue = skuDetail[1].replace(".5", "x");
 							String date = DateTimeUtil.convertFormat(new Date(),"dd/MM/yyyy");
 							sb.append("1;13618;13618;shangpin;shangpin;wangsaying@shangpin.com;S;;0;123123;VIA CUPA;NAPOLI;80131;NA;3348053248;Italy;IT;2;")
 									.append(date).append("|");
 							sb.append("2;Via Leopardi 27, 22075 Lurate Caccivio (CO)|");
-							sb.append("3;").append(detail[1]).append(";").append(skuDetail[0]).append(";");
-							sb.append(skuDetail[1]).append(";").append(price).append("|");
+							sb.append("3;").append(detail[1]).append(";").append(sku).append(";");
+							sb.append(sizeValue).append(";").append(price).append("|");
 							//sb.append("3;1;235850;38;79|");
 							sb.append("4;Totale Prodotti (iva inclusa):;").append(price).append("|");
 							sb.append("4;Corriere Espresso SDA/DHL:;0|4;Contributo per contrassegno:;0|4;Totale Ordine (iva inclusa):;0|");
