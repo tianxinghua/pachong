@@ -49,9 +49,6 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
@@ -65,6 +62,9 @@ import com.shangpin.ephub.product.business.conf.stream.source.task.sender.Produc
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
+import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
+import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
+import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -103,7 +103,7 @@ public class PendingProductService implements IPendingProductService{
     @Autowired
     private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
     @Autowired
-    private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+    private HubBrandModelRuleController hubBrandModelRule;
     @Autowired
     private HubSpuGateWay hubSpuGateway;
     @Autowired 
@@ -276,10 +276,10 @@ public class PendingProductService implements IPendingProductService{
             	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
                 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                 	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
-                	if("排除".equals(hubSkuSize)){
+                	if(hubSkuSize.startsWith("排除")){
                 		hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-                	}else if("尺寸".equals(hubSkuSize)){
+                	}else if(hubSkuSize.startsWith("尺寸")){
                 		hubSkuPendingDto.setHubSkuSizeType("尺寸"); 
                 		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
@@ -442,7 +442,7 @@ public class PendingProductService implements IPendingProductService{
 		BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
 		BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
 		BrandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
-		BrandModelResult brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
+		BrandModelResult brandModelResult=  hubBrandModelRule.verify(BrandModelDto);
 		return brandModelResult;
 	}
     /**
