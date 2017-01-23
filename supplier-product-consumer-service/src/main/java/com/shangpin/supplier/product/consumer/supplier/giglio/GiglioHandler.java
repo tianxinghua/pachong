@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,9 +17,11 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 
@@ -37,10 +40,15 @@ public class GiglioHandler implements ISupplierHandler {
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
-				String[] colunms = message.getData().split(";");
+				Map<?,?> colunms = JsonUtil.deserialize(message.getData(),Map.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(message.getSupplierId(),hubSpu,colunms);
-				List<Image> images = converImage();
+				List<Image> images = converImage(colunms);
+				if(CollectionUtils.isNotEmpty(images)){
+					hubSpu.setIsexistpic(Isexistpic.YES.getIndex());
+				}else{
+					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+				}
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean sucSku = convertSku(message.getSupplierId(),hubSku,colunms);
@@ -58,37 +66,37 @@ public class GiglioHandler implements ISupplierHandler {
 		
 	}
 	
-	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,String[] colunms){
-		if(null != colunms && colunms.length >0){
+	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,Map<?,?> colunms){
+		if(null != colunms && colunms.size() >0){
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(value(colunms,"",0));
-			hubSpu.setSupplierSpuModel(value(colunms,"",2));
-			hubSpu.setSupplierSpuName(value(colunms,"",4));
-			hubSpu.setSupplierSpuColor(value(colunms,"",5));
-			hubSpu.setSupplierGender(value(colunms,"",8));
-			hubSpu.setSupplierCategoryname(value(colunms,"",9));
-			hubSpu.setSupplierBrandname(value(colunms,"",3));
-			hubSpu.setSupplierSeasonname(value(colunms,"",10));
-			hubSpu.setSupplierMaterial(value(colunms,"",7));
+			hubSpu.setSupplierSpuNo(value(colunms,"idProdotto"));
+			hubSpu.setSupplierSpuModel(value(colunms,"Codice Prodotto"));
+			hubSpu.setSupplierSpuName(value(colunms,"Nome Modello"));
+			hubSpu.setSupplierSpuColor(value(colunms,"Colore ENG"));
+			hubSpu.setSupplierGender(value(colunms,"Sesso(unisex, uomo, donna)"));
+			hubSpu.setSupplierCategoryname(value(colunms,"Categoria"));
+			hubSpu.setSupplierBrandname(value(colunms,"Marca"));
+			hubSpu.setSupplierSeasonname(value(colunms,"Collezione / Anno"));
+			hubSpu.setSupplierMaterial(value(colunms,"Materiale ENG"));
 			hubSpu.setSupplierOrigin("");//TODO 无产地
-			hubSpu.setSupplierSpuDesc(value(colunms,"",6));
+			hubSpu.setSupplierSpuDesc(value(colunms,"Descrizione ENG"));
 			return true;
 		}else{
 			return false;
 		}
 	}
 	
-	private boolean convertSku(String supplierId,HubSupplierSkuDto hubSku,String[] colunms){
-		if(null != colunms && colunms.length >0){
+	private boolean convertSku(String supplierId,HubSupplierSkuDto hubSku,Map<?,?> colunms){
+		if(null != colunms && colunms.size() >0){
 			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuNo(value(colunms,"",1));
-			hubSku.setSupplierSkuName(value(colunms,"",4));
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(value(colunms,"",11))));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(value(colunms,"",13))));
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(value(colunms,"",12))));
+			hubSku.setSupplierSkuNo(value(colunms,"idSKU"));
+			hubSku.setSupplierSkuName(value(colunms,"Nome Modello"));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(value(colunms,"Prezzo Et (€)"))));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(value(colunms,"Price to WS (€)"))));
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(value(colunms,"Prezzo Imp (€)"))));
 			hubSku.setMarketPriceCurrencyorg("EUR");
 			hubSku.setSupplyPriceCurrency("EUR");
-			String size_stock = value(colunms,"",14);
+			String size_stock = value(colunms,"Taglie");
 			Pattern pattern = Pattern.compile("(.+)\\((\\d+)\\)");
 			Matcher matcher = pattern.matcher(size_stock);
 			String size = null, stock = null;
@@ -108,8 +116,31 @@ public class GiglioHandler implements ISupplierHandler {
 		}
 	}
 	
-	private List<Image> converImage(){
-		return null;
+	private List<Image> converImage(Map<?,?> colunms){
+		if(null == colunms || colunms.size() == 0){
+			return null;
+		}else{
+			String picture = value(colunms,"Foto");
+			if(StringUtils.isEmpty(picture)){
+				return null;
+			}else{
+				List<Image> images = new ArrayList<Image>();
+				for(String url : picture.split(";")){
+					Image image = new Image();
+					image.setUrl(url.trim());
+					images.add(image);
+				}
+				return images;
+			}
+		}
+	}
+	
+	private String value(Map<?,?> colunms,String key){
+		if(colunms.containsKey(key)){
+			return colunms.get(key).toString();
+		}else{
+			return "";
+		}
 	}
 	
 	/**
@@ -120,6 +151,7 @@ public class GiglioHandler implements ISupplierHandler {
 	 * @param j 第j列...
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private String value(String[] colunms,String sep,int i,int...j){
 		StringBuffer buffer = new StringBuffer();
 		try {
