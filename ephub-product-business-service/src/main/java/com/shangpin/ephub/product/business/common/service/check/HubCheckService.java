@@ -4,10 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,19 +26,14 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
-import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.gms.SizeService;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
-import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
@@ -78,8 +69,6 @@ public class HubCheckService {
 	HubSupplierCategroyDicGateWay hubSupplierCategroyDicGateWay;
 	@Autowired
 	HubBrandModelRuleController HubBrandModelRuleService;
-	@Autowired
-	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 	@Autowired
 	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 	@Autowired

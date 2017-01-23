@@ -4,9 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
@@ -14,6 +11,8 @@ import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
+import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
+import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +33,7 @@ public class HubCheckRuleService {
 	@Autowired
 	HubCheckService hubCheckService;
 	@Autowired
-	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+	HubBrandModelRuleController hubBrandModelRule;
 	
 	public HubProductCheckResult checkHubProduct(HubProductDto hubProduct){
 		HubProductCheckResult result = new HubProductCheckResult();
@@ -132,14 +131,14 @@ public class HubCheckRuleService {
 		}
 		
 //		//货号
-		BrandModelDto BrandModelDto = null;
+		BrandModelDto brandModelDto = null;
 		BrandModelResult brandModelResult= null;
 		if(StringUtils.isNoneBlank(hubProduct.getSpuModel())){
-			BrandModelDto = new BrandModelDto();
-			BrandModelDto.setBrandMode(hubProduct.getSpuModel());
-			BrandModelDto.setHubBrandNo(hubProduct.getBrandNo());
-			BrandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
-			brandModelResult=  hubBrandModelRuleGateWay.verify(BrandModelDto);
+			brandModelDto = new BrandModelDto();
+			brandModelDto.setBrandMode(hubProduct.getSpuModel());
+			brandModelDto.setHubBrandNo(hubProduct.getBrandNo());
+			brandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
+			brandModelResult=  hubBrandModelRule.verify(brandModelDto);
 			if(brandModelResult.isPassing()){
 				result.setSpuModel(brandModelResult.getBrandMode());
 			}else{
