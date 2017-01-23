@@ -27,45 +27,45 @@
 					<!--节点编号 -->
 					<id>default-node-one</id>
 					<!--Ip地址和端口 -->
-					<host>172.20.30.56</host>
-					<port>9501</port>
+					<host>192.168.20.118</host>
+					<port>7001</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-two</id>
 					<!--Ip地址和端口 -->
-					<host>172.20.10.130</host>
-					<port>9502</port>
+					<host>192.168.20.118</host>
+					<port>7002</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-three</id>
 					<!--Ip地址和端口 -->
-					<host>172.20.10.131</host>
-					<port>9503</port>
+					<host>192.168.20.118</host>
+					<port>7003</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-four</id>
 					<!--Ip地址和端口 -->
-					<host>172.20.30.55</host>
-					<port>9504</port>
+					<host>192.168.20.118</host>
+					<port>7004</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-five</id>
 					<!--Ip地址和端口 -->
-					<host>172.20.10.235</host>
-					<port>9505</port>
+					<host>192.168.20.118</host>
+					<port>7005</port>
 				</redisnode>
 				<redisnode>
 					<!--节点编号 -->
 					<id>default-node-six</id>
 					<!--Ip地址和端口 -->
-					<host>172.20.10.122</host>
-					<port>9506</port>
+					<host>192.168.20.118</host>
+					<port>7006</port>
 				</redisnode>
 			</redisnodes>
-		</cluster>
+		</cluster>                                a
 	</application>
 </redis>

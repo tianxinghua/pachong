@@ -41,7 +41,7 @@ public class PictureProductConsumerServiceApplication implements ApplicationRunn
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 //		URL url = new URL("http://b2b.officinastore.com/Scambio/Atelier/Foto/P17---ALEXANDER McQUEEN---460429F140G1000_3_P.JPG");
-//		URL url = new URL("http://b2b.officinastore.com/Scambio/Atelier/Foto/P17---ALEXANDER%20McQUEEN---460429F140G1000_3_P.JPG");
+//		URL url = new URL("http://213.144.71.1/FOTO/P17/VALENTINO/LW0B0125BOL0RO_3_P.JPG");
 //		URLConnection openConnection = url.openConnection();
 //		openConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
 //		openConnection.setConnectTimeout(10*60*1000);

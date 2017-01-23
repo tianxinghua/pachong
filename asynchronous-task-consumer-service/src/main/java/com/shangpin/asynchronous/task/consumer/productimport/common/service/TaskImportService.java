@@ -110,7 +110,7 @@ public class TaskImportService {
 		return true;
 	}
 
-	public void convertExcel(List<Map<String, String>> result, String taskNo) throws Exception {
+	public String convertExcel(List<Map<String, String>> result, String taskNo) throws Exception {
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		String resultFileName = sim.format(new Date());
 		File filePath = new File(ftpProperties.getLocalResultPath());
@@ -131,7 +131,9 @@ public class TaskImportService {
 			file.delete();
 		}
 		// 更新结果文件路径到表中
-		updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, path + resultFileName + ".xls");
+		
+		return path + resultFileName + ".xls";
+//		updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, path + resultFileName + ".xls");
 	}
 
 	public XSSFSheet checkXlsxExcel(InputStream in, ProductImportTask task, String type) throws Exception {

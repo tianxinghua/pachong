@@ -71,23 +71,22 @@ public class PendingSkuImportService {
 	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
 	TaskImportService taskService;
-
 	@Autowired
 	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
-
 	@Autowired
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 	@Autowired
 	HubSpuGateWay hubSpuGateway;
 
-	public void handMessage(ProductImportTask task) throws Exception {
+	public String handMessage(ProductImportTask task) throws Exception {
 
 		// ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
 		String filePath = json.get("taskFtpFilePath").toString();
 		task.setData(filePath);
-
 		InputStream in = taskService.downFileFromFtp(task);
+		
+		//解析excel
 		List<HubPendingProductImportDTO> listHubProduct = null;
 		String fileFormat = filePath.split("\\.")[1];
 		if ("xls".equals(fileFormat)) {
@@ -97,15 +96,15 @@ public class PendingSkuImportService {
 		}
 
 		// 3、公共类校验hub数据并把校验结果写入excel
-		checkAndHandlePendingProduct(task.getTaskNo(), listHubProduct);
+		return checkAndHandlePendingProduct(task.getTaskNo(), listHubProduct);
 	}
 
 	// 校验数据以及保存到hub表
-	private void checkAndHandlePendingProduct(String taskNo, List<HubPendingProductImportDTO> listHubProduct)
+	private String checkAndHandlePendingProduct(String taskNo, List<HubPendingProductImportDTO> listHubProduct)
 			throws Exception {
 
 		if (listHubProduct == null) {
-			return;
+			return null;
 		}
 
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
@@ -119,7 +118,7 @@ public class PendingSkuImportService {
 			listMap.add(map);
 		}
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-		taskService.convertExcel(listMap, taskNo);
+		return taskService.convertExcel(listMap, taskNo);
 	}
 
 	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map) throws Exception{
@@ -179,9 +178,13 @@ public class PendingSkuImportService {
 				}
 			}
 			if(hubSkuPendingTempDto!=null){
-				if(hubSpuNo!=null&&size!=null){
+				if(hubSpuNo!=null){
 					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
-					sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize());
+					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
+					}else{
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo);
+					}
 					List<HubSkuDto> listSku = hubSkuGateWay.selectByCriteria(sku);
 					if(listSku!=null&&listSku.size()>0){
 						log.info(hubSpuNo+"hub中已存在尺码:"+size);
@@ -207,6 +210,9 @@ public class PendingSkuImportService {
 			hubSkuPendingDto.setHubSkuSizeType(sizeType);
 		}else{
 			hubSkuPendingDto.setHubSkuSizeType("尺寸");
+			if(hubSkuPendingDto.getHubSkuSize()==null){
+				hubSkuPendingDto.setHubSkuSize("");
+			}
 		}
 		if (hubSkuPendingTempDto != null) {
 			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());

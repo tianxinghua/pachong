@@ -81,7 +81,7 @@ public class PendingSpuImportService {
 	}
 	
 	
-	public void handMessage(ProductImportTask task) throws Exception {
+	public String handMessage(ProductImportTask task) throws Exception {
 
 		JSONObject json = JSONObject.parseObject(task.getData());
 		String filePath = json.get("taskFtpFilePath").toString();
@@ -98,7 +98,7 @@ public class PendingSpuImportService {
 		}
 		
 		// 3、公共类校验hub数据并把校验结果写入excel
-		checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct);
+		return checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct);
 	}
 
 	private List<HubPendingSpuImportDTO> handlePendingSpuXlsx(InputStream in, ProductImportTask task, String type) throws Exception{
@@ -136,10 +136,10 @@ public class PendingSpuImportService {
 	}
 
 	// 校验数据以及保存到hub表
-	private void checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct)
+	private String  checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct)
 			throws Exception {
 		if (listHubProduct == null) {
-			return;
+			return null;
 		}
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
@@ -195,7 +195,7 @@ public class PendingSpuImportService {
 		}
 		
 		// 处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-		taskService.convertExcel(listMap, taskNo);
+		return taskService.convertExcel(listMap, taskNo);
 	}
 	private HubSkuCheckDto convertHubPendingProduct2PendingSkuCheck(HubSpuPendingDto product,String size) {
 		HubSkuCheckDto hubPendingSkuDto = new HubSkuCheckDto();
