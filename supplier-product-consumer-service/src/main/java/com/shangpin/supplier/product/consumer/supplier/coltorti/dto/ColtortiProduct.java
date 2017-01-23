@@ -49,7 +49,7 @@ public class ColtortiProduct implements Serializable{
 	private Map<String,String> category;
 	private Map<String,String> ms5Category;
 	private Map<String,Map<String,Object>> attributes;
-	private Date updatedAt;
+	private String updatedAt;
 	
 	private Integer stock;
 	private Map<String,Integer> sizeStockMap;
@@ -108,7 +108,28 @@ public class ColtortiProduct implements Serializable{
 
 		return "";
 	}
-	
+	/**
+	 * 先根据attribute的000001属性获取，得不到着到variant去获取。
+	 * @return
+	 */
+	public String getColorCode(){
+		boolean got=false;
+
+		if(!got && variant!=null && variant.size()>0){
+			Set<Entry<String, String>> set = this.getVariant().entrySet();
+			return set.iterator().next().getKey();
+		}
+
+
+		if(attributes!=null && attributes.size()>0){
+			String v=getAttributeValues("000001");
+			if(v!=null)
+				return v;
+		}
+		
+
+		return "";
+	}
 	private String getAttributeValues(String attrKey){
 		if(attributes!=null && attributes.size()>0){
 			Map<String, Object> attr=attributes.get(attrKey);
