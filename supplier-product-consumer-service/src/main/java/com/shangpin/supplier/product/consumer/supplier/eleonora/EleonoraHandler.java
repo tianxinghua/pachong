@@ -43,10 +43,8 @@ public class EleonoraHandler implements ISupplierHandler {
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         try {
             if(!StringUtils.isEmpty(message.getData())){
-                Products productObj = JsonUtil.deserialize(message.getData(), Products.class);
-                List<Product> products = productObj.getProducts();
-                if(null!=products&&products.size()>0){
-                    for(Product product:products){
+            	Product product = JsonUtil.deserialize(message.getData(), Product.class);
+                if(null!=product){
                         HubSupplierSpuDto supplierSpuDto = new HubSupplierSpuDto();
                         boolean success = false;
                         List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
@@ -81,7 +79,6 @@ public class EleonoraHandler implements ISupplierHandler {
                                 log.error("异常： spu : " + product.getProducer_id() +"没有sku");
                             }
 
-                        }
 
                     }
                 }
