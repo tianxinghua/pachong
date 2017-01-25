@@ -1,12 +1,4 @@
 package com.shangpin.picture.product.consumer;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.http.impl.execchain.MainClientExec;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,11 +6,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
-import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
-
-import sun.misc.BASE64Encoder;
 /**
  * <p>Title:PictureProductConsumerServiceApplication.java </p>
  * <p>Description: 图片处理消费者</p>
@@ -29,7 +16,7 @@ import sun.misc.BASE64Encoder;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
-@EnableScheduling
+//@EnableScheduling
 public class PictureProductConsumerServiceApplication implements ApplicationRunner{
 
 	
