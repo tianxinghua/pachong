@@ -114,7 +114,14 @@ public class SupplierProductPictureService {
 	 */
 	private String getExtension(String url){
 		if (StringUtils.isNoneBlank(url)) {
-			 return url.substring(url.lastIndexOf(".")+1);
+			 String suffix = url.substring(url.lastIndexOf(".")+1);
+			 if (suffix == null) {
+				 return "jpg";
+			 }
+			 if (suffix != null && suffix.length() > 5) {
+				return "jpg";
+			}
+			return suffix;
 		} else {
 			return null;
 		}
