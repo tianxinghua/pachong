@@ -156,15 +156,23 @@ public class DataSverviceUtil {
 
     public String sizeCommonReplace(String size){
         Map<String,String> commonSizeMap = getCommonSupplierSizeMapping();
+        if(size==null){
+            return size;
+        }
         if(null!=commonSizeMap&&commonSizeMap.size()>0){
 
             Set<String> sizeSet  = getCommonSupplierSizeMapping().keySet();//sizeMap.keySet();
+            String replaceKey="";
             for(String sizeKey:sizeSet){
-            	if(size==null){
-            		return null;
-            	}
+                if("++".equals(sizeKey)){
+                    replaceKey = "\\++";
+                }else  if("+".equals(sizeKey)){
+                    replaceKey = "\\+";
+                }else{
+                    replaceKey = sizeKey;
+                }
                 if(size.indexOf(sizeKey)>=0){
-                    size = size.replaceAll(sizeKey,sizeMap.get(sizeKey));
+                    size = size.replaceAll(replaceKey,sizeMap.get(sizeKey));
                 }
             }
         }
