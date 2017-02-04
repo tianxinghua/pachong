@@ -348,7 +348,16 @@ public class PendingHandler {
 		hubSpuPending.setSpuSeasonState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 		hubSpuPending.setHubMaterial(hubSpuDto.getMaterial());
 		hubSpuPending.setHubOrigin(hubSpuDto.getOrigin());
+		hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 		hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+		hubSpuPending.setIsCurrentSeason(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+		hubSpuPending.setHubSpuNo(hubSpuDto.getSpuNo());
+		hubSpuPending.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
+		hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+		hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+		hubSpuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+		hubSpuPending.setSpuGenderState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+		hubSpuPending.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
 		Date date = new Date();
 		hubSpuPending.setCreateTime(date);
 		hubSpuPending.setUpdateTime(date);
