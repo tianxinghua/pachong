@@ -126,6 +126,8 @@ public class PendingHandler {
 	 */
 	static Map<String, Byte> hubSeasonFlag = null;
 
+	static Integer isCurrentMin  =   DateUtils.getCurrentMin();
+
 	ObjectMapper mapper =new ObjectMapper();
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -150,7 +152,7 @@ public class PendingHandler {
 			HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
 					message.getData().getSupplierSpuNo());
 			//spu pending 处理
-			hubSpuPending = handleSpuPending(message, headers, pendingSpu, spuStatus, tmp);
+			hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
 		}
 
 
@@ -192,18 +194,18 @@ public class PendingHandler {
         }
 	}
 
-	private SpuPending handleSpuPending(PendingProduct message, Map<String, Object> headers, PendingSpu pendingSpu, Integer spuStatus, HubSpuPendingDto tmp) throws Exception {
-		SpuPending hubSpuPending;
+	private SpuPending handleSpuPending(PendingProduct message, Map<String, Object> headers,Integer spuStatus, HubSpuPendingDto tmp) throws Exception {
+		SpuPending hubSpuPending = null;
 		if (spuStatus == MessageType.NEW.getIndex()) {
             if (null == tmp) {
-                hubSpuPending = createNewSpu(message, headers, pendingSpu);
+                hubSpuPending = createNewSpu(message);
             } else {
                 hubSpuPending = new SpuPending();
                 BeanUtils.copyProperties(tmp, hubSpuPending);
             }
 
         } else if (spuStatus == MessageType.UPDATE.getIndex()) {
-            hubSpuPending = this.updateSpu(pendingSpu, headers);
+            hubSpuPending = this.updateSpu(message.getData(), headers);
 
         } else {
             // 不需要处理 已存在
@@ -211,18 +213,18 @@ public class PendingHandler {
                 hubSpuPending = new SpuPending();
                 BeanUtils.copyProperties(tmp, hubSpuPending);
             } else {// 如果不存在 说明是消息队列混乱了
-                hubSpuPending = createNewSpu(message, headers, pendingSpu);
+				hubSpuPending = createNewSpuFromSupplier(message);
             }
         }
 		return hubSpuPending;
 	}
 
-	private SpuPending createNewSpu(PendingProduct message, Map<String, Object> headers, PendingSpu pendingSpu)
+	private SpuPending createNewSpu(PendingProduct message)
 			throws Exception {
 		SpuPending hubSpuPending = null;
 		try {
-			pendingSpu.setSupplierNo(message.getSupplierNo());
-			hubSpuPending = this.addNewSpu(pendingSpu, headers);
+			message.getData().setSupplierNo(message.getSupplierNo());
+			hubSpuPending = this.addNewSpu(message.getData());
 		} catch (Exception e) {
 
 			if (e instanceof DuplicateKeyException) {// 并发造成的
@@ -242,6 +244,22 @@ public class PendingHandler {
 		return hubSpuPending;
 	}
 
+
+	private SpuPending createNewSpuFromSupplier(PendingProduct message)
+			throws Exception {
+		HubSupplierSpuDto supplierSpuDto = dataServiceHandler.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(message.getSupplierId(), message.getData().getSupplierSpuNo());
+		PendingSpu tmp = new PendingSpu();
+		this.setValueFromHubSuppierSpuToPendingSpu(supplierSpuDto,tmp);
+		tmp.setSupplierNo(message.getSupplierNo());
+		return  addNewSpu(tmp);
+	}
+
+	/**
+	 * 获取spu或者sku对应的状态
+	 * @param headers
+	 * @return
+	 * @throws Exception
+	 */
 	private Map<String, Integer> getMessageStatus(Map<String, Object> headers) throws Exception {
 
 		Map<String, Integer> result = new HashMap<>();
@@ -265,7 +283,7 @@ public class PendingHandler {
 
 	}
 
-	private SpuPending addNewSpu(PendingSpu spu, Map<String, Object> headers) throws Exception {
+	private SpuPending addNewSpu(PendingSpu spu) throws Exception {
 
 		// judage in hub_spu by product_code ,if exist ,set value from hub_spu
 		// and set spu status value is 1
@@ -705,20 +723,6 @@ public class PendingHandler {
 						allStatus =false;
 					}
 
-
-//					if(spuPendingDto.getSpuBrandState().intValue()==PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex()){
-//
-//						boolean brandmapping = setBrandMapping(spu, updateSpuPending);
-//						if(!brandmapping){
-//							allStatus =false;
-//						}else{
-//							spuPendingDto.setSpuBrandState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//						}
-//						spuPendingDto.setHubBrandNo(updateSpuPending.getHubBrandNo());
-//					} else{
-//						updateSpuPending.setHubBrandNo(null);
-//					}
-
 				}
 				//验证货号必须要有品牌
 				if(StringUtils.isNotBlank(spu.getSpuModel())){
@@ -780,7 +784,7 @@ public class PendingHandler {
 			PendingSpu tmp = new PendingSpu();
 			this.setValueFromHubSuppierSpuToPendingSpu(supplierSpuDto,tmp);
 			tmp.setSupplierNo(spu.getSupplierNo());
-			SpuPending newSpuPending  = addNewSpu(tmp,headers);
+			SpuPending newSpuPending  = addNewSpu(tmp);
 			return newSpuPending;
 		}
 
@@ -1246,7 +1250,8 @@ public class PendingHandler {
 	 */
 	private boolean isNeedHandle() {
 		int min = DateUtils.getCurrentMin();
-		if (min % 60 < 5) {
+		if(min-isCurrentMin>=5||min-isCurrentMin<0){
+			isCurrentMin = min;
 			return true;
 		} else {
 			return false;
