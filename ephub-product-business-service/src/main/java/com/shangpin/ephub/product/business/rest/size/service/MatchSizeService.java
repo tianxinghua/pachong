@@ -46,11 +46,15 @@ public class MatchSizeService{
 					String sizeValue = item.getSizeStandardValue();
 					if(dto.getSize().equals(sizeValue)){
 						i++;
-						result = item.getSizeStandardName();
+						matchSizeResult.setSizeType(item.getSizeStandardName());
+						matchSizeResult.setSizeId(String.valueOf(item.getScreenSizeStandardValueId()));
+						matchSizeResult.setSizeValue(sizeValue);
+						matchSizeResult.setMultiSizeType(false);
 						flag = true;
 						if(i>=2){
 							result = "此尺码下含有多个尺码类型";
 							flag = false;
+							matchSizeResult.setMultiSizeType(true);
 						}
 					}
 				}

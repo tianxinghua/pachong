@@ -28,4 +28,15 @@ public class MatchSizeResult implements Serializable {
 	 * 加工处理后校验通过的品牌型号:如果校验通过，则为通过的品牌型号，如果校验不通过，则该字段为null.
 	 */
 	private String result;
+	
+	private String sizeId;
+	
+	private String sizeType;
+	
+	private String sizeValue;
+	
+	/**
+	 * true 代表有多个尺码类型
+	 */
+	private boolean isMultiSizeType;
 }
