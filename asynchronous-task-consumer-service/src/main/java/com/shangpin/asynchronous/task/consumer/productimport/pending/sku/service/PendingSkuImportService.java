@@ -131,6 +131,7 @@ public class PendingSkuImportService {
 		log.info("pendindSku校验参数：{}", hubSkuCheckDto);
 		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
 		log.info("pendindSku校验返回结果：{}", hubPendingSkuCheckResult);
+		
 		// 校验spu信息
 		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
@@ -143,86 +144,10 @@ public class PendingSkuImportService {
 		
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		
-		if (map.get("pendingSpuId") != null) {
-			HubPendingSkuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
-			hubPendingSpuDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
-		}
-
-		boolean isPushToHub = Boolean.parseBoolean(map.get("hubIsExist"));
-		checkPendingSku(map.get("hubSpuNo"),isPushToHub,hubPendingSkuCheckResult, HubPendingSkuDto, hubSkuCheckDto, map,product);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,product,false);
 
 		if (Boolean.parseBoolean(map.get("isPassing"))) {
-			taskService.sendToHub(hubPendingSpuDto, isPushToHub, map.get("hubSpuId"));
-		}
-
-	}
-
-	@SuppressWarnings("unused")
-	private void checkPendingSku(String hubSpuNo,boolean isPushToHub,HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-			HubSkuCheckDto hubSkuCheckDto, Map<String, String> map,HubPendingProductImportDTO product) throws Exception{
-		String specificationType = product.getSpecificationType();
-		String sizeType = product.getSizeType();
-		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
-				hubSkuPendingDto.getSupplierSkuNo());
-		hubSkuPendingDto.setHubSkuSize(product.getHubSkuSize());
-		if (hubPendingSkuCheckResult.isPassing()) {
-			String result = hubPendingSkuCheckResult.getResult();
-			String size = null;
-			if (StringUtils.isNotBlank(result)) {
-				if(result.split(",").length>1){
-					String sizeId = result.split(",")[0];
-					hubSkuPendingDto.setScreenSize(sizeId);
-				}else{
-					hubSkuPendingDto.setHubSkuSize(result);
-				}
-			}
-			if(hubSkuPendingTempDto!=null){
-				if(hubSpuNo!=null){
-					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
-					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
-					}else{
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo);
-					}
-					List<HubSkuDto> listSku = hubSkuGateWay.selectByCriteria(sku);
-					if(listSku!=null&&listSku.size()>0){
-						log.info(hubSpuNo+"hub中已存在尺码:"+size);
-						hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
-					}else{
-						hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
-					}
-				}else{
-					hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
-				}
-			}else{
-				hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
-			}
-			
-			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
-			hubSkuPendingDto.setFilterFlag((byte)1);
-		} else {
-			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
-			//此尺码过滤不处理
-			hubSkuPendingDto.setFilterFlag((byte)0);
-		}
-		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
-			hubSkuPendingDto.setHubSkuSizeType(sizeType);
-		}else{
-			hubSkuPendingDto.setHubSkuSizeType("尺寸");
-			if(hubSkuPendingDto.getHubSkuSize()==null){
-				hubSkuPendingDto.setHubSkuSize("");
-			}
-		}
-		if (hubSkuPendingTempDto != null) {
-			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
-			hubSkuPendingDto.setUpdateTime(new Date());
-			hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
-		} else {
-			hubSkuPendingDto.setCreateTime(new Date());
-			hubSkuPendingDto.setUpdateTime(new Date());
-			hubSkuPendingDto.setDataState((byte) 1);
-			hubSkuPendingGateWay.insert(hubSkuPendingDto);
+			taskService.sendToHub(hubPendingSpuDto, map);
 		}
 	}
 
@@ -249,16 +174,6 @@ public class PendingSkuImportService {
 		return hubPendingSkuDto;
 	}
 
-	private HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) throws Exception{
-
-		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
-		List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteria);
-		if (list != null && list.size() > 0) {
-			return list.get(0);
-		}
-		return null;
-	}
 
 	// 解析excel转换为对象
 	private List<HubPendingProductImportDTO> handleHubXlsxExcel(InputStream in, ProductImportTask task, String type)

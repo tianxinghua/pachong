@@ -41,6 +41,9 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
+import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
+import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +68,10 @@ public class ExportServiceImpl {
 	private HubPendingSpuCheckGateWay hubPendingSpuClient;
 	@Autowired
 	private HubPendingSkuCheckGateWay hubPendingSkuClient;
+	
+
+	@Autowired
+	MatchSizeGateWay matchSizeGateWay;
 
 	private static final Integer PAGESIZE = 50;
 	
@@ -252,11 +259,27 @@ public class ExportServiceImpl {
     			String fileName = parSetName(rowTemplate[i]);
     			if("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i]) || "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
             			|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i]) || "marketPriceCurrencyorg".equals(rowTemplate[i]) 
-            			|| "hubSkuSizeType".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])){
-    				//所有sku的属性
+            			|| "hubSkuSize".equals(rowTemplate[i])){
+    				//所有sku的属性|| "hubSkuSizeType".equals(rowTemplate[i]) 
     				fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
+            	}else if("hubSkuSizeType".equals(rowTemplate[i])){
+            		fieldSetMet = skuClazz.getMethod(fileName);
+					value = fieldSetMet.invoke(sku);
+					if(value!=null){
+						row.createCell(i).setCellValue(null != value ? value.toString() : "");	
+					}else{
+						MatchSizeDto match = new MatchSizeDto();
+						match.setHubBrandNo(product.getHubBrandNo());
+						match.setHubCategoryNo(product.getHubCategoryNo());
+						match.setSize(sku.getHubSkuSize());	
+						MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(match);
+						if(matchSizeResult.isPassing()){
+							String sizeType = matchSizeResult.getSizeType();
+							row.createCell(i).setCellValue(sizeType);	
+						}
+					}
             	}else if("seasonYear".equals(rowTemplate[i])){
             		setRowOfSeasonYear(row, product, spuClazz, i);
             	}else if("seasonName".equals(rowTemplate[i])){
