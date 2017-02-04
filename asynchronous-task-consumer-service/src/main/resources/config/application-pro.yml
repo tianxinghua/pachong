@@ -1,4 +1,7 @@
 feign.hystrix.enabled: false
+ribbon:
+  ConnectTimeout: 120000
+  ReadTimeout: 120000
 spring: 
   rabbitmq: 
            host: 172.20.11.49
