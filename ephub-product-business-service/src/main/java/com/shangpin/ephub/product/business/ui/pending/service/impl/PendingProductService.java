@@ -201,7 +201,8 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                        pendingProduct.setHubSkus(pendingSkus.get(pendingSpu.getSpuPendingId()));
+                        List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
+                        pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
                         pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         products.add(pendingProduct);
