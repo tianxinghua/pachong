@@ -12,5 +12,4 @@ public class EphubFdfsClientServiceApplicationTests {
 	@Test
 	public void contextLoads() {
 	}
-
 }

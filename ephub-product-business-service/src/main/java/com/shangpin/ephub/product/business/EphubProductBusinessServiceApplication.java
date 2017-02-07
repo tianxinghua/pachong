@@ -10,7 +10,6 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
-//@EnableCircuitBreaker
 public class EphubProductBusinessServiceApplication {
 
 	public static void main(String[] args) {
