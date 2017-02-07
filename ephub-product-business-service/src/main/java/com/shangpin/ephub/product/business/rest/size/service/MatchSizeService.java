@@ -52,9 +52,10 @@ public class MatchSizeService{
 						matchSizeResult.setMultiSizeType(false);
 						flag = true;
 						if(i>=2){
-							result = "此尺码下含有多个尺码类型";
+							result = "尺码："+sizeValue+"下含有多个尺码类型";
 							flag = false;
 							matchSizeResult.setMultiSizeType(true);
+							break;
 						}
 					}
 				}
