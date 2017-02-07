@@ -88,7 +88,7 @@ public class HubProductServiceImpl implements HubProductService {
                 HubSkuDto hubSkuDto = hubSkuGateWay.selectByPrimaryKey(skuId);
 
                 //设置spu中的尺码类型
-                setSpuSizeType(spSpuInfo,hubSkuDto.getSkuSize());
+                setSpuSizeType(spSpuInfo,hubSkuDto.getSkuSizeType());
 
                 List<HubProductIdDto> supplierSkuMapping =  idDto.getSubProduct();
                 for(HubProductIdDto supplierIdDto :supplierSkuMapping) {
@@ -179,7 +179,14 @@ public class HubProductServiceImpl implements HubProductService {
 
             skuOrgDom.setScreenSize(hubSkuPendingDto.getScreenSize());
             List<String> sizeList = new ArrayList<>();
-            sizeList.add(hubSkuPendingDto.getHubSkuSize());
+            if(StringUtils.isNotBlank(hubSkuPendingDto.getHubSkuSizeType())) {
+                if (hubSkuPendingDto.getHubSkuSizeType().equals(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)) {
+                	   sizeList.add(hubSkuPendingDto.getHubSkuSize());
+                }else{
+                	   sizeList.add(hubSkuPendingDto.getHubSkuSizeType()+":"+hubSkuPendingDto.getHubSkuSize());
+                }
+            }
+//            sizeList.add(hubSkuPendingDto.getHubSkuSize());
             skuOrgDom.setProductSize(sizeList);
         }
 

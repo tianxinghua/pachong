@@ -24,6 +24,7 @@ public class HubWaitSelectResponseDto {
      * 尺码
      */
     private String skuSize;
+    private String skuSizeType;
     private String skuSizeId;
     /**
      * hubskuno
