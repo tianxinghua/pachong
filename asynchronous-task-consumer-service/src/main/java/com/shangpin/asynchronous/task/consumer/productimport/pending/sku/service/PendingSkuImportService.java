@@ -137,7 +137,7 @@ public class PendingSkuImportService {
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 		HubSpuPendingDto isPendingSpuExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
-			log.info(hubPendingSpuDto.getSpuModel() + "已存在hub");
+			log.info(hubPendingSpuDto.getSpuModel() + "已存在pendingSpu");
 			isPendingSpuExist = listSpu.get(0);
 		}
 		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map);
