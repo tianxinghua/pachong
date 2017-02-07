@@ -222,6 +222,8 @@ public class PendingProductService implements IPendingProductService{
     	Map<Long,List<HubSkuPendingDto>> pendigSkus = new HashMap<>();
     	try {
             HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
+            criteriaDto.setPageNo(1);
+            criteriaDto.setPageSize(1000); 
             criteriaDto.setOrderByClause("spu_pending_id,hub_sku_size");
             criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
