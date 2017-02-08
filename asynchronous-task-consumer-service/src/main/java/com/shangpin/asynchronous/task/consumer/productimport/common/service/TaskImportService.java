@@ -394,7 +394,7 @@ public class TaskImportService {
 				hubSpuNo = list.get(0).getSpuNo();
 				spuIsPassing = true;
 				hubIsExist = true;
-				checkResult = spuModel+"hub已存在";
+				checkResult = spuModel+"在hub已存在";
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				log.info(hubPendingSpuDto.getSpuModel()+"检验pendingSpu参数：{}",hubPendingSpuDto);
@@ -420,7 +420,7 @@ public class TaskImportService {
 		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isPendingSpuExist, hubPendingSpuDto, hubPendingSpuCheckResult,skuIsPassing,flag);
 		if (spuIsPassing==true&&flag==true) {
 			map.put("taskState", "校验通过");
-			map.put("processInfo", checkResult);
+			map.put("processInfo", "spu:"+checkResult+",sku:"+hubPendingSkuCheckResult.getResult());
 		} else {
 			map.put("taskState", "校验失败");
 			map.put("processInfo", "spu："+checkResult+",sku:"+hubPendingSkuCheckResult.getResult());
