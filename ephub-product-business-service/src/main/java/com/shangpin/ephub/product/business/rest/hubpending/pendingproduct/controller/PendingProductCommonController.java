@@ -11,6 +11,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
+import com.shangpin.ephub.product.business.service.pending.PendingCommonService;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class PendingProductCommonController {
 
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
+
+	@Autowired
+	PendingCommonService pendingCommonService;
 	
 	@RequestMapping(value = "/handle-pending")
 	public HubResponse<?> checkSku(@RequestBody PendingSpu dto){
@@ -48,7 +52,7 @@ public class PendingProductCommonController {
 
 
 		} catch (Exception e) {
-			log.error("update spsku error. reason :"+ e.getMessage(),e);
+			log.error("update  error. reason :"+ e.getMessage(),e);
 			return HubResponse.errorResp(e.getMessage());
 		}
 		return HubResponse.successResp(true);
