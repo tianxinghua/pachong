@@ -32,7 +32,6 @@ public class HubPendingSpuCheckResult implements Serializable {
     private String result;
     
     private boolean brand;
-    private boolean spuModel;
     private boolean color;
     private boolean seasonName;
     private boolean category;

@@ -289,12 +289,14 @@ public class PendingProductService implements IPendingProductService{
                 		hubSkuPendingDto.setHubSkuSizeType("尺寸"); 
                 		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+                		hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
                 	}else{
                         HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuSize);
     					if(result.isPassing()){
                         	hubSkuPendingDto.setScreenSize(result.getScreenSizeStandardValueId()); 
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                         	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+                        	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
                         }else{
                         	pass = false ;
                             log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+hubSkuSize);
