@@ -33,10 +33,12 @@ public class MatchSizeDto implements Serializable {
     /**
      * 尚品品类编号
      */
+	@NotNull(message = "品类编号不可为空")
     private String hubCategoryNo;
     
     /**
      * 尺码值
      */
+	@NotNull(message = "尺码不可为空")
     private String size;
 }

@@ -157,15 +157,34 @@ public class PendingProductService implements IPendingProductService{
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
-                        PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
-                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
-                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
-                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
-                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
-                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                        pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
-                        products.add(pendingProduct);
+                    	
+                    	HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+                    	criteria.createCriteria().andSupplierIdEqualTo(pendingSpu.getSupplierId()).andSpuPendingIdEqualTo(pendingSpu.getSpuPendingId());
+                    	criteria.setPageNo(1);
+                    	criteria.setPageSize(10000);
+                    	
+                    	boolean flag = false;
+                    	List<HubSkuPendingDto> skuList = hubSkuPendingGateWay.selectByCriteria(criteria);
+                    	if(skuList!=null&&skuList.size()>0){
+                    		for(HubSkuPendingDto sku : skuList){
+                    			if(sku.getStock()!=null&&sku.getStock()>0){
+                    				flag = true;
+                    				break;
+                    			}
+                    		}
+                    	}
+                    	
+                    	if(flag){
+                    		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
+                            SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                            pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
+                            FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                            pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
+                            BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
+                            pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
+                            pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
+                            products.add(pendingProduct);
+                    	}
                     }
                 }
             }
@@ -590,6 +609,7 @@ public class PendingProductService implements IPendingProductService{
         		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		}
+        		criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
@@ -645,6 +665,7 @@ public class PendingProductService implements IPendingProductService{
 				criteria.andPicStateNotEqualTo(PicState.UNHANDLED.getIndex());
 			}
 		}
+		criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
 		return criteria;
 	}
     /**
