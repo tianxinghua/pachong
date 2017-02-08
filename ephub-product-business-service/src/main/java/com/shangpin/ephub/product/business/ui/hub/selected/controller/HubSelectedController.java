@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,6 +67,11 @@ public class HubSelectedController {
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
+					if(StringUtils.isNotBlank(hubWaitSelectResponseDto.getSkuSizeType())){
+						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSizeType()+":"+hubWaitSelectResponseDto.getSkuSize());	
+					}else{
+						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
+					}
 					HubWaitSelectResponse.setUpdateTime(DateTimeUtil.getTime(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}

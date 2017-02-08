@@ -9,14 +9,8 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
@@ -29,11 +23,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
-import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;

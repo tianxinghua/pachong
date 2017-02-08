@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
+import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title:PendingProductController </p>
@@ -68,7 +70,15 @@ public class PendingProductController {
         }
     }
     @RequestMapping(value="/origin",method=RequestMethod.POST)
-    public HubResponse<?> findOrigin(@RequestBody String supplierSpuId){
-    	return HubResponse.successResp(pendingProductService.findSupplierProduct(supplierSpuId)); 
+    public HubResponse<?> findOrigin(@RequestBody String spuPendingId){
+    	PendingQuryDto pendingQuryDto = new PendingQuryDto();
+    	pendingQuryDto.setSpuPendingId(Long.valueOf(spuPendingId));
+    	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
+    	PendingProductDto pendingProduct = products.getProduts().get(0);
+    	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
+    	PendingOriginVo pendingOriginVo = new PendingOriginVo();
+    	pendingOriginVo.setPendingProduct(pendingProduct);
+    	pendingOriginVo.setSupplierProduct(supplierProduct);
+    	return HubResponse.successResp(pendingOriginVo); 
     }
 }

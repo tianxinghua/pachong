@@ -4,10 +4,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,11 +11,7 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BasicDataResponse;
 import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
-import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-import com.shangpin.ephub.response.HubResponse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -77,8 +69,8 @@ public class EphubProductBusinessServiceApplicationTests {
 	public void testGetProductSize(){
 		try {
 			SizeRequestDto request = new SizeRequestDto();
-			request.setBrandNo("B0084");
-			request.setCategoryNo("A03B01C02D05");
+			request.setBrandNo("B03258");
+			request.setCategoryNo("A02B02C05D12");
 			BasicDataResponse<?> response = httpClient.postForObject(ApiAddressProperties.getGmsSizeUrl(), request, BasicDataResponse.class);
 			System.out.println(response);
 		} catch (Exception e) {
@@ -94,13 +86,13 @@ public class EphubProductBusinessServiceApplicationTests {
 //		System.out.println(dto);
 //	}
 	
-	public static void main(String[] args) {
-		SupplierDTO dto = new SupplierDTO();
-		dto.setAccount("account");
-		dto.setAccountBank("accountBank");
-		String json = JsonUtil.serialize(dto);
-		SupplierDTO dto2 = JsonUtil.deserialize(json, SupplierDTO.class);
-		System.out.println(dto2);
-	}
+//	public static void main(String[] args) {
+//		SupplierDTO dto = new SupplierDTO();
+//		dto.setAccount("account");
+//		dto.setAccountBank("accountBank");
+//		String json = JsonUtil.serialize(dto);
+//		SupplierDTO dto2 = JsonUtil.deserialize(json, SupplierDTO.class);
+//		System.out.println(dto2);
+//	}
 
 }

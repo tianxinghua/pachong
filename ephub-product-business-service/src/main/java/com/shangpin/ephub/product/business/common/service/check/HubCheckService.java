@@ -4,10 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,19 +26,14 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
-import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.gms.SizeService;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
-import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
@@ -79,8 +70,6 @@ public class HubCheckService {
 	@Autowired
 	HubBrandModelRuleController HubBrandModelRuleService;
 	@Autowired
-	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
-	@Autowired
 	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 	@Autowired
 	CategoryService categoryService;
@@ -107,7 +96,7 @@ public class HubCheckService {
 	}
 	
 	public HubPendingSpuCheckResult checkSpu(HubSpuPendingDto hubProduct){
-		boolean flag = false;
+		
 		StringBuffer str = new StringBuffer();
 		//品牌
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
@@ -116,11 +105,15 @@ public class HubCheckService {
 		if(StringUtils.isNotBlank(hubProduct.getHubBrandNo())){
 			if(!getBrand(hubProduct.getHubBrandNo())){
 				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
+				result.setBrand(false);
 				result.setPassing(false);
-			}	
+			}else{
+				result.setBrand(true);
+			}
 		}else{
 			str.append("品牌编号为空，");
 			result.setPassing(false);
+			result.setBrand(false);
 		}
 		
 		//校验品类
@@ -128,10 +121,14 @@ public class HubCheckService {
 			if(!getCategoryName(hubProduct.getHubCategoryNo())){
 				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
-			}	
+				result.setCategory(false);
+			}else{
+				result.setCategory(true);
+			}
 		}else{
 			str.append("品类编号为空，");
 			result.setPassing(false);
+			result.setCategory(false);
 		}
 		
 		//校验颜色
@@ -139,10 +136,14 @@ public class HubCheckService {
 			if(!checkHubColor(hubProduct.getHubColor())){	
 				str.append("颜色编号"+hubProduct.getHubColor()+"不存在,") ;
 				result.setPassing(false);
+				result.setColor(false);
+			}else{
+				result.setColor(true);
 			}
 		}else{
 			str.append("颜色为空，");
 			result.setPassing(false);
+			result.setColor(false);
 		}
 		
 		//校验季节
@@ -150,9 +151,13 @@ public class HubCheckService {
 			if(!checkHubSeason(hubProduct.getHubSeason())){
 				str.append("季节编号"+hubProduct.getHubSeason()+"不存在,") ;
 				result.setPassing(false);
+				result.setSeasonName(false);
+			}else{
+				result.setSeasonName(true);
 			}
 		}else{
 			str.append("季节为空，");
+			result.setSeasonName(false);
 			result.setPassing(false);
 		}
 		
@@ -161,30 +166,42 @@ public class HubCheckService {
 			if(!checkHubGender(hubProduct.getHubGender())){
 				str.append("性别编号"+hubProduct.getHubGender()+"不存在") ;
 				result.setPassing(false);
-			}	
+				result.setGender(false);
+			}else{
+				result.setGender(true);
+			}
 		}else{
 			str.append("性别为空，");
 			result.setPassing(false);
+			result.setGender(false);
 		}
 		//校验材质
 		if(StringUtils.isNoneBlank(hubProduct.getHubMaterial())){
 			if(!RegexUtil.excludeLetter(hubProduct.getHubMaterial())){
 				result.setPassing(false);
 				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
+				result.setMaterial(false);
+	        }else{
+	        	result.setMaterial(true);
 	        }
 		}else{
 			str.append("材质为空，");
 			result.setPassing(false);
+			result.setMaterial(false);
 		}
 		//校验产地
 		if(StringUtils.isNotBlank(hubProduct.getHubOrigin())){
 			if(!checkHubOrigin(hubProduct.getHubOrigin())){
 				str.append("产地"+hubProduct.getHubOrigin()+"不存在") ;
 				result.setPassing(false);
+				result.setOriginal(false);
+			}else{
+				result.setOriginal(true);
 			}	
 		}else{
 			str.append("产地为空");
 			result.setPassing(false);
+			result.setOriginal(false);
 		}
 		
 		result.setResult(str.toString());

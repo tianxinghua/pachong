@@ -30,4 +30,12 @@ public class HubPendingSpuCheckResult implements Serializable {
      * 校验不通过记录原因，通过为空
      */
     private String result;
+    
+    private boolean brand;
+    private boolean color;
+    private boolean seasonName;
+    private boolean category;
+    private boolean gender;
+    private boolean material;
+    private boolean original;
 }

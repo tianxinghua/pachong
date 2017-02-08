@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class HubWaitSelectedService {
 			HubSkuSupplierMappingDto HubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
 			HubSkuSupplierMappingDto.setSupplierSelectState((byte)SupplierSelectState.SELECTING.getIndex());
 			HubSkuSupplierMappingDto.setSkuSupplierMappingId(dto.getSkuSupplierMappingId());
+			HubSkuSupplierMappingDto.setUpdateTime(new Date());
 			hubSkuSupplierMappingGateWay.updateByPrimaryKeySelective(HubSkuSupplierMappingDto);
 
 			Long spuId = dto.getSpuId();
@@ -106,7 +108,7 @@ public class HubWaitSelectedService {
 			}
 			spu.setSubProduct(skulist);
 			try {
-				log.info("推送scm参数{}", spu);
+				log.info("推送scm参数{}", spu.toString());
 				hubCommonProductServiceImpl.sendHubProuctToScm(spu);
 			} catch (Exception e) {
 				log.error("推送scm出错{}", e);

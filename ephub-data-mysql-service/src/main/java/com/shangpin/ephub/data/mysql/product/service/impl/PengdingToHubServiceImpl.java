@@ -196,7 +196,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         Date date = new Date();
         for(String size:sizeSet){
             HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
-            hubSkuCriteria.createCriteria().andSkuSizeEqualTo(size);
+            hubSkuCriteria.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo()).andSkuSizeEqualTo(size.trim());
             List<HubSku> hubSkus = hubSkuMapper.selectByExample(hubSkuCriteria);
 
             List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(size);

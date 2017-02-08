@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.pending.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -50,7 +51,7 @@ public interface IPendingProductService {
 	 * @param spuPendingId
 	 * @return
 	 */
-	public List<HubSkuPendingDto> findPendingSkuBySpuPendingId(Long spuPendingId) throws Exception;
+	public Map<Long,List<HubSkuPendingDto>> findPendingSkuBySpuPendingId(List<Long> spuPendingIds) throws Exception;
 	/**
 	 * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
 	 * @param pendingProductDto
@@ -76,5 +77,5 @@ public interface IPendingProductService {
 	 * @param supplierSpuId
 	 * @return
 	 */
-	public SupplierProductVo findSupplierProduct(String supplierSpuId);
+	public SupplierProductVo findSupplierProduct(Long supplierSpuId);
 }

@@ -52,4 +52,8 @@ public class PendingQuryDto {
      * 图片状态
      */
     private Integer picState;
+    /**
+     * spu主键
+     */
+    private Long spuPendingId;
 }

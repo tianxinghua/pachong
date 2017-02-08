@@ -14,19 +14,19 @@ public class TaskImportTemplate {
 	 }
 	 public static String[] getPendingSkuValueTemplate() {
 			String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
-					"supplierSkuNo","skuName","supplierBarcode","hubColor","specification","originalProductSizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency",
+					"supplierSkuNo","skuName","supplierBarcode","hubColor","specification","hubSkuSizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency",
 					"marketPrice","marketPriceCurrencyorg","originalProductSizeValue","spuDesc"};
 			return temp;
 	}
 	 
 	 public static String [] getPendingSpuTemplate(){
 		 String[] headers = {"图片","供应商门户编号*","供应商编号", "供应商名称","供应商SpuNo", "品类名称","品类编号*", "品牌编号*","品牌名称","货号*","上市年份*","上市季节*","适应性别*",
-				 "商品名称*","颜色*","材质*","产地*","描述","不符合项","商品状态"};
+				 "商品名称*","颜色*","材质*","产地*","描述","不符合项","商品状态","规格类型"};
 		 return headers;
 	 }
 	 public static String[] getPendingSpuValueTemplate() {
 			String [] temp = {"spPicUrl","supplierId","supplierNo","supplierName","supplierSpuNo","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
-					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc","memo","spuState"};
+					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc","memo","spuState","specificationType"};
 			return temp;
 		}
 }

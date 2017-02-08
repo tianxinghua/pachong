@@ -58,6 +58,7 @@ public class PendingProductCommonController {
 		return HubResponse.successResp(true);
 	}
 
+	@SuppressWarnings("unused")
 	private void updatePendingSku(SpSkuNoDto dto) throws Exception{
 		//写入尚品的SKUno
 		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();

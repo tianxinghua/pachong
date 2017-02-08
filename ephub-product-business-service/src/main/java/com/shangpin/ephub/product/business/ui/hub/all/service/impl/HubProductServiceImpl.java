@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
@@ -129,7 +129,8 @@ public class HubProductServiceImpl implements IHubProductService {
 			List<HubProductDetail> hubProducts = hubProductDetails.getHubDetails();
 			if(null != hubProducts && hubProducts.size()>0){
 				for(HubProductDetail hubSku : hubProducts){
-					if(!StringUtils.isEmpty(hubSku.getSkuId())){
+					
+					if(hubSku.getSkuId()!=null){
 						HubSkuSupplierMappingDto hubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
 						hubSkuSupplierMappingDto.setSkuNo(hubSku.getSkuNo());
 						hubSkuSupplierMappingDto.setSupplierId(hubSku.getSupplierId());
@@ -219,6 +220,13 @@ public class HubProductServiceImpl implements IHubProductService {
 				SupplierDTO supplierDTO = supplierService.getSupplier(mappingDto.getSupplierNo());
 				hubProuctDetail.setSupplierName(null != supplierDTO? supplierDTO.getSupplierName():"");
 				hubProuctDetail.setSkuId(hubSku.getSkuId());
+				
+				if(StringUtils.isNotBlank(hubSku.getSkuSizeType())){
+					hubProuctDetail.setSkuSize(hubSku.getSkuSizeType()+":"+hubSku.getSkuSize());	
+				}else{
+					hubProuctDetail.setSkuSize(hubSku.getSkuSize());
+				}
+				
 				hubProuctDetail.setSkuSize(hubSku.getSkuSize());
 				hubProuctDetail.setColor(hubSpu.getHubColor()); 
 				hubProuctDetail.setMaterial(hubSpu.getMaterial());

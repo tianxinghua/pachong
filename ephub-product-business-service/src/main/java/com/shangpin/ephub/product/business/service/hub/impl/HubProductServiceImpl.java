@@ -183,7 +183,14 @@ public class HubProductServiceImpl implements HubProductService {
 
             skuOrgDom.setScreenSize(hubSkuPendingDto.getScreenSize());
             List<String> sizeList = new ArrayList<>();
-            sizeList.add((null==hubSkuDto.getSkuSizeType()?"":hubSkuDto.getSkuSizeType())+":"+hubSkuDto.getSkuSize());
+            if(StringUtils.isNotBlank(hubSkuPendingDto.getHubSkuSizeType())) {
+                if (hubSkuPendingDto.getHubSkuSizeType().equals(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)) {
+                	   sizeList.add(hubSkuPendingDto.getHubSkuSize());
+                }else{
+                	   sizeList.add(hubSkuPendingDto.getHubSkuSizeType()+":"+hubSkuPendingDto.getHubSkuSize());
+                }
+            }
+//            sizeList.add(hubSkuPendingDto.getHubSkuSize());
             skuOrgDom.setProductSize(sizeList);
         }
 
