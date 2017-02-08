@@ -27,14 +27,20 @@ public class ConstantProperty {
     * 材质对照表每页最大查询数量
     */
    public static int MAX_MATERIAL_QUERY_NUM = 20000;
+  //  品类对照
+   public static String REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY="REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY";
 
-   public static String REDIS_EPHUB_PENDING_CATEGORY_KEY="REDIS_EPHUB_PENDING_CATEGORY_KEY";
+   public static String REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME_KEY="REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME_KEY";
 
+   public static int  REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME = 600;
+    //   ------------------  品类end
 
+   //  尺码
    public static String REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY";
 
    public static String REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY";
 
    public static int  REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_TIME = 60;
+   //  -------------------  尺码end
 
 }
