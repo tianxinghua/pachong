@@ -147,6 +147,13 @@ public class SupplierProductMysqlService {
 				isChanged = true;
 			}
 		}
+		if(hubSku.getStock()!=null){
+			if(!hubSku.getStock().equals(hubSkuSel.getStock())){
+				pendingSku.setStock(hubSku.getStock());
+				hubSkuUpdated.setStock(hubSku.getStock()); 
+				isChanged = true;
+			}
+		}
 		
 		return isChanged;
 	}
