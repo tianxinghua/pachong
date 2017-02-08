@@ -1,14 +1,13 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
+import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -177,6 +176,24 @@ public class DataSverviceUtil {
             }
         }
         return size;
+    }
+
+
+    public  void updateStock(PendingSku supplierSku){
+        if(null!=supplierSku){
+            HubSkuPendingDto originSkuPending =  dataServiceHandler.getHubSkuPending(supplierSku.getSupplierId(),supplierSku.getSupplierSkuNo());
+            if(null!=originSkuPending){
+                HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
+                hubSkuPending.setSkuPendingId(originSkuPending.getSkuPendingId());
+                hubSkuPending.setStock(supplierSku.getStock());
+                Date date = new Date();
+                hubSkuPending.setUpdateTime(date);
+
+                dataServiceHandler.updateSkuPengding(hubSkuPending);
+            }
+
+        }
+
     }
 
 

@@ -90,6 +90,9 @@ public class PendingHandler {
 	@Autowired
 	SpuPendingHandler spuPendingHandler;
 
+	@Autowired
+	PendingCommonHandler pendingCommonHandler;
+
 	static Map<String, String> genderStaticMap = null;
 
 	static Map<String, Map<String, String>> supplierCategoryMappingStaticMap = null;
@@ -182,7 +185,9 @@ public class PendingHandler {
                         this.updateSku(hubSpuPending, sku, headers, filterFlag);
 
                     } else if (skuStatus == MessageType.MODIFY_PRICE.getIndex()) {
-                        // TODO 处理自动调整价格
+                        // TODO 处理自动调整价格    现先处理库存
+						dataSverviceUtil.updateStock(sku);
+
                     } else{
 						if (null == hubSkuPending) {
 							this.addNewSku(hubSpuPending, pendingSpu, sku, headers, filterFlag);
@@ -552,7 +557,7 @@ public class PendingHandler {
 			setOriginStaticMap();
 
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				setOriginStaticMap();
 			}
 		}
@@ -596,19 +601,20 @@ public class PendingHandler {
 
 				} else {
 					result = false;
-
+//					hubSpuPending.setHubCategoryNo(pendingCommonHandler.getSpCategoryValue(spu.getHubCategoryNo()));
 					hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				}
 
 			} else {
 
 				result = false;
-				hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//				hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				dataServiceHandler.saveHubCategory(spu.getSupplierId(), spu.getHubCategoryNo(), spu.getHubGender());
 
 			}
 		} else {
 			result = false;
+//			hubSpuPending.setHubCategoryNo(pendingCommonHandler.getSpCategoryValue(spu.getHubCategoryNo()));
 			hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 			dataServiceHandler.saveHubCategory(spu.getSupplierId(), spu.getHubCategoryNo(), spu.getHubGender());
 
@@ -659,7 +665,7 @@ public class PendingHandler {
 			if (!brandModelStaticMap.containsKey(hubBrandNo)) {// 未包含
 				this.setBrandModelValueToMap(hubBrandNo);
 			} else {
-				if (isNeedHandle()) {// 包含 需要重新拉取
+				if (pendingCommonHandler.isNeedHandle()) {// 包含 需要重新拉取
 					this.setBrandModelValueToMap(hubBrandNo);
 				}
 			}
@@ -1046,7 +1052,7 @@ public class PendingHandler {
 			if (!supplierCategoryMappingStaticMap.containsKey(supplierId)) {// 未包含
 				this.setSupplierCategoryValueToMap(supplierId);
 			} else {
-				if (isNeedHandle()) {// 包含 需要重新拉取
+				if (pendingCommonHandler.isNeedHandle()) {// 包含 需要重新拉取
 					this.setSupplierCategoryValueToMap(supplierId);
 				}
 			}
@@ -1108,7 +1114,7 @@ public class PendingHandler {
 			setGenderValueToMap(supplierId);
 		} else {
 
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				setGenderValueToMap(supplierId);
 			}
 
@@ -1150,7 +1156,7 @@ public class PendingHandler {
 			;
 
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getBrand();
 				for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
 					brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
@@ -1176,7 +1182,7 @@ public class PendingHandler {
 			}
 
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				for (ColorDTO dto : dataServiceHandler.getColorDTO()) {
 					colorStaticMap.put(dto.getSupplierColor(), dto.getHubColorName());
 					hubColorStaticMap.put(dto.getHubColorName(), "");
@@ -1203,7 +1209,7 @@ public class PendingHandler {
 			setSeasonStaticMap();
 
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				setSeasonStaticMap();
 			}
 
@@ -1240,7 +1246,7 @@ public class PendingHandler {
 				materialStaticMap.put(dto.getSupplierMaterial(), dto.getHubMaterial());
 			}
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
 				for (MaterialDTO dto : materialDTOS) {
 					materialStaticMap.put(dto.getSupplierMaterial(), dto.getHubMaterial());
@@ -1294,21 +1300,7 @@ public class PendingHandler {
 		return result;
 	}
 
-	/**
-	 * 在指定时间段 重新获取所有数据
-	 * 
-	 * @return
-	 */
-	private boolean isNeedHandle() {
-		int min = DateUtils.getCurrentMin();
-		if(min-isCurrentMin>=5||min-isCurrentMin<0){
-			isCurrentMin = min;
-			return true;
-		} else {
-			return false;
-		}
 
-	}
 
 	/**
 	 * 判断供应商的品牌和季节是不是有效
@@ -1344,7 +1336,7 @@ public class PendingHandler {
 			hubSupplierBrandFlag = new ConcurrentHashMap<>();
 			setHubSupplierBrandFlag();
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				setHubSupplierBrandFlag();
 			}
 		}
@@ -1375,7 +1367,7 @@ public class PendingHandler {
 			hubSeasonFlag = new ConcurrentHashMap<>();
 			setHubSeasonFlag();
 		} else {
-			if (isNeedHandle()) {
+			if (pendingCommonHandler.isNeedHandle()) {
 				setHubSeasonFlag();
 			}
 		}
