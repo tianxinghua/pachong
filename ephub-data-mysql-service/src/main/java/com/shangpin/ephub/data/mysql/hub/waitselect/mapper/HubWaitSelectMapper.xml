@@ -5,6 +5,7 @@
     <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
     <result column="color" property="color" jdbcType="VARCHAR" />
     <result column="sku_size" property="skuSize" jdbcType="VARCHAR" />
+    
     <result column="sku_size_id" property="skuSizeId" jdbcType="VARCHAR" />
     <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
@@ -20,6 +21,7 @@
     <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
     <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
     <result column="season" property="season" jdbcType="VARCHAR" />
+    <result column="sku_size_type" property="skuSizeType" jdbcType="VARCHAR" />
     <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
     <result column="spu_state" property="spuState" jdbcType="TINYINT" />
     <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
@@ -44,8 +46,8 @@
   
   <select id="selectList" resultMap="BaseResultMap" >
     select
-   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_select_state,map.supplier_sku_no,map.memo,
-   	sku.sku_id,sku.sku_no,sku.sp_sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
+   	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_select_state,map.supplier_sku_no,map.memo,map.update_time,
+   	sku.sku_id,sku.sku_no,sku.sp_sku_no,sku.sku_size,sku.sku_size_id,sku.sku_size_type,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
    	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
     from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
@@ -73,13 +75,13 @@
 	 </if>
 	
 	   <if test="null!=startDate">
-                and sku.update_time >=#{startDate}
+                and map.update_time >=#{startDate}
       </if>      
             
       <if test="null!=endDate">
-           <![CDATA[ and sku.update_time <=#{endDate}    ]]>
+           <![CDATA[ and map.update_time <=#{endDate}    ]]>
       </if>
-      ORDER BY update_time desc
+      ORDER BY map.update_time desc
       limit #{pageNo} , #{pageSize}
   </select>
    <select id="count" resultType="java.lang.Long" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectRequest">
@@ -118,7 +120,7 @@
    <select id="selectDetail" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.hub.waitselect.bean.HubWaitSelectDetailRequest">
     select
    	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_sku_no,map.supplier_spu_model,map.supplier_select_state,map.barcode,
-   	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,
+   	sku.sku_id,sku.sku_no,sku.sku_size,sku.sku_size_id,sku.update_time,sku.sku_size_type,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
    	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
     from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  

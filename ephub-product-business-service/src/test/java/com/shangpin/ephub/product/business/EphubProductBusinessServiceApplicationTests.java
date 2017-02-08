@@ -69,8 +69,8 @@ public class EphubProductBusinessServiceApplicationTests {
 	public void testGetProductSize(){
 		try {
 			SizeRequestDto request = new SizeRequestDto();
-			request.setBrandNo("B0084");
-			request.setCategoryNo("A03B01C02D05");
+			request.setBrandNo("B03258");
+			request.setCategoryNo("A02B02C05D12");
 			BasicDataResponse<?> response = httpClient.postForObject(ApiAddressProperties.getGmsSizeUrl(), request, BasicDataResponse.class);
 			System.out.println(response);
 		} catch (Exception e) {
@@ -86,13 +86,13 @@ public class EphubProductBusinessServiceApplicationTests {
 //		System.out.println(dto);
 //	}
 	
-	public static void main(String[] args) {
-		SupplierDTO dto = new SupplierDTO();
-		dto.setAccount("account");
-		dto.setAccountBank("accountBank");
-		String json = JsonUtil.serialize(dto);
-		SupplierDTO dto2 = JsonUtil.deserialize(json, SupplierDTO.class);
-		System.out.println(dto2);
-	}
+//	public static void main(String[] args) {
+//		SupplierDTO dto = new SupplierDTO();
+//		dto.setAccount("account");
+//		dto.setAccountBank("accountBank");
+//		String json = JsonUtil.serialize(dto);
+//		SupplierDTO dto2 = JsonUtil.deserialize(json, SupplierDTO.class);
+//		System.out.println(dto2);
+//	}
 
 }

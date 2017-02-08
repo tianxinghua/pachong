@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +69,12 @@ public class HubWaitSelectedController {
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
+					if(StringUtils.isNotBlank(hubWaitSelectResponseDto.getSkuSizeType())){
+						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSizeType()+":"+hubWaitSelectResponseDto.getSkuSize());	
+					}else{
+						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
+					}
+					
 					HubWaitSelectResponse.setUpdateTime(sim.format(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}
@@ -102,6 +109,11 @@ public class HubWaitSelectedController {
 					HubWaitSelectedDetailResponse HubWaitSelectResponse = new HubWaitSelectedDetailResponse();
 					log.info("待选品详情的detail数据：{}",hubWaitSelectResponseDto);
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
+					if(StringUtils.isNotBlank(hubWaitSelectResponseDto.getSkuSizeType())){
+						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSizeType()+":"+hubWaitSelectResponseDto.getSkuSize());	
+					}else{
+						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
+					}
 					arr.add(HubWaitSelectResponse);
 				}
 				log.info("待选品详情返回的数据：{}",arr);
