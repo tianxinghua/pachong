@@ -77,5 +77,5 @@ public interface IPendingProductService {
 	 * @param supplierSpuId
 	 * @return
 	 */
-	public SupplierProductVo findSupplierProduct(String supplierSpuId);
+	public SupplierProductVo findSupplierProduct(Long supplierSpuId);
 }
