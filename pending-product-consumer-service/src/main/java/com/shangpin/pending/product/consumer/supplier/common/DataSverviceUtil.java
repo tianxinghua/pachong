@@ -179,13 +179,24 @@ public class DataSverviceUtil {
     }
 
 
-    public  void updateStock(PendingSku supplierSku){
+    public  void updatePriceOrStock(PendingSku supplierSku){
         if(null!=supplierSku){
             HubSkuPendingDto originSkuPending =  dataServiceHandler.getHubSkuPending(supplierSku.getSupplierId(),supplierSku.getSupplierSkuNo());
             if(null!=originSkuPending){
                 HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
                 hubSkuPending.setSkuPendingId(originSkuPending.getSkuPendingId());
-                hubSkuPending.setStock(supplierSku.getStock());
+                if(null!=supplierSku.getStock()){
+                    hubSkuPending.setStock(supplierSku.getStock());
+                }
+                if(null!=supplierSku.getMarketPrice()){
+                    hubSkuPending.setMarketPrice(supplierSku.getMarketPrice());
+                }
+                if(null!=supplierSku.getSalesPrice()){
+                    hubSkuPending.setSalesPrice(supplierSku.getSalesPrice());
+                }
+                if(null!=supplierSku.getSupplyPrice()){
+                    hubSkuPending.setSupplyPrice(supplierSku.getSupplyPrice());
+                }
                 Date date = new Date();
                 hubSkuPending.setUpdateTime(date);
 

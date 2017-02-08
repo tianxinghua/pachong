@@ -186,7 +186,7 @@ public class PendingHandler {
 
                     } else if (skuStatus == MessageType.MODIFY_PRICE.getIndex()) {
                         // TODO 处理自动调整价格    现先处理库存
-						dataSverviceUtil.updateStock(sku);
+						dataSverviceUtil.updatePriceOrStock(sku);
 
                     } else{
 						if (null == hubSkuPending) {
