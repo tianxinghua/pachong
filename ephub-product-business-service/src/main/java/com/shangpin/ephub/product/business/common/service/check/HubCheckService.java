@@ -96,7 +96,7 @@ public class HubCheckService {
 	}
 	
 	public HubPendingSpuCheckResult checkSpu(HubSpuPendingDto hubProduct){
-		boolean flag = false;
+		
 		StringBuffer str = new StringBuffer();
 		//品牌
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
@@ -105,11 +105,15 @@ public class HubCheckService {
 		if(StringUtils.isNotBlank(hubProduct.getHubBrandNo())){
 			if(!getBrand(hubProduct.getHubBrandNo())){
 				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
+				result.setBrand(false);
 				result.setPassing(false);
-			}	
+			}else{
+				result.setBrand(true);
+			}
 		}else{
 			str.append("品牌编号为空，");
 			result.setPassing(false);
+			result.setBrand(false);
 		}
 		
 		//校验品类
@@ -117,10 +121,14 @@ public class HubCheckService {
 			if(!getCategoryName(hubProduct.getHubCategoryNo())){
 				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
-			}	
+				result.setCategory(false);
+			}else{
+				result.setCategory(true);
+			}
 		}else{
 			str.append("品类编号为空，");
 			result.setPassing(false);
+			result.setCategory(false);
 		}
 		
 		//校验颜色
@@ -128,10 +136,14 @@ public class HubCheckService {
 			if(!checkHubColor(hubProduct.getHubColor())){	
 				str.append("颜色编号"+hubProduct.getHubColor()+"不存在,") ;
 				result.setPassing(false);
+				result.setColor(false);
+			}else{
+				result.setColor(true);
 			}
 		}else{
 			str.append("颜色为空，");
 			result.setPassing(false);
+			result.setColor(false);
 		}
 		
 		//校验季节
@@ -139,9 +151,13 @@ public class HubCheckService {
 			if(!checkHubSeason(hubProduct.getHubSeason())){
 				str.append("季节编号"+hubProduct.getHubSeason()+"不存在,") ;
 				result.setPassing(false);
+				result.setSeasonName(false);
+			}else{
+				result.setSeasonName(true);
 			}
 		}else{
 			str.append("季节为空，");
+			result.setSeasonName(false);
 			result.setPassing(false);
 		}
 		
@@ -150,30 +166,42 @@ public class HubCheckService {
 			if(!checkHubGender(hubProduct.getHubGender())){
 				str.append("性别编号"+hubProduct.getHubGender()+"不存在") ;
 				result.setPassing(false);
-			}	
+				result.setGender(false);
+			}else{
+				result.setGender(true);
+			}
 		}else{
 			str.append("性别为空，");
 			result.setPassing(false);
+			result.setGender(false);
 		}
 		//校验材质
 		if(StringUtils.isNoneBlank(hubProduct.getHubMaterial())){
 			if(!RegexUtil.excludeLetter(hubProduct.getHubMaterial())){
 				result.setPassing(false);
 				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
+				result.setMaterial(false);
+	        }else{
+	        	result.setMaterial(true);
 	        }
 		}else{
 			str.append("材质为空，");
 			result.setPassing(false);
+			result.setMaterial(false);
 		}
 		//校验产地
 		if(StringUtils.isNotBlank(hubProduct.getHubOrigin())){
 			if(!checkHubOrigin(hubProduct.getHubOrigin())){
 				str.append("产地"+hubProduct.getHubOrigin()+"不存在") ;
 				result.setPassing(false);
+				result.setOriginal(false);
+			}else{
+				result.setOriginal(true);
 			}	
 		}else{
 			str.append("产地为空");
 			result.setPassing(false);
+			result.setOriginal(false);
 		}
 		
 		result.setResult(str.toString());

@@ -59,7 +59,14 @@ public class MatchSizeService{
 						}
 					}
 				}
+				
+				if(!flag){
+					result = "尺码："+dto.getSize()+"未匹配成功";
+				}
+				
 			}
+		}else{
+			result = "尺码："+dto.getSize()+"未匹配成功";
 		}
 		matchSizeResult.setResult(result);
 		matchSizeResult.setPassing(flag);
