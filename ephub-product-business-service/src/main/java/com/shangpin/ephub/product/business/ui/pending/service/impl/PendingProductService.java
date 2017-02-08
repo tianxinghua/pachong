@@ -281,6 +281,8 @@ public class PendingProductService implements IPendingProductService{
                 	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
                 	log.info("从页面接收到的尺码信息===="+hubSkuSize); 
                 	if(hubSkuSize.startsWith("排除")){
+                		hubSkuPendingDto.setHubSkuSizeType("排除");
+                		hubSkuPendingDto.setHubSkuSize(null);//目的是不更新尺码值
                 		hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                 	}else if(hubSkuSize.startsWith("尺寸")){
@@ -377,12 +379,12 @@ public class PendingProductService implements IPendingProductService{
 
     }
     @Override
-	public SupplierProductVo findSupplierProduct(String supplierSpuId) {
+	public SupplierProductVo findSupplierProduct(Long supplierSpuId) {
     	SupplierProductVo supplierProductVo = new SupplierProductVo();
     	try {
-        	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(Long.valueOf(supplierSpuId));
+        	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(supplierSpuId);
         	JavaUtil.fatherToChild(spuDto,supplierProductVo);
-        	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(Long.valueOf(supplierSpuId));
+        	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(supplierSpuId);
         	if(CollectionUtils.isNotEmpty(supplierSku)){
         		supplierProductVo.setSupplierSku(supplierSku);
         	}
@@ -556,6 +558,10 @@ public class PendingProductService implements IPendingProductService{
      */
     private HubSpuPendingCriteriaDto findhubSpuPendingCriteriaFromPendingQury(PendingQuryDto pendingQuryDto){
     	HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto = new HubSpuPendingCriteriaDto();
+    	if(null != pendingQuryDto.getSpuPendingId()){
+    		hubSpuPendingCriteriaDto.createCriteria().andSpuPendingIdEqualTo(pendingQuryDto.getSpuPendingId());
+    		return hubSpuPendingCriteriaDto;
+    	}
     	hubSpuPendingCriteriaDto.setOrderByClause("update_time desc");
     	if(!StringUtils.isEmpty(pendingQuryDto.getPageIndex()) && !StringUtils.isEmpty(pendingQuryDto.getPageSize())){
             hubSpuPendingCriteriaDto.setPageNo(pendingQuryDto.getPageIndex());
