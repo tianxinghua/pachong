@@ -30,12 +30,15 @@ public class FTPClientUtil {
 	
 	@PostConstruct
 	public void init(){
-		host = ftpProperties.getHost();
-		port = ftpProperties.getPort();
-		userName = ftpProperties.getUserName();
-		password = ftpProperties.getPassword();
-		ftpHubPatht = ftpProperties.getFtpHubPath();
-		exportPath = ftpProperties.getExportPath();
+		if(ftpProperties!=null){
+			host = ftpProperties.getHost();
+			port = ftpProperties.getPort();
+			userName = ftpProperties.getUserName();
+			password = ftpProperties.getPassword();
+			ftpHubPatht = ftpProperties.getFtpHubPath();
+			exportPath = ftpProperties.getExportPath();
+		}
+	
 	}
 	private static FTPClient ftp = null;
 	static {

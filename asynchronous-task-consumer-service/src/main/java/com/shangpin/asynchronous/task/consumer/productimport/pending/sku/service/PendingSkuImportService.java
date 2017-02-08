@@ -1,16 +1,13 @@
 package com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service;
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,10 +21,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
@@ -140,8 +133,7 @@ public class PendingSkuImportService {
 			log.info(hubPendingSpuDto.getSpuModel() + "已存在pendingSpu");
 			isPendingSpuExist = listSpu.get(0);
 		}
-		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map);
-		
+		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
 		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,product,false);
@@ -160,6 +152,8 @@ public class PendingSkuImportService {
 		if(hubPendingSkuDto.getSupplyPrice()!=null){
 			hubPendingSkuDto.setSupplyPrice(new BigDecimal(product.getSupplyPrice()));	
 		}
+		hubPendingSkuDto.setHubSkuSize(product.getHubSkuSize());
+		hubPendingSkuDto.setHubSkuSizeType(product.getSizeType());
 		return hubPendingSkuDto;
 	}
 
