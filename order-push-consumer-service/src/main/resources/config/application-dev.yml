@@ -192,6 +192,18 @@ shangpin:
               isPurchaseExp: true
               openApiKey: 0f2c32ad59974f3491015af961940df1
               openApiSecret: 4b21ee81b8b74727880f5ecb18589efa
+      lamborghiniConf:
+              cancelUrl: http://lamborghini.edstema.it/api/v3.0/cancel/order.json?storeCode=8CJXT
+              placeUrl: http://lamborghini.edstema.it/api/v3.0/place/order.json?storeCode=8CJXT
+              isPurchaseExp: no
+              openApiKey: 1fcc121b19a44943a2de62d8aa7c16a0
+              openApiSecret: d1d1169169564e4ca66afbb8b7c8db68
+      palomaBarceloConf:
+              cancelUrl: http://barcelo.edstema.it/api/v3.0/cancel/order.json?storeCode=8CJXT
+              placeUrl: http://barcelo.edstema.it/api/v3.0/place/order.json?storeCode=8CJXT
+              isPurchaseExp: no
+              openApiKey: 6c628d64ca334fd8ac570161786e687d
+              openApiSecret: d67c43d9a76e4080ba302e3d6c6c8d8b
       genteroma: 
               url: http://extcloud.genteroma.net:8088/ws_sito/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace
@@ -368,7 +380,15 @@ shangpin:
               key: MPm32XJp7M
               isPurchaseExp: no
               openApiKey: 
-              openApiSecret: 
+              openApiSecret:
+      baseBlu:
+              stockUrl: http://77.81.230.19/WexComServerTest/StockEc/GetStockByEan13
+              orderCreateUrl: http://77.81.230.19/WexComServerTest/DocumentEc/SHAInsertOrderEc
+              orderQueryUrl: http://77.81.230.19/WexComServerTest/DocumentEc/SHAGetListOrderDetailEc
+              sKey: SHA
+              isPurchaseExp: no
+              openApiKey:
+              openApiSecret:
       supplier:
               delayTime: 1000
               retry: 120

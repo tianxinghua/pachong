@@ -96,5 +96,7 @@ public class SupplierProperties {
 	private Carofiglio carofiglio;
 	private Tufano tufano;
 	private Lungolivigno lungolivigno;
+
+	private BaseBlu baseBlu;
 	
 }

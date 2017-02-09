@@ -14,7 +14,7 @@ import java.io.Serializable;
 @ToString
 public class BaseBlu extends SupplierCommon implements Serializable {
 
-    private String url;
+
 
     private String stockUrl;
 
