@@ -63,9 +63,10 @@ public class EpOrderServiceApplicationTests {
 	@Test
 	public void testPushOrder(){
 		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("9900038981467:1");
+		orderDTO.setDetail("9900041846920:1");
 		orderDTO.setSupplierNo("2016080801914");
 		orderDTO.setSpMasterOrderNo("20170209001");
+		orderDTO.setPurchaseNo("CGDF20170209001");
 		baseBluServiceImpl.handleConfirmOrder(orderDTO);
 	}
 

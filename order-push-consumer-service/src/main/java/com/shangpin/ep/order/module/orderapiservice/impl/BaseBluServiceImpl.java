@@ -1,5 +1,6 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ep.order.common.LogCommon;
@@ -47,7 +48,7 @@ public class BaseBluServiceImpl implements IOrderService {
 
     }
 
-    OutTimeConfig outTimeConf =  new OutTimeConfig(1000*3,1000*10,1000*10);
+    OutTimeConfig outTimeConf =  new OutTimeConfig(1000*3,1000*60,1000*60);
 
     ObjectMapper mapper = new ObjectMapper();
     @Override
@@ -87,6 +88,7 @@ public class BaseBluServiceImpl implements IOrderService {
                     return;
                 }else{
                     try {
+                        result = result.substring(1,result.length()-1);
                         OrderResult orderResult =  mapper.readValue(result, OrderResult.class);
                         if(orderResult.getCodMsg().equals("0")){
                             orderDTO.setConfirmTime(new Date());
@@ -131,7 +133,10 @@ public class BaseBluServiceImpl implements IOrderService {
         String stockResult  = HttpUtil45.get(stockUrl,outTimeConf,null);
         LogCommon.recordLog(stockResult,LogLeve.DEBUG);
         if(stockResult.indexOf("Stock")>=0){
-            JSONObject obj = new JSONObject();
+            stockResult = stockResult.substring(1,stockResult.length()-1);
+
+            JSONObject obj = JSON.parseObject(stockResult);;
+
             int num = obj.getIntValue("Stock");
             if(num > 0 ){
                 return true;
