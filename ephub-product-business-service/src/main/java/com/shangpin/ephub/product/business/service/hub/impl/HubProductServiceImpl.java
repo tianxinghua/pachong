@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,9 @@ public class HubProductServiceImpl implements HubProductService {
                     productDto.setSkuList(skuOrgDoms);
                     //推送
                     HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+                    ObjectMapper mapper = new ObjectMapper();
+                    log.info("send scm parameter: " + mapper.writeValueAsString(productDto));
+
                     ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
                             requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
                             });
@@ -163,7 +167,7 @@ public class HubProductServiceImpl implements HubProductService {
         skuOrgDom.setSkuOrgInfoId(0L);
         skuOrgDom.setSkuOrgName(hubSpuDto.getSpuName());
         skuOrgDom.setBarCode(null==hubSkuSupplierMappingDto.getBarcode()?"":hubSkuSupplierMappingDto.getBarcode());
-        log.info("barcode ="+ skuOrgDom.getBarCode());
+//        log.info("barcode ="+ skuOrgDom.getBarCode());
         skuOrgDom.setSupplierSkuNo(hubSkuSupplierMappingDto.getSupplierSkuNo());
         skuOrgDom.setSkuNo("");
         skuOrgDom.setSupplierNo(hubSkuSupplierMappingDto.getSupplierNo());
