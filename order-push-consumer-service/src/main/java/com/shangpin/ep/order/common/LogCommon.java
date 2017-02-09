@@ -30,7 +30,7 @@ public class LogCommon {
      * @param logTypeStatus
      */
     public static void loggerOrder(OrderDTO orderDTO, LogTypeStatus logTypeStatus){
-        recodeLog(LogLeve.INFO,logFormat,getLogContent(orderDTO));
+        recordLog(LogLeve.INFO,logFormat,getLogContent(orderDTO));
 
     }
 
@@ -41,10 +41,11 @@ public class LogCommon {
      */
     public static void loggerOrder(OrderDTO orderDTO, LogLeve logLeve){
 
-           recodeLog(logLeve,logFormat,getLogContent(orderDTO));
+        recordLog(logLeve,logFormat,getLogContent(orderDTO));
 
 
     }
+
 
 
 
@@ -53,7 +54,7 @@ public class LogCommon {
     }
 
     public static void recordLog(String content){
-        recodeLog(LogLeve.INFO,content);
+        recordLog(LogLeve.INFO,content);
     }
 
     /**
@@ -62,18 +63,18 @@ public class LogCommon {
      * @param logLeve   ：日志级别
      */
     public static void recordLog(String content, LogLeve logLeve){
-        recodeLog(logLeve,content);
+        recordLog(logLeve,content);
     }
 
     public static void recordLog(String content,Exception e){
-
+        recordLog(content,LogLeve.INFO,e);
     }
 
     public static void recordLog(String content, LogLeve logLeve,Exception e){
-        recodeLog(logLeve,content + " exceptionLog:" + e.getMessage() );
+        recordLog(logLeve,content + " exceptionLog:" + e.getMessage() );
     }
 
-    private static void recodeLog(LogLeve logLeve,String format,Object... obj){
+    private static void recordLog(LogLeve logLeve,String format,Object... obj){
          if("TRACK".equals(logLeve.getDescription())){
              log.trace(format,obj);
          }else  if("DEBUG".equals(logLeve.getDescription())) {
@@ -87,7 +88,9 @@ public class LogCommon {
          }
     }
 
-    private static void recodeLog(LogLeve logLeve,String content){
+
+
+    private static void recordLog(LogLeve logLeve,String content){
         if("TRACK".equals(logLeve.getDescription())){
             log.trace(content);
         }else  if("DEBUG".equals(logLeve.getDescription())) {

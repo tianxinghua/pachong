@@ -389,6 +389,14 @@ shangpin:
                   openApiKey: 3ad363bca5f945629b31f1ab238ec73e
                   openApiSecret: dd9a3156581d4b9ba87f293f61148361
                   isPurchaseExp: no
+          baseBlu:
+                  stockUrl: http://88.37.81.130/WexComServer/StockEc/GetStockByEan13
+                  orderCreateUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAInsertOrderEc
+                  orderQueryUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAGetListOrderDetailEc
+                  sKey: SHA
+                  isPurchaseExp: no
+                  openApiKey:
+                  openApiSecret:
           supplier:
                   delayTime: 1000
                   retry: 120

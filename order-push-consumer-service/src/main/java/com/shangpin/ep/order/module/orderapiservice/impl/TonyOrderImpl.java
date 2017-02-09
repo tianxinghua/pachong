@@ -1,5 +1,6 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -8,6 +9,8 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
+import com.shangpin.ep.order.enumeration.LogLeve;
+import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,12 +54,18 @@ public class TonyOrderImpl implements IOrderService {
     private  String merchantId = null;
     private  String token = null;
     private  String url = null;
-    
-    @PostConstruct
+	private  String appKey;
+	private  String appSe;
+	@Autowired
+	OpenApiService openApiService;
+
+	@PostConstruct
     public void init(){
     	url = supplierProperties.getTonyConf().getUrl();
     	token = supplierProperties.getTonyConf().getToken();
     	merchantId = supplierProperties.getTonyConf().getMerchantId();
+		appKey =  supplierProperties.getTonyConf().getOpenApiKey();
+		appSe =  supplierProperties.getTonyConf().getOpenApiSecret();
     }
     
     public static String CANCELED = "CANCELED";
@@ -297,7 +306,7 @@ public class TonyOrderImpl implements IOrderService {
 	        item.setQty(num);
 	        item.setSku(skuNo);
 	        double totalPrice = 0;
-        	String price = orderDTO.getPurchasePriceDetail();
+        	String price = this.getPurchasePrice(orderDTO);//orderDTO.getPurchasePriceDetail();
         	item.setPrice(price);	
         	totalPrice = (Double.parseDouble(price))*num;
 	        item.setCur(1);
@@ -344,6 +353,20 @@ public class TonyOrderImpl implements IOrderService {
 		}
         return  order;
     }
+
+    private String getPurchasePrice(OrderDTO orderDTO){
+		String price = "10";
+		try {
+			BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+			price = priceInt.divide(new BigDecimal(1.05), 2)
+                    .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+			orderDTO.setPurchasePriceDetail(price);
+		} catch (Exception e) {
+			LogCommon.recordLog("获取采购单："+ orderDTO.getPurchaseNo()+" 价格错误。错误原因："+e.getMessage(), LogLeve.ERROR,e);
+		}
+		return price;
+	}
+
 
     private static String getUTCTime(){
     	// 1、取得本地时间：  

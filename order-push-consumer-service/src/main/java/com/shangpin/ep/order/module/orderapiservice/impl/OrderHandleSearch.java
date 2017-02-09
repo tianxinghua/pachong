@@ -138,6 +138,11 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("carofiglioOrderImpl")
 	IOrderService carofiglioOrderImpl;
+
+	@Autowired
+	@Qualifier("baseBluServiceImpl")
+	IOrderService baseBluServiceImpl;
+
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -218,6 +223,8 @@ public class OrderHandleSearch {
 			return lamborghiniOrderImpl;
 		}else if ("2016080301913".equals(supplierId)) {
 			return palomaBarceloOrderImpl;
+		}else if ("2016080801914".equals(supplierId)) {
+			return baseBluServiceImpl;
 		}else {
 			return null;
 		}
@@ -293,6 +300,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getLamborghiniConf();
 		}else if ("2016080301913".equals(supplierId)) {
 			return supplierProperties.getPalomaBarceloConf();
+		}else if ("2016080801914".equals(supplierId)) {
+			return supplierProperties.getBaseBlu();
 		}else {
 			return null;
 		}
