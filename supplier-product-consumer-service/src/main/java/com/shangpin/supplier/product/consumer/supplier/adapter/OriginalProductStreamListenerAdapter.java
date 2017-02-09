@@ -46,7 +46,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("monnierHandler")
 	private ISupplierHandler monnierfreresHandler;
-
+	@Autowired
+	@Qualifier("giglioHandler")
+	private ISupplierHandler giglioHandler;
 
 	@Autowired
 	@Qualifier("eleonoraHandler")
@@ -338,7 +340,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void giglioStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		giglioHandler.handleOriginalProduct(message, headers); 
 		
 	}
 
