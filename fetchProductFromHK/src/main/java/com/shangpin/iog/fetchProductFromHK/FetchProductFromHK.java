@@ -35,7 +35,6 @@ public class FetchProductFromHK {
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
 	private static String relationFlag;
-	public static String productFlag;
 	public static String endDate;
 	public static String startDate;
 	private static String smtpHost = null;
@@ -50,8 +49,6 @@ public class FetchProductFromHK {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		relationFlag = bdl.getString("relationFlag");
-		productFlag = bdl.getString("productFlag");
 		startDate = bdl.getString("startDate");
 		endDate = bdl.getString("endDate");
 		
