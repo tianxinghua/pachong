@@ -22,6 +22,7 @@ import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SupplierStockDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SupplierStockService;
+import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.iog.tony.common.Constant;
 import com.shangpin.iog.tony.dto.EventDTO;
 import com.shangpin.iog.tony.dto.ReturnDTO;
@@ -43,6 +44,8 @@ public class TonyStockImp {
     SupplierStockService supplierStockService;
     @Autowired
     SkuRelationService skuRelationService;
+    @Autowired
+    UpdateStockService updateStockService;
     public void  fetchStock() {
 
         Gson gson = new Gson();
@@ -122,6 +125,13 @@ public class TonyStockImp {
             }
 
         }
+        
+        try {
+			updateStockService.updateTime(Constant.SUPPLIER_ID);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -135,7 +145,10 @@ public class TonyStockImp {
             for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
                 try {
                     SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
-                    skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+                    if(skuRelationDTO!=null){
+                    	skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());	
+                    }
+                    
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }
