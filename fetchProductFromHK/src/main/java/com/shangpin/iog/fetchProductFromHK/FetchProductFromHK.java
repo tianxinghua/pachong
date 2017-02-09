@@ -17,12 +17,15 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SpuDTO;
+import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.ProductFetchService;
+import com.shangpin.iog.service.SupplierService;
 
 @Component("fetchProductFromHK")
 public class FetchProductFromHK {
@@ -35,6 +38,14 @@ public class FetchProductFromHK {
 	public static String productFlag;
 	public static String endDate;
 	public static String startDate;
+	private static String smtpHost = null;
+	private static String from = null;
+	private static String fromUserPassword = null;
+	private static String to = null;
+	private static String subject = null;
+	private static String messageText = null;
+	private static String messageType = null;
+
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
@@ -43,9 +54,21 @@ public class FetchProductFromHK {
 		productFlag = bdl.getString("productFlag");
 		startDate = bdl.getString("startDate");
 		endDate = bdl.getString("endDate");
+		
+		
+
+		smtpHost = bdl.getString("smtpHost");
+		from = bdl.getString("from");
+		fromUserPassword = bdl.getString("fromUserPassword");
+		to = bdl.getString("to");
+		subject = bdl.getString("subject");
+		messageText = bdl.getString("messageText");
+		messageType = bdl.getString("messageType");
 	}
-	
-	
+
+
+	@Autowired
+	SupplierService supplierService;
 	@Autowired
 	private ProductFetchService productFetchService;
 	private static ApplicationContext factory;
@@ -61,67 +84,20 @@ public class FetchProductFromHK {
 		FetchProductFromHK o = (FetchProductFromHK) factory
 				.getBean("fetchProductFromHK");
 		try {
-			o.fetchRelationFromHK();
 			o.fetchProductFromHK();
+//			o.fetchRelationFromHK();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void fetchRelationFromHK() {
-		if(StringUtils.isNotBlank(supplierId)){
-			String [] arraySupplierId = supplierId.split(",",-1);
-			for(String supplier:arraySupplierId){
-				saveRelationFromHKBySupplierId(supplier);
-			}
-			
-		}else if ("false".equals(relationFlag)) {
-			System.out.println("false");
-			saveRelationDayFromHK();
-		} else {
-			//true 表示拉取所有的
-			System.out.println("true");
-			fetchAndsaveAllRelationFromHK();
-//			writeGrapDate("false", "initRelation.ini");
-
-		}
-		
-		
-//		//false 表示按每天拉取
-		if ("false".equals(relationFlag)) {
-			System.out.println("false");
-			saveRelationDayFromHK();
-		} else {
-			//true 表示拉取所有的
-			System.out.println("true");
-			fetchAndsaveAllRelationFromHK();
-//			writeGrapDate("false", "initRelation.ini");
-
-		}
-	}
 
 	private void saveRelationFromHKBySupplierId(String supplier) {
 		List<SkuRelationDTO> list = null;
-		try {
 			list = productFetchService.selectRelationFromHKBySupplierId(supplier);
-			logger.info("拉取"+supplier+"的relation总数："+list.size());
-			System.out.println("拉取"+supplier+"的relation总数："+list.size());
+			System.out.println("供应商"+supplier+"的relation总数："+list.size());
 			saveAllRelation(list);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void fetchAndsaveAllRelationFromHK() {
-		List<SkuRelationDTO> list = null;
-		try {
-			list = productFetchService.selectAllRelation();
-			logger.info("拉取所有的relation总数："+list.size());
-			System.out.println("拉取所有的relation总数："+list.size());
-			saveAllRelation(list);
-		} catch (ServiceException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void saveRelationDayFromHK() {
@@ -150,9 +126,9 @@ public class FetchProductFromHK {
 					j++;
 				}
 			}
-			logger.info("save success数量："+i);
+//			logger.info("save success数量："+i);
 			System.out.println("save success数量："+i);
-			logger.info("重复的数量："+j);
+//			logger.info("重复的数量："+j);
 			System.out.println("重复的数量："+j);
 			i=0;
 			j=0;
@@ -160,39 +136,57 @@ public class FetchProductFromHK {
 	}
 
 	public void fetchProductFromHK() {
-
-		//按供应商拉取数据
-		if(StringUtils.isNotBlank(supplierId)){
-			String [] arraySupplierId = supplierId.split(",",-1);
-			for(String supplier:arraySupplierId){
-				saveProductFromHKBySupplierId(supplier);
-			}
+		try {
+			//按供应商拉取数据
+			if(StringUtils.isNotBlank(supplierId)){
+				String [] arraySupplierId = supplierId.split(",",-1);
+				for(String supplier:arraySupplierId){
+					saveProductFromHKBySupplierId(supplier);
+					saveRelationFromHKBySupplierId(supplier);
+				}
+				
+			}else if(StringUtils.isNotBlank(startDate)){
+				saveProductFromHKByDate();
+			}else{
+				List<SupplierDTO> list = null;
+					list = supplierService.findByState("1");
+					System.out.println("拉取到待更新的供应商总数："+list.size());
+					for(SupplierDTO supp:list){
+						saveProductFromHKBySupplierId(supp.getSupplierId());
+						saveRelationFromHKBySupplierId(supp.getSupplierId());
+					}
+				} 
+	//			saveSkuDayFromHK();
+	//			saveSpuDayFromHK();
+	//			saveRelationDayFromHK();
+		}catch (final Exception e) {
 			
-		}else if(StringUtils.isNotBlank(startDate)){
-			saveProductFromHKByDate();
-		}else{
-			saveSkuDayFromHK();
-			saveSpuDayFromHK();
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						SendMail.sendMessage(
+								smtpHost,
+								from,
+								fromUserPassword,
+								to,
+								subject,
+								"从香港同步到本地数据出错，请检查原因:"+e.getMessage(),
+								messageType);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			t.start();
+			e.printStackTrace();
 		}
-		//false 表示按每天拉取
-//		if ("false".equals(supplierId)) {
-//			System.out.println("false");
-//			saveSkuDayFromHK();
-//			saveSpuDayFromHK();
-//		} else {
-//			//true 表示拉取所有的
-//			System.out.println("true");
-//			saveAllSkuFromHK();
-//			saveAllSpuFromHK();
-//			writeGrapDate("false", "initSkuSpu.ini");
-//
-//		}
 	}
 	private void saveProductFromHKByDate() {
 		List<ProductDTO> list = null;
 		try {
 			list = productFetchService.findProductByDate(startDate,endDate);
-			logger.info("拉取的供应商数据总数："+list.size());
+//			logger.info("拉取的供应商数据总数："+list.size());
 			System.out.println("今日拉取的供应商数据总数："+list.size());
 			saveSku(list);
 			saveSpu(list);
@@ -201,17 +195,12 @@ public class FetchProductFromHK {
 		}
 	}
 
-	private void saveProductFromHKBySupplierId(String supplier) {
+	private void saveProductFromHKBySupplierId(String supplier) throws Exception{
 		List<ProductDTO> list = null;
-		try {
-			list = productFetchService.findSkuBySupplierId(supplier);
-			logger.info("拉取的供应商:"+supplier+"数据总数："+list.size());
-			System.out.println("今日拉取的SKU总数："+list.size());
-			saveSku(list);
-			saveSpu(list);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		list = productFetchService.findSkuBySupplierId(supplier);
+		System.out.println("供应商:"+supplier+"的商品Product总数："+list.size());
+		saveSku(list);
+		saveSpu(list);
 		
 	}
 
@@ -220,7 +209,7 @@ public class FetchProductFromHK {
 		List<ProductDTO> list = null;
 		try {
 			list = productFetchService.selectSkuByDay();
-			logger.info("今日拉取的SKU总数："+list.size());
+//			logger.info("今日拉取的SKU总数："+list.size());
 			System.out.println("今日拉取的SKU总数："+list.size());
 			saveSku(list);
 		} catch (ServiceException e) {
@@ -234,7 +223,7 @@ public class FetchProductFromHK {
 		List<ProductDTO> list = null;
 		try {
 			list = productFetchService.selectSpuByDay();
-			logger.info("今日拉取的SPU总数："+list.size());
+//			logger.info("今日拉取的SPU总数："+list.size());
 			System.out.println("今日拉取的SPU总数："+list.size());
 			saveSpu(list);
 		} catch (ServiceException e1) {
@@ -247,7 +236,7 @@ public class FetchProductFromHK {
 		List<ProductDTO> list = null;
 		try {
 			list = productFetchService.selectAllSku();
-			logger.info("拉取的所有SKU总数："+list.size());
+//			logger.info("拉取的所有SKU总数："+list.size());
 			System.out.println("拉取的所有的SKU总数："+list.size());
 			saveSku(list);
 		} catch (ServiceException e1) {
@@ -260,7 +249,7 @@ public class FetchProductFromHK {
 		List<ProductDTO> list = null;
 		try {
 			list = productFetchService.selectAllSpu();
-			logger.info("拉取的所有SPU总数："+list.size());
+//			logger.info("拉取的所有SPU总数："+list.size());
 			System.out.println("拉取的所有的SPU总数："+list.size());
 			saveSpu(list);
 		} catch (ServiceException e1) {
@@ -290,16 +279,21 @@ public class FetchProductFromHK {
 				sku.setNewMarketPrice(pro.getNewMarketPrice());
 				sku.setNewSalePrice(pro.getNewSalePrice());
 				sku.setNewSupplierPrice(pro.getNewSupplierPrice());
+				sku.setSpSkuId(pro.getSpSkuId());
 				try {
 					productFetchService.saveSKU(sku);
 					i++;
 				} catch (ServiceException e) {
+//					if(sku.getSpSkuId()!=null){
+//						productFetchService.updateSpSkuId(sku.getSupplierId(),sku.getSkuId(),sku.getSpSkuId());	
+//					}
+					
 					j++;
 				}
 			}
-			logger.info("save success数量："+i);
+//			logger.info("save success数量："+i);
 			System.out.println("save success数量："+i);
-			logger.info("重复的数量："+j);
+//			logger.info("重复的数量："+j);
 			System.out.println("重复的数量："+j);
 			i=0;
 			j=0;
@@ -333,9 +327,9 @@ public class FetchProductFromHK {
 				}
 			}
 			
-			logger.info("save success数量："+m);
+//			logger.info("save success数量："+m);
 			System.out.println("save success数量："+m);
-			logger.info("重复的数量："+n);
+//			logger.info("重复的数量："+n);
 			System.out.println("重复的数量："+n);
 			m=0;
 			n=0;
