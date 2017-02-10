@@ -117,6 +117,7 @@ public class PendingSpuImportService {
 	}
 
 	private List<HubPendingSpuImportDTO> handlePendingSpuXlsx(InputStream in, ProductImportTask task, String type) throws Exception{
+		
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, type);
 		if (xssfSheet == null) {
 			return null;
@@ -169,7 +170,7 @@ public class PendingSpuImportService {
 			List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 			HubSpuPendingDto isSpuPendingExist = null;
 			if (listSpu != null && listSpu.size() > 0) {
-				log.info(product.getSpuModel()+"已存在hub");
+				log.info(product.getSpuModel()+"已存在pendingSpu");
 				isSpuPendingExist = listSpu.get(0);
 			}
 			
@@ -183,13 +184,13 @@ public class PendingSpuImportService {
 					criteria.setPageNo(1);
 					criteria.setPageSize(1000);
 					List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
-					log.info("查询尺码信息：{}",listSku);
 					if(listSku!=null&&listSku.size()>0){
 						for(HubSkuPendingDto sku:listSku){
 							HubPendingSkuCheckResult hubPendingSkuCheckResult = new HubPendingSkuCheckResult();
 							HubPendingProductImportDTO product1 = new HubPendingProductImportDTO();
 							product1.setSpecificationType(product.getSpecificationType());
 							product1.setHubSkuSize(sku.getHubSkuSize());
+							product1.setSizeType(sku.getHubSkuSizeType());
 							boolean isMultiSizeType = false;
 							if("尺码".equals(product.getSpecificationType())||StringUtils.isBlank(product.getSpecificationType())){
 								MatchSizeDto match = new MatchSizeDto();
@@ -212,7 +213,6 @@ public class PendingSpuImportService {
 								}else{
 									str.append(sku.getSupplierSkuNo()+"尺码为空").append(",");
 								}
-								
 							}else{
 								hubPendingSkuCheckResult.setPassing(true);
 								hubPendingSkuCheckResult.setResult(sku.getHubSkuSize());
@@ -225,7 +225,6 @@ public class PendingSpuImportService {
 			checkResult.setPassing(flag);
 			checkResult.setResult(str.toString());
 			taskService.checkPendingSpu(isSpuPendingExist,checkResult,hubPendingSpuDto,map,flag);
-			
 			boolean isPassing = Boolean.parseBoolean(map.get("isPassing"));
 			if (isPassing) {
 				taskService.sendToHub(hubPendingSpuDto, map);

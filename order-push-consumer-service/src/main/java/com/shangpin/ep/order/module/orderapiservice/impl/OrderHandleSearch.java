@@ -223,9 +223,11 @@ public class OrderHandleSearch {
 			return lamborghiniOrderImpl;
 		}else if ("2016080301913".equals(supplierId)) {
 			return palomaBarceloOrderImpl;
-		}else if ("2016080801914".equals(supplierId)) {
-			return baseBluServiceImpl;
-		}else {
+		}
+//		else if ("2016080801914".equals(supplierId)) {
+//			return null;
+//		}
+		else {
 			return null;
 		}
 	}
@@ -300,9 +302,11 @@ public class OrderHandleSearch {
 			return supplierProperties.getLamborghiniConf();
 		}else if ("2016080301913".equals(supplierId)) {
 			return supplierProperties.getPalomaBarceloConf();
-		}else if ("2016080801914".equals(supplierId)) {
-			return supplierProperties.getBaseBlu();
-		}else {
+		}
+//		else if ("2016080801914".equals(supplierId)) {
+//			return supplierProperties.getBaseBlu();
+//		}
+		else {
 			return null;
 		}
 	}
