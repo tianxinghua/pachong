@@ -1,6 +1,10 @@
 package com.shangpin.ephub.product.business.rest.size.service;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,27 +45,82 @@ public class MatchSizeService{
 		if(size!=null){
 			List<SizeStandardItem> list = size.getSizeStandardItemList();	
 			if(list!=null&&list.size()>0){
-				int i=0;
+			
+				Map<String,String> map2 = new HashMap<String,String>();
+				Map<String,String> map0 = new HashMap<String,String>();
 				for(SizeStandardItem item:list){
 					String sizeValue = item.getSizeStandardValue();
-					if(dto.getSize().equals(sizeValue)){
-						i++;
-						matchSizeResult.setSizeType(item.getSizeStandardName());
-						matchSizeResult.setSizeId(String.valueOf(item.getScreenSizeStandardValueId()));
-						matchSizeResult.setSizeValue(sizeValue);
-						matchSizeResult.setMultiSizeType(false);
-						flag = true;
-						if(i>=2){
-							result = "尺码："+sizeValue+"下含有多个尺码类型";
-							flag = false;
-							matchSizeResult.setMultiSizeType(true);
-							break;
-						}
+					String sizeStandardName = item.getSizeStandardName();
+					//筛选尺码
+					if(item.getIsScreening()==(byte)2){
+						map2.put(item.getScreenSizeStandardValueId()+","+sizeStandardName+":"+sizeValue,sizeValue);
+					}
+					//标准尺码
+					if(item.getIsScreening()==(byte)0){
+						map0.put(item.getScreenSizeStandardValueId()+","+sizeStandardName+":"+sizeValue,sizeValue);
 					}
 				}
 				
+				boolean isExist = false;
+				if (map0.size() > 0) {
+					int i = 0;
+					for (Map.Entry<String, String> entry : map0.entrySet()) {
+						String value = entry.getValue();
+						String key = entry.getKey();
+						if (dto.getSize().equals(value)) {
+							isExist = true;
+							i++;
+							String screenSizeStandardValueId = key.split(",", -1)[0];
+							String[] arr = key.split(",", -1)[1].split(":", -1);
+							if (arr.length == 2) {
+								matchSizeResult.setSizeType(arr[0]);
+								matchSizeResult.setSizeId(screenSizeStandardValueId);
+								matchSizeResult.setSizeValue(arr[1]);
+								matchSizeResult.setMultiSizeType(false);
+								flag = true;
+								if (i >= 2) {
+									result = "尺码：" + arr[1] + "下含有多个尺码类型";
+									flag = false;
+									matchSizeResult.setMultiSizeType(true);
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				if(!isExist){
+					if (map2.size() > 0) {
+						int i = 0;
+						for (Map.Entry<String, String> entry : map2.entrySet()) {
+							String value = entry.getValue();
+							String key = entry.getKey();
+							if (dto.getSize().equals(value)) {
+								isExist = true;
+								i++;
+								String screenSizeStandardValueId = key.split(",", -1)[0];
+								String[] arr = key.split(",", -1)[1].split(":", -1);
+								if (arr.length == 2) {
+									matchSizeResult.setSizeType(arr[0]);
+									matchSizeResult.setSizeId(screenSizeStandardValueId);
+									matchSizeResult.setSizeValue(arr[1]);
+									matchSizeResult.setMultiSizeType(false);
+									flag = true;
+									if (i >= 2) {
+										result = "尺码：" + arr[1] + "下含有多个尺码类型";
+										flag = false;
+										matchSizeResult.setMultiSizeType(true);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
 				if(!flag){
-					result = "尺码："+dto.getSize()+"未匹配成功";
+					if(result==null){
+						result = "尺码："+dto.getSize()+"未匹配成功";						
+					}
 				}
 				
 			}
