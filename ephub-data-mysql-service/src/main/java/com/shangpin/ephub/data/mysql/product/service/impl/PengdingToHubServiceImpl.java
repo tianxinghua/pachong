@@ -194,9 +194,21 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         Set<String> sizeSet = sizeSkuMap.keySet();
 
         Date date = new Date();
+        String sizeTypeAndSize ="",tmpSize="",tmpSizeType="";
         for(String size:sizeSet){
+            log.debug("spuno =" + hubSpu.getSpuNo());
+            log.debug("size = " + size.trim());
+            sizeTypeAndSize = size;
+            if(sizeTypeAndSize.indexOf(":")>0){
+                tmpSizeType = sizeTypeAndSize.substring(0,sizeTypeAndSize.indexOf(":"));
+                tmpSize= sizeTypeAndSize.substring(sizeTypeAndSize.indexOf(":")+1,sizeTypeAndSize.length());
+            }else{
+                tmpSizeType = "";
+                tmpSize = size;
+            }
+
             HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
-            hubSkuCriteria.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo()).andSkuSizeEqualTo(size.trim());
+            hubSkuCriteria.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo()).andSkuSizeEqualTo(tmpSize).andSkuSizeTypeEqualTo(tmpSizeType);
             List<HubSku> hubSkus = hubSkuMapper.selectByExample(hubSkuCriteria);
 
             List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(size);
@@ -204,6 +216,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             if(null!=hubSkus&&hubSkus.size()>0){  //已存在
                  hubSku = hubSkus.get(0);
             }else{
+                log.debug("no hubsku");
                 String skuNo = hubSpuUtil.createHubSkuNo(hubSpu.getSpuNo(),1);
                 hubSku = insertHubSku(hubSpu, skuNo, size, date, hubSkuPendings);
 

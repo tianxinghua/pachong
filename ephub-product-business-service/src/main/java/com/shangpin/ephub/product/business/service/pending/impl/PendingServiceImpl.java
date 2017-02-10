@@ -115,10 +115,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             criterion.andHubCategoryNoLike(queryVO.getCategoryNo() +"%");
         }
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
-            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate()));
+            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getShortDate(queryVO.getStartDate()));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
-            criterion.andUpdateTimeLessThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getEndDate()));
+            criterion.andUpdateTimeLessThan(DateTimeUtil.getShortDate(queryVO.getEndDate()));
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
