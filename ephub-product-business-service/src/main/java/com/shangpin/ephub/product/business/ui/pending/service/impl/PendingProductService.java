@@ -196,7 +196,7 @@ public class PendingProductService implements IPendingProductService{
     }
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
-    	log.info("接收到的查询条件："+JsonUtil.serialize(pendingQuryDto));  
+    	log.info("接收到的查询条件："+JsonUtil.serialize(pendingQuryDto)); 
     	long start = System.currentTimeMillis();
         PendingProducts pendingProducts = new PendingProducts();
         List<PendingProductDto> products = new ArrayList<PendingProductDto>();
@@ -409,12 +409,14 @@ public class PendingProductService implements IPendingProductService{
     	SupplierProductVo supplierProductVo = new SupplierProductVo();
     	try {
         	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(supplierSpuId);
-        	JavaUtil.fatherToChild(spuDto,supplierProductVo);
-        	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(supplierSpuId);
-        	if(CollectionUtils.isNotEmpty(supplierSku)){
-        		supplierProductVo.setSupplierSku(supplierSku);
+        	if(null != spuDto){
+        		JavaUtil.fatherToChild(spuDto,supplierProductVo);
+            	List<HubSupplierSkuDto> supplierSku = findHubSupplierSkuBySpu(supplierSpuId);
+            	if(CollectionUtils.isNotEmpty(supplierSku)){
+            		supplierProductVo.setSupplierSku(supplierSku);
+            	}
+            	supplierProductVo.setUpdateTimeStr(null != spuDto.getUpdateTime() ? DateTimeUtil.getTime(spuDto.getUpdateTime()) : ""); 
         	}
-        	supplierProductVo.setUpdateTimeStr(null != spuDto.getUpdateTime() ? DateTimeUtil.getTime(spuDto.getUpdateTime()) : ""); 
 		} catch (Exception e) {
 			log.error("查询原始信息时异常："+e.getMessage(),e); 
 		}
@@ -657,10 +659,12 @@ public class PendingProductService implements IPendingProductService{
 			criteria.andHubSeasonLike(pendingQuryDto.getHubYear()+"%");
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
-			criteria.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat));
+			Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat);
+			criteria.andUpdateTimeGreaterThanOrEqualTo(startTime);
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
-			criteria.andUpdateTimeLessThan(DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat));
+			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
+			criteria.andUpdateTimeLessThan(endTime);
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
 			criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
