@@ -44,6 +44,7 @@ spring:
                                            prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8
   ftp:
        host: 172.20.10.88
        port: 21
