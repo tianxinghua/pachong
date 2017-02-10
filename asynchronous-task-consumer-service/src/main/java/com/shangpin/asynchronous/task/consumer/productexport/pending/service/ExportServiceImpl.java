@@ -355,7 +355,7 @@ public class ExportServiceImpl {
 					}
 					String memo = product.getMemo();
 					if(!StringUtils.isEmpty(memo)){
-						buffer = buffer.append("再处理原因:"+memo);
+						buffer = buffer.append(memo);
 					}
 					row.createCell(i).setCellValue(buffer.toString()); 
 				}else if("spuState".equals(rowTemplate[i])){
