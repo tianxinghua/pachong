@@ -429,6 +429,7 @@ public class PendingProductService implements IPendingProductService{
      */
     private List<HubSupplierSkuDto> findHubSupplierSkuBySpu(Long supplierSpuId) {
 		HubSupplierSkuCriteriaDto skuCriteria = new HubSupplierSkuCriteriaDto();
+		skuCriteria.setOrderByClause("supplier_sku_size"); 
     	skuCriteria.setFields("supplier_sku_size");
     	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
