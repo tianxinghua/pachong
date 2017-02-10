@@ -17,6 +17,7 @@ public class SupplierProductVo extends HubSupplierSpuDto {
 	 */
 	private static final long serialVersionUID = 5634253012222804461L;
 	private List<HubSupplierSkuDto> supplierSku;
+	private String updateTimeStr;
 	
 
 }
