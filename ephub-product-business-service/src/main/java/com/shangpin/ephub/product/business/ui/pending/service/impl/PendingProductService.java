@@ -247,7 +247,7 @@ public class PendingProductService implements IPendingProductService{
             criteriaDto.setPageNo(1);
             criteriaDto.setPageSize(1000); 
             criteriaDto.setOrderByClause("spu_pending_id,hub_sku_size");
-            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
+            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andStockGreaterThan(0);
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
             	for(HubSkuPendingDto sku : skus){
@@ -429,6 +429,7 @@ public class PendingProductService implements IPendingProductService{
      */
     private List<HubSupplierSkuDto> findHubSupplierSkuBySpu(Long supplierSpuId) {
 		HubSupplierSkuCriteriaDto skuCriteria = new HubSupplierSkuCriteriaDto();
+		skuCriteria.setOrderByClause("supplier_sku_size"); 
     	skuCriteria.setFields("supplier_sku_size");
     	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);

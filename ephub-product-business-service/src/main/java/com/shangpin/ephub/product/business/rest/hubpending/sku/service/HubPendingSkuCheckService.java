@@ -48,7 +48,7 @@ public class HubPendingSkuCheckService {
 			
 		}else{
 			result.setPassing(true);
-			result.setResult(hubProduct.getSkuSize());
+			result.setResult("类型为尺寸,通过");
 		}
 		return result;
 	}
