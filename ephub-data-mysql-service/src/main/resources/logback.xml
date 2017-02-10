@@ -39,13 +39,15 @@
 	<logger name="com.shangpin" level="DEGUG" ></logger>
 	
 	<logger name="org.apache.ibatis" level="DEBUG">  
-    	<appender-ref ref="STDOUT"/>  
+    	<appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_INFO"/>
 	</logger>  
 	<logger name="java.sql" level="debug">  
-    	<appender-ref ref="STDOUT"/>  
+    	<appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE_INFO"/>
 	</logger> 
 	
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE_INFO"/>
     </root>
