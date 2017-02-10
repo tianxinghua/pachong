@@ -679,7 +679,32 @@ public class PendingProductService implements IPendingProductService{
 				criteria.andPicStateNotEqualTo(PicState.UNHANDLED.getIndex());
 			}
 		}
-		criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
+		List<Integer> conformities = pendingQuryDto.getConformities();
+		if(CollectionUtils.isNotEmpty(conformities)){
+			for(int i = 0;i<conformities.size();i++){
+				if (ProductState.SPU_GENDER_STATE.getIndex() == conformities.get(i)) {
+        			criteria.andSpuGenderStateEqualTo(SpuGenderState.HANDLED.getIndex());
+        		} else if (ProductState.SPU_BRAND_STATE.getIndex() == conformities.get(i)) {
+        			criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
+        		} else if(ProductState.CATGORY_STATE.getIndex() == conformities.get(i)){
+        			criteria.andCatgoryStateEqualTo(CatgoryState.PERFECT_MATCHED.getIndex());
+        		} else if(ProductState.SPU_MODEL_STATE.getIndex() == conformities.get(i)){
+        			criteria.andSpuModelStateEqualTo(SpuModelState.VERIFY_PASSED.getIndex());
+        		} else if(ProductState.MATERIAL_STATE.getIndex() == conformities.get(i)){
+        			criteria.andMaterialStateEqualTo(MaterialState.HANDLED.getIndex());
+        		} else if(ProductState.SPU_COLOR_STATE.getIndex() == conformities.get(i)){
+        			criteria.andSpuColorStateEqualTo(SpuColorState.HANDLED.getIndex());
+        		} else if(ProductState.ORIGIN_STATE.getIndex() == conformities.get(i)){
+        			criteria.andOriginStateEqualTo(OriginState.HANDLED.getIndex());
+        		} else if(ProductState.SPU_SEASON_STATE.getIndex() == conformities.get(i)){
+        			criteria.andSpuSeasonStateEqualTo(SpuSeasonState.HANDLED.getIndex());
+        		} else if(ProductState.SIZE_STATE.getIndex() == conformities.get(i)){
+        			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
+        		}else if(ProductState.INFOCOMPLETE.getIndex() == conformities.get(i)){
+        			//TODO 信息完整项
+        		}
+			}
+		}
 		return criteria;
 	}
     /**

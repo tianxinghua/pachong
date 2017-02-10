@@ -41,7 +41,12 @@ public enum ProductState {
 	/**
 	 * 尺码状态
 	 */
-	SIZE_STATE(9,"sizeState");
+	SIZE_STATE(9,"sizeState"),
+	
+	/**
+	 * 信息完整
+	 */
+	INFOCOMPLETE(10,"infoComplete"); 
 	
 	/**
      * 数字索引标识

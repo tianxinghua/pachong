@@ -56,4 +56,14 @@ public class PendingQuryDto {
      * spu主键
      */
     private Long spuPendingId;
+    /**
+     * 符合项
+     */
+    private List<Integer> conformities;//符合项
+    /**
+     * 商品状态
+     */
+    private Integer spuState;
+    
+    
 }
