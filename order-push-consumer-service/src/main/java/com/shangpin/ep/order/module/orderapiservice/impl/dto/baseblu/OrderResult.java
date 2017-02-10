@@ -10,16 +10,16 @@ import java.io.Serializable;
  */
 public class OrderResult implements Serializable {
     @JsonIgnore
-    private String codMsg;
+    private int  codMsg;
     @JsonIgnore
     private String msg;
 
     @JsonProperty("CodMsg")
-    public String getCodMsg() {
+    public int getCodMsg() {
         return codMsg;
     }
     @JsonProperty("CodMsg")
-    public void setCodMsg(String codMsg) {
+    public void setCodMsg(int codMsg) {
         codMsg = codMsg;
     }
     @JsonProperty("Msg")
