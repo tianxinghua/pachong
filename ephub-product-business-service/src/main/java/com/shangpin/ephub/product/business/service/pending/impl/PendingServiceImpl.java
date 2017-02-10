@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
  * @param
  */
 @Service
+@Slf4j
 public class PendingServiceImpl implements com.shangpin.ephub.product.business.service.pending.PendingService {
 
     @Autowired
@@ -101,7 +103,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     private HubSpuPendingCriteriaDto getHubSpuPendingCriteria(SpuPendingAuditQueryVO queryVO) {
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
-
+        log.info("audit query parameter =" + queryVO.toString());
         criteria.setDistinct(true);
         criteria.setFields(" spu_model,hub_brand_no  ");
         if(StringUtils.isNotBlank(queryVO.getSpuModel())){
@@ -115,10 +117,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             criterion.andHubCategoryNoLike(queryVO.getCategoryNo() +"%");
         }
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
-            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getShortDate(queryVO.getStartDate()));
+            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00"));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
-            criterion.andUpdateTimeLessThan(DateTimeUtil.getShortDate(queryVO.getEndDate()));
+            criterion.andUpdateTimeLessThan(DateTimeUtil.getDateTimeFormate(queryVO.getEndDate()+" 00:00:00"));
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
