@@ -353,6 +353,10 @@ public class ExportServiceImpl {
 					if(null == product.getSpSkuSizeState() || 1 != product.getSpSkuSizeState()){
 						buffer = buffer.append("尺码").append(comma);
 					}
+					String memo = product.getMemo();
+					if(!StringUtils.isEmpty(memo)){
+						buffer = buffer.append(memo);
+					}
 					row.createCell(i).setCellValue(buffer.toString()); 
 				}else if("spuState".equals(rowTemplate[i])){
 					if(SpuState.INFO_PECCABLE.getIndex() == product.getSpuState()){

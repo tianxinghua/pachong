@@ -60,6 +60,11 @@ public class SupplierProductMysqlService {
 					updateHubSpu(hubSpuUpdated);
 					return ProductStatus.UPDATE;
 				}else{
+					HubSupplierSpuDto memo = new HubSupplierSpuDto();
+					memo.setMemo(hubSpu.getMemo());
+					memo.setSupplierId(hubSpuSel.getSupplierId());
+					memo.setSupplierSpuNo(hubSpuSel.getSupplierSpuNo());
+//					updateHubSpuMemo(memo);
 					return ProductStatus.NO_NEED_HANDLE;
 				}
 			}
@@ -70,6 +75,15 @@ public class SupplierProductMysqlService {
 		}			
 	}	
 	
+	private void updateHubSpuMemo(HubSupplierSpuDto hubSpuUpdated) {
+		HubSupplierSpuWithCriteriaDto criteriaDto = new HubSupplierSpuWithCriteriaDto();
+		HubSupplierSpuCriteriaDto hubSupplierSpuCriteriaDto = new HubSupplierSpuCriteriaDto();
+		hubSupplierSpuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSpuUpdated.getSupplierId()).andSupplierSpuNoEqualTo(hubSpuUpdated.getSupplierSpuNo());
+		criteriaDto.setCriteria(hubSupplierSpuCriteriaDto);
+		criteriaDto.setHubSupplierSpu(hubSpuUpdated);
+		hubSupplierSpuGateWay.updateByCriteriaSelective(criteriaDto);
+	}
+
 	/**
 	 * 判断hubSku价格是否发生变化
 	 * @param hubSku
