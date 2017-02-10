@@ -196,6 +196,7 @@ public class PendingProductService implements IPendingProductService{
     }
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
+    	log.info("接收到的查询条件："+JsonUtil.serialize(pendingQuryDto));  
     	long start = System.currentTimeMillis();
         PendingProducts pendingProducts = new PendingProducts();
         List<PendingProductDto> products = new ArrayList<PendingProductDto>();
