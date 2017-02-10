@@ -68,8 +68,8 @@ public class HubSelectedService {
 	HubProductServiceImpl hubCommonProductServiceImpl;
 
 	public void exportExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
-		String[] headers = {"尚品Sku编号","门户Sku编号","供应商SKU", "商品名称","品类", "品牌", "货号","商品状态","生效价格","价格状态","操作人","供价*","供价币种*","阶段供价","阶段供价生效时间","阶段供价失效时间","市场价","市场价币种"};
-		String[] columns = {"spSkuNo","skuNo","supplierSkuNo","spuName","categoryName", "brandName", "spuModel","productState","param1","param1","param1","supplyPrice","supplyCurry","param1","param1","param1","marketPrice","marketCurry"};
+		String[] headers = {"尚品Sku编号","门户Sku编号","供应商SKU", "商品名称","品类", "品牌","品牌中文", "品牌编号", "货号","商品状态","生效价格","价格状态","操作人","供价*","供价币种*","阶段供价","阶段供价生效时间","阶段供价失效时间","市场价","市场价币种"};
+		String[] columns = {"spSkuNo","skuNo","supplierSkuNo","spuName","categoryName", "brandName","brandChName","brandNo", "spuModel","productState","param1","param1","param1","supplyPrice","supplyCurry","param1","param1","param1","marketPrice","marketCurry"};
 		
 		Map<String, String> map = null;
 		
@@ -118,9 +118,11 @@ public class HubSelectedService {
 			spSkuNo = listSku.get(0).getSpSkuNo();
 		}
 		
-		String brandName = getBrand(response.getBrandNo());
+		BrandDom brandDom = getBrand(response.getBrandNo());
 		String categoryName = getCategoryName(response.getCategoryNo());
-		map.put("brandName", brandName);
+		map.put("brandName", brandDom.getBrandEnName());
+		map.put("brandChName", brandDom.getBrandCnName());
+		map.put("brandNo", brandDom.getBrandNo());
 		if(supplyPrice!=null){
 			map.put("supplyPrice", supplyPrice+"");	
 		}
@@ -151,13 +153,13 @@ public class HubSelectedService {
         	return categoryNo;
         }
 	}
-	private String getBrand(String brandNo) {
+	private BrandDom getBrand(String brandNo) {
 		// TODO Auto-generated method stub
 		BrandDom brand = brandService.getGmsBrand(brandNo);
         if(brand!=null){
-            return 	brand.getBrandCnName();
+            return 	brand;
         }else{
-        	return brandNo;
+        	return null;
         }
 	}
 
