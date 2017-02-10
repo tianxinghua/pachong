@@ -17,6 +17,7 @@ spring:
            #healthCheckUrl: http://192.168.3.211:8001/info 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8
 shangpin: 
   hub:
     dataSource:
