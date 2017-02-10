@@ -247,7 +247,7 @@ public class PendingProductService implements IPendingProductService{
             criteriaDto.setPageNo(1);
             criteriaDto.setPageSize(1000); 
             criteriaDto.setOrderByClause("spu_pending_id,hub_sku_size");
-            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
+            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andStockGreaterThan(0);
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
             	for(HubSkuPendingDto sku : skus){
