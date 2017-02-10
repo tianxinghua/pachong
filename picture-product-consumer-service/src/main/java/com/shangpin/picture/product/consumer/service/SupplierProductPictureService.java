@@ -2,6 +2,8 @@ package com.shangpin.picture.product.consumer.service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
@@ -19,6 +21,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
+import com.shangpin.picture.product.consumer.bean.AuthenticationInformation;
 import com.shangpin.picture.product.consumer.conf.stream.source.message.RetryPicture;
 import com.shangpin.picture.product.consumer.conf.stream.source.sender.RetryPictureProductStreamSender;
 import com.shangpin.picture.product.consumer.e.PicHandleState;
@@ -64,12 +67,33 @@ public class SupplierProductPictureService {
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
 				updateDto.setSupplierSpuId(picDto.getSupplierSpuId());
-				pullPicAndPushToPicServer(picUrl, updateDto);
+				AuthenticationInformation information = null;
+				String supplierId = picDto.getSupplierId();
+				if (StringUtils.isNoneBlank(supplierId)) {
+					if ("2016030701799".equals(supplierId)) {
+						information = new AuthenticationInformation("shangpin", "Shang2016");
+					}
+				}
+				pullPicAndPushToPicServer(picUrl, updateDto, information);
 				supplierProductPictureManager.updateSelective(updateDto);
 			}
 		}
 	}
-	private void pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto){
+	/**
+	 * 拉取图片并上传图片服务器
+	 * @param picUrl 图片原始地址
+	 * @param dto 数据传输对象
+	 * @param authenticationInformation 认证信息
+	 */
+	private void pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+		if (authenticationInformation != null) {//需要认证
+			Authenticator.setDefault(new Authenticator() {
+	            protected PasswordAuthentication getPasswordAuthentication() {
+	                return new PasswordAuthentication(authenticationInformation.getUsername(),
+	                        new String(authenticationInformation.getPassword()).toCharArray());
+	            }
+	        });
+		}
 		InputStream inputStream = null;
 		try {
 			
@@ -194,7 +218,14 @@ public class SupplierProductPictureService {
 				updateDto.setSpuPendingPicId(hubSpuPendingPicDto.getSpuPendingPicId());
 				updateDto.setSupplierSpuId(hubSpuPendingPicDto.getSupplierSpuId());
 				Integer retryCount = hubSpuPendingPicDto.getRetryCount();
-				pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto);
+				AuthenticationInformation information = null;
+				String supplierId = hubSpuPendingPicDto.getSupplierId();
+				if (StringUtils.isNoneBlank(supplierId)) {
+					if ("2016030701799".equals(supplierId)) {
+						information = new AuthenticationInformation("shangpin", "Shang2016");
+					}
+				}
+				pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
 				count = retryCount == null ? 1 : retryCount + 1;
 				updateDto.setRetryCount(count);
 				supplierProductPictureManager.updateSelective(updateDto);
