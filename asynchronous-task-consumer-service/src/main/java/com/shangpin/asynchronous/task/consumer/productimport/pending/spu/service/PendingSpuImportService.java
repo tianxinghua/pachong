@@ -216,6 +216,7 @@ public class PendingSpuImportService {
 							}else{
 								hubPendingSkuCheckResult.setPassing(true);
 								hubPendingSkuCheckResult.setResult(sku.getHubSkuSize());
+								str.append("校验通过："+sku.getHubSkuSize());
 							}
 							checkPendingSku(hubPendingSkuCheckResult, sku, map,product1,isMultiSizeType);
 						}
