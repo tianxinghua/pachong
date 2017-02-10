@@ -182,7 +182,8 @@ public class PendingProductService implements IPendingProductService{
                             pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                             BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                             pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                            pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
+                            List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                            pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
                             products.add(pendingProduct);
                     	}
                     }
@@ -222,7 +223,9 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
-                        pendingProduct.setSpPicUrl(findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo()));
+                        List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
+                        pendingProduct.setPicUrls(picurls); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         products.add(pendingProduct);
                     }
@@ -298,6 +301,7 @@ public class PendingProductService implements IPendingProductService{
             	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
                 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                 	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
+                	hubSkuSize = StringUtils.isEmpty(hubSkuSize) ? "" : hubSkuSize;
                 	log.info("从页面接收到的尺码信息===="+hubSkuSize); 
                 	if(hubSkuSize.startsWith("排除")){
                 		hubSkuPendingDto.setHubSkuSizeType("排除");
@@ -507,20 +511,19 @@ public class PendingProductService implements IPendingProductService{
      * @param supplierSpuNo
      * @return
      */
-    private String findSpPicUrl(String supplierId,String supplierSpuNo){
+    private List<String> findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
     	criteria.setFields("sp_pic_url");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	if(spuPendingPics!=null&&spuPendingPics.size()>0){
-    		if(spuPendingPics.get(0)!=null){
-    			return spuPendingPics.get(0).getSpPicUrl();
-    		}else{
-    			return "";
+    		List<String> picUrls = new ArrayList<String>();
+    		for(HubSpuPendingPicDto dto : spuPendingPics){
+    			picUrls.add(dto.getSpPicUrl());
     		}
-    	}else{
-    		return "";
+    		return picUrls;
     	}
+    	return null;
     }
 //    /**
 //     * 根据门户id和品牌编号查找品牌名称
