@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.ui.pending.vo;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  */
 @Setter
 @Getter
+@ToString
 public class SpuPendingAuditQueryVO implements Serializable {
 
     /**

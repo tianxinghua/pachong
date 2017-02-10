@@ -196,6 +196,7 @@ public class PendingProductService implements IPendingProductService{
     }
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
+    	log.info("接收到的查询条件："+JsonUtil.serialize(pendingQuryDto));  
     	long start = System.currentTimeMillis();
         PendingProducts pendingProducts = new PendingProducts();
         List<PendingProductDto> products = new ArrayList<PendingProductDto>();
@@ -413,6 +414,7 @@ public class PendingProductService implements IPendingProductService{
         	if(CollectionUtils.isNotEmpty(supplierSku)){
         		supplierProductVo.setSupplierSku(supplierSku);
         	}
+        	supplierProductVo.setUpdateTimeStr(null != spuDto.getUpdateTime() ? DateTimeUtil.getTime(spuDto.getUpdateTime()) : ""); 
 		} catch (Exception e) {
 			log.error("查询原始信息时异常："+e.getMessage(),e); 
 		}
@@ -429,8 +431,11 @@ public class PendingProductService implements IPendingProductService{
      */
     private List<HubSupplierSkuDto> findHubSupplierSkuBySpu(Long supplierSpuId) {
 		HubSupplierSkuCriteriaDto skuCriteria = new HubSupplierSkuCriteriaDto();
+		skuCriteria.setPageNo(1);
+		skuCriteria.setPageSize(100); 
+		skuCriteria.setOrderByClause("supplier_sku_size"); 
     	skuCriteria.setFields("supplier_sku_size");
-    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andStockGreaterThan(0); 
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
 	}
     /**
