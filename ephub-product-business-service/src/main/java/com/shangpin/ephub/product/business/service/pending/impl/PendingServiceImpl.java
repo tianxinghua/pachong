@@ -119,12 +119,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
 //            log.info("sartDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getStartDate() ));
-            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 08:00:00" ));
+            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getShortDate(queryVO.getStartDate()  ));
+//            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 08:00:00" ));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
 //            log.info("getEndDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getEndDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getEndDate()));
-            criterion.andUpdateTimeLessThan(DateTimeUtil.getDateTimeFormate(queryVO.getEndDate() +" 08:00:00"));
+            criterion.andUpdateTimeLessThan(DateTimeUtil.getShortDate(queryVO.getEndDate() ));
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
