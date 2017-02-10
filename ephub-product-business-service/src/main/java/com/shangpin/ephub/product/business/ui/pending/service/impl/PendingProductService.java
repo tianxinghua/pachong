@@ -621,7 +621,7 @@ public class PendingProductService implements IPendingProductService{
         		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		}
-        		criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
+//        		criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
