@@ -173,6 +173,14 @@ public class HubSpuPendingDto implements Serializable {
      */
     private Byte filterFlag;
 
+    private Byte infoState;
+
+    private Byte stockState;
+
+    private String createUser;
+
+    private String updateUser;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
@@ -463,6 +471,38 @@ public class HubSpuPendingDto implements Serializable {
         this.filterFlag = filterFlag;
     }
 
+    public Byte getInfoState() {
+        return infoState;
+    }
+
+    public void setInfoState(Byte infoState) {
+        this.infoState = infoState;
+    }
+
+    public Byte getStockState() {
+        return stockState;
+    }
+
+    public void setStockState(Byte stockState) {
+        this.stockState = stockState;
+    }
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser == null ? null : createUser.trim();
+    }
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser == null ? null : updateUser.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -505,6 +545,10 @@ public class HubSpuPendingDto implements Serializable {
         sb.append(", materialState=").append(materialState);
         sb.append(", originState=").append(originState);
         sb.append(", filterFlag=").append(filterFlag);
+        sb.append(", infoState=").append(infoState);
+        sb.append(", stockState=").append(stockState);
+        sb.append(", createUser=").append(createUser);
+        sb.append(", updateUser=").append(updateUser);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -557,7 +601,11 @@ public class HubSpuPendingDto implements Serializable {
             && (this.getSpSkuSizeState() == null ? other.getSpSkuSizeState() == null : this.getSpSkuSizeState().equals(other.getSpSkuSizeState()))
             && (this.getMaterialState() == null ? other.getMaterialState() == null : this.getMaterialState().equals(other.getMaterialState()))
             && (this.getOriginState() == null ? other.getOriginState() == null : this.getOriginState().equals(other.getOriginState()))
-            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()));
+            && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()))
+            && (this.getInfoState() == null ? other.getInfoState() == null : this.getInfoState().equals(other.getInfoState()))
+            && (this.getStockState() == null ? other.getStockState() == null : this.getStockState().equals(other.getStockState()))
+            && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
+            && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()));
     }
 
     @Override
@@ -600,6 +648,10 @@ public class HubSpuPendingDto implements Serializable {
         result = prime * result + ((getMaterialState() == null) ? 0 : getMaterialState().hashCode());
         result = prime * result + ((getOriginState() == null) ? 0 : getOriginState().hashCode());
         result = prime * result + ((getFilterFlag() == null) ? 0 : getFilterFlag().hashCode());
+        result = prime * result + ((getInfoState() == null) ? 0 : getInfoState().hashCode());
+        result = prime * result + ((getStockState() == null) ? 0 : getStockState().hashCode());
+        result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
+        result = prime * result + ((getUpdateUser() == null) ? 0 : getUpdateUser().hashCode());
         return result;
     }
 }

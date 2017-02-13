@@ -2466,6 +2466,266 @@ public class HubSpuPendingCriteriaDto {
             addCriterion("filter_flag not between", value1, value2, "filterFlag");
             return (Criteria) this;
         }
+
+        public Criteria andInfoStateIsNull() {
+            addCriterion("info_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateIsNotNull() {
+            addCriterion("info_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateEqualTo(Byte value) {
+            addCriterion("info_state =", value, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateNotEqualTo(Byte value) {
+            addCriterion("info_state <>", value, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateGreaterThan(Byte value) {
+            addCriterion("info_state >", value, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("info_state >=", value, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateLessThan(Byte value) {
+            addCriterion("info_state <", value, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateLessThanOrEqualTo(Byte value) {
+            addCriterion("info_state <=", value, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateIn(List<Byte> values) {
+            addCriterion("info_state in", values, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateNotIn(List<Byte> values) {
+            addCriterion("info_state not in", values, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateBetween(Byte value1, Byte value2) {
+            addCriterion("info_state between", value1, value2, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andInfoStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("info_state not between", value1, value2, "infoState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateIsNull() {
+            addCriterion("stock_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateIsNotNull() {
+            addCriterion("stock_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateEqualTo(Byte value) {
+            addCriterion("stock_state =", value, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateNotEqualTo(Byte value) {
+            addCriterion("stock_state <>", value, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateGreaterThan(Byte value) {
+            addCriterion("stock_state >", value, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("stock_state >=", value, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateLessThan(Byte value) {
+            addCriterion("stock_state <", value, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateLessThanOrEqualTo(Byte value) {
+            addCriterion("stock_state <=", value, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateIn(List<Byte> values) {
+            addCriterion("stock_state in", values, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateNotIn(List<Byte> values) {
+            addCriterion("stock_state not in", values, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateBetween(Byte value1, Byte value2) {
+            addCriterion("stock_state between", value1, value2, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andStockStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("stock_state not between", value1, value2, "stockState");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserIsNull() {
+            addCriterion("create_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserIsNotNull() {
+            addCriterion("create_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserEqualTo(String value) {
+            addCriterion("create_user =", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNotEqualTo(String value) {
+            addCriterion("create_user <>", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserGreaterThan(String value) {
+            addCriterion("create_user >", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserGreaterThanOrEqualTo(String value) {
+            addCriterion("create_user >=", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserLessThan(String value) {
+            addCriterion("create_user <", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserLessThanOrEqualTo(String value) {
+            addCriterion("create_user <=", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserLike(String value) {
+            addCriterion("create_user like", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNotLike(String value) {
+            addCriterion("create_user not like", value, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserIn(List<String> values) {
+            addCriterion("create_user in", values, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNotIn(List<String> values) {
+            addCriterion("create_user not in", values, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserBetween(String value1, String value2) {
+            addCriterion("create_user between", value1, value2, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNotBetween(String value1, String value2) {
+            addCriterion("create_user not between", value1, value2, "createUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserIsNull() {
+            addCriterion("update_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserIsNotNull() {
+            addCriterion("update_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserEqualTo(String value) {
+            addCriterion("update_user =", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotEqualTo(String value) {
+            addCriterion("update_user <>", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserGreaterThan(String value) {
+            addCriterion("update_user >", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserGreaterThanOrEqualTo(String value) {
+            addCriterion("update_user >=", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserLessThan(String value) {
+            addCriterion("update_user <", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserLessThanOrEqualTo(String value) {
+            addCriterion("update_user <=", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserLike(String value) {
+            addCriterion("update_user like", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotLike(String value) {
+            addCriterion("update_user not like", value, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserIn(List<String> values) {
+            addCriterion("update_user in", values, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotIn(List<String> values) {
+            addCriterion("update_user not in", values, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserBetween(String value1, String value2) {
+            addCriterion("update_user between", value1, value2, "updateUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateUserNotBetween(String value1, String value2) {
+            addCriterion("update_user not between", value1, value2, "updateUser");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
