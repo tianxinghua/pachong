@@ -621,7 +621,6 @@ public class PendingProductService implements IPendingProductService{
         		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		}
-//        		criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
@@ -701,7 +700,7 @@ public class PendingProductService implements IPendingProductService{
         		} else if(ProductState.SIZE_STATE.getIndex() == conformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
         		}else if(ProductState.INFOCOMPLETE.getIndex() == conformities.get(i)){
-        			//TODO 信息完整项
+        			criteria.andHubMaterialIsNotNull();
         		}
 			}
 		}
