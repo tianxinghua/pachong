@@ -701,6 +701,8 @@ public class PendingProductService implements IPendingProductService{
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
         		}else if(ProductState.INFOCOMPLETE.getIndex() == conformities.get(i)){
         			criteria.andHubMaterialIsNotNull();
+        		}else if(ProductState.HAVESTOCK.getIndex() == conformities.get(i)){
+        			//TODO
         		}
 			}
 		}
