@@ -166,6 +166,7 @@ public class TonyOrderImpl implements IOrderService {
             	deleteOrder.setRefundTime(new Date());
                 deleteOrder.setPushStatus(PushStatus.REFUNDED);
             } else {
+            	String message = returnDataDTO.getMessages().toString();
             	deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
             	deleteOrder.setErrorType(ErrorStatus.API_ERROR);
                 deleteOrder.setDescription(deleteOrder.getLogContent());
@@ -219,11 +220,12 @@ public class TonyOrderImpl implements IOrderService {
             	 orderDTO.setConfirmTime(new Date());
              	 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
             } else {
-            	if("[Quota exceeded]".equals(returnDataDTO.getMessages().toString())){
+            	String message = returnDataDTO.getMessages().toString();
+            	if(message.contains("Quota exceeded")){
             		orderDTO.setDescription(orderDTO.getLogContent());
             		orderDTO.setErrorType(ErrorStatus.API_ERROR);
                 	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-            	}else if("Shop order id - Shop order id - Order not found".equals(returnDataDTO.getMessages().toString())){
+            	}else if(message.contains("Shop order id - Shop order id - Order not found")){
                 	orderDTO.setDescription(orderDTO.getLogContent());
                 	orderDTO.setPushStatus(PushStatus.NO_STOCK);
             	}else{
@@ -238,7 +240,6 @@ public class TonyOrderImpl implements IOrderService {
         	orderDTO.setLogContent(ex.getMessage());
         } 
     }
-    
     /**
      * 在线推送订单:
      * status未支付：锁库存						
@@ -267,11 +268,12 @@ public class TonyOrderImpl implements IOrderService {
 	        	  	orderDTO.setLockStockTime(new Date());
 	            	orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
 	            }else {
-	            	if("[Quota exceeded]".equals(returnDataDTO.getMessages().toString())){
+	            	String message = returnDataDTO.getMessages().toString();
+	            	if(message.contains("Quota exceeded")){
 	            		orderDTO.setDescription(orderDTO.getLogContent());
 	            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
 	                	orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
-	            	}else if(returnDataDTO.getMessages().toString().endsWith("quantity not available in the stock")){
+	            	}else if(message.contains("quantity not available in the stock")){
 	            		orderDTO.setDescription(orderDTO.getLogContent());
 	                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
 	            		

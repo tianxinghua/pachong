@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
@@ -31,6 +34,8 @@ public class PictureHandler {
 	
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
+	@Autowired
+	private HubSpuPendingPicGateWay picClient;
 
 	/**
 	 * 初始化发送图片消息体
@@ -75,6 +80,22 @@ public class PictureHandler {
 			}
 		}
 		if(currentSeason.containsKey(supplierSeason.trim().toUpperCase())){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	/**
+	 * 判断该spu是否存在图片
+	 * @param supplierSpuId
+	 * @return
+	 */
+	public boolean picExistsOfSpu(String supplierId,String supplierSpuNo){
+		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
+		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
+		if(null != pics && pics.size() >0){
 			return true;
 		}else{
 			return false;

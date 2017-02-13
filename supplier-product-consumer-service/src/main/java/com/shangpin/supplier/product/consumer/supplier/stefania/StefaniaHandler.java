@@ -49,7 +49,7 @@ public class StefaniaHandler implements ISupplierHandler{
 				StefProduct stefProduct = JsonUtil.deserialize(message.getData(), StefProduct.class);
 				for(StefItem stefItem :stefProduct.getItems().getItems()){
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-					List<Image> images = converImage(stefItem.getPicture());
+					List<Image> images = converImage(message.getSupplierId(),stefItem);
 					if(null == images){
 						hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
 					}else{
@@ -80,12 +80,17 @@ public class StefaniaHandler implements ISupplierHandler{
 	 * @param stefPicture
 	 * @return
 	 */
-	private List<Image> converImage(String stefPicture){
-		if(StringUtils.isEmpty(stefPicture)){
+	private List<Image> converImage(String supplierId,StefItem stefItem){
+		String productModle = findProductModleByItemId(stefItem.getItem_id());
+		if(pictureHandler.picExistsOfSpu(supplierId, productModle)){
+			return null;
+		}
+		String picture = stefItem.getPicture();
+		if(StringUtils.isEmpty(picture)){
 			return null;
 		}else{
 			List<Image> images = new ArrayList<Image>();
-			String[] picArray = stefPicture.split("\\|");
+			String[] picArray = picture.split("\\|");
 			for(String url : picArray){
 				Image image = new Image();
 				image.setUrl(url);

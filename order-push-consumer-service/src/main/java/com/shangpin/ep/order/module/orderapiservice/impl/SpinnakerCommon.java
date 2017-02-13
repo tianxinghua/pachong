@@ -141,33 +141,15 @@ public class SpinnakerCommon implements IOrderService{
 
 	private void refundlOrder(OrderDTO deleteOrder) {
 		//查询状态
-		String rtnData2 = null;
 		try{
 			Map<String, String> map =new HashMap<String, String>();
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", deleteOrder.getPurchaseNo());
 			 map.put("order_no", deleteOrder.getSpOrderId());
 			 map.put("key", key);
-			 rtnData2 =montiPushOrder(queryOrderUrl,deleteOrder, map);
-			 deleteOrder.setLogContent("查询订单返回结果="+rtnData2+"推送的订单="+map.toString());
-			 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-		}catch(Exception e){
-			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-			deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
-			deleteOrder.setDescription(deleteOrder.getLogContent());
-		}
-		
-		// 获取退单信息
-		Gson gson = new Gson();
-
-		ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-		if("HO".equals(response.getStatus())){
+			// 获取退单信息
+			Gson gson = new Gson();
 			try {
-				 Map<String, String> map =new HashMap<String, String>();
-				 map.put("DBContext", dBContext);
-				 map.put("purchase_no", deleteOrder.getPurchaseNo());
-				 map.put("order_no", deleteOrder.getSpOrderId());
-				 map.put("key", key);
 				 String rtnData1 =montiPushOrder(cancelUrl,deleteOrder, map);
 				 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
 				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
@@ -179,19 +161,21 @@ public class SpinnakerCommon implements IOrderService{
 				} else {
 					deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 					deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+					deleteOrder.setLogContent(deleteOrder.getLogContent());
 					deleteOrder.setDescription(deleteOrder.getLogContent());
 				}
 			} catch (Exception e) {
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
 				deleteOrder.setDescription(deleteOrder.getLogContent());
+				deleteOrder.setLogContent(e.getMessage());
 			}
-		}else{
+		}catch(Exception e){
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-			deleteOrder.setErrorType(ErrorStatus.API_ERROR);
-			deleteOrder.setDescription(deleteOrder.getLogContent());
+			deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
+			deleteOrder.setDescription(e.getMessage());
+			deleteOrder.setLogContent(e.getMessage());
 		}
-		
 		
 	}
 

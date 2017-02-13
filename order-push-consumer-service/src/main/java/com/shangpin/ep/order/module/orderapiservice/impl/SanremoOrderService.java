@@ -157,48 +157,34 @@ public class SanremoOrderService implements IOrderService {
 
 	private void refundlOrder(OrderDTO deleteOrder) {
 		//查询状态
-		String rtnData2 = null;
 		try{
 			Map<String, String> map =new HashMap<String, String>();
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", deleteOrder.getPurchaseNo());
 			 map.put("order_no", deleteOrder.getSpOrderId());
 			 map.put("key", key);
-			 rtnData2 =sanremoPushOrder(queryOrderUrl,deleteOrder, map);
-			 deleteOrder.setLogContent("查询订单返回结果="+rtnData2+"推送的订单="+map.toString());
-			 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-			 
 			// 获取退单信息
 			Gson gson = new Gson();
+			try {
+				 String rtnData1 =sanremoPushOrder(cancelUrl,deleteOrder, map);
+				 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
+				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
 
-			ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-			if("HO".equals(response.getStatus())){
-				try {
-					 String rtnData1 =sanremoPushOrder(cancelUrl,deleteOrder, map);
-					 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
-					 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-
-					ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
-					if ("OK".equals(responseObject.getStatus())) {
-						deleteOrder.setRefundTime(new Date());
-						deleteOrder.setPushStatus(PushStatus.REFUNDED);
-					} else {
-						deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-						deleteOrder.setErrorType(ErrorStatus.API_ERROR);
-						deleteOrder.setLogContent(deleteOrder.getLogContent());
-						deleteOrder.setDescription(deleteOrder.getLogContent());
-					}
-				} catch (Exception e) {
+				ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
+				if ("OK".equals(responseObject.getStatus())) {
+					deleteOrder.setRefundTime(new Date());
+					deleteOrder.setPushStatus(PushStatus.REFUNDED);
+				} else {
 					deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-					deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
+					deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+					deleteOrder.setLogContent(deleteOrder.getLogContent());
 					deleteOrder.setDescription(deleteOrder.getLogContent());
-					deleteOrder.setLogContent(e.getMessage());
 				}
-			}else{
+			} catch (Exception e) {
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-				deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+				deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
 				deleteOrder.setDescription(deleteOrder.getLogContent());
-				deleteOrder.setLogContent(deleteOrder.getLogContent());
+				deleteOrder.setLogContent(e.getMessage());
 			}
 		}catch(Exception e){
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
