@@ -3,9 +3,11 @@ package com.shangpin.pending.product.consumer.supplier.common;
 import java.io.IOException;
 import java.util.*;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
+import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,14 @@ public class DataSverviceUtil {
 
     @Autowired
     DataServiceHandler dataServiceHandler;
+
+    @Autowired
+    DataOfPendingServiceHandler dataOfPendingServiceHandler;
+
+    @Autowired
+    SpuPendingHandler spuPendingHandler;
+
+
 
     /**
      * 先进入redis查找 没有查找数据库
@@ -179,7 +189,7 @@ public class DataSverviceUtil {
     }
 
 
-    public  void updatePriceOrStock(PendingSku supplierSku){
+    public  void updatePriceOrStock(SpuPending hubSpuPending,PendingSku supplierSku){
         if(null!=supplierSku){
             HubSkuPendingDto originSkuPending =  dataServiceHandler.getHubSkuPending(supplierSku.getSupplierId(),supplierSku.getSupplierSkuNo());
             if(null!=originSkuPending){
@@ -200,7 +210,27 @@ public class DataSverviceUtil {
                 Date date = new Date();
                 hubSkuPending.setUpdateTime(date);
 
+
+
                 dataServiceHandler.updateSkuPengding(hubSkuPending);
+                //处理spu的stock_state
+                if(null!=supplierSku.getStock()){
+                    if(supplierSku.getStock()<=0){
+                        //判断此SPU下是否有库存
+                        int totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
+                        if(totalStock>0){
+                            if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
+                                spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),totalStock);
+                            }
+                        }
+                    }else{
+                        if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
+                            spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),supplierSku.getStock());
+                        }
+                    }
+                }
+
+
             }
 
         }

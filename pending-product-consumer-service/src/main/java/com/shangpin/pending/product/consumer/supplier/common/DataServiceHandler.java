@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -557,6 +559,17 @@ public class DataServiceHandler {
 //				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
 //			}
 //		}
+
+		if(StringUtils.isNotBlank(spuPending.getHubBrandNo())&&
+				StringUtils.isNotBlank(spuPending.getSpuModel())&&
+						StringUtils.isNotBlank(spuPending.getHubColor())&&
+								StringUtils.isNotBlank(spuPending.getHubCategoryNo())){
+			//品牌/货号/颜色/材质 不为空就设置为1，其他为0
+			spuPending.setInfoState(InfoState.PERFECT.getIndex());
+		}else{
+			spuPending.setInfoState(InfoState.IMPERFECT.getIndex());
+		}
+		spuPending.setStockState(StockState.NOSKU.getIndex());
 
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);

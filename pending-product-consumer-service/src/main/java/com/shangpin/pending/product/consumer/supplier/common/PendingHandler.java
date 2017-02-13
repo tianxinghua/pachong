@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
@@ -187,7 +188,7 @@ public class PendingHandler {
 
                     } else if (skuStatus == MessageType.MODIFY_PRICE.getIndex()) {
                         // TODO 处理自动调整价格    现先处理库存
-						dataSverviceUtil.updatePriceOrStock(sku);
+						dataSverviceUtil.updatePriceOrStock(hubSpuPending,sku);
 
                     } else{
 						if (null == hubSkuPending) {
@@ -912,7 +913,19 @@ public class PendingHandler {
 				}
 			}
 			hubSkuPending.setFilterFlag(filterFlag);
+			//spu pending stock state handle
+			if(null!=hubSpuPending.getStockState()){
+				if(hubSpuPending.getStockState().toString().equals(String.valueOf(StockState.NOSKU.getIndex()))){
+					spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),hubSkuPending.getStock());
+				}else if(hubSpuPending.getStockState().toString().equals(String.valueOf(StockState.NOSTOCK.getIndex()))){
+				    if(hubSkuPending.getStock()>0){
+						spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),hubSkuPending.getStock());
+					}
+				}
+			}else{//遗漏  第一次插入SKU  应该默认赋值为NOSKU
+				spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),hubSkuPending.getStock());
 
+			}
 			dataServiceHandler.savePendingSku(hubSkuPending);
 
 		}
