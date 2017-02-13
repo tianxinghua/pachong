@@ -24,6 +24,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
@@ -94,7 +95,14 @@ public class HubSelectedService {
 				convertTOExcel(response,map);
 				result.add(map);
 			}
-			ExportExcelUtils.createSheet(workbook,supplierNo, headers, columns, result);
+			String name = null;
+			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+			if(supplierDto!=null&&supplierDto.getSupplierName()!=null){
+				name = supplierDto.getSupplierName();
+			}else{
+				name = supplierNo;
+			}
+			ExportExcelUtils.createSheet(workbook,name, headers, columns, result);
 		}
 		workbook.write(ouputStream); 
 	}
@@ -154,7 +162,6 @@ public class HubSelectedService {
         }
 	}
 	private BrandDom getBrand(String brandNo) {
-		// TODO Auto-generated method stub
 		BrandDom brand = brandService.getGmsBrand(brandNo);
         if(brand!=null){
             return 	brand;
