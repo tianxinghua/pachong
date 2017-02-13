@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
 import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
@@ -26,6 +27,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuGenderState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuSeasonState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
@@ -712,9 +714,9 @@ public class PendingProductService implements IPendingProductService{
         		} else if(ProductState.SIZE_STATE.getIndex() == conformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
         		}else if(ProductState.INFOCOMPLETE.getIndex() == conformities.get(i)){
-        			criteria.andInfoStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
+        			criteria.andInfoStateEqualTo(InfoState.PERFECT.getIndex());
         		}else if(ProductState.HAVESTOCK.getIndex() == conformities.get(i)){
-        			criteria.andStockStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
+        			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
         		}
 			}
 		}
