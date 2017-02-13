@@ -152,49 +152,43 @@ public class VelaOrderService implements IOrderService {
 	
 
 	private void refundlOrder(OrderDTO deleteOrder) {
-		//查询状态
-		String rtnData2 = null;
+		
+//		String queryOrderUrl = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum";
+//		String cancelUrl="http://185.58.119.177/velashopapi/Myapi/Productslist/CancelOrder";
+//		deleteOrder = new OrderDTO();
+//		deleteOrder.setPurchaseNo("CGDF2017021091493");
+//		deleteOrder.setSpOrderId("201702105271414");
+//		dBContext = "Default";
+//		key = "MPm32XJp7M";
+		
 		try{
 			Map<String, String> map =new HashMap<String, String>();
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", deleteOrder.getPurchaseNo());
 			 map.put("order_no", deleteOrder.getSpOrderId());
 			 map.put("key", key);
-			 rtnData2 =velaPushOrder(queryOrderUrl,deleteOrder, map);
-			 deleteOrder.setLogContent("查询订单返回结果="+rtnData2+"推送的订单="+map.toString());
-			 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-			 
 			// 获取退单信息
 			Gson gson = new Gson();
+			try {
+				 String rtnData1 =velaPushOrder(cancelUrl,deleteOrder, map);
+				 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
+				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
 
-			ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-			if("HO".equals(response.getStatus())){
-				try {
-					 String rtnData1 =velaPushOrder(cancelUrl,deleteOrder, map);
-					 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
-					 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-
-					ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
-					if ("OK".equals(responseObject.getStatus())) {
-						deleteOrder.setRefundTime(new Date());
-						deleteOrder.setPushStatus(PushStatus.REFUNDED);
-					} else {
-						deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-						deleteOrder.setErrorType(ErrorStatus.API_ERROR);
-						deleteOrder.setLogContent(deleteOrder.getLogContent());
-						deleteOrder.setDescription(deleteOrder.getLogContent());
-					}
-				} catch (Exception e) {
+				ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
+				if ("OK".equals(responseObject.getStatus())) {
+					deleteOrder.setRefundTime(new Date());
+					deleteOrder.setPushStatus(PushStatus.REFUNDED);
+				} else {
 					deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-					deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
+					deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+					deleteOrder.setLogContent(deleteOrder.getLogContent());
 					deleteOrder.setDescription(deleteOrder.getLogContent());
-					deleteOrder.setLogContent(e.getMessage());
 				}
-			}else{
+			} catch (Exception e) {
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-				deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+				deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
 				deleteOrder.setDescription(deleteOrder.getLogContent());
-				deleteOrder.setLogContent(deleteOrder.getLogContent());
+				deleteOrder.setLogContent(e.getMessage());
 			}
 		}catch(Exception e){
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);

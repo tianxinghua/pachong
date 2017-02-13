@@ -73,22 +73,6 @@ public class PozzileiOrderService implements IOrderService {
    		createOrder(orderDTO);
    	}
 
-   	public static void main(String[] args) {
-//   		OrderDTO orderDTO =new OrderDTO();
-//		new PozzileiOrderService().handleConfirmOrder(orderDTO);
-		
-		 Map<String, String> map =new HashMap<String, String>();
-		 map.put("DBContext", "Default");
-		 map.put("purchase_no", "CGDF2016122808354");
-		 map.put("order_no", "2016122808354");
-		 map.put("barcode", "1000293100035");
-		 map.put("ordQty", "1");
-		 map.put("key", "5jq3vkBd7d");
-		 map.put("sellPrice", "0");
-		 String rtnData =HttpUtil45.get("http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder", new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2) ,map);
-		 System.out.println(rtnData);
-		
-	}
    	@Override
    	public void handleCancelOrder(OrderDTO deleteOrder) {
    		deleteOrder.setPushStatus(PushStatus.LOCK_CANCELLED);
@@ -166,52 +150,53 @@ public class PozzileiOrderService implements IOrderService {
 			handleException.handleException(orderDTO,e);
 		}
 	}
+  	public static void main(String[] args) {
+//		OrderDTO orderDTO =new OrderDTO();
+//	new PozzileiOrderService().handleConfirmOrder(orderDTO);
+  		new PozzileiOrderService().refundlOrder(null);
+	 Map<String, String> map =new HashMap<String, String>();
+	 map.put("DBContext", "Default");
+	 map.put("purchase_no", "CGDF2016122808354");
+	 map.put("order_no", "2016122808354");
+	 map.put("barcode", "1000293100035");
+	 map.put("ordQty", "1");
+	 map.put("key", "5jq3vkBd7d");
+	 map.put("sellPrice", "0");
+//	 String rtnData =HttpUtil45.get("http://net13serverpo.net/pozziapi/Myapi/Productslist/setOrder", new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2) ,map);
+//	 System.out.println(rtnData);
 	
+}
 
 	private void refundlOrder(OrderDTO deleteOrder) {
-		//查询状态
-		String rtnData2 = null;
+		
 		try{
 			Map<String, String> map =new HashMap<String, String>();
 			 map.put("DBContext", dBContext);
 			 map.put("purchase_no", deleteOrder.getPurchaseNo());
 			 map.put("order_no", deleteOrder.getSpOrderId());
 			 map.put("key", key);
-			 rtnData2 =pozzileiPushOrder(queryOrderUrl,deleteOrder, map);
-			 deleteOrder.setLogContent("查询订单返回结果="+rtnData2+"推送的订单="+map.toString());
-			 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-			 
 			// 获取退单信息
 			Gson gson = new Gson();
+			try {
+				 String rtnData1 =pozzileiPushOrder(cancelUrl,deleteOrder, map);
+				 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
+				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
 
-			ResponseObject response = gson.fromJson(rtnData2, ResponseObject.class);
-			if("HO".equals(response.getStatus())){
-				try {
-					 String rtnData1 =pozzileiPushOrder(cancelUrl,deleteOrder, map);
-					 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
-					 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-
-					ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
-					if ("OK".equals(responseObject.getStatus())) {
-						deleteOrder.setRefundTime(new Date());
-						deleteOrder.setPushStatus(PushStatus.REFUNDED);
-					} else {
-						deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-						deleteOrder.setErrorType(ErrorStatus.API_ERROR);
-						deleteOrder.setLogContent(deleteOrder.getLogContent());
-						deleteOrder.setDescription(deleteOrder.getLogContent());
-					}
-				} catch (Exception e) {
+				ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
+				if ("OK".equals(responseObject.getStatus())) {
+					deleteOrder.setRefundTime(new Date());
+					deleteOrder.setPushStatus(PushStatus.REFUNDED);
+				} else {
 					deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-					deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
+					deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+					deleteOrder.setLogContent(deleteOrder.getLogContent());
 					deleteOrder.setDescription(deleteOrder.getLogContent());
-					deleteOrder.setLogContent(e.getMessage());
 				}
-			}else{
+			} catch (Exception e) {
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-				deleteOrder.setErrorType(ErrorStatus.API_ERROR);
+				deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
 				deleteOrder.setDescription(deleteOrder.getLogContent());
-				deleteOrder.setLogContent(deleteOrder.getLogContent());
+				deleteOrder.setLogContent(e.getMessage());
 			}
 		}catch(Exception e){
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
@@ -220,5 +205,5 @@ public class PozzileiOrderService implements IOrderService {
 			deleteOrder.setLogContent(e.getMessage());
 		}
 	}
-
+	
 }

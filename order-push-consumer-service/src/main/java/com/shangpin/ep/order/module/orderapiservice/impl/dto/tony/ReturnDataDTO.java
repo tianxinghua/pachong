@@ -1,5 +1,7 @@
 package com.shangpin.ep.order.module.orderapiservice.impl.dto.tony;
 
+import java.util.List;
+
 /**
  * Created by Administrator on 2015/10/8.
  */
