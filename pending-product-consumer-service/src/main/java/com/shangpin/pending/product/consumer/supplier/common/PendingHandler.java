@@ -132,6 +132,7 @@ public class PendingHandler {
 	static Integer isCurrentMin  =   DateUtils.getCurrentMin();
 
 	ObjectMapper mapper =new ObjectMapper();
+
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
 		if(null!=message){
@@ -236,18 +237,9 @@ public class PendingHandler {
 			hubSpuPending = this.addNewSpu(message.getData());
 		} catch (Exception e) {
 
-			if (e instanceof DuplicateKeyException) {// 并发造成的
-				HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
-						message.getData().getSupplierSpuNo());
-				if (null != spuDto) {
-					hubSpuPending = new SpuPending();
-					BeanUtils.copyProperties(spuDto, hubSpuPending);
+			hubSpuPending = new SpuPending();
+			setSpuPendingValueWhenDuplicateKeyException(hubSpuPending, e, message.getSupplierId(), message.getData().getSupplierSpuNo());
 
-				}
-			} else {
-				e.printStackTrace();
-				throw e;
-			}
 
 		}
 		return hubSpuPending;
@@ -260,7 +252,14 @@ public class PendingHandler {
 		PendingSpu tmp = new PendingSpu();
 		this.setValueFromHubSuppierSpuToPendingSpu(supplierSpuDto,tmp);
 		tmp.setSupplierNo(message.getSupplierNo());
-		return  addNewSpu(tmp);
+		SpuPending hubSpuPending = null;
+		try {
+			hubSpuPending = addNewSpu(tmp);
+		} catch (Exception e) {
+			hubSpuPending = new SpuPending();
+			setSpuPendingValueWhenDuplicateKeyException(hubSpuPending, e, tmp.getSupplierId(), tmp.getSupplierSpuNo());
+		}
+		return hubSpuPending;
 	}
 
 	/**
@@ -741,59 +740,8 @@ public class PendingHandler {
 
 				BeanUtils.copyProperties(spu, updateSpuPending);
 
-				boolean allStatus = true;
-				// 获取品牌
+				setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
 
-				if(StringUtils.isNotBlank(spu.getHubBrandNo())){
-
-					boolean brandmapping = setBrandMapping(spu, updateSpuPending);
-					if(!brandmapping){
-						allStatus =false;
-					}
-
-				}
-				//验证货号必须要有品牌
-				if(StringUtils.isNotBlank(spu.getSpuModel())){
-					if(StringUtils.isBlank(spu.getHubBrandNo())){
-						spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
-					}
-					if(!setBrandModel(spu, updateSpuPending)) allStatus =false;
-				}
-
-				// 设置性别
-				if (StringUtils.isNotBlank(spu.getHubGender())) {
-					if (!setGenderMapping(spu, updateSpuPending))
-						allStatus = false;
-				}
-
-				// 获取品类
-				if (StringUtils.isNotBlank(spu.getHubCategoryNo())&&StringUtils.isNotBlank(spu.getHubGender())) {
-					if (!setCategoryMapping(spu, updateSpuPending))
-						allStatus = false;
-				}
-
-				// 获取颜色
-				if (StringUtils.isNotBlank(spu.getHubColor())) {
-
-					if (!setColorMapping(spu, updateSpuPending))
-						allStatus = false;
-				}
-
-				// 获取季节
-			    if(StringUtils.isNotBlank(spu.getHubSeason())){
-					if (!setSeasonMapping(spu, updateSpuPending))
-						allStatus = false;
-				}
-
-				// 获取材质
-				if (StringUtils.isNotBlank(spu.getHubMaterial())) {
-					if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
-				}
-				// 产地映射
-				if (StringUtils.isNotBlank(spu.getHubOrigin())) {
-					if (!setOriginMapping(spu, updateSpuPending))
-						allStatus = false;
-				}
 				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
 			    //更新后重新赋值
 				spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
@@ -812,10 +760,88 @@ public class PendingHandler {
 			PendingSpu tmp = new PendingSpu();
 			this.setValueFromHubSuppierSpuToPendingSpu(supplierSpuDto,tmp);
 			tmp.setSupplierNo(spu.getSupplierNo());
-			SpuPending newSpuPending  = addNewSpu(tmp);
+			SpuPending newSpuPending = null;
+			try {
+				newSpuPending = addNewSpu(tmp);
+			} catch (Exception e) {
+				 newSpuPending = new SpuPending();
+				 setSpuPendingValueWhenDuplicateKeyException(newSpuPending, e, spu.getSupplierId(), spu.getSupplierSpuNo());
+			}
 			return newSpuPending;
 		}
 
+	}
+
+	private void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
+		if (e instanceof DuplicateKeyException) {
+			HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
+					supplierSpuNo);
+			if (null != spuDto) {
+
+				BeanUtils.copyProperties(spuDto, spuPending);
+
+			}
+		} else {
+			e.printStackTrace();
+			throw e;
+		}
+
+	}
+
+	private void setSpuPendingValueForUpdate(PendingSpu spu, HubSpuPendingDto spuPendingDto, HubSpuPendingDto updateSpuPending) throws Exception {
+		boolean allStatus = true;
+		// 获取品牌
+
+		if(StringUtils.isNotBlank(spu.getHubBrandNo())){
+
+            boolean brandmapping = setBrandMapping(spu, updateSpuPending);
+            if(!brandmapping){
+                allStatus =false;
+            }
+
+        }
+		//验证货号必须要有品牌
+		if(StringUtils.isNotBlank(spu.getSpuModel())){
+            if(StringUtils.isBlank(spu.getHubBrandNo())){
+                spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
+            }
+            if(!setBrandModel(spu, updateSpuPending)) allStatus =false;
+        }
+
+		// 设置性别
+		if (StringUtils.isNotBlank(spu.getHubGender())) {
+            if (!setGenderMapping(spu, updateSpuPending))
+                allStatus = false;
+        }
+
+		// 获取品类
+		if (StringUtils.isNotBlank(spu.getHubCategoryNo())&&StringUtils.isNotBlank(spu.getHubGender())) {
+            if (!setCategoryMapping(spu, updateSpuPending))
+                allStatus = false;
+        }
+
+		// 获取颜色
+		if (StringUtils.isNotBlank(spu.getHubColor())) {
+
+            if (!setColorMapping(spu, updateSpuPending))
+                allStatus = false;
+        }
+
+		// 获取季节
+		if(StringUtils.isNotBlank(spu.getHubSeason())){
+            if (!setSeasonMapping(spu, updateSpuPending))
+                allStatus = false;
+        }
+
+		// 获取材质
+		if (StringUtils.isNotBlank(spu.getHubMaterial())) {
+            if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
+        }
+		// 产地映射
+		if (StringUtils.isNotBlank(spu.getHubOrigin())) {
+            if (!setOriginMapping(spu, updateSpuPending))
+                allStatus = false;
+        }
 	}
 
 	private void setValueFromHubSuppierSpuToPendingSpu(HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
