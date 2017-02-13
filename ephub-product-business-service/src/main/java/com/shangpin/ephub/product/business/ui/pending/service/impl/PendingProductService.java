@@ -31,6 +31,8 @@ import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
+import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -118,6 +120,8 @@ public class PendingProductService implements IPendingProductService{
     private HubSupplierSpuGateWay hubSupplierSpuGateWay;
     @Autowired
     private HubSupplierSkuGateWay hubSupplierSkuGateWay;
+    @Autowired
+    private PengdingToHubGateWay pendingToHub;
 
     @Override
     public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
@@ -343,6 +347,9 @@ public class PendingProductService implements IPendingProductService{
             if(0==pendingProductDto.getSupplierSpuId()){
                 pendingProductDto.setSupplierSpuId(null);
             }
+            //TODO
+//            HubPendingDto
+//            pendingToHub.addSkuOrSkuSupplierMapping()
             if(pass){
             	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
