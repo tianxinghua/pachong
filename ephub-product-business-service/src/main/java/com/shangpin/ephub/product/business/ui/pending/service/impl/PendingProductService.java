@@ -163,35 +163,16 @@ public class PendingProductService implements IPendingProductService{
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
-                    	
-                    	HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-                    	criteria.createCriteria().andSupplierIdEqualTo(pendingSpu.getSupplierId()).andSpuPendingIdEqualTo(pendingSpu.getSpuPendingId());
-                    	criteria.setPageNo(1);
-                    	criteria.setPageSize(10000);
-                    	
-                    	boolean flag = false;
-                    	List<HubSkuPendingDto> skuList = hubSkuPendingGateWay.selectByCriteria(criteria);
-                    	if(skuList!=null&&skuList.size()>0){
-                    		for(HubSkuPendingDto sku : skuList){
-                    			if(sku.getStock()!=null&&sku.getStock()>0){
-                    				flag = true;
-                    				break;
-                    			}
-                    		}
-                    	}
-                    	
-                    	if(flag){
-                    		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
-                            SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
-                            pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
-                            FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                            pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
-                            BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
-                            pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                            List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                            pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
-                            products.add(pendingProduct);
-                    	}
+                		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
+                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
+                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
+                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
+                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
+                        List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
+                        products.add(pendingProduct);
                     }
                 }
             }
