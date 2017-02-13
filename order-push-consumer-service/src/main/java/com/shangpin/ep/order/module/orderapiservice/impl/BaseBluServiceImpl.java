@@ -88,9 +88,10 @@ public class BaseBluServiceImpl implements IOrderService {
                     return;
                 }else{
                     try {
+                        result = result.replaceAll("\\\\","");
                         result = result.substring(1,result.length()-1);
                         OrderResult orderResult =  mapper.readValue(result, OrderResult.class);
-                        if(orderResult.getCodMsg().equals("0")){
+                        if(0==orderResult.getCodMsg()){
                             orderDTO.setConfirmTime(new Date());
                             orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
                         }else{
@@ -133,6 +134,7 @@ public class BaseBluServiceImpl implements IOrderService {
         String stockResult  = HttpUtil45.get(stockUrl,outTimeConf,null);
         LogCommon.recordLog(stockResult,LogLeve.DEBUG);
         if(stockResult.indexOf("Stock")>=0){
+            stockResult = stockResult.replaceAll("\\\\","");
             stockResult = stockResult.substring(1,stockResult.length()-1);
 
             JSONObject obj = JSON.parseObject(stockResult);;

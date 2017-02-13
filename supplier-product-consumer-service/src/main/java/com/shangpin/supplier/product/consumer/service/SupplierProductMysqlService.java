@@ -20,6 +20,8 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductMysqlService </p>
  * <p>Description: Supplier表的增删改查Service</p>
@@ -29,6 +31,7 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
  *
  */
 @Service
+@Slf4j
 public class SupplierProductMysqlService {
 
 	@Autowired
@@ -42,8 +45,9 @@ public class SupplierProductMysqlService {
 	 * @param pendingSpu 把hubSpu发生变化了的信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu) throws EpHubSupplierProductConsumerException{
+	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
 		try {	
+			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
 			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
 				hubSpu.setCreateTime(new Date());
@@ -69,20 +73,19 @@ public class SupplierProductMysqlService {
 				}
 			}
 		} catch (Exception e) {
-			/*System.out.println("supplierid============="+hubSpu.getSupplierId());
-			System.out.println(hubSpu.getSupplierMaterial());*/
-			throw new EpHubSupplierProductConsumerException("系统在保存待处理spu时发生异常：异常为"+e.getMessage(), e);
+			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage(), e);
+			return ProductStatus.NO_NEED_HANDLE;
 		}			
 	}	
 	
-	private void updateHubSpuMemo(HubSupplierSpuDto hubSpuUpdated) {
-		HubSupplierSpuWithCriteriaDto criteriaDto = new HubSupplierSpuWithCriteriaDto();
-		HubSupplierSpuCriteriaDto hubSupplierSpuCriteriaDto = new HubSupplierSpuCriteriaDto();
-		hubSupplierSpuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSpuUpdated.getSupplierId()).andSupplierSpuNoEqualTo(hubSpuUpdated.getSupplierSpuNo());
-		criteriaDto.setCriteria(hubSupplierSpuCriteriaDto);
-		criteriaDto.setHubSupplierSpu(hubSpuUpdated);
-		hubSupplierSpuGateWay.updateByCriteriaSelective(criteriaDto);
-	}
+//	private void updateHubSpuMemo(HubSupplierSpuDto hubSpuUpdated) {
+//		HubSupplierSpuWithCriteriaDto criteriaDto = new HubSupplierSpuWithCriteriaDto();
+//		HubSupplierSpuCriteriaDto hubSupplierSpuCriteriaDto = new HubSupplierSpuCriteriaDto();
+//		hubSupplierSpuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSpuUpdated.getSupplierId()).andSupplierSpuNoEqualTo(hubSpuUpdated.getSupplierSpuNo());
+//		criteriaDto.setCriteria(hubSupplierSpuCriteriaDto);
+//		criteriaDto.setHubSupplierSpu(hubSpuUpdated);
+//		hubSupplierSpuGateWay.updateByCriteriaSelective(criteriaDto);
+//	}
 
 	/**
 	 * 判断hubSku价格是否发生变化

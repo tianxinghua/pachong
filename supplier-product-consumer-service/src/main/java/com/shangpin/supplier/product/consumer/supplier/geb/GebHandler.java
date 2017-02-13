@@ -79,13 +79,13 @@ public class GebHandler implements ISupplierHandler {
 					images.add(image);
 				}
 			}
-			if(null != itemImages.getThumb()){
-				for(String url : itemImages.getThumb()){
-					Image image = new Image();
-					image.setUrl(url);
-					images.add(image);
-				}
-			}
+//			if(null != itemImages.getThumb()){
+//				for(String url : itemImages.getThumb()){
+//					Image image = new Image();
+//					image.setUrl(url);
+//					images.add(image);
+//				}
+//			}
 		}
 		return images;
 	}
