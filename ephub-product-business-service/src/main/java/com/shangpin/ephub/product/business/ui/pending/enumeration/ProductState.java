@@ -46,7 +46,11 @@ public enum ProductState {
 	/**
 	 * 信息完整
 	 */
-	INFOCOMPLETE(10,"infoComplete"); 
+	INFOCOMPLETE(10,"infoComplete"),
+	/**
+	 * 有库存
+	 */
+	HAVESTOCK(11,"haveStock");
 	
 	/**
      * 数字索引标识
