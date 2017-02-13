@@ -39,4 +39,7 @@ public interface HubSkuPendingMapper {
     int updateByPrimaryKeySelective(HubSkuPending record);
 
     int updateByPrimaryKey(HubSkuPending record);
+
+    // 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方
+    int sumStockBySpuPendingId(Long spuPendingId);
 }

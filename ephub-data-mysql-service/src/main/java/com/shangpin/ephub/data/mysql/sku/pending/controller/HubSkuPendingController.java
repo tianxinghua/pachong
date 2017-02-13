@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.sku.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,4 +78,9 @@ public class HubSkuPendingController {
     public int updateByPrimaryKey(@RequestBody HubSkuPending hubSkuPending){
     	return hubSkuPendingService.updateByPrimaryKey(hubSkuPending);
     }
+
+	@RequestMapping(value = "/sum-stock-by-spuPendingId/{spuPendingId}")
+	public int sumStockBySpuPendingId(@PathVariable(value = "spuPendingId") Long spuPendingId){
+		return hubSkuPendingService.sumStockBySpuPendingId(spuPendingId);
+	}
 }
