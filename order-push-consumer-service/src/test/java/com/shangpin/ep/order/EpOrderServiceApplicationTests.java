@@ -1,10 +1,13 @@
 package com.shangpin.ep.order;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.baseblu.OrderResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +63,7 @@ public class EpOrderServiceApplicationTests {
 	@Qualifier("baseBluServiceImpl")
 	IOrderService baseBluServiceImpl;
 
-	@Test
+
 	public void testPushOrder(){
 		OrderDTO orderDTO = new OrderDTO();
 		orderDTO.setDetail("9900041846920:1");
@@ -68,6 +71,18 @@ public class EpOrderServiceApplicationTests {
 		orderDTO.setSpMasterOrderNo("20170209001");
 		orderDTO.setPurchaseNo("CGDF20170209001");
 		baseBluServiceImpl.handleConfirmOrder(orderDTO);
+	}
+
+	@Test
+	public void testMapping(){
+		String result = "{\"CodMsg\": 1, \"Msg\": \"OK Operation Occurred Successfully\"}";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			OrderResult orderResult =  mapper.readValue(result, OrderResult.class);
+			System.out.println("123");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 
