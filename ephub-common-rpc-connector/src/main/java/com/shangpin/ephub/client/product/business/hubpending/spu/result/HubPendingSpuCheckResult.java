@@ -39,4 +39,5 @@ public class HubPendingSpuCheckResult implements Serializable {
     private boolean gender;
     private boolean material;
     private boolean original;
+    private String model;
 }
