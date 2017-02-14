@@ -71,4 +71,9 @@ public class HubSkuPendingService {
 	public int updateByPrimaryKey(HubSkuPending hubSkuPending) {
 		return hubSkuPendingMapper.updateByPrimaryKey(hubSkuPending);
 	}
+
+	public int sumStockBySpuPendingId(Long spuPendingId) {
+		return hubSkuPendingMapper.sumStockBySpuPendingId(spuPendingId);
+	}
+
 }

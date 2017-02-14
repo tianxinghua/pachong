@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.sku.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,4 +58,7 @@ public interface HubSkuPendingGateWay {
 	
 	@RequestMapping(value = "/hub-sku-pending/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSkuPendingDto hubSkuPending);
+
+    @RequestMapping(value = "/hub-sku-pending/sum-stock-by-spuPendingId/{spuPendingId}", method = RequestMethod.POST,consumes = "application/json")
+    public int sumStockBySpuPendingId(@PathVariable(value = "spuPendingId") Long spuPendingId);
 }
