@@ -142,6 +142,9 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("baseBluServiceImpl")
 	IOrderService baseBluServiceImpl;
+	@Autowired
+	@Qualifier("tessabitServiceImpl")
+	IOrderService tessabitServiceImpl;
 
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
@@ -225,8 +228,9 @@ public class OrderHandleSearch {
 			return palomaBarceloOrderImpl;
 		}else if ("2016080801914".equals(supplierId)) {
 			return baseBluServiceImpl;
-		}
-		else {
+		}else if("2015091701503".equals(supplierId)){
+			return tessabitServiceImpl;
+		}else {
 			return null;
 		}
 	}
@@ -303,6 +307,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getPalomaBarceloConf();
 		}else if ("2016080801914".equals(supplierId)) {
 			return supplierProperties.getBaseBlu();
+		}else if("2015091701503".equals(supplierId)){
+			return supplierProperties.getTessabit();
 		}
 		else {
 			return null;
