@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,14 +97,21 @@ public class HubSelectedService {
 				convertTOExcel(response,map);
 				result.add(map);
 			}
-			String name = null;
+			StringBuffer supplierName = new StringBuffer();
 			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
 			if(supplierDto!=null&&supplierDto.getSupplierName()!=null){
-				name = supplierDto.getSupplierName();
+				String name = supplierDto.getSupplierName();
+				 String reg ="[A-Za-z]+";
+			        Pattern pattern = Pattern.compile(reg);
+			        Matcher matcher = pattern.matcher(name);
+			        while (matcher.find()) {
+			            String fqdnId = matcher.group();
+			            supplierName.append(fqdnId).append(" ");
+			        }
 			}else{
-				name = supplierNo;
+				supplierName.append(supplierNo);
 			}
-			ExportExcelUtils.createSheet(workbook,name, headers, columns, result);
+			ExportExcelUtils.createSheet(workbook,supplierName.toString(), headers, columns, result);
 		}
 		workbook.write(ouputStream); 
 	}
