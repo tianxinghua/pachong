@@ -24,6 +24,7 @@ spring:
                                        republishToDlq: true
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8
   mail: 
        default-recipient: lizhongren@shangpin.com
        default-sender: yanxiaobin@shangpin.com
@@ -267,6 +268,17 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 8353086ab69f4840876abdf52e2d6746
                   openApiSecret: 1d90dae197f14b0f9abbe5746bec57d7
+          tessabit:
+                  url: http://46.44.241.30/WS_Sito_P15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: shang1907
+                  isPurchaseExp:
+                  openApiKey: f82cd9c9eeee4ee584acdff5b3b5d73c
+                  openApiSecret: ec44c8cf8afb4c4c80e66ffd90d8e9b6
           paolo:
                   url: http://95.110.163.89:8580/ws_sito_shang/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
