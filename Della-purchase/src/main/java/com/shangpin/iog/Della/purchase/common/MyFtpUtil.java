@@ -41,8 +41,27 @@ public class MyFtpUtil {
 		for(;i<10;i++){
 			logger.info("第"+i+"次开始上传92.223.134.2开始");
 			FTPClient ftp = new FTPClient(); 
-	        FileInputStream fis = null ; 
+			FileInputStream fis = null;
 	        try {
+	        	
+//	        	ftp.setRemoteHost("92.223.134.2");
+//                ftp.setRemotePort(21);
+//                ftp.setTimeout(1000*60*30);
+//                ftp.connect();
+//                //登陆
+//                ftp.login("mosuftp", "inter2015£");
+//                logger.info("ftp登录成功!!");
+//                //连接模式
+//                ftp.setConnectMode(FTPConnectMode.PASV);
+//                //跳转到指定路径
+//                ftp.chdir("/MOSU/Orders");
+//                //ASCII方式：传输xml文本文件
+//                ftp.setType(FTPTransferType.BINARY);
+//                // 获取 XML文件到本地
+//                ftp.put(localFile,new File(localFile).getName());
+//                logger.info(localFile+" 上传92.223.134.2成功!!!!!!!!!!!!!!!!!");    
+//                break;
+	        	
 	        	ftp.setDefaultTimeout(1000 * 60 * 5);
 				ftp.setConnectTimeout(1000 * 60 * 5);
 				ftp.enterLocalActiveMode();
@@ -51,19 +70,25 @@ public class MyFtpUtil {
 				ftp.setControlEncoding("UTF-8");
 				ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 				ftp.changeWorkingDirectory("/MOSU/Orders");
+				ftp.enterLocalPassiveMode();
 				File srcFile = new File(localFile);
 				fis = new FileInputStream(srcFile);
 				logger.info("ftp连接成功");
 				ftp.storeFile(srcFile.getName(), fis);
 				logger.info(srcFile.getName()+"上传92.223.134.2成功!!!!!!!!!!!!!!!!!");
 				break;
-			} catch (Exception e) {				
+			} catch (Exception e) {	
+				logger.info(e.getMessage(),e); 
 				loggerError.error(e.getMessage(),e); 
 			}finally{
+//				close(ftp);
 				try {
+					if(null != fis){
+						fis.close();
+					}
 					ftp.disconnect();
 				} catch (IOException e) {
-					loggerError.error(e.getMessage(),e);
+					loggerError.error(e);
 				}
 			}
 		}
@@ -79,10 +104,23 @@ public class MyFtpUtil {
 					}
 				}
 			});
-    		
-    	}
-        
+    	}        
     }
+    
+    /**
+     *断开连接
+     * @param ftp 客户端
+     */
+//    public void close(FTPClient ftp){
+//        try {
+//            if (null != ftp)
+//                ftp.quit();
+//        } catch (IOException e) {
+//        	loggerError.error(e);        
+//        } catch (FTPException e) {
+//        	loggerError.error(e);        
+//        }
+//    }
 
 }
 
