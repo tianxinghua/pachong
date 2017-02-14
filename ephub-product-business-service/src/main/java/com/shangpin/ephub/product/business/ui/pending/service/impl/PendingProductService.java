@@ -235,7 +235,7 @@ public class PendingProductService implements IPendingProductService{
             criteriaDto.setPageNo(1);
             criteriaDto.setPageSize(1000); 
             criteriaDto.setOrderByClause("spu_pending_id,hub_sku_size");
-            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andStockGreaterThan(0);
+            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
             	for(HubSkuPendingDto sku : skus){
@@ -432,7 +432,7 @@ public class PendingProductService implements IPendingProductService{
 		skuCriteria.setPageSize(100); 
 		skuCriteria.setOrderByClause("supplier_sku_size"); 
     	skuCriteria.setFields("supplier_sku_size");
-    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andStockGreaterThan(0); 
+    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId); 
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
 	}
     /**
@@ -628,6 +628,9 @@ public class PendingProductService implements IPendingProductService{
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
+//		if(StringUtils.isEmpty(pendingQuryDto.getSpuState())){
+//			
+//		}
 		criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
