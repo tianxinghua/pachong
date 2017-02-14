@@ -99,7 +99,9 @@ public class FetchProduct extends AbsSaveProduct{
 				}else if(good.getTypeID().equals("1")){
 					gender = "woman";
 				}else if(good.getTypeID().equals("21617687")){
-					gender = "kids";
+					gender = "boy";
+				}else if(good.getTypeID().equals("21617686")){
+					gender = "girl";
 				}
 				spu.setCategoryGender(gender);					
 				//sku

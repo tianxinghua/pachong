@@ -1,4 +1,5 @@
-package com.shangpin.iog.ostore.dto;
+package com.shangpin.iog.linoricci.dto;
+
 
 public class Item {
 	private String spuId;
