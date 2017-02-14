@@ -58,7 +58,7 @@ public class FetchProduct extends AbsSaveProduct{
 						SpuDTO spu = new SpuDTO();
 						spu.setId(UUIDGenerator.getUUID());
 						spu.setSupplierId(supplierId);
-						spu.setSpuId(item.getSku_brand());
+						spu.setSpuId(item.getSku_brand()+item.getColor());
 						spu.setCategoryGender(item.getGender());
 						spu.setCategoryName(item.getCategory());
 						spu.setSubCategoryName(item.getSub_category());
@@ -81,7 +81,7 @@ public class FetchProduct extends AbsSaveProduct{
 								SkuDTO sku = new SkuDTO();
 								sku.setId(UUIDGenerator.getUUID());
 								sku.setSupplierId(supplierId);	
-								sku.setSpuId(item.getSku_brand());
+								sku.setSpuId(item.getSku_brand()+item.getColor());
 								sku.setProductSize(strs[i]); 
 								sku.setStock(strs[i+1]);
 								sku.setSkuId(strs[i+2]);//skuid设置为barcode
@@ -103,7 +103,7 @@ public class FetchProduct extends AbsSaveProduct{
 							for(String url : urls.split("\\|")){
 								picLists.add(url);
 							}
-							imageMap.put(spu.getSpuId()+";"+item.getSku_brand(), picLists);
+							imageMap.put(spu.getSpuId()+";"+spu.getSpuId(), picLists);
 						}
 						
 					} catch (Exception e) {

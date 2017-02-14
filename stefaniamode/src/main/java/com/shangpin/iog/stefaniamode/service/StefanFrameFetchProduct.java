@@ -93,7 +93,7 @@ public class StefanFrameFetchProduct extends AbsSaveProduct{
 			e2.printStackTrace();
 		}
 		for (Product product : productList) {
-			SpuDTO spu = new SpuDTO();
+
 
 			Items items = product.getItems();
 			if (null == items) {// 无SKU
@@ -103,6 +103,8 @@ public class StefanFrameFetchProduct extends AbsSaveProduct{
 			if (null == itemList)
 				continue;
 			String skuId = "";
+			Map<String,String> spuMap = new HashMap<>();
+
 			for (Item item : itemList) {
 				SkuDTO sku = new SkuDTO();
 				Integer stock = Integer.parseInt(item.getStock());
@@ -112,17 +114,43 @@ public class StefanFrameFetchProduct extends AbsSaveProduct{
 				sku.setId(UUIDGenerator.getUUID());
 				sku.setSupplierId(supplierId);
 
-				sku.setSpuId(product.getProductId());
+
 				skuId = item.getItem_id();
 				if (skuId.indexOf("½") > 0) {
 					skuId = skuId.replace("½", "+");
 				}
+
+
 				sku.setSkuId(skuId);
 				sku.setProductSize(item.getItem_size());
 				sku.setMarketPrice(item.getMarket_price());
 				sku.setSalePrice(item.getSell_price());
 				sku.setSupplierPrice("");
 				sku.setColor(item.getColor());
+				if(StringUtils.isNotBlank(sku.getColor())) {
+					if(!spuMap.containsKey(product.getProductId()+"#"+sku.getColor())){
+						SpuDTO spu = new SpuDTO();
+						spu.setId(UUIDGenerator.getUUID());
+						spu.setSupplierId(supplierId);
+						spu.setSpuId(product.getProductId()+"#"+sku.getColor());
+						spu.setBrandName(product.getProduct_brand());
+						spu.setCategoryName(product.getCategory());
+						spu.setSpuName(product.getProduct_name());
+						spu.setSeasonId(product.getSeason_code());
+						spu.setMaterial(product.getProduct_material());
+						if (StringUtils.isNotBlank(product.getMade_in())) {
+							origin = product.getMade_in();
+						}
+						spu.setProductOrigin(origin);
+						// 商品所属性别字段；
+						spu.setCategoryGender(product.getMain_category());
+						spuList.add(spu);
+
+						spuMap.put(product.getProductId()+"#"+sku.getColor(),"");
+					}
+
+				}
+				sku.setSpuId(product.getProductId()+"#"+sku.getColor());
 				sku.setProductDescription(item.getDescription());
 				sku.setStock(item.getStock());
 				sku.setProductCode(product.getProductId());
@@ -134,21 +162,7 @@ public class StefanFrameFetchProduct extends AbsSaveProduct{
 //					imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), Arrays.asList(picArray));
 //				}
 			}
-			spu.setId(UUIDGenerator.getUUID());
-			spu.setSupplierId(supplierId);
-			spu.setSpuId(product.getProductId());
-			spu.setBrandName(product.getProduct_brand());
-			spu.setCategoryName(product.getCategory());
-			spu.setSpuName(product.getProduct_name());
-			spu.setSeasonId(product.getSeason_code());
-			spu.setMaterial(product.getProduct_material());
-			if (StringUtils.isNotBlank(product.getMade_in())) {
-				origin = product.getMade_in();
-			}
-			spu.setProductOrigin(origin);
-			// 商品所属性别字段；
-			spu.setCategoryGender(product.getMain_category());
-			spuList.add(spu);
+
 		}
 		returnMap.put("sku", skuList);
 		returnMap.put("spu", spuList);

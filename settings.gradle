@@ -16,37 +16,29 @@ include 'iog-facade-impl'
 include 'iog-sop'
 include 'iog-generater-util'
 include 'iog-web-apiHandler'
-
 include 'coltorti'
-include 'atelier-ostore-order'
+
+include 'palomaBarcelo-stock'
+include 'coltorti'
+include 'mclabels'
+include 'mclabels-stock'
+include 'stefaniamode'
+include 'Della'
+include 'biondini'
+include 'eleonorabonucci'
 
 
 
-include 'efashion-order'
 include 'report'
 include 'picturedown'
 
-include 'dellogliostore'
-include 'stockMonti'
+
 include 'project-mq'
 include 'stockMontiHK'
 include 'stockclean'
 include 'OpenTest'
-include 'picturedown'
-include 'order-control'
-include 'tufano'
-include 'lungolivigno-order'
-include 'atelier-paolo-order'
-include 'GiBiLogic-stock'
-include 'spinnaker'
-include 'picturedown'
+
 include 'monnierfreres'
-include 'coltorti'
-include 'studio69'
-include 'smets-hk-stock'
-include 'smets-stock'
-include 'synchSupplierIdAndSpId'
-include 'eleonorabonucci'
-include 'Della-purchase'
-include 'linoricci'
+include 'giglio'
+
 

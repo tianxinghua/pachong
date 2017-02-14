@@ -6,6 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Product {
+	
+	
 	private String spuId;
 	private String brandCode;
 	private String brandDesc;

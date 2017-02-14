@@ -45,9 +45,9 @@ public class Startup {
 		// 加载spring
 		log.info("----拉取stefaniamode数据开始----");
 		loadSpringContext();
-		log.info("----初始SPRING成功----");
+
 		// 拉取数据
-		StefanFrameFetchProduct fetchProduct = (StefanFrameFetchProduct) factory.getBean("framestefaniamode");
+		FetchProduct fetchProduct = (FetchProduct) factory.getBean("stefaniamode");
 		fetchProduct.fetchProductAndSave();
 
 		log.info("----拉取stefaniamode数据完成----");
