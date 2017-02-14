@@ -99,4 +99,6 @@ public class SupplierProperties {
 
 	private BaseBlu baseBlu;
 	
+	private Tessabit tessabit;
+	
 }
