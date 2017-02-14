@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.49
+           host: 172.20.11.50
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -61,6 +61,7 @@ spring:
                                        republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8
   ftp:
        host: 172.20.10.88
        port: 21
