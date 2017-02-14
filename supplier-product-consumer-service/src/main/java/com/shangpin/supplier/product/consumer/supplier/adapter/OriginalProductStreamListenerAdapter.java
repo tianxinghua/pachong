@@ -49,10 +49,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("giglioHandler")
 	private ISupplierHandler giglioHandler;
-
 	@Autowired
 	@Qualifier("eleonoraHandler")
 	private ISupplierHandler eleonoraHandler;
+	@Autowired
+	@Qualifier("studio69Handler")
+	private ISupplierHandler studio69Handler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -200,7 +202,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void studio69StreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);	
+		studio69Handler.handleOriginalProduct(message, headers);	
 	}
 	/**
 	 * creative99供货商原始数据监听方法
