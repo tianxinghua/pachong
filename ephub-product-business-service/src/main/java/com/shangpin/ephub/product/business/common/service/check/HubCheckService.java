@@ -38,6 +38,8 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
+import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
+import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -101,6 +103,29 @@ public class HubCheckService {
 		//品牌
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		result.setPassing(true);
+		
+		BrandModelDto brandModelDto = null;
+		BrandModelResult brandModelResult= null;
+		if(StringUtils.isNoneBlank(hubProduct.getSpuModel())){
+			brandModelDto = new BrandModelDto();
+			brandModelDto.setBrandMode(hubProduct.getSpuModel());
+			brandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
+			brandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
+			brandModelResult=  HubBrandModelRuleService.verify(brandModelDto);
+			if(brandModelResult.isPassing()){
+				result.setSpuModel(true);
+				result.setModel(brandModelResult.getBrandMode());
+			}else{
+				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败");
+				result.setPassing(false);
+				result.setSpuModel(false);
+			}
+		}else{
+			str.append("spuModel为空");
+			result.setPassing(false);
+			result.setSpuModel(false);
+		}
+		
 		//校验品牌
 		if(StringUtils.isNotBlank(hubProduct.getHubBrandNo())){
 			if(!getBrand(hubProduct.getHubBrandNo())){
