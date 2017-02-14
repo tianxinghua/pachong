@@ -31,13 +31,9 @@ public class StudioSkuDto implements Serializable {
     private String productSize;//尺码   必填
     private String stock;//库存  必填   如果库存等于0的 不存
     private String memo;  //备注
-    private Date createTime = new Date();
-    private Date lastTime;//修改时间
-     
     private String newMarketPrice; //新的市场价
     private String newSalePrice;
     private String newSupplierPrice;
-    private Date updateTime;
     private String eventStartDate;
     private String eventEndDate;
     private String measurement;

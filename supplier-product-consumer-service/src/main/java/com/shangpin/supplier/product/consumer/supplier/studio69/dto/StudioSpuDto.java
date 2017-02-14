@@ -1,7 +1,6 @@
 package com.shangpin.supplier.product.consumer.supplier.studio69.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -35,8 +34,6 @@ public class StudioSpuDto implements Serializable{
     private String picUrl;//图片地址
     private String material;//材质 必填
     private String productOrigin;//产地
-    private Date createTime= new Date();
-    private Date lastTime= new Date();//修改时间
     private String memo;
     private String newseasonId;
     private String newseasonName;
