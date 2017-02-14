@@ -22,7 +22,7 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductPictureService supplierProductPictureService;
 
-	//@Scheduled(cron = "00 29 12 * * ?")
+	@Scheduled(cron = "00 30 15 * * ?")
 	public void pictureTask() {
 		try {
 			log.info("================================系统开始扫描拉取失败的图片并发送重新拉取图片事件================================");

@@ -56,7 +56,7 @@ public class SupplierProductPictureService {
 	 * 处理供应商商品图片
 	 * @param picDtos
 	 */
-	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
+	public synchronized void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
@@ -209,7 +209,7 @@ public class SupplierProductPictureService {
 	 * 重试拉取图片
 	 * @param spuPendingPicId 图片表主键
 	 */
-	public void processRetryProductPicture(Long spuPendingPicId) {
+	public synchronized void processRetryProductPicture(Long spuPendingPicId) {
 		int count = 0;
 		try {
 			HubSpuPendingPicDto hubSpuPendingPicDto = supplierProductPictureManager.queryById(spuPendingPicId);
