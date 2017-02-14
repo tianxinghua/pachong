@@ -56,7 +56,7 @@ public class SupplierProductPictureService {
 	 * 处理供应商商品图片
 	 * @param picDtos
 	 */
-	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
+	public synchronized void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
@@ -169,17 +169,17 @@ public class SupplierProductPictureService {
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
 					Long spuPendingPicId = hubSpuPendingPicDto.getSpuPendingPicId();//获取主键
-					if (StringUtils.isBlank(shangpinRedis.get(assemblyKey(spuPendingPicId)))) {//拿到锁
+					//if (StringUtils.isBlank(shangpinRedis.get(assemblyKey(spuPendingPicId)))) {//拿到锁
 						HubSpuPendingPicDto dto = supplierProductPictureManager.queryById(spuPendingPicId);
 						if (dto != null && dto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
 							Integer retryCount = dto.getRetryCount();
-							if (retryCount != null && retryCount > 100) {
+							if (retryCount != null && retryCount > 20) {
 								continue;
 							}
-							shangpinRedis.set(assemblyKey(spuPendingPicId), String.valueOf(spuPendingPicId));
+							//shangpinRedis.set(assemblyKey(spuPendingPicId), String.valueOf(spuPendingPicId));
 							streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
 						}
-					}
+					//}
 				}
 			}
 		}
@@ -209,11 +209,11 @@ public class SupplierProductPictureService {
 	 * 重试拉取图片
 	 * @param spuPendingPicId 图片表主键
 	 */
-	public void processRetryProductPicture(Long spuPendingPicId) {
+	public synchronized void processRetryProductPicture(Long spuPendingPicId) {
 		int count = 0;
 		try {
 			HubSpuPendingPicDto hubSpuPendingPicDto = supplierProductPictureManager.queryById(spuPendingPicId);
-			if (hubSpuPendingPicDto != null && hubSpuPendingPicDto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
+			if (hubSpuPendingPicDto != null && hubSpuPendingPicDto.getDataState() == DataState.NOT_DELETED.getIndex() && hubSpuPendingPicDto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(hubSpuPendingPicDto.getSpuPendingPicId());
 				updateDto.setSupplierSpuId(hubSpuPendingPicDto.getSupplierSpuId());
