@@ -875,10 +875,15 @@ public class PendingHandler {
 		if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
 			String spSize = sizeMap.get(supplierSku.getHubSkuSize());
 			String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
-			hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
-			hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+			if(spSizeTypeAndSize.indexOf(":")>=0){
+
+				hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
+				hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+			} else{
+				hubSkuPending.setHubSkuSize(spSizeTypeAndSize);
+			}
 			hubSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
-			mappingSize = true;
+//			mappingSize = true;
 		} else {
 			hubSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
 		}
@@ -1011,7 +1016,7 @@ public class PendingHandler {
 			hubSkuPending.setFilterFlag(filterFlag);
 			if(StringUtils.isNotBlank(supplierSku.getHubSkuSize())){
 
-				if(originSkuPending.getSpSkuSizeState().intValue()!=PropertyStatus.MESSAGE_HANDLED.getIndex()){ //已匹配上的尺码不做处理
+				if(null!=originSkuPending.getSpSkuSizeState()&&originSkuPending.getSpSkuSizeState().intValue()!=PropertyStatus.MESSAGE_HANDLED.getIndex()){ //已匹配上的尺码不做处理
 
 					setSkuPendingSizeForUpdate(hubSpuPending, supplierSku, hubSkuPending);
 				}
@@ -1032,8 +1037,12 @@ public class PendingHandler {
             if(spSize.indexOf(",")>=0){
 
                 String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
-                hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
-                hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
+                if(spSizeTypeAndSize.indexOf(":")>=0){
+					hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
+					hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
+				}else{
+					hubSkuPending.setHubSkuSize(spSizeTypeAndSize);
+				}
 
                 hubSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
             }
