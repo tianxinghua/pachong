@@ -55,6 +55,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("studio69Handler")
 	private ISupplierHandler studio69Handler;
+	@Autowired
+	@Qualifier("alducadaostaHandler") 
+	private ISupplierHandler alducadaostaHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -371,7 +374,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void alducadaostaStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		alducadaostaHandler.handleOriginalProduct(message, headers);
 		
 	}
 	/**
