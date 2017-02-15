@@ -75,4 +75,4 @@ shangpin:
              gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetCategory
              scmsSupplierInfoUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
-             sopSkuListBySupplierSkuNoUrl: http://qa.sopoutapi.shangpin.com/Product/GetSopSkuListBySupplierSkuNo
+             sopSkuListBySupplierSkuNoUrl: http://sopoutapi.spidc1.com/Product/GetSopSkuListBySupplierSkuNo

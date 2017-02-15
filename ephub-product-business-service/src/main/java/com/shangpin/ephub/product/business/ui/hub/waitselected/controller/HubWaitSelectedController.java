@@ -136,6 +136,7 @@ public class HubWaitSelectedController {
 			hubWaitSelectedService.updateSelectState(dto);
 	        return HubResponse.successResp(null);
 		}catch(Exception e){
+			log.error("选品失败：{}",e);
 			 return HubResponse.errorResp("选品失败，请重新选品");
 		}
 	}
