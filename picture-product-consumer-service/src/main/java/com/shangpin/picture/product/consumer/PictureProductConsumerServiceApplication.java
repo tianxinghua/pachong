@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
-@EnableScheduling
+//@EnableScheduling
 public class PictureProductConsumerServiceApplication {
 
 	
