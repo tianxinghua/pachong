@@ -53,6 +53,8 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
@@ -63,8 +65,6 @@ import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
@@ -163,35 +163,16 @@ public class PendingProductService implements IPendingProductService{
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
-                    	
-                    	HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-                    	criteria.createCriteria().andSupplierIdEqualTo(pendingSpu.getSupplierId()).andSpuPendingIdEqualTo(pendingSpu.getSpuPendingId());
-                    	criteria.setPageNo(1);
-                    	criteria.setPageSize(10000);
-                    	
-                    	boolean flag = false;
-                    	List<HubSkuPendingDto> skuList = hubSkuPendingGateWay.selectByCriteria(criteria);
-                    	if(skuList!=null&&skuList.size()>0){
-                    		for(HubSkuPendingDto sku : skuList){
-                    			if(sku.getStock()!=null&&sku.getStock()>0){
-                    				flag = true;
-                    				break;
-                    			}
-                    		}
-                    	}
-                    	
-                    	if(flag){
-                    		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
-                            SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
-                            pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
-                            FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                            pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
-                            BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
-                            pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                            List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                            pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
-                            products.add(pendingProduct);
-                    	}
+                		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
+                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : pendingSpu.getSupplierNo());
+                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
+                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
+                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
+                        List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
+                        products.add(pendingProduct);
                     }
                 }
             }
@@ -254,7 +235,7 @@ public class PendingProductService implements IPendingProductService{
             criteriaDto.setPageNo(1);
             criteriaDto.setPageSize(1000); 
             criteriaDto.setOrderByClause("spu_pending_id,hub_sku_size");
-            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andStockGreaterThan(0);
+            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
             	for(HubSkuPendingDto sku : skus){
@@ -323,19 +304,28 @@ public class PendingProductService implements IPendingProductService{
                 		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                 		hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
                 	}else{
-                        HubSizeCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), hubSkuSize);
+                		String [] arr = hubSkuSize.split(":",-1);
+                		String sizeType = null;
+                		String sizeValue = null;
+                		if(arr.length==2){
+                			sizeType = arr[0];
+                			sizeValue = arr[1];
+                		}else{
+                			sizeValue = hubSkuSize;
+                		}
+                		HubPendingSkuCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), sizeType,sizeValue);
     					if(result.isPassing()){
-                        	hubSkuPendingDto.setScreenSize(result.getScreenSizeStandardValueId()); 
+                        	hubSkuPendingDto.setScreenSize(result.getSizeId()); 
                         	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                         	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                         	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
                         }else{
                         	pass = false ;
-                            log.info("pending sku校验失败，不更新："+result.getResult()+"|原始数据："+hubSkuSize);
+                            log.info("pending sku校验失败，不更新："+result.getMessage()+"|原始数据："+hubSkuSize);
                             response.setCode("1");
                             PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
                             skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
-                            skuUpdatedVo.setSkuResult(result.getResult());
+                            skuUpdatedVo.setSkuResult(result.getMessage());
                             skus.add(skuUpdatedVo);
                         }
     					if(hubSkuSize.contains(":")){
@@ -451,7 +441,7 @@ public class PendingProductService implements IPendingProductService{
 		skuCriteria.setPageSize(100); 
 		skuCriteria.setOrderByClause("supplier_sku_size"); 
     	skuCriteria.setFields("supplier_sku_size");
-    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andStockGreaterThan(0); 
+    	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId); 
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
 	}
     /**
@@ -647,6 +637,9 @@ public class PendingProductService implements IPendingProductService{
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
+//		if(StringUtils.isEmpty(pendingQuryDto.getSpuState())){
+//			
+//		}
 		criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());

@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
@@ -98,10 +100,14 @@ public class HubSelectedController {
     public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
+			long startTime  = System.currentTimeMillis();
 			log.info("导出查询商品请求参数：{}",dto);
 			dto.setPageNo(0);
 			dto.setPageSize(100000);
+			Byte [] selectState = {(byte)SupplierSelectState.SELECTED.getIndex()};
+			dto.setSupplierSelectState(Arrays.asList(selectState));
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
+			log.info("导出查询商品耗时："+(System.currentTimeMillis()-startTime));
 			response.setContentType("application/vnd.ms-excel");    
 	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
 			OutputStream ouputStream = response.getOutputStream();

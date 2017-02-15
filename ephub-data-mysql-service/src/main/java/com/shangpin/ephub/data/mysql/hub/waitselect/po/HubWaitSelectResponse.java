@@ -125,7 +125,7 @@ public class HubWaitSelectResponse {
 	     * 供应商SkuNo
 	     */
 	    private String supplierSkuNo;
-
+	    private Long supplierSkuId;
 	    /**
 	     * 条码
 	     */

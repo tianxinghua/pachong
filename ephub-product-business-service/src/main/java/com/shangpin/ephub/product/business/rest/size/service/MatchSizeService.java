@@ -1,10 +1,8 @@
 package com.shangpin.ephub.product.business.rest.size.service;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,11 +51,11 @@ public class MatchSizeService{
 					String sizeStandardName = item.getSizeStandardName();
 					//筛选尺码
 					if(item.getIsScreening()==(byte)2){
-						map2.put(item.getScreenSizeStandardValueId()+","+sizeStandardName+":"+sizeValue,sizeValue);
+						map2.put(sizeStandardName+":"+sizeValue,sizeValue);
 					}
 					//标准尺码
 					if(item.getIsScreening()==(byte)0){
-						map0.put(item.getScreenSizeStandardValueId()+","+sizeStandardName+":"+sizeValue,sizeValue);
+						map0.put(sizeStandardName+":"+sizeValue,sizeValue);
 					}
 				}
 				
@@ -68,13 +66,11 @@ public class MatchSizeService{
 						String value = entry.getValue();
 						String key = entry.getKey();
 						if (dto.getSize().equals(value)) {
+							String[] arr = key.split(":", -1);
 							isExist = true;
 							i++;
-							String screenSizeStandardValueId = key.split(",", -1)[0];
-							String[] arr = key.split(",", -1)[1].split(":", -1);
 							if (arr.length == 2) {
 								matchSizeResult.setSizeType(arr[0]);
-								matchSizeResult.setSizeId(screenSizeStandardValueId);
 								matchSizeResult.setSizeValue(arr[1]);
 								matchSizeResult.setMultiSizeType(false);
 								flag = true;
@@ -98,11 +94,9 @@ public class MatchSizeService{
 							if (dto.getSize().equals(value)) {
 								isExist = true;
 								i++;
-								String screenSizeStandardValueId = key.split(",", -1)[0];
-								String[] arr = key.split(",", -1)[1].split(":", -1);
+								String[] arr = key.split(":", -1);
 								if (arr.length == 2) {
 									matchSizeResult.setSizeType(arr[0]);
-									matchSizeResult.setSizeId(screenSizeStandardValueId);
 									matchSizeResult.setSizeValue(arr[1]);
 									matchSizeResult.setMultiSizeType(false);
 									flag = true;
