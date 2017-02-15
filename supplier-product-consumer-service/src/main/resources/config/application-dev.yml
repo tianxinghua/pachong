@@ -986,6 +986,7 @@ spring:
 ##################                                                                                                                                                                                                                                                                                                                                                      
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8       
   mail: 
        default-recipient: yan_xiao_bin@126.com
        default-sender: yanxiaobin@shangpin.com
