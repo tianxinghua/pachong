@@ -608,7 +608,7 @@ public class PendingHandler {
 			} else {
 
 				result = false;
-//				hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+				hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
 				dataServiceHandler.saveHubCategory(spu.getSupplierId(), spu.getHubCategoryNo(), spu.getHubGender());
 
 			}
@@ -885,10 +885,12 @@ public class PendingHandler {
 		// 品牌和品类都已匹配上 尺码未匹配上
 		String hubSize = "";
 		if(!mappingSize){
-			if (hubSpuPending.getSpuBrandState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()
-					&& hubSpuPending.getCatgoryState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()) {
-				hubSize = this.getHubSize(hubSpuPending.getHubCategoryNo(), hubSpuPending.getHubBrandNo(),
-						supplierSku.getSupplierId(), hubSkuPending.getHubSkuSize());
+			if(null!=hubSpuPending.getSpuBrandState()&&null!=hubSpuPending.getCatgoryState()){
+				if (hubSpuPending.getSpuBrandState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()
+						&& hubSpuPending.getCatgoryState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()) {
+					hubSize = this.getHubSize(hubSpuPending.getHubCategoryNo(), hubSpuPending.getHubBrandNo(),
+							supplierSku.getSupplierId(), hubSkuPending.getHubSkuSize());
+				}
 			}
 		}
 	    //判断HUBSPU  是否存在
