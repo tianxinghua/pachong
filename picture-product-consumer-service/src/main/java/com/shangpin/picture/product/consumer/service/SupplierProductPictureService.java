@@ -8,11 +8,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.commons.redis.IShangpinRedis;
@@ -22,6 +25,7 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteria
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.picture.product.consumer.bean.AuthenticationInformation;
+import com.shangpin.picture.product.consumer.conf.certificate.CertificateConf;
 import com.shangpin.picture.product.consumer.conf.stream.source.message.RetryPicture;
 import com.shangpin.picture.product.consumer.conf.stream.source.sender.RetryPictureProductStreamSender;
 import com.shangpin.picture.product.consumer.e.PicHandleState;
@@ -40,7 +44,12 @@ import sun.misc.BASE64Encoder;
  */
 @Service
 @Slf4j
+@EnableConfigurationProperties(CertificateConf.class)
 public class SupplierProductPictureService {
+
+	private static final String PASSWORD = "password";
+
+	private static final String USERNAME = "username";
 
 	private static final int TIMEOUT = 45*60*1000;
 	
@@ -52,6 +61,9 @@ public class SupplierProductPictureService {
 	
 	@Autowired
 	private IShangpinRedis shangpinRedis;
+	
+	@Autowired
+	private CertificateConf certificate;
 	/**
 	 * 处理供应商商品图片
 	 * @param picDtos
@@ -69,15 +81,26 @@ public class SupplierProductPictureService {
 				updateDto.setSupplierSpuId(picDto.getSupplierSpuId());
 				AuthenticationInformation information = null;
 				String supplierId = picDto.getSupplierId();
-				if (StringUtils.isNoneBlank(supplierId)) {
-					if ("2016030701799".equals(supplierId)) {
-						information = new AuthenticationInformation("shangpin", "Shang2016");
-					}
+				if (StringUtils.isNotBlank(supplierId)) {
+					information = getAuthentication(supplierId);
 				}
 				pullPicAndPushToPicServer(picUrl, updateDto, information);
 				supplierProductPictureManager.updateSelective(updateDto);
 			}
 		}
+	}
+	/**
+	 * @param supplierId
+	 * @return
+	 */
+	private AuthenticationInformation getAuthentication(String supplierId) {
+		Map<String, Map<String, String>> usernameAndPassword = certificate.getUsernameAndPassword();
+		Map<String, String> userAndPasswd = usernameAndPassword.get(supplierId);
+		AuthenticationInformation authenticationInformation = null;
+		if (MapUtils.isNotEmpty(userAndPasswd)) {
+			authenticationInformation = new AuthenticationInformation(userAndPasswd.get(USERNAME), userAndPasswd.get(PASSWORD));
+		}
+		return authenticationInformation;
 	}
 	/**
 	 * 拉取图片并上传图片服务器
@@ -137,7 +160,7 @@ public class SupplierProductPictureService {
 	 * @return 扩张名
 	 */
 	private String getExtension(String url){
-		if (StringUtils.isNoneBlank(url)) {
+		if (StringUtils.isNotBlank(url)) {
 			 String suffix = url.substring(url.lastIndexOf(".")+1);
 			 if (suffix == null) {
 				 return "jpg";
@@ -220,10 +243,8 @@ public class SupplierProductPictureService {
 				Integer retryCount = hubSpuPendingPicDto.getRetryCount();
 				AuthenticationInformation information = null;
 				String supplierId = hubSpuPendingPicDto.getSupplierId();
-				if (StringUtils.isNoneBlank(supplierId)) {
-					if ("2016030701799".equals(supplierId)) {
-						information = new AuthenticationInformation("shangpin", "Shang2016");
-					}
+				if (StringUtils.isNotBlank(supplierId)) {
+						information = getAuthentication(supplierId);
 				}
 				pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
 				count = retryCount == null ? 1 : retryCount + 1;

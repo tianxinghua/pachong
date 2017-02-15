@@ -123,4 +123,19 @@ banner:
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
        image:
-             location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+             location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used)
+shangpin: 
+       certificate: 
+             usernameAndPassword: 
+                  2016030701799: 
+                      username: shangpin
+                      password: Shang2016
+                  2016083001937: 
+                      username: shangpin
+                      password: Shang1808
+                  2016011201731: 
+                      username: shangpin
+                      password: Atelier2015
+                  2016012101751:                                     
+                      username: shangpin
+                      password: Atelier2015              
