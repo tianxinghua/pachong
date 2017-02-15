@@ -91,14 +91,19 @@ public class PictureHandler {
 	 * @param supplierSpuId
 	 * @return
 	 */
-	public boolean picExistsOfSpu(String supplierId,String supplierSpuNo){
+	public Map<String,String> stefaniaPicExistsOfSpu(String supplierId,String supplierSpuNo){
+		Map<String,String> existPics = new HashMap<String,String>();
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
 		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
-			return true;
-		}else{
-			return false;
+			String picurl = "";
+			for(HubSpuPendingPicDto picDto : pics){
+				picurl =  picDto.getPicUrl();
+				picurl = picurl.substring(0, picurl.indexOf("&U"));
+				existPics.put(picurl, null);
+			}
 		}
+		return existPics;
 	}
 }

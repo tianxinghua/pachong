@@ -58,6 +58,7 @@ spring:
                                        republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8
   ftp:
        host: 192.168.20.110
        port: 21

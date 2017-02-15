@@ -28,13 +28,13 @@ spring:
                               destination: supplier.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 2
                                        maxAttempts: 1
                         retryPictureProduct: 
                               destination: retry.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 2
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
@@ -55,6 +55,7 @@ spring:
                                        republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8       
   #mail: 
        #default-recipient: yan_xiao_bin@126.com
        #default-sender: yanxiaobin@shangpin.com
@@ -70,3 +71,18 @@ banner:
        location: classpath:banner/banner.txt # Banner file location.
        image:
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+shangpin: 
+       certificate: 
+             usernameAndPassword: 
+                  2016030701799: 
+                      username: shangpin
+                      password: Shang2016
+                  2016083001937: 
+                      username: shangpin
+                      password: Shang1808
+                  2016011201731: 
+                      username: shangpin
+                      password: Atelier2015
+                  2016012101751:                                     
+                      username: shangpin
+                      password: Atelier2015             
