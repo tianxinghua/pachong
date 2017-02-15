@@ -29,5 +29,7 @@ public class ApiAddressProperties {
 	private String gmsCategoryUrl;
 	
 	private String scmsSupplierInfoUrl;
+
+	private String sopSkuListBySupplierSkuNoUrl;
 	
 }

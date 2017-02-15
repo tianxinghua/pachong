@@ -159,6 +159,9 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                     return false;
                 }
             }else{ //  无尺码映射
+                //修改pending状态为待处理
+                updateSpuState(spuPendingIds,SpuState.INFO_IMPECCABLE.getIndex());
+
                 return false;
 
             }
@@ -179,6 +182,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 Set<String> sizeSet = sizeSkuMap.keySet();
                 if(sizeSet.size()>0){
                     searchAndCreateHubSkuAndMapping(sizeSkuMap, hubSpu);
+                }else{
+                    updateSpuState(spuPendingIds,SpuState.INFO_IMPECCABLE.getIndex());
                 }
                 return true;
             }else{
@@ -474,6 +479,18 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         HubSpuPending record = new HubSpuPending();
         record.setHubSpuNo(spuNo);
         record.setSpuState(SpuState.HANDLED.getIndex());
+        hubSpuPendingMapper.updateByExampleSelective(record,criteria);
+
+
+    }
+
+
+    private void updateSpuState(List<Long> spuPendingIds,byte spuState){
+        HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
+        criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+        HubSpuPending record = new HubSpuPending();
+        record.setSpuState(spuState);
+        record.setMemo("无符合的SKU,请重新处理");
         hubSpuPendingMapper.updateByExampleSelective(record,criteria);
 
 
