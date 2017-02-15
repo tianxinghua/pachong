@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -99,11 +100,11 @@ public class PendingSkuImportService {
 		if (listHubProduct == null) {
 			return null;
 		}
-
+		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
 		for (HubPendingProductImportDTO product : listHubProduct) {
-			if (product == null) {
+			if(product == null||StringUtils.isBlank(product.getSupplierId())){
 				continue;
 			}
 			map = new HashMap<String, String>();
