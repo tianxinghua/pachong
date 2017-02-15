@@ -2,7 +2,6 @@ package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
@@ -53,7 +51,7 @@ public class HubSelectedController {
     public HubResponse selectList(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
-			log.info("已选品请求参数：{}",dto);
+			long startTime = System.currentTimeMillis();
 			HubWaitSelectRequestDto hubWaitSelectRequest = new HubWaitSelectRequestDto();
 			BeanUtils.copyProperties(dto, hubWaitSelectRequest);
 			Long total = HubWaitSelectGateWay.count(hubWaitSelectRequest);
@@ -65,6 +63,7 @@ public class HubSelectedController {
 				dto.setPageSize(pageSize);
 				log.info("已选品请求参数：{}",dto);
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
+				log.info("已选品查询耗时："+(System.currentTimeMillis()-startTime));
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
@@ -81,6 +80,7 @@ public class HubSelectedController {
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
 				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
 				HubWaitSelectedResponseWithPageDto.setList(arr);
+				log.info("已选品查询总耗时："+(System.currentTimeMillis()-startTime));
 				return HubResponse.successResp(HubWaitSelectedResponseWithPageDto);
 			}else{
 				return HubResponse.successResp("列表页为空");

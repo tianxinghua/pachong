@@ -117,6 +117,8 @@ public class MatchSizeService{
 					}
 				}
 				
+			}else{
+				result = "scm未匹配到尺码";
 			}
 		}else{
 			result = "尺码："+dto.getSize()+"未匹配成功";
