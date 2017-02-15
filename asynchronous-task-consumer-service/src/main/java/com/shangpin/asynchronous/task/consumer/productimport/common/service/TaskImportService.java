@@ -491,6 +491,12 @@ public class TaskImportService {
 			
 		} else {
 			
+			if(hubPendingSpuCheckResult.isSpuModel()){
+				hubPendingSpuDto.setSpuModelState((byte)1);
+			}else{
+				hubPendingSpuDto.setSpuModelState((byte)0);
+			}
+			
 			if(hubPendingSpuCheckResult.isCategory()){
 				hubPendingSpuDto.setCatgoryState((byte)1);
 			}else{
