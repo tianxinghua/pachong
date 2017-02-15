@@ -58,7 +58,7 @@ public class HubSupplierSkuController {
     public List<HubSupplierSku> selectByCriteria(@RequestBody HubSupplierSkuCriteria criteria){
     	return hubSupplierSkuService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
+	@RequestMapping(value = "/select-by-primary-key/{supplierSkuId}")
     public HubSupplierSku selectByPrimaryKey(@PathVariable(value = "supplierSkuId") Long supplierSkuId){
     	return hubSupplierSkuService.selectByPrimaryKey(supplierSkuId);
     }

@@ -124,49 +124,49 @@ public class HubSelectedService {
 	}
 
 	private void convertTOExcel(HubWaitSelectResponseDto response, Map<String, String> map) {
-		String supplierId = response.getSupplierId();
-		String supplierSkuNo = response.getSupplierSkuNo();
+		if(response.getSupplierSkuId()!=null){
+			log.info("supplierSkuId查询:"+response.getSupplierSkuId());
+			HubSupplierSkuDto listSku = hubSupplierSkuGateWay.selectByPrimaryKey(response.getSupplierSkuId());
+			log.info("返回结果：{}",listSku);
+			BigDecimal supplyPrice = null;
+			BigDecimal marketPrice = null;
+			String supplyCurry = null;
+			String marketCurry = null;
+			if (listSku != null) {
+				supplyPrice = listSku.getSupplyPrice();
+				marketPrice = listSku.getMarketPrice();
+				supplyCurry = listSku.getSupplyPriceCurrency();
+				marketCurry = listSku.getMarketPriceCurrencyorg();
+			}
+			long start = System.currentTimeMillis();
+			BrandDom brandDom = getBrand(response.getBrandNo());
+			String categoryName = getCategoryName(response.getCategoryNo());
+			log.info("获取品类、品牌名称总耗时："+(System.currentTimeMillis()-start));
+			map.put("brandName", brandDom.getBrandEnName());
+			map.put("brandChName", brandDom.getBrandCnName());
+			map.put("brandNo", brandDom.getBrandNo());
+			if(supplyPrice!=null){
+				map.put("supplyPrice", supplyPrice+"");	
+			}
+			if(marketPrice!=null){
+				map.put("marketPrice", marketPrice+"");	
+			}
+			map.put("supplyCurry", supplyCurry);
+			map.put("marketCurry", marketCurry);
+			map.put("spSkuNo", response.getSpSkuNo());
+			map.put("spuName", response.getSpuName());
+			map.put("supplierSkuNo", response.getSupplierSkuNo());
+			map.put("spuModel", response.getSpuModel());
+			map.put("categoryName",categoryName);
+//			map.put("color", response.getHubColor());
+//			map.put("material", response.getMaterial());
+//			map.put("origin", response.getOrigin());
+//			map.put("gender", response.getGender());
+			map.put("supplierNo", response.getSupplierNo());
+//			map.put("size", response.getSkuSize());
+			map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
+		}
 		
-		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
-		HubSupplierSkuDto listSku = hubSupplierSkuGateWay.selectByPrimaryKey(response.getSupplierSkuId());
-		BigDecimal supplyPrice = null;
-		BigDecimal marketPrice = null;
-		String supplyCurry = null;
-		String marketCurry = null;
-		if (listSku != null) {
-			supplyPrice = listSku.getSupplyPrice();
-			marketPrice = listSku.getMarketPrice();
-			supplyCurry = listSku.getSupplyPriceCurrency();
-			marketCurry = listSku.getMarketPriceCurrencyorg();
-		}
-		long start = System.currentTimeMillis();
-		BrandDom brandDom = getBrand(response.getBrandNo());
-		String categoryName = getCategoryName(response.getCategoryNo());
-		log.info("获取品类、品牌名称总耗时："+(System.currentTimeMillis()-start));
-		map.put("brandName", brandDom.getBrandEnName());
-		map.put("brandChName", brandDom.getBrandCnName());
-		map.put("brandNo", brandDom.getBrandNo());
-		if(supplyPrice!=null){
-			map.put("supplyPrice", supplyPrice+"");	
-		}
-		if(marketPrice!=null){
-			map.put("marketPrice", marketPrice+"");	
-		}
-		map.put("supplyCurry", supplyCurry);
-		map.put("marketCurry", marketCurry);
-		map.put("spSkuNo", response.getSpSkuNo());
-		map.put("spuName", response.getSpuName());
-		map.put("supplierSkuNo", response.getSupplierSkuNo());
-		map.put("spuModel", response.getSpuModel());
-		map.put("categoryName",categoryName);
-//		map.put("color", response.getHubColor());
-//		map.put("material", response.getMaterial());
-//		map.put("origin", response.getOrigin());
-//		map.put("gender", response.getGender());
-		map.put("supplierNo", response.getSupplierNo());
-//		map.put("size", response.getSkuSize());
-		map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 		
 	}
 	private String getCategoryName(String categoryNo) {
