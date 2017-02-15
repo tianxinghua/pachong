@@ -143,7 +143,7 @@ public class HubWaitSelectResponseDto {
      */
     private String supplierNo;
     private String supplierId;
-    
+    private Long supplierSkuId;
     private String isNewSupplier;
     private String supplierSpuModel;
     private Date updateTime;

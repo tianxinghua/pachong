@@ -21,8 +21,11 @@ import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
@@ -65,8 +68,10 @@ public class HubSelectedService {
 	HubSkuGateWay hubSkuGateWay;
 	@Autowired
 	HubSpuPicGateWay hubSpuPicGateWay;
+//	@Autowired
+//	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
-	HubSkuPendingGateWay hubSkuPendingGateWay;
+	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
 	HubProductServiceImpl hubCommonProductServiceImpl;
 
@@ -76,6 +81,7 @@ public class HubSelectedService {
 		
 		Map<String, String> map = null;
 		
+		//拆分数据，以供应商为维度
 		Map<String, List<HubWaitSelectResponseDto>> mapSupplier = new HashMap<String, List<HubWaitSelectResponseDto>>();
 		for (HubWaitSelectResponseDto response : list) {
 			String supplierNo = response.getSupplierNo();
@@ -87,7 +93,8 @@ public class HubSelectedService {
 				mapSupplier.put(supplierNo, listSupplier);
 			}
 		}
-		 HSSFWorkbook workbook = new HSSFWorkbook();
+		
+		HSSFWorkbook workbook = new HSSFWorkbook();
 		for (Map.Entry<String, List<HubWaitSelectResponseDto>> entry : mapSupplier.entrySet()) {
 			List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 			String supplierNo = entry.getKey();
@@ -119,24 +126,24 @@ public class HubSelectedService {
 	private void convertTOExcel(HubWaitSelectResponseDto response, Map<String, String> map) {
 		String supplierId = response.getSupplierId();
 		String supplierSkuNo = response.getSupplierSkuNo();
-		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+		
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
 		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
-		List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
+		HubSupplierSkuDto listSku = hubSupplierSkuGateWay.selectByPrimaryKey(response.getSupplierSkuId());
 		BigDecimal supplyPrice = null;
 		BigDecimal marketPrice = null;
 		String supplyCurry = null;
 		String marketCurry = null;
-		String spSkuNo = null;
-		if (listSku != null && listSku.size() > 0) {
-			supplyPrice = listSku.get(0).getSupplyPrice();
-			marketPrice = listSku.get(0).getMarketPrice();
-			supplyCurry = listSku.get(0).getSupplyPriceCurrency();
-			marketCurry = listSku.get(0).getMarketPriceCurrencyorg();
-			spSkuNo = listSku.get(0).getSpSkuNo();
+		if (listSku != null) {
+			supplyPrice = listSku.getSupplyPrice();
+			marketPrice = listSku.getMarketPrice();
+			supplyCurry = listSku.getSupplyPriceCurrency();
+			marketCurry = listSku.getMarketPriceCurrencyorg();
 		}
-		
+		long start = System.currentTimeMillis();
 		BrandDom brandDom = getBrand(response.getBrandNo());
 		String categoryName = getCategoryName(response.getCategoryNo());
+		log.info("获取品类、品牌名称总耗时："+(System.currentTimeMillis()-start));
 		map.put("brandName", brandDom.getBrandEnName());
 		map.put("brandChName", brandDom.getBrandCnName());
 		map.put("brandNo", brandDom.getBrandNo());
@@ -148,7 +155,7 @@ public class HubSelectedService {
 		}
 		map.put("supplyCurry", supplyCurry);
 		map.put("marketCurry", marketCurry);
-		map.put("spSkuNo", spSkuNo);
+		map.put("spSkuNo", response.getSpSkuNo());
 		map.put("spuName", response.getSpuName());
 		map.put("supplierSkuNo", response.getSupplierSkuNo());
 		map.put("spuModel", response.getSpuModel());

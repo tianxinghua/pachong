@@ -24,7 +24,6 @@ public class MatchSizeResult implements Serializable {
 	 * 校验是否通过
 	 */
 	private boolean isPassing;
-	
 	/**
 	 * 是否有多个尺码类型
 	 */
