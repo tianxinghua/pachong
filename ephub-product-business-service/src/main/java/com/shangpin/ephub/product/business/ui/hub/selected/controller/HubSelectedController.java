@@ -101,11 +101,12 @@ public class HubSelectedController {
 	        	
 		try {
 			long startTime  = System.currentTimeMillis();
-			log.info("导出查询商品请求参数：{}",dto);
 			dto.setPageNo(0);
 			dto.setPageSize(100000);
-			Byte [] selectState = {(byte)SupplierSelectState.SELECTED.getIndex()};
-			dto.setSupplierSelectState(Arrays.asList(selectState));
+			List<Byte> selectList = new ArrayList<Byte>();
+			selectList.add((byte)2);
+			dto.setSupplierSelectState(selectList);
+			log.info("导出查询商品请求参数：{}",dto);
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 			log.info("导出查询商品耗时："+(System.currentTimeMillis()-startTime));
 			response.setContentType("application/vnd.ms-excel");    
