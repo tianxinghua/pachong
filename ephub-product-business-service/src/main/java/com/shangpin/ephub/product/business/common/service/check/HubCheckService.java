@@ -348,6 +348,7 @@ public class HubCheckService {
 	                	checkResult.setSizeId(String.valueOf(sizeItem.getScreenSizeStandardValueId()));
 	                	checkResult.setSizeType(sizeItem.getSizeStandardName());
 	                	checkResult.setSizeValue(sizeItem.getSizeStandardValue());
+	                	checkResult.setMessage("校验成功");
 	                	return checkResult;
 	                }
 	            }
