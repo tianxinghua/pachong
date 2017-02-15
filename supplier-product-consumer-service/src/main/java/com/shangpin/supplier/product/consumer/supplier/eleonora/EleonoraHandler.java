@@ -1,5 +1,15 @@
 package com.shangpin.supplier.product.consumer.supplier.eleonora;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -14,18 +24,8 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.eleonora.dto.Item;
 import com.shangpin.supplier.product.consumer.supplier.eleonora.dto.Items;
 import com.shangpin.supplier.product.consumer.supplier.eleonora.dto.Product;
-import com.shangpin.supplier.product.consumer.supplier.eleonora.dto.Products;
-import com.shangpin.supplier.product.consumer.supplier.geb.dto.Material;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/1/22.
