@@ -102,10 +102,12 @@ public class HubProductImportService {
 		}
 		// true全部校验成功，
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
-
+		Map<String, String> map = null;
 		for (HubProductDto hubProductDto : listHubProduct) {
-
-			Map<String, String> map = new HashMap<String, String>();
+			if(hubProductDto==null||StringUtils.isBlank(hubProductDto.getCategoryNo())){
+				continue;
+			}
+			map = new HashMap<String, String>();
 			// 校验hub
 			map.put("spuModel", hubProductDto.getSpuModel());
 			log.info("hub检验参数：{}",hubProductDto);

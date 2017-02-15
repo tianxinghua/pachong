@@ -161,6 +161,9 @@ public class PendingSpuImportService {
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
 		for (HubPendingSpuImportDTO product : listHubProduct) {
+			if(product==null||StringUtils.isBlank(product.getSupplierId())){
+				continue;
+			}
 			map = new HashMap<String, String>();
 			map.put("taskNo", taskNo);
 			map.put("spuModel", product.getSpuModel());
