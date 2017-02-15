@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckResult;
@@ -86,10 +86,10 @@ public class HubCheckRuleService {
 		if("尺码".equals(hubProduct.getSpecificationType())){
 			if(StringUtils.isNoneBlank(hubProduct.getSkuSize())){
 				//String hubCategoryNo,String hubBrandNo,String supplierId,String supplierSize
-				HubSizeCheckResult checkResult = null;
-				checkResult = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSkuSize());
+				HubPendingSkuCheckResult checkResult = null;
+				checkResult = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSizeType(),hubProduct.getSkuSize());
 				if(checkResult.isPassing()){
-					result.setSize(checkResult.getScreenSizeStandardValueId()+","+hubProduct.getSizeType()+":"+hubProduct.getSkuSize());
+					result.setSize(checkResult.getSizeId()+","+hubProduct.getSizeType()+":"+hubProduct.getSkuSize());
 				}else{
 					str.append("尺码"+hubProduct.getSizeType()+":"+hubProduct.getSkuSize()+"不存在,") ;
 					result.setPassing(false);

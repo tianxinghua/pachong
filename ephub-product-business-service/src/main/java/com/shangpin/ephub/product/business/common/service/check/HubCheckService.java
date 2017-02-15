@@ -26,6 +26,8 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.dto.BrandDom;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
@@ -35,8 +37,6 @@ import com.shangpin.ephub.product.business.common.service.gms.BrandService;
 import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.service.gms.SizeService;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubPendingSpuCheckResult;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.result.HubSizeCheckResult;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
@@ -335,28 +335,30 @@ public class HubCheckService {
 	 * @param size
 	 * @return
 	 */
-	public HubSizeCheckResult hubSizeExist(String hubCategoryNo,String hubBrandNo,String size){
-		HubSizeCheckResult checkResult = new HubSizeCheckResult();
+	public HubPendingSkuCheckResult hubSizeExist(String hubCategoryNo,String hubBrandNo,String sizeType,String size){
+		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 		checkResult.setPassing(false);
 		try {
 			CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);
 			if(sizeDom!=null){
 				List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
 	            for(SizeStandardItem sizeItem : sizeStandardItemList){
-	                if((sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue()).equals(size)){
+	                if((sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue()).equals(sizeType+":"+size)){
 	                	checkResult.setPassing(true);
-	                	checkResult.setScreenSizeStandardValueId(String.valueOf(sizeItem.getScreenSizeStandardValueId()));
+	                	checkResult.setSizeId(String.valueOf(sizeItem.getScreenSizeStandardValueId()));
+	                	checkResult.setSizeType(sizeItem.getSizeStandardName());
+	                	checkResult.setSizeValue(sizeItem.getSizeStandardValue());
 	                	return checkResult;
 	                }
 	            }
-	            checkResult.setResult(size+"校验不通过");
+	            checkResult.setMessage(size+"校验不通过");
 			}else{
-				  checkResult.setResult(size+"在scm中未查到记录");
+				  checkResult.setMessage(size+"在scm中未查到记录");
 			}
 			
 		} catch (Exception e) {
 			log.error("校验尺码是否存在时异常："+e.getMessage(),e);
-			checkResult.setResult("服务器异常");
+			checkResult.setMessage("服务器异常");
 		}
 		return checkResult;		
 	}

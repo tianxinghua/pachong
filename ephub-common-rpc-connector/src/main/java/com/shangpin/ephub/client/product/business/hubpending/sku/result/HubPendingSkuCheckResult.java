@@ -29,5 +29,8 @@ public class HubPendingSkuCheckResult implements Serializable {
     /**
      * 校验不通过记录原因，通过为空
      */
-    private String result;
+    private String message;
+    private String sizeValue;
+    private String sizeType;
+    private String sizeId;
 }
