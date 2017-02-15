@@ -81,20 +81,22 @@ public class StefaniaHandler implements ISupplierHandler{
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,StefItem stefItem){
-		String productModle = findProductModleByItemId(stefItem.getItem_id());
-		if(pictureHandler.picExistsOfSpu(supplierId, productModle)){
-			return null;
-		}
+		String supplierSpuNo = findProductModleByItemId(stefItem.getItem_id());
+		Map<String,String> existPics = pictureHandler.stefaniaPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture = stefItem.getPicture();
 		if(StringUtils.isEmpty(picture)){
 			return null;
 		}else{
 			List<Image> images = new ArrayList<Image>();
 			String[] picArray = picture.split("\\|");
+			String picurl = "";
 			for(String url : picArray){
-				Image image = new Image();
-				image.setUrl(url);
-				images.add(image);
+				picurl = url.substring(0, url.indexOf("&U"));
+				if(!existPics.containsKey(picurl)){
+					Image image = new Image();
+					image.setUrl(url);
+					images.add(image);
+				}
 			}
 			return images;
 		}

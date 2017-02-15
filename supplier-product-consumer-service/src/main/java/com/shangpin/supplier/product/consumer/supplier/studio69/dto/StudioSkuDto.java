@@ -1,7 +1,6 @@
 package com.shangpin.supplier.product.consumer.supplier.studio69.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import lombok.Getter;
 import lombok.Setter;
