@@ -784,4 +784,15 @@ public class DataServiceHandler {
 		return null;
 	}
 
+
+	public HubSupplierSkuDto getHubSupplierSkuBySupplierIdAndSupplierSkuNo(String supplierId,String supplierSkuNo){
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+		List<HubSupplierSkuDto> hubSupplierSkuDtos = supplierSkuGateWay.selectByCriteria(criteria);
+		if(null!=hubSupplierSkuDtos&&hubSupplierSkuDtos.size()>0){
+			return  hubSupplierSkuDtos.get(0);
+		}
+		return null;
+	}
+
 }
