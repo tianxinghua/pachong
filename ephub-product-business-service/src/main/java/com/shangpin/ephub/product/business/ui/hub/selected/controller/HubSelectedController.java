@@ -103,9 +103,6 @@ public class HubSelectedController {
 			long startTime  = System.currentTimeMillis();
 			dto.setPageNo(0);
 			dto.setPageSize(100000);
-			List<Byte> selectList = new ArrayList<Byte>();
-			selectList.add((byte)2);
-			dto.setSupplierSelectState(selectList);
 			log.info("导出查询商品请求参数：{}",dto);
 			List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
 			log.info("导出查询商品耗时："+(System.currentTimeMillis()-startTime));
