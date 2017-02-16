@@ -7,11 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.common.service.gms.SizeService;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
-import com.shangpin.ephub.product.business.rest.size.result.MatchSizeResult;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -115,12 +115,15 @@ public class MatchSizeService{
 					if(result==null){
 						result = "尺码："+dto.getSize()+"未匹配成功";						
 					}
+					matchSizeResult.setFilter(true);
 				}
 				
 			}else{
+				matchSizeResult.setNotTemplate(true);
 				result = "scm未匹配到尺码";
 			}
 		}else{
+			matchSizeResult.setNotTemplate(true);
 			result = "尺码："+dto.getSize()+"未匹配成功";
 		}
 		matchSizeResult.setResult(result);
