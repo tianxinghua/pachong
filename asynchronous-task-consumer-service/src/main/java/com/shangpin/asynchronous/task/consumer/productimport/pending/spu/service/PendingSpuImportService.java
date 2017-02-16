@@ -178,7 +178,7 @@ public class PendingSpuImportService {
 			}
 			
 			//如果规格为尺码，则校验spu下所有的尺码
-			boolean flag = true;
+			boolean flag = false;
 			HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 			StringBuffer str = new StringBuffer();
 			if(isSpuPendingExist!=null){
@@ -208,16 +208,18 @@ public class PendingSpuImportService {
 										hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
 										hubPendingSkuCheckResult.setSizeValue(matchSizeResult.getSizeValue());
 										product1.setSizeType(matchSizeResult.getSizeType());
+										flag = true;
 									}else{
 										isMultiSizeType = matchSizeResult.isMultiSizeType();
 										hubPendingSkuCheckResult.setPassing(false);
-										flag = false;
 										str.append(matchSizeResult.getResult()).append(",");
 									}
 								}else{
+									hubPendingSkuCheckResult.setPassing(false);
 									str.append(sku.getSupplierSkuNo()+"尺码为空").append(",");
 								}
 							}else{
+								flag = true;
 								hubPendingSkuCheckResult.setPassing(true);
 								hubPendingSkuCheckResult.setSizeValue(sku.getHubSkuSize());
 								str.append("校验通过："+sku.getHubSkuSize());
