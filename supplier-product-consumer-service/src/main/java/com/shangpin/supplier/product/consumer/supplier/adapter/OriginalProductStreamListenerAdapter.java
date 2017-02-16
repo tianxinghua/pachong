@@ -58,6 +58,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("alducadaostaHandler") 
 	private ISupplierHandler alducadaostaHandler;
+	@Autowired
+	@Qualifier("delibertiHandler") 
+	private ISupplierHandler delibertiHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -460,7 +463,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void delibertiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		delibertiHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	/**
