@@ -127,7 +127,6 @@ public class HubSelectedService {
 		if(response.getSupplierSkuId()!=null){
 			log.info("supplierSkuId查询:"+response.getSupplierSkuId());
 			HubSupplierSkuDto listSku = hubSupplierSkuGateWay.selectByPrimaryKey(response.getSupplierSkuId());
-			log.info("返回结果：{}",listSku);
 			BigDecimal supplyPrice = null;
 			BigDecimal marketPrice = null;
 			String supplyCurry = null;
@@ -141,7 +140,6 @@ public class HubSelectedService {
 			long start = System.currentTimeMillis();
 			BrandDom brandDom = getBrand(response.getBrandNo());
 			String categoryName = getCategoryName(response.getCategoryNo());
-			log.info("获取品类、品牌名称总耗时："+(System.currentTimeMillis()-start));
 			map.put("brandName", brandDom.getBrandEnName());
 			map.put("brandChName", brandDom.getBrandCnName());
 			map.put("brandNo", brandDom.getBrandNo());
