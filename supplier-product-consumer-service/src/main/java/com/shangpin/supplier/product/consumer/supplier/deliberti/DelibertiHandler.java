@@ -20,6 +20,7 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.common.dto.Color;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.deliberti.dto.DelibertiSkuDto;
@@ -78,11 +79,16 @@ public class DelibertiHandler implements ISupplierHandler {
 		if(null == delibertiSpuDto){
 			return false;
 		}else{
+			Color color = StringUtil.splitColor(delibertiSpuDto.getColor());
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(delibertiSpuDto.getSpuId());
-			hubSpu.setSupplierSpuModel(delibertiSpuDto.getProductModel());
+			String productModel = delibertiSpuDto.getProductModel();
+			if(!StringUtils.isEmpty(color.getColorCode())){
+				productModel = productModel + " " + color.getColorCode();
+			}
+			hubSpu.setSupplierSpuModel(productModel);
 			hubSpu.setSupplierSpuName(delibertiSpuDto.getSpuName());
-			hubSpu.setSupplierSpuColor(delibertiSpuDto.getColor());
+			hubSpu.setSupplierSpuColor(color.getColorValue());
 			hubSpu.setSupplierGender(delibertiSpuDto.getCategoryGender());
 			hubSpu.setSupplierCategoryno(delibertiSpuDto.getCategoryId());
 			hubSpu.setSupplierCategoryname(delibertiSpuDto.getCategoryName());
@@ -122,5 +128,5 @@ public class DelibertiHandler implements ISupplierHandler {
 		}
 		return images;
 	}
-
+	
 }

@@ -93,9 +93,12 @@ public class StefaniaHandler implements ISupplierHandler{
 			for(String url : picArray){
 				picurl = url.substring(0, url.indexOf("&U"));
 				if(!existPics.containsKey(picurl)){
+					log.info("stefania "+picurl+" 将推送");
 					Image image = new Image();
 					image.setUrl(url);
 					images.add(image);
+				}else{
+					log.info("XXXXXXXXX stefania "+picurl+" 已存在XXXXXXXXXXXX");
 				}
 			}
 			return images;
