@@ -41,4 +41,7 @@ include 'OpenTest'
 include 'monnierfreres'
 include 'giglio'
 
+include 'lungolivigno'
+include 'lungolivigno-stock'
+
 
