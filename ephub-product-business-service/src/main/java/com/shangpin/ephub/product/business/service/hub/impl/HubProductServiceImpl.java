@@ -59,6 +59,8 @@ public class HubProductServiceImpl implements HubProductService {
     @Autowired
     ApiAddressProperties apiAddressProperties;
 
+    ObjectMapper objectMapper =new ObjectMapper();
+
     @Override
     public void sendHubProuctToScm(HubProductIdDto hubProductIdDto) throws Exception {
         Long  spuId = hubProductIdDto.getId();
@@ -95,13 +97,15 @@ public class HubProductServiceImpl implements HubProductService {
                     //推送
                     //---------------------------------- 推送前先调用接口  看是否存在  存在则不用推送
                     Map<String,SopSkuDto> existSopSkuMap = new HashMap<>();
-                    List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
+                    List<ApiSkuOrgDom> existSkuOrgDoms = new ArrayList<>();//getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
                     //处理已经存在的
                     if(existSkuOrgDoms.size()>0){
+                        log.info("SPSKUNO已存在");
                         handleExistSku(existSkuOrgDoms,existSopSkuMap);
                     }
 
                     if(skuOrgDoms.size()>0){
+                        log.info("SPSKUNO 不存在");
                         handleSendToScm(spSpuInfo, spSpuExtendInfo, skuOrgDoms);
                     }
 
@@ -116,6 +120,7 @@ public class HubProductServiceImpl implements HubProductService {
     private void handleExistSku(List<ApiSkuOrgDom> existSkuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) {
         for(ApiSkuOrgDom skuOrgDom:existSkuOrgDoms){
             SopSkuDto sopSkuDto = existSopSkuMap.get(skuOrgDom.getSupplierSkuNo());
+            log.info("sopSkuDto  = " + sopSkuDto.toString());
             updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTED,"");
             //获取 sku pending 的值  更新状态
             updateSkuPendingStatus(sopSkuDto);
@@ -149,6 +154,10 @@ public class HubProductServiceImpl implements HubProductService {
         queryDto.setLstSupplierSkuNo(supplierSkuNoList);
 
         HubResponseDto<SopSkuDto> sopSkuResponseDto = querySpSkuNoFromScm(queryDto);
+        if(null!=sopSkuResponseDto){
+            log.info("　get  spSku　" + objectMapper.writeValueAsString(sopSkuResponseDto));
+        }
+
         List<ApiSkuOrgDom> existApiSkuOrgDoms = new ArrayList<>();
         if(sopSkuResponseDto.getIsSuccess()){
             List<SopSkuDto> sopSkuDtos =  sopSkuResponseDto.getResDatas();

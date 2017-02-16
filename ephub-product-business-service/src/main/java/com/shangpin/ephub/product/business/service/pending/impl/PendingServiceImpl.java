@@ -522,22 +522,24 @@ class CreateSpuAndSkuTask implements Runnable{
 
         spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
 
-        //操作所有的审核中的skupending数据
+        //操作所有的审核中的skupending
+        if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
 
-        List<Long> spuIdList = new ArrayList<>();
-        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
-            spuIdList.add(spuDto.getSpuPendingId());
+            List<Long> spuIdList = new ArrayList<>();
+            for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+                spuIdList.add(spuDto.getSpuPendingId());
+            }
+            HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
+
+            hubSkuPending.setSkuState(spuStatus);
+            hubSkuPending.setUpdateTime(date);
+
+            HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+            criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+
+            HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
+            skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
         }
-        HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
-
-        hubSkuPending.setSkuState(spuStatus);
-        hubSkuPending.setUpdateTime(date);
-
-        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
-        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue());
-
-        HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
-        skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
 
 
     }
