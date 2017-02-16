@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * Created by lizhongren on 2017/2/14.
  */
 
+@ToString
 public class SopSkuDto implements Serializable {
     @JsonIgnore
     private String  skuNo;
