@@ -1,7 +1,7 @@
 package com.shangpin.iog.syn.sku.pending.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPendingCriteria;
+import com.shangpin.iog.syn.sku.pending.po.HubSkuPendingCriteria;
 import lombok.*;
 import org.apache.ibatis.session.RowBounds;
 

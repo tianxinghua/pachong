@@ -1,7 +1,7 @@
 package com.shangpin.iog.syn.spu.supplier.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria;
+import com.shangpin.iog.syn.spu.supplier.po.HubSupplierSpuCriteria;
 import lombok.*;
 import org.apache.ibatis.session.RowBounds;
 

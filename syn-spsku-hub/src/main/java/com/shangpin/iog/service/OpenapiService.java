@@ -88,26 +88,42 @@ public class OpenapiService {
 	private void synchAndSaveRalation(String hostUrl ,String supplier,String start,String end) throws Exception{
 
 		//获取hub待处理的信息
-		List<Long>  spuPendingIdList = getSpuPendingIdList(hostUrl, supplier);
+		int page =1;
+		//获取已有的SPSKUID
+		Map<String,String> map = new HashMap<>();
 
-		if(null!=spuPendingIdList&&spuPendingIdList.size()>0){
-			//获取skuPending
-			List<HubSkuPending> skuPendings = getSkuPending(hostUrl, spuPendingIdList);
+		boolean con = true;
+		boolean searchData = true;
+		while(con) {
+			List<Long> spuPendingIdList = getSpuPendingIdList(hostUrl, supplier, page);
 
-			if(null!=skuPendings&&skuPendings.size()>0){
-				//获取已有的SPSKUID
-				Map<String,String> map = new HashMap<>();
-				if(null!=skuRelationService){
-					//获取映射关系
-					List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
-					for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-						map.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+			if (null != spuPendingIdList && spuPendingIdList.size() > 0) {
+				if(searchData){  //
+					if(null!=skuRelationService){
+						//获取映射关系
+						List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
+						for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
+							map.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+						}
 					}
+					searchData = false;
 				}
-				updateSpuStateAndSpSkuNo(hostUrl,skuPendings, map);
+				//获取skuPending
+				List<HubSkuPending> skuPendings = getSkuPending(hostUrl, spuPendingIdList);
+
+				if (null != skuPendings && skuPendings.size() > 0) {
+
+					updateSpuStateAndSpSkuNo(hostUrl, skuPendings, map);
+				}
+				if(spuPendingIdList.size()<10){
+					con = false;
+				}else{
+					page++;
+				}
+
+			}else{
+				con = false;
 			}
-
-
 		}
 
 	}
@@ -124,14 +140,14 @@ public class OpenapiService {
 					 tmp.setSpuPendingId(skuPending.getSpuPendingId());
 					 tmp.setSpuState(SpuState.NOHAND.getIndex());
 					 updateSpuJson =  mapper.writeValueAsString(tmp) ;
-					 HttpUtil45.operateData("post","josn",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
+					 HttpUtil45.operateData("post","json",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
 
 					 HubSkuPending skuTmp = new HubSkuPending();
 					 skuTmp.setSkuPendingId(skuPending.getSkuPendingId());
 					 skuTmp.setSpSkuNo(map.get(skuPending.getSupplierSkuNo()));
 					 skuTmp.setInfoFrom(new Integer(1).byteValue());
 					 updateSkuJson =  mapper.writeValueAsString(skuTmp) ;
-					 HttpUtil45.operateData("post","josn",updateSkuUrl,outTimeConfig,null,updateSkuJson,"","");
+					 HttpUtil45.operateData("post","json",updateSkuUrl,outTimeConfig,null,updateSkuJson,"","");
 
 				 } catch (Exception e) {
 					 e.printStackTrace();
@@ -143,9 +159,12 @@ public class OpenapiService {
 	private List<HubSkuPending> getSkuPending(String hostUrl, List<Long> spuPendingIdList) throws IOException, ServiceException {
 		String skuPendingUrl = hostUrl+"/hub-sku-pending/select-by-criteria";
 		HubSkuPendingCriteria criteria =new HubSkuPendingCriteria();
+		criteria.setPageNo(1);
+		criteria.setPageSize(5000);
+		criteria.setFields(" spu_pending_id,sku_pending_id,supplier_sku_no");
 		criteria.createCriteria().andSpuPendingIdIn(spuPendingIdList);
 		String jsonQuery =  mapper.writeValueAsString(criteria) ;
-		String skuPendingResult = HttpUtil45.operateData("post","josn",skuPendingUrl,outTimeConfig,null,jsonQuery,"","");
+		String skuPendingResult = HttpUtil45.operateData("post","json",skuPendingUrl,outTimeConfig,null,jsonQuery,"","");
 		if(StringUtils.isNotBlank(skuPendingResult)){
 			return  mapper.readValue(skuPendingResult,new TypeReference<List<HubSkuPending>>(){});
         }else{
@@ -153,17 +172,24 @@ public class OpenapiService {
 		}
 	}
 
-	private List<Long>  getSpuPendingIdList(String hostUrl, String supplier) throws ServiceException, java.io.IOException {
+	private List<Long>  getSpuPendingIdList(String hostUrl, String supplier,int page) throws ServiceException, java.io.IOException {
 		String pendingUrl = hostUrl+"/hub-spu-pending/select-by-criteria";
 		HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
+		criteria.setPageNo(page);
 		criteria.setFields(" spu_pending_id ");
-		criteria.createCriteria().andSupplierIdEqualTo(supplier).andSpuStateEqualTo(SpuState.NOHAND.getIndex());
+		criteria.createCriteria().andSupplierIdEqualTo(supplier).andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
 
 		String jsonQuery =  mapper.writeValueAsString(criteria) ;
-		String spuPendingResult = HttpUtil45.operateData("post","josn",pendingUrl,outTimeConfig,null,jsonQuery,"","");
+		String spuPendingResult = HttpUtil45.operateData("post","json",pendingUrl,outTimeConfig,null,jsonQuery,"","");
 		if(StringUtils.isNotBlank(spuPendingResult)){
-
-			return  mapper.readValue(spuPendingResult,new TypeReference<List<Long>>(){});
+			List<Long> spuIds = new ArrayList<>();
+			List<HubSpuPending> spuPendings =   mapper.readValue(spuPendingResult,new TypeReference<List<HubSpuPending>>(){});
+			if(null!=spuPendings&&spuPendings.size()>0){
+				for(HubSpuPending spu :spuPendings){
+					spuIds.add(spu.getSpuPendingId());
+				}
+			}
+			return  spuIds;
 		}else{
 			return null;
 		}
