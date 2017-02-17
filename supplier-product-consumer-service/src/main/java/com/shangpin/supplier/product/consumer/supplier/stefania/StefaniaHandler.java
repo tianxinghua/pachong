@@ -123,7 +123,8 @@ public class StefaniaHandler implements ISupplierHandler{
 				hubSpu.setSupplierSpuModel(productModle);
 				hubSpu.setSupplierSpuName(stefProduct.getProduct_name());
 				hubSpu.setSupplierSpuColor(stefItem.getColor());
-				hubSpu.setSupplierGender(stefProduct.getMain_category());
+				String gender = stefProduct.getMain_category();
+				hubSpu.setSupplierGender(splitGender(gender));
 				hubSpu.setSupplierCategoryname(stefProduct.getCategory());
 				hubSpu.setSupplierBrandname(stefProduct.getProduct_brand());
 				hubSpu.setSupplierSeasonname(stefProduct.getSeason_code());
@@ -179,6 +180,24 @@ public class StefaniaHandler implements ISupplierHandler{
 			}
 		}
 		return "";
+	}
+	
+	private String splitGender(String originGender){
+		if(StringUtils.isEmpty(originGender)){
+			return "";
+		}
+		originGender = originGender.toLowerCase();
+		if(originGender.startsWith("baby boy")){
+			return "baby boy";
+		}else if(originGender.startsWith("baby girl")){
+			return "baby girl";
+		}else{
+			if(originGender.contains(" ")){
+				return originGender.substring(0, originGender.indexOf(" ")).trim();
+			}else{
+				return originGender;
+			}
+		}
 	}
 	
 }

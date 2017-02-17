@@ -50,7 +50,7 @@ public class PictureProductService {
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 下所有图片已存在，不推送");
 			}
 		} catch (Exception e) {
-			log.error(supplierPicture.getSupplierName()+":"+supplierPicture.getProductPicture().getSupplierSpuNo()+" 发送图片异常："+e.getMessage(),e); 
+			log.error(supplierPicture.getSupplierName()+":"+supplierPicture.getProductPicture().getSupplierSpuNo()+" 发送图片异常："+e.getMessage()); 
 		}
 	}
 	/**

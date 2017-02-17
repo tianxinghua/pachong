@@ -73,7 +73,7 @@ public class SupplierProductMysqlService {
 				}
 			}
 		} catch (Exception e) {
-			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage(), e);
+			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage());
 			return ProductStatus.NO_NEED_HANDLE;
 		}			
 	}	
@@ -115,7 +115,7 @@ public class SupplierProductMysqlService {
 				}
 			}
 		} catch (Exception e) {
-			throw new EpHubSupplierProductConsumerException("系统在保存待处理sku时发生异常：异常为"+e.getMessage(), e);
+			throw new EpHubSupplierProductConsumerException("系统在保存待处理sku时发生异常：异常为"+e.getMessage());
 		}
 		
 	}	
