@@ -124,24 +124,6 @@ public class FetchProduct {
                         }
                     }
 
-//                    System.out.println("supplierId : " + supplierId);
-//                    System.out.println("skuId : " + skuId);
-//                    System.out.println("spuId : " + spuId);
-//                    System.out.println("productCode : " + productCode);
-//                    System.out.println("brand : " + brand);
-//                    System.out.println("name : " + name);
-//                    System.out.println("color : " + color);
-//                    System.out.println("desc : " + desc);
-//                    System.out.println("material : " + material);
-//                    System.out.println("sex : " + sex);
-//                    System.out.println("cate : " + cate);
-//                    System.out.println("season : " + season);
-//                    System.out.println("localPrice : " + localPrice);
-//                    System.out.println("supplierPrice : " + supplierPrice);
-//                    System.out.println("size : " + size);
-//                    System.out.println("stock : " + stock);
-//                    System.out.println("picsList : " + picsList);
-
                     //SKU
                     SkuDTO sku = new SkuDTO();
                     sku.setProductName(name);

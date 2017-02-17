@@ -1,4 +1,4 @@
-package com.shangpin.iog.Della.purchase;
+package com.shangpin.iog.Della.purchase.test;
 
 import java.io.File;
 import java.io.FileInputStream;

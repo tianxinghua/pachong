@@ -1,5 +1,6 @@
-package com.shangpin.iog.Della.purchase;
+package com.shangpin.iog.Della.purchase.test;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.enterprisedt.net.ftp.FTPClient;
@@ -10,7 +11,9 @@ import com.enterprisedt.net.ftp.FTPTransferType;
 public class Test2 {
 	
 	public static void main(String[] args) {
-		upLoad();
+		//upLoad();
+		File file =  new File("E:\\fff.csv");
+		System.out.println(file.getName());
 	}
 	
 	/**

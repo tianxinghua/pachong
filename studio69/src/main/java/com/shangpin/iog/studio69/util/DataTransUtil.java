@@ -148,12 +148,17 @@ public class DataTransUtil {
 			Map<String,String> param = new HashMap<String,String>();
 			param.put("GoodsID", goodsID);
 			String data = HttpUtil45.postAuth(url+"GetGoodsDetailByGoodsID", param, outTimeConf, username, password);
+			System.out.println(data);
 			GoodsDetail goodsDetail = ObjectXMLUtil.xml2Obj(GoodsDetail.class, data);
 			return goodsDetail;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static void main(String[] args) {
+		getGoodsDetailByGoodsID("124478");
 	}
 	
 	public static Map<String,GoodDetail> getGoodsDetailList(){
@@ -241,9 +246,9 @@ public class DataTransUtil {
     	
     }
 	
-	public static void main(String[] args) {
-		String goodsCategorys = HttpUtil45.postAuth(url+"GetGoodsCategory", null, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), username, password);
-		save("GetGoodsCatg.txt",goodsCategorys);
-		System.out.println(goodsCategorys); 
-	}
+//	public static void main(String[] args) {
+//		String goodsCategorys = HttpUtil45.postAuth(url+"GetGoodsCategory", null, new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10), username, password);
+//		save("GetGoodsCatg.txt",goodsCategorys);
+//		System.out.println(goodsCategorys); 
+//	}
 }
