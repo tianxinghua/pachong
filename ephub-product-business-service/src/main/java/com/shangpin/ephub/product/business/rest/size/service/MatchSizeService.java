@@ -83,6 +83,9 @@ public class MatchSizeService{
 							}
 						}
 					}
+				}else{
+					result = "scm未找到尺码模板";		
+					matchSizeResult.setNotTemplate(true);
 				}
 
 				if(!isExist){
@@ -115,7 +118,9 @@ public class MatchSizeService{
 					if(result==null){
 						result = "尺码："+dto.getSize()+"未匹配成功";						
 					}
-					matchSizeResult.setFilter(true);
+					if(map2.size()>0&&map0.size()>0){
+						matchSizeResult.setFilter(true);
+					}
 				}
 				
 			}else{
