@@ -30,6 +30,9 @@ public class StringUtil {
 		if(StringUtils.isEmpty(stock)){
 			return 0;
 		}else{
+			if(stock.contains(".")){
+				stock = stock.substring(0,stock.indexOf(".")); 
+			}
 			return Integer.parseInt(stock);
 		}
 	}
