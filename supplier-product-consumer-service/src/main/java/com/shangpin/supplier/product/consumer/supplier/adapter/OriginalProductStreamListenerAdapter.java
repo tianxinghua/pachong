@@ -61,6 +61,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("delibertiHandler") 
 	private ISupplierHandler delibertiHandler;
+	@Autowired
+	@Qualifier("dellogliostoreHandler")
+	private ISupplierHandler dellogliostoreHandler;
+	@Autowired
+	@Qualifier("pritelliHandler")
+	private ISupplierHandler pritelliHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -358,7 +364,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void dellogliostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		dellogliostoreHandler.handleOriginalProduct(message, headers);
 		
 	}
 	/**
@@ -396,7 +402,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void pritelliStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		pritelliHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	/**

@@ -1,4 +1,4 @@
-package com.shangpin.supplier.product.consumer.supplier.deliberti;
+package com.shangpin.supplier.product.consumer.supplier.dellogliostore;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,17 +20,16 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.dto.Color;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.deliberti.dto.DelibertiSkuDto;
-import com.shangpin.supplier.product.consumer.supplier.deliberti.dto.DelibertiSpuDto;
+import com.shangpin.supplier.product.consumer.supplier.dellogliostore.dto.DellogSkuDto;
+import com.shangpin.supplier.product.consumer.supplier.dellogliostore.dto.DellogSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("delibertiHandler")
+@Component("dellogliostoreHandler")
 @Slf4j
-public class DelibertiHandler implements ISupplierHandler {
+public class DellogliostoreHandler implements ISupplierHandler {
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -41,79 +40,74 @@ public class DelibertiHandler implements ISupplierHandler {
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
-				DelibertiSpuDto delibertiSpuDto = JsonUtil.deserialize(message.getData(), DelibertiSpuDto.class);
+				DellogSpuDto dellogSpuDto = JsonUtil.deserialize(message.getData(), DellogSpuDto.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),delibertiSpuDto,hubSpu);
+				boolean success = convertSpu(message.getSupplierId(),dellogSpuDto,hubSpu);
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-					List<DelibertiSkuDto> skus = delibertiSpuDto.getSkus();
+					List<DellogSkuDto> skus = dellogSpuDto.getSkus();
 					if(CollectionUtils.isNotEmpty(skus)){
-						for(DelibertiSkuDto delibertiSkuDto : skus){
+						for(DellogSkuDto dellogSkuDto : skus){
 							HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-							boolean succSku = convertSku(message.getSupplierId(),delibertiSkuDto,hubSku);
+							boolean succSku = convertSku(message.getSupplierId(),dellogSkuDto,hubSku);
 							if(succSku){
 								hubSkus.add(hubSku);
 							}
 						}
 					}
-					List<Image> images = converImage(delibertiSpuDto.getPictures());
+					List<Image> images = converImage(dellogSpuDto.getPictures());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (EpHubSupplierProductConsumerException e) {
-			log.error("deliberti异常："+e.getMessage(),e);
+			log.error("dellogliostore异常："+e.getMessage(),e);
 		}
-		
 	}
 	
 	/**
 	 * 
 	 * @param supplierId
-	 * @param delibertiSpuDto
+	 * @param dellogSpuDto
 	 * @param hubSpu
 	 * @return
 	 * @throws EpHubSupplierProductConsumerRuntimeException
 	 */
-	public boolean convertSpu(String supplierId,DelibertiSpuDto delibertiSpuDto,HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
-		if(null == delibertiSpuDto){
+	public boolean convertSpu(String supplierId,DellogSpuDto dellogSpuDto,HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
+		if(null == dellogSpuDto){
 			return false;
 		}else{
-			Color color = StringUtil.splitColor(delibertiSpuDto.getColor());
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(delibertiSpuDto.getSpuId());
-			String productModel = delibertiSpuDto.getProductModel();
-			if(!StringUtils.isEmpty(color.getColorCode())){
-				productModel = productModel + " " + color.getColorCode();
-			}
+			hubSpu.setSupplierSpuNo(dellogSpuDto.getSpuId());
+			String productModel = dellogSpuDto.getProductModel();
 			hubSpu.setSupplierSpuModel(productModel);
-			hubSpu.setSupplierSpuName(delibertiSpuDto.getSpuName());
-			hubSpu.setSupplierSpuColor(color.getColorValue());
-			hubSpu.setSupplierGender(delibertiSpuDto.getCategoryGender());
-			hubSpu.setSupplierCategoryno(delibertiSpuDto.getCategoryId());
-			hubSpu.setSupplierCategoryname(delibertiSpuDto.getCategoryName());
-			hubSpu.setSupplierBrandname(delibertiSpuDto.getBrandName());
-			hubSpu.setSupplierSeasonname(delibertiSpuDto.getSeasonName());
-			hubSpu.setSupplierMaterial(delibertiSpuDto.getMaterial());
-			hubSpu.setSupplierOrigin(delibertiSpuDto.getProductOrigin());
+			hubSpu.setSupplierSpuName(dellogSpuDto.getSpuName());
+			hubSpu.setSupplierSpuColor(dellogSpuDto.getColor());
+			hubSpu.setSupplierGender(dellogSpuDto.getCategoryGender());
+			hubSpu.setSupplierCategoryno(dellogSpuDto.getCategoryId());
+			hubSpu.setSupplierCategoryname(dellogSpuDto.getCategoryName());
+			hubSpu.setSupplierBrandname(dellogSpuDto.getBrandName());
+			hubSpu.setSupplierSeasonname(dellogSpuDto.getSeasonName());
+			hubSpu.setSupplierMaterial(dellogSpuDto.getMaterial());
+			hubSpu.setSupplierOrigin(dellogSpuDto.getProductOrigin());
 			return true;
 		}
 	}
 	/**
 	 * 
 	 * @param supplierId
-	 * @param delibertiSkuDto
+	 * @param dellogSkuDto
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId,DelibertiSkuDto delibertiSkuDto,HubSupplierSkuDto hubSku){
+	public boolean convertSku(String supplierId,DellogSkuDto dellogSkuDto,HubSupplierSkuDto hubSku){
 		hubSku.setSupplierId(supplierId);
-		hubSku.setSupplierSkuNo(delibertiSkuDto.getSkuId());
-		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(delibertiSkuDto.getMarketPrice())));
-		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(delibertiSkuDto.getSupplierPrice())));
-		hubSku.setMarketPriceCurrencyorg(delibertiSkuDto.getSaleCurrency());
-		hubSku.setSupplierSkuSize(delibertiSkuDto.getProductSize());
-		hubSku.setStock(StringUtil.verifyStock((delibertiSkuDto.getStock())));
+		hubSku.setSupplierSkuNo(dellogSkuDto.getSkuId());
+		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(dellogSkuDto.getMarketPrice())));
+		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(dellogSkuDto.getSupplierPrice())));
+		hubSku.setMarketPriceCurrencyorg(dellogSkuDto.getSaleCurrency());
+		hubSku.setSupplierSkuSize(dellogSkuDto.getProductSize());
+		hubSku.setStock(StringUtil.verifyStock((dellogSkuDto.getStock())));
 		return true;
 	}
 	
@@ -128,5 +122,5 @@ public class DelibertiHandler implements ISupplierHandler {
 		}
 		return images;
 	}
-	
+
 }
