@@ -93,9 +93,12 @@ public class StefaniaHandler implements ISupplierHandler{
 			for(String url : picArray){
 				picurl = url.substring(0, url.indexOf("&U"));
 				if(!existPics.containsKey(picurl)){
+					log.info("stefania "+picurl+" 将推送");
 					Image image = new Image();
 					image.setUrl(url);
 					images.add(image);
+				}else{
+					log.info("XXXXXXXXX stefania "+picurl+" 已存在XXXXXXXXXXXX");
 				}
 			}
 			return images;
@@ -120,7 +123,8 @@ public class StefaniaHandler implements ISupplierHandler{
 				hubSpu.setSupplierSpuModel(productModle);
 				hubSpu.setSupplierSpuName(stefProduct.getProduct_name());
 				hubSpu.setSupplierSpuColor(stefItem.getColor());
-				hubSpu.setSupplierGender(stefProduct.getMain_category());
+				String gender = stefProduct.getMain_category();
+				hubSpu.setSupplierGender(splitGender(gender));
 				hubSpu.setSupplierCategoryname(stefProduct.getCategory());
 				hubSpu.setSupplierBrandname(stefProduct.getProduct_brand());
 				hubSpu.setSupplierSeasonname(stefProduct.getSeason_code());
@@ -176,6 +180,24 @@ public class StefaniaHandler implements ISupplierHandler{
 			}
 		}
 		return "";
+	}
+	
+	private String splitGender(String originGender){
+		if(StringUtils.isEmpty(originGender)){
+			return "";
+		}
+		originGender = originGender.toLowerCase();
+		if(originGender.startsWith("baby boy")){
+			return "baby boy";
+		}else if(originGender.startsWith("baby girl")){
+			return "baby girl";
+		}else{
+			if(originGender.contains(" ")){
+				return originGender.substring(0, originGender.indexOf(" ")).trim();
+			}else{
+				return originGender;
+			}
+		}
 	}
 	
 }
