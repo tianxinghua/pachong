@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
@@ -22,7 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
@@ -81,7 +81,7 @@ public class ExportServiceImpl {
 	 * @param taskNo 任务编号
 	 * @param products
 	 */
-	public void exportSku(String taskNo,PendingQuryDto pendingQuryDto){
+	public void exportSku(String taskNo,PendingQuryDto pendingQuryDto) throws Exception{
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -92,41 +92,37 @@ public class ExportServiceImpl {
             cell.setCellValue(row0[i]);
             cell.setCellStyle(style);
         }
-        try {
-        	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
-        	int totalSize = pendingQuryDto.getPageSize();//总记录数
-        	log.info("sku导出总记录数："+totalSize); 
-        	if(totalSize > 0){
-        		List<PendingProducts> lists = new ArrayList<PendingProducts>();
-        		int pageCount = getPageCount(totalSize,SKUPAGESIZE);//页数
-        		log.info("sku导出总页数："+pageCount); 
-            	for(int i =1; i <= pageCount; i++){
-            		pendingQuryDto.setPageIndex(i);
-            		pendingQuryDto.setPageSize(SKUPAGESIZE);
-            		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
-            		lists.add(products);
-            	}
-            	int j = 0;
-            	for(PendingProducts products : lists){
-                    for(PendingProductDto product : products.getProduts()){
-                    	log.info("该spu下共有sku数是："+product.getHubSkus().size()); 
-                        for(HubSkuPendingDto sku : product.getHubSkus()){
-                            try {
-                                j++;
-                                row = sheet.createRow(j);
-                                insertProductSkuOfRow(row,product,sku,rowTemplate);
-                            } catch (Exception e) {
-                            	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
-                                j--;
-                            }
+    	String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
+    	int totalSize = pendingQuryDto.getPageSize();//总记录数
+    	log.info("sku导出总记录数："+totalSize); 
+    	if(totalSize > 0){
+    		List<PendingProducts> lists = new ArrayList<PendingProducts>();
+    		int pageCount = getPageCount(totalSize,SKUPAGESIZE);//页数
+    		log.info("sku导出总页数："+pageCount); 
+        	for(int i =1; i <= pageCount; i++){
+        		pendingQuryDto.setPageIndex(i);
+        		pendingQuryDto.setPageSize(SKUPAGESIZE);
+        		PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
+        		lists.add(products);
+        	}
+        	int j = 0;
+        	for(PendingProducts products : lists){
+                for(PendingProductDto product : products.getProduts()){
+                    for(HubSkuPendingDto sku : product.getHubSkus()){
+                        try {
+                            j++;
+                            row = sheet.createRow(j);
+                            insertProductSkuOfRow(row,product,sku,rowTemplate);
+                        } catch (Exception e) {
+                        	log.error("insertProductSkuOfRow异常："+e.getMessage(),e);
+                            j--;
                         }
                     }
                 }
-        	}
-            saveAndUploadExcel(taskNo,pendingQuryDto.getCreateUser(),wb);
-        } catch (Exception e) {
-            log.error("待处理页导出sku异常："+e.getMessage(),e);
-        }
+            }
+    	}
+        saveAndUploadExcel(taskNo,pendingQuryDto.getCreateUser(),wb);
+        
 	}
 	/**
 	 * 获取总页数
@@ -146,7 +142,7 @@ public class ExportServiceImpl {
 	 * @param taskNo 任务编号
 	 * @param products
 	 */
-	public void exportSpu(String taskNo,PendingQuryDto pendingQuryDto){
+	public void exportSpu(String taskNo,PendingQuryDto pendingQuryDto) throws Exception{
 		HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("产品信息");
         HSSFRow row = sheet.createRow(0);
@@ -157,42 +153,38 @@ public class ExportServiceImpl {
             cell.setCellValue(row0[i]);
             cell.setCellStyle(style);
         }
-        try {
-        	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
-        	int totalSize = pendingQuryDto.getPageSize();//总记录数
-        	log.info("spu导出总记录数："+totalSize); 
-        	if(totalSize > 0){
-        		List<PendingProducts> lists = new ArrayList<PendingProducts>();
-        		int pageCount = getPageCount(totalSize,PAGESIZE);//页数
-        		log.info("spu导出总页数："+pageCount); 
-            	for(int i =1; i <= pageCount; i++){
-            		pendingQuryDto.setPageIndex(i);
-            		pendingQuryDto.setPageSize(PAGESIZE);
-            		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
-            		lists.add(products);
-            	}
-        		int j = 0;
-        		for(PendingProducts products : lists){
-                    for(PendingProductDto product : products.getProduts()){
-                        try {
-                            j++;
-                            row = sheet.createRow(j);  
-                            if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
-                                row.setHeight((short) 1500);
-                        		sheet.setColumnWidth(0, (36*150));
-                            }
-                            insertProductSpuOfRow(pendingQuryDto.getIsExportPic(),row,product,rowTemplate);
-                        } catch (Exception e) {
-                        	log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
-                            j--;
+    	String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
+    	int totalSize = pendingQuryDto.getPageSize();//总记录数
+    	log.info("spu导出总记录数："+totalSize); 
+    	if(totalSize > 0){
+    		List<PendingProducts> lists = new ArrayList<PendingProducts>();
+    		int pageCount = getPageCount(totalSize,PAGESIZE);//页数
+    		log.info("spu导出总页数："+pageCount); 
+        	for(int i =1; i <= pageCount; i++){
+        		pendingQuryDto.setPageIndex(i);
+        		pendingQuryDto.setPageSize(PAGESIZE);
+        		PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
+        		lists.add(products);
+        	}
+    		int j = 0;
+    		for(PendingProducts products : lists){
+                for(PendingProductDto product : products.getProduts()){
+                    try {
+                        j++;
+                        row = sheet.createRow(j);  
+                        if(pendingQuryDto.getIsExportPic() == IsExportPic.YES.getIndex()){
+                            row.setHeight((short) 1500);
+                    		sheet.setColumnWidth(0, (36*150));
                         }
+                        insertProductSpuOfRow(pendingQuryDto.getIsExportPic(),row,product,rowTemplate);
+                    } catch (Exception e) {
+                    	log.error("insertProductSpuOfRow异常："+e.getMessage(),e);
+                        j--;
                     }
                 }
-        	}
-            saveAndUploadExcel(taskNo,pendingQuryDto.getCreateUser(),wb);
-        } catch (Exception e) {
-            log.error("待处理页导出spu异常："+e.getMessage(),e);
-        }
+            }
+    	}
+        saveAndUploadExcel(taskNo,pendingQuryDto.getCreateUser(),wb);
 	}
 	
 	/**
@@ -249,11 +241,20 @@ public class ExportServiceImpl {
      * @param product
      * @throws Exception
      */
-    private void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
+    @SuppressWarnings("unused")
+	private void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
     	Class<?> spuClazz = product.getClass();
     	Class<?> skuClazz = sku.getClass();
     	Method fieldSetMet = null;
 		Object value = null;
+		MatchSizeResult matchSizeResult = null;
+		if(StringUtils.isBlank(sku.getHubSkuSizeType())){
+			MatchSizeDto match = new MatchSizeDto();
+			match.setHubBrandNo(product.getHubBrandNo());
+			match.setHubCategoryNo(product.getHubCategoryNo());
+			match.setSize(sku.getHubSkuSize());	
+			matchSizeResult = matchSizeGateWay.matchSize(match);
+		}
     	for(int i=0;i<rowTemplate.length;i++){
     		try {
     			String fileName = parSetName(rowTemplate[i]);
@@ -270,14 +271,13 @@ public class ExportServiceImpl {
 					if(value!=null){
 						row.createCell(i).setCellValue(null != value ? value.toString() : "");	
 					}else{
-						MatchSizeDto match = new MatchSizeDto();
-						match.setHubBrandNo(product.getHubBrandNo());
-						match.setHubCategoryNo(product.getHubCategoryNo());
-						match.setSize(sku.getHubSkuSize());	
-						MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(match);
-						if(matchSizeResult.isPassing()){
-							String sizeType = matchSizeResult.getSizeType();
-							row.createCell(i).setCellValue(sizeType);	
+						if(matchSizeResult!=null){
+							if(matchSizeResult.isPassing()){
+								String sizeType = matchSizeResult.getSizeType();
+								row.createCell(i).setCellValue(sizeType);	
+							}else if(matchSizeResult.isFilter()){
+								row.createCell(i).setCellValue("排除");
+							}
 						}
 					}
             	}else if("seasonYear".equals(rowTemplate[i])){
@@ -290,7 +290,16 @@ public class ExportServiceImpl {
 					if("尺寸".equals(value)){
 						row.createCell(i).setCellValue("尺寸");
 					}else{
-						row.createCell(i).setCellValue("");
+						if(matchSizeResult!=null){
+							if(matchSizeResult.isMultiSizeType()){
+								row.createCell(i).setCellValue("多个模板");
+							}
+							if(matchSizeResult.isNotTemplate()){
+								row.createCell(i).setCellValue("没有模板");
+							}
+						}else{
+							row.createCell(i).setCellValue("");	
+						}
 					}
             	}else if("originalProductSizeValue".equals(rowTemplate[i]) ){
             		//原尺码类型 原尺码值 从哪取值？

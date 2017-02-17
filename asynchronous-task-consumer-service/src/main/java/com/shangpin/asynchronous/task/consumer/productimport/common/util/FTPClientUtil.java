@@ -13,6 +13,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 
 @Component
@@ -55,6 +56,7 @@ public class FTPClientUtil {
 	 * @throws Exception
 	 */
 	public static String uploadToExportPath(File file,String fileName) throws Exception {
+		Log.info("=====开始上传ftp=====");
 		int reply;
 		ftp.connect(host, Integer.parseInt(port));
 		ftp.login(userName, password);
@@ -72,6 +74,7 @@ public class FTPClientUtil {
 		}
 		ftp.storeFile(fileName, sbs);
 		sbs.close();
+		Log.info("=====上传ftp结束=====");
 		return exportPath;
 	}
 	

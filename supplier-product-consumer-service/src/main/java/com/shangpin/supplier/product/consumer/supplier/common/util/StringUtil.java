@@ -16,7 +16,10 @@ public class StringUtil {
 		if(StringUtils.isEmpty(stock)){
 			return 0;
 		}else{
-			return Integer.parseInt(stock);
+			if(Integer.parseInt(stock.trim())<0){
+				return 0;
+			}
+			return Integer.parseInt(stock.trim());
 		}
 	}
 }
