@@ -143,6 +143,7 @@ public class GebHandler implements ISupplierHandler {
 			String supplierSkuNo = item.getProduct_id()+"-"+size;
 			hubSku.setSupplierSkuNo(supplierSkuNo);
 			hubSku.setSupplierSkuName(item.getItem_intro());
+			hubSku.setSupplierBarcode(supplierSkuNo);
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getRetail_price())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice())));
 			hubSku.setMarketPriceCurrencyorg(item.getCurrency());

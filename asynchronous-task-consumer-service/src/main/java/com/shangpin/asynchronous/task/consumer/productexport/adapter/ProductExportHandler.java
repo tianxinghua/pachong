@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.util.JsonUtil;
@@ -27,6 +29,8 @@ public class ProductExportHandler {
 	
 	@Autowired
 	private ExportServiceImpl exportServiceImpl;
+	@Autowired
+	TaskImportService taskService;
 	
 	/**
 	 * 商品导出数据流监听
@@ -34,17 +38,23 @@ public class ProductExportHandler {
 	 * @param headers 消息头
 	 */
 	public void productExportTask(ProductImportTask message, Map<String, Object> headers) {
-		if(!StringUtils.isEmpty(message.getData())){
-			PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
-			log.info("接收到导出任务："+message.getData());
-			if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
-				exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
-			}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
-				exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
+		try{
+			if(!StringUtils.isEmpty(message.getData())){
+				PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
+				log.info("接收到导出任务："+message.getData());
+				if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
+					exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
+				}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
+					exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
+				}
+			}else{
+				log.error("待处理页导出请传入参数！！！"); 
 			}
-		}else{
-			log.error("待处理页导出请传入参数！！！"); 
-		}
+		}catch (Exception e) {
+            log.error("待处理页导出sku异常："+e.getMessage(),e);
+            taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
+        }
+		
 	}
 
 }

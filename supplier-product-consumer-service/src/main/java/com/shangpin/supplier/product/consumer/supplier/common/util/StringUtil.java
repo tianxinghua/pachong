@@ -27,11 +27,15 @@ public class StringUtil {
 	 * @return
 	 */
 	public static int verifyStock(String stock){
+		
 		if(StringUtils.isEmpty(stock)){
 			return 0;
 		}else{
 			if(stock.contains(".")){
 				stock = stock.substring(0,stock.indexOf(".")); 
+			}
+			if(Integer.parseInt(stock.trim())<0){
+				return 0;
 			}
 			return Integer.parseInt(stock);
 		}

@@ -62,6 +62,11 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("delibertiHandler") 
 	private ISupplierHandler delibertiHandler;
 	@Autowired
+	@Qualifier("theclutcherHandler") 
+	private ISupplierHandler theclutcherHandler;
+	@Autowired
+	@Qualifier("raffaellonetworkHandler") 
+	private ISupplierHandler raffaellonetworkHandler;
 	@Qualifier("dellogliostoreHandler")
 	private ISupplierHandler dellogliostoreHandler;
 	@Autowired
@@ -450,8 +455,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void raffaellonetworkStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		raffaellonetworkHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * frmoda供货商原始数据监听方法
@@ -532,7 +536,6 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void theclutcherStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		theclutcherHandler.handleOriginalProduct(message, headers); 
 	}
 }
