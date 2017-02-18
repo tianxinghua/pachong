@@ -139,6 +139,7 @@ public class OpenapiService {
 					 HubSpuPending tmp = new HubSpuPending();
 					 tmp.setSpuPendingId(skuPending.getSpuPendingId());
 					 tmp.setSpuState(SpuState.NOHAND.getIndex());
+					 tmp.setUpdateTime(new Date());
 					 updateSpuJson =  mapper.writeValueAsString(tmp) ;
 					 HttpUtil45.operateData("post","json",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
 
@@ -146,6 +147,7 @@ public class OpenapiService {
 					 skuTmp.setSkuPendingId(skuPending.getSkuPendingId());
 					 skuTmp.setSpSkuNo(map.get(skuPending.getSupplierSkuNo()));
 					 skuTmp.setInfoFrom(new Integer(1).byteValue());
+					 skuTmp.setUpdateTime(new Date());
 					 updateSkuJson =  mapper.writeValueAsString(skuTmp) ;
 					 HttpUtil45.operateData("post","json",updateSkuUrl,outTimeConfig,null,updateSkuJson,"","");
 
