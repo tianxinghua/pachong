@@ -30,24 +30,18 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月21日 下午4:15:16
  */
 @Service
-@Slf4j
 public class MatchSizeService {
 
 	@Autowired
 	SizeService sizeService;
 
 	/**
-	 * 正则校验
-	 * 
-	 * @param hubBrandNo
-	 *            品牌编号
-	 * @param hubCategoryNo
-	 *            品类编号
-	 * @param brandMode
-	 *            品牌方型号
-	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
+	 * 根据品牌、品类编号和尺码匹配出尺码类型
+	 * @param dto
+	 * @return
 	 */
 	public MatchSizeResult matchSize(MatchSizeDto dto) {
+		
 		MatchSizeResult matchSizeResult = new MatchSizeResult();
 		CategoryScreenSizeDom size = sizeService.getGmsSize(dto.getHubBrandNo(), dto.getHubCategoryNo());
 		boolean sizeIsExist = false;
@@ -56,7 +50,6 @@ public class MatchSizeService {
 		Map<String,String> screenSizeMap = new HashMap<String,String>();
 		Map<String,String> standardSizeMap = new HashMap<String,String>();
 		if(size!=null){
-			
 			List<SizeStandardItem> list = size.getSizeStandardItemList();	
 			if(list!=null&&list.size()>0){
 				//获取筛选尺码和标准尺码map集合
@@ -64,6 +57,7 @@ public class MatchSizeService {
 				//第一步：从标准尺码中查找匹配尺码
 				sizeIsExist = matchStandardSize(dto.getSize(),standardSizeMap,matchSizeResult);
 				if(!sizeIsExist){
+					//第二步：从标准尺码中未匹配到尺码。继续从筛选尺码中匹配
 					sizeIsExist = matchScreenSize(dto.getSize(),screenSizeMap,matchSizeResult);
 				}
 			}else{
@@ -76,11 +70,12 @@ public class MatchSizeService {
 		if(matchSizeResult.isPassing()){
 			matchSizeResult.setPassing(true);
 		}else{
+			matchSizeResult.setPassing(false);
 			if(isNotTemplate){
 				matchSizeResult.setNotTemplate(isNotTemplate);
 				result = "scm没有尺码模板";	
 			}else{
-				//sizeIsExist为true，说明匹配到尺码
+				//sizeIsExist为true，说明匹配到尺码并且匹配到多个
 				if(sizeIsExist){
 					matchSizeResult.setMultiSizeType(true);
 					result = "含有多个尺码模板";		
