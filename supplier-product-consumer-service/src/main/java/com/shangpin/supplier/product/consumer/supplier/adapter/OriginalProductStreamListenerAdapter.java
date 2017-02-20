@@ -81,6 +81,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("frmodaHandler")
 	private ISupplierHandler frmodaHandler;
+	@Autowired
+	@Qualifier("zitafabianiHandler")
+	private ISupplierHandler zitafabianiHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -445,7 +448,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void zitafabianiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		zitafabianiHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	
