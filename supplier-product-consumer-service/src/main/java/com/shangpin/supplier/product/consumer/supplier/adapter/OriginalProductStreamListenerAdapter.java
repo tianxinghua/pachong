@@ -75,6 +75,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("piccadillyHandler")
 	private ISupplierHandler piccadillyHandler;
+	@Autowired
+	@Qualifier("massHandler")
+	private ISupplierHandler massHandler;
+	@Autowired
+	@Qualifier("frmodaHandler")
+	private ISupplierHandler frmodaHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -381,7 +387,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void francescomassaStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		massHandler.handleOriginalProduct(message,headers);
 		
 	}
 	
@@ -466,8 +472,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void frmodaStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		frmodaHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**

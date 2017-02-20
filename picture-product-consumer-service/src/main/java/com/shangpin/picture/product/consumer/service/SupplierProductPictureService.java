@@ -68,7 +68,7 @@ public class SupplierProductPictureService {
 	 * 处理供应商商品图片
 	 * @param picDtos
 	 */
-	public synchronized void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
+	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
@@ -127,6 +127,9 @@ public class SupplierProductPictureService {
 			openConnection.setReadTimeout(TIMEOUT);
 			inputStream = openConnection.getInputStream();
 			String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(inputStream));
+			if (StringUtils.isBlank(base64)) {
+				throw new RuntimeException("读取到的图片内容为空,无法获取图片");
+			}
 			UploadPicDto uploadPicDto = new UploadPicDto();
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
@@ -140,7 +143,7 @@ public class SupplierProductPictureService {
 			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
-			dto.setMemo("图片拉取失败");
+			dto.setMemo("图片拉取失败:"+e.getMessage());
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -232,7 +235,7 @@ public class SupplierProductPictureService {
 	 * 重试拉取图片
 	 * @param spuPendingPicId 图片表主键
 	 */
-	public synchronized void processRetryProductPicture(Long spuPendingPicId) {
+	public  void processRetryProductPicture(Long spuPendingPicId) {
 		int count = 0;
 		try {
 			HubSpuPendingPicDto hubSpuPendingPicDto = supplierProductPictureManager.queryById(spuPendingPicId);
