@@ -16,16 +16,7 @@ include 'iog-facade-impl'
 include 'iog-sop'
 include 'iog-generater-util'
 include 'iog-web-apiHandler'
-include 'coltorti'
 
-include 'palomaBarcelo-stock'
-include 'coltorti'
-include 'mclabels'
-include 'mclabels-stock'
-include 'stefaniamode'
-include 'Della'
-include 'biondini'
-include 'eleonorabonucci'
 
 
 
@@ -36,12 +27,7 @@ include 'picturedown'
 include 'project-mq'
 include 'stockMontiHK'
 include 'stockclean'
-include 'OpenTest'
+include 'synchSupplierIdAndSpId'
 
-include 'monnierfreres'
-include 'giglio'
-
-include 'lungolivigno'
-include 'lungolivigno-stock'
 
 
