@@ -121,7 +121,12 @@ public class HubProductServiceImpl implements HubProductService {
         for(ApiSkuOrgDom skuOrgDom:existSkuOrgDoms){
             SopSkuDto sopSkuDto = existSopSkuMap.get(skuOrgDom.getSupplierSkuNo());
             log.info("sopSkuDto  = " + sopSkuDto.toString());
-            updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTED,"");
+            if(StringUtils.isBlank(sopSkuDto.getSkuNo())){
+                updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"SOP未审核通过，需要人工处理");
+            }else{
+                updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTED,"");
+            }
+
             //获取 sku pending 的值  更新状态
             updateSkuPendingStatus(sopSkuDto);
         }
@@ -153,13 +158,18 @@ public class HubProductServiceImpl implements HubProductService {
         }
         queryDto.setLstSupplierSkuNo(supplierSkuNoList);
 
-        HubResponseDto<SopSkuDto> sopSkuResponseDto = querySpSkuNoFromScm(queryDto);
+        HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
+        try {
+            sopSkuResponseDto = querySpSkuNoFromScm(queryDto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(null!=sopSkuResponseDto){
             log.info("　get  spSku　" + objectMapper.writeValueAsString(sopSkuResponseDto));
         }
 
         List<ApiSkuOrgDom> existApiSkuOrgDoms = new ArrayList<>();
-        if(sopSkuResponseDto.getIsSuccess()){
+        if(null!=sopSkuResponseDto&&sopSkuResponseDto.getIsSuccess()){
             List<SopSkuDto> sopSkuDtos =  sopSkuResponseDto.getResDatas();
             if(null!=sopSkuDtos&&sopSkuDtos.size()>0){
                for( SopSkuDto  sopSkuDto:sopSkuDtos ){
@@ -387,8 +397,13 @@ public class HubProductServiceImpl implements HubProductService {
 
     private void updateSkuPendingStatus(SopSkuDto sopSkuDto){
         HubSkuPendingDto skuPendingDto = new HubSkuPendingDto();
-        skuPendingDto.setSpSkuNo(sopSkuDto.getSkuNo());
+        if(StringUtils.isBlank(sopSkuDto.getSkuNo())){
+        }else{
+            skuPendingDto.setSpSkuNo(sopSkuDto.getSkuNo());
+        }
+
         skuPendingDto.setUpdateTime(new Date());
+
         HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
         criteria.createCriteria().andSupplierIdEqualTo(sopSkuDto.getSopUserNo().toString()).andSupplierSkuNoEqualTo(sopSkuDto.getSupplierSkuNo());
         HubSkuPendingWithCriteriaDto skuPendingWithCriteriaDto = new HubSkuPendingWithCriteriaDto(skuPendingDto,criteria);
