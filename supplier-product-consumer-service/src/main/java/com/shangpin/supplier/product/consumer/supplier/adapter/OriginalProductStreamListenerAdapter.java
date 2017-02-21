@@ -72,14 +72,18 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("pritelliHandler")
 	private ISupplierHandler pritelliHandler;
-
+	@Autowired
+	@Qualifier("piccadillyHandler")
+	private ISupplierHandler piccadillyHandler;
 	@Autowired
 	@Qualifier("massHandler")
 	private ISupplierHandler massHandler;
-
 	@Autowired
 	@Qualifier("frmodaHandler")
 	private ISupplierHandler frmodaHandler;
+	@Autowired
+	@Qualifier("zitafabianiHandler")
+	private ISupplierHandler zitafabianiHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -424,7 +428,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void piccadillyStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		piccadillyHandler.handleOriginalProduct(message, headers);
 		
 	}
 	
@@ -444,7 +448,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void zitafabianiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		zitafabianiHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	

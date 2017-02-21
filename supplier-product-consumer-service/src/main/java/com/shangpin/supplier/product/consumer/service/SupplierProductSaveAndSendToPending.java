@@ -125,26 +125,19 @@ public class SupplierProductSaveAndSendToPending {
 	public boolean isCurrentSeason(String supplierId,String supplierSeason){
 		if(StringUtils.isEmpty(supplierSeason)){
 			return false;
-		}
-		Map<String,String> currentSeason =  null;
-		if(null == currentSeason){
-			currentSeason = new HashMap<String,String>();
-		}
-//		if(!currentSeason.containsKey(supplierId)){
+		}else{
+			supplierSeason = supplierSeason.trim();
 			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
-			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
+			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason).andFilterFlagEqualTo((byte)1);
 			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
 			if(null != dics && dics.size() > 0){
-				for(HubSeasonDicDto dic : dics){
-					currentSeason.put(dic.getSupplierSeason().trim().toLowerCase(), null);
-				}
+				return true;
+			}else{
+				return false;
 			}
-//		}
-		if(currentSeason.containsKey(supplierSeason.trim().toLowerCase())){
-			return true;
-		}else{
-			return false;
 		}
+		
+		
 	}
 	/**
 	 * 赋值Spu并返回
