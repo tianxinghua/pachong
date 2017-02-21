@@ -322,11 +322,11 @@ public class SupplierProductMysqlService {
 			hubSpuUpdated.setSupplierBrandname(hubSpu.getSupplierBrandname()); 
 			isChanged = true;
 		}
-		if(!StringUtils.isEmpty(hubSpu.getSupplierSeasonno()) && hubSpu.getSupplierSeasonno().equals(hubSpuSel.getSupplierSeasonno())){
-			pendingSpu.setHubSeason(hubSpu.getSupplierSeasonno());
-			hubSpuUpdated.setSupplierSeasonno(hubSpu.getSupplierSeasonno());
-			isChanged = true;
-		}
+//		if(!StringUtils.isEmpty(hubSpu.getSupplierSeasonno()) && hubSpu.getSupplierSeasonno().equals(hubSpuSel.getSupplierSeasonno())){
+//			pendingSpu.setHubSeason(hubSpu.getSupplierSeasonno());
+//			hubSpuUpdated.setSupplierSeasonno(hubSpu.getSupplierSeasonno());
+//			isChanged = true;
+//		}
 		if(!StringUtils.isEmpty(hubSpu.getSupplierSeasonname()) && !hubSpu.getSupplierSeasonname().equals(hubSpuSel.getSupplierSeasonname())){
 			pendingSpu.setHubSeason(hubSpu.getSupplierSeasonname());
 			hubSpuUpdated.setSupplierSeasonname(hubSpu.getSupplierSeasonname());

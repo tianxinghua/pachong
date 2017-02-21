@@ -1,4 +1,4 @@
-package com.shangpin.supplier.product.consumer.supplier.pritelli;
+package com.shangpin.supplier.product.consumer.supplier.piccadilly;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,14 +21,14 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.pritelli.dto.PritelliSkuDto;
-import com.shangpin.supplier.product.consumer.supplier.pritelli.dto.PritelliSpuDto;
+import com.shangpin.supplier.product.consumer.supplier.piccadilly.dto.PiccadillySkuDto;
+import com.shangpin.supplier.product.consumer.supplier.piccadilly.dto.PiccadillySpuDto;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("pritelliHandler")
+@Component("piccadillyHandler")
 @Slf4j
-public class PritelliHandler implements ISupplierHandler{
+public class PiccadillyHandler implements ISupplierHandler {
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -39,28 +39,28 @@ public class PritelliHandler implements ISupplierHandler{
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
-				PritelliSpuDto pritelliSpuDto = JsonUtil.deserialize(message.getData(), PritelliSpuDto.class);
+				PiccadillySpuDto piccadillySpuDto = JsonUtil.deserialize(message.getData(), PiccadillySpuDto.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),pritelliSpuDto,hubSpu);
+				boolean success = convertSpu(message.getSupplierId(),piccadillySpuDto,hubSpu);
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-					List<PritelliSkuDto> skus = pritelliSpuDto.getSkus();
+					List<PiccadillySkuDto> skus = piccadillySpuDto.getSkus();
 					if(CollectionUtils.isNotEmpty(skus)){
-						for(PritelliSkuDto pritelliSkuDto : skus){
+						for(PiccadillySkuDto piccadillySkuDto : skus){
 							HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-							boolean succSku = convertSku(message.getSupplierId(),pritelliSkuDto,hubSku);
+							boolean succSku = convertSku(message.getSupplierId(),piccadillySkuDto,hubSku);
 							if(succSku){
 								hubSkus.add(hubSku);
 							}
 						}
 					}
-					List<Image> images = converImage(pritelliSpuDto.getPictures());
+					List<Image> images = converImage(piccadillySpuDto.getPictures());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (Exception e) {
-			log.error("pritelli异常："+e.getMessage(),e);
+			log.error("piccadilly异常："+e.getMessage(),e);
 		}
 		
 	}
@@ -68,46 +68,46 @@ public class PritelliHandler implements ISupplierHandler{
 	/**
 	 * 
 	 * @param supplierId
-	 * @param pritelliSpuDto
+	 * @param piccadillySpuDto
 	 * @param hubSpu
 	 * @return
 	 * @throws EpHubSupplierProductConsumerRuntimeException
 	 */
-	public boolean convertSpu(String supplierId,PritelliSpuDto pritelliSpuDto,HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
-		if(null == pritelliSpuDto){
+	public boolean convertSpu(String supplierId,PiccadillySpuDto piccadillySpuDto,HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
+		if(null == piccadillySpuDto){
 			return false;
 		}else{
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(pritelliSpuDto.getSpuId());
-			String productModel = pritelliSpuDto.getProductModel();
+			hubSpu.setSupplierSpuNo(piccadillySpuDto.getSpuId());
+			String productModel = piccadillySpuDto.getProductModel();
 			hubSpu.setSupplierSpuModel(productModel);
-			hubSpu.setSupplierSpuName(pritelliSpuDto.getSpuName());
-			hubSpu.setSupplierSpuColor(pritelliSpuDto.getColor());
-			hubSpu.setSupplierGender(pritelliSpuDto.getCategoryGender());
-			hubSpu.setSupplierCategoryno(pritelliSpuDto.getCategoryId());
-			hubSpu.setSupplierCategoryname(pritelliSpuDto.getCategoryName());
-			hubSpu.setSupplierBrandname(pritelliSpuDto.getBrandName());
-			hubSpu.setSupplierSeasonname(pritelliSpuDto.getSeasonName());
-			hubSpu.setSupplierMaterial(pritelliSpuDto.getMaterial());
-			hubSpu.setSupplierOrigin(pritelliSpuDto.getProductOrigin());
+			hubSpu.setSupplierSpuName(piccadillySpuDto.getSpuName());
+			hubSpu.setSupplierSpuColor(piccadillySpuDto.getColor());
+			hubSpu.setSupplierGender(piccadillySpuDto.getCategoryGender());
+			hubSpu.setSupplierCategoryno(piccadillySpuDto.getCategoryId());
+			hubSpu.setSupplierCategoryname(piccadillySpuDto.getCategoryName());
+			hubSpu.setSupplierBrandname(piccadillySpuDto.getBrandName());
+			hubSpu.setSupplierSeasonname(piccadillySpuDto.getSeasonName());
+			hubSpu.setSupplierMaterial(piccadillySpuDto.getMaterial());
+			hubSpu.setSupplierOrigin(piccadillySpuDto.getProductOrigin());
 			return true;
 		}
 	}
 	/**
 	 * 
 	 * @param supplierId
-	 * @param pritelliSkuDto
+	 * @param piccadillySkuDto
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean convertSku(String supplierId,PritelliSkuDto pritelliSkuDto,HubSupplierSkuDto hubSku){
+	public boolean convertSku(String supplierId,PiccadillySkuDto piccadillySkuDto,HubSupplierSkuDto hubSku){
 		hubSku.setSupplierId(supplierId);
-		hubSku.setSupplierSkuNo(pritelliSkuDto.getSkuId());
-		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(pritelliSkuDto.getMarketPrice())));
-		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(pritelliSkuDto.getSupplierPrice())));
-		hubSku.setMarketPriceCurrencyorg(pritelliSkuDto.getSaleCurrency());
-		hubSku.setSupplierSkuSize(pritelliSkuDto.getProductSize());
-		hubSku.setStock(StringUtil.verifyStock((pritelliSkuDto.getStock())));
+		hubSku.setSupplierSkuNo(piccadillySkuDto.getSkuId());
+		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(piccadillySkuDto.getMarketPrice())));
+		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(piccadillySkuDto.getSupplierPrice())));
+		hubSku.setMarketPriceCurrencyorg(piccadillySkuDto.getSaleCurrency());
+		hubSku.setSupplierSkuSize(piccadillySkuDto.getProductSize());
+		hubSku.setStock(StringUtil.verifyStock((piccadillySkuDto.getStock())));
 		return true;
 	}
 	

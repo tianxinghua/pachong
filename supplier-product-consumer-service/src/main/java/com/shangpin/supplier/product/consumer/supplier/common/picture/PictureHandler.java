@@ -88,7 +88,7 @@ public class PictureHandler {
 	
 	/**
 	 * 判断该spu是否存在图片
-	 * @param supplierSpuId
+	 * @param
 	 * @return
 	 */
 	public Map<String,String> stefaniaPicExistsOfSpu(String supplierId,String supplierSpuNo){

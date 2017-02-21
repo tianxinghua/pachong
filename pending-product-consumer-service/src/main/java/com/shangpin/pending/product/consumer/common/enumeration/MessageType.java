@@ -9,7 +9,8 @@ public enum MessageType {
     NEW(0,"NEW"),
     UPDATE(1,"UPDATE"),
     MODIFY_PRICE(2,"MODIFY_PRICE"),
-    NO_NEED_HANDLE(3,"NO_NEED_HANDLE");
+    NO_NEED_HANDLE(3,"NO_NEED_HANDLE"),
+    RESTART_HANDLE(4,"RESTART_HANDLE");
 
 
     /**

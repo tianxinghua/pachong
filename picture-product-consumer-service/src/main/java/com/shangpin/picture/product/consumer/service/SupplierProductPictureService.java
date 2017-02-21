@@ -68,7 +68,7 @@ public class SupplierProductPictureService {
 	 * 处理供应商商品图片
 	 * @param picDtos
 	 */
-	public synchronized void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
+	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
@@ -126,7 +126,15 @@ public class SupplierProductPictureService {
 			openConnection.setConnectTimeout(TIMEOUT);
 			openConnection.setReadTimeout(TIMEOUT);
 			inputStream = openConnection.getInputStream();
-			String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(inputStream));
+			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			if (byteArray == null || byteArray.length == 0) {
+				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
+			}
+			String base64 = new BASE64Encoder().encode(byteArray);
+			/*if (StringUtils.isBlank(base64)) {
+				throw new RuntimeException("读取到的图片内容为空,无法获取图片");
+			}*/
+			//log.info(picUrl+"------>"+base64+"<-------");
 			UploadPicDto uploadPicDto = new UploadPicDto();
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
@@ -140,7 +148,7 @@ public class SupplierProductPictureService {
 			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
-			dto.setMemo("图片拉取失败");
+			dto.setMemo("图片拉取失败:"+e.getMessage());
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -181,13 +189,13 @@ public class SupplierProductPictureService {
 	 */
 	public void scanFailedPictureToRetry() {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
 		for (int i = 1; i <= countTotalPage(supplierProductPictureManager.countFailedPictureTotal(criteria), PAGE_SIZE); i++) {
 			HubSpuPendingPicCriteriaDto _criteria = new HubSpuPendingPicCriteriaDto();
 			_criteria.setFields("spu_pending_pic_id");
 			_criteria.setPageNo(i);
 			_criteria.setPageSize(PAGE_SIZE);
-			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
 			List<HubSpuPendingPicDto> picDto = supplierProductPictureManager.queryByCriteria(_criteria);
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
@@ -232,7 +240,7 @@ public class SupplierProductPictureService {
 	 * 重试拉取图片
 	 * @param spuPendingPicId 图片表主键
 	 */
-	public synchronized void processRetryProductPicture(Long spuPendingPicId) {
+	public  void processRetryProductPicture(Long spuPendingPicId) {
 		int count = 0;
 		try {
 			HubSpuPendingPicDto hubSpuPendingPicDto = supplierProductPictureManager.queryById(spuPendingPicId);
@@ -255,6 +263,12 @@ public class SupplierProductPictureService {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
 		} finally {
 			shangpinRedis.del(assemblyKey(spuPendingPicId));
+		}
+		try {
+			Thread.sleep(1000*25);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
