@@ -172,6 +172,8 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
+                        String supplierCategoryname = findSupplierProduct(pendingProduct.getSupplierSpuId()).getSupplierCategoryname();
+						pendingProduct.setSupplierCategoryname(StringUtils.isEmpty(supplierCategoryname) ? "" : supplierCategoryname);
                         products.add(pendingProduct);
                     }
                 }
