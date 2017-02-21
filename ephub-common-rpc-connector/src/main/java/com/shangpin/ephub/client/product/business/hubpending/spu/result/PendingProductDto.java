@@ -22,5 +22,8 @@ public class PendingProductDto extends HubSpuPendingDto {
 	private String hubCategoryName;
 	private List<HubSkuPendingDto> hubSkus;
 	private String spPicUrl;
+	private List<String> picUrls;
+	
+	private String supplierCategoryname;
 	
 }

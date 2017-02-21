@@ -2157,6 +2157,66 @@ public class HubSkuPendingCriteriaDto {
             addCriterion("hub_sku_size_type not between", value1, value2, "hubSkuSizeType");
             return (Criteria) this;
         }
+
+        public Criteria andSupplierSkuIdIsNull() {
+            addCriterion("supplier_sku_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdIsNotNull() {
+            addCriterion("supplier_sku_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdEqualTo(Long value) {
+            addCriterion("supplier_sku_id =", value, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdNotEqualTo(Long value) {
+            addCriterion("supplier_sku_id <>", value, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdGreaterThan(Long value) {
+            addCriterion("supplier_sku_id >", value, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("supplier_sku_id >=", value, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdLessThan(Long value) {
+            addCriterion("supplier_sku_id <", value, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdLessThanOrEqualTo(Long value) {
+            addCriterion("supplier_sku_id <=", value, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdIn(List<Long> values) {
+            addCriterion("supplier_sku_id in", values, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdNotIn(List<Long> values) {
+            addCriterion("supplier_sku_id not in", values, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdBetween(Long value1, Long value2) {
+            addCriterion("supplier_sku_id between", value1, value2, "supplierSkuId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuIdNotBetween(Long value1, Long value2) {
+            addCriterion("supplier_sku_id not between", value1, value2, "supplierSkuId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -99,6 +99,8 @@ public class HubSkuSupplierMappingDto implements Serializable {
      */
     private String origin;
 
+    private Integer retryNum;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSkuSupplierMappingId() {
@@ -253,6 +255,14 @@ public class HubSkuSupplierMappingDto implements Serializable {
         this.origin = origin == null ? null : origin.trim();
     }
 
+    public Integer getRetryNum() {
+        return retryNum;
+    }
+
+    public void setRetryNum(Integer retryNum) {
+        this.retryNum = retryNum;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -278,6 +288,7 @@ public class HubSkuSupplierMappingDto implements Serializable {
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
         sb.append(", origin=").append(origin);
+        sb.append(", retryNum=").append(retryNum);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -313,7 +324,8 @@ public class HubSkuSupplierMappingDto implements Serializable {
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
-            && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()));
+            && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()))
+            && (this.getRetryNum() == null ? other.getRetryNum() == null : this.getRetryNum().equals(other.getRetryNum()));
     }
 
     @Override
@@ -339,6 +351,7 @@ public class HubSkuSupplierMappingDto implements Serializable {
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         result = prime * result + ((getOrigin() == null) ? 0 : getOrigin().hashCode());
+        result = prime * result + ((getRetryNum() == null) ? 0 : getRetryNum().hashCode());
         return result;
     }
 }

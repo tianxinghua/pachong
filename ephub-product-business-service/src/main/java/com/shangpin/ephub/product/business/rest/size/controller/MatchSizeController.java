@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
-import com.shangpin.ephub.product.business.rest.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.rest.size.service.MatchSizeService;
 
 import lombok.extern.slf4j.Slf4j;
