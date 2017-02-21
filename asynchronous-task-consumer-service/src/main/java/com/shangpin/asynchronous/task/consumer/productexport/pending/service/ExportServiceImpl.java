@@ -381,6 +381,9 @@ public class ExportServiceImpl {
 						row.createCell(i).setCellValue("审核中");
 					}
 				}else{
+					if("specificationType".equals(rowTemplate[i])){
+						continue;
+					}
 					String fileName = parSetName(rowTemplate[i]);
 					fieldSetMet = cls.getMethod(fileName);
 					value = fieldSetMet.invoke(product);

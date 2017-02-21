@@ -51,7 +51,7 @@ public class ProductExportHandler {
 				log.error("待处理页导出请传入参数！！！"); 
 			}
 		}catch (Exception e) {
-            log.error("待处理页导出sku异常："+e.getMessage(),e);
+            log.error("待处理页导出异常："+e.getMessage(),e);
             taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
         }
 		
