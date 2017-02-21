@@ -241,7 +241,6 @@ public class ExportServiceImpl {
      * @param product
      * @throws Exception
      */
-    @SuppressWarnings("unused")
 	private void insertProductSkuOfRow(HSSFRow row,PendingProductDto product,HubSkuPendingDto sku,String[] rowTemplate) throws Exception{
     	Class<?> spuClazz = product.getClass();
     	Class<?> skuClazz = sku.getClass();
