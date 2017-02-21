@@ -95,10 +95,11 @@ public class PendingHandler extends VariableInit {
 					message.getData().getSupplierSpuNo());
 			//spu pending 处理
 			hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
+			if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
+				//重处理的不做SKU更新
+				return;
+			}
 		}
-
-
-
 		if (null != hubSpuPending) {
 			//sku pending 处理
 			handleSkuPending(headers, messageMap, pendingSpu, hubSpuPending, spuStatus, skus);
@@ -170,7 +171,10 @@ public class PendingHandler extends VariableInit {
         } else if (spuStatus == MessageType.UPDATE.getIndex()) {
             hubSpuPending = this.updateSpu(message.getData(), headers);
 
-        } else {
+        }else if (spuStatus == MessageType.RESTART_HANDLE.getIndex()) {
+			hubSpuPending = this.updateSpu(message.getData(), headers);
+
+		}  else {
             // 不需要处理 已存在
             if (null != tmp) {
                 hubSpuPending = new SpuPending();
