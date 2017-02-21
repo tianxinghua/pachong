@@ -1386,6 +1386,66 @@ public class HubSkuSupplierMappingCriteriaDto {
             addCriterion("origin not between", value1, value2, "origin");
             return (Criteria) this;
         }
+
+        public Criteria andRetryNumIsNull() {
+            addCriterion("retry_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumIsNotNull() {
+            addCriterion("retry_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumEqualTo(Integer value) {
+            addCriterion("retry_num =", value, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumNotEqualTo(Integer value) {
+            addCriterion("retry_num <>", value, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumGreaterThan(Integer value) {
+            addCriterion("retry_num >", value, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("retry_num >=", value, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumLessThan(Integer value) {
+            addCriterion("retry_num <", value, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumLessThanOrEqualTo(Integer value) {
+            addCriterion("retry_num <=", value, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumIn(List<Integer> values) {
+            addCriterion("retry_num in", values, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumNotIn(List<Integer> values) {
+            addCriterion("retry_num not in", values, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumBetween(Integer value1, Integer value2) {
+            addCriterion("retry_num between", value1, value2, "retryNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRetryNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("retry_num not between", value1, value2, "retryNum");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
