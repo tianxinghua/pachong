@@ -1,4 +1,4 @@
-feign.hystrix.enabled: true
+feign.hystrix.enabled: false
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 120000
 ribbon:
   ConnectTimeout: 120000

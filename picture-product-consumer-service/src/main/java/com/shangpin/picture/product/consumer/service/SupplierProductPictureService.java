@@ -126,10 +126,11 @@ public class SupplierProductPictureService {
 			openConnection.setConnectTimeout(TIMEOUT);
 			openConnection.setReadTimeout(TIMEOUT);
 			inputStream = openConnection.getInputStream();
-			String base64 = new BASE64Encoder().encode(IOUtils.toByteArray(inputStream));
-			if (StringUtils.isBlank(base64)) {
+			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			String base64 = new BASE64Encoder().encode(byteArray);
+			/*if (StringUtils.isBlank(base64)) {
 				throw new RuntimeException("读取到的图片内容为空,无法获取图片");
-			}
+			}*/
 			UploadPicDto uploadPicDto = new UploadPicDto();
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
@@ -184,13 +185,13 @@ public class SupplierProductPictureService {
 	 */
 	public void scanFailedPictureToRetry() {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
 		for (int i = 1; i <= countTotalPage(supplierProductPictureManager.countFailedPictureTotal(criteria), PAGE_SIZE); i++) {
 			HubSpuPendingPicCriteriaDto _criteria = new HubSpuPendingPicCriteriaDto();
 			_criteria.setFields("spu_pending_pic_id");
 			_criteria.setPageNo(i);
 			_criteria.setPageSize(PAGE_SIZE);
-			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
 			List<HubSpuPendingPicDto> picDto = supplierProductPictureManager.queryByCriteria(_criteria);
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
