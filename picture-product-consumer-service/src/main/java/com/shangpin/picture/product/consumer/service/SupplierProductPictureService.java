@@ -127,10 +127,14 @@ public class SupplierProductPictureService {
 			openConnection.setReadTimeout(TIMEOUT);
 			inputStream = openConnection.getInputStream();
 			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			if (byteArray == null || byteArray.length == 0) {
+				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
+			}
 			String base64 = new BASE64Encoder().encode(byteArray);
 			/*if (StringUtils.isBlank(base64)) {
 				throw new RuntimeException("读取到的图片内容为空,无法获取图片");
 			}*/
+			//log.info(picUrl+"------>"+base64+"<-------");
 			UploadPicDto uploadPicDto = new UploadPicDto();
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
@@ -259,6 +263,12 @@ public class SupplierProductPictureService {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
 		} finally {
 			shangpinRedis.del(assemblyKey(spuPendingPicId));
+		}
+		try {
+			Thread.sleep(1000*25);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
