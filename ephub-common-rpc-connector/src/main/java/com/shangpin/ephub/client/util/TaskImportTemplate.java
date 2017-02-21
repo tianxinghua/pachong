@@ -25,7 +25,7 @@ public class TaskImportTemplate {
 		 return headers;
 	 }
 	 public static String[] getPendingSpuValueTemplate() {
-			String [] temp = {"spPicUrl","supplierId","supplierNo","supplierName","supplierSpuNo","","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
+			String [] temp = {"spPicUrl","supplierId","supplierNo","supplierName","supplierSpuNo","supplierCategoryname","hubCategoryName","hubCategoryNo","hubBrandNo","hubBrandName","spuModel","seasonYear","seasonName","hubGender",
 					"spuName","hubColor","hubMaterial","hubOrigin","spuDesc","memo","spuState","specificationType"};
 			return temp;
 		}
