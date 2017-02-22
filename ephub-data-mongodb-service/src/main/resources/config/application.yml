@@ -1,5 +1,5 @@
 ﻿server.port: 8008
 spring:
   profiles: 
-    active: dev
+    active: qa
   application.name: ephub-data-mongodb-service
