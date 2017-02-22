@@ -42,6 +42,10 @@
     <result column="stock_state" property="stockState" jdbcType="TINYINT" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="audit_state" property="auditState" jdbcType="TINYINT" />
+    <result column="audit_date" property="auditDate" jdbcType="TIMESTAMP" />
+    <result column="audit_user" property="auditUser" jdbcType="VARCHAR" />
+    <result column="audit_opinion" property="auditOpinion" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -109,7 +113,7 @@
       spu_model_state, catgory_state, supplier_spu_id, memo, data_state, version, spu_brand_state, 
       spu_gender_state, spu_season_state, hub_color, hub_color_no, spu_color_state, sp_sku_size_state, 
       material_state, origin_state, filter_flag, info_state, stock_state, create_user, 
-      update_user
+      update_user, audit_state, audit_date, audit_user, audit_opinion
     </if>
     <if test="fields != null" >
       ${fields}
@@ -134,7 +138,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag,info_state,stock_state,create_user,update_user
+    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag,info_state,stock_state,create_user,update_user,audit_state,audit_date,audit_user,audit_opinion
     from hub_spu_pending
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </select>
@@ -165,7 +169,8 @@
       hub_color_no, spu_color_state, sp_sku_size_state, 
       material_state, origin_state, filter_flag, 
       info_state, stock_state, create_user, 
-      update_user)
+      update_user, audit_state, audit_date, 
+      audit_user, audit_opinion)
     values (#{spuPendingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
       #{supplierSpuNo,jdbcType=VARCHAR}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
       #{hubGender,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, #{hubBrandNo,jdbcType=VARCHAR}, 
@@ -179,7 +184,8 @@
       #{hubColorNo,jdbcType=VARCHAR}, #{spuColorState,jdbcType=TINYINT}, #{spSkuSizeState,jdbcType=TINYINT}, 
       #{materialState,jdbcType=TINYINT}, #{originState,jdbcType=TINYINT}, #{filterFlag,jdbcType=TINYINT}, 
       #{infoState,jdbcType=TINYINT}, #{stockState,jdbcType=TINYINT}, #{createUser,jdbcType=VARCHAR}, 
-      #{updateUser,jdbcType=VARCHAR})
+      #{updateUser,jdbcType=VARCHAR}, #{auditState,jdbcType=TINYINT}, #{auditDate,jdbcType=TIMESTAMP}, 
+      #{auditUser,jdbcType=VARCHAR}, #{auditOpinion,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
@@ -307,6 +313,18 @@
       <if test="updateUser != null" >
         update_user,
       </if>
+      <if test="auditState != null" >
+        audit_state,
+      </if>
+      <if test="auditDate != null" >
+        audit_date,
+      </if>
+      <if test="auditUser != null" >
+        audit_user,
+      </if>
+      <if test="auditOpinion != null" >
+        audit_opinion,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
@@ -428,6 +446,18 @@
       </if>
       <if test="updateUser != null" >
         #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="auditState != null" >
+        #{auditState,jdbcType=TINYINT},
+      </if>
+      <if test="auditDate != null" >
+        #{auditDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditUser != null" >
+        #{auditUser,jdbcType=VARCHAR},
+      </if>
+      <if test="auditOpinion != null" >
+        #{auditOpinion,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -560,6 +590,18 @@
       <if test="record.updateUser != null" >
         update_user = #{record.updateUser,jdbcType=VARCHAR},
       </if>
+      <if test="record.auditState != null" >
+        audit_state = #{record.auditState,jdbcType=TINYINT},
+      </if>
+      <if test="record.auditDate != null" >
+        audit_date = #{record.auditDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.auditUser != null" >
+        audit_user = #{record.auditUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.auditOpinion != null" >
+        audit_opinion = #{record.auditOpinion,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -606,7 +648,11 @@
       info_state = #{record.infoState,jdbcType=TINYINT},
       stock_state = #{record.stockState,jdbcType=TINYINT},
       create_user = #{record.createUser,jdbcType=VARCHAR},
-      update_user = #{record.updateUser,jdbcType=VARCHAR}
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      audit_state = #{record.auditState,jdbcType=TINYINT},
+      audit_date = #{record.auditDate,jdbcType=TIMESTAMP},
+      audit_user = #{record.auditUser,jdbcType=VARCHAR},
+      audit_opinion = #{record.auditOpinion,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -731,6 +777,18 @@
       <if test="updateUser != null" >
         update_user = #{updateUser,jdbcType=VARCHAR},
       </if>
+      <if test="auditState != null" >
+        audit_state = #{auditState,jdbcType=TINYINT},
+      </if>
+      <if test="auditDate != null" >
+        audit_date = #{auditDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditUser != null" >
+        audit_user = #{auditUser,jdbcType=VARCHAR},
+      </if>
+      <if test="auditOpinion != null" >
+        audit_opinion = #{auditOpinion,jdbcType=VARCHAR},
+      </if>
     </set>
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
@@ -774,7 +832,11 @@
       info_state = #{infoState,jdbcType=TINYINT},
       stock_state = #{stockState,jdbcType=TINYINT},
       create_user = #{createUser,jdbcType=VARCHAR},
-      update_user = #{updateUser,jdbcType=VARCHAR}
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      audit_state = #{auditState,jdbcType=TINYINT},
+      audit_date = #{auditDate,jdbcType=TIMESTAMP},
+      audit_user = #{auditUser,jdbcType=VARCHAR},
+      audit_opinion = #{auditOpinion,jdbcType=VARCHAR}
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria" id="selectByExampleWithRowbounds" >

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
@@ -46,6 +47,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
@@ -162,6 +164,11 @@ public class PendingProductService implements IPendingProductService{
                 int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
+                    List<Long> supplierSpuIds = new ArrayList<>();
+                    for(HubSpuPendingDto pendingSpu : pendingSpus){
+                    	supplierSpuIds.add(pendingSpu.getSupplierSpuId());
+                    }
+                    Map<Long,String> categories = findSupplierCategoryname(supplierSpuIds);
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                 		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
@@ -172,6 +179,8 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
+                        String supplierCategoryname = categories.get(pendingSpu.getSupplierSpuId());
+						pendingProduct.setSupplierCategoryname(StringUtils.isEmpty(supplierCategoryname) ? "" : supplierCategoryname);
                         products.add(pendingProduct);
                     }
                 }
@@ -215,6 +224,7 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
                         pendingProduct.setPicUrls(picurls); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
+                        pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
@@ -426,6 +436,27 @@ public class PendingProductService implements IPendingProductService{
 		}
 		return supplierProductVo;
 	}
+    
+    /**
+     * 根据supplierSpuId获取原始数据spu表中供应商品类名称
+     * @param supplierSpuIds
+     * @return key=supplier_spu_id,value=supplier_categoryname
+     */
+    public Map<Long,String> findSupplierCategoryname(List<Long> supplierSpuIds){
+    	Map<Long,String> categories = new HashMap<Long,String>();
+    	HubSupplierSpuCriteriaDto criteraDto = new HubSupplierSpuCriteriaDto();
+    	criteraDto.setPageNo(1);
+    	criteraDto.setPageSize(1000); 
+    	criteraDto.setFields("supplier_spu_id,supplier_categoryname");
+    	criteraDto.createCriteria().andSupplierSpuIdIn(supplierSpuIds);
+    	List<HubSupplierSpuDto> spus = hubSupplierSpuGateWay.selectByCriteria(criteraDto);
+    	if(CollectionUtils.isNotEmpty(spus)){
+    		for(HubSupplierSpuDto dto : spus){
+    			categories.put(dto.getSupplierSpuId(), dto.getSupplierCategoryname());
+    		}
+    	}
+    	return categories;
+    }
 
     /***************************************************************************************************************************
      *       以下为内部调用私有方法
@@ -637,10 +668,12 @@ public class PendingProductService implements IPendingProductService{
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
-//		if(StringUtils.isEmpty(pendingQuryDto.getSpuState())){
-//			
-//		}
 		criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
+		if("0".equals(pendingQuryDto.getAuditState())){
+			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
+		}else if("1".equals(pendingQuryDto.getAuditState())){
+			criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}

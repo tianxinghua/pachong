@@ -181,6 +181,26 @@ public class HubSpuPendingDto implements Serializable {
 
     private String updateUser;
 
+    /**
+     * 审核状态 0（不同意）1（同意）
+     */
+    private Byte auditState;
+
+    /**
+     * 审核日期
+     */
+    private Date auditDate;
+
+    /**
+     * 审核人
+     */
+    private String auditUser;
+
+    /**
+     * 审核意见
+     */
+    private String auditOpinion;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
@@ -503,6 +523,38 @@ public class HubSpuPendingDto implements Serializable {
         this.updateUser = updateUser == null ? null : updateUser.trim();
     }
 
+    public Byte getAuditState() {
+        return auditState;
+    }
+
+    public void setAuditState(Byte auditState) {
+        this.auditState = auditState;
+    }
+
+    public Date getAuditDate() {
+        return auditDate;
+    }
+
+    public void setAuditDate(Date auditDate) {
+        this.auditDate = auditDate;
+    }
+
+    public String getAuditUser() {
+        return auditUser;
+    }
+
+    public void setAuditUser(String auditUser) {
+        this.auditUser = auditUser == null ? null : auditUser.trim();
+    }
+
+    public String getAuditOpinion() {
+        return auditOpinion;
+    }
+
+    public void setAuditOpinion(String auditOpinion) {
+        this.auditOpinion = auditOpinion == null ? null : auditOpinion.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -549,6 +601,10 @@ public class HubSpuPendingDto implements Serializable {
         sb.append(", stockState=").append(stockState);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateUser=").append(updateUser);
+        sb.append(", auditState=").append(auditState);
+        sb.append(", auditDate=").append(auditDate);
+        sb.append(", auditUser=").append(auditUser);
+        sb.append(", auditOpinion=").append(auditOpinion);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -605,7 +661,11 @@ public class HubSpuPendingDto implements Serializable {
             && (this.getInfoState() == null ? other.getInfoState() == null : this.getInfoState().equals(other.getInfoState()))
             && (this.getStockState() == null ? other.getStockState() == null : this.getStockState().equals(other.getStockState()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
-            && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()));
+            && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()))
+            && (this.getAuditState() == null ? other.getAuditState() == null : this.getAuditState().equals(other.getAuditState()))
+            && (this.getAuditDate() == null ? other.getAuditDate() == null : this.getAuditDate().equals(other.getAuditDate()))
+            && (this.getAuditUser() == null ? other.getAuditUser() == null : this.getAuditUser().equals(other.getAuditUser()))
+            && (this.getAuditOpinion() == null ? other.getAuditOpinion() == null : this.getAuditOpinion().equals(other.getAuditOpinion()));
     }
 
     @Override
@@ -652,6 +712,10 @@ public class HubSpuPendingDto implements Serializable {
         result = prime * result + ((getStockState() == null) ? 0 : getStockState().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateUser() == null) ? 0 : getUpdateUser().hashCode());
+        result = prime * result + ((getAuditState() == null) ? 0 : getAuditState().hashCode());
+        result = prime * result + ((getAuditDate() == null) ? 0 : getAuditDate().hashCode());
+        result = prime * result + ((getAuditUser() == null) ? 0 : getAuditUser().hashCode());
+        result = prime * result + ((getAuditOpinion() == null) ? 0 : getAuditOpinion().hashCode());
         return result;
     }
 }

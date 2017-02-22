@@ -157,6 +157,10 @@ public class HubSkuPendingDto implements Serializable {
 
     private String hubSkuSizeType;
 
+    /**
+     * 原始skuId
+     */
+    private Long supplierSkuId;
 
     private static final long serialVersionUID = 1L;
 
@@ -408,6 +412,14 @@ public class HubSkuPendingDto implements Serializable {
         this.hubSkuSizeType = hubSkuSizeType == null ? null : hubSkuSizeType.trim();
     }
 
+    public Long getSupplierSkuId() {
+        return supplierSkuId;
+    }
+
+    public void setSupplierSkuId(Long supplierSkuId) {
+        this.supplierSkuId = supplierSkuId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -445,6 +457,7 @@ public class HubSkuPendingDto implements Serializable {
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", filterFlag=").append(filterFlag);
         sb.append(", hubSkuSizeType=").append(hubSkuSizeType);
+        sb.append(", supplierSkuId=").append(supplierSkuId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -492,7 +505,8 @@ public class HubSkuPendingDto implements Serializable {
             && (this.getScreenSize() == null ? other.getScreenSize() == null : this.getScreenSize().equals(other.getScreenSize()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()))
-            && (this.getHubSkuSizeType() == null ? other.getHubSkuSizeType() == null : this.getHubSkuSizeType().equals(other.getHubSkuSizeType()));
+            && (this.getHubSkuSizeType() == null ? other.getHubSkuSizeType() == null : this.getHubSkuSizeType().equals(other.getHubSkuSizeType()))
+            && (this.getSupplierSkuId() == null ? other.getSupplierSkuId() == null : this.getSupplierSkuId().equals(other.getSupplierSkuId()));
     }
 
     @Override
@@ -530,6 +544,7 @@ public class HubSkuPendingDto implements Serializable {
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getFilterFlag() == null) ? 0 : getFilterFlag().hashCode());
         result = prime * result + ((getHubSkuSizeType() == null) ? 0 : getHubSkuSizeType().hashCode());
+        result = prime * result + ((getSupplierSkuId() == null) ? 0 : getSupplierSkuId().hashCode());
         return result;
     }
 }

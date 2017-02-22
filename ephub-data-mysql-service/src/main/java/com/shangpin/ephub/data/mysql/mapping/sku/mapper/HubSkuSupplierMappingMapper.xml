@@ -21,6 +21,7 @@
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
     <result column="origin" property="origin" jdbcType="VARCHAR" />
+    <result column="retry_num" property="retryNum" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -84,7 +85,8 @@
     <if test="fields == null" >
       sku_supplier_mapping_id, sku_no, supplier_sku_no, barcode, supplier_id, new_spu_type, 
       supplier_select_state, supplier_no, is_new_supplier, create_time, create_user, update_time, 
-      update_user, supplier_spu_model, supplier_sku_id, memo, data_state, version, origin
+      update_user, supplier_spu_model, supplier_sku_id, memo, data_state, version, origin, 
+      retry_num
     </if>
     <if test="fields != null" >
       ${fields}
@@ -109,7 +111,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,supplier_select_state,supplier_no,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version,origin
+    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,supplier_select_state,supplier_no,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version,origin,retry_num
     from hub_sku_supplier_mapping
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </select>
@@ -133,14 +135,14 @@
       create_time, create_user, update_time, 
       update_user, supplier_spu_model, supplier_sku_id, 
       memo, data_state, version, 
-      origin)
+      origin, retry_num)
     values (#{skuSupplierMappingId,jdbcType=BIGINT}, #{skuNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, 
       #{barcode,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{newSpuType,jdbcType=TINYINT}, 
       #{supplierSelectState,jdbcType=TINYINT}, #{supplierNo,jdbcType=VARCHAR}, #{isNewSupplier,jdbcType=TINYINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSkuId,jdbcType=BIGINT}, 
       #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, 
-      #{origin,jdbcType=VARCHAR})
+      #{origin,jdbcType=VARCHAR}, #{retryNum,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
@@ -205,6 +207,9 @@
       <if test="origin != null" >
         origin,
       </if>
+      <if test="retryNum != null" >
+        retry_num,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="skuSupplierMappingId != null" >
@@ -263,6 +268,9 @@
       </if>
       <if test="origin != null" >
         #{origin,jdbcType=VARCHAR},
+      </if>
+      <if test="retryNum != null" >
+        #{retryNum,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -332,6 +340,9 @@
       <if test="record.origin != null" >
         origin = #{record.origin,jdbcType=VARCHAR},
       </if>
+      <if test="record.retryNum != null" >
+        retry_num = #{record.retryNum,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -357,7 +368,8 @@
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
       version = #{record.version,jdbcType=BIGINT},
-      origin = #{record.origin,jdbcType=VARCHAR}
+      origin = #{record.origin,jdbcType=VARCHAR},
+      retry_num = #{record.retryNum,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -419,6 +431,9 @@
       <if test="origin != null" >
         origin = #{origin,jdbcType=VARCHAR},
       </if>
+      <if test="retryNum != null" >
+        retry_num = #{retryNum,jdbcType=INTEGER},
+      </if>
     </set>
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </update>
@@ -441,7 +456,8 @@
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT},
-      origin = #{origin,jdbcType=VARCHAR}
+      origin = #{origin,jdbcType=VARCHAR},
+      retry_num = #{retryNum,jdbcType=INTEGER}
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMappingCriteria" id="selectByExampleWithRowbounds" >
