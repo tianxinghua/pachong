@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
@@ -168,7 +169,6 @@ public class PendingProductService implements IPendingProductService{
                     	supplierSpuIds.add(pendingSpu.getSupplierSpuId());
                     }
                     Map<Long,String> categories = findSupplierCategoryname(supplierSpuIds);
-                    log.info("查询pending_spu categories大小==="+categories.size()); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                 		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
@@ -667,10 +667,12 @@ public class PendingProductService implements IPendingProductService{
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
-//		if(StringUtils.isEmpty(pendingQuryDto.getSpuState())){
-//			
-//		}
 		criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
+		if("0".equals(pendingQuryDto.getAuditState())){
+			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
+		}else if("1".equals(pendingQuryDto.getAuditState())){
+			criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
