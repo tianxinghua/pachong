@@ -27,6 +27,18 @@ public class SpuPendingAuditVO  extends SpuPendingVO{
 	 * 按查询条件:true 单个:false
 	 */
 	private boolean isMulti;
+	/**
+	 * 复核人
+	 */
+	private String auditUser;
+	
+	public String getAuditUser() {
+		return auditUser;
+	}
+
+	public void setAuditUser(String auditUser) {
+		this.auditUser = auditUser;
+	}
 
 	@JsonProperty("auditStatus")
 	public Integer getAuditStatus() {

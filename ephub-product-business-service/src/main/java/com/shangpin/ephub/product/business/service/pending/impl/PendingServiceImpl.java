@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
@@ -244,12 +245,18 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 return false;
 
             }else{
-
+            	hubSpuPending.setAuditState(AuditState.AGREE.getIndex());
+            	hubSpuPending.setAuditDate(new Date());
+            	hubSpuPending.setAuditUser(auditVO.getAuditUser());
                 hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
                 hubSpuPending.setMemo("");
             }
 
         }else{
+        	hubSpuPending.setAuditState(AuditState.DISAGREE.getIndex());
+        	hubSpuPending.setAuditDate(new Date());
+        	hubSpuPending.setAuditUser(auditVO.getAuditUser());
+        	hubSpuPending.setAuditOpinion(auditVO.getMemo()); 
             hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
             hubSpuPending.setMemo(auditVO.getMemo());
         }
