@@ -25,5 +25,6 @@ public class PendingProductDto extends HubSpuPendingDto {
 	private List<String> picUrls;
 	
 	private String supplierCategoryname;
+	private String auditDateStr;
 	
 }

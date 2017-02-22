@@ -224,6 +224,7 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
                         pendingProduct.setPicUrls(picurls); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
+                        pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
