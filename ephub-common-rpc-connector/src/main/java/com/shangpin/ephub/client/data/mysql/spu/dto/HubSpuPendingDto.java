@@ -181,12 +181,24 @@ public class HubSpuPendingDto implements Serializable {
 
     private String updateUser;
 
+    /**
+     * 审核状态 0（不同意）1（同意）
+     */
     private Byte auditState;
 
+    /**
+     * 审核日期
+     */
     private Date auditDate;
 
+    /**
+     * 审核人
+     */
     private String auditUser;
 
+    /**
+     * 审核意见
+     */
     private String auditOpinion;
 
     private static final long serialVersionUID = 1L;

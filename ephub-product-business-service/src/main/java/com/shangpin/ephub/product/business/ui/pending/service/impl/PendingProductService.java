@@ -168,7 +168,6 @@ public class PendingProductService implements IPendingProductService{
                     	supplierSpuIds.add(pendingSpu.getSupplierSpuId());
                     }
                     Map<Long,String> categories = findSupplierCategoryname(supplierSpuIds);
-                    log.info("查询pending_spu categories大小==="+categories.size()); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                 		PendingProductDto pendingProduct = convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
