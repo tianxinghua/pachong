@@ -1,6 +1,7 @@
 package com.shangpin.ephub.client.data.mongodb.product.supplier.gateway.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
@@ -37,5 +38,14 @@ public class SupplierProductDto implements Serializable{
 	 * 商品数据
 	 */
 	private Map<String,Object> product; 
+	
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+	/**
+	 * 更新时间
+	 */
+	private Date updateTime;
 
 }

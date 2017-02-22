@@ -1,6 +1,7 @@
 package com.shangpin.ephub.data.mongodb.product.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.data.annotation.Id;
@@ -40,5 +41,13 @@ public class SupplierProductDto implements Serializable{
 	 * 商品数据
 	 */
 	private Map<String,Object> product; 
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+	/**
+	 * 更新时间
+	 */
+	private Date updateTime;
 
 }
