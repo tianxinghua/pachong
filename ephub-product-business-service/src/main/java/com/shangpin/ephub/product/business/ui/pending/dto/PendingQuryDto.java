@@ -64,6 +64,10 @@ public class PendingQuryDto {
      * 商品状态
      */
     private Integer spuState;
+    /**
+     * 审核状态
+     */
+    private String auditState;
     
     
 }
