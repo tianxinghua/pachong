@@ -1,11 +1,11 @@
 package com.shangpin.ephub.client.data.mongodb.product.supplier.gateway;
 
-import java.util.Map;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.shangpin.ephub.client.data.mongodb.product.supplier.gateway.dto.SupplierProductDto;
 
 /**
  * <p>Title:SupplierProductController.java </p>
@@ -18,5 +18,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface SupplierProductGateway {
 
 	@RequestMapping(value = "/supplier-product/save", method = RequestMethod.POST,consumes = "application/json")
-	public boolean save(@RequestBody Map<String, Object> data);
+	public boolean save(@RequestBody SupplierProductDto supplierProduct);
 }

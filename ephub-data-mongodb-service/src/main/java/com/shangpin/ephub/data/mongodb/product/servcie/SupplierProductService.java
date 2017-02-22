@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.data.mongodb.product.dto.SupplierProductDto;
+
 /**
  * <p>Title:SupplierProductService.java </p>
  * <p>Description: </p>
@@ -22,7 +24,7 @@ public class SupplierProductService {
 	 * 保存数据
 	 * @param data 数据
 	 */
-	public void save(Map<String, Object> data) {
-		mongoTemplate.save(data,"supplierProduct");
+	public void save(SupplierProductDto supplierProduct) {
+		mongoTemplate.save(supplierProduct);
 	}
 }

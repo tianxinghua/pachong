@@ -1,12 +1,11 @@
 package com.shangpin.ephub.data.mongodb.product.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.data.mongodb.product.dto.SupplierProductDto;
 import com.shangpin.ephub.data.mongodb.product.servcie.SupplierProductService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +26,11 @@ public class SupplierProductController {
 	private SupplierProductService supplierProductService;
 	
 	@RequestMapping(value = "/save")
-	public boolean save(@RequestBody Map<String, Object> data){
+	public boolean save(@RequestBody SupplierProductDto supplierProduct){
 		Boolean result = null; 
 		long start = System.currentTimeMillis();
 		try {
-			supplierProductService.save(data);
+			supplierProductService.save(supplierProduct);
 			result = true;
 			log.info("MongoDB保存数据完毕，耗时{}milliseconds!", System.currentTimeMillis() - start);
 		} catch (Throwable e) {
