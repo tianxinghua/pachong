@@ -15,6 +15,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.shangpin.ephub.client.data.mongodb.product.supplier.gateway.SupplierProductGateway;
+import com.shangpin.ephub.client.data.mongodb.product.supplier.gateway.dto.SupplierProductDto;
 import com.shangpin.supplier.product.consumer.supplier.deliberti.dto.DelibertiSpuDto;
 /**
  * <p>Title:SupplierProductConsumerServiceApplication.java </p>
@@ -37,17 +38,20 @@ public class SupplierProductConsumerServiceApplication implements ApplicationRun
 	private SupplierProductGateway gateway;
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
+		SupplierProductDto supplierProductDto = new SupplierProductDto();
 		Map<String, Object> data = new HashMap<>();
 		DelibertiSpuDto spu = new DelibertiSpuDto();
 		spu.setBrandId("brandId");
 		spu.setCategoryId("categoryId");
 		data.put("spu", spu);
 		List<String> skus = new ArrayList<>();
-		skus.add("AAAAA");
+		skus.add("DDDDDD");
 		skus.add("BBBBB");
 		skus.add("CCCCC");
 		data.put("skus", skus);
-		boolean flag = gateway.save(data);
+		supplierProductDto.setProduct(data);
+		supplierProductDto.setId("1");
+		boolean flag = gateway.save(supplierProductDto);
 		System.out.println(flag);
 	}
 }
