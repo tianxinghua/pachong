@@ -108,8 +108,8 @@ public class HubSelectedController {
 	 * @param dto
 	 * @return
 	 */
-	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
-    public HubResponse exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto){
+	@RequestMapping(value = "/export-product2",method ={RequestMethod.POST,RequestMethod.GET})
+    public HubResponse exportProduct2(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
 			HubSpuImportTaskDto task=saveTaskIntoMysql("hubSelected",6);
@@ -159,8 +159,8 @@ public class HubSelectedController {
 		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 		return hubSpuTask;
     }
-	@RequestMapping(value = "/export-product1",method ={RequestMethod.POST,RequestMethod.GET})
-    public void exportProduct1(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
+    public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
 			long startTime  = System.currentTimeMillis();
