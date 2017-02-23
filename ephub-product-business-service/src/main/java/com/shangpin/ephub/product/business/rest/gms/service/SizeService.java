@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.gms;
+package com.shangpin.ephub.product.business.rest.gms.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -11,11 +11,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -75,7 +75,7 @@ public class SizeService {
 	 * @param hubCategoryNo hub标准品类
 	 * @return
 	 */
-	public HubResponseDto<CategoryScreenSizeDom> getGmsSizeByApi(String hubBrandNo,String hubCategoryNo){
+	private HubResponseDto<CategoryScreenSizeDom> getGmsSizeByApi(String hubBrandNo,String hubCategoryNo){
 		SizeRequestDto requestDto = new SizeRequestDto();
         requestDto.setBrandNo(hubBrandNo);
         requestDto.setCategoryNo(hubCategoryNo);
@@ -95,7 +95,7 @@ public class SizeService {
 	 * @param hubCategoryNo
 	 * @return
 	 */
-	public String getGmsSizeByRedis(String hubBrandNo,String hubCategoryNo){
+	private String getGmsSizeByRedis(String hubBrandNo,String hubCategoryNo){
 		try {
 			return shangpinRedis.get(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo);
 		} catch (Exception e) {

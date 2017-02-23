@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.gms;
+package com.shangpin.ephub.product.business.rest.gms.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +11,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.BrandRequstDto;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandRequstDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -72,7 +72,7 @@ public class BrandService {
 	 * @param brandNo
 	 * @param brand
 	 */
-	public void setBrandIntoReids(String brandNo, BrandDom brand){
+	private void setBrandIntoReids(String brandNo, BrandDom brand){
 		try {
 			shangpinRedis.setex(GlobalConstant.REDIS_HUB_BRAND_KEY+"_"+brandNo,1000*60*5,JsonUtil.serialize(brand));
 		} catch (Exception e) {
@@ -85,7 +85,7 @@ public class BrandService {
 	 * @param brandNo
 	 * @return
 	 */
-	public String getGmsBrandByRedis(String brandNo){
+	private String getGmsBrandByRedis(String brandNo){
 		try {
 			return shangpinRedis.get(GlobalConstant.REDIS_HUB_BRAND_KEY+"_"+brandNo);
 		} catch (Exception e) {
@@ -99,7 +99,7 @@ public class BrandService {
 	 * @param brandNo
 	 * @return
 	 */
-	public HubResponseDto<BrandDom> getGmsBrandByApi(String brandNo){
+	private HubResponseDto<BrandDom> getGmsBrandByApi(String brandNo){
 		long start = System.currentTimeMillis();
 		BrandRequstDto request = new BrandRequstDto();
         request.setBrandNo(brandNo);

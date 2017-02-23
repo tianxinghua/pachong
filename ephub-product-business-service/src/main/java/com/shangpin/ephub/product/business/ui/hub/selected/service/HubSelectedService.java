@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,23 +20,23 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
-import com.shangpin.ephub.product.business.common.service.gms.BrandService;
-import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
-import com.shangpin.ephub.product.business.common.service.supplier.SupplierService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.util.ExportExcelUtils;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
+import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
+import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 
@@ -73,7 +74,7 @@ public class HubSelectedService {
 	@Autowired
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
-	HubProductServiceImpl hubCommonProductServiceImpl;
+	SopSkuService sopSkuService;
 
 	public void exportExcel(List<HubWaitSelectResponseDto> list, OutputStream ouputStream) throws Exception {
 		String[] headers = {"尚品Sku编号","门户Sku编号","供应商SKU", "商品名称","品类", "品牌","品牌中文", "品牌编号", "货号","商品状态","生效价格","价格状态","操作人","供价*","供价币种*","阶段供价","阶段供价生效时间","阶段供价失效时间","市场价","市场价币种"};
@@ -118,6 +119,9 @@ public class HubSelectedService {
 			}else{
 				supplierName.append(supplierNo);
 			}
+			if(StringUtils.isBlank(supplierName.toString())){
+				supplierName.append(supplierNo);
+			}
 			ExportExcelUtils.createSheet(workbook,supplierName.toString(), headers, columns, result);
 		}
 		workbook.write(ouputStream); 
@@ -125,7 +129,7 @@ public class HubSelectedService {
 
 	private void convertTOExcel(HubWaitSelectResponseDto response, Map<String, String> map) {
 		if(response.getSupplierSkuId()!=null){
-			log.info("supplierSkuId查询:"+response.getSupplierSkuId());
+	
 			HubSupplierSkuDto listSku = hubSupplierSkuGateWay.selectByPrimaryKey(response.getSupplierSkuId());
 			BigDecimal supplyPrice = null;
 			BigDecimal marketPrice = null;
@@ -137,7 +141,6 @@ public class HubSelectedService {
 				supplyCurry = listSku.getSupplyPriceCurrency();
 				marketCurry = listSku.getMarketPriceCurrencyorg();
 			}
-			long start = System.currentTimeMillis();
 			BrandDom brandDom = getBrand(response.getBrandNo());
 			String categoryName = getCategoryName(response.getCategoryNo());
 			map.put("brandName", brandDom.getBrandEnName());
@@ -163,10 +166,32 @@ public class HubSelectedService {
 			map.put("supplierNo", response.getSupplierNo());
 //			map.put("size", response.getSkuSize());
 			map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
+			
+			String skuNo = getSopSkuNo(response.getSupplierId(),response.getSupplierSkuNo());
+			log.info("supplierSkuId："+response.getSupplierSkuId()+"查询sopSkuNo:"+skuNo);
+			map.put("skuNo",skuNo);
+			
 		}
-		
-		
 	}
+	
+	private String getSopSkuNo(String supplierId,String supplierSkuNo) {
+		SopSkuQueryDto queryDto = new SopSkuQueryDto();
+		queryDto.setSopUserNo(supplierId);
+		List<String> list = new ArrayList<String>();
+		list.add(supplierSkuNo);
+		queryDto.setLstSupplierSkuNo(list);
+        HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
+        try {
+            sopSkuResponseDto = sopSkuService.querySpSkuNoFromScm(queryDto);
+            if(sopSkuResponseDto!=null&&sopSkuResponseDto.getIsSuccess()&&sopSkuResponseDto.getResDatas().size()>0){
+            	return sopSkuResponseDto.getResDatas().get(0).getSopSkuNo();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return null;
+	}
+
 	private String getCategoryName(String categoryNo) {
 		FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
         if(category!=null){

@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroy
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
@@ -29,14 +30,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.RegexUtil;
-import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
-import com.shangpin.ephub.product.business.common.service.gms.BrandService;
-import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
-import com.shangpin.ephub.product.business.common.service.gms.SizeService;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
+import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
+import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
+import com.shangpin.ephub.product.business.rest.gms.service.SizeService;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
@@ -217,16 +218,21 @@ public class HubCheckService {
 		//校验产地
 		if(StringUtils.isNotBlank(hubProduct.getHubOrigin())){
 			if(!checkHubOrigin(hubProduct.getHubOrigin())){
-				str.append("产地"+hubProduct.getHubOrigin()+"不存在") ;
+				str.append("产地"+hubProduct.getHubOrigin()+"不存在，") ;
 				result.setPassing(false);
 				result.setOriginal(false);
 			}else{
 				result.setOriginal(true);
 			}	
 		}else{
-			str.append("产地为空");
+			str.append("产地为空，");
 			result.setPassing(false);
 			result.setOriginal(false);
+		}
+		//校验图片
+		if(null == hubProduct.getPicState() || PicState.HANDLED.getIndex() != hubProduct.getPicState()){
+			str.append("图片不完整");
+			result.setPassing(false);
 		}
 		
 		result.setResult(str.toString());
@@ -337,6 +343,15 @@ public class HubCheckService {
 	 */
 	public HubPendingSkuCheckResult hubSizeExist(String hubCategoryNo,String hubBrandNo,String sizeType,String size){
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
+		
+		if("排除".equals(sizeType)){
+			checkResult.setPassing(true);
+	     	checkResult.setSizeType("排除");
+        	checkResult.setSizeValue(size);
+        	checkResult.setMessage("尺码排除");
+        	return checkResult;
+		}
+		
 		checkResult.setPassing(false);
 		try {
 			CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);

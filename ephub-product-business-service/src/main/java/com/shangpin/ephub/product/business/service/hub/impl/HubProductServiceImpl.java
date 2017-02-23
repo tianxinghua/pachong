@@ -1,13 +1,12 @@
 package com.shangpin.ephub.product.business.service.hub.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
-import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
-import com.shangpin.ephub.product.business.service.hub.dto.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,20 +16,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
+import com.shangpin.ephub.product.business.service.hub.dto.ApiProductOrgExtendDom;
+import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
+import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
+import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
+import com.shangpin.ephub.product.business.service.hub.dto.PlaceOrigin;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SpProductOrgInfoEntity;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,6 +70,8 @@ public class HubProductServiceImpl implements HubProductService {
 
     @Autowired
     ApiAddressProperties apiAddressProperties;
+    @Autowired
+    SopSkuService sopSkuService;
 
     ObjectMapper objectMapper =new ObjectMapper();
 
@@ -160,7 +174,7 @@ public class HubProductServiceImpl implements HubProductService {
 
         HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
         try {
-            sopSkuResponseDto = querySpSkuNoFromScm(queryDto);
+            sopSkuResponseDto = sopSkuService.querySpSkuNoFromScm(queryDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,17 +242,6 @@ public class HubProductServiceImpl implements HubProductService {
 
         ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
                 requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
-                });
-        return entity.getBody();
-    }
-
-    private HubResponseDto<SopSkuDto> querySpSkuNoFromScm(SopSkuQueryDto queryDto) throws JsonProcessingException {
-        HttpEntity<SopSkuQueryDto> requestEntity = new HttpEntity<SopSkuQueryDto>(queryDto);
-        ObjectMapper mapper = new ObjectMapper();
-        log.info("send spSku query parameter: " + mapper.writeValueAsString(queryDto));
-
-        ResponseEntity<HubResponseDto<SopSkuDto>> entity = restTemplate.exchange(apiAddressProperties.getSopSkuListBySupplierSkuNoUrl(), HttpMethod.POST,
-                requestEntity, new ParameterizedTypeReference<HubResponseDto<SopSkuDto>>() {
                 });
         return entity.getBody();
     }

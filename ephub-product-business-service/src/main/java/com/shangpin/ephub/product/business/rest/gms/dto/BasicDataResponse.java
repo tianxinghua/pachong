@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.dto;
+package com.shangpin.ephub.product.business.rest.gms.dto;
 
 import java.util.List;
 

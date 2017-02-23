@@ -1,8 +1,11 @@
 package com.shangpin.ephub.product.business.ui.hub.selected.controller;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,12 +17,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
 import com.shangpin.ephub.product.business.ui.hub.selected.service.HubSelectedService;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
@@ -46,7 +55,10 @@ public class HubSelectedController {
 	HubSpuPicGateWay hubSpuPicGateWay;
 	@Autowired
 	HubSelectedService HubSelectedService;
-	
+	@Autowired
+	HubSpuImportTaskGateWay spuImportGateway;
+    @Autowired
+    ProductImportTaskStreamSender productImportTaskStreamSender;
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse selectList(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
@@ -97,7 +109,58 @@ public class HubSelectedController {
 	 * @return
 	 */
 	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
-    public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+    public HubResponse exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto){
+	        	
+		try {
+			HubSpuImportTaskDto task=saveTaskIntoMysql("hubSelected",6);
+			sendMessageToTask(task.getTaskNo(),6,JsonUtil.serialize(dto));
+			return HubResponse.successResp(task.getTaskNo());
+		} catch (Exception e) {
+			log.error("导出查询商品失败：{}",e);
+			return HubResponse.errorResp("导出异常");
+		}
+    }
+	
+	 private void sendMessageToTask(String taskNo,int type,String data){
+	    	ProductImportTask productImportTask = new ProductImportTask();
+	    	productImportTask.setMessageId(UUID.randomUUID().toString());
+	    	productImportTask.setTaskNo(taskNo);
+	    	productImportTask.setMessageDate(DateTimeUtil.getTime(new Date())); 
+	    	productImportTask.setData(data);
+	    	productImportTask.setType(type);
+	    	productImportTaskStreamSender.productExportTaskStream(productImportTask, null);
+	 }
+		
+	  private HubSpuImportTaskDto saveTaskIntoMysql(String createUser,int taskType){
+	    	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+	    	Date date = new Date();
+			hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
+			hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
+			hubSpuTask.setCreateTime(date);
+			hubSpuTask.setUpdateTime(date);
+			hubSpuTask.setImportType((byte)taskType);
+			hubSpuTask.setCreateUser(createUser); 
+			hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+			hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+			hubSpuTask.setResultFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+			Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
+			hubSpuTask.setSpuImportTaskId(spuImportTaskId);
+			return hubSpuTask;
+	    }
+    private HubSpuImportTaskDto saveTaskIntoMysql(int taskType){
+    	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+    	Date date = new Date();
+		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
+		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
+		hubSpuTask.setCreateTime(date);
+		hubSpuTask.setUpdateTime(date);
+		hubSpuTask.setImportType((byte)taskType);
+		Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
+		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
+		return hubSpuTask;
+    }
+	@RequestMapping(value = "/export-product1",method ={RequestMethod.POST,RequestMethod.GET})
+    public void exportProduct1(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
 			long startTime  = System.currentTimeMillis();
@@ -119,8 +182,6 @@ public class HubSelectedController {
 		}
 		
     }
-	
-
 	/**
 	 * 导出查询图片
 	 * @param dto
