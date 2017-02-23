@@ -132,64 +132,74 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         List<HubSpu> hubSpus = hubSpuMapper.selectByExample(criteria);
         if(null==hubSpus||(null!=hubSpus&&hubSpus.size()==0)){ //不存在插入新的SPU记录 以及 SKU 记录
             log.info("不存在spu");
-            //合并sku pending的尺码 生成HUBSKU
-            Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
-            //根据尺码合并不同供货商的SKU信息
-            setSizeSkuMap(spuPendingIds, sizeSkuMap);
-            if(sizeSkuMap.size()>0){
-                //插入新的SPU
-                HubSpu hubSpu = new HubSpu();
-                HubSpuPending spuPending = null;
-                spuPending = this.getHubSpuPendingByIdAndSetValueByAuditVO(spuPendingIds.get(0),auditVO);
-                if(null!=spuPending){
-                    //创建hubspu
-                    createHubSpu(hubSpu, spuPending);
-                    //在spupending中反写spuNo以及状态
-                    updatespuPending(spuPendingIds,hubSpu.getSpuNo());
-                    //创建SPU图片
-                    createSpuPic(auditVO.getPicVOs(),spuPendingIds,hubSpu.getSpuId());
-                    //插入hubSKU 和 供货商的对应关系
-                    Set<String> sizeSet = sizeSkuMap.keySet();
-                    log.info(sizeSet.size()+"");
-                    if(sizeSet.size()>0){
-                        createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
-                    }
-                    return true;
-                }else{
-                    return false;
-                }
-            }else{ //  无尺码映射
-                //修改pending状态为待处理
-                updateSpuState(spuPendingIds,SpuState.INFO_IMPECCABLE.getIndex());
-
-                return false;
-
-            }
-
+            return insertNewHubSpuAndHubSkuAndMapping(auditVO, spuPendingIds);
 
 
         }else{ //
             log.info("存在spu");
-            Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
-            //根据尺码合并不同供货商的SKU信息
-            setSizeSkuMap(spuPendingIds, sizeSkuMap);
-            //获取SPU
-            HubSpu hubSpu = hubSpus.get(0);
+            return insertHubSkuAndMappingWhenExistHubSpu(spuPendingIds, hubSpus);
+        }
+    }
+
+    private boolean insertNewHubSpuAndHubSkuAndMapping(SpuModelDto auditVO, List<Long> spuPendingIds) throws Exception {
+        //合并sku pending的尺码 生成HUBSKU
+        Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
+        //根据尺码合并不同供货商的SKU信息
+        setSizeSkuMap(spuPendingIds, sizeSkuMap);
+        if(sizeSkuMap.size()>0){
+            //插入新的SPU
+            HubSpu hubSpu = new HubSpu();
             HubSpuPending spuPending = null;
-            spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
+            spuPending = this.getHubSpuPendingByIdAndSetValueByAuditVO(spuPendingIds.get(0),auditVO);
             if(null!=spuPending){
+                //创建hubspu
+                createHubSpu(hubSpu, spuPending);
+                //在spupending中反写spuNo以及状态
+                updatespuPending(spuPendingIds,hubSpu.getSpuNo());
+                //创建SPU图片
+                createSpuPic(auditVO.getPicVOs(),spuPendingIds,hubSpu.getSpuId());
                 //插入hubSKU 和 供货商的对应关系
                 Set<String> sizeSet = sizeSkuMap.keySet();
+                log.info(sizeSet.size()+"");
                 if(sizeSet.size()>0){
-                    searchAndCreateHubSkuAndMapping(sizeSkuMap, hubSpu);
-                }else{
-                    updateSpuState(spuPendingIds,SpuState.INFO_IMPECCABLE.getIndex());
+                    createHubSkuAndMapping(sizeSkuMap, hubSpu, sizeSet);
                 }
                 return true;
             }else{
-                //无spu
                 return false;
             }
+        }else{ //  无尺码映射
+            //修改pending状态为待处理
+            updateSpuState(spuPendingIds, SpuState.INFO_IMPECCABLE.getIndex());
+
+            return false;
+
+        }
+    }
+
+    private boolean insertHubSkuAndMappingWhenExistHubSpu(List<Long> spuPendingIds, List<HubSpu> hubSpus) throws Exception {
+        Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
+        //根据尺码合并不同供货商的SKU信息
+        setSizeSkuMap(spuPendingIds, sizeSkuMap);
+        //获取SPU
+        HubSpu hubSpu = hubSpus.get(0);
+        HubSpuPending spuPending = null;
+        spuPending = this.getHubSpuPendingById(spuPendingIds.get(0));
+        if(null!=spuPending){
+            //插入hubSKU 和 供货商的对应关系
+            Set<String> sizeSet = sizeSkuMap.keySet();
+            if(sizeSet.size()>0){
+                searchAndCreateHubSkuAndMapping(sizeSkuMap, hubSpu);
+                //更新Spu 状态
+                //在spupending中反写spuNo以及状态
+                updatespuPending(spuPendingIds,hubSpu.getSpuNo());
+            }else{
+                updateSpuState(spuPendingIds, SpuState.INFO_IMPECCABLE.getIndex());
+            }
+            return true;
+        }else{
+            //无spu
+            return false;
         }
     }
 
@@ -226,10 +236,9 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 hubSku = insertHubSku(hubSpu, skuNo, size, date, hubSkuPendings);
 
             }
-            //增加SKU的映射关系
+            //增加SKU的映射关系  并更新hubskupending
             inserSkuSupplierMapping(date, hubSkuPendings, hubSku);
-            //修改SKUPENDING 的skustatus状态
-            updateSkuPendingSkuStatus(hubSkuPendings);
+
 
         }
 
@@ -323,6 +332,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             HubSkuPending tmp = new HubSkuPending();
             tmp.setSkuPendingId(skuPending.getSkuPendingId());
             tmp.setHubSkuNo(hubSku.getSkuNo());
+            tmp.setSkuState(HubSpuPendigStatus.HANDLED.getIndex().byteValue());
+            tmp.setUpdateTime(new Date());
             hubSkuPendingMapper.updateByPrimaryKeySelective(tmp);
         }
     }
@@ -479,6 +490,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         HubSpuPending record = new HubSpuPending();
         record.setHubSpuNo(spuNo);
         record.setSpuState(SpuState.HANDLED.getIndex());
+        record.setUpdateTime(new Date());
         hubSpuPendingMapper.updateByExampleSelective(record,criteria);
 
 
