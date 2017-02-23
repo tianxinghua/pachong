@@ -46,13 +46,13 @@ public class MonnierfreresServiceImpl {
 			.append("QTECMD").append("\r\n");
 			String dayTime = DateTimeUtil.strForDate(endTime);
 			for(HubOrderDetail orderDetail : orderDetails){
-				buffer.append(orderDetail.getPurchaseNo()).append(split)
+				buffer.append(orderDetail.getOrderNo()).append(split)
 				.append(dayTime).append(split)
 				.append("").append(split)
 				.append("").append(split)
 				.append("Shangpin").append(split)
 				.append("54").append(split)
-				.append(orderDetail.getPurchaseNo()).append(split)
+				.append(orderDetail.getOrderNo()).append(split)
 				.append("SHANGPIN").append(split)
 				.append("GENERTEC ITALIA").append(split)
 				.append("VIA GIACOMO LEOPARDI, 27").append(split)

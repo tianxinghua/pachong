@@ -155,7 +155,7 @@ public class TaskImportService {
 		}
 		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
 			hubSkuPendingDto.setHubSkuSizeType(sizeType);
-		}else if("排除".equals(specificationType)){
+		}else if("排除".equals(sizeType)){
 			hubSkuPendingDto.setMemo("此尺码过滤不处理");
 			hubSkuPendingDto.setFilterFlag((byte)0);
 		}else if("尺寸".equals(specificationType)){
