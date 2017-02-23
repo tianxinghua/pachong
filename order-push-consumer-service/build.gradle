@@ -36,6 +36,7 @@ repositories {
 group="com.shangpin.ep.order"
 
 dependencies {
+	compile('commons-net:commons-net:3.3')
 	compile('javax.servlet:javax.servlet-api:3.1.0')
 	compile('javax.xml.rpc:javax.xml.rpc-api:1.1.1')  
     compile('commons-discovery:commons-discovery:0.5')

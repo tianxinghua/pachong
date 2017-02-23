@@ -60,7 +60,7 @@ public class DellogliostoreHandler implements ISupplierHandler {
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("dellogliostore异常："+e.getMessage(),e);
 		}
 	}

@@ -21,4 +21,5 @@ public class SupplierProductConsumerServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SupplierProductConsumerServiceApplication.class, args);
 	}
+
 }
