@@ -29,7 +29,7 @@ public class MonnierfreresServiceImpl {
 	/**
 	 * 产生的订单文件
 	 */
-	private static String localFile = "/usr/local/share/applications/order-push-consumer-service/lib/monnierfreres/shangpinOrders.csv";
+	private static String localPath = "/usr/local/share/applications/order-push-consumer-service/lib/monnierfreres/";
 	
 	@Scheduled(cron="00 00 04 * * ?")
 	public void uploadFtp(){
@@ -44,9 +44,10 @@ public class MonnierfreresServiceImpl {
 			.append("CODTRP").append(split).append("REFCMD").append(split).append("NOMCLI").append(split).append("NOMCLI").append(split).append("NOMSTE").append(split).append("ADRES1").append(split)
 			.append("ADRES2").append(split).append("VILNOM").append(split).append("CODPST").append(split).append("CODPAY").append(split).append("MNTTOT").append(split).append("CODPRD").append(split)
 			.append("QTECMD").append("\r\n");
+			String dayTime = DateTimeUtil.strForDate(endTime);
 			for(HubOrderDetail orderDetail : orderDetails){
 				buffer.append(orderDetail.getPurchaseNo()).append(split)
-				.append(DateTimeUtil.strForDate(endTime)).append(split)
+				.append(dayTime).append(split)
 				.append("").append(split)
 				.append("").append(split)
 				.append("Shangpin").append(split)
@@ -65,6 +66,7 @@ public class MonnierfreresServiceImpl {
 			}
 			String orders = buffer.toString();
 			log.info("monnierfreres今日推送订单："+orders);
+			String localFile = localPath+"shangpinOrders_"+dayTime+".csv";
 			save(localFile,orders);
 			upload(localFile);
 			
