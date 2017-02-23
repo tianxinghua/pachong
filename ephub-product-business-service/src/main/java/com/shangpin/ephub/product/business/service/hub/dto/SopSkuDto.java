@@ -24,6 +24,10 @@ public class SopSkuDto implements Serializable {
     private String  supplierSkuNo;
     @JsonIgnore
     private String  productModel;
+    @JsonIgnore
+    private String  sopSkuNo;
+    @JsonIgnore
+    private String  sopProductNo;
 
     @JsonProperty("SkuNo")
     public String getSkuNo() {
@@ -64,5 +68,22 @@ public class SopSkuDto implements Serializable {
     @JsonProperty("ProductModel")
     public void setProductModel(String productModel) {
         this.productModel = productModel;
+    }
+
+    @JsonProperty("SopSkuNo")
+    public String getSopSkuNo() {
+        return sopSkuNo;
+    }
+    @JsonProperty("SopSkuNo")
+    public void setSopSkuNo(String sopSkuNo) {
+        this.sopSkuNo = sopSkuNo;
+    }
+    @JsonProperty("SopProductNo")
+    public String getSopProductNo() {
+        return sopProductNo;
+    }
+    @JsonProperty("SopProductNo")
+    public void setSopProductNo(String sopProductNo) {
+        this.sopProductNo = sopProductNo;
     }
 }
