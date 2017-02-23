@@ -22,7 +22,7 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/5 * * * ?")
 	public void pictureTask() {
 		try {
 			log.info("================================系统开始扫描supplierProduct需要重新推送的数据================================");
