@@ -81,7 +81,7 @@ public class MatchSizeService {
 					result = "含有多个尺码模板";		
 				}else{
 					if(standardSizeMap.size()>0){
-						result = "尺码："+size+"未匹配成功";		
+						result = "尺码："+dto.getSize()+"未匹配成功";		
 						matchSizeResult.setFilter(true);	
 					}else{
 						result = "scm没有尺码模板";	

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
@@ -239,17 +240,22 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 //如果不符合 直接返回
                 hubSpuPending.setMemo(judgeResult);
                 hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                //设置审核状态为不同意
+                setAuditState(hubSpuPending,AuditState.DISAGREE,auditVO.getAuditUser(),judgeResult);
                 updateSpuPendingState(auditVO, hubSpuPending);
                 auditVO.setMemo(judgeResult);
                 return false;
 
             }else{
-
+            	//设置审核状态为同意
+            	setAuditState(hubSpuPending,AuditState.AGREE,auditVO.getAuditUser(),"");
                 hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
                 hubSpuPending.setMemo("");
             }
 
         }else{
+        	//设置审核状态为不同意
+            setAuditState(hubSpuPending,AuditState.DISAGREE,auditVO.getAuditUser(),auditVO.getMemo());
             hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
             hubSpuPending.setMemo(auditVO.getMemo());
         }
@@ -272,7 +278,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                     return false;
                 }
                 if (hasNohandleSkuSize(hubSpuPendingDtos)) {
-
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
                     hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
                     updateSpuPendingState(auditVO, hubSpuPending);
@@ -280,7 +285,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                     return false;
                 }
             }
-
             HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
             //更新spuPending 状态
             spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
@@ -290,9 +294,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
             //只有审核通过的才处理
             if(SpuStatus.getOrderStatus(auditVO.getAuditStatus()).getIndex()==SpuStatus.SPU_HANDLED.getIndex()){
-
-
-
                 SpuModelDto spuModelVO = new SpuModelDto();
                 BeanUtils.copyProperties(auditVO,spuModelVO);
 
@@ -333,11 +334,19 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             auditVO.setMemo("未发现待审核的数据，或者状态已被改变。");
             return false;
         }
-
-
-
-
-
+    }
+    /**
+     * 设置审核状态
+     * @param hubSpuPending 被赋值的对象
+     * @param auditState 审核状态
+     * @param auditUser 审核人
+     * @param auditOpinion 审核意见
+     */
+    private void setAuditState(HubSpuPendingDto hubSpuPending,AuditState auditState,String auditUser,String auditOpinion){
+    	hubSpuPending.setAuditState(auditState.getIndex());
+    	hubSpuPending.setAuditDate(new Date());
+    	hubSpuPending.setAuditUser(auditUser);
+    	hubSpuPending.setAuditOpinion(auditOpinion); 
     }
 
     private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {
