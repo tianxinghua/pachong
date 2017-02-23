@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroy
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
@@ -217,16 +218,21 @@ public class HubCheckService {
 		//校验产地
 		if(StringUtils.isNotBlank(hubProduct.getHubOrigin())){
 			if(!checkHubOrigin(hubProduct.getHubOrigin())){
-				str.append("产地"+hubProduct.getHubOrigin()+"不存在") ;
+				str.append("产地"+hubProduct.getHubOrigin()+"不存在，") ;
 				result.setPassing(false);
 				result.setOriginal(false);
 			}else{
 				result.setOriginal(true);
 			}	
 		}else{
-			str.append("产地为空");
+			str.append("产地为空，");
 			result.setPassing(false);
 			result.setOriginal(false);
+		}
+		//校验图片
+		if(null == hubProduct.getPicState() || PicState.HANDLED.getIndex() != hubProduct.getPicState()){
+			str.append("图片不完整");
+			result.setPassing(false);
 		}
 		
 		result.setResult(str.toString());
