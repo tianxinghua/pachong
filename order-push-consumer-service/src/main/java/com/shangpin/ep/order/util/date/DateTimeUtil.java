@@ -326,6 +326,16 @@ public class DateTimeUtil {
 	    String dt = sdf.format(dd);
 	    return dt ;
 	 }
+ /**
+  * 返回指定日期的前一天
+  * @param nowTime
+  * @return
+  */
+ public static Date getbeforeDay(Date nowTime){
+	 long currentdate=nowTime.getTime()-24*60*60*1000;
+	 return new Date(currentdate);
+ }
+ 
   /**
    * 返回比当前日早一天的日期
    * @return String
