@@ -33,45 +33,49 @@ public class MonnierfreresServiceImpl {
 	
 	@Scheduled(cron="00 00 04 * * ?")
 	public void uploadFtp(){
-		Date endTime = new Date();
-		Date startTime = DateTimeUtil.getbeforeDay(endTime);
-		log.info("monnierfreres推送订单开始时间："+startTime+" 结束时间："+endTime); 
-		List<HubOrderDetail> orderDetails = hubOrderDetailService.findHubOrderDetails("2015101001587", OrderStatus.PAYED, startTime, endTime);
-		if(null != orderDetails && orderDetails.size() >0){
-			log.info("monnierfreres查询到的订单的数量是========="+orderDetails.size());
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("REFCMD").append(split).append("DATCMD").append(split).append("DATLIV").append(split).append("INSCMD").append(split).append("CODCLI").append(split)
-			.append("CODTRP").append(split).append("REFCMD").append(split).append("NOMCLI").append(split).append("NOMCLI").append(split).append("NOMSTE").append(split).append("ADRES1").append(split)
-			.append("ADRES2").append(split).append("VILNOM").append(split).append("CODPST").append(split).append("CODPAY").append(split).append("MNTTOT").append(split).append("CODPRD").append(split)
-			.append("QTECMD").append("\r\n");
-			String dayTime = DateTimeUtil.strForDate(endTime);
-			for(HubOrderDetail orderDetail : orderDetails){
-				buffer.append(orderDetail.getOrderNo()).append(split)
-				.append(dayTime).append(split)
-				.append("").append(split)
-				.append("").append(split)
-				.append("Shangpin").append(split)
-				.append("54").append(split)
-				.append(orderDetail.getOrderNo()).append(split)
-				.append("SHANGPIN").append(split)
-				.append("GENERTEC ITALIA").append(split)
-				.append("VIA GIACOMO LEOPARDI, 27").append(split)
-				.append("").append(split)
-				.append("LURATE CACCIVIO").append(split)
-				.append("22075").append(split)
-				.append("IT").append(split)
-				.append("").append(split)
-				.append(orderDetail.getSupplierSkuNo()).append(split)
-				.append(orderDetail.getQuantity()).append("\r\n"); 
+		try {
+			Date endTime = new Date();
+			Date startTime = DateTimeUtil.getbeforeDay(endTime);
+			log.info("monnierfreres推送订单开始时间："+startTime+" 结束时间："+endTime); 
+			List<HubOrderDetail> orderDetails = hubOrderDetailService.findHubOrderDetails("2015101001587", OrderStatus.PAYED, startTime, endTime);
+			if(null != orderDetails && orderDetails.size() >0){
+				log.info("monnierfreres查询到的订单的数量是========="+orderDetails.size());
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("REFCMD").append(split).append("DATCMD").append(split).append("DATLIV").append(split).append("INSCMD").append(split).append("CODCLI").append(split)
+				.append("CODTRP").append(split).append("REFCMD").append(split).append("NOMCLI").append(split).append("NOMCLI").append(split).append("NOMSTE").append(split).append("ADRES1").append(split)
+				.append("ADRES2").append(split).append("VILNOM").append(split).append("CODPST").append(split).append("CODPAY").append(split).append("MNTTOT").append(split).append("CODPRD").append(split)
+				.append("QTECMD").append("\r\n");
+				String dayTime = DateTimeUtil.strForDate(endTime);
+				for(HubOrderDetail orderDetail : orderDetails){
+					buffer.append(orderDetail.getOrderNo()).append(split)
+					.append(dayTime).append(split)
+					.append("").append(split)
+					.append("").append(split)
+					.append("Shangpin").append(split)
+					.append("54").append(split)
+					.append(orderDetail.getOrderNo()).append(split)
+					.append("SHANGPIN").append(split)
+					.append("GENERTEC ITALIA").append(split)
+					.append("VIA GIACOMO LEOPARDI, 27").append(split)
+					.append("").append(split)
+					.append("LURATE CACCIVIO").append(split)
+					.append("22075").append(split)
+					.append("IT").append(split)
+					.append("").append(split)
+					.append(orderDetail.getSupplierSkuNo()).append(split)
+					.append(orderDetail.getQuantity()).append("\r\n"); 
+				}
+				String orders = buffer.toString();
+				log.info("monnierfreres今日推送订单："+orders);
+				String localFile = localPath+"shangpinOrders_"+dayTime+".csv";
+				save(localFile,orders);
+				upload(localFile);
+				
+			}else{
+				log.info("monnierfreres在该时间段内没有订单。");
 			}
-			String orders = buffer.toString();
-			log.info("monnierfreres今日推送订单："+orders);
-			String localFile = localPath+"shangpinOrders_"+dayTime+".csv";
-			save(localFile,orders);
-			upload(localFile);
-			
-		}else{
-			log.info("monnierfreres在该时间段内没有订单。");
+		} catch (Exception e) {
+			log.info("monnierfreres推送订单异常："+e.getMessage(),e); 
 		}
 	}
 	
