@@ -1,8 +1,6 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -233,58 +231,24 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     public boolean audit(SpuPendingAuditVO auditVO) throws Exception {
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-
-        if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
-            //状态检查
-            String judgeResult = judgeStatue(auditVO);
-            if( StringUtils.isNotBlank(judgeResult)){
-                //如果不符合 直接返回
-                hubSpuPending.setMemo(judgeResult);
-                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
-                //设置审核状态为不同意
-                setAuditState(hubSpuPending,AuditState.DISAGREE,auditVO.getAuditUser(),judgeResult);
-                updateSpuPendingState(auditVO, hubSpuPending);
-                auditVO.setMemo(judgeResult);
-                return false;
-
-            }else{
-            	//设置审核状态为同意
-            	setAuditState(hubSpuPending,AuditState.AGREE,auditVO.getAuditUser(),"");
-                hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
-                hubSpuPending.setMemo("");
-            }
-
-        }else{
-        	//设置审核状态为不同意
-            setAuditState(hubSpuPending,AuditState.DISAGREE,auditVO.getAuditUser(),auditVO.getMemo());
-            hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
-            hubSpuPending.setMemo(auditVO.getMemo());
-        }
-
         hubSpuPending.setUpdateTime(new Date());
+        //设置审核状态
+        if (setAuditMsg(auditVO, hubSpuPending)) return false;
+
+
         //设置查询条件
         HubSpuPendingCriteriaDto criteria = getHubSpuPendingCriteriaDto(auditVO, hubSpuPending);
 
         //查询出spuPending ，以便查询出skuPending
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
+        //加强判断  如果不是同一品类  不让通过
+        if (judgeCategory(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
+
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
             if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
-                //判断skupending 尺码是否符合标准
-                if(!hasSkuSize(hubSpuPendingDtos)){
-                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
-                    hubSpuPending.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
-                    updateSpuPendingState(auditVO, hubSpuPending);
-                    auditVO.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
-                    return false;
-                }
-                if (hasNohandleSkuSize(hubSpuPendingDtos)) {
-                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
-                    hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
-                    updateSpuPendingState(auditVO, hubSpuPending);
-                    auditVO.setMemo("尺码有未匹配的,不能审核通过");
-                    return false;
-                }
+                if (auditSize(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
+
             }
             HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
             //更新spuPending 状态
@@ -336,6 +300,76 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             return false;
         }
     }
+
+    private boolean judgeCategory(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending, List<HubSpuPendingDto> hubSpuPendingDtos) {
+        Map<String,String> categoryMap = new HashMap<>();
+        if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
+            for(HubSpuPendingDto spuPendingDto:hubSpuPendingDtos){
+                categoryMap.put(spuPendingDto.getHubCategoryNo(),"");
+            }
+            if(categoryMap.size()>1){
+                String errMsg = "同一品牌同一货号，品类必须唯一";
+                hubSpuPending.setMemo(errMsg);
+                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                //设置审核状态为不同意
+                setAuditState(hubSpuPending, AuditState.DISAGREE,auditVO.getAuditUser(),errMsg);
+                updateSpuPendingState(auditVO, hubSpuPending);
+                auditVO.setMemo(errMsg);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean auditSize(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending, List<HubSpuPendingDto> hubSpuPendingDtos) {
+        //判断skupending 尺码是否符合标准
+        if(!hasSkuSize(hubSpuPendingDtos)){
+            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+            hubSpuPending.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
+            updateSpuPendingState(auditVO, hubSpuPending);
+            auditVO.setMemo("数据错误，SPU下没有SKU，请与技术部沟通。对此引起的不便，报以歉意。");
+            return true;
+        }
+        if (hasNohandleSkuSize(hubSpuPendingDtos)) {
+            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+            hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
+            updateSpuPendingState(auditVO, hubSpuPending);
+            auditVO.setMemo("尺码有未匹配的,不能审核通过");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean setAuditMsg(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending) {
+        if(auditVO.getAuditStatus()== SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
+            //状态检查
+            String judgeResult = judgeStatue(auditVO);
+            if( StringUtils.isNotBlank(judgeResult)){
+                //如果不符合 直接返回
+                hubSpuPending.setMemo(judgeResult);
+                hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                //设置审核状态为不同意
+                setAuditState(hubSpuPending, AuditState.DISAGREE,auditVO.getAuditUser(),judgeResult);
+                updateSpuPendingState(auditVO, hubSpuPending);
+                auditVO.setMemo(judgeResult);
+                return true;
+
+            }else{
+            	//设置审核状态为同意
+            	setAuditState(hubSpuPending,AuditState.AGREE,auditVO.getAuditUser(),"");
+                hubSpuPending.setSpuState(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+                hubSpuPending.setMemo("");
+            }
+
+        }else{
+        	//设置审核状态为不同意
+            setAuditState(hubSpuPending,AuditState.DISAGREE,auditVO.getAuditUser(),auditVO.getMemo());
+            hubSpuPending.setSpuState(auditVO.getAuditStatus().byteValue());
+            hubSpuPending.setMemo(auditVO.getMemo());
+        }
+        return false;
+    }
+
     /**
      * 设置审核状态
      * @param hubSpuPending 被赋值的对象
