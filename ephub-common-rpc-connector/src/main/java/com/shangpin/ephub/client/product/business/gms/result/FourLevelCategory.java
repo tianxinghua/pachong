@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.dto;
+package com.shangpin.ephub.client.product.business.gms.result;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

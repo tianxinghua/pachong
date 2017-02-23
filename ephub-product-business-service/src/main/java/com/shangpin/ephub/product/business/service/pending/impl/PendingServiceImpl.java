@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
@@ -29,16 +28,18 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.util.RegexUtil;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
-import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/24.

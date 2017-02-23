@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
-import com.shangpin.ephub.product.business.common.service.gms.SizeService;
+import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
+import com.shangpin.ephub.product.business.rest.gms.service.SizeService;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>

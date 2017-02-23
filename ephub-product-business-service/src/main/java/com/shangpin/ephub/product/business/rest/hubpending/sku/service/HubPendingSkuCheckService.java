@@ -39,9 +39,6 @@ public class HubPendingSkuCheckService {
 				flag = false;
 				message = "尺码类型为空";
 			}
-		}else if("排除".equals(hubProduct.getSpecificationType())){
-			message = "尺码已过滤不处理";
-			flag = true;
 		}else if("尺寸".equals(hubProduct.getSpecificationType())){
 			flag = true;
 			message = "尺码类型为尺寸不校验";

@@ -29,14 +29,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.RegexUtil;
-import com.shangpin.ephub.product.business.common.dto.BrandDom;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
-import com.shangpin.ephub.product.business.common.service.gms.BrandService;
-import com.shangpin.ephub.product.business.common.service.gms.CategoryService;
-import com.shangpin.ephub.product.business.common.service.gms.SizeService;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
+import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
+import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
+import com.shangpin.ephub.product.business.rest.gms.service.SizeService;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
@@ -337,6 +337,15 @@ public class HubCheckService {
 	 */
 	public HubPendingSkuCheckResult hubSizeExist(String hubCategoryNo,String hubBrandNo,String sizeType,String size){
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
+		
+		if("排除".equals(sizeType)){
+			checkResult.setPassing(true);
+	     	checkResult.setSizeType("排除");
+        	checkResult.setSizeValue(size);
+        	checkResult.setMessage("尺码排除");
+        	return checkResult;
+		}
+		
 		checkResult.setPassing(false);
 		try {
 			CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);

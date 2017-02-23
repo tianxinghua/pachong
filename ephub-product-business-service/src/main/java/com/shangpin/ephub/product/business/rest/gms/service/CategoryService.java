@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.gms;
+package com.shangpin.ephub.product.business.rest.gms.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.dto.CategoryRequestDto;
-import com.shangpin.ephub.product.business.common.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.CategoryRequestDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -72,7 +76,7 @@ public class CategoryService {
 	 * @param categoryNo
 	 * @param category
 	 */
-	public void setCateGoryIntoReids(String categoryNo, FourLevelCategory category){
+	private void setCateGoryIntoReids(String categoryNo, FourLevelCategory category){
 		try {
 			shangpinRedis.setex(GlobalConstant.REDIS_HUB_CATEGORY_KEY+"_"+categoryNo,1000*60*5,JsonUtil.serialize(category));
 		} catch (Exception e) {
@@ -85,7 +89,7 @@ public class CategoryService {
 	 * @param categoryNo
 	 * @return
 	 */
-	public String getGmsCateGoryByRedis(String categoryNo){
+	private String getGmsCateGoryByRedis(String categoryNo){
 		try {
 			return shangpinRedis.get(GlobalConstant.REDIS_HUB_CATEGORY_KEY+"_"+categoryNo);
 		} catch (Exception e) {
@@ -99,7 +103,7 @@ public class CategoryService {
 	 * @param categoryNo
 	 * @return
 	 */
-	public HubResponseDto<FourLevelCategory> getGmsCateGoryByApi(String categoryNo){
+	private HubResponseDto<FourLevelCategory> getGmsCateGoryByApi(String categoryNo){
 		long start_categoryService = System.currentTimeMillis();
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
@@ -111,4 +115,15 @@ public class CategoryService {
 //        log.info("--->请求品类名称接口耗时{}",System.currentTimeMillis() - start_categoryService);
         return entity.getBody();
 	}
+	
+	private HubResponseDto<SopSkuDto> querySpSkuNoFromScm(SopSkuQueryDto queryDto) throws JsonProcessingException {
+        HttpEntity<SopSkuQueryDto> requestEntity = new HttpEntity<SopSkuQueryDto>(queryDto);
+        ObjectMapper mapper = new ObjectMapper();
+        log.info("send spSku query parameter: " + mapper.writeValueAsString(queryDto));
+
+        ResponseEntity<HubResponseDto<SopSkuDto>> entity = restTemplate.exchange(apiAddressProperties.getSopSkuListBySupplierSkuNoUrl(), HttpMethod.POST,
+                requestEntity, new ParameterizedTypeReference<HubResponseDto<SopSkuDto>>() {
+                });
+        return entity.getBody();
+    }
 }
