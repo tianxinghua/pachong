@@ -46,6 +46,8 @@ public class ProductExportHandler {
 					exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
 				}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
 					exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
+				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_SELECTED.getIndex()){
+					exportServiceImpl.exportHubSelected(message); 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

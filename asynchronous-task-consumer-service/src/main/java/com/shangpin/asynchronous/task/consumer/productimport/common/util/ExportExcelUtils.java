@@ -73,8 +73,13 @@ public class ExportExcelUtils {
 	                for(String s:columns){  
 	                    HSSFCell cell = row.createCell(cellIndex);  
 	                    HSSFRichTextString richString = new HSSFRichTextString(m.get(s) == null ? "" : m.get(s).toString());  
-	                    cell.setCellValue(richString);  
-	                    cellIndex++;  
+	                    try{
+	                    	cell.setCellValue(richString);  
+		                    cellIndex++;  
+	                    }catch(Exception e){
+	                    	System.out.println(richString);
+	                    }
+	                    
 	                }  
 	                index++;  
 	            }     

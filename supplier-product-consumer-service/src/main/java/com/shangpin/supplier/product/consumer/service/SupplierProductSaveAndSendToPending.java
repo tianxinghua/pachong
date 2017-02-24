@@ -56,12 +56,8 @@ public class SupplierProductSaveAndSendToPending {
 	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
 		//映射表里维护supplierId、supplierNo、supplierName
-		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo((byte)5);
-		List<HubSupplierValueMappingDto> list = supplierProductRetryManager.findHubSupplierValueMapping(criteria);
-		if(list!=null&&list.size()>0){
-			
-		}else{
+		HubSupplierValueMappingDto list = supplierProductRetryManager.findHubSupplierValueMapping(supplierId);
+		if(list==null){
 			HubSupplierValueMappingDto dto = new HubSupplierValueMappingDto();
 			dto.setSupplierId(supplierId);
 			dto.setHubVal(supplierName);

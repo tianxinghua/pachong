@@ -29,7 +29,6 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -178,7 +177,7 @@ public class PendingSpuImportService {
 			}
 			
 			//如果规格为尺码，则校验spu下所有的尺码
-			boolean flag = false;
+			boolean flag = true;
 			HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 			StringBuffer str = new StringBuffer();
 			if(isSpuPendingExist!=null){
@@ -208,13 +207,14 @@ public class PendingSpuImportService {
 										hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
 										hubPendingSkuCheckResult.setSizeValue(matchSizeResult.getSizeValue());
 										product1.setSizeType(matchSizeResult.getSizeType());
-										flag = true;
 									}else{
+										flag = false;
 										isMultiSizeType = matchSizeResult.isMultiSizeType();
 										hubPendingSkuCheckResult.setPassing(false);
 										str.append(matchSizeResult.getResult()).append(",");
 									}
 								}else{
+									flag = false;
 									hubPendingSkuCheckResult.setPassing(false);
 									str.append(sku.getSupplierSkuNo()+"尺码为空").append(",");
 								}
@@ -226,7 +226,11 @@ public class PendingSpuImportService {
 							}
 							taskService.checkPendingSku(hubPendingSkuCheckResult, sku, map,product1,isMultiSizeType);
 						}
+					}else{
+						flag = false;
 					}
+			}else{
+				flag = false;
 			}
 			// 校验sku信息
 			checkResult.setPassing(flag);

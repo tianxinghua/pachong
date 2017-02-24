@@ -101,6 +101,24 @@ public class PendingSkuImportService {
 			return null;
 		}
 		
+//		Map<String, List<HubPendingProductImportDTO>> mapSpu = new HashMap<String, List<HubPendingProductImportDTO>>();
+//		for (HubPendingProductImportDTO product : listHubProduct) {
+//			String key = product.getSupplierId()+"_"+product.getSupplierSpuNo();
+//			if(mapSpu.containsKey(key)){
+//				mapSpu.get(key).add(product);
+//			}else{
+//				List<HubPendingProductImportDTO> arr = new ArrayList<HubPendingProductImportDTO>();
+//				arr.add(product);
+//				mapSpu.put(key, arr);
+//			}
+//		}
+//		
+//		
+//	  for (Map.Entry<String, List<HubPendingProductImportDTO>> entry : mapSpu.entrySet()) {
+//        	List<HubPendingProductImportDTO> spuList = entry.getValue();
+//        	int i = 0;
+//	  }
+		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
 		for (HubPendingProductImportDTO product : listHubProduct) {
