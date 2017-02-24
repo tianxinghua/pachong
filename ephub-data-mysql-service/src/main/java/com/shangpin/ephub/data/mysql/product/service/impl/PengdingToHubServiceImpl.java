@@ -295,6 +295,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     }
 
     private void inserSkuSupplierMapping(Date date, List<HubSkuPending> hubSkuPendings, HubSku hubSku) throws Exception{
+        String barcode = "";
         for(HubSkuPending skuPending:hubSkuPendings){
 
             HubSkuSupplierMapping skuSupplierMapping = getSkuSupplierMappint(skuPending.getSupplierId(), skuPending.getSupplierSkuNo());
@@ -305,7 +306,9 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
             HubSkuSupplierMapping hubSkuSupplierMapping = new HubSkuSupplierMapping();
             BeanUtils.copyProperties(skuPending,hubSkuSupplierMapping);
-            hubSkuSupplierMapping.setBarcode(skuPending.getSupplierBarcode());
+            barcode =  skuPending.getSupplierBarcode();
+            if(StringUtils.isBlank(barcode)) barcode = skuPending.getSupplierSkuNo();
+            hubSkuSupplierMapping.setBarcode(barcode);
             hubSkuSupplierMapping.setSkuNo(hubSku.getSkuNo());
             hubSkuSupplierMapping.setSupplierSelectState(DataSelectStatus.NOT_SELECT.getIndex().byteValue());
 //            HubSpuPending spuPendingTmp =  this.getHubSpuPendingById(skuPending.getSpuPendingId());

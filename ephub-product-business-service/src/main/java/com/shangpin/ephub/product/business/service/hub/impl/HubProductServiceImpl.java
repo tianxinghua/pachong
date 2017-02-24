@@ -111,7 +111,7 @@ public class HubProductServiceImpl implements HubProductService {
                     //推送
                     //---------------------------------- 推送前先调用接口  看是否存在  存在则不用推送
                     Map<String,SopSkuDto> existSopSkuMap = new HashMap<>();
-                    List<ApiSkuOrgDom> existSkuOrgDoms = new ArrayList<>();//getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
+                    List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
                     //处理已经存在的
                     if(existSkuOrgDoms.size()>0){
                         log.info("SPSKUNO已存在");
@@ -168,13 +168,19 @@ public class HubProductServiceImpl implements HubProductService {
         queryDto.setSopUserNo(supplierId);
         List<String> supplierSkuNoList = new ArrayList<>();
         for(ApiSkuOrgDom apiSkuOrgDom:skuOrgDoms){
-            supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
+            if(apiSkuOrgDom.isRetry()){
+
+                supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
+            }
         }
         queryDto.setLstSupplierSkuNo(supplierSkuNoList);
 
         HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
         try {
-            sopSkuResponseDto = sopSkuService.querySpSkuNoFromScm(queryDto);
+            if(supplierSkuNoList.size()>0){
+
+                sopSkuResponseDto = sopSkuService.querySpSkuNoFromScm(queryDto);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -306,9 +312,9 @@ public class HubProductServiceImpl implements HubProductService {
         skuOrgDom.setPlaceOriginList(originList);
         skuOrgDom.setSkuOrginalFromId(hubSkuSupplierMappingDto.getSkuSupplierMappingId().toString());
         if(null!=hubSkuSupplierMappingDto.getRetryNum()){
-
+             skuOrgDom.setRetry(true);
         }else{
-
+            skuOrgDom.setRetry(false);
         }
 
         return skuOrgDom;
