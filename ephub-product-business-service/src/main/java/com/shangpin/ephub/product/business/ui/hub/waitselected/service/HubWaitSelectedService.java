@@ -52,10 +52,21 @@ public class HubWaitSelectedService {
 		Map<Long, Map<Long, Map<Long, String>>> spuIdMap = new HashMap<Long, Map<Long, Map<Long, String>>>();
 		for (HubWaitSelectStateDto dto : list) {
 
+			boolean fail = false;
+			HubSkuSupplierMappingDto mapp = hubSkuSupplierMappingGateWay.selectByPrimaryKey(dto.getSkuSupplierMappingId());
+			if(mapp!=null){
+				if(mapp.getSupplierSelectState().intValue()==SupplierSelectState.SELECTE_FAIL.getIndex()){
+					fail = true;
+				}
+			}
+			
 			HubSkuSupplierMappingDto HubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
 			HubSkuSupplierMappingDto.setSupplierSelectState((byte)SupplierSelectState.SELECTING.getIndex());
 			HubSkuSupplierMappingDto.setSkuSupplierMappingId(dto.getSkuSupplierMappingId());
 			HubSkuSupplierMappingDto.setUpdateTime(new Date());
+			if(fail){
+				HubSkuSupplierMappingDto.setRetryNum(1);
+			}
 			hubSkuSupplierMappingGateWay.updateByPrimaryKeySelective(HubSkuSupplierMappingDto);
 
 			Long spuId = dto.getSpuId();
