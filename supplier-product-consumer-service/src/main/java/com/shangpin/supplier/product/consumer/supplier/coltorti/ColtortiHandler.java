@@ -24,7 +24,15 @@ import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexis
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商coltorti处理类
+ * <p>Title: ColtortiHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:09:05
+ *
+ */
 @Component("coltortiHandler")
 @Slf4j
 public class ColtortiHandler implements ISupplierHandler {

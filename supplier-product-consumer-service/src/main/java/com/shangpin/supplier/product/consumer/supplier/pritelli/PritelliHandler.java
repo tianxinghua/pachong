@@ -25,7 +25,15 @@ import com.shangpin.supplier.product.consumer.supplier.pritelli.dto.PritelliSkuD
 import com.shangpin.supplier.product.consumer.supplier.pritelli.dto.PritelliSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商pritelli消费者
+ * <p>Title: PritelliHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:11:28
+ *
+ */
 @Component("pritelliHandler")
 @Slf4j
 public class PritelliHandler implements ISupplierHandler{
