@@ -4,12 +4,14 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.ToString;
 
 /**
  * Created by loyalty on 17/1/1.
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ToString
 public class SpSkuNoDto implements Serializable {
 
     /**

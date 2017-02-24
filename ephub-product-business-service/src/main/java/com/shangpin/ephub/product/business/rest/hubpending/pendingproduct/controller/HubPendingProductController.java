@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class HubPendingProductController {
 	
 	@RequestMapping(value = "/setspskuno")
 	public HubResponse<?> checkSku(@RequestBody SpSkuNoDto dto){
-		log.info("receive parameters :{}",dto);
+		log.info("receive parameters :{}",dto.toString());
 		try {
 			this.updatePendingSku(dto);
 
@@ -62,26 +63,33 @@ public class HubPendingProductController {
 
 	private void updatePendingSku(SpSkuNoDto dto) throws Exception{
 		//写入尚品的SKUno
-		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
-		hubSkuPending.setSpSkuNo(dto.getSkuNo());
-		hubSkuPending.setMemo(dto.getErrorReason());
-		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-		criteria.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo())
-				.andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
-
-
-
-		HubSkuPendingWithCriteriaDto skuCritria = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteria);
-		skuPendingGateWay.updateByCriteriaSelective(skuCritria);
-
-		List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
-		HubSkuPendingDto  searchSkuPending  = null;
-		if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
-			searchSkuPending = hubSkuPendingDtos.get(0);
-		}
+		HubSkuPendingDto searchSkuPending = updateSkuPendingSpSkuNo(dto);
 
 		//更新SKUSUPPLIERMAPPING 的状态
 
+		updateSkuSupplierMapping(dto);
+
+		//修改hub_sku中的商品sku编号
+		updateHubSkuSpSkuNo(dto, searchSkuPending);
+
+
+
+
+	}
+
+	private void updateHubSkuSpSkuNo(SpSkuNoDto dto, HubSkuPendingDto searchSkuPending) {
+		if(null!=searchSkuPending){
+//			HubSkuCriteriaDto criteriaSku = new HubSkuCriteriaDto();
+			HubSkuDto hubSku = new HubSkuDto();
+			hubSku.setSpSkuNo(dto.getSkuNo());
+			HubSkuCriteriaDto skuCriteria = new HubSkuCriteriaDto();
+			skuCriteria.createCriteria().andSkuNoEqualTo(searchSkuPending.getHubSkuNo());
+			HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
+			hubSkuGateWay.updateByCriteriaSelective(criteriaWithSku);
+		}
+	}
+
+	private void updateSkuSupplierMapping(SpSkuNoDto dto) {
 		HubSkuSupplierMappingCriteriaDto criteriaDto = new HubSkuSupplierMappingCriteriaDto();
 		criteriaDto.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
 
@@ -92,30 +100,30 @@ public class HubPendingProductController {
 			hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
 			hubSkuSupplierMapping.setMemo(dto.getErrorReason());
 		}
-
+		hubSkuSupplierMapping.setUpdateTime(new Date());
 		HubSkuSupplierMappingWithCriteriaDto skumappingCritria = new HubSkuSupplierMappingWithCriteriaDto(hubSkuSupplierMapping,criteriaDto);
 		skuSupplierMappingGateWay.updateByCriteriaSelective(skumappingCritria);
-
-		//修改hub_sku中的商品sku编号
-		if(null!=searchSkuPending){
-//			HubSkuCriteriaDto criteriaSku = new HubSkuCriteriaDto();
-			HubSkuDto hubSku = new HubSkuDto();
-			hubSku.setSpSkuNo(dto.getSkuNo());
-			HubSkuCriteriaDto skuCriteria = new HubSkuCriteriaDto();
-			skuCriteria.createCriteria().andSkuNoEqualTo(searchSkuPending.getHubSkuNo());
-			HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
-			hubSkuGateWay.updateByCriteriaSelective(criteriaWithSku);
-		}
-
-//		HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-//
-//		HubSpuPendingCriteriaDto criteriaSpu = new HubSpuPendingCriteriaDto();
-//
-//		HubSpuPendingWithCriteriaDto spuCritria = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteriaSpu);
-//		spuPendingGateWay.updateByCriteriaSelective(spuCritria);
-
-
 	}
 
-	
+	private HubSkuPendingDto updateSkuPendingSpSkuNo(SpSkuNoDto dto) {
+		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
+		hubSkuPending.setSpSkuNo(dto.getSkuNo());
+		hubSkuPending.setMemo(dto.getErrorReason());
+		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+		criteria.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo())
+				.andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
+
+
+		HubSkuPendingWithCriteriaDto skuCritria = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteria);
+		skuPendingGateWay.updateByCriteriaSelective(skuCritria);
+
+		List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+		HubSkuPendingDto  searchSkuPending  = null;
+		if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+			searchSkuPending = hubSkuPendingDtos.get(0);
+		}
+		return searchSkuPending;
+	}
+
+
 }

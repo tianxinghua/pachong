@@ -305,7 +305,11 @@ public class HubProductServiceImpl implements HubProductService {
         originList.add(placeOrigin);
         skuOrgDom.setPlaceOriginList(originList);
         skuOrgDom.setSkuOrginalFromId(hubSkuSupplierMappingDto.getSkuSupplierMappingId().toString());
+        if(null!=hubSkuSupplierMappingDto.getRetryNum()){
 
+        }else{
+
+        }
 
         return skuOrgDom;
 
