@@ -28,8 +28,9 @@ public enum TaskImportTpye {
 	 */
 	EXPORT_PENDING_SKU(5,"pending-sku导出"),
 	
-	EXPORT_HUB_SELECTED(6,"hub供价导出");
-	
+	EXPORT_HUB_SELECTED(6,"hub供价导出"),
+	EXPORT_HUB_PIC(7,"hub图片导出"),
+	EXPORT_HUB_CHECK_PIC(8,"hub勾选图片导出");
 	/**
      * 数字索引标识
      */

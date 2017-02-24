@@ -20,4 +20,5 @@ public class HubWaitSelectStateDto {
 	private Long spuId;
 	private Long skuId;
 	private String spuNo;
+	private String createUser;
 }
