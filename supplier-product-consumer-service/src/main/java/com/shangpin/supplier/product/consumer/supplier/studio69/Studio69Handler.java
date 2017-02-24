@@ -26,7 +26,15 @@ import com.shangpin.supplier.product.consumer.supplier.studio69.dto.StudioSkuDto
 import com.shangpin.supplier.product.consumer.supplier.studio69.dto.StudioSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商studio69消费者
+ * <p>Title: Studio69Handler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:12:02
+ *
+ */
 @Component("studio69Handler")
 @Slf4j
 public class Studio69Handler implements ISupplierHandler{

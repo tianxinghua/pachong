@@ -25,7 +25,15 @@ import com.shangpin.supplier.product.consumer.supplier.piccadilly.dto.Piccadilly
 import com.shangpin.supplier.product.consumer.supplier.piccadilly.dto.PiccadillySpuDto;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商piccadilly消费者
+ * <p>Title: PiccadillyHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:11:12
+ *
+ */
 @Component("piccadillyHandler")
 @Slf4j
 public class PiccadillyHandler implements ISupplierHandler {

@@ -25,7 +25,15 @@ import com.shangpin.supplier.product.consumer.supplier.zitafabiani.dto.ZitaSkuDt
 import com.shangpin.supplier.product.consumer.supplier.zitafabiani.dto.ZitaSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商zitafabiani消费者
+ * <p>Title: ZitafabianiHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:12:23
+ *
+ */
 @Component("zitafabianiHandler")
 @Slf4j
 public class ZitafabianiHandler implements ISupplierHandler {
