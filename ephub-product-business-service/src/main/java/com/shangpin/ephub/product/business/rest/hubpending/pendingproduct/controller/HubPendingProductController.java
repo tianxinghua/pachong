@@ -49,7 +49,7 @@ public class HubPendingProductController {
 	
 	@RequestMapping(value = "/setspskuno")
 	public HubResponse<?> checkSku(@RequestBody SpSkuNoDto dto){
-		log.info("receive parameters :{}",dto);
+		log.info("receive parameters :{}",dto.toString());
 		try {
 			this.updatePendingSku(dto);
 
