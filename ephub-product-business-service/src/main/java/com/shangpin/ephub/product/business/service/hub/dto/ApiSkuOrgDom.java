@@ -98,5 +98,5 @@ public class ApiSkuOrgDom implements Serializable {
     private String SkuOrginalFromId; //skuMappingId
 
     //是否重试推送的标记
-    private boolean isRetry;
+    private boolean retry;
 }
