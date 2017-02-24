@@ -352,6 +352,14 @@ public class HubCheckService {
         	checkResult.setFilter(true);
         	return checkResult;
 		}
+		if("尺寸".equals(sizeType)){
+			checkResult.setPassing(false);
+	     	checkResult.setSizeType("尺寸");
+        	checkResult.setSizeValue(size);
+        	checkResult.setMessage("尺码类型为尺寸");
+        	checkResult.setFilter(true);
+        	return checkResult;
+		}
 		
 		checkResult.setPassing(false);
 		try {
