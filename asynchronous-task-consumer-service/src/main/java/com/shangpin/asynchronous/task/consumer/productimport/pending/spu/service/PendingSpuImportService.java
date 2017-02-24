@@ -31,6 +31,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
@@ -157,6 +158,8 @@ public class PendingSpuImportService {
 			return null;
 		}
 		
+		
+		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
 		for (HubPendingSpuImportDTO product : listHubProduct) {
@@ -172,14 +175,28 @@ public class PendingSpuImportService {
 			List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 			HubSpuPendingDto isSpuPendingExist = null;
 			if (listSpu != null && listSpu.size() > 0) {
-				log.info(product.getSpuModel()+"已存在pendingSpu");
 				isSpuPendingExist = listSpu.get(0);
+			}
+			
+			
+			List<HubSpuDto> list = dataHandleService.selectHubSpu(hubPendingSpuDto);
+			if (list != null && list.size() > 0) {
+				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
+				Long hubSpuId = list.get(0).getSpuId();
+				String	hubSpuNo = list.get(0).getSpuNo();
+				boolean hubIsExist = true;
+				map.put("hubIsExist",hubIsExist+"");
+				map.put("hubSpuId",hubSpuId+"");
+				map.put("hubSpuNo",hubSpuNo);
+				map.put("pendingSpuId",isSpuPendingExist.getSpuPendingId()+"");
 			}
 			
 			//如果规格为尺码，则校验spu下所有的尺码
 			boolean flag = true;
 			HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 			StringBuffer str = new StringBuffer();
+			
+			Map<String,String> sizeType = new HashMap<String,String>();
 			if(isSpuPendingExist!=null){
 					HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 					criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSpuPendingIdEqualTo(isSpuPendingExist.getSpuPendingId());
@@ -187,6 +204,8 @@ public class PendingSpuImportService {
 					criteria.setPageSize(1000);
 					List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
 					if(listSku!=null&&listSku.size()>0){
+						
+						
 						for(HubSkuPendingDto sku:listSku){
 							HubPendingSkuCheckResult hubPendingSkuCheckResult = new HubPendingSkuCheckResult();
 							HubPendingProductImportDTO product1 = new HubPendingProductImportDTO();
@@ -202,6 +221,7 @@ public class PendingSpuImportService {
 									match.setSize(sku.getHubSkuSize());	
 									MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(match);
 									if(matchSizeResult.isPassing()){
+										sizeType.put(matchSizeResult.getSizeType(),"");
 										hubPendingSkuCheckResult.setPassing(true);
 										hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 										hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
@@ -232,8 +252,23 @@ public class PendingSpuImportService {
 			}else{
 				flag = false;
 			}
+			
+			
+//			HubSkuCheckDto hubSkuCheckDto = convertHubPendingProduct2PendingSkuCheck(product);
+//			log.info("pendindSku校验参数：{}", hubSkuCheckDto);
+//			HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
+//			log.info("pendindSku校验返回结果：{}", hubPendingSkuCheckResult);
+			
+			
 			// 校验sku信息
-			checkResult.setPassing(flag);
+			if(sizeType.size()>1){
+				
+				
+				checkResult.setPassing(false);	
+			}else{
+				checkResult.setPassing(flag);
+			}
+			
 			checkResult.setMessage(str.toString());
 			taskService.checkPendingSpu(isSpuPendingExist,checkResult,hubPendingSpuDto,map,flag);
 			boolean isPassing = Boolean.parseBoolean(map.get("isPassing"));
@@ -246,6 +281,10 @@ public class PendingSpuImportService {
 		
 		// 处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
+	}
+	
+	private void matchSize(){
+		
 	}
 	
 	@SuppressWarnings("unused")
@@ -290,21 +329,24 @@ public class PendingSpuImportService {
 			if(isMultiSizeType){
 				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
 				//此尺码含有多个尺码类型，需要手动选择
+				hubSkuPendingDto.setFilterFlag((byte)1);
 				hubSkuPendingDto.setMemo("此尺码含有多个尺码类型，需要手动选择");
-				hubSkuPendingDto.setSpSkuSizeState((byte) 1);
 			}else{
 				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
 				//此尺码过滤不处理
-				hubSkuPendingDto.setSpSkuSizeState((byte) 1);
 				hubSkuPendingDto.setMemo("此尺码未匹配成功");
+				hubSkuPendingDto.setFilterFlag((byte)1);
 			}
+			
+			//临时加
+			hubSkuPendingDto.setFilterFlag((byte)1);
 		}
 		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
 			hubSkuPendingDto.setHubSkuSizeType(sizeType);
-		}else if("排除".equals(product.getSpecificationType())){
+		}else if("排除".equals(sizeType)){
 			hubSkuPendingDto.setMemo("此尺码过滤不处理");
-			hubSkuPendingDto.setSpSkuSizeState((byte) 0);
-		}else{
+			hubSkuPendingDto.setFilterFlag((byte)0);
+		}else if("尺寸".equals(specificationType)){
 			hubSkuPendingDto.setHubSkuSizeType("尺寸");
 			if(hubSkuPendingDto.getHubSkuSize()==null){
 				hubSkuPendingDto.setHubSkuSize("");

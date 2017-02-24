@@ -132,10 +132,10 @@ public class TaskImportService {
 						hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 					}
 				}else{
-					hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
+					hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 				}
 			}else{
-				hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
+				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 			}
 			
 			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
@@ -156,6 +156,7 @@ public class TaskImportService {
 			//临时加
 			hubSkuPendingDto.setMemo("此尺码过滤不处理");
 			hubSkuPendingDto.setFilterFlag((byte)0);
+			hubSkuPendingDto.setHubSkuSizeType("排除");
 		}
 		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
 			hubSkuPendingDto.setHubSkuSizeType(sizeType);

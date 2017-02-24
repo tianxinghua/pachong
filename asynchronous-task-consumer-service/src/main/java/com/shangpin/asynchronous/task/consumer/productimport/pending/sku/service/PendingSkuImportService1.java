@@ -26,6 +26,7 @@
 //import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 //import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 //import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+//import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 //import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 //import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 //import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
@@ -110,7 +111,6 @@
 //			return null;
 //		}
 //		
-//		
 //		Map<String, List<HubPendingProductImportDTO>> mapSpu = new HashMap<String, List<HubPendingProductImportDTO>>();
 //		for (HubPendingProductImportDTO product : listHubProduct) {
 //			String key = product.getSupplierId()+"_"+product.getSupplierSpuNo();
@@ -127,10 +127,11 @@
 //		Map<String, String> map = null;
 //		
 //        for (Map.Entry<String, List<HubPendingProductImportDTO>> entry : mapSpu.entrySet()) {
+//        	
 //        	List<HubPendingProductImportDTO> spuList = entry.getValue();
 //        	int i = 0;
 //        	HubPendingSpuCheckResult hubPendingSpuCheckResult = null;
-//        	boolean skuIsPassing = true;
+//        	boolean skuIsPassing = false;
 //        	map = new HashMap<String, String>();
 //        	StringBuffer s = new StringBuffer();
 //        	for (HubPendingProductImportDTO product : spuList) {
@@ -144,9 +145,10 @@
 //    				hubPendingSpuCheckResult = pendingSpuCheckGateWay.checkSpu(hubPendingSpuDto);
 //    			}
 //    			HubPendingSkuCheckResult hubPendingSkuCheckResult = checkProduct(product);
-//    			if(!hubPendingSkuCheckResult.isPassing()){
+//    			if(hubPendingSkuCheckResult.isPassing()){
+//    				skuIsPassing = true;
+//    			}else{
 //    				s.append(hubPendingSkuCheckResult.getMessage());
-//    				skuIsPassing = false;
 //    			}
 //    		}
 //        	
@@ -161,25 +163,25 @@
 //		HubSkuCheckDto hubSkuCheckDto = convertHubPendingProduct2PendingSkuCheck(product);
 //		log.info("pendindSku校验参数：{}", hubSkuCheckDto);
 //		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
+//		
+//		
+//		checkPendingSku(hubPendingSkuCheckResult,product);
+//		
 //		log.info("pendindSku校验返回结果：{}", hubPendingSkuCheckResult);
 //		return hubPendingSkuCheckResult;
 //	}
 //	
-//	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-//			 Map<String, String> map,HubPendingProductImportDTO product,boolean isMultiSizeType) throws Exception{
-//		String hubSpuNo = map.get("hubSpuNo");
-//		if (map.get("pendingSpuId") != null) {
-//			hubSkuPendingDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
-//		}
-//
+//	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult,
+//			 HubPendingProductImportDTO product) throws Exception{
+//		
+//		HubSkuPendingDto hubSkuPendingDto = convertHubPendingProduct2PendingSku(product);
 //		String specificationType = product.getSpecificationType();
 //		String sizeType = product.getSizeType();
 //		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 //				hubSkuPendingDto.getSupplierSkuNo());
 //		if (hubPendingSkuCheckResult.isPassing()) {
 //			hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
-//			if(hubSkuPendingTempDto!=null){
-//				if(hubSpuNo!=null){
+//			if(hubSkuPendingTempDto!=null&&hubSpuNo!=null){
 //					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
 //					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
 //						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
@@ -193,9 +195,6 @@
 //					}else{
 //						hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 //					}
-//				}else{
-//					hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
-//				}
 //			}else{
 //				hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 //			}
@@ -203,34 +202,15 @@
 //			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
 //			hubSkuPendingDto.setFilterFlag((byte)1);
 //		} else {
-//			if(isMultiSizeType){
-//				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
-//				//此尺码含有多个尺码类型，需要手动选择
-//				hubSkuPendingDto.setFilterFlag((byte)1);
-//				hubSkuPendingDto.setMemo("此尺码含有多个尺码类型，需要手动选择");
-//			}else{
-//				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
-//				//此尺码过滤不处理
-//				hubSkuPendingDto.setMemo("此尺码未匹配成功");
-//				hubSkuPendingDto.setFilterFlag((byte)1);
-//			}
-//			
-//			//临时加
 //			hubSkuPendingDto.setMemo("此尺码过滤不处理");
 //			hubSkuPendingDto.setFilterFlag((byte)0);
 //		}
-//		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
-//			hubSkuPendingDto.setHubSkuSizeType(sizeType);
-//		}else if("排除".equals(sizeType)){
-//			hubSkuPendingDto.setMemo("此尺码过滤不处理");
-//			hubSkuPendingDto.setFilterFlag((byte)0);
-//		}else if("尺寸".equals(specificationType)){
+//		if("尺寸".equals(specificationType)||"尺寸".equals(sizeType)){
 //			hubSkuPendingDto.setHubSkuSizeType("尺寸");
 //			if(hubSkuPendingDto.getHubSkuSize()==null){
 //				hubSkuPendingDto.setHubSkuSize("");
 //			}
 //		}
-//		
 //		//更新或插入操作
 //		if (hubSkuPendingTempDto != null) {
 //			hubSkuPendingDto.setSkuPendingId(hubSkuPendingTempDto.getSkuPendingId());
@@ -243,7 +223,16 @@
 //			hubSkuPendingGateWay.insert(hubSkuPendingDto);
 //		}
 //	}
-//	
+//	public HubSkuPendingDto findHubSkuPending(String supplierId, String supplierSkuNo) throws Exception{
+//
+//		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+//		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+//		List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteria);
+//		if (list != null && list.size() > 0) {
+//			return list.get(0);
+//		}
+//		return null;
+//	}
 //	public void checkPendingSpu(HubSpuPendingDto isPendingSpuExist,HubPendingSkuCheckResult hubPendingSkuCheckResult,HubSpuPendingDto hubPendingSpuDto, 
 //			Map<String, String> map) {
 //		

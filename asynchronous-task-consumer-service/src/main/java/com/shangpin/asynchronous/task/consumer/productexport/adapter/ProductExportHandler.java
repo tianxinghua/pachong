@@ -40,14 +40,20 @@ public class ProductExportHandler {
 	public void productExportTask(ProductImportTask message, Map<String, Object> headers) {
 		try{
 			if(!StringUtils.isEmpty(message.getData())){
-				PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
+				
 				log.info("接收到导出任务："+message.getData());
 				if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
+					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
 				}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
+					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
 				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_SELECTED.getIndex()){
 					exportServiceImpl.exportHubSelected(message); 
+				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_PIC.getIndex()){
+					exportServiceImpl.exportHubPicSelected(message); 
+				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex()){
+					exportServiceImpl.exportHubCheckPicSelected(message); 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 
