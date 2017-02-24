@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
@@ -108,12 +109,12 @@ public class HubSelectedController {
 	 * @param dto
 	 * @return
 	 */
-	@RequestMapping(value = "/export-product2",method ={RequestMethod.POST,RequestMethod.GET})
+	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
     public HubResponse exportProduct2(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
-			HubSpuImportTaskDto task=saveTaskIntoMysql("hubSelected",6);
-			sendMessageToTask(task.getTaskNo(),6,JsonUtil.serialize(dto));
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_SELECTED.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_SELECTED.getIndex(),JsonUtil.serialize(dto));
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出查询商品失败：{}",e);
@@ -121,6 +122,63 @@ public class HubSelectedController {
 		}
     }
 	
+	/**
+	 * 导出查询图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
+    public HubResponse exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+	        	
+		
+		try {
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_PIC.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_PIC.getIndex(),JsonUtil.serialize(dto));
+			return HubResponse.successResp(task.getTaskNo());
+		} catch (Exception e) {
+			log.error("导出查询商品失败：{}",e);
+			return HubResponse.errorResp("导出异常");
+		}
+		
+    }
+	/**
+	 * 导出勾选图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-check-pic",method = RequestMethod.POST)
+    public HubResponse exportCheckPic(@RequestBody List<HubWaitSelectStateDto> dto,HttpServletResponse response){
+	        	
+		try {
+			if(dto==null||dto.size()<=0){
+				return HubResponse.errorResp("数信息为空");
+			}
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.get(0).getCreateUser(),TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex(),JsonUtil.serialize(dto));
+			return HubResponse.successResp(task.getTaskNo());
+		} catch (Exception e) {
+			log.error("导出图片失败：{}",e);
+			return HubResponse.errorResp("导出异常");
+		}
+    }
+	/**
+	 * 导出勾选图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-check-pic1",method = RequestMethod.POST)
+    public void exportCheckPic1(@RequestBody List<HubWaitSelectStateDto> dto,HttpServletResponse response){
+	        	
+		try {
+			log.info("导出勾选图片请求参数：{}",dto);
+			response.setContentType("application/vnd.ms-excel");    
+	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
+			OutputStream ouputStream = response.getOutputStream();
+			HubSelectedService.exportSelectPicExcel(dto,ouputStream);
+		} catch (Exception e) {
+			log.error("导出勾选图片失败：{}",e);
+		}
+    }
 	 private void sendMessageToTask(String taskNo,int type,String data){
 	    	ProductImportTask productImportTask = new ProductImportTask();
 	    	productImportTask.setMessageId(UUID.randomUUID().toString());
@@ -147,9 +205,9 @@ public class HubSelectedController {
 			hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 			return hubSpuTask;
 	    }
-    private HubSpuImportTaskDto saveTaskIntoMysql(int taskType){
-    	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
-    	Date date = new Date();
+   private HubSpuImportTaskDto saveTaskIntoMysql(int taskType){
+   	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+   	Date date = new Date();
 		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
 		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
 		hubSpuTask.setCreateTime(date);
@@ -158,9 +216,9 @@ public class HubSelectedController {
 		Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
 		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 		return hubSpuTask;
-    }
-	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
-    public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+   }
+	@RequestMapping(value = "/export-product1",method ={RequestMethod.POST,RequestMethod.GET})
+   public void exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
 			long startTime  = System.currentTimeMillis();
@@ -181,14 +239,14 @@ public class HubSelectedController {
 			log.error("导出查询商品失败：{}",e);
 		}
 		
-    }
+   }
 	/**
 	 * 导出查询图片
 	 * @param dto
 	 * @return
 	 */
-	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
-    public void exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+	@RequestMapping(value = "/export-select-pic1",method = RequestMethod.POST)
+    public void exportSelectPic1(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
 			dto.setPageNo(0);
@@ -208,23 +266,5 @@ public class HubSelectedController {
 		}
 		
 		log.info("===============导出查询图片请求结束===========");
-    }
-	/**
-	 * 导出勾选图片
-	 * @param dto
-	 * @return
-	 */
-	@RequestMapping(value = "/export-check-pic",method = RequestMethod.POST)
-    public void exportCheckPic(@RequestBody List<HubWaitSelectStateDto> dto,HttpServletResponse response){
-	        	
-		try {
-			log.info("导出勾选图片请求参数：{}",dto);
-			response.setContentType("application/vnd.ms-excel");    
-	        response.setHeader("Content-Disposition", "attachment;filename="+"selected_product_" + System.currentTimeMillis()+".xls");    
-			OutputStream ouputStream = response.getOutputStream();
-			HubSelectedService.exportSelectPicExcel(dto,ouputStream);
-		} catch (Exception e) {
-			log.error("导出勾选图片失败：{}",e);
-		}
     }
 }
