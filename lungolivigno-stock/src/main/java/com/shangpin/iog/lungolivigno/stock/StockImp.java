@@ -1,5 +1,17 @@
 package com.shangpin.iog.lungolivigno.stock;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
@@ -14,16 +26,6 @@ import com.shangpin.iog.lungolivigno.dto.Result;
 import com.shangpin.iog.lungolivigno.dto.Sizes;
 import com.shangpin.iog.lungolivigno.dto.User;
 import com.shangpin.iog.lungolivigno.schedule.AppContext;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
-
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * Created by lubaijiang on 2015/9/14.
@@ -51,6 +53,9 @@ public class StockImp  extends AbsUpdateProductStock {
         url_getStock = bdl.getString("url_getStock");
         url_login = bdl.getString("url_login");
     }
+    
+    private static Gson gson = new Gson();
+    
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
@@ -85,46 +90,47 @@ public class StockImp  extends AbsUpdateProductStock {
 						
 					}									
 				}
-				
-				Pagination pagination = new Pagination();
-				pagination.setCount(100000);
-				pagination.setOffset(1);
 				RequestStokDTO  requestStokDTO = new RequestStokDTO();
 				requestStokDTO.setSku(set); 
 				requestStokDTO.setWithDetail(true);
-				requestStokDTO.setPagination(pagination); 
-				String requestStokStr = new Gson().toJson(requestStokDTO);
-				System.out.println(urlStock);
-				String stockResult = HttpUtil45.operateData("post", "json", urlStock, outTimeConf, null, requestStokStr, "", "");
-				ResponseDTO responseDTO = new Gson().fromJson(stockResult, ResponseDTO.class);
-//				System.out.println(stockResult); 
-				for(Result resultDto : responseDTO.getResult()){
-					try {
-						for(Sizes size :resultDto.getSizes()){
+				int offset = 1;
+				while(true){
+					Pagination pagination = new Pagination();
+					pagination.setCount(100);
+					pagination.setOffset(offset);
+					requestStokDTO.setPagination(pagination); 
+					String requestStokStr = gson.toJson(requestStokDTO);
+					logger.info("请求参数=========="+requestStokStr); 
+					String stockResult = HttpUtil45.operateData("post", "json", urlStock, outTimeConf, null, requestStokStr, "", "");
+					ResponseDTO responseDTO = gson.fromJson(stockResult, ResponseDTO.class);
+					if(null != responseDTO.getResult() && responseDTO.getResult().size() > 0){
+						for(Result resultDto : responseDTO.getResult()){
 							try {
-								if(size.getQty()>0){
-									stockMap.put(resultDto.getSku()+"-"+size.getSizeIndex(), size.getQty()+"");									
-									logger.info(resultDto.getSku()+"-"+size.getSizeIndex()+"--------------"+resultDto.getStoreCode()+" Qty:"+size.getQty());
+								for(Sizes size :resultDto.getSizes()){
+									try {
+										if(size.getQty()>0){
+											stockMap.put(resultDto.getSku()+"-"+size.getSizeIndex(), size.getQty()+"");									
+											logger.info(resultDto.getSku()+"-"+size.getSizeIndex()+"--------------"+resultDto.getStoreCode()+" Qty:"+size.getQty());
+										}
+									} catch (Exception e) {
+										// TODO: handle exception
+									}
 								}
 							} catch (Exception e) {
-								// TODO: handle exception
+								logError.error(e); 
 							}
 						}
-					} catch (Exception e) {
-						logError.error(e); 
+						offset = offset + 100;
+					}else{
+						break;
 					}
-					
 				}
-				
 			}else{
 				logger.info("##################登录失败##################################");
 			}
-        
-        
         }catch(Exception ex){
         	logError.error(ex);
         }
-        
         for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
                 skustock.put(skuno, stockMap.get(skuno));
@@ -135,7 +141,7 @@ public class StockImp  extends AbsUpdateProductStock {
         return skustock;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception{
     	//加载spring
         loadSpringContext();    
 //    	StockImp s = new StockImp();

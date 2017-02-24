@@ -1,22 +1,16 @@
 package com.shangpin.iog.lungolivigno.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
-import com.shangpin.framework.ServiceException;
-import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
@@ -24,7 +18,6 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.lungolivigno.dto.LoginDTO;
 import com.shangpin.iog.lungolivigno.dto.Pagination;
-import com.shangpin.iog.lungolivigno.dto.RequestAttributeDTO;
 import com.shangpin.iog.lungolivigno.dto.RequestPriceDTO;
 import com.shangpin.iog.lungolivigno.dto.RequestProductsDTO;
 import com.shangpin.iog.lungolivigno.dto.ResponseGetPrice;
@@ -67,6 +60,8 @@ public class FetchProduct extends AbsSaveProduct{
 		url_getPrice = bdl.getString("url_getPrice");
 	}
 	
+	private static Gson gson =  new Gson();
+	
 	public Map<String, Object> fetchProductAndSave() {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		List<SkuDTO> skuList = new ArrayList<SkuDTO>();
@@ -91,7 +86,7 @@ public class FetchProduct extends AbsSaveProduct{
 			String result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
 			logger.info("login result==="+result);
 			int i = 0;
-			while(HttpUtil45.errorResult.equals(result) && i<100){
+			while(HttpUtil45.errorResult.equals(result) && i<10){
 				result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
 				i++;
 			}
@@ -103,93 +98,101 @@ public class FetchProduct extends AbsSaveProduct{
 				//获取价格
 //				String priceListJson = HttpUtil45.post(url_getPriceList+sessionId, outTimeConf);
 //				System.out.println(priceListJson); 
-				
-				//获取产品
-				Pagination pagination = new Pagination();
-				pagination.setCount(100000);
-				pagination.setOffset(1);
-				String url = url_getProducts+sessionId;
-				System.out.println(url);
 				RequestProductsDTO requestProductsDTO = new RequestProductsDTO();
 				requestProductsDTO.setFromDate("20160101");
-				requestProductsDTO.setPagination(pagination);
 				requestProductsDTO.setPriceList("01");
 				requestProductsDTO.setWithStock("true");
-				String jsonValuePro = new Gson().toJson(requestProductsDTO); 
-				logger.info(jsonValuePro); 
-				String productsResult = HttpUtil45.operateData("post", "json", url, outTimeConf, null, jsonValuePro, "", "");
-				System.out.println(productsResult); 
-				logger.info("=================获取数据结束==============");
-				System.out.println("=================获取数据结束==============");
-				ResponseProductsDTO responseProductsDTO = new Gson().fromJson(productsResult, ResponseProductsDTO.class);
-				logger.info("=================转化对象结束==============");
-				System.out.println("=================转化对象结束==============");
-				for(Result  resultDTO :responseProductsDTO.getResult()){
-					try {
-						SpuDTO spu = new SpuDTO();
-						spu.setId(UUIDGenerator.getUUID());
-						spu.setSupplierId(supplierId);
-						spu.setSpuId(resultDTO.getSku());
-						spu.setCategoryGender(resultDTO.getAttributes().get(2).getValue());
-						spu.setCategoryName(resultDTO.getAttributes().get(8).getValue().trim());
-						spu.setBrandName(resultDTO.getAttributes().get(1).getValue());
-						spu.setSeasonName(resultDTO.getAttributes().get(3).getValue()+resultDTO.getAttributes().get(4).getValue());
-						String material = resultDTO.getAttributes().get(10).getValue().trim();
-						spu.setMaterial(StringUtils.isNotBlank(material)? material:resultDTO.getAttributes().get(10).getCode().trim());
-						String origin = resultDTO.getAttributes().get(6).getValue();
-						spu.setProductOrigin(StringUtils.isNotBlank(origin)? origin:resultDTO.getAttributes().get(6).getCode());
-						spuList.add(spu);
-						
-						//请求获取价格
-						RequestPriceDTO requestPriceDTO =  new RequestPriceDTO();
-						List<String> skus = new ArrayList<String>();
-						skus.add(resultDTO.getSku());
-						requestPriceDTO.setSku(skus);
-						requestPriceDTO.setPriceList("ES"); 
-						requestPriceDTO.setPagination(pagination);
-						String priceParam = new Gson().toJson(requestPriceDTO);
-						String priceJson = HttpUtil45.operateData("post", "json", url_getPrice+sessionId, outTimeConf, null, priceParam, "", "");
-						System.out.println(priceJson); 
-						ResponseGetPrice responseGetPrice = new Gson().fromJson(priceJson, ResponseGetPrice.class);
-						for(Sizes sizes : resultDTO.getSizes()){
+				int offset = 1;
+				while(true){
+					//获取产品
+					Pagination pagination = new Pagination();
+					pagination.setCount(100);
+					pagination.setOffset(offset);
+					requestProductsDTO.setPagination(pagination);
+					String jsonValuePro = gson.toJson(requestProductsDTO); 
+					logger.info("请求参数============="+jsonValuePro); 
+					String url = url_getProducts+sessionId;
+					System.out.println(url);
+					String productsResult = HttpUtil45.operateData("post", "json", url, outTimeConf, null, jsonValuePro, "", "");
+					System.out.println(productsResult); 
+					logger.info("=================获取数据结束==============");
+					System.out.println("=================获取数据结束==============");
+					ResponseProductsDTO responseProductsDTO = gson.fromJson(productsResult, ResponseProductsDTO.class);
+					logger.info("=================转化对象结束==============");
+					System.out.println("=================转化对象结束==============");
+					if(null != responseProductsDTO.getResult() && responseProductsDTO.getResult().size() >0){
+						for(Result  resultDTO :responseProductsDTO.getResult()){
 							try {
-								String size = sizes.getLabel();
-								if(StringUtils.isNotBlank(sizes.getLabel()) && sizes.getLabel().contains("½")){
-									size = size.replaceAll("½", "+");
+								SpuDTO spu = new SpuDTO();
+								spu.setId(UUIDGenerator.getUUID());
+								spu.setSupplierId(supplierId);
+								spu.setSpuId(resultDTO.getSku());
+								spu.setCategoryGender(resultDTO.getAttributes().get(2).getValue());
+								spu.setCategoryName(resultDTO.getAttributes().get(8).getValue().trim());
+								spu.setBrandName(resultDTO.getAttributes().get(1).getValue());
+								spu.setSeasonName(resultDTO.getAttributes().get(3).getValue()+resultDTO.getAttributes().get(4).getValue());
+								String material = resultDTO.getAttributes().get(10).getValue().trim();
+								spu.setMaterial(StringUtils.isNotBlank(material)? material:resultDTO.getAttributes().get(10).getCode().trim());
+								String origin = resultDTO.getAttributes().get(6).getValue();
+								spu.setProductOrigin(StringUtils.isNotBlank(origin)? origin:resultDTO.getAttributes().get(6).getCode());
+								spuList.add(spu);
+								
+								//请求获取价格
+								RequestPriceDTO requestPriceDTO =  new RequestPriceDTO();
+								Pagination pagination1 = new Pagination();
+								pagination1.setCount(100);
+								pagination1.setOffset(1); 
+								List<String> skus = new ArrayList<String>();
+								skus.add(resultDTO.getSku());
+								requestPriceDTO.setSku(skus);
+								requestPriceDTO.setPriceList("ES"); 
+								requestPriceDTO.setPagination(pagination1);
+								String priceParam = gson.toJson(requestPriceDTO);
+								String priceJson = HttpUtil45.operateData("post", "json", url_getPrice+sessionId, outTimeConf, null, priceParam, "", "");
+								System.out.println(priceJson); 
+								ResponseGetPrice responseGetPrice = gson.fromJson(priceJson, ResponseGetPrice.class);
+								for(Sizes sizes : resultDTO.getSizes()){
+									try {
+										String size = sizes.getLabel();
+										if(StringUtils.isNotBlank(sizes.getLabel()) && sizes.getLabel().contains("½")){
+											size = size.replaceAll("½", "+");
+										}
+										
+										SkuDTO sku = new SkuDTO();
+										sku.setId(UUIDGenerator.getUUID());
+				                        sku.setSupplierId(supplierId);
+				                        sku.setSpuId(spu.getSpuId());
+				                        sku.setSkuId(resultDTO.getSku()+"-"+sizes.getSizeIndex());
+				                        sku.setProductName(resultDTO.getName());
+				                        sku.setMarketPrice("");
+				                        sku.setSalePrice("");
+				                        String supplierPrice = "";
+				                        for(Sizes sizePrice :responseGetPrice.getResult().get(0).getSizes()){
+				                        	if(sizes.getSizeIndex() == sizePrice.getSizeIndex()){
+				                        		supplierPrice = sizePrice.getPrice();
+				                        		break;
+				                        	}
+				                        }
+				                        sku.setSupplierPrice(supplierPrice); 
+				                        sku.setProductCode(resultDTO.getAttributes().get(5).getCode());
+				                        sku.setColor(resultDTO.getAttributes().get(9).getValue().trim());
+				                        sku.setProductSize(size);
+				                        sku.setStock(""+sizes.getQty());
+				                        skuList.add(sku);
+				                        
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
 								}
 								
-								SkuDTO sku = new SkuDTO();
-								sku.setId(UUIDGenerator.getUUID());
-		                        sku.setSupplierId(supplierId);
-		                        sku.setSpuId(spu.getSpuId());
-		                        sku.setSkuId(resultDTO.getSku()+"-"+sizes.getSizeIndex());
-		                        sku.setProductName(resultDTO.getName());
-		                        sku.setMarketPrice("");
-		                        sku.setSalePrice("");
-		                        String supplierPrice = "";
-		                        for(Sizes sizePrice :responseGetPrice.getResult().get(0).getSizes()){
-		                        	if(sizes.getSizeIndex() == sizePrice.getSizeIndex()){
-		                        		supplierPrice = sizePrice.getPrice();
-		                        		break;
-		                        	}
-		                        }
-		                        sku.setSupplierPrice(supplierPrice); 
-		                        sku.setProductCode(resultDTO.getAttributes().get(5).getCode());
-		                        sku.setColor(resultDTO.getAttributes().get(9).getValue().trim());
-		                        sku.setProductSize(size);
-		                        sku.setStock(""+sizes.getQty());
-		                        skuList.add(sku);
-		                        
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
-						
-					} catch (Exception e) {
-						e.printStackTrace();
+						offset = offset + 100 ;
+					}else{
+						break;
 					}
-					
-					
 				}
 //				String urlAttr = url_getAttributes+sessionId;
 //				RequestAttributeDTO requestAttributeDTO = new RequestAttributeDTO();
@@ -202,8 +205,6 @@ public class FetchProduct extends AbsSaveProduct{
 			}else{
 				logger.info("##################登录失败##################################");
 			}
-			
-			
 //			String urlStock = url_getStock+sessionId;
 //			System.out.println(urlStock);
 //			String productsResult = HttpUtil45.post(urlStock, outTimeConf);

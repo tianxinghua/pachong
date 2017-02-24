@@ -1,32 +1,24 @@
 package com.shangpin.ice.ice;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
-import IceUtilInternal.StringUtil;
-import ShangPin.SOP.Entity.Api.Product.*;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
-import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
-import ShangPin.SOP.Entity.DTO.PurchaseOrderDetilApiDto;
-import ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto;
-import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
-
-import com.mysql.jdbc.log.LogUtils;
-import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.iog.common.utils.SendMail;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.dto.SkuRelationDTO;
-import com.shangpin.iog.dto.SpecialSkuDTO;
-import com.shangpin.iog.dto.StockUpdateDTO;
-import com.shangpin.iog.dto.StockUpdateLimitDTO;
-import com.shangpin.iog.service.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -35,9 +27,31 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ShangPin.SOP.Api.ApiException;
+import ShangPin.SOP.Entity.Api.Product.SopProductSkuIce;
+import ShangPin.SOP.Entity.Api.Product.SopProductSkuPage;
+import ShangPin.SOP.Entity.Api.Product.SopProductSkuPageQuery;
+import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
+import ShangPin.SOP.Entity.Api.Product.SopSkuInventoryIce;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetail;
+import ShangPin.SOP.Entity.Api.Purchase.PurchaseOrderDetailPage;
+import ShangPin.SOP.Entity.DTO.PurchaseOrderDetilApiDto;
+import ShangPin.SOP.Entity.DTO.PurchaseOrderInfoApiDto;
+import ShangPin.SOP.Entity.Where.OpenApi.Purchase.PurchaseOrderQueryDto;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.iog.common.utils.SendMail;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.dto.SpecialSkuDTO;
+import com.shangpin.iog.dto.StockUpdateDTO;
+import com.shangpin.iog.dto.StockUpdateLimitDTO;
+import com.shangpin.iog.service.SkuPriceService;
+import com.shangpin.iog.service.SkuRelationService;
+import com.shangpin.iog.service.SpecialSkuService;
+import com.shangpin.iog.service.StockUpdateLimitService;
+import com.shangpin.iog.service.UpdateStockService;
 
 /**
  * 更新主站库存的抽象类<br/>
@@ -1171,15 +1185,15 @@ public abstract class AbsUpdateProductStock {
 		this.useThread = useThread;
 	}
 	
-	public static void main(String[] args) {
-		Date nowTime =com.shangpin.iog.common.utils.DateTimeUtil.convertFormat("2016-11-16 07:59:59", "yyyy-MM-dd HH:mm:ss");
-		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss"));
-		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss"));
-		long theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
-		long theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
-		if(nowTime.getTime() >=theStart && nowTime.getTime() <= theEnd){
-			System.out.println("true"); 
-		}
-	}
+//	public static void main(String[] args) {
+//		Date nowTime =com.shangpin.iog.common.utils.DateTimeUtil.convertFormat("2016-11-16 07:59:59", "yyyy-MM-dd HH:mm:ss");
+//		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss"));
+//		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss"));
+//		long theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
+//		long theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
+//		if(nowTime.getTime() >=theStart && nowTime.getTime() <= theEnd){
+//			System.out.println("true"); 
+//		}
+//	}
 		
 }
