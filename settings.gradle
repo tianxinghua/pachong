@@ -43,5 +43,7 @@ include 'giglio'
 
 include 'lungolivigno'
 include 'lungolivigno-stock'
+include 'GiBiLogic-stock'
+include 'Della-stock'
 
 
