@@ -33,4 +33,5 @@ public class HubPendingSkuCheckResult implements Serializable {
     private String sizeValue;
     private String sizeType;
     private String sizeId;
+    private boolean isFilter;
 }

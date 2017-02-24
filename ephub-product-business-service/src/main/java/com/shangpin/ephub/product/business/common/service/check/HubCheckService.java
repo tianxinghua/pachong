@@ -229,11 +229,11 @@ public class HubCheckService {
 			result.setPassing(false);
 			result.setOriginal(false);
 		}
-		//校验图片
-		if(null == hubProduct.getPicState() || PicState.HANDLED.getIndex() != hubProduct.getPicState()){
-			str.append("图片不完整");
-			result.setPassing(false);
-		}
+//		//校验图片
+//		if(null == hubProduct.getPicState() || PicState.HANDLED.getIndex() != hubProduct.getPicState()){
+//			str.append("图片不完整");
+//			result.setPassing(false);
+//		}
 		
 		result.setResult(str.toString());
 		//校验产地
@@ -345,10 +345,11 @@ public class HubCheckService {
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 		
 		if("排除".equals(sizeType)){
-			checkResult.setPassing(true);
+			checkResult.setPassing(false);
 	     	checkResult.setSizeType("排除");
         	checkResult.setSizeValue(size);
         	checkResult.setMessage("尺码排除");
+        	checkResult.setFilter(true);
         	return checkResult;
 		}
 		
