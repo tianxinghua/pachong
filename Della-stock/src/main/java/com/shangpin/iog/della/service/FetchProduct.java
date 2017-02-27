@@ -1,25 +1,19 @@
 package com.shangpin.iog.della.service;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
-
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.schedule.AppContext;
@@ -35,22 +29,13 @@ public class FetchProduct extends AbsUpdateProductStock {
 	private static Logger logInfo  = Logger.getLogger("info");
 	private static LoggerUtil error = LoggerUtil.getLogger("error");
 	private static ResourceBundle bdl = null;
-	private static String supplierId = "";
 	private static String remoteFileName = "";
 	private static String local = "";
-
-	private static String host;
-	private static String app_key;
-	private static String app_secret;
 
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("sop");
-		supplierId = bdl.getString("supplierId");
 		remoteFileName = bdl.getString("remoteFileName");
-		host = bdl.getString("HOST");
-	    app_key = bdl.getString("APP_KEY");
-	    app_secret = bdl.getString("APP_SECRET");
 	    local = bdl.getString("local");
 
 	}
@@ -83,25 +68,23 @@ public class FetchProduct extends AbsUpdateProductStock {
 				return skustock;
 			}			
 		}
-		
-		for(Item item:items){
-			
+		if(null != items && items.size() > 0){
+			logInfo.info("获取到的供应商的数据大小是========"+items.size()); 
+			for(Item item:items){
+				String stock = item.getQuantity();
+				stockMap.put(item.getItem_code(), Integer.parseInt(StringUtils.isNotBlank(stock) ? stock : "0"));
+			}
+			for (String skuno : skuNo) {
+	            if(stockMap.containsKey(skuno)){
+	                skustock.put(skuno, stockMap.get(skuno));
+	            } else{
+	                skustock.put(skuno, 0);
 
-			stockMap.put(item.getItem_code(), Integer.parseInt(item.getQuantity()));
-
-//			stockMap.put(item.getItem_code(), Integer.parseInt(item.getQuantity()));
-
-//			System.out.println(stockMap.toString());
+	            }
+	        }
+		}else{
+			logInfo.info("获取到的供应商的数据大小是0"); 
 		}
-		
-		for (String skuno : skuNo) {
-            if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, stockMap.get(skuno));
-            } else{
-                skustock.put(skuno, 0);
-
-            }
-        }
 		
 		return skustock;
 	}
