@@ -622,11 +622,22 @@ public class ExportServiceImpl {
 			StringBuffer supplierName = new StringBuffer();
 			List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 			String supplierNo = entry.getKey();
-			SupplierDTO supplierDto = gmsGateWay.getSupplierDto(supplierNo);
+			SupplierDTO supplierDto = null;
+			try{
+				supplierDto = gmsGateWay.getSupplierDto(supplierNo);
+			}catch(Exception e){
+				log.error("===获取供应商信息报错：{}",e);
+			}
+			
 			List<HubWaitSelectResponseDto> listSupp = entry.getValue();
 			for (HubWaitSelectResponseDto response : listSupp) {
 				map = new HashMap<String, String>();
-				convertTOExcel(response, map,supplierDto.getSupplierName());
+				if(supplierDto!=null){
+					convertTOExcel(response, map,supplierDto.getSupplierName());	
+				}else{
+					convertTOExcel(response, map,supplierNo);
+				}
+				
 				result.add(map);
 			}
 		
@@ -667,10 +678,17 @@ public class ExportServiceImpl {
 				marketCurry = listSku.getMarketPriceCurrencyorg();
 			}
 			BrandDom brandDom = getBrand(response.getBrandNo());
+		
 			String categoryName = getCategoryName(response.getCategoryNo());
-			map.put("brandName", brandDom.getBrandEnName());
-			map.put("brandChName", brandDom.getBrandCnName());
-			map.put("brandNo", brandDom.getBrandNo());
+			
+			if(brandDom!=null){
+				map.put("brandName", brandDom.getBrandEnName());
+				map.put("brandChName", brandDom.getBrandCnName());
+				map.put("brandNo", brandDom.getBrandNo());
+			}else{
+				map.put("brandNo", response.getBrandNo());
+			}
+			
 			if (supplyPrice != null) {
 				map.put("supplyPrice", supplyPrice + "");
 			}
@@ -722,27 +740,35 @@ public class ExportServiceImpl {
 				return sopSkuResponseDto.getResDatas().get(0).getSopSkuNo();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("===获取spSkuNo信息报错：{}",e);
 		}
 		return null;
 	}
 
 	private String getCategoryName(String categoryNo) {
-		FourLevelCategory category = gmsGateWay.findCategory(categoryNo);
-		if (category != null) {
-			return category.getFourthName();
-		} else {
-			return categoryNo;
+		
+		try{
+			FourLevelCategory category = gmsGateWay.findCategory(categoryNo);
+			if (category != null) {
+				return category.getFourthName();
+			} 
+		}catch(Exception e){
+			log.error("===获取category信息报错：{}",e);
 		}
+		return categoryNo;
 	}
 
 	private BrandDom getBrand(String brandNo) {
-		BrandDom brand = gmsGateWay.findBrand(brandNo);
-		if (brand != null) {
-			return brand;
-		} else {
-			return null;
+		
+		try{
+			BrandDom brand = gmsGateWay.findBrand(brandNo);
+			if (brand != null) {
+				return brand;
+			}
+		}catch(Exception e){
+			log.error("===获取brandNo信息报错：{}",e);
 		}
+		return null;
 	}
 
 	public void exportHubPicSelected(ProductImportTask message) throws Exception  {
