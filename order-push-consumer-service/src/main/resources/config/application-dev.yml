@@ -389,6 +389,17 @@ shangpin:
               isPurchaseExp: no
               openApiKey:
               openApiSecret:
+      parisi:
+              hostUrl: http://www.rpwebservice.it/wsnat13.asmx
+              stockUrl: http://tempuri.org/GetStockWithSku
+              setOrderUrl: http://tempuri.org/PutOrderWithSku
+              confirmOrderUrl: http://tempuri.org/ConfirmOrderWithSku
+              cancelOrderUrl: http://tempuri.org/CancelOrderWithSku
+              deleteOrderUrl: http://tempuri.org/DeleteOrder
+              strKey: YX123HF
+              isPurchaseExp: no
+              openApiKey:
+              openApiSecret:
       supplier:
               delayTime: 1000
               retry: 120

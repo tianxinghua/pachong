@@ -98,6 +98,8 @@ public class SupplierProperties {
 	private Lungolivigno lungolivigno;
 
 	private BaseBlu baseBlu;
+
+	private Parisi parisi;
 	
 	private Tessabit tessabit;
 	

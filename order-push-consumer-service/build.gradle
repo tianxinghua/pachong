@@ -57,6 +57,7 @@ dependencies {
 	compile('com.shangpin.common:commons-rdbms:2.0.0.RELEASE')
 	compile('com.alibaba:fastjson:1.2.16')
 	compile('com.google.code.gson:gson:2.2.2')
+	compile('dom4j:dom4j:1.6')
 	compile('com.github.scribejava:scribejava-core:2.1.0')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-amqp')
