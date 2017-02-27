@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -38,6 +41,8 @@ import lombok.extern.slf4j.Slf4j;
 public class DataHandleService {
 	
 	@Autowired
+	HubSkuPendingGateWay hubSkuPendingGateWay;
+	@Autowired
 	HubSpuGateWay hubSpuGateway;
 	@Autowired
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
@@ -63,6 +68,23 @@ public class DataHandleService {
 		hubSpuPendingCriteriaDto.createCriteria().andSupplierIdEqualTo(hubPendingSpuDto.getSupplierId()).andSupplierSpuNoEqualTo(hubPendingSpuDto.getSupplierSpuNo());
 		return hubSpuPendingGateWay.selectByCriteria(hubSpuPendingCriteriaDto);
 		
+	}
+
+	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId(HubSpuPendingDto hubSpuPendingDro) {
+		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(hubSpuPendingDro.getSupplierId())
+				.andSpuPendingIdEqualTo(hubSpuPendingDro.getSpuPendingId());
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000);
+		 return hubSkuPendingGateWay.selectByCriteria(criteria);
+	}
+
+	public void insertHubSkuPendingDto(HubSkuPendingDto hubSkuPendingDto) {
+		hubSkuPendingGateWay.insert(hubSkuPendingDto);		
+	}
+
+	public void updateHubSkuPendingByPrimaryKey(HubSkuPendingDto hubSkuPendingDto) {
+		hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);		
 	}
 	
 }

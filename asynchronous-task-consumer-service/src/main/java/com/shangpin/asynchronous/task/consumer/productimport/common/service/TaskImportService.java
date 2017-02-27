@@ -122,7 +122,7 @@ public class TaskImportService {
 					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
 						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
 					}else{
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo);
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeTypeEqualTo(product.getSizeType());
 					}
 					List<HubSkuDto> listSku = hubSkuGateWay.selectByCriteria(sku);
 					if(listSku!=null&&listSku.size()>0){
@@ -460,13 +460,6 @@ public class TaskImportService {
 			//更新
 			pengdingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
 		} 
-//		else {尺寸、尺码
-//			SpuModelDto spuModelDto = new SpuModelDto();
-//			spuModelDto.setBrandNo(hubPendingSpuDto.getHubBrandNo());
-//			spuModelDto.setSpuModel(hubPendingSpuDto.getSpuModel());
-//			log.info("pendingToHub.auditPending推送参数:{}", spuModelDto);
-//			pengdingToHubGateWay.auditPending(spuModelDto);
-//		}
 	}
 
 	private Long saveOrUpdatePendingSpu(boolean hubIsExist,HubSpuPendingDto isPendingSpuExist, HubSpuPendingDto hubPendingSpuDto,

@@ -22,7 +22,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
@@ -139,17 +138,12 @@ public class PendingSkuImportService {
 		
 		for (Map.Entry<Long, String> entry : spuMap.entrySet()) {
 			Long spuPendingId = entry.getKey();
-			
 			HubSkuPendingCriteriaDto criate = new HubSkuPendingCriteriaDto();
-			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andFilterFlagEqualTo((byte)1).andSpSkuSizeStateEqualTo((byte)1);
 			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criate);
 			boolean flag = false;
 			if(list!=null&&list.size()>0){
-				for(HubSkuPendingDto sku:list){
-					if(sku.getFilterFlag().intValue()==1&&sku.getSpSkuSizeState().intValue()==1){
-						flag = true;
-					}
-				}
+				flag = true;
 			}
 			
 			if(!flag){
@@ -163,7 +157,6 @@ public class PendingSkuImportService {
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
-
 	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map,Map<Long,String> spuMap) throws Exception{
 
 		map.put("taskNo", taskNo);

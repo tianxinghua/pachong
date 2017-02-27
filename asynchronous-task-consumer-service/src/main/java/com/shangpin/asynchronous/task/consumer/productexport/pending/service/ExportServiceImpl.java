@@ -605,7 +605,11 @@ public class ExportServiceImpl {
 		// 拆分数据，以供应商为维度
 		Map<String, List<HubWaitSelectResponseDto>> mapSupplier = new HashMap<String, List<HubWaitSelectResponseDto>>();
 		for (HubWaitSelectResponseDto response : list) {
+			
 			String supplierNo = response.getSupplierNo();
+			if(StringUtils.isBlank(supplierNo)){
+				continue;
+			}
 			if (mapSupplier.containsKey(supplierNo)) {
 				mapSupplier.get(supplierNo).add(response);
 			} else {
