@@ -1,5 +1,6 @@
 package com.shangpin.supplier.product.consumer.supplier.mass;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -34,12 +35,13 @@ public class MassHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
-	
+
+	ObjectMapper mapper = new ObjectMapper();
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
-				ProductDTO item = JsonUtil.deserialize(message.getData(), ProductDTO.class);
+				ProductDTO item = mapper.readValue(message.getData(), ProductDTO.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
@@ -57,7 +59,7 @@ public class MassHandler implements ISupplierHandler {
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("mass异常："+e.getMessage(),e);
 		}
 		

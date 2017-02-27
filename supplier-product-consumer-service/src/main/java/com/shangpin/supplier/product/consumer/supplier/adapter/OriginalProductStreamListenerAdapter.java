@@ -84,6 +84,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("zitafabianiHandler")
 	private ISupplierHandler zitafabianiHandler;
+
+	@Autowired
+	@Qualifier("opticalHandler")
+	private ISupplierHandler opticalHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -529,7 +533,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void opticalStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
+		opticalHandler.handleOriginalProduct(message, headers);
 		
 	}
 	/**

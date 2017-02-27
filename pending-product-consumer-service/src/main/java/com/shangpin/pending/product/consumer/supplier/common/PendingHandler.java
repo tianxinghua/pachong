@@ -248,8 +248,11 @@ public class PendingHandler extends VariableInit {
 			if (null != spu) {
 				result.put(spu.getSupplierId(), spu.getStatus());
 				List<PendingHeaderSku> skus = spu.getSkus();
-				for (PendingHeaderSku sku : skus) {
-					result.put(sku.getSkuNo(), sku.getStatus());
+				if(null!=skus){
+
+					for (PendingHeaderSku sku : skus) {
+						result.put(sku.getSkuNo(), sku.getStatus());
+					}
 				}
 			}
 

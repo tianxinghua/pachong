@@ -44,6 +44,7 @@ public class PendingCommonHandler {
                 }
                 shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,categoryMap);
                 shangpinRedis.setex(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000,"1");
+                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
             }
         }
         return getSpCategoryValueFromRedis(supplierCategory);
