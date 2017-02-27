@@ -101,8 +101,8 @@ public class HubSelectedController {
 			
 		} catch (Exception e) {
 			log.error("已选品获取列表失败：{}",e);
-			return HubResponse.errorResp("获取列表失败");
 		}
+		return HubResponse.errorResp("获取列表失败");
     }
 	/**
 	 * 导出查询商品
@@ -110,16 +110,19 @@ public class HubSelectedController {
 	 * @return
 	 */
 	@RequestMapping(value = "/export-product",method ={RequestMethod.POST,RequestMethod.GET})
-    public HubResponse exportProduct2(@RequestBody HubWaitSelectRequestWithPageDto dto){
+    public HubResponse exportProduct(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
 		try {
+			
+			log.info("导出已选品参数：{}",dto);
 			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_SELECTED.getIndex());
 			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_SELECTED.getIndex(),JsonUtil.serialize(dto));
+			log.info("导出已选品参数");
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出查询商品失败：{}",e);
-			return HubResponse.errorResp("导出异常");
 		}
+		return HubResponse.errorResp("导出异常");
     }
 	
 	/**
@@ -137,9 +140,8 @@ public class HubSelectedController {
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出查询商品失败：{}",e);
-			return HubResponse.errorResp("导出异常");
 		}
-		
+		return HubResponse.errorResp("导出异常");
     }
 	/**
 	 * 导出勾选图片
@@ -158,8 +160,8 @@ public class HubSelectedController {
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出图片失败：{}",e);
-			return HubResponse.errorResp("导出异常");
 		}
+		return HubResponse.errorResp("导出异常");
     }
 	/**
 	 * 导出勾选图片
@@ -202,6 +204,7 @@ public class HubSelectedController {
 			hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 			hubSpuTask.setResultFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 			Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
+			log.info("====导出已选品任务保存入库："+spuImportTaskId);
 			hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 			return hubSpuTask;
 	    }
