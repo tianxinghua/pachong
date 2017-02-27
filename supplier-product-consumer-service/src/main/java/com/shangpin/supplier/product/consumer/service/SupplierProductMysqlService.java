@@ -252,7 +252,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @param pendingSpu
 	 */
-	private void convertHubSpuToPendingSpu(HubSupplierSpuDto hubSpu, PendingSpu pendingSpu) throws Exception {
+	public void convertHubSpuToPendingSpu(HubSupplierSpuDto hubSpu, PendingSpu pendingSpu) throws Exception {
 		pendingSpu.setSupplierId(hubSpu.getSupplierId());
 		pendingSpu.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
 		pendingSpu.setSupplierSpuId(hubSpu.getSupplierSpuId());

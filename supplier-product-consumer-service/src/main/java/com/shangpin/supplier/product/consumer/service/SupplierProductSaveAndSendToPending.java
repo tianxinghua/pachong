@@ -1,6 +1,7 @@
 package com.shangpin.supplier.product.consumer.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
@@ -22,6 +25,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
 
@@ -46,8 +50,25 @@ public class SupplierProductSaveAndSendToPending {
 	SupplierProductSendToPending supplierProductSendToPending;
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
+	@Autowired
+	SupplierProductRetryManager supplierProductRetryManager;
 		
 	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
+		
+		//映射表里维护supplierId、supplierNo、supplierName
+		HubSupplierValueMappingDto list = supplierProductRetryManager.findHubSupplierValueMapping(supplierId);
+		if(list==null){
+			HubSupplierValueMappingDto dto = new HubSupplierValueMappingDto();
+			dto.setSupplierId(supplierId);
+			dto.setHubVal(supplierName);
+			dto.setHubValNo(supplierNo);
+			dto.setHubValType((byte)5);
+			dto.setCreateTime(new Date());
+			dto.setUpdateTime(new Date());
+			dto.setCreateUser("SupplierCousumerService");
+			dto.setDataState((byte)1);
+			supplierProductRetryManager.insert(dto);
+		}
 		
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);
 		Map<String,String> headers = new HashMap<String,String>();	

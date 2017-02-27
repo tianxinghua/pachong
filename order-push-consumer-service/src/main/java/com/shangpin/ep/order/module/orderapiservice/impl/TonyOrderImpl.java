@@ -254,6 +254,7 @@ public class TonyOrderImpl implements IOrderService {
         String json = gson.toJson(order,PushOrderDTO.class);
         String rtnData = null;
         try {
+        	orderDTO.setErrorType(null);
         	rtnData = tonyPushOrder(orderDTO,url+"createOrder", json);
         	orderDTO.setLogContent("锁库存推送返回结果=="+rtnData+"，锁库存推送的数据："+json);
         	logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
@@ -273,12 +274,12 @@ public class TonyOrderImpl implements IOrderService {
 	            		orderDTO.setDescription(orderDTO.getLogContent());
 	            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
 	                	orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+	            	}else if(message.contains("Order already exists")){
+	            		orderDTO.setLockStockTime(new Date());
+		            	orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
 	            	}else if(message.contains("quantity not available in the stock")){
 	            		orderDTO.setDescription(orderDTO.getLogContent());
 	                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
-	            	}else if(message.contains("Shop order id - Shop order id - Order already exists")){
-	            		orderDTO.setLockStockTime(new Date());
-		            	orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
 	            	}else{
 	            		orderDTO.setErrorType(ErrorStatus.API_ERROR);
 	            		orderDTO.setDescription(orderDTO.getLogContent());

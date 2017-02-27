@@ -16,7 +16,6 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
@@ -27,7 +26,15 @@ import com.shangpin.supplier.product.consumer.supplier.deliberti.dto.DelibertiSk
 import com.shangpin.supplier.product.consumer.supplier.deliberti.dto.DelibertiSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商deliberti消费者
+ * <p>Title: DelibertiHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:09:49
+ *
+ */
 @Component("delibertiHandler")
 @Slf4j
 public class DelibertiHandler implements ISupplierHandler {
@@ -61,7 +68,7 @@ public class DelibertiHandler implements ISupplierHandler {
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("deliberti异常："+e.getMessage(),e);
 		}
 		

@@ -16,7 +16,6 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
@@ -26,7 +25,15 @@ import com.shangpin.supplier.product.consumer.supplier.dellogliostore.dto.Dellog
 import com.shangpin.supplier.product.consumer.supplier.dellogliostore.dto.DellogSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 供应商dellogliostore消费者
+ * <p>Title: DellogliostoreHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年2月24日 上午10:10:32
+ *
+ */
 @Component("dellogliostoreHandler")
 @Slf4j
 public class DellogliostoreHandler implements ISupplierHandler {
@@ -60,7 +67,7 @@ public class DellogliostoreHandler implements ISupplierHandler {
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("dellogliostore异常："+e.getMessage(),e);
 		}
 	}

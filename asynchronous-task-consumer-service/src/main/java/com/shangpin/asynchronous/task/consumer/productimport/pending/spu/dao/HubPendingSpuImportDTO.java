@@ -24,6 +24,7 @@ public class HubPendingSpuImportDTO {
 	private String supplierNo;
 	private String supplierName;
 	private String supplierSpuNo;
+	private String supplierCategoryname;
 	private String hubCategoryName;
 	private String hubCategoryNo;
 	private String hubBrandNo;

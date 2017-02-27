@@ -22,11 +22,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
@@ -71,6 +74,8 @@ public class PendingSkuImportService {
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 	@Autowired
 	HubSpuGateWay hubSpuGateway;
+	@Autowired
+	HubSpuPendingGateWay hubSpuPendingGateWay;
 
 	public String handMessage(ProductImportTask task) throws Exception {
 
@@ -101,21 +106,65 @@ public class PendingSkuImportService {
 			return null;
 		}
 		
+//		Map<String, List<HubPendingProductImportDTO>> mapSpu = new HashMap<String, List<HubPendingProductImportDTO>>();
+//		for (HubPendingProductImportDTO product : listHubProduct) {
+//			String key = product.getSupplierId()+"_"+product.getSupplierSpuNo();
+//			if(mapSpu.containsKey(key)){
+//				mapSpu.get(key).add(product);
+//			}else{
+//				List<HubPendingProductImportDTO> arr = new ArrayList<HubPendingProductImportDTO>();
+//				arr.add(product);
+//				mapSpu.put(key, arr);
+//			}
+//		}
+//		
+//		
+//	  for (Map.Entry<String, List<HubPendingProductImportDTO>> entry : mapSpu.entrySet()) {
+//        	List<HubPendingProductImportDTO> spuList = entry.getValue();
+//        	int i = 0;
+//	  }
+		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
+		Map<Long,String> spuMap = new HashMap<Long,String>();
 		for (HubPendingProductImportDTO product : listHubProduct) {
 			if(product == null||StringUtils.isBlank(product.getSupplierId())){
 				continue;
 			}
 			map = new HashMap<String, String>();
-			checkProduct(taskNo, product, map);
+			
+			checkProduct(taskNo, product, map,spuMap);
 			listMap.add(map);
 		}
+		
+		for (Map.Entry<Long, String> entry : spuMap.entrySet()) {
+			Long spuPendingId = entry.getKey();
+			
+			HubSkuPendingCriteriaDto criate = new HubSkuPendingCriteriaDto();
+			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criate);
+			boolean flag = false;
+			if(list!=null&&list.size()>0){
+				for(HubSkuPendingDto sku:list){
+					if(sku.getFilterFlag().intValue()==1&&sku.getSpSkuSizeState().intValue()==1){
+						flag = true;
+					}
+				}
+			}
+			
+			if(!flag){
+				HubSpuPendingDto spu = new HubSpuPendingDto();
+				spu.setSpuPendingId(spuPendingId);
+				spu.setSpuState((byte)0);
+				hubSpuPendingGateWay.updateByPrimaryKeySelective(spu);
+			}
+		
+	  }
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
 
-	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map) throws Exception{
+	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map,Map<Long,String> spuMap) throws Exception{
 
 		map.put("taskNo", taskNo);
 		map.put("spuModel", product.getSpuModel());
@@ -133,6 +182,7 @@ public class PendingSkuImportService {
 		if (listSpu != null && listSpu.size() > 0) {
 			log.info(hubPendingSpuDto.getSpuModel() + "已存在pendingSpu");
 			isPendingSpuExist = listSpu.get(0);
+			spuMap.put(isPendingSpuExist.getSpuPendingId(),null);
 		}
 		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
 		// 校验sku信息
