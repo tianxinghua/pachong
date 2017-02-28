@@ -319,73 +319,15 @@ public class FetchProduct extends AbsSaveProduct{
 					
 				}
 				sku.setSalePrice(""); 
-				skuList.add(sku);
-//				try{
-//					//保存sku
-//					if(skuDTOMap.containsKey(sku.getSkuId())){
-//						skuDTOMap.remove(sku.getSkuId());
-//					}
-//					productFetchService.saveSKU(sku);					
-//					
-//				}catch(Exception e){
-//					try {
-//                        if(null != e.getMessage() && e.getMessage().equals("数据插入失败键重复")){
-//                            //更新价格和库存
-//                            productFetchService.updatePriceAndStock(sku);
-//                        } else{
-//                            e.printStackTrace();
-//                        }
-//
-//                    } catch (ServiceException e1) {
-//                        e1.printStackTrace();
-//                    }
-//				}
-				
+				skuList.add(sku);				
 				imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), picList);
-
-//				try{
-//					if(spuId.length()>0 && skuId.length()>0 && picList.size()>0){						
-//						productFetchService.savePicture(supplierId, null, skuId, picList);
-//					}
-//					
-//				}catch(Exception e){
-//					e.printStackTrace();
-//				}
-				
 				spuList.add(spu);
-				
-//				try{
-//					//保存spu
-//					System.out.println(spu.getSpuId());
-//					productFetchService.saveSPU(spu);
-//				}catch(Exception e){
-//					try{
-//	            		productFetchService.updateMaterial(spu);
-//	            	}catch(ServiceException ex){
-////	            		logger.error(ex.getMessage());
-//	            		ex.printStackTrace();
-//	            	}
-//					e.printStackTrace();
-//				}
-				
 				
 			}else if(element.getChildElements().hasNext()){
 				saveSpuDTO(element.getChildElements(),skuList,spuList,imageMap);
 			}
 		}
-		
-//		//更新网站不再给信息的老数据
-//		for(Iterator<Map.Entry<String,SkuDTO>> itor = skuDTOMap.entrySet().iterator();itor.hasNext(); ){
-//			 Map.Entry<String,SkuDTO> entry =  itor.next();
-//			if(!"0".equals(entry.getValue().getStock())){//更新不为0的数据 使其库存为0
-//				entry.getValue().setStock("0");
-//				try {
-//					productFetchService.updatePriceAndStock(entry.getValue());
-//				} catch (ServiceException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
+
 		
 	}
 
