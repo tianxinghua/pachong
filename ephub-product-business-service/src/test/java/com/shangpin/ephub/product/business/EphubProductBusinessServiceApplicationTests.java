@@ -16,14 +16,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
-import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.dto.BasicDataResponse;
-import com.shangpin.ephub.product.business.common.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.common.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.common.dto.SizeRequestDto;
-import com.shangpin.ephub.product.business.common.dto.SizeStandardItem;
-import com.shangpin.ephub.product.business.common.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
