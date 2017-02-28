@@ -8,7 +8,7 @@ import lombok.Setter;
 public class RequestProductsDTO {
 
 	String FromDate;
-	String WithStock;
+	boolean WithStock;
 	String PriceList;
 	Pagination Pagination; 
 }
