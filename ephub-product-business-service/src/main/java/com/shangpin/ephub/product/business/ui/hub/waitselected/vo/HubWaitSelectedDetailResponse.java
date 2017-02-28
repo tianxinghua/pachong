@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.hub.waitselected.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -37,6 +38,6 @@ public class HubWaitSelectedDetailResponse implements Serializable {
     
     private String price;
     private String currency;
-    private String[] picUrl;
+    private List<String> picUrl;
    
 }
