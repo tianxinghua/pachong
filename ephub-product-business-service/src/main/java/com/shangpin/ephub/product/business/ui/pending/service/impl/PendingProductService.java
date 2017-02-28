@@ -224,6 +224,7 @@ public class PendingProductService implements IPendingProductService{
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
                         pendingProduct.setPicUrls(picurls); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
+                        pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
                         products.add(pendingProduct);
                     }
@@ -430,6 +431,7 @@ public class PendingProductService implements IPendingProductService{
             		supplierProductVo.setSupplierSku(supplierSku);
             	}
             	supplierProductVo.setUpdateTimeStr(null != spuDto.getUpdateTime() ? DateTimeUtil.getTime(spuDto.getUpdateTime()) : ""); 
+            	supplierProductVo.setCreatTimeStr(null != spuDto.getCreateTime() ? DateTimeUtil.getTime(spuDto.getCreateTime()) : "");
         	}
 		} catch (Exception e) {
 			log.error("查询原始信息时异常："+e.getMessage(),e); 
@@ -471,7 +473,7 @@ public class PendingProductService implements IPendingProductService{
 		skuCriteria.setPageNo(1);
 		skuCriteria.setPageSize(100); 
 		skuCriteria.setOrderByClause("supplier_sku_size"); 
-    	skuCriteria.setFields("supplier_sku_size");
+    	skuCriteria.setFields("supplier_sku_size,stock");
     	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId); 
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
 	}
@@ -668,7 +670,11 @@ public class PendingProductService implements IPendingProductService{
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
-		criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
+		if(StringUtils.isEmpty(pendingQuryDto.getSpuState()) || "0".equals(pendingQuryDto.getSpuState())){ 
+			criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
+		}else if("1".equals(pendingQuryDto.getSpuState())){
+			criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
+		}
 		if("0".equals(pendingQuryDto.getAuditState())){
 			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
 		}else if("1".equals(pendingQuryDto.getAuditState())){
