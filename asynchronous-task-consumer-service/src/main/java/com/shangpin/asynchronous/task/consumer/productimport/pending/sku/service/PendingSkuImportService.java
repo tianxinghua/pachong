@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -17,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
@@ -27,15 +25,11 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -62,31 +56,28 @@ public class PendingSkuImportService {
 	@Autowired
 	DataHandleService dataHandleService;
 	@Autowired
-	HubSpuImportTaskGateWay spuImportGateway;
-	@Autowired
 	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
 	TaskImportService taskService;
 	@Autowired
 	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
 	@Autowired
-	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
-	@Autowired
-	HubSpuGateWay hubSpuGateway;
-	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
 
+	/**
+	 * 处理消息
+	 * @param task
+	 * @return
+	 * @throws Exception
+	 */
 	public String handMessage(ProductImportTask task) throws Exception {
 
 		// ftp下载文件
-		JSONObject json = JSONObject.parseObject(task.getData());
-		String filePath = json.get("taskFtpFilePath").toString();
-		task.setData(filePath);
 		InputStream in = taskService.downFileFromFtp(task);
 		
 		//解析excel
 		List<HubPendingProductImportDTO> listHubProduct = null;
-		String fileFormat = filePath.split("\\.")[1];
+		String fileFormat = task.getData().split("\\.")[1];
 		if ("xls".equals(fileFormat)) {
 			listHubProduct = handleHubXlsExcel(in, task, "sku");
 		} else if ("xlsx".equals(fileFormat)) {

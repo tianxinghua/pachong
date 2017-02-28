@@ -18,6 +18,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
@@ -47,6 +48,9 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
+import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +90,8 @@ public class TaskImportService {
 	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
-
+	@Autowired
+	MatchSizeGateWay matchSizeGateWay;
 	private static String[] pendingSpuTemplate = null;
 	static {
 		pendingSpuTemplate = TaskImportTemplate.getPendingSpuTemplate();
@@ -354,8 +359,13 @@ public class TaskImportService {
 	}
 
 	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
+		
+
+		JSONObject json = JSONObject.parseObject(task.getData());
+		String filePath = json.get("taskFtpFilePath").toString();
+		task.setData(filePath);
+		
 		InputStream in = FTPClientUtil.downFile(task.getData());
-//		FTPClientUtil.closeFtp();
 		if (in == null) {
 			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "从ftp下载失败数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "从ftp下载失败", null);
@@ -556,6 +566,14 @@ public class TaskImportService {
 			pengingSpuId = hubSpuPendingGateWay.insert(hubPendingSpuDto);
 		}
 		return pengingSpuId;
+	}
+	public MatchSizeResult matchSize(String hubBrandNo,String categoryNo,String hubSize) {
+		MatchSizeDto match = new MatchSizeDto();
+		match.setHubBrandNo(hubBrandNo);
+		match.setHubCategoryNo(categoryNo);
+		match.setSize(hubSize);
+		MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(match);
+		return matchSizeResult;
 	}
 
 }
