@@ -111,10 +111,10 @@
 	           and  spu.spu_model like concat('',#{spuModel},'%')
 	 </if>
 	  <if test="null!=startDate">
-                and sku.update_time >=#{startDate}
+                and map.update_time >=#{startDate}
       </if>            
       <if test="null!=endDate">
-           <![CDATA[ and sku.update_time <=#{endDate}    ]]>
+           <![CDATA[ and map.update_time <=#{endDate}    ]]>
       </if>
   </select>
   
