@@ -76,8 +76,12 @@ public class HubSelectedController {
 				dto.setPageSize(pageSize);
 				log.info("已选品请求参数：{}",dto);
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectByPage(dto);
-				log.info("已选品查询耗时："+(System.currentTimeMillis()-startTime));
+				
 				List<HubWaitSelectedResponse> arr = new ArrayList<HubWaitSelectedResponse>();
+				if(list==null||list.size()<=0){
+					return HubResponse.successResp("列表页为空");
+				}
+				log.info("已选品查询耗时："+(System.currentTimeMillis()-startTime)+",总记录数："+list.size());
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
 					HubWaitSelectedResponse HubWaitSelectResponse = new HubWaitSelectedResponse();
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
@@ -89,7 +93,6 @@ public class HubSelectedController {
 					HubWaitSelectResponse.setUpdateTime(DateTimeUtil.getTime(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}
-				
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
 				HubWaitSelectedResponseWithPageDto.setTotal(Integer.parseInt(String.valueOf(total)));
 				HubWaitSelectedResponseWithPageDto.setList(arr);
