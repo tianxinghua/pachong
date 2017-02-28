@@ -2,13 +2,10 @@ package com.shangpin.iog.spinnaker.stock.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -98,7 +95,7 @@ public class Schedule {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				logger.info("更新数据库开始");
 				try {
-					stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
+//					stockImp.setUseThread(true);stockImp.setSkuCount4Thread(500);
 					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();

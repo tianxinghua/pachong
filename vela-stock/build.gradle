@@ -30,7 +30,7 @@ jar {
     }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.vela.stock.VelaStockImp'
+        attributes 'Main-Class': 'com.shangpin.iog.vela.stock.Startup'
         attributes 'Class-Path': '. ./conf/  ' +  manifestCp
     }
 }

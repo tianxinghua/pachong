@@ -9,22 +9,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.shangpin.iog.vela.stock.schedule.AppContext;
 
-
-
-/**
- * Created by sunny on 2015/8/5.
- */
 public class Startup {
 
     private static   Logger logger = LoggerFactory.getLogger(Startup.class);
-
-
-
-
-    private static ApplicationContext factory;
+    @SuppressWarnings("unused")
+	private static ApplicationContext factory;
     private static void loadSpringContext()
     {
-
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
 
@@ -33,7 +24,6 @@ public class Startup {
         //加载spring
         loadSpringContext();
         logger.info(" schedule start  ");
-
     }
 
 
