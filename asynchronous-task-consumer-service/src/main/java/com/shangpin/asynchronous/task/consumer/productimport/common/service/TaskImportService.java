@@ -109,29 +109,42 @@ public class TaskImportService {
 
 	@SuppressWarnings("unused")
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-			 Map<String, String> map,HubPendingProductImportDTO product,boolean isMultiSizeType) throws Exception{
+			 Map<String, String> map,HubPendingProductImportDTO pendingSkuImportDto,boolean isMultiSizeType) throws Exception{
 		String hubSpuNo = map.get("hubSpuNo");
 		if (map.get("pendingSpuId") != null) {
 			hubSkuPendingDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
 
-		String specificationType = product.getSpecificationType();
-		String sizeType = product.getSizeType();
+		String specificationType = pendingSkuImportDto.getSpecificationType();
+		String sizeType = pendingSkuImportDto.getSizeType();
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
+		
+		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
+			hubSkuPendingDto.setHubSkuSizeType(sizeType);
+		}else if("排除".equals(sizeType)){
+			hubSkuPendingDto.setMemo("此尺码过滤不处理");
+			hubSkuPendingDto.setFilterFlag((byte)0);
+		}else if("尺寸".equals(specificationType)){
+			hubSkuPendingDto.setHubSkuSizeType("尺寸");
+			if(hubSkuPendingDto.getHubSkuSize()==null){
+				hubSkuPendingDto.setHubSkuSize("");
+			}
+		}
+		
 		if (hubPendingSkuCheckResult.isPassing()) {
 			hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
 			if(hubSkuPendingTempDto!=null){
 				if(hubSpuNo!=null){
 					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
-					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
-					}else{
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeTypeEqualTo(product.getSizeType());
+					if(StringUtils.isNotBlank(pendingSkuImportDto.getHubSkuSize())&&StringUtils.isNotBlank(pendingSkuImportDto.getSizeType())){
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(hubSkuPendingDto.getHubSkuSize()).andSkuSizeTypeEqualTo(hubSkuPendingDto.getHubSkuSizeType());	
+					}else if(StringUtils.isNotBlank(pendingSkuImportDto.getSizeType())){
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeTypeEqualTo(hubSkuPendingDto.getHubSkuSizeType());
 					}
 					List<HubSkuDto> listSku = hubSkuGateWay.selectByCriteria(sku);
 					if(listSku!=null&&listSku.size()>0){
-						log.info(hubSpuNo+"hub中已存在尺码:"+product.getHubSkuSize());
+						log.info(hubSpuNo+"hub中已存在尺码:"+pendingSkuImportDto.getHubSkuSize());
 						hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 					}else{
 						hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
@@ -162,17 +175,6 @@ public class TaskImportService {
 			hubSkuPendingDto.setMemo("此尺码过滤不处理");
 			hubSkuPendingDto.setFilterFlag((byte)0);
 			hubSkuPendingDto.setHubSkuSizeType("排除");
-		}
-		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
-			hubSkuPendingDto.setHubSkuSizeType(sizeType);
-		}else if("排除".equals(sizeType)){
-			hubSkuPendingDto.setMemo("此尺码过滤不处理");
-			hubSkuPendingDto.setFilterFlag((byte)0);
-		}else if("尺寸".equals(specificationType)){
-			hubSkuPendingDto.setHubSkuSizeType("尺寸");
-			if(hubSkuPendingDto.getHubSkuSize()==null){
-				hubSkuPendingDto.setHubSkuSize("");
-			}
 		}
 		
 		//更新或插入操作

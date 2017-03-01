@@ -148,19 +148,19 @@ public class PendingSkuImportService {
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
-	private void checkProduct(String taskNo, HubPendingProductImportDTO product, Map<String, String> map,Map<Long,String> spuMap) throws Exception{
+	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap) throws Exception{
 
 		map.put("taskNo", taskNo);
-		map.put("spuModel", product.getSpuModel());
+		map.put("spuModel", pendingSkuImportDto.getSpuModel());
 
 		// 校验sku信息
-		HubSkuCheckDto hubSkuCheckDto = convertHubPendingProduct2PendingSkuCheck(product);
+		HubSkuCheckDto hubSkuCheckDto = convertHubPendingProduct2PendingSkuCheck(pendingSkuImportDto);
 		log.info("pendindSku校验参数：{}", hubSkuCheckDto);
 		HubPendingSkuCheckResult hubPendingSkuCheckResult = pendingSkuCheckGateWay.checkSku(hubSkuCheckDto);
 		log.info("pendindSku校验返回结果：{}", hubPendingSkuCheckResult);
 		
 		// 校验spu信息
-		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
+		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(pendingSkuImportDto);
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 		HubSpuPendingDto isPendingSpuExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
@@ -170,8 +170,8 @@ public class PendingSkuImportService {
 		}
 		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
 		// 校验sku信息
-		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(product);
-		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,product,false);
+		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,pendingSkuImportDto,false);
 
 		if (Boolean.parseBoolean(map.get("isPassing"))) {
 			taskService.sendToHub(hubPendingSpuDto, map);
