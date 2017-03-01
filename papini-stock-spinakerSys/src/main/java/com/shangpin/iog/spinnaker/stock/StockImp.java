@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -70,12 +69,17 @@ public class StockImp extends AbsUpdateProductStock {
 		logger.info("获取季节码url："+season_url); 
 		String season_json = HttpUtil45.get(season_url,outTimeConfig, null);
 		logger.info("获取的季节信息："+season_json); 
-		SeasoncodeList season_list = gson.fromJson(season_json, SeasoncodeList.class);
-		if (season_list == null || StringUtils.isNotEmpty(season_list.getResult())) {
-			logger.info("获取季节码失败，抓取库存失败。"); 
-			loggerError.error("获取季节码失败，抓取库存失败。"); 
+		int i = 0;
+		while(HttpUtil45.errorResult.equals(season_json) && i<100){
+			season_json = HttpUtil45.get(season_url,outTimeConfig, null);
+			i++;
+		}
+		if ((HttpUtil45.errorResult.equals(season_json))) {
+			logger.info("获取季节码失败，抓取库存失败。已经尝试了"+i+"遍"); 
+			loggerError.error("获取季节码失败，抓取库存失败。已经尝试了"+i+"遍"); 
 			return null;
 		}
+		SeasoncodeList season_list = gson.fromJson(season_json, SeasoncodeList.class);
 		for (Seasoncode obj : season_list.getSeasonCode()) {
 			String code = URLEncoder.encode(obj.getSeasonCode(), "UTF-8");
 			String url = api_url+"/Myapi/Productslist/GetAllStockForSync?DBContext=Default&SeasonCode="
@@ -108,8 +112,7 @@ public class StockImp extends AbsUpdateProductStock {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
     public static void main(String[] args) throws Exception {
-        loadSpringContext();        
-
+        loadSpringContext();      
     }
 //    @Override
 //    public Map<String, String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
