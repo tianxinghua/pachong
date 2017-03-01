@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,10 +47,10 @@ public class PendingProductController {
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
         return pendingProductService.batchUpdatePendingProduct(pendingProducts);
     }
-    @RequestMapping(value="/unable-to-process",method=RequestMethod.POST)
-    public HubResponse<?> updateProductToUnableToProcess(@RequestBody String id){
+    @RequestMapping(value="/unable-to-process/{updateUser}",method=RequestMethod.POST)
+    public HubResponse<?> updateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody String id){
     	try {
-    		boolean result = pendingProductService.updatePendingProductToUnableToProcess(id);
+    		boolean result = pendingProductService.updatePendingProductToUnableToProcess(updateUser,id);
 	        if(result){
 	            return HubResponse.successResp(resultSuccess);
 	        }else{
@@ -60,9 +61,9 @@ public class PendingProductController {
 		}
        
     }
-    @RequestMapping(value="/batch-unable-to-process",method=RequestMethod.POST)
-    public HubResponse<?> batchUpdateProductToUnableToProcess(@RequestBody List<String> ids){
-        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(ids);
+    @RequestMapping(value="/batch-unable-to-process/{updateUser}",method=RequestMethod.POST)
+    public HubResponse<?> batchUpdateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody List<String> ids){
+        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(updateUser,ids);
         if(result){
             return HubResponse.successResp(resultSuccess);
         }else{

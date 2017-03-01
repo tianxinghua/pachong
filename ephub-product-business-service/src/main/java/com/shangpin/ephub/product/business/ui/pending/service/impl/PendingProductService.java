@@ -244,12 +244,13 @@ public class PendingProductService extends PendingSkuService{
         return response;
     }
     @Override
-    public boolean updatePendingProductToUnableToProcess(String spuPendingId) throws Exception{
+    public boolean updatePendingProductToUnableToProcess(String updateUser,String spuPendingId) throws Exception{
         try {
             if(!StringUtils.isEmpty(spuPendingId)){
                 HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
                 hubSpuPendingDto.setSpuPendingId(Long.parseLong(spuPendingId));
                 hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
+                hubSpuPendingDto.setUpdateUser(updateUser); 
                 hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
             }
             return true;
@@ -260,11 +261,11 @@ public class PendingProductService extends PendingSkuService{
 
     }
     @Override
-    public boolean batchUpdatePendingProductToUnableToProcess(List<String> spuPendingIds){
+    public boolean batchUpdatePendingProductToUnableToProcess(String updateUser,List<String> spuPendingIds){
         try {
             if(null != spuPendingIds && spuPendingIds.size()>0){
                 for(String spuPendingId : spuPendingIds){
-                    updatePendingProductToUnableToProcess(spuPendingId);
+                    updatePendingProductToUnableToProcess(updateUser,spuPendingId);
                 }
             }
             return true;
