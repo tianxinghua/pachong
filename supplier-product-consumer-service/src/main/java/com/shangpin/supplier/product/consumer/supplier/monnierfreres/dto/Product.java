@@ -29,5 +29,6 @@ public class Product {
 	private String price_before_discount;//sku
 	private String special_price;//sku
 	private String ean13;
+	private String fashioncollection;//seasonName
 	private String price_type;
 }
