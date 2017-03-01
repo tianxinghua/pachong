@@ -18,7 +18,15 @@ import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
-
+/**
+ * 待处理页面逻辑中处理sku的实现类
+ * <p>Title: PendingSkuService</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年3月1日 下午5:59:59
+ *
+ */
 @Service
 @Slf4j
 public abstract class PendingSkuService extends PendingSpuService{
