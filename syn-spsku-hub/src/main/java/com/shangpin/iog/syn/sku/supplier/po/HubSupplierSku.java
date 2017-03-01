@@ -1,9 +1,12 @@
 package com.shangpin.iog.syn.sku.supplier.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSupplierSku implements Serializable {
     /**
      * 主键

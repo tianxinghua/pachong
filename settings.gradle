@@ -24,10 +24,9 @@ include 'project-mq'
 include 'stockMontiHK'
 include 'stockclean'
 include 'OpenTest'
+include 'syn-spsku-hub'
 
 
 
-include 'lungolivigno'
-include 'lungolivigno-stock'
-include 'parisi-stock'
+
 

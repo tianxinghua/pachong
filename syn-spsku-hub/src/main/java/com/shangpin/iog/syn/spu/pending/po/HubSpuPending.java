@@ -1,8 +1,11 @@
 package com.shangpin.iog.syn.spu.pending.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSpuPending implements Serializable {
     /**
      * 主键

@@ -1,8 +1,11 @@
 package com.shangpin.iog.syn.spu.hub.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSpu implements Serializable {
     /**
      * 主键
