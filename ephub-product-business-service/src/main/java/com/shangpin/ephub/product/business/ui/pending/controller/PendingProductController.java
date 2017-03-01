@@ -70,9 +70,7 @@ public class PendingProductController {
         }
     }
     @RequestMapping(value="/origin",method=RequestMethod.POST)
-    public HubResponse<?> findOrigin(@RequestBody String spuPendingId){
-    	PendingQuryDto pendingQuryDto = new PendingQuryDto();
-    	pendingQuryDto.setSpuPendingId(Long.valueOf(spuPendingId));
+    public HubResponse<?> findOrigin(@RequestBody PendingQuryDto pendingQuryDto){
     	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
     	PendingProductDto pendingProduct = products.getProduts().get(0);
     	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
