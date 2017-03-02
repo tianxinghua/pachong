@@ -42,7 +42,7 @@ public class FetchProduct extends AbsSaveProduct{
 	
 	private static String url_login = null;
 	private static String url_getProducts = null;
-	private static String url_getAttributes = null;
+//	private static String url_getAttributes = null;
 	private static String user_name = null;
 	private static String user_password = null;
 	private static String url_getPriceList = null;
@@ -54,7 +54,7 @@ public class FetchProduct extends AbsSaveProduct{
 		supplierId = bdl.getString("supplierId");
 		url_login = bdl.getString("url_login");
 		url_getProducts = bdl.getString("url_getProducts");
-		url_getAttributes = bdl.getString("url_getAttributes");
+//		url_getAttributes = bdl.getString("url_getAttributes");
 		user_name = bdl.getString("user_name");
 		user_password = bdl.getString("user_password");
 		url_getPriceList = bdl.getString("url_getPriceList");
@@ -62,6 +62,34 @@ public class FetchProduct extends AbsSaveProduct{
 	}
 	
 	private static Gson gson =  new Gson();
+	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+	/**
+	 * 请求接口
+	 * @param url
+	 * @param jsonParam
+	 * @return
+	 */
+	private String getDataOfInterface(String url,String jsonParam){
+		logger.info("请求的url："+url);
+		logger.info("请求的参数："+jsonParam); 
+		String data = "";
+		int i = 0;
+		while(i<20){
+			try {
+				if(StringUtils.isBlank(jsonParam)){
+					data = HttpUtil45.operateData("post", "", url, outTimeConf, null, "", "", "");
+				}else{
+					data = HttpUtil45.operateData("post", "json", url, outTimeConf, null, jsonParam, "", "");
+				}
+				return data;
+			} catch (Exception e) {
+				i ++ ;
+				loggerError.error("请求接口"+url+"第"+i+"次异常："+e.getMessage(),e); 
+			}
+		}
+		loggerError.error("请求接口"+url+"最终失败。"); 
+		return data;
+	}
 	
 	public Map<String, Object> fetchProductAndSave() {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
@@ -71,11 +99,11 @@ public class FetchProduct extends AbsSaveProduct{
 		
 		try{
 			//具体的业务
-			OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
 			String sessionId = login();
 			if(StringUtils.isNotBlank(sessionId)){
 				//获取价格
-				String priceListJson = HttpUtil45.post(url_getPriceList+sessionId, outTimeConf);
+				logger.info("===========开始获取priceList=========");
+				String priceListJson = getDataOfInterface(url_getPriceList+sessionId, "");
 				System.out.println(priceListJson); 
 				PriceList priceList = gson.fromJson(priceListJson, PriceList.class);
 				String italyPriceList = priceList.getResult().get(0).getCode();
@@ -93,16 +121,16 @@ public class FetchProduct extends AbsSaveProduct{
 					pagination.setOffset(offset);
 					requestProductsDTO.setPagination(pagination);
 					String jsonValuePro = gson.toJson(requestProductsDTO); 
-					logger.info("请求参数============="+jsonValuePro); 
 					String url = url_getProducts+sessionId;
 					System.out.println(url);
-					String productsResult = HttpUtil45.operateData("post", "json", url, outTimeConf, null, jsonValuePro, "", "");
-					System.out.println(productsResult); 
-					logger.info("=================获取数据结束==============");
-					System.out.println("=================获取数据结束==============");
+					logger.info("开始获取第"+offset+"页产品。"); 
+					String productsResult = getDataOfInterface(url,jsonValuePro);
+					System.out.println(productsResult);
+					if(StringUtils.isBlank(productsResult)){
+						logger.info("第"+offset+"页产品获取失败。结束拉取。");
+						return null;
+					}
 					ResponseProductsDTO responseProductsDTO = gson.fromJson(productsResult, ResponseProductsDTO.class);
-					logger.info("=================转化对象结束==============");
-					System.out.println("=================转化对象结束==============");
 					if(null != responseProductsDTO.getResult() && responseProductsDTO.getResult().size() >0){
 						for(Result  resultDTO :responseProductsDTO.getResult()){
 							try {
@@ -132,10 +160,14 @@ public class FetchProduct extends AbsSaveProduct{
 								requestPriceDTO.setPriceList(shangpinPriceList); 
 								requestPriceDTO.setPagination(pagination1);
 								String priceParam = gson.toJson(requestPriceDTO);
-								logger.info("请求价格接口GetPrice参数==="+priceParam);
-								String priceJson = HttpUtil45.operateData("post", "json", url_getPrice+sessionId, outTimeConf, null, priceParam, "", "");
-								System.out.println(priceJson); 
-								ResponseGetPrice responseGetPrice = gson.fromJson(priceJson, ResponseGetPrice.class);
+								logger.info(spu.getSpuId()+"请求价格接口GetPrice开始。");
+								String priceJson = getDataOfInterface(url_getPrice+sessionId, priceParam);
+								ResponseGetPrice responseGetPrice = null;
+								if(StringUtils.isNotBlank(priceJson)){
+									responseGetPrice = gson.fromJson(priceJson, ResponseGetPrice.class);
+								}else{
+									logger.info(spu.getSpuId()+"获取价格失败。");
+								}
 								for(Sizes sizes : resultDTO.getSizes()){
 									try {
 										String size = sizes.getLabel();
@@ -152,15 +184,13 @@ public class FetchProduct extends AbsSaveProduct{
 				                        sku.setMarketPrice(sizes.getPrice());
 				                        sku.setSalePrice("");
 				                        String supplierPrice = "";
-				                        if(responseGetPrice.isStatus()){
+				                        if(null != responseGetPrice && responseGetPrice.isStatus()){
 				                        	for(Sizes sizePrice :responseGetPrice.getResult().get(0).getSizes()){
 					                        	if(sizes.getSizeIndex() == sizePrice.getSizeIndex()){
 					                        		supplierPrice = sizePrice.getPrice();
 					                        		break;
 					                        	}
 					                        }
-				                        }else{
-				                        	System.out.println(spu.getBrandName()+" 获取供价失败");
 				                        }
 				                        sku.setSupplierPrice(supplierPrice); 
 				                        sku.setProductCode(resultDTO.getAttributes().get(5).getCode());
