@@ -64,6 +64,7 @@ public class HubWaitSelectedService {
 			HubSkuSupplierMappingDto.setSupplierSelectState((byte)SupplierSelectState.SELECTING.getIndex());
 			HubSkuSupplierMappingDto.setSkuSupplierMappingId(dto.getSkuSupplierMappingId());
 			HubSkuSupplierMappingDto.setUpdateTime(new Date());
+			HubSkuSupplierMappingDto.setUpdateUser(dto.getCreateUser());
 			if(fail){
 				HubSkuSupplierMappingDto.setRetryNum(1);
 			}

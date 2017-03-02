@@ -32,7 +32,7 @@ public class MatchSizeService {
 
 	@Autowired
 	SizeService sizeService;
-
+	
 	/**
 	 * 根据品牌、品类编号和尺码匹配出尺码类型
 	 * @param dto

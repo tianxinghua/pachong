@@ -17,6 +17,9 @@ import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.service.HubWaitSelectedService;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedDetailResponse;
@@ -44,6 +47,8 @@ public class HubWaitSelectedController {
 	HubWaitSelectGateWay HubWaitSelectGateWay;
 	@Autowired
 	HubWaitSelectedService hubWaitSelectedService;
+	@Autowired
+	HubSpuPicGateWay hubSpuPicGateWay;
 	
 	/**
 	 * 待选品列表
@@ -103,10 +108,26 @@ public class HubWaitSelectedController {
 		try {
 			log.info("待选品详情请求参数：{}",dto);
 				List<HubWaitSelectResponseDto> list = HubWaitSelectGateWay.selectDetail(dto);
-				log.info("待选品详情返回list:=============》"+list.toString());
+				if(list==null||list.size()<=0){
+					return HubResponse.successResp("获取数据为空");
+				}
+				log.info("待选品详情返回list大小:=============》"+list.size());
 				List<HubWaitSelectedDetailResponse> arr = new ArrayList<HubWaitSelectedDetailResponse>();
 				for(HubWaitSelectResponseDto hubWaitSelectResponseDto:list){
+					
 					HubWaitSelectedDetailResponse HubWaitSelectResponse = new HubWaitSelectedDetailResponse();
+					
+					HubSpuPicCriteriaDto critera = new HubSpuPicCriteriaDto();
+					critera.createCriteria().andSpuIdEqualTo(hubWaitSelectResponseDto.getSpuId());
+					List<HubSpuPicDto> listPic = hubSpuPicGateWay.selectByCriteria(critera);
+				
+					if(listPic!=null&&listPic.size()>0){
+						List<String> listPicUrl = new ArrayList<String>();
+						for(HubSpuPicDto spuPic : listPic){
+							listPicUrl.add(spuPic.getSpPicUrl());
+						}
+						HubWaitSelectResponse.setPicUrl(listPicUrl);
+					}
 					log.info("待选品详情的detail数据：{}",hubWaitSelectResponseDto);
 					BeanUtils.copyProperties(hubWaitSelectResponseDto, HubWaitSelectResponse);
 					if(StringUtils.isNotBlank(hubWaitSelectResponseDto.getSkuSizeType())){
