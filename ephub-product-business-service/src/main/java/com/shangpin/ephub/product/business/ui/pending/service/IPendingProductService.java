@@ -22,6 +22,19 @@ import com.shangpin.ephub.response.HubResponse;
 public interface IPendingProductService {
 	
 	/**
+     * 根据supplierSpuId获取原始数据spu表中供应商品类名称
+     * @param supplierSpuIds
+     * @return key=supplier_spu_id,value=supplier_categoryname
+     */
+	public Map<Long,String> findSupplierCategoryname(List<Long> supplierSpuIds);
+	/**
+	 * 根据供应商门户编号/供应商spu编号查询图片地址
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @return
+	 */
+	public List<String> findSpPicUrl(String supplierId,String supplierSpuNo);
+	/**
 	 * 待处理页面导出sku
 	 * @param pendingQuryDto
 	 * @return
@@ -51,7 +64,7 @@ public interface IPendingProductService {
 	 * @param spuPendingId
 	 * @return
 	 */
-	public Map<Long,List<HubSkuPendingDto>> findPendingSkuBySpuPendingId(List<Long> spuPendingIds) throws Exception;
+	public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds) throws Exception;
 	/**
 	 * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
 	 * @param pendingProductDto
@@ -64,14 +77,16 @@ public interface IPendingProductService {
 	public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts);
 	/**
 	 * 将HubSpuPendingDto更新为无法处理
+	 * @param updateUser操作人
 	 * @param spuPendingId
 	 */
-	public boolean updatePendingProductToUnableToProcess(String spuPendingId) throws Exception;
+	public boolean updatePendingProductToUnableToProcess(String updateUser,String spuPendingId) throws Exception;
 	/**
 	 * 批量更新为无法处理
+	 * @param updateUser 操作人
 	 * @param spuPendingIds
 	 */
-	public boolean batchUpdatePendingProductToUnableToProcess(List<String> spuPendingIds);
+	public boolean batchUpdatePendingProductToUnableToProcess(String updateUser,List<String> spuPendingIds);
 	/**
 	 * 根据主键查询原始信息
 	 * @param supplierSpuId

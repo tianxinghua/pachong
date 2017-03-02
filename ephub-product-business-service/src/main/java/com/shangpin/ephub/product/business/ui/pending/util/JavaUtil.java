@@ -3,6 +3,9 @@ package com.shangpin.ephub.product.business.ui.pending.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -65,5 +68,16 @@ public class JavaUtil {
 		return "get" + fieldName.substring(startIndex, startIndex + 1).toUpperCase()
 				+ fieldName.substring(startIndex + 1);
 	}
+    
+    /**
+     * 将pendingSpu转化为pendingProduct
+     * @param pendingSpu
+     * @return
+     */
+    public static PendingProductDto convertHubSpuPendingDto2PendingProductDto(HubSpuPendingDto pendingSpu) throws Exception{
+        PendingProductDto pendingProduct = new PendingProductDto();
+		JavaUtil.fatherToChild(pendingSpu, pendingProduct); 
+        return pendingProduct;
+    }
  
 }
