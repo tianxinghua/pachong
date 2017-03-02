@@ -55,10 +55,18 @@ public class DataHandleService {
 	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
 	
-	public List<HubSpuDto> selectHubSpu(HubSpuPendingDto hubPendingSpuDto) {
-		HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
-		criteria.createCriteria().andSpuModelEqualTo(hubPendingSpuDto.getSpuModel()).andBrandNoEqualTo(hubPendingSpuDto.getHubBrandNo());
-		return  hubSpuGateway.selectByCriteria(criteria);
+	public HubSpuDto  selectHubSpu(String spuModel,String hubBrandNo) {
+		
+		HubSpuDto spuDto = null;
+		if(spuModel!=null&&hubBrandNo!=null){
+			HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
+			criteria.createCriteria().andSpuModelEqualTo(spuModel).andBrandNoEqualTo(hubBrandNo);
+			List<HubSpuDto> listSpu = hubSpuGateway.selectByCriteria(criteria);	
+			if(listSpu!=null&&listSpu.size()>0){
+				spuDto = listSpu.get(0);	
+			}
+		}
+		return spuDto;
 	}
 
 	public BrandModelResult checkSpuModel(HubSpuPendingDto hubPendingSpuDto) {

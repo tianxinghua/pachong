@@ -396,12 +396,12 @@ public class TaskImportService {
 			spuModel = hubPendingSpuCheckResult.getModel();
 			// 查询货号是否已存在hubSpu中
 			hubPendingSpuDto.setSpuModel(spuModel);
-			List<HubSpuDto> list = dataHandleService.selectHubSpu(hubPendingSpuDto);
-			if (list != null && list.size() > 0) {
+			HubSpuDto list = dataHandleService.selectHubSpu(hubPendingSpuDto.getSpuModel(),hubPendingSpuDto.getHubBrandNo());
+			if (list != null) {
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				convertHubSpuToPendingSpu(hubPendingSpuDto, list.get(0));
-				hubSpuId = list.get(0).getSpuId();
-				hubSpuNo = list.get(0).getSpuNo();
+				convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+				hubSpuId = list.getSpuId();
+				hubSpuNo = list.getSpuNo();
 				spuIsPassing = true;
 				hubIsExist = true;
 				checkResult = spuModel+"在hub已存在";
