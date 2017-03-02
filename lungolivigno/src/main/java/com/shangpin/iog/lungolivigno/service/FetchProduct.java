@@ -18,6 +18,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
 import com.shangpin.iog.lungolivigno.dto.LoginDTO;
 import com.shangpin.iog.lungolivigno.dto.Pagination;
+import com.shangpin.iog.lungolivigno.dto.PriceList;
 import com.shangpin.iog.lungolivigno.dto.RequestPriceDTO;
 import com.shangpin.iog.lungolivigno.dto.RequestProductsDTO;
 import com.shangpin.iog.lungolivigno.dto.ResponseGetPrice;
@@ -70,41 +71,23 @@ public class FetchProduct extends AbsSaveProduct{
 		
 		try{
 			//具体的业务
-			
-			//skuList.add(sku);
-			//spuList.add(spu);
-			/**
-			List<String> list = new ArrayList<String>();
-			imageMap.put(sku.getSkuId()+";"+sku.getProductCode()+" "+sku.getColor(), list);
-			**/
-			System.out.println("-------------开始登陆----------------");
 			OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
-			User user = new User();
-			user.setUserName(user_name);
-			user.setPassword(user_password);			
-			String jsonValue = new Gson().toJson(user); 			
-			String result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
-			logger.info("login result==="+result);
-			int i = 0;
-			while(HttpUtil45.errorResult.equals(result) && i<10){
-				result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
-				i++;
-			}
-			if(!HttpUtil45.errorResult.equals(result)){
-				logger.info("登录了第 "+i+"次登录成功");
-				System.out.println("登录了第 "+i+"次登录成功"); 
-				LoginDTO LoginDTO = new Gson().fromJson(result, LoginDTO.class);
-				String sessionId = LoginDTO.getResult();				
+			String sessionId = login();
+			if(StringUtils.isNotBlank(sessionId)){
 				//获取价格
-//				String priceListJson = HttpUtil45.post(url_getPriceList+sessionId, outTimeConf);
-//				System.out.println(priceListJson); 
+				String priceListJson = HttpUtil45.post(url_getPriceList+sessionId, outTimeConf);
+				System.out.println(priceListJson); 
+				PriceList priceList = gson.fromJson(priceListJson, PriceList.class);
+				String italyPriceList = priceList.getResult().get(0).getCode();
+				String shangpinPriceList = priceList.getResult().get(1).getCode();
 				RequestProductsDTO requestProductsDTO = new RequestProductsDTO();
 				requestProductsDTO.setFromDate("20160101");
-				requestProductsDTO.setPriceList("01");
-				requestProductsDTO.setWithStock("true");
+				requestProductsDTO.setPriceList(italyPriceList);
+				requestProductsDTO.setWithStock(true);
 				int offset = 1;
 				while(true){
 					//获取产品
+					sessionId = login();
 					Pagination pagination = new Pagination();
 					pagination.setCount(100);
 					pagination.setOffset(offset);
@@ -123,6 +106,7 @@ public class FetchProduct extends AbsSaveProduct{
 					if(null != responseProductsDTO.getResult() && responseProductsDTO.getResult().size() >0){
 						for(Result  resultDTO :responseProductsDTO.getResult()){
 							try {
+								sessionId = login();
 								SpuDTO spu = new SpuDTO();
 								spu.setId(UUIDGenerator.getUUID());
 								spu.setSupplierId(supplierId);
@@ -145,9 +129,10 @@ public class FetchProduct extends AbsSaveProduct{
 								List<String> skus = new ArrayList<String>();
 								skus.add(resultDTO.getSku());
 								requestPriceDTO.setSku(skus);
-								requestPriceDTO.setPriceList("ES"); 
+								requestPriceDTO.setPriceList(shangpinPriceList); 
 								requestPriceDTO.setPagination(pagination1);
 								String priceParam = gson.toJson(requestPriceDTO);
+								logger.info("请求价格接口GetPrice参数==="+priceParam);
 								String priceJson = HttpUtil45.operateData("post", "json", url_getPrice+sessionId, outTimeConf, null, priceParam, "", "");
 								System.out.println(priceJson); 
 								ResponseGetPrice responseGetPrice = gson.fromJson(priceJson, ResponseGetPrice.class);
@@ -164,14 +149,18 @@ public class FetchProduct extends AbsSaveProduct{
 				                        sku.setSpuId(spu.getSpuId());
 				                        sku.setSkuId(resultDTO.getSku()+"-"+sizes.getSizeIndex());
 				                        sku.setProductName(resultDTO.getName());
-				                        sku.setMarketPrice("");
+				                        sku.setMarketPrice(sizes.getPrice());
 				                        sku.setSalePrice("");
 				                        String supplierPrice = "";
-				                        for(Sizes sizePrice :responseGetPrice.getResult().get(0).getSizes()){
-				                        	if(sizes.getSizeIndex() == sizePrice.getSizeIndex()){
-				                        		supplierPrice = sizePrice.getPrice();
-				                        		break;
-				                        	}
+				                        if(responseGetPrice.isStatus()){
+				                        	for(Sizes sizePrice :responseGetPrice.getResult().get(0).getSizes()){
+					                        	if(sizes.getSizeIndex() == sizePrice.getSizeIndex()){
+					                        		supplierPrice = sizePrice.getPrice();
+					                        		break;
+					                        	}
+					                        }
+				                        }else{
+				                        	System.out.println(spu.getBrandName()+" 获取供价失败");
 				                        }
 				                        sku.setSupplierPrice(supplierPrice); 
 				                        sku.setProductCode(resultDTO.getAttributes().get(5).getCode());
@@ -218,7 +207,35 @@ public class FetchProduct extends AbsSaveProduct{
 		returnMap.put("spu", spuList);
 		returnMap.put("image", imageMap);
 		return returnMap;		
-	}	
+	}
+
+	private String login(){
+		try{
+			System.out.println("-------------开始登陆----------------");
+			OutTimeConfig outTimeConf = new OutTimeConfig(1000*5, 1000*60 * 5, 1000*60 * 5);
+			User user = new User();
+			user.setUserName(user_name);
+			user.setPassword(user_password);			
+			String jsonValue = new Gson().toJson(user); 			
+			String result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
+			logger.info("login result==="+result);
+			int i = 0;
+			while(HttpUtil45.errorResult.equals(result) && i<10){
+				result = HttpUtil45.operateData("post", "json", url_login, outTimeConf, null, jsonValue, "", "");
+				i++;
+			}
+			if(!HttpUtil45.errorResult.equals(result)){
+				logger.info("登录了第 "+i+"次登录成功");
+				System.out.println("登录了第 "+i+"次登录成功"); 
+				LoginDTO LoginDTO = new Gson().fromJson(result, LoginDTO.class);
+				return LoginDTO.getResult();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("登录异常："+e.getMessage(),e); 
+		}
+		return null;
+	}
 	
 	public static void main(String[] args) {
 		FetchProduct f = new FetchProduct();

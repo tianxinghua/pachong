@@ -137,10 +137,10 @@ public class OpenapiService {
 							loggerError.error(skuRelationDTO.toString() + "保存失败");
 						}
 					}
-					if(null!=ice.SkuNo&&!"".equals(ice.SkuNo)&&null!=ice.SupplierSkuNo&&!"".equals(ice.SupplierSkuNo)){
+					if(StringUtils.isNotBlank(ice.SkuNo) && StringUtils.isNotBlank(ice.SupplierSkuNo)){ 
 						if(1!=ice.IsDeleted){
 							try {
-								if(!skuSpSkuMap.containsKey(ice.SupplierSkuNo) || !skuSpSkuMap.get(ice.SupplierSkuNo).equals(ice.SkuNo)){ 
+								if(!skuSpSkuMap.containsKey(ice.SupplierSkuNo) || !ice.SkuNo.equals(skuSpSkuMap.get(ice.SupplierSkuNo))){ 
 									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,String.valueOf(ice.SkuStatus),null);
 									loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
 								}

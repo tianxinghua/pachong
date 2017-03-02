@@ -30,3 +30,20 @@ include 'syn-spsku-hub'
 
 
 
+include 'pozzilei-arte-stock'
+include 'pozzilei-forte-stock'
+include 'pozzilei-stock'
+include 'sanremo-stock'
+include 'vela-stock'
+include 'papini-stock-spinakerSys'
+include 'Monti-stock'
+include 'synchSupplierIdAndSpId'
+
+
+
+
+
+
+
+
+
