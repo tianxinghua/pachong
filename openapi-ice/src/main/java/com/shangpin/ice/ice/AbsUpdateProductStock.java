@@ -1,6 +1,7 @@
 package com.shangpin.ice.ice;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -662,6 +663,8 @@ public abstract class AbsUpdateProductStock {
 			theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
 		}
 		if(null!=skuIceArray){
+			// get update supplier date
+			boolean isNeedHandle = isNeedUpdateStock(supplier);
 			for(SopSkuInventoryIce skuIce:skuIceArray){
 				if(iceStock.containsKey(skuIce.SkuNo)){
 					loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
@@ -672,7 +675,11 @@ public abstract class AbsUpdateProductStock {
 							if(iceStock.get(skuIce.SkuNo) < skuIce.InventoryQuantity){
 								toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 							}else{
-								loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>sop skuNo: " + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+							    if(isNeedHandle){
+									toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+								}else{
+                                    loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>sop skuNo: " + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+								}
 							}
 						}else{
 							
@@ -694,6 +701,32 @@ public abstract class AbsUpdateProductStock {
 			}
 		}
 
+	}
+
+	/**
+	 * 超过两个小时未更新的 可以更新库存
+	 * @param supplier
+	 * @return
+     */
+	private boolean isNeedUpdateStock(String supplier) {
+		boolean result = false;
+		Date updateStockTime = null;
+		try {
+            StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
+			if(null!=stockUpdateDTO){
+				Date now  = new Date();
+				updateStockTime = stockUpdateDTO.getUpdateTime();
+				if(now.getTime()-updateStockTime.getTime()>1000*60*60*2){
+					result = true;
+				}
+
+			}
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return result;
 	}
 
 

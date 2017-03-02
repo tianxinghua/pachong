@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -762,6 +763,7 @@ public abstract class AbsUpdateProductStock {
 		}
 		
 		if (null != skuArray) {
+			boolean isNeedHandle = isNeedUpdateStock(app_key);
 			for (SopSkuInventory skuIce : skuArray) {
 				if (iceStock.containsKey(skuIce.getSkuNo())) {
 					logger.warn("skuNo ：--------" + skuIce.getSkuNo()
@@ -787,12 +789,16 @@ public abstract class AbsUpdateProductStock {
 							if(iceStock.get(skuIce.getSkuNo()) < Integer.parseInt(skuIce.getInventoryQuantity())){
 								toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
 							}else{
-								loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>skuNo: " + skuIce.getSkuNo()
-										+ " supplierIdsku :" + skuIce.getSupplierSkuNo()
-										+ " supplier quantity ="
-										+ iceStock.get(skuIce.getSkuNo())
-										+ " shangpin quantity = "
-										+ skuIce.getInventoryQuantity());
+								if(isNeedHandle){
+									toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+								}else {
+									loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>skuNo: " + skuIce.getSkuNo()
+											+ " supplierIdsku :" + skuIce.getSupplierSkuNo()
+											+ " supplier quantity ="
+											+ iceStock.get(skuIce.getSkuNo())
+											+ " shangpin quantity = "
+											+ skuIce.getInventoryQuantity());
+								}
 							}
 						}else{
 							toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
@@ -818,6 +824,32 @@ public abstract class AbsUpdateProductStock {
 
 	}
 
+
+	/**
+	 * 超过两个小时未更新的 可以更新库存
+	 * @param supplier
+	 * @return
+	 */
+	private boolean isNeedUpdateStock(String supplier) {
+		boolean result = false;
+		Date updateStockTime = null;
+		try {
+			StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
+			if(null!=stockUpdateDTO){
+				Date now  = new Date();
+				updateStockTime = stockUpdateDTO.getUpdateTime();
+				if(now.getTime()-updateStockTime.getTime()>1000*60*60*2){
+					result = true;
+				}
+
+			}
+
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 	/**
 	 * 拉取供应商库存，并返回ice中对应的sku的库存
 	 * 
