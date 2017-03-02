@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -16,7 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.alibaba.fastjson.JSONObject;
+
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
@@ -30,6 +31,7 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -95,24 +97,6 @@ public class PendingSkuImportService {
 		if (listHubProduct == null) {
 			return null;
 		}
-		
-//		Map<String, List<HubPendingProductImportDTO>> mapSpu = new HashMap<String, List<HubPendingProductImportDTO>>();
-//		for (HubPendingProductImportDTO product : listHubProduct) {
-//			String key = product.getSupplierId()+"_"+product.getSupplierSpuNo();
-//			if(mapSpu.containsKey(key)){
-//				mapSpu.get(key).add(product);
-//			}else{
-//				List<HubPendingProductImportDTO> arr = new ArrayList<HubPendingProductImportDTO>();
-//				arr.add(product);
-//				mapSpu.put(key, arr);
-//			}
-//		}
-//		
-//		
-//	  for (Map.Entry<String, List<HubPendingProductImportDTO>> entry : mapSpu.entrySet()) {
-//        	List<HubPendingProductImportDTO> spuList = entry.getValue();
-//        	int i = 0;
-//	  }
 		
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
@@ -264,40 +248,6 @@ public class PendingSkuImportService {
 						Method setMethod = cls.getDeclaredMethod(fieldSetName, String.class);
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}
-//						@SuppressWarnings("unchecked")
-//						Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());
-//						if (!hubValueTemplate[i].equals(field.getName())) {
-//							return null;
-//						}
-//						if(xssfRow.getCell(i)!=null){
-//							xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
-//							String value = xssfRow.getCell(i).toString();
-//							i++;
-//							if (null != value && !"".equals(value)) {
-//								String fieldType = field.getType().getSimpleName();
-//								if ("String".equals(fieldType)) {
-//									fieldSetMet.invoke(item, value);
-//								} else if ("Integer".equals(fieldType) || "int".equals(fieldType)) {
-//									Integer intval = Integer.parseInt(value);
-//									fieldSetMet.invoke(item, intval);
-//								} else if ("Long".equalsIgnoreCase(fieldType)) {
-//									Long temp = Long.parseLong(value);
-//									fieldSetMet.invoke(item, temp);
-//								} else if ("Double".equalsIgnoreCase(fieldType)) {
-//									Double temp = Double.parseDouble(value);
-//									fieldSetMet.invoke(item, temp);
-//								} else if ("Boolean".equalsIgnoreCase(fieldType)) {
-//									Boolean temp = Boolean.parseBoolean(value);
-//									fieldSetMet.invoke(item, temp);
-//								} else if ("BigDecimal".equalsIgnoreCase(fieldType)) {
-//									BigDecimal temp = new BigDecimal(value);
-//									fieldSetMet.invoke(item, temp);
-//								} else {
-//									log.info("not supper type" + fieldType);
-//								}
-//							}
-//						
-					
 				}
 
 			} catch (Exception ex) {

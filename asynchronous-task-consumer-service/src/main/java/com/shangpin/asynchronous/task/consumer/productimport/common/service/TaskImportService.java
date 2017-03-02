@@ -242,7 +242,6 @@ public class TaskImportService {
 		// 更新结果文件路径到表中
 		
 		return path + resultFileName + ".xls";
-//		updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, path + resultFileName + ".xls");
 	}
 
 	public XSSFSheet checkXlsxExcel(InputStream in, ProductImportTask task, String type) throws Exception {
@@ -254,10 +253,8 @@ public class TaskImportService {
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "下载的excel数据为空", null);
 			return null;
 		}
-		boolean flag = checkXlsxFileTemplet(xssfSheet.getRow(0), type);
+		boolean flag = checkXlsxFileTemplet(xssfSheet.getRow(0), type,task.getTaskNo());
 		if (!flag) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "上传文件与模板不一致");
-			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "上传文件与模板不一致", null);
 			return null;
 		}
 		return xssfSheet;
@@ -272,16 +269,14 @@ public class TaskImportService {
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "下载的excel数据为空", null);
 			return null;
 		}
-		boolean flag = checkXlsFileTemplet(xssfSheet.getRow(0), type);
+		boolean flag = checkXlsFileTemplet(xssfSheet.getRow(0), type,task.getTaskNo());
 		if (!flag) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "上传文件与模板不一致");
-			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "上传文件与模板不一致", null);
 			return null;
 		}
 		return xssfSheet;
 	}
 
-	public static boolean checkXlsxFileTemplet(XSSFRow xssfRow, String type) {
+	public  boolean checkXlsxFileTemplet(XSSFRow xssfRow, String type,String taskNo) {
 
 		boolean flag = true;
 		if ("spu".equals(type)) {
@@ -317,11 +312,15 @@ public class TaskImportService {
 				}
 			}
 		}
-
+		if(!flag){
+			log.info("任务编号：" + taskNo + "," + "上传文件与模板不一致");
+			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);
+				
+		}
 		return flag;
 	}
 
-	public static boolean checkXlsFileTemplet(HSSFRow xssfRow, String type) {
+	public  boolean checkXlsFileTemplet(HSSFRow xssfRow, String type,String taskNo) {
 
 		boolean flag = true;
 		if ("spu".equals(type)) {
@@ -356,6 +355,9 @@ public class TaskImportService {
 					}
 				}
 			}
+		}
+		if(!flag){
+			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);			
 		}
 		return flag;
 	}
