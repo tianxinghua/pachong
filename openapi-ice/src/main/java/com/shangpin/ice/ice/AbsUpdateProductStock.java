@@ -334,7 +334,7 @@ public abstract class AbsUpdateProductStock {
 			}	
 			loggerInfo.info("isOk============="+isOk); 
 			if(isOk){//多线程更新库存,有一个更新成功,则视为更新库存成功.
-				this.updateStockTime(supplier);
+				this.updateStockTimeAndState(supplier);
 			}
 			
 			int fct=0;
@@ -348,7 +348,7 @@ public abstract class AbsUpdateProductStock {
 			int i= updateStock(supplier, localAndIceSku, skuNoSet,sopPriceMap);
 			loggerInfo.info("更新库存失败的数量==========="+i);			
 			if(i>=0){//待更新的库存失败数小于0时，不更新
-				this.updateStockTime(supplier);
+				this.updateStockTimeAndState(supplier);
 			}
 
 			return i;
@@ -374,6 +374,24 @@ public abstract class AbsUpdateProductStock {
 			loggerError.error("更新库存更新时间业务失败======"+e);
 		}
 	}
+
+	private void updateStockTimeAndState(String supplier){
+		try {
+//			if(null!=updateStockService){
+//				updateStockService.updateTime(supplier);
+			loggerInfo.info("=========="+supplier+"开始更新库存时间========");
+			StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
+			stockUpdateDTO.setSupplierId(supplier);
+			stockUpdateDTO.setUpdateTime(new Date());
+			//
+			stockUpdateDTO.setSpare(String.valueOf(stockUpdateDTO.getUpdateTime().getTime()));
+			updateStockService.updateStatus(stockUpdateDTO);
+//			}
+		} catch (Exception e) {
+			loggerError.error("更新库存更新时间业务失败======"+e);
+		}
+	}
+
 	
 	/**
 	 * 将供货商添加到UPDATE_STOCK表中
@@ -446,6 +464,8 @@ public abstract class AbsUpdateProductStock {
 	private int updateIceStock(String supplier, Map<String, Integer> iceStock,Map<String,String> sopPriceMap)
 			throws Exception {
 
+
+
 		//拉取的供货商的库存集合为空时，不往下执行
 		if(!this.supplierSkuIdMain && iceStock.size() ==0){
 			
@@ -466,31 +486,7 @@ public abstract class AbsUpdateProductStock {
 		//获取允许更新的数量
 		int updateTimes=0;
 		int updateCount=0;
-		if(null!=stockUpdateLimitService){
-			StockUpdateLimitDTO limitDTO =  stockUpdateLimitService.findBySupplierId(supplier);
-			if(null!=limitDTO){
-				updateTimes = limitDTO.getLimitNum();
-			}else{
-				//插入新的记录
-				StockUpdateLimitDTO saveDto =new StockUpdateLimitDTO();
-				saveDto.setSupplierId(supplier);
-				saveDto.setCreateTime(DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd"));
-				saveDto.setUpdateTime(new Date());
-				saveDto.setLimitNum(500000);
-
-				try {
-					stockUpdateLimitService.save(saveDto);
-					updateTimes = saveDto.getLimitNum();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			//发邮件或者退出不更新
-			if(updateTimes<0){
-				Thread t = new Thread(new StockLimitMail(supplier));
-				t.start();
-			}
-		}
+		updateTimes = handleUpdateTimes(supplier, updateTimes);
 
 		OpenApiServantPrx servant = null;
 		try {
@@ -517,35 +513,7 @@ public abstract class AbsUpdateProductStock {
 				Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 				loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
 				updateCount = updateCount+toUpdateIce.size();
-				while (iter.hasNext()) {
-					Entry<String, Integer> entry = iter.next();
-					Boolean result =true;
-					int stock = 0;
-					for(int i=0;i<2;i++){  //发生错误 允许再执行一次
-						try{
-							if(entry.getValue()>=0){
-								stock = entry.getValue();
-							}
-							result = servant.UpdateStock(supplier, entry.getKey(), stock);
-							loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+stock+" ,"+ result);
-						}catch(ApiException e){
-							result=false;
-							loggerError.error("更新sku错误："+entry.getKey()+":"+stock+"---"+e.Message);
-						} catch(Exception e){
-							logger.error("更新sku错误："+entry.getKey()+":"+stock,e);
-							loggerError.error("更新sku错误："+entry.getKey()+":"+stock,e);
-						}
-
-						if(result){
-							i=2;
-						}
-					}
-
-					if(!result){
-						failCount++;
-						logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
-					}
-				}
+				failCount = updateStock(supplier, servant, failCount, iter);
 
 				skuNoShangpinList = new ArrayList<>();
 			}
@@ -559,38 +527,48 @@ public abstract class AbsUpdateProductStock {
 		Iterator<Entry<String, Integer>> iter=toUpdateIce.entrySet().iterator();
 		loggerInfo.info("待更新的数据总和：--------"+toUpdateIce.size());
 		updateCount = updateCount+toUpdateIce.size();
-		while (iter.hasNext()) {
-			Entry<String, Integer> entry = iter.next();
-			Boolean result =true;
-			int stock = 0;
-			for(int i=0;i<2;i++){  //发生错误 允许再执行一次
-				try{
-					if(entry.getValue()>=0){
-						stock = entry.getValue();
-					}
-					result = servant.UpdateStock(supplier, entry.getKey(), stock);
-					loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+stock+" ,"+ result);
-				}catch(ApiException e){
-					result=false;
-					loggerError.error("更新sku错误："+entry.getKey()+":"+stock+"---"+e.Message);
-				} catch(Exception e){
-					logger.error("更新sku错误："+entry.getKey()+":"+stock,e);
-					loggerError.error("更新sku错误："+entry.getKey()+":"+stock,e);
-				}
-
-				if(result){
-					i=2;
-				}
-			}
-
-			if(!result){
-				failCount++;
-				logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
-			}
-		}
+		failCount = updateStock(supplier, servant, failCount, iter);
 		loggerInfo.info("更新库存 失败的数量：" + failCount);
 
 		//更新可更新的数量
+		updateUpdateTime(supplier, updateTimes, updateCount);
+		return failCount;
+	}
+
+	private int updateStock(String supplier, OpenApiServantPrx servant, int failCount, Iterator<Entry<String, Integer>> iter) {
+		while (iter.hasNext()) {
+            Entry<String, Integer> entry = iter.next();
+            Boolean result =true;
+            int stock = 0;
+            for(int i=0;i<2;i++){  //发生错误 允许再执行一次
+                try{
+                    if(entry.getValue()>=0){
+                        stock = entry.getValue();
+                    }
+                    result = servant.UpdateStock(supplier, entry.getKey(), stock);
+                    loggerInfo.info("待更新的数据：--------"+entry.getKey()+":"+stock+" ,"+ result);
+                }catch(ApiException e){
+                    result=false;
+                    loggerError.error("更新sku错误："+entry.getKey()+":"+stock+"---"+e.Message);
+                } catch(Exception e){
+                    logger.error("更新sku错误："+entry.getKey()+":"+stock,e);
+                    loggerError.error("更新sku错误："+entry.getKey()+":"+stock,e);
+                }
+
+                if(result){
+                    i=2;
+                }
+            }
+
+            if(!result){
+                failCount++;
+                logger.warn("更新iceSKU：{}，库存量：{}失败",entry.getKey(),stock);
+            }
+        }
+		return failCount;
+	}
+
+	private void updateUpdateTime(String supplier, int updateTimes, int updateCount) {
 		if(null!=stockUpdateLimitService){
 			StockUpdateLimitDTO updateDate =new StockUpdateLimitDTO();
 			updateDate.setSupplierId(supplier);
@@ -603,8 +581,43 @@ public abstract class AbsUpdateProductStock {
 				e.printStackTrace();
 			}
 		}
-		return failCount;
 	}
+
+	private int handleUpdateTimes(String supplier, int updateTimes) {
+		if(null!=stockUpdateLimitService){
+			StockUpdateLimitDTO limitDTO =  stockUpdateLimitService.findBySupplierId(supplier);
+			if(null!=limitDTO){
+				updateTimes = limitDTO.getLimitNum();
+			}else{
+				updateTimes = getUpdateTimes(supplier, updateTimes);
+
+			}
+			//发邮件或者退出不更新
+			if(updateTimes<0){
+				Thread t = new Thread(new StockLimitMail(supplier));
+				t.start();
+			}
+		}
+		return updateTimes;
+	}
+
+	private int getUpdateTimes(String supplier, int updateTimes) {
+		//插入新的记录
+		StockUpdateLimitDTO saveDto =new StockUpdateLimitDTO();
+		saveDto.setSupplierId(supplier);
+		saveDto.setCreateTime(DateTimeUtil.convertFormat(new Date(),"yyyy-MM-dd"));
+		saveDto.setUpdateTime(new Date());
+		saveDto.setLimitNum(500000);
+
+		try {
+            stockUpdateLimitService.save(saveDto);
+            updateTimes = saveDto.getLimitNum();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return updateTimes;
+	}
+
 	/**
 	 * 移除库存没有变化的商品 不做更新
 	 * @param supplier
@@ -710,14 +723,17 @@ public abstract class AbsUpdateProductStock {
      */
 	private boolean isNeedUpdateStock(String supplier) {
 		boolean result = false;
-		Date updateStockTime = null;
+
 		try {
             StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
 			if(null!=stockUpdateDTO){
 				Date now  = new Date();
-				updateStockTime = stockUpdateDTO.getUpdateTime();
-				if(now.getTime()-updateStockTime.getTime()>1000*60*60*2){
-					result = true;
+				if(StringUtils.isNotBlank(stockUpdateDTO.getSpare())){
+
+					Long  updateStockTime = Long.valueOf(stockUpdateDTO.getSpare());
+					if(now.getTime() - updateStockTime > 1000*60*60*2){
+						result = true;
+					}
 				}
 
 			}

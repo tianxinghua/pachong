@@ -16,7 +16,7 @@ public class StockUpdateDTO implements Serializable{
 	private String totalNum;
 	private String email;
 	private String status;
-	private String spare;
+	private String spare; //the date string value of success update
 	
 	public String getSpare() {
 		return spare;
