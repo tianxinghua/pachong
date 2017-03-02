@@ -211,7 +211,8 @@ public class HubSelectedController {
 			hubSpuTask.setSpuImportTaskId(spuImportTaskId);
 			return hubSpuTask;
 	    }
-   private HubSpuImportTaskDto saveTaskIntoMysql(int taskType){
+   @SuppressWarnings("unused")
+private HubSpuImportTaskDto saveTaskIntoMysql(int taskType){
    	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
    	Date date = new Date();
 		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));

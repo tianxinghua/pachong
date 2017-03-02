@@ -37,7 +37,6 @@ import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
-import com.shangpin.ephub.product.business.service.hub.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 
 import lombok.extern.slf4j.Slf4j;

@@ -247,6 +247,7 @@ public class PendingProductService extends PendingSkuService{
     public boolean updatePendingProductToUnableToProcess(String updateUser,String spuPendingId) throws Exception{
         try {
             if(!StringUtils.isEmpty(spuPendingId)){
+            	log.info("无法处理接口操作人=========="+updateUser); 
                 HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
                 hubSpuPendingDto.setSpuPendingId(Long.parseLong(spuPendingId));
                 hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
