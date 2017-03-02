@@ -80,13 +80,8 @@ public class HubProductImportService {
 	// 1、更新任务表，把task_state更新成正在处理 2、从ftp下载文件并解析成对象 3、公共类校验hub数据并把校验结果写入excel
 	// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 	public String handMessage(ProductImportTask task) throws Exception {
-
-		JSONObject json = JSONObject.parseObject(task.getData());
-		String filePath = json.get("taskFtpFilePath").toString();
-		task.setData(filePath);
 		
 		InputStream in = taskService.downFileFromFtp(task);
-		
 		// 2、从ftp下载文件并校验模板，并校验
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, "hub");
 		List<HubProductDto> listHubProduct = excelToObject(xssfSheet);

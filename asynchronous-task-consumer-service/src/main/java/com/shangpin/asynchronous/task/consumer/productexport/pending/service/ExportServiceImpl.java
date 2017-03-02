@@ -574,10 +574,10 @@ public class ExportServiceImpl {
 			dto.setPageSize(100000);
 			log.info("导出查询商品请求参数：{}", dto);
 			List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(dto);
-			log.info("导出查询商品耗时：" + (System.currentTimeMillis() - startTime));
 			if (list == null || list.size() <= 0) {
 				return null;
 			}
+			log.info("导出查询商品耗时：" + (System.currentTimeMillis() - startTime)+",总记录数："+list.size());
 			HSSFWorkbook workbook = exportExcel(list);
 			return workbook;
 		} catch (Exception e) {
@@ -605,7 +605,11 @@ public class ExportServiceImpl {
 		// 拆分数据，以供应商为维度
 		Map<String, List<HubWaitSelectResponseDto>> mapSupplier = new HashMap<String, List<HubWaitSelectResponseDto>>();
 		for (HubWaitSelectResponseDto response : list) {
+			
 			String supplierNo = response.getSupplierNo();
+			if(StringUtils.isBlank(supplierNo)){
+				continue;
+			}
 			if (mapSupplier.containsKey(supplierNo)) {
 				mapSupplier.get(supplierNo).add(response);
 			} else {
@@ -659,6 +663,7 @@ public class ExportServiceImpl {
 			allResult.addAll(result);
 			ExportExcelUtils.createSheet(workbook, supplierName.toString(), headers,  columns, result);
 		}
+		log.info("allResult:"+allResult.size());
 		ExportExcelUtils.createSheet(workbook, "all", allHeaders,allColumns, allResult);
 		return workbook;
 	}

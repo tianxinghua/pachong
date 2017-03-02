@@ -18,6 +18,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
@@ -47,6 +48,9 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPend
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
+import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +90,8 @@ public class TaskImportService {
 	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
-
+	@Autowired
+	MatchSizeGateWay matchSizeGateWay;
 	private static String[] pendingSpuTemplate = null;
 	static {
 		pendingSpuTemplate = TaskImportTemplate.getPendingSpuTemplate();
@@ -104,29 +109,42 @@ public class TaskImportService {
 
 	@SuppressWarnings("unused")
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-			 Map<String, String> map,HubPendingProductImportDTO product,boolean isMultiSizeType) throws Exception{
+			 Map<String, String> map,HubPendingProductImportDTO pendingSkuImportDto,boolean isMultiSizeType) throws Exception{
 		String hubSpuNo = map.get("hubSpuNo");
 		if (map.get("pendingSpuId") != null) {
 			hubSkuPendingDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
 
-		String specificationType = product.getSpecificationType();
-		String sizeType = product.getSizeType();
+		String specificationType = pendingSkuImportDto.getSpecificationType();
+		String sizeType = pendingSkuImportDto.getSizeType();
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
+		
+		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
+			hubSkuPendingDto.setHubSkuSizeType(sizeType);
+		}else if("排除".equals(sizeType)){
+			hubSkuPendingDto.setMemo("此尺码过滤不处理");
+			hubSkuPendingDto.setFilterFlag((byte)0);
+		}else if("尺寸".equals(specificationType)){
+			hubSkuPendingDto.setHubSkuSizeType("尺寸");
+			if(hubSkuPendingDto.getHubSkuSize()==null){
+				hubSkuPendingDto.setHubSkuSize("");
+			}
+		}
+		
 		if (hubPendingSkuCheckResult.isPassing()) {
 			hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
 			if(hubSkuPendingTempDto!=null){
 				if(hubSpuNo!=null){
 					HubSkuCriteriaDto sku = new HubSkuCriteriaDto();
-					if(product.getHubSkuSize()!=null&&product.getSizeType()!=null){
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(product.getHubSkuSize()).andSkuSizeTypeEqualTo(product.getSizeType());	
-					}else{
-						sku.createCriteria().andSpuNoEqualTo(hubSpuNo);
+					if(StringUtils.isNotBlank(pendingSkuImportDto.getHubSkuSize())&&StringUtils.isNotBlank(pendingSkuImportDto.getSizeType())){
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeEqualTo(hubSkuPendingDto.getHubSkuSize()).andSkuSizeTypeEqualTo(hubSkuPendingDto.getHubSkuSizeType());	
+					}else if(StringUtils.isNotBlank(pendingSkuImportDto.getSizeType())){
+						sku.createCriteria().andSpuNoEqualTo(hubSpuNo).andSkuSizeTypeEqualTo(hubSkuPendingDto.getHubSkuSizeType());
 					}
 					List<HubSkuDto> listSku = hubSkuGateWay.selectByCriteria(sku);
 					if(listSku!=null&&listSku.size()>0){
-						log.info(hubSpuNo+"hub中已存在尺码:"+product.getHubSkuSize());
+						log.info(hubSpuNo+"hub中已存在尺码:"+pendingSkuImportDto.getHubSkuSize());
 						hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 					}else{
 						hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
@@ -157,17 +175,6 @@ public class TaskImportService {
 			hubSkuPendingDto.setMemo("此尺码过滤不处理");
 			hubSkuPendingDto.setFilterFlag((byte)0);
 			hubSkuPendingDto.setHubSkuSizeType("排除");
-		}
-		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
-			hubSkuPendingDto.setHubSkuSizeType(sizeType);
-		}else if("排除".equals(sizeType)){
-			hubSkuPendingDto.setMemo("此尺码过滤不处理");
-			hubSkuPendingDto.setFilterFlag((byte)0);
-		}else if("尺寸".equals(specificationType)){
-			hubSkuPendingDto.setHubSkuSizeType("尺寸");
-			if(hubSkuPendingDto.getHubSkuSize()==null){
-				hubSkuPendingDto.setHubSkuSize("");
-			}
 		}
 		
 		//更新或插入操作
@@ -235,7 +242,6 @@ public class TaskImportService {
 		// 更新结果文件路径到表中
 		
 		return path + resultFileName + ".xls";
-//		updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, path + resultFileName + ".xls");
 	}
 
 	public XSSFSheet checkXlsxExcel(InputStream in, ProductImportTask task, String type) throws Exception {
@@ -247,10 +253,8 @@ public class TaskImportService {
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "下载的excel数据为空", null);
 			return null;
 		}
-		boolean flag = checkXlsxFileTemplet(xssfSheet.getRow(0), type);
+		boolean flag = checkXlsxFileTemplet(xssfSheet.getRow(0), type,task.getTaskNo());
 		if (!flag) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "上传文件与模板不一致");
-			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "上传文件与模板不一致", null);
 			return null;
 		}
 		return xssfSheet;
@@ -265,16 +269,14 @@ public class TaskImportService {
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "下载的excel数据为空", null);
 			return null;
 		}
-		boolean flag = checkXlsFileTemplet(xssfSheet.getRow(0), type);
+		boolean flag = checkXlsFileTemplet(xssfSheet.getRow(0), type,task.getTaskNo());
 		if (!flag) {
-			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "上传文件与模板不一致");
-			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "上传文件与模板不一致", null);
 			return null;
 		}
 		return xssfSheet;
 	}
 
-	public static boolean checkXlsxFileTemplet(XSSFRow xssfRow, String type) {
+	public  boolean checkXlsxFileTemplet(XSSFRow xssfRow, String type,String taskNo) {
 
 		boolean flag = true;
 		if ("spu".equals(type)) {
@@ -310,11 +312,15 @@ public class TaskImportService {
 				}
 			}
 		}
-
+		if(!flag){
+			log.info("任务编号：" + taskNo + "," + "上传文件与模板不一致");
+			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);
+				
+		}
 		return flag;
 	}
 
-	public static boolean checkXlsFileTemplet(HSSFRow xssfRow, String type) {
+	public  boolean checkXlsFileTemplet(HSSFRow xssfRow, String type,String taskNo) {
 
 		boolean flag = true;
 		if ("spu".equals(type)) {
@@ -349,13 +355,21 @@ public class TaskImportService {
 					}
 				}
 			}
+		}
+		if(!flag){
+			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);			
 		}
 		return flag;
 	}
 
 	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
+		
+
+		JSONObject json = JSONObject.parseObject(task.getData());
+		String filePath = json.get("taskFtpFilePath").toString();
+		task.setData(filePath);
+		
 		InputStream in = FTPClientUtil.downFile(task.getData());
-//		FTPClientUtil.closeFtp();
 		if (in == null) {
 			log.info("任务编号：" + task.getTaskNo() + "," + task.getData() + "从ftp下载失败数据为空");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), task.getTaskNo(), "从ftp下载失败", null);
@@ -384,12 +398,12 @@ public class TaskImportService {
 			spuModel = hubPendingSpuCheckResult.getModel();
 			// 查询货号是否已存在hubSpu中
 			hubPendingSpuDto.setSpuModel(spuModel);
-			List<HubSpuDto> list = dataHandleService.selectHubSpu(hubPendingSpuDto);
-			if (list != null && list.size() > 0) {
+			HubSpuDto list = dataHandleService.selectHubSpu(hubPendingSpuDto.getSpuModel(),hubPendingSpuDto.getHubBrandNo());
+			if (list != null) {
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				convertHubSpuToPendingSpu(hubPendingSpuDto, list.get(0));
-				hubSpuId = list.get(0).getSpuId();
-				hubSpuNo = list.get(0).getSpuNo();
+				convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+				hubSpuId = list.getSpuId();
+				hubSpuNo = list.getSpuNo();
 				spuIsPassing = true;
 				hubIsExist = true;
 				checkResult = spuModel+"在hub已存在";
@@ -460,13 +474,6 @@ public class TaskImportService {
 			//更新
 			pengdingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
 		} 
-//		else {尺寸、尺码
-//			SpuModelDto spuModelDto = new SpuModelDto();
-//			spuModelDto.setBrandNo(hubPendingSpuDto.getHubBrandNo());
-//			spuModelDto.setSpuModel(hubPendingSpuDto.getSpuModel());
-//			log.info("pendingToHub.auditPending推送参数:{}", spuModelDto);
-//			pengdingToHubGateWay.auditPending(spuModelDto);
-//		}
 	}
 
 	private Long saveOrUpdatePendingSpu(boolean hubIsExist,HubSpuPendingDto isPendingSpuExist, HubSpuPendingDto hubPendingSpuDto,
@@ -563,6 +570,14 @@ public class TaskImportService {
 			pengingSpuId = hubSpuPendingGateWay.insert(hubPendingSpuDto);
 		}
 		return pengingSpuId;
+	}
+	public MatchSizeResult matchSize(String hubBrandNo,String categoryNo,String hubSize) {
+		MatchSizeDto match = new MatchSizeDto();
+		match.setHubBrandNo(hubBrandNo);
+		match.setHubCategoryNo(categoryNo);
+		match.setSize(hubSize);
+		MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(match);
+		return matchSizeResult;
 	}
 
 }
