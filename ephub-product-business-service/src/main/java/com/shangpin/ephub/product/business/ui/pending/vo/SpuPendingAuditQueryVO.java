@@ -27,6 +27,10 @@ public class SpuPendingAuditQueryVO implements Serializable {
      */
     private String spuModel;
 
+    //供货商编号
+    private String supplierNo;
+
+
     /**
      * 更新的开始时间
      */

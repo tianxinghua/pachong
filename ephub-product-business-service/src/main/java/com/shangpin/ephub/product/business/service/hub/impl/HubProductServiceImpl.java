@@ -115,7 +115,7 @@ public class HubProductServiceImpl implements HubProductService {
                     //处理已经存在的
                     if(existSkuOrgDoms.size()>0){
                         log.info("SPSKUNO已存在");
-                        handleExistSku(existSkuOrgDoms,existSopSkuMap);
+                        handleExistSku(existSkuOrgDoms,existSopSkuMap,hubSpuDto);
                     }
 
                     if(skuOrgDoms.size()>0){
@@ -131,13 +131,17 @@ public class HubProductServiceImpl implements HubProductService {
 
     }
 
-    private void handleExistSku(List<ApiSkuOrgDom> existSkuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) {
+    private void handleExistSku(List<ApiSkuOrgDom> existSkuOrgDoms,Map<String,SopSkuDto> existSopSkuMap,HubSpuDto hubSpuDto) {
         for(ApiSkuOrgDom skuOrgDom:existSkuOrgDoms){
             SopSkuDto sopSkuDto = existSopSkuMap.get(skuOrgDom.getSupplierSkuNo());
             log.info("sopSkuDto  = " + sopSkuDto.toString());
             if(StringUtils.isBlank(sopSkuDto.getSkuNo())){
                 updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"SOP未审核通过，需要人工处理");
             }else{
+                //货号判断
+                if(!sopSkuDto.getProductModel().equals(hubSpuDto.getSpuModel())){
+                    updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"SOP已存在此商品，货号不同");
+                }
                 updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTED,"");
             }
 
