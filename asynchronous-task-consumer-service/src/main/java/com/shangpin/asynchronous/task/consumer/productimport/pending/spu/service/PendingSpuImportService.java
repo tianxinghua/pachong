@@ -188,6 +188,7 @@ public class PendingSpuImportService {
 				for (HubSkuPendingDto hubSkuPendingDto : listSku) {
 					HubPendingSkuCheckResult hubPendingSkuCheckResult = loopCheckHubSkuPending(hubSkuPendingDto,product,map);
 					flag = hubPendingSkuCheckResult.isPassing();
+					str.append(hubPendingSkuCheckResult.getMessage()).append(",");
 				}
 			} else {
 				flag = false;
