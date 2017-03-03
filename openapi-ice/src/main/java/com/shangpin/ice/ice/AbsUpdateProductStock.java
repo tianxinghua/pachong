@@ -732,6 +732,7 @@ public abstract class AbsUpdateProductStock {
 
 					Long  updateStockTime = Long.valueOf(stockUpdateDTO.getSpare());
 					if(now.getTime() - updateStockTime > 1000*60*60*2){
+						loggerInfo.info("########供应商已超过2小时没更新库存，现在全量更新。#########");
 						result = true;
 					}
 				}

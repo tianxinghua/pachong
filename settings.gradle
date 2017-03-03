@@ -38,6 +38,7 @@ include 'Monti-stock'
 include 'synchSupplierIdAndSpId'
 include 'rosi'
 include 'filippo'
+include 'Atelier-stock-template'
 
 
 
