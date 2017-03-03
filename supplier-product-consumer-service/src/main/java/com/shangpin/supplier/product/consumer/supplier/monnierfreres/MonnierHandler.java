@@ -116,7 +116,7 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender(item.getGender());
 			hubSpu.setSupplierCategoryname(item.getType());
 			hubSpu.setSupplierBrandname(item.getBrand());
-			hubSpu.setSupplierSeasonname("2017SS");
+			hubSpu.setSupplierSeasonname(item.getFashioncollection());
 			hubSpu.setSupplierGender("female");
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getManufacturer());

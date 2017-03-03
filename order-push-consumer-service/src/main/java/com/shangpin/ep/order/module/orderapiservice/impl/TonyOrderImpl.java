@@ -277,8 +277,9 @@ public class TonyOrderImpl implements IOrderService {
 	            	}else if(message.contains("Order already exists")){
 	            		orderDTO.setLockStockTime(new Date());
 		            	orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
+		            	return;
 	            	}else if(message.contains("quantity not available in the stock")){
-	            		orderDTO.setDescription(orderDTO.getLogContent());
+            			orderDTO.setDescription(orderDTO.getLogContent());
 	                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
 	            	}else{
 	            		orderDTO.setErrorType(ErrorStatus.API_ERROR);

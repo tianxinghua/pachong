@@ -563,7 +563,7 @@ public class DataServiceHandler {
 		if(StringUtils.isNotBlank(spuPending.getHubBrandNo())&&
 				StringUtils.isNotBlank(spuPending.getSpuModel())&&
 						StringUtils.isNotBlank(spuPending.getHubColor())&&
-								StringUtils.isNotBlank(spuPending.getHubCategoryNo())){
+								StringUtils.isNotBlank(spuPending.getHubMaterial())){
 			//品牌/货号/颜色/材质 不为空就设置为1，其他为0
 			spuPending.setInfoState(InfoState.PERFECT.getIndex());
 		}else{

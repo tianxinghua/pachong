@@ -369,6 +369,33 @@ shangpin:
                   isPurchaseExp: no
                   openApiKey:
                   openApiSecret:
+          clutcher:
+                  openApiKey: 6327ccd73b584d6082955d536ec12690
+                  openApiSecret: c0b555b7d20247678efd565d0fe2ff32
+                  isPurchaseExp: no
+          kix:
+                  openApiKey: 3ad363bca5f945629b31f1ab238ec73e
+                  openApiSecret: dd9a3156581d4b9ba87f293f61148361
+                  isPurchaseExp: no
+          baseBlu:
+                  stockUrl: http://88.37.81.130/WexComServer/StockEc/GetStockByEan13
+                  orderCreateUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAInsertOrderEc
+                  orderQueryUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAGetListOrderDetailEc
+                  sKey: SHA
+                  isPurchaseExp: no
+                  openApiKey:
+                  openApiSecret:
+          parisi:
+                  hostUrl: http://www.rpwebservice.it/wsnat13.asmx
+                  stockUrl: http://tempuri.org/GetStockWithSku
+                  setOrderUrl: http://tempuri.org/PutOrderWithSku
+                  confirmOrderUrl: http://tempuri.org/ConfirmOrderWithSku
+                  cancelOrderUrl: http://tempuri.org/CancelOrderWithSku
+                  deleteOrderUrl: http://tempuri.org/DeleteOrder
+                  strKey: YX123HF
+                  isPurchaseExp: no
+                  openApiKey:
+                  openApiSecret:
           supplier:
                   delayTime: 1000
                   retry: 120

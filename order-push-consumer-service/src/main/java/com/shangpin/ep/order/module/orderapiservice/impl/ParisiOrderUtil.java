@@ -58,7 +58,7 @@ public class ParisiOrderUtil  {
                     "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
                     "  <soap:Body>\n" +
                     "    <PutOrderWithSku xmlns=\"http://tempuri.org/\">\n" +
-                    "      <order_no>string</order_no>\n" +
+                    "      <order_no>"+orderDTO.getSpOrderId()+"</order_no>\n" +
                     "      <sku>"+sku + "</sku>\n" +
                     "      <quantity>"+quantity+"</quantity>\n" +
                     "      <strKey>"+strKey+"</strKey>\n" +

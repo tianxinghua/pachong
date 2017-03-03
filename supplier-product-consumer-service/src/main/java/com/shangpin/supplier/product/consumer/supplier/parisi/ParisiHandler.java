@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * 暂停对接
  */
-@Component("opticalHandler")
+@Component("parisHandler")
 @Slf4j
 public class ParisiHandler implements ISupplierHandler {
 	
