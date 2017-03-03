@@ -30,6 +30,10 @@ public class MonnierfreresServiceImpl {
 	 * 产生的订单文件
 	 */
 	private static String localPath = "/usr/local/share/applications/order-push-consumer-service/lib/monnierfreres/";
+	/**
+	 * csv文件第一行
+	 */
+	private static String header = "REFCMD,DATCMD,DATLIV,INSCMD,CODCLI,CODTRP,REFCMD,NOMCLI,NOMSTE,ADRES1,ADRES2,VILNOM,CODPST,CODPAY,MNTTOT,CODPRD,QTECMD,PRXUNT,PRPTYP,NLGLIV,NUMLOT,INSLI1,INSLI2,INSCD2,RELNOM,ADREL1,ADREL2,ADREL3,VILREL,RELPST,RELPAY,CMPAD1,CMPAD2,CMPAD3,TELFIX,TELMOB,CODREL,MAILAD,LOTACH,DISOR,DISSOV,FACNOM,ADREF1,ADREF2,ADREF3,VILFAC,FACPST,FACPAY,MCTRBS,MSGCD1,MSGCD2,MSGCD3,MSGCD4";
 	
 	@Scheduled(cron="00 00 04 * * ?")
 	public void uploadFtp(){
@@ -41,10 +45,7 @@ public class MonnierfreresServiceImpl {
 			if(null != orderDetails && orderDetails.size() >0){
 				log.info("monnierfreres查询到的订单的数量是========="+orderDetails.size());
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("REFCMD").append(split).append("DATCMD").append(split).append("DATLIV").append(split).append("INSCMD").append(split).append("CODCLI").append(split)
-				.append("CODTRP").append(split).append("REFCMD").append(split).append("NOMCLI").append(split).append("NOMCLI").append(split).append("NOMSTE").append(split).append("ADRES1").append(split)
-				.append("ADRES2").append(split).append("VILNOM").append(split).append("CODPST").append(split).append("CODPAY").append(split).append("MNTTOT").append(split).append("CODPRD").append(split)
-				.append("QTECMD").append("\r\n");
+				buffer.append(header).append("\r\n");
 				String dayTime = DateTimeUtil.strForDate(endTime);
 				for(HubOrderDetail orderDetail : orderDetails){
 					buffer.append(orderDetail.getOrderNo()).append(split)
@@ -56,7 +57,7 @@ public class MonnierfreresServiceImpl {
 					.append(orderDetail.getOrderNo()).append(split)
 					.append("SHANGPIN").append(split)
 					.append("GENERTEC ITALIA").append(split)
-					.append("VIA GIACOMO LEOPARDI, 27").append(split)
+					.append("VIA GIACOMO LEOPARDI.27").append(split)
 					.append("").append(split)
 					.append("LURATE CACCIVIO").append(split)
 					.append("22075").append(split)
