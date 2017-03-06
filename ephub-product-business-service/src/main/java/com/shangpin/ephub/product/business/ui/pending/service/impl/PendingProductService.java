@@ -105,7 +105,7 @@ public class PendingProductService extends PendingSkuService{
                         List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getSpPicUrl() : ""); 
                         pendingProduct.setPicUrls(findSpPicUrls(picurls)); 
-                        pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : ""); 
+                        pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : picReason); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 

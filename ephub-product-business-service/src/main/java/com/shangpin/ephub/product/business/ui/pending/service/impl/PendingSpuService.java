@@ -74,6 +74,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class PendingSpuService implements IPendingProductService {
 	
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+	protected static String picReason = "该商品没有图片";
 	
 	@Autowired
 	protected HubSpuPendingGateWay hubSpuPendingGateWay;
@@ -334,6 +335,9 @@ public abstract class PendingSpuService implements IPendingProductService {
                         if(CollectionUtils.isNotEmpty(picurls)){
                         	pendingProduct.setSpPicUrl(picurls.get(0).getSpPicUrl()); 
                             pendingProduct.setPicReason(picurls.get(0).getMemo());
+                        }else{
+                        	pendingProduct.setSpPicUrl(""); 
+                            pendingProduct.setPicReason(picReason);
                         }
                         String supplierCategoryname = categories.get(pendingSpu.getSupplierSpuId());
 						pendingProduct.setSupplierCategoryname(StringUtils.isEmpty(supplierCategoryname) ? "" : supplierCategoryname);
