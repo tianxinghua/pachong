@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -101,9 +102,10 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
-                        List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
-                        pendingProduct.setPicUrls(picurls); 
+                        List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getSpPicUrl() : ""); 
+                        pendingProduct.setPicUrls(findSpPicUrls(picurls)); 
+                        pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : ""); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
@@ -299,6 +301,23 @@ public class PendingProductService extends PendingSkuService{
     /***************************************************************************************************************************
      *       以下为内部调用私有方法
     /**************************************************************************************************************************/
+    /**
+     * 
+     * @param lists
+     * @return
+     */
+    private List<String> findSpPicUrls(List<HubSpuPendingPicDto> lists){
+    	if(CollectionUtils.isNotEmpty(lists)){
+    		List<String> spPicUrls = new ArrayList<String>();
+    		for(HubSpuPendingPicDto dto : lists){
+    			spPicUrls.add(dto.getSpPicUrl());
+    		}
+    		return spPicUrls;
+    	}else{
+    		return null;
+    	}
+    }
+     
     /**
      * 查找supplier sku
      * @param supplierSpuId
