@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -58,6 +59,9 @@ public abstract class PendingSkuService extends PendingSpuService{
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
             	for(HubSkuPendingDto sku : skus){
+            		if(FilterFlag.INVALID.getIndex() == sku.getFilterFlag()){
+            			sku.setHubSkuSizeType("排除"); 
+            		}
             		Long spuPendingId = sku.getSpuPendingId();
 					if(pendigSkus.containsKey(spuPendingId)){
 						pendigSkus.get(spuPendingId).add(sku);
