@@ -25,7 +25,7 @@ public class MonnierfreresServiceImpl {
 
 	@Autowired
 	private IHubOrderDetailService hubOrderDetailService;
-	private static String split = ",";
+	private static String split = ";";
 	/**
 	 * 产生的订单文件
 	 */
@@ -33,7 +33,7 @@ public class MonnierfreresServiceImpl {
 	/**
 	 * csv文件第一行
 	 */
-	private static String header = "REFCMD,DATCMD,DATLIV,INSCMD,CODCLI,CODTRP,REFCMD,NOMCLI,NOMSTE,ADRES1,ADRES2,VILNOM,CODPST,CODPAY,MNTTOT,CODPRD,QTECMD,PRXUNT,PRPTYP,NLGLIV,NUMLOT,INSLI1,INSLI2,INSCD2,RELNOM,ADREL1,ADREL2,ADREL3,VILREL,RELPST,RELPAY,CMPAD1,CMPAD2,CMPAD3,TELFIX,TELMOB,CODREL,MAILAD,LOTACH,DISOR,DISSOV,FACNOM,ADREF1,ADREF2,ADREF3,VILFAC,FACPST,FACPAY,MCTRBS,MSGCD1,MSGCD2,MSGCD3,MSGCD4";
+	private static String header = "REFCMD;DATCMD;DATLIV;INSCMD;CODCLI;CODTRP;REFCMD;NOMCLI;NOMSTE;ADRES1;ADRES2;VILNOM;CODPST;CODPAY;MNTTOT;CODPRD;QTECMD;PRXUNT;PRPTYP;NLGLIV;NUMLOT;INSLI1;INSLI2;INSCD2;RELNOM;ADREL1;ADREL2;ADREL3;VILREL;RELPST;RELPAY;CMPAD1;CMPAD2;CMPAD3;TELFIX;TELMOB;CODREL;MAILAD;LOTACH;DISOR;DISSOV;FACNOM;ADREF1;ADREF2;ADREF3;VILFAC;FACPST;FACPAY;MCTRBS;MSGCD1;MSGCD2;MSGCD3;MSGCD4";
 	
 	@Scheduled(cron="00 00 04 * * ?")
 	public void uploadFtp(){
@@ -64,7 +64,11 @@ public class MonnierfreresServiceImpl {
 					.append("IT").append(split)
 					.append("").append(split)
 					.append(orderDetail.getSupplierSkuNo()).append(split)
-					.append(orderDetail.getQuantity()).append("\r\n"); 
+					.append(orderDetail.getQuantity());
+					for(int i=0;i<36;i++){
+						buffer.append(split);
+					}
+					buffer.append("\r\n"); 
 				}
 				String orders = buffer.toString();
 				log.info("monnierfreres今日推送订单："+orders);
