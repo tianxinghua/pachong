@@ -189,6 +189,16 @@ public class HubSpuPending implements Serializable {
 
     private String auditOpinion;
 
+    /**
+     * 0：程序处理 1：手工处理
+     */
+    private Byte handleFrom;
+
+    /**
+     * 1：SPU属性完全匹配 ，SKU需要处理 （查询用）
+     */
+    private Byte handleState;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
@@ -543,6 +553,22 @@ public class HubSpuPending implements Serializable {
         this.auditOpinion = auditOpinion == null ? null : auditOpinion.trim();
     }
 
+    public Byte getHandleFrom() {
+        return handleFrom;
+    }
+
+    public void setHandleFrom(Byte handleFrom) {
+        this.handleFrom = handleFrom;
+    }
+
+    public Byte getHandleState() {
+        return handleState;
+    }
+
+    public void setHandleState(Byte handleState) {
+        this.handleState = handleState;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -593,6 +619,8 @@ public class HubSpuPending implements Serializable {
         sb.append(", auditDate=").append(auditDate);
         sb.append(", auditUser=").append(auditUser);
         sb.append(", auditOpinion=").append(auditOpinion);
+        sb.append(", handleFrom=").append(handleFrom);
+        sb.append(", handleState=").append(handleState);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -653,7 +681,9 @@ public class HubSpuPending implements Serializable {
             && (this.getAuditState() == null ? other.getAuditState() == null : this.getAuditState().equals(other.getAuditState()))
             && (this.getAuditDate() == null ? other.getAuditDate() == null : this.getAuditDate().equals(other.getAuditDate()))
             && (this.getAuditUser() == null ? other.getAuditUser() == null : this.getAuditUser().equals(other.getAuditUser()))
-            && (this.getAuditOpinion() == null ? other.getAuditOpinion() == null : this.getAuditOpinion().equals(other.getAuditOpinion()));
+            && (this.getAuditOpinion() == null ? other.getAuditOpinion() == null : this.getAuditOpinion().equals(other.getAuditOpinion()))
+            && (this.getHandleFrom() == null ? other.getHandleFrom() == null : this.getHandleFrom().equals(other.getHandleFrom()))
+            && (this.getHandleState() == null ? other.getHandleState() == null : this.getHandleState().equals(other.getHandleState()));
     }
 
     @Override
@@ -704,6 +734,8 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getAuditDate() == null) ? 0 : getAuditDate().hashCode());
         result = prime * result + ((getAuditUser() == null) ? 0 : getAuditUser().hashCode());
         result = prime * result + ((getAuditOpinion() == null) ? 0 : getAuditOpinion().hashCode());
+        result = prime * result + ((getHandleFrom() == null) ? 0 : getHandleFrom().hashCode());
+        result = prime * result + ((getHandleState() == null) ? 0 : getHandleState().hashCode());
         return result;
     }
 }

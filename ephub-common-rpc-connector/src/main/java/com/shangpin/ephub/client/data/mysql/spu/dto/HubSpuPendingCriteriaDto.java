@@ -2986,6 +2986,126 @@ public class HubSpuPendingCriteriaDto {
             addCriterion("audit_opinion not between", value1, value2, "auditOpinion");
             return (Criteria) this;
         }
+
+        public Criteria andHandleFromIsNull() {
+            addCriterion("handle_from is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromIsNotNull() {
+            addCriterion("handle_from is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromEqualTo(Byte value) {
+            addCriterion("handle_from =", value, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromNotEqualTo(Byte value) {
+            addCriterion("handle_from <>", value, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromGreaterThan(Byte value) {
+            addCriterion("handle_from >", value, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromGreaterThanOrEqualTo(Byte value) {
+            addCriterion("handle_from >=", value, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromLessThan(Byte value) {
+            addCriterion("handle_from <", value, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromLessThanOrEqualTo(Byte value) {
+            addCriterion("handle_from <=", value, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromIn(List<Byte> values) {
+            addCriterion("handle_from in", values, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromNotIn(List<Byte> values) {
+            addCriterion("handle_from not in", values, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromBetween(Byte value1, Byte value2) {
+            addCriterion("handle_from between", value1, value2, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleFromNotBetween(Byte value1, Byte value2) {
+            addCriterion("handle_from not between", value1, value2, "handleFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateIsNull() {
+            addCriterion("handle_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateIsNotNull() {
+            addCriterion("handle_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateEqualTo(Byte value) {
+            addCriterion("handle_state =", value, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateNotEqualTo(Byte value) {
+            addCriterion("handle_state <>", value, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateGreaterThan(Byte value) {
+            addCriterion("handle_state >", value, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("handle_state >=", value, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateLessThan(Byte value) {
+            addCriterion("handle_state <", value, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateLessThanOrEqualTo(Byte value) {
+            addCriterion("handle_state <=", value, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateIn(List<Byte> values) {
+            addCriterion("handle_state in", values, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateNotIn(List<Byte> values) {
+            addCriterion("handle_state not in", values, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateBetween(Byte value1, Byte value2) {
+            addCriterion("handle_state between", value1, value2, "handleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andHandleStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("handle_state not between", value1, value2, "handleState");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

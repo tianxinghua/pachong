@@ -34,10 +34,10 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
@@ -74,6 +74,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class PendingSpuService implements IPendingProductService {
 	
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+	protected static String picReason = "该商品没有图片";
 	
 	@Autowired
 	protected HubSpuPendingGateWay hubSpuPendingGateWay;
@@ -285,19 +286,12 @@ public abstract class PendingSpuService implements IPendingProductService {
     }
     
     @Override
-    public List<String> findSpPicUrl(String supplierId,String supplierSpuNo){
+    public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-    	criteria.setFields("sp_pic_url");
+    	criteria.setFields("sp_pic_url,memo");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
-    	if(spuPendingPics!=null&&spuPendingPics.size()>0){
-    		List<String> picUrls = new ArrayList<String>();
-    		for(HubSpuPendingPicDto dto : spuPendingPics){
-    			picUrls.add(dto.getSpPicUrl());
-    		}
-    		return picUrls;
-    	}
-    	return null;
+    	return spuPendingPics;
     }
     
 	@Override
@@ -337,8 +331,14 @@ public abstract class PendingSpuService implements IPendingProductService {
                         pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                        List<String> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0) : ""); 
+                        List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        if(CollectionUtils.isNotEmpty(picurls)){
+                        	pendingProduct.setSpPicUrl(picurls.get(0).getSpPicUrl()); 
+                            pendingProduct.setPicReason(picurls.get(0).getMemo());
+                        }else{
+                        	pendingProduct.setSpPicUrl(""); 
+                            pendingProduct.setPicReason(picReason);
+                        }
                         String supplierCategoryname = categories.get(pendingSpu.getSupplierSpuId());
 						pendingProduct.setSupplierCategoryname(StringUtils.isEmpty(supplierCategoryname) ? "" : supplierCategoryname);
                         products.add(pendingProduct);
