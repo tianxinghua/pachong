@@ -14,12 +14,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.della.dto.Item;
 import com.shangpin.iog.della.schedule.AppContext;
 import com.shangpin.iog.della.utils.CSVUtil;
 import com.shangpin.iog.della.utils.FTPUtils;
-import com.shangpin.sop.AbsUpdateProductStock;
 
 
 @Component("dellaStock")
@@ -40,13 +40,11 @@ public class FetchProduct extends AbsUpdateProductStock {
 
 	}
 	
-	public Map<String, Integer> grabStock(Collection<String> skuNo)
+	public Map<String, String> grabStock(Collection<String> skuNo)
 			throws ServiceException ,Exception{
 		
-		Map<String, Integer> skustock = new HashMap<>();
-		Map<String,Integer> stockMap = new HashMap<>();
-
-		
+		Map<String, String> skustock = new HashMap<String, String>();
+		Map<String, String> stockMap = new HashMap<String, String>();
 		List<Item> items =null; 
 		try{
 			FTPUtils ftp =new FTPUtils("mosuftp", "inter2015£", "92.223.134.2", 21);
@@ -72,13 +70,13 @@ public class FetchProduct extends AbsUpdateProductStock {
 			logInfo.info("获取到的供应商的数据大小是========"+items.size()); 
 			for(Item item:items){
 				String stock = item.getQuantity();
-				stockMap.put(item.getItem_code(), Integer.parseInt(StringUtils.isNotBlank(stock) ? stock : "0"));
+				stockMap.put(item.getItem_code(), StringUtils.isNotBlank(stock) ? stock : "0");
 			}
 			for (String skuno : skuNo) {
 	            if(stockMap.containsKey(skuno)){
 	                skustock.put(skuno, stockMap.get(skuno));
 	            } else{
-	                skustock.put(skuno, 0);
+	                skustock.put(skuno, "0");
 
 	            }
 	        }
@@ -89,42 +87,15 @@ public class FetchProduct extends AbsUpdateProductStock {
 		return skustock;
 	}
 	
+	@SuppressWarnings("unused")
 	private static ApplicationContext factory;
     private static void loadSpringContext()
     {
-
         factory = new AnnotationConfigApplicationContext(AppContext.class);
     }
 	
 	public static void main(String[] args){
-		
 		loadSpringContext();		
-//		FetchProduct fetchProduct = (FetchProduct)factory.getBean("dellaStock");
-//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//		logInfo.info("della更新数据库开始");
-//		System.out.println("della更新数据库开始");
-//		try {
-//			
-//			fetchProduct.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
-//
-//		} catch (Exception e) {
-//			logInfo.error(e.getMessage());
-//			e.printStackTrace();
-//		}
-//		logInfo.info("della更新数据库结束");
-//		System.out.println("della更新数据库结束");
-//		System.exit(0);
-		
-//		try {
-//			AbsUpdateProductStock fetchProduct = new FetchProduct();
-//			fetchProduct.grabStock(null);
-//		} catch (ServiceException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 	
 }
