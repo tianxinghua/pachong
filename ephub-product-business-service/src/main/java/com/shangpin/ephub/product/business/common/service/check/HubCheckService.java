@@ -98,6 +98,22 @@ public class HubCheckService {
         }
 	}
 	
+	public String checkSpuModel(String spuModel,String hubBrandNo,String hubCategoryNo){
+		
+		String model = null;
+		if(StringUtils.isNotBlank(spuModel)&&StringUtils.isNotBlank(hubBrandNo)&&StringUtils.isNotBlank(hubCategoryNo)){
+			BrandModelDto brandModelDto = new BrandModelDto();
+			brandModelDto.setBrandMode(spuModel);
+			brandModelDto.setHubBrandNo(hubBrandNo);
+			brandModelDto.setHubCategoryNo(hubCategoryNo);
+			BrandModelResult brandModelResult=  HubBrandModelRuleService.verify(brandModelDto);
+			if(brandModelResult.isPassing()){
+				model = brandModelResult.getBrandMode();
+			}
+		}
+		return model;
+	}
+	
 	public HubPendingSpuCheckResult checkSpu(HubSpuPendingDto hubProduct){
 		
 		StringBuffer str = new StringBuffer();
@@ -105,24 +121,12 @@ public class HubCheckService {
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		result.setPassing(true);
 		
-		BrandModelDto brandModelDto = null;
-		BrandModelResult brandModelResult= null;
-		if(StringUtils.isNoneBlank(hubProduct.getSpuModel())){
-			brandModelDto = new BrandModelDto();
-			brandModelDto.setBrandMode(hubProduct.getSpuModel());
-			brandModelDto.setHubBrandNo(hubProduct.getHubBrandNo());
-			brandModelDto.setHubCategoryNo(hubProduct.getHubCategoryNo());
-			brandModelResult=  HubBrandModelRuleService.verify(brandModelDto);
-			if(brandModelResult.isPassing()){
-				result.setSpuModel(true);
-				result.setModel(brandModelResult.getBrandMode());
-			}else{
-				str.append("spuModel："+hubProduct.getSpuModel()+"校验失败");
-				result.setPassing(false);
-				result.setSpuModel(false);
-			}
+		String spuModel = checkSpuModel(hubProduct.getSpuModel(),hubProduct.getHubBrandNo(),hubProduct.getHubCategoryNo());
+		if(spuModel!=null){
+			result.setSpuModel(true);
+			result.setModel(spuModel);
 		}else{
-			str.append("spuModel为空");
+			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败");
 			result.setPassing(false);
 			result.setSpuModel(false);
 		}

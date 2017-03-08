@@ -10,6 +10,14 @@ import java.util.Date;
 
 
 public class DateTimeUtil {
+	
+	
+    public static int  getCurrentMin(){
+        Calendar calendar = Calendar.getInstance();
+        return  calendar.get(Calendar.MINUTE);
+
+    }
+
   /**
    * Return current datetime string.
    * @return current datetime, pattern: "yyyy-MM-dd HH:mm:ss".

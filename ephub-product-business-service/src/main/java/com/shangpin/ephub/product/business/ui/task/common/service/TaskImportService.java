@@ -68,20 +68,20 @@ public class TaskImportService {
                 //第二步 ： 保存数据库
                 saveTask(task,taskNo,ftpPath,systemFileName,importType.getIndex());
                 //TODO 第三步 ：发送到hub消息队列
-                sendTaskMessage(taskNo,ftpPath+systemFileName,importType);
+                sendTaskMessage(task.getCreateUser(),taskNo,ftpPath+systemFileName,importType);
                 return HubResponse.successResp(null);
             }
         }
         log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
         return HubResponse.errorResp("文件格式有误，请下载模板");
     }
-    private void sendTaskMessage(String taskNo,String ftpFilePath,TaskImportTpye importType){
+    private void sendTaskMessage(String createUser,String taskNo,String ftpFilePath,TaskImportTpye importType){
         ProductImportTask productImportTask = new ProductImportTask();
         productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
         productImportTask.setMessageId(UUID.randomUUID().toString());
         productImportTask.setTaskNo(taskNo);
         productImportTask.setType(importType.getIndex());
-        productImportTask.setData("{\"taskFtpFilePath\":\""+ftpFilePath+"\"}");
+        productImportTask.setData("{\"taskFtpFilePath\":\""+ftpFilePath+"\",\"createUser\":\""+createUser+"\"}");
         log.info("推送任务的参数：{}",productImportTask);
         if(TaskImportTpye.HUB_PRODUCT.getIndex()==importType.getIndex()){
         	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
