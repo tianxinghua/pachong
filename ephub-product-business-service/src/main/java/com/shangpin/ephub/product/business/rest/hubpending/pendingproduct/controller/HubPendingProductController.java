@@ -1,8 +1,15 @@
 package com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
+import com.shangpin.ephub.product.business.service.ServiceConstant;
+import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +54,9 @@ public class HubPendingProductController {
 
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
+
+	@Autowired
+	SopSkuService sopSkuService;
 	
 	@RequestMapping(value = "/setspskuno")
 	public HubResponse<?> checkSku(@RequestBody SpSkuNoDto dto){
@@ -62,19 +72,48 @@ public class HubPendingProductController {
 	}
 
 	private void updatePendingSku(SpSkuNoDto dto) throws Exception{
+		//如果是因为SOP已存在的错误 需要调用接口获取到信息
+		if(dto.getSign()!=1){
+			getExistSpSkuNo(dto);
+		}
+
+
 		//写入尚品的SKUno
-		HubSkuPendingDto searchSkuPending = updateSkuPendingSpSkuNo(dto);
-
+		HubSkuPendingDto searchSkuPending =null;
+		searchSkuPending = updateSkuPendingSpSkuNo(dto);
 		//更新SKUSUPPLIERMAPPING 的状态
-
 		updateSkuSupplierMapping(dto);
-
 		//修改hub_sku中的商品sku编号
-		updateHubSkuSpSkuNo(dto, searchSkuPending);
+		if(null!=searchSkuPending){
+			updateHubSkuSpSkuNo(dto, searchSkuPending);
+		}
 
+	}
 
-
-
+	private void getExistSpSkuNo(SpSkuNoDto dto) {
+		if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
+            //如果是已存在的错误，调用接口  组装
+            SopSkuQueryDto queryDto = new SopSkuQueryDto();
+            queryDto.setSopUserNo(dto.getSupplierId());
+            List<String> supplierSkuNoList = new ArrayList<>();
+             supplierSkuNoList.add(dto.getSupplierSkuNo());
+            queryDto.setLstSupplierSkuNo(supplierSkuNoList);
+            HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
+            try {
+                if(supplierSkuNoList.size()>0){
+                    sopSkuResponseDto = sopSkuService.querySpSkuNoFromScm(queryDto);
+					if(null!=sopSkuResponseDto&&sopSkuResponseDto.getIsSuccess()){
+						List<SopSkuDto> sopSkuDtos =  sopSkuResponseDto.getResDatas();
+						if(null!=sopSkuDtos&&sopSkuDtos.size()>0){
+							 SopSkuDto  sopSkuDto =  sopSkuDtos.get(0);
+							dto.setSkuNo(sopSkuDto.getSkuNo());
+						}
+					}
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	private void updateHubSkuSpSkuNo(SpSkuNoDto dto, HubSkuPendingDto searchSkuPending) {
@@ -97,8 +136,14 @@ public class HubPendingProductController {
 		if(dto.getSign()==1){
 			hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTED.getIndex()).byteValue());
 		}else{
-			hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
-			hubSkuSupplierMapping.setMemo(dto.getErrorReason());
+			if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
+				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.EXIST.getIndex()).byteValue());
+				hubSkuSupplierMapping.setMemo(ServiceConstant.HUB_SEND_TO_SCM_EXIST);
+
+			}else{
+				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
+				hubSkuSupplierMapping.setMemo(dto.getErrorReason());
+			}
 		}
 		hubSkuSupplierMapping.setUpdateTime(new Date());
 		HubSkuSupplierMappingWithCriteriaDto skumappingCritria = new HubSkuSupplierMappingWithCriteriaDto(hubSkuSupplierMapping,criteriaDto);
@@ -107,7 +152,7 @@ public class HubPendingProductController {
 
 	private HubSkuPendingDto updateSkuPendingSpSkuNo(SpSkuNoDto dto) {
 		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
-		hubSkuPending.setSpSkuNo(dto.getSkuNo());
+		hubSkuPending.setSpSkuNo( dto.getSkuNo());
 		hubSkuPending.setMemo(dto.getErrorReason());
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo())
@@ -117,12 +162,33 @@ public class HubPendingProductController {
 		HubSkuPendingWithCriteriaDto skuCritria = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteria);
 		skuPendingGateWay.updateByCriteriaSelective(skuCritria);
 
-		List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+		List<HubSkuPendingDto> hubSkuPendingDtos = null;
+		if(dto.getSign()==1){
+			////更新成功的才处理
+			hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+		}
 		HubSkuPendingDto  searchSkuPending  = null;
+
 		if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
 			searchSkuPending = hubSkuPendingDtos.get(0);
 		}
 		return searchSkuPending;
+	}
+
+
+
+	private void updateExistSkuSupplierMapping(SpSkuNoDto dto) {
+		HubSkuSupplierMappingCriteriaDto criteriaDto = new HubSkuSupplierMappingCriteriaDto();
+		criteriaDto.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
+
+		HubSkuSupplierMappingDto hubSkuSupplierMapping = new HubSkuSupplierMappingDto();
+
+		hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.EXIST.getIndex()).byteValue());
+		hubSkuSupplierMapping.setMemo(dto.getErrorReason());
+
+		hubSkuSupplierMapping.setUpdateTime(new Date());
+		HubSkuSupplierMappingWithCriteriaDto skumappingCritria = new HubSkuSupplierMappingWithCriteriaDto(hubSkuSupplierMapping,criteriaDto);
+		skuSupplierMappingGateWay.updateByCriteriaSelective(skumappingCritria);
 	}
 
 

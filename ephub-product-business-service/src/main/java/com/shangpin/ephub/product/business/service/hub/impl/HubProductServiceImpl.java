@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.*;
+import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
+import com.shangpin.ephub.product.business.service.ServiceConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,10 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
@@ -142,11 +141,13 @@ public class HubProductServiceImpl implements HubProductService {
                 if(!sopSkuDto.getProductModel().equals(hubSpuDto.getSpuModel())){
                     updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"SOP已存在此商品，货号不同");
                 }
-                updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTED,"");
+                updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.EXIST, ServiceConstant.HUB_SEND_TO_SCM_EXIST);
             }
 
             //获取 sku pending 的值  更新状态
             updateSkuPendingStatus(sopSkuDto);
+            // 更新 hubsku
+            updateHubSkuSpSkuNo(skuOrgDom.getHubSkuNo(),sopSkuDto.getSkuNo());
         }
     }
 
@@ -321,7 +322,7 @@ public class HubProductServiceImpl implements HubProductService {
         }else{
             skuOrgDom.setRetry(false);
         }
-
+        skuOrgDom.setHubSkuNo(hubSkuDto.getSkuNo());
         return skuOrgDom;
 
     }
@@ -428,5 +429,16 @@ public class HubProductServiceImpl implements HubProductService {
         skuPendingGateWay.updateByCriteriaSelective(skuPendingWithCriteriaDto);
     }
 
+
+    private void updateHubSkuSpSkuNo(String hubSkuNo,String spSkuNo) {
+
+            HubSkuDto hubSku = new HubSkuDto();
+            hubSku.setSpSkuNo(spSkuNo);
+            HubSkuCriteriaDto skuCriteria = new HubSkuCriteriaDto();
+            skuCriteria.createCriteria().andSkuNoEqualTo(hubSkuNo);
+            HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
+            hubSkuGateWay.updateByCriteriaSelective(criteriaWithSku);
+
+    }
 
 }
