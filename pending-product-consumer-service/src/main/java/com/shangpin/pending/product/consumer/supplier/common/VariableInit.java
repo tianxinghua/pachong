@@ -495,6 +495,7 @@ public class VariableInit {
             return true;
 
         }else{
+            hubSpuPending.setPicState(PicState.UNHANDLED.getIndex());
             return false;
         }
     }
