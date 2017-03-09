@@ -21,6 +21,7 @@ import com.shangpin.asynchronous.task.consumer.productimport.common.service.Data
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
+import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -65,6 +66,12 @@ public class PendingSpuImportService {
 	public String handMessage(ProductImportTask task) throws Exception {
 		
 		//从ftp下载文件
+		JSONObject json = JSONObject.parseObject(task.getData());
+		String filePath = json.get("taskFtpFilePath").toString();
+		String createUser = json.get("createUser").toString();
+		task.setData(filePath);
+		
+		
 		InputStream in = taskService.downFileFromFtp(task);
 		
 		//excel转对象
@@ -77,10 +84,10 @@ public class PendingSpuImportService {
 		}
 
 		//校验数据并把校验结果写入excel
-		return checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct);
+		return checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct,createUser);
 	}
 	// 校验数据以及保存到hub表
-		private String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct)
+		private String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
 				throws Exception {
 			
 			if (listHubProduct == null) {
@@ -98,17 +105,17 @@ public class PendingSpuImportService {
 				map = new HashMap<String, String>();
 				map.put("taskNo", taskNo);
 				map.put("spuModel", product.getSpuModel());
-				loopHandleSpuImportDto(map,product);
+				loopHandleSpuImportDto(map,product,createUser);
 				listMap.add(map);
 			}
 
 			// 处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 			return taskService.convertExcel(listMap, taskNo);
 		}
-	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO product) throws Exception{
+	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO product,String createUser) throws Exception{
 		
 		//判断spuPending是否已存在
-		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product);
+		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product,createUser);
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 		HubSpuPendingDto isSpuPendingExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
@@ -184,8 +191,11 @@ public class PendingSpuImportService {
 
 			List<HubSkuPendingDto> listSku = dataHandleService.selectHubSkuPendingBySpuPendingId(isSpuPendingExist);
 			if (listSku != null && listSku.size() > 0) {
-				
 				for (HubSkuPendingDto hubSkuPendingDto : listSku) {
+					
+					if(hubSkuPendingDto.getSkuState()!=null&&hubSkuPendingDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingDto.getSkuState()==SpuState.HANDLING.getIndex()){
+						continue;
+					}
 					HubPendingSkuCheckResult hubPendingSkuCheckResult = loopCheckHubSkuPending(hubSkuPendingDto,product,map);
 					flag = hubPendingSkuCheckResult.isPassing();
 					str.append(hubPendingSkuCheckResult.getMessage()).append(",");
@@ -246,10 +256,11 @@ public class PendingSpuImportService {
 		return hubPendingSkuCheckResult;
 	}
 
-	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingSpuImportDTO product) {
+	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingSpuImportDTO product,String createUser) {
 		HubSpuPendingDto HubPendingSpuDto = new HubSpuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSpuDto);
 		HubPendingSpuDto.setHubSeason(product.getSeasonYear() + "_" + product.getSeasonName());
+		HubPendingSpuDto.setUpdateUser(createUser);
 		return HubPendingSpuDto;
 	}
 
