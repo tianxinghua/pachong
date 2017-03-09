@@ -11,13 +11,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
+import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.grouppo.schedule.AppContext;
 import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub;
 import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub.Stock_TabularQuery;
 import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub.Stock_TabularQueryResponse;
 import com.shangpin.iog.grouppo.util.axis20.StockWSServiceStub.Stock_TabularQueryResponseStructure;
-import com.shangpin.sop.AbsUpdateProductStock;
 
 /**
  * Created by lubaijiang on 2015/9/14.
@@ -28,8 +28,8 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     private static LoggerUtil logError = LoggerUtil.getLogger("error");
     
     private static ResourceBundle bdl=null;
-    private static String supplierId;
-    private static ApplicationContext factory;
+    @SuppressWarnings("unused")
+	private static ApplicationContext factory;
     private static void loadSpringContext()
     {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
@@ -37,13 +37,12 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
     }
     @Override
-    public Map<String,Integer> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
+    public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
     	
     	//获取库存元数据    
-    	Map<String,Integer> skustock = new HashMap<String, Integer>();
+    	Map<String,String> skustock = new HashMap<String, String>();
 		Map<String,String> stockMap = new HashMap<String, String>();
 		Map<String,Double> zeroStock = new HashMap<String, Double>();
         
@@ -101,9 +100,9 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
         logger.info("stockMap.size==="+stockMap.size()); 
         for (String skuno : skuNo) {
             if(stockMap.containsKey(skuno)){
-                skustock.put(skuno, Integer.parseInt(stockMap.get(skuno)));
+                skustock.put(skuno, stockMap.get(skuno));
             } else{
-                skustock.put(skuno, 0);
+                skustock.put(skuno, "0");
             }
         }
         return skustock;
@@ -112,10 +111,6 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     //test main
     public static void main(String[] args) throws Exception {
     	//加载spring
-//        loadSpringContext();    
-
-    	StockImpNotUseThread stockImp = new StockImpNotUseThread();
-    	 stockImp.grabStock(null);
-    	
+        loadSpringContext();    
     }
 }
