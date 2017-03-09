@@ -192,7 +192,8 @@ public class PendingSpuImportService {
 			List<HubSkuPendingDto> listSku = dataHandleService.selectHubSkuPendingBySpuPendingId(isSpuPendingExist);
 			if (listSku != null && listSku.size() > 0) {
 				for (HubSkuPendingDto hubSkuPendingDto : listSku) {
-					if(hubSkuPendingDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingDto.getSkuState()==SpuState.HANDLING.getIndex()){
+					
+					if(hubSkuPendingDto.getSkuState()!=null&&hubSkuPendingDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingDto.getSkuState()==SpuState.HANDLING.getIndex()){
 						continue;
 					}
 					HubPendingSkuCheckResult hubPendingSkuCheckResult = loopCheckHubSkuPending(hubSkuPendingDto,product,map);
