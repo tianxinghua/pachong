@@ -344,5 +344,13 @@ public class SupplierProductMysqlService {
 		}
 		return isChanged;
 	}
+
+	public List<HubSupplierSkuDto> findSupplierSkuBySupplierIdAndSupplierSpuId(String supplierId, Long supplierSpuId) {
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuIdEqualTo(supplierSpuId);
+		criteria.setPageNo(1);
+		criteria.setPageSize(10000);
+		return hubSupplierSkuGateWay.selectByCriteria(criteria);
+	}
 	
 }

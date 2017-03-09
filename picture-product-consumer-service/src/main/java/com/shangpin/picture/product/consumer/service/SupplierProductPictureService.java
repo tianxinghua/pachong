@@ -19,7 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 
 import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
@@ -70,11 +69,13 @@ public class SupplierProductPictureService {
 	 */
 	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
+			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
+//			Map<String,Byte> picUrlMaps = supplierProductPictureManager.exists(supplierSpuId);
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
-				if(!supplierProductPictureManager.exists(picDto.getSupplierId(),picUrl)){
-					continue;
-				}
+//				if(picUrlMaps.containsKey(picUrl) && PicHandleState.HANDLED.getIndex() == picUrlMaps.get(picUrl)){ 
+//					continue;
+//				}
 				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
@@ -87,6 +88,7 @@ public class SupplierProductPictureService {
 				pullPicAndPushToPicServer(picUrl, updateDto, information);
 				supplierProductPictureManager.updateSelective(updateDto);
 			}
+			spuPicStatusServiceManager.judgeSpuPicState(supplierSpuId); 
 		}
 	}
 	/**
@@ -141,9 +143,7 @@ public class SupplierProductPictureService {
 			dto.setSpPicUrl(supplierProductPictureManager.uploadPic(uploadPicDto));
 			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 			dto.setMemo("图片拉取成功");
-			if(dto.getSupplierSpuId() != null){
-				spuPicStatusServiceManager.updatePicStatus(dto.getSupplierSpuId(), CommonHandleState.HANDLED.getIndex().byteValue());
-			}
+			
 		} catch (Throwable e) {
 			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();

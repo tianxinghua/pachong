@@ -43,6 +43,8 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuHandleGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuHandleGateWay;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
@@ -69,7 +71,10 @@ import lombok.extern.slf4j.Slf4j;
 
 public class PendingHandler extends VariableInit {
 
-
+	@Autowired
+	HubPendingSpuHandleGateWay hubPendingSpuHandleGateWay;
+	@Autowired
+	HubPendingSkuHandleGateWay hubPendingSkuHandleGateWay;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -87,25 +92,43 @@ public class PendingHandler extends VariableInit {
 		SpuPending hubSpuPending = null;
 		Integer spuStatus = null;
 		List<PendingSku> skus = pendingSpu.getSkus();
+		
+		HubSpuPendingDto hubSpuPendingDto = null;
 		if (messageMap.containsKey(pendingSpu.getSupplierId())) {
 
 			spuStatus = messageMap.get(pendingSpu.getSupplierId());
-			// 防止数据传入错误，需要先查询pending表中是否存在
-			HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
-					message.getData().getSupplierSpuNo());
-			//spu pending 处理
-			hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
-			if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
-				//重处理的不做SKU更新
-				return;
+			if (spuStatus == MessageType.RESTART_BRAND_MODEL.getIndex()) {
+				hubSpuPendingDto = handSpuPending(message.getData());
+			}else{
+				// 防止数据传入错误，需要先查询pending表中是否存在
+				HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
+						message.getData().getSupplierSpuNo());
+				//spu pending 处理
+				
+				hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
+				if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
+					//重处理的不做SKU更新
+					return;
+				}
 			}
 		}
-		if (null != hubSpuPending) {
-			//sku pending 处理
-			handleSkuPending(headers, messageMap, pendingSpu, hubSpuPending, spuStatus, skus);
+		
+		if(hubSpuPendingDto!=null){
+			if(null!=skus&&skus.size()>0){
+	            for (HubSkuPendingDto sku : skus) {
+	            	sku.setSpuPendingId(hubSpuPendingDto.getSpuPendingId());
+	            	sku.setSupplierNo(hubSpuPendingDto.getSupplierNo());
+	            	hubPendingSkuHandleGateWay.handleHubPendingSku(sku);
+	            }
+	            hubPendingSpuHandleGateWay.updateSpuState(hubSpuPendingDto.getSpuPendingId());
+			}
+		}else{
+			if (null != hubSpuPending) {
+				//sku pending 处理
+				handleSkuPending(headers, messageMap, pendingSpu, hubSpuPending, spuStatus, skus);
 
+			}
 		}
-
 	}
 
 	private void handleSkuPending(Map<String, Object> headers, Map<String, Integer> messageMap, PendingSpu pendingSpu, SpuPending hubSpuPending, Integer spuStatus, List<PendingSku> skus) throws Exception {
@@ -174,7 +197,7 @@ public class PendingHandler extends VariableInit {
         }else if (spuStatus == MessageType.RESTART_HANDLE.getIndex()) {
 			hubSpuPending = this.updateSpu(message.getData(), headers);
 
-		}  else {
+		} else {
             // 不需要处理 已存在
             if (null != tmp) {
                 hubSpuPending = new SpuPending();
@@ -184,6 +207,10 @@ public class PendingHandler extends VariableInit {
             }
         }
 		return hubSpuPending;
+	}
+
+	private HubSpuPendingDto handSpuPending(HubSpuPendingDto hubSpuPendingDto) {
+		return 	hubPendingSpuHandleGateWay.handleHubPendingSpu(hubSpuPendingDto);
 	}
 
 	private SpuPending createNewSpu(PendingProduct message)

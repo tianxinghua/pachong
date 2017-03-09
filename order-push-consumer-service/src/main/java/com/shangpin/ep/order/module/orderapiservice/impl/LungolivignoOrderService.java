@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,10 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.User;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component("lungolivignoOrderService")
+@Slf4j
 public class LungolivignoOrderService implements IOrderService{
 
 	@Autowired
@@ -154,8 +156,7 @@ public class LungolivignoOrderService implements IOrderService{
 		}catch(Exception e){
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			handleException.handleException(orderDTO,e);
-			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
-			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+			log.error("lungolivigo"+orderDTO.getPurchaseNo()+"此单推送异常========= "+e.getMessage(),e);
 		}
 	}
 	

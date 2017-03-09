@@ -13,14 +13,18 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingC
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
+import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,11 +54,11 @@ public class SupplierProductRetryService {
 	 * 处理供应商商品
 	 * @param picDtos
 	 */
-	public void processProduct() throws Exception{
+	public void processProduct(Byte state) throws Exception{
 		
 		
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
-		criteria.createCriteria().andInfoStateEqualTo((byte)2);
+		criteria.createCriteria().andInfoStateEqualTo(state);
 		criteria.setPageNo(1);
 		criteria.setPageSize(PAGESIZE);
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
@@ -62,12 +66,11 @@ public class SupplierProductRetryService {
 		if(products!=null&&products.size()>0){
 			log.info("待更新的个数："+products.size());
 			for(HubSupplierSpuDto spu : products){
-				loopProduct(spu);
+				loopProduct(spu,state);
 				updateSupplierInfoState(spu);
 			}
 		}
 	}
-	
 	private void updateSupplierInfoState(HubSupplierSpuDto spu) {
 		HubSupplierSpuDto hubSupplierSpu = new HubSupplierSpuDto();
     	hubSupplierSpu.setSupplierSpuId(spu.getSupplierSpuId());
@@ -76,7 +79,7 @@ public class SupplierProductRetryService {
     	supplierProductPictureManager.updateSupplierSpu(hubSupplierSpu);		
 	}
 
-	private void loopProduct(HubSupplierSpuDto spu) throws Exception{
+	private void loopProduct(HubSupplierSpuDto spu,byte state) throws Exception{
 		
 		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId());
 		if(season==null){
@@ -87,12 +90,11 @@ public class SupplierProductRetryService {
 		if(supplier==null){
 			return;
 		}
-		
  
     	Spu spuHead = new Spu();
 		spuHead.setSupplierId(spu.getSupplierId());
 		spuHead.setSpuNo(spu.getSupplierSpuNo());
-		spuHead.setStatus(4);
+		spuHead.setStatus(state);
 		
 	   	PendingProduct pendingProduct = new PendingProduct();
 		pendingProduct.setSupplierNo(supplier.getHubValNo()); 
@@ -104,12 +106,54 @@ public class SupplierProductRetryService {
 		pendingSpu.setSupplierNo(supplier.getHubValNo());
 		pendingProduct.setData(pendingSpu);
 		
+		List<PendingSku> skus = new ArrayList<PendingSku>();
+		//开始构造消息头
+		
+		List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSkuBySupplierIdAndSupplierSpuId(spu.getSupplierId(),spu.getSupplierSpuId());
+		
+		List<Sku> headSkus = new ArrayList<Sku>();		
+		if(hubSkus != null && hubSkus.size()>0){
+			for(HubSupplierSkuDto hubSku : hubSkus){
+				try {					
+					Sku headSku = new Sku();
+					PendingSku pendingSku = new PendingSku();
+					//开始保存hubSku到数据库
+					hubSku.setSupplierSpuId(pendingSpu.getSupplierSpuId()); //在这里回写supplierSpuId
+					convertHubSkuToPendingSku(hubSku,pendingSku);
+					skus.add(pendingSku);
+					headSku.setSupplierId(spu.getSupplierId());
+					headSku.setSkuNo(hubSku.getSupplierSkuNo());
+					headSku.setStatus(state);
+					headSkus.add(headSku);
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
+				}				
+			}
+		}		
+		pendingSpu.setSkus(skus);
+		pendingProduct.setData(pendingSpu);		
+		spuHead.setSkus(headSkus);	
+		
+		
 		Map<String,String> headers = new HashMap<String,String>();	
     	headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
     	supplierProductSendToPending.dispatchSupplierProduct(pendingProduct, headers);
     	
 	}
-
+	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) throws Exception {
+		pendingSku.setSupplierId(hubSku.getSupplierId());
+		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
+		pendingSku.setHubSkuSize(hubSku.getSupplierSkuSize());
+		pendingSku.setMarketPrice(hubSku.getMarketPrice());
+		pendingSku.setMarketPriceCurrencyorg(hubSku.getMarketPriceCurrencyorg());
+		pendingSku.setSalesPrice(hubSku.getSalesPrice());
+		pendingSku.setSalesPriceCurrency(hubSku.getSalesPriceCurrency());
+		pendingSku.setSkuName(hubSku.getSupplierSkuName());
+		pendingSku.setStock(hubSku.getStock());
+		pendingSku.setSupplierBarcode(hubSku.getSupplierBarcode());
+		pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
+		pendingSku.setSupplyPriceCurrency(hubSku.getSupplyPriceCurrency());
+	}
 	/**
 	 * 获取总页数
 	 * @param totalSize 总计路数

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -88,7 +88,7 @@ public class PictureProductService {
 	 */
 	private Map<String,String> findHubSpuPendingPics(Long supplierSpuId){
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
-		dto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicHandleStateEqualTo(PicState.HANDLED.getIndex()).andDataStateNotEqualTo(Byte.valueOf("0")); 
+		dto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex()).andDataStateNotEqualTo(Byte.valueOf("0")); 
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
 			Map<String,String> retMap = new HashMap<String,String>();
