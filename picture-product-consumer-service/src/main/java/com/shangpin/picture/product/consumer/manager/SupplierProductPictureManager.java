@@ -1,6 +1,8 @@
 package com.shangpin.picture.product.consumer.manager;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,19 +52,31 @@ public class SupplierProductPictureManager {
 		hubSpuPendingPicGateWay.updateByPrimaryKeySelective(updateDto);
 	}
 	/**
-	 * @param supplierId 供应商门户id
-	 * @param picUrl 原始图片地址
-	 * @return 检查是否存在，如果存在则返回true，否则返回false
+	 * 查询该spu是否有图片
+	 * @param supplierSpuId 供应商原始spu表id
+	 * @return 检查是否存在，返回原始url和处理状态集合
 	 */
-	public boolean exists(String supplierId,String picUrl) {
-		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andPicUrlEqualTo(picUrl);
-		criteria.setFields("spu_pending_pic_id");
-		if (CollectionUtils.isEmpty(hubSpuPendingPicGateWay.selectByCriteria(criteria))) {
-			return true;
-		} else {
-			return false;
+	public Map<String,Byte> exists(Long supplierSpuId) {
+		Map<String,Byte> picUrlMaps = new HashMap<String,Byte>();
+		List<HubSpuPendingPicDto> lists = selectHubSpuPendingPic(supplierSpuId);
+		if (CollectionUtils.isNotEmpty(lists)) {
+			for(HubSpuPendingPicDto dto : lists){
+				picUrlMaps.put(dto.getPicUrl(), dto.getPicHandleState());
+			}
 		}
+		return picUrlMaps;
+	}
+	/**
+	 * 查找图片
+	 * @param supplierSpuId 供应商原始spu表id
+	 * @return
+	 */
+	public List<HubSpuPendingPicDto> selectHubSpuPendingPic(Long supplierSpuId) {
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		criteria.setFields("pic_url,pic_handle_state");
+		List<HubSpuPendingPicDto> lists = hubSpuPendingPicGateWay.selectByCriteria(criteria);
+		return lists;
 	}
 	/**
 	 * 根据查询条件查询总记录数
