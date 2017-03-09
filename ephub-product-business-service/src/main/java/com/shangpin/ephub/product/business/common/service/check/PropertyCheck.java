@@ -31,11 +31,11 @@ public class PropertyCheck extends CommonCheckBase {
 	}
 
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception {
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
 
 		boolean flag = true;
 		for (CommonCheckBase base : allPropertyCheck) {
-			if (!base.convertValue(spuPendingDto)) {
+			if (!base.convertValue(hubSpuPendingIsExist,spuPendingDto)) {
 				flag = false;
 			}
 		}

@@ -32,7 +32,7 @@ public class OriginCheck extends CommonCheckBase {
     @Override
     protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) {
     	
-    	if(hubSpuPendingIsExist.getOriginState()==OriginState.HANDLED.getIndex()){
+    	if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getOriginState()!=null&&hubSpuPendingIsExist.getOriginState()==OriginState.HANDLED.getIndex()){
     		return null;
     	}
     	
@@ -46,8 +46,11 @@ public class OriginCheck extends CommonCheckBase {
         return null;
     }
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception {
-		return setOriginMapping(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getOriginState()!=null&&hubSpuPendingIsExist.getOriginState()==OriginState.HANDLED.getIndex()){
+    		return true;
+    	}
+		return setOriginMapping(hubSpuPendingIsExist,spuPendingDto);
 	}
 
     /**
@@ -81,21 +84,21 @@ public class OriginCheck extends CommonCheckBase {
 	        return originStaticMap;
 	    }
 	
-	  protected boolean setOriginMapping(HubSpuPendingDto hubSpuPending) throws Exception {
+	  protected boolean setOriginMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 	        Map<String, String> originMap = this.getOriginMap();
 	        if (StringUtils.isNotBlank(hubSpuPending.getHubOrigin())) {
 
 	            if (originMap.containsKey(hubSpuPending.getHubOrigin().trim())) {
-	                hubSpuPending.setHubOrigin(originMap.get(hubSpuPending.getHubOrigin().trim()));
-	                hubSpuPending.setOriginState(InfoState.PERFECT.getIndex());
+	            	hubSpuPendingIsExist.setHubOrigin(originMap.get(hubSpuPending.getHubOrigin().trim()));
+	                hubSpuPendingIsExist.setOriginState(InfoState.PERFECT.getIndex());
 	                return true;
 	            } else {
-	                hubSpuPending.setHubOrigin(hubSpuPending.getHubOrigin().trim());
-	                hubSpuPending.setOriginState(InfoState.IMPERFECT.getIndex());
+	            	hubSpuPendingIsExist.setHubOrigin(hubSpuPending.getHubOrigin().trim());
+	            	hubSpuPendingIsExist.setOriginState(InfoState.IMPERFECT.getIndex());
 	                return false;
 	            }
 	        } else {
-	            hubSpuPending.setOriginState(InfoState.IMPERFECT.getIndex());
+	        	hubSpuPendingIsExist.setOriginState(InfoState.IMPERFECT.getIndex());
 	            return false;
 	        }
 	    }

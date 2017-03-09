@@ -24,22 +24,8 @@ public abstract class CommonCheckBase {
 	}
 
 	/**
-	 * supplier映射pending处理 总入口
-	 * 
-	 * @param spuPendingDto
-	 * @return
-	 * @throws Exception
-	 */
-	public void handleConvert(HubSpuPendingDto spuPendingDto) throws Exception {
-
-		if (isNeedConvert(null,spuPendingDto)) {
-			 convertValue(spuPendingDto);
-		}
-	}
-
-	/**
 	 * pending数据校验 总入口
-	 * 
+	 * @param hubSpuPendingIsExist
 	 * @param spuPendingDto
 	 * @return
 	 * @throws Exception
@@ -47,11 +33,11 @@ public abstract class CommonCheckBase {
 	public String handleconvertOrCheck(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
 
 		if (isNeedConvert(hubSpuPendingIsExist,spuPendingDto)) {
-			 convertValue(spuPendingDto);
+			 convertValue(hubSpuPendingIsExist,spuPendingDto);
+			 return null;
 		}else{
-			 checkValue(hubSpuPendingIsExist,spuPendingDto);
+			 return checkValue(hubSpuPendingIsExist,spuPendingDto);
 		}
-		return checkValue(hubSpuPendingIsExist,spuPendingDto);
 	}
 
 	/**
@@ -74,7 +60,7 @@ public abstract class CommonCheckBase {
      * @param spuPendingDto
      * @return 映射成功返回true，反之false
      */
-    protected abstract boolean convertValue(HubSpuPendingDto spuPendingDto)  throws Exception;
+    protected abstract boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto)  throws Exception;
 
 	/**
      * 具体的校验

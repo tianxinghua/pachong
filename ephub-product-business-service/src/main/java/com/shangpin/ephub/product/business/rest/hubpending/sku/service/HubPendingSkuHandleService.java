@@ -31,6 +31,7 @@ import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.product.business.common.hubDic.origin.service.HubOriginDicService;
 import com.shangpin.ephub.product.business.common.pending.sku.HubPendingSkuService;
+import com.shangpin.ephub.product.business.common.pending.spu.HubPendingSpuService;
 import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SupplierSizeMappingDto;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
@@ -60,6 +61,8 @@ public class HubPendingSkuHandleService {
 	IShangpinRedis shangpinRedis;
 	@Autowired
 	HubPendingSkuService hubPendingSkuService;
+	@Autowired
+	HubPendingSpuService hubPendingSpuService;
 	@Autowired
 	HubOriginDicService hubOriginDicService;
 	@Autowired
@@ -92,19 +95,18 @@ public class HubPendingSkuHandleService {
 		}
 	};
 
-	public void handleHubPendingSku(HubSkuPendingDto hubSkuPendingDto, HubSpuPendingDto spu) throws Exception {
+	public void handleHubPendingSku(HubSkuPendingDto hubSkuPendingDto) throws Exception {
 
 		HubSkuPendingDto hubSkuPendingIsExist = hubPendingSkuService.findHubSkuPendingBySupplierIdAndSupplierSkuNo(
 				hubSkuPendingDto.getSupplierId(), hubSkuPendingDto.getSupplierSkuNo());
 		if (hubSkuPendingIsExist != null) {
-			handleOldHubSkuPending(hubSkuPendingIsExist, hubSkuPendingDto, spu);
+			handleOldHubSkuPending(hubSkuPendingIsExist, hubSkuPendingDto);
 		} else {
-			handleNewHubSkuPending(hubSkuPendingDto, spu);
+			handleNewHubSkuPending(hubSkuPendingDto);
 		}
 	}
 
-	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto,
-			HubSpuPendingDto hubSpuPendingDto) throws Exception {
+	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto) throws Exception {
 
 		if (hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
 				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex()
@@ -112,17 +114,15 @@ public class HubPendingSkuHandleService {
 			// 如果spustate状态为已处理、审核中或者已完善 ，则不更新
 			return;
 		}
-
-		matchSize(hubSpuPendingDto, hubSkuPendingDto);
-
 		hubSkuPendingDto.setSkuPendingId(hubSkuPendingIsExist.getSkuPendingId());
+		matchSize(hubSkuPendingDto);
 		hubPendingSkuService.updateHubSkuPendingByPrimaryKey(hubSkuPendingDto);
 	}
 
-	private void handleNewHubSkuPending(HubSkuPendingDto hubSkuPendingDto, HubSpuPendingDto hubSpuPendingDto)
+	private void handleNewHubSkuPending(HubSkuPendingDto hubSkuPendingDto)
 			throws Exception {
 		
-		setSkuPendingValue(hubSkuPendingDto, hubSpuPendingDto);
+		setSkuPendingValue(hubSkuPendingDto);
 		Map<String, String> sizeMap = getSupplierSizeMapping(hubSkuPendingDto.getSupplierId());
 		//映射尺码
 		if (sizeMap.containsKey(hubSkuPendingDto.getHubSkuSize())) {
@@ -141,34 +141,36 @@ public class HubPendingSkuHandleService {
 			hubSkuPendingDto.setHubSkuSize(sizeCommonReplace(hubSkuPendingDto.getHubSkuSize()));
 		}
 		//匹配尺码类型
-		matchSize(hubSpuPendingDto, hubSkuPendingDto);
+		matchSize(hubSkuPendingDto);
 		hubPendingSkuService.insertHubSkuPending(hubSkuPendingDto);
 	}
 
-	private void matchSize(HubSpuPendingDto hubSpuPendingDto,HubSkuPendingDto hubSkuPendingDto){
-		if (hubSpuPendingDto.getSpuBrandState() == SpuBrandState.HANDLED.getIndex()
-				&& hubSpuPendingDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex()) {
-			MatchSizeDto match = new MatchSizeDto();
-			match.setHubBrandNo(hubSpuPendingDto.getHubBrandNo());
-			match.setHubCategoryNo(hubSpuPendingDto.getHubCategoryNo());
-			match.setSize(hubSkuPendingDto.getHubSkuSize());
-			MatchSizeResult result = matchSizeService.matchSize(match);
-			if (result.isPassing()) {
-				hubSkuPendingDto.setHubSkuSizeType(result.getSizeType());
-				hubSkuPendingDto.setSpSkuSizeState(SpSkuSizeState.HANDLED.getIndex());
-				hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-				if (hubSpuPendingDto.getHubSpuNo() != null) {
-					// 说明hubSpu已存在
-					hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
-				} else {
-					hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
+	private void matchSize(HubSkuPendingDto hubSkuPendingDto){
+		if(hubSkuPendingDto.getSpuPendingId()!=null){
+			HubSpuPendingDto hubSpuPendingDto = hubPendingSpuService.findHubSpuPendingByPrimary(hubSkuPendingDto.getSpuPendingId());
+			if (hubSpuPendingDto!=null&&hubSpuPendingDto.getSpuBrandState() == SpuBrandState.HANDLED.getIndex()
+					&& hubSpuPendingDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex()) {
+				MatchSizeDto match = new MatchSizeDto();
+				match.setHubBrandNo(hubSpuPendingDto.getHubBrandNo());
+				match.setHubCategoryNo(hubSpuPendingDto.getHubCategoryNo());
+				match.setSize(hubSkuPendingDto.getHubSkuSize());
+				MatchSizeResult result = matchSizeService.matchSize(match);
+				if (result.isPassing()) {
+					hubSkuPendingDto.setHubSkuSizeType(result.getSizeType());
+					hubSkuPendingDto.setSpSkuSizeState(SpSkuSizeState.HANDLED.getIndex());
+					hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
+					if (hubSpuPendingDto.getHubSpuNo() != null) {
+						// 说明hubSpu已存在
+						hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
+					} else {
+						hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
+					}
+					return;
 				}
-			}else{
-				hubSkuPendingDto.setSpSkuSizeState(SpSkuSizeState.UNHANDLED.getIndex());
-				hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
-				hubSkuPendingDto.setSkuState(SpuState.INFO_PECCABLE.getIndex());
 			}
 		}
+		hubSkuPendingDto.setSpSkuSizeState(SpSkuSizeState.UNHANDLED.getIndex());
+		hubSkuPendingDto.setSkuState(SpuState.INFO_PECCABLE.getIndex());
 	}
 	public String sizeCommonReplace(String size) {
 		if (size == null) {
@@ -301,7 +303,7 @@ public class HubPendingSkuHandleService {
 
 	}
 
-	protected void setSkuPendingValue(HubSkuPendingDto hubSkuPending, HubSpuPendingDto hubSpuPending) {
+	protected void setSkuPendingValue(HubSkuPendingDto hubSkuPending) {
 		// baracode 需要特殊处理
 		if (StringUtils.isBlank(hubSkuPending.getSupplierBarcode())) {
 			hubSkuPending.setSupplierBarcode(hubSkuPending.getSupplierSkuNo());
@@ -310,10 +312,7 @@ public class HubPendingSkuHandleService {
 		hubSkuPending.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
 		hubSkuPending.setSpSkuSizeState(SpSkuSizeState.UNHANDLED.getIndex());
 		hubSkuPending.setUpdateTime(new Date());
-		hubSkuPending.setSupplierNo(hubSpuPending.getSupplierNo());
-		hubSkuPending.setSpuPendingId(hubSpuPending.getSpuPendingId());
 		hubSkuPending.setDataState(DataState.NOT_DELETED.getIndex());
-
 	}
 
 }

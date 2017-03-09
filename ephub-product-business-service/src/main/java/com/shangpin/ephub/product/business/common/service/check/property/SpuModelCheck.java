@@ -21,6 +21,10 @@ public class SpuModelCheck extends CommonCheckBase {
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception{
 		
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuModelState()!=null&&hubSpuPendingIsExist.getSpuModelState()==SpuModelState.VERIFY_PASSED.getIndex()){
+			return null;
+		}
+		
 		hubSpuPendingIsExist.setSpuModel(spuPendingDto.getSpuModel());
 		if(checkBrandModel(hubSpuPendingIsExist,spuPendingDto)){
 			return null;
@@ -30,22 +34,26 @@ public class SpuModelCheck extends CommonCheckBase {
 	}
 	
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception{
-		return checkOrSetBrandModel(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception{
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuModelState()!=null&&hubSpuPendingIsExist.getSpuModelState()==SpuModelState.VERIFY_PASSED.getIndex()){
+			return true;
+		}
+		return checkOrSetBrandModel(hubSpuPendingIsExist,spuPendingDto);
 	}
 	
-	protected boolean checkOrSetBrandModel(HubSpuPendingDto hubSpuPending) throws Exception {
+	protected boolean checkOrSetBrandModel(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 		String spuModel = null;
 		if (!StringUtils.isEmpty(hubSpuPending.getHubBrandNo()) && !StringUtils.isEmpty(hubSpuPending.getSpuModel())) {
 			spuModel = hubBrandModelRuleService.regexVerify(hubSpuPending.getHubBrandNo(),
 					hubSpuPending.getHubCategoryNo(), hubSpuPending.getSpuModel());
 			if (spuModel != null) {
-				hubSpuPending.setSpuModel(spuModel);
-				hubSpuPending.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
+				hubSpuPendingIsExist.setSpuModel(spuModel);
+				hubSpuPendingIsExist.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
 				return true;
 			}
 		}
-		hubSpuPending.setSpuModelState(SpuModelState.VERIFY_FAILED.getIndex());
+		hubSpuPendingIsExist.setSpuModel(hubSpuPending.getSpuModel());
+		hubSpuPendingIsExist.setSpuModelState(SpuModelState.VERIFY_FAILED.getIndex());
 		return false;
 	}
 	

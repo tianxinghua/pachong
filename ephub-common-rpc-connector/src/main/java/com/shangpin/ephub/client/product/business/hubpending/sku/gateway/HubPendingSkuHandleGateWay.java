@@ -24,5 +24,5 @@ public interface HubPendingSkuHandleGateWay {
 	 * @return 校验结果：
 	 */
 	@RequestMapping(value = "/pending-sku-handle/pending-sku", method = RequestMethod.POST,consumes = "application/json")
-	public Long handleHubPendingSku(@RequestBody HubSkuPendingDto dto,@RequestBody HubSpuPendingDto spuDto);
+	public Long handleHubPendingSku(@RequestBody HubSkuPendingDto dto);
 }

@@ -29,7 +29,7 @@ public class GenderCheck extends CommonCheckBase {
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
 
-		if(hubSpuPendingIsExist.getSpuGenderState()==SpuGenderState.HANDLED.getIndex()){
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuGenderState()!=null&&hubSpuPendingIsExist.getSpuGenderState()==SpuGenderState.HANDLED.getIndex()){
     		return null;
     	}
 		
@@ -44,8 +44,11 @@ public class GenderCheck extends CommonCheckBase {
 	}
 
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception {
-		return setGenderMapping(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuGenderState()!=null&&hubSpuPendingIsExist.getSpuGenderState()==SpuGenderState.HANDLED.getIndex()){
+    		return true;
+    	}
+		return setGenderMapping(hubSpuPendingIsExist,spuPendingDto);
 	}
 
 	/**
@@ -66,7 +69,7 @@ public class GenderCheck extends CommonCheckBase {
 		}
 	}
 
-	protected boolean setGenderMapping(HubSpuPendingDto hubSpuPending) throws Exception {
+	protected boolean setGenderMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 		boolean result = true;
 		// 获取性别
 		Map<String, String> genderMap = this.getGenderMap(null);
@@ -74,13 +77,13 @@ public class GenderCheck extends CommonCheckBase {
 		if (null != hubSpuPending.getHubGender()
 				&& genderMap.containsKey(hubSpuPending.getHubGender().trim().toUpperCase())) {
 			// 包含时转化赋值
-			hubSpuPending.setHubGender(genderMap.get(hubSpuPending.getHubGender().toUpperCase()));
-			hubSpuPending.setSpuGenderState(InfoState.PERFECT.getIndex());
+			hubSpuPendingIsExist.setHubGender(genderMap.get(hubSpuPending.getHubGender().toUpperCase()));
+			hubSpuPendingIsExist.setSpuGenderState(InfoState.PERFECT.getIndex());
 		} else {
 			result = false;
-			hubSpuPending.setSpuGenderState(InfoState.IMPERFECT.getIndex());
+			hubSpuPendingIsExist.setSpuGenderState(InfoState.IMPERFECT.getIndex());
+			hubSpuPendingIsExist.setHubGender(hubSpuPending.getHubGender());
 			hubGenderDicService.saveHubGender(null, hubSpuPending.getHubGender());
-
 		}
 
 		return result;

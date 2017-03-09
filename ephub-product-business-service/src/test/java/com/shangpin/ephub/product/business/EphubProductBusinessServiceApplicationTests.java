@@ -78,10 +78,10 @@ public class EphubProductBusinessServiceApplicationTests {
 	public void testGetProductSize(){
 		try {
 			MatchSizeResult matchSizeResult = new MatchSizeResult();
-			String size = "36";
+			String sizeValue = "36";
 			SizeRequestDto request = new SizeRequestDto();
 			request.setBrandNo("B0200");
-			request.setCategoryNo("A01B01C01D20");
+			request.setCategoryNo("A03B02C02D09");
 			
 	        HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(request);
 			ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = httpClient.exchange(ApiAddressProperties.getGmsSizeUrl(), HttpMethod.POST,
@@ -89,23 +89,22 @@ public class EphubProductBusinessServiceApplicationTests {
 	                });
 			
 			HubResponseDto<CategoryScreenSizeDom> cate  = entity.getBody();
-			CategoryScreenSizeDom sizes = cate.getResDatas().get(0);
-			boolean flag = false;
-			String result = null;
+			CategoryScreenSizeDom size = entity.getBody().getResDatas().get(0);
 			boolean sizeIsExist = false;
+			String result = null;
 			boolean isNotTemplate = false;
 			Map<String,String> screenSizeMap = new HashMap<String,String>();
 			Map<String,String> standardSizeMap = new HashMap<String,String>();
-			if(sizes!=null){
-				
-				List<SizeStandardItem> list = sizes.getSizeStandardItemList();	
+			if(size!=null){
+				List<SizeStandardItem> list = size.getSizeStandardItemList();	
 				if(list!=null&&list.size()>0){
 					//获取筛选尺码和标准尺码map集合
 					getSizeMap(list,screenSizeMap,standardSizeMap);
 					//第一步：从标准尺码中查找匹配尺码
-					sizeIsExist = matchStandardSize(size,standardSizeMap,matchSizeResult);
+					sizeIsExist = matchStandardSize(sizeValue,standardSizeMap,matchSizeResult);
 					if(!sizeIsExist){
-						sizeIsExist = matchScreenSize(size,screenSizeMap,matchSizeResult);
+						//第二步：从标准尺码中未匹配到尺码。继续从筛选尺码中匹配
+						sizeIsExist = matchScreenSize(sizeValue,screenSizeMap,matchSizeResult);
 					}
 				}else{
 					isNotTemplate = true;
@@ -117,18 +116,18 @@ public class EphubProductBusinessServiceApplicationTests {
 			if(matchSizeResult.isPassing()){
 				matchSizeResult.setPassing(true);
 			}else{
-				
+				matchSizeResult.setPassing(false);
 				if(isNotTemplate){
 					matchSizeResult.setNotTemplate(isNotTemplate);
 					result = "scm没有尺码模板";	
 				}else{
-					//sizeIsExist为true，说明匹配到尺码
+					//sizeIsExist为true，说明匹配到尺码并且匹配到多个
 					if(sizeIsExist){
 						matchSizeResult.setMultiSizeType(true);
 						result = "含有多个尺码模板";		
 					}else{
 						if(standardSizeMap.size()>0){
-							result = "尺码："+size+"未匹配成功";		
+							result = "尺码："+""+"未匹配成功";		
 							matchSizeResult.setFilter(true);	
 						}else{
 							result = "scm没有尺码模板";	

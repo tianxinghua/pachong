@@ -31,7 +31,7 @@ public class SeasonCheck extends CommonCheckBase {
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) {
 
-		if(hubSpuPendingIsExist.getSpuSeasonState()==SpuSeasonState.HANDLED.getIndex()){
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuSeasonState()!=null&&hubSpuPendingIsExist.getSpuSeasonState()==SpuSeasonState.HANDLED.getIndex()){
     		return null;
     	}
 		
@@ -46,8 +46,12 @@ public class SeasonCheck extends CommonCheckBase {
 	}
 
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception {
-		return setSeasonMapping(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
+		
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuSeasonState()!=null&&hubSpuPendingIsExist.getSpuSeasonState()==SpuSeasonState.HANDLED.getIndex()){
+    		return true;
+    	}
+		return setSeasonMapping(hubSpuPendingIsExist,spuPendingDto);
 	}
 
 	/**
@@ -108,39 +112,40 @@ public class SeasonCheck extends CommonCheckBase {
 			}
 		}
 	}
-	 protected boolean setSeasonMapping(HubSpuPendingDto hubSpuPending) throws Exception {
+	 protected boolean setSeasonMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 	        Map<String, String> seasonMap = this.getSeasonMap(hubSpuPending.getSupplierId());
 	        boolean result = true;
 	        String spSeason = "", seasonSign = "";
 	        if (StringUtils.isNotBlank(hubSpuPending.getHubSeason())) {
+	        	hubSpuPendingIsExist.setHubSeason(hubSpuPending.getHubSeason());
 	            if (seasonMap.containsKey(hubSpuPending.getSupplierId() + "_" + hubSpuPending.getHubSeason().trim())) {
 	                // 包含时转化赋值
 	                spSeason = seasonMap.get(hubSpuPending.getSupplierId() + "_" + hubSpuPending.getHubSeason().trim());
 	                if (StringUtils.isNotBlank(spSeason)) {
 	                    if (spSeason.indexOf("|") > 0) {
 	                        seasonSign = spSeason.substring(spSeason.indexOf("|") + 1, spSeason.length());
-	                        hubSpuPending.setHubSeason(spSeason.substring(0, spSeason.indexOf("|")));
+	                        hubSpuPendingIsExist.setHubSeason(spSeason.substring(0, spSeason.indexOf("|")));
 	                        if (SeasonType.SEASON_CURRENT.getIndex().toString().equals(seasonSign)) {
-	                            hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_CURRENT.getIndex().byteValue());
+	                        	hubSpuPendingIsExist.setIsCurrentSeason(SeasonType.SEASON_CURRENT.getIndex().byteValue());
 	                        } else {
-	                            hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
+	                        	hubSpuPendingIsExist.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
 	                        }
 	                    }
-	                    hubSpuPending.setSpuSeasonState(InfoState.PERFECT.getIndex());
+	                    hubSpuPendingIsExist.setSpuSeasonState(InfoState.PERFECT.getIndex());
 	                } else {
 	                    result = false;
-	                    hubSpuPending.setSpuSeasonState(InfoState.IMPERFECT.getIndex());
+	                    hubSpuPendingIsExist.setSpuSeasonState(InfoState.IMPERFECT.getIndex());
 	                }
 
 	            } else {
 	                result = false;
-	                hubSpuPending.setSpuSeasonState(InfoState.IMPERFECT.getIndex());
+	                hubSpuPendingIsExist.setSpuSeasonState(InfoState.IMPERFECT.getIndex());
 	                hubSeasonDicService.saveSeason(hubSpuPending.getSupplierId(), hubSpuPending.getHubSeason());
 	            }
 
 	        } else {//
 	            result = false;
-	            hubSpuPending.setSpuSeasonState(InfoState.IMPERFECT.getIndex());
+	            hubSpuPendingIsExist.setSpuSeasonState(InfoState.IMPERFECT.getIndex());
 	        }
 	        return result;
 	    }

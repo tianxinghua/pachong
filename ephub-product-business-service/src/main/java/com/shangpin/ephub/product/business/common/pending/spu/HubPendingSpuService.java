@@ -53,9 +53,9 @@ public class HubPendingSpuService{
 		return null;
 	}
 	
-	public HubSpuPendingDto findHubSpuPendingBySpuModelAndBrandNo(String spuModel,String hubBrandNo) {
+	public HubSpuPendingDto findHubSpuPendingBySpuModelAndBrandNoAndSpuState(String spuModel,String hubBrandNo,Byte spuState) {
 		HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
-		criteria.createCriteria().andSpuModelEqualTo(spuModel).andHubBrandNoEqualTo(hubBrandNo);
+		criteria.createCriteria().andSpuModelEqualTo(spuModel).andHubBrandNoEqualTo(hubBrandNo).andSpuStateEqualTo(spuState);
 		List<HubSpuPendingDto> listSpu = hubSpuPendingGateWay.selectByCriteria(criteria);
 		if(listSpu!=null&&listSpu.size()>0){
 			return listSpu.get(0);
