@@ -13,7 +13,8 @@ public enum SupplierSelectState {
 	SELECTING(1,"选品中"),
 	SELECTED(2,"已选品"),
 	WAIT_SCM_AUDIT(3,"待SCM审核"),
-	SELECTE_FAIL(4,"选品失败");
+	SELECTE_FAIL(4,"选品失败"),
+    EXIST(5,"商品已存在");
 	/**
      * 数字索引标识
      */

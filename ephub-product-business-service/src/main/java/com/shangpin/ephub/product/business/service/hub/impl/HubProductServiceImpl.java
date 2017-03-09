@@ -172,10 +172,11 @@ public class HubProductServiceImpl implements HubProductService {
         queryDto.setSopUserNo(supplierId);
         List<String> supplierSkuNoList = new ArrayList<>();
         for(ApiSkuOrgDom apiSkuOrgDom:skuOrgDoms){
-            if(apiSkuOrgDom.isRetry()){
+            //因为拉取后 存在的要改成其它的状态 所以 没有可以在推送前就查询
+//            if(apiSkuOrgDom.isRetry()){
 
                 supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
-            }
+//            }
         }
         queryDto.setLstSupplierSkuNo(supplierSkuNoList);
 
