@@ -32,7 +32,7 @@ public class CategoryCheck extends CommonCheckBase {
     @Override
     protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception{
     	
-    	if(hubSpuPendingIsExist.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()){
+    	if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getCatgoryState()!=null&&hubSpuPendingIsExist.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()){
     		return null;
     	}
     	hubSpuPendingIsExist.setHubCategoryNo(spuPendingDto.getHubCategoryNo());
@@ -46,8 +46,11 @@ public class CategoryCheck extends CommonCheckBase {
     }
     
     @Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception{
-		return setCategoryMapping(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception{
+    	if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getCatgoryState()!=null&&hubSpuPendingIsExist.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()){
+    		return true;
+    	}
+		return setCategoryMapping(hubSpuPendingIsExist,spuPendingDto);
 	}
 
     /**
@@ -67,7 +70,7 @@ public class CategoryCheck extends CommonCheckBase {
 		}
 	}
 	
-	 public boolean setCategoryMapping(HubSpuPendingDto hubSpuPending) throws Exception {
+	 public boolean setCategoryMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 	        boolean result = true;
 	        String categoryAndStatus = "";
 	        Integer mapStatus = 0;
@@ -85,29 +88,36 @@ public class CategoryCheck extends CommonCheckBase {
 	                categoryAndStatus = categoryMappingMap.get(
 	                		hubSpuPending.getHubCategoryNo().trim().toUpperCase() + "_" + hubSpuPending.getHubGender().trim().toUpperCase());
 	                if (categoryAndStatus.contains("_")) {
-	                    hubSpuPending.setHubCategoryNo(categoryAndStatus.substring(0, categoryAndStatus.indexOf("_")));
+	                	hubSpuPendingIsExist.setHubCategoryNo(categoryAndStatus.substring(0, categoryAndStatus.indexOf("_")));
 	                    mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_") + 1));
-	                    hubSpuPending.setCatgoryState(mapStatus.byteValue());
-	                    if(hubSpuPending.getCatgoryState().intValue()!=InfoState.PERFECT.getIndex()){
-	                        //未达到4级品类
-	                        result = false;
+	                    hubSpuPendingIsExist.setCatgoryState(mapStatus.byteValue());
+	                    if(hubSpuPending.getCatgoryState()!=null){
+	                    	 if(hubSpuPending.getCatgoryState().intValue()!=InfoState.PERFECT.getIndex()){
+	 	                        //未达到4级品类
+	 	                        result = false;
+	 	                    }
+	                    }else{
+	                    	result = false;
 	                    }
-
+	                   
 	                } else {
 	                    result = false;
-	                    hubSpuPending.setCatgoryState(InfoState.IMPERFECT.getIndex());
+	                    hubSpuPendingIsExist.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
+	                    hubSpuPendingIsExist.setCatgoryState(InfoState.IMPERFECT.getIndex());
 	                }
 
 	            } else {
 
 	                result = false;
-	                hubSpuPending.setCatgoryState(InfoState.IMPERFECT.getIndex());
+	                hubSpuPendingIsExist.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
+	                hubSpuPendingIsExist.setCatgoryState(InfoState.IMPERFECT.getIndex());
 	                hubCategoryDicService.saveHubCategory(hubSpuPending.getSupplierId(), hubSpuPending.getHubCategoryNo(), hubSpuPending.getHubGender());
 
 	            }
 	        } else {
 	            result = false;
-	            hubSpuPending.setCatgoryState(InfoState.IMPERFECT.getIndex());
+	            hubSpuPendingIsExist.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
+	            hubSpuPendingIsExist.setCatgoryState(InfoState.IMPERFECT.getIndex());
 	            hubCategoryDicService.saveHubCategory(hubSpuPending.getSupplierId(), hubSpuPending.getHubCategoryNo(), hubSpuPending.getHubGender());
 
 	        }

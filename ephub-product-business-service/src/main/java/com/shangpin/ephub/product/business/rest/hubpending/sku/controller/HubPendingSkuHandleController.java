@@ -26,10 +26,10 @@ public class HubPendingSkuHandleController {
 	private HubPendingSkuHandleService hubPendingSkuHandleService;
 	
 	@RequestMapping(value = "/pending-sku")
-	public void handleHubPendingSku(@RequestBody HubSkuPendingDto dto,@RequestBody HubSpuPendingDto spu){
+	public void handleHubPendingSku(@RequestBody HubSkuPendingDto dto){
 		log.info("pendingSku接受到数据：{}",dto);
 		try {
-			hubPendingSkuHandleService.handleHubPendingSku(dto,spu);
+			hubPendingSkuHandleService.handleHubPendingSku(dto);
 		} catch (Exception e) {
 			log.error("skuPending映射时发生异常：{}",e);
 			e.printStackTrace();

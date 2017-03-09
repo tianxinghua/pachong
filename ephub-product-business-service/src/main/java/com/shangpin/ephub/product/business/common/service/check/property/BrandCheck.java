@@ -32,7 +32,7 @@ public class BrandCheck extends CommonCheckBase {
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
 		
-		if(hubSpuPendingIsExist.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuBrandState()!=null&&hubSpuPendingIsExist.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
 			return null;
 		}
 		hubSpuPendingIsExist.setHubBrandNo(spuPendingDto.getHubBrandNo());
@@ -46,8 +46,11 @@ public class BrandCheck extends CommonCheckBase {
 	}
 
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception{
-		return setBrandMapping(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception{
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuBrandState()!=null&&hubSpuPendingIsExist.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
+			return true;
+		}
+		return setBrandMapping(hubSpuPendingIsExist,spuPendingDto);
 	}
 
 	/**
@@ -69,24 +72,25 @@ public class BrandCheck extends CommonCheckBase {
 		}
 	}
 
-	protected boolean setBrandMapping(HubSpuPendingDto hubSpuPending) throws Exception {
+	protected boolean setBrandMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 		boolean result = true;
 		Map<String, String> brandMap = this.getBrandMap();
+		
 		if (StringUtils.isNotBlank(hubSpuPending.getHubBrandNo())) {
-
 			if (brandMap.containsKey(hubSpuPending.getHubBrandNo().trim().toUpperCase())) {
 				// 包含时转化赋值
-				hubSpuPending.setHubBrandNo(brandMap.get(hubSpuPending.getHubBrandNo().trim().toUpperCase()));
-				hubSpuPending.setSpuBrandState(InfoState.PERFECT.getIndex());
-
+				hubSpuPendingIsExist.setSpuBrandState(InfoState.PERFECT.getIndex());
+				hubSpuPendingIsExist.setHubBrandNo(brandMap.get(hubSpuPending.getHubBrandNo().trim().toUpperCase()));
 			} else {
 				result = false;
-				hubSpuPending.setSpuBrandState(InfoState.IMPERFECT.getIndex());
+				hubSpuPendingIsExist.setSpuBrandState(InfoState.IMPERFECT.getIndex());
+				hubSpuPendingIsExist.setHubBrandNo(hubSpuPending.getHubBrandNo());
 				hubBrandDicService.saveBrand(hubSpuPending.getSupplierId(), hubSpuPending.getHubBrandNo().trim());
 			}
 		} else {
 			result = false;
-			hubSpuPending.setSpuBrandState(InfoState.IMPERFECT.getIndex());
+			hubSpuPendingIsExist.setHubBrandNo(hubSpuPending.getHubBrandNo());
+			hubSpuPendingIsExist.setSpuBrandState(InfoState.IMPERFECT.getIndex());
 		}
 		return result;
 	}

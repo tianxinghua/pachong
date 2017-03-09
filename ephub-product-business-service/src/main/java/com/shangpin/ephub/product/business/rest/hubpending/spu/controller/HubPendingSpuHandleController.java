@@ -29,7 +29,6 @@ public class HubPendingSpuHandleController {
 	@RequestMapping(value = "/pending-spu")
 	public HubSpuPendingDto handleHubPendingSpu(@RequestBody HubSpuPendingDto hubSpuPendingDto){
 		log.info("pendingSpu处理接受到数据：{}",hubSpuPendingDto);
-		System.out.println(JSONObject.toJSONString(hubSpuPendingDto));
 		try {
 			return hubPendingSpuHandleService.handleHubPendingSpu(hubSpuPendingDto);
 		} catch (Exception e) {

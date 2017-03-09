@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.spu.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class HubSpuPendingController {
     public List<HubSpuPending> selectByCriteria(@RequestBody HubSpuPendingCriteria criteria){
     	return hubSpuPendingService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubSpuPending selectByPrimaryKey(Long spuPendingId){
+	@RequestMapping(value = "/select-by-primary-key/{spuPendingId}")
+    public HubSpuPending selectByPrimaryKey(@PathVariable(name="spuPendingId") Long spuPendingId){
     	return hubSpuPendingService.selectByPrimaryKey(spuPendingId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

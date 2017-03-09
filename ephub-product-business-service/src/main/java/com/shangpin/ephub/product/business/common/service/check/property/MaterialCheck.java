@@ -30,7 +30,7 @@ public class MaterialCheck extends CommonCheckBase {
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) {
 		
-		if(hubSpuPendingIsExist.getMaterialState()==MaterialState.HANDLED.getIndex()){
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getMaterialState()!=null&&hubSpuPendingIsExist.getMaterialState()==MaterialState.HANDLED.getIndex()){
     		return null;
     	}
 		// 校验材质
@@ -46,11 +46,14 @@ public class MaterialCheck extends CommonCheckBase {
 	}
 
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception {
-		return replaceMaterial(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getMaterialState()!=null&&hubSpuPendingIsExist.getMaterialState()==MaterialState.HANDLED.getIndex()){
+    		return true;
+    	}
+		return replaceMaterial(hubSpuPendingIsExist,spuPendingDto);
 	}
 
-	protected boolean replaceMaterial(HubSpuPendingDto hubSpuPending) {
+	protected boolean replaceMaterial(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) {
 		Map<String, String> materialMap = this.getMaterialMap();
 		Set<String> materialSet = materialMap.keySet();
 		String supplierMaterial = "";
@@ -63,23 +66,23 @@ public class MaterialCheck extends CommonCheckBase {
 				supplierMaterial = hubSpuPending.getHubMaterial().toLowerCase();
 				if (supplierMaterial.indexOf(material.toLowerCase()) >= 0) {
 
-					hubSpuPending.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(), materialMap.get(material)));
+					hubSpuPendingIsExist.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(), materialMap.get(material)));
 				}
 
 			}
-			hubSpuPending.setHubMaterial(hubSpuPending.getHubMaterial());
+			hubSpuPendingIsExist.setHubMaterial(hubSpuPending.getHubMaterial());
 
 			if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
-				hubSpuPending.setMaterialState(InfoState.IMPERFECT.getIndex());
+				hubSpuPendingIsExist.setMaterialState(InfoState.IMPERFECT.getIndex());
 				// 材质含有英文 返回false
 				return false;
 			} else {
-				hubSpuPending.setMaterialState(InfoState.PERFECT.getIndex());
+				hubSpuPendingIsExist.setMaterialState(InfoState.PERFECT.getIndex());
 				return true;
 			}
 
 		} else {
-			hubSpuPending.setMaterialState(InfoState.IMPERFECT.getIndex());
+			hubSpuPendingIsExist.setMaterialState(InfoState.IMPERFECT.getIndex());
 			// 无材质 返回false
 			return false;
 		}

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
+import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
@@ -99,16 +101,15 @@ public class HubPendingSpuHandleService {
 
 	public HubSpuPendingDto handleHubPendingSpu(HubSpuPendingDto hubSpuPendingDto) throws Exception {
 
-		HubSpuPendingDto hubSpuPendingIsExist = hubPendingSpuService.findHubSpuPendingBySupplierIdAndSupplierSpuNo(
+		HubSpuPendingDto hubSpuPendingIsExist = null;
+		hubSpuPendingIsExist = hubPendingSpuService.findHubSpuPendingBySupplierIdAndSupplierSpuNo(
 				hubSpuPendingDto.getSupplierId(), hubSpuPendingDto.getSupplierSpuNo());
 		if (hubSpuPendingIsExist != null) {
 			handleOldHubSpuPending(hubSpuPendingIsExist, hubSpuPendingDto);
-			return hubSpuPendingIsExist;
 		} else {
-			handleNewHubSpuPending(hubSpuPendingDto);
-			return hubSpuPendingDto;
+			hubSpuPendingIsExist = handleNewHubSpuPending(hubSpuPendingDto);
 		}
-		
+		return hubSpuPendingIsExist;
 	}
 
 	private String handleOldHubSpuPending(HubSpuPendingDto hubSpuPendingIsExist, HubSpuPendingDto hubSpuPendingDto)
@@ -122,10 +123,29 @@ public class HubPendingSpuHandleService {
 			return null;
 		}
 		// 校验spu各属性
-		String result = checkHubPendingSpuPropert(hubSpuPendingIsExist,hubSpuPendingDto);
+		String result =  commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);;
 		checkHubSpuPendingIsExistHubSpu(hubSpuPendingIsExist);
 		hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingIsExist);
 		return result;
+	}
+	private HubSpuPendingDto handleNewHubSpuPending(HubSpuPendingDto hubSpuPendingDto) throws Exception{
+		
+		// 映射spu各属性
+		HubSpuPendingDto hubSpuPendingIsExist = new HubSpuPendingDto();
+		convertHubPendingSpuDto(hubSpuPendingDto,hubSpuPendingIsExist);
+		commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);
+		
+		checkHubSpuPendingIsExistHubSpu(hubSpuPendingIsExist);
+		
+		Long spuPendingId = hubPendingSpuService.insertHubSpuPending(hubSpuPendingIsExist);
+		hubSpuPendingIsExist.setSpuPendingId(spuPendingId);
+		return hubSpuPendingIsExist;
+	}
+	private void convertHubPendingSpuDto(HubSpuPendingDto hubSpuPendingDto, HubSpuPendingDto hubSpuPendingIsExist) {
+		BeanUtils.copyProperties(hubSpuPendingDto, hubSpuPendingIsExist);
+		hubSpuPendingIsExist.setUpdateTime(new Date());
+		hubSpuPendingIsExist.setUpdateTime(new Date());
+		hubSpuPendingIsExist.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 	}
 
 	private boolean checkHubSpuPendingIsExistHubSpu(HubSpuPendingDto hubSpuPendingIsExist) throws Exception {
@@ -137,36 +157,20 @@ public class HubPendingSpuHandleService {
 			if (hubSpuDto != null) {
 				convertHubSpuToPendingSpu(hubSpuDto,hubSpuPendingIsExist);
 				return true;
-			} 
+			}else{
+				checkIsExistPendingHanding(hubSpuPendingIsExist);
+			}
 		}
 		return false;
 	}
 
-	private void handleNewHubSpuPending(HubSpuPendingDto hubSpuPendingDto) throws Exception{
-		
-		// 映射spu各属性
-		convertHubPendingSpuPropert(hubSpuPendingDto);
-		if(hubSpuPendingDto.getSpuModelState().byteValue()==SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPendingDto.getSpuBrandState().byteValue()==SpuBrandState.HANDLED.getIndex()){
-			HubSpuPendingDto hubSpuPendingDtoTemp = hubPendingSpuService.findHubSpuPendingBySpuModelAndBrandNo(hubSpuPendingDto.getSpuModel(),
-					hubSpuPendingDto.getHubBrandNo());	
-			if(hubSpuPendingDtoTemp!=null&&(hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.INFO_IMPECCABLE.getIndex()||hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.HANDLED.getIndex()||hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.HANDLING.getIndex())){
-				convertExistHubSpuPendingToNewHubSpuPending(hubSpuPendingDto,hubSpuPendingDtoTemp);
-			}
+	private void checkIsExistPendingHanding(HubSpuPendingDto hubSpuPendingDto ){
+		HubSpuPendingDto hubSpuPendingDtoTemp = hubPendingSpuService.findHubSpuPendingBySpuModelAndBrandNoAndSpuState(hubSpuPendingDto.getSpuModel(),
+				hubSpuPendingDto.getHubBrandNo(),SpuState.INFO_IMPECCABLE.getIndex());	
+		if(hubSpuPendingDtoTemp!=null&&(hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.INFO_IMPECCABLE.getIndex()||hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.HANDLED.getIndex()||hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.HANDLING.getIndex())){
+			convertExistHubSpuPendingToNewHubSpuPending(hubSpuPendingDto,hubSpuPendingDtoTemp);
 		}
-		Long spuPendingId = hubPendingSpuService.insertHubSpuPending(hubSpuPendingDto);
-		hubSpuPendingDto.setSpuPendingId(spuPendingId);
 	}
-
-	public String checkHubPendingSpuPropert(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPendingDto) throws Exception {
-
-		return commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);
-	}
-	
-	private void convertHubPendingSpuPropert(HubSpuPendingDto hubSpuPendingDto) throws Exception {
-
-		commonCheckBase.handleConvert(hubSpuPendingDto);
-	}
-
 	private void convertExistHubSpuPendingToNewHubSpuPending(HubSpuPendingDto hubPendingSpuDto,
 			HubSpuPendingDto hubSpuPendingDtoTemp) {
 		hubPendingSpuDto.setHubBrandNo(hubSpuPendingDtoTemp.getHubBrandNo());
@@ -188,6 +192,7 @@ public class HubPendingSpuHandleService {
 		hubPendingSpuDto.setSpuColorState((byte) 1);
 		hubPendingSpuDto.setSpuGenderState((byte) 1);
 		hubPendingSpuDto.setSpuModelState((byte) 1);
+		hubPendingSpuDto.setHandleState(HandleState.PENDING_HANDING_EXIST.getIndex());
 	}
 
 	private void convertHubSpuToPendingSpu(HubSpuDto hubSpuDto,HubSpuPendingDto hubPendingSpuDto) {
@@ -211,6 +216,7 @@ public class HubPendingSpuHandleService {
 		hubPendingSpuDto.setSpuGenderState((byte) 1);
 		hubPendingSpuDto.setSpuModelState((byte) 1);
 		hubPendingSpuDto.setUpdateTime(new Date());
+		hubPendingSpuDto.setHandleState(HandleState.HUB_EXIST.getIndex());
 	}
 
 	public String updateSpuPendingState(Long spuPendingId) {
@@ -241,6 +247,7 @@ public class HubPendingSpuHandleService {
 		if(hubSpuNo!=null){
 			if(isSkuPassing){
 				hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
+				hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 				if(!sendToHub(spuPendingId,hubSpuNo)){
 					return "sendToHub失败";
 				}
@@ -258,7 +265,10 @@ public class HubPendingSpuHandleService {
 				hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 			}
 		}
-		hubPendingSpuService.updateHubSpuPendingByPrimaryKey(spuPending);
+		
+		hubSpuPendingDto.setSpuPendingId(spuPendingId);
+		hubSpuPendingDto.setUpdateTime(new Date());
+		hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingDto);
 		return null;
 	}
 	

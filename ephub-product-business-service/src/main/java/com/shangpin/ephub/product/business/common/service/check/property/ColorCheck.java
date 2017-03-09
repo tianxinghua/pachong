@@ -30,7 +30,7 @@ public class ColorCheck extends CommonCheckBase {
 
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
-		if(hubSpuPendingIsExist.getSpuColorState()==SpuColorState.HANDLED.getIndex()){
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuColorState()!=null&&hubSpuPendingIsExist.getSpuColorState()==SpuColorState.HANDLED.getIndex()){
     		return null;
     	}
 		hubSpuPendingIsExist.setHubColor(spuPendingDto.getHubColor());
@@ -44,8 +44,11 @@ public class ColorCheck extends CommonCheckBase {
 	}
 
 	@Override
-	protected boolean convertValue(HubSpuPendingDto spuPendingDto) throws Exception{
-		return setColorMapping(spuPendingDto);
+	protected boolean convertValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception{
+		if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getSpuColorState()!=null&&hubSpuPendingIsExist.getSpuColorState()==SpuColorState.HANDLED.getIndex()){
+    		return true;
+    	}
+		return setColorMapping(hubSpuPendingIsExist,spuPendingDto);
 	}
     
     /**
@@ -90,17 +93,18 @@ public class ColorCheck extends CommonCheckBase {
 	    }
 
 
-	 protected boolean setColorMapping(HubSpuPendingDto hubSpuPending) throws Exception {
+	 protected boolean setColorMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 	        boolean result = true;
 	        Map<String, String> colorMap = this.getColorMap();
 	        if (colorMap.containsKey(hubSpuPending.getHubColor()) & !StringUtils.isEmpty(colorMap.get(hubSpuPending.getHubColor()))) {
 	            // 包含时转化赋值
-	            hubSpuPending.setHubColor(colorMap.get(hubSpuPending.getHubColor()));
-	            hubSpuPending.setSpuColorState(InfoState.PERFECT.getIndex());
+	        	hubSpuPendingIsExist.setHubColor(colorMap.get(hubSpuPending.getHubColor()));
+	            hubSpuPendingIsExist.setSpuColorState(InfoState.PERFECT.getIndex());
 
 	        } else {
 	            result = false;
-	            hubSpuPending.setSpuColorState(InfoState.IMPERFECT.getIndex());
+	            hubSpuPendingIsExist.setSpuColorState(InfoState.IMPERFECT.getIndex());
+	            hubSpuPendingIsExist.setHubColor(hubSpuPending.getHubColor());
 	            hubColorDicService.saveColorItem(hubSpuPending.getHubColor());
 
 	        }
