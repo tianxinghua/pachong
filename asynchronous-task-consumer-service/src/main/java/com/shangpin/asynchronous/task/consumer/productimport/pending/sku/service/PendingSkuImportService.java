@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
@@ -75,6 +76,10 @@ public class PendingSkuImportService {
 	public String handMessage(ProductImportTask task) throws Exception {
 
 		// ftp下载文件
+		JSONObject json = JSONObject.parseObject(task.getData());
+		String filePath = json.get("taskFtpFilePath").toString();
+		String createUser = json.get("createUser").toString();
+		task.setData(filePath);
 		InputStream in = taskService.downFileFromFtp(task);
 		
 		//解析excel
@@ -87,11 +92,11 @@ public class PendingSkuImportService {
 		}
 
 		// 3、公共类校验hub数据并把校验结果写入excel
-		return checkAndHandlePendingProduct(task.getTaskNo(), listHubProduct);
+		return checkAndHandlePendingProduct(task.getTaskNo(), listHubProduct,createUser);
 	}
 
 	// 校验数据以及保存到hub表
-	private String checkAndHandlePendingProduct(String taskNo, List<HubPendingProductImportDTO> listHubProduct)
+	private String checkAndHandlePendingProduct(String taskNo, List<HubPendingProductImportDTO> listHubProduct,String createUser)
 			throws Exception {
 
 		if (listHubProduct == null) {
@@ -107,7 +112,7 @@ public class PendingSkuImportService {
 			}
 			map = new HashMap<String, String>();
 			
-			checkProduct(taskNo, product, map,spuMap);
+			checkProduct(taskNo, product, map,spuMap,createUser);
 			listMap.add(map);
 		}
 		
@@ -132,7 +137,7 @@ public class PendingSkuImportService {
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
-	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap) throws Exception{
+	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap,String createUser) throws Exception{
 
 		map.put("taskNo", taskNo);
 		map.put("spuModel", pendingSkuImportDto.getSpuModel());
@@ -144,7 +149,7 @@ public class PendingSkuImportService {
 		log.info("pendindSku校验返回结果：{}", hubPendingSkuCheckResult);
 		
 		// 校验spu信息
-		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(pendingSkuImportDto);
+		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(pendingSkuImportDto,createUser);
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
 		HubSpuPendingDto isPendingSpuExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
@@ -225,10 +230,11 @@ public class PendingSkuImportService {
 		return listHubProduct;
 	}
 
-	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product) throws Exception{
+	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingProductImportDTO product,String createUser) throws Exception{
 		HubSpuPendingDto HubPendingSpuDto = new HubSpuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSpuDto);
 		HubPendingSpuDto.setHubSeason(product.getSeasonYear() + "_" + product.getSeasonName());
+		HubPendingSpuDto.setUpdateUser(createUser);
 		return HubPendingSpuDto;
 	}
 

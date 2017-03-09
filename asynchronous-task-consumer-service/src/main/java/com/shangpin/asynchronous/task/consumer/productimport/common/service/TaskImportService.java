@@ -110,6 +110,7 @@ public class TaskImportService {
 	@SuppressWarnings("unused")
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
 			 Map<String, String> map,HubPendingProductImportDTO pendingSkuImportDto,boolean isMultiSizeType) throws Exception{
+		
 		String hubSpuNo = map.get("hubSpuNo");
 		if (map.get("pendingSpuId") != null) {
 			hubSkuPendingDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
@@ -119,7 +120,10 @@ public class TaskImportService {
 		String sizeType = pendingSkuImportDto.getSizeType();
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
-		
+		if(hubSkuPendingTempDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingTempDto.getSkuState()==SpuState.HANDLING.getIndex()){
+			//TODO 已处理的如果不导出就不用加此判断
+			return;
+		}
 		if("尺码".equals(specificationType)||StringUtils.isBlank(specificationType)){
 			hubSkuPendingDto.setHubSkuSizeType(sizeType);
 		}else if("排除".equals(sizeType)){
@@ -363,11 +367,6 @@ public class TaskImportService {
 	}
 
 	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
-		
-
-		JSONObject json = JSONObject.parseObject(task.getData());
-		String filePath = json.get("taskFtpFilePath").toString();
-		task.setData(filePath);
 		
 		InputStream in = FTPClientUtil.downFile(task.getData());
 		if (in == null) {
