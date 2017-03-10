@@ -104,10 +104,11 @@ public class SeasonCheck extends CommonCheckBase {
 		for (HubSeasonDicDto dicDto : hubSeasonDics) {
 			if (StringUtils.isNotBlank(dicDto.getHubMarketTime()) && StringUtils.isNotBlank(dicDto.getHubSeason())
 					&& StringUtils.isNotBlank(dicDto.getMemo())) {
-
-				seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
-						dicDto.getHubMarketTime().trim() + "_" + dicDto.getHubSeason().trim() + "|"
-								+ dicDto.getMemo().trim());
+				if(dicDto.getSupplierSeason()!=null){
+					seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
+							dicDto.getHubMarketTime().trim() + "_" + dicDto.getHubSeason().trim() + "|"
+									+ dicDto.getMemo().trim());
+				}
 				hubSeasonStaticMap.put(dicDto.getHubMarketTime() + "_" + dicDto.getHubSeason(), "");
 			}
 		}
