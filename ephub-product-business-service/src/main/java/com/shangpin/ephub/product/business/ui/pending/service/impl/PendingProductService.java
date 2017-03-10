@@ -105,6 +105,7 @@ public class PendingProductService extends PendingSkuService{
                         List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getSpPicUrl() : ""); 
                         pendingProduct.setPicUrls(findSpPicUrls(picurls)); 
+                        pendingProduct.setSupplierUrls(findSupplierUrls(picurls)); 
                         pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : picReason); 
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
@@ -311,6 +312,22 @@ public class PendingProductService extends PendingSkuService{
     		List<String> spPicUrls = new ArrayList<String>();
     		for(HubSpuPendingPicDto dto : lists){
     			spPicUrls.add(dto.getSpPicUrl());
+    		}
+    		return spPicUrls;
+    	}else{
+    		return null;
+    	}
+    }
+    /**
+     * 
+     * @param lists
+     * @return
+     */
+    private List<String> findSupplierUrls(List<HubSpuPendingPicDto> lists){
+    	if(CollectionUtils.isNotEmpty(lists)){
+    		List<String> spPicUrls = new ArrayList<String>();
+    		for(HubSpuPendingPicDto dto : lists){
+    			spPicUrls.add(dto.getPicUrl());
     		}
     		return spPicUrls;
     	}else{

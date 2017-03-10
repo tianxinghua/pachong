@@ -233,8 +233,10 @@ public abstract class PendingSpuService implements IPendingProductService {
 		if(-1 != pendingQuryDto.getPicState()){
 			if(0 == pendingQuryDto.getPicState()){
 				criteria.andPicStateEqualTo(PicState.UNHANDLED.getIndex());
-			}else{
-				criteria.andPicStateNotEqualTo(PicState.UNHANDLED.getIndex());
+			}else if(1 == pendingQuryDto.getPicState()){
+				criteria.andPicStateEqualTo(PicState.HANDLE_ERROR.getIndex());
+			}else if(2 == pendingQuryDto.getPicState()){
+				criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
 			}
 		}
 		List<Integer> conformities = pendingQuryDto.getConformities();
@@ -288,7 +290,7 @@ public abstract class PendingSpuService implements IPendingProductService {
     @Override
     public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-    	criteria.setFields("sp_pic_url,memo");
+    	criteria.setFields("sp_pic_url,memo,pic_url");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	return spuPendingPics;
