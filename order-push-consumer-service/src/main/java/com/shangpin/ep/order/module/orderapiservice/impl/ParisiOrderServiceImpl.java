@@ -91,7 +91,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		String rtnData = null;
         try {
 
-            parisiOrderUtil.pushOrder(orderDTO,skuId,qty);
+//            parisiOrderUtil.pushOrder(orderDTO,skuId,qty);
 
             logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 
