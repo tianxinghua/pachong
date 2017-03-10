@@ -570,7 +570,9 @@ public class DataServiceHandler {
 			spuPending.setInfoState(InfoState.IMPERFECT.getIndex());
 		}
 		spuPending.setStockState(StockState.NOSKU.getIndex());
-
+		if(spuPending.getSpuModel()!=null){
+			spuPending.setSpuModel(spuPending.getSpuModel().toUpperCase());			
+		}
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);
 
