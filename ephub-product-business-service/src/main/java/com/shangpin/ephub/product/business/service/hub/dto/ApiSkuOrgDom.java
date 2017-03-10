@@ -99,4 +99,6 @@ public class ApiSkuOrgDom implements Serializable {
 
     //是否重试推送的标记
     private boolean retry;
+    //hub 本身的SKUNO
+    private String  hubSkuNo;
 }
