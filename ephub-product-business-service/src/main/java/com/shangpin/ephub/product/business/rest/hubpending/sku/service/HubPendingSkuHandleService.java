@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -142,7 +143,16 @@ public class HubPendingSkuHandleService {
 		}
 		//匹配尺码类型
 		matchSize(hubSkuPendingDto);
-		hubPendingSkuService.insertHubSkuPending(hubSkuPendingDto);
+		try{
+			hubPendingSkuService.insertHubSkuPending(hubSkuPendingDto);
+		}catch (Exception e) {
+			if (e instanceof DuplicateKeyException) {
+
+			} else {
+				throw e;
+			}
+		}
+	
 	}
 
 	private void matchSize(HubSkuPendingDto hubSkuPendingDto){

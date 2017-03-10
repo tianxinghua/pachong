@@ -3,12 +3,12 @@ package com.shangpin.ephub.product.business.rest.hubpending.spu.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
@@ -136,11 +136,27 @@ public class HubPendingSpuHandleService {
 		commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);
 		
 		checkHubSpuPendingIsExistHubSpu(hubSpuPendingIsExist);
-		
-		Long spuPendingId = hubPendingSpuService.insertHubSpuPending(hubSpuPendingIsExist);
-		hubSpuPendingIsExist.setSpuPendingId(spuPendingId);
+		try{
+			Long spuPendingId = hubPendingSpuService.insertHubSpuPending(hubSpuPendingIsExist);
+			hubSpuPendingIsExist.setSpuPendingId(spuPendingId);	
+		}catch(Exception e){
+			hubSpuPendingIsExist = new HubSpuPendingDto();
+			setSpuPendingValueWhenDuplicateKeyException(hubSpuPendingIsExist,e,hubSpuPendingDto.getSupplierId(),hubSpuPendingDto.getSupplierSpuNo());
+		}
 		return hubSpuPendingIsExist;
 	}
+	
+	private void setSpuPendingValueWhenDuplicateKeyException(HubSpuPendingDto hubSpuPendingIsExist, Exception e, String supplierId, String supplierSpuNo) throws Exception {
+		if (e instanceof DuplicateKeyException) {
+			HubSpuPendingDto spuDto = hubPendingSpuService.findHubSpuPendingBySupplierIdAndSupplierSpuNo(supplierId,supplierSpuNo);
+			if (null != spuDto) {
+				BeanUtils.copyProperties(spuDto, hubSpuPendingIsExist);
+			}
+		} else {
+			throw e;
+		}
+	}
+	
 	private void convertHubPendingSpuDto(HubSpuPendingDto hubSpuPendingDto, HubSpuPendingDto hubSpuPendingIsExist) {
 		BeanUtils.copyProperties(hubSpuPendingDto, hubSpuPendingIsExist);
 		hubSpuPendingIsExist.setUpdateTime(new Date());
