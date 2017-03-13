@@ -17,28 +17,18 @@ include 'iog-generater-util'
 include 'report'
 include 'picturedown'
 
+include 'Della-stock'
 
-include 'project-mq'
-include 'stockMontiHK'
-include 'stockclean'
-include 'OpenTest'
-include 'syn-spsku-hub'
-
-
-
-
-
-include 'pozzilei-arte-stock'
-include 'pozzilei-forte-stock'
-include 'pozzilei-stock'
-include 'sanremo-stock'
-include 'vela-stock'
-include 'papini-stock-spinakerSys'
-include 'Monti-stock'
-include 'synchSupplierIdAndSpId'
-include 'rosi'
-include 'filippo'
+include 'optical-stock'
+include 'eleonorabonucci-stock'
+include 'grouppo-stock'
+include 'filippo-stock'
+include 'monnierfreres-stock'
 include 'Atelier-stock-template'
+include 'lungolivigno-order'
+include 'lungolivigno'
+include 'giglio-stock'
+include 'optical'
 
 
 
