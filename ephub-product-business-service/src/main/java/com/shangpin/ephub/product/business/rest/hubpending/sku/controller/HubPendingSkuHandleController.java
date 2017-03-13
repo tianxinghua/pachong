@@ -31,7 +31,7 @@ public class HubPendingSkuHandleController {
 		try {
 			hubPendingSkuHandleService.handleHubPendingSku(dto);
 		} catch (Exception e) {
-			log.error("skuPending映射时发生异常：{}",e);
+			log.error("====skuPending处理时发生异常：{}",e);
 			e.printStackTrace();
 		}
 	}

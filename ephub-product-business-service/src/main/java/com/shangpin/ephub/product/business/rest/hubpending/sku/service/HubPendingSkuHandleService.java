@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -107,10 +108,10 @@ public class HubPendingSkuHandleService {
 	}
 
 	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto) throws Exception {
-
-		if (hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
+		
+		if (hubSkuPendingIsExist.getSkuState()!=null&&(hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
 				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex()
-				|| hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex()) {
+				|| hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex())) {
 			// 如果spustate状态为已处理、审核中或者已完善 ，则不更新
 			return;
 		}
@@ -142,13 +143,22 @@ public class HubPendingSkuHandleService {
 		}
 		//匹配尺码类型
 		matchSize(hubSkuPendingDto);
-		hubPendingSkuService.insertHubSkuPending(hubSkuPendingDto);
+		try{
+			hubPendingSkuService.insertHubSkuPending(hubSkuPendingDto);
+		}catch (Exception e) {
+			if (e instanceof DuplicateKeyException) {
+
+			} else {
+				throw e;
+			}
+		}
+	
 	}
 
 	private void matchSize(HubSkuPendingDto hubSkuPendingDto){
 		if(hubSkuPendingDto.getSpuPendingId()!=null){
 			HubSpuPendingDto hubSpuPendingDto = hubPendingSpuService.findHubSpuPendingByPrimary(hubSkuPendingDto.getSpuPendingId());
-			if (hubSpuPendingDto!=null&&hubSpuPendingDto.getSpuBrandState() == SpuBrandState.HANDLED.getIndex()
+			if (hubSpuPendingDto!=null&&hubSpuPendingDto.getSpuBrandState()!=null&&hubSpuPendingDto.getCatgoryState()!=null&&hubSpuPendingDto.getSpuBrandState() == SpuBrandState.HANDLED.getIndex()
 					&& hubSpuPendingDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex()) {
 				MatchSizeDto match = new MatchSizeDto();
 				match.setHubBrandNo(hubSpuPendingDto.getHubBrandNo());

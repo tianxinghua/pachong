@@ -39,6 +39,13 @@ public class HubPendingSpuService{
 		hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 	}
 	public Long insertHubSpuPending(HubSpuPendingDto hubPendingSpuDto){
+		if(hubPendingSpuDto.getSpuModel()!=null){
+			hubPendingSpuDto.setSpuModel(hubPendingSpuDto.getSpuModel().toUpperCase());
+		}
+		if(hubPendingSpuDto.getHubMaterial()!=null){
+			hubPendingSpuDto.setHubMaterial(hubPendingSpuDto.getHubMaterial().replaceAll("<br />", "\r\n").replaceAll("<html>", "")
+					.replaceAll("</html>", "").replaceAll("<br>","\r\n"));
+		}
 		return hubSpuPendingGateWay.insert(hubPendingSpuDto);
 	}
 

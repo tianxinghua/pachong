@@ -3,12 +3,12 @@ package com.shangpin.ephub.product.business.rest.hubpending.spu.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
@@ -115,9 +115,9 @@ public class HubPendingSpuHandleService {
 	private String handleOldHubSpuPending(HubSpuPendingDto hubSpuPendingIsExist, HubSpuPendingDto hubSpuPendingDto)
 			throws Exception {
 
-		if (SpuState.HANDLED.getIndex() ==  hubSpuPendingIsExist.getSpuState()
-				||SpuState.HANDLING.getIndex()== hubSpuPendingIsExist.getSpuState().byteValue()
-				||SpuState.INFO_IMPECCABLE.getIndex() == hubSpuPendingIsExist.getSpuState().byteValue()) {
+		if (hubSpuPendingIsExist.getSpuState()!=null&&(SpuState.HANDLED.getIndex() ==  hubSpuPendingIsExist.getSpuState()
+				||SpuState.HANDLING.getIndex()== hubSpuPendingIsExist.getSpuState()
+				||SpuState.INFO_IMPECCABLE.getIndex() == hubSpuPendingIsExist.getSpuState())) {
 			// 如果spustate状态为已处理、审核中或者已完善 ，则不更新
 			BeanUtils.copyProperties(hubSpuPendingIsExist, hubSpuPendingDto);
 			return null;
@@ -136,11 +136,27 @@ public class HubPendingSpuHandleService {
 		commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);
 		
 		checkHubSpuPendingIsExistHubSpu(hubSpuPendingIsExist);
-		
-		Long spuPendingId = hubPendingSpuService.insertHubSpuPending(hubSpuPendingIsExist);
-		hubSpuPendingIsExist.setSpuPendingId(spuPendingId);
+		try{
+			Long spuPendingId = hubPendingSpuService.insertHubSpuPending(hubSpuPendingIsExist);
+			hubSpuPendingIsExist.setSpuPendingId(spuPendingId);	
+		}catch(Exception e){
+			hubSpuPendingIsExist = new HubSpuPendingDto();
+			setSpuPendingValueWhenDuplicateKeyException(hubSpuPendingIsExist,e,hubSpuPendingDto.getSupplierId(),hubSpuPendingDto.getSupplierSpuNo());
+		}
 		return hubSpuPendingIsExist;
 	}
+	
+	private void setSpuPendingValueWhenDuplicateKeyException(HubSpuPendingDto hubSpuPendingIsExist, Exception e, String supplierId, String supplierSpuNo) throws Exception {
+		if (e instanceof DuplicateKeyException) {
+			HubSpuPendingDto spuDto = hubPendingSpuService.findHubSpuPendingBySupplierIdAndSupplierSpuNo(supplierId,supplierSpuNo);
+			if (null != spuDto) {
+				BeanUtils.copyProperties(spuDto, hubSpuPendingIsExist);
+			}
+		} else {
+			throw e;
+		}
+	}
+	
 	private void convertHubPendingSpuDto(HubSpuPendingDto hubSpuPendingDto, HubSpuPendingDto hubSpuPendingIsExist) {
 		BeanUtils.copyProperties(hubSpuPendingDto, hubSpuPendingIsExist);
 		hubSpuPendingIsExist.setUpdateTime(new Date());
@@ -150,7 +166,8 @@ public class HubPendingSpuHandleService {
 
 	private boolean checkHubSpuPendingIsExistHubSpu(HubSpuPendingDto hubSpuPendingIsExist) throws Exception {
 		
-		if (hubSpuPendingIsExist.getSpuModelState() == SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPendingIsExist.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()) {
+		if (hubSpuPendingIsExist.getSpuModelState() !=null&&hubSpuPendingIsExist.getSpuBrandState()!=null&&hubSpuPendingIsExist.getSpuModelState() == SpuModelState.VERIFY_PASSED.getIndex()&&
+				hubSpuPendingIsExist.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()) {
 			// 查询是否已存在hubSpu
 			HubSpuDto hubSpuDto = hubSpuService.findHubSpuByBrandNoAndSpuModel(hubSpuPendingIsExist.getHubBrandNo(),
 					hubSpuPendingIsExist.getSpuModel());
@@ -167,7 +184,7 @@ public class HubPendingSpuHandleService {
 	private void checkIsExistPendingHanding(HubSpuPendingDto hubSpuPendingDto ){
 		HubSpuPendingDto hubSpuPendingDtoTemp = hubPendingSpuService.findHubSpuPendingBySpuModelAndBrandNoAndSpuState(hubSpuPendingDto.getSpuModel(),
 				hubSpuPendingDto.getHubBrandNo(),SpuState.INFO_IMPECCABLE.getIndex());	
-		if(hubSpuPendingDtoTemp!=null&&(hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.INFO_IMPECCABLE.getIndex()||hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.HANDLED.getIndex()||hubSpuPendingDtoTemp.getSpuState().byteValue()==SpuState.HANDLING.getIndex())){
+		if(hubSpuPendingDtoTemp!=null&&hubSpuPendingDtoTemp.getSpuState()!=null&&(hubSpuPendingDtoTemp.getSpuState()==SpuState.INFO_IMPECCABLE.getIndex()||hubSpuPendingDtoTemp.getSpuState()==SpuState.HANDLED.getIndex()||hubSpuPendingDtoTemp.getSpuState()==SpuState.HANDLING.getIndex())){
 			convertExistHubSpuPendingToNewHubSpuPending(hubSpuPendingDto,hubSpuPendingDtoTemp);
 		}
 	}
@@ -222,54 +239,72 @@ public class HubPendingSpuHandleService {
 	public String updateSpuPendingState(Long spuPendingId) {
 		
 		HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
-		
 		HubSpuPendingDto spuPending = hubPendingSpuService.findHubSpuPendingByPrimary(spuPendingId);
-		String hubSpuNo = spuPending.getHubSpuNo();
-		boolean isSkuPassing = true;
-		boolean isSpuPassing = false;
-		List<HubSkuPendingDto> listSku = hubPendingSkuService.findHubSkuPendingBySpuPendingId(spuPendingId);
-		if(listSku!=null){
-			for(HubSkuPendingDto sku:listSku){
-				if(sku.getSpSkuSizeState()==SpSkuSizeState.UNHANDLED.getIndex()&&sku.getFilterFlag()==FilterFlag.EFFECTIVE.getIndex()){
-					isSkuPassing = false;
+		if(spuPending!=null){
+			String hubSpuNo = spuPending.getHubSpuNo();
+			boolean isSkuPassing = true;
+			boolean isAllSkuFilter = true;
+			List<HubSkuPendingDto> listSku = hubPendingSkuService.findHubSkuPendingBySpuPendingId(spuPendingId);
+			if(listSku!=null){
+				for(HubSkuPendingDto sku:listSku){
+					if(sku.getSpSkuSizeState()!=null&&sku.getFilterFlag()!=null&&sku.getSpSkuSizeState()==SpSkuSizeState.UNHANDLED.getIndex()&&sku.getFilterFlag()==FilterFlag.EFFECTIVE.getIndex()){
+						isSkuPassing = false;
+					}
+					if(sku.getFilterFlag()!=null&&sku.getFilterFlag()==FilterFlag.EFFECTIVE.getIndex()){
+						isAllSkuFilter = false;
+					}
 				}
 			}
-		}else{
-			isSkuPassing = false;
-		}
-		if(spuPending.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()&&spuPending.getCatgoryState()==SpuBrandState.HANDLED.getIndex()
-				&&spuPending.getSpuColorState()==SpuBrandState.HANDLED.getIndex()&&spuPending.getSpuGenderState()==SpuBrandState.HANDLED.getIndex()
-				&&spuPending.getMaterialState()==SpuBrandState.HANDLED.getIndex()&&spuPending.getOriginState()==SpuBrandState.HANDLED.getIndex()
-						&&spuPending.getSpuSeasonState()==SpuBrandState.HANDLED.getIndex()&&spuPending.getSpuModelState()==SpuBrandState.HANDLED.getIndex()){
-			isSpuPassing = true;
-		}
+			//sku不存在或者所有sku已被过滤
+			if(isAllSkuFilter){
+				isSkuPassing = false;
+			}
 		
-		if(hubSpuNo!=null){
-			if(isSkuPassing){
-				hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
-				hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
-				if(!sendToHub(spuPendingId,hubSpuNo)){
-					return "sendToHub失败";
-				}
-			}else{
-				hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
-			}
-		}else{
-			if(isSpuPassing){
+			if(hubSpuNo!=null){
 				if(isSkuPassing){
-					hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+					hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
+					hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
+					if(!sendToHub(spuPendingId,hubSpuNo)){
+						return "sendToHub失败";
+					}
 				}else{
+					hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 				}
 			}else{
-				hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+				if(isSpuPass(spuPending)){
+					if(isSkuPassing){
+						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
+					}else{
+						hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+					}
+				}else{
+					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+				}
 			}
+			
+			hubSpuPendingDto.setSpuPendingId(spuPendingId);
+			hubSpuPendingDto.setUpdateTime(new Date());
+			hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingDto);
 		}
 		
-		hubSpuPendingDto.setSpuPendingId(spuPendingId);
-		hubSpuPendingDto.setUpdateTime(new Date());
-		hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingDto);
 		return null;
+	}
+	
+	private boolean isSpuPass(HubSpuPendingDto spuPending){
+		if(spuPending.getSpuBrandState()!=null&&spuPending.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()&&
+				spuPending.getCatgoryState()!=null&&spuPending.getCatgoryState()==SpuBrandState.HANDLED.getIndex()&&
+						spuPending.getSpuColorState()!=null&&spuPending.getSpuColorState()==SpuBrandState.HANDLED.getIndex()&&
+								spuPending.getSpuGenderState()!=null&&spuPending.getSpuGenderState()==SpuBrandState.HANDLED.getIndex()&&
+										spuPending.getMaterialState()!=null&&spuPending.getMaterialState()==SpuBrandState.HANDLED.getIndex()&&
+												spuPending.getOriginState()!=null&&spuPending.getOriginState()==SpuBrandState.HANDLED.getIndex()&&
+														spuPending.getSpuSeasonState()!=null&&spuPending.getSpuSeasonState()==SpuBrandState.HANDLED.getIndex()&&
+																spuPending.getSpuModelState()!=null&&spuPending.getSpuModelState()==SpuBrandState.HANDLED.getIndex()){
+			return true;	
+		}else{
+			return false;
+		}
+		
 	}
 	
 	public boolean sendToHub(Long spuPendingId,String hubSpuNo) {
