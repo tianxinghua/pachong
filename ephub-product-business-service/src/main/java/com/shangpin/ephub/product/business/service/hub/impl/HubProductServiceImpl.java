@@ -140,8 +140,10 @@ public class HubProductServiceImpl implements HubProductService {
                 //货号判断
                 if(!sopSkuDto.getProductModel().equals(hubSpuDto.getSpuModel())){
                     updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"SOP已存在此商品，货号不同");
+                }else{
+                    updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.EXIST, ServiceConstant.HUB_SEND_TO_SCM_EXIST);
                 }
-                updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.EXIST, ServiceConstant.HUB_SEND_TO_SCM_EXIST);
+
             }
 
             //获取 sku pending 的值  更新状态
