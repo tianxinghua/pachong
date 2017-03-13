@@ -345,7 +345,7 @@ public class PendingProductService extends PendingSkuService{
 		skuCriteria.setPageNo(1);
 		skuCriteria.setPageSize(100); 
 		skuCriteria.setOrderByClause("supplier_sku_size"); 
-    	skuCriteria.setFields("supplier_sku_size,stock");
+    	skuCriteria.setFields("supplier_sku_size,stock,supply_price,supply_price_currency,market_price,market_price_currencyOrg");
     	skuCriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId); 
     	return hubSupplierSkuGateWay.selectByCriteria(skuCriteria);
 	}
