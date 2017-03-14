@@ -130,7 +130,9 @@ public class PendingSpuImportService {
 			map.put("hubIsExist", hubIsExist + "");
 			map.put("hubSpuId", hubSpuId + "");
 			map.put("hubSpuNo", hubSpuNo);
-			map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");
+			if(isSpuPendingExist!=null){
+				map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");	
+			}
 		}
 		
 		HubPendingSkuCheckResult checkResult = selectAndcheckSku(product,isSpuPendingExist, map);
@@ -202,6 +204,7 @@ public class PendingSpuImportService {
 				}
 			} else {
 				flag = false;
+				str.append("无sku信息");
 			}
 		} else {
 			flag = false;
