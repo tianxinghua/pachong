@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.service.pending.impl;
 
 import java.util.*;
 
+import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -347,6 +348,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             auditVO.setMemo("尺码有未匹配的,不能审核通过");
             return true;
         }
+
+        if(!hasNeedHandingSkuSize(hubSpuPendingDtos)){
+            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+            hubSpuPending.setMemo("SPU下没有待处理的SKU,请重新处理尺码");
+            updateSpuPendingState(auditVO, hubSpuPending);
+            auditVO.setMemo("SPU下没有待处理的SKU,请重新处理尺码");
+            return true;
+        }
         return false;
     }
 
@@ -506,6 +515,27 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 //                .andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue())
         .andSpSkuSizeStateEqualTo(CommonHandleState.UNHANDLED.getIndex().byteValue())
         .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());
+
+        List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
+        if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private boolean hasNeedHandingSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos) {
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList)
+
+//                .andSkuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())   //spu 和 sku 状态保持一致
+                .andSpSkuSizeStateEqualTo(CommonHandleState.HANDLED.getIndex().byteValue())       //尺码已映射
+                .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());  //不过滤的才使用
 
         List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
         if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
