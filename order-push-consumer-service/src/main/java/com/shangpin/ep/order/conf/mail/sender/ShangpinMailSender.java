@@ -72,6 +72,14 @@ public class ShangpinMailSender {
 		}
 		String inputTo = shangpinMail.getTo();
 		helper.setTo(inputTo == null? defaultMailProperties.getDefaultRecipient():inputTo.trim());//收件人
+		List<String> addTo = shangpinMail.getAddTo();
+		if (CollectionUtils.isNotEmpty(addTo)) {
+			for (String to : addTo) {
+				if (StringUtils.isNotBlank(to)) {
+					helper.addTo(to);
+				}
+			}
+		}
 		String inputFrom = shangpinMail.getFrom();
 		String from = inputFrom == null? defaultMailProperties.getDefaultSender():inputFrom.trim();
 		helper.setFrom(from); //发件人
