@@ -189,9 +189,18 @@ public abstract class PendingSpuService implements IPendingProductService {
 			criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
 		}
 		if("0".equals(pendingQuryDto.getAuditState())){
+			//再处理
 			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
+			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+				criteria.andAuditUserLike("%"+pendingQuryDto.getOperator()+"%");
+			}
 		}else if("1".equals(pendingQuryDto.getAuditState())){
 			criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+		}else{
+			//待处理
+			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+				criteria.andUpdateUserLike("%"+pendingQuryDto.getOperator()+"%");
+			}
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());

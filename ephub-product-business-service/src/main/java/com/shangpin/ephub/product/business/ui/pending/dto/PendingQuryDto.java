@@ -68,6 +68,10 @@ public class PendingQuryDto {
      * 审核状态
      */
     private String auditState;
+    /**
+     * 操作人
+     */
+    private String operator;
     
     
 }
