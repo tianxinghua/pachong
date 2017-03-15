@@ -252,23 +252,25 @@ public class ExportServiceImpl {
 	private void saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) {
 		FileOutputStream fout = null;
 		File file = null;
+		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
 		try {
 			file = new File(ftpProperties.getLocalResultPath() + createUser + "_" + taskNo + ".xls");
 			fout = new FileOutputStream(file);
 			wb.write(fout);
 			log.info(file.getName() + " 生成文件成功！");
 			FTPClientUtil.uploadToExportPath(file, file.getName());
-			log.info("上传成功！");
+			log.info(taskNo+"上传成功！");
 			updateHubSpuImportTask(taskNo);
-			log.info("更新任务状态成功！");
+			log.info(taskNo+" 更新任务状态成功！");
+			is_upload_success = true;
 		} catch (Exception e) {
-			log.error("保存并上传ftp时异常：" + e.getMessage(), e);
+			log.error(taskNo+" 保存并上传ftp时异常：" + e.getMessage(), e);
 		} finally {
 			try {
 				if (null != fout) {
 					fout.close();
 				}
-				if (null != file && file.exists()) {
+				if (is_upload_success && null != file && file.exists()) {
 					file.delete();
 				}
 			} catch (Exception e2) {

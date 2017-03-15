@@ -76,8 +76,8 @@ public class RaffaellonetworkHandler implements ISupplierHandler{
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
-			log.error("studio69异常："+e.getMessage(),e);
+		} catch (Exception e) {
+			log.error("rafftnework异常：{}",e);
 		}
 		
 	}

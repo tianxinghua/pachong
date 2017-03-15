@@ -121,7 +121,7 @@ public class TaskImportService {
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
 		
-		if(hubSkuPendingTempDto.getSkuState()!=null&&(hubSkuPendingTempDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingTempDto.getSkuState()==SpuState.HANDLING.getIndex())){
+		if(hubSkuPendingTempDto!=null&&hubSkuPendingTempDto.getSkuState()!=null&&(hubSkuPendingTempDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingTempDto.getSkuState()==SpuState.HANDLING.getIndex())){
 			//TODO 已处理的如果不导出就不用加此判断
 			return;
 		}

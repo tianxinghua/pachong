@@ -130,7 +130,9 @@ public class PendingSpuImportService {
 			map.put("hubIsExist", hubIsExist + "");
 			map.put("hubSpuId", hubSpuId + "");
 			map.put("hubSpuNo", hubSpuNo);
-			map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");
+			if(isSpuPendingExist!=null){
+				map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");	
+			}
 		}
 		
 		HubPendingSkuCheckResult checkResult = selectAndcheckSku(product,isSpuPendingExist, map);
@@ -193,7 +195,7 @@ public class PendingSpuImportService {
 			if (listSku != null && listSku.size() > 0) {
 				for (HubSkuPendingDto hubSkuPendingDto : listSku) {
 					
-					if(hubSkuPendingDto.getSkuState()!=null&&hubSkuPendingDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingDto.getSkuState()==SpuState.HANDLING.getIndex()){
+					if(hubSkuPendingDto.getSkuState()!=null&&(hubSkuPendingDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingDto.getSkuState()==SpuState.HANDLING.getIndex())){
 						continue;
 					}
 					HubPendingSkuCheckResult hubPendingSkuCheckResult = loopCheckHubSkuPending(hubSkuPendingDto,product,map);
@@ -202,6 +204,7 @@ public class PendingSpuImportService {
 				}
 			} else {
 				flag = false;
+				str.append("无sku信息");
 			}
 		} else {
 			flag = false;

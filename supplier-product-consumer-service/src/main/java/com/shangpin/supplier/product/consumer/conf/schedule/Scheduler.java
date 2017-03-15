@@ -22,28 +22,28 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/10 * * * ?")
 	public void pictureTask() {
 		try {
-//			log.info("================================系统开始扫描supplierProduct需要重新推送的数据================================");
-//			long start = System.currentTimeMillis();
+			log.info("===============系统开始扫描supplierProduct需要重新推送的数据=============");
+			long start = System.currentTimeMillis();
 			supplierProductPictureService.processProduct((byte)4);
-//			log.info("======系统扫描supplierProduct需要重新推送的数据结束,耗时{}毫秒===========",System.currentTimeMillis()-start);
+			log.info("======系统扫描supplierProduct需要重新推送的数据结束,耗时{}毫秒===========",System.currentTimeMillis()-start);
 		} catch (Throwable e) {
-//			log.info("××××××××××××××××××××××××××××××系统扫描需要重新推送的数据事件发生异常××××××××××××××××××××××××××××××",e);
+			log.info("==================系统扫描需要重新推送的数据事件发生异常===================",e);
 			e.printStackTrace();
 		}
 	}
 	
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/2 * * * ?")
 	public void modelTask() {
 		try {
-			log.info("================================系统开始扫描supplierProduct需要重新推送的数据================================");
+			log.info("××××××××××××××××××××××××××××××系统开始扫描同款需要重新推送的数据××××××××××××××××××××××××××××××");
 			long start = System.currentTimeMillis();
 			supplierProductPictureService.processProduct((byte)5);
-			log.info("======系统扫描supplierProduct需要重新推送的数据结束,耗时{}毫秒===========",System.currentTimeMillis()-start);
+			log.info("××××××××××××××××××××××××××××××系统扫描同款需要重新推送的数据结束,耗时{}毫秒××××××××××××××××××××××××××××××",System.currentTimeMillis()-start);
 		} catch (Throwable e) {
-			log.info("××××××××××××××××××××××××××××××系统扫描需要重新推送的数据事件发生异常××××××××××××××××××××××××××××××",e);
+			log.info("××××××××××××××××××××××××××××××系统扫描同款需要重新推送的数据事件发生异常××××××××××××××××××××××××××××××",e);
 			e.printStackTrace();
 		}
 	}

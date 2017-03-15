@@ -37,7 +37,7 @@ public class StringUtil {
 			if(Integer.parseInt(stock.trim())<0){
 				return 0;
 			}
-			return Integer.parseInt(stock);
+			return Integer.parseInt(stock.trim());
 		}
 	}
 	/**

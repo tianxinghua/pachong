@@ -230,7 +230,7 @@ public class BrunarossoServiceImpl implements IOrderService {
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = brunarossPost(supplierProperties.getBrunarosso().getUrl()+supplierProperties.getBrunarosso().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getBrunarosso().getUser(),supplierProperties.getBrunarosso().getPassword(),orderDTO);
+		String returnData = brunarossPost(supplierProperties.getBrunarosso().getUrl()+supplierProperties.getBrunarosso().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getBrunarosso().getUser(),supplierProperties.getBrunarosso().getPassword(),orderDTO);
 		orderDTO.setLogContent("下订单返回结果======="+returnData+" 下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
