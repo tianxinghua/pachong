@@ -1,5 +1,6 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +21,7 @@ import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.exception.ServiceException;
 import com.shangpin.ep.order.exception.ServiceMessageException;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
+import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.Billingcustomer;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.LoginDTO;
@@ -48,6 +50,8 @@ public class LungolivignoOrderService implements IOrderService{
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
+    @Autowired
+    OpenApiService openApiService;  
     
     
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5, 1000*60 * 5, 1000*60 * 5);	
@@ -112,8 +116,9 @@ public class LungolivignoOrderService implements IOrderService{
 			row.setSku(sku.substring(0, sku.indexOf("-")));
 			row.setSizeIndex(sku.substring(sku.indexOf("-")+1)); 
 			row.setQty(Integer.parseInt(stock));
-			row.setPrice(Double.valueOf(orderDTO.getPurchasePriceDetail())); 
-			row.setFinalPrice(Double.valueOf(orderDTO.getPurchasePriceDetail())); 
+			Double priceDetail = Double.valueOf(getpriceDetail(orderDTO));
+			row.setPrice(priceDetail); 
+			row.setFinalPrice(priceDetail); 
 			row.setPickStoreCode(storecode); 
 			rows.add(row);
 			requestSaveOrderDTO.setRows(rows);	
@@ -217,6 +222,18 @@ public class LungolivignoOrderService implements IOrderService{
 			throw new ServiceMessageException("获取storecode失败,发生异常。");
 		}
 		
+	}
+	
+	/**
+	 * 从sop获取价格
+	 * @param orderDTO
+	 * @return
+	 */
+	private String getpriceDetail(OrderDTO orderDTO) throws Exception{
+		BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getLungolivigno().getOpenApiKey(), supplierProperties.getLungolivigno().getOpenApiKey(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+		String price = priceInt.divide(new BigDecimal(1.05), 2)
+				.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+		return price;
 	}
 	
 	/**

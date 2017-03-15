@@ -132,6 +132,7 @@ public class SupplierProductMysqlService {
 		boolean isChanged = false;
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
+		pendingSku.setSupplierSkuId(hubSku.getSupplierSkuId()); 
 		
 		hubSkuUpdated.setSupplierId(hubSku.getSupplierId());
 		hubSkuUpdated.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -182,6 +183,7 @@ public class SupplierProductMysqlService {
 	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) throws Exception {
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
+		pendingSku.setSupplierSkuId(hubSku.getSupplierSkuId()); 
 		pendingSku.setHubSkuSize(hubSku.getSupplierSkuSize());
 		pendingSku.setMarketPrice(hubSku.getMarketPrice());
 		pendingSku.setMarketPriceCurrencyorg(hubSku.getMarketPriceCurrencyorg());
