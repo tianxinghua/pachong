@@ -139,7 +139,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             criterion.andSpuStateEqualTo(queryVO.getStatus().byteValue());
         }
         if(StringUtils.isNotBlank(queryVO.getOperator())){
-        	criterion.andUpdateUserLike("%"+queryVO.getOperator()+"%"); 
+        	criterion.andUpdateUserLike(queryVO.getOperator()+"%"); 
         }
 
         return criteria;
