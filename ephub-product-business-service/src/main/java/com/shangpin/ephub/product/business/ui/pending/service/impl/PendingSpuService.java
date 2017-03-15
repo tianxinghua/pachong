@@ -189,9 +189,18 @@ public abstract class PendingSpuService implements IPendingProductService {
 			criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
 		}
 		if("0".equals(pendingQuryDto.getAuditState())){
+			//再处理
 			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
+			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+				criteria.andAuditUserLike(pendingQuryDto.getOperator()+"%");
+			}
 		}else if("1".equals(pendingQuryDto.getAuditState())){
 			criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+		}else{
+			//待处理
+			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+				criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
+			}
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
@@ -223,6 +232,14 @@ public abstract class PendingSpuService implements IPendingProductService {
 		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
 			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
 			criteria.andUpdateTimeLessThan(endTime);
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeStart())){
+			Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeStart(), dateFormat);
+			criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeEnd())){
+			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeEnd(),dateFormat);
+			criteria.andCreateTimeLessThan(endTime);
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
 			criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
@@ -290,7 +307,7 @@ public abstract class PendingSpuService implements IPendingProductService {
     @Override
     public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-    	criteria.setFields("sp_pic_url,memo,pic_url");
+    	criteria.setFields("sp_pic_url,memo,pic_url,pic_handle_state");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	return spuPendingPics;

@@ -18,6 +18,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -244,9 +245,13 @@ public class HubPendingSpuHandleService {
 			String hubSpuNo = spuPending.getHubSpuNo();
 			boolean isSkuPassing = true;
 			boolean isAllSkuFilter = true;
+			int totalStock = 0;
+			boolean isExistSku = false;
 			List<HubSkuPendingDto> listSku = hubPendingSkuService.findHubSkuPendingBySpuPendingId(spuPendingId);
 			if(listSku!=null){
+				isExistSku = true;
 				for(HubSkuPendingDto sku:listSku){
+					totalStock += sku.getStock();
 					if(sku.getSpSkuSizeState()!=null&&sku.getFilterFlag()!=null&&sku.getSpSkuSizeState()==SpSkuSizeState.UNHANDLED.getIndex()&&sku.getFilterFlag()==FilterFlag.EFFECTIVE.getIndex()){
 						isSkuPassing = false;
 					}
@@ -262,11 +267,13 @@ public class HubPendingSpuHandleService {
 		
 			if(hubSpuNo!=null){
 				if(isSkuPassing){
+					hubSpuPendingDto.setMemo("自动进入待选品");
 					hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
 					hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 					if(!sendToHub(spuPendingId,hubSpuNo)){
 						return "sendToHub失败";
 					}
+					log.info("*****"+hubSpuPendingDto.getSupplierId()+":"+hubSpuPendingDto.getSpuModel()+"自动进入待选品");
 				}else{
 					hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
@@ -274,15 +281,25 @@ public class HubPendingSpuHandleService {
 			}else{
 				if(isSpuPass(spuPending)){
 					if(isSkuPassing){
+						log.info("*****"+hubSpuPendingDto.getSupplierId()+":"+hubSpuPendingDto.getSpuModel()+"自动进入待复合");
+						hubSpuPendingDto.setMemo("自动进入待复合");
+						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
 					}else{
+						hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 					}
 				}else{
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 				}
 			}
-			
+			if(isExistSku&&totalStock>=0){
+				hubSpuPendingDto.setStockState(StockState.HANDLED.getIndex());
+			}else if(isExistSku&&totalStock<=0){
+				hubSpuPendingDto.setStockState(StockState.NOSTOCK.getIndex());
+			}else{
+				hubSpuPendingDto.setStockState(StockState.NOSKU.getIndex());
+			}
 			hubSpuPendingDto.setSpuPendingId(spuPendingId);
 			hubSpuPendingDto.setUpdateTime(new Date());
 			hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingDto);

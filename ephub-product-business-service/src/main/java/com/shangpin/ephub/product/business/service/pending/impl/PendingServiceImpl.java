@@ -138,6 +138,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }else{
             criterion.andSpuStateEqualTo(queryVO.getStatus().byteValue());
         }
+        if(StringUtils.isNotBlank(queryVO.getOperator())){
+        	criterion.andUpdateUserLike(queryVO.getOperator()+"%"); 
+        }
 
         return criteria;
     }
@@ -398,6 +401,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     	hubSpuPending.setAuditDate(new Date());
     	hubSpuPending.setAuditUser(auditUser);
     	hubSpuPending.setAuditOpinion(auditOpinion); 
+    	hubSpuPending.setUpdateUser(auditUser); 
     }
 
     private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {

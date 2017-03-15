@@ -25,8 +25,22 @@ public class PendingQuryDto {
     private String hubSeason;
     private String hubYear;
     private List<Integer> inconformities;//不符合的项
+    /**
+     * 开始更新时间
+     */
     private String statTime;
+    /**
+     * 结束更新时间
+     */
     private String endTime;
+    /**
+     * 开始拉去时间
+     */
+    private String createTimeStart;
+    /**
+     * 结束拉去时间
+     */
+    private String createTimeEnd;
     private String createUser;
     /**
      * 品牌名称
@@ -68,6 +82,10 @@ public class PendingQuryDto {
      * 审核状态
      */
     private String auditState;
+    /**
+     * 操作人
+     */
+    private String operator;
     
     
 }
