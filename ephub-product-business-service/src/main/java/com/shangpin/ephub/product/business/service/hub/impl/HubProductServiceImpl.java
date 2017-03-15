@@ -154,18 +154,25 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
     private void handleSendToScm(SpProductOrgInfoEntity spSpuInfo, ApiProductOrgExtendDom spSpuExtendInfo, List<ApiSkuOrgDom> skuOrgDoms) throws JsonProcessingException {
-        HubProductDto productDto = new HubProductDto();
-        productDto.setProductOrgInfo(spSpuInfo);
-        productDto.setProductOrgInfoExtend(spSpuExtendInfo);
-        productDto.setSkuList(skuOrgDoms);
-        HubResponseDto<String> responseDto = sendToScm(productDto);
-        if(responseDto.getIsSuccess()){  //创建成功
-            for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
-            }
-        }else{ //创建失败
-            for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+
+
+
+
+
+        for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+            HubProductDto productDto = new HubProductDto();
+            productDto.setProductOrgInfo(spSpuInfo);
+            productDto.setProductOrgInfoExtend(spSpuExtendInfo);
+            List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
+            sendSkuList.add(skuOrg);
+            productDto.setSkuList(sendSkuList);
+            HubResponseDto<String> responseDto = sendToScm(productDto);
+            if(responseDto.getIsSuccess()){  //创建成功
+                 updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
+
+            }else{ //创建失败
+                 updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+
             }
         }
     }
