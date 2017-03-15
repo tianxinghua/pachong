@@ -307,7 +307,7 @@ public abstract class PendingSpuService implements IPendingProductService {
     @Override
     public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-    	criteria.setFields("sp_pic_url,memo,pic_url");
+    	criteria.setFields("sp_pic_url,memo,pic_url,pic_handle_state");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	return spuPendingPics;
