@@ -399,44 +399,45 @@ public class PendingHandler extends VariableInit {
 		spuPendingDto = dataServiceHandler.getHubSpuPending(spu.getSupplierId(), spu.getSupplierSpuNo());
 		HubSpuDto hubSpuDto = null;
 		if (null != spuPendingDto) {
-			if (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()
-					|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLING.getIndex()
-					|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()) {
-				// 审核中或者已处理,不能做修改
-				boolean brandmapping = true;
-				// 首先映射品牌 ，否则无法查询SPU
-				brandmapping = setBrandMapping(spu, spuPendingDto);
+				if (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()
+						|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLING.getIndex()
+						|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()) {
+					// 审核中或者已处理,不能做修改
+					boolean brandmapping = true;
+					// 首先映射品牌 ，否则无法查询SPU
+					brandmapping = setBrandMapping(spu, spuPendingDto);
 
-				// 验证货号
-				boolean spuModelJudge = true;
-				if (brandmapping) {
-					spuModelJudge = setBrandModel(spu, spuPendingDto);
+					// 验证货号
+					boolean spuModelJudge = true;
+					if (brandmapping) {
+						spuModelJudge = setBrandModel(spu, spuPendingDto);
+					}
+
+					if (brandmapping && null != spu.getSpuModel()) {
+						hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(spuPendingDto.getHubBrandNo(),
+								spuPendingDto.getSpuModel());
+					}
+
+				} else 	if(StringUtils.isBlank(spuPendingDto.getUpdateUser())){
+					HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+
+					BeanUtils.copyProperties(spu, updateSpuPending);
+
+					setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
+
+					dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
+				    //更新后重新赋值
+					spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
 				}
 
-				if (brandmapping && null != spu.getSpuModel()) {
-					hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(spuPendingDto.getHubBrandNo(),
-							spuPendingDto.getSpuModel());
+				SpuPending spuPending = new SpuPending();
+				BeanUtils.copyProperties(spuPendingDto, spuPending);
+				if (null != hubSpuDto) {
+					spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
 				}
 
-			} else {
-				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
-
-				BeanUtils.copyProperties(spu, updateSpuPending);
-
-				setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
-
-				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
-			    //更新后重新赋值
-				spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
-			}
-
-			SpuPending spuPending = new SpuPending();
-			BeanUtils.copyProperties(spuPendingDto, spuPending);
-			if (null != hubSpuDto) {
-				spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
-			}
-
-			return spuPending;
+				return spuPending;
+			
 		} else{
 			//  if can't find spupending ,  search  supplier and insert spupending
 			HubSupplierSpuDto supplierSpuDto = dataServiceHandler.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(spu.getSupplierId(), spu.getSupplierSpuNo());
