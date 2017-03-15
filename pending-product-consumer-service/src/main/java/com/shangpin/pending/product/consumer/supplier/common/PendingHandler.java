@@ -422,8 +422,10 @@ public class PendingHandler extends VariableInit {
 				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 
 				BeanUtils.copyProperties(spu, updateSpuPending);
-
-				setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
+				//只有未被人工修改过的才做处理
+				if(StringUtils.isBlank(spuPendingDto.getUpdateUser())) {
+					setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
+				}
 
 				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
 			    //更新后重新赋值
