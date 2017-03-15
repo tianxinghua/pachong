@@ -418,26 +418,26 @@ public class PendingHandler extends VariableInit {
 								spuPendingDto.getSpuModel());
 					}
 
-				} else 	if(StringUtils.isBlank(spuPendingDto.getUpdateUser())){
-					HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+				} else {
+				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 
-					BeanUtils.copyProperties(spu, updateSpuPending);
-
+				BeanUtils.copyProperties(spu, updateSpuPending);
+				//只有未被人工修改过的才做处理
+				if(StringUtils.isBlank(spuPendingDto.getUpdateUser())) {
 					setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
-
-					dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
-				    //更新后重新赋值
-					spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
 				}
 
-				SpuPending spuPending = new SpuPending();
-				BeanUtils.copyProperties(spuPendingDto, spuPending);
-				if (null != hubSpuDto) {
-					spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
-				}
+				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
+			    //更新后重新赋值
+				spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
+			}
 
-				return spuPending;
-			
+			SpuPending spuPending = new SpuPending();
+			BeanUtils.copyProperties(spuPendingDto, spuPending);
+			if (null != hubSpuDto) {
+				spuPending.setHubSpuNo(hubSpuDto.getSpuNo());
+			}
+			return spuPending;
 		} else{
 			//  if can't find spupending ,  search  supplier and insert spupending
 			HubSupplierSpuDto supplierSpuDto = dataServiceHandler.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(spu.getSupplierId(), spu.getSupplierSpuNo());

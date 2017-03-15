@@ -59,7 +59,7 @@ public class ProductExportHandler {
 				log.error("待处理页导出请传入参数！！！"); 
 			}
 		}catch (Exception e) {
-            log.error("待处理页导出异常："+e.getMessage(),e);
+            log.error("任务处理异常："+e.getMessage()+"，接收到导出任务："+message.getData(),e);
             taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
         }
 		

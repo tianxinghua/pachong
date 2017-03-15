@@ -562,6 +562,7 @@ public class VariableInit {
         boolean allStatus = true;
         // 获取品牌
 
+
         if(StringUtils.isNotBlank(spu.getHubBrandNo())){
 
             boolean brandmapping = setBrandMapping(spu, updateSpuPending);

@@ -35,6 +35,10 @@ public class ShangpinMail implements Serializable{
 	 */
 	private String to;
 	/**
+	 * 其余的收件人
+	 */
+	private List<String> addTo;
+	/**
 	 * 主题
 	 */
 	private String subject;

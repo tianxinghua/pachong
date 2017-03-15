@@ -1,7 +1,10 @@
 package com.shangpin.ep.order;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.shangpin.ep.order.common.LogCommon;
+import com.shangpin.ep.order.conf.mail.attach.AttachBean;
 import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
 import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ep.order.enumeration.LogLeve;
@@ -59,31 +63,58 @@ public class EpOrderServiceApplicationTests {
 //		
 //		
 //	}
+//	@Autowired
+//	@Qualifier("baseBluServiceImpl")
+//	IOrderService baseBluServiceImpl;
+//
+//
+//	public void testPushOrder(){
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setDetail("9900041846920:1");
+//		orderDTO.setSupplierNo("2016080801914");
+//		orderDTO.setSpMasterOrderNo("20170209001");
+//		orderDTO.setPurchaseNo("CGDF20170209001");
+//		baseBluServiceImpl.handleConfirmOrder(orderDTO);
+//	}
+//
+//	@Test
+//	public void testMapping(){
+//		String result = "{\"CodMsg\": 1, \"Msg\": \"OK Operation Occurred Successfully\"}";
+//		ObjectMapper mapper = new ObjectMapper();
+//		try {
+//			OrderResult orderResult =  mapper.readValue(result, OrderResult.class);
+//			System.out.println("123");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+
 	@Autowired
-	@Qualifier("baseBluServiceImpl")
-	IOrderService baseBluServiceImpl;
-
-
-	public void testPushOrder(){
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("9900041846920:1");
-		orderDTO.setSupplierNo("2016080801914");
-		orderDTO.setSpMasterOrderNo("20170209001");
-		orderDTO.setPurchaseNo("CGDF20170209001");
-		baseBluServiceImpl.handleConfirmOrder(orderDTO);
-	}
-
+	private ShangpinMailSender sm;
+	
 	@Test
-	public void testMapping(){
-		String result = "{\"CodMsg\": 1, \"Msg\": \"OK Operation Occurred Successfully\"}";
-		ObjectMapper mapper = new ObjectMapper();
+	public void sendMailTest(){
+		ShangpinMail shangpinMail = new ShangpinMail();
 		try {
-			OrderResult orderResult =  mapper.readValue(result, OrderResult.class);
-			System.out.println("123");
-		} catch (IOException e) {
+			shangpinMail.setFrom("lizhongren@shangpin.com");
+			shangpinMail.setSubject("这是一个测试邮件");
+			shangpinMail.setText("这是测试邮件的内容");
+			shangpinMail.setTo("lubaijiang@shangpin.com");
+			List<String> addTo = new ArrayList<>();
+			addTo.add("yanxiaobin@shangpin.com");
+			shangpinMail.setAddTo(addTo );
+			List<AttachBean> attachList = new ArrayList<>();
+			AttachBean a = new AttachBean();
+			a.setFileName("eee.jpg");
+			a.setFile(new File("E:\\eee.jpg"));
+			attachList.add(a );
+			shangpinMail.setAttachList(attachList );
+			sm.sendShangpinMail(shangpinMail);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("over");
 	}
-
 
 }
