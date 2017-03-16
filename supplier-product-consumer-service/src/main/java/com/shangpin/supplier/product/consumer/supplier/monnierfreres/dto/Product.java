@@ -31,4 +31,12 @@ public class Product {
 	private String ean13;
 	private String fashioncollection;//seasonName
 	private String price_type;
+	/**
+	 * 颜色码
+	 */
+	private String pvr_color;
+	/**
+	 * 货号
+	 */
+	private String pvr_model;
 }
