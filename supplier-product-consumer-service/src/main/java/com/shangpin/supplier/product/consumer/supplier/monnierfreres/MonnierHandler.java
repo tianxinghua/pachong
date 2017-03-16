@@ -63,7 +63,7 @@ public class MonnierHandler implements ISupplierHandler {
 	}
 	
 	/**
-	 * geb处理图片
+	 * monnier处理图片
 	 * @param itemImages
 	 * @return
 	 */
@@ -100,17 +100,23 @@ public class MonnierHandler implements ISupplierHandler {
 	}
 	
 	/**
-	 * 将geb原始dto转换成hub spu
+	 * 将monnier原始dto转换成hub spu
 	 * @param supplierId 供应商门户id
 	 * @param item 供应商原始dto
 	 * @param hubSpu hub spu表
 	 */
 	public boolean convertSpu(String supplierId,Product item, HubSupplierSpuDto hubSpu,String data) throws EpHubSupplierProductConsumerRuntimeException{
 		if(null != item){			
-			
+			String supplierSpuNo = getPre9OfSku(item.getSku());
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(item.getProduct_id());
-			hubSpu.setSupplierSpuModel(item.getProduct_id());
+			hubSpu.setSupplierSpuNo(supplierSpuNo);
+			String spuModel = "";
+			if(!StringUtils.isEmpty(item.getPvr_model()) && !StringUtils.isEmpty(item.getPvr_color())){
+				spuModel = item.getPvr_model() + " "+item.getPvr_color();
+			}else{
+				spuModel = supplierSpuNo;
+			}
+			hubSpu.setSupplierSpuModel(spuModel);
 			hubSpu.setSupplierSpuName(item.getName());
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());
@@ -128,7 +134,7 @@ public class MonnierHandler implements ISupplierHandler {
 		}
 	}
 	/**
-	 * 将geb原始dto转换成hub sku
+	 * 将monnier原始dto转换成hub sku
 	 * @param supplierId
 	 * @param supplierSpuId hub spuid
 	 * @param item
@@ -151,6 +157,18 @@ public class MonnierHandler implements ISupplierHandler {
 			return true;
 		}else{
 			return false;
+		}
+	}
+	/**
+	 * 截取前9位
+	 * @param sku
+	 * @return
+	 */
+	private String getPre9OfSku(String sku){
+		if(StringUtils.isEmpty(sku) || sku.length() < 9){
+			return sku;
+		}else{
+			return sku.substring(0, 9);
 		}
 	}
 
