@@ -557,4 +557,12 @@ public class OriginalProductStreamListenerAdapter {
 	public void theclutcherStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		theclutcherHandler.handleOriginalProduct(message, headers); 
 	}
+	/**
+	 * theclutcher供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void antonacciStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		antonacciHandler.handleOriginalProduct(message, headers); 
+	}
 }

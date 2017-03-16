@@ -501,4 +501,13 @@ public class PendingProductStreamListener {
     public void theclutcherPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.theclutcherPendingProductStreamListen(message,headers);
     }
+	/**
+	 * 供应商antonacci待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.ANTONACCI)
+	public void antonacciPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.antonacciPendingProductStreamListen(message,headers);
+	}
 }

@@ -116,6 +116,8 @@ public interface OriginalProductSink {
 	public static final String TIZIANAFAUSTI = "tizianafaustiOriginalProduct"; 	 
 	
 	public static final String THECLUTCHER = "theclutcherOriginalProduct"; 
+	
+	public static final String ANTONACCI = "antonacciOriginalProduct"; 
 	//===============================
 	/**
 	 * 供货商SPINNAKER通道组件配置
@@ -435,4 +437,10 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.THECLUTCHER)
     public SubscribableChannel theclutcherOriginalProduct();
+	/**
+	 * 供货商 ANTONACCI通道组件配置
+	 * @return  ANTONACCI通道组件
+	 */
+	@Input(value = OriginalProductSink.ANTONACCI)
+	public SubscribableChannel antonacciOriginalProduct();
 }
