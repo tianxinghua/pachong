@@ -40,6 +40,11 @@ public class DateTimeUtil {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
     return sdf.format(date);
   }
+  
+  public static String strForDateTime(Date date) {
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
+	    return sdf.format(date);
+  }
 
   /**
    * Return short format datetime string.
@@ -333,6 +338,16 @@ public class DateTimeUtil {
   */
  public static Date getbeforeDay(Date nowTime){
 	 long currentdate=nowTime.getTime()-24*60*60*1000;
+	 return new Date(currentdate);
+ }
+ 
+ /**
+  * 返回指定日期的前一天
+  * @param nowTime
+  * @return
+  */
+ public static Date getYesterdayTime(){
+	 long currentdate=(new Date()).getTime()-24*60*60*1000;
 	 return new Date(currentdate);
  }
  
