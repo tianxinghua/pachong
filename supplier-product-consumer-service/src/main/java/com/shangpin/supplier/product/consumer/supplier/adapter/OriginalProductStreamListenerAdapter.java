@@ -88,6 +88,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("opticalHandler")
 	private ISupplierHandler opticalHandler;
+
+	@Autowired
+	@Qualifier("basebluHandler")
+	private ISupplierHandler basebluHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -462,8 +466,8 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void basebluStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		basebluHandler.handleOriginalProduct(message, headers);
+
 	}
 	/**
 	 * raffaellonetwork供货商原始数据监听方法
