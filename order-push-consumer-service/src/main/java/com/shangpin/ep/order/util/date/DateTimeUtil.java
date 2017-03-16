@@ -42,7 +42,7 @@ public class DateTimeUtil {
   }
   
   public static String strForDateTime(Date date) {
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH");
 	    return sdf.format(date);
   }
 

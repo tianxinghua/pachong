@@ -70,7 +70,7 @@ public class DellaMartiraServiceImpl {
 				}
 				String orders = buffer.toString();
 				log.info("dellaMartira今日推送订单："+orders);
-				String localFile = localPath+"shangpinOrders_"+dayTime+".csv";
+				String localFile = localPath+dayTime+".csv";
 				save(localFile,orders);
 				upload(localFile);
 			}else{
