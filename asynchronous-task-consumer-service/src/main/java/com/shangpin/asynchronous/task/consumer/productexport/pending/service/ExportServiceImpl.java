@@ -166,7 +166,6 @@ public class ExportServiceImpl {
 						} catch (Exception e) {
 							log.error("insertProductSkuOfRow异常：" + e.getMessage(), e);
 							j--;
-							throw e;
 						}
 					}
 				}

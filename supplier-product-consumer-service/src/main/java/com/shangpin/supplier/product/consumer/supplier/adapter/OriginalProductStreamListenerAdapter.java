@@ -89,6 +89,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("opticalHandler")
 	private ISupplierHandler opticalHandler;
 	
+	@Autowired
+	@Qualifier("antonacciHandler")
+	private ISupplierHandler antonacciHandler;
+	
 	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
