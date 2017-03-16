@@ -167,6 +167,9 @@ spring:
                               content-type: application/json
                         theclutcherOriginalProduct: 
                               destination: theclutcher.original.product
+                              content-type: application/json
+                        antonacciOriginalProduct: 
+                              destination: antonacci.original.product
                               content-type: application/json                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
               rabbit: 
                       bindings: 
