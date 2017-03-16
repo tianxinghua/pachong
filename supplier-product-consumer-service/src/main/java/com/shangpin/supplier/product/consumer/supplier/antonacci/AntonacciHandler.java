@@ -1,4 +1,4 @@
-package com.shangpin.supplier.product.consumer.supplier.monnierfreres;
+package com.shangpin.supplier.product.consumer.supplier.antonacci;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,15 +19,15 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.antonacci.dto.Product;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.monnierfreres.dto.Product;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("monnierHandler")
+@Component("antonacciHandler")
 @Slf4j
-public class MonnierHandler implements ISupplierHandler {
+public class AntonacciHandler implements ISupplierHandler {
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -40,7 +40,7 @@ public class MonnierHandler implements ISupplierHandler {
 			if(!StringUtils.isEmpty(message.getData())){
 				Product item = JsonUtil.deserialize(message.getData(), Product.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),item,hubSpu,message.getData());
+				boolean success = convertSpu(message.getSupplierId(),item,hubSpu);
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku);
@@ -49,9 +49,9 @@ public class MonnierHandler implements ISupplierHandler {
 				}
 				//处理图片				
 				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(message.getSupplierId(), hubSpu.getSupplierSeasonname())){
-					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
-				}
+//				if(pictureHandler.isCurrentSeason(message.getSupplierId(), hubSpu.getSupplierSeasonname())){
+					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item.getImages()));
+//				}
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
@@ -63,78 +63,51 @@ public class MonnierHandler implements ISupplierHandler {
 	}
 	
 	/**
-	 * monnier处理图片
+	 * geb处理图片
 	 * @param itemImages
 	 * @return
 	 */
-	private List<Image> converImage(Product itemImages){
-		
-		String[] img = new String[5];
-		if (!StringUtils.isEmpty((itemImages.getImage_url_1()))) {
-			img[0] = itemImages.getImage_url_1();
-		}
-		if (!StringUtils.isEmpty((itemImages.getImage_url_2()))) {
-			img[1] = itemImages.getImage_url_2();
-		}
-		if (!StringUtils.isEmpty((itemImages.getImage_url_3()))) {
-			img[2] = itemImages.getImage_url_3();
-		}
-		if (!StringUtils.isEmpty((itemImages.getImage_url_4()))) {
-			img[3] = itemImages.getImage_url_4();
-		}
-		if (!StringUtils.isEmpty((itemImages.getImage_url_5()))) {
-			img[4] = itemImages.getImage_url_5();
-		}
-		
+	private List<Image> converImage(String itemImage){
 		List<Image> images = new ArrayList<Image>();
-		if(null != itemImages){			
-			if(img.length>0){
-				for(String url : img){
+		if(null != itemImage){	
+			String []itemImages = itemImage.split("\\|",-1);
+				for(String url : itemImages){
 					Image image = new Image();
 					image.setUrl(url);
 					images.add(image);
 				}
-			}
 		}
 		return images;
 	}
 	
 	/**
-	 * 将monnier原始dto转换成hub spu
+	 * 将geb原始dto转换成hub spu
 	 * @param supplierId 供应商门户id
 	 * @param item 供应商原始dto
 	 * @param hubSpu hub spu表
 	 */
-	public boolean convertSpu(String supplierId,Product item, HubSupplierSpuDto hubSpu,String data) throws EpHubSupplierProductConsumerRuntimeException{
+	public boolean convertSpu(String supplierId,Product item, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
 		if(null != item){			
-			String supplierSpuNo = getPre9OfSku(item.getSku());
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(supplierSpuNo);
-			String spuModel = "";
-			if(!StringUtils.isEmpty(item.getPvr_model()) && !StringUtils.isEmpty(item.getPvr_color())){
-				spuModel = item.getPvr_model() + " "+item.getPvr_color();
-			}else{
-				spuModel = supplierSpuNo;
-			}
-			hubSpu.setSupplierSpuModel(spuModel);
-			hubSpu.setSupplierSpuName(item.getName());
+			hubSpu.setSupplierSpuNo(item.getSpuID());
+			hubSpu.setSupplierSpuModel(item.getProductCode());
+			hubSpu.setSupplierSpuName(item.getProductName());
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());
-			hubSpu.setSupplierCategoryname(item.getType());
-			hubSpu.setSupplierBrandname(item.getBrand());
-			hubSpu.setSupplierSeasonname(item.getFashioncollection());
-			hubSpu.setSupplierGender("female");
+			hubSpu.setSupplierCategoryname(item.getCategoryName());
+			hubSpu.setSupplierBrandname(item.getBrandName());
+			hubSpu.setSupplierSeasonname(item.getSeasonName());
 			hubSpu.setSupplierMaterial(item.getMaterial());
-			hubSpu.setSupplierOrigin(item.getManufacturer());
-			hubSpu.setSupplierSpuDesc(item.getDescription());
-			hubSpu.setMemo(data);
+			hubSpu.setSupplierOrigin(item.getOrigin());
+			hubSpu.setSupplierSpuDesc(item.getProductDescription());
 			return true;
 		}else{
 			return false;
 		}
 	}
+	
 	/**
-	 * 将monnier原始dto转换成hub sku
+	 * 将geb原始dto转换成hub sku
 	 * @param supplierId
 	 * @param supplierSpuId hub spuid
 	 * @param item
@@ -145,30 +118,19 @@ public class MonnierHandler implements ISupplierHandler {
 		if(null != item){			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			String size = null;
-			size = item.getSize();
-			String supplierSkuNo = item.getSku();
+			String supplierSkuNo = item.getSkuID();
 			hubSku.setSupplierSkuNo(supplierSkuNo);
-			hubSku.setSupplierSkuName(item.getName());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice_before_discount())));
-			hubSku.setMarketPriceCurrencyorg("EUR");
-			hubSku.setSupplierSkuSize(size);
-			hubSku.setStock(StringUtil.verifyStock(item.getQty()));
+			hubSku.setSupplierSkuName(item.getProductName());
+			hubSku.setSupplierBarcode(supplierSkuNo);
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getMarketPrice())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getSalePrice())));
+			hubSku.setMarketPriceCurrencyorg(item.getSaleCurrency());
+			hubSku.setSupplyPriceCurrency(item.getSaleCurrency());
+			hubSku.setSupplierSkuSize(item.getSize());
+			hubSku.setStock(StringUtil.verifyStock((item.getStock())));
 			return true;
 		}else{
 			return false;
-		}
-	}
-	/**
-	 * 截取前9位
-	 * @param sku
-	 * @return
-	 */
-	private String getPre9OfSku(String sku){
-		if(StringUtils.isEmpty(sku) || sku.length() < 9){
-			return sku;
-		}else{
-			return sku.substring(0, 9);
 		}
 	}
 

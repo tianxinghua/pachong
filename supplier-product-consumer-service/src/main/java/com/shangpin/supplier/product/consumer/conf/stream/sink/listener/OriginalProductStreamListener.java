@@ -502,4 +502,13 @@ public class OriginalProductStreamListener {
     public void theclutcherStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.theclutcherStreamListen(message,headers);
     }
+	/**
+	 * 供应商adANTONACCIapter原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ANTONACCI)
+	public void antonacciStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.antonacciStreamListen(message,headers);
+	}
 	}

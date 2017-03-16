@@ -221,19 +221,23 @@ public class ImageUtils {
     public static void batchZoomScale(String srcImageFile, String result,
             int scale, boolean flag) {
     	File folder = new File(srcImageFile);
-    	for(File file : folder.listFiles()){
-    		try {
-    			String fileName = file.getName();
-                BufferedImage tag = zoomScaleOfFile(file,scale,flag);
-                new File(result).mkdir();
-                String newFileName = result+fileName;
-                ImageIO.write(tag, "JPG", new File(newFileName));// 输出到文件流
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error("批量按比例缩放图片异常："+e.getMessage(),e); 
-            }
+    	if(folder!=null){
+    		File [] fileList = folder.listFiles();
+    		if(fileList!=null&&fileList.length>0){
+    			for(File file : fileList){
+            		try {
+            			String fileName = file.getName();
+                        BufferedImage tag = zoomScaleOfFile(file,scale,flag);
+                        new File(result).mkdir();
+                        String newFileName = result+fileName;
+                        ImageIO.write(tag, "JPG", new File(newFileName));// 输出到文件流
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.error("批量按比例缩放图片异常："+e.getMessage(),e); 
+                    }
+            	}
+    		}
     	}
-        
     }
     /**
      * 单个文件缩放图像（按高度和宽度缩放）
@@ -315,18 +319,23 @@ public class ImageUtils {
      */
     public static void scale2(String srcImageFile, String result, int height, int width, boolean bb) {
     	File folder = new File(srcImageFile);
-    	for(File file : folder.listFiles()){
-    		try {
-    			String fileName = file.getName();
-    			BufferedImage itemp = singleScale2OfFile(file,height,width,bb);
-                new File(result).mkdir();
-                String newFileName = result+fileName;
-                ImageIO.write(itemp, "JPG", new File(newFileName));
-            } catch (Exception e) {
-            	e.printStackTrace(); 
-                log.error("压缩图片异常："+e.getMessage(),e);
-            }
-    	}   	
+    	if(folder!=null){
+    		File [] fileList = folder.listFiles();
+    		if(fileList!=null&&fileList.length>0){
+    			for(File file : fileList){
+	        		try {
+	        			String fileName = file.getName();
+	        			BufferedImage itemp = singleScale2OfFile(file,height,width,bb);
+	                    new File(result).mkdir();
+	                    String newFileName = result+fileName;
+	                    ImageIO.write(itemp, "JPG", new File(newFileName));
+	                } catch (Exception e) {
+	                	e.printStackTrace(); 
+	                    log.error("压缩图片异常："+e.getMessage(),e);
+	                }
+    			}
+        	} 
+    	}
     }
     
     /**

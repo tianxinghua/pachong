@@ -21,9 +21,11 @@ import com.shangpin.ep.order.module.sku.service.IHubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("wiseServiceImpl")
+@Component("giglioServiceImpl")
 @Slf4j
-public class WiseServiceImpl implements IOrderService {
+public class GiglioServiceImpl implements IOrderService{
+	
+	private static String split = ";";
 	
 	@Autowired
     private LogCommon logCommon;    
@@ -47,31 +49,29 @@ public class WiseServiceImpl implements IOrderService {
 		try {
 			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
 			if(null != sku){
-				//采购单号 尺码  skuId 货号  barcode 数量    
-				String messageText ="Shangpin OrderNo: "+orderDTO.getPurchaseNo()+"<br>"+
-									"ProductSize: "+sku.getProductSize()+"<br>"+
-									"SpuId-SkuId: "+orderDTO.getSupplierSkuNo()+"<br>"+
-									"StyleCode-ColorCode: "+(null != sku.getProductCode()? sku.getProductCode():"")+"<br>"+
-									"Barcode: "+sku.getBarcode()+"<br>"+
-									"Qty: "+orderDTO.getQuantity()+"<br>"+
-									"Status: confirmed";
-				log.info("wise推送订单参数："+messageText); 
-				sendMail("wise-order-shangpin",messageText);
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(orderDTO.getPurchaseNo()).append(split)
+				.append(sku.getProductSize()).append(split).append(orderDTO.getSupplierSkuNo()).append(split)
+				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
+				.append(orderDTO.getQuantity());
+				log.info("giglio推送订单参数："+buffer.toString()); 
+				sendMail("order-shangpin",buffer.toString());
 				orderDTO.setConfirmTime(new Date()); 
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
-				log.info("wise推送成功。"); 
+				log.info("giglio推送成功。"); 
 			}else{
-				log.info("wise根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku"+ orderDTO.getSupplierSkuNo());
+				log.info("giglio根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku"+ orderDTO.getSupplierSkuNo());
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
-				orderDTO.setDescription("wise根据供应商门户编号和供应商skuid查找SKU失败");
+				orderDTO.setDescription("giglio根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			handleException.handleException(orderDTO,e);
-			orderDTO.setLogContent("wise推送订单异常========= "+e.getMessage());
+			orderDTO.setLogContent("giglio推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
+		
 		
 	}
 
@@ -86,27 +86,25 @@ public class WiseServiceImpl implements IOrderService {
 		try {
 			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
 			if(null != sku){
-				String messageText ="Shangpin OrderNo: "+deleteOrder.getPurchaseNo()+"<br>"+
-						"ProductSize: "+sku.getProductSize()+"<br>"+
-						"SpuId-SkuId: "+deleteOrder.getSupplierSkuNo()+"<br>"+
-						"StyleCode-ColorCode: "+(null != sku.getProductCode()? sku.getProductCode():"")+"<br>"+
-						"Barcode: "+sku.getBarcode()+"<br>"+
-						"Qty: "+deleteOrder.getQuantity()+"<br>"+
-						"Status: cancelled";
-				log.info("wise退款单参数："+messageText); 
-				sendMail("wise-cancelled order-shangpin",messageText);
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(deleteOrder.getPurchaseNo()).append(split)
+				.append(sku.getProductSize()).append(split).append(deleteOrder.getSupplierSkuNo()).append(split)
+				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
+				.append(deleteOrder.getQuantity());
+				log.info("giglio退款单参数："+buffer.toString()); 
+				sendMail("cancelled order-shangpin",buffer.toString());
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
-				log.info("wise退款成功。"); 
+				log.info("giglio退款成功。"); 
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
-				deleteOrder.setDescription("wise根据供应商门户编号和供应商skuid查找SKU失败");
+				deleteOrder.setDescription("giglio根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 			handleException.handleException(deleteOrder, e); 
-			deleteOrder.setLogContent("wise退款发生异常============"+e.getMessage());
+			deleteOrder.setLogContent("giglio退款发生异常============"+e.getMessage());
 			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);		
 		}
 	}
@@ -122,10 +120,9 @@ public class WiseServiceImpl implements IOrderService {
 		shangpinMail.setFrom("chengxu@shangpin.com");
 		shangpinMail.setSubject(subject);
 		shangpinMail.setText(text);
-		shangpinMail.setTo("martina@wiseboutique.com");
+		shangpinMail.setTo("giuseppe@giglio.com");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("francesca.fiorani@wiseboutique.com");
-		addTo.add("andrea.venturini@wiseboutique.com");
+		addTo.add("fabio@giglio.com");
 		addTo.add("wangsaying@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);

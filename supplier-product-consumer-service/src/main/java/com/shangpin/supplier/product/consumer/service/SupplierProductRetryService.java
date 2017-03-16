@@ -56,7 +56,6 @@ public class SupplierProductRetryService {
 	 */
 	public void processProduct(Byte state) throws Exception{
 		
-		
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		criteria.createCriteria().andInfoStateEqualTo(state);
 		criteria.setPageNo(1);
@@ -64,10 +63,13 @@ public class SupplierProductRetryService {
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
 		
 		if(products!=null&&products.size()>0){
-			log.info("待更新的个数："+products.size());
+			
 			for(HubSupplierSpuDto spu : products){
 				loopProduct(spu,state);
 				updateSupplierInfoState(spu);
+			}
+			if(products.size()==PAGESIZE){
+				processProduct(state);
 			}
 		}
 	}

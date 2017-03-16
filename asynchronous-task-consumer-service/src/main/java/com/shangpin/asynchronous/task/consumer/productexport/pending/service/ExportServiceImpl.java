@@ -237,6 +237,7 @@ public class ExportServiceImpl {
 					} catch (Exception e) {
 						log.error("insertProductSpuOfRow异常：" + e.getMessage(), e);
 						j--;
+						throw e;
 					}
 				}
 			}
@@ -249,7 +250,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param wb
 	 */
-	private void saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) {
+	private void saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
 		FileOutputStream fout = null;
 		File file = null;
 		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
@@ -265,6 +266,7 @@ public class ExportServiceImpl {
 			is_upload_success = true;
 		} catch (Exception e) {
 			log.error(taskNo+" 保存并上传ftp时异常：" + e.getMessage(), e);
+			throw e;
 		} finally {
 			try {
 				if (null != fout) {
@@ -274,7 +276,7 @@ public class ExportServiceImpl {
 					file.delete();
 				}
 			} catch (Exception e2) {
-				e2.printStackTrace();
+				throw e2;
 			}
 
 		}
@@ -311,7 +313,7 @@ public class ExportServiceImpl {
 		Method fieldSetMet = null;
 		Object value = null;
 		MatchSizeResult matchSizeResult = null;
-		if (StringUtils.isBlank(sku.getHubSkuSizeType())) {
+		if (StringUtils.isBlank(sku.getHubSkuSizeType())||"排除".equals(sku.getHubSkuSizeType())) {
 			MatchSizeDto match = new MatchSizeDto();
 			match.setHubBrandNo(product.getHubBrandNo());
 			match.setHubCategoryNo(product.getHubCategoryNo());
@@ -332,7 +334,7 @@ public class ExportServiceImpl {
 				} else if ("hubSkuSizeType".equals(rowTemplate[i])) {
 					fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
-					if (value != null) {
+					if (value != null&&!"排除".equals(value)) {
 						row.createCell(i).setCellValue(null != value ? value.toString() : "");
 					} else {
 						if (matchSizeResult != null) {
@@ -376,6 +378,7 @@ public class ExportServiceImpl {
 				}
 			} catch (Exception e) {
 				log.error("待处理页导出sku时异常：" + e.getMessage());
+				throw e;
 			}
 		}
 	}
@@ -561,31 +564,25 @@ public class ExportServiceImpl {
 				+ fieldName.substring(startIndex + 1);
 	}
 
-	public void exportHubSelected(ProductImportTask message) {
+	public void exportHubSelected(ProductImportTask message) throws Exception{
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportProduct(pendingQuryDto);
 		saveAndUploadExcel(message.getTaskNo(), pendingQuryDto.getCreateUser(), workbook);
 	}
 
-	public HSSFWorkbook exportProduct(HubWaitSelectRequestWithPageDto dto) {
-
-		try {
-			long startTime = System.currentTimeMillis();
-			dto.setPageNo(0);
-			dto.setPageSize(100000);
-			log.info("导出查询商品请求参数：{}", dto);
-			List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(dto);
-			if (list == null || list.size() <= 0) {
-				return null;
-			}
-			log.info("导出查询商品耗时：" + (System.currentTimeMillis() - startTime)+",总记录数："+list.size());
-			HSSFWorkbook workbook = exportExcel(list);
-			return workbook;
-		} catch (Exception e) {
-			log.error("导出查询商品失败：{}", e);
+	public HSSFWorkbook exportProduct(HubWaitSelectRequestWithPageDto dto) throws Exception{
+		long startTime = System.currentTimeMillis();
+		dto.setPageNo(0);
+		dto.setPageSize(100000);
+		log.info("导出查询商品请求参数：{}", dto);
+		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(dto);
+		if (list == null || list.size() <= 0) {
+			return null;
 		}
-		return null;
+		log.info("导出查询商品耗时：" + (System.currentTimeMillis() - startTime)+",总记录数："+list.size());
+		HSSFWorkbook workbook = exportExcel(list);
+		return workbook;
 	}
 
 	public HSSFWorkbook exportExcel(List<HubWaitSelectResponseDto> list) throws Exception {

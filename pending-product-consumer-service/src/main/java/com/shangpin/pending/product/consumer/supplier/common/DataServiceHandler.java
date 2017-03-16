@@ -585,7 +585,9 @@ public class DataServiceHandler {
 				spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("<br />", "\r\n").replaceAll("<html>", "")
 						.replaceAll("</html>", "").replaceAll("<br>","\r\n"));
 			}
-
+			if(spuPending!=null&&spuPending.getSpuModel()!=null){
+				spuPending.setSpuModel(spuPending.getSpuModel().toUpperCase());
+			}
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
 			criteria.createCriteria().andSpuPendingIdEqualTo(spuKey);
 			spuPending.setUpdateTime(new Date());
