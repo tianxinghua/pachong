@@ -145,6 +145,9 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("tessabitServiceImpl")
 	IOrderService tessabitServiceImpl;
+	@Autowired
+	@Qualifier("giglioServiceImpl") 
+	IOrderService giglioServiceImpl;
 
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
@@ -230,6 +233,10 @@ public class OrderHandleSearch {
 			return baseBluServiceImpl;
 		}else if("2015091701503".equals(supplierId)){
 			return tessabitServiceImpl;
+		}else if("2016083001937".equals(supplierId)){ 
+			return wiseServiceImpl;
+		}else if("2015091801508".equals(supplierId)){ 
+			return giglioServiceImpl;
 		}else {
 			return null;
 		}
