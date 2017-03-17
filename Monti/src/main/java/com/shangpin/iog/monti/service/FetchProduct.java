@@ -95,7 +95,9 @@ public class FetchProduct extends AbsSaveProduct{
 	            }.getType());
 	
 	            String producturl ="";
-	
+	            if(season_list==null){
+	            	return null;
+	            }
 	            for (Seasoncode obj : season_list.getSeasonCode()){
 	                int i = 1;
 	                while (true){
@@ -143,7 +145,6 @@ public class FetchProduct extends AbsSaveProduct{
 	                                spudto.setSpuId(spu.getProduct_id());
 	                                spudto.setId(UUIDGenerator.getUUID());
 	                                spudto.setMaterial(spu.getProduct_Material());
-	                                spudto.setPicUrl(spu.getUrl());
 	                                spudto.setSpuName(spu.getDescription());
 	                                spudto.setProductOrigin(spu.getProduct_MadeIn());
 	                                

@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.articoli.dto.Other_images;
 
 public class StartUp {
 
@@ -25,8 +25,13 @@ private static Logger logInfo  = Logger.getLogger("info");
 		loadSpringContext();
 		System.out.println("初始化Spring成功");
 		logInfo.info("-----------------articoli fech start---------------------");
-		FechProduct fech = (FechProduct) factory.getBean("articoli");
-		fech.fechAndSave();
+		FechProduct fech = (FechProduct) factory.getBean("antonacci");
+		try {
+			fech.sendAndSaveProduct();
+		} catch (ServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("-------------Fech over-----------------");
 		logInfo.info("--------------Fech over-----------------");
 		
