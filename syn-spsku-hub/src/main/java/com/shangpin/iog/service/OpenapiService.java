@@ -95,9 +95,11 @@ public class OpenapiService {
 		boolean con = true;
 		boolean searchData = true;
 		while(con) {
+			loggerInfo.info("page = " + page);
 			List<Long> spuPendingIdList = getSpuPendingIdList(hostUrl, supplier, page);
 
 			if (null != spuPendingIdList && spuPendingIdList.size() > 0) {
+				loggerInfo.info("spupendId = "+ spuPendingIdList.toString());
 				if(searchData){  //
 					if(null!=skuRelationService){
 						//获取映射关系
@@ -141,8 +143,9 @@ public class OpenapiService {
 					 tmp.setSpuState(SpuState.NOHAND.getIndex());
 					 tmp.setUpdateTime(new Date());
 					 updateSpuJson =  mapper.writeValueAsString(tmp) ;
-					 HttpUtil45.operateData("post","json",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
-
+					 loggerInfo.info(" updateSpuJson =" + updateSpuJson);
+					 String spuResult = HttpUtil45.operateData("post","json",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
+					 loggerInfo.info(" spuResult =" + spuResult);
 					 HubSkuPending skuTmp = new HubSkuPending();
 					 skuTmp.setSkuPendingId(skuPending.getSkuPendingId());
 					 skuTmp.setSpSkuNo(map.get(skuPending.getSupplierSkuNo()));
@@ -152,6 +155,7 @@ public class OpenapiService {
 					 HttpUtil45.operateData("post","json",updateSkuUrl,outTimeConfig,null,updateSkuJson,"","");
 
 				 } catch (Exception e) {
+					 loggerError.error(" exception = " + e.getMessage(),e);
 					 e.printStackTrace();
 				 }
 			 }
@@ -178,6 +182,7 @@ public class OpenapiService {
 		String pendingUrl = hostUrl+"/hub-spu-pending/select-by-criteria";
 		HubSpuPendingCriteria criteria = new HubSpuPendingCriteria();
 		criteria.setPageNo(page);
+		criteria.setPageSize(20);
 		criteria.setFields(" spu_pending_id ");
 		criteria.createCriteria().andSupplierIdEqualTo(supplier).andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
 
@@ -193,6 +198,7 @@ public class OpenapiService {
 			}
 			return  spuIds;
 		}else{
+
 			return null;
 		}
 

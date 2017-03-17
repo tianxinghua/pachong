@@ -1,10 +1,7 @@
 package com.shangpin.iog.optical.schedule;
 
-
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -19,22 +16,18 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 import com.shangpin.iog.optical.stock.StockImp;
-import com.shangpin.sop.AbsUpdateProductStock;
 
 @Component
-@PropertySource("classpath:sop.properties")
+@PropertySource("classpath:conf.properties")
 public class Schedule {
 
 	private static Logger logger = Logger.getLogger("info");
 	private static LoggerUtil logError = LoggerUtil.getLogger("error");
-	@Value("${HOST}")
-	private String host;
-	@Value("${APP_KEY}")
-	private String app_key;
-	@Value("${APP_SECRET}")
-	private String app_secret;
+	@Value("${supplierId}")
+    private String supplierId ;
 	@Value("${time}")
     private String time;
 
@@ -47,22 +40,18 @@ public class Schedule {
 	public void start(){
 		System.out.println(new Date().toLocaleString()+"开始更新");
     	Murder mur = Murder.getMur();
-    	mur.setStockImp(host,app_key,app_secret,time,stockImp); 
+    	mur.setStockImp(supplierId,time,stockImp); 
     	Thread t = new Thread(mur);
     	t.start();
 	}
 	
 	
 	static class Murder<T> extends TimerTask{
-		private String host;
-		private String app_key;
-		private String app_secret;
+		private String supplierId;
 		private String time;
 		private T stockImp;
-		public void setStockImp(String host,String app_key,String app_secret,String time,T stockImp) {
-			this.host = host;
-			this.app_key = app_key;
-			this.app_secret = app_secret;
+		public void setStockImp(String supplierId,String time,T stockImp) {
+			this.supplierId = supplierId;
 			this.time = time;
 			this.stockImp = stockImp;
 		}		
@@ -72,19 +61,20 @@ public class Schedule {
 			return murder;
 		}
 		
-		private static ExecutorService executor = new ThreadPoolExecutor(2, 3, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.DiscardPolicy());
+		private static ExecutorService executor = new ThreadPoolExecutor(2, 5, 300, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(3),new ThreadPoolExecutor.CallerRunsPolicy());
 		@Override
-		public void run() {				
+		public void run() {
+			System.out.println("supplierId==="+supplierId);
+			System.out.println("time=="+time); 			
 			System.out.println(Thread.currentThread().getName()+"执行murder");
-			Thread t = new Thread(new Worker( host, app_key, app_secret,stockImp));
+			Thread t = new Thread(new Worker(supplierId,stockImp));
 			Future<?> future = executor.submit(t);
 			try {
 				future.get(Integer.parseInt(time), TimeUnit.MILLISECONDS);
 			} catch (Exception e) {
 				future.cancel(true);
-				e.printStackTrace();
-				logError.error(e); 
-				logError.error(Thread.currentThread().getName()+"超时销毁 "+e.toString());
+				logError.error(e.getMessage(),e); 
+				logError.error(Thread.currentThread().getName()+"超时销毁");
 				System.out.println(Thread.currentThread().getName()+"超时销毁");
 			}
 		}
@@ -92,14 +82,10 @@ public class Schedule {
 	
 	static class Worker<T> implements Runnable{
 		private AbsUpdateProductStock stockImp;
-		private String host;
-		private String app_key;
-		private String app_secret;
+		private String supplierId;
 		public Worker(){};
-		public Worker(String host,String app_key,String app_secret,T stockImp) {
-			this.host = host;
-			this.app_key = app_key;
-			this.app_secret = app_secret;
+		public Worker(String supplierId,T stockImp) {
+			this.supplierId = supplierId;
 			this.stockImp = (AbsUpdateProductStock) stockImp;
 		}
 		
@@ -111,7 +97,7 @@ public class Schedule {
 				logger.info("更新数据库开始");
 				try {
 					
-					stockImp.updateProductStock(host, app_key, app_secret, "2015-01-01 00:00", format.format(new Date()));
+					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();
 					logger.info("更新库存数据库出错"+e.toString());

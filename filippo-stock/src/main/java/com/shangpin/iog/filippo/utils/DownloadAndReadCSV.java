@@ -1,31 +1,26 @@
 package com.shangpin.iog.filippo.utils;
 
-import com.csvreader.CsvReader;
-import com.shangpin.iog.filippo.stock.dto.CsvDTO;
-
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import com.csvreader.CsvReader;
 
 /**
  * Created by monkey on 2015/10/20.
  */
 public class DownloadAndReadCSV {
-    static ResourceBundle bundle = ResourceBundle.getBundle("conf") ;
+    static ResourceBundle bundle = ResourceBundle.getBundle("sop") ;
     private static String path = bundle.getString("path");
     private static String httpurl = bundle.getString("url");
 
@@ -39,6 +34,7 @@ public class DownloadAndReadCSV {
         int num = 0;
         List<String> returnList = new ArrayList<String>();
         String[] urls = httpurl.split(",");
+        FileOutputStream fs = null;
         try {
 	        for (String hurl : urls) {
 	        	num++;
@@ -47,10 +43,9 @@ public class DownloadAndReadCSV {
 	        	URLConnection conn = url.openConnection();
 	        	InputStream inStream = conn.getInputStream();
 	        	realPath = getPath(path+num);
-	        	FileOutputStream fs = new FileOutputStream(realPath);
+	        	fs = new FileOutputStream(realPath);
 	        	
 	        	byte[] buffer = new byte[1204];
-	        	int length;
 	        	while ((byteread = inStream.read(buffer)) != -1) {
 	        		bytesum += byteread;
 	        		System.out.println(bytesum);
@@ -62,6 +57,14 @@ public class DownloadAndReadCSV {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally{
+        	if(null != fs){
+        		try {
+					fs.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
         }
         return  returnList;
     }
@@ -113,9 +116,9 @@ public class DownloadAndReadCSV {
         return dtoList;
     }
   
-    public static String getPath(String realpath){
+    private static String getPath(String realpath){
         //Date dt=new Date();
-        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
+//        SimpleDateFormat matter1=new SimpleDateFormat("yyyy-MM-ddHH");
         //String date=matter1.format(dt).replaceAll("-","").trim();
         //realpath = realpath+"_"+date+".csv";
         realpath = realpath+".csv";

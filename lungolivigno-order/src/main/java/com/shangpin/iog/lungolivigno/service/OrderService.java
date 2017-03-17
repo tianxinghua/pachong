@@ -3,7 +3,6 @@ package com.shangpin.iog.lungolivigno.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -358,9 +357,9 @@ public class OrderService extends AbsOrderService{
 //		}
 //		System.out.println(storecode); 
 		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("703045002162002-6:1,");
-		orderDTO.setSpOrderId("201612175142218");
-		orderDTO.setPurchasePriceDetail("693.00");
+		orderDTO.setDetail("708184982171025-1:1,");
+		orderDTO.setSpOrderId("201703095335129");
+		orderDTO.setPurchasePriceDetail("242.62");
 //		
 //		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
 ////		deleteOrder.setSpPurchaseNo("CGD20161107675218");

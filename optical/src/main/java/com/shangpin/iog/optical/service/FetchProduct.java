@@ -1,13 +1,10 @@
 package com.shangpin.iog.optical.service;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,15 +28,11 @@ public class FetchProduct extends AbsSaveProduct{
 	private static Logger loggerError = Logger.getLogger("error");
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
-	private static String url = null;
-	private static String filepath = null;
 
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		supplierId = bdl.getString("supplierId");
-		url = bdl.getString("excel.url");
-		filepath = bdl.getString("excel.filepath");
 	}
 
 	public String getValue(String value){
@@ -61,6 +54,7 @@ public class FetchProduct extends AbsSaveProduct{
 		try{
 			String xml = HttpUtil45.get("http://www.opticalscribe.com/spfiles/spfilexls.xml",new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30), null);
 			List<List<String>> list = Utils.getListProduct(xml);
+			logger.info("抓取供应商的产品list========"+list.size()); 
 			for(List<String> item : list){
 				try {
 
@@ -139,11 +133,6 @@ public class FetchProduct extends AbsSaveProduct{
 		returnMap.put("spu", spuList);
 		returnMap.put("image", imageMap);
 		return returnMap;
-	}
-
-	public static void main(String[] args) {
-		FetchProduct f = new FetchProduct();
-		f.fetchProductAndSave();
 	}
 
 }

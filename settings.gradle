@@ -8,16 +8,33 @@ include 'iog-facade-dubbo'
 include 'iog-order-dubbo'
 include 'project-dao'
 include 'iog-service'
-include 'iog-web-container'
 include 'iog-common-product'
 include 'iog-product-framework'
 include 'openapi-ice'
 include 'iog-facade-impl'
 include 'iog-sop'
 include 'iog-generater-util'
-include 'iog-web-apiHandler'
+include 'report'
+include 'picturedown'
 
-include 'eleonorabonucci'
-include 'biondini'
-include 'syn-spsku-hub'
+include 'Della-stock'
+
+include 'optical-stock'
+include 'eleonorabonucci-stock'
+include 'grouppo-stock'
+include 'filippo-stock'
+include 'monnierfreres-stock'
+include 'Atelier-stock-template'
+include 'lungolivigno-order'
+include 'lungolivigno'
+include 'giglio-stock'
+include 'optical'
+
+
+
+
+
+
+
+
 
