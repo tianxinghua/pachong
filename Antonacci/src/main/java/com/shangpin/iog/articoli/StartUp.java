@@ -29,16 +29,10 @@ private static Logger logInfo  = Logger.getLogger("info");
 		try {
 			fech.sendAndSaveProduct();
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("-------------Fech over-----------------");
 		logInfo.info("--------------Fech over-----------------");
-		
-//		String ss = "<other_images><image1></image1><image2></image2></other_images>";
-//		Other_images i = XMLUtil.gsonXml2Obj(Other_images.class, ss);
-//		System.out.println(i);
-		
 		
 	}
 }

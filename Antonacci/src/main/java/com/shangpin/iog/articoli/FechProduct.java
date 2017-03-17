@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,9 +44,6 @@ public class FechProduct extends AbsSaveProduct {
 	@Autowired
 	private ProductSearchService productSearchService;
 
-	public static void main(String[] args) throws Exception {
-	}
-
 	public void sendAndSaveProduct() throws ServiceException {
 		handleData("spu", supplierId, day, null);
 	}
@@ -56,15 +52,15 @@ public class FechProduct extends AbsSaveProduct {
 	public Map<String, Object> fetchProductAndSave() {
 
 		Map<String, Object> returnMap = null;
-		String json = HttpUtil45.get(uri, new OutTimeConfig(1000 * 60 * 20,
-				1000 * 60 * 20, 1000 * 60 * 20), null);
+		String json = HttpUtil45.get(uri, new OutTimeConfig(1000 * 60 * 30,
+				1000 * 60 * 30, 1000 * 60 * 30), null);
 		List<Product> productList = gson.fromJson(json,
 				new TypeToken<List<Product>>() {
 				}.getType());
 		if (productList != null && productList.size() > 0) {
+			System.out.println("总数："+productList.size());
 			returnMap = fechAndSave(productList);
 		}
-		
 		return returnMap;
 	}
 
@@ -101,21 +97,30 @@ public class FechProduct extends AbsSaveProduct {
 				spu.setCategoryName(product.getCategoryName());
 				spu.setSeasonId(product.getSeasonName());
 				spu.setBrandName(product.getBrandName());
-				spu.setMaterial(product.getMaterial());
+				
 				String origin = "";
+				String material = null;
 				if (product.getProductDescription() != null) {
 					String[] descArray = product.getProductDescription().split(
 							"-", -1);
 					for (String desc : descArray) {
-						if (desc.contains("made in")) {
-							origin = desc.replace("made in", "").trim();
-							break;
+						if(desc!=null){
+							if (desc.contains("made in")) {
+								origin = desc.replace("made in", "").trim();
+							}
+							if (desc.contains("%")) {
+								material += desc;
+							}
 						}
 					}
 				}
 				spu.setProductOrigin(origin);
+				if(material!=null){
+					spu.setMaterial(material);	
+				}else{
+					spu.setMaterial(product.getMaterial());
+				}
 				spuList.add(spu);
-
 				List<String> list = new ArrayList<String>();
 				if (product.getImages() != null) {
 					String[] picUrl = product.getImages().split("\\|", -1);
