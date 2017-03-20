@@ -27,6 +27,7 @@ public class HubSkuService implements IHubSkuService {
     public HubSku getSku(String supplierId,String supplierSkuId){
 		try {
     		HubSkuCriteria skuCriteria  = new HubSkuCriteria();
+    		skuCriteria.setFields("ID,SUPPLIER_ID,SPU_ID,SKU_ID,MARKET_PRICE,SALE_PRICE,SUPPLIER_PRICE,BARCODE,PRODUCT_CODE,PRODUCT_SIZE");
         	skuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSkuIdEqualTo(supplierSkuId);
         	return skuDAO.selectByExample(skuCriteria).get(0);
 		} catch (Exception e) {	

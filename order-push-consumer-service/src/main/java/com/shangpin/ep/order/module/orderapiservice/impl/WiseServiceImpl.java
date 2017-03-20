@@ -17,7 +17,7 @@ import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.sku.bean.HubSku;
-import com.shangpin.ep.order.module.sku.service.IHubSkuService;
+import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ public class WiseServiceImpl implements IOrderService {
 	@Autowired
 	private ShangpinMailSender shangpinMailSender;
 	@Autowired
-	private IHubSkuService hubSkuService;
+	private HubSkuService hubSkuService;
 	@Autowired
     private HandleException handleException;
 
