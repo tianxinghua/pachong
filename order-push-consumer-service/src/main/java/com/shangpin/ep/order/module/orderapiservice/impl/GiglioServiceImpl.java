@@ -17,7 +17,7 @@ import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.sku.bean.HubSku;
-import com.shangpin.ep.order.module.sku.service.IHubSkuService;
+import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +32,7 @@ public class GiglioServiceImpl implements IOrderService{
 	@Autowired
 	private ShangpinMailSender shangpinMailSender;
 	@Autowired
-	private IHubSkuService hubSkuService;
+	private HubSkuService hubSkuService;
 	@Autowired
     private HandleException handleException;
 
@@ -60,7 +60,7 @@ public class GiglioServiceImpl implements IOrderService{
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
 				log.info("giglio推送成功。"); 
 			}else{
-				log.info("giglio根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku"+ orderDTO.getSupplierSkuNo());
+				log.info("giglio根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku："+ orderDTO.getSupplierSkuNo());
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
 				orderDTO.setDescription("giglio根据供应商门户编号和供应商skuid查找SKU失败");
