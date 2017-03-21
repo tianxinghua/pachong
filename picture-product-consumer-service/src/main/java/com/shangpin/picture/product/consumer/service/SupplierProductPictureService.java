@@ -111,17 +111,16 @@ public class SupplierProductPictureService {
 	 * @param authenticationInformation 认证信息
 	 */
 	private void pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
-		if (authenticationInformation != null) {//需要认证
-			Authenticator.setDefault(new Authenticator() {
-	            protected PasswordAuthentication getPasswordAuthentication() {
-	                return new PasswordAuthentication(authenticationInformation.getUsername(),
-	                        new String(authenticationInformation.getPassword()).toCharArray());
-	            }
-	        });
-		}
 		InputStream inputStream = null;
 		try {
-			
+			if (authenticationInformation != null) {//需要认证
+				Authenticator.setDefault(new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(authenticationInformation.getUsername(),
+								new String(authenticationInformation.getPassword()).toCharArray());
+					}
+				});
+			}
 			URL url = new URL(picUrl.replaceAll(" +", "%20"));
 			URLConnection openConnection = url.openConnection();
 			openConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
@@ -189,13 +188,13 @@ public class SupplierProductPictureService {
 	 */
 	public void scanFailedPictureToRetry() {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
+		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		for (int i = 1; i <= countTotalPage(supplierProductPictureManager.countFailedPictureTotal(criteria), PAGE_SIZE); i++) {
 			HubSpuPendingPicCriteriaDto _criteria = new HubSpuPendingPicCriteriaDto();
 			_criteria.setFields("spu_pending_pic_id");
 			_criteria.setPageNo(i);
 			_criteria.setPageSize(PAGE_SIZE);
-			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
+			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 			List<HubSpuPendingPicDto> picDto = supplierProductPictureManager.queryByCriteria(_criteria);
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {

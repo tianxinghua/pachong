@@ -3,6 +3,7 @@ package com.shangpin.ep.order;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * EP订单实时推送系统入口
  * <p>Title:EpOrderServiceApplication.java </p>
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @date 2016年11月9日 上午11:06:26
  */
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@EnableScheduling
 public class EpOrderServiceApplication {
 
 	public static void main(String[] args) {
