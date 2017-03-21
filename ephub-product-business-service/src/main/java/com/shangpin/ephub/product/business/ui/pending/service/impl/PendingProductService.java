@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
@@ -103,7 +104,7 @@ public class PendingProductService extends PendingSkuService{
                         List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
                         List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                        pendingProduct.setSpPicUrl(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getSpPicUrl() : ""); 
+                        pendingProduct.setSpPicUrl(findMainUrl(picurls)); 
                         pendingProduct.setPicUrls(findSpPicUrls(picurls)); 
                         pendingProduct.setSupplierUrls(findSupplierUrls(picurls)); 
                         pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : picReason); 
@@ -123,7 +124,7 @@ public class PendingProductService extends PendingSkuService{
         return pendingProducts;
     }
     
-    @Override
+	@Override
     public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto){
     	log.info("接收到的待校验的数据：{}",pendingProductDto);
     	HubResponse<PendingUpdatedVo> response = new HubResponse<PendingUpdatedVo>();
@@ -396,7 +397,9 @@ public class PendingProductService extends PendingSkuService{
     	if(CollectionUtils.isNotEmpty(lists)){
     		List<String> spPicUrls = new ArrayList<String>();
     		for(HubSpuPendingPicDto dto : lists){
-    			spPicUrls.add(dto.getSpPicUrl());
+    			if(PicHandleState.HANDLED.getIndex() == dto.getPicHandleState()){
+    				spPicUrls.add(dto.getSpPicUrl());
+    			}
     		}
     		return spPicUrls;
     	}else{

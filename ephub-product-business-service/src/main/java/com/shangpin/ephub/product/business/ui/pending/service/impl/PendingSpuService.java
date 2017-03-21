@@ -18,6 +18,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
 import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
@@ -189,9 +190,18 @@ public abstract class PendingSpuService implements IPendingProductService {
 			criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
 		}
 		if("0".equals(pendingQuryDto.getAuditState())){
+			//再处理
 			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
+			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+				criteria.andAuditUserLike(pendingQuryDto.getOperator()+"%");
+			}
 		}else if("1".equals(pendingQuryDto.getAuditState())){
 			criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+		}else{
+			//待处理
+			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+				criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
+			}
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
@@ -223,6 +233,14 @@ public abstract class PendingSpuService implements IPendingProductService {
 		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
 			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
 			criteria.andUpdateTimeLessThan(endTime);
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeStart())){
+			Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeStart(), dateFormat);
+			criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
+		}
+		if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeEnd())){
+			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeEnd(),dateFormat);
+			criteria.andCreateTimeLessThan(endTime);
 		}
 		if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
 			criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
@@ -290,11 +308,27 @@ public abstract class PendingSpuService implements IPendingProductService {
     @Override
     public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo){
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-    	criteria.setFields("sp_pic_url,memo,pic_url");
+    	criteria.setFields("sp_pic_url,memo,pic_url,pic_handle_state");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	return spuPendingPics;
     }
+    
+    /**
+     * 查找一个主图
+     * @param picurls
+     * @return
+     */
+    protected String findMainUrl(List<HubSpuPendingPicDto> picurls) {
+		if(CollectionUtils.isNotEmpty(picurls)){
+			for(HubSpuPendingPicDto dto : picurls){
+				if(!StringUtils.isEmpty(dto.getSpPicUrl()) && PicHandleState.HANDLED.getIndex() == dto.getPicHandleState()){
+					return dto.getSpPicUrl();
+				}
+			}
+		}
+		return "";
+	}
     
 	@Override
     public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
@@ -334,13 +368,7 @@ public abstract class PendingSpuService implements IPendingProductService {
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                        if(CollectionUtils.isNotEmpty(picurls)){
-                        	pendingProduct.setSpPicUrl(picurls.get(0).getSpPicUrl()); 
-                            pendingProduct.setPicReason(picurls.get(0).getMemo());
-                        }else{
-                        	pendingProduct.setSpPicUrl(""); 
-                            pendingProduct.setPicReason(picReason);
-                        }
+                        pendingProduct.setSpPicUrl(findMainUrl(picurls)); 
                         String supplierCategoryname = categories.get(pendingSpu.getSupplierSpuId());
 						pendingProduct.setSupplierCategoryname(StringUtils.isEmpty(supplierCategoryname) ? "" : supplierCategoryname);
                         products.add(pendingProduct);

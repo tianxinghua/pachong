@@ -49,6 +49,10 @@ public class SpuPendingAuditQueryVO implements Serializable {
      * 查询状态 内部使用
      */
     private Integer status;
+    /**
+     * 操作人
+     */
+    private String operator;
 
 
 }

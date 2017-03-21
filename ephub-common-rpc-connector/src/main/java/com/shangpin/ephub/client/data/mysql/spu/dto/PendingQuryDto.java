@@ -1,5 +1,6 @@
 package com.shangpin.ephub.client.data.mysql.spu.dto;
 
+
 import java.util.List;
 
 import lombok.Getter;
@@ -25,8 +26,22 @@ public class PendingQuryDto {
     private String hubSeason;
     private String hubYear;
     private List<Integer> inconformities;//不符合的项
+    /**
+     * 开始更新时间
+     */
     private String statTime;
+    /**
+     * 结束更新时间
+     */
     private String endTime;
+    /**
+     * 开始拉去时间
+     */
+    private String createTimeStart;
+    /**
+     * 结束拉去时间
+     */
+    private String createTimeEnd;
     private String createUser;
     /**
      * 品牌名称
@@ -39,7 +54,7 @@ public class PendingQuryDto {
     /**
      * 是否导出图片
      */
-    private int isExportPic;
+    private Integer isExportPic;
     /**
      * 导出第几页
      */
@@ -48,9 +63,30 @@ public class PendingQuryDto {
      * 导出每页的商品数量
      */
     private String exportPageSize;
-    
     /**
      * 图片状态
      */
-    private int picState;
+    private Integer picState;
+    /**
+     * spu主键
+     */
+    private Long spuPendingId;
+    /**
+     * 符合项
+     */
+    private List<Integer> conformities;//符合项
+    /**
+     * 商品状态
+     */
+    private String spuState;
+    /**
+     * 审核状态
+     */
+    private String auditState;
+    /**
+     * 操作人
+     */
+    private String operator;
+    
+    
 }
