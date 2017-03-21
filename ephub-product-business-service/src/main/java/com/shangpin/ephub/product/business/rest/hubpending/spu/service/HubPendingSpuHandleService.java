@@ -249,7 +249,7 @@ public class HubPendingSpuHandleService {
 			int totalStock = 0;
 			boolean isExistSku = false;
 			List<HubSkuPendingDto> listSku = hubPendingSkuService.findHubSkuPendingBySpuPendingId(spuPendingId);
-			if(listSku!=null){
+			if(listSku!=null&&listSku.size()>0){
 				isExistSku = true;
 				for(HubSkuPendingDto sku:listSku){
 					totalStock += sku.getStock();
@@ -264,9 +264,13 @@ public class HubPendingSpuHandleService {
 						isSendToHub = true;
 					}
 				}
+			}else{
+				hubSpuPendingDto.setMemo("无sku信息");
+				log.info("******spuPendingId:"+spuPendingId+"下无sku信息");
 			}
 			//sku不存在或者所有sku已被过滤
 			if(isAllSkuFilter){
+				hubSpuPendingDto.setMemo("sku都被过滤了");
 				isSkuPassing = false;
 			}
 		
@@ -297,10 +301,12 @@ public class HubPendingSpuHandleService {
 						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
 					}else{
+						hubSpuPendingDto.setMemo("sku下有校验失败的尺码");
 						hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 					}
 				}else{
+					hubSpuPendingDto.setMemo("spu校验失败");
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 				}
 			}
@@ -314,6 +320,8 @@ public class HubPendingSpuHandleService {
 			hubSpuPendingDto.setSpuPendingId(spuPendingId);
 			hubSpuPendingDto.setUpdateTime(new Date());
 			hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingDto);
+		}else{
+			log.info("spuPendingId为空");
 		}
 		
 		return null;

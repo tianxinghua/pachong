@@ -30,8 +30,10 @@ public class HubPendingSkuCheckService {
 		HubPendingSkuCheckResult result = null;
 		String message = null;
 		boolean flag = false;
-		log.info("检验尺码参数：{}",hubProduct);
-		if("尺码".equals(hubProduct.getSpecificationType())||StringUtils.isBlank(hubProduct.getSpecificationType())){
+		 if("尺寸".equals(hubProduct.getSpecificationType())||"尺寸".equals(hubProduct.getSizeType())){
+				flag = true;
+				message = "尺码类型为尺寸不校验";
+		 }else if("尺码".equals(hubProduct.getSpecificationType())||StringUtils.isBlank(hubProduct.getSpecificationType())){
 			if(StringUtils.isNotBlank(hubProduct.getSizeType())){
 				result = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSizeType(),hubProduct.getSkuSize());
 				return result;
@@ -39,14 +41,10 @@ public class HubPendingSkuCheckService {
 				flag = false;
 				message = "尺码类型为空";
 			}
-		}else if("尺寸".equals(hubProduct.getSpecificationType())){
-			flag = true;
-			message = "尺码类型为尺寸不校验";
 		}else{
 			flag = false;
 			message = "规格类型无效";
 		}
-		
 		result = new HubPendingSkuCheckResult();
 		if(flag){
 			result.setPassing(true);

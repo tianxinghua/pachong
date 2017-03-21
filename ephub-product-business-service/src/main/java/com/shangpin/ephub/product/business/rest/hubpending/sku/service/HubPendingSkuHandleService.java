@@ -28,11 +28,14 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
+import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.product.business.common.hubDic.origin.service.HubOriginDicService;
 import com.shangpin.ephub.product.business.common.pending.sku.HubPendingSkuService;
 import com.shangpin.ephub.product.business.common.pending.spu.HubPendingSpuService;
+import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SupplierSizeMappingDto;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
@@ -68,7 +71,9 @@ public class HubPendingSkuHandleService {
 	HubOriginDicService hubOriginDicService;
 	@Autowired
 	MatchSizeService matchSizeService;
-
+	@Autowired
+	HubPendingSkuCheckService hubCheckService;
+	
 	@PostConstruct
 	public void init() {
 	}
@@ -115,20 +120,65 @@ public class HubPendingSkuHandleService {
 			return;
 		}
 		
-//		//如果skustate为已完善，并且尺码类型不为排除，则不更新
-//		if(hubSkuPendingIsExist.getSkuState()!=null&&hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex()&&StringUtils.isNotBlank(hubSkuPendingIsExist.getHubSkuNo())&&!"排除".equals(hubSkuPendingIsExist.getHubSkuSizeType())){
-//			return;
-//		}
-//		setSizeMapp(hubSkuPendingDto);
+		hubSkuPendingDto.setSkuPendingId(hubSkuPendingIsExist.getSkuPendingId());
+		hubSkuPendingDto.setSpuPendingId(hubSkuPendingIsExist.getSpuPendingId());
+		//临时的，解决sku状态已完成，但未进入选品的数据
 		if(StringUtils.isNotBlank(hubSkuPendingIsExist.getHubSkuSizeType())&&!"排除".equals(hubSkuPendingIsExist.getHubSkuSizeType())){
-			hubSkuPendingDto.setHubSkuSizeType(hubSkuPendingIsExist.getHubSkuSizeType());
 			hubSkuPendingDto.setHubSkuSize(hubSkuPendingIsExist.getHubSkuSize());
 			hubSkuPendingDto.setHubSkuSizeType(hubSkuPendingIsExist.getHubSkuSizeType());
 		}
-		hubSkuPendingDto.setSkuPendingId(hubSkuPendingIsExist.getSkuPendingId());
-		hubSkuPendingDto.setSpuPendingId(hubSkuPendingIsExist.getSpuPendingId());
-		matchSize(hubSkuPendingDto);
+		
+		String sizeType = hubSkuPendingDto.getHubSkuSizeType();
+		if(StringUtils.isNotBlank(sizeType)){
+			checkSkuSizeType(hubSkuPendingDto);
+		}else{
+			matchSizeType(hubSkuPendingDto);
+		}
 		hubPendingSkuService.updateHubSkuPendingByPrimaryKey(hubSkuPendingDto);
+	}
+
+	private void checkSkuSizeType(HubSkuPendingDto hubSkuPendingDto) {
+				
+		HubSpuPendingDto hubSpuPending = hubPendingSpuService.findHubSpuPendingByPrimary(hubSkuPendingDto.getSpuPendingId());
+		if(checkBrandAndCategoryState(hubSpuPending)){
+			HubSkuCheckDto hubSkuCheckDto = new HubSkuCheckDto();
+			hubSkuCheckDto.setBrandNo(hubSpuPending.getHubBrandNo());
+			hubSkuCheckDto.setCategoryNo(hubSpuPending.getHubCategoryNo());
+			hubSkuCheckDto.setSizeType(hubSkuPendingDto.getHubSkuSizeType());
+			hubSkuCheckDto.setSkuSize(hubSkuPendingDto.getHubSkuSize());
+			if("尺寸".equals(hubSkuPendingDto.getHubSkuSizeType())){
+				hubSkuCheckDto.setSpecificationType("尺寸");	
+			}else{
+				hubSkuCheckDto.setSpecificationType("尺码");
+			}
+			
+			HubPendingSkuCheckResult hubPendingSkuCheckResult = hubCheckService.checkHubPendingSku(hubSkuCheckDto);
+			if (hubPendingSkuCheckResult.isPassing()) {
+				hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
+				if(hubSpuPending.getHubSpuNo()!=null){
+					hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
+				}else{
+					hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
+				}
+				hubSkuPendingDto.setSpSkuSizeState((byte) 1);
+				hubSkuPendingDto.setFilterFlag((byte)1);
+			} else {
+				if(hubPendingSkuCheckResult.isFilter()){
+					hubSkuPendingDto.setMemo("此尺码过滤不处理");
+					hubSkuPendingDto.setFilterFlag((byte)0);
+					hubSkuPendingDto.setHubSkuSizeType("排除");
+				}else{
+					hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
+					hubSkuPendingDto.setMemo(hubPendingSkuCheckResult.getMessage());
+					hubSkuPendingDto.setFilterFlag((byte)1);
+				}
+			}
+		}else{
+			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
+			hubSkuPendingDto.setMemo("品类品牌未校验通过");
+			hubSkuPendingDto.setSpSkuSizeState((byte) 0);
+			hubSkuPendingDto.setFilterFlag((byte)1);
+		}
 	}
 
 	private void setSizeMapp(HubSkuPendingDto hubSkuPendingDto) {
@@ -158,7 +208,7 @@ public class HubPendingSkuHandleService {
 		
 		setSizeMapp(hubSkuPendingDto);
 		//匹配尺码类型
-		matchSize(hubSkuPendingDto);
+		matchSizeType(hubSkuPendingDto);
 		try{
 			hubPendingSkuService.insertHubSkuPending(hubSkuPendingDto);
 		}catch (Exception e) {
@@ -171,11 +221,10 @@ public class HubPendingSkuHandleService {
 	
 	}
 
-	private void matchSize(HubSkuPendingDto hubSkuPendingDto){
+	private void matchSizeType(HubSkuPendingDto hubSkuPendingDto){
 		if(hubSkuPendingDto.getSpuPendingId()!=null){
 			HubSpuPendingDto hubSpuPendingDto = hubPendingSpuService.findHubSpuPendingByPrimary(hubSkuPendingDto.getSpuPendingId());
-			if (hubSpuPendingDto!=null&&hubSpuPendingDto.getSpuBrandState()!=null&&hubSpuPendingDto.getCatgoryState()!=null&&hubSpuPendingDto.getSpuBrandState() == SpuBrandState.HANDLED.getIndex()
-					&& hubSpuPendingDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex()) {
+			if (checkBrandAndCategoryState(hubSpuPendingDto)) {
 				MatchSizeDto match = new MatchSizeDto();
 				match.setHubBrandNo(hubSpuPendingDto.getHubBrandNo());
 				match.setHubCategoryNo(hubSpuPendingDto.getHubCategoryNo());
@@ -198,6 +247,15 @@ public class HubPendingSkuHandleService {
 		hubSkuPendingDto.setSpSkuSizeState(SpSkuSizeState.UNHANDLED.getIndex());
 		hubSkuPendingDto.setSkuState(SpuState.INFO_PECCABLE.getIndex());
 	}
+	private boolean checkBrandAndCategoryState(HubSpuPendingDto hubSpuPendingDto) {
+		if(hubSpuPendingDto!=null&&hubSpuPendingDto.getSpuBrandState()!=null&&hubSpuPendingDto.getCatgoryState()!=null&&hubSpuPendingDto.getSpuBrandState() == SpuBrandState.HANDLED.getIndex()
+				&& hubSpuPendingDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public String sizeCommonReplace(String size) {
 		if (size == null) {
 			return size;
