@@ -222,6 +222,8 @@ public class DataSverviceUtil {
                             if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
                                 spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),totalStock);
                             }
+                        }else{
+                            spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),0);
                         }
                     }else{
                         if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
