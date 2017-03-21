@@ -245,6 +245,7 @@ public class HubPendingSpuHandleService {
 			String hubSpuNo = spuPending.getHubSpuNo();
 			boolean isSkuPassing = true;
 			boolean isAllSkuFilter = true;
+			boolean isSendToHub = false;
 			int totalStock = 0;
 			boolean isExistSku = false;
 			List<HubSkuPendingDto> listSku = hubPendingSkuService.findHubSkuPendingBySpuPendingId(spuPendingId);
@@ -258,6 +259,10 @@ public class HubPendingSpuHandleService {
 					if(sku.getFilterFlag()!=null&&sku.getFilterFlag()==FilterFlag.EFFECTIVE.getIndex()){
 						isAllSkuFilter = false;
 					}
+					//如果含有待处理并
+					if(sku.getSkuState()!=null&&sku.getSkuState()==SpuState.HANDLING.getIndex()){
+						isSendToHub = true;
+					}
 				}
 			}
 			//sku不存在或者所有sku已被过滤
@@ -267,13 +272,19 @@ public class HubPendingSpuHandleService {
 		
 			if(hubSpuNo!=null){
 				if(isSkuPassing){
-					hubSpuPendingDto.setMemo("自动进入待选品");
-					hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
-					hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
-					if(!sendToHub(spuPendingId,hubSpuNo)){
-						return "sendToHub失败";
+					if(isSendToHub){
+						hubSpuPendingDto.setMemo("自动进入待选品");
+						hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
+						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
+						if(!sendToHub(spuPendingId,hubSpuNo)){
+							return "sendToHub失败";
+						}
+						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"自动进入待选品");
+					}else{
+						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"spu下sku都已处理，不再推送");
+						return null;
 					}
-					log.info("*****"+hubSpuPendingDto.getSupplierId()+":"+hubSpuPendingDto.getSpuModel()+"自动进入待选品");
+					
 				}else{
 					hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
@@ -281,7 +292,7 @@ public class HubPendingSpuHandleService {
 			}else{
 				if(isSpuPass(spuPending)){
 					if(isSkuPassing){
-						log.info("*****"+hubSpuPendingDto.getSupplierId()+":"+hubSpuPendingDto.getSpuModel()+"自动进入待复合");
+						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"自动进入待复合");
 						hubSpuPendingDto.setMemo("自动进入待复合");
 						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());

@@ -110,19 +110,28 @@ public class HubPendingSkuHandleService {
 	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto) throws Exception {
 		
 		if (hubSkuPendingIsExist.getSkuState()!=null&&(hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
-				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex()
-				|| hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex())) {
-			// 如果spustate状态为已处理、审核中或者已完善 ，则不更新
+				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex())||hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex()) {
+			// 如果skustate状态为已处理、审核中 或者已完善，则不更新
 			return;
 		}
+		
+//		//如果skustate为已完善，并且尺码类型不为排除，则不更新
+//		if(hubSkuPendingIsExist.getSkuState()!=null&&hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex()&&StringUtils.isNotBlank(hubSkuPendingIsExist.getHubSkuNo())&&!"排除".equals(hubSkuPendingIsExist.getHubSkuSizeType())){
+//			return;
+//		}
+//		setSizeMapp(hubSkuPendingDto);
+		if(StringUtils.isNotBlank(hubSkuPendingIsExist.getHubSkuSizeType())&&!"排除".equals(hubSkuPendingIsExist.getHubSkuSizeType())){
+			hubSkuPendingDto.setHubSkuSizeType(hubSkuPendingIsExist.getHubSkuSizeType());
+			hubSkuPendingDto.setHubSkuSize(hubSkuPendingIsExist.getHubSkuSize());
+			hubSkuPendingDto.setHubSkuSizeType(hubSkuPendingIsExist.getHubSkuSizeType());
+		}
 		hubSkuPendingDto.setSkuPendingId(hubSkuPendingIsExist.getSkuPendingId());
+		hubSkuPendingDto.setSpuPendingId(hubSkuPendingIsExist.getSpuPendingId());
 		matchSize(hubSkuPendingDto);
 		hubPendingSkuService.updateHubSkuPendingByPrimaryKey(hubSkuPendingDto);
 	}
 
-	private void handleNewHubSkuPending(HubSkuPendingDto hubSkuPendingDto)
-			throws Exception {
-		
+	private void setSizeMapp(HubSkuPendingDto hubSkuPendingDto) {
 		setSkuPendingValue(hubSkuPendingDto);
 		Map<String, String> sizeMap = getSupplierSizeMapping(hubSkuPendingDto.getSupplierId());
 		//映射尺码
@@ -141,6 +150,13 @@ public class HubPendingSkuHandleService {
 		} else {
 			hubSkuPendingDto.setHubSkuSize(sizeCommonReplace(hubSkuPendingDto.getHubSkuSize()));
 		}
+		
+	}
+
+	private void handleNewHubSkuPending(HubSkuPendingDto hubSkuPendingDto)
+			throws Exception {
+		
+		setSizeMapp(hubSkuPendingDto);
 		//匹配尺码类型
 		matchSize(hubSkuPendingDto);
 		try{
