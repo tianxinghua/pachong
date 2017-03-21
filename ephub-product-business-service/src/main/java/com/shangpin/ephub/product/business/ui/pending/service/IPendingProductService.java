@@ -3,7 +3,6 @@ package com.shangpin.ephub.product.business.ui.pending.service;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
