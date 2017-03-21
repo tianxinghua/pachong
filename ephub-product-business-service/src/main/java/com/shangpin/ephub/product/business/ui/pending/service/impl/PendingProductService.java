@@ -124,22 +124,6 @@ public class PendingProductService extends PendingSkuService{
         return pendingProducts;
     }
     
-    /**
-     * 查找一个主图
-     * @param picurls
-     * @return
-     */
-    private String findMainUrl(List<HubSpuPendingPicDto> picurls) {
-		if(CollectionUtils.isNotEmpty(picurls)){
-			for(HubSpuPendingPicDto dto : picurls){
-				if(!StringUtils.isEmpty(dto.getSpPicUrl()) && PicHandleState.HANDLED.getIndex() == dto.getPicHandleState()){
-					return dto.getSpPicUrl();
-				}
-			}
-		}
-		return "";
-	}
-
 	@Override
     public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto){
     	log.info("接收到的待校验的数据：{}",pendingProductDto);
