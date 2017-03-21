@@ -3,7 +3,9 @@ package com.shangpin.ephub.product.business.ui.pending.service;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -94,4 +96,10 @@ public interface IPendingProductService {
 	 * @return
 	 */
 	public SupplierProductVo findSupplierProduct(Long supplierSpuId);
+	/**
+	 * 根据品牌编号查找品牌货号规则
+	 * @param hubBrandNo
+	 * @return
+	 */
+	public HubBrandModelRuleDto findHubBrandModelRule(String hubBrandNo);
 }

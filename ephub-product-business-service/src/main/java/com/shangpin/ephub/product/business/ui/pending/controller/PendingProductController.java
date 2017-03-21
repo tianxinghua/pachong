@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
@@ -75,9 +76,11 @@ public class PendingProductController {
     	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
     	PendingProductDto pendingProduct = products.getProduts().get(0);
     	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
+    	HubBrandModelRuleDto modelRule = pendingProductService.findHubBrandModelRule(pendingProduct.getHubBrandNo());
     	PendingOriginVo pendingOriginVo = new PendingOriginVo();
     	pendingOriginVo.setPendingProduct(pendingProduct);
     	pendingOriginVo.setSupplierProduct(supplierProduct);
+    	pendingOriginVo.setModelRule(null != modelRule ? modelRule.getModelRule() : ""); 
     	return HubResponse.successResp(pendingOriginVo); 
     }
 }
