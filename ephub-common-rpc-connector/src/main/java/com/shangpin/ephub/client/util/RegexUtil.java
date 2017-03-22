@@ -30,8 +30,17 @@ public class RegexUtil {
      * @return 如果是符合格式的字符串,返回 <b>true </b>,否则为 <b>false </b>
      */
     public static boolean excludeLetter(String str) {
+        if(StringUtils.isBlank(str)) return false;
         String regex = "[^A-Za-z]+";
-        return match(regex, str);
+        boolean result =  match(regex, str);
+        if(!result){
+
+                //排除PVC
+                String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+                result =  match(regexPvc, str.toLowerCase());
+
+        }
+        return result;
     }
 
     /**
@@ -53,6 +62,10 @@ public class RegexUtil {
                     result = judgeNum(val);
                 }
             }
+        }else{
+            //排除PVC
+            String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+            result =  match(regexPvc, val.toLowerCase());
         }
         return result ;
     }
@@ -120,5 +133,8 @@ public class RegexUtil {
         System.out.println(RegexUtil.excludeLetter(" skdj  中国 "));
         System.out.println(RegexUtil.excludeLetter("  100%  中国 ,93 % "));
         System.out.println(RegexUtil.specialCategoryMatch("A0123"," 45% 棉 ,5% 面部，快点看看 50%"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A"," sdkj pvc kkd"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任PVC的"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任 pvc 的l"));
     }
 }
