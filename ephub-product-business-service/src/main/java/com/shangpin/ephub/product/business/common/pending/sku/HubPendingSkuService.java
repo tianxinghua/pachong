@@ -44,11 +44,13 @@ public class HubPendingSkuService{
 
 	public HubSkuPendingDto findHubSkuPendingBySupplierIdAndSupplierSkuNo(String supplierId, String supplierSkuNo) {
 		
-		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
-		List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
-		if(listSku!=null&&listSku.size()>0){
-			return listSku.get(0);
+		if(supplierSkuNo!=null&&supplierId!=null){
+			HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+			List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
+			if(listSku!=null&&listSku.size()>0){
+				return listSku.get(0);
+			}
 		}
 		return null;
 	}

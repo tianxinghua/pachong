@@ -66,6 +66,7 @@ public class MatchSizeService {
 		}
 		
 		if(matchSizeResult.isPassing()){
+			result = "尺码："+dto.getSize()+"匹配成功";	
 			matchSizeResult.setPassing(true);
 		}else{
 			matchSizeResult.setPassing(false);
