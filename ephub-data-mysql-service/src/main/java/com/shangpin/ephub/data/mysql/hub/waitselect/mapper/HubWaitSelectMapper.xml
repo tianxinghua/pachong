@@ -24,6 +24,8 @@
     <result column="sku_size_type" property="skuSizeType" jdbcType="VARCHAR" />
     <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
     <result column="spu_state" property="spuState" jdbcType="TINYINT" />
+    <result column="picture_state" property="pictureState" jdbcType="TINYINT" />
+    <result column="picture_export_time" property="pictureExportTime" jdbcType="VARCHAR" />
     <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
     <result column="new_type" property="newType" jdbcType="TINYINT" />
     <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
@@ -50,7 +52,7 @@
    	map.supplier_no,map.sku_supplier_mapping_id,map.supplier_id,map.supplier_select_state,map.supplier_sku_no,map.memo,map.update_time,map.supplier_sku_id,
    	sku.sku_id,sku.sku_no,sku.sp_sku_no,sku.sku_size,sku.sku_size_id,sku.sku_size_type,
    	spu.spu_id,spu.spu_no,spu.spu_model,spu.spu_name,spu.gender,spu.category_no,spu.brand_no,
-   	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material
+   	spu.market_time,spu.season,spu.hub_color,spu.hub_color_no,spu.spu_state,spu.pic_url,spu.origin,spu.material,spu.picture_export_user,spu.picture_export_time
     from hub_spu spu  INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
@@ -78,7 +80,10 @@
 	   <if test="null!=startDate">
                 and map.update_time >=#{startDate}
       </if>      
-            
+       <if test="null!=pictureState">
+                and spu.picture_state = #{pictureState}
+      </if>      
+              
       <if test="null!=endDate">
            <![CDATA[ and map.update_time <=#{endDate}    ]]>
       </if>
