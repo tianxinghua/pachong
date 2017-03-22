@@ -55,7 +55,11 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
@@ -121,6 +125,8 @@ public class ExportServiceImpl {
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
+	@Autowired
+	HubSpuGateWay hubSpuGateWay;
 
 	private static final Integer PAGESIZE = 50;
 
@@ -252,7 +258,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param wb
 	 */
-	private void saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
+	private boolean saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
 		FileOutputStream fout = null;
 		File file = null;
 		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
@@ -267,6 +273,7 @@ public class ExportServiceImpl {
 			log.info(taskNo+" 更新任务状态成功！");
 			is_upload_success = true;
 		} catch (Exception e) {
+			is_upload_success = false;
 			log.error(taskNo+" 保存并上传ftp时异常：" + e.getMessage(), e);
 			throw e;
 		} finally {
@@ -278,10 +285,11 @@ public class ExportServiceImpl {
 					file.delete();
 				}
 			} catch (Exception e2) {
+				is_upload_success = false;
 				throw e2;
 			}
-
 		}
+		return is_upload_success;
 	}
 
 	/**
@@ -804,7 +812,29 @@ public class ExportServiceImpl {
 		HSSFWorkbook workbook = exportPic(pendingQuryDto);
 		saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook);
 	}
+	public void exportHubPicSelected2(ProductImportTask message) throws Exception  {
 
+		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
+				HubWaitSelectRequestWithPageDto.class);
+		pendingQuryDto.setPictureState((byte)0);
+		pendingQuryDto.setPageNo(0);
+		pendingQuryDto.setPageSize(100000);
+		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
+		HSSFWorkbook workbook = exportPicExcel(list);
+		//如果上传成功，则更显数据库pictureState状态
+		if(saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook)){
+			HubSpuDto hubSpu = new HubSpuDto();
+			hubSpu.setPictureState((byte)1);
+			hubSpu.setPictureExportTime(new Date());
+			hubSpu.setPictureExportUser(pendingQuryDto.getCreateUser());
+			for(HubWaitSelectResponseDto dto:list){
+				if(dto.getSpuId()!=null){
+					hubSpu.setSpuId(dto.getSpuId());
+					hubSpuGateWay.updateByPrimaryKeySelective(hubSpu);	
+				}
+			}
+		}
+	}
 	public void exportHubCheckPicSelected(ProductImportTask message)  throws Exception{
 		Gson gson = new Gson();
 		List<HubWaitSelectStateDto> list = gson.fromJson(message.getData(),  new TypeToken<ArrayList<HubWaitSelectStateDto>>()
@@ -868,9 +898,9 @@ public class ExportServiceImpl {
 	public HSSFWorkbook exportPicExcel(List<HubWaitSelectResponseDto> list)  throws Exception  {
 
 		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
-				"url9", "url10" };
+				"url9", "url10","操作人","导出时间" };
 		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
-				"url9", "url10" };
+				"url9", "url10" ,"pictureExportUser","pictureExportTime"};
 		String title = "图片导出";
 
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
@@ -906,6 +936,10 @@ public class ExportServiceImpl {
 			}
 			map.put("spSkuNo", spSkuNo);
 			map.put("hubSpuNo", "HUB-"+response.getSpuNo());
+			map.put("pictureExportUser",response.getPictureExportUser());
+			if(response.getPictureExportTime()!=null){
+				map.put("pictureExportTime",DateTimeUtil.getTime(response.getPictureExportTime()));	
+			}
 			result.add(map);
 		}
 		log.info("生成excel时间："+(System.currentTimeMillis()-start));

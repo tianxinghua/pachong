@@ -55,7 +55,7 @@ public class SupplierProductRetryService {
 	 * @param picDtos
 	 */
 	public void processProduct(Byte state) throws Exception{
-		
+		long start = System.currentTimeMillis();
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		criteria.createCriteria().andInfoStateEqualTo(state);
 		criteria.setPageNo(1);
@@ -63,11 +63,12 @@ public class SupplierProductRetryService {
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
 		
 		if(products!=null&&products.size()>0){
-			
+			log.info("========系统扫描到infoState："+state+"需要重新推送的数据===");
 			for(HubSupplierSpuDto spu : products){
 				loopProduct(spu,state);
 				updateSupplierInfoState(spu);
 			}
+			log.info("=====系统扫描到需要重新推送的数据结束,耗时{}毫秒======",System.currentTimeMillis()-start);
 			if(products.size()==PAGESIZE){
 				processProduct(state);
 			}
