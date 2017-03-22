@@ -58,3 +58,11 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR3"
 	}
 }
+
+springBoot {
+	buildInfo{
+		additionalProperties = [
+			'company' : 'shangpin'
+		]
+	}
+}

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.data.mysql.sku.hub.mapper.HubSkuMapper;
+import com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
