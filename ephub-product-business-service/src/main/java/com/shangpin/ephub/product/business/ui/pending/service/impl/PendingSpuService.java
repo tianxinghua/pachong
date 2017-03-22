@@ -33,6 +33,9 @@ import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
+import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto.Criteria;
@@ -95,6 +98,8 @@ public abstract class PendingSpuService implements IPendingProductService {
 	protected HubSupplierSpuGateWay hubSupplierSpuGateWay;
     @Autowired
     private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
+    @Autowired
+    private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 
     /**
      * 将任务记录保存到数据库
@@ -380,4 +385,17 @@ public abstract class PendingSpuService implements IPendingProductService {
         }
         return products;
     }
+	
+	@Override
+	public HubBrandModelRuleDto findHubBrandModelRule(String hubBrandNo){
+		HubBrandModelRuleCriteriaDto criterraDto = new HubBrandModelRuleCriteriaDto();
+		criterraDto.setFields("model_rule");
+		criterraDto.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
+		List<HubBrandModelRuleDto> lists = hubBrandModelRuleGateWay.selectByCriteria(criterraDto);
+		if(CollectionUtils.isNotEmpty(lists)){
+			return lists.get(0);
+		}else{
+			return null;
+		}
+	}
 }

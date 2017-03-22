@@ -9,5 +9,9 @@ public class PendingOriginVo {
 	
 	private PendingProductDto pendingProduct;
 	private SupplierProductVo supplierProduct;
+	/**
+	 * 货号示例
+	 */
+	private String modelRule;
 
 }

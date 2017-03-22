@@ -13,6 +13,7 @@ import com.shangpin.ephub.product.business.service.ServiceConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +72,9 @@ public class HubProductServiceImpl implements HubProductService {
     ApiAddressProperties apiAddressProperties;
     @Autowired
     SopSkuService sopSkuService;
+
+    @Autowired
+    private TaskExecutor executor;
 
     ObjectMapper objectMapper =new ObjectMapper();
 
@@ -154,19 +158,11 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
     private void handleSendToScm(SpProductOrgInfoEntity spSpuInfo, ApiProductOrgExtendDom spSpuExtendInfo, List<ApiSkuOrgDom> skuOrgDoms) throws JsonProcessingException {
-        HubProductDto productDto = new HubProductDto();
-        productDto.setProductOrgInfo(spSpuInfo);
-        productDto.setProductOrgInfoExtend(spSpuExtendInfo);
-        productDto.setSkuList(skuOrgDoms);
-        HubResponseDto<String> responseDto = sendToScm(productDto);
-        if(responseDto.getIsSuccess()){  //创建成功
-            for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
-            }
-        }else{ //创建失败
-            for(ApiSkuOrgDom skuOrg:skuOrgDoms){
-                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
-            }
+
+        for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+            SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
+                     apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
+            executor.execute(task);
         }
     }
 
@@ -176,10 +172,10 @@ public class HubProductServiceImpl implements HubProductService {
         List<String> supplierSkuNoList = new ArrayList<>();
         for(ApiSkuOrgDom apiSkuOrgDom:skuOrgDoms){
             //因为拉取后 存在的要改成其它的状态 所以 没有可以在推送前就查询 (咱不开启)
-            if(apiSkuOrgDom.isRetry()){
+           // if(apiSkuOrgDom.isRetry()){
 
                 supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
-            }
+           // }
         }
         queryDto.setLstSupplierSkuNo(supplierSkuNoList);
 
@@ -441,6 +437,70 @@ public class HubProductServiceImpl implements HubProductService {
             HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
             hubSkuGateWay.updateByCriteriaSelective(criteriaWithSku);
 
+    }
+
+}
+
+class SendToScmTask implements Runnable{
+
+    HubSkuSupplierMappingGateWay skuSupplierMappingGateWay;
+    ApiSkuOrgDom skuOrg;
+    RestTemplate restTemplate;
+    ApiAddressProperties apiAddressProperties;
+    SpProductOrgInfoEntity spSpuInfo;
+    ApiProductOrgExtendDom spSpuExtendInfo;
+
+    SendToScmTask(HubSkuSupplierMappingGateWay skuSupplierMappingGateWay,ApiSkuOrgDom skuOrg,RestTemplate restTemplate,
+                  ApiAddressProperties apiAddressProperties,SpProductOrgInfoEntity spSpuInfo, ApiProductOrgExtendDom spSpuExtendInfo){
+        this.skuSupplierMappingGateWay = skuSupplierMappingGateWay;
+        this.skuOrg = skuOrg;
+        this.restTemplate = restTemplate;
+        this.apiAddressProperties = apiAddressProperties;
+        this.spSpuInfo = spSpuInfo;
+        this.spSpuExtendInfo = spSpuExtendInfo;
+    }
+
+    @Override
+    public void run() {
+        HubProductDto productDto = new HubProductDto();
+        productDto.setProductOrgInfo(spSpuInfo);
+        productDto.setProductOrgInfoExtend(spSpuExtendInfo);
+        List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
+        sendSkuList.add(skuOrg);
+        productDto.setSkuList(sendSkuList);
+        HubResponseDto<String> responseDto = null;
+        try {
+            responseDto = sendToScm(productDto);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        if(responseDto.getIsSuccess()){  //创建成功
+            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
+
+        }else{ //创建失败
+            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+
+        }
+    }
+    private void updateSkuMappingStatus(Long id,SupplierSelectState status,String reason){
+        HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
+        skuSupplierMapping.setSkuSupplierMappingId(id);
+        skuSupplierMapping.setSupplierSelectState(Integer.valueOf(status.getIndex()).byteValue());
+        skuSupplierMapping.setUpdateTime(new Date());
+        skuSupplierMapping.setMemo(reason);
+
+        skuSupplierMappingGateWay.updateByPrimaryKeySelective(skuSupplierMapping);
+    }
+
+    private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
+        HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+        ObjectMapper mapper = new ObjectMapper();
+//        log.info("send scm parameter: " + mapper.writeValueAsString(productDto));
+
+        ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
+                requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
+                });
+        return entity.getBody();
     }
 
 }

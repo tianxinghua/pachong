@@ -1,10 +1,10 @@
 package com.shangpin.ephub.data.mysql.spu.hub.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class HubSpuCriteria {
     protected String orderByClause;

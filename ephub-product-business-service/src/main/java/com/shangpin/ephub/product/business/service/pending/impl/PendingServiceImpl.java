@@ -258,6 +258,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
             if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
+                //审核尺码
                 if (auditSize(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
 
             }
@@ -553,6 +554,22 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
         HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
         criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList);
+        int i =  skuPendingGateWay.countByCriteria(criteriaSku);
+        if(i>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    private boolean hasSkuStock(List<HubSpuPendingDto> hubSpuPendingDtos) {
+        List<Long> spuIdList = new ArrayList<>();
+        for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
+            spuIdList.add(spuDto.getSpuPendingId());
+        }
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andStockGreaterThan(0);
         int i =  skuPendingGateWay.countByCriteria(criteriaSku);
         if(i>0){
             return true;
