@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuWithCriteria;
-import com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper;
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 
 /**
  * <p>Title:HubSpuService.java </p>

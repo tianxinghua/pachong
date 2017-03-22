@@ -1,19 +1,12 @@
 package com.shangpin.ephub.data.mysql.spu.hub.mapper;
 
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
+import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-/**
- * <p>Title:HubSpuMapper.java </p>
- * <p>Description: </p>
- * <p>Company: www.shangpin.com</p> 
- * @author yanxiaobin
- * @date 2016年12月24日 下午2:54:18
- */
 @Mapper
 public interface HubSpuMapper {
     int countByExample(HubSpuCriteria example);
@@ -39,8 +32,6 @@ public interface HubSpuMapper {
     int updateByPrimaryKeySelective(HubSpu record);
 
     int updateByPrimaryKey(HubSpu record);
-
-
     //------------------- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -------------
     String getMaxSpuNo();
 }

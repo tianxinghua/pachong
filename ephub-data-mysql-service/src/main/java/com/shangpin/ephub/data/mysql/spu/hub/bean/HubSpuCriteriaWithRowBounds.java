@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.apache.ibatis.session.RowBounds;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
