@@ -1,10 +1,10 @@
 package com.shangpin.ephub.data.mysql.spu.hub.po;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class HubSpuCriteria {
     protected String orderByClause;
@@ -1876,6 +1876,196 @@ public class HubSpuCriteria {
 
         public Criteria andVersionNotBetween(Long value1, Long value2) {
             addCriterion("version not between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeIsNull() {
+            addCriterion("picture_export_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeIsNotNull() {
+            addCriterion("picture_export_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeEqualTo(Date value) {
+            addCriterion("picture_export_time =", value, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeNotEqualTo(Date value) {
+            addCriterion("picture_export_time <>", value, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeGreaterThan(Date value) {
+            addCriterion("picture_export_time >", value, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("picture_export_time >=", value, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeLessThan(Date value) {
+            addCriterion("picture_export_time <", value, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeLessThanOrEqualTo(Date value) {
+            addCriterion("picture_export_time <=", value, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeIn(List<Date> values) {
+            addCriterion("picture_export_time in", values, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeNotIn(List<Date> values) {
+            addCriterion("picture_export_time not in", values, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeBetween(Date value1, Date value2) {
+            addCriterion("picture_export_time between", value1, value2, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportTimeNotBetween(Date value1, Date value2) {
+            addCriterion("picture_export_time not between", value1, value2, "pictureExportTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserIsNull() {
+            addCriterion("picture_export_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserIsNotNull() {
+            addCriterion("picture_export_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserEqualTo(String value) {
+            addCriterion("picture_export_user =", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserNotEqualTo(String value) {
+            addCriterion("picture_export_user <>", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserGreaterThan(String value) {
+            addCriterion("picture_export_user >", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserGreaterThanOrEqualTo(String value) {
+            addCriterion("picture_export_user >=", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserLessThan(String value) {
+            addCriterion("picture_export_user <", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserLessThanOrEqualTo(String value) {
+            addCriterion("picture_export_user <=", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserLike(String value) {
+            addCriterion("picture_export_user like", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserNotLike(String value) {
+            addCriterion("picture_export_user not like", value, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserIn(List<String> values) {
+            addCriterion("picture_export_user in", values, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserNotIn(List<String> values) {
+            addCriterion("picture_export_user not in", values, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserBetween(String value1, String value2) {
+            addCriterion("picture_export_user between", value1, value2, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureExportUserNotBetween(String value1, String value2) {
+            addCriterion("picture_export_user not between", value1, value2, "pictureExportUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateIsNull() {
+            addCriterion("picture_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateIsNotNull() {
+            addCriterion("picture_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateEqualTo(Byte value) {
+            addCriterion("picture_state =", value, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateNotEqualTo(Byte value) {
+            addCriterion("picture_state <>", value, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateGreaterThan(Byte value) {
+            addCriterion("picture_state >", value, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("picture_state >=", value, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateLessThan(Byte value) {
+            addCriterion("picture_state <", value, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateLessThanOrEqualTo(Byte value) {
+            addCriterion("picture_state <=", value, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateIn(List<Byte> values) {
+            addCriterion("picture_state in", values, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateNotIn(List<Byte> values) {
+            addCriterion("picture_state not in", values, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateBetween(Byte value1, Byte value2) {
+            addCriterion("picture_state between", value1, value2, "pictureState");
+            return (Criteria) this;
+        }
+
+        public Criteria andPictureStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("picture_state not between", value1, value2, "pictureState");
             return (Criteria) this;
         }
     }

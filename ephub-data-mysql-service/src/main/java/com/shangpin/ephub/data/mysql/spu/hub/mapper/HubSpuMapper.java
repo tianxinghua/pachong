@@ -1,12 +1,17 @@
 package com.shangpin.ephub.data.mysql.spu.hub.mapper;
 
-import java.util.List;
-
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+/**
+ * 
+ * @author yanxiaobin
+ *
+ */
 @Mapper
 public interface HubSpuMapper {
     int countByExample(HubSpuCriteria example);

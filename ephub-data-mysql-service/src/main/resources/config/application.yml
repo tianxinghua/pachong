@@ -1,5 +1,5 @@
 ﻿server.port: 8001
-spring: 
+spring:  
   profiles: 
     active: dev
   application.name: ephub-data-mysql-service
