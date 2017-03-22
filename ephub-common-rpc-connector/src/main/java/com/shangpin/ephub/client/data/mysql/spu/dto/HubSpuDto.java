@@ -131,6 +131,12 @@ public class HubSpuDto implements Serializable {
      */
     private Long version;
 
+    private Date pictureExportTime;
+
+    private String pictureExportUser;
+
+    private Byte pictureState;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuId() {
@@ -341,6 +347,30 @@ public class HubSpuDto implements Serializable {
         this.version = version;
     }
 
+    public Date getPictureExportTime() {
+        return pictureExportTime;
+    }
+
+    public void setPictureExportTime(Date pictureExportTime) {
+        this.pictureExportTime = pictureExportTime;
+    }
+
+    public String getPictureExportUser() {
+        return pictureExportUser;
+    }
+
+    public void setPictureExportUser(String pictureExportUser) {
+        this.pictureExportUser = pictureExportUser == null ? null : pictureExportUser.trim();
+    }
+
+    public Byte getPictureState() {
+        return pictureState;
+    }
+
+    public void setPictureState(Byte pictureState) {
+        this.pictureState = pictureState;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -373,6 +403,9 @@ public class HubSpuDto implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
+        sb.append(", pictureExportTime=").append(pictureExportTime);
+        sb.append(", pictureExportUser=").append(pictureExportUser);
+        sb.append(", pictureState=").append(pictureState);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -415,7 +448,10 @@ public class HubSpuDto implements Serializable {
             && (this.getInfoFrom() == null ? other.getInfoFrom() == null : this.getInfoFrom().equals(other.getInfoFrom()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getPictureExportTime() == null ? other.getPictureExportTime() == null : this.getPictureExportTime().equals(other.getPictureExportTime()))
+            && (this.getPictureExportUser() == null ? other.getPictureExportUser() == null : this.getPictureExportUser().equals(other.getPictureExportUser()))
+            && (this.getPictureState() == null ? other.getPictureState() == null : this.getPictureState().equals(other.getPictureState()));
     }
 
     @Override
@@ -448,6 +484,9 @@ public class HubSpuDto implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getPictureExportTime() == null) ? 0 : getPictureExportTime().hashCode());
+        result = prime * result + ((getPictureExportUser() == null) ? 0 : getPictureExportUser().hashCode());
+        result = prime * result + ((getPictureState() == null) ? 0 : getPictureState().hashCode());
         return result;
     }
 }

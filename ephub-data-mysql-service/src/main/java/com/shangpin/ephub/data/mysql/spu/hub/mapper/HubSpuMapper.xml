@@ -28,6 +28,9 @@
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="picture_export_time" property="pictureExportTime" jdbcType="TIMESTAMP" />
+    <result column="picture_export_user" property="pictureExportUser" jdbcType="VARCHAR" />
+    <result column="picture_state" property="pictureState" jdbcType="TINYINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -92,7 +95,7 @@
       spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, hub_color, 
       hub_color_no, season, spu_desc, create_time, create_user, update_time, update_user, 
       spu_state, spu_select_state, new_type, pic_url, origin, material, spu_no, info_from, 
-      memo, data_state, version
+      memo, data_state, version, picture_export_time, picture_export_user, picture_state
     </if>
     <if test="fields != null" >
       ${fields}
@@ -117,7 +120,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,hub_color,hub_color_no,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,origin,material,spu_no,info_from,memo,data_state,version
+    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,hub_color,hub_color_no,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,origin,material,spu_no,info_from,memo,data_state,version,picture_export_time,picture_export_user,picture_state
     from hub_spu
     where spu_id = #{spuId,jdbcType=BIGINT}
   </select>
@@ -143,7 +146,8 @@
       spu_state, spu_select_state, new_type, 
       pic_url, origin, material, 
       spu_no, info_from, memo, 
-      data_state, version)
+      data_state, version, picture_export_time, 
+      picture_export_user, picture_state)
     values (#{spuId,jdbcType=BIGINT}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
       #{gender,jdbcType=VARCHAR}, #{categoryNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
       #{marketTime,jdbcType=VARCHAR}, #{hubColor,jdbcType=VARCHAR}, #{hubColorNo,jdbcType=VARCHAR}, 
@@ -152,7 +156,8 @@
       #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT}, #{newType,jdbcType=TINYINT}, 
       #{picUrl,jdbcType=VARCHAR}, #{origin,jdbcType=VARCHAR}, #{material,jdbcType=VARCHAR}, 
       #{spuNo,jdbcType=VARCHAR}, #{infoFrom,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{pictureExportTime,jdbcType=TIMESTAMP}, 
+      #{pictureExportUser,jdbcType=VARCHAR}, #{pictureState,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
     <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="java.lang.Long">
@@ -238,6 +243,15 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="pictureExportTime != null" >
+        picture_export_time,
+      </if>
+      <if test="pictureExportUser != null" >
+        picture_export_user,
+      </if>
+      <if test="pictureState != null" >
+        picture_state,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="spuId != null" >
@@ -317,6 +331,15 @@
       </if>
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
+      </if>
+      <if test="pictureExportTime != null" >
+        #{pictureExportTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pictureExportUser != null" >
+        #{pictureExportUser,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureState != null" >
+        #{pictureState,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -407,6 +430,15 @@
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.pictureExportTime != null" >
+        picture_export_time = #{record.pictureExportTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.pictureExportUser != null" >
+        picture_export_user = #{record.pictureExportUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pictureState != null" >
+        picture_state = #{record.pictureState,jdbcType=TINYINT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -439,7 +471,10 @@
       info_from = #{record.infoFrom,jdbcType=TINYINT},
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
-      version = #{record.version,jdbcType=BIGINT}
+      version = #{record.version,jdbcType=BIGINT},
+      picture_export_time = #{record.pictureExportTime,jdbcType=TIMESTAMP},
+      picture_export_user = #{record.pictureExportUser,jdbcType=VARCHAR},
+      picture_state = #{record.pictureState,jdbcType=TINYINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -522,6 +557,15 @@
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="pictureExportTime != null" >
+        picture_export_time = #{pictureExportTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pictureExportUser != null" >
+        picture_export_user = #{pictureExportUser,jdbcType=VARCHAR},
+      </if>
+      <if test="pictureState != null" >
+        picture_state = #{pictureState,jdbcType=TINYINT},
+      </if>
     </set>
     where spu_id = #{spuId,jdbcType=BIGINT}
   </update>
@@ -551,7 +595,10 @@
       info_from = #{infoFrom,jdbcType=TINYINT},
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
-      version = #{version,jdbcType=BIGINT}
+      version = #{version,jdbcType=BIGINT},
+      picture_export_time = #{pictureExportTime,jdbcType=TIMESTAMP},
+      picture_export_user = #{pictureExportUser,jdbcType=VARCHAR},
+      picture_state = #{pictureState,jdbcType=TINYINT}
     where spu_id = #{spuId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria" id="selectByExampleWithRowbounds" >
