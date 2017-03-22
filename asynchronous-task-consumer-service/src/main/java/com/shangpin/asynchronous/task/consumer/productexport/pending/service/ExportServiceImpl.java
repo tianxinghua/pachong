@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -31,7 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
@@ -40,6 +38,7 @@ import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
 import com.shangpin.asynchronous.task.consumer.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.util.HubWaitSelectStateDto;
 import com.shangpin.asynchronous.task.consumer.util.ImageUtils;
+import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuPictureState;
 import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
@@ -55,9 +54,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
@@ -816,22 +813,21 @@ public class ExportServiceImpl {
 
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
-		pendingQuryDto.setPictureState((byte)0);
+		pendingQuryDto.setPictureState(HubSpuPictureState.UNHANDLED.getIndex());
 		pendingQuryDto.setPageNo(0);
 		pendingQuryDto.setPageSize(100000);
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
-		HSSFWorkbook workbook = exportPicExcel(list);
+		Map<Long,String> mapTemp = new HashMap<Long,String>();
+		HSSFWorkbook workbook = exportPicExcel(list,mapTemp);
 		//如果上传成功，则更显数据库pictureState状态
 		if(saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook)){
 			HubSpuDto hubSpu = new HubSpuDto();
-			hubSpu.setPictureState((byte)1);
+			hubSpu.setPictureState(HubSpuPictureState.HANDLED.getIndex());
 			hubSpu.setPictureExportTime(new Date());
 			hubSpu.setPictureExportUser(pendingQuryDto.getCreateUser());
-			for(HubWaitSelectResponseDto dto:list){
-				if(dto.getSpuId()!=null){
-					hubSpu.setSpuId(dto.getSpuId());
-					hubSpuGateWay.updateByPrimaryKeySelective(hubSpu);	
-				}
+			for(Map.Entry<Long,String> entry:mapTemp.entrySet()){
+				hubSpu.setSpuId(entry.getKey());
+				hubSpuGateWay.updateByPrimaryKeySelective(hubSpu);
 			}
 		}
 	}
@@ -891,11 +887,12 @@ public class ExportServiceImpl {
 		pendingQuryDto.setPageNo(0);
 		pendingQuryDto.setPageSize(100000);
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
-		HSSFWorkbook wb = exportPicExcel(list);
+		Map<Long,String> mapTemp = new HashMap<Long,String>();
+		HSSFWorkbook wb = exportPicExcel(list,mapTemp);
 		return wb;
 	}
 	
-	public HSSFWorkbook exportPicExcel(List<HubWaitSelectResponseDto> list)  throws Exception  {
+	public HSSFWorkbook exportPicExcel(List<HubWaitSelectResponseDto> list,Map<Long,String> mapTemp)  throws Exception  {
 
 		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
 				"url9", "url10","操作人","导出时间" };
@@ -905,7 +902,6 @@ public class ExportServiceImpl {
 
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
-		Map<Long,String> mapTemp = new HashMap<Long,String>();
 		log.info("list总大小："+list.size());
 		long start = System.currentTimeMillis();
 		for (HubWaitSelectResponseDto response : list) {
