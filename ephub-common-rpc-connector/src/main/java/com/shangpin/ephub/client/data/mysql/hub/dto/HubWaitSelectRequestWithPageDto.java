@@ -28,4 +28,5 @@ public class HubWaitSelectRequestWithPageDto {
     private String endDate;
     private String createUser;
     private List<Byte> supplierSelectState;
+    private Byte pictureState;
 }
