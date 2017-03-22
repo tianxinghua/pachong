@@ -26,4 +26,5 @@ public class HubWaitSelectRequestWithPage {
     private String startDate;
     private String endDate;
     private List<Byte> supplierSelectState;
+    private Byte pictureState;
 }
