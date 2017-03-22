@@ -25,7 +25,8 @@
     <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
     <result column="spu_state" property="spuState" jdbcType="TINYINT" />
     <result column="picture_state" property="pictureState" jdbcType="TINYINT" />
-    <result column="picture_export_time" property="pictureExportTime" jdbcType="VARCHAR" />
+    <result column="picture_export_user" property="pictureExportUser" jdbcType="VARCHAR" />
+    <result column="picture_export_time" property="pictureExportTime" jdbcType="TIMESTAMP" />
     <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
     <result column="new_type" property="newType" jdbcType="TINYINT" />
     <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />

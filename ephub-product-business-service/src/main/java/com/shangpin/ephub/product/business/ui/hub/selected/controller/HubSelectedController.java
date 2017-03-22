@@ -146,6 +146,26 @@ public class HubSelectedController {
 		}
 		return HubResponse.errorResp("导出异常");
     }
+	
+
+	/**
+	 * 导出查询图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-not-handle-pic",method = RequestMethod.POST)
+    public HubResponse exportNotSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+	        	
+		try {
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_NOT_HANDLE_PIC.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_NOT_HANDLE_PIC.getIndex(),JsonUtil.serialize(dto));
+			return HubResponse.successResp(task.getTaskNo());
+		} catch (Exception e) {
+			log.error("导出查询商品失败：{}",e);
+		}
+		return HubResponse.errorResp("导出异常");
+    }
+	
 	/**
 	 * 导出勾选图片
 	 * @param dto
