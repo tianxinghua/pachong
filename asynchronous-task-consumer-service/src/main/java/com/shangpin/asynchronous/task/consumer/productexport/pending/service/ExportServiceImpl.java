@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
@@ -406,7 +408,11 @@ public class ExportServiceImpl {
 					}
 				} else if ("seasonYear".equals(rowTemplate[i])) {
 					setRowOfSeasonYear(row, product, cls, i);
-				} else if ("seasonName".equals(rowTemplate[i])) {
+				} else if ("seasonYear".equals(rowTemplate[i])) {
+					setRowOfSeasonYear(row, product, cls, i);
+				}else if ("totalStock".equals(rowTemplate[i])) {
+					setStockTotal(row, product, cls, i);
+				}else if ("seasonName".equals(rowTemplate[i])) {
 					setRowOfSeasonName(row, product, cls, i);
 				} else if ("memo".equals(rowTemplate[i])) {
 					if (null == product.getSpuModelState() || 1 != product.getSpuModelState()) {
@@ -466,6 +472,19 @@ public class ExportServiceImpl {
 				continue;
 			}
 		}
+	}
+
+	private void setStockTotal(HSSFRow row, PendingProductDto product, Class<?> clazz, int i) {
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuIdEqualTo(product.getSupplierSpuId());
+		List<HubSupplierSkuDto> list = hubSupplierSkuGateWay.selectByCriteria(criteria);
+		int totalStock = 0;
+		if(list!=null&&list.size()>0){
+			for(HubSupplierSkuDto sku:list){
+				totalStock+=sku.getStock().intValue();
+			}
+		}
+		row.createCell(i).setCellValue(totalStock);
 	}
 
 	/**
@@ -643,10 +662,10 @@ public class ExportServiceImpl {
 				
 				result.add(map);
 			}
-		
+			Map<String,String> temMap = new HashMap<>();
 			if (supplierDto != null && supplierDto.getSupplierName() != null) {
 				String name = supplierDto.getSupplierName();
-				String reg = "[A-Za-z]+";
+				String reg = "[A-Za-z0-9]+";
 				Pattern pattern = Pattern.compile(reg);
 				Matcher matcher = pattern.matcher(name);
 				while (matcher.find()) {
@@ -660,13 +679,17 @@ public class ExportServiceImpl {
 				supplierName.append(supplierNo);
 			}
 			allResult.addAll(result);
+			if(temMap.containsKey(supplierName.toString())){
+				supplierName= supplierName.append("-").append(supplierNo).append(new Random().nextInt(10) + 1);
+			}
+			log.info("sheetName:"+supplierName.toString());
+			temMap.put(supplierName.toString(), "");	
 			ExportExcelUtils.createSheet(workbook, supplierName.toString(), headers,  columns, result);
 		}
 		log.info("allResult:"+allResult.size());
 		ExportExcelUtils.createSheet(workbook, "all", allHeaders,allColumns, allResult);
 		return workbook;
 	}
-
 	private void convertTOExcel(HubWaitSelectResponseDto response, Map<String, String> map,String supplierName) {
 		if (response.getSupplierSkuId() != null) {
 
@@ -715,7 +738,6 @@ public class ExportServiceImpl {
 			map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 
 			String skuNo = getSopSkuNo(response.getSupplierId(), response.getSupplierSkuNo());
-			log.info("supplierSkuId：" + response.getSupplierSkuId() + "查询sopSkuNo:" + skuNo);
 			map.put("skuNo", skuNo);
 			
 			//新增

@@ -85,11 +85,13 @@ public class SupplierProductRetryService {
 		
 		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId());
 		if(season==null){
+			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+":"+spu.getSupplierSeasonname()+"非当季");
 			return;
 		}
 	
 		HubSupplierValueMappingDto supplier = supplierProductPictureManager.findHubSupplierValueMapping(spu.getSupplierId());
 		if(supplier==null){
+			log.info("===="+spu.getSupplierId()+"未找到供应商名称");
 			return;
 		}
  
@@ -131,7 +133,9 @@ public class SupplierProductRetryService {
 					log.error(e.getMessage(), e);
 				}				
 			}
-		}		
+		}else{
+			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
+		}
 		pendingSpu.setSkus(skus);
 		pendingProduct.setData(pendingSpu);		
 		spuHead.setSkus(headSkus);	
