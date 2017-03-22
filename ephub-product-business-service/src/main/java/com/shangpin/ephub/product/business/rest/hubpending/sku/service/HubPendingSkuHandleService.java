@@ -115,7 +115,7 @@ public class HubPendingSkuHandleService {
 	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto) throws Exception {
 		
 		if (hubSkuPendingIsExist.getSkuState()!=null&&(hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
-				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex())||hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex()) {
+				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex()||hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex())) {
 			// 如果skustate状态为已处理、审核中 或者已完善，则不更新
 			return;
 		}

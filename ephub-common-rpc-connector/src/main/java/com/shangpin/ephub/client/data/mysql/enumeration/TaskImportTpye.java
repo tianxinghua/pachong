@@ -30,6 +30,7 @@ public enum TaskImportTpye {
 	
 	EXPORT_HUB_SELECTED(6,"hub供价导出"),
 	EXPORT_HUB_PIC(7,"hub图片导出"),
+	EXPORT_HUB_NOT_HANDLE_PIC(9,"hub未修图片导出"),
 	EXPORT_HUB_CHECK_PIC(8,"hub勾选图片导出");
 	/**
      * 数字索引标识

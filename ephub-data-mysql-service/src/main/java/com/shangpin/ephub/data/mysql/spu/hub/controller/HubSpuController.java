@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuWithCriteria;
+import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
+import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 import com.shangpin.ephub.data.mysql.spu.hub.service.HubSpuService;
 /**
  * <p>Title:HubSpuController.java </p>
