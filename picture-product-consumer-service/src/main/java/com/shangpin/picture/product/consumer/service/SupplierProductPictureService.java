@@ -189,13 +189,13 @@ public class SupplierProductPictureService {
 	 */
 	public void scanFailedPictureToRetry() {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
+		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		for (int i = 1; i <= countTotalPage(supplierProductPictureManager.countFailedPictureTotal(criteria), PAGE_SIZE); i++) {
 			HubSpuPendingPicCriteriaDto _criteria = new HubSpuPendingPicCriteriaDto();
 			_criteria.setFields("spu_pending_pic_id");
 			_criteria.setPageNo(i);
 			_criteria.setPageSize(PAGE_SIZE);
-			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo("2015092401528");
+			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 			List<HubSpuPendingPicDto> picDto = supplierProductPictureManager.queryByCriteria(_criteria);
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
@@ -204,7 +204,7 @@ public class SupplierProductPictureService {
 						HubSpuPendingPicDto dto = supplierProductPictureManager.queryById(spuPendingPicId);
 						if (dto != null && dto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
 							Integer retryCount = dto.getRetryCount();
-							if (retryCount != null && retryCount > 20) {
+							if (retryCount != null && retryCount > 3) {
 								continue;
 							}
 							//shangpinRedis.set(assemblyKey(spuPendingPicId), String.valueOf(spuPendingPicId));
@@ -263,12 +263,6 @@ public class SupplierProductPictureService {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
 		} finally {
 			shangpinRedis.del(assemblyKey(spuPendingPicId));
-		}
-		try {
-			Thread.sleep(1000*25);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }
