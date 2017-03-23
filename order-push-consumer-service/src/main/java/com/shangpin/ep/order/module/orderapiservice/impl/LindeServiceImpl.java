@@ -200,7 +200,7 @@ public class LindeServiceImpl implements IOrderService {
 		param.put("ITEM_ID", item_id);	
 		orderDTO.setLogContent("查询库存参数============" + param.toString()); 
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = lindePost(supplierProperties.getLinde().getUrl()+supplierProperties.getLinde().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getLinde().getUser(),supplierProperties.getLinde().getPassword(),orderDTO);
+		String returnData = lindePost(supplierProperties.getLinde().getUrl()+supplierProperties.getLinde().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2),supplierProperties.getLinde().getUser(),supplierProperties.getLinde().getPassword(),orderDTO);
 		orderDTO.setLogContent("查询库存返回结果======="+returnData);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
@@ -220,7 +220,7 @@ public class LindeServiceImpl implements IOrderService {
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = lindePost(supplierProperties.getLinde().getUrl()+supplierProperties.getLinde().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getLinde().getUser(),supplierProperties.getLinde().getPassword(),orderDTO);
+		String returnData = lindePost(supplierProperties.getLinde().getUrl()+supplierProperties.getLinde().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2),supplierProperties.getLinde().getUser(),supplierProperties.getLinde().getPassword(),orderDTO);
 		orderDTO.setLogContent("下订单返回结果======="+returnData+" 下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
@@ -237,7 +237,7 @@ public class LindeServiceImpl implements IOrderService {
 		param.put("STATUS", status);//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
 		orderDTO.setLogContent("设置订单参数======="+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
-		String returnData = lindePost(supplierProperties.getLinde().getUrl()+supplierProperties.getLinde().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getLinde().getUser(),supplierProperties.getLinde().getPassword(),orderDTO);
+		String returnData = lindePost(supplierProperties.getLinde().getUrl()+supplierProperties.getLinde().getSetStatusInterface(), param, new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2),supplierProperties.getLinde().getUser(),supplierProperties.getLinde().getPassword(),orderDTO);
 		orderDTO.setLogContent("设置订单状态返回结果======="+returnData);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
 		return returnData;
