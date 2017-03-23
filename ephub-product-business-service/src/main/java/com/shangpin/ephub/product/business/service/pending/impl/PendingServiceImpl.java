@@ -104,7 +104,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     private HubSpuPendingCriteriaDto getHubSpuPendingCriteria(SpuPendingAuditQueryVO queryVO) {
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
-        log.info("audit query parameter =" + queryVO.toString());
         criteria.setDistinct(true);
         criteria.setFields(" spu_model,hub_brand_no  ");
         if(StringUtils.isNotBlank(queryVO.getSpuModel())){
