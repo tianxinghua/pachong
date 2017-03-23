@@ -257,6 +257,7 @@ public class SupplierProductPictureService {
 				count = retryCount == null ? 1 : retryCount + 1;
 				updateDto.setRetryCount(count);
 				supplierProductPictureManager.updateSelective(updateDto);
+				spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
 			} 
 		} catch (Throwable e) {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);

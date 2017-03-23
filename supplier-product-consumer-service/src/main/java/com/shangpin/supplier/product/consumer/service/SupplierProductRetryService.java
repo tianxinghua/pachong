@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
@@ -20,9 +19,7 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
-import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
@@ -167,6 +164,7 @@ public class SupplierProductRetryService {
 	 * @param pagesize 每页记录数
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private Integer getPageCount(Integer totalSize, Integer pageSize) {
 		if(totalSize % pageSize == 0){
 			return totalSize/pageSize;
