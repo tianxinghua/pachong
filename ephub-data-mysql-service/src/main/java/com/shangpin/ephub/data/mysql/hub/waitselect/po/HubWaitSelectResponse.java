@@ -150,5 +150,7 @@ public class HubWaitSelectResponse {
 	    private String isNewSupplier;
 	    private Date updateTime;
 	    private String memo;
+	    private String pictureExportUser;
+	    private Date pictureExportTime;
 	    
 }

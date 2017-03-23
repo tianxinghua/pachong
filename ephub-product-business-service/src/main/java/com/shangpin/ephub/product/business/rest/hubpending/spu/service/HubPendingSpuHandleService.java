@@ -247,12 +247,12 @@ public class HubPendingSpuHandleService {
 		if(spuPending!=null){
 			String hubSpuNo = spuPending.getHubSpuNo();
 			boolean isSkuPassing = true;
-			boolean isAllSkuFilter = true;
 			boolean isSendToHub = false;
 			int totalStock = 0;
 			boolean isExistSku = false;
 			List<HubSkuPendingDto> listSku = hubPendingSkuService.findHubSkuPendingBySpuPendingId(spuPendingId);
 			if(listSku!=null&&listSku.size()>0){
+				boolean isAllSkuFilter = true;
 				isExistSku = true;
 				for(HubSkuPendingDto sku:listSku){
 					totalStock += sku.getStock();
@@ -267,14 +267,17 @@ public class HubPendingSpuHandleService {
 						isSendToHub = true;
 					}
 				}
+				
+				//所有sku已被过滤
+				if(isAllSkuFilter){
+					hubSpuPendingDto.setMemo("自动处理：spu下sku都被过滤了");
+					log.info("*****"+spuPending.getSupplierId()+" ："+spuPending.getSpuModel()+"spu下sku都被过滤了");
+					isSkuPassing = false;
+				}
 			}else{
-				hubSpuPendingDto.setMemo("自动处理：无sku信息");
-				log.info("******spuPendingId:"+spuPendingId+"下无sku信息");
-			}
-			//sku不存在或者所有sku已被过滤
-			if(isAllSkuFilter){
-				hubSpuPendingDto.setMemo("自动处理：sku都被过滤了");
 				isSkuPassing = false;
+				hubSpuPendingDto.setMemo("自动处理：spu下无sku信息");
+				log.info("*****"+spuPending.getSupplierId()+" ："+spuPending.getSpuModel()+" spu下无sku信息");
 			}
 		
 			if(hubSpuNo!=null){
@@ -284,6 +287,7 @@ public class HubPendingSpuHandleService {
 						hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
 						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 						if(!sendToHub(spuPendingId,hubSpuNo)){
+							log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"sendToHub失败");
 							return "sendToHub失败";
 						}
 						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"自动进入待选品");
@@ -293,6 +297,7 @@ public class HubPendingSpuHandleService {
 					}
 					
 				}else{
+					hubSpuPendingDto.setMemo("自动处理：hubSpu存在同款，但sku有未校验通过的");
 					hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 				}
@@ -304,7 +309,7 @@ public class HubPendingSpuHandleService {
 						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
 					}else{
-						hubSpuPendingDto.setMemo("自动处理：sku下有校验失败的尺码");
+						hubSpuPendingDto.setMemo("自动处理：spu下有校验失败的尺码");
 						hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 					}
@@ -313,7 +318,7 @@ public class HubPendingSpuHandleService {
 					hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 				}
 			}
-			if(isExistSku&&totalStock>=0){
+			if(isExistSku&&totalStock>0){
 				hubSpuPendingDto.setStockState(StockState.HANDLED.getIndex());
 			}else if(isExistSku&&totalStock<=0){
 				hubSpuPendingDto.setStockState(StockState.NOSTOCK.getIndex());
