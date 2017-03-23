@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping(value = "/pending-sku")
-@Slf4j
 public class HubPendingSkuCheckController {
 	
 	@Autowired
@@ -33,8 +32,6 @@ public class HubPendingSkuCheckController {
 	
 	@RequestMapping(value = "/check-sku")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuCheckDto dto){
-		log.info("校验pendingSku接受到参数:{}",dto);
-		
 		HubPendingSkuCheckResult result = hubCheckRuleService.checkHubPendingSku(dto);
 		return result;
 	}

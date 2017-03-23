@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,10 +30,92 @@ public class RegexUtil {
      * @return 如果是符合格式的字符串,返回 <b>true </b>,否则为 <b>false </b>
      */
     public static boolean excludeLetter(String str) {
+        if(StringUtils.isBlank(str)) return false;
         String regex = "[^A-Za-z]+";
-        return match(regex, str);
+        boolean result =  match(regex, str);
+        if(!result){
+
+                //排除PVC
+                String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+                result =  match(regexPvc, str.toLowerCase());
+
+        }
+        return result;
     }
 
+    /**
+     * 品类特殊处理
+     * @param category
+     * @param val
+     * @return
+     */
+    public static boolean specialCategoryMatch(String category,String val) {
+        if(StringUtils.isBlank(val)) return false;
+        String regex = "[^A-Za-z]+";
+        boolean result =  match(regex, val);
+        if(result){
+
+            if(category.startsWith("A01")){  //服装
+                if(val.indexOf("%")<0){
+                    return false;
+                }else{
+                    result = judgeNum(val);
+                }
+            }
+        }else{
+            //排除PVC
+            String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+            result =  match(regexPvc, val.toLowerCase());
+        }
+        return result ;
+    }
+
+    private static boolean judgeNum(String val){
+          int total = 0;
+          String tmp = "";
+          val =  replaceBlank(val);
+          while(val.indexOf("%")>0){
+              tmp =  val.substring(0,val.indexOf("%"));
+              val = val.substring(val.indexOf("%")+1,val.length());
+              total = total + getNum(tmp,3);
+
+          }
+          if(total==0){
+              return false;
+          }else{
+              if(0==total%100){
+                  return true;
+              }else{
+                  return false;
+              }
+          }
+    }
+
+    public  static int getNum(String val,int length){
+         int num = 0;
+         if(length==0){
+             return 0;
+         }else{
+
+             try {
+                 val = val.substring(val.length()-length);
+                 return Integer.valueOf(val);
+
+             } catch (Exception e) {
+                 return getNum(val,length-1);
+             }
+         }
+    }
+
+    public static String replaceBlank(String str) {
+        String dest = "";
+        if (str!=null) {
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
+        }
+        return dest;
+    }
     /**
      * 验证验证输入汉字
      *
@@ -48,6 +132,9 @@ public class RegexUtil {
         System.out.println(RegexUtil.excludeLetter("skdj"));
         System.out.println(RegexUtil.excludeLetter(" skdj  中国 "));
         System.out.println(RegexUtil.excludeLetter("  100%  中国 ,93 % "));
-
+        System.out.println(RegexUtil.specialCategoryMatch("A0123"," 45% 棉 ,5% 面部，快点看看 50%"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A"," sdkj pvc kkd"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任PVC的"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任 pvc 的l"));
     }
 }

@@ -412,6 +412,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setMaterial(spuPending.getHubMaterial());
         hubSpu.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
         hubSpu.setSpuNo(hubSpuUtil.createHubSpuNo(0L));//插入SPU编号
+        hubSpu.setPictureState((byte)0);
         hubSpuMapper.insert(hubSpu);
 
 

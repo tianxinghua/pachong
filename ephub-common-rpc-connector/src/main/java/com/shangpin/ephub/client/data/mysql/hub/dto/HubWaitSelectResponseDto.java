@@ -146,6 +146,8 @@ public class HubWaitSelectResponseDto {
     private Long supplierSkuId;
     private String isNewSupplier;
     private String supplierSpuModel;
+    private String pictureExportUser;
+    private Date pictureExportTime;
     private Date updateTime;
 	private String memo;
 	    
