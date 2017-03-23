@@ -63,8 +63,8 @@ public class MonnierHandler implements ISupplierHandler {
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
-		} catch (EpHubSupplierProductConsumerException e) {
-			log.error("geb异常："+e.getMessage(),e); 
+		} catch (Exception e) {
+			log.error("monnier异常："+e.getMessage(),e); 
 		}
 		
 	}
