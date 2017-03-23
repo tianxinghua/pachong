@@ -10,6 +10,7 @@ import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -134,7 +135,13 @@ public class HubPendingProductController {
 
 		HubSkuSupplierMappingDto hubSkuSupplierMapping = new HubSkuSupplierMappingDto();
 		if(dto.getSign()==1){
-			hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTED.getIndex()).byteValue());
+			if(StringUtils.isBlank(dto.getSkuNo())){
+				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
+				hubSkuSupplierMapping.setMemo("尚品SKU未生成");
+			}else{
+				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTED.getIndex()).byteValue());
+			}
+
 		}else{
 			if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
 				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.EXIST.getIndex()).byteValue());
