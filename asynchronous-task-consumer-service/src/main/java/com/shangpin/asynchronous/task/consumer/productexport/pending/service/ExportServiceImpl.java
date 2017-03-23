@@ -41,6 +41,7 @@ import com.shangpin.asynchronous.task.consumer.util.ImageUtils;
 import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuPictureState;
 import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
@@ -815,6 +816,9 @@ public class ExportServiceImpl {
 				HubWaitSelectRequestWithPageDto.class);
 		pendingQuryDto.setPictureState(HubSpuPictureState.UNHANDLED.getIndex());
 		pendingQuryDto.setPageNo(0);
+		List<Byte> selectList = new ArrayList<Byte>();
+		selectList.add((byte)2);
+		pendingQuryDto.setSupplierSelectState(selectList);
 		pendingQuryDto.setPageSize(100000);
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
 		Map<Long,String> mapTemp = new HashMap<Long,String>();
