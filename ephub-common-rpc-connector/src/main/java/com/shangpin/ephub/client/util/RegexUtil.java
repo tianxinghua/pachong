@@ -36,7 +36,7 @@ public class RegexUtil {
         if(!result){
 
                 //排除PVC
-                String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+                String regexPvc = "[^A-Za-z]?pvc[^A-Za-z]?";
                 result =  match(regexPvc, str.toLowerCase());
 
         }
@@ -66,8 +66,9 @@ public class RegexUtil {
                 	return null;
                 }
             }else{
-                //排除PVC
-                String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+                //排除PVC  聚氯乙烯
+//                String regexPvc = "^(pvc)$";
+            	String regexPvc = "[^A-Za-z]*pvc[^A-Za-z]*";
                 result =  match(regexPvc, val.toLowerCase());
                 if(result){
                 	return null;
@@ -138,13 +139,13 @@ public class RegexUtil {
     }
 
     public static void main(String[] args){
-        System.out.println("1234");
-        System.out.println(RegexUtil.excludeLetter("skdj"));
-        System.out.println(RegexUtil.excludeLetter(" skdj  中国 "));
-        System.out.println(RegexUtil.excludeLetter("  100%  中国 ,93 % "));
-        System.out.println(RegexUtil.specialCategoryMatch("A0123"," 45% 棉 ,5% 面部，快点看看 50%"));
+//        System.out.println("1234");
+//        System.out.println(RegexUtil.excludeLetter("skdj"));
+//        System.out.println(RegexUtil.excludeLetter(" skdj  中国 "));
+//        System.out.println(RegexUtil.excludeLetter("  100%  中国 ,93 % "));
+        System.out.println(RegexUtil.specialCategoryMatch("A0123"," 50% 棉 ,100% 面部，快点看看 50%"));
         System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A"," sdkj pvc kkd"));
-        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任PVC的"));
-        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任 pvc 的l"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","PVC"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任100% pvc 的"));
     }
 }
