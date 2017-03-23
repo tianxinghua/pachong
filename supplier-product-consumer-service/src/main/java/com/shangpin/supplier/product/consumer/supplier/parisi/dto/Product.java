@@ -1,7 +1,5 @@
 package com.shangpin.supplier.product.consumer.supplier.parisi.dto;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import lombok.Getter;
 import lombok.Setter;
 

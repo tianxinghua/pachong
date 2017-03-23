@@ -14,6 +14,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierDate;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
@@ -42,6 +43,8 @@ public abstract class IAtelierHandler{
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	/**
 	 * 处理spu行数据，返回一个spu对象
@@ -87,7 +90,11 @@ public abstract class IAtelierHandler{
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				AtelierDate atelierDate = JsonUtil.deserialize(message.getData(),AtelierDate.class);
-				AtelierSpu atelierSpu = handleSpuData(atelierDate.getSpu());			
+				String supplierId = message.getSupplierId();
+				AtelierSpu atelierSpu = handleSpuData(atelierDate.getSpu());	
+				
+				mongoService.save(supplierId, atelierSpu.getSpuId(), atelierDate);
+				
 				HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
 				List<Image> images = converImage(atelierDate.getImage());
 				if(null == images){
@@ -95,14 +102,14 @@ public abstract class IAtelierHandler{
 				}else{
 					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 				}
-				boolean success = convertSpu(message.getSupplierId(),atelierSpu,hubSpu,message.getData());
+				boolean success = convertSpu(supplierId,atelierSpu,hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				if(null != atelierDate.getSku()){				
 					AtelierPrice atelierPrice = handlePriceData(atelierDate.getPrice());
 					for(String skuColumn : atelierDate.getSku()){
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 						AtelierSku atelierSku = handleSkuData(skuColumn);					
-						boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),atelierSpu,atelierSku,atelierPrice,hubSku);
+						boolean skuSucc = convertSku(supplierId,hubSpu.getSupplierSpuId(),atelierSpu,atelierSku,atelierPrice,hubSku);
 						if(skuSucc){
 							hubSkus.add(hubSku);
 						}					
@@ -111,7 +118,7 @@ public abstract class IAtelierHandler{
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (Exception e) {

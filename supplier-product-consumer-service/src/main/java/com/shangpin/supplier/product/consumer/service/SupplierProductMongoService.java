@@ -25,6 +25,12 @@ public class SupplierProductMongoService {
 	@Autowired
 	private SupplierProductGateway gateway;
 	
+	/**
+	 * 保存原始数据到mongodb
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @param spuDto
+	 */
 	public <T> void save(String supplierId,String supplierSpuNo,T spuDto){
 		try {
 			SupplierProductDto supplierProductDto = new SupplierProductDto();

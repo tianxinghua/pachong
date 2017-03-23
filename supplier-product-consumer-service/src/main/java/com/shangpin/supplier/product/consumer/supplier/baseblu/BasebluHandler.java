@@ -17,6 +17,7 @@ import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.baseblu.dto.Item;
@@ -33,14 +34,20 @@ public class BasebluHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				Item item = JsonUtil.deserialize(message.getData(), Item.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, item.getSku_brand()+item.getColor(), item);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),item,hubSpu,message.getData());
+				boolean success = convertSpu(supplierId,item,hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 
 				String size_stock_barcode = item.getSize_stock_barcode();
@@ -49,7 +56,7 @@ public class BasebluHandler implements ISupplierHandler {
 					if (i % 3 == 0) {
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 
-						boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku,strs[i],strs[i+1],strs[i+2]);
+						boolean skuSuc = convertSku(supplierId,hubSpu.getSupplierSpuId(),item,hubSku,strs[i],strs[i+1],strs[i+2]);
 						if(skuSuc){
 							hubSkus.add(hubSku);
 						}
@@ -60,11 +67,11 @@ public class BasebluHandler implements ISupplierHandler {
 
 				//处理图片
 				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(message.getSupplierId(), hubSpu.getSupplierSeasonname())){
+				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
 					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
 		} catch (EpHubSupplierProductConsumerException e) {

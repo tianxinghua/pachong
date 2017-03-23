@@ -17,6 +17,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -42,21 +43,27 @@ public class DellogliostoreHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				DellogSpuDto dellogSpuDto = JsonUtil.deserialize(message.getData(), DellogSpuDto.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, dellogSpuDto.getSpuId(), dellogSpuDto);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),dellogSpuDto,hubSpu);
+				boolean success = convertSpu(supplierId,dellogSpuDto,hubSpu);
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					List<DellogSkuDto> skus = dellogSpuDto.getSkus();
 					if(CollectionUtils.isNotEmpty(skus)){
 						for(DellogSkuDto dellogSkuDto : skus){
 							HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-							boolean succSku = convertSku(message.getSupplierId(),dellogSkuDto,hubSku);
+							boolean succSku = convertSku(supplierId,dellogSkuDto,hubSku);
 							if(succSku){
 								hubSkus.add(hubSku);
 							}
@@ -64,7 +71,7 @@ public class DellogliostoreHandler implements ISupplierHandler {
 					}
 					List<Image> images = converImage(dellogSpuDto.getPictures());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (Exception e) {

@@ -18,6 +18,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
@@ -34,14 +35,20 @@ public class GiglioHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				Map<?,?> colunms = JsonUtil.deserialize(message.getData(),Map.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, value(colunms,"idProdotto"), colunms);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),hubSpu,colunms);
+				boolean success = convertSpu(supplierId,hubSpu,colunms);
 				List<Image> images = converImage(colunms);
 				if(CollectionUtils.isNotEmpty(images)){
 					hubSpu.setIsexistpic(Isexistpic.YES.getIndex());
@@ -50,13 +57,13 @@ public class GiglioHandler implements ISupplierHandler {
 				}
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-				boolean sucSku = convertSku(message.getSupplierId(),hubSku,colunms);
+				boolean sucSku = convertSku(supplierId,hubSku,colunms);
 				if(sucSku){
 					hubSkus.add(hubSku);
 				}
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(), supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
 				}
 			}
 		} catch (Exception e) {

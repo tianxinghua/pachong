@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -32,6 +33,8 @@ public class TheclutcherHandler implements ISupplierHandler{
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -39,17 +42,21 @@ public class TheclutcherHandler implements ISupplierHandler{
 			if(!StringUtils.isEmpty(message.getData())){
 				Product product = JsonUtil.deserialize(message.getData(), Product.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),product,hubSpu);
+				String supplierId = message.getSupplierId();
+				boolean success = convertSpu(supplierId,product,hubSpu);
+				
+				mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), product);
+				
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-					boolean succSku = convertSku(message.getSupplierId(),product,hubSku);
+					boolean succSku = convertSku(supplierId,product,hubSku);
 					if(succSku){
 						hubSkus.add(hubSku);
 					}
 					List<Image> images = converImage(product.getImages());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (Exception e) {

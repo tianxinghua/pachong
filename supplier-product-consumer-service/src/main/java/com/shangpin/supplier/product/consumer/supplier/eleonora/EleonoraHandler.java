@@ -17,6 +17,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -38,12 +39,18 @@ public class EleonoraHandler implements ISupplierHandler {
     private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
     @Autowired
     private PictureHandler pictureHandler;
+    @Autowired
+	private SupplierProductMongoService mongoService;
 
     @Override
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         try {
             if(!StringUtils.isEmpty(message.getData())){
             	Product product = JsonUtil.deserialize(message.getData(), Product.class);
+            	String supplierId = message.getSupplierId();
+            	
+            	mongoService.save(supplierId, product.getProductId(), product);
+            	
                 if(null!=product){
                         HubSupplierSpuDto supplierSpuDto = new HubSupplierSpuDto();
                         boolean success = false;
@@ -55,12 +62,12 @@ public class EleonoraHandler implements ISupplierHandler {
                                 //处理SPU   颜色需要特殊处理
                                 String color = itemList.get(0).getColor();
                                 supplierSpuDto.setSupplierSpuColor(color);
-                                success = convertSpu(message.getSupplierId(),product,supplierSpuDto);
+								success = convertSpu(supplierId,product,supplierSpuDto);
                                 //处理图片
                                 String pic = itemList.get(0).getPicture();
                                 for(Item item:itemList){
                                     HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-                                    boolean skuSuc = convertSku(message.getSupplierId(),supplierSpuDto.getSupplierSpuId(),item,hubSku);
+                                    boolean skuSuc = convertSku(supplierId,supplierSpuDto.getSupplierSpuId(),item,hubSku);
                                     if(skuSuc){
                                         hubSkus.add(hubSku);
                                     }
@@ -73,7 +80,7 @@ public class EleonoraHandler implements ISupplierHandler {
                                         List<String> picUrlList = Arrays.asList(picArray);
                                         supplierPicture = pictureHandler.initSupplierPicture(message, supplierSpuDto, converImage(picUrlList));
                                     }
-                                    supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
+                                    supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
                                 }
                             }else{
                                 log.error("异常： spu : " + product.getProducer_id() +"没有sku");

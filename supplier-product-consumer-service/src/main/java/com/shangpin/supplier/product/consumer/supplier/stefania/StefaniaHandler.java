@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
@@ -41,31 +42,37 @@ public class StefaniaHandler implements ISupplierHandler{
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				StefProduct stefProduct = JsonUtil.deserialize(message.getData(), StefProduct.class);
+				String supplierId = message.getSupplierId();
 				for(StefItem stefItem :stefProduct.getItems().getItems()){
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-					List<Image> images = converImage(message.getSupplierId(),stefItem);
+					List<Image> images = converImage(supplierId,stefItem);
 					if(null == images){
 						hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
 					}else{
 						hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 					}
-					boolean success = convertSpu(message.getSupplierId(), stefProduct, stefItem, hubSpu,message.getData());
+					boolean success = convertSpu(supplierId, stefProduct, stefItem, hubSpu,message.getData());
+					
+					mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), stefItem);
+					
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-					boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), stefItem, hubSku);
+					boolean skuSucc = convertSku(supplierId, hubSpu.getSupplierSpuId(), stefItem, hubSku);
 					if(skuSucc){
 						hubSkus.add(hubSku);
 					}
 					//处理图片
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 					if(success){
-						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 					}
 				}
 			}	
