@@ -47,30 +47,40 @@ public class RegexUtil {
      * 品类特殊处理
      * @param category
      * @param val
-     * @return
+     * @return 校验成功 返回null ，失败返回错误原因
      */
-    public static boolean specialCategoryMatch(String category,String val) {
-        if(StringUtils.isBlank(val)) return false;
-        String regex = "[^A-Za-z]+";
-        boolean result =  match(regex, val);
-        if(result){
-
-            if(category.startsWith("A01")){  //服装
-                if(val.indexOf("%")<0){
-                    return false;
+    public static String specialCategoryMatch(String category,String val) {
+    	
+    	try{
+    		if(StringUtils.isBlank(val)) return "材质为空";
+            String regex = "[^A-Za-z]+";
+            boolean result =  match(regex, val);
+            if(result){
+                if(category.startsWith("A01")){  //服装
+                    if(val.indexOf("%")<0){
+                    	 return "材质缺少百分比";
+                    }else{
+                        return judgeNum(val);
+                    }
                 }else{
-                    result = judgeNum(val);
+                	return null;
+                }
+            }else{
+                //排除PVC
+                String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
+                result =  match(regexPvc, val.toLowerCase());
+                if(result){
+                	return null;
+                }else{
+                	return "材质中含有英文字符";
                 }
             }
-        }else{
-            //排除PVC
-            String regexPvc = "[^A-Za-z]+pvc[^A-Za-z]+";
-            result =  match(regexPvc, val.toLowerCase());
-        }
-        return result ;
+    	}catch(Exception e){
+    		return "材质校验异常："+e.getMessage();
+    	}
     }
 
-    private static boolean judgeNum(String val){
+    private static String judgeNum(String val){
           int total = 0;
           String tmp = "";
           val =  replaceBlank(val);
@@ -81,12 +91,12 @@ public class RegexUtil {
 
           }
           if(total==0){
-              return false;
+        	  return "材质百分比错误";
           }else{
               if(0==total%100){
-                  return true;
+            	  return null;
               }else{
-                  return false;
+            	  return "材质百分比错误";
               }
           }
     }
