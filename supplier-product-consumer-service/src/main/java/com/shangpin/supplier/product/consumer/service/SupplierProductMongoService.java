@@ -44,11 +44,11 @@ public class SupplierProductMongoService {
 		
 	}
 	
-	public static void main(String[] args) {
-		AlducaSpuDto dto = new AlducaSpuDto();
-		Map<String,String> map = new BeanMap(dto);
-		System.out.println(map.toString());
-		
-				
-	}
+//	public static void main(String[] args) {
+//		AlducaSpuDto dto = new AlducaSpuDto();
+//		Map<String,String> map = new BeanMap(dto);
+//		System.out.println(map.toString());
+//		
+//				
+//	}
 }
