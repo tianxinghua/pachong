@@ -815,6 +815,9 @@ public class ExportServiceImpl {
 				HubWaitSelectRequestWithPageDto.class);
 		pendingQuryDto.setPictureState(HubSpuPictureState.UNHANDLED.getIndex());
 		pendingQuryDto.setPageNo(0);
+		List<Byte> selectList = new ArrayList<Byte>();
+		selectList.add((byte)2);
+		pendingQuryDto.setSupplierSelectState(selectList);
 		pendingQuryDto.setPageSize(100000);
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
 		Map<Long,String> mapTemp = new HashMap<Long,String>();
