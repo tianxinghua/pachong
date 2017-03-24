@@ -52,6 +52,8 @@ public class ProductExportHandler {
 					exportServiceImpl.exportHubSelected(message); 
 				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_PIC.getIndex()){
 					exportServiceImpl.exportHubPicSelected(message); 
+				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_NOT_HANDLE_PIC.getIndex()){
+					exportServiceImpl.exportHubPicSelected2(message); 
 				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex()){
 					exportServiceImpl.exportHubCheckPicSelected(message); 
 				}

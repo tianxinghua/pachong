@@ -3,10 +3,10 @@ package com.shangpin.asynchronous.task.consumer.productimport.pending.spu.servic
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -16,14 +16,13 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -31,8 +30,6 @@ import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -87,7 +84,8 @@ public class PendingSpuImportService {
 		return checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct,createUser);
 	}
 	// 校验数据以及保存到hub表
-		private String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
+	
+		public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
 				throws Exception {
 			
 			if (listHubProduct == null) {
@@ -100,7 +98,6 @@ public class PendingSpuImportService {
 				if (product == null || StringUtils.isBlank(product.getSupplierId())) {
 					continue;
 				}
-				
 				
 				map = new HashMap<String, String>();
 				map.put("taskNo", taskNo);
@@ -228,16 +225,21 @@ public class PendingSpuImportService {
 	
 			if (hubSkuPendingDto.getHubSkuSize() != null) {
 				MatchSizeResult matchSizeResult = taskService.matchSize(pendingSpuImportDto.getHubBrandNo(),pendingSpuImportDto.getHubCategoryNo(),hubSkuPendingDto.getHubSkuSize());
-				if (matchSizeResult.isPassing()) {
-					flag = true;
-					hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
-					hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
-					hubPendingSkuCheckResult.setSizeValue(matchSizeResult.getSizeValue());
-					pendingSkuImportDto.setSizeType(matchSizeResult.getSizeType());
-				} else {
-					isMultiSizeType = matchSizeResult.isMultiSizeType();
-					flag = false;
+				if(matchSizeResult!=null){
+					if (matchSizeResult.isPassing()) {
+						flag = true;
+						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
+						hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
+						hubPendingSkuCheckResult.setSizeValue(matchSizeResult.getSizeValue());
+						pendingSkuImportDto.setSizeType(matchSizeResult.getSizeType());
+						
+					} else {
+						isMultiSizeType = matchSizeResult.isMultiSizeType();
+						flag = false;
+					}
 					result = matchSizeResult.getResult();
+				}else{
+					result = "返回结果为空，校验失败";
 				}
 			} else {
 				flag = false;

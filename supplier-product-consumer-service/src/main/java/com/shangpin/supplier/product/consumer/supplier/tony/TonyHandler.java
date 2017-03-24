@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
@@ -41,12 +42,18 @@ public class TonyHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				TonyItems tonyItems = JsonUtil.deserialize(message.getData(), TonyItems.class);
+				
+				String supplierId = message.getSupplierId();
+				mongoService.save(supplierId, tonyItems.getSku_parent(), tonyItems);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				List<Image> images =  converImage(tonyItems.getImages());
 				if(null == images){
@@ -54,17 +61,17 @@ public class TonyHandler implements ISupplierHandler {
 				}else{
 					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 				}
-				boolean success = convertSpu(message.getSupplierId(), tonyItems, hubSpu,message.getData());
+				boolean success = convertSpu(supplierId, tonyItems, hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-				boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), tonyItems, hubSku);
+				boolean skuSucc = convertSku(supplierId, hubSpu.getSupplierSpuId(), tonyItems, hubSku);
 				if(skuSucc){
 					hubSkus.add(hubSku);
 				}
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (EpHubSupplierProductConsumerException e) {

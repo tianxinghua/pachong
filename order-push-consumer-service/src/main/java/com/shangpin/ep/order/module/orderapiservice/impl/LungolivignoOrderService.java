@@ -54,7 +54,7 @@ public class LungolivignoOrderService implements IOrderService{
     OpenApiService openApiService;  
     
     
-	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*5, 1000*60 * 5, 1000*60 * 5);	
+	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*2, 1000*60 * 2, 1000*60 * 2);	
 	    
     @Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {

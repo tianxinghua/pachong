@@ -16,8 +16,8 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.alducadaosta.dto.AlducaSkuDto;
@@ -42,21 +42,27 @@ public class AlducadaostaHandler implements ISupplierHandler{
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				AlducaSpuDto alducaSpuDto = JsonUtil.deserialize(message.getData(), AlducaSpuDto.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, alducaSpuDto.getSpuId(), alducaSpuDto);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),alducaSpuDto,hubSpu);
+				boolean success = convertSpu(supplierId,alducaSpuDto,hubSpu);
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					List<AlducaSkuDto> skus = alducaSpuDto.getSkus();
 					if(CollectionUtils.isNotEmpty(skus)){
 						for(AlducaSkuDto alducaSkuDto : skus){
 							HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-							boolean succSku = convertSku(message.getSupplierId(),alducaSkuDto,hubSku);
+							boolean succSku = convertSku(supplierId,alducaSkuDto,hubSku);
 							if(succSku){
 								hubSkus.add(hubSku);
 							}
@@ -64,10 +70,10 @@ public class AlducadaostaHandler implements ISupplierHandler{
 					}
 					List<Image> images = converImage(alducaSpuDto.getPictures());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("alducadaosta异常："+e.getMessage(),e);
 		}
 		

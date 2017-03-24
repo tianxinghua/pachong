@@ -101,7 +101,7 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			String jsonValue = json;
 			orderDTO.setLogContent("开始推送订单");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			operateData = coltortiPushOrder("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(1000*60*3,1000*60*3,1000*60*3), null, jsonValue,param1,"SHANGPIN", "12345678",orderDTO);
+			operateData = coltortiPushOrder("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2), null, jsonValue,param1,"SHANGPIN", "12345678",orderDTO);
 			orderDTO.setLogContent("推送成功："+json+" 推送订单数据为："+json);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			orderDTO.setSupplierOrderNo(orderDTO.getPurchaseNo());

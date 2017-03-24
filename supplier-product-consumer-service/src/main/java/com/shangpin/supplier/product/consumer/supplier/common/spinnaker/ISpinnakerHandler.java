@@ -14,7 +14,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -39,6 +39,8 @@ public abstract class ISpinnakerHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 	
 	/**
 	 * 将原始对象转换成hub对象
@@ -74,7 +76,11 @@ public abstract class ISpinnakerHandler {
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
-				Spu spu = JsonUtil.deserialize(message.getData(), Spu.class);			
+				Spu spu = JsonUtil.deserialize(message.getData(), Spu.class);	
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, spu.getProduct_id(), spu);
+				
 				if(null != spu.getItems() && null != spu.getItems().getItem() && spu.getItems().getItem().size()>0){
 					for(Sku sku : spu.getItems().getItem()){
 						HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
@@ -84,9 +90,9 @@ public abstract class ISpinnakerHandler {
 						}else{
 							hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
 						}
-						boolean success = convertSpu(message.getSupplierId(),spu,sku,hubSpu,message.getData());
+						boolean success = convertSpu(supplierId,spu,sku,hubSpu,message.getData());
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-						boolean skuSucc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),sku,hubSku);
+						boolean skuSucc = convertSku(supplierId,hubSpu.getSupplierSpuId(),sku,hubSku);
 						List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 						if(skuSucc){
 							hubSkus.add(hubSku);
@@ -94,13 +100,13 @@ public abstract class ISpinnakerHandler {
 						//处理图片
 						SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
 						if(success){
-							supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+							supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 						}
 						
 					}
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("Spinnaker系统供应商 "+message.getSupplierName()+"异常："+e.getMessage(),e); 
 		}
 	}

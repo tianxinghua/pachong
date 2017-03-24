@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
@@ -20,9 +19,7 @@ import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
-import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
@@ -55,7 +52,7 @@ public class SupplierProductRetryService {
 	 * @param picDtos
 	 */
 	public void processProduct(Byte state) throws Exception{
-		
+		long start = System.currentTimeMillis();
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		criteria.createCriteria().andInfoStateEqualTo(state);
 		criteria.setPageNo(1);
@@ -63,11 +60,12 @@ public class SupplierProductRetryService {
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
 		
 		if(products!=null&&products.size()>0){
-			
+			log.info("========系统扫描到infoState："+state+"需要重新推送的数据===");
 			for(HubSupplierSpuDto spu : products){
 				loopProduct(spu,state);
 				updateSupplierInfoState(spu);
 			}
+			log.info("=====系统扫描到需要重新推送的数据结束,耗时{}毫秒======",System.currentTimeMillis()-start);
 			if(products.size()==PAGESIZE){
 				processProduct(state);
 			}
@@ -85,11 +83,13 @@ public class SupplierProductRetryService {
 		
 		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId());
 		if(season==null){
+			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+":"+spu.getSupplierSeasonname()+"非当季");
 			return;
 		}
 	
 		HubSupplierValueMappingDto supplier = supplierProductPictureManager.findHubSupplierValueMapping(spu.getSupplierId());
 		if(supplier==null){
+			log.info("===="+spu.getSupplierId()+"未找到供应商名称");
 			return;
 		}
  
@@ -131,7 +131,9 @@ public class SupplierProductRetryService {
 					log.error(e.getMessage(), e);
 				}				
 			}
-		}		
+		}else{
+			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
+		}
 		pendingSpu.setSkus(skus);
 		pendingProduct.setData(pendingSpu);		
 		spuHead.setSkus(headSkus);	
@@ -162,6 +164,7 @@ public class SupplierProductRetryService {
 	 * @param pagesize 每页记录数
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private Integer getPageCount(Integer totalSize, Integer pageSize) {
 		if(totalSize % pageSize == 0){
 			return totalSize/pageSize;

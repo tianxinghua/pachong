@@ -203,7 +203,7 @@ public class SupplierProductPictureService {
 						HubSpuPendingPicDto dto = supplierProductPictureManager.queryById(spuPendingPicId);
 						if (dto != null && dto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
 							Integer retryCount = dto.getRetryCount();
-							if (retryCount != null && retryCount > 20) {
+							if (retryCount != null && retryCount > 3) {
 								continue;
 							}
 							//shangpinRedis.set(assemblyKey(spuPendingPicId), String.valueOf(spuPendingPicId));
@@ -257,17 +257,12 @@ public class SupplierProductPictureService {
 				count = retryCount == null ? 1 : retryCount + 1;
 				updateDto.setRetryCount(count);
 				supplierProductPictureManager.updateSelective(updateDto);
+				spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
 			} 
 		} catch (Throwable e) {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
 		} finally {
 			shangpinRedis.del(assemblyKey(spuPendingPicId));
-		}
-		try {
-			Thread.sleep(1000*25);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

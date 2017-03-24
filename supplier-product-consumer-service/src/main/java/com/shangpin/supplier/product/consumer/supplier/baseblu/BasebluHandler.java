@@ -1,28 +1,29 @@
 package com.shangpin.supplier.product.consumer.supplier.baseblu;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.baseblu.dto.Item;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.monnierfreres.dto.Product;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @Component("basebluHandler")
 @Slf4j
@@ -32,14 +33,20 @@ public class BasebluHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				Item item = JsonUtil.deserialize(message.getData(), Item.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, item.getSku_brand()+item.getColor(), item);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),item,hubSpu,message.getData());
+				boolean success = convertSpu(supplierId,item,hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 
 				String size_stock_barcode = item.getSize_stock_barcode();
@@ -48,7 +55,7 @@ public class BasebluHandler implements ISupplierHandler {
 					if (i % 3 == 0) {
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 
-						boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),item,hubSku,strs[i],strs[i+1],strs[i+2]);
+						boolean skuSuc = convertSku(supplierId,hubSpu.getSupplierSpuId(),item,hubSku,strs[i],strs[i+1],strs[i+2]);
 						if(skuSuc){
 							hubSkus.add(hubSku);
 						}
@@ -59,14 +66,14 @@ public class BasebluHandler implements ISupplierHandler {
 
 				//处理图片
 				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(message.getSupplierId(), hubSpu.getSupplierSeasonname())){
+				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
 					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("baseblu异常："+e.getMessage(),e);
 		}
 		

@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -14,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +30,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
@@ -39,6 +38,7 @@ import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
 import com.shangpin.asynchronous.task.consumer.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.util.HubWaitSelectStateDto;
 import com.shangpin.asynchronous.task.consumer.util.ImageUtils;
+import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuPictureState;
 import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
@@ -50,10 +50,13 @@ import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
@@ -119,6 +122,8 @@ public class ExportServiceImpl {
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
+	@Autowired
+	HubSpuGateWay hubSpuGateWay;
 
 	private static final Integer PAGESIZE = 50;
 
@@ -250,7 +255,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param wb
 	 */
-	private void saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
+	private boolean saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
 		FileOutputStream fout = null;
 		File file = null;
 		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
@@ -265,6 +270,7 @@ public class ExportServiceImpl {
 			log.info(taskNo+" 更新任务状态成功！");
 			is_upload_success = true;
 		} catch (Exception e) {
+			is_upload_success = false;
 			log.error(taskNo+" 保存并上传ftp时异常：" + e.getMessage(), e);
 			throw e;
 		} finally {
@@ -276,10 +282,11 @@ public class ExportServiceImpl {
 					file.delete();
 				}
 			} catch (Exception e2) {
+				is_upload_success = false;
 				throw e2;
 			}
-
 		}
+		return is_upload_success;
 	}
 
 	/**
@@ -406,7 +413,11 @@ public class ExportServiceImpl {
 					}
 				} else if ("seasonYear".equals(rowTemplate[i])) {
 					setRowOfSeasonYear(row, product, cls, i);
-				} else if ("seasonName".equals(rowTemplate[i])) {
+				} else if ("seasonYear".equals(rowTemplate[i])) {
+					setRowOfSeasonYear(row, product, cls, i);
+				}else if ("totalStock".equals(rowTemplate[i])) {
+					setStockTotal(row, product, cls, i);
+				}else if ("seasonName".equals(rowTemplate[i])) {
 					setRowOfSeasonName(row, product, cls, i);
 				} else if ("memo".equals(rowTemplate[i])) {
 					if (null == product.getSpuModelState() || 1 != product.getSpuModelState()) {
@@ -466,6 +477,19 @@ public class ExportServiceImpl {
 				continue;
 			}
 		}
+	}
+
+	private void setStockTotal(HSSFRow row, PendingProductDto product, Class<?> clazz, int i) {
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuIdEqualTo(product.getSupplierSpuId());
+		List<HubSupplierSkuDto> list = hubSupplierSkuGateWay.selectByCriteria(criteria);
+		int totalStock = 0;
+		if(list!=null&&list.size()>0){
+			for(HubSupplierSkuDto sku:list){
+				totalStock+=sku.getStock().intValue();
+			}
+		}
+		row.createCell(i).setCellValue(totalStock);
 	}
 
 	/**
@@ -643,10 +667,10 @@ public class ExportServiceImpl {
 				
 				result.add(map);
 			}
-		
+			Map<String,String> temMap = new HashMap<>();
 			if (supplierDto != null && supplierDto.getSupplierName() != null) {
 				String name = supplierDto.getSupplierName();
-				String reg = "[A-Za-z]+";
+				String reg = "[A-Za-z0-9]+";
 				Pattern pattern = Pattern.compile(reg);
 				Matcher matcher = pattern.matcher(name);
 				while (matcher.find()) {
@@ -660,13 +684,17 @@ public class ExportServiceImpl {
 				supplierName.append(supplierNo);
 			}
 			allResult.addAll(result);
+			if(temMap.containsKey(supplierName.toString())){
+				supplierName= supplierName.append("-").append(supplierNo).append(new Random().nextInt(10) + 1);
+			}
+			log.info("sheetName:"+supplierName.toString());
+			temMap.put(supplierName.toString(), "");	
 			ExportExcelUtils.createSheet(workbook, supplierName.toString(), headers,  columns, result);
 		}
 		log.info("allResult:"+allResult.size());
 		ExportExcelUtils.createSheet(workbook, "all", allHeaders,allColumns, allResult);
 		return workbook;
 	}
-
 	private void convertTOExcel(HubWaitSelectResponseDto response, Map<String, String> map,String supplierName) {
 		if (response.getSupplierSkuId() != null) {
 
@@ -715,7 +743,6 @@ public class ExportServiceImpl {
 			map.put("updateTime", DateTimeUtil.getTime(response.getUpdateTime()));
 
 			String skuNo = getSopSkuNo(response.getSupplierId(), response.getSupplierSkuNo());
-			log.info("supplierSkuId：" + response.getSupplierSkuId() + "查询sopSkuNo:" + skuNo);
 			map.put("skuNo", skuNo);
 			
 			//新增
@@ -782,7 +809,31 @@ public class ExportServiceImpl {
 		HSSFWorkbook workbook = exportPic(pendingQuryDto);
 		saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook);
 	}
+	public void exportHubPicSelected2(ProductImportTask message) throws Exception  {
 
+		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
+				HubWaitSelectRequestWithPageDto.class);
+		pendingQuryDto.setPictureState(HubSpuPictureState.UNHANDLED.getIndex());
+		pendingQuryDto.setPageNo(0);
+		List<Byte> selectList = new ArrayList<Byte>();
+		selectList.add((byte)2);
+		pendingQuryDto.setSupplierSelectState(selectList);
+		pendingQuryDto.setPageSize(100000);
+		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
+		Map<Long,String> mapTemp = new HashMap<Long,String>();
+		HSSFWorkbook workbook = exportPicExcel(list,mapTemp);
+		//如果上传成功，则更显数据库pictureState状态
+		if(saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook)){
+			HubSpuDto hubSpu = new HubSpuDto();
+			hubSpu.setPictureState(HubSpuPictureState.HANDLED.getIndex());
+			hubSpu.setPictureExportTime(new Date());
+			hubSpu.setPictureExportUser(pendingQuryDto.getCreateUser());
+			for(Map.Entry<Long,String> entry:mapTemp.entrySet()){
+				hubSpu.setSpuId(entry.getKey());
+				hubSpuGateWay.updateByPrimaryKeySelective(hubSpu);
+			}
+		}
+	}
 	public void exportHubCheckPicSelected(ProductImportTask message)  throws Exception{
 		Gson gson = new Gson();
 		List<HubWaitSelectStateDto> list = gson.fromJson(message.getData(),  new TypeToken<ArrayList<HubWaitSelectStateDto>>()
@@ -839,21 +890,21 @@ public class ExportServiceImpl {
 		pendingQuryDto.setPageNo(0);
 		pendingQuryDto.setPageSize(100000);
 		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
-		HSSFWorkbook wb = exportPicExcel(list);
+		Map<Long,String> mapTemp = new HashMap<Long,String>();
+		HSSFWorkbook wb = exportPicExcel(list,mapTemp);
 		return wb;
 	}
 	
-	public HSSFWorkbook exportPicExcel(List<HubWaitSelectResponseDto> list)  throws Exception  {
+	public HSSFWorkbook exportPicExcel(List<HubWaitSelectResponseDto> list,Map<Long,String> mapTemp)  throws Exception  {
 
 		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
-				"url9", "url10" };
+				"url9", "url10","操作人","导出时间" };
 		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
-				"url9", "url10" };
+				"url9", "url10" ,"pictureExportUser","pictureExportTime"};
 		String title = "图片导出";
 
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		Map<String, String> map = null;
-		Map<Long,String> mapTemp = new HashMap<Long,String>();
 		log.info("list总大小："+list.size());
 		long start = System.currentTimeMillis();
 		for (HubWaitSelectResponseDto response : list) {
@@ -884,6 +935,10 @@ public class ExportServiceImpl {
 			}
 			map.put("spSkuNo", spSkuNo);
 			map.put("hubSpuNo", "HUB-"+response.getSpuNo());
+			map.put("pictureExportUser",response.getPictureExportUser());
+			if(response.getPictureExportTime()!=null){
+				map.put("pictureExportTime",DateTimeUtil.getTime(response.getPictureExportTime()));	
+			}
 			result.add(map);
 		}
 		log.info("生成excel时间："+(System.currentTimeMillis()-start));

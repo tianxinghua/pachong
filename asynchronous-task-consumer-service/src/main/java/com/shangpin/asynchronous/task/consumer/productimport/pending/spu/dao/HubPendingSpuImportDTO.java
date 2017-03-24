@@ -41,4 +41,6 @@ public class HubPendingSpuImportDTO {
 	private String memo;
 	private String spuState;
 	private String specificationType;
+	private String totalStock;
+	private String updateUser;
 }

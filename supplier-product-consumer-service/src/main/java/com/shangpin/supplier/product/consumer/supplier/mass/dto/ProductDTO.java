@@ -1,12 +1,12 @@
 package com.shangpin.supplier.product.consumer.supplier.mass.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Created by lizhongren on 2017/2/18.
@@ -16,7 +16,12 @@ import java.util.Date;
 @ToString
 public class ProductDTO implements Serializable {
 
-    private String supplierId;//供货商门户编号
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3339978607502926167L;
+
+	private String supplierId;//供货商门户编号
 
     private String spuId; //必须
 

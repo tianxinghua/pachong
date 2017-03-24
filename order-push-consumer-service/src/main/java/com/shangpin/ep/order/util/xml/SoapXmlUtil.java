@@ -39,8 +39,8 @@ public class SoapXmlUtil {
 		InputStream in = null;
 		try {
 			HttpClient httpClient = new HttpClient();
-			httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000*60*10);
-			httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000*60*10);
+			httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000*60*2);
+			httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000*60*2);
 			PostMethod postMethod = new PostMethod(serviceUrl);
 	        postMethod.setRequestHeader("SOAPAction", sopAction);
 	        postMethod.setRequestHeader("Content-Type", contentType);	        
