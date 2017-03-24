@@ -48,7 +48,6 @@ public class GmsController {
 	 */
 	@RequestMapping(value = "/select-brand/{brandNo}")
 	public BrandDom findBrand(@PathVariable("brandNo") String brandNo){
-		log.info(GmsController.class.getName()+".findBrand接收到的参数为:{}", brandNo);
 		BrandDom brand = brandService.getGmsBrand(brandNo);
 		return brand;
 	}
@@ -59,7 +58,6 @@ public class GmsController {
 	 */
 	@RequestMapping(value = "/select-category/{categoryNo}")
 	public FourLevelCategory findCategory(@PathVariable("categoryNo") String categoryNo){
-		log.info(GmsController.class.getName()+".findCategory接收到的参数为:{}", categoryNo.toString());
 		return categoryService.getGmsCateGory(categoryNo);
 	}
 	
@@ -79,7 +77,6 @@ public class GmsController {
 	 */
 	@RequestMapping(value = "/select-sopSkuNo")
 	public HubResponseDto<SopSkuDto> findSopSkuNo(@RequestBody SopSkuQueryDto queryDto){
-		log.info(GmsController.class.getName()+".findSopSkuNo接收到的参数为:{}", queryDto.toString());
 		try {
 			return sopSkuService.querySpSkuNoFromScm(queryDto);
 		} catch (JsonProcessingException e) {
@@ -94,7 +91,6 @@ public class GmsController {
 	 */
 	@RequestMapping(value = "/select-supplier/{supplierNo}")
 	public SupplierDTO getSupplierDto(@PathVariable("supplierNo") String supplierNo){
-		log.info(GmsController.class.getName()+".getSupplierDto接收到的参数为:{}", supplierNo);
 		return supplierService.getSupplier(supplierNo);
 	}
 }

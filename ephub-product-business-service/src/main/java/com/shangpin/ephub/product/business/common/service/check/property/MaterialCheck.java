@@ -34,15 +34,17 @@ public class MaterialCheck extends CommonCheckBase {
     		return null;
     	}
 		// 校验材质
+		String result = null;
 		hubSpuPendingIsExist.setHubMaterial(spuPendingDto.getHubMaterial());
 		if (StringUtils.isNotBlank(spuPendingDto.getHubMaterial())) {
-			if (RegexUtil.excludeLetter(spuPendingDto.getHubMaterial())) {
+			result = RegexUtil.specialCategoryMatch(spuPendingDto.getHubCategoryNo(),spuPendingDto.getHubMaterial());
+			if (result==null) {
 				hubSpuPendingIsExist.setMaterialState(MaterialState.HANDLED.getIndex());
 				return null;
 			}
 		}
 		hubSpuPendingIsExist.setMaterialState(MaterialState.UNHANDLED.getIndex());
-		return "材质校验失败";
+		return result;
 	}
 
 	@Override

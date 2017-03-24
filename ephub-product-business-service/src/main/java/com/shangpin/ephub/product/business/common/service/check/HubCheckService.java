@@ -207,9 +207,10 @@ public class HubCheckService {
 		}
 		//校验材质
 		if(StringUtils.isNoneBlank(hubProduct.getHubMaterial())){
-			if(!RegexUtil.excludeLetter(hubProduct.getHubMaterial())){
+			String resultMaterial = RegexUtil.specialCategoryMatch(hubProduct.getHubCategoryNo(),hubProduct.getHubMaterial());
+			if(resultMaterial!=null){
 				result.setPassing(false);
-				str.append("材质中含有英文字符："+hubProduct.getHubMaterial()) ;
+				str.append(resultMaterial+":"+hubProduct.getHubMaterial()) ;
 				result.setMaterial(false);
 	        }else{
 	        	result.setMaterial(true);
