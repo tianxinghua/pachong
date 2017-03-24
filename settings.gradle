@@ -1,2 +1,4 @@
 
 include "supplier-product-consumer-service", "picture-product-consumer-service", "pending-product-consumer-service", "order-push-consumer-service", "asynchronous-task-consumer-service"
+include 'price-push-consumer-service'
+
