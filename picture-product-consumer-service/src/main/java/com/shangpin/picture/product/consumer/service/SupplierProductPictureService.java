@@ -1,7 +1,5 @@
 package com.shangpin.picture.product.consumer.service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
