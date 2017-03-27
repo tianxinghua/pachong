@@ -278,7 +278,7 @@ public class SupplierProductPictureService {
 				Integer retryCount = hubSpuPendingPicDto.getRetryCount();
 				AuthenticationInformation information = null;
 				String supplierId = hubSpuPendingPicDto.getSupplierId();
-				if (StringUtils.isNotBlank(supplierId)) {
+				if (StringUtils.isNotBlank(supplierId)) { 
 						information = getAuthentication(supplierId);
 				}
 				String spPicUrl = hubSpuPendingPicDto.getSpPicUrl();
