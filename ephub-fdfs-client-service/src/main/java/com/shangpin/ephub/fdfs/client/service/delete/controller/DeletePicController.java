@@ -1,6 +1,5 @@
 package com.shangpin.ephub.fdfs.client.service.delete.controller;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,6 @@ import com.shangpin.ephub.fdfs.client.service.delete.dto.DeletePicDto;
 import com.shangpin.ephub.fdfs.client.service.delete.service.DeletePicService;
 
 import lombok.extern.slf4j.Slf4j;
-import sun.misc.BASE64Decoder;
 
 /**
  * <p>Title:UploadController.java </p>
