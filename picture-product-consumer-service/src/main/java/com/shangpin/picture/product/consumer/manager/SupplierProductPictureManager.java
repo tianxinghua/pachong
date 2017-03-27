@@ -1,5 +1,6 @@
 package com.shangpin.picture.product.consumer.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,12 @@ import org.springframework.stereotype.Component;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import com.shangpin.ephub.client.fdfs.dto.DeletePicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
+import com.shangpin.ephub.client.fdfs.gateway.DeletePicGateWay;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:SupplierProductPictureManager.java </p>
@@ -22,6 +27,7 @@ import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
  * @date 2017年1月2日 下午12:44:02
  */
 @Component
+@Slf4j
 public class SupplierProductPictureManager {
 	
 	@Autowired
@@ -29,6 +35,9 @@ public class SupplierProductPictureManager {
 	
 	@Autowired
 	private UploadPicGateway uploadPicGateway;
+	
+	@Autowired
+	private DeletePicGateWay deletePicGateWay;
 	/**
 	 * 保存初始化数据
 	 * @param picDto
@@ -108,6 +117,28 @@ public class SupplierProductPictureManager {
 	 */
 	public void deleteById(Long spuPendingPicId) {
 		hubSpuPendingPicGateWay.deleteByPrimaryKey(spuPendingPicId);
+	}
+	/**
+	 * 删除图片
+	 * @param spPicUrl 图片地址
+	 */
+	public boolean deleteImageBySpPicUrl(String spPicUrl) {
+		boolean flag = false;
+		DeletePicDto deletePicDto = new DeletePicDto();
+		List<String> urls = new ArrayList<>();
+		urls.add(spPicUrl);
+		deletePicDto.setUrls(urls);
+		try {
+			Map<String, Integer> result = deletePicGateWay.delete(deletePicDto);
+			Integer code = result.get(spPicUrl);
+			if (code == 0) {
+				flag = true;
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			log.error(e.getMessage(), e);
+		}
+		 return flag;
 	}
 
 }

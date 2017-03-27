@@ -281,16 +281,33 @@ public class SupplierProductPictureService {
 				if (StringUtils.isNotBlank(supplierId)) {
 						information = getAuthentication(supplierId);
 				}
-				pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
-				count = retryCount == null ? 1 : retryCount + 1;
-				updateDto.setRetryCount(count);
-				supplierProductPictureManager.updateSelective(updateDto);
-				spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
+				String spPicUrl = hubSpuPendingPicDto.getSpPicUrl();
+				int code = pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
+				if (code == 404 || code == 400) {
+					if (deleteImage(spPicUrl))supplierProductPictureManager.deleteById(spuPendingPicId);;
+				} else {
+					if (deleteImage(spPicUrl)){
+						count = retryCount == null ? 1 : retryCount + 1;
+						updateDto.setRetryCount(count);
+						supplierProductPictureManager.updateSelective(updateDto);
+						spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
+					}
+				}
 			} 
 		} catch (Throwable e) {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
 		} finally {
 			shangpinRedis.del(assemblyKey(spuPendingPicId));
 		}
+	}
+	/**
+	 * 删除图片
+	 * @param spPicUrl 图片地址
+	 */
+	private boolean deleteImage(String spPicUrl) {
+		if (StringUtils.isNotBlank(spPicUrl)) {
+			return supplierProductPictureManager.deleteImageBySpPicUrl(spPicUrl);
+		}
+		return true;
 	}
 }
