@@ -13,8 +13,8 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.biondioni.dto.Article;
@@ -37,32 +37,38 @@ public class BiondioniHandler implements ISupplierHandler {
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				Modele modele = JsonUtil.deserialize(message.getData(),Modele.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, modele.getNumMdle(), modele);
+				
 				List<Article> artList = modele.getArticleList();
 				for(Article article : artList){
 					HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-					boolean success = convertSpu(message.getSupplierId(), modele, article, hubSpu,message.getData());
+					boolean success = convertSpu(supplierId, modele, article, hubSpu,message.getData());
 					List<QtTaille> qtys = article.getTarifMagInternet().getList();
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					for(QtTaille qty : qtys){
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-						boolean skuSucc = convertSku(message.getSupplierId(), hubSpu.getSupplierSpuId(), modele, article, qty, hubSku);
+						boolean skuSucc = convertSku(supplierId, hubSpu.getSupplierSpuId(), modele, article, qty, hubSku);
 						if(skuSucc){
 							hubSkus.add(hubSku);
 						}
 					}
 					if(success){
-						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,null);
+						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,null);
 					}
 				}
 				
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("biondioni异常："+e.getMessage(), e); 
 		}
 	}

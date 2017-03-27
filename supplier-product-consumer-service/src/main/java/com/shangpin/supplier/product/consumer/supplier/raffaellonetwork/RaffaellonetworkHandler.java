@@ -16,15 +16,13 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.raffaellonetwork.dto.Product;
-import com.shangpin.supplier.product.consumer.supplier.studio69.dto.StudioSkuDto;
-import com.shangpin.supplier.product.consumer.supplier.studio69.dto.StudioSpuDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,14 +34,20 @@ public class RaffaellonetworkHandler implements ISupplierHandler{
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
 				Product product = JsonUtil.deserialize(message.getData(), Product.class);
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, product.getId(), product);
+				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),product,hubSpu);
+				boolean success = convertSpu(supplierId,product,hubSpu);
 				if(success){
 				
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
@@ -55,7 +59,7 @@ public class RaffaellonetworkHandler implements ISupplierHandler{
 						if(size.length==stock.length){
 							for (int i = 0; i < size.length; i++) {
 								HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-								boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),product,hubSku,size[i],stock[i]);
+								boolean skuSuc = convertSku(supplierId,hubSpu.getSupplierSpuId(),product,hubSku,size[i],stock[i]);
 								if(skuSuc){
 									hubSkus.add(hubSku);
 								}
@@ -65,7 +69,7 @@ public class RaffaellonetworkHandler implements ISupplierHandler{
 						}
 					}else{
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-						boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),product,hubSku,product.getSize(),product.getQuantity());
+						boolean skuSuc = convertSku(supplierId,hubSpu.getSupplierSpuId(),product,hubSku,product.getSize(),product.getQuantity());
 						if(skuSuc){
 							hubSkus.add(hubSku);
 						}
@@ -73,7 +77,7 @@ public class RaffaellonetworkHandler implements ISupplierHandler{
 					
 					List<Image> images = converImage(product);
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (Exception e) {

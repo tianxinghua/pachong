@@ -25,7 +25,7 @@ public class DelibertiServiceImpl implements IOrderService {
 	private static Logger logger = Logger.getLogger("info");
 	private static Logger loggerError = Logger.getLogger("error");
 
-	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
+	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*2, 1000 * 60*2);
 	
    @Autowired
     LogCommon logCommon;    

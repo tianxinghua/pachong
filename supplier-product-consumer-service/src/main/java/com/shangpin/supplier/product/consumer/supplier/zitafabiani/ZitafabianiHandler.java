@@ -17,6 +17,7 @@ import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -42,6 +43,8 @@ public class ZitafabianiHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -49,14 +52,18 @@ public class ZitafabianiHandler implements ISupplierHandler {
 			if(!StringUtils.isEmpty(message.getData())){
 				ZitaSpuDto zitaSpuDto = JsonUtil.deserialize(message.getData(), ZitaSpuDto.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),zitaSpuDto,hubSpu);
+				String supplierId = message.getSupplierId();
+				boolean success = convertSpu(supplierId,zitaSpuDto,hubSpu);
+				
+				mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), zitaSpuDto);
+				
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					List<ZitaSkuDto> skus = zitaSpuDto.getSkus();
 					if(CollectionUtils.isNotEmpty(skus)){
 						for(ZitaSkuDto zitaSkuDto : skus){
 							HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-							boolean succSku = convertSku(message.getSupplierId(),zitaSkuDto,hubSku);
+							boolean succSku = convertSku(supplierId,zitaSkuDto,hubSku);
 							if(succSku){
 								hubSkus.add(hubSku);
 							}
@@ -64,7 +71,7 @@ public class ZitafabianiHandler implements ISupplierHandler {
 					}
 					List<Image> images = converImage(zitaSpuDto.getPictures());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 		} catch (Exception e) {

@@ -34,7 +34,7 @@ public class MontiOrderService implements IOrderService {
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
-    private static OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
+    private static OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*2, 1000 * 60*2);
     private  String cancelUrl = null;
     private  String queryOrderUrl = null;
     private  String setOrderUrl = null;

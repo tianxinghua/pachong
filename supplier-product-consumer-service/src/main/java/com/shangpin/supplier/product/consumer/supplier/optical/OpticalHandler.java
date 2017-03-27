@@ -1,5 +1,15 @@
 package com.shangpin.supplier.product.consumer.supplier.optical;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -7,25 +17,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.sarenza.dto.Product;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 暂停对接
@@ -38,6 +37,8 @@ public class OpticalHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -51,23 +52,27 @@ public class OpticalHandler implements ISupplierHandler {
 					e.printStackTrace();
 				}
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),contentList,hubSpu,message.getData());
+				String supplierId = message.getSupplierId();
+				boolean success = convertSpu(supplierId,contentList,hubSpu,message.getData());
+				
+				mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), message.getData());
+				
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-				boolean skuSuc = convertSku(message.getSupplierId(),hubSpu.getSupplierSpuId(),contentList,hubSku);
+				boolean skuSuc = convertSku(supplierId,hubSpu.getSupplierSpuId(),contentList,hubSku);
 				if(skuSuc){
 					hubSkus.add(hubSku);
 				}
 				//处理图片				
 				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(message.getSupplierId(), hubSpu.getSupplierSeasonname())){
+				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
 					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(contentList));
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}	
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("optical异常："+e.getMessage(),e);
 		}
 		

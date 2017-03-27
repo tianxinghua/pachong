@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.coltorti.convert.ColtortiProductConvert;
@@ -41,13 +42,19 @@ public class ColtortiHandler implements ISupplierHandler {
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(null != message && !StringUtils.isEmpty(message.getData())){
 				ColtortiProduct p = JsonUtil.deserialize(message.getData(), ColtortiProduct.class);
-				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(message.getSupplierId(), p,message.getData());
+				String supplierId = message.getSupplierId();
+				
+				mongoService.save(supplierId, p.getSkuId(), p);
+				
+				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(supplierId, p,message.getData());
 				List<Image> images = ColtortiProductConvert.productPic(p);
 				if(null != images){
 					supplierSpuDto.setIsexistpic(Isexistpic.YES.getIndex());
@@ -62,19 +69,19 @@ public class ColtortiHandler implements ISupplierHandler {
 						Entry<String,String> map = iterator.next();
 						String size = map.getValue();
 						String sizeCode = map.getKey();
-						supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p,size,sizeCode);
+						supplierSkuDto = ColtortiProductConvert.product2sku(supplierId, p,size,sizeCode);
 						hubSkus.add(supplierSkuDto);
 					}
 				}else if(!StringUtils.isEmpty(p.getSizeKeyValue())){//用于经过尺码拆分后的新产品
 					int idx=p.getSizeKeyValue().lastIndexOf("#");
 					String size =  p.getSizeKeyValue().substring(idx+1);
 					String sizeCode = p.getSizeKeyValue().substring(idx+1);
-					supplierSkuDto = ColtortiProductConvert.product2sku(message.getSupplierId(), p,size,sizeCode);
+					supplierSkuDto = ColtortiProductConvert.product2sku(supplierId, p,size,sizeCode);
 					hubSkus.add(supplierSkuDto);
 				}
 				
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, supplierSpuDto, images);
-				supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(), message.getSupplierId(), message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
+				supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(), supplierId, message.getSupplierName(), supplierSpuDto, hubSkus,supplierPicture);
 			}
 		} catch (Exception e) {
 			log.error("coltorti异常："+e.getMessage(),e); 

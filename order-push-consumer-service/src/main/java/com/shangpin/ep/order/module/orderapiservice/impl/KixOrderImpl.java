@@ -185,7 +185,7 @@ public class KixOrderImpl  implements IOrderService {
 	 */
 //    @HystrixCommand(fallbackMethod = "handleException")
 	private String kixPushOrder(OrderDTO orderDTO, String type,String url, String json)  throws Exception{
-		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
+		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*2, 1000*60*2, 1000*60*2);
 		return HttpUtil45.operateData(type, "json", url, outTimeConf , null, json , null,null,  null);
 	}
 	

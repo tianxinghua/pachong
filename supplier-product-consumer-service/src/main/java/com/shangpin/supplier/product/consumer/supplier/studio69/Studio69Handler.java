@@ -16,8 +16,8 @@ import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerRuntimeException;
+import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
@@ -43,6 +43,8 @@ public class Studio69Handler implements ISupplierHandler{
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
 	@Autowired
 	private PictureHandler pictureHandler;
+	@Autowired
+	private SupplierProductMongoService mongoService;
 
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
@@ -50,14 +52,18 @@ public class Studio69Handler implements ISupplierHandler{
 			if(!StringUtils.isEmpty(message.getData())){
 				StudioSpuDto studioSpuDto = JsonUtil.deserialize(message.getData(), StudioSpuDto.class);
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				boolean success = convertSpu(message.getSupplierId(),studioSpuDto,hubSpu);
+				String supplierId = message.getSupplierId();
+				boolean success = convertSpu(supplierId,studioSpuDto,hubSpu);
+				
+				mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), studioSpuDto);
+				
 				if(success){
 					List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 					List<StudioSkuDto> skus = studioSpuDto.getSkus();
 					if(CollectionUtils.isNotEmpty(skus)){
 						for(StudioSkuDto studioSkuDto : skus){
 							HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-							boolean succSku = convertSku(message.getSupplierId(),studioSkuDto,hubSku);
+							boolean succSku = convertSku(supplierId,studioSkuDto,hubSku);
 							if(succSku){
 								hubSkus.add(hubSku);
 							}
@@ -65,10 +71,10 @@ public class Studio69Handler implements ISupplierHandler{
 					}
 					List<Image> images = converImage(studioSpuDto.getPictures());
 					SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),message.getSupplierId(), message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
-		} catch (EpHubSupplierProductConsumerException e) {
+		} catch (Exception e) {
 			log.error("studio69异常："+e.getMessage(),e);
 		}
 		

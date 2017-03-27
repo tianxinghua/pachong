@@ -2,6 +2,7 @@ package com.shangpin.pending.product.consumer;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -50,5 +51,6 @@ public class CommonTest {
         JSONObject obj = JSON.parseObject(stockResult);;
 
         int num = obj.getIntValue("Stock");
+        System.out.println("SupplierValueMappingType.TYPE_SIZE.getIndex()=" + SupplierValueMappingType.TYPE_SIZE.getIndex())  ;
     }
 }

@@ -219,14 +219,16 @@ public class DataSverviceUtil {
                         //判断此SPU下是否有库存
                         int totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
                         if(totalStock>0){
-                            if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
+//                            if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
                                 spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),totalStock);
-                            }
+//                            }
+                        }else{
+                            spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),0);
                         }
                     }else{
-                        if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
+//                        if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
                             spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),supplierSku.getStock());
-                        }
+//                        }
                     }
                 }
 

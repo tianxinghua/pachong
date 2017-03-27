@@ -1,25 +1,21 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogLeve;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
-import com.shangpin.ep.order.enumeration.OrderStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.module.order.bean.ReturnOrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.util.xml.SoapXmlUtil;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.ResourceBundle;
 
 /**
  * 下订单类，并且完成在线验证

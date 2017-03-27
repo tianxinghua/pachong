@@ -102,5 +102,12 @@ public class SupplierProductPictureManager {
 	public HubSpuPendingPicDto queryById(Long spuPendingPicId) {
 		return hubSpuPendingPicGateWay.selectByPrimaryKey(spuPendingPicId);
 	}
+	/**
+	 * 根据数据库表的主键删除记录
+	 * @param spuPendingPicId
+	 */
+	public void deleteById(Long spuPendingPicId) {
+		hubSpuPendingPicGateWay.deleteByPrimaryKey(spuPendingPicId);
+	}
 
 }
