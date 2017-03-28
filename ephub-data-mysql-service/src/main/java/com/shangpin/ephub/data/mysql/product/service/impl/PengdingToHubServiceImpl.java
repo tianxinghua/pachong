@@ -257,7 +257,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     }
 
-    private void updateSkuPendingSkuStatus(List<HubSkuPending> hubSkuPendings) {
+    @SuppressWarnings("unused")
+	private void updateSkuPendingSkuStatus(List<HubSkuPending> hubSkuPendings) {
         for(HubSkuPending skuPendingDto:hubSkuPendings){
             HubSkuPending skuPengding = new HubSkuPending();
             skuPengding.setSkuPendingId(skuPendingDto.getSkuPendingId());
