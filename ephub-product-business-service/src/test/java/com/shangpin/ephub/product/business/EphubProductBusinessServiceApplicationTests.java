@@ -28,7 +28,7 @@ public class EphubProductBusinessServiceApplicationTests {
 
 	@Autowired
 	private RestTemplate httpClient;
-	@Autowired
+	@Autowired 
 	ApiAddressProperties ApiAddressProperties;
 //	@Test
 //	public void test(){
