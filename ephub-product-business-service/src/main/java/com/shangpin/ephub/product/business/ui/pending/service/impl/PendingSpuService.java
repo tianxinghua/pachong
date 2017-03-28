@@ -382,10 +382,12 @@ public abstract class PendingSpuService implements IPendingProductService {
 	
 	@Override
 	public HubBrandModelRuleDto findHubBrandModelRule(String hubBrandNo){
+		long start = System.currentTimeMillis();
 		HubBrandModelRuleCriteriaDto criterraDto = new HubBrandModelRuleCriteriaDto();
 		criterraDto.setFields("model_rex,model_rule");
 		criterraDto.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
 		List<HubBrandModelRuleDto> lists = hubBrandModelRuleGateWay.selectByCriteria(criterraDto);
+		log.info("--->货号示例查询总耗时{}",System.currentTimeMillis()-start); 
 		if(CollectionUtils.isNotEmpty(lists)){
 			return lists.get(0);
 		}else{

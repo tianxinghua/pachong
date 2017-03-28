@@ -18,6 +18,8 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:PendingProductController </p>
  * <p>Description: 待处理页面</p>
@@ -28,6 +30,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @RestController
 @RequestMapping("/pending-product")
+@Slf4j
 public class PendingProductController {
 	
 	private static String resultSuccess = "success";
@@ -76,6 +79,7 @@ public class PendingProductController {
     }
     @RequestMapping(value="/origin",method=RequestMethod.POST)
     public HubResponse<?> findOrigin(@RequestBody PendingQuryDto pendingQuryDto){
+    	long start = System.currentTimeMillis();
     	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
     	PendingProductDto pendingProduct = products.getProduts().get(0);
     	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
@@ -84,6 +88,7 @@ public class PendingProductController {
     	pendingOriginVo.setPendingProduct(pendingProduct);
     	pendingOriginVo.setSupplierProduct(supplierProduct);
     	pendingOriginVo.setBrandModelRuleDto(brandModelRuleDto); 
+    	log.info("--->查看原始总耗时{}",System.currentTimeMillis()-start); 
     	return HubResponse.successResp(pendingOriginVo); 
     }
     @RequestMapping(value="/retry-pictures",method=RequestMethod.POST)
