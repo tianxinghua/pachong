@@ -269,7 +269,7 @@ public class SupplierProductPictureService {
 				int code = pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
 				if (code == 404 || code == 400) {
 					supplierProductPictureManager.deleteById(spuPendingPicId);
-				} else {
+				} else { 
 						count = retryCount == null ? 1 : retryCount + 1;
 						updateDto.setRetryCount(count);
 						supplierProductPictureManager.updateSelective(updateDto);
