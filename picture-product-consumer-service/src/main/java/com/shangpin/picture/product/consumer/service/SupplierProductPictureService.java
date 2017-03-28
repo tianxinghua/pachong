@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
@@ -58,8 +57,6 @@ public class SupplierProductPictureService {
 	@Autowired
 	private SpuPicStatusServiceManager spuPicStatusServiceManager;
 	
-	@Autowired
-	private IShangpinRedis shangpinRedis;
 	
 	@Autowired
 	private CertificateConf certificate;
@@ -225,28 +222,17 @@ public class SupplierProductPictureService {
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
 					Long spuPendingPicId = hubSpuPendingPicDto.getSpuPendingPicId();//获取主键
-					//if (StringUtils.isBlank(shangpinRedis.get(assemblyKey(spuPendingPicId)))) {//拿到锁
 						HubSpuPendingPicDto dto = supplierProductPictureManager.queryById(spuPendingPicId);
 						if (dto != null && dto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
 							Integer retryCount = dto.getRetryCount();
 							if (retryCount != null && retryCount > 6) {
 								continue;
 							}
-							//shangpinRedis.set(assemblyKey(spuPendingPicId), String.valueOf(spuPendingPicId));
 							streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
 						}
-					//}
 				}
 			}
 		}
-	}
-	/**
-	 * 组装redis键
-	 * @param spuPendingPicId 主键
-	 * @return 缓存key
-	 */
-	private String assemblyKey(Long spuPendingPicId) {
-		return "EP_HUB_SPU_PENDING_PIC_ID:"+spuPendingPicId;
 	}
 	/**
 	 * 计算总页数
@@ -279,33 +265,35 @@ public class SupplierProductPictureService {
 				if (StringUtils.isNotBlank(supplierId)) { 
 						information = getAuthentication(supplierId);
 				}
-				String spPicUrl = hubSpuPendingPicDto.getSpPicUrl();
+				deleteImage(hubSpuPendingPicDto);
 				int code = pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
 				if (code == 404 || code == 400) {
-					if (deleteImage(spPicUrl))supplierProductPictureManager.deleteById(spuPendingPicId);;
+					supplierProductPictureManager.deleteById(spuPendingPicId);
 				} else {
-					if (deleteImage(spPicUrl)){
 						count = retryCount == null ? 1 : retryCount + 1;
 						updateDto.setRetryCount(count);
 						supplierProductPictureManager.updateSelective(updateDto);
 						spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
-					}
 				}
 			} 
 		} catch (Throwable e) {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
-		} finally {
-			shangpinRedis.del(assemblyKey(spuPendingPicId));
 		}
 	}
 	/**
-	 * 删除图片
-	 * @param spPicUrl 图片地址
+	 * 删除图片：先备份图片地址到deleted表，再删除图片
+	 * @param hubSpuPendingPicDto 图片
 	 */
-	private boolean deleteImage(String spPicUrl) {
-		if (StringUtils.isNotBlank(spPicUrl)) {
-			return supplierProductPictureManager.deleteImageBySpPicUrl(spPicUrl);
+	private void deleteImage(HubSpuPendingPicDto hubSpuPendingPicDto) {
+		if (StringUtils.isNotBlank(hubSpuPendingPicDto.getSpPicUrl())) {
+			try {
+				supplierProductPictureManager.backupHubSpuPendingPicDtoToDeleted(hubSpuPendingPicDto);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				log.error(e.getMessage(),e);
+				throw new RuntimeException("备份图片信息【"+hubSpuPendingPicDto+"】到deleted表时发生异常，备份失败，系统停止删除图片并终止本次重试拉取图片", e);
+			}
+			supplierProductPictureManager.deleteImageAndSetNull(hubSpuPendingPicDto);
 		}
-		return true;
 	}
 }

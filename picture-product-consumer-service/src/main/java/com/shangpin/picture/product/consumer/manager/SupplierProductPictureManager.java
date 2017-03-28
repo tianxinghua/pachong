@@ -5,19 +5,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDeletedCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDeletedDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicDeletedGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.fdfs.dto.DeletePicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.DeletePicGateWay;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:SupplierProductPictureManager.java </p>
@@ -27,12 +29,12 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2017年1月2日 下午12:44:02
  */
 @Component
-@Slf4j
 public class SupplierProductPictureManager {
 	
 	@Autowired
 	private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
-	
+	@Autowired
+	private HubSpuPendingPicDeletedGateWay hubSpuPendingPicDeletedGateWay;	
 	@Autowired
 	private UploadPicGateway uploadPicGateway;
 	
@@ -119,26 +121,39 @@ public class SupplierProductPictureManager {
 		hubSpuPendingPicGateWay.deleteByPrimaryKey(spuPendingPicId);
 	}
 	/**
-	 * 删除图片
-	 * @param spPicUrl 图片地址
+	 * 删除图片之前备份图片信息数据
+	 * @param hubSpuPendingPicDto 需要备份的数据
+	 * @throws Throwable 
+	 * @throws IllegalAccessException 
 	 */
-	public boolean deleteImageBySpPicUrl(String spPicUrl) {
-		boolean flag = false;
+	public void backupHubSpuPendingPicDtoToDeleted(HubSpuPendingPicDto hubSpuPendingPicDto) throws Throwable {
+		HubSpuPendingPicDeletedCriteriaDto criteriaDto = new HubSpuPendingPicDeletedCriteriaDto();
+		criteriaDto.createCriteria().andSpPicUrlEqualTo(hubSpuPendingPicDto.getSpPicUrl());
+		List<HubSpuPendingPicDeletedDto> list = hubSpuPendingPicDeletedGateWay.selectByCriteria(criteriaDto);
+		if (CollectionUtils.isEmpty(list)) {
+		HubSpuPendingPicDeletedDto deletedDto = new HubSpuPendingPicDeletedDto();
+		BeanUtils.copyProperties(deletedDto, hubSpuPendingPicDto);
+		deletedDto.setSpuPendingPicId(null);
+		hubSpuPendingPicDeletedGateWay.insert(deletedDto);
+		}
+	}
+	/**
+	 * 清除图片
+	 * @param hubSpuPendingPicDto 图片数据
+	 */
+	public void deleteImageAndSetNull(HubSpuPendingPicDto hubSpuPendingPicDto) {
 		DeletePicDto deletePicDto = new DeletePicDto();
 		List<String> urls = new ArrayList<>();
-		urls.add(spPicUrl);
+		urls.add(hubSpuPendingPicDto.getSpPicUrl());
 		deletePicDto.setUrls(urls);
-		try {
-			Map<String, Integer> result = deletePicGateWay.delete(deletePicDto);
-			Integer code = result.get(spPicUrl);
-			if (code == 0) {
-				flag = true;
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			log.error(e.getMessage(), e);
+		Map<String, Integer> result = deletePicGateWay.delete(deletePicDto);
+		Integer code = result.get(hubSpuPendingPicDto.getSpPicUrl());
+		if (code == 0) {
+			hubSpuPendingPicDto.setSpPicUrl(null);
+			hubSpuPendingPicGateWay.updateByPrimaryKey(hubSpuPendingPicDto);
+		} else {
+			throw new RuntimeException("删除图片时发生异常【"+hubSpuPendingPicDto+"】");
 		}
-		 return flag;
 	}
 
 }
