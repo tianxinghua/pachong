@@ -420,6 +420,10 @@ shangpin:
                   isPurchaseExp: no
                   openApiKey:
                   openApiSecret:
+          antonacci:
+                  isPurchaseExp: no
+                  openApiKey:
+                  openApiSecret:
           supplier:
                   delayTime: 1000
                   retry: 120

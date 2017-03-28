@@ -37,19 +37,19 @@ public class AntonacciOrderImpl implements IOrderService {
 	@Autowired
 	HandleException handleException;
 
-	public static void main(String[] args) {
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setSpOrderId("201703231100111");
-		orderDTO.setSupplierSkuNo("A16-800687VJ00250-V1382-XL");
-		orderDTO.setPurchaseNo("CDGF201703231100111");
-		
+//	public static void main(String[] args) {
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setSpOrderId("201703285383195");
+//		orderDTO.setSupplierSkuNo("A16-S74LB0062-S30501-900-52");
+//		orderDTO.setPurchaseNo("CGDF2017032881152");
+//		
 //		new AntonacciOrderImpl().handleSupplierOrder(orderDTO);
 //		new AntonacciOrderImpl().handleConfirmOrder(orderDTO);
-//		new AntonacciOrderImpl().handleCancelOrder(orderDTO);
-		new AntonacciOrderImpl().handleRefundlOrder(orderDTO);
-
-		
-	}
+////		new AntonacciOrderImpl().handleCancelOrder(orderDTO);
+////		new AntonacciOrderImpl().handleRefundlOrder(orderDTO);
+//
+//		
+//	}
 
 	/**
 	 * 锁库存

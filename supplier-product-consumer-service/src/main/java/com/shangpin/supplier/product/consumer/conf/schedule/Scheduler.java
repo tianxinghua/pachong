@@ -22,7 +22,7 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0/60 * * * * ?")
 	public void pictureTask() {
 		try {
 			supplierProductPictureService.processProduct((byte)4);
@@ -32,7 +32,7 @@ public class Scheduler {
 		}
 	}
 	
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0/30 * * * * ?")
 	public void modelTask() {
 		try {
 			supplierProductPictureService.processProduct((byte)5);

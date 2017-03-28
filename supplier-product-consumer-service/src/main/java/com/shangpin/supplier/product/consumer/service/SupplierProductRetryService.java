@@ -60,15 +60,15 @@ public class SupplierProductRetryService {
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
 		
 		if(products!=null&&products.size()>0){
-			log.info("========系统扫描到infoState："+state+"需要重新推送的数据===");
+			log.info("========系统扫描到infoState："+state+"需要重新推送的数据:"+products.size()+"===");
 			for(HubSupplierSpuDto spu : products){
 				loopProduct(spu,state);
 				updateSupplierInfoState(spu);
 			}
 			log.info("=====系统扫描到需要重新推送的数据结束,耗时{}毫秒======",System.currentTimeMillis()-start);
-			if(products.size()==PAGESIZE){
-				processProduct(state);
-			}
+//			if(products.size()==PAGESIZE){
+//				processProduct(state);
+//			}
 		}
 	}
 	private void updateSupplierInfoState(HubSupplierSpuDto spu) {
