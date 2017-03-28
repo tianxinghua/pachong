@@ -3,7 +3,6 @@ package com.shangpin.ephub.product.business.ui.pending.service;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -29,13 +28,6 @@ public interface IPendingProductService {
      * @return key=supplier_spu_id,value=supplier_categoryname
      */
 	public Map<Long,String> findSupplierCategoryname(List<Long> supplierSpuIds);
-	/**
-	 * 根据供应商门户编号/供应商spu编号查询图片地址
-	 * @param supplierId
-	 * @param supplierSpuNo
-	 * @return
-	 */
-	public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo);
 	/**
 	 * 待处理页面导出sku
 	 * @param pendingQuryDto

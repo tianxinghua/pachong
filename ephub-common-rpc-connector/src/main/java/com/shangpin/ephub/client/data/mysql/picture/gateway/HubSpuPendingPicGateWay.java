@@ -29,8 +29,8 @@ public interface HubSpuPendingPicGateWay {
 	@RequestMapping(value = "/hub-spu-pending-pic/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSpuPendingPicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-spu-pending-pic/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long spuPicId);
+	@RequestMapping(value = "/hub-spu-pending-pic/delete-by-primary-key/{spuPicId}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("spuPicId") Long spuPicId);
 	
 	@RequestMapping(value = "/hub-spu-pending-pic/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody HubSpuPendingPicDto hubSpuPendingPic);

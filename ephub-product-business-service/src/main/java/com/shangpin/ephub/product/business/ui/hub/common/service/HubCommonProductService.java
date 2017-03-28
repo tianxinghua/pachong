@@ -56,8 +56,13 @@ public class HubCommonProductService {
 		if(!StringUtils.isEmpty(hubQuryDto.getBrandNo())){
 			criteria = criteria.andBrandNoEqualTo(hubQuryDto.getBrandNo());
 		}
-		if(!StringUtils.isEmpty(hubQuryDto.getCategoryNo())){
-			criteria = criteria.andCategoryNoEqualTo(hubQuryDto.getCategoryNo());
+		String hubCategoryNo = hubQuryDto.getCategoryNo();
+		if(!StringUtils.isEmpty(hubCategoryNo)){
+			if(hubCategoryNo.length() < 12){
+				criteria.andCategoryNoLike(hubCategoryNo+"%");
+			}else{
+				criteria.andCategoryNoEqualTo(hubCategoryNo);
+			}
 		}
 		if(!StringUtils.isEmpty(hubQuryDto.getStartUpdateTime())){
 			criteria = criteria.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(hubQuryDto.getStartUpdateTime(),dateFormat));
