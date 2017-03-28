@@ -175,6 +175,8 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andSpuSeasonStateEqualTo(SpuSeasonState.UNHANDLED.getIndex());
         		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
+        		} else if(ProductState.HAVEOPERATOR.getIndex() == inconformities.get(i)){
+        			criteria.andUpdateUserIsNull();
         		}
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
@@ -286,6 +288,8 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andInfoStateEqualTo(InfoState.PERFECT.getIndex());
         		}else if(ProductState.HAVESTOCK.getIndex() == conformities.get(i)){
         			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
+        		}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
+        			criteria.andUpdateUserIsNotNull();
         		}
 			}
 		}
