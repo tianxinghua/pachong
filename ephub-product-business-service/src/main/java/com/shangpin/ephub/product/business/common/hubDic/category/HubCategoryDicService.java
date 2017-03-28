@@ -29,10 +29,10 @@ public class HubCategoryDicService {
 	@Autowired
 	private HubSupplierCategroyDicGateWay hubSupplierCategroyDicGateWay;
 
-	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierId(String supplierId) {
+	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierId(String supplierId,int pageNo,int pageSize) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
-		criteria.setPageNo(1);
-		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId)
 				.andPushStateEqualTo(InfoState.PERFECT.getIndex());
@@ -109,5 +109,16 @@ public class HubCategoryDicService {
 		} else {
 			return null;
 		}
+	}
+
+	public void updateHubCategoryDic(Long id, String categoryNo,String createUser) {
+		HubSupplierCategroyDicDto hubSupplierCategroyDic = new HubSupplierCategroyDicDto();
+		hubSupplierCategroyDic.setHubCategoryNo(categoryNo);
+		hubSupplierCategroyDic.setSupplierCategoryDicId(id);
+		hubSupplierCategroyDic.setCategoryType((byte)4);
+		hubSupplierCategroyDic.setUpdateTime(new Date());
+		hubSupplierCategroyDic.setUpdateUser(createUser);
+		hubSupplierCategroyDicGateWay.updateByPrimaryKeySelective(hubSupplierCategroyDic);
+		
 	}
 }

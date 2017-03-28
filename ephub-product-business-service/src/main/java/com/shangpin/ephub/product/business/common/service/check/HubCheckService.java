@@ -363,14 +363,19 @@ public class HubCheckService {
 			if(sizeDom!=null){
 				List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
 	            for(SizeStandardItem sizeItem : sizeStandardItemList){
-	                if((sizeItem.getSizeStandardName() + ":" +sizeItem.getSizeStandardValue()).equals(sizeType+":"+size)){
-	                	checkResult.setPassing(true);
-	                	checkResult.setSizeId(String.valueOf(sizeItem.getScreenSizeStandardValueId()));
-	                	checkResult.setSizeType(sizeItem.getSizeStandardName());
-	                	checkResult.setSizeValue(sizeItem.getSizeStandardValue());
-	                	checkResult.setMessage("校验成功");
-	                	return checkResult;
-	                }
+	            	if(sizeItem.getSizeStandardValue()!=null){
+	            		String [] sizeScmArr = sizeItem.getSizeStandardValue().split("\\|",-1);
+	            		for(String sizeScm:sizeScmArr){
+	            			 if((sizeItem.getSizeStandardName() + ":" +sizeScm).equals(sizeType+":"+size)){
+	 		                	checkResult.setPassing(true);
+	 		                	checkResult.setSizeId(String.valueOf(sizeItem.getScreenSizeStandardValueId()));
+	 		                	checkResult.setSizeType(sizeItem.getSizeStandardName());
+	 		                	checkResult.setSizeValue(sizeItem.getSizeStandardValue());
+	 		                	checkResult.setMessage("校验成功");
+	 		                	return checkResult;
+	 		                }
+	            		}
+	            	}
 	            }
 	            checkResult.setMessage(size+"校验不通过");
 			}else{
