@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.pending.vo;
 
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +12,8 @@ public class PendingOriginVo {
 	private PendingProductDto pendingProduct;
 	private SupplierProductVo supplierProduct;
 	/**
-	 * 货号示例
+	 * 标准货号
 	 */
-	private String modelRule;
+	private HubBrandModelRuleDto brandModelRuleDto;
 
 }

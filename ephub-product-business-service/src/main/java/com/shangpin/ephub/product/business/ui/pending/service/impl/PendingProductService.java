@@ -39,6 +39,7 @@ import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRu
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
@@ -72,6 +73,8 @@ public class PendingProductService extends PendingSkuService{
     private HubSupplierSkuGateWay hubSupplierSkuGateWay;
     @Autowired
     private PengdingToHubGateWay pendingToHubGateWay;
+    @Autowired
+    private IHubSpuPendingPicService  hubSpuPendingPicService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
@@ -103,7 +106,7 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
-                        List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        List<HubSpuPendingPicDto> picurls = hubSpuPendingPicService.findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(findMainUrl(picurls)); 
                         pendingProduct.setPicUrls(findSpPicUrls(picurls)); 
                         pendingProduct.setSupplierUrls(findSupplierUrls(picurls)); 

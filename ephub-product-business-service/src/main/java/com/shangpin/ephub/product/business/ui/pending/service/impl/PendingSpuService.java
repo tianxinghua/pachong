@@ -30,9 +30,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
@@ -58,6 +56,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
+import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -97,9 +96,9 @@ public abstract class PendingSpuService implements IPendingProductService {
     @Autowired
 	protected HubSupplierSpuGateWay hubSupplierSpuGateWay;
     @Autowired
-    private HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
-    @Autowired
     private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+    @Autowired
+    private IHubSpuPendingPicService  hubSpuPendingPicService;
 
     /**
      * 将任务记录保存到数据库
@@ -310,15 +309,6 @@ public abstract class PendingSpuService implements IPendingProductService {
     	return categories;
     }
     
-    @Override
-    public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo){
-    	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-    	criteria.setFields("sp_pic_url,memo,pic_url,pic_handle_state");
-    	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
-    	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
-    	return spuPendingPics;
-    }
-    
     /**
      * 查找一个主图
      * @param picurls
@@ -372,7 +362,7 @@ public abstract class PendingSpuService implements IPendingProductService {
                         pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                        List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        List<HubSpuPendingPicDto> picurls = hubSpuPendingPicService.findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(findMainUrl(picurls)); 
                         String supplierCategoryname = categories.get(pendingSpu.getSupplierSpuId());
 						pendingProduct.setSupplierCategoryname(StringUtils.isEmpty(supplierCategoryname) ? "" : supplierCategoryname);
@@ -389,7 +379,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 	@Override
 	public HubBrandModelRuleDto findHubBrandModelRule(String hubBrandNo){
 		HubBrandModelRuleCriteriaDto criterraDto = new HubBrandModelRuleCriteriaDto();
-		criterraDto.setFields("model_rule");
+		criterraDto.setFields("model_rex,model_rule");
 		criterraDto.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
 		List<HubBrandModelRuleDto> lists = hubBrandModelRuleGateWay.selectByCriteria(criterraDto);
 		if(CollectionUtils.isNotEmpty(lists)){

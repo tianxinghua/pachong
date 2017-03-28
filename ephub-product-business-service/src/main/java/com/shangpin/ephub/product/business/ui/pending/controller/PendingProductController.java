@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -34,6 +35,8 @@ public class PendingProductController {
 	
 	@Autowired
 	private IPendingProductService pendingProductService;
+	
+	private IHubSpuPendingPicService pendingPicService;
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
@@ -76,11 +79,20 @@ public class PendingProductController {
     	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
     	PendingProductDto pendingProduct = products.getProduts().get(0);
     	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
-    	HubBrandModelRuleDto modelRule = pendingProductService.findHubBrandModelRule(pendingProduct.getHubBrandNo());
+    	HubBrandModelRuleDto brandModelRuleDto = pendingProductService.findHubBrandModelRule(pendingProduct.getHubBrandNo());
     	PendingOriginVo pendingOriginVo = new PendingOriginVo();
     	pendingOriginVo.setPendingProduct(pendingProduct);
     	pendingOriginVo.setSupplierProduct(supplierProduct);
-    	pendingOriginVo.setModelRule(null != modelRule ? modelRule.getModelRule() : ""); 
+    	pendingOriginVo.setBrandModelRuleDto(brandModelRuleDto); 
     	return HubResponse.successResp(pendingOriginVo); 
+    }
+    @RequestMapping(value="/retry-pictures",method=RequestMethod.POST)
+    public HubResponse<?> retryPictures(@RequestBody List<String> spPicUrl){
+    	boolean bool = pendingPicService.retryPictures(spPicUrl);
+    	if(bool){
+    		return HubResponse.successResp("success");
+    	}else{
+    		return HubResponse.errorResp("error");
+    	}
     }
 }
