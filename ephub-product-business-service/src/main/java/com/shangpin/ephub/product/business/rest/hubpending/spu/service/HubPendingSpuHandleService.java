@@ -211,7 +211,6 @@ public class HubPendingSpuHandleService {
 		hubPendingSpuDto.setSpuColorState((byte) 1);
 		hubPendingSpuDto.setSpuGenderState((byte) 1);
 		hubPendingSpuDto.setSpuModelState((byte) 1);
-		hubPendingSpuDto.setPicState(PicState.HANDLED.getIndex());
 		hubPendingSpuDto.setHandleState(HandleState.PENDING_HANDING_EXIST.getIndex());
 	}
 
@@ -235,7 +234,7 @@ public class HubPendingSpuHandleService {
 		hubPendingSpuDto.setSpuColorState((byte) 1);
 		hubPendingSpuDto.setSpuGenderState((byte) 1);
 		hubPendingSpuDto.setSpuModelState((byte) 1);
-		hubPendingSpuDto.setPicState(PicState.HANDLED.getIndex());
+//		hubPendingSpuDto.setPicState(PicState.HANDLED.getIndex());
 		hubPendingSpuDto.setUpdateTime(new Date());
 		hubPendingSpuDto.setHandleState(HandleState.HUB_EXIST.getIndex());
 	}
@@ -303,13 +302,23 @@ public class HubPendingSpuHandleService {
 				}
 			}else{
 				if(isSpuPass(spuPending)){
-					if(isSkuPassing){
+					boolean isExistPic = false;
+					if(spuPending.getHandleState()!=null&&spuPending.getHandleState()==HandleState.PENDING_HANDING_EXIST.getIndex()){
+						isExistPic = true;
+					}else if(spuPending.getPicState()!=null&&spuPending.getPicState()==PicState.HANDLED.getIndex()){
+						isExistPic = true;
+					}
+					if(isSkuPassing&&isExistPic){
 						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"自动进入待复合");
 						hubSpuPendingDto.setMemo("自动处理：自动进入待复合");
 						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
 					}else{
-						hubSpuPendingDto.setMemo("自动处理：spu下有校验失败的尺码");
+						if(isExistPic){
+							hubSpuPendingDto.setMemo("自动处理：spu下有校验失败的尺码");
+						}else{
+							hubSpuPendingDto.setMemo("自动处理：spu无图片");
+						}
 						hubSpuPendingDto.setHandleFrom(HandleFromState.HAND_HANDLE.getIndex());
 						hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 					}
@@ -343,8 +352,7 @@ public class HubPendingSpuHandleService {
 										spuPending.getMaterialState()!=null&&spuPending.getMaterialState()==SpuBrandState.HANDLED.getIndex()&&
 												spuPending.getOriginState()!=null&&spuPending.getOriginState()==SpuBrandState.HANDLED.getIndex()&&
 														spuPending.getSpuSeasonState()!=null&&spuPending.getSpuSeasonState()==SpuBrandState.HANDLED.getIndex()&&
-																spuPending.getSpuModelState()!=null&&spuPending.getSpuModelState()==SpuBrandState.HANDLED.getIndex()&&
-																	spuPending.getPicState()!=null&&spuPending.getPicState()==PicState.HANDLED.getIndex()){
+																spuPending.getSpuModelState()!=null&&spuPending.getSpuModelState()==SpuBrandState.HANDLED.getIndex()){
 			return true;	
 		}else{
 			return false;

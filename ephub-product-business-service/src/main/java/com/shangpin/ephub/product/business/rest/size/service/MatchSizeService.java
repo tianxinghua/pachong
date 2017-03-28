@@ -99,24 +99,28 @@ public class MatchSizeService {
 			for (Map.Entry<String, String> entry : map2.entrySet()) {
 				String value = entry.getValue();
 				String key = entry.getKey();
-				if (size.equals(value)) {
-					sizeIsExist = true;
-					i++;
-					String[] arr = key.split(":", -1);
-					if (arr.length == 2) {
-						matchSizeResult.setSizeType(arr[0]);
-						matchSizeResult.setSizeValue(arr[1]);
-						matchSizeResult.setPassing(true);
-						if (i >= 2) {
-							matchSizeResult.setPassing(false);
-							break;
+				if(value!=null){
+					String [] arrAcm = value.split("\\|",-1);
+					for(String scmSize:arrAcm){
+						if (size.equals(scmSize)) {
+							sizeIsExist = true;
+							i++;
+							String[] arr = key.split(":", -1);
+							if (arr.length == 2) {
+								matchSizeResult.setSizeType(arr[0]);
+								matchSizeResult.setSizeValue(arr[1]);
+								matchSizeResult.setPassing(true);
+								if (i >= 2) {
+									matchSizeResult.setPassing(false);
+									break;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
 		return sizeIsExist;
-
 	}
 
 	private boolean matchStandardSize(String size, Map<String, String> map0, MatchSizeResult matchSizeResult) {
