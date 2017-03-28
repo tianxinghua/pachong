@@ -175,6 +175,8 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andSpuSeasonStateEqualTo(SpuSeasonState.UNHANDLED.getIndex());
         		} else if(ProductState.SIZE_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
+        		} else if(ProductState.HAVEOPERATOR.getIndex() == inconformities.get(i)){
+        			criteria.andUpdateUserIsNull();
         		}
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
@@ -286,6 +288,8 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andInfoStateEqualTo(InfoState.PERFECT.getIndex());
         		}else if(ProductState.HAVESTOCK.getIndex() == conformities.get(i)){
         			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
+        		}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
+        			criteria.andUpdateUserIsNotNull();
         		}
 			}
 		}
@@ -378,10 +382,12 @@ public abstract class PendingSpuService implements IPendingProductService {
 	
 	@Override
 	public HubBrandModelRuleDto findHubBrandModelRule(String hubBrandNo){
+		long start = System.currentTimeMillis();
 		HubBrandModelRuleCriteriaDto criterraDto = new HubBrandModelRuleCriteriaDto();
 		criterraDto.setFields("model_rex,model_rule");
 		criterraDto.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
 		List<HubBrandModelRuleDto> lists = hubBrandModelRuleGateWay.selectByCriteria(criterraDto);
+		log.info("--->货号示例查询总耗时{}",System.currentTimeMillis()-start); 
 		if(CollectionUtils.isNotEmpty(lists)){
 			return lists.get(0);
 		}else{

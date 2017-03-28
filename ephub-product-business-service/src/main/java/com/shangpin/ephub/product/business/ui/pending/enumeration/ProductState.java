@@ -50,7 +50,11 @@ public enum ProductState {
 	/**
 	 * 有库存
 	 */
-	HAVESTOCK(11,"haveStock");
+	HAVESTOCK(11,"haveStock"),
+	/**
+	 * 有操作人
+	 */
+	HAVEOPERATOR(12,"haveOperator");
 	
 	/**
      * 数字索引标识
