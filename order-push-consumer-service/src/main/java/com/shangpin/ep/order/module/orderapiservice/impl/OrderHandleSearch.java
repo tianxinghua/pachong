@@ -148,6 +148,9 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("giglioServiceImpl") 
 	IOrderService giglioServiceImpl;
+	@Autowired
+	@Qualifier("antonacciOrderImpl") 
+	IOrderService antonacciOrderImpl;
 
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
@@ -237,6 +240,8 @@ public class OrderHandleSearch {
 			return wiseServiceImpl;
 		}else if("2015091801508".equals(supplierId)){ 
 			return giglioServiceImpl;
+		}else if("2016022301781".equals(supplierId)){ 
+			return antonacciOrderImpl;
 		}else {
 			return null;
 		}
@@ -316,6 +321,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getBaseBlu();
 		}else if("2015091701503".equals(supplierId)){
 			return supplierProperties.getTessabit();
+		}else if("2016022301781".equals(supplierId)){
+			return supplierProperties.getAntonacci();
 		}
 		else {
 			return null;

@@ -1,8 +1,8 @@
 package com.shangpin.picture.product.consumer.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
+import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
@@ -58,8 +57,6 @@ public class SupplierProductPictureService {
 	@Autowired
 	private SpuPicStatusServiceManager spuPicStatusServiceManager;
 	
-	@Autowired
-	private IShangpinRedis shangpinRedis;
 	
 	@Autowired
 	private CertificateConf certificate;
@@ -70,12 +67,11 @@ public class SupplierProductPictureService {
 	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
-//			Map<String,Byte> picUrlMaps = supplierProductPictureManager.exists(supplierSpuId);
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
-//				if(picUrlMaps.containsKey(picUrl) && PicHandleState.HANDLED.getIndex() == picUrlMaps.get(picUrl)){ 
-//					continue;
-//				}
+				if(!supplierProductPictureManager.exists(picDto.getSupplierId(),picUrl)){
+					continue;
+				}
 				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
@@ -85,8 +81,12 @@ public class SupplierProductPictureService {
 				if (StringUtils.isNotBlank(supplierId)) {
 					information = getAuthentication(supplierId);
 				}
-				pullPicAndPushToPicServer(picUrl, updateDto, information);
-				supplierProductPictureManager.updateSelective(updateDto);
+				int code = pullPicAndPushToPicServer(picUrl, updateDto, information);
+				if (code == 404 || code == 400) {
+					supplierProductPictureManager.deleteById(spuPendingPicId);
+				} else {
+					supplierProductPictureManager.updateSelective(updateDto);
+				}
 			}
 			spuPicStatusServiceManager.judgeSpuPicState(supplierSpuId); 
 		}
@@ -110,8 +110,10 @@ public class SupplierProductPictureService {
 	 * @param dto 数据传输对象
 	 * @param authenticationInformation 认证信息
 	 */
-	private void pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+	private int pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		InputStream inputStream = null;
+		HttpURLConnection httpUrlConnection = null;
+		int flag = 0;
 		try {
 			if (authenticationInformation != null) {//需要认证
 				Authenticator.setDefault(new Authenticator() {
@@ -123,19 +125,21 @@ public class SupplierProductPictureService {
 			}
 			URL url = new URL(picUrl.replaceAll(" +", "%20"));
 			URLConnection openConnection = url.openConnection();
-			openConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
-			openConnection.setConnectTimeout(TIMEOUT);
-			openConnection.setReadTimeout(TIMEOUT);
+			httpUrlConnection  =  (HttpURLConnection) openConnection;
+			httpUrlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+			httpUrlConnection.setConnectTimeout(TIMEOUT);
+			httpUrlConnection.setReadTimeout(TIMEOUT);
+			httpUrlConnection.connect();
+			flag = httpUrlConnection.getResponseCode();
+			if (flag == 404 || flag == 400) {
+				return flag;
+			}
 			inputStream = openConnection.getInputStream();
 			byte[] byteArray = IOUtils.toByteArray(inputStream);
 			if (byteArray == null || byteArray.length == 0) {
 				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
 			}
 			String base64 = new BASE64Encoder().encode(byteArray);
-			/*if (StringUtils.isBlank(base64)) {
-				throw new RuntimeException("读取到的图片内容为空,无法获取图片");
-			}*/
-			//log.info(picUrl+"------>"+base64+"<-------");
 			UploadPicDto uploadPicDto = new UploadPicDto();
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
@@ -143,23 +147,41 @@ public class SupplierProductPictureService {
 			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 			dto.setMemo("图片拉取成功");
 			
-		} catch (Throwable e) {
+		}catch (Throwable e) {
 			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
-			dto.setMemo("图片拉取失败:"+e.getMessage());
+			dto.setMemo("图片拉取失败:"+flag);
 		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					log.error("关闭资源流发生异常", e);
-					e.printStackTrace();
-					throw new RuntimeException("关闭资源流发生异常");
-				}
-			}
+			close(inputStream, httpUrlConnection);
 		}
 		dto.setUpdateTime(new Date());
+		return flag;
+	}
+	/**
+	 * 关闭链接以及资源
+	 * @param inputStream
+	 * @param httpUrlConnection
+	 */
+	private void close(InputStream inputStream, HttpURLConnection httpUrlConnection) {
+		if (inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (Throwable e) {
+				log.error("关闭资源流发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭资源流发生异常");
+			}
+		}
+		if (httpUrlConnection != null) {
+			try {
+				httpUrlConnection.disconnect();
+			} catch (Throwable e) {
+				log.error("关闭链接发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭链接发生异常");
+			}
+		}
 	}
 	/**
 	 * 获取图片扩张名
@@ -199,28 +221,17 @@ public class SupplierProductPictureService {
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {
 					Long spuPendingPicId = hubSpuPendingPicDto.getSpuPendingPicId();//获取主键
-					//if (StringUtils.isBlank(shangpinRedis.get(assemblyKey(spuPendingPicId)))) {//拿到锁
 						HubSpuPendingPicDto dto = supplierProductPictureManager.queryById(spuPendingPicId);
 						if (dto != null && dto.getPicHandleState() != PicHandleState.HANDLED.getIndex()) {
 							Integer retryCount = dto.getRetryCount();
-							if (retryCount != null && retryCount > 3) {
+							if (retryCount != null && retryCount > 6) {
 								continue;
 							}
-							//shangpinRedis.set(assemblyKey(spuPendingPicId), String.valueOf(spuPendingPicId));
 							streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
 						}
-					//}
 				}
 			}
 		}
-	}
-	/**
-	 * 组装redis键
-	 * @param spuPendingPicId 主键
-	 * @return 缓存key
-	 */
-	private String assemblyKey(Long spuPendingPicId) {
-		return "EP_HUB_SPU_PENDING_PIC_ID:"+spuPendingPicId;
 	}
 	/**
 	 * 计算总页数
@@ -250,19 +261,38 @@ public class SupplierProductPictureService {
 				Integer retryCount = hubSpuPendingPicDto.getRetryCount();
 				AuthenticationInformation information = null;
 				String supplierId = hubSpuPendingPicDto.getSupplierId();
-				if (StringUtils.isNotBlank(supplierId)) {
+				if (StringUtils.isNotBlank(supplierId)) { 
 						information = getAuthentication(supplierId);
 				}
-				pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
-				count = retryCount == null ? 1 : retryCount + 1;
-				updateDto.setRetryCount(count);
-				supplierProductPictureManager.updateSelective(updateDto);
-				spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
+				deleteImage(hubSpuPendingPicDto);
+				int code = pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
+				if (code == 404 || code == 400) {
+					supplierProductPictureManager.deleteById(spuPendingPicId);
+				} else { 
+						count = retryCount == null ? 1 : retryCount + 1;
+						updateDto.setRetryCount(count);
+						supplierProductPictureManager.updateSelective(updateDto);
+						spuPicStatusServiceManager.judgeSpuPicState(hubSpuPendingPicDto.getSupplierSpuId()); 
+				}
 			} 
 		} catch (Throwable e) {
 			log.error("重试拉取主键为"+spuPendingPicId+"的图片时发生异常，重试次数为"+count+"次",e);
-		} finally {
-			shangpinRedis.del(assemblyKey(spuPendingPicId));
+		}
+	}
+	/**
+	 * 删除图片：先备份图片地址到deleted表，再删除图片
+	 * @param hubSpuPendingPicDto 图片
+	 */
+	private void deleteImage(HubSpuPendingPicDto hubSpuPendingPicDto) {
+		if (StringUtils.isNotBlank(hubSpuPendingPicDto.getSpPicUrl())) {
+			try {
+				supplierProductPictureManager.backupHubSpuPendingPicDtoToDeleted(hubSpuPendingPicDto);
+			} catch (Throwable e) {
+				e.printStackTrace();
+				log.error(e.getMessage(),e);
+				throw new RuntimeException("备份图片信息【"+hubSpuPendingPicDto+"】到deleted表时发生异常，备份失败，系统停止删除图片并终止本次重试拉取图片", e);
+			}
+			supplierProductPictureManager.deleteImageAndSetNull(hubSpuPendingPicDto);
 		}
 	}
 }

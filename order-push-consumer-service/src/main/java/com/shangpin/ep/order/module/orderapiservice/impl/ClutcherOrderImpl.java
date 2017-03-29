@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +19,6 @@ import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
-import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.exception.ServiceException;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
@@ -35,28 +32,17 @@ import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 import com.shangpin.ep.order.util.utils.UUIDGenerator;
 
 /**
- * Created by wangyuzhi on 15/10/9.
+ * Created by zhaogenchun on 15/10/9.
  */
 @Component("clutcherOrderImpl")
 public class ClutcherOrderImpl implements IOrderService {
     private static Logger logger = Logger.getLogger("info");
-    private static Logger loggerError = Logger.getLogger("error");
     @Autowired
     LogCommon logCommon;    
     @Autowired
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
-    private  String merchantId = null;
-    private  String token = null;
-    private  String url = null;
-    
-    @PostConstruct
-    public void init(){
-    	url = supplierProperties.getTonyConf().getUrl();
-    	token = supplierProperties.getTonyConf().getToken();
-    	merchantId = supplierProperties.getTonyConf().getMerchantId();
-    }
     
     public static String CANCELED = "CANCELED";
     public static String PENDING = "PENDING";
@@ -120,9 +106,8 @@ public class ClutcherOrderImpl implements IOrderService {
             rtnData = getResponseJson(orderDTO,json,method,uri,uuid);
             logger.info(uri+","+type+"推送订单返回结果=="+rtnData+",推送的数据："+json);
         	orderDTO.setLogContent(uri+","+type+"推送订单返回结果=="+rtnData);
-    		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
             if(HttpUtil45.errorResult.equals(rtnData)){
-            	setType(orderDTO,type,"ko",uuid);
+            	setType(orderDTO,type,"ERROR",uuid);
             	return ;
             }
             ResponseObject respon = gson.fromJson(rtnData, ResponseObject.class);
@@ -151,17 +136,25 @@ public class ClutcherOrderImpl implements IOrderService {
 			}else if("ok".equals(flag)){
 				orderDTO.setRefundTime(new Date());
 				orderDTO.setPushStatus(PushStatus.REFUNDED);
+			}else if("ERROR".equals(flag)){
+				orderDTO.setPushStatus(PushStatus.REFUNDED_ERROR);
+                orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+                orderDTO.setDescription(orderDTO.getLogContent());
 			}
     	}
 		if("cancel".equals(type)){
 			if("ko".equals(flag)){
-				orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED);
-//				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+				orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
 				orderDTO.setDescription(orderDTO.getLogContent());
 			}else if("ok".equals(flag)){
 				orderDTO.setCancelTime(new Date());
 				orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED);
-			}    		
+			}else if("ERROR".equals(flag)){
+				orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
+                orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+                orderDTO.setDescription(orderDTO.getLogContent());
+			} 		
 		}
 		if("confirm".equals(type)){
 			if("ko".equals(flag)){
@@ -170,6 +163,10 @@ public class ClutcherOrderImpl implements IOrderService {
 			}else if("ok".equals(flag)){
 				orderDTO.setConfirmTime(new Date());
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+			}else if("ERROR".equals(flag)){
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+                orderDTO.setDescription(orderDTO.getLogContent());
 			}
 		}
 		if("lock".equals(type)){
@@ -180,6 +177,10 @@ public class ClutcherOrderImpl implements IOrderService {
 			}else if("ok".equals(flag)){
 				orderDTO.setLockStockTime(new Date());
 				orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
+			}else if("ERROR".equals(flag)){
+				orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+                orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
+                orderDTO.setDescription(orderDTO.getLogContent());
 			}
 		}
     }
@@ -188,7 +189,6 @@ public class ClutcherOrderImpl implements IOrderService {
      */
 	private static PushOrderDTO getOrder(OrderDTO orderDTO){
 		PushOrderDTO order = new PushOrderDTO();
-		String markPrice = null;
 		List<ItemDTO> list = new ArrayList<ItemDTO>();
 		try {
 		     String detail = orderDTO.getDetail();
@@ -224,7 +224,6 @@ public class ClutcherOrderImpl implements IOrderService {
 		String time = getUTCTime().getTime()+"";
 		time = time.substring(0,10);
 		params.put("time_stamp",time );
-		String charset = "UTF-8";
 		String md5_sign;
 		String json = null;
 		try {
@@ -237,6 +236,7 @@ public class ClutcherOrderImpl implements IOrderService {
 			Map<String, String> headerMap = new LinkedHashMap<String, String>();
 			headerMap.put("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
 			
+			@SuppressWarnings("deprecation")
 			String url = "http://ws.theclutcher.com/shangpin.svc/"+uri+"/"+uuid+"?app_key=SHNGPN-001&request="+URLEncoder.encode(p)+"&time_stamp="+time+"&sign="+md5_result;
 			json = clutherPushOrder(orderDTO,url,type);
 		} catch (Exception e) {
@@ -268,15 +268,11 @@ public class ClutcherOrderImpl implements IOrderService {
      calEnd.set(Integer.parseInt(ds[0]) ,Integer.parseInt(ds[1]),Integer.parseInt(ds[2]),Integer.parseInt(ds[3]),Integer.parseInt(ds[4]),Integer.parseInt(ds[5]) ); 
       
      long epochStart=calStart.getTime().getTime(); 
-     //epoch time of the target time 
      long epochEnd=calEnd.getTime().getTime(); 
-      
-     //get the sum of epoch time, from the target time to the ticks-start time 
-      long all=epochEnd-epochStart;    
-      //convert epoch time to ticks time 
-         long ticks=( (all/1000) * 1000000) * 10; 
-         
-         return ticks; 
+     long all=epochEnd-epochStart;    
+     long ticks=( (all/1000) * 1000000) * 10; 
+     
+     return ticks; 
    }
 
 }

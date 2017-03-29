@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.49
+           host: 172.20.11.50
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -17,8 +17,9 @@ spring:
             prefer-agent-address: true
             prefer-ip-address: true
             health-check-interval: 15s
-            register: false
-            register-health-check: false
+            health-check-timeout: 15s            
+            register: true
+            register-health-check: true
         stream: 
               bindings: 
                         supplierRetryPictureProduct: 
@@ -34,7 +35,7 @@ spring:
                               destination: retry.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 10
+                                       concurrency: 5
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
