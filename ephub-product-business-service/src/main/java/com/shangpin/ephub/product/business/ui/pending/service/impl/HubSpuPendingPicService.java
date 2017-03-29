@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.consumer.picture.dto.RetryPictureDto;
 import com.shangpin.ephub.client.consumer.picture.gateway.PictureGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 
@@ -41,6 +43,7 @@ public class HubSpuPendingPicService implements IHubSpuPendingPicService {
 				for(HubSpuPendingPicDto dto : lists){
 					ids.add(dto.getSpuPendingPicId());
 				}
+				updatePicHandleState(ids,PicHandleState.HANDLE_ERROR);
 				RetryPictureDto pictureDto = new RetryPictureDto();
 				pictureDto.setIds(ids); 
 				pictureGateWay.retry(pictureDto); 
@@ -68,6 +71,18 @@ public class HubSpuPendingPicService implements IHubSpuPendingPicService {
     	criteria.createCriteria().andSpPicUrlIn(spPicUrl);
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);
     	return spuPendingPics;
+	}
+
+	@Override
+	public void updatePicHandleState(List<Long> spuPendingPicIds, PicHandleState picHandleState) {
+		HubSpuPendingPicWithCriteriaDto criteriaDto = new  HubSpuPendingPicWithCriteriaDto();
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSpuPendingPicIdIn(spuPendingPicIds);
+		criteriaDto.setCriteria(criteria);
+		HubSpuPendingPicDto hubSpuPendingPic = new HubSpuPendingPicDto();
+		hubSpuPendingPic.setPicHandleState(picHandleState.getIndex());
+		criteriaDto.setHubSpuPendingPic(hubSpuPendingPic);
+		hubSpuPendingPicGateWay.updateByCriteriaSelective(criteriaDto);
 	}
 
 }
