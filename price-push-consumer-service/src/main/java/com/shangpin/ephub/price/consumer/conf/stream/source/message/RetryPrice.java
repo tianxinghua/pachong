@@ -1,14 +1,10 @@
-package com.shangpin.picture.product.consumer.conf.stream.source.message;
+package com.shangpin.ephub.price.consumer.conf.stream.source.message;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 /**
  * <p>Title:RetryPicture.java </p>
  * <p>Description: </p>
@@ -22,7 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RetryPicture implements Serializable {
+public class RetryPrice implements Serializable {
 
 	/**
 	 * 

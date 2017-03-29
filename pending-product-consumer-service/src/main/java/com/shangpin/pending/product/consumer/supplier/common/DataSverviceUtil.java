@@ -181,7 +181,7 @@ public class DataSverviceUtil {
                     replaceKey = sizeKey;
                 }
                 if(size.indexOf(sizeKey)>=0){
-                    size = size.replaceAll(replaceKey,sizeMap.get(sizeKey));
+                    size = size.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
                 }
             }
         }

@@ -16,36 +16,36 @@ spring:
             health-check-interval: 10s
             register: false
             register-health-check: false
-        stream: 
-              bindings: 
-                        supplierRetryPictureProduct: 
-                              destination: retry.product.picture
-                              content-type: application/json              
-                        supplierPictureProduct: 
-                              destination: supplier.product.picture
+        stream:
+              bindings:
+                        supplierRetryPrice:
+                              destination: retry.product.price
+                              content-type: application/json
+                        supplierPrice:
+                              destination: supplier.product.price
                               group: one
-                              consumer: 
+                              consumer:
                                        concurrency: 1
                                        maxAttempts: 1
-                        retryPictureProduct: 
-                              destination: retry.product.picture
+                        retrySupplierPrice:
+                              destination: retry.product.price
                               group: one
-                              consumer: 
+                              consumer:
                                        concurrency: 1
                                        maxAttempts: 1
-              rabbit: 
-                      bindings: 
-                            supplierRetryPictureProduct: 
-                                  producer: 
-                                       prefix: HA.                      
-                            supplierPictureProduct: 
-                                  consumer: 
+              rabbit:
+                      bindings:
+                            supplierRetryPrice:
+                                  producer:
+                                       prefix: HA.
+                            supplierPrice:
+                                  consumer:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            retryPictureProduct: 
-                                  consumer: 
+                            retrySupplierPrice:
+                                  consumer:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true

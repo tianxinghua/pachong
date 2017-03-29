@@ -76,6 +76,9 @@ public class PendingHandler extends VariableInit {
 	@Autowired
 	HubPendingSkuHandleGateWay hubPendingSkuHandleGateWay;
 
+	@Autowired
+	DataOfPendingServiceHandler dataOfPendingServiceHandler;
+
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
 		if(null!=message){
@@ -542,6 +545,20 @@ public class PendingHandler extends VariableInit {
 				}else if(hubSpuPending.getStockState().toString().equals(String.valueOf(StockState.NOSTOCK.getIndex()))){
 				    if(hubSkuPending.getStock()>0){
 						spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),hubSkuPending.getStock());
+					}
+				}else{
+					//原库存标记为有库存
+					if(0==hubSkuPending.getStock()){
+						int totalStock = 0;
+						try {
+							totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						if(0==totalStock){
+							spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),totalStock);
+						}
+
 					}
 				}
 			}else{//遗漏  第一次插入SKU  应该默认赋值为NOSKU
