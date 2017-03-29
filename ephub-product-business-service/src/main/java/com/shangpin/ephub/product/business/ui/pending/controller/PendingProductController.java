@@ -38,7 +38,7 @@ public class PendingProductController {
 	
 	@Autowired
 	private IPendingProductService pendingProductService;
-	
+	@Autowired
 	private IHubSpuPendingPicService pendingPicService;
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
