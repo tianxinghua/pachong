@@ -103,7 +103,8 @@ public class RegexUtil {
     }
 
     public  static int getNum(String val,int length){
-         int num = 0;
+         @SuppressWarnings("unused")
+		int num = 0;
          if(length==0){
              return 0;
          }else{
