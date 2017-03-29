@@ -1,10 +1,10 @@
 package com.shangpin.ephub.product.business.service.hub.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serializable;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by lizhongren on 2017/2/14.
@@ -12,6 +12,10 @@ import java.util.List;
 @Setter
 @Getter
 public class SopSkuQueryDto implements Serializable{
-    private String sopUserNo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5330004526971904061L;
+	private String sopUserNo;
     private List<String> lstSupplierSkuNo;
 }

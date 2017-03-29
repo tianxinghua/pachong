@@ -79,6 +79,7 @@ public class HubPendingSkuHandleService {
 	}
 
 	// 有顺序的 不能打乱顺序
+	@SuppressWarnings("serial")
 	static Map<String, String> sizeMap = new LinkedHashMap<String, String>() {
 		{
 			put("½U", ".5");

@@ -100,7 +100,7 @@ public class BrandService {
 	 * @return
 	 */
 	private HubResponseDto<BrandDom> getGmsBrandByApi(String brandNo){
-		long start = System.currentTimeMillis();
+		//long start = System.currentTimeMillis();
 		BrandRequstDto request = new BrandRequstDto();
         request.setBrandNo(brandNo);
         HttpEntity<BrandRequstDto> requestEntity = new HttpEntity<BrandRequstDto>(request);

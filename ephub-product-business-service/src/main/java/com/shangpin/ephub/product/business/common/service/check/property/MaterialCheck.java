@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuGenderState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.hubDic.material.dto.MaterialDTO;

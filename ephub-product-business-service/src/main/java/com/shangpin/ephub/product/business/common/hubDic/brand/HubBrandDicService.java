@@ -13,7 +13,6 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**

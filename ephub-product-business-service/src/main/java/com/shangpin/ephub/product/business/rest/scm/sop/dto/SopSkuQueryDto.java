@@ -12,6 +12,10 @@ import java.util.List;
 @Setter
 @Getter
 public class SopSkuQueryDto implements Serializable{
-    private String sopUserNo;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7460154031367111403L;
+	private String sopUserNo;
     private List<String> lstSupplierSkuNo;
 }
