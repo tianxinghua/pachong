@@ -150,5 +150,6 @@ public class HubWaitSelectResponseDto {
     private Date pictureExportTime;
     private Date updateTime;
 	private String memo;
+	private String updateUser;
 	    
 }

@@ -44,8 +44,8 @@ public interface HubSkuPendingGateWay {
 	@RequestMapping(value = "/hub-sku-pending/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSkuPendingDto> selectByCriteria(@RequestBody HubSkuPendingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-sku-pending/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubSkuPendingDto selectByPrimaryKey(Long skuPendingId);
+	@RequestMapping(value = "/hub-sku-pending/select-by-primary-key/{skuPendingId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubSkuPendingDto selectByPrimaryKey(@PathVariable("skuPendingId") Long skuPendingId);
 	
 	@RequestMapping(value = "/hub-sku-pending/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSkuPendingWithCriteriaDto hubSkuPendingWithCriteria);

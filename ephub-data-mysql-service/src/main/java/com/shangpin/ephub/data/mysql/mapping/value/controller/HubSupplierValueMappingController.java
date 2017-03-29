@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.mapping.value.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class HubSupplierValueMappingController {
     public List<HubSupplierValueMapping> selectByCriteria(@RequestBody HubSupplierValueMappingCriteria hubSupplierValueMappingCriteria){
     	return hubSupplierValueMappingService.selectByCriteria(hubSupplierValueMappingCriteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubSupplierValueMapping selectByPrimaryKey(Long valueMappingId){
+	@RequestMapping(value = "/select-by-primary-key/{valueMappingId}")
+    public HubSupplierValueMapping selectByPrimaryKey(@PathVariable("valueMappingId") Long valueMappingId){
     	return hubSupplierValueMappingService.selectByPrimaryKey(valueMappingId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

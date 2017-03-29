@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.mapp.category.dto;
+package com.shangpin.ephub.product.business.ui.mapp.size.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,18 +14,13 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierCategoryDicRequestDto {
-	
-	private Long supplierCategoryDicId;
+public class HubSupplierSizeDicRequestDto {
+	private Long hubSupplierValMappingId;
 	private String supplierId;
 	private int pageNo;
 	private int pageSize;
-	private String hubCategoryNo;
-	private String supplierCategory;
-	private String supplierGender;
-	private Byte categoryType;
+	private String supplierVal;
+	private String hubVal;;
 	private String updateUser;
-	
-	
 
 }

@@ -157,7 +157,7 @@ public class CategoryCheck extends CommonCheckBase {
 	    private void setSupplierCategoryValueToMap(String supplierId) throws Exception {
 
 	        List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = hubCategoryDicService
-	                .getSupplierCategoryBySupplierId(supplierId,1,ConstantProperty.MAX_COMMON_QUERY_NUM);
+	                .getSupplierCategoryBySupplierId(supplierId,1,ConstantProperty.MAX_COMMON_QUERY_NUM,InfoState.PERFECT.getIndex());
 	        if (null != hubSupplierCategroyDicDtos && hubSupplierCategroyDicDtos.size() > 0) {
 	            Map<String, String> categoryMap = new HashMap<>();
 	            String spCategory = "";
