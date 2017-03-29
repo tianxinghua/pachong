@@ -17,8 +17,9 @@ spring:
             prefer-agent-address: true
             prefer-ip-address: true
             health-check-interval: 15s
-            register: false
-            register-health-check: false
+            health-check-timeout: 15s            
+            register: true
+            register-health-check: true
         stream: 
               bindings: 
                         supplierRetryPictureProduct: 
