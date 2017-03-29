@@ -117,7 +117,7 @@ public class OpenapiService {
 
 					updateSpuStateAndSpSkuNo(hostUrl, skuPendings, map);
 				}
-				if(spuPendingIdList.size()<10){
+				if(spuPendingIdList.size()<20){
 					con = false;
 				}else{
 					page++;
@@ -151,6 +151,7 @@ public class OpenapiService {
 					 skuTmp.setSpSkuNo(map.get(skuPending.getSupplierSkuNo()));
 					 skuTmp.setInfoFrom(new Integer(1).byteValue());
 					 skuTmp.setUpdateTime(new Date());
+					 skuTmp.setSkuState(SpuState.HANDLED.getIndex());
 					 updateSkuJson =  mapper.writeValueAsString(skuTmp) ;
 					 HttpUtil45.operateData("post","json",updateSkuUrl,outTimeConfig,null,updateSkuJson,"","");
 
