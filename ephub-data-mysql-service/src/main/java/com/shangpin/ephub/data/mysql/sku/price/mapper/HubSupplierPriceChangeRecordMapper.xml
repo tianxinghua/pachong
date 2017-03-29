@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shangpin.ephub.data.mysql.sku.price.mapper.HubSupplierPriceChangeRecordMapper">
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    <id column="supplier_price_change_record_id" jdbcType="BIGINT" property="supplierPriceChangeRecordId" />
+    <result column="supplier_id" jdbcType="VARCHAR" property="supplierId" />
+    <result column="supplier_no" jdbcType="VARCHAR" property="supplierNo" />
+    <result column="supplier_sku_no" jdbcType="VARCHAR" property="supplierSkuNo" />
+    <result column="supplier_spu_no" jdbcType="VARCHAR" property="supplierSpuNo" />
+    <result column="sp_sku_no" jdbcType="VARCHAR" property="spSkuNo" />
+    <result column="market_price" jdbcType="DECIMAL" property="marketPrice" />
+    <result column="supply_price" jdbcType="DECIMAL" property="supplyPrice" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="market_year" jdbcType="VARCHAR" property="marketYear" />
+    <result column="market_season" jdbcType="VARCHAR" property="marketSeason" />
+    <result column="type" jdbcType="BIT" property="type" />
+    <result column="state" jdbcType="BIT" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    <if test="fields == null">
+      supplier_price_change_record_id, supplier_id, supplier_no, supplier_sku_no, supplier_spu_no, 
+      sp_sku_no, market_price, supply_price, currency, market_year, market_season, type, 
+      state, create_time, update_time, memo
+    </if>
+    <if test="fields != null">
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null">
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    supplier_price_change_record_id,supplier_id,supplier_no,supplier_sku_no,supplier_spu_no,sp_sku_no,market_price,supply_price,currency,market_year,market_season,type,state,create_time,update_time,memo
+    from hub_supplier_price_change_record
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hub_supplier_price_change_record
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria">
+    delete from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    <selectKey keyColumn="supplier_price_change_record_id" keyProperty="supplierPriceChangeRecordId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS sku_pending_id
+    </selectKey>
+    insert into hub_supplier_price_change_record (supplier_price_change_record_id, supplier_id, 
+      supplier_no, supplier_sku_no, supplier_spu_no, 
+      sp_sku_no, market_price, supply_price, 
+      currency, market_year, market_season, 
+      type, state, create_time, 
+      update_time, memo)
+    values (#{supplierPriceChangeRecordId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR}, 
+      #{spSkuNo,jdbcType=VARCHAR}, #{marketPrice,jdbcType=DECIMAL}, #{supplyPrice,jdbcType=DECIMAL}, 
+      #{currency,jdbcType=VARCHAR}, #{marketYear,jdbcType=VARCHAR}, #{marketSeason,jdbcType=VARCHAR}, 
+      #{type,jdbcType=BIT}, #{state,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    <selectKey keyColumn="supplier_price_change_record_id" keyProperty="supplierPriceChangeRecordId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS sku_pending_id
+    </selectKey>
+    insert into hub_supplier_price_change_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="supplierPriceChangeRecordId != null">
+        supplier_price_change_record_id,
+      </if>
+      <if test="supplierId != null">
+        supplier_id,
+      </if>
+      <if test="supplierNo != null">
+        supplier_no,
+      </if>
+      <if test="supplierSkuNo != null">
+        supplier_sku_no,
+      </if>
+      <if test="supplierSpuNo != null">
+        supplier_spu_no,
+      </if>
+      <if test="spSkuNo != null">
+        sp_sku_no,
+      </if>
+      <if test="marketPrice != null">
+        market_price,
+      </if>
+      <if test="supplyPrice != null">
+        supply_price,
+      </if>
+      <if test="currency != null">
+        currency,
+      </if>
+      <if test="marketYear != null">
+        market_year,
+      </if>
+      <if test="marketSeason != null">
+        market_season,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="memo != null">
+        memo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="supplierPriceChangeRecordId != null">
+        #{supplierPriceChangeRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null">
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null">
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null">
+        #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null">
+        #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null">
+        #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null">
+        #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplyPrice != null">
+        #{supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="marketYear != null">
+        #{marketYear,jdbcType=VARCHAR},
+      </if>
+      <if test="marketSeason != null">
+        #{marketSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=BIT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null">
+        #{memo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria" resultType="java.lang.Integer">
+    select count(*) from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update hub_supplier_price_change_record
+    <set>
+      <if test="record.supplierPriceChangeRecordId != null">
+        supplier_price_change_record_id = #{record.supplierPriceChangeRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierId != null">
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierNo != null">
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSkuNo != null">
+        supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuNo != null">
+        supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spSkuNo != null">
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketPrice != null">
+        market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.supplyPrice != null">
+        supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.currency != null">
+        currency = #{record.currency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketYear != null">
+        market_year = #{record.marketYear,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketSeason != null">
+        market_season = #{record.marketSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=BIT},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.memo != null">
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update hub_supplier_price_change_record
+    set supplier_price_change_record_id = #{record.supplierPriceChangeRecordId,jdbcType=BIGINT},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
+      currency = #{record.currency,jdbcType=VARCHAR},
+      market_year = #{record.marketYear,jdbcType=VARCHAR},
+      market_season = #{record.marketSeason,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=BIT},
+      state = #{record.state,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      memo = #{record.memo,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    update hub_supplier_price_change_record
+    <set>
+      <if test="supplierId != null">
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null">
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null">
+        supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null">
+        supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null">
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null">
+        market_price = #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplyPrice != null">
+        supply_price = #{supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="marketYear != null">
+        market_year = #{marketYear,jdbcType=VARCHAR},
+      </if>
+      <if test="marketSeason != null">
+        market_season = #{marketSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=BIT},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null">
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    update hub_supplier_price_change_record
+    set supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      market_price = #{marketPrice,jdbcType=DECIMAL},
+      supply_price = #{supplyPrice,jdbcType=DECIMAL},
+      currency = #{currency,jdbcType=VARCHAR},
+      market_year = #{marketYear,jdbcType=VARCHAR},
+      market_season = #{marketSeason,jdbcType=VARCHAR},
+      type = #{type,jdbcType=BIT},
+      state = #{state,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      memo = #{memo,jdbcType=VARCHAR}
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null">
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    <id column="supplier_price_change_record_id" jdbcType="BIGINT" property="supplierPriceChangeRecordId" />
+    <result column="supplier_id" jdbcType="VARCHAR" property="supplierId" />
+    <result column="supplier_no" jdbcType="VARCHAR" property="supplierNo" />
+    <result column="supplier_sku_no" jdbcType="VARCHAR" property="supplierSkuNo" />
+    <result column="supplier_spu_no" jdbcType="VARCHAR" property="supplierSpuNo" />
+    <result column="sp_sku_no" jdbcType="VARCHAR" property="spSkuNo" />
+    <result column="market_price" jdbcType="DECIMAL" property="marketPrice" />
+    <result column="supply_price" jdbcType="DECIMAL" property="supplyPrice" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="market_year" jdbcType="VARCHAR" property="marketYear" />
+    <result column="market_season" jdbcType="VARCHAR" property="marketSeason" />
+    <result column="type" jdbcType="BIT" property="type" />
+    <result column="state" jdbcType="BIT" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="memo" jdbcType="VARCHAR" property="memo" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    <if test="fields == null">
+      supplier_price_change_record_id, supplier_id, supplier_no, supplier_sku_no, supplier_spu_no, 
+      sp_sku_no, market_price, supply_price, currency, market_year, market_season, type, 
+      state, create_time, update_time, memo
+    </if>
+    <if test="fields != null">
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null">
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    supplier_price_change_record_id,supplier_id,supplier_no,supplier_sku_no,supplier_spu_no,sp_sku_no,market_price,supply_price,currency,market_year,market_season,type,state,create_time,update_time,memo
+    from hub_supplier_price_change_record
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from hub_supplier_price_change_record
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria">
+    delete from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    insert into hub_supplier_price_change_record (supplier_price_change_record_id, supplier_id, 
+      supplier_no, supplier_sku_no, supplier_spu_no, 
+      sp_sku_no, market_price, supply_price, 
+      currency, market_year, market_season, 
+      type, state, create_time, 
+      update_time, memo)
+    values (#{supplierPriceChangeRecordId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR}, 
+      #{spSkuNo,jdbcType=VARCHAR}, #{marketPrice,jdbcType=DECIMAL}, #{supplyPrice,jdbcType=DECIMAL}, 
+      #{currency,jdbcType=VARCHAR}, #{marketYear,jdbcType=VARCHAR}, #{marketSeason,jdbcType=VARCHAR}, 
+      #{type,jdbcType=BIT}, #{state,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    insert into hub_supplier_price_change_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="supplierPriceChangeRecordId != null">
+        supplier_price_change_record_id,
+      </if>
+      <if test="supplierId != null">
+        supplier_id,
+      </if>
+      <if test="supplierNo != null">
+        supplier_no,
+      </if>
+      <if test="supplierSkuNo != null">
+        supplier_sku_no,
+      </if>
+      <if test="supplierSpuNo != null">
+        supplier_spu_no,
+      </if>
+      <if test="spSkuNo != null">
+        sp_sku_no,
+      </if>
+      <if test="marketPrice != null">
+        market_price,
+      </if>
+      <if test="supplyPrice != null">
+        supply_price,
+      </if>
+      <if test="currency != null">
+        currency,
+      </if>
+      <if test="marketYear != null">
+        market_year,
+      </if>
+      <if test="marketSeason != null">
+        market_season,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="memo != null">
+        memo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="supplierPriceChangeRecordId != null">
+        #{supplierPriceChangeRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierId != null">
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null">
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null">
+        #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null">
+        #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null">
+        #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null">
+        #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplyPrice != null">
+        #{supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="currency != null">
+        #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="marketYear != null">
+        #{marketYear,jdbcType=VARCHAR},
+      </if>
+      <if test="marketSeason != null">
+        #{marketSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=BIT},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null">
+        #{memo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria" resultType="java.lang.Integer">
+    select count(*) from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update hub_supplier_price_change_record
+    <set>
+      <if test="record.supplierPriceChangeRecordId != null">
+        supplier_price_change_record_id = #{record.supplierPriceChangeRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierId != null">
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierNo != null">
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSkuNo != null">
+        supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuNo != null">
+        supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spSkuNo != null">
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketPrice != null">
+        market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.supplyPrice != null">
+        supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.currency != null">
+        currency = #{record.currency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketYear != null">
+        market_year = #{record.marketYear,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketSeason != null">
+        market_season = #{record.marketSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=BIT},
+      </if>
+      <if test="record.state != null">
+        state = #{record.state,jdbcType=BIT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.memo != null">
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update hub_supplier_price_change_record
+    set supplier_price_change_record_id = #{record.supplierPriceChangeRecordId,jdbcType=BIGINT},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{record.supplierSkuNo,jdbcType=VARCHAR},
+      supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
+      currency = #{record.currency,jdbcType=VARCHAR},
+      market_year = #{record.marketYear,jdbcType=VARCHAR},
+      market_season = #{record.marketSeason,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=BIT},
+      state = #{record.state,jdbcType=BIT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      memo = #{record.memo,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    update hub_supplier_price_change_record
+    <set>
+      <if test="supplierId != null">
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null">
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null">
+        supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuNo != null">
+        supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null">
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null">
+        market_price = #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplyPrice != null">
+        supply_price = #{supplyPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="marketYear != null">
+        market_year = #{marketYear,jdbcType=VARCHAR},
+      </if>
+      <if test="marketSeason != null">
+        market_season = #{marketSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=BIT},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="memo != null">
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord">
+    update hub_supplier_price_change_record
+    set supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      market_price = #{marketPrice,jdbcType=DECIMAL},
+      supply_price = #{supplyPrice,jdbcType=DECIMAL},
+      currency = #{currency,jdbcType=VARCHAR},
+      market_year = #{marketYear,jdbcType=VARCHAR},
+      market_season = #{marketSeason,jdbcType=VARCHAR},
+      type = #{type,jdbcType=BIT},
+      state = #{state,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      memo = #{memo,jdbcType=VARCHAR}
+    where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_supplier_price_change_record
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null">
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>
