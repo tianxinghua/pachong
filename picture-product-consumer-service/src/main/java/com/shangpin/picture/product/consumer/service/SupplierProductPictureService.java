@@ -67,12 +67,11 @@ public class SupplierProductPictureService {
 	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
-//			Map<String,Byte> picUrlMaps = supplierProductPictureManager.exists(supplierSpuId);
 			for (HubSpuPendingPicDto picDto : picDtos) {
 				String picUrl = picDto.getPicUrl();
-//				if(picUrlMaps.containsKey(picUrl) && PicHandleState.HANDLED.getIndex() == picUrlMaps.get(picUrl)){ 
-//					continue;
-//				}
+				if(!supplierProductPictureManager.exists(picDto.getSupplierId(),picUrl)){
+					continue;
+				}
 				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
