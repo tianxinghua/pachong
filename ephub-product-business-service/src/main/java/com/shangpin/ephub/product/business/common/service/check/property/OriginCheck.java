@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
 import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;

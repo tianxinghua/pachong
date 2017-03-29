@@ -28,7 +28,7 @@ public class EphubProductBusinessServiceApplicationTests {
 
 	@Autowired
 	private RestTemplate httpClient;
-	@Autowired
+	@Autowired 
 	ApiAddressProperties ApiAddressProperties;
 //	@Test
 //	public void test(){
@@ -88,6 +88,7 @@ public class EphubProductBusinessServiceApplicationTests {
 	                requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
 	                });
 			
+			@SuppressWarnings("unused")
 			HubResponseDto<CategoryScreenSizeDom> cate  = entity.getBody();
 			CategoryScreenSizeDom size = entity.getBody().getResDatas().get(0);
 			boolean sizeIsExist = false;

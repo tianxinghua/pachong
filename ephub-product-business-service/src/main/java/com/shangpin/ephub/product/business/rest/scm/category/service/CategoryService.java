@@ -104,7 +104,7 @@ public class CategoryService {
 	 * @return
 	 */
 	private HubResponseDto<FourLevelCategory> getGmsCateGoryByApi(String categoryNo){
-		long start_categoryService = System.currentTimeMillis();
+		//long start_categoryService = System.currentTimeMillis();
 		CategoryRequestDto request = new CategoryRequestDto();
         request.setCategoryNo(categoryNo);
         HttpEntity<CategoryRequestDto> requestEntity = new HttpEntity<CategoryRequestDto>(request);
@@ -116,6 +116,7 @@ public class CategoryService {
         return entity.getBody();
 	}
 	
+	@SuppressWarnings("unused")
 	private HubResponseDto<SopSkuDto> querySpSkuNoFromScm(SopSkuQueryDto queryDto) throws JsonProcessingException {
         HttpEntity<SopSkuQueryDto> requestEntity = new HttpEntity<SopSkuQueryDto>(queryDto);
         ObjectMapper mapper = new ObjectMapper();

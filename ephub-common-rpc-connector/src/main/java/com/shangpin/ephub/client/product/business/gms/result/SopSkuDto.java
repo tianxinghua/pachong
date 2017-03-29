@@ -1,12 +1,11 @@
 package com.shangpin.ephub.client.product.business.gms.result;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
-import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * Created by lizhongren on 2017/2/14.
@@ -14,7 +13,11 @@ import java.io.Serializable;
 
 @ToString
 public class SopSkuDto implements Serializable {
-    @JsonIgnore
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -932065893277138333L;
+	@JsonIgnore
     private String  skuNo;
     @JsonIgnore
     private String  productNo;

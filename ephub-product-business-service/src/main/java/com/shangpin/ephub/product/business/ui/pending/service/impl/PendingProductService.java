@@ -258,6 +258,7 @@ public class PendingProductService extends PendingSkuService{
             }else if(pass&&isSkuPass){
             	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
+            pendingProductDto.setCreateTime(null); 
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
@@ -370,12 +371,15 @@ public class PendingProductService extends PendingSkuService{
     }
     @Override
 	public SupplierProductVo findSupplierProduct(Long supplierSpuId) {
+    	long start = System.currentTimeMillis();
     	SupplierProductVo supplierProductVo = new SupplierProductVo();
     	try {
         	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(supplierSpuId);
         	if(null != spuDto){
         		JavaUtil.fatherToChild(spuDto,supplierProductVo);
+        		long start_sku = System.currentTimeMillis();
             	List<HubSupplierSkuDto> supplierSku = findHubSupplierSku(supplierSpuId);
+            	log.info("--->原始信息查询sku耗时{}",System.currentTimeMillis()-start_sku); 
             	if(CollectionUtils.isNotEmpty(supplierSku)){
             		supplierProductVo.setSupplierSku(supplierSku);
             	}
@@ -385,6 +389,7 @@ public class PendingProductService extends PendingSkuService{
 		} catch (Exception e) {
 			log.error("查询原始信息时异常："+e.getMessage(),e); 
 		}
+    	log.info("--->原始信息查询总耗时{}",System.currentTimeMillis()-start); 
 		return supplierProductVo;
 	}
 

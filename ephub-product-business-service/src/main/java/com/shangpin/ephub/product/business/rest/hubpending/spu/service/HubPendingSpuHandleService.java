@@ -55,7 +55,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author zhaogenchun
  * @date 2016年12月23日 下午4:15:16
  */
-@SuppressWarnings("unused")
 @Service
 @Slf4j
 public class HubPendingSpuHandleService {

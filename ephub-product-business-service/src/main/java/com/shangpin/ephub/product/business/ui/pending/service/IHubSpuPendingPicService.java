@@ -10,6 +10,7 @@ import java.util.List;
  *
  */
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 public interface IHubSpuPendingPicService {
 
@@ -32,5 +33,11 @@ public interface IHubSpuPendingPicService {
 	 * @return
 	 */
 	public List<HubSpuPendingPicDto> findSpPicUrl(String supplierId,String supplierSpuNo);
+	/**
+	 * 更新pic_handle_state
+	 * @param spuPendingPicIds
+	 * @param picHandleState
+	 */
+	public void updatePicHandleState(List<Long> spuPendingPicIds, PicHandleState picHandleState);
 	
 }

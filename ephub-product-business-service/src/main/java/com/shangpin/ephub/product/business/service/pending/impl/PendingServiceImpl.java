@@ -1,8 +1,11 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +41,11 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * Created by loyalty on 16/12/24.
  * @param
  */
 @Service
-@Slf4j
 public class PendingServiceImpl implements com.shangpin.ephub.product.business.service.pending.PendingService {
 
     @Autowired
@@ -562,7 +562,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     }
 
 
-    private boolean hasSkuStock(List<HubSpuPendingDto> hubSpuPendingDtos) {
+    @SuppressWarnings("unused")
+	private boolean hasSkuStock(List<HubSpuPendingDto> hubSpuPendingDtos) {
         List<Long> spuIdList = new ArrayList<>();
         for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
             spuIdList.add(spuDto.getSpuPendingId());
