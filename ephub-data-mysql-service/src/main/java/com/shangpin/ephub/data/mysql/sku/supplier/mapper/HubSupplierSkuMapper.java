@@ -1,7 +1,5 @@
 package com.shangpin.ephub.data.mysql.sku.supplier.mapper;
 
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

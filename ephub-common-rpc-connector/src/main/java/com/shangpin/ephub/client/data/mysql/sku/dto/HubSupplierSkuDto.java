@@ -120,6 +120,11 @@ public class HubSupplierSkuDto implements Serializable {
      */
     private Long version;
 
+    /**
+     * 尚品skuno
+     */
+    private String spSkuNo;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSupplierSkuId() {
@@ -306,6 +311,14 @@ public class HubSupplierSkuDto implements Serializable {
         this.version = version;
     }
 
+    public String getSpSkuNo() {
+        return spSkuNo;
+    }
+
+    public void setSpSkuNo(String spSkuNo) {
+        this.spSkuNo = spSkuNo == null ? null : spSkuNo.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -335,6 +348,7 @@ public class HubSupplierSkuDto implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
+        sb.append(", spSkuNo=").append(spSkuNo);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -374,7 +388,8 @@ public class HubSupplierSkuDto implements Serializable {
             && (this.getFilterFlag() == null ? other.getFilterFlag() == null : this.getFilterFlag().equals(other.getFilterFlag()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
-            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
+            && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getSpSkuNo() == null ? other.getSpSkuNo() == null : this.getSpSkuNo().equals(other.getSpSkuNo()));
     }
 
     @Override
@@ -404,6 +419,7 @@ public class HubSupplierSkuDto implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getSpSkuNo() == null) ? 0 : getSpSkuNo().hashCode());
         return result;
     }
 }
