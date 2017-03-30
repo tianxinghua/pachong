@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.data.mysql.sku.supplier.bean.HubSupplierSkuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.sku.supplier.bean.HubSupplierSkuWithCriteria;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import com.shangpin.ephub.data.mysql.sku.supplier.service.HubSupplierSkuService;
 
 /**

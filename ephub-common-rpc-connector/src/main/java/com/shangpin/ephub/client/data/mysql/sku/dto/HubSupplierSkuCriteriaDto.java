@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.data.mysql.sku.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -118,7 +120,7 @@ public class HubSupplierSkuCriteriaDto {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -1627,22 +1629,92 @@ public class HubSupplierSkuCriteriaDto {
             addCriterion("version not between", value1, value2, "version");
             return (Criteria) this;
         }
+
+        public Criteria andSpSkuNoIsNull() {
+            addCriterion("sp_sku_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoIsNotNull() {
+            addCriterion("sp_sku_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoEqualTo(String value) {
+            addCriterion("sp_sku_no =", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoNotEqualTo(String value) {
+            addCriterion("sp_sku_no <>", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoGreaterThan(String value) {
+            addCriterion("sp_sku_no >", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoGreaterThanOrEqualTo(String value) {
+            addCriterion("sp_sku_no >=", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoLessThan(String value) {
+            addCriterion("sp_sku_no <", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoLessThanOrEqualTo(String value) {
+            addCriterion("sp_sku_no <=", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoLike(String value) {
+            addCriterion("sp_sku_no like", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoNotLike(String value) {
+            addCriterion("sp_sku_no not like", value, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoIn(List<String> values) {
+            addCriterion("sp_sku_no in", values, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoNotIn(List<String> values) {
+            addCriterion("sp_sku_no not in", values, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoBetween(String value1, String value2) {
+            addCriterion("sp_sku_no between", value1, value2, "spSkuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpSkuNoNotBetween(String value1, String value2) {
+            addCriterion("sp_sku_no not between", value1, value2, "spSkuNo");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
 
-    	public Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-    	
-        public Criterion() {
-			super();
-		}
 
-		private String condition;
+        public Criterion() {
+            super();
+        }
+
+        private String condition;
 
         private Object value;
 

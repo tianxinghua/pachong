@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import com.shangpin.ephub.data.mysql.sku.supplier.bean.HubSupplierSkuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.sku.supplier.bean.HubSupplierSkuWithCriteria;
 import com.shangpin.ephub.data.mysql.sku.supplier.mapper.HubSupplierSkuMapper;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 
 /**
  * <p>Title:HubSupplierSkuService.java </p>

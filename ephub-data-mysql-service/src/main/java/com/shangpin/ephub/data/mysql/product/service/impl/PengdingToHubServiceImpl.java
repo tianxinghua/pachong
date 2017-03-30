@@ -41,8 +41,6 @@ import com.shangpin.ephub.data.mysql.sku.pending.mapper.HubSkuPendingMapper;
 import com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPending;
 import com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPendingCriteria;
 import com.shangpin.ephub.data.mysql.sku.supplier.mapper.HubSupplierSkuMapper;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
-import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;

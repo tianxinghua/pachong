@@ -111,6 +111,7 @@ public class HubSupplierCategoryDicController {
 		try {
 			HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
 			BeanUtils.copyProperties(dto, dicDto);
+			log.info("======供应商品类映射hub品类变更：{}",dto);
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
 			return HubResponse.successResp("success");
 		} catch (Exception e) {
