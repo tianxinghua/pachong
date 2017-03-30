@@ -25,13 +25,13 @@ spring:
                               destination: supplier.product.price
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 4
                                        maxAttempts: 1
                         retrySupplierPrice:
                               destination: retry.product.price
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 4
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
