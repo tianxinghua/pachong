@@ -12,7 +12,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class ProductPriceDTO {
     String sopUserNo; //门户编号
     String skuNo;     //尚品的SKU编号
     String supplierSkuNo;//供货商skuNo
