@@ -1,31 +1,28 @@
 package com.shangpin.iog.articoli.dto;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@XmlRootElement(name="product")
 public class Product {
 
-	String code;	
-	String product_name;
-	String description;
-	String category;
-	String product_brand;
-	String product_detail;
-	String url;
-	String image;
-	String market_price;
-	String sell_price;
-	String brand;	
-	String season;
-	String color;
-	String material;
-	String gender;
-	Other_images other_images;
-	Sizes sizes;
+	private String spuID;	
+	private String skuID;
+	private String categoryName;
+	private String brandName;
+	private String productDescription;
+	private String seasonName;
+	private String gender;
+	private String material;
+	private String productName;
+	private String salePrice;
+	private String marketPrice;	
+	private String stock;
+	private String productCode;
+	private String color;
+	private String saleCurrency;
+	private String size;
+	private String images;
+	private String origin;
 }

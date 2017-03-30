@@ -35,16 +35,24 @@ public class StartUp {
 	public static void main(String[] args)
 	{
 
-        //加载spring
-        log.info("----拉取optical数据开始----");
-		loadSpringContext();
-        log.info("----初始SPRING成功----");
-        //拉取数据
-        FetchProduct fetchProduct =(FetchProduct)factory.getBean("optical");
-        fetchProduct.handleData("spu", supplierId, day, picpath);;
+		try {
+			//加载spring
+	        log.info("----拉取optical数据开始----");
+			loadSpringContext();
+	        log.info("----初始SPRING成功----");
+	        System.out.println("----初始SPRING成功----"); 
+	        //拉取数据
+	        FetchProduct fetchProduct =(FetchProduct)factory.getBean("optical");
+	        fetchProduct.handleData("spu", supplierId, day, picpath);;
 
-        log.info("----拉取optical数据完成----");
-		System.out.println("-------fetch end---------");
+	        log.info("----拉取optical数据完成----");
+			System.out.println("-------fetch end---------");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			System.exit(0); 
+		}
+        
 
 	}
 }
