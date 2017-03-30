@@ -9,7 +9,14 @@ public enum InfoState {
 	/**
 	 * 信息未完善
 	 */
-	IMPERFECT((byte)0,"信息未完善");
+	IMPERFECT((byte)0,"信息未完善"),
+	RefreshCategory((byte)4,"刷新品类"),
+	Union((byte)5,"自动选品"),
+	RefreshSize((byte)6,"刷新尺码"),
+	RefreshGender((byte)7,"刷新性别"),
+	RefreshSpuModel((byte)8,"刷新货号"),
+	RefreshBrand((byte)9,"刷新品牌"),
+	RefreshOrigin((byte)10,"刷新产地");
 	
 	/**
      * 数字索引标识

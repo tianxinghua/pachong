@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
 import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by zhaogenchun on 2017/03/06.
@@ -156,7 +157,7 @@ public class CategoryCheck extends CommonCheckBase {
 	    private void setSupplierCategoryValueToMap(String supplierId) throws Exception {
 
 	        List<HubSupplierCategroyDicDto> hubSupplierCategroyDicDtos = hubCategoryDicService
-	                .getSupplierCategoryBySupplierId(supplierId);
+	                .getSupplierCategoryBySupplierId(supplierId,1,ConstantProperty.MAX_COMMON_QUERY_NUM,InfoState.PERFECT.getIndex());
 	        if (null != hubSupplierCategroyDicDtos && hubSupplierCategroyDicDtos.size() > 0) {
 	            Map<String, String> categoryMap = new HashMap<>();
 	            String spCategory = "";

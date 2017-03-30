@@ -1,7 +1,5 @@
 package com.shangpin.ephub.client.product.business.hubpending.spu.gateway;
 
-import javax.ws.rs.PathParam;
-
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

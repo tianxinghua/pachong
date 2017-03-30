@@ -39,6 +39,7 @@ import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRu
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
@@ -72,6 +73,8 @@ public class PendingProductService extends PendingSkuService{
     private HubSupplierSkuGateWay hubSupplierSkuGateWay;
     @Autowired
     private PengdingToHubGateWay pendingToHubGateWay;
+    @Autowired
+    private IHubSpuPendingPicService  hubSpuPendingPicService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
@@ -103,7 +106,7 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
                         pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
-                        List<HubSpuPendingPicDto> picurls = findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+                        List<HubSpuPendingPicDto> picurls = hubSpuPendingPicService.findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(findMainUrl(picurls)); 
                         pendingProduct.setPicUrls(findSpPicUrls(picurls)); 
                         pendingProduct.setSupplierUrls(findSupplierUrls(picurls)); 
@@ -255,6 +258,7 @@ public class PendingProductService extends PendingSkuService{
             }else if(pass&&isSkuPass){
             	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
+            pendingProductDto.setCreateTime(null); 
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
@@ -367,12 +371,15 @@ public class PendingProductService extends PendingSkuService{
     }
     @Override
 	public SupplierProductVo findSupplierProduct(Long supplierSpuId) {
+    	long start = System.currentTimeMillis();
     	SupplierProductVo supplierProductVo = new SupplierProductVo();
     	try {
         	HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(supplierSpuId);
         	if(null != spuDto){
         		JavaUtil.fatherToChild(spuDto,supplierProductVo);
+        		long start_sku = System.currentTimeMillis();
             	List<HubSupplierSkuDto> supplierSku = findHubSupplierSku(supplierSpuId);
+            	log.info("--->原始信息查询sku耗时{}",System.currentTimeMillis()-start_sku); 
             	if(CollectionUtils.isNotEmpty(supplierSku)){
             		supplierProductVo.setSupplierSku(supplierSku);
             	}
@@ -382,6 +389,7 @@ public class PendingProductService extends PendingSkuService{
 		} catch (Exception e) {
 			log.error("查询原始信息时异常："+e.getMessage(),e); 
 		}
+    	log.info("--->原始信息查询总耗时{}",System.currentTimeMillis()-start); 
 		return supplierProductVo;
 	}
 

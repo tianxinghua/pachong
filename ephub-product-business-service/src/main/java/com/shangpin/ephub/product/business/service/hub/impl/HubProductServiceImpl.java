@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.shangpin.ephub.client.data.mysql.sku.dto.*;
-import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
-import com.shangpin.ephub.product.business.service.ServiceConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,6 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
@@ -34,6 +37,7 @@ import com.shangpin.ephub.product.business.common.enumeration.ScmGenderType;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
+import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.ApiProductOrgExtendDom;
 import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
@@ -82,8 +86,10 @@ public class HubProductServiceImpl implements HubProductService {
     public void sendHubProuctToScm(HubProductIdDto hubProductIdDto) throws Exception {
         Long  spuId = hubProductIdDto.getId();
         List<HubProductIdDto> skus = hubProductIdDto.getSubProduct();
-        Long skuId = 0L;
-        Long supplierMappingId = 0L;
+        @SuppressWarnings("unused")
+		Long skuId = 0L;
+        @SuppressWarnings("unused")
+		Long supplierMappingId = 0L;
         //推送对象初始化
         SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
         ApiProductOrgExtendDom spSpuExtendInfo = new ApiProductOrgExtendDom();//  扩展对象
@@ -245,7 +251,8 @@ public class HubProductServiceImpl implements HubProductService {
         }
     }
 
-    private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
+    @SuppressWarnings("unused")
+	private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
         HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
         ObjectMapper mapper = new ObjectMapper();
         log.info("send scm parameter: " + mapper.writeValueAsString(productDto));
@@ -492,7 +499,8 @@ class SendToScmTask implements Runnable{
         skuSupplierMappingGateWay.updateByPrimaryKeySelective(skuSupplierMapping);
     }
 
-    private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
+    @SuppressWarnings("unused")
+	private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
         HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
         ObjectMapper mapper = new ObjectMapper();
 //        log.info("send scm parameter: " + mapper.writeValueAsString(productDto));

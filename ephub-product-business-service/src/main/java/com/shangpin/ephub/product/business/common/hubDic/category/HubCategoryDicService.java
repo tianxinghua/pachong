@@ -29,13 +29,26 @@ public class HubCategoryDicService {
 	@Autowired
 	private HubSupplierCategroyDicGateWay hubSupplierCategroyDicGateWay;
 
-	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierId(String supplierId) {
+	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierId(String supplierId,int pageNo,int pageSize,Byte pushState) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
-		criteria.setPageNo(1);
-		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId)
-				.andPushStateEqualTo(InfoState.PERFECT.getIndex());
+				.andPushStateEqualTo(pushState);
+		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
+	}
+	
+	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType) {
+		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
+		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+		criterion.andSupplierIdEqualTo(supplierId);
+		if(categoryType!=null){
+			criterion.andCategoryTypeEqualTo(categoryType);
+		}
+				
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
@@ -109,5 +122,24 @@ public class HubCategoryDicService {
 		} else {
 			return null;
 		}
+	}
+
+	public void updateHubCategoryDic(Long id, String categoryNo,String createUser) {
+		HubSupplierCategroyDicDto hubSupplierCategroyDic = new HubSupplierCategroyDicDto();
+		hubSupplierCategroyDic.setHubCategoryNo(categoryNo);
+		hubSupplierCategroyDic.setSupplierCategoryDicId(id);
+		hubSupplierCategroyDic.setCategoryType((byte)4);
+		hubSupplierCategroyDic.setUpdateTime(new Date());
+		hubSupplierCategroyDic.setUpdateUser(createUser);
+		hubSupplierCategroyDicGateWay.updateByPrimaryKeySelective(hubSupplierCategroyDic);
+		
+	}
+
+	public HubSupplierCategroyDicDto getSupplierCategoryById(Long id) {
+		return hubSupplierCategroyDicGateWay.selectByPrimaryKey(id);
+	}
+
+	public void updateHubCategoryDicByPrimaryKey(HubSupplierCategroyDicDto dicDto) {
+		hubSupplierCategroyDicGateWay.updateByPrimaryKeySelective(dicDto);
 	}
 }

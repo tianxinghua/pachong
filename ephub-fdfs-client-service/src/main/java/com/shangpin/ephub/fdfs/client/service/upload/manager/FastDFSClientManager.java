@@ -80,7 +80,8 @@ public class FastDFSClientManager {
             StorePath storePath = StorePath.praseFromUrl(fileUrl);
             storageClient.deleteFile(storePath.getGroup(), storePath.getPath());
         } catch (FdfsUnsupportStorePathException e) {
-            log.warn(e.getMessage());
+            log.warn(e.getMessage(),e);
+            throw new RuntimeException(e.getMessage(),e);
         }
     }
 }

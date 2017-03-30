@@ -12,8 +12,6 @@ import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * <p>Title:HubCheckRuleController.java </p>
  * <p>Description: HubPendingSku入库前校验规则rest服务接口</p>

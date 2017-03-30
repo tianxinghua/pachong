@@ -35,8 +35,8 @@ public class HubSpuPendingPicController {
     public int deleteByCriteria(@RequestBody HubSpuPendingPicCriteria criteria){
     	return hubSpuPendingPicService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long spuPicId){
+	@RequestMapping(value = "/delete-by-primary-key/{spuPicId}")
+    public int deleteByPrimaryKey(@PathVariable("spuPicId") Long spuPicId){
     	return hubSpuPendingPicService.deleteByPrimaryKey(spuPicId);
     }
 	@RequestMapping(value = "/insert")

@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
-import com.shangpin.ephub.product.business.service.ServiceConstant;
-import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
-import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
-import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +24,12 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
+import com.shangpin.ephub.product.business.service.ServiceConstant;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -184,6 +183,7 @@ public class HubPendingProductController {
 
 
 
+	@SuppressWarnings("unused")
 	private void updateExistSkuSupplierMapping(SpSkuNoDto dto) {
 		HubSkuSupplierMappingCriteriaDto criteriaDto = new HubSkuSupplierMappingCriteriaDto();
 		criteriaDto.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());

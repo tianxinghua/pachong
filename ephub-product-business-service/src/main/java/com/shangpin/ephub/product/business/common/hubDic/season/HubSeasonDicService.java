@@ -38,6 +38,7 @@ public class HubSeasonDicService {
 	public List<HubSeasonDicDto> getHubSeasonDic() {
 		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
 		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		@SuppressWarnings("unused")
 		HubSeasonDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		return hubSeasonDicGateWay.selectByCriteria(criteria);
 

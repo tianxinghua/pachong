@@ -79,6 +79,7 @@ public class HubPendingSkuHandleService {
 	}
 
 	// 有顺序的 不能打乱顺序
+	@SuppressWarnings("serial")
 	static Map<String, String> sizeMap = new LinkedHashMap<String, String>() {
 		{
 			put("½U", ".5");
@@ -115,7 +116,7 @@ public class HubPendingSkuHandleService {
 	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto) throws Exception {
 		
 		if (hubSkuPendingIsExist.getSkuState()!=null&&(hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
-				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex()||hubSkuPendingIsExist.getSkuState() == SpuState.INFO_IMPECCABLE.getIndex())) {
+				|| hubSkuPendingIsExist.getSkuState() == SpuState.HANDLING.getIndex())) {
 			// 如果skustate状态为已处理、审核中 或者已完善，则不更新
 			return;
 		}
@@ -132,6 +133,7 @@ public class HubPendingSkuHandleService {
 		if(StringUtils.isNotBlank(sizeType)){
 			checkSkuSizeType(hubSkuPendingDto);
 		}else{
+			setSizeMapp(hubSkuPendingDto);
 			matchSizeType(hubSkuPendingDto);
 		}
 		hubPendingSkuService.updateHubSkuPendingByPrimaryKey(hubSkuPendingDto);
@@ -153,8 +155,11 @@ public class HubPendingSkuHandleService {
 			}
 			
 			HubPendingSkuCheckResult hubPendingSkuCheckResult = hubCheckService.checkHubPendingSku(hubSkuCheckDto);
+			log.info("校验结果：{}",hubPendingSkuCheckResult);
+			
 			if (hubPendingSkuCheckResult.isPassing()) {
 				hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
+				log.info("getHubSpuNo：{}",hubSpuPending.getHubSpuNo());
 				if(hubSpuPending.getHubSpuNo()!=null){
 					hubSkuPendingDto.setSkuState((byte) SpuState.HANDLING.getIndex());
 				}else{
