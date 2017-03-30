@@ -6,11 +6,9 @@ import lombok.*;
 import java.io.Serializable;
 
 /**
- * <p>Title:RetryPicture.java </p>
- * <p>Description: </p>
- * <p>Company: www.shangpin.com</p> 
- * @author yanxiaobin
- * @date 2017年1月18日 下午12:20:21
+
+ * <p>商品价格信息: </p>
+
  */
 @Setter
 @Getter
@@ -24,8 +22,14 @@ public class RetryPrice implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -8329268266608806631L;
-	/**
-	 * 图片表主键
-	 */
-	private Long spuPendingPicId;
+	String sopUserNo; //门户编号
+	String skuNo;     //尚品的SKU编号
+	String supplierSkuNo;//供货商skuNo
+	String marketPrice;//市场价
+	String purchasePrice;//采购价
+	String createUserName;
+	String marketYear;
+	String marketSeason;
+	String currency;
+	String memo;
 }
