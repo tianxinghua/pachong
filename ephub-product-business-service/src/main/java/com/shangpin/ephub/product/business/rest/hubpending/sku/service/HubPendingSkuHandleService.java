@@ -78,30 +78,6 @@ public class HubPendingSkuHandleService {
 	public void init() {
 	}
 
-	// 有顺序的 不能打乱顺序
-	@SuppressWarnings("serial")
-	static Map<String, String> sizeMap = new LinkedHashMap<String, String>() {
-		{
-			put("½U", ".5");
-			put("½", ".5");
-			put("+", ".5");
-			put("2/3", ".5");
-			put("UNIQUE", "均码");
-			put("Unica", "均码");
-			put("One size", "均码");
-			put("UNI", "均码");
-			put("TU", "均码");
-			put("U", "均码");
-			put("Medium", "M");
-			put("Small", "S");
-			put("VIII", "8");
-			put("VI", "6");
-			put("III", "3");
-			put("II", "2");
-			put("I", "1");
-		}
-	};
-
 	public void handleHubPendingSku(HubSkuPendingDto hubSkuPendingDto) throws Exception {
 
 		HubSkuPendingDto hubSkuPendingIsExist = hubPendingSkuService.findHubSkuPendingBySupplierIdAndSupplierSkuNo(
@@ -279,7 +255,7 @@ public class HubPendingSkuHandleService {
 					replaceKey = sizeKey;
 				}
 				if (size.indexOf(sizeKey) >= 0) {
-					size = size.replaceAll(replaceKey, sizeMap.get(sizeKey));
+					size = size.replaceAll(replaceKey, commonSizeMap.get(sizeKey));
 				}
 			}
 		}

@@ -106,11 +106,12 @@ public class HubSupplierCategoryDicController {
 	 * @return
 	 */
 	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
-	public HubResponse exportProduct(@RequestBody HubSupplierCategoryDicRequestDto dto) {
+	public HubResponse save(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 
 		try {
 			HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
 			BeanUtils.copyProperties(dto, dicDto);
+			log.info("======供应商品类映射hub品类变更：{}",dto);
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
 			return HubResponse.successResp("success");
 		} catch (Exception e) {
@@ -122,6 +123,7 @@ public class HubSupplierCategoryDicController {
 	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 		try {
+			save(dto);
 			HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 			criteria.createCriteria().andSupplierIdEqualTo(dto.getSupplierId())
 					.andSupplierCategorynameEqualTo(dto.getSupplierCategory())
