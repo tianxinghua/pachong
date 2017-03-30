@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.sku.pending.service;
 
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import com.shangpin.ephub.data.mysql.sku.pending.po.HubSkuPendingCriteria;
  * @date 2016年12月14日 下午5:12:15
  */
 @Service
+@Slf4j
 public class HubSkuPendingService {
 
 	@Autowired
@@ -73,7 +75,16 @@ public class HubSkuPendingService {
 	}
 
 	public int sumStockBySpuPendingId(Long spuPendingId) {
-		return hubSkuPendingMapper.sumStockBySpuPendingId(spuPendingId);
+		log.debug("sum total stock for spuPendignId= " +spuPendingId);
+		Integer  sumTotal = null;
+		try {
+			sumTotal = hubSkuPendingMapper.sumStockBySpuPendingId(spuPendingId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			sumTotal = 0;
+		}
+		if(null==sumTotal) sumTotal = 0;
+		return sumTotal;
 	}
 
 }
