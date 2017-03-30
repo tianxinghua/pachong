@@ -32,6 +32,7 @@ public class HubOriginDicService {
 		criteria.setOrderByClause("sort_val");
 		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
 		criteria.createCriteria().andSupplierIdEqualTo("").andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SIZE.getIndex().byteValue());
+		criteria.or(criteria.createCriteria().andSupplierIdIsNull().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SIZE.getIndex().byteValue()));
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 
