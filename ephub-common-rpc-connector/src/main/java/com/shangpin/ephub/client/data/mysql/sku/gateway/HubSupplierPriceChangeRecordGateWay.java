@@ -2,6 +2,8 @@ package com.shangpin.ephub.client.data.mysql.sku.gateway;
 
 
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithRowBoundsDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
