@@ -30,12 +30,12 @@ public class HubSupplierPriceChangeRecordDto implements Serializable {
     /**
      * 1:　价格  ２：季节  ３　: 价格 +　季节
      */
-    private Boolean type;
+    private Byte type;
 
     /**
      * 0:未处理  1、推送消息队列完成   2：处理完成 3：处理失败
      */
-    private Boolean state;
+    private Byte state;
 
     private Date createTime;
 
@@ -133,19 +133,19 @@ public class HubSupplierPriceChangeRecordDto implements Serializable {
         this.marketSeason = marketSeason == null ? null : marketSeason.trim();
     }
 
-    public Boolean getType() {
+    public Byte getType() {
         return type;
     }
 
-    public void setType(Boolean type) {
+    public void setType(Byte type) {
         this.type = type;
     }
 
-    public Boolean getState() {
+    public Byte getState() {
         return state;
     }
 
-    public void setState(Boolean state) {
+    public void setState(Byte state) {
         this.state = state;
     }
 

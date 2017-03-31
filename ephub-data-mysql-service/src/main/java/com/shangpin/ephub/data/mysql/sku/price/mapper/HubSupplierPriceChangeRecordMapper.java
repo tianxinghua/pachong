@@ -1,9 +1,9 @@
 package com.shangpin.ephub.data.mysql.sku.price.mapper;
 
-import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
-import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
+import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
