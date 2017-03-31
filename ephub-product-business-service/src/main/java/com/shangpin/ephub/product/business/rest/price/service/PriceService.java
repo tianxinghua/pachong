@@ -202,8 +202,8 @@ public class PriceService {
 	
 	private HubSupplierPriceChangeRecordCriteriaDto findCriteriaDto(PriceQueryDto priceQueryDto){
 		HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
-		if(!StringUtils.isEmpty(priceQueryDto.getSpSkuId())){
-			criteriaDto.createCriteria().andSpSkuNoEqualTo(priceQueryDto.getSpSkuId());
+		if(CollectionUtils.isNotEmpty(priceQueryDto.getSpSkuIds())){
+			criteriaDto.createCriteria().andSpSkuNoIn(priceQueryDto.getSpSkuIds());
 			return criteriaDto;
 		}else{
 			if(null != priceQueryDto.getPageIndex() && null != priceQueryDto.getPageSize()){

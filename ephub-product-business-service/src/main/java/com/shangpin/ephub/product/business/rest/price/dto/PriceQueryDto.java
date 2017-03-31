@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.rest.price.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -31,6 +33,6 @@ public class PriceQueryDto {
     /**
      * 尚品skuid
      */
-    private String spSkuId;
+    private List<String> spSkuIds;
 
 }
