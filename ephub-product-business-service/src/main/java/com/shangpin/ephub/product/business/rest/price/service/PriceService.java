@@ -20,7 +20,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.price.body.ProductPriceDTO;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
-
+/**
+ * <p>Title: PriceService</p>
+ * <p>Description: 供价推送服务类 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年3月31日 下午12:09:52
+ *
+ */
 @Service
 public class PriceService {
 	
@@ -35,7 +42,6 @@ public class PriceService {
 		HubSupplierSpuDto supplierSpuDto = priceDto.getHubSpu();
 		List<HubSupplierSkuDto> supplierSkus = priceDto.getHubSkus();
 		String supplierNo = priceDto.getSupplierNo();
-		
 		HubSupplierSpuDto spuDtoSel = isSupplierSeasonNameChanged(supplierSpuDto);
 		if(null != spuDtoSel){
 			List<HubSupplierSkuDto> hubSkus = findSupplierSkus(spuDtoSel.getSupplierSpuId());
@@ -44,25 +50,23 @@ public class PriceService {
 					if(!StringUtils.isEmpty(skuDto.getSpSkuNo())){
 						HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 						convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto);
-						saveHubSupplierPriceChangeRecordDto(recordDto);
+						Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
 						ProductPriceDTO retryPrice  = new ProductPriceDTO();
 						convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);				
-						sendMessageToPriceConsumer(retryPrice);
-						
+						sendMessageToPriceConsumer(supplierPriceChangeRecordId,retryPrice);
 					}
 				}
 			}
 		}
-		
 		for(HubSupplierSkuDto skuDto : supplierSkus){
 			boolean isChanged = isPriceChanged(skuDto);
-			if(isChanged){
+			if(isChanged && !StringUtils.isEmpty(skuDto.getSpSkuNo())){
 				HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 				convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto);
-				saveHubSupplierPriceChangeRecordDto(recordDto);
+				Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
 				ProductPriceDTO retryPrice  = new ProductPriceDTO();
 				convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);
-				//TODO 发送消息
+				sendMessageToPriceConsumer(supplierPriceChangeRecordId,retryPrice);
 			}
 		}
 	}
@@ -180,8 +184,25 @@ public class PriceService {
 	 * 发送消息
 	 * @param retryPrice
 	 */
-	public void sendMessageToPriceConsumer(ProductPriceDTO retryPrice){
-		
+	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
+		try {
+			
+			updateState(supplierPriceChangeRecordId,State.PUSHED);
+		} catch (Exception e) {
+			updateState(supplierPriceChangeRecordId,State.PUSHED_ERROR);
+			throw new Exception("供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage());
+		}
+	}
+	/**
+	 * 更新记录状态
+	 * @param supplierPriceChangeRecordId
+	 * @param state
+	 */
+	public void updateState(Long supplierPriceChangeRecordId,State state){
+		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
+		recordDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId);
+		recordDto.setState(state.getIndex()); 
+		priceChangeRecordGateWay.updateByPrimaryKeySelective(recordDto);
 	}
 	
 }
