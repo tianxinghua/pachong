@@ -20,7 +20,7 @@ import java.util.List;
 
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubSkuPriceGateWay {
+public interface HubSupplierPriceChangeRecordGateWay {
 
 	
 	@RequestMapping(value = "/hub-supplier-price/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
