@@ -96,7 +96,7 @@ public class PriceService {
 		recordDto.setSupplyPrice(supplierSkuDto.getSupplyPrice());
 		recordDto.setCurrency(StringUtils.isEmpty(supplierSkuDto.getMarketPriceCurrencyorg()) ? supplierSkuDto.getSupplyPriceCurrency() : supplierSkuDto.getMarketPriceCurrencyorg()); 
 		recordDto.setMarketSeason(supplierSpuDto.getSupplierSeasonname()); 
-		recordDto.setState(false);
+//		recordDto.setState(false);
 		recordDto.setCreateTime(new Date());
 	}
 
