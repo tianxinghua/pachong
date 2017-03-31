@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -93,6 +94,7 @@ public class SupplierProductSaveAndSendToPending {
 	 */
 	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
+			savePriceRecordAndSendConsumer(supplierNo,hubSpu,hubSkus);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 			//保存hubSpu到数据库
@@ -134,6 +136,25 @@ public class SupplierProductSaveAndSendToPending {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
 		}
 		return false;
+	}
+	
+	/**
+	 * 保存价格变化记录并且推送到价格消费者
+	 * @param supplierNo 供应商编号
+	 * @param hubSkus 供应商原始sku
+	 */
+	public void savePriceRecordAndSendConsumer(String supplierNo, HubSupplierSpuDto hubSpu, List<HubSupplierSkuDto> hubSkus){
+		try {
+			if(CollectionUtils.isNotEmpty(hubSkus)){
+				for(HubSupplierSkuDto skuDto : hubSkus){
+					//TODO 调用rpc
+					skuDto.getSupplierId();
+					skuDto.getSupplierSkuNo();
+				}
+			}
+		} catch (Exception e) {
+			log.error("保存价格变化记录并且推送到价格消费者异常："+e.getMessage(),e); 
+		}
 	}
 	
 	/**

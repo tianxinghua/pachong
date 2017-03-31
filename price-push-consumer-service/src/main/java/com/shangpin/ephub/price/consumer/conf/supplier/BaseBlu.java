@@ -16,7 +16,12 @@ public class BaseBlu extends SupplierCommon implements Serializable {
 
 
 
-    private String stockUrl;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2388702036832119720L;
+
+	private String stockUrl;
 
     private String orderCreateUrl;
 
