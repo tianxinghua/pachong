@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.State;
+import com.shangpin.ephub.client.data.mysql.enumeration.Type;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -49,7 +50,7 @@ public class PriceService {
 				for(HubSupplierSkuDto skuDto : hubSkus){
 					if(!StringUtils.isEmpty(skuDto.getSpSkuNo())){
 						HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-						convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto);
+						convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto,Type.SEASON);
 						Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
 						ProductPriceDTO retryPrice  = new ProductPriceDTO();
 						convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);				
@@ -62,7 +63,7 @@ public class PriceService {
 			boolean isChanged = isPriceChanged(skuDto);
 			if(isChanged && !StringUtils.isEmpty(skuDto.getSpSkuNo())){
 				HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-				convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto);
+				convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto,Type.PRICE);
 				Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
 				ProductPriceDTO retryPrice  = new ProductPriceDTO();
 				convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);
@@ -94,8 +95,9 @@ public class PriceService {
 	 * @param supplierSpuDto 供应商原始spu表对象
 	 * @param supplierSkuDto 供应商原始sku表对象
 	 * @param recordDto 供价记录表实体类
+	 * @param type 类型
 	 */
-	public void convertPriceDtoToRecordDto(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,HubSupplierPriceChangeRecordDto recordDto){
+	public void convertPriceDtoToRecordDto(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,HubSupplierPriceChangeRecordDto recordDto,Type type){
 		recordDto.setSupplierId(supplierSkuDto.getSupplierId());
 		recordDto.setSupplierNo(supplierNo);
 		recordDto.setSupplierSkuNo(supplierSkuDto.getSupplierSkuNo());
@@ -106,6 +108,7 @@ public class PriceService {
 		recordDto.setCurrency(StringUtils.isEmpty(supplierSkuDto.getMarketPriceCurrencyorg()) ? supplierSkuDto.getSupplyPriceCurrency() : supplierSkuDto.getMarketPriceCurrencyorg()); 
 		recordDto.setMarketSeason(supplierSpuDto.getSupplierSeasonname()); 
 		recordDto.setState(State.UNHANDLED.getIndex());
+		recordDto.setType(type.getIndex()); 
 		recordDto.setCreateTime(new Date());
 	}
 
