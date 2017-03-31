@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableFeignClients("com.shangpin.ephub")
-@EnableScheduling
+//@EnableScheduling
 public class PictureProductConsumerServiceApplication {
 
 	

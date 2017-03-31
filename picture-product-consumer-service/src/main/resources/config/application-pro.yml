@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: 172.20.11.49
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
