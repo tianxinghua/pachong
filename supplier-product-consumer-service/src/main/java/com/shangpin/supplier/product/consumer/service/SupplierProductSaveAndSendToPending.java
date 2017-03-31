@@ -22,6 +22,8 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
+import com.shangpin.ephub.client.product.business.price.gateway.PriceGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
@@ -51,7 +53,9 @@ public class SupplierProductSaveAndSendToPending {
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
 	@Autowired
-	SupplierProductRetryManager supplierProductRetryManager;
+	private SupplierProductRetryManager supplierProductRetryManager;
+	@Autowired
+	private PriceGateWay priceGateWay;
 		
 	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
@@ -145,12 +149,13 @@ public class SupplierProductSaveAndSendToPending {
 	 */
 	public void savePriceRecordAndSendConsumer(String supplierNo, HubSupplierSpuDto hubSpu, List<HubSupplierSkuDto> hubSkus){
 		try {
+			log.info("【"+hubSpu.getSupplierId()+" "+hubSpu.getSupplierSpuNo()+"开始推送供价变化记录：新季节是："+hubSpu.getSupplierSeasonname()+"】"); 
 			if(CollectionUtils.isNotEmpty(hubSkus)){
-				for(HubSupplierSkuDto skuDto : hubSkus){
-					//TODO 调用rpc
-					skuDto.getSupplierId();
-					skuDto.getSupplierSkuNo();
-				}
+				PriceDto priceDto = new PriceDto();
+				priceDto.setSupplierNo(supplierNo);
+				priceDto.setHubSpu(hubSpu);
+				priceDto.setHubSkus(hubSkus);
+				priceGateWay.savePriceRecordAndSendConsumer(priceDto);
 			}
 		} catch (Exception e) {
 			log.error("保存价格变化记录并且推送到价格消费者异常："+e.getMessage(),e); 
