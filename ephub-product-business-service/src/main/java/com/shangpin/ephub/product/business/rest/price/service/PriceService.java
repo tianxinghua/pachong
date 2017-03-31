@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
@@ -26,6 +27,8 @@ public class PriceService {
 	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
 	@Autowired 
 	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
+	@Autowired
+	private HubSupplierPriceChangeRecordGateWay priceChangeRecordGateWay;
 	
 	public void savePriceRecordAndSendConsumer(PriceDto priceDto) throws Exception{
 		HubSupplierSpuDto supplierSpuDto = priceDto.getHubSpu();
@@ -43,7 +46,8 @@ public class PriceService {
 						saveHubSupplierPriceChangeRecordDto(recordDto);
 						ProductPriceDTO retryPrice  = new ProductPriceDTO();
 						convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);				
-						//TODO 发送消息
+						sendMessageToPriceConsumer(retryPrice);
+						
 					}
 				}
 			}
@@ -162,9 +166,21 @@ public class PriceService {
 		criteriaDto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
 		return hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
 	}
-	
-	public Long saveHubSupplierPriceChangeRecordDto(HubSupplierPriceChangeRecordDto recordDto){
-		return 1L;
+	/**
+	 * 保存供价记录
+	 * @param recordDto
+	 * @return
+	 * @throws Exception
+	 */
+	public Long saveHubSupplierPriceChangeRecordDto(HubSupplierPriceChangeRecordDto recordDto) throws Exception{
+		return priceChangeRecordGateWay.insert(recordDto);
+	}
+	/**
+	 * 发送消息
+	 * @param retryPrice
+	 */
+	public void sendMessageToPriceConsumer(ProductPriceDTO retryPrice){
+		
 	}
 	
 }
