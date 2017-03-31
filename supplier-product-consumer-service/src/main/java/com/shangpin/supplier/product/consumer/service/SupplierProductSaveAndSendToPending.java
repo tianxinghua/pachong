@@ -158,7 +158,7 @@ public class SupplierProductSaveAndSendToPending {
 				priceGateWay.savePriceRecordAndSendConsumer(priceDto);
 			}
 		} catch (Exception e) {
-			log.error("保存价格变化记录并且推送到价格消费者异常："+e.getMessage(),e); 
+			log.error("【"+hubSpu.getSupplierId()+" "+hubSpu.getSupplierSpuNo()+"推送供价变化记录异常："+e.getMessage()+"】",e);  
 		}
 	}
 	
