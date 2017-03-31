@@ -2,6 +2,8 @@ package com.shangpin.ephub.data.mysql.sku.supplier.service;
 
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

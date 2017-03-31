@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.sku.supplier.bean;
 
 import java.io.Serializable;
 
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.apache.ibatis.session.RowBounds;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

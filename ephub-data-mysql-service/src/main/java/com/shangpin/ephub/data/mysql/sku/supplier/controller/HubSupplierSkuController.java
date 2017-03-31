@@ -2,6 +2,8 @@ package com.shangpin.ephub.data.mysql.sku.supplier.controller;
 
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

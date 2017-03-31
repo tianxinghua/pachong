@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -592,7 +594,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     }
 
-    private HubSupplierSku getSupplierSku(String supplierId,String supplierSkuNo){
+    private HubSupplierSku getSupplierSku(String supplierId, String supplierSkuNo){
         HubSupplierSkuCriteria example = new HubSupplierSkuCriteria();
         example.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
         List<HubSupplierSku> hubSupplierSkus = hubSupplierSkuMapper.selectByExample(example);

@@ -2,6 +2,8 @@ package com.shangpin.ephub.data.mysql.sku.supplier.mapper;
 
 import java.util.List;
 
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
+import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
