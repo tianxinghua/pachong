@@ -140,6 +140,7 @@ public class SupplierProductPictureService {
 				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
 			}
 			String base64 = new BASE64Encoder().encode(byteArray);
+			log.info("【"+picUrl+"】==>>"+"【"+base64+"】");
 			UploadPicDto uploadPicDto = new UploadPicDto();
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
