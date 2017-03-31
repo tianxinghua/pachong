@@ -17,13 +17,17 @@ public enum State {
 	 */
 	PUSHED((byte)1,"消息推送完成"),
 	/**
+	 * 推送消息失敗
+	 */
+	PUSHED_ERROR((byte)2,"消息推送失敗"),
+	/**
 	 * 处理完成
 	 */
-	HANDLED((byte)2,"处理完成"),
+	HANDLED((byte)3,"处理完成"),
 	/**
 	 * 处理失败
 	 */
-	HANDLE_ERROR((byte)3,"处理失败");
+	HANDLE_ERROR((byte)4,"处理失败");
 	/**
      * 数字索引标识
      */

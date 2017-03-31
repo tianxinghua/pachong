@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.State;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -100,7 +101,7 @@ public class PriceService {
 		recordDto.setSupplyPrice(supplierSkuDto.getSupplyPrice());
 		recordDto.setCurrency(StringUtils.isEmpty(supplierSkuDto.getMarketPriceCurrencyorg()) ? supplierSkuDto.getSupplyPriceCurrency() : supplierSkuDto.getMarketPriceCurrencyorg()); 
 		recordDto.setMarketSeason(supplierSpuDto.getSupplierSeasonname()); 
-//		recordDto.setState();
+		recordDto.setState(State.UNHANDLED.getIndex());
 		recordDto.setCreateTime(new Date());
 	}
 

@@ -8,7 +8,7 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
-version = '0.13.20-SNAPSHOT'
+version = '0.13.21-SNAPSHOT'
 
 jar {
     manifest {
