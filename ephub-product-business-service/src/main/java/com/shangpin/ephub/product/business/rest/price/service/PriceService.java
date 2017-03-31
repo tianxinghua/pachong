@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
+import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.State;
 import com.shangpin.ephub.client.data.mysql.enumeration.Type;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
@@ -20,7 +22,6 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecord
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.message.price.body.ProductPriceDTO;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.product.business.rest.price.dto.PriceQueryDto;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
@@ -45,8 +46,8 @@ public class PriceService {
 	private SupplierProductService supplierProductService;
 	@Autowired
 	private HubSeasonDicGateWay hubSeasonDicGateWay;
-	
-//	private PriceMqGateWay priceMqGateWay;
+	@Autowired
+	private PriceMqGateWay priceMqGateWay;
 	
 	public ProductPrice priceList(PriceQueryDto priceQueryDto){
 		try {
@@ -180,7 +181,7 @@ public class PriceService {
 	 */
 	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
 		try {
-			
+			priceMqGateWay.retry(retryPrice); 
 			updateState(supplierPriceChangeRecordId,State.PUSHED);
 		} catch (Exception e) {
 			updateState(supplierPriceChangeRecordId,State.PUSHED_ERROR);
