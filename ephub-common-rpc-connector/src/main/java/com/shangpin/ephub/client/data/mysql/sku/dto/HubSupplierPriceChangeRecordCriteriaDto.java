@@ -900,52 +900,52 @@ public class HubSupplierPriceChangeRecordCriteriaDto {
             return (Criteria) this;
         }
 
-        public Criteria andTypeEqualTo(Boolean value) {
+        public Criteria andTypeEqualTo(Byte value) {
             addCriterion("type =", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotEqualTo(Boolean value) {
+        public Criteria andTypeNotEqualTo(Byte value) {
             addCriterion("type <>", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThan(Boolean value) {
+        public Criteria andTypeGreaterThan(Byte value) {
             addCriterion("type >", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andTypeGreaterThanOrEqualTo(Byte value) {
             addCriterion("type >=", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThan(Boolean value) {
+        public Criteria andTypeLessThan(Byte value) {
             addCriterion("type <", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThanOrEqualTo(Boolean value) {
+        public Criteria andTypeLessThanOrEqualTo(Byte value) {
             addCriterion("type <=", value, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeIn(List<Boolean> values) {
+        public Criteria andTypeIn(List<Byte> values) {
             addCriterion("type in", values, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotIn(List<Boolean> values) {
+        public Criteria andTypeNotIn(List<Byte> values) {
             addCriterion("type not in", values, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeBetween(Boolean value1, Boolean value2) {
+        public Criteria andTypeBetween(Byte value1, Byte value2) {
             addCriterion("type between", value1, value2, "type");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andTypeNotBetween(Byte value1, Byte value2) {
             addCriterion("type not between", value1, value2, "type");
             return (Criteria) this;
         }
@@ -960,52 +960,52 @@ public class HubSupplierPriceChangeRecordCriteriaDto {
             return (Criteria) this;
         }
 
-        public Criteria andStateEqualTo(Boolean value) {
+        public Criteria andStateEqualTo(Byte value) {
             addCriterion("state =", value, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotEqualTo(Boolean value) {
+        public Criteria andStateNotEqualTo(Byte value) {
             addCriterion("state <>", value, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateGreaterThan(Boolean value) {
+        public Criteria andStateGreaterThan(Byte value) {
             addCriterion("state >", value, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateGreaterThanOrEqualTo(Boolean value) {
+        public Criteria andStateGreaterThanOrEqualTo(Byte value) {
             addCriterion("state >=", value, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateLessThan(Boolean value) {
+        public Criteria andStateLessThan(Byte value) {
             addCriterion("state <", value, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateLessThanOrEqualTo(Boolean value) {
+        public Criteria andStateLessThanOrEqualTo(Byte value) {
             addCriterion("state <=", value, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateIn(List<Boolean> values) {
+        public Criteria andStateIn(List<Byte> values) {
             addCriterion("state in", values, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotIn(List<Boolean> values) {
+        public Criteria andStateNotIn(List<Byte> values) {
             addCriterion("state not in", values, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateBetween(Boolean value1, Boolean value2) {
+        public Criteria andStateBetween(Byte value1, Byte value2) {
             addCriterion("state between", value1, value2, "state");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotBetween(Boolean value1, Boolean value2) {
+        public Criteria andStateNotBetween(Byte value1, Byte value2) {
             addCriterion("state not between", value1, value2, "state");
             return (Criteria) this;
         }
@@ -1213,8 +1213,6 @@ public class HubSupplierPriceChangeRecordCriteriaDto {
         public Criterion() {
             super();
         }
-
-
         private String condition;
 
         private Object value;
