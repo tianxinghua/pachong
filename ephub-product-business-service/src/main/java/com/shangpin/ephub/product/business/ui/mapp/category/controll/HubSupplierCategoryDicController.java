@@ -12,13 +12,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseDto;
+import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseWithPageDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,30 +50,40 @@ public class HubSupplierCategoryDicController {
 	HubCategoryDicService hubCategoryDicService;
 	@Autowired
 	HubSupplierSpuService hubSupplierSpuService;
-
+	@Autowired
+	SupplierService supplierService;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryList(
 			@RequestBody HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto) {
 		
 		try {
-			String supplierId = hubSupplierCategoryDicRequestDto.getSupplierId();
-			if (StringUtils.isNotBlank(supplierId)) {
-				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
-						hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType());
-				if (list != null && list.size() > 0) {
-					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
-					for (HubSupplierCategroyDicDto dicDto : list) {
-						HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-						BeanUtils.copyProperties(dicDto, dic);
-						responseList.add(dic);
+			String supplierNo = hubSupplierCategoryDicRequestDto.getSupplierNo();
+			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+			if(supplierDto!=null){
+				String supplierId = supplierDto.getSopUserNo();
+				if (StringUtils.isNotBlank(supplierId)) {
+					
+					int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType());
+					if(total>0){
+						List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
+								hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType());
+						if (list != null && list.size() > 0) {
+							List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
+							for (HubSupplierCategroyDicDto dicDto : list) {
+								HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
+								BeanUtils.copyProperties(dicDto, dic);
+								responseList.add(dic);
+							}
+							HubSupplierCategoryDicResponseWithPageDto response = new HubSupplierCategoryDicResponseWithPageDto();
+							response.setTotal(total);
+							response.setList(responseList);
+							return HubResponse.successResp(response);
+						}
 					}
-					return HubResponse.successResp(responseList);
-				} else {
 					return HubResponse.successResp("列表页为空");
-				}
-			} else {
-				return HubResponse.errorResp("请选择供应商");
+				} 
 			}
+			return HubResponse.errorResp("请选择供应商");
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
@@ -124,12 +138,18 @@ public class HubSupplierCategoryDicController {
 	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 		try {
 			save(dto);
-			HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
-			criteria.createCriteria().andSupplierIdEqualTo(dto.getSupplierId())
-					.andSupplierCategorynameEqualTo(dto.getSupplierCategory())
-					.andSupplierGenderEqualTo(dto.getSupplierGender());
-			hubSupplierSpuService.updateHubSpuPending(criteria,InfoState.RefreshCategory.getIndex());
-			return HubResponse.successResp("success");
+			String supplierNo = dto.getSupplierNo();
+			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+			if(supplierDto!=null){
+				String supplierId = supplierDto.getSopUserNo();
+				HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+				criteria.createCriteria().andSupplierIdEqualTo(supplierId)
+						.andSupplierCategorynameEqualTo(dto.getSupplierCategory())
+						.andSupplierGenderEqualTo(dto.getSupplierGender());
+				hubSupplierSpuService.updateHubSpuPending(criteria,InfoState.RefreshCategory.getIndex());
+				return HubResponse.successResp("success");
+			}
+			
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);
 		}
