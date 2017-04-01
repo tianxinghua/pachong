@@ -600,7 +600,9 @@ public class ExportServiceImpl {
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportProduct(pendingQuryDto);
-		saveAndUploadExcel(message.getTaskNo(), pendingQuryDto.getCreateUser(), workbook);
+		if(workbook!=null){
+			saveAndUploadExcel(message.getTaskNo(), pendingQuryDto.getCreateUser(), workbook);	
+		}
 	}
 
 	public HSSFWorkbook exportProduct(HubWaitSelectRequestWithPageDto dto) throws Exception{
