@@ -1,8 +1,10 @@
-package com.shangpin.ephub.client.message.price.body;
+package com.shangpin.ephub.client.consumer.price.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Created by lizhongren on 2016/9/19.

@@ -16,6 +16,6 @@ import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 @FeignClient("ephub-product-business-service")
 public interface PriceGateWay {
 
-	@RequestMapping(value = "/price/save", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/price/save-and-sendmessage", method = RequestMethod.POST,consumes = "application/json")
 	public void savePriceRecordAndSendConsumer(PriceDto priceDto) throws Exception;
 }

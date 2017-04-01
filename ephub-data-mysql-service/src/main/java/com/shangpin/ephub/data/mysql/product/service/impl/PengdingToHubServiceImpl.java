@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.data.mysql.common.PropertyConstant;
 import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
 import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.apache.commons.lang.StringUtils;
@@ -115,13 +116,13 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         List<Long> spuPendingIds = new ArrayList<>();
         spuPendingIds.add(hubPendingDto.getHubSpuPendingId());
 
-        log.info("存在spu");
+        log.debug("存在spu");
         Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
         //根据尺码合并不同供货商的SKU信息
         setSizeSkuMap(spuPendingIds, sizeSkuMap);
         //获取SPU
         HubSpu hubSpu = hubSpuMapper.selectByPrimaryKey(hubPendingDto.getHubSpuId());
-        log.info("hubSpu:{}",hubSpu);
+        log.debug("hubSpu:{}",hubSpu);
         HubSpuPending spuPending = null;
         spuPending = this.getHubSpuPendingById(hubPendingDto.getHubSpuPendingId());
         if(null!=spuPending){
@@ -233,9 +234,8 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 tmpSize = size;
             }
 
-            HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
-            hubSkuCriteria.createCriteria().andSpuNoEqualTo(hubSpu.getSpuNo()).andSkuSizeEqualTo(tmpSize).andSkuSizeTypeEqualTo(tmpSizeType);
-            List<HubSku> hubSkus = hubSkuMapper.selectByExample(hubSkuCriteria);
+            List<HubSku> hubSkus = this.getSkuBySpuNoAndSizeAndSizeType(hubSpu.getSpuNo(),
+                    tmpSize,tmpSizeType);
 
             List<HubSkuPending> hubSkuPendings = sizeSkuMap.get(size);
             HubSku hubSku = null;
@@ -290,12 +290,17 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
     }
 
     private HubSku insertHubSku(HubSpu hubSpu, String skuNo, Object o, Date date, List<HubSkuPending> hubSkuPendings) throws Exception {
+
+        String sizeTypeAndSize = (String) o;
+        String sizeType= sizeTypeAndSize.substring(0,sizeTypeAndSize.indexOf(":"));
+
+
         HubSku hubSku = new HubSku();
 
         hubSku.setSpuNo(hubSpu.getSpuNo());
         hubSku.setColor(hubSpu.getHubColor());
         hubSku.setSkuNo(skuNo);
-        String sizeTypeAndSize = (String) o;
+
         hubSku.setSkuSizeType(sizeTypeAndSize.substring(0,sizeTypeAndSize.indexOf(":")));
         hubSku.setSkuSize(sizeTypeAndSize.substring(sizeTypeAndSize.indexOf(":")+1,sizeTypeAndSize.length()));
         hubSku.setSkuSizeId(hubSkuPendings.get(0).getScreenSize());
@@ -619,6 +624,20 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     private HubSupplierSpu getSupplierSpuById(Long supplierSpuId) {
        return hubSupplierSpuMapper.selectByPrimaryKey(supplierSpuId);
+    }
+
+    private List<HubSku> getSkuBySpuNoAndSizeAndSizeType(String spuNo,String size,String sizeType){
+
+        //如果size类型=尺寸 不需要查询尺寸
+        HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
+        if(PropertyConstant.SIZE_TYPE.equals(sizeType)){
+            hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeTypeEqualTo(sizeType);
+        }else{
+            hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeEqualTo(size).andSkuSizeTypeEqualTo(sizeType);
+        }
+        return  hubSkuMapper.selectByExample(hubSkuCriteria);
+
+
     }
 
 }
