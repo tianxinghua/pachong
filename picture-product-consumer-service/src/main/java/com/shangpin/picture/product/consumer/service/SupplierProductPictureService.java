@@ -85,7 +85,9 @@ public class SupplierProductPictureService {
 				if (code == 404 || code == 400) {
 					supplierProductPictureManager.deleteById(spuPendingPicId);
 				} else {
+					log.info("id="+updateDto.getSpuPendingPicId()+"==第五步==>> 将数据保存至数据库，数据为"+updateDto);
 					supplierProductPictureManager.updateSelective(updateDto);
+					log.info("id="+updateDto.getSpuPendingPicId()+"==第六步==>> 图片拉取流程完毕");
 				}
 			}
 			spuPicStatusServiceManager.judgeSpuPicState(supplierSpuId); 
@@ -140,11 +142,14 @@ public class SupplierProductPictureService {
 				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
 			}
 			String base64 = new BASE64Encoder().encode(byteArray);
-			log.info("【"+picUrl+"】==>>"+"【"+base64+"】");
+			log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+picUrl+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
 			UploadPicDto uploadPicDto = new UploadPicDto();
+			uploadPicDto.setRequestId(String.valueOf(dto.getSpuPendingPicId()));
 			uploadPicDto.setBase64(base64);
 			uploadPicDto.setExtension(getExtension(picUrl));
-			dto.setSpPicUrl(supplierProductPictureManager.uploadPic(uploadPicDto));
+			String fdfsURL = supplierProductPictureManager.uploadPic(uploadPicDto);
+			log.info("id="+dto.getSpuPendingPicId()+"==第四步==>> 调用图片服务上传图片后返回的图片URL为"+fdfsURL+"， 下一步将更改数据库");
+			dto.setSpPicUrl(fdfsURL);
 			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 			dto.setMemo("图片拉取成功");
 			

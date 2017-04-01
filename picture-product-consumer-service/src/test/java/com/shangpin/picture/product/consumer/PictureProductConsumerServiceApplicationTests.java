@@ -19,8 +19,8 @@ public class PictureProductConsumerServiceApplicationTests {
 	public void contextLoads() {
 	}
 	public static void main(String[] args) throws Throwable {
-		try {
-			String ou = "https://1431182383.rsc.cdn77.org/public/Foto/A15---Valentino%20Garavani%20uomo---IU0EU00QCSES02_0.jpg";
+		//try {
+			String ou = "https://bagheerastorage.blob.core.windows.net/product/16990/original/589aabf6-e931-48ba-b2c0-14dab4a5dcdd.jpg";
 			URL url = new URL(ou.replaceAll(" +", "%20"));
 			URLConnection openConnection = url.openConnection();
 			HttpURLConnection httpUrlConnection  =  (HttpURLConnection) openConnection;
@@ -28,20 +28,19 @@ public class PictureProductConsumerServiceApplicationTests {
 			httpUrlConnection.setConnectTimeout(45*60*1000);
 			httpUrlConnection.setReadTimeout(45*60*1000);
 			httpUrlConnection.connect();
-			int code = httpUrlConnection.getResponseCode();
-			System.out.println(code);
-//			InputStream inputStream = httpUrlConnection.getInputStream();
-//			byte[] byteArray = IOUtils.toByteArray(inputStream);
-//			String base64 = new BASE64Encoder().encode(byteArray);
-//			System.out.println(base64);
+			//int code = httpUrlConnection.getResponseCode();
+			//System.out.println(code);
+			InputStream inputStream = httpUrlConnection.getInputStream();
+			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			String base64 = new BASE64Encoder().encode(byteArray);
+			System.out.println("【"+base64.substring(0, 100)+"】");
 			httpUrlConnection.disconnect();
-			return;
-		} catch (Throwable e) {
-			e.printStackTrace();
-			System.out.println("发生异常。。。。。。。");
-		} finally {
-			System.out.println("==========");
-		}
-		System.out.println("over.......");
+//		} catch (Throwable e) {
+//			e.printStackTrace();
+//			System.out.println("发生异常。。。。。。。");
+//		} finally {
+//			System.out.println("==========");
+//		}
+//		System.out.println("over.......");
 	}
 }
