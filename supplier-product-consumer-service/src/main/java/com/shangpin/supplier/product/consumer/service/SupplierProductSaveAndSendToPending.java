@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -21,6 +22,8 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
+import com.shangpin.ephub.client.product.business.price.gateway.PriceGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
@@ -50,7 +53,9 @@ public class SupplierProductSaveAndSendToPending {
 	@Autowired
 	private HubSeasonDicGateWay seasonClient;
 	@Autowired
-	SupplierProductRetryManager supplierProductRetryManager;
+	private SupplierProductRetryManager supplierProductRetryManager;
+	@Autowired
+	private PriceGateWay priceGateWay;
 		
 	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
@@ -93,6 +98,7 @@ public class SupplierProductSaveAndSendToPending {
 	 */
 	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
+			savePriceRecordAndSendConsumer(supplierNo,hubSpu,hubSkus);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 			//保存hubSpu到数据库
@@ -134,6 +140,26 @@ public class SupplierProductSaveAndSendToPending {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
 		}
 		return false;
+	}
+	
+	/**
+	 * 保存价格变化记录并且推送到价格消费者
+	 * @param supplierNo 供应商编号
+	 * @param hubSkus 供应商原始sku
+	 */
+	public void savePriceRecordAndSendConsumer(String supplierNo, HubSupplierSpuDto hubSpu, List<HubSupplierSkuDto> hubSkus){
+		try {
+			log.info("【"+hubSpu.getSupplierId()+" "+hubSpu.getSupplierSpuNo()+"开始推送供价变化记录：新季节是："+hubSpu.getSupplierSeasonname()+"】"); 
+			if(CollectionUtils.isNotEmpty(hubSkus)){
+				PriceDto priceDto = new PriceDto();
+				priceDto.setSupplierNo(supplierNo);
+				priceDto.setHubSpu(hubSpu);
+				priceDto.setHubSkus(hubSkus);
+				priceGateWay.savePriceRecordAndSendConsumer(priceDto);
+			}
+		} catch (Exception e) {
+			log.error("【"+hubSpu.getSupplierId()+" "+hubSpu.getSupplierSpuNo()+"推送供价变化记录异常："+e.getMessage()+"】",e);  
+		}
 	}
 	
 	/**

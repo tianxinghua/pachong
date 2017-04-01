@@ -18,33 +18,33 @@ spring:
             #instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
         stream: 
               bindings: 
-                        supplierRetryPictureProduct: 
-                              destination: retry.product.picture
+                        supplierRetryPrice:
+                              destination: retry.product.price
                               content-type: application/json              
-                        supplierPictureProduct: 
-                              destination: supplier.product.picture
+                        supplierPrice:
+                              destination: supplier.product.price
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 4
                                        maxAttempts: 1
-                        retryPictureProduct: 
-                              destination: retry.product.picture
+                        retrySupplierPrice:
+                              destination: retry.product.price
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 4
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
-                            supplierRetryPictureProduct: 
+                            supplierRetryPrice:
                                   producer: 
                                        prefix: HA.                      
-                            supplierPictureProduct: 
+                            supplierPrice:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            retryPictureProduct: 
+                            retrySupplierPrice:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
