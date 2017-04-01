@@ -29,6 +29,10 @@ public class UploadPicDto implements Serializable {
 	 */
 	private static final long serialVersionUID = -4975561245426069166L;
 	/**
+	 * 请求id
+	 */
+	private String requestId;
+	/**
 	 * 图片BASE64编码之后的字符串
 	 */
 	private String base64;
