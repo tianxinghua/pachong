@@ -7,7 +7,7 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
  * @date 2017年3月31日 上午11:29:13
  *
  */
-public enum State {
+public enum PriceHandleState {
 	/**
 	 * 未处理
 	 */
@@ -37,7 +37,7 @@ public enum State {
      */
     private String description;
     
-    State(byte index,String description){
+    PriceHandleState(byte index, String description){
 		this.index = index;
 		this.description = description;
 	}

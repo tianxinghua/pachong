@@ -17,5 +17,5 @@ public interface PriceMqGateWay {
 	
 
 	@RequestMapping(value = "/hub_supplier_sku_price/transprice", method = RequestMethod.POST, consumes = "application/json")
-	public void retry(@RequestBody ProductPriceDTO productPriceDTO);
+	public void transPrice(@RequestBody ProductPriceDTO productPriceDTO);
 }

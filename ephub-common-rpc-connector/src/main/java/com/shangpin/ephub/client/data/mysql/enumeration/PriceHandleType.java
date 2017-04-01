@@ -7,7 +7,7 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
  * @date 2017年3月31日 上午11:23:48
  *
  */
-public enum Type {
+public enum PriceHandleType {
 	/**
 	 * 价格
 	 */
@@ -30,7 +30,7 @@ public enum Type {
      */
     private String description;
     
-    Type(byte index,String description){
+    PriceHandleType(byte index, String description){
 		this.index = index;
 		this.description = description;
 	}
