@@ -41,4 +41,14 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 	}
+	
+	@Scheduled(cron = "0/30 * * * * ?")
+	public void smodelTask() {
+		try {
+			supplierProductPictureService.processProduct((byte)6);
+		} catch (Throwable e) {
+			log.info("=======系统扫描同款需要重新推送的数据事件发生异常======",e);
+			e.printStackTrace();
+		}
+	}
 }
