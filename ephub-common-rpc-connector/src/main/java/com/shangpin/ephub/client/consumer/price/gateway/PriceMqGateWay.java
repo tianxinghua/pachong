@@ -16,6 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface PriceMqGateWay {
 	
 
-	@RequestMapping(value = "/hub_supplier_sku_price/transprice", method = RequestMethod.POST, consumes = "application/json")
+	@RequestMapping(value = "/hub-supplier-sku-price/transprice", method = RequestMethod.POST, consumes = "application/json")
 	public void transPrice(@RequestBody ProductPriceDTO productPriceDTO);
 }
