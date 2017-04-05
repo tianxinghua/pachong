@@ -66,9 +66,9 @@
      	  </foreach>
 	 </if>
     	
-    <if test="null!= createUser">
-	       and   map.update_user = #{createUser}
-	 </if>
+<!--     <if test="null!= createUser"> -->
+<!-- 	       and   map.update_user = #{createUser} -->
+<!-- 	 </if> -->
      <if test="null!= supplierNo">
 	        and        map.supplier_no = #{supplierNo}
 	 </if>
@@ -109,9 +109,9 @@
      	  </foreach>
 	 </if>
 	 
-	  <if test="null!= createUser">
-	       and   map.update_user = #{createUser}
-	 </if>
+<!-- 	  <if test="null!= createUser"> -->
+<!-- 	       and   map.update_user = #{createUser} -->
+<!-- 	 </if> -->
 	 
      <if test="null!= supplierNo">
 	             and   map.supplier_no = #{supplierNo}

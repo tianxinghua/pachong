@@ -45,13 +45,23 @@ public class HubCategoryDicService {
 		criteria.setPageSize(pageSize);
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId);
-		if(categoryType!=null){
+		if(categoryType!=0){
 			criterion.andCategoryTypeEqualTo(categoryType);
 		}
 				
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
+	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType) {
+		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+		criterion.andSupplierIdEqualTo(supplierId);
+		if(categoryType!=0){
+			criterion.andCategoryTypeEqualTo(categoryType);
+		}
+		return hubSupplierCategroyDicGateWay.countByCriteria(criteria);
+	}
+	
 	public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(
 			String supplierId, String supplierCategory, String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
