@@ -30,8 +30,8 @@ public class HubSupplierPriceChangeRecordService {
 		return hubSupplierPriceChangeRecordMapper.deleteByExample(criteria);
 	}
 
-	public int deleteByPrimaryKey(Long id) {
-		return hubSupplierPriceChangeRecordMapper.deleteByPrimaryKey(id);
+	public int deleteByPrimaryKey(Long supplierPriceChangeRecordId) {
+		return hubSupplierPriceChangeRecordMapper.deleteByPrimaryKey(supplierPriceChangeRecordId);
 	}
 
 	public int insert(HubSupplierPriceChangeRecord hubSupplierPriceChangeRecord) {
@@ -51,8 +51,8 @@ public class HubSupplierPriceChangeRecordService {
 		return hubSupplierPriceChangeRecordMapper.selectByExampleWithRowbounds(criteriaWithRowBounds.getCriteria(), criteriaWithRowBounds.getRowBounds());
 	}
 
-	public HubSupplierPriceChangeRecord selectByPrimaryKey(Long id) {
-		return hubSupplierPriceChangeRecordMapper.selectByPrimaryKey(id);
+	public HubSupplierPriceChangeRecord selectByPrimaryKey(Long supplierPriceChangeRecordId) {
+		return hubSupplierPriceChangeRecordMapper.selectByPrimaryKey(supplierPriceChangeRecordId);
 	}
 
 	public int updateByCriteriaSelective(HubSupplierPriceChangeRecordWithCriteria hubSupplierPriceChangeRecordWithCriteria) {
