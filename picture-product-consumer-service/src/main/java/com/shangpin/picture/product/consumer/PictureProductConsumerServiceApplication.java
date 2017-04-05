@@ -18,7 +18,7 @@ import com.shangpin.picture.product.consumer.conf.client.ClientConf;
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)
-@EnableScheduling
+//@EnableScheduling
 public class PictureProductConsumerServiceApplication {
 
 	
