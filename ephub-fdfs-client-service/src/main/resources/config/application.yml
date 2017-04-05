@@ -1,4 +1,4 @@
-﻿server.port: 8007
+﻿﻿server.port: 8007
 spring: 
   profiles: 
     active: dev
