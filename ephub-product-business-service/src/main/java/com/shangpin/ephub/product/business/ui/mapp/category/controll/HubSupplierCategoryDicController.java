@@ -138,10 +138,8 @@ public class HubSupplierCategoryDicController {
 	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 		try {
 			save(dto);
-			String supplierNo = dto.getSupplierNo();
-			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
-			if(supplierDto!=null){
-				String supplierId = supplierDto.getSopUserNo();
+			if(dto!=null&&dto.getSupplierId()!=null){
+				String supplierId = dto.getSupplierId();
 				HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 				criteria.createCriteria().andSupplierIdEqualTo(supplierId)
 						.andSupplierCategorynameEqualTo(dto.getSupplierCategory())

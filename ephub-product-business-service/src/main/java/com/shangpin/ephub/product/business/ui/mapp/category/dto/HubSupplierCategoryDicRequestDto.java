@@ -18,6 +18,7 @@ public class HubSupplierCategoryDicRequestDto {
 	
 	private Long supplierCategoryDicId;
 	private String supplierNo;
+	private String supplierId;
 	private int pageNo;
 	private int pageSize;
 	private String hubCategoryNo;
