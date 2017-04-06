@@ -11,10 +11,12 @@
     <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
     <result column="supply_price" property="supplyPrice" jdbcType="DECIMAL" />
     <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="supplier_season" property="supplierSeason" jdbcType="VARCHAR" />
     <result column="market_year" property="marketYear" jdbcType="VARCHAR" />
     <result column="market_season" property="marketSeason" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="TINYINT" />
     <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="create_user_name" property="createUserName" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
@@ -80,8 +82,8 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       supplier_price_change_record_id, supplier_id, supplier_no, supplier_sku_no, supplier_spu_no, 
-      sp_sku_no, market_price, supply_price, currency, market_year, market_season, type, 
-      state, create_time, update_time, memo
+      sp_sku_no, market_price, supply_price, currency, supplier_season, market_year, market_season, 
+      type, state, create_user_name, create_time, update_time, memo
     </if>
     <if test="fields != null" >
       ${fields}
@@ -106,7 +108,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    supplier_price_change_record_id,supplier_id,supplier_no,supplier_sku_no,supplier_spu_no,sp_sku_no,market_price,supply_price,currency,market_year,market_season,type,state,create_time,update_time,memo
+    supplier_price_change_record_id,supplier_id,supplier_no,supplier_sku_no,supplier_spu_no,sp_sku_no,market_price,supply_price,currency,supplier_season,market_year,market_season,type,state,create_user_name,create_time,update_time,memo
     from hub_supplier_price_change_record
     where supplier_price_change_record_id = #{supplierPriceChangeRecordId,jdbcType=BIGINT}
   </select>
@@ -124,18 +126,20 @@
     <selectKey keyColumn="supplier_price_change_record_id" keyProperty="supplierPriceChangeRecordId" order="AFTER" resultType="long">
       SELECT LAST_INSERT_ID() AS supplier_price_change_record_id
     </selectKey>
-    insert into hub_supplier_price_change_record (supplier_price_change_record_id, supplier_id,
+    insert into hub_supplier_price_change_record (supplier_price_change_record_id, supplier_id, 
       supplier_no, supplier_sku_no, supplier_spu_no, 
       sp_sku_no, market_price, supply_price, 
-      currency, market_year, market_season, 
-      type, state, create_time, 
-      update_time, memo)
+      currency, supplier_season, market_year, 
+      market_season, type, state, 
+      create_user_name, create_time, update_time, 
+      memo)
     values (#{supplierPriceChangeRecordId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, 
       #{supplierNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR}, 
       #{spSkuNo,jdbcType=VARCHAR}, #{marketPrice,jdbcType=DECIMAL}, #{supplyPrice,jdbcType=DECIMAL}, 
-      #{currency,jdbcType=VARCHAR}, #{marketYear,jdbcType=VARCHAR}, #{marketSeason,jdbcType=VARCHAR}, 
-      #{type,jdbcType=TINYINT}, #{state,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{memo,jdbcType=VARCHAR})
+      #{currency,jdbcType=VARCHAR}, #{supplierSeason,jdbcType=VARCHAR}, #{marketYear,jdbcType=VARCHAR}, 
+      #{marketSeason,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, #{state,jdbcType=TINYINT}, 
+      #{createUserName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{memo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord" >
     <selectKey keyColumn="supplier_price_change_record_id" keyProperty="supplierPriceChangeRecordId" order="AFTER" resultType="long">
@@ -170,6 +174,9 @@
       <if test="currency != null" >
         currency,
       </if>
+      <if test="supplierSeason != null" >
+        supplier_season,
+      </if>
       <if test="marketYear != null" >
         market_year,
       </if>
@@ -181,6 +188,9 @@
       </if>
       <if test="state != null" >
         state,
+      </if>
+      <if test="createUserName != null" >
+        create_user_name,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -220,6 +230,9 @@
       <if test="currency != null" >
         #{currency,jdbcType=VARCHAR},
       </if>
+      <if test="supplierSeason != null" >
+        #{supplierSeason,jdbcType=VARCHAR},
+      </if>
       <if test="marketYear != null" >
         #{marketYear,jdbcType=VARCHAR},
       </if>
@@ -231,6 +244,9 @@
       </if>
       <if test="state != null" >
         #{state,jdbcType=TINYINT},
+      </if>
+      <if test="createUserName != null" >
+        #{createUserName,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -279,6 +295,9 @@
       <if test="record.currency != null" >
         currency = #{record.currency,jdbcType=VARCHAR},
       </if>
+      <if test="record.supplierSeason != null" >
+        supplier_season = #{record.supplierSeason,jdbcType=VARCHAR},
+      </if>
       <if test="record.marketYear != null" >
         market_year = #{record.marketYear,jdbcType=VARCHAR},
       </if>
@@ -290,6 +309,9 @@
       </if>
       <if test="record.state != null" >
         state = #{record.state,jdbcType=TINYINT},
+      </if>
+      <if test="record.createUserName != null" >
+        create_user_name = #{record.createUserName,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -316,10 +338,12 @@
       market_price = #{record.marketPrice,jdbcType=DECIMAL},
       supply_price = #{record.supplyPrice,jdbcType=DECIMAL},
       currency = #{record.currency,jdbcType=VARCHAR},
+      supplier_season = #{record.supplierSeason,jdbcType=VARCHAR},
       market_year = #{record.marketYear,jdbcType=VARCHAR},
       market_season = #{record.marketSeason,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=TINYINT},
       state = #{record.state,jdbcType=TINYINT},
+      create_user_name = #{record.createUserName,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       memo = #{record.memo,jdbcType=VARCHAR}
@@ -354,6 +378,9 @@
       <if test="currency != null" >
         currency = #{currency,jdbcType=VARCHAR},
       </if>
+      <if test="supplierSeason != null" >
+        supplier_season = #{supplierSeason,jdbcType=VARCHAR},
+      </if>
       <if test="marketYear != null" >
         market_year = #{marketYear,jdbcType=VARCHAR},
       </if>
@@ -365,6 +392,9 @@
       </if>
       <if test="state != null" >
         state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="createUserName != null" >
+        create_user_name = #{createUserName,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -388,10 +418,12 @@
       market_price = #{marketPrice,jdbcType=DECIMAL},
       supply_price = #{supplyPrice,jdbcType=DECIMAL},
       currency = #{currency,jdbcType=VARCHAR},
+      supplier_season = #{supplierSeason,jdbcType=VARCHAR},
       market_year = #{marketYear,jdbcType=VARCHAR},
       market_season = #{marketSeason,jdbcType=VARCHAR},
       type = #{type,jdbcType=TINYINT},
       state = #{state,jdbcType=TINYINT},
+      create_user_name = #{createUserName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       memo = #{memo,jdbcType=VARCHAR}
