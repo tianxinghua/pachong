@@ -9,6 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
@@ -48,14 +49,23 @@ public abstract class PendingSkuService extends PendingSpuService{
     }
 	
 	@Override
-    public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds) throws Exception{
+    public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds,boolean allFlag) throws Exception{
     	Map<Long,List<HubSkuPendingDto>> pendigSkus = new HashMap<>();
     	try {
             HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
             criteriaDto.setPageNo(1);
             criteriaDto.setPageSize(1000); 
             criteriaDto.setOrderByClause("spu_pending_id,hub_sku_size");
-            criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
+            if(allFlag){
+            	 criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds);
+            }else{
+            	List<Byte> listSkuState = new ArrayList<Byte>();
+                listSkuState.add(SpuState.HANDLED.getIndex());
+                listSkuState.add(SpuState.HANDLING.getIndex());
+                listSkuState.add(SpuState.INFO_IMPECCABLE.getIndex());
+                criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateNotIn(listSkuState);
+                criteriaDto.or(criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateIsNull());
+            }
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
             	for(HubSkuPendingDto sku : skus){

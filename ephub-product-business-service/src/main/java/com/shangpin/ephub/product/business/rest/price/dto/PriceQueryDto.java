@@ -23,11 +23,11 @@ public class PriceQueryDto {
      */
     private String supplierId;
     /**
-     * 供应商季节名称
+     * 尚品季节名称
      */
     private String marketSeason;
     /**
-     * 供应商季节年
+     * 尚品上市时间
      */
     private String marketYear;
     /**

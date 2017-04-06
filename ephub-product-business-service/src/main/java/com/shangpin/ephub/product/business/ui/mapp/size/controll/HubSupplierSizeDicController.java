@@ -23,6 +23,7 @@ import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuSer
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicResponseDto;
+import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicResponseWithPageDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,16 +49,35 @@ public class HubSupplierSizeDicController {
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse selectHubSupplierCateoryList(@RequestBody HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto){
 		try {
-			String supplierId = hubSupplierSizeDicRequestDto.getSupplierId();
+			Byte type = null;
+			if(hubSupplierSizeDicRequestDto!=null&&hubSupplierSizeDicRequestDto.getType()!=null){
+				type = hubSupplierSizeDicRequestDto.getType();
+				if(type==1){
+					//全局尺码映射
+				}else if(type==2){
+					//供应商尺码映射
+					
+				}
+			}
+			
+			String supplierId = hubSupplierSizeDicRequestDto.getSupplierNo();
 			if(StringUtils.isNotBlank(supplierId)){
+				
+				int total = 0;
+//				 hubSizeDicService.countHubSupplierValueMapping(supplierId,SupplierValueMappingType.TYPE_SIZE.getIndex())
 				List<HubSupplierValueMappingDto> list = hubSizeDicService.getHubSupplierValueMappingBySupplierIdAndType(supplierId,SupplierValueMappingType.TYPE_SIZE.getIndex(),hubSupplierSizeDicRequestDto.getPageNo(),hubSupplierSizeDicRequestDto.getPageSize());
 				if(list!=null&&list.size()>0){
+					
+					HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
+					
 					List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
 					for(HubSupplierValueMappingDto dicDto : list){
 						HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
 						BeanUtils.copyProperties(dicDto, dic);
 						responseList.add(dic);
 					}
+					page.setList(responseList);
+					page.setTotal(total);
 					return HubResponse.successResp(responseList);
 				}else{
 					return HubResponse.successResp("列表页为空");

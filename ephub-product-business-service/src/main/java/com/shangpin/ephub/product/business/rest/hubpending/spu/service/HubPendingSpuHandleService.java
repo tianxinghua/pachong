@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
@@ -265,7 +266,6 @@ public class HubPendingSpuHandleService {
 						isSendToHub = true;
 					}
 				}
-				
 				//所有sku已被过滤
 				if(isAllSkuFilter){
 					hubSpuPendingDto.setMemo("自动处理：spu下sku都被过滤了");

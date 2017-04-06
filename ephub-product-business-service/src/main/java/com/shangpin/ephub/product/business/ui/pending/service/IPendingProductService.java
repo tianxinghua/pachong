@@ -52,13 +52,14 @@ public interface IPendingProductService {
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto);
+	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag);
 	/**
 	 * 根据spu查找sku
 	 * @param spuPendingId
+	 * @param flag true:代表查询所有sku ， false：代表查询部分sku(skuState不等于2、5、1)
 	 * @return
 	 */
-	public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds) throws Exception;
+	public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds,boolean allFlag) throws Exception;
 	/**
 	 * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
 	 * @param pendingProductDto

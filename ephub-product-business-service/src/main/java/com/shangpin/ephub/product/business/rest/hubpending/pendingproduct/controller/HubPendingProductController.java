@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
+import com.shangpin.ephub.client.data.mysql.enumeration.State;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
+import com.shangpin.ephub.client.data.mysql.enumeration.Type;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
@@ -21,12 +24,20 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
+import com.shangpin.ephub.product.business.rest.price.service.PriceService;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
@@ -45,6 +56,11 @@ public class HubPendingProductController {
 	
     @Autowired
 	HubSkuPendingGateWay skuPendingGateWay;
+    
+    @Autowired
+    HubSupplierSkuGateWay supplierSkuGateWay;
+    @Autowired
+    HubSupplierSpuGateWay supplierSpuGateWay;
 
     @Autowired
 	HubSpuPendingGateWay spuPendingGateWay;
@@ -57,6 +73,8 @@ public class HubPendingProductController {
 
 	@Autowired
 	SopSkuService sopSkuService;
+	@Autowired
+	PriceService priceService;
 	
 	@RequestMapping(value = "/setspskuno")
 	public HubResponse<?> checkSku(@RequestBody SpSkuNoDto dto){
@@ -77,7 +95,6 @@ public class HubPendingProductController {
 			getExistSpSkuNo(dto);
 		}
 
-
 		//写入尚品的SKUno
 		HubSkuPendingDto searchSkuPending =null;
 		searchSkuPending = updateSkuPendingSpSkuNo(dto);
@@ -87,9 +104,36 @@ public class HubPendingProductController {
 		if(null!=searchSkuPending){
 			updateHubSkuSpSkuNo(dto, searchSkuPending);
 		}
+		
+		updateSkuSupplierSpSkuNo(dto);
 
 	}
 
+	private void updateSkuSupplierSpSkuNo(SpSkuNoDto dto) throws Exception{
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(dto.getSupplierId()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
+		List<HubSupplierSkuDto> hubSkuPendingList = supplierSkuGateWay.selectByCriteria(criteria);
+		if(hubSkuPendingList!=null&&hubSkuPendingList.size()>0){
+			HubSupplierSkuDto hubSkuPendingOrigion = hubSkuPendingList.get(0);
+			
+			HubSupplierSkuDto hubSkuPending = new HubSupplierSkuDto();
+			hubSkuPending.setSpSkuNo( dto.getSkuNo());
+			hubSkuPending.setMemo(dto.getErrorReason());
+			hubSkuPending.setSupplierSkuId(hubSkuPendingOrigion.getSupplierSkuId());
+			supplierSkuGateWay.updateByPrimaryKeySelective(hubSkuPendingOrigion);
+			
+			//保存价格变化记录
+			 HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
+			HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
+			priceService.convertPriceDtoToRecordDto(dto.getSupplierNo(),hubSupplierSpuDto,hubSkuPendingOrigion,recordDto,Type.PRICE);
+			Long supplierPriceChangeRecordId = priceService.saveHubSupplierPriceChangeRecordDto(recordDto);
+			//推送到消息队列
+			ProductPriceDTO retryPrice = new ProductPriceDTO();
+			priceService.convertPriceDtoToRetryPrice(dto.getSupplierNo(), hubSupplierSpuDto, hubSkuPendingOrigion, retryPrice);
+			priceService.sendMessageToPriceConsumer(supplierPriceChangeRecordId, retryPrice);
+		}
+		
+	}
 	private void getExistSpSkuNo(SpSkuNoDto dto) {
 		if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
             //如果是已存在的错误，调用接口  组装
