@@ -46,9 +46,12 @@ public class HubCategoryDicService {
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId);
 		if(categoryType!=0){
-			criterion.andCategoryTypeEqualTo(categoryType);
+			if(categoryType==5){
+				criterion.andCategoryTypeIsNull();
+			}else{
+				criterion.andCategoryTypeEqualTo(categoryType);
+			}
 		}
-				
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
@@ -57,7 +60,11 @@ public class HubCategoryDicService {
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId);
 		if(categoryType!=0){
-			criterion.andCategoryTypeEqualTo(categoryType);
+			if(categoryType==5){
+				criterion.andCategoryTypeIsNull();
+			}else{
+				criterion.andCategoryTypeEqualTo(categoryType);
+			}
 		}
 		return hubSupplierCategroyDicGateWay.countByCriteria(criteria);
 	}
