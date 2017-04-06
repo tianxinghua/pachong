@@ -138,14 +138,7 @@ public class OpenapiService {
              if(map.containsKey(skuPending.getSupplierSkuNo())){
 
 				 try {
-					 HubSpuPending tmp = new HubSpuPending();
-					 tmp.setSpuPendingId(skuPending.getSpuPendingId());
-					 tmp.setSpuState(SpuState.NOHAND.getIndex());
-					 tmp.setUpdateTime(new Date());
-					 updateSpuJson =  mapper.writeValueAsString(tmp) ;
-					 loggerInfo.info(" updateSpuJson =" + updateSpuJson);
-					 String spuResult = HttpUtil45.operateData("post","json",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
-					 loggerInfo.info(" spuResult =" + spuResult);
+
 					 HubSkuPending skuTmp = new HubSkuPending();
 					 skuTmp.setSkuPendingId(skuPending.getSkuPendingId());
 					 skuTmp.setSpSkuNo(map.get(skuPending.getSupplierSkuNo()));
@@ -154,6 +147,20 @@ public class OpenapiService {
 					 skuTmp.setSkuState(SpuState.HANDLED.getIndex());
 					 updateSkuJson =  mapper.writeValueAsString(skuTmp) ;
 					 HttpUtil45.operateData("post","json",updateSkuUrl,outTimeConfig,null,updateSkuJson,"","");
+
+					 if(this.isEqualSkuPendingCount(hostUrl,skuPending.getSpuPendingId())){
+						 HubSpuPending tmp = new HubSpuPending();
+						 tmp.setSpuPendingId(skuPending.getSpuPendingId());
+						 tmp.setSpuState(SpuState.NOHAND.getIndex());
+						 tmp.setUpdateTime(new Date());
+						 updateSpuJson =  mapper.writeValueAsString(tmp) ;
+						 loggerInfo.info(" updateSpuJson =" + updateSpuJson);
+						 String spuResult = HttpUtil45.operateData("post","json",updateSpuUrl,outTimeConfig,null,updateSpuJson,"","");
+						 loggerInfo.info(" spuResult =" + spuResult);
+					 }else{
+						 loggerInfo.info(" spu pending id "+ skuPending.getSpuPendingId() + " have some no handle .don't modify spu state  ");
+					 }
+
 
 				 } catch (Exception e) {
 					 loggerError.error(" exception = " + e.getMessage(),e);
@@ -203,6 +210,28 @@ public class OpenapiService {
 			return null;
 		}
 
+
+	}
+
+
+	private boolean isEqualSkuPendingCount(String hostUrl, Long spuPendingId) throws IOException, ServiceException {
+		String skuPendingUrl = hostUrl+"/hub-sku-pending/count-by-criteria";
+		HubSkuPendingCriteria criteria =new HubSkuPendingCriteria();
+		criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+		String jsonQuery =  mapper.writeValueAsString(criteria) ;
+		String skuPendingCountResult = HttpUtil45.operateData("post","json",skuPendingUrl,outTimeConfig,null,jsonQuery,"","");
+
+		HubSkuPendingCriteria spSkuNoCriteria =new HubSkuPendingCriteria();
+		spSkuNoCriteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo("");
+
+		String spSkuNoQuery =  mapper.writeValueAsString(spSkuNoCriteria) ;
+		String spSkuNoCountResult = HttpUtil45.operateData("post","json",skuPendingUrl,outTimeConfig,null,spSkuNoQuery,"","");
+		loggerInfo.info("spuPendingId = "+ spuPendingId + " spSkuNoCountResult =" + spSkuNoCountResult + " skuPendingAllCountResult =" + skuPendingCountResult );
+		if(skuPendingCountResult.equals(spSkuNoCountResult)){
+			return true;
+		}else{
+			return false;
+		}
 
 	}
 }
