@@ -43,7 +43,7 @@ public class PendingProductController {
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
-        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto);
+        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
         return HubResponse.successResp(pendingProducts);
     }
     @RequestMapping(value="/update",method=RequestMethod.POST)
@@ -80,7 +80,7 @@ public class PendingProductController {
     @RequestMapping(value="/origin",method=RequestMethod.POST)
     public HubResponse<?> findOrigin(@RequestBody PendingQuryDto pendingQuryDto){
     	long start = System.currentTimeMillis();
-    	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
+    	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto,true);
     	PendingProductDto pendingProduct = products.getProduts().get(0);
     	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
     	HubBrandModelRuleDto brandModelRuleDto = pendingProductService.findHubBrandModelRule(pendingProduct.getHubBrandNo());

@@ -57,6 +57,8 @@ public class HubPendingSkuService{
 	public List<HubSkuPendingDto> findHubSkuPendingBySpuPendingId(Long spuPendingId) {
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+		criteria.setPageNo(1);
+		criteria.setPageSize(10000);
 		List<HubSkuPendingDto> listSku = hubSkuPendingGateWay.selectByCriteria(criteria);
 		if(listSku!=null&&listSku.size()>0){
 			return listSku;
