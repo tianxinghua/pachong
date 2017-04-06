@@ -77,7 +77,7 @@ public class PendingProductService extends PendingSkuService{
     private IHubSpuPendingPicService  hubSpuPendingPicService;
 
     @Override
-    public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto){
+    public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
     	log.info("接收到的查询条件："+JsonUtil.serialize(pendingQuryDto)); 
     	long start = System.currentTimeMillis();
         PendingProducts pendingProducts = new PendingProducts();
@@ -94,7 +94,7 @@ public class PendingProductService extends PendingSkuService{
                     	spuPendingIds.add(pendingSpu.getSpuPendingId());
                     }
                     long start_sku = System.currentTimeMillis();
-                    Map<Long,List<HubSkuPendingDto>> pendingSkus = findPendingSku(spuPendingIds);
+                    Map<Long,List<HubSkuPendingDto>> pendingSkus = findPendingSku(spuPendingIds,flag);
                     log.info("--->待处理查询sku耗时{}",System.currentTimeMillis()-start_sku); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = JavaUtil.convertHubSpuPendingDto2PendingProductDto(pendingSpu);

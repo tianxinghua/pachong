@@ -35,7 +35,7 @@ public class HubPendingSkuCheckController {
 	}
 	@RequestMapping(value = "/export")
 	public PendingProducts exportPengdingSku(@RequestBody PendingQuryDto pendingQuryDto){
-		PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto);
+		PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto,false);
 		products.setCreateUser(pendingQuryDto.getCreateUser());
 		return products;
 	}

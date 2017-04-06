@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.mapp.size.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -14,15 +16,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierSizeDicRequestDto {
-	private Long hubSupplierValMappingId;
-	private String supplierNo;
-	private String supplierId;
-	private int pageNo;
-	private int pageSize;
-	private String supplierVal;
-	private String hubVal;;
-	private Byte type;
-	private String updateUser;
-
+public class HubSupplierSizeDicResponseWithPageDto {
+	
+	private int total;
+	private List<HubSupplierSizeDicResponseDto> list;
 }
