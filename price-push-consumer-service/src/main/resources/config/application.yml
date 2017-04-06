@@ -2,4 +2,4 @@
 spring:
   profiles: 
     active: dev
-  application.name: price-product-consumer-service
+  application.name: price-push-consumer-service

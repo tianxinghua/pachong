@@ -121,6 +121,10 @@ public class PayedOrderPusher extends AbstractPusher{
 		//更新推送状态
 		hubOrderService.updateHubOrderDetailPushStatus(orderDTO);
 		orderCommonUtil.setStatusIntoHeader(headers, orderDTO);
+		//记录订单推送状态发生变化
+		orderLogService.saveOrderLog(orderDTO);
+
+
 		//记录处理后的日志
 		LogCommon.loggerOrder(orderDTO,LogLeve.INFO);
 	}
