@@ -1,18 +1,22 @@
 package com.shangpin.ephub.price.consumer.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.price.consumer.conf.stream.source.message.ProductPriceDTO;
 import com.shangpin.ephub.price.consumer.conf.stream.source.sender.RetryPriceStreamSender;
 import com.shangpin.ephub.price.consumer.service.dto.PriceHandleMessageDTO;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Service;
-import com.shangpin.iog.ice.service.*;
+import com.shangpin.iog.ice.service.PirceHandleService;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/3/30.
@@ -76,7 +80,7 @@ public class PriceSendService {
         om.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         Map<String,String> purchasePriceMap= new HashMap<>();
         Map<String,ProductPriceDTO>  allProductMap  = new HashMap<>();
-        PriceHandleMessageDTO  dto = new PriceHandleMessageDTO();
+      //  PriceHandleMessageDTO  dto = new PriceHandleMessageDTO();
         String  content ="";
         List<String> successSkuList = new ArrayList<>();
         try {
