@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ep.order.module.sku.mapper.HubSkuMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ep.order.module.sku.bean.HubSku" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_ID" property="supplierId" jdbcType="VARCHAR" />
+    <result column="SPU_ID" property="spuId" jdbcType="VARCHAR" />
+    <result column="SKU_ID" property="skuId" jdbcType="VARCHAR" />
+    <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR" />
+    <result column="MARKET_PRICE" property="marketPrice" jdbcType="VARCHAR" />
+    <result column="SALE_PRICE" property="salePrice" jdbcType="VARCHAR" />
+    <result column="SUPPLIER_PRICE" property="supplierPrice" jdbcType="VARCHAR" />
+    <result column="BARCODE" property="barcode" jdbcType="VARCHAR" />
+    <result column="PRODUCT_CODE" property="productCode" jdbcType="VARCHAR" />
+    <result column="COLOR" property="color" jdbcType="VARCHAR" />
+    <result column="PRODUCT_DESCRIPTION" property="productDescription" jdbcType="VARCHAR" />
+    <result column="SALE_CURRENCY" property="saleCurrency" jdbcType="VARCHAR" />
+    <result column="PRODUCT_SIZE" property="productSize" jdbcType="VARCHAR" />
+    <result column="STOCK" property="stock" jdbcType="VARCHAR" />
+    <result column="MEMO" property="memo" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_TIME" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="NEW_MARKET_PRICE" property="newMarketPrice" jdbcType="VARCHAR" />
+    <result column="NEW_SALE_PRICE" property="newSalePrice" jdbcType="VARCHAR" />
+    <result column="NEW_SUPPLIER_PRICE" property="newSupplierPrice" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="EVENT_START_DATE" property="eventStartDate" jdbcType="VARCHAR" />
+    <result column="EVENT_END_DATE" property="eventEndDate" jdbcType="VARCHAR" />
+    <result column="MEASUREMENT" property="measurement" jdbcType="VARCHAR" />
+    <result column="SP_SKU_ID" property="spSkuId" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="SP_STATUS" property="spStatus" jdbcType="VARCHAR" />
+    <result column="SP_PRODUCT_CODE" property="spProductCode" jdbcType="VARCHAR" />
+    <result column="PIC_URL_DEFAULT" property="picUrlDefault" jdbcType="VARCHAR" />
+    <result column="IS_EXCLUDE" property="isExclude" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      ID, SUPPLIER_ID, SPU_ID, SKU_ID, PRODUCT_NAME, MARKET_PRICE, SALE_PRICE, SUPPLIER_PRICE, 
+      BARCODE, PRODUCT_CODE, COLOR, PRODUCT_DESCRIPTION, SALE_CURRENCY, PRODUCT_SIZE, STOCK, 
+      MEMO, CREATE_TIME, LAST_TIME, NEW_MARKET_PRICE, NEW_SALE_PRICE, NEW_SUPPLIER_PRICE, 
+      UPDATE_TIME, EVENT_START_DATE, EVENT_END_DATE, MEASUREMENT, SP_SKU_ID, STATUS, SP_STATUS, 
+      SP_PRODUCT_CODE, PIC_URL_DEFAULT, IS_EXCLUDE
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SKU
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    ID,SUPPLIER_ID,SPU_ID,SKU_ID,PRODUCT_NAME,MARKET_PRICE,SALE_PRICE,SUPPLIER_PRICE,BARCODE,PRODUCT_CODE,COLOR,PRODUCT_DESCRIPTION,SALE_CURRENCY,PRODUCT_SIZE,STOCK,MEMO,CREATE_TIME,LAST_TIME,NEW_MARKET_PRICE,NEW_SALE_PRICE,NEW_SUPPLIER_PRICE,UPDATE_TIME,EVENT_START_DATE,EVENT_END_DATE,MEASUREMENT,SP_SKU_ID,STATUS,SP_STATUS,SP_PRODUCT_CODE,PIC_URL_DEFAULT,IS_EXCLUDE
+    from SKU
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SKU
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuCriteria" >
+    delete from SKU
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ep.order.module.sku.bean.HubSku" >
+    insert into SKU (ID, SUPPLIER_ID, SPU_ID, 
+      SKU_ID, PRODUCT_NAME, MARKET_PRICE, 
+      SALE_PRICE, SUPPLIER_PRICE, BARCODE, 
+      PRODUCT_CODE, COLOR, PRODUCT_DESCRIPTION, 
+      SALE_CURRENCY, PRODUCT_SIZE, STOCK, 
+      MEMO, CREATE_TIME, LAST_TIME, 
+      NEW_MARKET_PRICE, NEW_SALE_PRICE, NEW_SUPPLIER_PRICE, 
+      UPDATE_TIME, EVENT_START_DATE, EVENT_END_DATE, 
+      MEASUREMENT, SP_SKU_ID, STATUS, 
+      SP_STATUS, SP_PRODUCT_CODE, PIC_URL_DEFAULT, 
+      IS_EXCLUDE)
+    values (#{id,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuId,jdbcType=VARCHAR}, 
+      #{skuId,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, #{marketPrice,jdbcType=VARCHAR}, 
+      #{salePrice,jdbcType=VARCHAR}, #{supplierPrice,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, 
+      #{productCode,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, #{productDescription,jdbcType=VARCHAR}, 
+      #{saleCurrency,jdbcType=VARCHAR}, #{productSize,jdbcType=VARCHAR}, #{stock,jdbcType=VARCHAR}, 
+      #{memo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{lastTime,jdbcType=TIMESTAMP}, 
+      #{newMarketPrice,jdbcType=VARCHAR}, #{newSalePrice,jdbcType=VARCHAR}, #{newSupplierPrice,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{eventStartDate,jdbcType=VARCHAR}, #{eventEndDate,jdbcType=VARCHAR}, 
+      #{measurement,jdbcType=VARCHAR}, #{spSkuId,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{spStatus,jdbcType=VARCHAR}, #{spProductCode,jdbcType=VARCHAR}, #{picUrlDefault,jdbcType=VARCHAR}, 
+      #{isExclude,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ep.order.module.sku.bean.HubSku" >
+    insert into SKU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="supplierId != null" >
+        SUPPLIER_ID,
+      </if>
+      <if test="spuId != null" >
+        SPU_ID,
+      </if>
+      <if test="skuId != null" >
+        SKU_ID,
+      </if>
+      <if test="productName != null" >
+        PRODUCT_NAME,
+      </if>
+      <if test="marketPrice != null" >
+        MARKET_PRICE,
+      </if>
+      <if test="salePrice != null" >
+        SALE_PRICE,
+      </if>
+      <if test="supplierPrice != null" >
+        SUPPLIER_PRICE,
+      </if>
+      <if test="barcode != null" >
+        BARCODE,
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE,
+      </if>
+      <if test="color != null" >
+        COLOR,
+      </if>
+      <if test="productDescription != null" >
+        PRODUCT_DESCRIPTION,
+      </if>
+      <if test="saleCurrency != null" >
+        SALE_CURRENCY,
+      </if>
+      <if test="productSize != null" >
+        PRODUCT_SIZE,
+      </if>
+      <if test="stock != null" >
+        STOCK,
+      </if>
+      <if test="memo != null" >
+        MEMO,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="lastTime != null" >
+        LAST_TIME,
+      </if>
+      <if test="newMarketPrice != null" >
+        NEW_MARKET_PRICE,
+      </if>
+      <if test="newSalePrice != null" >
+        NEW_SALE_PRICE,
+      </if>
+      <if test="newSupplierPrice != null" >
+        NEW_SUPPLIER_PRICE,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="eventStartDate != null" >
+        EVENT_START_DATE,
+      </if>
+      <if test="eventEndDate != null" >
+        EVENT_END_DATE,
+      </if>
+      <if test="measurement != null" >
+        MEASUREMENT,
+      </if>
+      <if test="spSkuId != null" >
+        SP_SKU_ID,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="spStatus != null" >
+        SP_STATUS,
+      </if>
+      <if test="spProductCode != null" >
+        SP_PRODUCT_CODE,
+      </if>
+      <if test="picUrlDefault != null" >
+        PIC_URL_DEFAULT,
+      </if>
+      <if test="isExclude != null" >
+        IS_EXCLUDE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="spuId != null" >
+        #{spuId,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null" >
+        #{marketPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierPrice != null" >
+        #{supplierPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="productDescription != null" >
+        #{productDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="saleCurrency != null" >
+        #{saleCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="productSize != null" >
+        #{productSize,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastTime != null" >
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="newMarketPrice != null" >
+        #{newMarketPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="newSalePrice != null" >
+        #{newSalePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="newSupplierPrice != null" >
+        #{newSupplierPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventStartDate != null" >
+        #{eventStartDate,jdbcType=VARCHAR},
+      </if>
+      <if test="eventEndDate != null" >
+        #{eventEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="measurement != null" >
+        #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuId != null" >
+        #{spSkuId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="spStatus != null" >
+        #{spStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="spProductCode != null" >
+        #{spProductCode,jdbcType=VARCHAR},
+      </if>
+      <if test="picUrlDefault != null" >
+        #{picUrlDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="isExclude != null" >
+        #{isExclude,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuCriteria" resultType="java.lang.Integer" >
+    select count(*) from SKU
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update SKU
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuId != null" >
+        SPU_ID = #{record.spuId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.skuId != null" >
+        SKU_ID = #{record.skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productName != null" >
+        PRODUCT_NAME = #{record.productName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketPrice != null" >
+        MARKET_PRICE = #{record.marketPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salePrice != null" >
+        SALE_PRICE = #{record.salePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierPrice != null" >
+        SUPPLIER_PRICE = #{record.supplierPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.barcode != null" >
+        BARCODE = #{record.barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productCode != null" >
+        PRODUCT_CODE = #{record.productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.color != null" >
+        COLOR = #{record.color,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productDescription != null" >
+        PRODUCT_DESCRIPTION = #{record.productDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="record.saleCurrency != null" >
+        SALE_CURRENCY = #{record.saleCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productSize != null" >
+        PRODUCT_SIZE = #{record.productSize,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stock != null" >
+        STOCK = #{record.stock,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memo != null" >
+        MEMO = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastTime != null" >
+        LAST_TIME = #{record.lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.newMarketPrice != null" >
+        NEW_MARKET_PRICE = #{record.newMarketPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newSalePrice != null" >
+        NEW_SALE_PRICE = #{record.newSalePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.newSupplierPrice != null" >
+        NEW_SUPPLIER_PRICE = #{record.newSupplierPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.eventStartDate != null" >
+        EVENT_START_DATE = #{record.eventStartDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.eventEndDate != null" >
+        EVENT_END_DATE = #{record.eventEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.measurement != null" >
+        MEASUREMENT = #{record.measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spSkuId != null" >
+        SP_SKU_ID = #{record.spSkuId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        STATUS = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spStatus != null" >
+        SP_STATUS = #{record.spStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spProductCode != null" >
+        SP_PRODUCT_CODE = #{record.spProductCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picUrlDefault != null" >
+        PIC_URL_DEFAULT = #{record.picUrlDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isExclude != null" >
+        IS_EXCLUDE = #{record.isExclude,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update SKU
+    set ID = #{record.id,jdbcType=VARCHAR},
+      SUPPLIER_ID = #{record.supplierId,jdbcType=VARCHAR},
+      SPU_ID = #{record.spuId,jdbcType=VARCHAR},
+      SKU_ID = #{record.skuId,jdbcType=VARCHAR},
+      PRODUCT_NAME = #{record.productName,jdbcType=VARCHAR},
+      MARKET_PRICE = #{record.marketPrice,jdbcType=VARCHAR},
+      SALE_PRICE = #{record.salePrice,jdbcType=VARCHAR},
+      SUPPLIER_PRICE = #{record.supplierPrice,jdbcType=VARCHAR},
+      BARCODE = #{record.barcode,jdbcType=VARCHAR},
+      PRODUCT_CODE = #{record.productCode,jdbcType=VARCHAR},
+      COLOR = #{record.color,jdbcType=VARCHAR},
+      PRODUCT_DESCRIPTION = #{record.productDescription,jdbcType=VARCHAR},
+      SALE_CURRENCY = #{record.saleCurrency,jdbcType=VARCHAR},
+      PRODUCT_SIZE = #{record.productSize,jdbcType=VARCHAR},
+      STOCK = #{record.stock,jdbcType=VARCHAR},
+      MEMO = #{record.memo,jdbcType=VARCHAR},
+      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+      LAST_TIME = #{record.lastTime,jdbcType=TIMESTAMP},
+      NEW_MARKET_PRICE = #{record.newMarketPrice,jdbcType=VARCHAR},
+      NEW_SALE_PRICE = #{record.newSalePrice,jdbcType=VARCHAR},
+      NEW_SUPPLIER_PRICE = #{record.newSupplierPrice,jdbcType=VARCHAR},
+      UPDATE_TIME = #{record.updateTime,jdbcType=TIMESTAMP},
+      EVENT_START_DATE = #{record.eventStartDate,jdbcType=VARCHAR},
+      EVENT_END_DATE = #{record.eventEndDate,jdbcType=VARCHAR},
+      MEASUREMENT = #{record.measurement,jdbcType=VARCHAR},
+      SP_SKU_ID = #{record.spSkuId,jdbcType=VARCHAR},
+      STATUS = #{record.status,jdbcType=VARCHAR},
+      SP_STATUS = #{record.spStatus,jdbcType=VARCHAR},
+      SP_PRODUCT_CODE = #{record.spProductCode,jdbcType=VARCHAR},
+      PIC_URL_DEFAULT = #{record.picUrlDefault,jdbcType=VARCHAR},
+      IS_EXCLUDE = #{record.isExclude,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ep.order.module.sku.bean.HubSku" >
+    update SKU
+    <set >
+      <if test="supplierId != null" >
+        SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="spuId != null" >
+        SPU_ID = #{spuId,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null" >
+        SKU_ID = #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="productName != null" >
+        PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null" >
+        MARKET_PRICE = #{marketPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="salePrice != null" >
+        SALE_PRICE = #{salePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierPrice != null" >
+        SUPPLIER_PRICE = #{supplierPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null" >
+        BARCODE = #{barcode,jdbcType=VARCHAR},
+      </if>
+      <if test="productCode != null" >
+        PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        COLOR = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="productDescription != null" >
+        PRODUCT_DESCRIPTION = #{productDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="saleCurrency != null" >
+        SALE_CURRENCY = #{saleCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="productSize != null" >
+        PRODUCT_SIZE = #{productSize,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        STOCK = #{stock,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        MEMO = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastTime != null" >
+        LAST_TIME = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="newMarketPrice != null" >
+        NEW_MARKET_PRICE = #{newMarketPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="newSalePrice != null" >
+        NEW_SALE_PRICE = #{newSalePrice,jdbcType=VARCHAR},
+      </if>
+      <if test="newSupplierPrice != null" >
+        NEW_SUPPLIER_PRICE = #{newSupplierPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventStartDate != null" >
+        EVENT_START_DATE = #{eventStartDate,jdbcType=VARCHAR},
+      </if>
+      <if test="eventEndDate != null" >
+        EVENT_END_DATE = #{eventEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="measurement != null" >
+        MEASUREMENT = #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuId != null" >
+        SP_SKU_ID = #{spSkuId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="spStatus != null" >
+        SP_STATUS = #{spStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="spProductCode != null" >
+        SP_PRODUCT_CODE = #{spProductCode,jdbcType=VARCHAR},
+      </if>
+      <if test="picUrlDefault != null" >
+        PIC_URL_DEFAULT = #{picUrlDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="isExclude != null" >
+        IS_EXCLUDE = #{isExclude,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ep.order.module.sku.bean.HubSku" >
+    update SKU
+    set SUPPLIER_ID = #{supplierId,jdbcType=VARCHAR},
+      SPU_ID = #{spuId,jdbcType=VARCHAR},
+      SKU_ID = #{skuId,jdbcType=VARCHAR},
+      PRODUCT_NAME = #{productName,jdbcType=VARCHAR},
+      MARKET_PRICE = #{marketPrice,jdbcType=VARCHAR},
+      SALE_PRICE = #{salePrice,jdbcType=VARCHAR},
+      SUPPLIER_PRICE = #{supplierPrice,jdbcType=VARCHAR},
+      BARCODE = #{barcode,jdbcType=VARCHAR},
+      PRODUCT_CODE = #{productCode,jdbcType=VARCHAR},
+      COLOR = #{color,jdbcType=VARCHAR},
+      PRODUCT_DESCRIPTION = #{productDescription,jdbcType=VARCHAR},
+      SALE_CURRENCY = #{saleCurrency,jdbcType=VARCHAR},
+      PRODUCT_SIZE = #{productSize,jdbcType=VARCHAR},
+      STOCK = #{stock,jdbcType=VARCHAR},
+      MEMO = #{memo,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      LAST_TIME = #{lastTime,jdbcType=TIMESTAMP},
+      NEW_MARKET_PRICE = #{newMarketPrice,jdbcType=VARCHAR},
+      NEW_SALE_PRICE = #{newSalePrice,jdbcType=VARCHAR},
+      NEW_SUPPLIER_PRICE = #{newSupplierPrice,jdbcType=VARCHAR},
+      UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      EVENT_START_DATE = #{eventStartDate,jdbcType=VARCHAR},
+      EVENT_END_DATE = #{eventEndDate,jdbcType=VARCHAR},
+      MEASUREMENT = #{measurement,jdbcType=VARCHAR},
+      SP_SKU_ID = #{spSkuId,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      SP_STATUS = #{spStatus,jdbcType=VARCHAR},
+      SP_PRODUCT_CODE = #{spProductCode,jdbcType=VARCHAR},
+      PIC_URL_DEFAULT = #{picUrlDefault,jdbcType=VARCHAR},
+      IS_EXCLUDE = #{isExclude,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from SKU
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+   <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
+</mapper>

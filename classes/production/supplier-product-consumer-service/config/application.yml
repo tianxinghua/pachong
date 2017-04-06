@@ -1,0 +1,5 @@
+﻿server.port: 8005
+spring: 
+  profiles: 
+    active: qa
+  application.name: supplier-product-consumer-service

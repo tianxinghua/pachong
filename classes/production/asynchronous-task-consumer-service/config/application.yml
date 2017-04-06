@@ -1,0 +1,5 @@
+﻿server.port: 8004
+spring:
+  profiles: 
+    active: qa
+  application.name: asynchronous-task-consumer-service

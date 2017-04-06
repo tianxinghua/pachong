@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ep.order.module.sku.mapper.HubSkuOrgMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ep.order.module.sku.bean.HubSkuOrg" >
+    <id column="SkuOrgId" property="skuorgid" jdbcType="BIGINT" />
+    <result column="SupplierId" property="supplierid" jdbcType="VARCHAR" />
+    <result column="ProductOrgId" property="productorgid" jdbcType="BIGINT" />
+    <result column="ProductNoOrg" property="productnoorg" jdbcType="VARCHAR" />
+    <result column="SupplierSkuNoOrg" property="supplierskunoorg" jdbcType="VARCHAR" />
+    <result column="SkuNameOrg" property="skunameorg" jdbcType="VARCHAR" />
+    <result column="MarketPrice" property="marketprice" jdbcType="DECIMAL" />
+    <result column="MarketPriceCurrencyOrg" property="marketpricecurrencyorg" jdbcType="VARCHAR" />
+    <result column="SalesPrice" property="salesprice" jdbcType="DECIMAL" />
+    <result column="SalesPriceCurrency" property="salespricecurrency" jdbcType="VARCHAR" />
+    <result column="SupplyPrice" property="supplyprice" jdbcType="DECIMAL" />
+    <result column="SupplyPriceCurrency" property="supplypricecurrency" jdbcType="VARCHAR" />
+    <result column="BarcodeOrg" property="barcodeorg" jdbcType="VARCHAR" />
+    <result column="ColorOrg" property="colororg" jdbcType="VARCHAR" />
+    <result column="SkuSizeOrg" property="skusizeorg" jdbcType="VARCHAR" />
+    <result column="Stock" property="stock" jdbcType="INTEGER" />
+    <result column="Memo" property="memo" jdbcType="VARCHAR" />
+    <result column="CreateTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="UpdateTime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="LastTime" property="lasttime" jdbcType="TIMESTAMP" />
+    <result column="SpSkuNo" property="spskuno" jdbcType="VARCHAR" />
+    <result column="EventStartTime" property="eventstarttime" jdbcType="TIMESTAMP" />
+    <result column="EventEndTime" property="eventendtime" jdbcType="TIMESTAMP" />
+    <result column="Measurement" property="measurement" jdbcType="VARCHAR" />
+    <result column="Status" property="status" jdbcType="VARCHAR" />
+    <result column="SelStatus" property="selstatus" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      SkuOrgId, SupplierId, ProductOrgId, ProductNoOrg, SupplierSkuNoOrg, SkuNameOrg, MarketPrice, 
+      MarketPriceCurrencyOrg, SalesPrice, SalesPriceCurrency, SupplyPrice, SupplyPriceCurrency, 
+      BarcodeOrg, ColorOrg, SkuSizeOrg, Stock, Memo, CreateTime, UpdateTime, LastTime, 
+      SpSkuNo, EventStartTime, EventEndTime, Measurement, Status, SelStatus
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrgCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from HubSkuOrg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    SkuOrgId,SupplierId,ProductOrgId,ProductNoOrg,SupplierSkuNoOrg,SkuNameOrg,MarketPrice,MarketPriceCurrencyOrg,SalesPrice,SalesPriceCurrency,SupplyPrice,SupplyPriceCurrency,BarcodeOrg,ColorOrg,SkuSizeOrg,Stock,Memo,CreateTime,UpdateTime,LastTime,SpSkuNo,EventStartTime,EventEndTime,Measurement,Status,SelStatus
+    from HubSkuOrg
+    where SkuOrgId = #{skuorgid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from HubSkuOrg
+    where SkuOrgId = #{skuorgid,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrgCriteria" >
+    delete from HubSkuOrg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrg" >
+    insert into HubSkuOrg (SkuOrgId, SupplierId, ProductOrgId, 
+      ProductNoOrg, SupplierSkuNoOrg, SkuNameOrg, 
+      MarketPrice, MarketPriceCurrencyOrg, SalesPrice, 
+      SalesPriceCurrency, SupplyPrice, SupplyPriceCurrency, 
+      BarcodeOrg, ColorOrg, SkuSizeOrg, 
+      Stock, Memo, CreateTime, 
+      UpdateTime, LastTime, SpSkuNo, 
+      EventStartTime, EventEndTime, Measurement, 
+      Status, SelStatus)
+    values (#{skuorgid,jdbcType=BIGINT}, #{supplierid,jdbcType=VARCHAR}, #{productorgid,jdbcType=BIGINT}, 
+      #{productnoorg,jdbcType=VARCHAR}, #{supplierskunoorg,jdbcType=VARCHAR}, #{skunameorg,jdbcType=VARCHAR}, 
+      #{marketprice,jdbcType=DECIMAL}, #{marketpricecurrencyorg,jdbcType=VARCHAR}, #{salesprice,jdbcType=DECIMAL}, 
+      #{salespricecurrency,jdbcType=VARCHAR}, #{supplyprice,jdbcType=DECIMAL}, #{supplypricecurrency,jdbcType=VARCHAR}, 
+      #{barcodeorg,jdbcType=VARCHAR}, #{colororg,jdbcType=VARCHAR}, #{skusizeorg,jdbcType=VARCHAR}, 
+      #{stock,jdbcType=INTEGER}, #{memo,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{lasttime,jdbcType=TIMESTAMP}, #{spskuno,jdbcType=VARCHAR}, 
+      #{eventstarttime,jdbcType=TIMESTAMP}, #{eventendtime,jdbcType=TIMESTAMP}, #{measurement,jdbcType=VARCHAR}, 
+      #{status,jdbcType=VARCHAR}, #{selstatus,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrg" >
+    insert into HubSkuOrg
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="skuorgid != null" >
+        SkuOrgId,
+      </if>
+      <if test="supplierid != null" >
+        SupplierId,
+      </if>
+      <if test="productorgid != null" >
+        ProductOrgId,
+      </if>
+      <if test="productnoorg != null" >
+        ProductNoOrg,
+      </if>
+      <if test="supplierskunoorg != null" >
+        SupplierSkuNoOrg,
+      </if>
+      <if test="skunameorg != null" >
+        SkuNameOrg,
+      </if>
+      <if test="marketprice != null" >
+        MarketPrice,
+      </if>
+      <if test="marketpricecurrencyorg != null" >
+        MarketPriceCurrencyOrg,
+      </if>
+      <if test="salesprice != null" >
+        SalesPrice,
+      </if>
+      <if test="salespricecurrency != null" >
+        SalesPriceCurrency,
+      </if>
+      <if test="supplyprice != null" >
+        SupplyPrice,
+      </if>
+      <if test="supplypricecurrency != null" >
+        SupplyPriceCurrency,
+      </if>
+      <if test="barcodeorg != null" >
+        BarcodeOrg,
+      </if>
+      <if test="colororg != null" >
+        ColorOrg,
+      </if>
+      <if test="skusizeorg != null" >
+        SkuSizeOrg,
+      </if>
+      <if test="stock != null" >
+        Stock,
+      </if>
+      <if test="memo != null" >
+        Memo,
+      </if>
+      <if test="createtime != null" >
+        CreateTime,
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime,
+      </if>
+      <if test="lasttime != null" >
+        LastTime,
+      </if>
+      <if test="spskuno != null" >
+        SpSkuNo,
+      </if>
+      <if test="eventstarttime != null" >
+        EventStartTime,
+      </if>
+      <if test="eventendtime != null" >
+        EventEndTime,
+      </if>
+      <if test="measurement != null" >
+        Measurement,
+      </if>
+      <if test="status != null" >
+        Status,
+      </if>
+      <if test="selstatus != null" >
+        SelStatus,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="skuorgid != null" >
+        #{skuorgid,jdbcType=BIGINT},
+      </if>
+      <if test="supplierid != null" >
+        #{supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="productorgid != null" >
+        #{productorgid,jdbcType=BIGINT},
+      </if>
+      <if test="productnoorg != null" >
+        #{productnoorg,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierskunoorg != null" >
+        #{supplierskunoorg,jdbcType=VARCHAR},
+      </if>
+      <if test="skunameorg != null" >
+        #{skunameorg,jdbcType=VARCHAR},
+      </if>
+      <if test="marketprice != null" >
+        #{marketprice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketpricecurrencyorg != null" >
+        #{marketpricecurrencyorg,jdbcType=VARCHAR},
+      </if>
+      <if test="salesprice != null" >
+        #{salesprice,jdbcType=DECIMAL},
+      </if>
+      <if test="salespricecurrency != null" >
+        #{salespricecurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyprice != null" >
+        #{supplyprice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplypricecurrency != null" >
+        #{supplypricecurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="barcodeorg != null" >
+        #{barcodeorg,jdbcType=VARCHAR},
+      </if>
+      <if test="colororg != null" >
+        #{colororg,jdbcType=VARCHAR},
+      </if>
+      <if test="skusizeorg != null" >
+        #{skusizeorg,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lasttime != null" >
+        #{lasttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="spskuno != null" >
+        #{spskuno,jdbcType=VARCHAR},
+      </if>
+      <if test="eventstarttime != null" >
+        #{eventstarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventendtime != null" >
+        #{eventendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="measurement != null" >
+        #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="selstatus != null" >
+        #{selstatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrgCriteria" resultType="java.lang.Integer" >
+    select count(*) from HubSkuOrg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update HubSkuOrg
+    <set >
+      <if test="record.skuorgid != null" >
+        SkuOrgId = #{record.skuorgid,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierid != null" >
+        SupplierId = #{record.supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productorgid != null" >
+        ProductOrgId = #{record.productorgid,jdbcType=BIGINT},
+      </if>
+      <if test="record.productnoorg != null" >
+        ProductNoOrg = #{record.productnoorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierskunoorg != null" >
+        SupplierSkuNoOrg = #{record.supplierskunoorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.skunameorg != null" >
+        SkuNameOrg = #{record.skunameorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketprice != null" >
+        MarketPrice = #{record.marketprice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.marketpricecurrencyorg != null" >
+        MarketPriceCurrencyOrg = #{record.marketpricecurrencyorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salesprice != null" >
+        SalesPrice = #{record.salesprice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.salespricecurrency != null" >
+        SalesPriceCurrency = #{record.salespricecurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplyprice != null" >
+        SupplyPrice = #{record.supplyprice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.supplypricecurrency != null" >
+        SupplyPriceCurrency = #{record.supplypricecurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="record.barcodeorg != null" >
+        BarcodeOrg = #{record.barcodeorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.colororg != null" >
+        ColorOrg = #{record.colororg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.skusizeorg != null" >
+        SkuSizeOrg = #{record.skusizeorg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stock != null" >
+        Stock = #{record.stock,jdbcType=INTEGER},
+      </if>
+      <if test="record.memo != null" >
+        Memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null" >
+        CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatetime != null" >
+        UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lasttime != null" >
+        LastTime = #{record.lasttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.spskuno != null" >
+        SpSkuNo = #{record.spskuno,jdbcType=VARCHAR},
+      </if>
+      <if test="record.eventstarttime != null" >
+        EventStartTime = #{record.eventstarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.eventendtime != null" >
+        EventEndTime = #{record.eventendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.measurement != null" >
+        Measurement = #{record.measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        Status = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.selstatus != null" >
+        SelStatus = #{record.selstatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update HubSkuOrg
+    set SkuOrgId = #{record.skuorgid,jdbcType=BIGINT},
+      SupplierId = #{record.supplierid,jdbcType=VARCHAR},
+      ProductOrgId = #{record.productorgid,jdbcType=BIGINT},
+      ProductNoOrg = #{record.productnoorg,jdbcType=VARCHAR},
+      SupplierSkuNoOrg = #{record.supplierskunoorg,jdbcType=VARCHAR},
+      SkuNameOrg = #{record.skunameorg,jdbcType=VARCHAR},
+      MarketPrice = #{record.marketprice,jdbcType=DECIMAL},
+      MarketPriceCurrencyOrg = #{record.marketpricecurrencyorg,jdbcType=VARCHAR},
+      SalesPrice = #{record.salesprice,jdbcType=DECIMAL},
+      SalesPriceCurrency = #{record.salespricecurrency,jdbcType=VARCHAR},
+      SupplyPrice = #{record.supplyprice,jdbcType=DECIMAL},
+      SupplyPriceCurrency = #{record.supplypricecurrency,jdbcType=VARCHAR},
+      BarcodeOrg = #{record.barcodeorg,jdbcType=VARCHAR},
+      ColorOrg = #{record.colororg,jdbcType=VARCHAR},
+      SkuSizeOrg = #{record.skusizeorg,jdbcType=VARCHAR},
+      Stock = #{record.stock,jdbcType=INTEGER},
+      Memo = #{record.memo,jdbcType=VARCHAR},
+      CreateTime = #{record.createtime,jdbcType=TIMESTAMP},
+      UpdateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      LastTime = #{record.lasttime,jdbcType=TIMESTAMP},
+      SpSkuNo = #{record.spskuno,jdbcType=VARCHAR},
+      EventStartTime = #{record.eventstarttime,jdbcType=TIMESTAMP},
+      EventEndTime = #{record.eventendtime,jdbcType=TIMESTAMP},
+      Measurement = #{record.measurement,jdbcType=VARCHAR},
+      Status = #{record.status,jdbcType=VARCHAR},
+      SelStatus = #{record.selstatus,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrg" >
+    update HubSkuOrg
+    <set >
+      <if test="supplierid != null" >
+        SupplierId = #{supplierid,jdbcType=VARCHAR},
+      </if>
+      <if test="productorgid != null" >
+        ProductOrgId = #{productorgid,jdbcType=BIGINT},
+      </if>
+      <if test="productnoorg != null" >
+        ProductNoOrg = #{productnoorg,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierskunoorg != null" >
+        SupplierSkuNoOrg = #{supplierskunoorg,jdbcType=VARCHAR},
+      </if>
+      <if test="skunameorg != null" >
+        SkuNameOrg = #{skunameorg,jdbcType=VARCHAR},
+      </if>
+      <if test="marketprice != null" >
+        MarketPrice = #{marketprice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketpricecurrencyorg != null" >
+        MarketPriceCurrencyOrg = #{marketpricecurrencyorg,jdbcType=VARCHAR},
+      </if>
+      <if test="salesprice != null" >
+        SalesPrice = #{salesprice,jdbcType=DECIMAL},
+      </if>
+      <if test="salespricecurrency != null" >
+        SalesPriceCurrency = #{salespricecurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="supplyprice != null" >
+        SupplyPrice = #{supplyprice,jdbcType=DECIMAL},
+      </if>
+      <if test="supplypricecurrency != null" >
+        SupplyPriceCurrency = #{supplypricecurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="barcodeorg != null" >
+        BarcodeOrg = #{barcodeorg,jdbcType=VARCHAR},
+      </if>
+      <if test="colororg != null" >
+        ColorOrg = #{colororg,jdbcType=VARCHAR},
+      </if>
+      <if test="skusizeorg != null" >
+        SkuSizeOrg = #{skusizeorg,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        Stock = #{stock,jdbcType=INTEGER},
+      </if>
+      <if test="memo != null" >
+        Memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lasttime != null" >
+        LastTime = #{lasttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="spskuno != null" >
+        SpSkuNo = #{spskuno,jdbcType=VARCHAR},
+      </if>
+      <if test="eventstarttime != null" >
+        EventStartTime = #{eventstarttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="eventendtime != null" >
+        EventEndTime = #{eventendtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="measurement != null" >
+        Measurement = #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        Status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="selstatus != null" >
+        SelStatus = #{selstatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where SkuOrgId = #{skuorgid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrg" >
+    update HubSkuOrg
+    set SupplierId = #{supplierid,jdbcType=VARCHAR},
+      ProductOrgId = #{productorgid,jdbcType=BIGINT},
+      ProductNoOrg = #{productnoorg,jdbcType=VARCHAR},
+      SupplierSkuNoOrg = #{supplierskunoorg,jdbcType=VARCHAR},
+      SkuNameOrg = #{skunameorg,jdbcType=VARCHAR},
+      MarketPrice = #{marketprice,jdbcType=DECIMAL},
+      MarketPriceCurrencyOrg = #{marketpricecurrencyorg,jdbcType=VARCHAR},
+      SalesPrice = #{salesprice,jdbcType=DECIMAL},
+      SalesPriceCurrency = #{salespricecurrency,jdbcType=VARCHAR},
+      SupplyPrice = #{supplyprice,jdbcType=DECIMAL},
+      SupplyPriceCurrency = #{supplypricecurrency,jdbcType=VARCHAR},
+      BarcodeOrg = #{barcodeorg,jdbcType=VARCHAR},
+      ColorOrg = #{colororg,jdbcType=VARCHAR},
+      SkuSizeOrg = #{skusizeorg,jdbcType=VARCHAR},
+      Stock = #{stock,jdbcType=INTEGER},
+      Memo = #{memo,jdbcType=VARCHAR},
+      CreateTime = #{createtime,jdbcType=TIMESTAMP},
+      UpdateTime = #{updatetime,jdbcType=TIMESTAMP},
+      LastTime = #{lasttime,jdbcType=TIMESTAMP},
+      SpSkuNo = #{spskuno,jdbcType=VARCHAR},
+      EventStartTime = #{eventstarttime,jdbcType=TIMESTAMP},
+      EventEndTime = #{eventendtime,jdbcType=TIMESTAMP},
+      Measurement = #{measurement,jdbcType=VARCHAR},
+      Status = #{status,jdbcType=VARCHAR},
+      SelStatus = #{selstatus,jdbcType=INTEGER}
+    where SkuOrgId = #{skuorgid,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ep.order.module.sku.bean.HubSkuOrgCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from HubSkuOrg
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>
