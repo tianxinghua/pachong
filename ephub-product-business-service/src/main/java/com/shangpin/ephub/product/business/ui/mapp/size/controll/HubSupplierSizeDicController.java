@@ -3,7 +3,6 @@ package com.shangpin.ephub.product.business.ui.mapp.size.controll;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +20,6 @@ import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappi
 import com.shangpin.ephub.product.business.common.hubDic.size.HubSizeDicService;
 import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
-import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicResponseDto;
@@ -53,16 +51,8 @@ public class HubSupplierSizeDicController {
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse selectHubSupplierCateoryList(@RequestBody HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto){
 		try {
-			Byte type = null;
 			if(hubSupplierSizeDicRequestDto!=null&&hubSupplierSizeDicRequestDto.getType()!=null){
-				type = hubSupplierSizeDicRequestDto.getType();
-				if(type==1){
-					//全局尺码映射
-					return getCommonSizeMapp(hubSupplierSizeDicRequestDto);
-				}else if(type==2){
-					//供应商尺码映射
-					return getSupplierSizeMapp(hubSupplierSizeDicRequestDto);
-				}
+				return getCommonSizeMapp(hubSupplierSizeDicRequestDto);
 			}
 			return HubResponse.errorResp("传值为空");
 		} catch (Exception e) {
@@ -72,15 +62,14 @@ public class HubSupplierSizeDicController {
     }
 	
 	private HubResponse getCommonSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
+		
 		int total = 0;
-		total = hubSizeDicService.countHubSupplierValueMapping(null,
+		total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
 				SupplierValueMappingType.TYPE_SIZE.getIndex());
 		if (total > 0) {
 			List<HubSupplierValueMappingDto> list = hubSizeDicService
-					.getHubSupplierValueMappingBySupplierIdAndType(null,
-							SupplierValueMappingType.TYPE_SIZE.getIndex(),
-							hubSupplierSizeDicRequestDto.getPageNo(),
-							hubSupplierSizeDicRequestDto.getPageSize());
+					.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
+							SupplierValueMappingType.TYPE_SIZE.getIndex());
 			if (list != null && list.size() > 0) {
 
 				HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
@@ -93,47 +82,10 @@ public class HubSupplierSizeDicController {
 				}
 				page.setList(responseList);
 				page.setTotal(total);
-				return HubResponse.successResp(responseList);
+				return HubResponse.successResp(page);
 			}
 		}
-		return HubResponse.successResp("列表页为空");
-	}
-
-	private HubResponse getSupplierSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
-		String supplierNo = hubSupplierSizeDicRequestDto.getSupplierNo();
-		SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
-		if (supplierDto != null) {
-			String supplierId = supplierDto.getSopUserNo();
-			if (StringUtils.isNotBlank(supplierId)) {
-				int total = 0;
-				total = hubSizeDicService.countHubSupplierValueMapping(supplierId,
-						SupplierValueMappingType.TYPE_SIZE.getIndex());
-				if (total > 0) {
-					List<HubSupplierValueMappingDto> list = hubSizeDicService
-							.getHubSupplierValueMappingBySupplierIdAndType(supplierId,
-									SupplierValueMappingType.TYPE_SIZE.getIndex(),
-									hubSupplierSizeDicRequestDto.getPageNo(),
-									hubSupplierSizeDicRequestDto.getPageSize());
-					if (list != null && list.size() > 0) {
-
-						HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
-
-						List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
-						for (HubSupplierValueMappingDto dicDto : list) {
-							HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
-							BeanUtils.copyProperties(dicDto, dic);
-							responseList.add(dic);
-						}
-						page.setList(responseList);
-						page.setTotal(total);
-						return HubResponse.successResp(responseList);
-					}
-				}
-				return HubResponse.successResp("列表页为空");
-			}
-		}
-		return HubResponse.errorResp("请选择供应商");
-
+		return HubResponse.errorResp("列表页为空");
 	}
 
 	@RequestMapping(value = "/detail/{id}",method = RequestMethod.POST)
@@ -148,7 +100,7 @@ public class HubSupplierSizeDicController {
 					responseList.add(dic);
 					return HubResponse.successResp(responseList);
 				}else{
-					return HubResponse.successResp("列表页为空");
+					return HubResponse.errorResp("列表页为空");
 				}
 			}else{
 				return HubResponse.errorResp("传值为空");
@@ -188,7 +140,15 @@ public class HubSupplierSizeDicController {
 			HubSupplierSkuCriteriaDto criteriaSku = new HubSupplierSkuCriteriaDto();
 			criteriaSku.setPageNo(1);
 			criteriaSku.setPageSize(10000);
-			criteriaSku.createCriteria().andSupplierIdEqualTo(dto.getSupplierId()).andSupplierSkuSizeEqualTo(dto.getSupplierVal());
+			Byte type = dto.getType();
+			if(type==1){
+				criteriaSku.createCriteria().andSupplierSkuSizeEqualTo(dto.getSupplierVal());
+			}else if(type==2){
+				criteriaSku.createCriteria().andSupplierIdEqualTo(dto.getSupplierId()).andSupplierSkuSizeEqualTo(dto.getSupplierVal());
+			}else if(type==3){
+				criteriaSku.createCriteria().andSupplierSkuSizeEqualTo(dto.getSupplierVal());
+			}
+			
 			List<HubSupplierSkuDto> listSku = hubSupplierSkuService.selectListBySupplierIdAndSize(criteriaSku);
 
 			if(listSku!=null&&listSku.size()>0){

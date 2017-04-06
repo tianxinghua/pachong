@@ -61,7 +61,6 @@ public class HubSupplierCategoryDicController {
 			if(supplierDto!=null){
 				String supplierId = supplierDto.getSopUserNo();
 				if (StringUtils.isNotBlank(supplierId)) {
-					
 					int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType());
 					if(total>0){
 						List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
@@ -79,7 +78,7 @@ public class HubSupplierCategoryDicController {
 							return HubResponse.successResp(response);
 						}
 					}
-					return HubResponse.successResp("列表页为空");
+					return HubResponse.errorResp("列表页为空");
 				} 
 			}
 			return HubResponse.errorResp("请选择供应商");
@@ -101,7 +100,7 @@ public class HubSupplierCategoryDicController {
 					responseList.add(dic);
 					return HubResponse.successResp(responseList);
 				} else {
-					return HubResponse.successResp("列表页为空");
+					return HubResponse.errorResp("列表页为空");
 				}
 			} else {
 				return HubResponse.errorResp("传值为空");

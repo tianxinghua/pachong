@@ -62,7 +62,6 @@ public abstract class PendingSkuService extends PendingSpuService{
             	List<Byte> listSkuState = new ArrayList<Byte>();
                 listSkuState.add(SpuState.HANDLED.getIndex());
                 listSkuState.add(SpuState.HANDLING.getIndex());
-                listSkuState.add(SpuState.INFO_IMPECCABLE.getIndex());
                 criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateNotIn(listSkuState);
                 criteriaDto.or(criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateIsNull());
             }
