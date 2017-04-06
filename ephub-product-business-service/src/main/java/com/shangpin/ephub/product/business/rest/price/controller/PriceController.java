@@ -20,7 +20,7 @@ import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
  */
 import com.shangpin.ephub.response.HubResponse;
 @RestController
-@RequestMapping("price")
+@RequestMapping("/price")
 public class PriceController {
 	
 	@Autowired
