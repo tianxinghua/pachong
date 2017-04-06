@@ -50,6 +50,7 @@ public interface IPendingProductService {
 	/**
 	 * 根据页面查询条件查询待处理表产品，包括spu/sku信息
 	 * @param pendingQuryDto
+	 * @param flag true:代表查询所有sku ， false：代表查询部分sku(skuState不等于2、5、1)
 	 * @return
 	 */
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag);

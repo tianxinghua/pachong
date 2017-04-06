@@ -22,7 +22,6 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
-import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
 
 import lombok.extern.slf4j.Slf4j;
@@ -60,10 +59,10 @@ public class PriceService {
 		HubSupplierSpuDto spuDtoSel = supplierProductService.isSupplierSeasonNameChanged(supplierSpuDto);
 		if(null != spuDtoSel){
 			List<HubSupplierSkuDto> hubSkus = supplierProductService.findSupplierSkus(spuDtoSel.getSupplierSpuId());
-			log.info("【"+supplierSpuDto.getSupplierId()+" "+supplierSpuDto.getSupplierSpuNo()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"】该spu下所有sku："+JsonUtil.serialize(hubSkus));  
 			if(CollectionUtils.isNotEmpty(hubSkus)){
 				for(HubSupplierSkuDto skuDto : hubSkus){
 					if(!StringUtils.isEmpty(skuDto.getSpSkuNo())){
+						log.info("【"+supplierSpuDto.getSupplierId()+" "+supplierSpuDto.getSupplierSpuNo()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商sku编号："+skuDto.getSupplierSkuNo()+"】");  
 						savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON);
 					}
 				}
@@ -74,7 +73,7 @@ public class PriceService {
 		for(HubSupplierSkuDto skuDto : supplierSkus){
 			boolean isChanged = supplierProductService.isPriceChanged(skuDto);
 			if(isChanged && !StringUtils.isEmpty(skuDto.getSpSkuNo())){
-				log.info("###"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 价格发生了变化###"); 
+				log.info("【###"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 价格发生了变化###】"); 
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.PRICE);
 			}
 		}
@@ -96,12 +95,12 @@ public class PriceService {
 		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 		convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, type,seasonDicDto);
 		Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
-		log.info("$$$"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"$$$"); 
+		log.info("【$$$"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"$$$】"); 
 		//发送消息队列
 		ProductPriceDTO productPrice  = new ProductPriceDTO();
 		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);				
 		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
-		log.info("$$$"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"$$$"); 
+		log.info("【$$$"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"$$$】"); 
 	}
 	
 	/**
