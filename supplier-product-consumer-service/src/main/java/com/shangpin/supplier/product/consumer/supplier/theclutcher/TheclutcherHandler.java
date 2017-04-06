@@ -88,7 +88,7 @@ public class TheclutcherHandler implements ISupplierHandler{
 			hubSpu.setSupplierSeasonname(studioSpuDto.getSeason());
 			hubSpu.setSupplierMaterial(studioSpuDto.getNotes());
 			String notes = studioSpuDto.getNotes();
-			if(notes.contains("Made in")){
+			if(notes!=null&&notes.contains("Made in")){
 				hubSpu.setSupplierOrigin(notes.substring(notes.indexOf("Made in")));
 			}
 			return true;

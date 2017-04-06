@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.lang3.StringUtils;
@@ -128,7 +129,11 @@ public class ExportServiceImpl {
 	private static final Integer PAGESIZE = 50;
 
 	private static final Integer SKUPAGESIZE = 50;
-
+	private static String localPath = null;
+	@PostConstruct
+    public void init(){
+	 	localPath = ftpProperties.getLocalResultPath();
+    }
 	/**
 	 * 待处理页面导出sku
 	 * 
@@ -260,7 +265,7 @@ public class ExportServiceImpl {
 		File file = null;
 		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
 		try {
-			file = new File(ftpProperties.getLocalResultPath() + createUser + "_" + taskNo + ".xls");
+			file = new File(localPath + createUser + "_" + taskNo + ".xls");
 			fout = new FileOutputStream(file);
 			wb.write(fout);
 			log.info(file.getName() + " 生成文件成功！");
@@ -482,9 +487,12 @@ public class ExportServiceImpl {
 	private void setStockTotal(HSSFRow row, PendingProductDto product, Class<?> clazz, int i) {
 		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
 		criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuIdEqualTo(product.getSupplierSpuId());
+		criteria.setPageNo(1);
+		criteria.setPageSize(10000);
 		List<HubSupplierSkuDto> list = hubSupplierSkuGateWay.selectByCriteria(criteria);
 		int totalStock = 0;
 		if(list!=null&&list.size()>0){
+			log.info("supplierSpuId："+product.getSupplierSpuId()+"下sku数量："+list.size());
 			for(HubSupplierSkuDto sku:list){
 				totalStock+=sku.getStock().intValue();
 			}
@@ -592,7 +600,9 @@ public class ExportServiceImpl {
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportProduct(pendingQuryDto);
-		saveAndUploadExcel(message.getTaskNo(), pendingQuryDto.getCreateUser(), workbook);
+		if(workbook!=null){
+			saveAndUploadExcel(message.getTaskNo(), pendingQuryDto.getCreateUser(), workbook);	
+		}
 	}
 
 	public HSSFWorkbook exportProduct(HubWaitSelectRequestWithPageDto dto) throws Exception{

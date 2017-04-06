@@ -7,6 +7,11 @@ spring:
            password: ephub-message-service-qa
            virtual-host: /ephub-message-service-qa
   cloud: 
+        consul: 
+          host: localhost
+          port: 8500
+          discovery: 
+              register: false
         stream: 
               bindings: 
                         supplierPictureProduct: 
@@ -989,11 +994,6 @@ spring:
                               antonacciPendingProduct: 
                                     producer: 
                                          prefix: HA.                                                                                                                                                                                                                                                                                                                                                          
-        consul: 
-          host: localhost
-          port: 8500
-          discovery: 
-              register: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8

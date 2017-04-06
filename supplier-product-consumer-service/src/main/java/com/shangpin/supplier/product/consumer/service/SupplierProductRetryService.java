@@ -111,7 +111,7 @@ public class SupplierProductRetryService {
 		List<PendingSku> skus = new ArrayList<PendingSku>();
 		//开始构造消息头
 		
-		List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSkuBySupplierIdAndSupplierSpuId(spu.getSupplierId(),spu.getSupplierSpuId());
+		List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSku(spu.getSupplierSpuId());
 		
 		List<Sku> headSkus = new ArrayList<Sku>();		
 		if(hubSkus != null && hubSkus.size()>0){
