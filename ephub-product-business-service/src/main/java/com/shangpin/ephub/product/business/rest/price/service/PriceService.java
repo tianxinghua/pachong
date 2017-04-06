@@ -14,10 +14,12 @@ import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
 import com.shangpin.ephub.client.data.mysql.price.unionselect.dto.PriceQueryDto;
+import com.shangpin.ephub.client.data.mysql.price.unionselect.gateway.HubSupplierPriceGateWay;
+import com.shangpin.ephub.client.data.mysql.price.unionselect.result.HubSupplierPrice;
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
@@ -42,7 +44,7 @@ public class PriceService {
 	@Autowired
 	private PriceMqGateWay priceMqGateWay;
 	@Autowired 
-	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
+	private HubSupplierPriceGateWay hubSupplierPriceGateWay;
 	
 	/**
 	 * 保存价格并推送消息
@@ -53,33 +55,47 @@ public class PriceService {
 		HubSupplierSpuDto supplierSpuDto = priceDto.getHubSpu();
 		List<HubSupplierSkuDto> supplierSkus = priceDto.getHubSkus();
 		String supplierNo = priceDto.getSupplierNo();
+		//先判断季节是否发生变化
 		HubSupplierSpuDto spuDtoSel = supplierProductService.isSupplierSeasonNameChanged(supplierSpuDto);
 		if(null != spuDtoSel){
 			List<HubSupplierSkuDto> hubSkus = supplierProductService.findSupplierSkus(spuDtoSel.getSupplierSpuId());
 			if(CollectionUtils.isNotEmpty(hubSkus)){
 				for(HubSupplierSkuDto skuDto : hubSkus){
 					if(!StringUtils.isEmpty(skuDto.getSpSkuNo())){
-						HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-						convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, PriceHandleType.SEASON);
-						Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
-						ProductPriceDTO productPrice  = new ProductPriceDTO();
-						convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,productPrice);				
-						sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
+						savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON);
 					}
 				}
 			}
 		}
+		//再判断价格是否发生变化
 		for(HubSupplierSkuDto skuDto : supplierSkus){
 			boolean isChanged = supplierProductService.isPriceChanged(skuDto);
 			if(isChanged && !StringUtils.isEmpty(skuDto.getSpSkuNo())){
-				HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-				convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto,PriceHandleType.PRICE);
-				Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
-				ProductPriceDTO productPrice  = new ProductPriceDTO();
-				convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,productPrice);
-				sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
+				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.PRICE);
 			}
 		}
+	}
+
+	/**
+	 * 将季节或价格发生变化的sku保存数据库并发送消息队列
+	 * @param supplierSpuDto 供应商原始Spu信息
+	 * @param supplierNo 供应商编号
+	 * @param skuDto 供应商原始Sku信息
+	 * @param type 记录的类型
+	 * @throws Exception
+	 */
+	public void savePriceRecordAndSendConsumer(HubSupplierSpuDto supplierSpuDto, String supplierNo, HubSupplierSkuDto skuDto,PriceHandleType type)
+			throws Exception {
+		//查尚品的季节
+		HubSeasonDicDto seasonDicDto = supplierProductService.findHubSeason(skuDto.getSupplierId(), supplierSpuDto.getSupplierSeasonname());
+		//保存数据库
+		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
+		convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, type,seasonDicDto);
+		Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
+		//发送消息队列
+		ProductPriceDTO productPrice  = new ProductPriceDTO();
+		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);				
+		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
 	}
 	
 	/**
@@ -89,38 +105,16 @@ public class PriceService {
 	 */
 	public ProductPrice priceList(PriceQueryDto priceQueryDto){
 		try {
+			if(null == priceQueryDto.getPageIndex() && null == priceQueryDto.getPageSize() && CollectionUtils.isEmpty(priceQueryDto.getSpSkuIds())){
+				return null;
+			}
 			ProductPrice productPrice = new ProductPrice();
-//			HubSupplierSkuCriteriaDto criteriaDto = supplierProductService.findCriteriaDto(priceQueryDto);
-//			if(null == criteriaDto){
-//				return null;
-//			}
-//			int total = hubSupplierSkuGateWay.countByCriteria(criteriaDto);
-//			productPrice.setTotal(total); 
-//			List<SpSeasonVo> productPriceList = new ArrayList<SpSeasonVo>();
-//			if(total > 0){
-//				List<HubSupplierSkuDto> lists = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
-//				for(HubSupplierSkuDto dto : lists){
-//					SpSeasonVo spSeasonVo = new SpSeasonVo();
-//					spSeasonVo.setSupplierId(dto.getSupplierId());
-//					spSeasonVo.setMarkPrice(null != dto.getMarketPrice() ? dto.getMarketPrice().toString() : "");
-//					spSeasonVo.setSpSkuId(null != dto.getSpSkuNo() ? dto.getSpSkuNo() : "");
-//					HubSupplierSpuDto  spu = supplierProductService.findHubSupplierSpuDtos(dto.getSupplierSpuId());
-//					spSeasonVo.setBrandName(null != spu.getSupplierBrandname() ? spu.getSupplierBrandname() : "");
-//					spSeasonVo.setCategoryName(null != spu.getSupplierCategoryname() ? spu.getSupplierCategoryname() : ""); 
-//					spSeasonVo.setSupplierSeasonName(null != spu.getSupplierSeasonname() ? spu.getSupplierSeasonname() : "");
-//					if(!StringUtils.isEmpty(priceQueryDto.getMarketSeason()) && !StringUtils.isEmpty(priceQueryDto.getMarketYear())){
-//						spSeasonVo.setSpSeasonName(priceQueryDto.getMarketSeason());
-//						spSeasonVo.setSpSeasonYear(priceQueryDto.getMarketYear());
-//					}else{
-//						HubSeasonDicDto seasonDic = supplierProductService.findHubSeason(dto.getSupplierId(),spu.getSupplierSeasonname());
-//						spSeasonVo.setSpSeasonName(null != seasonDic ? seasonDic.getHubSeason() : "");
-//						spSeasonVo.setSpSeasonYear(null != seasonDic ? seasonDic.getHubMarketTime() : ""); 
-//					}
-//					spSeasonVo.setCurrency("");
-//					productPriceList.add(spSeasonVo);
-//				}
-//				productPrice.setProductPriceList(productPriceList);
-//			}
+			int total = hubSupplierPriceGateWay.countByQuery(priceQueryDto);
+			productPrice.setTotal(total); 
+			if(total > 0){
+				List<HubSupplierPrice> productPriceList = hubSupplierPriceGateWay.selectByQuery(priceQueryDto);
+				productPrice.setProductPriceList(productPriceList); 
+			}
 			return productPrice;
 		} catch (Exception e) {
 			log.error("查询共价变化记录出错："+e.getMessage(),e);
@@ -131,11 +125,11 @@ public class PriceService {
 	/**
 	 * 将供应商原始表的信息转换为供价记录消息体
 	 * @param supplierNo 供应商门户编号
-	 * @param supplierSpuDto 供应商原始spu表对象
 	 * @param supplierSkuDto 供应商原始sku表对象
-	 * @param retryPrice 供价记录消息体
+	 * @param productPrice 供价记录消息体
+	 * @param seasonDicDto 尚品季节信息
 	 */
-	public void convertPriceDtoToRetryPrice(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,ProductPriceDTO productPrice){
+	public void convertPriceDtoToProductPriceDTO(String supplierNo,HubSupplierSkuDto supplierSkuDto,ProductPriceDTO productPrice,HubSeasonDicDto seasonDicDto){
 		productPrice.setSopUserNo(supplierSkuDto.getSupplierId());
 		productPrice.setSkuNo(supplierSkuDto.getSpSkuNo());
 		productPrice.setSupplierSkuNo(supplierSkuDto.getSupplierSkuNo());
@@ -143,7 +137,8 @@ public class PriceService {
 		productPrice.setMarketPrice(null != marketPrice ? marketPrice.toString() : ""); 
 		BigDecimal supplyPrice = supplierSkuDto.getSupplyPrice();
 		productPrice.setPurchasePrice(null != supplyPrice ? supplyPrice.toString() : "");
-		productPrice.setMarketSeason(supplierSpuDto.getSupplierSeasonname());
+		productPrice.setMarketSeason(seasonDicDto.getHubSeason());
+		productPrice.setMarketYear(seasonDicDto.getHubMarketTime()); 
 		productPrice.setCurrency(StringUtils.isEmpty(supplierSkuDto.getMarketPriceCurrencyorg()) ? supplierSkuDto.getSupplyPriceCurrency() : supplierSkuDto.getMarketPriceCurrencyorg());
 	}
 	/**
@@ -153,8 +148,9 @@ public class PriceService {
 	 * @param supplierSkuDto 供应商原始sku表对象
 	 * @param recordDto 供价记录表实体类
 	 * @param type 类型
+	 * @param seasonDicDto 尚品季节信息
 	 */
-	public void convertPriceDtoToRecordDto(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,HubSupplierPriceChangeRecordDto recordDto,PriceHandleType type){
+	public void convertPriceDtoToRecordDto(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,HubSupplierPriceChangeRecordDto recordDto,PriceHandleType type,HubSeasonDicDto seasonDicDto){
 		recordDto.setSupplierId(supplierSkuDto.getSupplierId());
 		recordDto.setSupplierNo(supplierNo);
 		recordDto.setSupplierSkuNo(supplierSkuDto.getSupplierSkuNo());
@@ -163,9 +159,11 @@ public class PriceService {
 		recordDto.setMarketPrice(supplierSkuDto.getMarketPrice());
 		recordDto.setSupplyPrice(supplierSkuDto.getSupplyPrice());
 		recordDto.setCurrency(StringUtils.isEmpty(supplierSkuDto.getMarketPriceCurrencyorg()) ? supplierSkuDto.getSupplyPriceCurrency() : supplierSkuDto.getMarketPriceCurrencyorg()); 
-		recordDto.setMarketSeason(supplierSpuDto.getSupplierSeasonname()); 
+		recordDto.setSupplierSeason(supplierSpuDto.getSupplierSeasonname()); 
 		recordDto.setState(PriceHandleState.UNHANDLED.getIndex());
 		recordDto.setType(type.getIndex()); 
+		recordDto.setMarketSeason(seasonDicDto.getHubSeason());
+		recordDto.setMarketYear(seasonDicDto.getHubMarketTime()); 
 		recordDto.setCreateTime(new Date());
 	}
 	
@@ -203,32 +201,5 @@ public class PriceService {
 		recordDto.setState(state.getIndex()); 
 		priceChangeRecordGateWay.updateByPrimaryKeySelective(recordDto);
 	}
-	
-//	private HubSupplierPriceChangeRecordCriteriaDto findCriteriaDto(PriceQueryDto priceQueryDto){
-//		HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
-//		if(CollectionUtils.isNotEmpty(priceQueryDto.getSpSkuIds())){
-//			criteriaDto.createCriteria().andSpSkuNoIn(priceQueryDto.getSpSkuIds());
-//			return criteriaDto;
-//		}else{
-//			if(null != priceQueryDto.getPageIndex() && null != priceQueryDto.getPageSize()){
-//				criteriaDto.setPageNo(priceQueryDto.getPageIndex());
-//				criteriaDto.setPageSize(priceQueryDto.getPageSize());
-//				if(!StringUtils.isEmpty(priceQueryDto.getSupplierId())){
-//					criteriaDto.createCriteria().andSupplierIdEqualTo(priceQueryDto.getSupplierId());
-//				}
-//				if(!StringUtils.isEmpty(priceQueryDto.getMarketSeason())){
-//					criteriaDto.createCriteria().andMarketSeasonEqualTo(priceQueryDto.getMarketSeason());
-//				}
-//				if(!StringUtils.isEmpty(priceQueryDto.getMarketYear())){
-//					criteriaDto.createCriteria().andMarketYearEqualTo(priceQueryDto.getMarketYear());
-//				}
-//				return criteriaDto;
-//			}else{
-//				return null;
-//			}
-//		}
-//		
-//	}
-	
 	
 }

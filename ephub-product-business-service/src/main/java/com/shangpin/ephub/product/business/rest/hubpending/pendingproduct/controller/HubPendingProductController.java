@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
@@ -23,7 +22,6 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
@@ -119,16 +117,9 @@ public class HubPendingProductController {
 			hubSkuPending.setMemo(dto.getErrorReason());
 			hubSkuPending.setSupplierSkuId(hubSkuPendingOrigion.getSupplierSkuId());
 			supplierSkuGateWay.updateByPrimaryKeySelective(hubSkuPendingOrigion);
+			HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
 			
-			//保存价格变化记录
-			 HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
-			HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-			priceService.convertPriceDtoToRecordDto(dto.getSupplierNo(),hubSupplierSpuDto,hubSkuPendingOrigion,recordDto,PriceHandleType.PRICE);
-			Long supplierPriceChangeRecordId = priceService.saveHubSupplierPriceChangeRecordDto(recordDto);
-			//推送到消息队列
-			ProductPriceDTO retryPrice = new ProductPriceDTO();
-			priceService.convertPriceDtoToRetryPrice(dto.getSupplierNo(), hubSupplierSpuDto, hubSkuPendingOrigion, retryPrice);
-			priceService.sendMessageToPriceConsumer(supplierPriceChangeRecordId, retryPrice);
+			priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE); 
 		}
 		
 	}
