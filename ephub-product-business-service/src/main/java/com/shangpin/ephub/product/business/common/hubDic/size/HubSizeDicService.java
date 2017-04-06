@@ -29,7 +29,7 @@ public class HubSizeDicService extends HubSupplierValueMappingService{
 		if(supplierId!=null){
 			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
 		}else{
-			criteria.createCriteria().andHubValTypeEqualTo(index.byteValue());
+			criteria.createCriteria().andSupplierIdIsNull().andHubValTypeEqualTo(index.byteValue());
 		}
 		
 		return hubSupplierValueMappingGateWay.countByCriteria(criteria);

@@ -37,7 +37,7 @@ public class HubSupplierValueMappingService {
 		if(supplierId!=null){
 			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(type.byteValue());	
 		}else{
-			criteria.createCriteria().andHubValTypeEqualTo(type.byteValue());
+			criteria.createCriteria().andHubValTypeEqualTo(type.byteValue()).andSupplierIdIsNull();
 		}
 		
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
