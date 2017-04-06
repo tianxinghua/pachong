@@ -23,4 +23,15 @@ public class HubSizeDicService extends HubSupplierValueMappingService{
 		criteria.createCriteria().andSupplierIdEqualTo("").andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SIZE.getIndex().byteValue());
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
+
+	public int countHubSupplierValueMapping(String supplierId, Integer index) {
+		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+		if(supplierId!=null){
+			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
+		}else{
+			criteria.createCriteria().andHubValTypeEqualTo(index.byteValue());
+		}
+		
+		return hubSupplierValueMappingGateWay.countByCriteria(criteria);
+	}
 }

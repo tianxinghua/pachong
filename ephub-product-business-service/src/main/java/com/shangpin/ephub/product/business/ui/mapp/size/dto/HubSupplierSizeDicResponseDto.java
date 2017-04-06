@@ -20,4 +20,5 @@ public class HubSupplierSizeDicResponseDto {
 	private String supplierId;
 	private String hubVal;
 	private String supplierVal;
+	private int sortVal;
 }

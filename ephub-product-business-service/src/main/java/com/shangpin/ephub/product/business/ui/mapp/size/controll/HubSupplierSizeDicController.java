@@ -21,6 +21,8 @@ import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappi
 import com.shangpin.ephub.product.business.common.hubDic.size.HubSizeDicService;
 import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicResponseWithPageDto;
@@ -46,6 +48,8 @@ public class HubSupplierSizeDicController {
 	HubSupplierSpuService hubSupplierSpuService;
 	@Autowired
 	HubSupplierSkuService hubSupplierSkuService;
+	@Autowired
+	SupplierService supplierService;
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse selectHubSupplierCateoryList(@RequestBody HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto){
 		try {
@@ -54,43 +58,84 @@ public class HubSupplierSizeDicController {
 				type = hubSupplierSizeDicRequestDto.getType();
 				if(type==1){
 					//全局尺码映射
+					return getCommonSizeMapp(hubSupplierSizeDicRequestDto);
 				}else if(type==2){
 					//供应商尺码映射
-					
+					return getSupplierSizeMapp(hubSupplierSizeDicRequestDto);
 				}
 			}
-			
-			String supplierId = hubSupplierSizeDicRequestDto.getSupplierNo();
-			if(StringUtils.isNotBlank(supplierId)){
-				
-				int total = 0;
-//				 hubSizeDicService.countHubSupplierValueMapping(supplierId,SupplierValueMappingType.TYPE_SIZE.getIndex())
-				List<HubSupplierValueMappingDto> list = hubSizeDicService.getHubSupplierValueMappingBySupplierIdAndType(supplierId,SupplierValueMappingType.TYPE_SIZE.getIndex(),hubSupplierSizeDicRequestDto.getPageNo(),hubSupplierSizeDicRequestDto.getPageSize());
-				if(list!=null&&list.size()>0){
-					
-					HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
-					
-					List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
-					for(HubSupplierValueMappingDto dicDto : list){
-						HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
-						BeanUtils.copyProperties(dicDto, dic);
-						responseList.add(dic);
-					}
-					page.setList(responseList);
-					page.setTotal(total);
-					return HubResponse.successResp(responseList);
-				}else{
-					return HubResponse.successResp("列表页为空");
-				}
-			}else{
-				return HubResponse.errorResp("请选择供应商");
-			}
+			return HubResponse.errorResp("传值为空");
 		} catch (Exception e) {
 			log.error("获取尺码映射列表失败：{}",e);
 			return HubResponse.errorResp("获取列表失败");
 		}
     }
 	
+	private HubResponse getCommonSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
+		int total = 0;
+		total = hubSizeDicService.countHubSupplierValueMapping(null,
+				SupplierValueMappingType.TYPE_SIZE.getIndex());
+		if (total > 0) {
+			List<HubSupplierValueMappingDto> list = hubSizeDicService
+					.getHubSupplierValueMappingBySupplierIdAndType(null,
+							SupplierValueMappingType.TYPE_SIZE.getIndex(),
+							hubSupplierSizeDicRequestDto.getPageNo(),
+							hubSupplierSizeDicRequestDto.getPageSize());
+			if (list != null && list.size() > 0) {
+
+				HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
+
+				List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
+				for (HubSupplierValueMappingDto dicDto : list) {
+					HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
+					BeanUtils.copyProperties(dicDto, dic);
+					responseList.add(dic);
+				}
+				page.setList(responseList);
+				page.setTotal(total);
+				return HubResponse.successResp(responseList);
+			}
+		}
+		return HubResponse.successResp("列表页为空");
+	}
+
+	private HubResponse getSupplierSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
+		String supplierNo = hubSupplierSizeDicRequestDto.getSupplierNo();
+		SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+		if (supplierDto != null) {
+			String supplierId = supplierDto.getSopUserNo();
+			if (StringUtils.isNotBlank(supplierId)) {
+				int total = 0;
+				total = hubSizeDicService.countHubSupplierValueMapping(supplierId,
+						SupplierValueMappingType.TYPE_SIZE.getIndex());
+				if (total > 0) {
+					List<HubSupplierValueMappingDto> list = hubSizeDicService
+							.getHubSupplierValueMappingBySupplierIdAndType(supplierId,
+									SupplierValueMappingType.TYPE_SIZE.getIndex(),
+									hubSupplierSizeDicRequestDto.getPageNo(),
+									hubSupplierSizeDicRequestDto.getPageSize());
+					if (list != null && list.size() > 0) {
+
+						HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
+
+						List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
+						for (HubSupplierValueMappingDto dicDto : list) {
+							HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
+							BeanUtils.copyProperties(dicDto, dic);
+							responseList.add(dic);
+						}
+						page.setList(responseList);
+						page.setTotal(total);
+						return HubResponse.successResp(responseList);
+					}
+				}
+				return HubResponse.successResp("列表页为空");
+			}
+		}
+		return HubResponse.errorResp("请选择供应商");
+
+	}
+
 	@RequestMapping(value = "/detail/{id}",method = RequestMethod.POST)
     public HubResponse selectHubSupplierCateoryDetail(@PathVariable("id") Long id){
 		try {
