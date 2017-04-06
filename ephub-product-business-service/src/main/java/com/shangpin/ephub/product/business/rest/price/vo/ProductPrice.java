@@ -2,6 +2,8 @@ package com.shangpin.ephub.product.business.rest.price.vo;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.price.unionselect.result.HubSupplierPrice;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +20,5 @@ import lombok.Setter;
 public class ProductPrice {
 
 	private Integer total;
-	private List<SpSeasonVo> productPriceList;
+	private List<HubSupplierPrice> productPriceList;
 }

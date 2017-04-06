@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.State;
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
-import com.shangpin.ephub.client.data.mysql.enumeration.Type;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
@@ -27,7 +26,6 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
@@ -125,7 +123,7 @@ public class HubPendingProductController {
 			//保存价格变化记录
 			 HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
 			HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-			priceService.convertPriceDtoToRecordDto(dto.getSupplierNo(),hubSupplierSpuDto,hubSkuPendingOrigion,recordDto,Type.PRICE);
+			priceService.convertPriceDtoToRecordDto(dto.getSupplierNo(),hubSupplierSpuDto,hubSkuPendingOrigion,recordDto,PriceHandleType.PRICE);
 			Long supplierPriceChangeRecordId = priceService.saveHubSupplierPriceChangeRecordDto(recordDto);
 			//推送到消息队列
 			ProductPriceDTO retryPrice = new ProductPriceDTO();
