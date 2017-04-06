@@ -112,7 +112,7 @@ public class HubSupplierPriceChangeRecordCriteria {
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
-        public GeneratedCriteria() {
+        public  GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -750,6 +750,76 @@ public class HubSupplierPriceChangeRecordCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andSupplierSeasonIsNull() {
+            addCriterion("supplier_season is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonIsNotNull() {
+            addCriterion("supplier_season is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonEqualTo(String value) {
+            addCriterion("supplier_season =", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonNotEqualTo(String value) {
+            addCriterion("supplier_season <>", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonGreaterThan(String value) {
+            addCriterion("supplier_season >", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_season >=", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonLessThan(String value) {
+            addCriterion("supplier_season <", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonLessThanOrEqualTo(String value) {
+            addCriterion("supplier_season <=", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonLike(String value) {
+            addCriterion("supplier_season like", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonNotLike(String value) {
+            addCriterion("supplier_season not like", value, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonIn(List<String> values) {
+            addCriterion("supplier_season in", values, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonNotIn(List<String> values) {
+            addCriterion("supplier_season not in", values, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonBetween(String value1, String value2) {
+            addCriterion("supplier_season between", value1, value2, "supplierSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSeasonNotBetween(String value1, String value2) {
+            addCriterion("supplier_season not between", value1, value2, "supplierSeason");
+            return (Criteria) this;
+        }
+
         public Criteria andMarketYearIsNull() {
             addCriterion("market_year is null");
             return (Criteria) this;
@@ -1010,6 +1080,76 @@ public class HubSupplierPriceChangeRecordCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andCreateUserNameIsNull() {
+            addCriterion("create_user_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameIsNotNull() {
+            addCriterion("create_user_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameEqualTo(String value) {
+            addCriterion("create_user_name =", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameNotEqualTo(String value) {
+            addCriterion("create_user_name <>", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameGreaterThan(String value) {
+            addCriterion("create_user_name >", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameGreaterThanOrEqualTo(String value) {
+            addCriterion("create_user_name >=", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameLessThan(String value) {
+            addCriterion("create_user_name <", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameLessThanOrEqualTo(String value) {
+            addCriterion("create_user_name <=", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameLike(String value) {
+            addCriterion("create_user_name like", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameNotLike(String value) {
+            addCriterion("create_user_name not like", value, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameIn(List<String> values) {
+            addCriterion("create_user_name in", values, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameNotIn(List<String> values) {
+            addCriterion("create_user_name not in", values, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameBetween(String value1, String value2) {
+            addCriterion("create_user_name between", value1, value2, "createUserName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateUserNameNotBetween(String value1, String value2) {
+            addCriterion("create_user_name not between", value1, value2, "createUserName");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -1203,16 +1343,17 @@ public class HubSupplierPriceChangeRecordCriteria {
 
     public static class Criteria extends GeneratedCriteria {
 
-        public Criteria() {
+        public  Criteria() {
             super();
         }
     }
 
     public static class Criterion {
 
-        public Criterion() {
+        public  Criterion() {
             super();
         }
+
         private String condition;
 
         private Object value;
