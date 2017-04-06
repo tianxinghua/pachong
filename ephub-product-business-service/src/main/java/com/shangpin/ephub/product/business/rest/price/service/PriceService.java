@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,8 +14,7 @@ import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
 import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.State;
-import com.shangpin.ephub.client.data.mysql.enumeration.Type;
+
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
@@ -104,7 +105,7 @@ public class PriceService {
 				for(HubSupplierSkuDto skuDto : hubSkus){
 					if(!StringUtils.isEmpty(skuDto.getSpSkuNo())){
 						HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-						convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto,Type.SEASON);
+						convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, PriceHandleType.SEASON);
 						Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
 						ProductPriceDTO retryPrice  = new ProductPriceDTO();
 						convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);				
@@ -117,7 +118,7 @@ public class PriceService {
 			boolean isChanged = supplierProductService.isPriceChanged(skuDto);
 			if(isChanged && !StringUtils.isEmpty(skuDto.getSpSkuNo())){
 				HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-				convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto,Type.PRICE);
+				convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto,PriceHandleType.PRICE);
 				Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
 				ProductPriceDTO retryPrice  = new ProductPriceDTO();
 				convertPriceDtoToRetryPrice(supplierNo,supplierSpuDto,skuDto,retryPrice);
@@ -151,7 +152,7 @@ public class PriceService {
 	 * @param recordDto 供价记录表实体类
 	 * @param type 类型
 	 */
-	public void convertPriceDtoToRecordDto(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,HubSupplierPriceChangeRecordDto recordDto,Type type){
+	public void convertPriceDtoToRecordDto(String supplierNo,HubSupplierSpuDto supplierSpuDto,HubSupplierSkuDto supplierSkuDto,HubSupplierPriceChangeRecordDto recordDto,PriceHandleType type){
 		recordDto.setSupplierId(supplierSkuDto.getSupplierId());
 		recordDto.setSupplierNo(supplierNo);
 		recordDto.setSupplierSkuNo(supplierSkuDto.getSupplierSkuNo());
@@ -161,7 +162,7 @@ public class PriceService {
 		recordDto.setSupplyPrice(supplierSkuDto.getSupplyPrice());
 		recordDto.setCurrency(StringUtils.isEmpty(supplierSkuDto.getMarketPriceCurrencyorg()) ? supplierSkuDto.getSupplyPriceCurrency() : supplierSkuDto.getMarketPriceCurrencyorg()); 
 		recordDto.setMarketSeason(supplierSpuDto.getSupplierSeasonname()); 
-		recordDto.setState(State.UNHANDLED.getIndex());
+		recordDto.setState(PriceHandleState.UNHANDLED.getIndex());
 		recordDto.setType(type.getIndex()); 
 		recordDto.setCreateTime(new Date());
 	}
@@ -179,12 +180,13 @@ public class PriceService {
 	 * 发送消息
 	 * @param retryPrice
 	 */
+
 	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
 		try {
-			priceMqGateWay.retry(retryPrice); 
-			updateState(supplierPriceChangeRecordId,State.PUSHED);
+			priceMqGateWay.transPrice(retryPrice);
+			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
 		} catch (Exception e) {
-			updateState(supplierPriceChangeRecordId,State.PUSHED_ERROR);
+			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED_ERROR);
 			throw new Exception("供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage());
 		}
 	}
@@ -193,7 +195,7 @@ public class PriceService {
 	 * @param supplierPriceChangeRecordId
 	 * @param state
 	 */
-	public void updateState(Long supplierPriceChangeRecordId,State state){
+	public void updateState(Long supplierPriceChangeRecordId,PriceHandleState state){
 		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 		recordDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId);
 		recordDto.setState(state.getIndex()); 
