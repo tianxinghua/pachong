@@ -170,7 +170,8 @@ public class HubSupplierSizeDicController {
 	        	
 		try {
 			HubSupplierValueMappingDto hubSupplierValueMappingDto = new HubSupplierValueMappingDto();
-			BeanUtils.copyProperties(dto, hubSupplierValueMappingDto);
+			hubSupplierValueMappingDto.setHubSupplierValMappingId(dto.getHubSupplierValMappingId());
+			hubSupplierValueMappingDto.setHubVal(dto.getHubVal());
 			hubSizeDicService.updateHubSupplierValueMappingByPrimaryKey(hubSupplierValueMappingDto);
 			return HubResponse.successResp("success");
 		} catch (Exception e) {
@@ -183,6 +184,7 @@ public class HubSupplierSizeDicController {
     public HubResponse refresh(@RequestBody HubSupplierSizeDicRequestDto dto){
 		
 		try {
+			exportProduct(dto);
 			HubSupplierSkuCriteriaDto criteriaSku = new HubSupplierSkuCriteriaDto();
 			criteriaSku.setPageNo(1);
 			criteriaSku.setPageSize(10000);
