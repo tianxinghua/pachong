@@ -7,9 +7,11 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 
+import com.shangpin.ephub.product.business.conf.client.ClientConf;
+
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
-@EnableFeignClients("com.shangpin.ephub")
+@EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)
 public class EphubProductBusinessServiceApplication {
 
 	public static void main(String[] args) {
