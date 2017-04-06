@@ -70,7 +70,7 @@ public class SupplierProductService {
 		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
 		if(CollectionUtils.isNotEmpty(hubSkus)){
 			HubSupplierSkuDto hubSkuSel = hubSkus.get(0);
-			hubSku.setSpSkuNo(hubSkuSel.getSpSkuNo()); 
+			hubSku.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : ""); 
 			BigDecimal supplierPrice = null;
 			if(hubSku.getSupplyPrice()!=null){
 				supplierPrice = hubSku.getSupplyPrice().setScale(2,BigDecimal.ROUND_HALF_UP); 

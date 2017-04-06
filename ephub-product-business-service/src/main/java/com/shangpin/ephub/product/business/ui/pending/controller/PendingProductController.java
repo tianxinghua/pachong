@@ -100,4 +100,8 @@ public class PendingProductController {
     		return HubResponse.errorResp("error");
     	}
     }
+    @RequestMapping(value="/list-all",method=RequestMethod.POST)
+    public HubResponse<?> pendingListAll(@RequestBody PendingQuryDto pendingQuryDto){
+    	return null;
+    } 
 }
