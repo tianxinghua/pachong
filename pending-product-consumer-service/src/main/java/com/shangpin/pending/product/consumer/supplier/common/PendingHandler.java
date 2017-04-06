@@ -14,6 +14,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -537,19 +538,17 @@ public class PendingHandler extends VariableInit {
 		boolean mappingSize = false;
 		Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(hubSpuPending.getSupplierId());
 		if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
-			String spSize = sizeMap.get(supplierSku.getHubSkuSize());
-			String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
-			if(spSizeTypeAndSize.indexOf(":")>=0){
-
-				hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
-				hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
-			} else{
-				hubSkuPending.setHubSkuSize(spSizeTypeAndSize);
-			}
-			hubSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
+			replaceSize(supplierSku, hubSkuPending, sizeMap);
 //			mappingSize = true;
 		} else {
-			hubSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
+			Map<String, String> commonSizeMap = dataSverviceUtil.getSupplierSizeMapping(ConstantProperty.REDIS_EPHUB_SUPPLIER_ALL_SIZE_MAPPING_KEY);
+			if (commonSizeMap.containsKey(supplierSku.getHubSkuSize())) {
+				replaceSize(supplierSku, hubSkuPending, commonSizeMap);
+
+			}else{
+				hubSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()).trim());
+			}
+
 		}
 		// 品牌和品类都已匹配上 尺码未匹配上
 		String hubSize = "";
@@ -615,6 +614,19 @@ public class PendingHandler extends VariableInit {
 
 		}
 
+	}
+
+	private void replaceSize(PendingSku supplierSku, HubSkuPendingDto hubSkuPending, Map<String, String> sizeMap) {
+		String spSize = sizeMap.get(supplierSku.getHubSkuSize());
+		String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
+		if(spSizeTypeAndSize.indexOf(":")>=0){
+
+            hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
+            hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+        } else{
+            hubSkuPending.setHubSkuSize(spSizeTypeAndSize);
+        }
+		hubSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
 	}
 
 	private void setSkuPendingIfHubSkuExist(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku, HubSkuPendingDto hubSkuPending, Date date, boolean mappingSize, String hubSize) throws Exception {
