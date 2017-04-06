@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.rest.price.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,17 +13,14 @@ import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
 import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
-import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.price.unionselect.dto.PriceQueryDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
-import com.shangpin.ephub.product.business.rest.price.dto.PriceQueryDto;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
-import com.shangpin.ephub.product.business.rest.price.vo.SpSeasonVo;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -94,37 +90,37 @@ public class PriceService {
 	public ProductPrice priceList(PriceQueryDto priceQueryDto){
 		try {
 			ProductPrice productPrice = new ProductPrice();
-			HubSupplierSkuCriteriaDto criteriaDto = supplierProductService.findCriteriaDto(priceQueryDto);
-			if(null == criteriaDto){
-				return null;
-			}
-			int total = hubSupplierSkuGateWay.countByCriteria(criteriaDto);
-			productPrice.setTotal(total); 
-			List<SpSeasonVo> productPriceList = new ArrayList<SpSeasonVo>();
-			if(total > 0){
-				List<HubSupplierSkuDto> lists = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
-				for(HubSupplierSkuDto dto : lists){
-					SpSeasonVo spSeasonVo = new SpSeasonVo();
-					spSeasonVo.setSupplierId(dto.getSupplierId());
-					spSeasonVo.setMarkPrice(null != dto.getMarketPrice() ? dto.getMarketPrice().toString() : "");
-					spSeasonVo.setSpSkuId(null != dto.getSpSkuNo() ? dto.getSpSkuNo() : "");
-					HubSupplierSpuDto  spu = supplierProductService.findHubSupplierSpuDtos(dto.getSupplierSpuId());
-					spSeasonVo.setBrandName(null != spu.getSupplierBrandname() ? spu.getSupplierBrandname() : "");
-					spSeasonVo.setCategoryName(null != spu.getSupplierCategoryname() ? spu.getSupplierCategoryname() : ""); 
-					spSeasonVo.setSupplierSeasonName(null != spu.getSupplierSeasonname() ? spu.getSupplierSeasonname() : "");
-					if(!StringUtils.isEmpty(priceQueryDto.getMarketSeason()) && !StringUtils.isEmpty(priceQueryDto.getMarketYear())){
-						spSeasonVo.setSpSeasonName(priceQueryDto.getMarketSeason());
-						spSeasonVo.setSpSeasonYear(priceQueryDto.getMarketYear());
-					}else{
-						HubSeasonDicDto seasonDic = supplierProductService.findHubSeason(dto.getSupplierId(),spu.getSupplierSeasonname());
-						spSeasonVo.setSpSeasonName(null != seasonDic ? seasonDic.getHubSeason() : "");
-						spSeasonVo.setSpSeasonYear(null != seasonDic ? seasonDic.getHubMarketTime() : ""); 
-					}
-					spSeasonVo.setCurrency("");
-					productPriceList.add(spSeasonVo);
-				}
-				productPrice.setProductPriceList(productPriceList);
-			}
+//			HubSupplierSkuCriteriaDto criteriaDto = supplierProductService.findCriteriaDto(priceQueryDto);
+//			if(null == criteriaDto){
+//				return null;
+//			}
+//			int total = hubSupplierSkuGateWay.countByCriteria(criteriaDto);
+//			productPrice.setTotal(total); 
+//			List<SpSeasonVo> productPriceList = new ArrayList<SpSeasonVo>();
+//			if(total > 0){
+//				List<HubSupplierSkuDto> lists = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+//				for(HubSupplierSkuDto dto : lists){
+//					SpSeasonVo spSeasonVo = new SpSeasonVo();
+//					spSeasonVo.setSupplierId(dto.getSupplierId());
+//					spSeasonVo.setMarkPrice(null != dto.getMarketPrice() ? dto.getMarketPrice().toString() : "");
+//					spSeasonVo.setSpSkuId(null != dto.getSpSkuNo() ? dto.getSpSkuNo() : "");
+//					HubSupplierSpuDto  spu = supplierProductService.findHubSupplierSpuDtos(dto.getSupplierSpuId());
+//					spSeasonVo.setBrandName(null != spu.getSupplierBrandname() ? spu.getSupplierBrandname() : "");
+//					spSeasonVo.setCategoryName(null != spu.getSupplierCategoryname() ? spu.getSupplierCategoryname() : ""); 
+//					spSeasonVo.setSupplierSeasonName(null != spu.getSupplierSeasonname() ? spu.getSupplierSeasonname() : "");
+//					if(!StringUtils.isEmpty(priceQueryDto.getMarketSeason()) && !StringUtils.isEmpty(priceQueryDto.getMarketYear())){
+//						spSeasonVo.setSpSeasonName(priceQueryDto.getMarketSeason());
+//						spSeasonVo.setSpSeasonYear(priceQueryDto.getMarketYear());
+//					}else{
+//						HubSeasonDicDto seasonDic = supplierProductService.findHubSeason(dto.getSupplierId(),spu.getSupplierSeasonname());
+//						spSeasonVo.setSpSeasonName(null != seasonDic ? seasonDic.getHubSeason() : "");
+//						spSeasonVo.setSpSeasonYear(null != seasonDic ? seasonDic.getHubMarketTime() : ""); 
+//					}
+//					spSeasonVo.setCurrency("");
+//					productPriceList.add(spSeasonVo);
+//				}
+//				productPrice.setProductPriceList(productPriceList);
+//			}
 			return productPrice;
 		} catch (Exception e) {
 			log.error("查询共价变化记录出错："+e.getMessage(),e);

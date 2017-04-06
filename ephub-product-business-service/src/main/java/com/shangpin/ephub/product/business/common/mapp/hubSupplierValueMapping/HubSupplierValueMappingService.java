@@ -34,7 +34,12 @@ public class HubSupplierValueMappingService {
 		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
 		criteria.setPageSize(pageSize);
 		criteria.setPageNo(pageNo);
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(type.byteValue());
+		if(supplierId!=null){
+			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(type.byteValue());	
+		}else{
+			criteria.createCriteria().andHubValTypeEqualTo(type.byteValue());
+		}
+		
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 	

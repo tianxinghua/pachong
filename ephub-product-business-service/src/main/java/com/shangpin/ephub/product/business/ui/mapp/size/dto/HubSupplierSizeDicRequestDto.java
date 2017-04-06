@@ -23,6 +23,7 @@ public class HubSupplierSizeDicRequestDto {
 	private String supplierVal;
 	private String hubVal;;
 	private Byte type;
+	private Short sortVal;
 	private String updateUser;
 
 }
