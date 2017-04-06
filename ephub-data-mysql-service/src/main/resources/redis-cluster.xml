@@ -66,6 +66,6 @@
 					<port>7006</port>
 				</redisnode>
 			</redisnodes>
-		</cluster>                                a
+		</cluster>
 	</application>
 </redis>
