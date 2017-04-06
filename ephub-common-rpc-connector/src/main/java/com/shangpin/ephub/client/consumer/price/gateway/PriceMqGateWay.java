@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
  */
-@FeignClient("price-product-consumer-service")
+@FeignClient("price-push-consumer-service")
 public interface PriceMqGateWay {
 	
 
