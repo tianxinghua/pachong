@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.common.hubDic.category;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +72,8 @@ public class HubCategoryDicService {
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
+		}else{
+			criterion.andMappingStateNotEqualTo((byte)1);
 		}
 		if(StringUtils.isNotBlank(supplilerCategory)){
 			criterion.andSupplierCategoryEqualTo(supplilerCategory);
@@ -78,7 +81,7 @@ public class HubCategoryDicService {
 		if(StringUtils.isNotBlank(supplierGender)){
 			criterion.andSupplierGenderEqualTo(supplierGender);
 		}
-		
+	
 		return hubSupplierCategroyDicGateWay.countByCriteria(criteria);
 	}
 	
