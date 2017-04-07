@@ -20,6 +20,7 @@ import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappi
 import com.shangpin.ephub.product.business.common.hubDic.size.HubSizeDicService;
 import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicResponseDto;
@@ -63,29 +64,38 @@ public class HubSupplierSizeDicController {
 	
 	private HubResponse getCommonSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
 		
-		int total = 0;
-		total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
-				SupplierValueMappingType.TYPE_SIZE.getIndex());
-		if (total > 0) {
-			List<HubSupplierValueMappingDto> list = hubSizeDicService
-					.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
-							SupplierValueMappingType.TYPE_SIZE.getIndex());
-			if (list != null && list.size() > 0) {
+		String supplierNo = hubSupplierSizeDicRequestDto.getSupplierNo();
+		if(supplierNo!=null){
+			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+			if(supplierDto!=null){
+				hubSupplierSizeDicRequestDto.setSupplierId(supplierDto.getSopUserNo());
+				int total = 0;
+				total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
+						SupplierValueMappingType.TYPE_SIZE.getIndex());
+				if (total > 0) {
+					List<HubSupplierValueMappingDto> list = hubSizeDicService
+							.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
+									SupplierValueMappingType.TYPE_SIZE.getIndex());
+					if (list != null && list.size() > 0) {
 
-				HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
+						HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
 
-				List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
-				for (HubSupplierValueMappingDto dicDto : list) {
-					HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
-					BeanUtils.copyProperties(dicDto, dic);
-					responseList.add(dic);
+						List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
+						for (HubSupplierValueMappingDto dicDto : list) {
+							HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
+							BeanUtils.copyProperties(dicDto, dic);
+							responseList.add(dic);
+						}
+						page.setList(responseList);
+						page.setTotal(total);
+						return HubResponse.successResp(page);
+					}
 				}
-				page.setList(responseList);
-				page.setTotal(total);
-				return HubResponse.successResp(page);
+				
 			}
 		}
 		return HubResponse.errorResp("列表页为空");
+		
 	}
 
 	@RequestMapping(value = "/detail/{id}",method = RequestMethod.POST)
