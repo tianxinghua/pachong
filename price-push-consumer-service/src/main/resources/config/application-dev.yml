@@ -20,7 +20,10 @@ spring:
               bindings: 
                         supplierRetryPrice:
                               destination: retry.product.price
-                              content-type: application/json              
+                              content-type: application/json
+                        supplierProducerPrice:
+                               destination: supplier.product.price
+                               content-type: application/json
                         supplierPrice:
                               destination: supplier.product.price
                               group: one
@@ -37,7 +40,10 @@ spring:
                       bindings: 
                             supplierRetryPrice:
                                   producer: 
-                                       prefix: HA.                      
+                                       prefix: HA.
+                            supplierProducerPrice:
+                                  producer:
+                                       prefix: HA.
                             supplierPrice:
                                   consumer: 
                                        prefix: HA.

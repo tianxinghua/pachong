@@ -216,13 +216,13 @@ public class SupplierProductPictureService {
 	 */
 	public void scanFailedPictureToRetry() {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-		criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		criteria.createCriteria().andPicHandleStateEqualTo(PicHandleState.HANDLE_ERROR.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		for (int i = 1; i <= countTotalPage(supplierProductPictureManager.countFailedPictureTotal(criteria), PAGE_SIZE); i++) {
 			HubSpuPendingPicCriteriaDto _criteria = new HubSpuPendingPicCriteriaDto();
 			_criteria.setFields("spu_pending_pic_id");
 			_criteria.setPageNo(i);
 			_criteria.setPageSize(PAGE_SIZE);
-			_criteria.createCriteria().andPicHandleStateNotEqualTo(PicHandleState.HANDLED.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+			_criteria.createCriteria().andPicHandleStateEqualTo(PicHandleState.HANDLE_ERROR.getIndex()).andPicUrlIsNotNull().andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 			List<HubSpuPendingPicDto> picDto = supplierProductPictureManager.queryByCriteria(_criteria);
 			if (CollectionUtils.isNotEmpty(picDto)) {
 				for (HubSpuPendingPicDto hubSpuPendingPicDto : picDto) {

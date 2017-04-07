@@ -1,7 +1,7 @@
 package com.shangpin.ephub.price.consumer.conf.stream.source.sender;
 
 import com.shangpin.ephub.price.consumer.conf.stream.source.channel.RetryPriceSource;
-import com.shangpin.ephub.price.consumer.conf.stream.source.message.RetryPrice;
+import com.shangpin.ephub.price.consumer.conf.stream.source.message.ProductPriceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
@@ -25,7 +25,7 @@ public class RetryPriceStreamSender {
 	 * @param retryPrice 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
-    public boolean supplierPictureProductStream(RetryPrice retryPrice, Map<String, ?> headers) {
+    public boolean supplierPictureProductStream(ProductPriceDTO retryPrice, Map<String, ?> headers) {
     	return retryPriceSource.supplierRetryPrice().send(MessageBuilder.withPayload(retryPrice).copyHeaders(headers).build());
     }
 }

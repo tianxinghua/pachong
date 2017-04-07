@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+
+import com.shangpin.asynchronous.task.consumer.conf.client.ClientConf;
 /**
  * <p>Title:AsynchronousTaskConsumerServiceApplication.java </p>
  * <p>Description: EPHUB系统后台异步任务消费系统入口</p>
@@ -15,7 +17,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
  */
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
-@EnableFeignClients("com.shangpin.ephub")
+@EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)
 public class AsynchronousTaskConsumerServiceApplication {
 
 	public static void main(String[] args) {
