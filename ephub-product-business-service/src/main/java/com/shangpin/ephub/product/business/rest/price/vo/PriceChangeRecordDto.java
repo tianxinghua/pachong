@@ -2,12 +2,14 @@ package com.shangpin.ephub.product.business.rest.price.vo;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Created by lizhongren on 2017/4/7.
  */
 @Getter
 @Setter
+@ToString
 public class PriceChangeRecordDto {
 
     private Long id; //传入的主键ID ,若没有 不填或者赋值0

@@ -263,7 +263,7 @@ public class PriceService {
 			tmp.setMemo(memo);
 			tmp.setUpdateTime(new Date());
 			tmp.setSupplierPriceChangeRecordId(dto.getSupplierPriceChangeRecordId());
-			priceChangeRecordGateWay.updateByPrimaryKey(tmp);
+			priceChangeRecordGateWay.updateByPrimaryKeySelective(tmp);
 		}
 
 
