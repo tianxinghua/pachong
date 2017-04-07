@@ -39,7 +39,7 @@ public class HubCategoryDicService {
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 	
-	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType) {
+	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType,String supplierCategory,String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
@@ -52,10 +52,16 @@ public class HubCategoryDicService {
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
 		}
+		if(StringUtils.isNotBlank(supplierCategory)){
+			criterion.andSupplierCategoryEqualTo(supplierCategory);
+		}
+		if(StringUtils.isNotBlank(supplierGender)){
+			criterion.andSupplierGenderEqualTo(supplierGender);
+		}
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
-	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType) {
+	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType,String supplilerCategory,String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criterion.andSupplierIdEqualTo(supplierId);
@@ -66,6 +72,13 @@ public class HubCategoryDicService {
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
 		}
+		if(StringUtils.isNotBlank(supplilerCategory)){
+			criterion.andSupplierCategoryEqualTo(supplilerCategory);
+		}
+		if(StringUtils.isNotBlank(supplierGender)){
+			criterion.andSupplierGenderEqualTo(supplierGender);
+		}
+		
 		return hubSupplierCategroyDicGateWay.countByCriteria(criteria);
 	}
 	
