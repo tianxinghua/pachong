@@ -40,4 +40,14 @@ public class PriceController {
 			return HubResponse.errorResp("查询参数错误或服务发生异常");
 		}
 	}
+
+	@RequestMapping(value="/update-price-handle-status",method=RequestMethod.POST)
+	public HubResponse<?> updatePriceHandleStatus(@RequestBody PriceQueryDto priceQueryDto){
+		Boolean result = false;
+		if(null != price){
+			return HubResponse.successResp(result);
+		}else{
+			return HubResponse.errorResp("通知成功，但更新状态时失败");
+		}
+	}
 }
