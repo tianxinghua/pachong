@@ -1,5 +1,6 @@
 package com.shangpin.asynchronous.task.consumer.productimport.common.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
@@ -86,8 +88,15 @@ public class DataHandleService {
 
 	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId(HubSpuPendingDto hubSpuPendingDro) {
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-		criteria.createCriteria().andSupplierIdEqualTo(hubSpuPendingDro.getSupplierId())
-				.andSpuPendingIdEqualTo(hubSpuPendingDro.getSpuPendingId());
+		List<Byte> listSkuState = new ArrayList<Byte>();
+        listSkuState.add(SpuState.HANDLED.getIndex());
+        listSkuState.add(SpuState.HANDLING.getIndex());
+        criteria.createCriteria().andSupplierIdEqualTo(hubSpuPendingDro.getSupplierId())
+		.andSpuPendingIdEqualTo(hubSpuPendingDro.getSpuPendingId()).andSkuStateNotIn(listSkuState);
+        
+        criteria.or(criteria.createCriteria().andSupplierIdEqualTo(hubSpuPendingDro.getSupplierId())
+        .andSpuPendingIdEqualTo(hubSpuPendingDro.getSpuPendingId()).andSkuStateIsNull());
+
 		criteria.setPageNo(1);
 		criteria.setPageSize(1000);
 		 return hubSkuPendingGateWay.selectByCriteria(criteria);

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
@@ -49,6 +51,7 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPend
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
@@ -101,20 +104,21 @@ public class PendingHandler extends VariableInit {
 		if (messageMap.containsKey(pendingSpu.getSupplierId())) {
 
 			spuStatus = messageMap.get(pendingSpu.getSupplierId());
+			// 防止数据传入错误，需要先查询pending表中是否存在
+			HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
+					message.getData().getSupplierSpuNo());
+			
+			//自动选品
 			if (spuStatus == MessageType.RESTART_BRAND_MODEL.getIndex()) {
 				hubSpuPendingDto = handSpuPending(message.getData());
-			}
-				else if (spuStatus == InfoState.RefreshCategory.getIndex()) {
-				refreshPending(message.getData());
+			}else if (spuStatus == InfoState.RefreshCategory.getIndex()) {
+				//刷新品类
+				refreshPendingCategory(message.getData(),tmp);
 			}else if (spuStatus == InfoState.RefreshSize.getIndex()) {
-				hubSpuPendingDto = handSpuPending(message.getData());
-			}
-				else{
-				// 防止数据传入错误，需要先查询pending表中是否存在
-				HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
-						message.getData().getSupplierSpuNo());
+				//刷新尺码
+				refreshHubSize(message.getData(),tmp);
+			}else{
 				//spu pending 处理
-				
 				hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
 				if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
 					//重处理的不做SKU更新
@@ -141,20 +145,68 @@ public class PendingHandler extends VariableInit {
 			}
 		}
 	}
+	
+	// 刷新尺码
+	private void refreshHubSize(PendingSpu spu, HubSpuPendingDto spuPendingDto) throws Exception {
 
-	private void refreshPending(PendingSpu spu) throws Exception{
-		HubSpuPendingDto spuPendingDto = null;
-		spuPendingDto = dataServiceHandler.getHubSpuPending(spu.getSupplierId(), spu.getSupplierSpuNo());
 		if (null != spuPendingDto) {
-			if (spuPendingDto.getSpuState() != null
-					&& (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()
-							|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLING.getIndex()
-							|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex())) {
-				return;
-			} else {
-				handlePendingCategory(spu, spuPendingDto);
+			List<PendingSku> skuList = spu.getSkus();
+			if (skuList != null && skuList.size() > 0) {
+				for (PendingSku supplierSku : skuList) {
+					HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(supplierSku.getSupplierId(),
+							supplierSku.getSupplierSkuNo());
+					dataSverviceUtil.delSupplierSizeMapping(supplierSku.getSupplierId());
+					if (null == hubSkuPending) {
+						byte filterFlag = FilterFlag.EFFECTIVE.getIndex();
+						SpuPending hubSpuPending = new SpuPending();
+						BeanUtils.copyProperties(spuPendingDto, hubSpuPending);
+						this.addNewSku(hubSpuPending, spu, supplierSku, null, filterFlag);
+					} else {
+						HubSkuPendingDto updateSkuPending = new HubSkuPendingDto();
+						Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(hubSkuPending.getSupplierId());
+						if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
+							String spSize = sizeMap.get(supplierSku.getHubSkuSize());
+							String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
+							if(spSizeTypeAndSize.indexOf(":")>=0){
+
+								updateSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
+								updateSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+							} else{
+								updateSkuPending.setHubSkuSize(spSizeTypeAndSize);
+							}
+							updateSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
+						} else {
+							updateSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
+						}
+						// 品牌和品类都已匹配上 尺码未匹配上
+						log.info("===供应商spuPendingId:" + updateSkuPending.getSkuPendingId() + "映射hub品类刷新:"
+								+ supplierSku.getHubSkuSize() + "==>" + updateSkuPending.getHubSkuSize());
+					}
+				}
 			}
 		} else {
+//			saveAndRefreshPendingSku(spu);
+		}
+	}
+	//刷新品类
+	private void refreshPendingCategory(PendingSpu spu,HubSpuPendingDto spuPendingDto) throws Exception{
+		
+		supplierCategoryMappingStaticMap = null;
+		if(null != spuPendingDto){
+			if(checkSpuPendingIsRefresh(spu)){
+				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+				// 获取品类
+				if(setCategoryMapping(spu, updateSpuPending)){
+					dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
+					log.info("===供应商spuPendingId:"+spuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+spuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
+				}
+			}
+		}else{
+			saveAndRefreshPending(spu);
+		}
+	}
+
+	private void saveAndRefreshPending(PendingSpu spu) throws Exception{
 			HubSupplierSpuDto supplierSpuDto = dataServiceHandler
 					.getHubSupplierSpuBySupplierIdAndSupplierSpuNo(spu.getSupplierId(), spu.getSupplierSpuNo());
 			PendingSpu tmp = new PendingSpu();
@@ -168,18 +220,17 @@ public class PendingHandler extends VariableInit {
 				setSpuPendingValueWhenDuplicateKeyException(newSpuPending, e, spu.getSupplierId(),
 						spu.getSupplierSpuNo());
 			}
-		}
 	}
-	private void handlePendingCategory(PendingSpu spu,HubSpuPendingDto spuPendingDto) throws Exception {
-		HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
-		// 获取品类
-		supplierCategoryMappingStaticMap = null;
-		if(setCategoryMapping(spu, updateSpuPending)){
-			dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
-			log.info("===供应商spuPendingId:"+spuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+spuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
-		}
+	private boolean checkSpuPendingIsRefresh(HubSpuPendingDto spuPendingDto){
+		
+		if (null != spuPendingDto&&(spuPendingDto.getSpuState() != null
+				&& (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()
+				|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLING.getIndex()
+				|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()))) {
+				return false;
+		} 
+		return true;
 	}
-
 	private void handleSkuPending(Map<String, Object> headers, Map<String, Integer> messageMap, PendingSpu pendingSpu, SpuPending hubSpuPending, Integer spuStatus, List<PendingSku> skus) throws Exception {
 		Integer skuStatus=0;
 		if(null!=skus&&skus.size()>0){
@@ -338,7 +389,7 @@ public class PendingHandler extends VariableInit {
 
 	}
 
-	private SpuPending addNewSpu(PendingSpu spu) throws Exception {
+	public SpuPending addNewSpu(PendingSpu spu) throws Exception {
 
 		// judage in hub_spu by product_code ,if exist ,set value from hub_spu
 		// and set spu status value is 1
@@ -505,7 +556,7 @@ public class PendingHandler extends VariableInit {
 
 	}
 
-	private void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
+	public void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
 		if (e instanceof DuplicateKeyException) {
 			HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
 					supplierSpuNo);
