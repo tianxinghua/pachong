@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
@@ -73,15 +74,14 @@ public class HubCategoryDicService {
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
-				criterion.andCategoryTypeIsNull();
+				criterion.andMappingStateNotEqualTo((byte)1);
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
-		}else{
-			criterion.andMappingStateNotEqualTo((byte)1);
 		}
 		if(StringUtils.isNotBlank(supplilerCategory)){
-			criterion.andSupplierCategoryLike(supplilerCategory+"%");
+			Log.info("supplilerCategory:"+supplilerCategory);
+			criterion.andSupplierCategoryLike(supplilerCategory.trim()+"%");
 			
 		}
 		if(StringUtils.isNotBlank(supplierGender)){
