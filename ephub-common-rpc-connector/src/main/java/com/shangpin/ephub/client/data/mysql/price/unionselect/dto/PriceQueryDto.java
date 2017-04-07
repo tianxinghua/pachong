@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class PriceQueryDto {
 	
-	private Integer pageIndex;
-    private Integer pageSize;
+	private Integer pageIndex = 1;
+    private Integer pageSize = 10;
     
     protected Integer startRow;
     /**
