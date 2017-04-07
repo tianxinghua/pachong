@@ -19,7 +19,7 @@ public class HubSupplierPriceChangeRecordWithCriteriaDto implements Serializable
 	 */
 	private static final long serialVersionUID = -8549460796668466239L;
 
-	private HubSupplierPriceChangeRecordDto hubSupplierPriceChangeRecordDto;
+	private HubSupplierPriceChangeRecordDto hubSupplierPriceChangeRecord;
 	
 	private HubSupplierPriceChangeRecordCriteriaDto criteria;
 }
