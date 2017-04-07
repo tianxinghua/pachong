@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.rest.price.controller;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
+import com.shangpin.ephub.product.business.rest.price.vo.PriceChangeRecordDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,9 @@ import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
  *
  */
 import com.shangpin.ephub.response.HubResponse;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/price")
 public class PriceController {
@@ -42,12 +47,31 @@ public class PriceController {
 	}
 
 	@RequestMapping(value="/update-price-handle-status",method=RequestMethod.POST)
-	public HubResponse<?> updatePriceHandleStatus(@RequestBody PriceQueryDto priceQueryDto){
-		Boolean result = false;
-		if(null != price){
-			return HubResponse.successResp(result);
-		}else{
-			return HubResponse.errorResp("通知成功，但更新状态时失败");
+	public HubResponse<?> updatePriceHandleStatus(@RequestBody List<PriceChangeRecordDto> priceChangeRecordDtos){
+
+		for(PriceChangeRecordDto priceChangeRecordDto:priceChangeRecordDtos) {
+			if(null!=priceChangeRecordDto.getId()&&0!=priceChangeRecordDto.getId()){
+				if("1".equals(priceChangeRecordDto.getSign())){
+					priceService.updateState(priceChangeRecordDto.getId(), PriceHandleState.HANDLED_SUCCESS);
+				} else{
+					priceService.updateState(priceChangeRecordDto.getId(),PriceHandleState.HANDLE_ERROR,priceChangeRecordDto.getMemo());
+				}
+
+			}else{
+				try {
+					if("1".equals(priceChangeRecordDto.getSign())){
+                        priceService.updateState(priceChangeRecordDto.getSupplierId(),priceChangeRecordDto.getSkuNo(),"", PriceHandleState.HANDLED_SUCCESS);
+                    } else{
+                        priceService.updateState(priceChangeRecordDto.getSupplierId(),priceChangeRecordDto.getSkuNo(),priceChangeRecordDto.getMemo(),PriceHandleState.HANDLE_ERROR);
+                    }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
+
+
+		 return HubResponse.successResp(true);
+
 	}
 }

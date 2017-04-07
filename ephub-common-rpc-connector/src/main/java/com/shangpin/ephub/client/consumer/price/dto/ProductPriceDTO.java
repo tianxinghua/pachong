@@ -26,11 +26,11 @@ public class ProductPriceDTO {
     String marketSeason;
     String currency;
     String memo;
-    
+    @JsonProperty("SupplierPriceChangeRecordId")
     public Long getSupplierPriceChangeRecordId(){
     	return this.supplierPriceChangeRecordId;
     }
-    
+    @JsonProperty("SupplierPriceChangeRecordId")
     public void setSupplierPriceChangeRecordId(Long supplierPriceChangeRecordId){
     	this.supplierPriceChangeRecordId = supplierPriceChangeRecordId;
     }

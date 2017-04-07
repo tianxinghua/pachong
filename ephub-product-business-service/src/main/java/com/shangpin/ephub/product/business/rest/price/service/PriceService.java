@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithCriteriaDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -220,8 +222,52 @@ public class PriceService {
 	public void updateState(Long supplierPriceChangeRecordId,PriceHandleState state){
 		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 		recordDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId);
-		recordDto.setState(state.getIndex()); 
+		recordDto.setState(state.getIndex());
+		recordDto.setUpdateTime(new Date());
 		priceChangeRecordGateWay.updateByPrimaryKeySelective(recordDto);
 	}
+
+	/**
+	 *
+	 * @param supplierPriceChangeRecordId
+	 * @param state
+	 * @param memo
+	 */
+	public void updateState(Long supplierPriceChangeRecordId,PriceHandleState state,String memo){
+		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
+		recordDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId);
+		recordDto.setState(state.getIndex());
+		recordDto.setMemo(memo);
+		recordDto.setUpdateTime(new Date());
+		priceChangeRecordGateWay.updateByPrimaryKeySelective(recordDto);
+	}
+
+	/**
+	 * 根据供货商门户编号 尚品编号  更新状态
+	 * @param supplierId
+	 * @param skuNo
+	 * @param memo
+	 * @param state
+	 * @throws Exception
+	 */
+	public void updateState(String supplierId,String skuNo,String memo,PriceHandleState state) throws Exception{
+		//查询最后一条记录
+		HubSupplierPriceChangeRecordCriteriaDto criteria  = new HubSupplierPriceChangeRecordCriteriaDto();
+		criteria.setOrderByClause(" create_time desc ");
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSpSkuNoEqualTo(skuNo).andStateEqualTo(PriceHandleState.PUSHED_OPENAPI_SUCCESS.getIndex());
+		List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteria);
+		if(null!=hubSupplierPriceChangeRecordDtos&&hubSupplierPriceChangeRecordDtos.size()>0){
+			HubSupplierPriceChangeRecordDto dto = hubSupplierPriceChangeRecordDtos.get(0);
+			HubSupplierPriceChangeRecordDto tmp = new HubSupplierPriceChangeRecordDto();
+			tmp.setState(state.getIndex());
+			tmp.setMemo(memo);
+			tmp.setUpdateTime(new Date());
+			tmp.setSupplierPriceChangeRecordId(dto.getSupplierPriceChangeRecordId());
+			priceChangeRecordGateWay.updateByPrimaryKey(tmp);
+		}
+
+
+	}
+
 	
 }
