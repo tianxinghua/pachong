@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
+import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
@@ -50,38 +53,52 @@ public class HubSupplierCategoryDicController {
 	@Autowired
 	HubSupplierSpuService hubSupplierSpuService;
 	@Autowired
+	HubSupplierValueMappingService hubSupplierValueMappingService;
+	@Autowired
 	SupplierService supplierService;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryList(
 			@RequestBody HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto) {
 		
 		try {
+			log.info("===品类映射list请求参数：{}",hubSupplierCategoryDicRequestDto);
 			String supplierNo = hubSupplierCategoryDicRequestDto.getSupplierNo();
-			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
-			if(supplierDto!=null){
-				String supplierId = supplierDto.getSopUserNo();
-				if (StringUtils.isNotBlank(supplierId)) {
-					int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
-					if(total>0){
-						List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
-								hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
-						if (list != null && list.size() > 0) {
-							List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
-							for (HubSupplierCategroyDicDto dicDto : list) {
-								HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-								BeanUtils.copyProperties(dicDto, dic);
-								responseList.add(dic);
-							}
-							HubSupplierCategoryDicResponseWithPageDto response = new HubSupplierCategoryDicResponseWithPageDto();
-							response.setTotal(total);
-							response.setList(responseList);
-							return HubResponse.successResp(response);
-						}
-					}
-					return HubResponse.errorResp("列表页为空");
-				} 
+			String supplierId = null;
+			if(supplierNo!=null){
+				SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+				if(supplierDto==null){
+					return HubResponse.errorResp("供应商为空");
+				}	
+				supplierId = supplierDto.getSopUserNo();
 			}
-			return HubResponse.errorResp("请选择供应商");
+			
+			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
+			if(total>0){
+				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
+						hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
+				if (list != null && list.size() > 0) {
+					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
+					for (HubSupplierCategroyDicDto dicDto : list) {
+						HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
+						List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,supplierId);
+						if(listMapp!=null&&listMapp.size()>0){
+							dic.setSupplierNo(listMapp.get(0).getHubValNo());
+							dic.setSupplierName(listMapp.get(0).getHubVal());
+						}	
+						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+						if(dicDto.getUpdateTime()!=null){
+							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+						}
+						BeanUtils.copyProperties(dicDto, dic);
+						responseList.add(dic);
+					}
+					HubSupplierCategoryDicResponseWithPageDto response = new HubSupplierCategoryDicResponseWithPageDto();
+					response.setTotal(total);
+					response.setList(responseList);
+					return HubResponse.successResp(response);
+				}
+			}
+			return HubResponse.errorResp("列表页为空");
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");

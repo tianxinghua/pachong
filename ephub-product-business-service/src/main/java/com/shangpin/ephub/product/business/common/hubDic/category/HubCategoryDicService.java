@@ -45,7 +45,9 @@ public class HubCategoryDicService {
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-		criterion.andSupplierIdEqualTo(supplierId);
+		if(StringUtils.isNotBlank(supplierId)){
+			criterion.andSupplierIdEqualTo(supplierId);	
+		}
 		if(categoryType!=0){
 			if(categoryType==5){
 				criterion.andCategoryTypeIsNull();
@@ -54,18 +56,21 @@ public class HubCategoryDicService {
 			}
 		}
 		if(StringUtils.isNotBlank(supplierCategory)){
-			criterion.andSupplierCategoryEqualTo(supplierCategory);
+			criterion.andSupplierCategoryLike(supplierCategory+"%");
 		}
 		if(StringUtils.isNotBlank(supplierGender)){
 			criterion.andSupplierGenderEqualTo(supplierGender);
 		}
+		criteria.setOrderByClause("update_time desc");
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
 	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType,String supplilerCategory,String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-		criterion.andSupplierIdEqualTo(supplierId);
+		if(StringUtils.isNotBlank(supplierId)){
+			criterion.andSupplierIdEqualTo(supplierId);	
+		}
 		if(categoryType!=0){
 			if(categoryType==5){
 				criterion.andCategoryTypeIsNull();
@@ -76,12 +81,12 @@ public class HubCategoryDicService {
 			criterion.andMappingStateNotEqualTo((byte)1);
 		}
 		if(StringUtils.isNotBlank(supplilerCategory)){
-			criterion.andSupplierCategoryEqualTo(supplilerCategory);
+			criterion.andSupplierCategoryLike(supplilerCategory+"%");
+			
 		}
 		if(StringUtils.isNotBlank(supplierGender)){
 			criterion.andSupplierGenderEqualTo(supplierGender);
 		}
-	
 		return hubSupplierCategroyDicGateWay.countByCriteria(criteria);
 	}
 	

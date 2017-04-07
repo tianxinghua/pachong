@@ -33,5 +33,12 @@ public class HubSupplierValueMappingService {
 	public void updateHubSupplierValueMappingByPrimaryKey(HubSupplierValueMappingDto hubSupplierValueMappingDto){
 		hubSupplierValueMappingGateWay.updateByPrimaryKeySelective(hubSupplierValueMappingDto);
 	}
+
+	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingByTypeAndSupplierId(byte type, String supplierId) {
+		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		criteria.createCriteria().andHubValTypeEqualTo(type).andSupplierIdEqualTo(supplierId);
+		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+	}
 	
 }
