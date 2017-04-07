@@ -35,9 +35,9 @@ repositories {
 
 dependencies {
     compile('com.shangpin:openapi-api-sdk:4.7')
-    compile('com.shangpin:openapi-api:4.7.5-test')
+    compile('com.shangpin:openapi-api:4.7.7-test')
     compile('ZeroC:Ice:3.5.1')
-    compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.13.30-SNAPSHOT')
+    compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.13.34-SNAPSHOT')
     compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
     compile('commons-codec:commons-codec:1.10')
     compile('commons-io:commons-io:2.5')

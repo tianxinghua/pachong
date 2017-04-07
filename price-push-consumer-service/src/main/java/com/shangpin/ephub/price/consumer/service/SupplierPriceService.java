@@ -46,10 +46,13 @@ public class SupplierPriceService {
         List<String> spSkus  = new ArrayList<>();
         spSkus.add(productPriceDTO.getSkuNo());
         try {
-            String spplierType = this.getSupplierPriceType(productPriceDTO.getSopUserNo());
-            if("PurchasePrice".equals(spplierType)){       //供货架
+            String supplierType = this.getSupplierPriceType(productPriceDTO.getSopUserNo());
+            log.info("supplier type ="+ supplierType);
+            if("PurchasePrice".equals(supplierType)){       //供货架
                 handSupplyPrice(productPriceDTO);
-            }else if("3".equals(spplierType)){ // 市场价
+            }else if("3".equals(supplierType)){ // 市场价
+                handleMarketPrice(productPriceDTO);
+            }else if("MarketDiscount".equals(supplierType)){ // 市场价
                 handleMarketPrice(productPriceDTO);
             }else{
                 //无类型
@@ -76,22 +79,22 @@ public class SupplierPriceService {
 
     private void handSupplyPrice(ProductPriceDTO productPriceDTO) throws Exception {
         if(priceSendService.sendSupplyPriceMsgToScm(productPriceDTO)){
-            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),
-                    productPriceDTO.getSkuNo(), PriceHandleState.HANDLED.getIndex(),""  );
+            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                    productPriceDTO.getSkuNo(), PriceHandleState.PUSHED_OPENAPI_SUCCESS.getIndex(),""  );
         }else{
-            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),
-                    productPriceDTO.getSkuNo(),PriceHandleState.HANDLE_ERROR
+            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                    productPriceDTO.getSkuNo(),PriceHandleState.PUSHED_OPENAPI_ERROR
                             .getIndex(),"供价制调用OPENAPI 返回失败"  );
         }
     }
 
     private void handleMarketPrice(ProductPriceDTO productPriceDTO) throws Exception {
         if(priceSendService.sendMarketPriceMsgToScm(productPriceDTO)){
-            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),
-                    productPriceDTO.getSkuNo(), PriceHandleState.HANDLED.getIndex(),""  );
+            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                    productPriceDTO.getSkuNo(), PriceHandleState.PUSHED_OPENAPI_SUCCESS.getIndex(),""  );
         }else{
-            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),
-                    productPriceDTO.getSkuNo(),PriceHandleState.HANDLE_ERROR
+            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                    productPriceDTO.getSkuNo(),PriceHandleState.PUSHED_OPENAPI_ERROR
                             .getIndex(),"市场制调用OPENAPI 返回失败"  );
         }
     }

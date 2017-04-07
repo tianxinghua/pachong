@@ -13,6 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductPriceDTO {
+    Long  supplierPriceChangeRecordId;
     String sopUserNo; //门户编号
     String skuNo;     //尚品的SKU编号
     String supplierSkuNo;//供货商skuNo
@@ -23,6 +24,15 @@ public class ProductPriceDTO {
     String marketSeason;
     String currency;
     String memo;
+
+    @JsonProperty("SupplierPriceChangeRecordId")
+    public Long getSupplierPriceChangeRecordId(){
+        return this.supplierPriceChangeRecordId;
+    }
+    @JsonProperty("SupplierPriceChangeRecordId")
+    public void setSupplierPriceChangeRecordId(Long supplierPriceChangeRecordId){
+        this.supplierPriceChangeRecordId = supplierPriceChangeRecordId;
+    }
 
     @JsonProperty("SopUserNo")
     public String getSopUserNo() {
