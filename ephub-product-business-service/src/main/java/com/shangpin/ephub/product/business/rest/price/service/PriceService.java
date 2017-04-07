@@ -204,6 +204,7 @@ public class PriceService {
 
 	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
 		try {
+			retryPrice.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId); 
 			priceMqGateWay.transPrice(retryPrice);
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
 		} catch (Exception e) {
