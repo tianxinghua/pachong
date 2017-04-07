@@ -1,7 +1,10 @@
 package com.shangpin.ephub.product.business.rest.price.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.product.business.rest.price.vo.PriceChangeRecordDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/price")
+@Slf4j
 public class PriceController {
 	
 	@Autowired
@@ -48,25 +52,33 @@ public class PriceController {
 
 	@RequestMapping(value="/update-price-handle-status",method=RequestMethod.POST)
 	public HubResponse<?> updatePriceHandleStatus(@RequestBody List<PriceChangeRecordDto> priceChangeRecordDtos){
-
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			log.info("call price/update-price-handle-status parameter = " +
+                    mapper.writeValueAsString(priceChangeRecordDtos));
+		} catch (Exception e) {
+			log.error("call price/update-price-handle-status error: "+e.getMessage(),e);
+		}
 		for(PriceChangeRecordDto priceChangeRecordDto:priceChangeRecordDtos) {
-			if(null!=priceChangeRecordDto.getId()&&0!=priceChangeRecordDto.getId()){
-				if("1".equals(priceChangeRecordDto.getSign())){
-					priceService.updateState(priceChangeRecordDto.getId(), PriceHandleState.HANDLED_SUCCESS);
-				} else{
-					priceService.updateState(priceChangeRecordDto.getId(),PriceHandleState.HANDLE_ERROR,priceChangeRecordDto.getMemo());
-				}
-
-			}else{
-				try {
-					if("1".equals(priceChangeRecordDto.getSign())){
-                        priceService.updateState(priceChangeRecordDto.getSupplierId(),priceChangeRecordDto.getSkuNo(),"", PriceHandleState.HANDLED_SUCCESS);
+			try {
+				if(null!=priceChangeRecordDto.getId()&&0!=priceChangeRecordDto.getId()){
+                    if("1".equals(priceChangeRecordDto.getSign())){
+                        priceService.updateState(priceChangeRecordDto.getId(), PriceHandleState.HANDLED_SUCCESS);
                     } else{
-                        priceService.updateState(priceChangeRecordDto.getSupplierId(),priceChangeRecordDto.getSkuNo(),priceChangeRecordDto.getMemo(),PriceHandleState.HANDLE_ERROR);
+                        priceService.updateState(priceChangeRecordDto.getId(),PriceHandleState.HANDLE_ERROR,priceChangeRecordDto.getMemo());
                     }
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+
+                }else{
+
+                        if("1".equals(priceChangeRecordDto.getSign())){
+                            priceService.updateState(priceChangeRecordDto.getSupplierId(),priceChangeRecordDto.getSkuNo(),"", PriceHandleState.HANDLED_SUCCESS);
+                        } else{
+                            priceService.updateState(priceChangeRecordDto.getSupplierId(),priceChangeRecordDto.getSkuNo(),priceChangeRecordDto.getMemo(),PriceHandleState.HANDLE_ERROR);
+                        }
+
+                }
+			} catch (Exception e) {
+				log.error("update price record :" + priceChangeRecordDto.toString() + " state error:" + e.getMessage(),e);
 			}
 		}
 
