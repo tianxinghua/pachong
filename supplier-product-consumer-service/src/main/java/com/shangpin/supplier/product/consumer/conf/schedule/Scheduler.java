@@ -22,7 +22,7 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0/60 * * * * ?")
+	@Scheduled(cron = "0/30 * * * * ?")
 	public void pictureTask() {
 		try {
 			supplierProductPictureService.processProduct((byte)4);

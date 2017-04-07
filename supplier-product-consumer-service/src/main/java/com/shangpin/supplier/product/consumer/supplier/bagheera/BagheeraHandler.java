@@ -43,7 +43,7 @@ public class BagheeraHandler implements ISupplierHandler {
 				BagheeraDTO bagheeraDto = JsonUtil.deserialize(message.getData(), BagheeraDTO.class);
 				String supplierId = message.getSupplierId();
 				
-				mongoService.save(supplierId, getSupplierSpuNo(bagheeraDto), bagheeraDto);
+				mongoService.save(supplierId, bagheeraDto.getCODE(), bagheeraDto);
 				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(supplierId,bagheeraDto,hubSpu);
@@ -86,7 +86,7 @@ public class BagheeraHandler implements ISupplierHandler {
 	public boolean convertSpu(String supplierId,BagheeraDTO bagheeraDto, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
 		if(null != bagheeraDto){
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(getSupplierSpuNo(bagheeraDto));
+			hubSpu.setSupplierSpuNo(bagheeraDto.getCODE());
 			hubSpu.setSupplierSpuModel(bagheeraDto.getSUPPLIER_CODE());
 			hubSpu.setSupplierSpuName(bagheeraDto.getITEM_GROUP());
 			hubSpu.setSupplierSpuColor(bagheeraDto.getCOLOR());
@@ -133,14 +133,14 @@ public class BagheeraHandler implements ISupplierHandler {
 		
 	}
 
-	private String getSupplierSpuNo(BagheeraDTO bagheeraDto) {
-		try {
-			return bagheeraDto.getCODE().substring(0,bagheeraDto.getCODE().length()-2);
-		} catch (Exception e) {
-			log.error(e.getMessage()); 
-			return "";
-		}
-		
-	}
+//	private String getSupplierSpuNo(BagheeraDTO bagheeraDto) {
+//		try {
+//			return bagheeraDto.getCODE().substring(0,bagheeraDto.getCODE().length()-2);
+//		} catch (Exception e) {
+//			log.error(e.getMessage()); 
+//			return "";
+//		}
+//		
+//	}
 
 }

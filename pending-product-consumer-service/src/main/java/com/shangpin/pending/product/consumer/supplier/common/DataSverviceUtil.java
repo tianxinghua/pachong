@@ -1,15 +1,15 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
-import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +17,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
+import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
 import com.shangpin.pending.product.consumer.supplier.dto.SupplierSizeMappingDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +69,16 @@ public class DataSverviceUtil {
     SpuPendingHandler spuPendingHandler;
 
 
+    /**
+     * 先进入redis查找 没有查找数据库
+     * @param supplierId
+     * @return   返回 尚品的尺码+"," +尚品的前端的选择尺码的ＩＤ
+     */
+    public Long delSupplierSizeMapping(String supplierId){
 
+        return shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY+"_"+supplierId);
+    }
+    
     /**
      * 先进入redis查找 没有查找数据库
      * @param supplierId
