@@ -79,8 +79,10 @@ public class HubWaitSelectedController {
 					}else{
 						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
 					}
+					if(hubWaitSelectResponseDto.getUpdateTime()!=null){
+						HubWaitSelectResponse.setUpdateTime(sim.format(hubWaitSelectResponseDto.getUpdateTime()));	
+					}
 					
-					HubWaitSelectResponse.setUpdateTime(sim.format(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}
 				HubWaitSelectedResponseWithPage HubWaitSelectedResponseWithPageDto = new HubWaitSelectedResponseWithPage();
