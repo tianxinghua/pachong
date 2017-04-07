@@ -1,5 +1,6 @@
 package com.shangpin.ephub.client.product.business.price.gateway;
 
+import com.shangpin.ephub.client.product.business.price.dto.PriceChangeRecordDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,4 +19,7 @@ public interface PriceGateWay {
 
 	@RequestMapping(value = "/price/save-and-sendmessage", method = RequestMethod.POST,consumes = "application/json")
 	public void savePriceRecordAndSendConsumer(PriceDto priceDto) throws Exception;
+
+
+
 }
