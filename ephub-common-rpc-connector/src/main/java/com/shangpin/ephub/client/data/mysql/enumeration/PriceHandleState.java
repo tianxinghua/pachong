@@ -15,19 +15,29 @@ public enum PriceHandleState {
 	/**
 	 * 消息推送完成
 	 */
-	PUSHED((byte)1,"消息推送完成"),
+	PUSHED((byte)1,"消息推送PRICE_SERVICE完成"),
 	/**
 	 * 推送消息失敗
 	 */
-	PUSHED_ERROR((byte)2,"消息推送失敗"),
+	PUSHED_ERROR((byte)2,"消息推送PRICE_SERVICE失敗"),
 	/**
 	 * 处理完成
 	 */
-	HANDLED((byte)3,"处理完成"),
+	HANDLED_SUCCESS((byte)3,"处理完成"),
 	/**
 	 * 处理失败
 	 */
-	HANDLE_ERROR((byte)4,"处理失败");
+	HANDLE_ERROR((byte)4,"处理失败"),
+
+
+	/**
+	 * 处理完成
+	 */
+	PUSHED_OPENAPI_SUCCESS((byte)5,"消息推送OPENAPI成功"),
+	/**
+	 * 处理失败
+	 */
+	PUSHED_OPENAPI_ERROR((byte)6,"消息推送OPENAPI失败");
 	/**
      * 数字索引标识
      */

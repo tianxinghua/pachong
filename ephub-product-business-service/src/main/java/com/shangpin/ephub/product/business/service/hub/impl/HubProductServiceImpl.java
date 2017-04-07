@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
@@ -477,7 +478,9 @@ class SendToScmTask implements Runnable{
         productDto.setSkuList(sendSkuList);
         HubResponseDto<String> responseDto = null;
         try {
+        	 Log.info("推送scm参数:"+productDto.toString());
             responseDto = sendToScm(productDto);
+            Log.info("推送scm返回结果:"+responseDto.toString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

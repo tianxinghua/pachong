@@ -2,7 +2,9 @@ package com.shangpin.ephub.product.business.rest.price.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import com.shangpin.ephub.client.data.mysql.price.unionselect.dto.PriceQueryDto;
 import com.shangpin.ephub.client.data.mysql.price.unionselect.gateway.HubSupplierPriceGateWay;
 import com.shangpin.ephub.client.data.mysql.price.unionselect.result.HubSupplierPrice;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
@@ -56,14 +59,15 @@ public class PriceService {
 		String supplierNo = priceDto.getSupplierNo();
 		
 		//先判断季节是否发生变化
+		Map<String,HubSupplierSkuDto> newSeasons = new HashMap<String,HubSupplierSkuDto>();
 		HubSupplierSpuDto spuDtoSel = supplierProductService.isSupplierSeasonNameChanged(supplierSpuDto);
 		if(null != spuDtoSel){
 			List<HubSupplierSkuDto> hubSkus = supplierProductService.findSupplierSkus(spuDtoSel.getSupplierSpuId());
 			if(CollectionUtils.isNotEmpty(hubSkus)){
 				for(HubSupplierSkuDto skuDto : hubSkus){
 					if(!StringUtils.isEmpty(skuDto.getSpSkuNo())){
-						log.info("【"+supplierSpuDto.getSupplierId()+" "+supplierSpuDto.getSupplierSpuNo()+" 尚品sku："+skuDto.getSpSkuNo()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商sku编号："+skuDto.getSupplierSkuNo()+"】");  
-						savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON);
+						log.info("【"+supplierSpuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商spu编号："+supplierSpuDto.getSupplierSpuNo()+"】");  
+						newSeasons.put(skuDto.getSupplierSkuNo(), skuDto);
 					}
 				}
 			}
@@ -73,8 +77,18 @@ public class PriceService {
 		for(HubSupplierSkuDto skuDto : supplierSkus){
 			boolean isChanged = supplierProductService.isPriceChanged(skuDto);
 			if(isChanged && !StringUtils.isEmpty(skuDto.getSpSkuNo())){
-				log.info("【###"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+" 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 价格发生了变化###】"); 
-				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.PRICE);
+				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+" 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 价格发生了变化】"); 
+				if(newSeasons.containsKey(skuDto.getSupplierSkuNo())){
+					savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.PRICEANDSEASON);
+					newSeasons.remove(skuDto.getSupplierSkuNo());
+				}else{
+					savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.PRICE);
+				}
+			}
+		}
+		if(newSeasons.size() > 0){
+			for(HubSupplierSkuDto skuDto : newSeasons.values()){
+				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON);
 			}
 		}
 	}
@@ -98,12 +112,12 @@ public class PriceService {
 		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 		convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, type,seasonDicDto);
 		Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
-		log.info("【$$$"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"$$$】"); 
+		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"】"); 
 		//发送消息队列
 		ProductPriceDTO productPrice  = new ProductPriceDTO();
 		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);				
 		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
-		log.info("【$$$"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"$$$】"); 
+		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】"); 
 	}
 	
 	/**
@@ -191,6 +205,7 @@ public class PriceService {
 
 	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
 		try {
+			retryPrice.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId); 
 			priceMqGateWay.transPrice(retryPrice);
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
 		} catch (Exception e) {
@@ -206,8 +221,52 @@ public class PriceService {
 	public void updateState(Long supplierPriceChangeRecordId,PriceHandleState state){
 		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 		recordDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId);
-		recordDto.setState(state.getIndex()); 
+		recordDto.setState(state.getIndex());
+		recordDto.setUpdateTime(new Date());
 		priceChangeRecordGateWay.updateByPrimaryKeySelective(recordDto);
 	}
+
+	/**
+	 *
+	 * @param supplierPriceChangeRecordId
+	 * @param state
+	 * @param memo
+	 */
+	public void updateState(Long supplierPriceChangeRecordId,PriceHandleState state,String memo){
+		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
+		recordDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId);
+		recordDto.setState(state.getIndex());
+		recordDto.setMemo(memo);
+		recordDto.setUpdateTime(new Date());
+		priceChangeRecordGateWay.updateByPrimaryKeySelective(recordDto);
+	}
+
+	/**
+	 * 根据供货商门户编号 尚品编号  更新状态
+	 * @param supplierId
+	 * @param skuNo
+	 * @param memo
+	 * @param state
+	 * @throws Exception
+	 */
+	public void updateState(String supplierId,String skuNo,String memo,PriceHandleState state) throws Exception{
+		//查询最后一条记录
+		HubSupplierPriceChangeRecordCriteriaDto criteria  = new HubSupplierPriceChangeRecordCriteriaDto();
+		criteria.setOrderByClause(" create_time desc ");
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSpSkuNoEqualTo(skuNo).andStateEqualTo(PriceHandleState.PUSHED_OPENAPI_SUCCESS.getIndex());
+		List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteria);
+		if(null!=hubSupplierPriceChangeRecordDtos&&hubSupplierPriceChangeRecordDtos.size()>0){
+			HubSupplierPriceChangeRecordDto dto = hubSupplierPriceChangeRecordDtos.get(0);
+			HubSupplierPriceChangeRecordDto tmp = new HubSupplierPriceChangeRecordDto();
+			tmp.setState(state.getIndex());
+			tmp.setMemo(memo);
+			tmp.setUpdateTime(new Date());
+			tmp.setSupplierPriceChangeRecordId(dto.getSupplierPriceChangeRecordId());
+			priceChangeRecordGateWay.updateByPrimaryKey(tmp);
+		}
+
+
+	}
+
 	
 }

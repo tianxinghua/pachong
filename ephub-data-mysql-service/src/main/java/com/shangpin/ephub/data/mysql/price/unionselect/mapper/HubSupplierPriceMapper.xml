@@ -37,8 +37,8 @@
     	and dic.hub_market_time = #{marketYear}
     </if>
     ORDER BY sku.create_time desc
-    <if test="pageIndex != null" >
-      limit #{pageIndex} , #{pageSize}
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
     </if>
     </where>
     

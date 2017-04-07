@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.common.hubDic.category;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,12 +40,14 @@ public class HubCategoryDicService {
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 	
-	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType) {
+	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType,String supplierCategory,String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-		criterion.andSupplierIdEqualTo(supplierId);
+		if(StringUtils.isNotBlank(supplierId)){
+			criterion.andSupplierIdEqualTo(supplierId);	
+		}
 		if(categoryType!=0){
 			if(categoryType==5){
 				criterion.andCategoryTypeIsNull();
@@ -52,19 +55,37 @@ public class HubCategoryDicService {
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
 		}
+		if(StringUtils.isNotBlank(supplierCategory)){
+			criterion.andSupplierCategoryLike(supplierCategory+"%");
+		}
+		if(StringUtils.isNotBlank(supplierGender)){
+			criterion.andSupplierGenderEqualTo(supplierGender);
+		}
+		criteria.setOrderByClause("update_time desc");
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
-	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType) {
+	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType,String supplilerCategory,String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
-		criterion.andSupplierIdEqualTo(supplierId);
+		if(StringUtils.isNotBlank(supplierId)){
+			criterion.andSupplierIdEqualTo(supplierId);	
+		}
 		if(categoryType!=0){
 			if(categoryType==5){
 				criterion.andCategoryTypeIsNull();
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
+		}else{
+			criterion.andMappingStateNotEqualTo((byte)1);
+		}
+		if(StringUtils.isNotBlank(supplilerCategory)){
+			criterion.andSupplierCategoryLike(supplilerCategory+"%");
+			
+		}
+		if(StringUtils.isNotBlank(supplierGender)){
+			criterion.andSupplierGenderEqualTo(supplierGender);
 		}
 		return hubSupplierCategroyDicGateWay.countByCriteria(criteria);
 	}
