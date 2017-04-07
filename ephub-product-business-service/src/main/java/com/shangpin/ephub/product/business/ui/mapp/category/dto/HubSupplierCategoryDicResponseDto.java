@@ -18,9 +18,12 @@ public class HubSupplierCategoryDicResponseDto {
 	
 	private Long supplierCategoryDicId;
 	private String supplierId;
+	private String supplierNo;
 	private String supplierCategory;
 	private String supplierGender;
 	private String hubCategoryNo;
 	 private Byte categoryType;
+	 private String updateTime;
+	 private String updateUser;
 
 }

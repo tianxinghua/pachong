@@ -61,10 +61,10 @@ public class HubSupplierCategoryDicController {
 			if(supplierDto!=null){
 				String supplierId = supplierDto.getSopUserNo();
 				if (StringUtils.isNotBlank(supplierId)) {
-					int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType());
+					int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
 					if(total>0){
 						List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
-								hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType());
+								hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
 						if (list != null && list.size() > 0) {
 							List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
 							for (HubSupplierCategroyDicDto dicDto : list) {
@@ -124,6 +124,11 @@ public class HubSupplierCategoryDicController {
 			HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
 			BeanUtils.copyProperties(dto, dicDto);
 			log.info("======供应商品类映射hub品类变更：{}",dto);
+			if(dto.getCategoryType()==4){
+				dicDto.setMappingState((byte)1);				
+			}else{
+				dicDto.setMappingState((byte)2);
+			}
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
 			return HubResponse.successResp("success");
 		} catch (Exception e) {
