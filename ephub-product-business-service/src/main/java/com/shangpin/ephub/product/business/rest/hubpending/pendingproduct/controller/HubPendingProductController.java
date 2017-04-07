@@ -116,9 +116,8 @@ public class HubPendingProductController {
 			hubSkuPending.setSpSkuNo( dto.getSkuNo());
 			hubSkuPending.setMemo(dto.getErrorReason());
 			hubSkuPending.setSupplierSkuId(hubSkuPendingOrigion.getSupplierSkuId());
-			supplierSkuGateWay.updateByPrimaryKeySelective(hubSkuPendingOrigion);
+			supplierSkuGateWay.updateByPrimaryKeySelective(hubSkuPending);
 			HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
-			
 			priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE); 
 		}
 		
