@@ -102,6 +102,16 @@ public class PendingProductController {
     }
     @RequestMapping(value="/list-all",method=RequestMethod.POST)
     public HubResponse<?> pendingListAll(@RequestBody PendingQuryDto pendingQuryDto){
-    	return null;
+    	PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,true);
+        return HubResponse.successResp(pendingProducts);
     } 
+    @RequestMapping(value="/update-to-infopeccable/{updateUser}",method=RequestMethod.POST)
+    public HubResponse<?> updateProductToInfoPeccable(@PathVariable String updateUser, @RequestBody List<String> ids){
+    	boolean bool = pendingProductService.updateProductToInfoPeccable(updateUser, ids);
+    	if(bool){
+    		return HubResponse.successResp("");
+    	}else{
+    		return HubResponse.errorResp("更新失败");
+    	}
+    }
 }
