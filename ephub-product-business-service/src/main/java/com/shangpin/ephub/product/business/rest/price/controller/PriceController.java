@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.price.unionselect.dto.PriceQueryDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
+import com.shangpin.ephub.product.business.rest.price.dto.PriceQuery;
 import com.shangpin.ephub.product.business.rest.price.service.PriceService;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
 /**
@@ -41,7 +41,7 @@ public class PriceController {
 	}
 	
 	@RequestMapping(value="/list",method=RequestMethod.POST)
-	public HubResponse<?> priceList(@RequestBody PriceQueryDto priceQueryDto){
+	public HubResponse<?> priceList(@RequestBody PriceQuery priceQueryDto){
 		ProductPrice price = priceService.priceList(priceQueryDto);
 		if(null != price){
 			return HubResponse.successResp(price);

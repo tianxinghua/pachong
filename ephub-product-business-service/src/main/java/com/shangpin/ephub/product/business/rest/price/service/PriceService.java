@@ -25,6 +25,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
+import com.shangpin.ephub.product.business.rest.price.dto.PriceQuery;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
 
 import lombok.extern.slf4j.Slf4j;
@@ -122,14 +123,15 @@ public class PriceService {
 	
 	/**
 	 * scm调用
-	 * @param priceQueryDto
+	 * @param priceQuery
 	 * @return
 	 */
-	public ProductPrice priceList(PriceQueryDto priceQueryDto){
+	public ProductPrice priceList(PriceQuery priceQuery){
 		try {
-			if(null == priceQueryDto.getPageIndex() && null == priceQueryDto.getPageSize() && CollectionUtils.isEmpty(priceQueryDto.getSpSkuIds())){
+			if(null == priceQuery.getPageIndex() && null == priceQuery.getPageSize() && CollectionUtils.isEmpty(priceQuery.getSpSkuIds())){
 				return null;
 			}
+			PriceQueryDto priceQueryDto = copyPriceQueryToPriceQueryDto(priceQuery);
 			ProductPrice productPrice = new ProductPrice();
 			int total = hubSupplierPriceGateWay.countByQuery(priceQueryDto);
 			productPrice.setTotal(total); 
@@ -143,6 +145,29 @@ public class PriceService {
 		}
 		return null;
 	}	
+	
+	private PriceQueryDto copyPriceQueryToPriceQueryDto(PriceQuery priceQuery){
+		PriceQueryDto priceQueryDto = new PriceQueryDto();
+		if(null != priceQuery){
+			if(null != priceQuery.getPageIndex() && null != priceQuery.getPageSize()){
+				priceQueryDto.setPageIndex(priceQuery.getPageIndex());
+				priceQueryDto.setPageSize(priceQuery.getPageSize());
+			}
+			if(!StringUtils.isEmpty(priceQuery.getSupplierId())){
+				priceQueryDto.setSupplierId(priceQuery.getSupplierId());
+			}
+			if(!StringUtils.isEmpty(priceQuery.getMarketSeason())){
+				priceQueryDto.setMarketSeason(priceQuery.getMarketSeason());
+			}
+			if(!StringUtils.isEmpty(priceQuery.getMarketYear())){
+				priceQueryDto.setMarketYear(priceQuery.getMarketYear());
+			}
+			if(CollectionUtils.isNotEmpty((priceQuery.getSpSkuIds()))){
+				priceQueryDto.setSpSkuIds(priceQuery.getSpSkuIds()); 
+			}
+		}
+		return priceQueryDto;
+	}
 	
 	/**
 	 * 将供应商原始表的信息转换为供价记录消息体
