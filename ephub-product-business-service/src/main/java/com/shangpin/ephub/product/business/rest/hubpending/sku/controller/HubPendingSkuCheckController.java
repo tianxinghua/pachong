@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.rest.hubpending.sku.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,7 +36,12 @@ public class HubPendingSkuCheckController {
 	}
 	@RequestMapping(value = "/export")
 	public PendingProducts exportPengdingSku(@RequestBody PendingQuryDto pendingQuryDto){
-		PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto,false);
+		PendingProducts products = null;
+		if(StringUtils.isEmpty(pendingQuryDto.getSpuState())){//待处理页面
+			products = pendingProductService.findPendingProducts(pendingQuryDto,false);
+		}else{//其他页面
+			products = pendingProductService.findPendingProducts(pendingQuryDto,true);
+		}
 		products.setCreateUser(pendingQuryDto.getCreateUser());
 		return products;
 	}
