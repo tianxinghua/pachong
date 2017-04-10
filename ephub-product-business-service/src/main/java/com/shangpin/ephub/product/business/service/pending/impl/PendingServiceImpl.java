@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,7 +241,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setUpdateTime(new Date());
-        //设置审核状态
+        //设置审核状态 返回成功的则返回
         if (setAuditMsg(auditVO, hubSpuPending)) return false;
 
 
@@ -251,13 +252,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
         //加强判断  如果不是同一品类  不让通过
         if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
+            //不通过 直接修改SPU的状态为待处理
             if (judgeCategory(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
         }
 
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
             if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
-                //审核尺码
+                //审核尺码  若不符合 直接修改SPU的状态为待处理
                 if (auditSize(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
 
             }
@@ -348,17 +350,34 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             auditVO.setMemo("尺码有未匹配的,不能审核通过");
             return true;
         }
-
-        if(!hasNeedHandingSkuSize(hubSpuPendingDtos)){
+        Map<String,String> sizeType = new HashMap<>();
+        if(!hasNeedHandingSkuSize(hubSpuPendingDtos,sizeType)){
             hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
             hubSpuPending.setMemo("SPU下没有待处理的SKU,请重新处理尺码");
             updateSpuPendingState(auditVO, hubSpuPending);
             auditVO.setMemo("SPU下没有待处理的SKU,请重新处理尺码");
             return true;
+        }else{
+            //判断尺码类型是否唯一  含有尺寸的 就不能有尺码
+            if(sizeType.size()>1){
+                if(sizeType.containsKey(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)){
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("SKU尺码类型包含尺寸以及非尺寸,请重新处理");
+                    updateSpuPendingState(auditVO, hubSpuPending);
+                    auditVO.setMemo("SKU尺码类型包含尺寸以及非尺寸,请重新处理");
+                    return true;
+                }
+            }
         }
         return false;
     }
 
+    /**
+     * 设置SPU状态  不通过的返回true
+     * @param auditVO
+     * @param hubSpuPending
+     * @return
+     */
     private boolean setAuditMsg(SpuPendingAuditVO auditVO, HubSpuPendingDto hubSpuPending) {
         if(auditVO.getAuditStatus()== SpuStatus.SPU_HANDLED.getIndex()){ //审核成功的 赋值为审核中
             //状态检查
@@ -525,7 +544,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
     }
 
-    private boolean hasNeedHandingSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos) {
+    private boolean hasNeedHandingSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos,Map<String,String> sizeType) {
         List<Long> spuIdList = new ArrayList<>();
         for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
             spuIdList.add(spuDto.getSpuPendingId());
@@ -539,7 +558,11 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());  //不过滤的才使用
 
         List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
+
         if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            for(HubSkuPendingDto hubSkuPendingDto:hubSkuPendingDtos){
+                sizeType.put(hubSkuPendingDto.getHubSkuSizeType(),"");
+            }
             return true;
         }else{
             return false;
