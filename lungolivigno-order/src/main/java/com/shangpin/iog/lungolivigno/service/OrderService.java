@@ -357,9 +357,9 @@ public class OrderService extends AbsOrderService{
 //		}
 //		System.out.println(storecode); 
 		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setDetail("708184982171025-1:1,");
-		orderDTO.setSpOrderId("201703095335129");
-		orderDTO.setPurchasePriceDetail("242.62");
+		orderDTO.setDetail("708144982171005-1:1,");
+		orderDTO.setSpOrderId("201703235375165");
+		orderDTO.setPurchasePriceDetail("179.00");
 //		
 //		ReturnOrderDTO deleteOrder = new ReturnOrderDTO();
 ////		deleteOrder.setSpPurchaseNo("CGD20161107675218");

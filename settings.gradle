@@ -29,7 +29,11 @@ include 'lungolivigno-order'
 include 'lungolivigno'
 include 'giglio-stock'
 include 'optical'
-
+include 'baseBlu'
+include 'itemInfo-stock'
+include 'stefaniamode'
+include 'coltorti'
+include 'iog-web-container'
 
 
 
