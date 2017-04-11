@@ -24,6 +24,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
@@ -392,6 +393,31 @@ public class PendingProductService extends PendingSkuService{
     	log.info("--->原始信息查询总耗时{}",System.currentTimeMillis()-start); 
 		return supplierProductVo;
 	}
+    @Override
+    public boolean updateProductToInfoPeccable(String updateUser,List<String> ids){
+    	try {
+    		log.info("改变状态到待处理接口操作人=========="+updateUser); 
+			if(CollectionUtils.isNotEmpty(ids)){
+				List<Long> list = new ArrayList<Long>();
+				for(String id : ids){
+					list.add(Long.valueOf(id));
+				}
+                HubSpuPendingDto hubSpuPendingDto = new HubSpuPendingDto();
+                hubSpuPendingDto.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+                hubSpuPendingDto.setUpdateUser(updateUser); 
+                HubSpuPendingCriteriaDto whereCriteria = new HubSpuPendingCriteriaDto();
+                whereCriteria.createCriteria().andSpuPendingIdIn(list);
+                HubSpuPendingWithCriteriaDto criteria = new HubSpuPendingWithCriteriaDto();
+                criteria.setHubSpuPending(hubSpuPendingDto);
+                criteria.setCriteria(whereCriteria);
+                hubSpuPendingGateWay.updateByCriteriaSelective(criteria);
+                return true;
+			}
+		} catch (Exception e) {
+			log.error("改变状态到待处理接口异常："+e.getMessage(),e);
+		}
+    	return false;
+    }
 
     /***************************************************************************************************************************
      *       以下为内部调用私有方法
