@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.mapp.size.controll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingD
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.product.business.common.hubDic.size.HubSizeDicService;
 import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuService;
@@ -65,33 +67,43 @@ public class HubSupplierSizeDicController {
 	private HubResponse getCommonSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
 		
 		String supplierNo = hubSupplierSizeDicRequestDto.getSupplierNo();
-		if(supplierNo!=null){
-			SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
-			if(supplierDto!=null){
-				hubSupplierSizeDicRequestDto.setSupplierId(supplierDto.getSopUserNo());
-				int total = 0;
-				total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
-						SupplierValueMappingType.TYPE_SIZE.getIndex());
-				if (total > 0) {
-					List<HubSupplierValueMappingDto> list = hubSizeDicService
-							.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
-									SupplierValueMappingType.TYPE_SIZE.getIndex());
-					if (list != null && list.size() > 0) {
-
-						HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
-
-						List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
-						for (HubSupplierValueMappingDto dicDto : list) {
-							HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
-							BeanUtils.copyProperties(dicDto, dic);
-							responseList.add(dic);
-						}
-						page.setList(responseList);
-						page.setTotal(total);
-						return HubResponse.successResp(page);
-					}
+		if(StringUtils.isNotBlank(supplierNo)){
+			if("quanju".equals(supplierNo)){
+				hubSupplierSizeDicRequestDto.setSupplierId("quanju");
+			}else{
+				SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+				if(supplierDto==null){
+					return HubResponse.errorResp("查询供应商返回为空");	
 				}
-				
+				hubSupplierSizeDicRequestDto.setSupplierId(supplierDto.getSopUserNo());
+			}
+			int total = 0;
+			total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
+					SupplierValueMappingType.TYPE_SIZE.getIndex());
+			if (total > 0) {
+				List<HubSupplierValueMappingDto> list = hubSizeDicService
+						.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
+								SupplierValueMappingType.TYPE_SIZE.getIndex());
+				if (list != null && list.size() > 0) {
+
+					HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
+
+					List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
+					for (HubSupplierValueMappingDto dicDto : list) {
+						HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
+						BeanUtils.copyProperties(dicDto, dic);
+						if(dicDto.getCreateTime()!=null){
+							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
+						}
+						if(dicDto.getUpdateTime()!=null){
+							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+						}
+						responseList.add(dic);
+					}
+					page.setList(responseList);
+					page.setTotal(total);
+					return HubResponse.successResp(page);
+				}
 			}
 		}
 		return HubResponse.errorResp("列表页为空");

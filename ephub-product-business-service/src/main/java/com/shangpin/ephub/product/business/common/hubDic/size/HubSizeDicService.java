@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappingType;
@@ -30,22 +31,29 @@ public class HubSizeDicService extends HubSupplierValueMappingService{
 		Byte type = hubSupplierSizeDicRequestDto.getType();
 		String supplierId = hubSupplierSizeDicRequestDto.getSupplierId();
 		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+		
+		HubSupplierValueMappingCriteriaDto.Criteria criterion = criteria.createCriteria();
 		if(type==1){
 			//通配映射
-			criteria.createCriteria().andSupplierIdIsNull().andHubValTypeEqualTo(index.byteValue());
+			criterion.andSupplierIdIsNull().andHubValTypeEqualTo(index.byteValue());
 		}else if(type==2){
-			//供应商尺码映射
-			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
-		}else if(type==3){
-			//全局尺码映射
-			criteria.createCriteria().andSupplierIdIsNotNull().andHubValTypeEqualTo(index.byteValue());
+			//供应商、全局尺码映射
+			criterion.andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
 		}
+		if(hubSupplierSizeDicRequestDto.getSupplierVal()!=null){
+			criterion.andSupplierValEqualTo(hubSupplierSizeDicRequestDto.getSupplierVal());
+		}
+//		else if(type==3){
+//			//全局尺码映射
+//			criteria.createCriteria().andSupplierIdIsNotNull().andHubValTypeEqualTo(index.byteValue());
+//		}
 		return hubSupplierValueMappingGateWay.countByCriteria(criteria);
 	}
 	
 	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto,
 			Integer index) {
 		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+		HubSupplierValueMappingCriteriaDto.Criteria criterion = criteria.createCriteria();
 		criteria.setPageSize(hubSupplierSizeDicRequestDto.getPageSize());
 		criteria.setPageNo(hubSupplierSizeDicRequestDto.getPageNo());
 		
@@ -53,14 +61,18 @@ public class HubSizeDicService extends HubSupplierValueMappingService{
 		String supplierId = hubSupplierSizeDicRequestDto.getSupplierId();
 		if(type==1){
 			//通配映射
-			criteria.createCriteria().andSupplierIdIsNull().andHubValTypeEqualTo(index.byteValue());
+			criterion.andSupplierIdIsNull().andHubValTypeEqualTo(index.byteValue());
 		}else if(type==2&&supplierId!=null){
-			//供应商尺码映射
-			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
-		}else if(type==3){
-			//全局尺码映射
-			criteria.createCriteria().andSupplierIdIsNotNull().andHubValTypeEqualTo(index.byteValue());
+			//供应商、全局尺码映射
+			criterion.andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
 		}
+		if(hubSupplierSizeDicRequestDto.getSupplierVal()!=null){
+			criterion.andSupplierValEqualTo(hubSupplierSizeDicRequestDto.getSupplierVal());
+		}
+//		else if(type==3){
+//			//全局尺码映射
+//			criteria.createCriteria().andSupplierIdIsNotNull().andHubValTypeEqualTo(index.byteValue());
+//		}
 		
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
