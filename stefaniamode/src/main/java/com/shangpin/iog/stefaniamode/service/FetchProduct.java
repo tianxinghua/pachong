@@ -317,9 +317,9 @@ public class FetchProduct {
 	}
 	
 	public static void main(String[] args) {
-//		String xml = HttpUtil45.get(url,new OutTimeConfig(1000 * 60*60, 1000 * 60*60, 1000 * 60*60),null);
-//		saveData("stefo.txt",xml);
-//		System.out.println("ok----------");
+		String xml = HttpUtil45.get(url,new OutTimeConfig(1000 * 60*60, 1000 * 60*60, 1000 * 60*60),null);
+		saveData("stefo.txt",xml);
+		System.out.println("ok----------");
 	}
 	
 	private static void saveData(String name,String data){
