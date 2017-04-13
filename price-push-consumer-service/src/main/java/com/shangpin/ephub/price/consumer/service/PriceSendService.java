@@ -37,19 +37,24 @@ public class PriceSendService {
      * @return
      */
     public boolean sendMarketPriceMsgToScm(ProductPriceDTO productPriceDTO) throws Exception{
-        boolean  sendResult =false;
+        boolean result=false;
+        String   sendResult ="";
         String content ="";
         try {
             long start = System.currentTimeMillis();
             ObjectMapper om = new ObjectMapper();
             om.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
             List<ProductPriceDTO> productDTOList = new ArrayList<>();
+            productPriceDTO.setMemo(productPriceDTO.getSupplierPriceChangeRecordId().toString());
+            productPriceDTO.setCurrency("-1");
+            productPriceDTO.setCreateUserName("openAPI");
             productDTOList.add(productPriceDTO);
             content = om.writeValueAsString(productDTOList);
 
 
             sendResult=openapiPriceHandleService.pushMarketPriceMessage(productPriceDTO.getSopUserNo(),content);
-            if(!sendResult){
+            log.info("call api result of marker price = " +sendResult);
+            if(sendResult.startsWith("error")){
                 log.error("send price message error: message boday= "+ content  );
                 for(ProductPriceDTO failPriceDto: productDTOList) {
 
@@ -57,16 +62,17 @@ public class PriceSendService {
 
                 }
 
-                return sendResult;
+
             }
             long end = System.currentTimeMillis();
-            log.info("Successfully handling of message = "+ content +"  , and spend time : "+(end-start)+" milliseconds");
+            log.info("Successfully handled of market price  message = "+ content +"  , and spend time : "+(end-start)+" milliseconds");
+            result =true;
         } catch (Exception e) {
 
             log.error("send price message error: message= "+ content+" reason : " + e.getMessage(),e);
             throw e;
         }
-        return sendResult;
+        return result;
     }
 
     /**
@@ -85,6 +91,9 @@ public class PriceSendService {
         List<String> successSkuList = new ArrayList<>();
         try {
             long start = System.currentTimeMillis();
+            productPriceDTO.setMemo(productPriceDTO.getSupplierPriceChangeRecordId().toString());
+            productPriceDTO.setCurrency("-1");
+            productPriceDTO.setCreateUserName("openAPI");
             content = om.writeValueAsString(productPriceDTO);
             purchasePriceMap.put(productPriceDTO.getSkuNo(),productPriceDTO.getPurchasePrice());
 
@@ -93,7 +102,7 @@ public class PriceSendService {
             Map<String,String> map = null;
             //返回更新失败的sku map
             map = openapiPriceHandleService.pushPurchasePriceMessage(productPriceDTO.getSopUserNo(),purchasePriceMap);
-
+            log.info("call api result of supply price = " + map.toString());
             //获取失败的数据  继续推送 消息队列  成功的 更新状态
             List<ProductPriceDTO> failList = new ArrayList<>();
 
@@ -114,7 +123,7 @@ public class PriceSendService {
             }
 
             long end = System.currentTimeMillis();
-            log.info("Successfully handling of message 【 "+content+" 】 , and spend time : "+(end-start)+" milliseconds");
+            log.info("Successfully handled of supply price  message 【 "+content+" 】 , and spend time : "+(end-start)+" milliseconds");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("send suply price message error: message= "+ content+" reason : " + e.getMessage(),e);
