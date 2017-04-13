@@ -227,7 +227,8 @@ public class TonyOrderImpl implements IOrderService {
                 	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
             	}else if(message.contains("Shop order id - Shop order id - Order not found")){
                 	orderDTO.setDescription(orderDTO.getLogContent());
-                	orderDTO.setPushStatus(PushStatus.NO_STOCK);
+                	orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
             	}else{
                 	orderDTO.setDescription(orderDTO.getLogContent());
                 	orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);

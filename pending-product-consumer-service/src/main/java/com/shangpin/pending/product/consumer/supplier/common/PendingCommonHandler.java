@@ -33,7 +33,7 @@ public class PendingCommonHandler {
         //先判断设置的时间是否有值  无值得话  品类重新处理
         String timeSign = shangpinRedis.get(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME_KEY);
         if(StringUtils.isBlank(timeSign)){
-            shangpinRedis.hdel(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY);
+//            shangpinRedis.hdel(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY);
             Map<String, String>  categoryMap = new HashMap<>() ;
             List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler
                     .getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_CATEGORY.getIndex());

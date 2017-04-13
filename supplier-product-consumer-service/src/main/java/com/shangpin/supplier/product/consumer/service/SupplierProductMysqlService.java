@@ -172,7 +172,12 @@ public class SupplierProductMysqlService {
 				isChanged = true;
 			}
 		}
-		
+		if(hubSku.getSupplierSkuSize()!=null){
+			if(!hubSku.getSupplierSkuSize().equals(hubSkuSel.getSupplierSkuSize())){
+				hubSkuUpdated.setSupplierSkuSize(hubSku.getSupplierSkuSize()); 
+				isChanged = true;
+			}
+		}
 		return isChanged;
 	}
 	/**
