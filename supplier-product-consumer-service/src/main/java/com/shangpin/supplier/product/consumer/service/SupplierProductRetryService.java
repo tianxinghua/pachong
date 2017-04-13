@@ -59,10 +59,14 @@ public class SupplierProductRetryService {
 		criteria.setPageSize(PAGESIZE);
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
 		
+		boolean flag = false;
+		if(state==5){
+			flag = true;
+		}
 		if(products!=null&&products.size()>0){
 			log.info("========系统扫描到infoState："+state+"需要重新推送的数据:"+products.size()+"===");
 			for(HubSupplierSpuDto spu : products){
-				loopProduct(spu,state);
+				loopProduct(spu,state,flag);
 				updateSupplierInfoState(spu);
 			}
 			log.info("=====系统扫描到需要重新推送的数据结束,耗时{}毫秒======",System.currentTimeMillis()-start);
@@ -79,7 +83,7 @@ public class SupplierProductRetryService {
     	supplierProductPictureManager.updateSupplierSpu(hubSupplierSpu);		
 	}
 
-	private void loopProduct(HubSupplierSpuDto spu,byte state) throws Exception{
+	private void loopProduct(HubSupplierSpuDto spu,byte state,boolean flag) throws Exception{
 		
 		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId());
 		if(season==null){
@@ -108,37 +112,36 @@ public class SupplierProductRetryService {
 		pendingSpu.setSupplierNo(supplier.getHubValNo());
 		pendingProduct.setData(pendingSpu);
 		
-		List<PendingSku> skus = new ArrayList<PendingSku>();
-		//开始构造消息头
-		
-		List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSku(spu.getSupplierSpuId());
-		
-		List<Sku> headSkus = new ArrayList<Sku>();		
-		if(hubSkus != null && hubSkus.size()>0){
-			for(HubSupplierSkuDto hubSku : hubSkus){
-				try {					
-					Sku headSku = new Sku();
-					PendingSku pendingSku = new PendingSku();
-					//开始保存hubSku到数据库
-					hubSku.setSupplierSpuId(pendingSpu.getSupplierSpuId()); //在这里回写supplierSpuId
-					convertHubSkuToPendingSku(hubSku,pendingSku);
-					skus.add(pendingSku);
-					headSku.setSupplierId(spu.getSupplierId());
-					headSku.setSkuNo(hubSku.getSupplierSkuNo());
-					headSku.setStatus(state);
-					headSkus.add(headSku);
-				} catch (Exception e) {
-					log.error(e.getMessage(), e);
-				}				
+		if(flag){
+			//开始构造sku消息头
+			List<PendingSku> skus = new ArrayList<PendingSku>();
+			List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSku(spu.getSupplierSpuId());
+			List<Sku> headSkus = new ArrayList<Sku>();		
+			if(hubSkus != null && hubSkus.size()>0){
+				for(HubSupplierSkuDto hubSku : hubSkus){
+					try {					
+						Sku headSku = new Sku();
+						PendingSku pendingSku = new PendingSku();
+						//开始保存hubSku到数据库
+						hubSku.setSupplierSpuId(pendingSpu.getSupplierSpuId()); //在这里回写supplierSpuId
+						convertHubSkuToPendingSku(hubSku,pendingSku);
+						skus.add(pendingSku);
+						headSku.setSupplierId(spu.getSupplierId());
+						headSku.setSkuNo(hubSku.getSupplierSkuNo());
+						headSku.setStatus(state);
+						headSkus.add(headSku);
+					} catch (Exception e) {
+						log.error(e.getMessage(), e);
+					}				
+				}
+			}else{
+				log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
 			}
-		}else{
-			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
+			pendingSpu.setSkus(skus);
+			spuHead.setSkus(headSkus);	
 		}
-		pendingSpu.setSkus(skus);
-		pendingProduct.setData(pendingSpu);		
-		spuHead.setSkus(headSkus);	
 		
-		
+		pendingProduct.setData(pendingSpu);	
 		Map<String,String> headers = new HashMap<String,String>();	
     	headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
     	supplierProductSendToPending.dispatchSupplierProduct(pendingProduct, headers);
