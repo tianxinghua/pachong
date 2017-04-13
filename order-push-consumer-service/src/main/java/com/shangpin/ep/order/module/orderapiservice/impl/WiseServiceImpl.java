@@ -127,7 +127,8 @@ public class WiseServiceImpl implements IOrderService {
 		addTo.add("francesca.fiorani@wiseboutique.com");
 		addTo.add("andrea.venturini@wiseboutique.com");
 		addTo.add("wangsaying@shangpin.com");
-		addTo.add("lubaijiang@shangpin.com");
+//		addTo.add("lubaijiang@shangpin.com");
+		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
