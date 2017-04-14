@@ -27,4 +27,8 @@ public class SupplierCommon implements Serializable {
      * 是否采购异常
      */
     private String  isPurchaseExp;
+    /**
+     * 采购单请求地址
+     */
+    private String purchaseOrderUrl;
 }

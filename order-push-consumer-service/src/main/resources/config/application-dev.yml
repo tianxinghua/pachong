@@ -400,6 +400,10 @@ shangpin:
               isPurchaseExp: no
               openApiKey:
               openApiSecret:
+      giglio:
+              isPurchaseExp: false
+              openApiKey:
+              openApiSecret:
       supplier:
               delayTime: 1000
               retry: 120

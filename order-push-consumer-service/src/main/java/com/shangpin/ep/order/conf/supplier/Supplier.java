@@ -33,4 +33,12 @@ public class Supplier extends SupplierCommon implements Serializable {
 	 * 重试次数
 	 */
 	private int retry;
+	/**
+	 * 获取PID的服务地址
+	 */
+	private String pidUrl;
+	/**
+	 * 获取产品的服务地址
+	 */
+	private String orderUrl;
 }

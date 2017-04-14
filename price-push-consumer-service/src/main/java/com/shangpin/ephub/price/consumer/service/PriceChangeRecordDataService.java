@@ -63,6 +63,7 @@ public class PriceChangeRecordDataService {
          tmp.setUpdateTime(new Date());
          tmp.setSupplierPriceChangeRecordId(id);
          hubSupplierPriceChangeRecordGateWay.updateByPrimaryKeySelective(tmp);
+         result = true;
       }else{
          HubSupplierPriceChangeRecordCriteriaDto criteria  = new HubSupplierPriceChangeRecordCriteriaDto();
          criteria.setOrderByClause(" create_time desc ");
