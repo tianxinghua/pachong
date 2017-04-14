@@ -450,4 +450,12 @@ public class OriginalProductStreamSender {
     public boolean antonacciStream(SupplierProduct supplierProduct) {
     	return originalProductSource.antonacci().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    /**
+     * 发送供应商lungolivigno商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean lungolivignoStream(SupplierProduct supplierProduct){
+    	return originalProductSource.lungolivigno().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }

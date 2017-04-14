@@ -169,7 +169,10 @@ spring:
                               content-type: application/json        
                         antonacciOriginalProduct: 
                               destination: antonacci.original.product
-                              content-type: application/json                                                                                                                                                                                                                                      
+                              content-type: application/json    
+                        lungolivignoOriginalProduct: 
+                              destination: lungolivigno.original.product
+                              content-type: application/json                                                                                                                                                                                                                                  
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -333,7 +336,10 @@ spring:
                                            prefix: HA.                                                                                                                                                                                                                                                                                                                           
                             antonacciOriginalProduct: 
                                   producer: 
-                                           prefix: HA.                                                                                                                                                                                                                                                                                                                           
+                                           prefix: HA.  
+                            lungolivignoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.                                                                                                                                                                                                                                                                                                                         
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
