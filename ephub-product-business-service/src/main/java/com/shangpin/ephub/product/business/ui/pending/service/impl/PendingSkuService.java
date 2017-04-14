@@ -62,8 +62,8 @@ public abstract class PendingSkuService extends PendingSpuService{
             	List<Byte> listSkuState = new ArrayList<Byte>();
                 listSkuState.add(SpuState.HANDLED.getIndex());
 //                listSkuState.add(SpuState.HANDLING.getIndex());
-                criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateNotIn(listSkuState).andSpSkuNoIsNull();
-                criteriaDto.or(criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateIsNull().andSpSkuNoIsNull());
+                criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateNotIn(listSkuState).andHubSkuNoIsNull();
+                criteriaDto.or(criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateIsNull().andHubSkuNoIsNull());
             }
             List<HubSkuPendingDto> skus = hubSkuPendingGateWay.selectByCriteria(criteriaDto);
             if(CollectionUtils.isNotEmpty(skus)){
