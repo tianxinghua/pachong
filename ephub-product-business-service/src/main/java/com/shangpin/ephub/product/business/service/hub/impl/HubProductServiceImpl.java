@@ -196,7 +196,8 @@ public class HubProductServiceImpl implements HubProductService {
             e.printStackTrace();
         }
         if(null!=sopSkuResponseDto){
-            log.info("　get  spSku　" + objectMapper.writeValueAsString(sopSkuResponseDto));
+            log.info("　get  spSku　" + objectMapper.writeValueAsString(sopSkuResponseDto) +
+                    " query parameter: " + objectMapper.writeValueAsString(queryDto));
         }
 
         List<ApiSkuOrgDom> existApiSkuOrgDoms = new ArrayList<>();

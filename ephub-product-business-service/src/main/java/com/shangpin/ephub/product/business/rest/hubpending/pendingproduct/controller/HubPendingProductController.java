@@ -155,6 +155,7 @@ public class HubPendingProductController {
 //			HubSkuCriteriaDto criteriaSku = new HubSkuCriteriaDto();
 			HubSkuDto hubSku = new HubSkuDto();
 			hubSku.setSpSkuNo(dto.getSkuNo());
+			hubSku.setUpdateTime(new Date());
 			HubSkuCriteriaDto skuCriteria = new HubSkuCriteriaDto();
 			skuCriteria.createCriteria().andSkuNoEqualTo(searchSkuPending.getHubSkuNo());
 			HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
@@ -194,6 +195,7 @@ public class HubPendingProductController {
 		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
 		hubSkuPending.setSpSkuNo( dto.getSkuNo());
 		hubSkuPending.setMemo(dto.getErrorReason());
+		hubSkuPending.setUpdateTime(new Date());
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo())
 				.andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
