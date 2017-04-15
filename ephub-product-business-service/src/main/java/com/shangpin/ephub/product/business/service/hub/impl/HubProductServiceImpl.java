@@ -87,10 +87,7 @@ public class HubProductServiceImpl implements HubProductService {
     public void sendHubProuctToScm(HubProductIdDto hubProductIdDto) throws Exception {
         Long  spuId = hubProductIdDto.getId();
         List<HubProductIdDto> skus = hubProductIdDto.getSubProduct();
-        @SuppressWarnings("unused")
-		Long skuId = 0L;
-        @SuppressWarnings("unused")
-		Long supplierMappingId = 0L;
+
         //推送对象初始化
         SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
         ApiProductOrgExtendDom spSpuExtendInfo = new ApiProductOrgExtendDom();//  扩展对象
@@ -485,12 +482,17 @@ class SendToScmTask implements Runnable{
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        if(responseDto.getIsSuccess()){  //创建成功
-            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
+        if(null==responseDto){
+            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,"推送SCM时失败");
+        }else{
 
-        }else{ //创建失败
-            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+            if(responseDto.getIsSuccess()){  //创建成功
+                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
 
+            }else{ //创建失败
+                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+
+            }
         }
     }
     private void updateSkuMappingStatus(Long id,SupplierSelectState status,String reason){
