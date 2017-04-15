@@ -176,8 +176,10 @@ public class HubCategoryDicService {
 	public HubSupplierCategroyDicDto getSupplierCategoryById(Long id) {
 		return hubSupplierCategroyDicGateWay.selectByPrimaryKey(id);
 	}
-
 	public void updateHubCategoryDicByPrimaryKey(HubSupplierCategroyDicDto dicDto) {
 		hubSupplierCategroyDicGateWay.updateByPrimaryKeySelective(dicDto);
+	}
+	public void deleteHubSupplierCateoryById(Long id) {
+		hubSupplierCategroyDicGateWay.deleteByPrimaryKey(id);
 	}
 }

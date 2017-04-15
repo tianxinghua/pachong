@@ -82,6 +82,7 @@ public class HubWaitSelectedController {
 					if(hubWaitSelectResponseDto.getUpdateTime()!=null){
 						HubWaitSelectResponse.setUpdateTime(sim.format(hubWaitSelectResponseDto.getUpdateTime()));	
 					}
+					HubWaitSelectResponse.setOperateUser(hubWaitSelectResponseDto.getUpdateUser());
 					
 					arr.add(HubWaitSelectResponse);
 				}

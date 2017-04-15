@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.mapp.size.dto;
+package com.shangpin.ephub.product.business.ui.mapp.color.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,15 +14,18 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierSizeDicResponseDto {
+public class HubSupplierColorDicResponseDto {
 	
-	private Long hubSupplierValMappingId;
+	private Long supplierCategoryDicId;
 	private String supplierId;
-	private String hubVal;
-	private String supplierVal;
-	private int sortVal;
-	
+	private String supplierNo;
+	private String supplierName;
+	private String supplierCategory;
+	private String supplierGender;
+	private String hubCategoryNo;
+	 private Byte categoryType;
 	 private String updateTime;
 	 private String createTime;
 	 private String updateUser;
+
 }

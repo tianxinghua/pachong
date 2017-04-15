@@ -66,14 +66,23 @@ public class SupplierService {
      * @throws Exception
      */
 	private SupplierDTO getScmsSupplierInfoByApi(String supplierNo) throws Exception {
-		long start_supplierService = System.currentTimeMillis();
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("supplierNo", supplierNo);
-		String url = apiAddress.getScmsSupplierInfoUrl()+supplierNo;
-		String reSupplierMsg = httpClient.getForObject(url, String.class);
-		SupplierDTO supplierDto = JsonUtil.deserialize2(reSupplierMsg, SupplierDTO.class);
-		log.info("--->请求供应商名称接口耗时{}",System.currentTimeMillis() - start_supplierService);
-		return supplierDto;
+		
+		try{
+			long start_supplierService = System.currentTimeMillis();
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("supplierNo", supplierNo);
+			String url = apiAddress.getScmsSupplierInfoUrl()+supplierNo;
+			log.info("supplierNo:"+supplierNo);
+			String reSupplierMsg = httpClient.getForObject(url, String.class);
+			log.info("reSupplierMsg:"+reSupplierMsg);
+			SupplierDTO supplierDto = JsonUtil.deserialize2(reSupplierMsg, SupplierDTO.class);
+			log.info("--->请求供应商名称接口耗时{}",System.currentTimeMillis() - start_supplierService);
+			return supplierDto;
+		}catch(Exception e){
+			e.getStackTrace();
+			throw e;
+		}
+		
 	}
     /**
      * 将供应商信息缓存到reids

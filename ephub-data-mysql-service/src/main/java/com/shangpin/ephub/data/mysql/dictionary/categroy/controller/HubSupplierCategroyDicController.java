@@ -36,8 +36,8 @@ public class HubSupplierCategroyDicController {
     public int deleteByCriteria(@RequestBody HubSupplierCategroyDicCriteria criteria){
     	return hubSupplierCategroyDicService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long supplierCategoryDicId){
+	@RequestMapping(value = "/delete-by-primary-key/{supplierCategoryDicId}")
+    public int deleteByPrimaryKey(@PathVariable("supplierCategoryDicId") Long supplierCategoryDicId){
     	return hubSupplierCategroyDicService.deleteByPrimaryKey(supplierCategoryDicId);
     }
 	@RequestMapping(value = "/insert")
