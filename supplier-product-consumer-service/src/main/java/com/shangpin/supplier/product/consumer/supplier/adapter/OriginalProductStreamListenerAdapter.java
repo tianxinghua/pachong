@@ -101,6 +101,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("bagheeraHandler")
 	private ISupplierHandler bagheeraHandler;
 	
+	@Autowired
+	@Qualifier("lungolivignoHandler")
+	private ISupplierHandler lungolivignoHandler;
+	
 	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
@@ -572,5 +576,13 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void antonacciStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		antonacciHandler.handleOriginalProduct(message, headers); 
+	}
+	/**
+	 * lungolivigno供应商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void lungolivignoStreamListen(SupplierProduct message, Map<String, Object> headers){
+		lungolivignoHandler.handleOriginalProduct(message, headers); 
 	}
 }

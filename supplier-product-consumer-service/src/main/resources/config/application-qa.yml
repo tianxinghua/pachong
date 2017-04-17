@@ -502,6 +502,15 @@ spring:
                                        maxAttempts: 1
                         antonacciPendingProduct: 
                               destination: antonacci.pending.product
+                              content-type: application/json
+                        lungolivignoOriginalProduct: 
+                              destination: lungolivigno.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1 
+                        lungolivignoPendingProduct: 
+                              destination: lungolivigno.pending.product
                               content-type: application/json                                                                                                                                                                                                                                                                                                                                        
               rabbit: 
                         bindings: 
@@ -992,6 +1001,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               antonacciPendingProduct: 
+                                    producer: 
+                                         prefix: HA.
+                              lungolivignoOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              lungolivignoPendingProduct: 
                                     producer: 
                                          prefix: HA.                                                                                                                                                                                                                                                                                                                                                          
   jackson: 

@@ -118,6 +118,8 @@ public interface OriginalProductSink {
 	public static final String THECLUTCHER = "theclutcherOriginalProduct"; 
 	
 	public static final String ANTONACCI = "antonacciOriginalProduct"; 
+	
+	public static final String LUNGOLIVIGNO = "lungolivignoOriginalProduct";
 	//===============================
 	/**
 	 * 供货商SPINNAKER通道组件配置
@@ -443,4 +445,10 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.ANTONACCI)
 	public SubscribableChannel antonacciOriginalProduct();
+	/**
+	 * 供应商LUNGOLIVIGNO通道组件配置
+	 * @return  LUNGOLIVIGNO通道组件
+	 */
+	@Input(value = OriginalProductSink.LUNGOLIVIGNO)
+	public SubscribableChannel lungolivignoOriginalProduct();
 }
