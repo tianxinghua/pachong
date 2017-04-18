@@ -458,4 +458,44 @@ public class OriginalProductStreamSender {
     public boolean lungolivignoStream(SupplierProduct supplierProduct){
     	return originalProductSource.lungolivigno().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    /**
+     * 发送供应商filippo商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean filippoStream(SupplierProduct supplierProduct){
+    	return originalProductSource.filippo().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商dellaMartira商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean dellaMartiraStream(SupplierProduct supplierProduct){
+    	return originalProductSource.dellaMartira().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商rosiSerli商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean rosiSerliStream(SupplierProduct supplierProduct){
+    	return originalProductSource.rosiSerli().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商mclables商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean mclablesStream(SupplierProduct supplierProduct){
+    	return originalProductSource.rosiSerli().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商emonti商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean emontiStream(SupplierProduct supplierProduct){
+    	return originalProductSource.emonti().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }

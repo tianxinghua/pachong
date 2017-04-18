@@ -119,6 +119,16 @@ public interface OriginalProductSource {
 	public static final String ANTONACCI = "antonacciOriginalProduct"; 
 	
 	public static final String LUNGOLIVIGNO = "lungolivignoOriginalProduct";
+	
+	public static final String FILIPPO = "filippoOriginalProduct";
+	
+	public static final String DELLAMARTIRA = "dellaMartiraOriginalProduct";
+	
+	public static final String ROSISERLI = "rosiSerliOriginalProduct";
+	
+	public static final String MCLABLES = "mclablesOriginalProduct";
+	
+	public static final String EMONTI = "emontiOriginalProduct";
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -449,4 +459,34 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.LUNGOLIVIGNO)
 	public MessageChannel lungolivigno();
+	/**
+	 * 供应商FILIPPO通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.FILIPPO)
+	public MessageChannel filippo();
+	/**
+	 * 供应商DELLAMARTIRA通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.DELLAMARTIRA)
+	public MessageChannel dellaMartira();
+	/**
+	 * 供应商ROSISERLI通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.ROSISERLI)
+	public MessageChannel rosiSerli();
+	/**
+	 * 供应商MCLABLES通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.MCLABLES)
+	public MessageChannel mclables();
+	/**
+	 * 供应商EMONTI通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.EMONTI)
+	public MessageChannel emonti();
 }

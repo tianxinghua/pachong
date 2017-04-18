@@ -172,7 +172,22 @@ spring:
                               content-type: application/json
                         lungolivignoOriginalProduct: 
                               destination: lungolivigno.original.product
-                              content-type: application/json                                                                                                                                                                                                                                            
+                              content-type: application/json 
+                        filippoOriginalProduct: 
+                              destination: filippo.original.product
+                              content-type: application/json
+                        dellaMartiraOriginalProduct: 
+                              destination: dellaMartira.original.product
+                              content-type: application/json
+                        rosiSerliOriginalProduct: 
+                              destination: rosiSerli.original.product
+                              content-type: application/json 
+                        mclablesOriginalProduct: 
+                              destination: mclables.original.product
+                              content-type: application/json  
+                        emontiOriginalProduct: 
+                              destination: emonti.original.product
+                              content-type: application/json                                                                                                                                                                                                                                         
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -339,7 +354,22 @@ spring:
                                            prefix: HA.  
                             lungolivignoOriginalProduct: 
                                   producer: 
-                                           prefix: HA.                                                                                                                                                                                                                                                                                                                      
+                                           prefix: HA.
+                            filippoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            dellaMartiraOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.  
+                            rosiSerliOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            mclablesOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.  
+                            emontiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.                                                                                                                                                                                                                                                                                                                 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
