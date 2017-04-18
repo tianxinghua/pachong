@@ -341,7 +341,13 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                        
+                                       maxAttempts: 1  
+                        lungolivignoPendingProduct: 
+                              destination: lungolivigno.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                      
               rabbit: 
                       bindings: 
                             spinnakerPendingProduct: 
@@ -663,6 +669,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false                                                                                                                                                                                                                                                                                                                 
                             antonacciPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            lungolivignoPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false

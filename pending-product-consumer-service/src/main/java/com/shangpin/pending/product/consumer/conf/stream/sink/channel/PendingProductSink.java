@@ -118,6 +118,8 @@ public interface PendingProductSink {
 	public static final String THECLUTCHER = "theclutcherPendingProduct";
 	
 	public static final String ANTONACCI = "antonacciPendingProduct";
+	
+	public static final String LUNGOLIVIGNO = "lungolivignoPendingProduct";
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -442,4 +444,10 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.ANTONACCI)
 	public SubscribableChannel antonacciPendingProduct();
+	/**
+	 * 供应商LUNGOLIVIGNO通道组件配置
+	 * @return 供货商LUNGOLIVIGNO通道组件
+	 */
+	@Input(value = PendingProductSink.LUNGOLIVIGNO)
+	public SubscribableChannel lungolivignoPendingProduct();
 }

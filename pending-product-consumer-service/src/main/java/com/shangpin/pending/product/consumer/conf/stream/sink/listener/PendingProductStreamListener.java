@@ -510,4 +510,14 @@ public class PendingProductStreamListener {
 	public void antonacciPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.antonacciPendingProductStreamListen(message,headers);
 	}
+	/**
+	 * 供应商LUNGOLIVIGNO待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.LUNGOLIVIGNO)
+	public void lungolivignoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		
+	}
 }

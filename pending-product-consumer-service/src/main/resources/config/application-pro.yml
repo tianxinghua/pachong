@@ -344,7 +344,13 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 1
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                        
+                                       maxAttempts: 1  
+                        lungolivignoPendingProduct: 
+                              destination: lungolivigno.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 1
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                      
               rabbit: 
                       bindings: 
                             spinnakerPendingProduct: 
@@ -670,7 +676,13 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                 
+                                       republishToDlq: false 
+                            lungolivignoPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
