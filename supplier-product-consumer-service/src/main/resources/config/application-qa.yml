@@ -511,7 +511,52 @@ spring:
                                        maxAttempts: 1 
                         lungolivignoPendingProduct: 
                               destination: lungolivigno.pending.product
-                              content-type: application/json                                                                                                                                                                                                                                                                                                                                        
+                              content-type: application/json  
+                        filippoOriginalProduct: 
+                              destination: filippo.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1 
+                        filippoPendingProduct: 
+                              destination: filippo.pending.product
+                              content-type: application/json 
+                        dellaMartiraOriginalProduct: 
+                              destination: dellaMartira.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1 
+                        dellaMartiraPendingProduct: 
+                              destination: dellaMartira.pending.product
+                              content-type: application/json 
+                        rosiSerliOriginalProduct: 
+                              destination: rosiSerli.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1 
+                        rosiSerliPendingProduct: 
+                              destination: rosiSerli.pending.product
+                              content-type: application/json  
+                        mclablesOriginalProduct: 
+                              destination: mclables.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1 
+                        mclablesPendingProduct: 
+                              destination: mclables.pending.product
+                              content-type: application/json  
+                        emontiOriginalProduct: 
+                              destination: emonti.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        emontiPendingProduct: 
+                              destination: emonti.pending.product
+                              content-type: application/json                                                                                                                                                                                                                                                                                                                                
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -1011,7 +1056,52 @@ spring:
                                          republishToDlq: false
                               lungolivignoPendingProduct: 
                                     producer: 
-                                         prefix: HA.                                                                                                                                                                                                                                                                                                                                                          
+                                         prefix: HA.
+                              filippoOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              filippoPendingProduct: 
+                                    producer: 
+                                         prefix: HA.
+                              dellaMartiraOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false 
+                              dellaMartiraPendingProduct: 
+                                    producer: 
+                                         prefix: HA.
+                              rosiSerliOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              rosiSerliPendingProduct: 
+                                    producer: 
+                                         prefix: HA.     
+                              mclablesOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              mclablesPendingProduct: 
+                                    producer: 
+                                         prefix: HA.   
+                              emontiOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false 
+                              emontiPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                                                                                                                                                                                                                                                                                                                                  
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8

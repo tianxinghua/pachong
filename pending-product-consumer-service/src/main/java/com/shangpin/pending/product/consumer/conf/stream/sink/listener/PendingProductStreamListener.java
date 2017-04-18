@@ -518,6 +518,56 @@ public class PendingProductStreamListener {
 	 */
 	@StreamListener(PendingProductSink.LUNGOLIVIGNO)
 	public void lungolivignoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		
+		adapter.lungolivignoPendingProductStreamListen(message, headers); 
+	}
+	/**
+	 * 供应商FILIPPO待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.FILIPPO)
+	public void filippoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.filippoPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商DELLAMARTIRA待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.DELLAMARTIRA)
+	public void dellaMartiraPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.dellaMartiraPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商ROSISERLI待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.ROSISERLI)
+	public void rosiSerliPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.rosiSerliPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商MCLABLES待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.MCLABLES)
+	public void mclablesPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.mclablesPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商EMONTI待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.EMONTI)
+	public void emontiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.emontiPendingProductStreamListen(message,headers);
 	}
 }

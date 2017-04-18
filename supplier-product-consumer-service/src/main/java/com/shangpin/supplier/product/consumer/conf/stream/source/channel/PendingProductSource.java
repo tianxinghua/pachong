@@ -120,6 +120,16 @@ public interface PendingProductSource {
 	public static final String ANTONACCI = "antonacciPendingProduct"; 
 	
 	public static final String LUNGOLIVIGNO = "lungolivignoPendingProduct";
+	
+	public static final String FILIPPO = "filippoPendingProduct";
+	
+	public static final String DELLAMARTIRA = "dellaMartiraPendingProduct";
+	
+	public static final String ROSISERLI = "rosiSerliPendingProduct";
+	
+	public static final String MCLABLES = "mclablesPendingProduct";
+	
+	public static final String EMONTI = "emontiPendingProduct";
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -450,4 +460,34 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.LUNGOLIVIGNO)
 	public MessageChannel lungolivignoPendingProduct();
+	/**
+	 * 供货商FILIPPO 通道组件配置
+	 * @return 供货商FILIPPO 通道组件
+	 */
+	@Output(value = PendingProductSource.FILIPPO)
+	public MessageChannel filippoPendingProduct();
+	/**
+	 * 供货商DELLAMARTIRA 通道组件配置
+	 * @return 供货商DELLAMARTIRA 通道组件
+	 */
+	@Output(value = PendingProductSource.DELLAMARTIRA)
+	public MessageChannel dellaMartiraPendingProduct();
+	/**
+	 * 供货商ROSISERLI 通道组件配置
+	 * @return 供货商ROSISERLI 通道组件
+	 */
+	@Output(value = PendingProductSource.ROSISERLI)
+	public MessageChannel rosiSerliPendingProduct();
+	/**
+	 * 供货商MCLABLES 通道组件配置
+	 * @return 供货商MCLABLES 通道组件
+	 */
+	@Output(value = PendingProductSource.MCLABLES)
+	public MessageChannel mclablesPendingProduct();
+	/**
+	 * 供货商EMONTI 通道组件配置
+	 * @return 供货商EMONTI 通道组件
+	 */
+	@Output(value = PendingProductSource.EMONTI)
+	public MessageChannel emontiPendingProduct();
 }

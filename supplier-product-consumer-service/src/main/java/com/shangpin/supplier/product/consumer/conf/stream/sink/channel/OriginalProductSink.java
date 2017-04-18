@@ -120,6 +120,16 @@ public interface OriginalProductSink {
 	public static final String ANTONACCI = "antonacciOriginalProduct"; 
 	
 	public static final String LUNGOLIVIGNO = "lungolivignoOriginalProduct";
+	
+	public static final String FILIPPO = "filippoOriginalProduct";
+	
+	public static final String DELLAMARTIRA = "dellaMartiraOriginalProduct";
+	
+	public static final String ROSISERLI = "rosiSerliOriginalProduct";
+	
+	public static final String MCLABLES = "mclablesOriginalProduct";
+	
+	public static final String EMONTI = "emontiOriginalProduct";
 	//===============================
 	/**
 	 * 供货商SPINNAKER通道组件配置
@@ -451,4 +461,34 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.LUNGOLIVIGNO)
 	public SubscribableChannel lungolivignoOriginalProduct();
+	/**
+	 * 供应商FILIPPO通道组件配置
+	 * @return FILIPPO通道组件
+	 */ 
+	@Input(value = OriginalProductSink.FILIPPO)
+	public SubscribableChannel filippoOriginalProduct();
+	/**
+	 * 供应商DELLAMARTIRA通道组件配置
+	 * @return DELLAMARTIRA通道组件
+	 */
+	@Input(value = OriginalProductSink.DELLAMARTIRA)
+	public SubscribableChannel dellaMartiraOriginalProduct();
+	/**
+	 * 供应商ROSISERLI通道组件配置
+	 * @return ROSISERLI通道组件
+	 */
+	@Input(value = OriginalProductSink.ROSISERLI)
+	public SubscribableChannel rosiSerliOriginalProduct();
+	/**
+	 * 供应商MCLABLES通道组件配置
+	 * @return MCLABLES通道组件
+	 */
+	@Input(value = OriginalProductSink.MCLABLES)
+	public SubscribableChannel mclablesOriginalProduct();
+	/**
+	 * 供应商EMONTI通道组件配置
+	 * @return EMONTI通道组件
+	 */
+	@Input(value = OriginalProductSink.EMONTI)
+	public SubscribableChannel emontiOriginalProduct();
 }
