@@ -221,6 +221,9 @@ public class SupplierProductMysqlService {
 	 * @return
 	 */
 	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) throws Exception {
+		if(StringUtils.isEmpty(hubSpu.getSupplierId()) || StringUtils.isEmpty(hubSpu.getSupplierSpuNo())){
+			throw new Exception("产品信息异常。"); 
+		}
 		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
 		criteriaDto.createCriteria().andSupplierIdEqualTo(hubSpu.getSupplierId()).andSupplierSpuNoEqualTo(hubSpu.getSupplierSpuNo());
 		List<HubSupplierSpuDto> hubSpus = hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
