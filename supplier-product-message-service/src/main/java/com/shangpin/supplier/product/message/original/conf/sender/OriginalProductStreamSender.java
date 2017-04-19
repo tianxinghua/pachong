@@ -83,6 +83,22 @@ public class OriginalProductStreamSender {
     	return originalProductSource.geb().send(MessageBuilder.withPayload(supplierProduct).build());
     }
     /**
+     * 发送供应商paloma商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean palomaStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.paloma().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商lamborghini商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean lamborghiniStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.lamborghini().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
      * 发送供应商pozzilei商品流数据
      * @param supplierProduct 消息体
      * @return 如果发送成功返回true,否则返回false

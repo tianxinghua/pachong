@@ -23,6 +23,12 @@ spring:
                         gebOriginalProduct: 
                               destination: geb.original.product
                               content-type: application/json
+                        palomaOriginalProduct: 
+                              destination: paloma.original.product
+                              content-type: application/json
+                        lamborghiniOriginalProduct: 
+                              destination: lamborghini.original.product
+                              content-type: application/json
                         coltortiOriginalProduct: 
                               destination: coltorti.original.product
                               content-type: application/json
@@ -185,6 +191,12 @@ spring:
                                   producer: 
                                            prefix: HA.
                             gebOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            palomaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            lamborghiniOriginalProduct: 
                                   producer: 
                                            prefix: HA.
                             coltortiOriginalProduct: 

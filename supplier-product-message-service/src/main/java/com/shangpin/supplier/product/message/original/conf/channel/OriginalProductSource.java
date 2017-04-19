@@ -20,6 +20,8 @@ public interface OriginalProductSource {
 	public static final String STEFANIA = "stefaniaOriginalProduct";
 	
 	public static final String GEB = "gebOriginalProduct";
+	public static final String PALOMA = "palomaOriginalProduct";
+	public static final String LAMBORGHINI = "lamborghiniOriginalProduct";
 	
 	public static final String COLTORTI = "coltortiOriginalProduct";
 	
@@ -142,11 +144,23 @@ public interface OriginalProductSource {
 	@Output(value = OriginalProductSource.STEFANIA)
     public MessageChannel stefania();
 	/**
+	 * 供货商LAMBORGHINI通道组件配置
+	 * @return 供货商LAMBORGHINI通道组件
+	 */
+	@Output(value = OriginalProductSource.LAMBORGHINI)
+    public MessageChannel lamborghini();
+	/**
+	 * 供货商PALOMA通道组件配置
+	 * @return 供货商PALOMA通道组件
+	 */
+	@Output(value = OriginalProductSource.PALOMA)
+	public MessageChannel paloma();
+	/**
 	 * 供货商GEB通道组件配置
 	 * @return 供货商GEB通道组件
 	 */
 	@Output(value = OriginalProductSource.GEB)
-    public MessageChannel geb();
+	public MessageChannel geb();
 	/**
 	 * 供货商COLTORTI通道组件配置
 	 * @return 供货商COLTORTI通道组件
