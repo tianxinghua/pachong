@@ -3,8 +3,11 @@ package com.shangpin.pending.product.consumer.supplier.common;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
+import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -28,26 +31,36 @@ public class PendingCommonHandler {
     private IShangpinRedis shangpinRedis;
 
     static Integer isCurrentMin  =   DateUtils.getCurrentMin();
-
-    public  String  getSpCategoryValue(String supplierCategory) throws Exception {
-        //先判断设置的时间是否有值  无值得话  品类重新处理
-        String timeSign = shangpinRedis.get(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME_KEY);
-        if(StringUtils.isBlank(timeSign)){
-//            shangpinRedis.hdel(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY);
+//	
+    public  Map<String, String>  getSpCategoryValue(String supplierId) throws Exception {
+    	
+        //先判断设置的是否有值  无值得话  品类重新处理
+//    	shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY);
+    	Map<String, String> supplierMap = shangpinRedis.hgetAll(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY);
+        if(supplierMap==null||supplierMap.size()<1){
+        	log.info("redis为空");
             Map<String, String>  categoryMap = new HashMap<>() ;
-            List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler
-                    .getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_CATEGORY.getIndex());
-            if (null != supplierValueMappingDtos && supplierValueMappingDtos.size() > 0) {
-                for (HubSupplierValueMappingDto dto : supplierValueMappingDtos) {
-                    if (StringUtils.isBlank(dto.getSupplierVal()))    continue;
-                    categoryMap.put( dto.getSupplierVal().trim().toUpperCase(),  dto.getHubVal());
+            List<HubSupplierCategroyDicDto> supplierCategoryMappingDtos = dataServiceHandler
+                    .getAllSupplierCategoryBySupplierId(supplierId);
+            if (null != supplierCategoryMappingDtos && supplierCategoryMappingDtos.size() > 0) {
+            	String spCategory = "";
+                for (HubSupplierCategroyDicDto dto : supplierCategoryMappingDtos) {
+                	 if (StringUtils.isBlank(dto.getSupplierCategory()))
+                         continue;
+                     if (StringUtils.isBlank(dto.getSupplierGender()))
+                         continue;
+                     spCategory = (null == dto.getHubCategoryNo() ? "" : dto.getHubCategoryNo());
+                     categoryMap.put(
+                             dto.getSupplierCategory().trim().toUpperCase() + "_"
+                                     + dto.getSupplierGender().trim().toUpperCase(),
+                             spCategory + "_" + dto.getMappingState());
                 }
-                shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,categoryMap);
-                shangpinRedis.setex(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000,"1");
-                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
+                shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY,categoryMap);
+                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
             }
+            return categoryMap;
         }
-        return getSpCategoryValueFromRedis(supplierCategory);
+        return supplierMap;
 
     }
 
@@ -65,7 +78,7 @@ public class PendingCommonHandler {
     }
 
     private String  getSpCategoryValueFromRedis(String supplierCategory){
-        List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,supplierCategory) ;
+        List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,supplierCategory.trim().toUpperCase()) ;
         if(null!=mapValue&&mapValue.size()>0){
             return mapValue.get(0);
         }else{
@@ -86,6 +99,31 @@ public class PendingCommonHandler {
         } else {
             return false;
         }
-
+    }
+    
+    public boolean getMap(PendingSpu spu,HubSpuPendingDto hubSpuPending) throws Exception{
+    	 boolean result = true;
+         String categoryAndStatus = "";
+         Integer mapStatus = 0;
+    	 Map<String, String> categoryMappingMap = this.getSpCategoryValue(spu.getSupplierId());
+         if (categoryMappingMap.containsKey(
+        		 spu.getHubCategoryNo().trim().toUpperCase() + "_" + spu.getHubGender().trim().toUpperCase())) {
+             // 包含时转化赋值
+             categoryAndStatus = categoryMappingMap.get(
+            		 spu.getHubCategoryNo().trim().toUpperCase() + "_" + spu.getHubGender().trim().toUpperCase());
+             if (categoryAndStatus.contains("_")) {
+                 hubSpuPending.setHubCategoryNo(categoryAndStatus.substring(0, categoryAndStatus.indexOf("_")));
+                 mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_") + 1));
+                 hubSpuPending.setCatgoryState(mapStatus.byteValue());
+                 if(hubSpuPending.getCatgoryState().intValue()!=PropertyStatus.MESSAGE_HANDLED.getIndex()){
+                     //未达到4级品类
+                     result = false;
+                 }
+             } else {
+                 result = false;
+                 hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+             }
+         } 
+         return result;
     }
 }

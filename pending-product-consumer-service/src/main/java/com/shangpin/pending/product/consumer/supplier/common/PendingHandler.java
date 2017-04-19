@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
@@ -32,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
@@ -52,6 +54,9 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPend
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
+import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
@@ -83,6 +88,8 @@ public class PendingHandler extends VariableInit {
 
 	@Autowired
 	DataOfPendingServiceHandler dataOfPendingServiceHandler;
+	@Autowired
+	MatchSizeGateWay matchSizeGateWay;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -156,13 +163,15 @@ public class PendingHandler extends VariableInit {
 				for (PendingSku supplierSku : skuList) {
 					HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(supplierSku.getSupplierId(),
 							supplierSku.getSupplierSkuNo());
-					dataSverviceUtil.delSupplierSizeMapping(supplierSku.getSupplierId());
 					if (null == hubSkuPending) {
 						byte filterFlag = FilterFlag.EFFECTIVE.getIndex();
 						SpuPending hubSpuPending = new SpuPending();
 						BeanUtils.copyProperties(spuPendingDto, hubSpuPending);
 						this.addNewSku(hubSpuPending, spu, supplierSku, null, filterFlag);
 					} else {
+						if(hubSkuPending.getSpSkuSizeState()!=null&&hubSkuPending.getSpSkuSizeState()==1){
+							continue ;
+						}
 						HubSkuPendingDto updateSkuPending = new HubSkuPendingDto();
 						Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(hubSkuPending.getSupplierId());
 						if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
@@ -173,6 +182,17 @@ public class PendingHandler extends VariableInit {
 								updateSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
 								updateSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
 							} else{
+//								MatchSizeResult matchSizeResult = null;
+//								if(spuPendingDto.getCatgoryState()!=null&&spuPendingDto.getSpuBrandState()!=null&&spuPendingDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()&&spuPendingDto.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
+//									MatchSizeDto match = new MatchSizeDto();
+//									match.setHubBrandNo(spuPendingDto.getHubBrandNo());
+//									match.setHubCategoryNo(spuPendingDto.getHubCategoryNo());
+//									match.setSize(spSizeTypeAndSize);
+//									matchSizeResult = matchSizeGateWay.matchSize(match);
+//									if(matchSizeResult!=null&&matchSizeResult.isPassing()){
+//										updateSkuPending.setHubSkuSizeType(matchSizeResult.getSizeType());
+//									}
+//								}
 								updateSkuPending.setHubSkuSize(spSizeTypeAndSize);
 							}
 							updateSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
@@ -180,7 +200,9 @@ public class PendingHandler extends VariableInit {
 							updateSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
 						}
 						// 品牌和品类都已匹配上 尺码未匹配上
-						log.info("===供应商spuPendingId:" + updateSkuPending.getSkuPendingId() + "映射hub品类刷新:"
+						updateSkuPending.setSkuPendingId(hubSkuPending.getSkuPendingId());
+						dataServiceHandler.updateSkuPengding(updateSkuPending);
+						log.info("===供应商spuPendingId:" + updateSkuPending.getSkuPendingId() + "映射hub尺码刷新:"
 								+ supplierSku.getHubSkuSize() + "==>" + updateSkuPending.getHubSkuSize());
 					}
 				}
@@ -192,16 +214,14 @@ public class PendingHandler extends VariableInit {
 	//刷新品类
 	private void refreshPendingCategory(PendingSpu spu,HubSpuPendingDto spuPendingDto) throws Exception{
 		
-		supplierCategoryMappingStaticMap = null;
 		if(null != spuPendingDto){
 			if(checkSpuPendingIsRefresh(spu)){
 				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 				// 获取品类
-				if(setCategoryMapping(spu, updateSpuPending)){
+				pendingCommonHandler.getMap(spu, updateSpuPending);
 					dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
 					log.info("===供应商spuPendingId:"+spuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+spuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
 				}
-			}
 		}else{
 			saveAndRefreshPending(spu);
 		}
@@ -225,8 +245,7 @@ public class PendingHandler extends VariableInit {
 	private boolean checkSpuPendingIsRefresh(HubSpuPendingDto spuPendingDto){
 		
 		if (null != spuPendingDto&&(spuPendingDto.getSpuState() != null
-				&& (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()
-				|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLING.getIndex()
+				&& (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLING.getIndex()
 				|| spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()))) {
 				return false;
 		} 

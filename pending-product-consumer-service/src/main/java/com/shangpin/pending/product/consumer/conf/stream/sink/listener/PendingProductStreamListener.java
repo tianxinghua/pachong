@@ -56,10 +56,28 @@ public class PendingProductStreamListener {
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
-	@StreamListener(PendingProductSink.GEB)
-    public void gebPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+	@StreamListener(PendingProductSink.paloma)
+    public void palomaPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.gebPendingProductStreamListen(message,headers);
     }
+	/**
+	 * 供应商GEB待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.lamborghini)
+	public void lamborghiniPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.gebPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商GEB待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.GEB)
+	public void gebPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.gebPendingProductStreamListen(message,headers);
+	}
 	/**
 	 * 供应商OSTORE待处理商品数据流通道监听者
 	 * @param message 消息
