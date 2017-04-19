@@ -48,6 +48,18 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        lamborghiniPendingProduct: 
+                              destination: lamborghini.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        palomaPendingProduct: 
+                              destination: paloma.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         coltortiPendingProduct: 
                               destination: coltorti.pending.product
                               group: one
@@ -405,6 +417,18 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             gebPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            palomaPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            lamborghiniPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false

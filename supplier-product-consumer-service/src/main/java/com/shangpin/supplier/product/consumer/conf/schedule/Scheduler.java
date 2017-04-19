@@ -22,15 +22,15 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0/30 * * * * ?")
-	public void pictureTask() {
-		try {
-			supplierProductPictureService.processProduct((byte)4);
-		} catch (Throwable e) {
-			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
-			e.printStackTrace();
-		}
-	}
+//	@Scheduled(cron = "0/30 * * * * ?")
+//	public void pictureTask() {
+//		try {
+//			supplierProductPictureService.processProduct((byte)4);
+//		} catch (Throwable e) {
+//			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
+//			e.printStackTrace();
+//		}
+//	}
 	
 	@Scheduled(cron = "0/30 * * * * ?")
 	public void modelTask() {
@@ -42,7 +42,7 @@ public class Scheduler {
 		}
 	}
 	
-	@Scheduled(cron = "0/30 * * * * ?")
+//	@Scheduled(cron = "0/30 * * * * ?")
 	public void smodelTask() {
 		try {
 			supplierProductPictureService.processProduct((byte)6);

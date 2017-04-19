@@ -20,6 +20,8 @@ public interface OriginalProductSink {
 	public static final String STEFANIA = "stefaniaOriginalProduct";
 	
 	public static final String GEB = "gebOriginalProduct";
+	public static final String paloma = "palomaOriginalProduct";
+	public static final String lamborghini = "lamborghiniOriginalProduct";
 	
 	public static final String COLTORTI = "coltortiOriginalProduct";
 	
@@ -156,11 +158,23 @@ public interface OriginalProductSink {
 	@Input(value = OriginalProductSink.STEFANIA)
     public SubscribableChannel stefaniaOriginalProduct();
 	/**
+	 * 供货商lamborghini通道组件配置
+	 * @return lamborghini通道组件
+	 */
+	@Input(value = OriginalProductSink.lamborghini)
+    public SubscribableChannel lamborghiniOriginalProduct();
+	/**
+	 * 供货商paloma通道组件配置
+	 * @return paloma通道组件
+	 */
+	@Input(value = OriginalProductSink.paloma)
+	public SubscribableChannel palomaOriginalProduct();
+	/**
 	 * 供货商GEB通道组件配置
 	 * @return GEB通道组件
 	 */
 	@Input(value = OriginalProductSink.GEB)
-    public SubscribableChannel gebOriginalProduct();
+	public SubscribableChannel gebOriginalProduct();
 	/**
 	 * 供货商COLTORTI通道组件配置
 	 * @return COLTORTI通道组件
