@@ -41,7 +41,7 @@ public class HubSizeDicService extends HubSupplierValueMappingService{
 			//供应商、全局尺码映射
 			criterion.andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
 		}
-		if(hubSupplierSizeDicRequestDto.getSupplierVal()!=null){
+		if(StringUtils.isNotBlank(hubSupplierSizeDicRequestDto.getSupplierVal())){
 			criterion.andSupplierValEqualTo(hubSupplierSizeDicRequestDto.getSupplierVal());
 		}
 //		criterion.andMappingTypeEqualTo(hubSupplierSizeDicRequestDto.getMappingType());
@@ -67,7 +67,7 @@ public class HubSizeDicService extends HubSupplierValueMappingService{
 			//供应商、全局尺码映射
 			criterion.andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(index.byteValue());
 		}
-		if(hubSupplierSizeDicRequestDto.getSupplierVal()!=null){
+		if(StringUtils.isNotBlank(hubSupplierSizeDicRequestDto.getSupplierVal())){
 			criterion.andSupplierValEqualTo(hubSupplierSizeDicRequestDto.getSupplierVal());
 		}
 //		criterion.andMappingTypeEqualTo(hubSupplierSizeDicRequestDto.getMappingType());
