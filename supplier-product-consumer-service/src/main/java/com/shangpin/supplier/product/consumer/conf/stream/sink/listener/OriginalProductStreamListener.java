@@ -529,4 +529,64 @@ public class OriginalProductStreamListener {
 	public void antonacciStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.antonacciStreamListen(message,headers);
 	}
+	/**
+	 * 供应商LUNGOLIVIGNO原始数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.LUNGOLIVIGNO)
+	public void lungolivignoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.lungolivignoStreamListen(message, headers); 
 	}
+	/**
+	 * 供应商FILIPPO原始数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.FILIPPO)
+	public void filippoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.filippoStreamListen(message, headers); 
+	}
+	/**
+	 * 供应商DELLAMARTIRA原始数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.DELLAMARTIRA)
+	public void dellaMartiraStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.dellaMartiraStreamListen(message, headers);
+	}
+	/**
+	 * 供应商ROSISERLI原始数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.ROSISERLI)
+	public void rosiSerliStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.rosiSerliStreamListen(message, headers);
+	}
+	/**
+	 * 供应商MCLABLES原始数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.MCLABLES)
+	public void mclablesStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.mclablesStreamListen(message, headers);
+	}
+	/**
+	 * 供应商EMONTI原始数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.EMONTI)
+	public void emontiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.emontiStreamListen(message, headers);
+	}
+}

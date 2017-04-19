@@ -2,25 +2,12 @@ package com.shangpin.ep.order.module.orderapiservice.impl;
 
 
 
-import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.xml.bind.JAXBException;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.transport.http.HttpTransportProperties;
-import org.apache.axis2.transport.http.impl.httpclient4.HttpTransportPropertiesImpl.Authenticator;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
@@ -36,7 +23,6 @@ import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub.CancelOrder;
 import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub.CancelOrderResponse;
 import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub.CreateNewOrder;
 import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub.CreateNewOrderResponse;
-import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 import com.shangpin.ep.order.util.xml.ObjectXMLUtil;
 
 /**
@@ -154,7 +140,7 @@ public class Studio69Serviceimpl implements IOrderService{
 		orderDTO.setLogContent("下单返回结果============="+result.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		Response response = ObjectXMLUtil.xml2Obj(Response.class, result.toString());
-		if("Success".equals(response.getResult())){
+		if("Success".equals(response.getResult()) || "Order ID Exist".equals(response.getResult())){
 			orderDTO.setConfirmTime(new Date()); 
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
 		}else if("Failed".equals(response.getResult()) && "Goods Stock doesn't enough".equals(response.getMessage())){//库存不足

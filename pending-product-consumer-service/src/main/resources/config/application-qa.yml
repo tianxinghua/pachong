@@ -353,7 +353,43 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                        
+                                       maxAttempts: 1 
+                        lungolivignoPendingProduct: 
+                              destination: lungolivigno.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1  
+                        filippoPendingProduct: 
+                              destination: filippo.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1  
+                        dellaMartiraPendingProduct: 
+                              destination: dellaMartira.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1 
+                        rosiSerliPendingProduct: 
+                              destination: rosiSerli.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1   
+                        mclablesPendingProduct: 
+                              destination: mclables.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1  
+                        emontiPendingProduct: 
+                              destination: emonti.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                             
               rabbit: 
                       bindings: 
                             spinnakerPendingProduct: 
@@ -691,7 +727,43 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                 
+                                       republishToDlq: false 
+                            lungolivignoPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false 
+                            filippoPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false  
+                            dellaMartiraPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false  
+                            rosiSerliPendingProduct:
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false  
+                            mclablesPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            emontiPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                                                                                                                                                                                                                                                                                         
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
