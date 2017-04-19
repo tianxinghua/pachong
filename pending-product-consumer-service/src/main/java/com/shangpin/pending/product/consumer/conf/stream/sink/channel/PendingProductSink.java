@@ -118,6 +118,18 @@ public interface PendingProductSink {
 	public static final String THECLUTCHER = "theclutcherPendingProduct";
 	
 	public static final String ANTONACCI = "antonacciPendingProduct";
+	
+	public static final String LUNGOLIVIGNO = "lungolivignoPendingProduct";
+	
+	public static final String FILIPPO = "filippoPendingProduct";
+	
+	public static final String DELLAMARTIRA = "dellaMartiraPendingProduct";
+	
+	public static final String ROSISERLI = "rosiSerliPendingProduct";
+	
+	public static final String MCLABLES = "mclablesPendingProduct";
+	
+	public static final String EMONTI = "emontiPendingProduct";
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -442,4 +454,40 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.ANTONACCI)
 	public SubscribableChannel antonacciPendingProduct();
+	/**
+	 * 供应商LUNGOLIVIGNO通道组件配置
+	 * @return 供货商LUNGOLIVIGNO通道组件
+	 */
+	@Input(value = PendingProductSink.LUNGOLIVIGNO)
+	public SubscribableChannel lungolivignoPendingProduct();
+	/**
+	 * 供应商FILIPPO通道组件配置
+	 * @return 供货商FILIPPO通道组件
+	 */
+	@Input(value = PendingProductSink.FILIPPO)
+	public SubscribableChannel filippoPendingProduct();
+	/**
+	 * 供应商DELLAMARTIRA通道组件配置
+	 * @return 供货商DELLAMARTIRA通道组件
+	 */
+	@Input(value = PendingProductSink.DELLAMARTIRA)
+	public SubscribableChannel dellaMartiraPendingProduct();
+	/**
+	 * 供应商ROSISERLI通道组件配置
+	 * @return 供货商ROSISERLI通道组件
+	 */
+	@Input(value = PendingProductSink.ROSISERLI)
+	public SubscribableChannel rosiSerliPendingProduct();
+	/**
+	 * 供应商MCLABLES通道组件配置
+	 * @return 供货商MCLABLES通道组件
+	 */
+	@Input(value = PendingProductSink.MCLABLES)
+	public SubscribableChannel mclablesPendingProduct();
+	/**
+	 * 供应商EMONTI通道组件配置
+	 * @return 供货商EMONTI通道组件
+	 */
+	@Input(value = PendingProductSink.EMONTI)
+	public SubscribableChannel emontiPendingProduct();
 }

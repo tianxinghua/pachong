@@ -120,7 +120,8 @@ public class GiglioServiceImpl implements IOrderService{
 		List<String> addTo = new ArrayList<>();
 		addTo.add("fabio@giglio.com");
 		addTo.add("wangsaying@shangpin.com");
-		addTo.add("lubaijiang@shangpin.com");
+		//addTo.add("lubaijiang@shangpin.com");
+		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}

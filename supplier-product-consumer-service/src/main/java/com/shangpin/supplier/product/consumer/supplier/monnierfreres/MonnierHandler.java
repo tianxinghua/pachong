@@ -152,12 +152,35 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			String size = null;
-			size = item.getSize();
 			String supplierSkuNo = item.getSku();
 			hubSku.setSupplierSkuNo(supplierSkuNo);
 			hubSku.setSupplierSkuName(item.getName());
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice_before_discount())));
 			hubSku.setMarketPriceCurrencyorg("EUR");
+			if(supplierSkuNo.length()==12){
+				size = supplierSkuNo.substring(9);
+				if(size.endsWith("0")){
+					size = size.substring(0, 2);
+				}else{
+					size = size.substring(0,2)+"."+size.substring(2);	
+				}
+				if(size.startsWith("0")){
+					size = size.substring(1);
+				}
+				Double d1 = new Double(9);
+				Double d2 = new Double(11);
+				if(d1.compareTo(Double.parseDouble(size))<0&&d2.compareTo(Double.parseDouble(size))>0){
+					log.info("【supplierSkuNo:"+supplierSkuNo+"尺码大于9小于11被排除");
+					return false;	
+				}
+				Double d3 = new Double(39);
+				if(d3.compareTo(Double.parseDouble(size))<0){
+					log.info("【supplierSkuNo:"+supplierSkuNo+"尺码大于39被排除");
+					return false;	
+				}
+			}else{
+				size = item.getSize();
+			}
 			hubSku.setSupplierSkuSize(size);
 			hubSku.setStock(StringUtil.verifyStock(item.getQty()));
 			return true;

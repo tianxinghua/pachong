@@ -452,4 +452,58 @@ public class PendingProductStreamSender {
     public boolean antonacciPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
     	return pendingProductSource.antonacciPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean lungolivignoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.lungolivignoPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct
+     * @param headers
+     * @return
+     */
+    public boolean filippoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.filippoPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean dellaMartiraPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.dellaMartiraPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean rosiSerliPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.rosiSerliPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean mclablesPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.mclablesPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean emontiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.emontiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
 }

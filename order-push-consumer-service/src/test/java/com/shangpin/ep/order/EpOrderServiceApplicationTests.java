@@ -53,13 +53,18 @@ public class EpOrderServiceApplicationTests {
 //	@Test
 //	public void contextLoads() throws Exception {
 //		
-////		ShangpinMail shangpinMail = new ShangpinMail();
-////		shangpinMail.setText("这是一封测试邮件");
-////		shangpinMailSender.sendShangpinMail(shangpinMail );
-//		
-////		OrderDTO orderDTO = new OrderDTO();
-////		orderDTO.setMessageId("GADFA4545");
-////		LogCommon.loggerOrder(orderDTO ,LogLeve.INFO);
+//		ShangpinMail shangpinMail = new ShangpinMail();
+//		shangpinMail.setFrom("chengxu@shangpin.com");
+//		shangpinMail.setSubject("这是一份测试邮件，请忽略");
+//		shangpinMail.setText("这是一份测试邮件，请忽略.This is a test email,please ignore");
+//		shangpinMail.setTo("lubaijiang@shangpin.com");
+//		List<String> addTo = new ArrayList<>();
+////		addTo.add("fabio@giglio.com");
+//		addTo.add("wangsaying@shangpin.com");
+//		addTo.add("123@shangpin.com");
+//		addTo.add("steven.ding@shangpin.com");
+//		shangpinMail.setAddTo(addTo );
+//		shangpinMailSender.sendShangpinMail(shangpinMail);
 //		
 //		
 //	}

@@ -101,6 +101,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("bagheeraHandler")
 	private ISupplierHandler bagheeraHandler;
 	
+	@Autowired
+	@Qualifier("lungolivignoHandler")
+	private ISupplierHandler lungolivignoHandler;
+	
 	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
@@ -572,5 +576,53 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void antonacciStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		antonacciHandler.handleOriginalProduct(message, headers); 
+	}
+	/**
+	 * lungolivigno供应商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void lungolivignoStreamListen(SupplierProduct message, Map<String, Object> headers){
+		lungolivignoHandler.handleOriginalProduct(message, headers); 
+	}
+	/**
+	 * filippo供应商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void filippoStreamListen(SupplierProduct message, Map<String, Object> headers){
+		//TODO
+	}
+	/**
+	 * dellaMartira供应商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void dellaMartiraStreamListen(SupplierProduct message, Map<String, Object> headers){
+		//TODO 
+	}
+	/**
+	 * rosiSerli供应商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void rosiSerliStreamListen(SupplierProduct message, Map<String, Object> headers){
+		//TOOD 
+	}
+	/**
+	 * mclables供应商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void mclablesStreamListen(SupplierProduct message, Map<String, Object> headers){
+		//TODO 
+	}
+	/**
+	 * emonti供应商原始数据监听方法
+	 * @param message
+	 * @param headers
+	 */
+	public void emontiStreamListen(SupplierProduct message, Map<String, Object> headers){
+		//TODO
 	}
 }
