@@ -16,16 +16,12 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSupplierColorDicResponseDto {
 	
-	private Long supplierCategoryDicId;
-	private String supplierId;
-	private String supplierNo;
-	private String supplierName;
-	private String supplierCategory;
-	private String supplierGender;
-	private String hubCategoryNo;
-	 private Byte categoryType;
-	 private String updateTime;
-	 private String createTime;
-	 private String updateUser;
+	private Long colorDicItemId;
+	private Long colorDicId;
+	private String supplierColor;
+	private String hubColor;
+	private String updateTime;
+	private String createTime;
+	private String updateUser;
 
 }

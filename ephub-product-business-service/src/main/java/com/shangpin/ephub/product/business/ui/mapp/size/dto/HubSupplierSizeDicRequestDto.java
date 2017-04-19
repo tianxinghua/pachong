@@ -25,5 +25,7 @@ public class HubSupplierSizeDicRequestDto {
 	private Byte type;
 	private Short sortVal;
 	private String updateUser;
+	private byte mappingType;
+	public byte refreshDicType;
 
 }

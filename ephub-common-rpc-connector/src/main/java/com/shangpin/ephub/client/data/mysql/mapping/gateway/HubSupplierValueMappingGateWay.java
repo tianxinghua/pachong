@@ -28,8 +28,8 @@ public interface HubSupplierValueMappingGateWay {
 	@RequestMapping(value = "/hub-supplier-value-mapping/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSupplierValueMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-supplier-value-mapping/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long valueMappingId);
+	@RequestMapping(value = "/hub-supplier-value-mapping/delete-by-primary-key/{valueMappingId}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("valueMappingId") Long valueMappingId);
 	
 	@RequestMapping(value = "/hub-supplier-value-mapping/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody HubSupplierValueMappingDto hubSupplierValueMapping);
