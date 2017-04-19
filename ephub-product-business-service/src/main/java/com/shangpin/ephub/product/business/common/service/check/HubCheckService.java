@@ -147,8 +147,8 @@ public class HubCheckService {
 		}
 		
 		//校验品类
-		if(StringUtils.isNoneBlank(hubProduct.getHubCategoryNo())){
-			if(!getCategoryName(hubProduct.getHubCategoryNo())){
+		if(StringUtils.isNotBlank(hubProduct.getHubCategoryNo())){
+			if(!hubProduct.getHubCategoryNo().matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}")&&!getCategoryName(hubProduct.getHubCategoryNo())){
 				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 				result.setCategory(false);

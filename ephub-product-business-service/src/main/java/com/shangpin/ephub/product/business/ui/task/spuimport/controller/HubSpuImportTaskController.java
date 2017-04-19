@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -39,7 +39,7 @@ public class HubSpuImportTaskController {
 	        	
 		try {
 			log.info("hub导入接受到的参数："+dto.toString());
-			return taskService.uploadFileAndSave(dto,TaskImportTpye.HUB_PRODUCT);
+			return taskService.uploadFileAndSave(dto,TaskType.HUB_PRODUCT);
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}

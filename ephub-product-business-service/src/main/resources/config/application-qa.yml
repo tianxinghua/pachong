@@ -32,6 +32,9 @@ spring:
                         productExportTask: 
                               destination: product.export.task
                               content-type: application/json
+                        refreshDicTask: 
+                              destination: refresh.dic.task
+                              content-type: application/json
               rabbit: 
                       bindings: 
                             pendingProductImportTask: 
@@ -41,6 +44,9 @@ spring:
                                   producer: 
                                            prefix: HA.
                             productExportTask: 
+                                  producer: 
+                                           prefix: HA.
+                            refreshDicTask: 
                                   producer: 
                                            prefix: HA.
   jackson: 

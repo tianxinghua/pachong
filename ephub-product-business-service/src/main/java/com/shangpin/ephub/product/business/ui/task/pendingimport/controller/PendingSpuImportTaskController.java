@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PendingSpuImportTaskController {
 	@Autowired
-	ProductImportTaskStreamSender productImportTaskStreamSender;
+	TaskStreamSender productImportTaskStreamSender;
 	@Autowired
 	TaskImportService pendingImportTaskService;
 	
@@ -44,7 +44,7 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			log.info("pendingSpu上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SPU);
+			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.PENDING_SPU);
 		} catch (Exception e) {
 			log.error("pendingSpu上传文件失败",e);
 			e.printStackTrace();
@@ -57,7 +57,7 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			log.info("pendingSku上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskImportTpye.PENDING_SKU);
+			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.PENDING_SKU);
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
@@ -76,7 +76,7 @@ public class PendingSpuImportTaskController {
     }
 	@RequestMapping(value = "/test",method = RequestMethod.POST)
 	public HubResponse test(){
-		  ProductImportTask productImportTask = new ProductImportTask();
+		  Task productImportTask = new Task();
 	        productImportTask.setMessageDate(DateTimeUtil.getTime(new Date()));
 	        productImportTask.setMessageId(UUID.randomUUID().toString());
 	        productImportTask.setTaskNo("201701101207");

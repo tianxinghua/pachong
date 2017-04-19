@@ -35,8 +35,8 @@ public class HubSupplierValueMappingController {
     public int deleteByCriteria(@RequestBody HubSupplierValueMappingCriteria criteria){
     	return hubSupplierValueMappingService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long valueMappingId){
+	@RequestMapping(value = "/delete-by-primary-key/{valueMappingId}")
+    public int deleteByPrimaryKey(@PathVariable("valueMappingId") Long valueMappingId){
     	return hubSupplierValueMappingService.deleteByPrimaryKey(valueMappingId);
     }
 	@RequestMapping(value = "/insert")
