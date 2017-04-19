@@ -486,6 +486,7 @@ public class ExportServiceImpl {
 
 	private void setStockTotal(HSSFRow row, PendingProductDto product, Class<?> clazz, int i) {
 		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.setFields("stock");
 		criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuIdEqualTo(product.getSupplierSpuId());
 		criteria.setPageNo(1);
 		criteria.setPageSize(10000);
