@@ -104,6 +104,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("lungolivignoHandler")
 	private ISupplierHandler lungolivignoHandler;
+
+
+
+	@Autowired
+	@Qualifier("dellaHandler")
+	private ISupplierHandler dellaHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -599,7 +605,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void dellaMartiraStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO 
+		dellaHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * rosiSerli供应商原始数据监听方法
