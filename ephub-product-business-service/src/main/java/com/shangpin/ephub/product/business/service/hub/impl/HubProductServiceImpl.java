@@ -85,57 +85,60 @@ public class HubProductServiceImpl implements HubProductService {
 
     @Override
     public void sendHubProuctToScm(HubProductIdDto hubProductIdDto) throws Exception {
-        Long  spuId = hubProductIdDto.getId();
-        List<HubProductIdDto> skus = hubProductIdDto.getSubProduct();
-        @SuppressWarnings("unused")
-		Long skuId = 0L;
-        @SuppressWarnings("unused")
-		Long supplierMappingId = 0L;
-        //推送对象初始化
-        SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
-        ApiProductOrgExtendDom spSpuExtendInfo = new ApiProductOrgExtendDom();//  扩展对象
+        try {
+            Long  spuId = hubProductIdDto.getId();
+            List<HubProductIdDto> skus = hubProductIdDto.getSubProduct();
 
-        //获取HUBSPU
-        HubSpuDto hubSpuDto = hubSpuGateWay.selectByPrimaryKey(spuId);
-        if(null!=hubSpuDto){
-            //scmspu 对象赋值
-            setScmSpu(spSpuInfo, hubSpuDto);
-            //scmspu 扩展对象赋值
-            setScmSpuExtendProperty(spSpuExtendInfo, hubSpuDto);
+            //推送对象初始化
+            SpProductOrgInfoEntity spSpuInfo = new SpProductOrgInfoEntity(); //SCM需要的SPU对象
+            ApiProductOrgExtendDom spSpuExtendInfo = new ApiProductOrgExtendDom();//  扩展对象
 
-            Map<String,Map<String,ApiSkuOrgDom>> supplierSizeMap = new HashMap<>();
-            //scmsku 对方赋值
-            setScmSkuValue(skus, spSpuInfo, hubSpuDto, supplierSizeMap);
+            //获取HUBSPU
+            HubSpuDto hubSpuDto = hubSpuGateWay.selectByPrimaryKey(spuId);
+            if(null!=hubSpuDto){
+                //scmspu 对象赋值
+                setScmSpu(spSpuInfo, hubSpuDto);
+                //scmspu 扩展对象赋值
+                setScmSpuExtendProperty(spSpuExtendInfo, hubSpuDto);
 
-            Set<String> supplierNoSet = supplierSizeMap.keySet();
-            if(null!=supplierNoSet){//以供货商的维度推送数据
-                for(String supplierId :supplierNoSet){
-                    Map<String, ApiSkuOrgDom> apiSkuOrgDomMap = supplierSizeMap.get(supplierId);
+                Map<String,Map<String,ApiSkuOrgDom>> supplierSizeMap = new HashMap<>();
+                //scmsku 对方赋值
+                setScmSkuValue(skus, spSpuInfo, hubSpuDto, supplierSizeMap);
 
-                    List<ApiSkuOrgDom> skuOrgDoms = new ArrayList<>();
-                    Set<Map.Entry<String, ApiSkuOrgDom>> entries = apiSkuOrgDomMap.entrySet();
-                    for(Map.Entry<String,ApiSkuOrgDom> entry:entries){
-                        skuOrgDoms.add(entry.getValue());
+                Set<String> supplierNoSet = supplierSizeMap.keySet();
+                if(null!=supplierNoSet){//以供货商的维度推送数据
+                    for(String supplierId :supplierNoSet){
+                        Map<String, ApiSkuOrgDom> apiSkuOrgDomMap = supplierSizeMap.get(supplierId);
+
+                        List<ApiSkuOrgDom> skuOrgDoms = new ArrayList<>();
+                        Set<Map.Entry<String, ApiSkuOrgDom>> entries = apiSkuOrgDomMap.entrySet();
+                        for(Map.Entry<String,ApiSkuOrgDom> entry:entries){
+                            skuOrgDoms.add(entry.getValue());
+                        }
+
+                        //推送
+                        //---------------------------------- 推送前先调用接口  看是否存在  存在则不用推送
+                        Map<String,SopSkuDto> existSopSkuMap = new HashMap<>();
+                        List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
+                        //处理已经存在的
+                        if(existSkuOrgDoms.size()>0){
+                            log.info("SPSKUNO已存在");
+                            handleExistSku(existSkuOrgDoms,existSopSkuMap,hubSpuDto);
+                        }
+
+                        if(skuOrgDoms.size()>0){
+                            log.info("SPSKUNO 不存在");
+                            handleSendToScm(spSpuInfo, spSpuExtendInfo, skuOrgDoms);
+                        }
+
                     }
-
-                    //推送
-                    //---------------------------------- 推送前先调用接口  看是否存在  存在则不用推送
-                    Map<String,SopSkuDto> existSopSkuMap = new HashMap<>();
-                    List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
-                    //处理已经存在的
-                    if(existSkuOrgDoms.size()>0){
-                        log.info("SPSKUNO已存在");
-                        handleExistSku(existSkuOrgDoms,existSopSkuMap,hubSpuDto);
-                    }
-
-                    if(skuOrgDoms.size()>0){
-                        log.info("SPSKUNO 不存在");
-                        handleSendToScm(spSpuInfo, spSpuExtendInfo, skuOrgDoms);
-                    }
-
                 }
-            }
 
+            }
+        } catch (Exception e) {
+            ObjectMapper mapper = new ObjectMapper();
+            String para = mapper.writeValueAsString(hubProductIdDto);
+            log.error("HubProductServiceImpl.sendHubProuctToScm has exception .Parameter :" + para + " reason :" + e.getMessage(),e);
         }
 
 
@@ -481,15 +484,20 @@ class SendToScmTask implements Runnable{
         	 Log.info("推送scm参数:"+productDto.toString());
             responseDto = sendToScm(productDto);
             Log.info("推送scm返回结果:"+responseDto.toString());
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if(responseDto.getIsSuccess()){  //创建成功
-            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
+        if(null==responseDto){
+            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,"推送SCM时失败");
+        }else{
 
-        }else{ //创建失败
-            updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+            if(responseDto.getIsSuccess()){  //创建成功
+                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()), SupplierSelectState.WAIT_SCM_AUDIT,"");
 
+            }else{ //创建失败
+                updateSkuMappingStatus(Long.valueOf(skuOrg.getSkuOrginalFromId()),SupplierSelectState.SELECTE_FAIL,responseDto.getResMsg());
+
+            }
         }
     }
     private void updateSkuMappingStatus(Long id,SupplierSelectState status,String reason){
