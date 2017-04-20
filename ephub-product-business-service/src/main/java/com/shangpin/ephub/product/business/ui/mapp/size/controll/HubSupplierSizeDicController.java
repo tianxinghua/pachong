@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
@@ -83,34 +84,35 @@ public class HubSupplierSizeDicController {
 				}
 				
 			}
-			int total = 0;
-			total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
-					SupplierValueMappingType.TYPE_SIZE.getIndex());
-			log.info("查询总个数："+total);
-			if (total > 0) {
-				List<HubSupplierValueMappingDto> list = hubSizeDicService
-						.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
-								SupplierValueMappingType.TYPE_SIZE.getIndex());
-				if (list != null && list.size() > 0) {
+		}
+		
+		int total = 0;
+		total = hubSizeDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto,
+				SupplierValueMappingType.TYPE_SIZE.getIndex());
+		log.info("查询总个数："+total);
+		if (total > 0) {
+			List<HubSupplierValueMappingDto> list = hubSizeDicService
+					.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto,
+							SupplierValueMappingType.TYPE_SIZE.getIndex());
+			if (list != null && list.size() > 0) {
 
-					HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
+				HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
 
-					List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
-					for (HubSupplierValueMappingDto dicDto : list) {
-						HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
-						BeanUtils.copyProperties(dicDto, dic);
-						if(dicDto.getCreateTime()!=null){
-							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
-						}
-						if(dicDto.getUpdateTime()!=null){
-							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
-						}
-						responseList.add(dic);
+				List<HubSupplierSizeDicResponseDto> responseList = new ArrayList<HubSupplierSizeDicResponseDto>();
+				for (HubSupplierValueMappingDto dicDto : list) {
+					HubSupplierSizeDicResponseDto dic = new HubSupplierSizeDicResponseDto();
+					BeanUtils.copyProperties(dicDto, dic);
+					if(dicDto.getCreateTime()!=null){
+						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
 					}
-					page.setList(responseList);
-					page.setTotal(total);
-					return HubResponse.successResp(page);
+					if(dicDto.getUpdateTime()!=null){
+						dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+					}
+					responseList.add(dic);
 				}
+				page.setList(responseList);
+				page.setTotal(total);
+				return HubResponse.successResp(page);
 			}
 		}
 		return HubResponse.errorResp("列表页为空");
@@ -187,7 +189,7 @@ public class HubSupplierSizeDicController {
 		Date date = new Date();
 		String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
 		taskImportService.saveTask(taskNo, "尺码映射:"+dto.getSupplierVal()+"=>"+dto.getHubVal(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
-		dto.setRefreshDicType((byte)6);
+		dto.setRefreshDicType(InfoState.RefreshSize.getIndex());
 		taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
 		if(StringUtils.isNotBlank(dto.getSupplierId())){
 			shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY+"_"+dto.getSupplierId());	
