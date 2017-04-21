@@ -147,6 +147,6 @@ public class RegexUtil {
         System.out.println(RegexUtil.specialCategoryMatch("A0123"," 50% 棉 ,100% 面部，快点看看 50%"));
         System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A"," sdkj pvc kkd"));
         System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","PVC"));
-        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","  李重任100% pvc 的"));
+        System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A13B01C01D02","100%pvc"));
     }
 }
