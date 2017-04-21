@@ -25,6 +25,7 @@ public class HubWaitSelectRequest {
     private String startDate;
     private String endDate;
     private String createUser;
+    private String operateUser;
     private List<Byte> supplierSelectState;
     private Byte pictureState;
 }

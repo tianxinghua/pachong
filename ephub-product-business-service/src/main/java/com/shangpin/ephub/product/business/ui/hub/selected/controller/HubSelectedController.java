@@ -90,6 +90,7 @@ public class HubSelectedController {
 					}else{
 						HubWaitSelectResponse.setSkuSize(hubWaitSelectResponseDto.getSkuSize());
 					}
+					HubWaitSelectResponse.setOperateUser(hubWaitSelectResponseDto.getUpdateUser());
 					HubWaitSelectResponse.setUpdateTime(DateTimeUtil.getTime(hubWaitSelectResponseDto.getUpdateTime()));
 					arr.add(HubWaitSelectResponse);
 				}

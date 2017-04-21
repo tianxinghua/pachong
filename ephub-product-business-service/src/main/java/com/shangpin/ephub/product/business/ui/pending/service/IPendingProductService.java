@@ -95,4 +95,11 @@ public interface IPendingProductService {
 	 * @return
 	 */
 	public HubBrandModelRuleDto findHubBrandModelRule(String hubBrandNo);
+	/**
+	 * 更新产品状态为待处理
+	 * @param updateUser 操作人
+	 * @param ids 主键
+	 * @return
+	 */
+	public boolean updateProductToInfoPeccable(String updateUser,List<String> ids);
 }

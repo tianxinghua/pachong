@@ -29,8 +29,8 @@ public interface HubSupplierCategroyDicGateWay {
 	@RequestMapping(value = "/hub-supplier-categroy-dic/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubSupplierCategroyDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-supplier-categroy-dic/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long supplierCategoryDicId);
+	@RequestMapping(value = "/hub-supplier-categroy-dic/delete-by-primary-key/{supplierCategoryDicId}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("supplierCategoryDicId") Long supplierCategoryDicId);
 	
 	@RequestMapping(value = "/hub-supplier-categroy-dic/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody HubSupplierCategroyDicDto hubSupplierCategroyDic);

@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.mapp.category.controll;
+package com.shangpin.ephub.product.business.ui.mapp.color.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +26,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseWithPageDto;
+import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicRequestDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,9 +47,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @SuppressWarnings("rawtypes")
 @RestController
-@RequestMapping("/hub-supplier-category-dic")
+@RequestMapping("/hub-supplier-color-dic")
 @Slf4j
-public class HubSupplierCategoryDicController {
+public class HubSupplierColorDicController {
 	@Autowired
 	HubCategoryDicService hubCategoryDicService;
 	@Autowired
@@ -59,11 +60,11 @@ public class HubSupplierCategoryDicController {
 	SupplierService supplierService;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryList(
-			@RequestBody HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto) {
+			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
 		
 		try {
-			log.info("===品类映射list请求参数：{}",hubSupplierCategoryDicRequestDto);
-			String supplierNo = hubSupplierCategoryDicRequestDto.getSupplierNo();
+			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
+			String supplierNo = hubSupplierColorDicRequestDto.getSupplierNo();
 			String supplierId = null;
 			if(StringUtils.isNotBlank(supplierNo)){
 				SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
@@ -73,11 +74,11 @@ public class HubSupplierCategoryDicController {
 				supplierId = supplierDto.getSopUserNo();
 			}
 			
-			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
+			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierColorDicRequestDto.getCategoryType(),hubSupplierColorDicRequestDto.getSupplierCategory(),hubSupplierColorDicRequestDto.getSupplierGender());
 			log.info("返回个数："+total);
 			if(total>0){
 				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
-						hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
+						hubSupplierColorDicRequestDto.getPageNo(), hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getCategoryType(),hubSupplierColorDicRequestDto.getSupplierCategory(),hubSupplierColorDicRequestDto.getSupplierGender());
 				if (list != null && list.size() > 0) {
 					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
 					for (HubSupplierCategroyDicDto dicDto : list) {
