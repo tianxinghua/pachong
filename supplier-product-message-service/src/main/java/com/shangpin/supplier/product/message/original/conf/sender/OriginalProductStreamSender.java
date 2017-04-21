@@ -504,7 +504,7 @@ public class OriginalProductStreamSender {
      * @return
      */
     public boolean mclablesStream(SupplierProduct supplierProduct){
-    	return originalProductSource.rosiSerli().send(MessageBuilder.withPayload(supplierProduct).build());
+    	return originalProductSource.mclables().send(MessageBuilder.withPayload(supplierProduct).build());
     }
     /**
      * 发送供应商emonti商品流数据
