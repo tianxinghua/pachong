@@ -168,7 +168,7 @@ shangpin:
               openApiKey: 
               openApiSecret: 
       russoCapri: 
-              url: http://95.110.163.155:8580/ws_sito_shang/ws_sito_P15.asmx/
+              url: http://163.172.118.96:8580/ws_sito_shang/ws_sito_P15.asmx/
               createOrderInterface: NewOrderMarketPlace
               setStatusInterface: SetStatusOrderMarketplace
               getStatusInterface: GetStatusOrderMarketplace

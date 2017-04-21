@@ -20,6 +20,8 @@ public interface PendingProductSink {
 	public static final String STEFANIA = "stefaniaPendingProduct";
 	
 	public static final String GEB = "gebPendingProduct";
+	public static final String lamborghini = "lamborghiniPendingProduct";
+	public static final String paloma = "palomaPendingProduct";
 	
 	public static final String COLTORTI = "coltortiPendingProduct";
 	
@@ -155,11 +157,23 @@ public interface PendingProductSink {
 	@Input(value = PendingProductSink.STEFANIA)
     public SubscribableChannel stefaniaPendingProduct();
 	/**
+	 * 供货商paloma通道组件配置
+	 * @return 供货商paloma通道组件
+	 */
+	@Input(value = PendingProductSink.paloma)
+    public SubscribableChannel palomaPendingProduct();
+	/**
 	 * 供货商GEB通道组件配置
 	 * @return 供货商GEB通道组件
 	 */
 	@Input(value = PendingProductSink.GEB)
-    public SubscribableChannel gebPendingProduct();
+	public SubscribableChannel gebPendingProduct();
+	/**
+	 * 供货商lamborghini通道组件配置
+	 * @return 供货商lamborghini通道组件
+	 */
+	@Input(value = PendingProductSink.lamborghini)
+	public SubscribableChannel lamborghiniPendingProduct();
 	/**
 	 * 供货商COLTORTI通道组件配置
 	 * @return 供货商COLTORTI通道组件
