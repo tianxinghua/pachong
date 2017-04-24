@@ -110,6 +110,11 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("dellaHandler")
 	private ISupplierHandler dellaHandler;
+
+
+	@Autowired
+	@Qualifier("emontiHandler")
+	private ISupplierHandler emontiHandler;
 	
 	/**
 	 * 此队列重名，未使用
@@ -629,6 +634,6 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void emontiStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO
+		emontiHandler.handleOriginalProduct(message, headers);
 	}
 }
