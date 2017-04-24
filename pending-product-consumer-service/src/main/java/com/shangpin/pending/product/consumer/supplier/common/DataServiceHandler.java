@@ -302,7 +302,14 @@ public class DataServiceHandler {
 				.andPushStateEqualTo(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
-
+	public List<HubSupplierCategroyDicDto> getAllSupplierCategoryBySupplierId(String supplierId) {
+		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+		criteria.setPageNo(1);
+		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+		criterion.andSupplierIdEqualTo(supplierId);
+		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
+	}
 	public HubSupplierCategroyDicDto getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(
 			String supplierId, String supplierCategory, String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();

@@ -116,6 +116,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("emontiHandler")
 	private ISupplierHandler emontiHandler;
 	
+	@Autowired
+	@Qualifier("mclablesHandler") 
+	private ISupplierHandler mclablesHandler;
+	
 	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
@@ -626,7 +630,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void mclablesStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO 
+		mclablesHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * emonti供应商原始数据监听方法

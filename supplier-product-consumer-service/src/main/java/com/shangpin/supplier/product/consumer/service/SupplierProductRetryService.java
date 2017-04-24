@@ -60,7 +60,7 @@ public class SupplierProductRetryService {
 		List<HubSupplierSpuDto> products = supplierProductPictureManager.findSupplierProduct(criteria);
 		
 		boolean flag = false;
-		if(state==5){
+		if(state==5||state==6){
 			flag = true;
 		}
 		if(products!=null&&products.size()>0){

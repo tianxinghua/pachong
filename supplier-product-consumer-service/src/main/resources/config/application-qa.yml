@@ -17,6 +17,12 @@ spring:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
+                        refreshDicTask: 
+                              destination: refresh.dic.task
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1  
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               group: one
@@ -61,7 +67,25 @@ spring:
                                        maxAttempts: 1
                         gebPendingProduct: 
                               destination: geb.pending.product
-                              content-type: application/json                        
+                              content-type: application/json
+                        lamborghiniOriginalProduct: 
+                              destination: lamborghini.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1          
+                        lamborghiniPendingProduct: 
+                              destination: lamborghini.pending.product
+                              content-type: application/json              
+                        palomaOriginalProduct: 
+                              destination: paloma.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1          
+                        palomaPendingProduct: 
+                              destination: paloma.pending.product
+                              content-type: application/json              
                         coltortiOriginalProduct: 
                               destination: coltorti.original.product
                               group: one
@@ -562,6 +586,12 @@ spring:
                               supplierPictureProduct: 
                                     producer: 
                                          prefix: HA.
+                              refreshDicTask: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                               spinnakerOriginalProduct: 
                                       consumer: 
                                          prefix: HA.
@@ -605,6 +635,24 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               gebPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                       
+                              lamborghiniOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              lamborghiniPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                       
+                              palomaOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              palomaPendingProduct: 
                                     producer: 
                                          prefix: HA.                                       
                               coltortiOriginalProduct: 
