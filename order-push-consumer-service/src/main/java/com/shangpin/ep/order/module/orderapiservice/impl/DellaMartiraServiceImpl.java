@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -44,7 +43,6 @@ public class DellaMartiraServiceImpl {
 	 */
 	private static String header = "Purchasing number;PO Line;Item code;Description;Item supplier code;Price;Quantity;Size";
 	
-	@Scheduled(cron="00 00 00,14,19 * * ?")
 	public void uploadFtp(){
 		try {
 			Date endTime = new Date();

@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ep.order.enumeration.OrderStatus;
@@ -35,7 +34,6 @@ public class MonnierfreresServiceImpl {
 	 */
 	private static String header = "REFCMD;DATCMD;DATLIV;INSCMD;CODCLI;CODTRP;REFCMD;NOMCLI;NOMSTE;ADRES1;ADRES2;VILNOM;CODPST;CODPAY;MNTTOT;CODPRD;QTECMD;PRXUNT;PRPTYP;NLGLIV;NUMLOT;INSLI1;INSLI2;INSCD2;RELNOM;ADREL1;ADREL2;ADREL3;VILREL;RELPST;RELPAY;CMPAD1;CMPAD2;CMPAD3;TELFIX;TELMOB;CODREL;MAILAD;LOTACH;DISOR;DISSOV;FACNOM;ADREF1;ADREF2;ADREF3;VILFAC;FACPST;FACPAY;MCTRBS;MSGCD1;MSGCD2;MSGCD3;MSGCD4";
 	
-	@Scheduled(cron="00 00 04 * * ?")
 	public void uploadFtp(){
 		try {
 			Date endTime = new Date();
