@@ -169,35 +169,48 @@ public class PendingHandler extends VariableInit {
 						BeanUtils.copyProperties(spuPendingDto, hubSpuPending);
 						this.addNewSku(hubSpuPending, spu, supplierSku, null, filterFlag);
 					} else {
-						if(hubSkuPending.getSpSkuSizeState()!=null&&hubSkuPending.getSpSkuSizeState()==1){
+						if(hubSkuPending.getSkuState()!=null&&(hubSkuPending.getSkuState()==2||hubSkuPending.getSkuState()==5)){
 							continue ;
 						}
+						boolean flag = false;
 						HubSkuPendingDto updateSkuPending = new HubSkuPendingDto();
 						Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(hubSkuPending.getSupplierId());
 						if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
 							String spSize = sizeMap.get(supplierSku.getHubSkuSize());
 							String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
 							if(spSizeTypeAndSize.indexOf(":")>=0){
-
 								updateSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
 								updateSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
 							} else{
-//								MatchSizeResult matchSizeResult = null;
-//								if(spuPendingDto.getCatgoryState()!=null&&spuPendingDto.getSpuBrandState()!=null&&spuPendingDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()&&spuPendingDto.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
-//									MatchSizeDto match = new MatchSizeDto();
-//									match.setHubBrandNo(spuPendingDto.getHubBrandNo());
-//									match.setHubCategoryNo(spuPendingDto.getHubCategoryNo());
-//									match.setSize(spSizeTypeAndSize);
-//									matchSizeResult = matchSizeGateWay.matchSize(match);
-//									if(matchSizeResult!=null&&matchSizeResult.isPassing()){
-//										updateSkuPending.setHubSkuSizeType(matchSizeResult.getSizeType());
-//									}
-//								}
 								updateSkuPending.setHubSkuSize(spSizeTypeAndSize);
+								flag = true;
 							}
 							updateSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
 						} else {
 							updateSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
+							flag = true;
+						}
+						if(flag){
+							MatchSizeResult matchSizeResult = null;
+							if(spuPendingDto.getCatgoryState()!=null&&spuPendingDto.getSpuBrandState()!=null&&spuPendingDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()&&spuPendingDto.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
+								MatchSizeDto match = new MatchSizeDto();
+								match.setHubBrandNo(spuPendingDto.getHubBrandNo());
+								match.setHubCategoryNo(spuPendingDto.getHubCategoryNo());
+								match.setSize(updateSkuPending.getHubSkuSize());
+								matchSizeResult = matchSizeGateWay.matchSize(match);
+								if(matchSizeResult!=null&&matchSizeResult.isPassing()){
+									updateSkuPending.setHubSkuSizeType(matchSizeResult.getSizeType());
+									updateSkuPending.setFilterFlag((byte)1);
+									updateSkuPending.setSpSkuSizeState((byte)1);
+									updateSkuPending.setSkuState((byte)1);
+									updateSkuPending.setScreenSize(matchSizeResult.getSizeId());
+								}else{
+									updateSkuPending.setFilterFlag((byte)1);
+									updateSkuPending.setSpSkuSizeState((byte)0);
+									updateSkuPending.setSkuState((byte)0);
+									updateSkuPending.setHubSkuSizeType("");
+								}
+							}
 						}
 						// 品牌和品类都已匹配上 尺码未匹配上
 						updateSkuPending.setSkuPendingId(hubSkuPending.getSkuPendingId());
@@ -218,7 +231,7 @@ public class PendingHandler extends VariableInit {
 			if(checkSpuPendingIsRefresh(spu)){
 				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 				// 获取品类
-				pendingCommonHandler.getMap(spu, updateSpuPending);
+				pendingCommonHandler.getCategoryMap(spu, updateSpuPending);
 					dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
 					log.info("===供应商spuPendingId:"+spuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+spuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
 				}

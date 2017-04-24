@@ -513,8 +513,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void smetsStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		frmodaHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * sarenza供货商原始数据监听方法
