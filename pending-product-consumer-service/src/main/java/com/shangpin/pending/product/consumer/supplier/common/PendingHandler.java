@@ -576,19 +576,28 @@ public class PendingHandler extends VariableInit {
 
 	}
 
-	public void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
-		if (e instanceof DuplicateKeyException) {
-			HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
-					supplierSpuNo);
-			if (null != spuDto) {
+	/**
+	 * 因异常被封装 无法判断 DoubleKey异常 先查询 没有不处理
+	 * @param spuPending
+	 * @param e
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @throws Exception
+	 */
+	private void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
+		HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
+				supplierSpuNo);
+		if (null != spuDto) {
 
-				BeanUtils.copyProperties(spuDto, spuPending);
+			BeanUtils.copyProperties(spuDto, spuPending);
 
-			}
-		} else {
+		}else{
 			e.printStackTrace();
 			throw e;
 		}
+
+
+
 
 	}
 

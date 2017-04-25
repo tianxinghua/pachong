@@ -55,7 +55,8 @@ public class SupplierPriceService {
                 String supplierType = supplierMessageDTO.getQuoteMode();;
                 log.info("supplier type ="+ supplierType);
                 if("PurchasePrice".equals(supplierType)){       //供货架
-                    //重新计算
+                    //重新计算价格
+                    reSetPrice(supplierMessageDTO,productPriceDTO);
 
                     handSupplyPrice(productPriceDTO);
                 }else if("3".equals(supplierType)){ // 市场价 (原来定义的是3）
@@ -138,9 +139,10 @@ public class SupplierPriceService {
         if(StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
             BigDecimal serviceRate = new BigDecimal(1);
             if (StringUtils.isNotBlank(supplierMessageDTO.getServiceRate())){
-
+                serviceRate = serviceRate.add(new BigDecimal(supplierMessageDTO.getServiceRate())) ;
             }
             BigDecimal feight =new BigDecimal(0);
+
             productPriceDTO.setPurchasePrice(new BigDecimal(productPriceDTO.getPurchasePrice())
                     .multiply(serviceRate).add(feight).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
         }
