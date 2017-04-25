@@ -1,9 +1,8 @@
-package com.shangpin.ephub.product.business.ui.mapp.color.controller;
+package com.shangpin.ephub.product.business.ui.mapp.model.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.common.enumeration.HubColorDic;
 import com.shangpin.ephub.product.business.common.hubDic.color.service.HubColorDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
@@ -50,9 +48,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @SuppressWarnings("rawtypes")
 @RestController
-@RequestMapping("/hub-supplier-color-dic")
+//@RequestMapping("/hub-supplier-color-dic")
 @Slf4j
-public class HubSupplierColorDicController {
+public class HubSupplierModelDicController {
 	@Autowired
 	HubColorDicService hubColorDicService;
 	@Autowired
@@ -64,6 +62,7 @@ public class HubSupplierColorDicController {
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierColorList(
 			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
+		
 		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
 			int total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
@@ -78,9 +77,8 @@ public class HubSupplierColorDicController {
 						if(dicDto.getUpdateTime()!=null){
 							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}
-						dic.setColorDicId(dicDto.getColorDicId());
 						dic.setColorDicItemId(dicDto.getColorDicItemId());
-						dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
+						dic.setHubColor(dicDto.getColorItemName());
 						dic.setSupplierColor(dicDto.getColorItemName());
 						dic.setUpdateUser(dicDto.getUpdateUser());
 						responseList.add(dic);
@@ -101,21 +99,24 @@ public class HubSupplierColorDicController {
 	@RequestMapping(value = "/sp-color-list", method = RequestMethod.POST)
 	public HubResponse selectSpColorList(@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
 		try {
-			int total = HubColorDic.getHubColorMap().size();
-			List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
-			Map<Long,String> map = HubColorDic.getHubColorMap();
-			for(Map.Entry<Long,String> entry:map.entrySet()){
-				Long key = entry.getKey();
-				String color = entry.getValue();
-				HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
-				dic.setColorDicId(key);
-				dic.setHubColor(color);
-				responseList.add(dic);
-			}
-			HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
-			response.setTotal(total);
-			response.setList(responseList);
-			return HubResponse.successResp(response);
+			
+			int total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getColorDicId());
+				List<HubColorDicDto> detail = hubColorDicService.getSpColorList(hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getColorDicId());
+				if (detail != null&&detail.size()>0) {
+					List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
+					for(HubColorDicDto dicDto : detail){
+						HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
+						dic.setColorDicId(dicDto.getColorDicId());
+						dic.setHubColor(dicDto.getColorName());
+						responseList.add(dic);
+					}
+					HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
+					response.setTotal(total);
+					response.setList(responseList);
+					return HubResponse.successResp(response);
+				} else {
+					return HubResponse.errorResp("列表页为空");
+				}
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
@@ -157,7 +158,7 @@ public class HubSupplierColorDicController {
 		try {
 			HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
 			BeanUtils.copyProperties(dto, dicDto);
-			log.info("======颜色变更：{}",dto);
+			log.info("======供应商品类映射hub品类变更：{}",dto);
 			if(dto.getCategoryType()==4){
 				dicDto.setMappingState((byte)1);		
 				dicDto.setPushState((byte)1);
