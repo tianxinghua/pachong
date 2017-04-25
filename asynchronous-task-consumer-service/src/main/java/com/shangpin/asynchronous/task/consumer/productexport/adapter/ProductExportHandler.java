@@ -10,6 +10,7 @@ import com.shangpin.asynchronous.task.consumer.productexport.pending.service.Exp
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
 import com.shangpin.ephub.client.util.JsonUtil;
@@ -56,6 +57,8 @@ public class ProductExportHandler {
 					exportServiceImpl.exportHubPicSelected2(message); 
 				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex()){
 					exportServiceImpl.exportHubCheckPicSelected(message); 
+				}else if(message.getType() == TaskType.ALL_PRODUCT.getIndex()){
+					//TODO 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 
