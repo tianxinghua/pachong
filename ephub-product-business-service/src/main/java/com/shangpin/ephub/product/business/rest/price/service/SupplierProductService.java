@@ -35,6 +35,9 @@ public class SupplierProductService {
 	 * @throws Exception
 	 */
 	private List<HubSupplierSpuDto> findHubSupplierSpuDtos(HubSupplierSpuDto supplierSpuDto) throws Exception{
+		if(StringUtils.isEmpty(supplierSpuDto.getSupplierId()) || StringUtils.isEmpty(supplierSpuDto.getSupplierSpuNo())){
+			return null;
+		}
 		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
 		criteriaDto.setFields("supplier_spu_id,supplier_seasonname,supplier_categoryname,supplier_brandname");
 		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierSpuDto.getSupplierId()).andSupplierSpuNoEqualTo(supplierSpuDto.getSupplierSpuNo());
