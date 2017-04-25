@@ -12,10 +12,10 @@ import com.shangpin.asynchronous.task.consumer.conf.stream.sink.channel.ProductI
 import com.shangpin.asynchronous.task.consumer.productexport.adapter.ProductExportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.HubProductImportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.PendingProductImportHandler;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 
 /**
- * <p>Title:ProductImportTaskStreamListener.java </p>
+ * <p>Title:TaskStreamListener.java </p>
  * <p>Description: 商品导入处理监听器</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
@@ -37,7 +37,7 @@ public class ProductImportTaskStreamListener {
 	 * @throws Exception
 	 */
 	@StreamListener(ProductImportTaskSink.PENDING_IMPORT)
-    public void biondioniPendingProductStreamListen(@Payload ProductImportTask message, @Headers Map<String,Object> headers) throws Exception  {
+    public void biondioniPendingProductStreamListen(@Payload Task message, @Headers Map<String,Object> headers) throws Exception  {
 		pendingProductImportHandler.pendingImportStreamListen(message,headers);
     }
 	/**
@@ -47,7 +47,7 @@ public class ProductImportTaskStreamListener {
 	 * @throws Exception
 	 */
 	@StreamListener(ProductImportTaskSink.HUB_IMPORT)
-    public void brunarossoPendingProductStreamListen(@Payload ProductImportTask message, @Headers Map<String,Object> headers) throws Exception  {
+    public void brunarossoPendingProductStreamListen(@Payload Task message, @Headers Map<String,Object> headers) throws Exception  {
 		hubProductImportHandler.hubProductImportStreamListen(message,headers);
     }
 	
@@ -57,7 +57,7 @@ public class ProductImportTaskStreamListener {
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	@StreamListener(ProductImportTaskSink.PRODUCT_EXPORT)
-    public void productStreamListen(@Payload ProductImportTask message, @Headers Map<String,Object> headers) throws Exception  {
+    public void productStreamListen(@Payload Task message, @Headers Map<String,Object> headers) throws Exception  {
 		productExportHandler.productExportTask(message,headers);
     }
 }

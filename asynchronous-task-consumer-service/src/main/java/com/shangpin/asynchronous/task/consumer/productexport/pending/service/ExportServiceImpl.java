@@ -62,7 +62,7 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
@@ -597,7 +597,7 @@ public class ExportServiceImpl {
 				+ fieldName.substring(startIndex + 1);
 	}
 
-	public void exportHubSelected(ProductImportTask message) throws Exception{
+	public void exportHubSelected(Task message) throws Exception{
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportProduct(pendingQuryDto);
@@ -813,14 +813,14 @@ public class ExportServiceImpl {
 		return null;
 	}
 
-	public void exportHubPicSelected(ProductImportTask message) throws Exception  {
+	public void exportHubPicSelected(Task message) throws Exception  {
 
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportPic(pendingQuryDto);
 		saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook);
 	}
-	public void exportHubPicSelected2(ProductImportTask message) throws Exception  {
+	public void exportHubPicSelected2(Task message) throws Exception  {
 
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
@@ -845,7 +845,7 @@ public class ExportServiceImpl {
 			}
 		}
 	}
-	public void exportHubCheckPicSelected(ProductImportTask message)  throws Exception{
+	public void exportHubCheckPicSelected(Task message)  throws Exception{
 		Gson gson = new Gson();
 		List<HubWaitSelectStateDto> list = gson.fromJson(message.getData(),  new TypeToken<ArrayList<HubWaitSelectStateDto>>()
         {}.getType());

@@ -16,10 +16,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.hub.dto.HubProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
@@ -28,12 +26,11 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.client.product.business.hubproduct.gateway.HubProductCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubproduct.result.HubProductCheckResult;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.util.TaskImportTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,7 +76,7 @@ public class HubProductImportService {
 	}
 	// 1、更新任务表，把task_state更新成正在处理 2、从ftp下载文件并解析成对象 3、公共类校验hub数据并把校验结果写入excel
 	// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-	public String handMessage(ProductImportTask task) throws Exception {
+	public String handMessage(Task task) throws Exception {
 		
 		InputStream in = taskService.downFileFromFtp(task);
 		// 2、从ftp下载文件并校验模板，并校验

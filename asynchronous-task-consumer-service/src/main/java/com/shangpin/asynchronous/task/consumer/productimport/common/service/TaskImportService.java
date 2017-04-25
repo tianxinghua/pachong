@@ -18,19 +18,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
@@ -42,12 +37,11 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
 import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
@@ -237,7 +231,7 @@ public class TaskImportService {
 		return path + resultFileName + ".xls";
 	}
 
-	public XSSFSheet checkXlsxExcel(InputStream in, ProductImportTask task, String type) throws Exception {
+	public XSSFSheet checkXlsxExcel(InputStream in, Task task, String type) throws Exception {
 
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(in);
 		XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
@@ -253,7 +247,7 @@ public class TaskImportService {
 		return xssfSheet;
 	}
 
-	public HSSFSheet checkXlsExcel(InputStream in, ProductImportTask task, String type) throws Exception {
+	public HSSFSheet checkXlsExcel(InputStream in, Task task, String type) throws Exception {
 
 		HSSFWorkbook xssfWorkbook = new HSSFWorkbook(in);
 		HSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
@@ -355,7 +349,7 @@ public class TaskImportService {
 		return flag;
 	}
 
-	public InputStream downFileFromFtp(ProductImportTask task) throws Exception {
+	public InputStream downFileFromFtp(Task task) throws Exception {
 		
 		InputStream in = FTPClientUtil.downFile(task.getData());
 		if (in == null) {
