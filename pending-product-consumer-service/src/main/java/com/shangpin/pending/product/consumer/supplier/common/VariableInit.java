@@ -712,9 +712,9 @@ public class VariableInit {
         boolean result = true;
         String spuModel = "";
 
-        if (!StringUtils.isEmpty(hubSpuPending.getHubBrandNo())) {
+        if (StringUtils.isNotBlank(hubSpuPending.getHubBrandNo())&&StringUtils.isNotBlank(spu.getSpuModel())) {
             BrandModelDto queryDto = new BrandModelDto();
-            queryDto.setBrandMode(spu.getSpuModel());
+            queryDto.setBrandMode(spu.getSpuModel().trim().toUpperCase());
             queryDto.setHubBrandNo(hubSpuPending.getHubBrandNo());
             queryDto.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
             BrandModelResult verify = brandModelRuleGateWay.verify(queryDto);
