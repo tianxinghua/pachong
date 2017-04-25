@@ -105,7 +105,8 @@ public class OpticalHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender(item.get(5));
 			hubSpu.setSupplierCategoryname(item.get(1));
 			hubSpu.setSupplierBrandname(item.get(2));
-			hubSpu.setSupplierSeasonname(item.get(19));
+//			hubSpu.setSupplierSeasonname(item.get(19));
+			hubSpu.setSupplierSeasonname("SS17"); 
 			hubSpu.setSupplierOrigin(item.get(10));
 			hubSpu.setSupplierSpuDesc(item.get(14));
 			hubSpu.setSupplierMaterial(item.get(9));
