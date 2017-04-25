@@ -98,7 +98,7 @@ public class SupplierProductSaveAndSendToPending {
 	 */
 	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
-			//savePriceRecordAndSendConsumer(supplierNo,hubSpu,hubSkus);
+			savePriceRecordAndSendConsumer(supplierNo,hubSpu,hubSkus);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 			//保存hubSpu到数据库
