@@ -76,20 +76,23 @@ public class RefreshDicStreamListenerAdapter {
 		if (TaskType.REFRESH_DIC.getIndex().equals(message.getType())) {
 			String data = message.getData();
 			JSONObject json = JSONObject.parseObject(data);
-			String dicType = json.get("refreshDicType").toString();
-			if (dicType.equals("4")) {
-				refreshCategory(json, (byte) 4);
-			}else if (dicType.equals("6")) {
-				refreshSize(json, (byte) 6);
+			Integer dicType = Integer.parseInt(json.get("refreshDicType").toString());
+			if (dicType==InfoState.RefreshCategory.getIndex()) {
+				refreshCategory(json, InfoState.RefreshCategory.getIndex());
+			}else if (dicType==InfoState.RefreshSize.getIndex()) {
+				refreshSize(json, InfoState.RefreshSize.getIndex());
 			}
 		}
 	}
 	
 	private void refreshSize(JSONObject json, byte state) throws Exception{
+		String supplierId = null;
+		if(json.get("supplierId")!=null){
+			supplierId = json.get("supplierId").toString();
+		}
 		
-		String supplierId = json.get("supplierId").toString();
 		String supplierVal = json.get("supplierVal").toString();
-		int type = Integer.parseInt(json.get("type").toString());
+//		int type = Integer.parseInt(json.get("type").toString());
 		HubSupplierSkuCriteriaDto criteriaSku = new HubSupplierSkuCriteriaDto();
 		criteriaSku.setPageNo(1);
 		criteriaSku.setPageSize(10000);
@@ -97,13 +100,13 @@ public class RefreshDicStreamListenerAdapter {
 			criteriaSku.createCriteria().andSupplierSkuSizeLike("%"+supplierVal+"%");
 		}else{
 			if("quanju".equals(supplierId)){
-				criteriaSku.createCriteria().andSupplierSkuSizeLike("%"+supplierVal+"%");	
+				criteriaSku.createCriteria().andSupplierSkuSizeEqualTo(supplierVal);	
 			}else{
 				criteriaSku.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuSizeEqualTo(supplierVal);
 			}
-			
 		}
 		int total = hubSupplierSkuGateWay.countByCriteria(criteriaSku);
+		log.info("待刷新尺码total:"+total);
 		if(total>0){
 			sendSize(total, criteriaSku, state);
 		}

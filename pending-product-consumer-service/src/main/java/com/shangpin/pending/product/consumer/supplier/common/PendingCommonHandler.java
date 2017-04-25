@@ -1,22 +1,21 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/2/8.
@@ -36,7 +35,7 @@ public class PendingCommonHandler {
     	
         //先判断设置的是否有值  无值得话  品类重新处理
 //    	shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY);
-    	Map<String, String> supplierMap = shangpinRedis.hgetAll(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY);
+    	Map<String, String> supplierMap = shangpinRedis.hgetAll(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+supplierId);
         if(supplierMap==null||supplierMap.size()<1){
         	log.info("redis为空");
             Map<String, String>  categoryMap = new HashMap<>() ;
@@ -55,8 +54,8 @@ public class PendingCommonHandler {
                                      + dto.getSupplierGender().trim().toUpperCase(),
                              spCategory + "_" + dto.getMappingState());
                 }
-                shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY,categoryMap);
-                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
+                shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+supplierId,categoryMap);
+                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+supplierId,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
             }
             return categoryMap;
         }
@@ -76,9 +75,8 @@ public class PendingCommonHandler {
         log.debug("获取品类对照耗时：" + (System.currentTimeMillis() - start )+" 毫秒");
         return   map;
     }
-
-    private String  getSpCategoryValueFromRedis(String supplierCategory){
-        List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,supplierCategory.trim().toUpperCase()) ;
+    public String  getSpCategoryValueFromRedis(String supplierCategory,String gender){
+        List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY,supplierCategory.trim().toUpperCase()+"_"+gender.trim().toUpperCase()) ;
         if(null!=mapValue&&mapValue.size()>0){
             return mapValue.get(0);
         }else{
@@ -101,7 +99,7 @@ public class PendingCommonHandler {
         }
     }
     
-    public boolean getMap(PendingSpu spu,HubSpuPendingDto hubSpuPending) throws Exception{
+    public boolean getCategoryMap(PendingSpu spu,HubSpuPendingDto hubSpuPending) throws Exception{
     	 boolean result = true;
          String categoryAndStatus = "";
          Integer mapStatus = 0;

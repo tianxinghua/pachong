@@ -28,7 +28,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
@@ -73,7 +73,7 @@ public class PendingSkuImportService {
 	 * @return
 	 * @throws Exception
 	 */
-	public String handMessage(ProductImportTask task) throws Exception {
+	public String handMessage(Task task) throws Exception {
 
 		// ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
@@ -194,7 +194,7 @@ public class PendingSkuImportService {
 
 
 	// 解析excel转换为对象
-	private List<HubPendingProductImportDTO> handleHubXlsxExcel(InputStream in, ProductImportTask task, String type)
+	private List<HubPendingProductImportDTO> handleHubXlsxExcel(InputStream in, Task task, String type)
 			throws Exception {
 
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, "sku");
@@ -214,7 +214,7 @@ public class PendingSkuImportService {
 	}
 
 	// 解析excel转换为对象
-	private List<HubPendingProductImportDTO> handleHubXlsExcel(InputStream in, ProductImportTask task, String type)
+	private List<HubPendingProductImportDTO> handleHubXlsExcel(InputStream in, Task task, String type)
 			throws Exception {
 
 		HSSFSheet hSSFSheet = taskService.checkXlsExcel(in, task, "sku");

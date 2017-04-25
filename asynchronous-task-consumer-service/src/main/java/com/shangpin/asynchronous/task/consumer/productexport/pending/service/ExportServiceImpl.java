@@ -62,7 +62,7 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
@@ -194,7 +194,7 @@ public class ExportServiceImpl {
 	 *            每页记录数
 	 * @return
 	 */
-	private Integer getPageCount(Integer totalSize, Integer pageSize) {
+	public Integer getPageCount(Integer totalSize, Integer pageSize) {
 		if (totalSize % pageSize == 0) {
 			return totalSize / pageSize;
 		} else {
@@ -260,7 +260,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param wb
 	 */
-	private boolean saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
+	public boolean saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
 		FileOutputStream fout = null;
 		File file = null;
 		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
@@ -512,7 +512,7 @@ public class ExportServiceImpl {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private void setRowOfSeasonName(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
+	public void setRowOfSeasonName(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String fileName = "getHubSeason";
 		Method fieldSetMet = clazz.getMethod(fileName);
@@ -532,7 +532,7 @@ public class ExportServiceImpl {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private void setRowOfSeasonYear(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
+	public void setRowOfSeasonYear(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String fileName = "getHubSeason";
 		Method fieldSetMet = clazz.getMethod(fileName);
@@ -586,7 +586,7 @@ public class ExportServiceImpl {
 	 * @param fieldName
 	 * @return
 	 */
-	private String parSetName(String fieldName) {
+	public String parSetName(String fieldName) {
 		if (null == fieldName || "".equals(fieldName)) {
 			return null;
 		}
@@ -597,7 +597,7 @@ public class ExportServiceImpl {
 				+ fieldName.substring(startIndex + 1);
 	}
 
-	public void exportHubSelected(ProductImportTask message) throws Exception{
+	public void exportHubSelected(Task message) throws Exception{
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportProduct(pendingQuryDto);
@@ -813,14 +813,14 @@ public class ExportServiceImpl {
 		return null;
 	}
 
-	public void exportHubPicSelected(ProductImportTask message) throws Exception  {
+	public void exportHubPicSelected(Task message) throws Exception  {
 
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
 		HSSFWorkbook workbook = exportPic(pendingQuryDto);
 		saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook);
 	}
-	public void exportHubPicSelected2(ProductImportTask message) throws Exception  {
+	public void exportHubPicSelected2(Task message) throws Exception  {
 
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
 				HubWaitSelectRequestWithPageDto.class);
@@ -845,7 +845,7 @@ public class ExportServiceImpl {
 			}
 		}
 	}
-	public void exportHubCheckPicSelected(ProductImportTask message)  throws Exception{
+	public void exportHubCheckPicSelected(Task message)  throws Exception{
 		Gson gson = new Gson();
 		List<HubWaitSelectStateDto> list = gson.fromJson(message.getData(),  new TypeToken<ArrayList<HubWaitSelectStateDto>>()
         {}.getType());
