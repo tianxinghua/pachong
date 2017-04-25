@@ -36,7 +36,11 @@ public enum TaskType {
 	/**
 	 * 全部商品页，商品导出
 	 */
-	ALL_PRODUCT(11,"商品导出");
+	ALL_PRODUCT(11,"全部商品页-商品导出"),
+	
+	EXPORT_SPU_ALL(12,"全部商品页-SPU导出"),
+	
+	EXPORT_SKU_ALL(13,"全部商品页-SKU导出");
 	/**
      * 数字索引标识
      */
