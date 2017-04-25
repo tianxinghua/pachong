@@ -78,7 +78,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	 */
 	@Override
 	public String ruleVerify(String hubBrandNo, String hubCategoryNo, String brandMode) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub (B[0-9]{2})(C[0-9]{2})(D[0-9]{2})
 		return null;
 	}
 }

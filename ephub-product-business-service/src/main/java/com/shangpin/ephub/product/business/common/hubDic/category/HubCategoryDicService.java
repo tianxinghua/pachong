@@ -51,7 +51,7 @@ public class HubCategoryDicService {
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
-				criterion.andCategoryTypeIsNull();
+				criterion.andMappingStateNotEqualTo((byte)1);
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
