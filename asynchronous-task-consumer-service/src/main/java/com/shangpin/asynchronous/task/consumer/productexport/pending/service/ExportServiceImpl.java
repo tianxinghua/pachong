@@ -194,7 +194,7 @@ public class ExportServiceImpl {
 	 *            每页记录数
 	 * @return
 	 */
-	private Integer getPageCount(Integer totalSize, Integer pageSize) {
+	public Integer getPageCount(Integer totalSize, Integer pageSize) {
 		if (totalSize % pageSize == 0) {
 			return totalSize / pageSize;
 		} else {
@@ -260,7 +260,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param wb
 	 */
-	private boolean saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
+	public boolean saveAndUploadExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
 		FileOutputStream fout = null;
 		File file = null;
 		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
@@ -512,7 +512,7 @@ public class ExportServiceImpl {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private void setRowOfSeasonName(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
+	public void setRowOfSeasonName(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String fileName = "getHubSeason";
 		Method fieldSetMet = clazz.getMethod(fileName);
@@ -532,7 +532,7 @@ public class ExportServiceImpl {
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 */
-	private void setRowOfSeasonYear(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
+	public void setRowOfSeasonYear(HSSFRow row, PendingProductDto product, Class<?> clazz, int i)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String fileName = "getHubSeason";
 		Method fieldSetMet = clazz.getMethod(fileName);
@@ -586,7 +586,7 @@ public class ExportServiceImpl {
 	 * @param fieldName
 	 * @return
 	 */
-	private String parSetName(String fieldName) {
+	public String parSetName(String fieldName) {
 		if (null == fieldName || "".equals(fieldName)) {
 			return null;
 		}
