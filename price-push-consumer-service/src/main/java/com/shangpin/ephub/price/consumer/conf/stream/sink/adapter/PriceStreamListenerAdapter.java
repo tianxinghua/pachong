@@ -49,7 +49,7 @@ public class PriceStreamListenerAdapter {
 		String messagebody  ="";
 		try {
 			messagebody = mapper.writeValueAsString(message);
-			log.info(" ProductPriceDTO Message body : " + mapper.writeValueAsString(message));
+			log.info(" ProductPriceDTO Message body in retry mq: " + mapper.writeValueAsString(message));
 			supplierProductPriceProcessor.processRetryPrice(message,headers);
 		} catch (Exception e) {
 

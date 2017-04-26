@@ -215,7 +215,7 @@ public class VariableInit {
         if (null == brandStaticMap) {
             brandStaticMap = new HashMap<>();
             hubBrandStaticMap = new HashMap<>();
-            List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getBrand();
+            List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
             for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
                 brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
                         hubBrandDicDto.getHubBrandNo());
@@ -225,7 +225,7 @@ public class VariableInit {
 
         } else {
             if (pendingCommonHandler.isNeedHandle()) {
-                List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getBrand();
+                List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
                 for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
                     brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
                             hubBrandDicDto.getHubBrandNo());

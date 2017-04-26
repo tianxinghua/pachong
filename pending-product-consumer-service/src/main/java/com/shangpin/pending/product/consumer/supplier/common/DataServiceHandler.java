@@ -203,6 +203,16 @@ public class DataServiceHandler {
 
 	}
 
+	public List<HubBrandDicDto> getAvailableBrand() throws Exception {
+		HubBrandDicCriteriaDto criteria = new HubBrandDicCriteriaDto();
+		criteria.setPageNo(1);
+		criteria.setPageSize(ConstantProperty.MAX_BRANDK_MAPPING_QUERY_NUM);
+		criteria.createCriteria().andDataStateEqualTo(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+		return brandDicGateway.selectByCriteria(criteria);
+
+	}
+
+
 	public HubSpuDto getHubSpuByBrandNoAndProductModel(String brandNo, String spuModel) {
 		HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
 		HubSpuCriteriaDto.Criteria criterion = criteria.createCriteria();
