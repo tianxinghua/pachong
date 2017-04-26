@@ -76,42 +76,40 @@ public class MclablesHandler implements ISupplierHandler {
 	 */
 	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,Item item){
 		if(null != item){
-			hubSpu.setSupplierId(supplierId);
-			if("true".equals(item.getVariationInfo().getIsParent())){
-				hubSpu.setSupplierSpuNo(item.getSku());
-				hubSpu.setSupplierSpuModel(item.getSku());
-			}else{
+			if("false".equals(item.getVariationInfo().getIsParent())){
+				hubSpu.setSupplierId(supplierId);
 				hubSpu.setSupplierSpuNo(item.getVariationInfo().getParentSku());
 				hubSpu.setSupplierSpuModel(item.getVariationInfo().getParentSku());
+				hubSpu.setSupplierSpuName(item.getTitle());
+				List<AttributeInfo> attributeInfolist = item.getAttributeList().getAttributeInfo();
+				String color = "";
+				String gender = "";
+				String material = "";
+				String season = "";
+				for(AttributeInfo attr:attributeInfolist){
+					if("Color".equals(attr.getName())){
+						color = attr.getValue();
+					}
+					if("Materials_node".equals(attr.getName())){
+						material = attr.getValue();
+					}
+					if("Gender".equals(attr.getName())){
+						gender = attr.getValue();
+					}
+					if("season".equals(attr.getName())){
+						season = attr.getValue();
+					}
+				}
+				hubSpu.setSupplierSpuColor(color);
+				hubSpu.setSupplierGender(gender);
+				hubSpu.setSupplierCategoryname(item.getClassification());
+				hubSpu.setSupplierBrandname(item.getBrand());
+				hubSpu.setSupplierSeasonname(season);
+				hubSpu.setSupplierMaterial(material);
+				hubSpu.setSupplierOrigin("");
+				hubSpu.setSupplierSpuDesc(item.getStoreInfo().getDescription());
+				return true;
 			}
-			hubSpu.setSupplierSpuName(item.getTitle());
-			List<AttributeInfo> attributeInfolist = item.getAttributeList().getAttributeInfo();
-			String color = "";
-			String gender = "";
-			String material = "";
-			String season = "";
-			for(AttributeInfo attr:attributeInfolist){
-				if("Color".equals(attr.getName())){
-					color = attr.getValue();
-				}
-				if("Materials_node".equals(attr.getName())){
-					material = attr.getValue();
-				}
-				if("Gender".equals(attr.getName())){
-					gender = attr.getValue();
-				}
-				if("season".equals(attr.getName())){
-					season = attr.getValue();
-				}
-			}
-			hubSpu.setSupplierSpuColor(color);
-			hubSpu.setSupplierGender(gender);
-			hubSpu.setSupplierCategoryname(item.getClassification());
-			hubSpu.setSupplierBrandname(item.getBrand());
-			hubSpu.setSupplierSeasonname(season);
-			hubSpu.setSupplierMaterial(material);
-			hubSpu.setSupplierOrigin("");
-			hubSpu.setSupplierSpuDesc(item.getStoreInfo().getDescription());
 		}
 		return false;
 	}
