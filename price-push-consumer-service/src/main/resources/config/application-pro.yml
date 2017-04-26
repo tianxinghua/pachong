@@ -22,38 +22,43 @@ spring:
             register-health-check: true
         stream: 
               bindings: 
-                        supplierRetryPictureProduct: 
-                              destination: retry.product.picture
-                              content-type: application/json              
-                        supplierPictureProduct: 
-                              destination: supplier.product.picture
+                        supplierRetryPrice:
+                              destination: retry.product.price
+                              content-type: application/json
+                        supplierProducerPrice:
+                               destination: supplier.product.price
+                               content-type: application/json
+                        supplierPrice:
+                              destination: supplier.product.price
                               group: one
-                              consumer: 
-                                       concurrency: 2
+                              consumer:
+                                       concurrency: 4
                                        maxAttempts: 1
-                        retryPictureProduct: 
-                              destination: retry.product.picture
+                        retrySupplierPrice:
+                              destination: retry.product.price
                               group: one
-                              consumer: 
-                                       concurrency: 1
+                              consumer:
+                                       concurrency: 4
                                        maxAttempts: 1
               rabbit: 
-                      bindings: 
-                            supplierRetryPictureProduct: 
-                                  producer: 
-                                       prefix: HA.                      
-                            supplierPictureProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            retryPictureProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
+                      supplierRetryPrice:
+                            producer:
+                                 prefix: HA.
+                      supplierProducerPrice:
+                            producer:
+                                 prefix: HA.
+                      supplierPrice:
+                            consumer:
+                                 prefix: HA.
+                                 autoBindDlq: false
+                                 requeueRejected: true
+                                 republishToDlq: false
+                      retrySupplierPrice:
+                            consumer:
+                                 prefix: HA.
+                                 autoBindDlq: false
+                                 requeueRejected: true
+                                 republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       

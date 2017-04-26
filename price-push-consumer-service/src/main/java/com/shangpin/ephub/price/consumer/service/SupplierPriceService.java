@@ -56,9 +56,10 @@ public class SupplierPriceService {
                 log.info("supplier type ="+ supplierType);
                 if("PurchasePrice".equals(supplierType)){       //供货架
                     //重新计算价格
-                    reSetPrice(supplierMessageDTO,productPriceDTO);
-
-                    handSupplyPrice(productPriceDTO);
+//                    reSetPrice(supplierMessageDTO,productPriceDTO);
+//
+//                    handSupplyPrice(productPriceDTO);
+                    priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),spSkus, PriceHandleState.HANDLED_SUCCESS.getIndex(),"暂不处理");
                 }else if("3".equals(supplierType)){ // 市场价 (原来定义的是3）
                     handleMarketPrice(productPriceDTO);
                 }else if("MarketDiscount".equals(supplierType)){ // 市场价
