@@ -87,7 +87,7 @@ public class HubPendingProductController {
 
 	private void updatePendingSku(SpSkuNoDto dto) throws Exception{
 		//如果是因为SOP已存在的错误 需要调用接口获取到信息
-		if(dto.getSign()!=1){
+		if(dto.getSign()==0){
 			getExistSpSkuNo(dto);
 		}
 
@@ -159,6 +159,7 @@ public class HubPendingProductController {
 //			HubSkuCriteriaDto criteriaSku = new HubSkuCriteriaDto();
 			HubSkuDto hubSku = new HubSkuDto();
 			hubSku.setSpSkuNo(dto.getSkuNo());
+			hubSku.setUpdateTime(new Date());
 			HubSkuCriteriaDto skuCriteria = new HubSkuCriteriaDto();
 			skuCriteria.createCriteria().andSkuNoEqualTo(searchSkuPending.getHubSkuNo());
 			HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
@@ -179,6 +180,9 @@ public class HubPendingProductController {
 				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTED.getIndex()).byteValue());
 			}
 
+		}else if(dto.getSign()==2){
+			hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTED.getIndex()).byteValue());
+			hubSkuSupplierMapping.setMemo("品牌品类协议尚未维护");
 		}else{
 			if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
 				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.EXIST.getIndex()).byteValue());
@@ -198,6 +202,7 @@ public class HubPendingProductController {
 		HubSkuPendingDto hubSkuPending = new HubSkuPendingDto();
 		hubSkuPending.setSpSkuNo( dto.getSkuNo());
 		hubSkuPending.setMemo(dto.getErrorReason());
+		hubSkuPending.setUpdateTime(new Date());
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		criteria.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo())
 				.andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
@@ -207,9 +212,15 @@ public class HubPendingProductController {
 		skuPendingGateWay.updateByCriteriaSelective(skuCritria);
 
 		List<HubSkuPendingDto> hubSkuPendingDtos = null;
-		if(dto.getSign()==1){
+		if(1==dto.getSign()||2==dto.getSign()){
 			////更新成功的才处理
 			hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+		}else{
+			//如果返回错误 但错误信息是SOP已存在的  则调用接口反写到返回值内 需要调用 以便更新HUB_sku的对应关系
+			if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
+
+				hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteria);
+			}
 		}
 		HubSkuPendingDto  searchSkuPending  = null;
 

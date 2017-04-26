@@ -32,7 +32,15 @@ public enum TaskType {
 	EXPORT_HUB_PIC(7,"hub图片导出"),
 	EXPORT_HUB_NOT_HANDLE_PIC(9,"hub未修图片导出"),
 	EXPORT_HUB_CHECK_PIC(8,"hub勾选图片导出"),
-	REFRESH_DIC(10,"刷新字典");
+	REFRESH_DIC(10,"刷新字典"),
+	/**
+	 * 全部商品页，商品导出
+	 */
+	ALL_PRODUCT(11,"全部商品页-商品导出"),
+	
+	EXPORT_SPU_ALL(12,"全部商品页-SPU导出"),
+	
+	EXPORT_SKU_ALL(13,"全部商品页-SKU导出");
 	/**
      * 数字索引标识
      */

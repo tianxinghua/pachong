@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.pending.service;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -33,13 +34,13 @@ public interface IPendingProductService {
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto);
+	public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto,TaskType taskType);
 	/**
 	 * 待处理页面导出spu
 	 * @param pendingQuryDto
 	 * @return
 	 */
-	public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto);
+	public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto,TaskType taskType);
 	/**
 	 * 根据页面查询条件查询待处理表，只包含spu信息
 	 * @param pendingQuryDto
