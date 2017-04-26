@@ -3,73 +3,42 @@ package com.shangpin.pending.product.consumer.supplier.common;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.util.RegexUtil;
-import com.shangpin.pending.product.consumer.common.ConstantProperty;
-import com.shangpin.pending.product.consumer.common.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
-import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
-import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuHandleGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuHandleGateWay;
-import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
-import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
-import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
 import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
 import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
-import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
-import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
-import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
-import com.shangpin.pending.product.consumer.supplier.dto.HubResponseDto;
-import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
+import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
+import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
-import com.shangpin.pending.product.consumer.supplier.dto.SizeRequestDto;
-import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
 import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
-import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -589,19 +558,28 @@ public class PendingHandler extends VariableInit {
 
 	}
 
-	public void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
-		if ("DuplicateKeyException".equals(e.getMessage())) {
-			HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
-					supplierSpuNo);
-			if (null != spuDto) {
+	/**
+	 * 因异常被封装 无法判断 DoubleKey异常 先查询 没有不处理
+	 * @param spuPending
+	 * @param e
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @throws Exception
+	 */
+	private void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
+		HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
+				supplierSpuNo);
+		if (null != spuDto) {
 
-				BeanUtils.copyProperties(spuDto, spuPending);
+			BeanUtils.copyProperties(spuDto, spuPending);
 
-			}
-		} else {
+		}else{
 			e.printStackTrace();
 			throw e;
 		}
+
+
+
 
 	}
 

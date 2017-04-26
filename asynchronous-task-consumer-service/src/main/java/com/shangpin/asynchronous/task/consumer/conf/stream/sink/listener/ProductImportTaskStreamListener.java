@@ -15,7 +15,7 @@ import com.shangpin.asynchronous.task.consumer.productimport.pending.PendingProd
 import com.shangpin.ephub.client.message.task.product.body.Task;
 
 /**
- * <p>Title:ProductImportTaskStreamListener.java </p>
+ * <p>Title:TaskStreamListener.java </p>
  * <p>Description: 商品导入处理监听器</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin

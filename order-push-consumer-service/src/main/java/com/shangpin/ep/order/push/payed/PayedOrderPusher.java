@@ -321,7 +321,7 @@ public class PayedOrderPusher extends AbstractPusher{
 					isNeed = true;
 				}
 			}else{
-				//更新库存失败 不需要做处理
+				//不需要做处理
 
 			}
 

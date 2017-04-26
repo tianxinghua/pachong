@@ -15,7 +15,7 @@ public class Scheduler {
 	
 
 
-	@Scheduled(cron = "00 33 16 * * ?")
+//	@Scheduled(cron = "00 33 16 * * ?")
 	public void pictureTask() {
 
 	}

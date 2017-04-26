@@ -104,5 +104,7 @@ public class SupplierProperties {
 	private Tessabit tessabit;
 	
 	private Antonacci antonacci;
+
+	private Giglio giglio;
 	
 }

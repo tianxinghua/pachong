@@ -56,6 +56,8 @@ public class ProductExportHandler {
 					exportServiceImpl.exportHubPicSelected2(message); 
 				}else if(message.getType() == TaskType.EXPORT_HUB_CHECK_PIC.getIndex()){
 					exportServiceImpl.exportHubCheckPicSelected(message); 
+				}else if(message.getType() == TaskType.ALL_PRODUCT.getIndex()){
+					//TODO 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

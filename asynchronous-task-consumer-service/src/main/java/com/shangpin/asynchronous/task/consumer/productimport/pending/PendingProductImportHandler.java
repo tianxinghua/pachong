@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service.PendingSkuImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingSpuImportService;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 
 import lombok.extern.slf4j.Slf4j;

@@ -54,7 +54,13 @@ public enum PushStatus {
 	/**
 	 * 无退单API
 	 */
-	NO_REFUNDED_API(11,"无退单API");
+	NO_REFUNDED_API(11,"无退单API"),
+
+	/**
+	 * 订单推送确认
+	 */
+	ORDER_WAIT_CONFIRMED(12,"订单推送等待确认");
+
 	/**
 	 * 数字索引标识
 	 */

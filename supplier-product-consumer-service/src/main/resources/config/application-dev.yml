@@ -93,7 +93,6 @@ spring:
                         biondioniPendingProduct: 
                               destination: biondioni.pending.product
                               content-type: application/json
-#################                                                                                                                                                                                                                                                                                                                                        
                         pozzileiOriginalProduct: 
                               destination: pozzilei.original.product
                               group: one
@@ -638,8 +637,7 @@ spring:
                                        republishToDlq: false
                             biondioniPendingProduct: 
                                   producer: 
-                                       prefix: HA.  
-##################                                                                                                                                                                                                                                                                                                                                                      
+                                       prefix: HA.
                             pozzileiOriginalProduct: 
                                   consumer: 
                                        prefix: HA.
@@ -1107,9 +1105,8 @@ spring:
                                        republishToDlq: false 
                             emontiPendingProduct: 
                                   producer: 
-                                       prefix: HA.               
-                                                                                                                                                                                                                                                                                                                                                       
-##################                                                                                                                                                                                                                                                                                                                                                      
+                                       prefix: HA.
+
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8

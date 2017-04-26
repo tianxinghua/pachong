@@ -104,6 +104,17 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("lungolivignoHandler")
 	private ISupplierHandler lungolivignoHandler;
+
+
+
+	@Autowired
+	@Qualifier("dellaHandler")
+	private ISupplierHandler dellaHandler;
+
+
+	@Autowired
+	@Qualifier("emontiHandler")
+	private ISupplierHandler emontiHandler;
 	
 	@Autowired
 	@Qualifier("mclablesHandler") 
@@ -602,7 +613,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void dellaMartiraStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO 
+		dellaHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * rosiSerli供应商原始数据监听方法
@@ -626,6 +637,6 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void emontiStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO
+		emontiHandler.handleOriginalProduct(message, headers);
 	}
 }
