@@ -122,28 +122,28 @@ public class HubSupplierColorDicController {
 		}
 	}
 	
-//	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
-//	public HubResponse selectHubSupplierCateoryDetail(@PathVariable("id") Long id) {
-//		try {
-//			if (id != null) {
-//				HubSupplierCategroyDicDto detail = hubCategoryDicService.getSupplierCategoryById(id);
-//				if (detail != null) {
-//					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
-//					HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-//					BeanUtils.copyProperties(detail, dic);
-//					responseList.add(dic);
-//					return HubResponse.successResp(responseList);
-//				} else {
-//					return HubResponse.errorResp("列表页为空");
-//				}
-//			} else {
-//				return HubResponse.errorResp("传值为空");
-//			}
-//		} catch (Exception e) {
-//			log.error("获取列表失败：{}", e);
-//			return HubResponse.errorResp("获取列表失败");
-//		}
-//	}
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
+	public HubResponse selectHubColorDetail(@PathVariable("id") Long id) {
+		try {
+			if (id != null) {
+				List<HubColorDicItemDto> detail = hubColorDicService.getSupplierColorByHubColorId(id);
+				if (detail != null) {
+					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
+					HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
+					BeanUtils.copyProperties(detail, dic);
+					responseList.add(dic);
+					return HubResponse.successResp(responseList);
+				} else {
+					return HubResponse.errorResp("列表页为空");
+				}
+			} else {
+				return HubResponse.errorResp("传值为空");
+			}
+		} catch (Exception e) {
+			log.error("获取列表失败：{}", e);
+			return HubResponse.errorResp("获取列表失败");
+		}
+	}
 
 	/**
 	 * 导出查询商品

@@ -52,8 +52,8 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2016年12月21日 下午5:25:30
  */
 @SuppressWarnings("rawtypes")
-@RestController
-@RequestMapping("/hub-supplier-category-dic")
+//@RestController
+//@RequestMapping("/hub-supplier-category-dic")
 @Slf4j
 public class HubSupplierCategoryDicController {
 	@Autowired
@@ -179,7 +179,7 @@ public class HubSupplierCategoryDicController {
 				taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
 				dto.setRefreshDicType((byte)4);
 				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
-				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY);
+				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
 			}
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);

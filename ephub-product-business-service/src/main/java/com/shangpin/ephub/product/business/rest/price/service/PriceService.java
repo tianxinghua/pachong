@@ -104,21 +104,21 @@ public class PriceService {
 	 */
 	public void savePriceRecordAndSendConsumer(HubSupplierSpuDto supplierSpuDto, String supplierNo, HubSupplierSkuDto skuDto,PriceHandleType type)
 			throws Exception {
-//		if(StringUtils.isEmpty(skuDto.getSpSkuNo())){
-//			return;
-//		}
-//		//查尚品的季节
-//		HubSeasonDicDto seasonDicDto = supplierProductService.findHubSeason(skuDto.getSupplierId(), supplierSpuDto.getSupplierSeasonname());
-//		//保存数据库
-//		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
-//		convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, type,seasonDicDto);
-//		Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
-//		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"】");
-//		//发送消息队列
-//		ProductPriceDTO productPrice  = new ProductPriceDTO();
-//		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);
-//		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
-//		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
+		if(StringUtils.isEmpty(skuDto.getSpSkuNo())){
+			return;
+		}
+		//查尚品的季节
+		HubSeasonDicDto seasonDicDto = supplierProductService.findHubSeason(skuDto.getSupplierId(), supplierSpuDto.getSupplierSeasonname());
+		//保存数据库
+		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
+		convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, type,seasonDicDto);
+		Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
+		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"】");
+		//发送消息队列
+		ProductPriceDTO productPrice  = new ProductPriceDTO();
+		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);
+		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
+		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
 	}
 	
 	/**
