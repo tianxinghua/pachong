@@ -96,9 +96,11 @@ public class MonnierHandler implements ISupplierHandler {
 		if(null != itemImages){			
 			if(img.length>0){
 				for(String url : img){
-					Image image = new Image();
-					image.setUrl(url);
-					images.add(image);
+					if(!url.contains("_COLOR")){//将带 _COLOR 的小图屏蔽掉
+						Image image = new Image();
+						image.setUrl(url);
+						images.add(image);
+					}
 				}
 			}
 		}
