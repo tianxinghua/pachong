@@ -170,4 +170,16 @@ public class HubColorDicService {
 		return hubColorDicItemGateWay.selectByCriteria(hubColorDicCriteriaDto);
 		
 	}
+
+	public List<HubColorDicItemDto> getHubColorDicItemBySupplierColor(String supplierColor) {
+		HubColorDicItemCriteriaDto crireria = new HubColorDicItemCriteriaDto();
+		crireria.createCriteria().andColorItemNameEqualTo(supplierColor);
+		crireria.setPageNo(1);
+		crireria.setPageSize(10000);
+		return hubColorDicItemGateWay.selectByCriteria(crireria);
+	}
+
+	public void saveColorItem(HubColorDicItemDto dicDto) {
+		hubColorDicItemGateWay.insertSelective(dicDto);
+	}
 }
