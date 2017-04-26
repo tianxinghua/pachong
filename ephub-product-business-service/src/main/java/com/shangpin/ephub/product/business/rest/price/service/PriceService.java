@@ -25,6 +25,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.rest.price.dto.PriceQuery;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
 
@@ -235,6 +236,7 @@ public class PriceService {
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
 		} catch (Exception e) {
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED_ERROR);
+			log.error("【推送失败的消息是："+JsonUtil.serialize(retryPrice)+"】");
 			throw new Exception("供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage());
 		}
 	}
