@@ -590,7 +590,7 @@ public class PendingHandler extends VariableInit {
 	}
 
 	public void setSpuPendingValueWhenDuplicateKeyException(SpuPending spuPending, Exception e, String supplierId, String supplierSpuNo) throws Exception {
-		if (e instanceof DuplicateKeyException) {
+		if ("DuplicateKeyException".equals(e.getMessage())) {
 			HubSpuPendingDto spuDto = dataServiceHandler.getHubSpuPending(supplierId,
 					supplierSpuNo);
 			if (null != spuDto) {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.service.HubProductImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +32,7 @@ public class HubProductImportHandler {
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
-	public void hubProductImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
+	public void hubProductImportStreamListen(Task message, Map<String, Object> headers) {
 		
 		try {
 			long start = System.currentTimeMillis();
