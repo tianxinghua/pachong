@@ -34,13 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class PendingSkuService extends PendingSpuService{
 
 	@Override
-    public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
+    public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto,TaskType taskType){
     	try {
     		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
             int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
             pendingQuryDto.setPageSize(total);
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskType.EXPORT_PENDING_SKU.getIndex());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskType.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),taskType.getIndex());
+        	sendMessageToTask(taskDto.getTaskNo(),taskType.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);

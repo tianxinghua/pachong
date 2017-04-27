@@ -17,13 +17,29 @@ public class PendingProductDto extends HubSpuPendingDto {
 	private static final long serialVersionUID = -656519843276622266L;
 
 	private String updateTimeStr;
+	private String creatTimeStr;
 	private String supplierName;
 	private String hubBrandName;
 	private String hubCategoryName;
 	private List<HubSkuPendingDto> hubSkus;
+	/**
+	 * 主图
+	 */
 	private String spPicUrl;
+	/**
+	 * 尚品图片链接
+	 */
 	private List<String> picUrls;
+	/**
+	 * 供应商图片链接
+	 */
+	private List<String> supplierUrls;
+	/**
+	 * 图片加载失败原因
+	 */
+	private String picReason;
 	
 	private String supplierCategoryname;
+	private String auditDateStr;
 	
 }

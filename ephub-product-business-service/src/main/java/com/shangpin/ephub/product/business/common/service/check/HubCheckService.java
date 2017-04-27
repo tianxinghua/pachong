@@ -148,13 +148,20 @@ public class HubCheckService {
 		
 		//校验品类
 		if(StringUtils.isNotBlank(hubProduct.getHubCategoryNo())){
-			if(!hubProduct.getHubCategoryNo().matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}")&&!getCategoryName(hubProduct.getHubCategoryNo())){
+			if(hubProduct.getHubCategoryNo().matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
+				if(getCategoryName(hubProduct.getHubCategoryNo())){
+					result.setCategory(true);
+				}else{
+					str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
+					result.setPassing(false);
+					result.setCategory(false);
+				}
+			}else{
 				str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 				result.setCategory(false);
-			}else{
-				result.setCategory(true);
 			}
+			
 		}else{
 			str.append("品类编号为空，");
 			result.setPassing(false);

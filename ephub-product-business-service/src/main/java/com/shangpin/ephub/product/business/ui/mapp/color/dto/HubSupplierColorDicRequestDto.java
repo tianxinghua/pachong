@@ -24,7 +24,5 @@ public class HubSupplierColorDicRequestDto {
 	private String supplierColor;
 	private Byte type;
 	private String updateUser;
-	
-	
-
+	private String createUser;
 }

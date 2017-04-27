@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.category.controll;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,19 +14,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
-import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
+import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseWithPageDto;
+import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,13 +45,12 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * Company: www.shangpin.com
  * </p>
- * 
  * @author zhaogenchun
  * @date 2016年12月21日 下午5:25:30
  */
 @SuppressWarnings("rawtypes")
-//@RestController
-//@RequestMapping("/hub-supplier-category-dic")
+@RestController
+@RequestMapping("/hub-supplier-category-dic")
 @Slf4j
 public class HubSupplierCategoryDicController {
 	@Autowired
@@ -57,7 +61,11 @@ public class HubSupplierCategoryDicController {
 	HubSupplierValueMappingService hubSupplierValueMappingService;
 	@Autowired
 	SupplierService supplierService;
-//	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@Autowired
+	TaskImportService taskImportService;
+	@Autowired
+	IShangpinRedis shangpinRedis;
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryList(
 			@RequestBody HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto) {
 		
@@ -107,7 +115,7 @@ public class HubSupplierCategoryDicController {
 		}
 	}
 
-//	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
 			if (id != null) {
@@ -136,7 +144,7 @@ public class HubSupplierCategoryDicController {
 	 * @param dto
 	 * @return
 	 */
-//	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse save(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 
 		try {
@@ -158,28 +166,48 @@ public class HubSupplierCategoryDicController {
 		return HubResponse.errorResp("保存异常");
 	}
 
-//	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 		try {
 			save(dto);
-			if(dto!=null&&dto.getSupplierId()!=null){
-				String supplierId = dto.getSupplierId();
-				HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
-				criteria.createCriteria().andSupplierIdEqualTo(supplierId)
-						.andSupplierCategorynameEqualTo(dto.getSupplierCategory())
-						.andSupplierGenderEqualTo(dto.getSupplierGender());
-				hubSupplierSpuService.updateHubSpuPending(criteria,InfoState.RefreshCategory.getIndex());
-				return HubResponse.successResp("success");
+			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
+				Date date = new Date();
+				String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
+				taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+				dto.setRefreshDicType((byte)4);
+				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
+				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
 			}
 			
+			//刷新同品类和性别的其它供应商
+			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
+				
+				HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
+				BeanUtils.copyProperties(dto, dicDto);
+				dicDto.setUpdateTime(new Date());
+				
+				HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
+				criteria.createCriteria().andSupplierIdNotEqualTo(dto.getSupplierId()).andSupplierCategoryEqualTo(dto.getSupplierCategory()).andSupplierGenderEqualTo(dto.getSupplierGender());
+				criteria.setPageNo(1);
+				criteria.setPageSize(10000);
+				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategory(criteria);
+				if(list!=null&&list.size()>0){
+					for(HubSupplierCategroyDicDto dic:list){
+						if(dic.getCategoryType()==4){
+							continue;
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);
+			return HubResponse.errorResp("刷新异常");
 		}
-		return HubResponse.errorResp("刷新异常");
+		return HubResponse.successResp(null);
 	}
 	
 	
-//	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
 			if (id != null) {
