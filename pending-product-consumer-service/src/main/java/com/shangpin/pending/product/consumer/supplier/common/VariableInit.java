@@ -148,8 +148,9 @@ public class VariableInit {
                     && StringUtils.isNotBlank(dicDto.getMemo())) {
 
                 seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
-                        dicDto.getHubMarketTime().trim() + "_" + dicDto.getHubSeason().trim() + "|"
-                                + dicDto.getMemo().trim());
+                        (null==dicDto.getHubMarketTime()?"":dicDto.getHubMarketTime().trim()) + "_" +
+                                (null==dicDto.getHubSeason()?"":dicDto.getHubSeason().trim()) + "|"
+                                + (null==dicDto.getMemo()?"":dicDto.getMemo().trim()));
                 hubSeasonStaticMap.put(dicDto.getHubMarketTime() + "_" + dicDto.getHubSeason(), "");
             }
         }

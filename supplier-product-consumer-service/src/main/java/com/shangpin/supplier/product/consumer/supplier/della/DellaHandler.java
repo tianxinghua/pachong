@@ -134,10 +134,10 @@ public class DellaHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuModel(item.getSupplier_item_code().replaceAll("\"", "").trim()+"-"+item.getColor_code().replaceAll("\"", "").trim());
 			hubSpu.setSupplierSpuNo(hubSpu.getSupplierSpuModel());
 			hubSpu.setSupplierSpuColor(item.getColor_description().replaceAll("\"", ""));
-			hubSpu.setSupplierGender(item.getGender().replaceAll("\"", ""));
-			hubSpu.setSupplierCategoryname(item.getBrand_line().replaceAll("\"", ""));
-			hubSpu.setSupplierBrandname(item.getBrand_name().replaceAll("\"", ""));
-			hubSpu.setSupplierSeasonname(item.getSeason().trim());
+			hubSpu.setSupplierGender(null==item.getGender()?"":item.getGender().replaceAll("\"", ""));
+			hubSpu.setSupplierCategoryname(null==item.getBrand_line()?"":item.getBrand_line().replaceAll("\"", ""));
+			hubSpu.setSupplierBrandname(null==item.getBrand_name()?"":item.getBrand_name().replaceAll("\"", ""));
+			hubSpu.setSupplierSeasonname(null==item.getSeason()?"":item.getSeason().trim());
 			String material = item.getItem_detailed_info();
 			try{
 				material = material.substring(material.lastIndexOf(":")+1);
@@ -145,9 +145,9 @@ public class DellaHandler implements ISupplierHandler {
 				e.printStackTrace();
 			}
 			hubSpu.setSupplierMaterial(material);
-			hubSpu.setSupplierOrigin(item.getSeason().replaceAll("\"", ""));
+			hubSpu.setSupplierOrigin(null==item.getMade_in()?"":item.getMade_in().replaceAll("\"", ""));
 			hubSpu.setSupplierSpuDesc(standard(item.getItem_detailed_info().replaceAll(",", ".").replaceAll("\"", "")));
-			hubSpu.setSupplierSpuName((item.getBrand_name()+" "+item.getBrand_line()).replaceAll("\"", ""));
+			hubSpu.setSupplierSpuName((item.getBrand_name()+" "+(null==item.getBrand_line()?"":item.getBrand_line()).replaceAll("\"", "")));
 
 
 
