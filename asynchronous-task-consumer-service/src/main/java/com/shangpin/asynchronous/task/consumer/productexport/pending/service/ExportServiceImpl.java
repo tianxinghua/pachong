@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
+import com.shangpin.asynchronous.task.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
 import com.shangpin.asynchronous.task.consumer.util.ExportExcelUtils;
@@ -125,6 +126,8 @@ public class ExportServiceImpl {
 	HubSkuGateWay hubSkuGateWay;
 	@Autowired
 	HubSpuGateWay hubSpuGateWay;
+	@Autowired
+	private ApiAddressProperties apiAddressProperties;
 
 	private static final Integer PAGESIZE = 50;
 
@@ -468,6 +471,8 @@ public class ExportServiceImpl {
 					} else if (SpuState.HANDLING.getIndex() == product.getSpuState()) {
 						row.createCell(i).setCellValue("审核中");
 					}
+				} else if("productInfoUrl".equals(rowTemplate[i])){
+					row.createCell(i).setCellValue(apiAddressProperties.getPendingProductInfoUrl()+product.getSpuPendingId());
 				} else {
 					if ("specificationType".equals(rowTemplate[i])) {
 						continue;
