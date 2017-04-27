@@ -588,4 +588,14 @@ public class PendingProductStreamListener {
 	public void emontiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.emontiPendingProductStreamListen(message,headers);
 	}
+	/**
+	 * 供应商DLRBOUTIQUE待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.DLRBOUTIQUE)
+	public void dlrboutiquePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.dlrboutiquePendingProductStreamListen(message,headers);
+	}
 }

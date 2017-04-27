@@ -132,6 +132,8 @@ public interface OriginalProductSink {
 	public static final String MCLABLES = "mclablesOriginalProduct";
 	
 	public static final String EMONTI = "emontiOriginalProduct";
+	
+	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
 	//===============================
 	/**
 	 * 供货商SPINNAKER通道组件配置
@@ -505,4 +507,10 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.EMONTI)
 	public SubscribableChannel emontiOriginalProduct();
+	/**
+	 * 供应商DLRBOUTIQUE通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.DLRBOUTIQUE)
+	public SubscribableChannel dlrboutiqueOriginalProduct();
 }

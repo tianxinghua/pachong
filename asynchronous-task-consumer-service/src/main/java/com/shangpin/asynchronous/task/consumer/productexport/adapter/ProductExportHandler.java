@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.asynchronous.task.consumer.productexport.pending.service.AllProductServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
@@ -31,6 +32,8 @@ public class ProductExportHandler {
 	private ExportServiceImpl exportServiceImpl;
 	@Autowired
 	TaskImportService taskService;
+	@Autowired
+	AllProductServiceImpl allProductServiceImpl;
 	
 	/**
 	 * 商品导出数据流监听
@@ -42,10 +45,10 @@ public class ProductExportHandler {
 			if(!StringUtils.isEmpty(message.getData())){
 				
 				log.info("接收到导出任务："+message.getData());
-				if(message.getType() == TaskType.EXPORT_PENDING_SKU.getIndex()){
+				if(message.getType() == TaskType.EXPORT_PENDING_SKU.getIndex() || message.getType() == TaskType.EXPORT_SKU_ALL.getIndex()){
 					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
-				}else if(message.getType() == TaskType.EXPORT_PENDING_SPU.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_PENDING_SPU.getIndex() || message.getType() == TaskType.EXPORT_SPU_ALL.getIndex()){
 					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
 				}else if(message.getType() == TaskType.EXPORT_HUB_SELECTED.getIndex()){
@@ -57,7 +60,8 @@ public class ProductExportHandler {
 				}else if(message.getType() == TaskType.EXPORT_HUB_CHECK_PIC.getIndex()){
 					exportServiceImpl.exportHubCheckPicSelected(message); 
 				}else if(message.getType() == TaskType.ALL_PRODUCT.getIndex()){
-					//TODO 
+					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
+					allProductServiceImpl.exportproductAll(message.getTaskNo(), pendingQuryDto);
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

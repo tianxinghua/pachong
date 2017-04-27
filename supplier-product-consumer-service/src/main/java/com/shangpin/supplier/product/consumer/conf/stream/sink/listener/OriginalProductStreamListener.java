@@ -589,4 +589,14 @@ public class OriginalProductStreamListener {
 	public void emontiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.emontiStreamListen(message, headers);
 	}
+	/**
+	 * 供应商DLRBOUTIQUE原始数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.DLRBOUTIQUE)
+	public void dlrboutiqueStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.dlrboutiqueStreamListen(message, headers);
+	}
 }

@@ -639,4 +639,13 @@ public class OriginalProductStreamListenerAdapter {
 	public void emontiStreamListen(SupplierProduct message, Map<String, Object> headers){
 		emontiHandler.handleOriginalProduct(message, headers);
 	}
+
+	/**
+	 * dlrboutique供应商原始数据监听方法
+	 * @param message
+	 * @param headers
+	 */
+	public void dlrboutiqueStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);				
+	}
 }

@@ -74,6 +74,13 @@ public class SupplierProductMysqlService {
 			}
 		} catch (Exception e) {
 			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage());
+			try {
+				HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
+				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
+			} catch (Exception e1) {
+				log.error(">>>>>>>>>>>>>>>>>异常为"+e1.getMessage(),e1);
+			}
+			
 			return ProductStatus.NO_NEED_HANDLE;
 		}			
 	}	
