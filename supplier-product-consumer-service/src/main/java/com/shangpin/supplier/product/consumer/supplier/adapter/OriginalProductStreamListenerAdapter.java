@@ -646,7 +646,6 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void dlrboutiqueStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		atelierCommonHandler.handleOriginalProduct(message, headers);				
 	}
 }
