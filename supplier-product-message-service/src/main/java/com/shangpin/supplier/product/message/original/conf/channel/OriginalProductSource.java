@@ -131,6 +131,8 @@ public interface OriginalProductSource {
 	public static final String MCLABLES = "mclablesOriginalProduct";
 	
 	public static final String EMONTI = "emontiOriginalProduct";
+	
+	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -503,4 +505,10 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.EMONTI)
 	public MessageChannel emonti();
+	/**
+	 * 供应商DLRBOUTIQUE通道组件配置 
+	 * @return
+	 */
+	@Output(value = OriginalProductSource.DLRBOUTIQUE)
+	public MessageChannel dlrboutique();
 }

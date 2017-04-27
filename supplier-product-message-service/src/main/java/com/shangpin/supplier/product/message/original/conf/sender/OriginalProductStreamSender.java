@@ -514,4 +514,12 @@ public class OriginalProductStreamSender {
     public boolean emontiStream(SupplierProduct supplierProduct){
     	return originalProductSource.emonti().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    /**
+     * 发送供应商dlrboutique商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean dlrboutiqueStream(SupplierProduct supplierProduct){
+    	return originalProductSource.dlrboutique().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }
