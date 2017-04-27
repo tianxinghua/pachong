@@ -22,7 +22,9 @@ public interface HubBrandModelRuleGateWay {
 	 * 校验供应商品牌型号是否符合品牌方型号规则
 	 * @param dto 数据传输对象
 	 * @return 校验结果：包含是否校验通过以及校验之后的结果（校验通过的经过加工的品牌型号）
+	 * 请使用{@link #verifyWithCategory(BrandModelDto)}替换从而进行校验！
 	 */
+	@Deprecated
 	@RequestMapping(value = "/hub-brand-model-rule/verify", method = RequestMethod.POST,consumes = "application/json")
 	public BrandModelResult verify(BrandModelDto dto);
 	/**
