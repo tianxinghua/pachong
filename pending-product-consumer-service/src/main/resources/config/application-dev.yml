@@ -377,7 +377,13 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                               
+                                       maxAttempts: 1  
+                        dlrboutiquePendingProduct: 
+                              destination: dlrboutique.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                              
               rabbit: 
                       bindings: 
                             spinnakerPendingProduct: 
@@ -739,7 +745,13 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                
+                                       republishToDlq: false 
+                            dlrboutiquePendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                                                                                                                                                                                                                                                                                               
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
