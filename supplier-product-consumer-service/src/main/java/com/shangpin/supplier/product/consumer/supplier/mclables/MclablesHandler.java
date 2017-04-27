@@ -49,7 +49,7 @@ public class MclablesHandler implements ISupplierHandler {
 				mongoService.save(supplierId, item.getSku(), item);
 				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				convertSpu(supplierId,hubSpu,item);
+				boolean succ = convertSpu(supplierId,hubSpu,item);
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean success = convertSku(supplierId,hubSku,item);
@@ -57,7 +57,9 @@ public class MclablesHandler implements ISupplierHandler {
 					hubSkus.add(hubSku);
 				}
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
-				supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+				if(succ){
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
+				}
 			}
 		} catch (Exception e) {
 			log.error("mclables异常："+e.getMessage(),e); 
@@ -74,10 +76,10 @@ public class MclablesHandler implements ISupplierHandler {
 	 */
 	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,Item item){
 		if(null != item){
-			if("true".equals(item.getVariationInfo().getIsParent())){
+			if("false".equals(item.getVariationInfo().getIsParent())){
 				hubSpu.setSupplierId(supplierId);
-				hubSpu.setSupplierSpuNo(item.getSku());
-				hubSpu.setSupplierSpuModel(item.getSku());
+				hubSpu.setSupplierSpuNo(item.getVariationInfo().getParentSku());
+				hubSpu.setSupplierSpuModel(item.getVariationInfo().getParentSku());
 				hubSpu.setSupplierSpuName(item.getTitle());
 				List<AttributeInfo> attributeInfolist = item.getAttributeList().getAttributeInfo();
 				String color = "";
