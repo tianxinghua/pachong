@@ -8,7 +8,7 @@ package com.shangpin.ephub.product.business.rest.model.service;
  */
 public interface IHubBrandModelRuleService {
 	/**
-	 * 正则校验
+	 * 只校验品牌不校验品类的正则校验
 	 * @param hubBrandNo 品牌编号
 	 * @param hubCategoryNo 品类编号
 	 * @param brandMode 品牌方型号
@@ -23,5 +23,13 @@ public interface IHubBrandModelRuleService {
 	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
 	 */
 	String ruleVerify(String hubBrandNo, String hubCategoryNo, String brandMode);
+	/**
+	 * 既校验品牌又校验品类的正则校验
+	 * @param hubBrandNo 品牌编号
+	 * @param hubCategoryNo 品类编号
+	 * @param brandMode 品牌方型号
+	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
+	 */
+	String regexVerifyWithCategory(String hubBrandNo, String hubCategoryNo, String brandMode);
 
 }

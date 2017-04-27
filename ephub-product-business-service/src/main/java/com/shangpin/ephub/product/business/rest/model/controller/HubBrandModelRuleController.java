@@ -29,14 +29,16 @@ public class HubBrandModelRuleController {
 	@Autowired
 	private IHubBrandModelRuleService hubBrandModelRuleService;
 	/**
-	 * 校验供应商品牌型号是否符合品牌方型号规则
+	 * 过时：请使用{@link #verifyWithCategory(BrandModelDto)}校验方式进行替代！
+	 * 校验供应商品牌型号是否符合品牌方型号规则：只校验品牌不校验品类
 	 * @param dto 数据传输对象
 	 * @return 校验结果：包含是否校验通过以及校验之后的结果（校验通过的经过加工的品牌型号）
 	 */
+	@Deprecated
 	@RequestMapping(value = "/verify")
 	public BrandModelResult verify(@RequestBody BrandModelDto dto){
 		long start = System.currentTimeMillis();
-		log.info(HubBrandModelRuleController.class.getName()+".verify接收到的参数为:{}， 系统即将开始进行品牌型号规则验证!", dto.toString());
+		log.info("品牌校验规则（仅仅校验品牌不校验品类）服务接收到的参数为:{}， 系统即将开始进行品牌型号规则验证!", dto.toString());
 		BrandModelResult result = new BrandModelResult();
 		String brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
 		if (StringUtils.isNotBlank(brandModel)) {
@@ -51,7 +53,33 @@ public class HubBrandModelRuleController {
 				result.setBrandMode(_brandModel);
 			}
 		}
-		log.info(HubBrandModelRuleController.class.getName()+".verify接收到的参数为:{}， 系统品牌型号规则验证结果为{}， 耗时{}milliseconds!", dto.toString(), result.toString(), System.currentTimeMillis() - start);
+		log.info("品牌校验规则（仅仅校验品牌不校验品类）服务接收到的参数为:{}， 系统品牌型号规则验证结果为{}， 耗时{}milliseconds!", dto.toString(), result.toString(), System.currentTimeMillis() - start);
+		return result;
+	}
+	/**
+	 * 校验供应商品牌型号是否符合品牌方型号规则：校验品牌并且校验品类
+	 * @param dto 数据传输对象
+	 * @return 校验结果：包含是否校验通过以及校验之后的结果（校验通过的经过加工的品牌型号）
+	 */
+	@RequestMapping(value = "/verify-with-category")
+	public BrandModelResult verifyWithCategory(@RequestBody BrandModelDto dto){
+		long start = System.currentTimeMillis();
+		log.info("品牌校验规则（校验品牌并且校验品类）服务接收到的参数为:{}， 系统即将开始进行品牌型号规则验证!", dto.toString());
+		BrandModelResult result = new BrandModelResult();
+		String brandModel = hubBrandModelRuleService.regexVerifyWithCategory(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+		if (StringUtils.isNotBlank(brandModel)) {
+			result.setPassing(true);
+			result.setBrandMode(brandModel);
+		} else {
+			String _brandModel = hubBrandModelRuleService.ruleVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+			if (StringUtils.isBlank(_brandModel)) {
+				result.setPassing(false);
+			} else {
+				result.setPassing(true);
+				result.setBrandMode(_brandModel);
+			}
+		}
+		log.info("品牌校验规则（校验品牌并且校验品类）服务接收到的参数为:{}， 系统品牌型号规则验证结果为{}， 耗时{}milliseconds!", dto.toString(), result.toString(), System.currentTimeMillis() - start);
 		return result;
 	}
 }

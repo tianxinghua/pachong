@@ -1,6 +1,7 @@
 package com.shangpin.ephub.client.product.business.model.gateway;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -21,7 +22,16 @@ public interface HubBrandModelRuleGateWay {
 	 * 校验供应商品牌型号是否符合品牌方型号规则
 	 * @param dto 数据传输对象
 	 * @return 校验结果：包含是否校验通过以及校验之后的结果（校验通过的经过加工的品牌型号）
+	 * 请使用{@link #verifyWithCategory(BrandModelDto)}替换从而进行校验！
 	 */
+	@Deprecated
 	@RequestMapping(value = "/hub-brand-model-rule/verify", method = RequestMethod.POST,consumes = "application/json")
 	public BrandModelResult verify(BrandModelDto dto);
+	/**
+	 * 校验供应商品牌型号是否符合品牌方型号规则：校验品牌并且校验品类
+	 * @param dto 数据传输对象
+	 * @return 校验结果：包含是否校验通过以及校验之后的结果（校验通过的经过加工的品牌型号）
+	 */
+	@RequestMapping(value = "/hub-brand-model-rule/verify-with-category", method = RequestMethod.POST,consumes = "application/json")
+	public BrandModelResult verifyWithCategory(@RequestBody BrandModelDto dto);
 }
