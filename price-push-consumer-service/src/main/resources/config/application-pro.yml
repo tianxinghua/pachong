@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: 172.20.11.49
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -20,50 +20,51 @@ spring:
             health-check-timeout: 15s            
             register: true
             register-health-check: true
-        stream: 
-              bindings: 
-                        supplierRetryPrice:
-                              destination: retry.product.price
-                              content-type: application/json
-                        supplierProducerPrice:
-                               destination: supplier.product.price
-                               content-type: application/json
-                        supplierPrice:
-                              destination: supplier.product.price
-                              group: one
-                              consumer:
-                                       concurrency: 4
-                                       maxAttempts: 1
-                        retrySupplierPrice:
-                              destination: retry.product.price
-                              group: one
-                              consumer:
-                                       concurrency: 4
-                                       maxAttempts: 1
-              rabbit: 
+        stream:
+            bindings:
                       supplierRetryPrice:
-                            producer:
-                                 prefix: HA.
+                            destination: retry.product.price
+                            content-type: application/json
                       supplierProducerPrice:
-                            producer:
-                                 prefix: HA.
+                             destination: supplier.product.price
+                             content-type: application/json
                       supplierPrice:
+                            destination: supplier.product.price
+                            group: one
                             consumer:
-                                 prefix: HA.
-                                 autoBindDlq: false
-                                 requeueRejected: true
-                                 republishToDlq: false
+                                     concurrency: 4
+                                     maxAttempts: 1
                       retrySupplierPrice:
+                            destination: retry.product.price
+                            group: one
                             consumer:
-                                 prefix: HA.
-                                 autoBindDlq: false
-                                 requeueRejected: true
-                                 republishToDlq: false
-  jackson: 
+                                     concurrency: 4
+                                     maxAttempts: 1
+            rabbit:
+                    bindings:
+                          supplierRetryPrice:
+                                producer:
+                                     prefix: HA.
+                          supplierProducerPrice:
+                                producer:
+                                     prefix: HA.
+                          supplierPrice:
+                                consumer:
+                                     prefix: HA.
+                                     autoBindDlq: false
+                                     requeueRejected: true
+                                     republishToDlq: false
+                          retrySupplierPrice:
+                                consumer:
+                                     prefix: HA.
+                                     autoBindDlq: false
+                                     requeueRejected: true
+                                     republishToDlq: false
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
   mail: 
-       default-recipient: yan_xiao_bin@126.com
+       default-recipient: lizhongren@shangpin.com
        default-sender: yanxiaobin@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
        host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
