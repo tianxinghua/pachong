@@ -131,8 +131,8 @@ public class DellaHandler implements ISupplierHandler {
 		if(null != item){			
 			
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(item.getSupplier_item_code().replaceAll("\"", "").trim());
-			hubSpu.setSupplierSpuModel(item.getSupplier_item_code().replaceAll("\"", "").trim());
+			hubSpu.setSupplierSpuModel(item.getSupplier_item_code().replaceAll("\"", "").trim()+"-"+item.getColor_code().replaceAll("\"", "").trim());
+			hubSpu.setSupplierSpuNo(hubSpu.getSupplierSpuModel());
 			hubSpu.setSupplierSpuColor(item.getColor_description().replaceAll("\"", ""));
 			hubSpu.setSupplierGender(item.getGender().replaceAll("\"", ""));
 			hubSpu.setSupplierCategoryname(item.getBrand_line().replaceAll("\"", ""));
@@ -168,7 +168,7 @@ public class DellaHandler implements ISupplierHandler {
 		if(null != item){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(item.getItem_code().trim());
-			hubSku.setSupplierBarcode(item.getItem_code()); //无货号
+			hubSku.setSupplierBarcode(item.getItem_code()); //
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getRetail_price())));
 			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(item.getSold_price())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getYour_price())));
