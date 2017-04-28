@@ -18,6 +18,9 @@ import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
+import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
@@ -63,6 +66,8 @@ public class VariableInit {
     @Autowired
     HubBrandModelRuleGateWay brandModelRuleGateWay;
 
+    @Autowired
+    MatchSizeGateWay matchSizeGateWay;
 
 
     @Autowired
@@ -406,6 +411,27 @@ public class VariableInit {
 
         return result;
     }
+
+
+    protected String getHubSize(String hubCategoryNo, String hubBrandNo,  String supplierSize){
+        MatchSizeDto sizeDto = new MatchSizeDto();
+        sizeDto.setHubBrandNo(hubBrandNo);
+        sizeDto.setHubCategoryNo(hubCategoryNo);
+        sizeDto.setSize(supplierSize);
+        MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(sizeDto);
+        if(null==matchSizeResult){
+            return "";
+        }else{
+            if(matchSizeResult.isPassing()) {
+                return (null==matchSizeResult.getSizeId()||"null".equals(matchSizeResult.getSizeId())?"":matchSizeResult.getSizeId())+","+ matchSizeResult.getSizeType()+":"+matchSizeResult.getSizeValue();
+            }else{
+                return "";
+            }
+        }
+    }
+
+
+
 
     protected void setSkuPendingSizePropertyValue(HubSkuPendingDto hubSkuPending, String hubSize) {
         String[] sizeAndIdArray = hubSize.split(",");

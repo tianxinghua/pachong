@@ -47,6 +47,16 @@ public class SpuPendingHandler {
     }
 
 
+    public boolean updateSpuStateToHandle(Long spuPendingId){
+        boolean  result = true;
+        HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
+        hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+        hubSpuPending.setSpuPendingId(spuPendingId);
+        spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
+        return result;
+    }
+
+
     public void updateStotckState(Long spuPendingId,Integer stockState){
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         if(stockState>0){

@@ -304,9 +304,28 @@ public class PendingHandler extends VariableInit {
             if (null != tmp) {
                 hubSpuPending = new SpuPending();
                 BeanUtils.copyProperties(tmp, hubSpuPending);
+
+				//判断HUB_SPU是否存
+				if (hubSpuPending.getSpuBrandState().intValue()==PropertyStatus.MESSAGE_HANDLED.getIndex()
+						&& null != hubSpuPending.getSpuModel()) {
+					HubSpuDto hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),
+							hubSpuPending.getSpuModel());
+					if(null!=hubSpuDto){
+						if(hubSpuPending.getSpuState().intValue()!=SpuStatus.SPU_HANDLED.getIndex()){
+						   spuPendingHandler.updateSpuStateToHandle(hubSpuPending.getSpuPendingId());
+						}
+						hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+
+					}
+				}
+
+
             } else {// 如果不存在 说明是消息队列混乱了
 				hubSpuPending = createNewSpuFromSupplier(message);
             }
+
+
+
         }
 		return hubSpuPending;
 	}
@@ -618,7 +637,7 @@ public class PendingHandler extends VariableInit {
 				if (hubSpuPending.getSpuBrandState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()
 						&& hubSpuPending.getCatgoryState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()) {
 					hubSize = this.getHubSize(hubSpuPending.getHubCategoryNo(), hubSpuPending.getHubBrandNo(),
-							supplierSku.getSupplierId(), hubSkuPending.getHubSkuSize());
+							 hubSkuPending.getHubSkuSize());
 
 				}
 			}
@@ -704,7 +723,7 @@ public class PendingHandler extends VariableInit {
 
                 String spSizeTypeAndSize =   sizeAndIdArray[1];
                 hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
-                hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+                hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
 
                 hubSkuPending.setScreenSize(sizeAndIdArray[0]);
 
@@ -720,15 +739,15 @@ public class PendingHandler extends VariableInit {
 				hubSkuPending.setSkuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());//SKU状态与SPU 相同
                 dataServiceHandler.savePendingSku(hubSkuPending);
                 // 保存对应关系
-                dataServiceHandler.saveSkuSupplierMapping(hubSpuPending, hubSkuPending, supplierSpu, supplierSku);
+                dataServiceHandler.saveSkuSupplierMapping(hubSku.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
             } else { // 不存在 创建hubsku 并创建 对应关系
 
                 dataServiceHandler.savePendingSku(hubSkuPending);
 
-                dataServiceHandler.insertHubSku(hubSpuPending.getHubSpuNo(), hubSpuPending.getHubColor(), date,
+				HubSkuDto hubSkuNo = dataServiceHandler.insertHubSku(hubSpuPending.getHubSpuNo(), hubSpuPending.getHubColor(), date,
                         hubSkuPending);
 
-                dataServiceHandler.saveSkuSupplierMapping(hubSpuPending, hubSkuPending, supplierSpu, supplierSku);
+                dataServiceHandler.saveSkuSupplierMapping(hubSkuNo.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
 
             }
         } else {// 无尺码映射
