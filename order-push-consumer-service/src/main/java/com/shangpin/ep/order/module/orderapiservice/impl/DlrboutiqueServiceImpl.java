@@ -21,9 +21,9 @@ import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
-@Component("brunarossoServiceImpl")
-public class BrunarossoServiceImpl implements IOrderService {
-	
+@Component("dlrboutiqueServiceImpl")
+public class DlrboutiqueServiceImpl implements IOrderService {
+
 	@Autowired
     LogCommon logCommon;    
     @Autowired
@@ -43,7 +43,7 @@ public class BrunarossoServiceImpl implements IOrderService {
      * @return
      * @throws Exception
      */
-    public String brunarossPost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
+    public String dlrboutiquePost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
     	return HttpUtil45.postAuth(url, param, outTimeConf, userName, password);
     }
     /**
@@ -144,13 +144,11 @@ public class BrunarossoServiceImpl implements IOrderService {
 					}else{
 						orderDTO.setConfirmTime(new Date()); 
 						orderDTO.setPushStatus(PushStatus.NO_STOCK);
-//						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
 				}else{
 					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 					orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);	
 					orderDTO.setDescription("查询对方库存接口失败,对方返回的信息是："+stockData);
-//					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。2分钟后会再推一次。 ");
 				}
 			}else{
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -158,7 +156,6 @@ public class BrunarossoServiceImpl implements IOrderService {
 				orderDTO.setDescription("查询数据库失败,未找到该商品 "+skuId);
 				orderDTO.setLogContent("查询数据库失败,未找到该商品=========== "+skuId);
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-//				sendMail("订单 "+orderDTO.getSpPurchaseNo()+" 查询数据库失败,未找到该商品=========== "+skuId);
 			}
 			
 		} catch (Exception e) {
@@ -209,7 +206,7 @@ public class BrunarossoServiceImpl implements IOrderService {
 	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);		
-		String returnData = brunarossPost(supplierProperties.getBrunarosso().getUrl()+supplierProperties.getBrunarosso().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getBrunarosso().getUser(),supplierProperties.getBrunarosso().getPassword(),orderDTO);
+		String returnData = dlrboutiquePost(supplierProperties.getDlrboutique().getUrl()+supplierProperties.getDlrboutique().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getDlrboutique().getUser(),supplierProperties.getDlrboutique().getPassword(),orderDTO);
 		return returnData;
 	}
 	
@@ -228,7 +225,7 @@ public class BrunarossoServiceImpl implements IOrderService {
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = brunarossPost(supplierProperties.getBrunarosso().getUrl()+supplierProperties.getBrunarosso().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getBrunarosso().getUser(),supplierProperties.getBrunarosso().getPassword(),orderDTO);
+		String returnData = dlrboutiquePost(supplierProperties.getDlrboutique().getUrl()+supplierProperties.getDlrboutique().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getDlrboutique().getUser(),supplierProperties.getDlrboutique().getPassword(),orderDTO);
 		orderDTO.setLogContent("下订单返回结果======="+returnData+" 下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
@@ -246,7 +243,7 @@ public class BrunarossoServiceImpl implements IOrderService {
 		param.put("STATUS", status);//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
 		orderDTO.setLogContent("设置订单参数======="+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
-		String returnData = brunarossPost(supplierProperties.getBrunarosso().getUrl()+supplierProperties.getBrunarosso().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getBrunarosso().getUser(),supplierProperties.getBrunarosso().getPassword(),orderDTO);
+		String returnData = dlrboutiquePost(supplierProperties.getDlrboutique().getUrl()+supplierProperties.getDlrboutique().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getDlrboutique().getUser(),supplierProperties.getDlrboutique().getPassword(),orderDTO);
 		orderDTO.setLogContent("设置订单状态返回结果======="+returnData);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
 		return returnData;

@@ -403,7 +403,19 @@ shangpin:
       giglio:
               isPurchaseExp: false
               openApiKey:
-              openApiSecret:
+              openApiSecret: 
+      dlrboutique: 
+              url: http://79.60.189.204/WS_SITO_P15/WS_SITO_P15.ASMX/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang2004
+              messageType: text/html;charset=utf-8
+              isPurchaseExp:
+              openApiKey: 
+              openApiSecret: 
       supplier:
               delayTime: 1000
               retry: 120
