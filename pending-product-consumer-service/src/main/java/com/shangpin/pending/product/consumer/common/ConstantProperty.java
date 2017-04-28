@@ -36,6 +36,8 @@ public class ConstantProperty {
     //   ------------------  品类end
 
    //  尺码
+   public static String SIZE_TYPE="尺寸";
+
    public static String REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY";
 
     public static String REDIS_EPHUB_SUPPLIER_ALL_SIZE_MAPPING_KEY="ALL";

@@ -733,6 +733,25 @@ public class DataServiceHandler {
 		}
 	}
 
+	public HubSkuDto getSkuBySpuNoAndSizeAndSizeType(String spuNo,String size,String sizeType){
+
+		//如果size类型=尺寸 不需要查询尺寸
+		HubSkuCriteriaDto hubSkuCriteria =new HubSkuCriteriaDto();
+		if(ConstantProperty.SIZE_TYPE.equals(sizeType)){
+			hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeTypeEqualTo(sizeType);
+		}else{
+			hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeEqualTo(size).andSkuSizeTypeEqualTo(sizeType);
+		}
+		List<HubSkuDto> hubSkuDtos =   hubSkuGateWay.selectByCriteria(hubSkuCriteria);
+		if(null!=hubSkuDtos&&hubSkuDtos.size()>0){
+			return hubSkuDtos.get(0);
+		}else{
+			return null;
+		}
+
+
+	}
+
 	public void saveSkuSupplierMapping(SpuPending hubSpuPending, HubSkuPendingDto skuPendingDto, PendingSpu supplierSpu,
 			PendingSku sku) {
 

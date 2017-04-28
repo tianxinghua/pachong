@@ -619,12 +619,16 @@ public class PendingHandler extends VariableInit {
 						&& hubSpuPending.getCatgoryState().intValue() == PropertyStatus.MESSAGE_HANDLED.getIndex()) {
 					hubSize = this.getHubSize(hubSpuPending.getHubCategoryNo(), hubSpuPending.getHubBrandNo(),
 							supplierSku.getSupplierId(), hubSkuPending.getHubSkuSize());
+
 				}
 			}
 		}
 	    //判断HUBSPU  是否存在
 		if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()) {
 			// 查询HUBSKU
+			log.info("hubSpu 存在："+(null==hubSpuPending.getHubSpuNo()?"":hubSpuPending.getHubSpuNo()) + ""+
+					" hubSize = " +hubSize + " query parameter: category=" + hubSpuPending.getHubCategoryNo() + "  brandno="+hubSpuPending.getHubBrandNo()
+					+ " supplierId=" + supplierSku.getSupplierId() + " hubSize="+hubSkuPending.getHubSkuSize());
 			setSkuPendingIfHubSkuExist(hubSpuPending, supplierSpu, supplierSku, hubSkuPending, date, mappingSize, hubSize);
 
 		} else {
@@ -703,14 +707,17 @@ public class PendingHandler extends VariableInit {
                 hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
 
                 hubSkuPending.setScreenSize(sizeAndIdArray[0]);
+
             }
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
             hubSkuPending.setSkuState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
-            HubSkuDto hubSku = dataServiceHandler.getHubSku(hubSpuPending.getHubSpuNo(),
-                    hubSkuPending.getScreenSize());
+            HubSkuDto hubSku = dataServiceHandler.getSkuBySpuNoAndSizeAndSizeType(hubSpuPending.getHubSpuNo(),
+                    null==hubSkuPending.getHubSkuSize()?"":hubSkuPending.getHubSkuSize(),
+					null==hubSkuPending.getHubSkuSizeType()?"":hubSkuPending.getHubSkuSizeType());
             if (null != hubSku) {// 存在 录入skusupplier对应关系
                 // 首先存储skuPending
+				hubSkuPending.setSkuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());//SKU状态与SPU 相同
                 dataServiceHandler.savePendingSku(hubSkuPending);
                 // 保存对应关系
                 dataServiceHandler.saveSkuSupplierMapping(hubSpuPending, hubSkuPending, supplierSpu, supplierSku);
@@ -731,7 +738,9 @@ public class PendingHandler extends VariableInit {
             // 如果是待审核的 因为尺码问题 不能通过
             if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()) {
                 spuPendingHandler.updateSpuStateFromWaitAuditToWaitHandle(hubSpuPending.getSpuPendingId());
-            }
+            }else if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()){
+				spuPendingHandler.updateSpuStateFromHandledToWaitHandle(hubSpuPending.getSpuPendingId());
+			}
 
         }
 	}
