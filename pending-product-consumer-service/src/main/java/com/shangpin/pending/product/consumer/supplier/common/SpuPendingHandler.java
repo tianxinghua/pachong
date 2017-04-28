@@ -1,5 +1,7 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
+import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -38,6 +40,8 @@ public class SpuPendingHandler {
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
         hubSpuPending.setSpuPendingId(spuPendingId);
+        hubSpuPending.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
+        hubSpuPending.setHandleState(HandleState.HUB_EXIST.getIndex());
         spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
         return result;
     }
