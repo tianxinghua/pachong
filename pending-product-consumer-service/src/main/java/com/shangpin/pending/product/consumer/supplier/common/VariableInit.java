@@ -442,7 +442,7 @@ public class VariableInit {
         hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
         hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
 
-        hubSkuPending.setScreenSize(sizeAndIdArray[0]);
+        hubSkuPending.setScreenSize(null==sizeAndIdArray[0]?"":sizeAndIdArray[0]);
     }
 
 

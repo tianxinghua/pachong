@@ -770,16 +770,17 @@ public class DataServiceHandler {
 			skuSupplierMapping.setSupplierId(skuPendingDto.getSupplierId());
 			HubSupplierSkuDto supplierSkuDto = this.getSupplierSku(sku.getSupplierId(), sku.getSupplierSkuNo());
 			if (null != supplierSkuDto) {
+
                 skuSupplierMapping.setSupplierSkuId(supplierSkuDto.getSupplierSkuId());
 
             }
 			skuSupplierMapping.setSupplierSelectState(SupplierSelectState.WAIT_SELECT.getIndex().byteValue());
 			log.info("skuMapping = " +skuSupplierMapping.toString());
 			skuSupplierMappingGateWay.insert(skuSupplierMapping);
-			log.info("save skuSupplierMapping success");
+
 		} catch (Exception e) {
 			log.error("save sku mapping error :" + e.getMessage(),e);
-			log.info("save skuSupplierMapping error");
+
 		}
 
 	}
