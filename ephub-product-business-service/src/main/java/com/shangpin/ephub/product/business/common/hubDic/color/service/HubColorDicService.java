@@ -160,13 +160,15 @@ public class HubColorDicService {
 		return hubColorDicGateWay.countByCriteria(hubColorDicCriteriaDto);
 	}
 
-	public List<HubColorDicItemDto> getSupplierColorByHubColorId(Long id) {
+	public List<HubColorDicItemDto> getSupplierColorByHubColorId(Long id,int pageNo,int pageSize) {
 		
 		HubColorDicItemCriteriaDto hubColorDicCriteriaDto = new HubColorDicItemCriteriaDto();
 		HubColorDicItemCriteriaDto.Criteria criteria = hubColorDicCriteriaDto.createCriteria();
 		if(id!=null){
 			criteria.andColorDicIdEqualTo(id);
 		}
+		hubColorDicCriteriaDto.setPageNo(pageNo);
+		hubColorDicCriteriaDto.setPageSize(pageSize);
 		return hubColorDicItemGateWay.selectByCriteria(hubColorDicCriteriaDto);
 		
 	}
@@ -181,5 +183,15 @@ public class HubColorDicService {
 
 	public void saveColorItem(HubColorDicItemDto dicDto) {
 		hubColorDicItemGateWay.insertSelective(dicDto);
+	}
+
+	public int countHubColorDicByHubColorId(Long colorDicId) {
+		HubColorDicItemCriteriaDto crireria = new HubColorDicItemCriteriaDto();
+		crireria.createCriteria().andColorDicIdEqualTo(colorDicId);
+		return hubColorDicItemGateWay.countByCriteria(crireria);
+	}
+
+	public void updateSupplierColorById(HubColorDicItemDto dicDto) {
+		hubColorDicItemGateWay.updateByPrimaryKeySelective(dicDto);
 	}
 }

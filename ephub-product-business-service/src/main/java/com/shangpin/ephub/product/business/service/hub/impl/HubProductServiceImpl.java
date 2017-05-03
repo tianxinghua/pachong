@@ -153,7 +153,7 @@ public class HubProductServiceImpl implements HubProductService {
             }else{
                 //货号判断
                 if(!sopSkuDto.getProductModel().equals(hubSpuDto.getSpuModel())){
-                    updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"SOP已存在此商品，货号不同");
+                    updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.EXIST,"SOP已存在此商品，货号不同");
                 }else{
                     updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.EXIST, ServiceConstant.HUB_SEND_TO_SCM_EXIST);
                 }
