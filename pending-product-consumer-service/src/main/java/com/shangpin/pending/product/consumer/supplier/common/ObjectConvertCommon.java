@@ -1,6 +1,7 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
@@ -38,8 +39,10 @@ public class ObjectConvertCommon {
         hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+        hubSpuPending.setHubGender(hubSpuDto.getGender());
         hubSpuPending.setSpuGenderState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+        hubSpuPending.setStockState(StockState.NOSKU.getIndex());
         Date date = new Date();
         hubSpuPending.setCreateTime(date);
         hubSpuPending.setUpdateTime(date);

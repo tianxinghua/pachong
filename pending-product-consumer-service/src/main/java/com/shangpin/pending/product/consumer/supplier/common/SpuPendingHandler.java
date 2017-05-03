@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * Created by lizhongren on 2017/1/13.
  */
@@ -31,6 +33,7 @@ public class SpuPendingHandler {
         boolean  result = true;
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+        hubSpuPending.setUpdateTime(new Date());
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
                 .andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -47,6 +50,7 @@ public class SpuPendingHandler {
         hubSpuPending.setSpuPendingId(spuPendingId);
         hubSpuPending.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
         hubSpuPending.setHandleState(HandleState.HUB_EXIST.getIndex());
+        hubSpuPending.setUpdateTime(new Date());
         spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
         return result;
     }
@@ -65,7 +69,7 @@ public class SpuPendingHandler {
             HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
             hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
             hubSpuPending.setSpuPendingId(spuPendingId);
-
+            hubSpuPending.setUpdateTime(new Date());
             spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
 
         }
@@ -78,6 +82,7 @@ public class SpuPendingHandler {
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
         hubSpuPending.setSpuPendingId(spuPendingId);
+        hubSpuPending.setUpdateTime(new Date());
         spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
         return result;
     }
@@ -90,6 +95,7 @@ public class SpuPendingHandler {
         }else if(stockState<=0){
             hubSpuPending.setStockState(StockState.NOSTOCK.getIndex());
         }
+        hubSpuPending.setUpdateTime(new Date());
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
         HubSpuPendingWithCriteriaDto criteriaSpu = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteria);
