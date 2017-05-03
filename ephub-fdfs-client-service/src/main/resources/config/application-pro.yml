@@ -26,7 +26,7 @@ spring:
        #password: 123.com # Login password of the SMTP server.
        #test-connection: false # Test that the mail server is available on startup.
 # ===================================================================
-# 分布式文件系统FDFS配置
+# 分布式文件系统FDFS配置 
 # ===================================================================
 fdfs:
   soTimeout: 3000
