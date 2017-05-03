@@ -63,28 +63,28 @@ public class PictureHandler {
 	 * @param supplierSeason
 	 * @return
 	 */
-	public boolean isCurrentSeason(String supplierId,String supplierSeason){
-		if(StringUtils.isEmpty(supplierSeason)){
-			return false;
-		}
-		Map<String,String> currentSeason =  null;
-		if(null == currentSeason){
-			currentSeason = new HashMap<String,String>();
-			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
-			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
-			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
-			if(null != dics && dics.size() > 0){
-				for(HubSeasonDicDto dic : dics){
-					currentSeason.put(dic.getSupplierSeason().trim().toUpperCase(), null);
-				}
-			}
-		}
-		if(currentSeason.containsKey(supplierSeason.trim().toUpperCase())){
-			return true;
-		}else{
-			return false;
-		}
-	}
+//	public boolean isCurrentSeason(String supplierId,String supplierSeason){
+//		if(StringUtils.isEmpty(supplierSeason)){
+//			return false;
+//		}
+//		Map<String,String> currentSeason =  null;
+//		if(null == currentSeason){
+//			currentSeason = new HashMap<String,String>();
+//			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
+//			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
+//			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
+//			if(null != dics && dics.size() > 0){
+//				for(HubSeasonDicDto dic : dics){
+//					currentSeason.put(dic.getSupplierSeason().trim().toUpperCase(), null);
+//				}
+//			}
+//		}
+//		if(currentSeason.containsKey(supplierSeason.trim().toUpperCase())){
+//			return true;
+//		}else{
+//			return false;
+//		}
+//	}
 	
 	/**
 	 * 判断该spu是否存在图片
