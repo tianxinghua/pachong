@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -34,13 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class PendingSkuService extends PendingSpuService{
 
 	@Override
-    public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto){
+    public HubResponse<?> exportSku(PendingQuryDto pendingQuryDto,TaskType taskType){
     	try {
     		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
             int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
             pendingQuryDto.setPageSize(total);
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SKU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),taskType.getIndex());
+        	sendMessageToTask(taskDto.getTaskNo(),taskType.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出sku失败，服务器发生错误:"+e.getMessage(),e);
@@ -61,7 +61,6 @@ public abstract class PendingSkuService extends PendingSpuService{
             }else{
             	List<Byte> listSkuState = new ArrayList<Byte>();
                 listSkuState.add(SpuState.HANDLED.getIndex());
-//                listSkuState.add(SpuState.HANDLING.getIndex());
                 criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateNotIn(listSkuState).andHubSkuNoIsNull();
                 criteriaDto.or(criteriaDto.createCriteria().andSpuPendingIdIn(spuPendingIds).andSkuStateIsNull().andHubSkuNoIsNull());
             }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
@@ -34,6 +35,9 @@ public class SupplierProductService {
 	 * @throws Exception
 	 */
 	private List<HubSupplierSpuDto> findHubSupplierSpuDtos(HubSupplierSpuDto supplierSpuDto) throws Exception{
+		if(StringUtils.isEmpty(supplierSpuDto.getSupplierId()) || StringUtils.isEmpty(supplierSpuDto.getSupplierSpuNo())){
+			return null;
+		}
 		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
 		criteriaDto.setFields("supplier_spu_id,supplier_seasonname,supplier_categoryname,supplier_brandname");
 		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierSpuDto.getSupplierId()).andSupplierSpuNoEqualTo(supplierSpuDto.getSupplierSpuNo());
@@ -47,6 +51,9 @@ public class SupplierProductService {
 	 * @throws Exception
 	 */
 	public HubSupplierSpuDto isSupplierSeasonNameChanged(HubSupplierSpuDto supplierSpuDto) throws Exception {
+		if(StringUtils.isEmpty(supplierSpuDto.getSupplierSeasonname())){
+			return null;
+		}
 		List<HubSupplierSpuDto> hubSpus = findHubSupplierSpuDtos(supplierSpuDto);
 		if(null == hubSpus || hubSpus.size() == 0){
 			return null;

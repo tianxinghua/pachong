@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.spu.pending.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,8 +42,9 @@ public class HubSpuPendingController {
     }
 	@RequestMapping(value = "/insert")
     public Long insert(@RequestBody HubSpuPending hubSpuPending){
-    	 hubSpuPendingService.insert(hubSpuPending);
-    	 return hubSpuPending.getSpuPendingId();
+		throw new DuplicateKeyException("DuplicateKeyException");
+//    	 hubSpuPendingService.insert(hubSpuPending);
+//    	 return hubSpuPending.getSpuPendingId();
     }
 	@RequestMapping(value = "/insert-selective")
     public Long insertSelective(@RequestBody HubSpuPending hubSpuPending){

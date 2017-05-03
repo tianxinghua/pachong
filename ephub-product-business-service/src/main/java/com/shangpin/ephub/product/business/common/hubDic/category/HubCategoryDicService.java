@@ -40,7 +40,9 @@ public class HubCategoryDicService {
 				.andPushStateEqualTo(pushState);
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
-	
+	public List<HubSupplierCategroyDicDto> getSupplierCategory(HubSupplierCategroyDicCriteriaDto criteria) {
+		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
+	}
 	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType,String supplierCategory,String supplierGender) {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		criteria.setPageNo(pageNo);
@@ -51,13 +53,13 @@ public class HubCategoryDicService {
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
-				criterion.andCategoryTypeIsNull();
+				criterion.andMappingStateNotEqualTo((byte)1);
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
 		}
 		if(StringUtils.isNotBlank(supplierCategory)){
-			criterion.andSupplierCategoryLike(supplierCategory+"%");
+			criterion.andSupplierCategoryLike("%"+supplierCategory+"%");
 		}
 		if(StringUtils.isNotBlank(supplierGender)){
 			criterion.andSupplierGenderEqualTo(supplierGender);
@@ -81,7 +83,7 @@ public class HubCategoryDicService {
 		}
 		if(StringUtils.isNotBlank(supplilerCategory)){
 			Log.info("supplilerCategory:"+supplilerCategory);
-			criterion.andSupplierCategoryLike(supplilerCategory.trim()+"%");
+			criterion.andSupplierCategoryLike("%"+supplilerCategory.trim()+"%");
 			
 		}
 		if(StringUtils.isNotBlank(supplierGender)){
@@ -108,7 +110,7 @@ public class HubCategoryDicService {
 			return null;
 		}
 	}
-
+	
 	public void saveHubCategory(String supplierId, String supplierCategory, String supplierGender) throws Exception {
 
 		// 先获取性别字典的值 目的是品类映射表需要性别字典的主键

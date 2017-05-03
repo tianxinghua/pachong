@@ -1,4 +1,6 @@
-package com.shangpin.ephub.product.business.ui.mapp.color.dto;
+package com.shangpin.ephub.product.business.ui.mapp.model.dto;
+
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,14 +16,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierColorDicResponseDto {
+public class HubBrandModelDicResponseWithPageDto {
 	
-	private Long colorDicItemId;
-	private Long colorDicId;
-	private String supplierColor;
-	private String hubColor;
-	private String updateTime;
-	private String createTime;
-	private String updateUser;
+	private int total;
+	private List<HuBrandModelDicResponseDto> list;
 
 }

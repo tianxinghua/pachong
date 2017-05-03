@@ -66,7 +66,7 @@ public class HubSupplierValueMappingService {
 	}
 
 	public int updateByPrimaryKeySelective(HubSupplierValueMapping hubSupplierValueMapping) {
-		return hubSupplierValueMappingMapper.updateByPrimaryKey(hubSupplierValueMapping);
+		return hubSupplierValueMappingMapper.updateByPrimaryKeySelective(hubSupplierValueMapping);
 	}
 
 	public int updateByPrimaryKey(HubSupplierValueMapping hubSupplierValueMapping) {

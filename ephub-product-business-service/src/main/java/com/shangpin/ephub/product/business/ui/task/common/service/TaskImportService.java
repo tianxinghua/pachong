@@ -11,15 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
@@ -51,8 +51,8 @@ public class TaskImportService {
     @Autowired
     HubSpuImportTaskGateWay spuImportGateway;
     @Autowired
-    ProductImportTaskStreamSender productImportTaskStreamSender;
-    public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,TaskImportTpye importType) throws Exception{
+    TaskStreamSender productImportTaskStreamSender;
+    public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,TaskType importType) throws Exception{
 
     	String name  = new String(task.getFileName().getBytes("UTF-8"));
         String []fileName = name.split("\\.");
@@ -75,15 +75,15 @@ public class TaskImportService {
         log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
         return HubResponse.errorResp("文件格式有误，请下载模板");
     }
-    private void sendTaskMessage(String createUser,String taskNo,String ftpFilePath,TaskImportTpye importType){
-        ProductImportTask productImportTask = new ProductImportTask();
+    private void sendTaskMessage(String createUser,String taskNo,String ftpFilePath,TaskType importType){
+        Task productImportTask = new Task();
         productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
         productImportTask.setMessageId(UUID.randomUUID().toString());
         productImportTask.setTaskNo(taskNo);
         productImportTask.setType(importType.getIndex());
         productImportTask.setData("{\"taskFtpFilePath\":\""+ftpFilePath+"\",\"createUser\":\""+createUser+"\"}");
         log.info("推送任务的参数：{}",productImportTask);
-        if(TaskImportTpye.HUB_PRODUCT.getIndex()==importType.getIndex()){
+        if(TaskType.HUB_PRODUCT.getIndex()==importType.getIndex()){
         	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
         	return;
         }
@@ -101,6 +101,29 @@ public class TaskImportService {
         hubSpuTask.setImportType((byte)importType);
         spuImportGateway.insert(hubSpuTask);
         return true;
+    }
+    
+    public boolean saveTask(String taskNo,String memo,String createUser,int importType) throws Exception{
+        HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+        hubSpuTask.setTaskNo(taskNo);
+        hubSpuTask.setCreateTime(new Date());
+        hubSpuTask.setUpdateTime(new Date());
+        hubSpuTask.setCreateUser(createUser);
+        hubSpuTask.setTaskState((byte) TaskState.NO_HANDLE.getIndex());
+        hubSpuTask.setImportType((byte)importType);
+        hubSpuTask.setProcessInfo(memo);
+        spuImportGateway.insert(hubSpuTask);
+        return true;
+    }
+    public void sendTaskMessage(String taskNo,Integer type,String data){
+        Task productImportTask = new Task();
+        productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
+        productImportTask.setMessageId(UUID.randomUUID().toString());
+        productImportTask.setTaskNo(taskNo);
+        productImportTask.setType(type);
+        productImportTask.setData(data);
+        log.info("推送任务的参数：{}",productImportTask);
+        productImportTaskStreamSender.refreshDicTaskStream(productImportTask, null);
     }
     public HubTaskProductResponseWithPageDTO findHubTaskList(HubImportTaskListRequestDto param) {
 

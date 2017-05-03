@@ -120,7 +120,11 @@ public class HubPendingProductController {
 			HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
 			hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
 			log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
-			priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE); 
+			try{
+				priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE);	
+			}catch(Exception e){
+				log.error("推送价格队列失败",e);
+			}
 		}
 		
 	}

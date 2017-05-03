@@ -28,8 +28,8 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuSeasonState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
@@ -44,10 +44,10 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
@@ -92,7 +92,7 @@ public abstract class PendingSpuService implements IPendingProductService {
     @Autowired 
 	private HubSpuImportTaskGateWay spuImportGateway;
     @Autowired 
-    private ProductImportTaskStreamSender tastSender;
+    private TaskStreamSender tastSender;
     @Autowired
 	protected HubSupplierSpuGateWay hubSupplierSpuGateWay;
     @Autowired
@@ -128,7 +128,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 	 * @param data
 	 */
     protected void sendMessageToTask(String taskNo,int type,String data){
-    	ProductImportTask productImportTask = new ProductImportTask();
+    	Task productImportTask = new Task();
     	productImportTask.setMessageId(UUID.randomUUID().toString());
     	productImportTask.setTaskNo(taskNo);
     	productImportTask.setMessageDate(DateTimeUtil.getTime(new Date())); 
@@ -338,13 +338,13 @@ public abstract class PendingSpuService implements IPendingProductService {
 	}
     
 	@Override
-    public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto){
+    public HubResponse<?> exportSpu(PendingQuryDto pendingQuryDto,TaskType taskType){
     	try {
     		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
             int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
             pendingQuryDto.setPageSize(total);
-        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex());
-        	sendMessageToTask(taskDto.getTaskNo(),TaskImportTpye.EXPORT_PENDING_SPU.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
+        	HubSpuImportTaskDto taskDto = saveTaskIntoMysql(pendingQuryDto.getCreateUser(),taskType.getIndex());
+        	sendMessageToTask(taskDto.getTaskNo(),taskType.getIndex(),JsonUtil.serialize(pendingQuryDto)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":"+pendingQuryDto.getCreateUser()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
 			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);

@@ -26,6 +26,7 @@ public class HubSupplierCategoryDicRequestDto {
 	private String supplierGender;
 	private Byte categoryType;
 	private String updateUser;
+	private byte refreshDicType;
 	
 	
 

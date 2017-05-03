@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.mapp.category.controll;
+package com.shangpin.ephub.product.business.ui.task.refreshDic.category.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
+import com.shangpin.commons.redis.ShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
@@ -45,12 +47,13 @@ import lombok.extern.slf4j.Slf4j;
  * <p>
  * Company: www.shangpin.com
  * </p>
+ * 
  * @author zhaogenchun
  * @date 2016年12月21日 下午5:25:30
  */
 @SuppressWarnings("rawtypes")
-@RestController
-@RequestMapping("/hub-supplier-category-dic")
+//@RestController
+//@RequestMapping("/hub-supplier-category-dic")
 @Slf4j
 public class HubSupplierCategoryDicController {
 	@Autowired
@@ -177,27 +180,6 @@ public class HubSupplierCategoryDicController {
 				dto.setRefreshDicType((byte)4);
 				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
 				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
-			}
-			
-			//刷新同品类和性别的其它供应商
-			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
-				
-				HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
-				BeanUtils.copyProperties(dto, dicDto);
-				dicDto.setUpdateTime(new Date());
-				
-				HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
-				criteria.createCriteria().andSupplierIdNotEqualTo(dto.getSupplierId()).andSupplierCategoryEqualTo(dto.getSupplierCategory()).andSupplierGenderEqualTo(dto.getSupplierGender());
-				criteria.setPageNo(1);
-				criteria.setPageSize(10000);
-				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategory(criteria);
-				if(list!=null&&list.size()>0){
-					for(HubSupplierCategroyDicDto dic:list){
-						if(dic.getCategoryType()==4){
-							continue;
-						}
-					}
-				}
 			}
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);

@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
@@ -26,10 +26,10 @@ import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
-import com.shangpin.ephub.product.business.conf.stream.source.task.sender.ProductImportTaskStreamSender;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.ui.hub.selected.service.HubSelectedService;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelectStateDto;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
@@ -59,7 +59,7 @@ public class HubSelectedController {
 	@Autowired
 	HubSpuImportTaskGateWay spuImportGateway;
     @Autowired
-    ProductImportTaskStreamSender productImportTaskStreamSender;
+    TaskStreamSender productImportTaskStreamSender;
 	@RequestMapping(value = "/list",method = RequestMethod.POST)
     public HubResponse selectList(@RequestBody HubWaitSelectRequestWithPageDto dto){
 	        	
@@ -119,8 +119,8 @@ public class HubSelectedController {
 		try {
 			
 			log.info("导出已选品参数：{}",dto);
-			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_SELECTED.getIndex());
-			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_SELECTED.getIndex(),JsonUtil.serialize(dto));
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskType.EXPORT_HUB_SELECTED.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskType.EXPORT_HUB_SELECTED.getIndex(),JsonUtil.serialize(dto));
 			log.info("导出已选品参数");
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
@@ -139,8 +139,8 @@ public class HubSelectedController {
 	        	
 		
 		try {
-			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_PIC.getIndex());
-			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_PIC.getIndex(),JsonUtil.serialize(dto));
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskType.EXPORT_HUB_PIC.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskType.EXPORT_HUB_PIC.getIndex(),JsonUtil.serialize(dto));
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出查询商品失败：{}",e);
@@ -158,8 +158,8 @@ public class HubSelectedController {
     public HubResponse exportNotSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 	        	
 		try {
-			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskImportTpye.EXPORT_HUB_NOT_HANDLE_PIC.getIndex());
-			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_NOT_HANDLE_PIC.getIndex(),JsonUtil.serialize(dto));
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskType.EXPORT_HUB_NOT_HANDLE_PIC.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskType.EXPORT_HUB_NOT_HANDLE_PIC.getIndex(),JsonUtil.serialize(dto));
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出查询商品失败：{}",e);
@@ -179,8 +179,8 @@ public class HubSelectedController {
 			if(dto==null||dto.size()<=0){
 				return HubResponse.errorResp("数信息为空");
 			}
-			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.get(0).getCreateUser(),TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex());
-			sendMessageToTask(task.getTaskNo(),TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex(),JsonUtil.serialize(dto));
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.get(0).getCreateUser(),TaskType.EXPORT_HUB_CHECK_PIC.getIndex());
+			sendMessageToTask(task.getTaskNo(),TaskType.EXPORT_HUB_CHECK_PIC.getIndex(),JsonUtil.serialize(dto));
 			return HubResponse.successResp(task.getTaskNo());
 		} catch (Exception e) {
 			log.error("导出图片失败：{}",e);
@@ -206,7 +206,7 @@ public class HubSelectedController {
 		}
     }
 	 private void sendMessageToTask(String taskNo,int type,String data){
-	    	ProductImportTask productImportTask = new ProductImportTask();
+	    	Task productImportTask = new Task();
 	    	productImportTask.setMessageId(UUID.randomUUID().toString());
 	    	productImportTask.setTaskNo(taskNo);
 	    	productImportTask.setMessageDate(DateTimeUtil.getTime(new Date())); 

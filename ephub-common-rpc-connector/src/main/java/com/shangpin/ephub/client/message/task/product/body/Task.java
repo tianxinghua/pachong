@@ -9,8 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * <p>Title:ProductTask.java </p>
- * <p>Description: </p>
+ * <p>Title:Task.java </p>
+ * <p>Description: 任务队列对象</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
  * @date 2016年12月19日 下午7:19:28
@@ -21,7 +21,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProductImportTask {
+public class Task {
 	/**
 	 * 消息编号
 	 */
@@ -32,7 +32,7 @@ public class ProductImportTask {
 	private String messageDate;
 	
 	/**
-	 * 任务类型  =0 一般任务  =1 pending-spu导入 =2 pending-sku导入处   =3 hub导入  =4 pending-spu导出  =5 pending-sku导出
+	 * 任务类型   枚举：TaskType
 	 */
 	private int type;
 	
