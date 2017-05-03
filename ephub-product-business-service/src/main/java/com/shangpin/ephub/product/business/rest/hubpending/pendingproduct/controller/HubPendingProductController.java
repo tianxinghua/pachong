@@ -101,7 +101,7 @@ public class HubPendingProductController {
 			updateHubSkuSpSkuNo(dto, searchSkuPending);
 		}
 		//更新尚品SKU到供货商原始SKU中
-//		updateSkuSupplierSpSkuNo(dto);
+		updateSkuSupplierSpSkuNo(dto);
 
 	}
 
