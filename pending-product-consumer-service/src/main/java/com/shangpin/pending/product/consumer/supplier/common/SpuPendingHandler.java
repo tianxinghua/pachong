@@ -57,7 +57,9 @@ public class SpuPendingHandler {
         HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
         criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
                 .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue())
-                .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue());
+                .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())
+                .andFilterFlagEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());//借用过滤枚举 为1的不过滤的
+
         int i= hubSkuPendingGateWay.countByCriteria(criteriaDto);
         if(i>0){
             HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();

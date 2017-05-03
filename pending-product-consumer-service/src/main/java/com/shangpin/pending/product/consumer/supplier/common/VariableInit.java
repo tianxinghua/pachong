@@ -23,10 +23,7 @@ import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.SeasonType;
-import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
+import com.shangpin.pending.product.consumer.common.enumeration.*;
 import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.pending.product.consumer.supplier.dto.*;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
@@ -436,13 +433,14 @@ public class VariableInit {
     protected void setSkuPendingSizePropertyValue(HubSkuPendingDto hubSkuPending, String hubSize) {
         String[] sizeAndIdArray = hubSize.split(",");
         hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-
+        hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 
         String spSizeTypeAndSize =   sizeAndIdArray[1];
         hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
         hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
 
         hubSkuPending.setScreenSize(null==sizeAndIdArray[0]?"":sizeAndIdArray[0]);
+
     }
 
 
