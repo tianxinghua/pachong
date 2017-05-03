@@ -20,7 +20,7 @@ public class PictureProductConsumerServiceApplicationTests {
 	}
 	public static void main(String[] args) throws Throwable {
 		//try {
-			String ou = "https://bagheerastorage.blob.core.windows.net/product/16990/original/589aabf6-e931-48ba-b2c0-14dab4a5dcdd.jpg";
+			String ou = "https://nodoarchive.blob.core.windows.net/img/88fe2ee0-e21c-11e6-9136-1b4e0bf1722c.jpg";
 			URL url = new URL(ou.replaceAll(" +", "%20"));
 			URLConnection openConnection = url.openConnection();
 			HttpURLConnection httpUrlConnection  =  (HttpURLConnection) openConnection;
@@ -34,6 +34,7 @@ public class PictureProductConsumerServiceApplicationTests {
 			byte[] byteArray = IOUtils.toByteArray(inputStream);
 			String base64 = new BASE64Encoder().encode(byteArray);
 			System.out.println("【"+base64.substring(0, 100)+"】");
+			System.out.println("长度："+base64.length());
 			httpUrlConnection.disconnect();
 //		} catch (Throwable e) {
 //			e.printStackTrace();
