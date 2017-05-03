@@ -748,15 +748,20 @@ public class PendingHandler extends VariableInit {
             if (null != hubSku) {// 存在 录入skusupplier对应关系
                 // 首先存储skuPending
 				hubSkuPending.setSkuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());//SKU状态与SPU 相同
+				hubSkuPending.setHubSkuNo(hubSku.getSkuNo());
                 dataServiceHandler.savePendingSku(hubSkuPending);
                 // 保存对应关系
                 dataServiceHandler.saveSkuSupplierMapping(hubSku.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
             } else { // 不存在 创建hubsku 并创建 对应关系
 
-                dataServiceHandler.savePendingSku(hubSkuPending);
+				//先创建hub_sku 然后反写到SKUPENDING 中
 
 				HubSkuDto hubSkuNo = dataServiceHandler.insertHubSku(hubSpuPending.getHubSpuNo(), hubSpuPending.getHubColor(), date,
                         hubSkuPending);
+
+				hubSkuPending.setHubSkuNo(hubSkuNo.getSkuNo());
+				dataServiceHandler.savePendingSku(hubSkuPending);
+
 
                 dataServiceHandler.saveSkuSupplierMapping(hubSkuNo.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
 

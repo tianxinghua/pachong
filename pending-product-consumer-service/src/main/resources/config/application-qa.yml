@@ -17,7 +17,16 @@ spring:
             register: false
             register-health-check: false
         stream: 
-              bindings: 
+              bindings:
+                        supplierSkuSelectedProducer:
+                             destination: supplier.sku.selected
+                             content-type: application/json
+                        supplierSkuSelectedConsumer:
+                              destination: supplier.sku.selected
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
                         spinnakerPendingProduct: 
                               destination: spinnaker.pending.product
                               group: one
