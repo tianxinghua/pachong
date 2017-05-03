@@ -36,6 +36,9 @@ fdfs:
     height: 150
   trackerList:            #TrackerList参数,支持多个
     - 172.20.10.104:22122
+  pool: 
+    maxTotal: 253
+    maxWaitMillis: 200
 banner:
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
