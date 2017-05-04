@@ -34,7 +34,11 @@ public enum SpuState {
 	/**
 	 * 审核中
 	 */
-	HANDLING((byte)5,"审核中");
+	HANDLING((byte)5,"审核中"),
+	/**
+	 * HUB已存在
+	 */
+	EXISTED_IN_HUB((byte)6,"HUB已存在");
 	
 	
 	
