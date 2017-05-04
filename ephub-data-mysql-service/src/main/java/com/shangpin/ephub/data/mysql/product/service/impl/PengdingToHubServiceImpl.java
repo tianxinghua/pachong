@@ -379,7 +379,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
             
             for(HubSkuPending hubSkuPending:hubSkuPendings){
                 if(null!=hubSkuPending.getSkuState()&&hubSkuPending.getSkuState().intValue()== HubSpuPendigStatus.HANDLING.getIndex()){//信息已完善 处理中
-                    if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSize())){
+                    if(sizeSkuMap.containsKey(hubSkuPending.getHubSkuSizeType()+":"+hubSkuPending.getHubSkuSize())){
                         sizeSkuMap.get(hubSkuPending.getHubSkuSizeType()+":"+hubSkuPending.getHubSkuSize()).add(hubSkuPending);
                     }else{
                         List<HubSkuPending> hubSkuPendingList = new ArrayList<>();

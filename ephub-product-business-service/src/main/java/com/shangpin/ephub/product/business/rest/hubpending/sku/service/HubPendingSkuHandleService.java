@@ -183,7 +183,6 @@ public class HubPendingSkuHandleService {
 		} else {
 			hubSkuPendingDto.setHubSkuSize(sizeCommonReplace(hubSkuPendingDto.getHubSkuSize()));
 		}
-		
 	}
 
 	private void handleNewHubSkuPending(HubSkuPendingDto hubSkuPendingDto)

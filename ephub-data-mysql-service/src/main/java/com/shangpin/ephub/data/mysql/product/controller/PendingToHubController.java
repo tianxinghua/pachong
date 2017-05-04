@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
@@ -27,7 +28,7 @@ public class PendingToHubController {
     @RequestMapping(value = "/create-hubspu-and-hubsku")
     public boolean auditPending(@RequestBody SpuModelDto dto){
         try {
-            log.debug("spumodeldto = "+ dto.toString());
+//            log.info("spumodeldto = "+ new ObjectMapper().writeValueAsString(dto));
             pengingToHubService.auditPending(dto);
         } catch (Exception e) {
             e.printStackTrace();

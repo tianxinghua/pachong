@@ -1,171 +1,193 @@
-//package com.shangpin.ephub.product.business.ui.mapp.brand.controller;
-//
-//import java.text.SimpleDateFormat;
-//import java.util.ArrayList;
-//import java.util.Date;
-//import java.util.List;
-//
-//import org.apache.commons.lang3.StringUtils;
-//import org.springframework.beans.BeanUtils;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestMethod;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import com.shangpin.commons.redis.IShangpinRedis;
-//import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
-//import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
-//import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
-//import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
-//import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-//import com.shangpin.ephub.client.util.DateTimeUtil;
-//import com.shangpin.ephub.client.util.JsonUtil;
-//import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
-//import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
-//import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
-//import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
-//import com.shangpin.ephub.product.business.common.util.ConstantProperty;
-//import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
-//import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
-//import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicRequestDto;
-//import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseDto;
-//import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseWithPageDto;
-//import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicRequestDto;
-//import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseDto;
-//import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseWithPageDto;
-//import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
-//import com.shangpin.ephub.response.HubResponse;
-//
-//import lombok.extern.slf4j.Slf4j;
-//
-///**
-// * <p>
-// * HubSpuImportTaskController
-// * </p>
-// * <p>
-// * Description:
-// * </p>
-// * <p>
-// * Company: www.shangpin.com
-// * </p>
-// * @author zhaogenchun
-// * @date 2016年12月21日 下午5:25:30
-// */
-//@SuppressWarnings("rawtypes")
-//@RestController
-//@RequestMapping("/hub-supplier-brand-dic")
-//@Slf4j
-//public class HubSupplierBrandDicController {
-//	@Autowired
-//	HubBrandDicService hubBrandDicService;
-//	@Autowired
-//	HubSupplierSpuService hubSupplierSpuService;
-//	@Autowired
-//	HubSupplierValueMappingService hubSupplierValueMappingService;
-//	@Autowired
-//	SupplierService supplierService;
-//	@Autowired
-//	TaskImportService taskImportService;
-//	@Autowired
-//	IShangpinRedis shangpinRedis;
-//	@RequestMapping(value = "/list", method = RequestMethod.POST)
-//	public HubResponse selectHubSupplierBrandList(
-//			@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
-//		
-//		try {
-//			log.info("===品牌映射list请求参数：{}",hubSupplierBrandDicRequestDto);
-//			String supplierNo = hubSupplierBrandDicRequestDto.getSupplierNo();
-//			String supplierId = null;
-//			if(StringUtils.isNotBlank(supplierNo)){
-//				SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
-//				if(supplierDto==null){
-//					return HubResponse.errorResp("供应商为空");
-//				}	
-//				supplierId = supplierDto.getSopUserNo();
-//				hubSupplierBrandDicRequestDto.setSupplierId(supplierId);
-//			}
-//			byte type = hubSupplierBrandDicRequestDto.getType();
-//			if(type==0){
-//				//查询hubSupplierBrand表
-//				getHubSupplierBrandDic(hubSupplierBrandDicRequestDto);
-//				
-//			}else if(type==1){
-//				//查询hubBrandDic表
-//				getHubBrandDic(hubSupplierBrandDicRequestDto);
-//			}
-//			
-//			int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(supplierId,hubSupplierBrandDicRequestDto.getType(),hubSupplierBrandDicRequestDto.getSupplierBrand());
-//			log.info("返回个数："+total);
-//			if(total>0){
-//				List<HubSupplierCategroyDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(supplierId,
-//						hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
-//				if (list != null && list.size() > 0) {
-//					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
-//					for (HubSupplierCategroyDicDto dicDto : list) {
-//						HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-//						List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
-//						if(listMapp!=null&&listMapp.size()>0){
-//							dic.setSupplierNo(listMapp.get(0).getHubValNo());
-//							dic.setSupplierName(listMapp.get(0).getHubVal());
-//						}	
-//						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
-//						if(dicDto.getUpdateTime()!=null){
-//							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
-//						}
-//						BeanUtils.copyProperties(dicDto, dic);
-//						responseList.add(dic);
-//					}
-//					HubSupplierCategoryDicResponseWithPageDto response = new HubSupplierCategoryDicResponseWithPageDto();
-//					response.setTotal(total);
-//					response.setList(responseList);
-//					return HubResponse.successResp(response);
-//				}
-//			}
-//			return HubResponse.errorResp("列表页为空");
-//		} catch (Exception e) {
-//			log.error("获取列表失败：{}", e);
-//			return HubResponse.errorResp("获取列表失败");
-//		}
-//	}
-//
-//	private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
-//		
-//		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand());
-//		log.info("返回个数："+total);
-//		if(total>0){
-//			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
-//			if (list != null && list.size() > 0) {
-//				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
-//				for (HubSupplierBrandDicDto dicDto : list) {
-//					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
-//					BeanUtils.copyProperties(dicDto, dic);
-//					responseList.add(dic);
-//				}
-//				HubSupplierBrandDicResponseWithPageDto response = new HubSupplierBrandDicResponseWithPageDto();
-//				response.setTotal(total);
-//				response.setList(responseList);
-//				return HubResponse.successResp(response);
-//			}
-//		}
-//		return HubResponse.errorResp("列表为空");
-//	}
-//
-//	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
-//	public HubResponse selectHubSupplierCateoryDetail(@PathVariable("id") Long id) {
+package com.shangpin.ephub.product.business.ui.mapp.brand.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
+import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
+import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
+import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
+import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicRequestDto;
+import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseDto;
+import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseWithPageDto;
+import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
+import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * <p>
+ * HubSpuImportTaskController
+ * </p>
+ * <p>
+ * Description:
+ * </p>
+ * <p>
+ * Company: www.shangpin.com
+ * </p>
+ * @author zhaogenchun
+ * @date 2016年12月21日 下午5:25:30
+ */
+@SuppressWarnings("rawtypes")
+@RestController
+@RequestMapping("/hub-supplier-brand-dic")
+@Slf4j
+public class HubSupplierBrandDicController {
+	@Autowired
+	HubBrandDicService hubBrandDicService;
+	@Autowired
+	HubSupplierSpuService hubSupplierSpuService;
+	@Autowired
+	HubSupplierValueMappingService hubSupplierValueMappingService;
+	@Autowired
+	SupplierService supplierService;
+	@Autowired
+	TaskImportService taskImportService;
+	@Autowired
+	IShangpinRedis shangpinRedis;
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	public HubResponse selectHubSupplierBrandList(
+			@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+		
+		try {
+			log.info("===品牌映射list请求参数：{}",hubSupplierBrandDicRequestDto);
+			String supplierNo = hubSupplierBrandDicRequestDto.getSupplierNo();
+			String supplierId = null;
+			if(StringUtils.isNotBlank(supplierNo)){
+				SupplierDTO supplierDto = supplierService.getSupplier(supplierNo);
+				if(supplierDto==null){
+					return HubResponse.errorResp("供应商为空");
+				}	
+				supplierId = supplierDto.getSopUserNo();
+				hubSupplierBrandDicRequestDto.setSupplierId(supplierId);
+			}
+			byte type = hubSupplierBrandDicRequestDto.getType();
+			if(type==0){
+				//查询hubSupplierBrand表
+				return getHubSupplierBrandDic(hubSupplierBrandDicRequestDto);
+			}else if(type==1){
+				//查询hubBrandDic表
+				return getHubBrandDic(hubSupplierBrandDicRequestDto);
+			}
+			return HubResponse.errorResp("类型为空");
+		} catch (Exception e) {
+			log.error("获取列表失败：{}", e);
+			return HubResponse.errorResp("获取列表失败");
+		}
+	}
+
+	private HubResponse getHubBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+		
+		int total = hubBrandDicService.countHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo());
+		log.info("返回个数："+total);
+		if(total>0){
+			List<HubBrandDicDto> list = hubBrandDicService.getHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+			if (list != null && list.size() > 0) {
+				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
+				for (HubBrandDicDto dicDto : list) {
+					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
+					BeanUtils.copyProperties(dicDto, dic);
+					responseList.add(dic);
+				}
+				HubSupplierBrandDicResponseWithPageDto response = new HubSupplierBrandDicResponseWithPageDto();
+				response.setTotal(total);
+				response.setList(responseList);
+				return HubResponse.successResp(response);
+			}
+		}
+		return HubResponse.errorResp("列表为空");
+	}
+
+	private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+		
+		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand());
+		log.info("返回个数："+total);
+		if(total>0){
+			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+			if (list != null && list.size() > 0) {
+				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
+				for (HubSupplierBrandDicDto dicDto : list) {
+					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
+					BeanUtils.copyProperties(dicDto, dic);
+					responseList.add(dic);
+				}
+				HubSupplierBrandDicResponseWithPageDto response = new HubSupplierBrandDicResponseWithPageDto();
+				response.setTotal(total);
+				response.setList(responseList);
+				return HubResponse.successResp(response);
+			}
+		}
+		return HubResponse.errorResp("列表为空");
+	}
+
+	@RequestMapping(value = "/detail", method = RequestMethod.POST)
+	public HubResponse selectHubSupplierCateoryDetail(@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+		try {
+			if (hubSupplierBrandDicRequestDto != null) {
+				List<HubBrandDicDto> detail = hubBrandDicService.getSupplierBrandByHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(),hubSupplierBrandDicRequestDto.getPageSize());
+				if (detail != null) {
+					List<HubBrandDicDto> responseList = new ArrayList<HubBrandDicDto>();
+					HubBrandDicDto dic = new HubBrandDicDto();
+					BeanUtils.copyProperties(detail, dic);
+					responseList.add(dic);
+					return HubResponse.successResp(responseList);
+				} else {
+					return HubResponse.errorResp("列表页为空");
+				}
+			} else {
+				return HubResponse.errorResp("传值为空");
+			}
+		} catch (Exception e) {
+			log.error("获取列表失败：{}", e);
+			return HubResponse.errorResp("获取列表失败");
+		}
+	}
+
+	/**
+	 * 导出查询商品
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
+	public HubResponse save(@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+
+		try {
+			HubSupplierBrandDicDto dicDto = new HubSupplierBrandDicDto();
+			BeanUtils.copyProperties(hubSupplierBrandDicRequestDto, dicDto);
+			if(StringUtils.isNotBlank(hubSupplierBrandDicRequestDto.getSupplierNo())){
+				//待处理保存更新
+				hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
+				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand());
+			}else{
+				//已处理保存
+				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand());
+			}
+			return HubResponse.successResp(null);
+		} catch (Exception e) {
+			log.error("保存失败：{}", e);
+		}
+		return HubResponse.errorResp("保存异常");
+	}
+	
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
+	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 //		try {
 //			if (id != null) {
-//				HubSupplierCategroyDicDto detail = hubCategoryDicService.getSupplierCategoryById(id);
-//				if (detail != null) {
-//					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
-//					HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-//					BeanUtils.copyProperties(detail, dic);
-//					responseList.add(dic);
-//					return HubResponse.successResp(responseList);
-//				} else {
-//					return HubResponse.errorResp("列表页为空");
-//				}
+//				hubBrandDicService.deleteHubBrandById(id);
+				return HubResponse.successResp(null);
 //			} else {
 //				return HubResponse.errorResp("传值为空");
 //			}
@@ -173,90 +195,6 @@
 //			log.error("获取列表失败：{}", e);
 //			return HubResponse.errorResp("获取列表失败");
 //		}
-//	}
-//
-//	/**
-//	 * 导出查询商品
-//	 * 
-//	 * @param dto
-//	 * @return
-//	 */
-//	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
-//	public HubResponse save(@RequestBody HubSupplierCategoryDicRequestDto dto) {
-//
-//		try {
-//			HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
-//			BeanUtils.copyProperties(dto, dicDto);
-//			log.info("======供应商品类映射hub品类变更：{}",dto);
-//			if(dto.getCategoryType()==4){
-//				dicDto.setMappingState((byte)1);		
-//				dicDto.setPushState((byte)1);
-//			}else{
-//				dicDto.setMappingState((byte)2);
-//			}
-//			dicDto.setUpdateTime(new Date());
-//			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
-//			return HubResponse.successResp("success");
-//		} catch (Exception e) {
-//			log.error("保存失败：{}", e);
-//		}
-//		return HubResponse.errorResp("保存异常");
-//	}
-//
-//	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
-//	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
-//		try {
-//			save(dto);
-//			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
-//				Date date = new Date();
-//				String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
-//				taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
-//				dto.setRefreshDicType((byte)4);
-//				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
-//				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
-//			}
-//			
-//			//刷新同品类和性别的其它供应商
-//			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
-//				
-//				HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
-//				BeanUtils.copyProperties(dto, dicDto);
-//				dicDto.setUpdateTime(new Date());
-//				
-//				HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
-//				criteria.createCriteria().andSupplierIdNotEqualTo(dto.getSupplierId()).andSupplierCategoryEqualTo(dto.getSupplierCategory()).andSupplierGenderEqualTo(dto.getSupplierGender());
-//				criteria.setPageNo(1);
-//				criteria.setPageSize(10000);
-//				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategory(criteria);
-//				if(list!=null&&list.size()>0){
-//					for(HubSupplierCategroyDicDto dic:list){
-//						if(dic.getCategoryType()==4){
-//							continue;
-//						}
-//					}
-//				}
-//			}
-//		} catch (Exception e) {
-//			log.error("刷新失败：{}", e);
-//			return HubResponse.errorResp("刷新异常");
-//		}
-//		return HubResponse.successResp(null);
-//	}
-//	
-//	
-//	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
-//	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
-//		try {
-//			if (id != null) {
-//				hubCategoryDicService.deleteHubSupplierCateoryById(id);
-//				return HubResponse.successResp(null);
-//			} else {
-//				return HubResponse.errorResp("传值为空");
-//			}
-//		} catch (Exception e) {
-//			log.error("获取列表失败：{}", e);
-//			return HubResponse.errorResp("获取列表失败");
-//		}
-//	}
-//
-//}
+	}
+
+}
