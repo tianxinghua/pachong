@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.rule.model.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +36,8 @@ public class HubBrandModelRuleControlller {
     public int deleteByCriteria(@RequestBody HubBrandModelRuleCriteria criteria){
     	return hubBrandModelRuleService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long brandModelRuleId){
+	@RequestMapping(value = "/delete-by-primary-key/{brandModelRuleId}")
+    public int deleteByPrimaryKey(@PathVariable("brandModelRuleId") Long brandModelRuleId){
     	return hubBrandModelRuleService.deleteByPrimaryKey(brandModelRuleId);
     }
 	@RequestMapping(value = "/insert")

@@ -93,6 +93,7 @@ public class HubSupplierModelDicController {
 	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
+			log.info("品牌货号规则详情参数："+id);
 			if (id != null) {
 				HubBrandModelRuleDto detail = hubBrandModelDicService.getHubBrandModelRuleById(id);
 				if (detail != null) {
@@ -123,12 +124,13 @@ public class HubSupplierModelDicController {
 		try {
 			HubBrandModelRuleDto dicDto = new HubBrandModelRuleDto();
 			BeanUtils.copyProperties(dto, dicDto);
-			log.info("======供应商品类映射hub品类变更：{}",dto);
+			log.info("======保存品牌货号规则参数：{}",dto);
 			dicDto.setUpdateTime(new Date());
 			dicDto.setCreateTime(new Date());
 			dicDto.setUpdateUser(dto.getCreateUser());
+			dicDto.setBrandModelRuleId(null);
 			hubBrandModelDicService.insertHubBrandModelRule(dicDto);
-			return HubResponse.successResp("success");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("保存失败：{}", e);
 		}
@@ -138,10 +140,11 @@ public class HubSupplierModelDicController {
 	@RequestMapping(value = "/updateAndRefresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse update(@RequestBody HubBrandModelDicRequestDto dto) {
 		try {
+			log.info("修改参数：{}",dto);
 			HubBrandModelRuleDto dicDto = new HubBrandModelRuleDto();
 			BeanUtils.copyProperties(dto, dicDto);
 			hubBrandModelDicService.updateHubBrandModelRuleById(dicDto);
-			return HubResponse.successResp("success");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);
 		}
@@ -167,6 +170,7 @@ public class HubSupplierModelDicController {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
+			log.info("删除货号规则参数："+id);
 			if (id != null) {
 				hubBrandModelDicService.deleteHubBrandModelRuleById(id);
 				return HubResponse.successResp(null);
