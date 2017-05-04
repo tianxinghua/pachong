@@ -103,6 +103,8 @@ public class HubPendingSkuHandleService {
 		if(StringUtils.isNotBlank(hubSkuPendingIsExist.getHubSkuSizeType())&&!"排除".equals(hubSkuPendingIsExist.getHubSkuSizeType())){
 			hubSkuPendingDto.setHubSkuSize(hubSkuPendingIsExist.getHubSkuSize());
 			hubSkuPendingDto.setHubSkuSizeType(hubSkuPendingIsExist.getHubSkuSizeType());
+		}else if("排除".equals(hubSkuPendingIsExist.getHubSkuSizeType())||hubSkuPendingIsExist.getFilterFlag()==FilterFlag.INVALID.getIndex()){
+			return;
 		}
 		
 		String sizeType = hubSkuPendingDto.getHubSkuSizeType();
