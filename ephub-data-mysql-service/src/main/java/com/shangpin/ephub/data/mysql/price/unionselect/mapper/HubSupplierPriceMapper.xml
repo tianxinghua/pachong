@@ -50,7 +50,7 @@
     left join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
     left join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
     <where>
-    sku.sp_sku_no is not null sku.sp_sku_no != ""
+    sku.sp_sku_no is not null and sku.sp_sku_no != ""
     <if test="supplierId != null">
     	and sku.supplier_id = #{supplierId}
     </if>
