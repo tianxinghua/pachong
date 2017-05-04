@@ -5,7 +5,6 @@ ribbon:
 spring: 
   rabbitmq: 
            host: 172.20.11.49
-
            port: 5672
            username: ephub-message-service
            password: ephub-message-service

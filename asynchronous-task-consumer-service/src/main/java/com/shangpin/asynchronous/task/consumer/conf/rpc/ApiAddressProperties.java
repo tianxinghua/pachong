@@ -21,5 +21,7 @@ public class ApiAddressProperties {
 	public static final String API_ADDRESS_PREFIX = "shangpin.hub.callAddress";
 
 	private String pendingProductInfoUrl;
+
+	private String  gmsAddProductUrl;
 	
 }
