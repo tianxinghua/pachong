@@ -38,7 +38,7 @@ public enum SpuState {
 	/**
 	 * HUB已存在
 	 */
-	EXISTED_IN_HUB((byte)6,"HUB已存在"),
+	EXISTED_IN_HUB((byte)6,"SOP已存在"),
 	
 	/**
 	 * SPU下所有的SKU都在尚品已生成
