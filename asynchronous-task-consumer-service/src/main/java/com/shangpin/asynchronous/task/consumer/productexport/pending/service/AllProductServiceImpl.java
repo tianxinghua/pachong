@@ -162,7 +162,9 @@ public class AllProductServiceImpl {
 					} else if (SpuState.HANDLING.getIndex() == product.getSpuState()) {
 						row.createCell(i).setCellValue("审核中");
 					} else if(SpuState.EXISTED_IN_HUB.getIndex() == product.getSpuState()){
-						row.createCell(i).setCellValue("SPU在HUB已存在");
+						row.createCell(i).setCellValue("SOP已存在");
+					} else if(SpuState.ALL_EXISTED_IN_HUB.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("SPU下所有的SKU都在尚品已生成");
 					}
 				} else if("supplierUrl".equals(rowTemplate[i])){ 
 					row.createCell(i).setCellValue(setSupplierUrls(product.getSupplierUrls()));
