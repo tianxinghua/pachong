@@ -16,6 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
+import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.conf.mail.message.ShangpinMail;
+import com.shangpin.ephub.product.business.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
@@ -227,6 +230,27 @@ public class EphubProductBusinessServiceApplicationTests {
 //		String json = JsonUtil.serialize(dto);
 //		SupplierDTO dto2 = JsonUtil.deserialize(json, SupplierDTO.class);
 //		System.out.println(dto2);
+//	}
+	
+	@Autowired
+	private ShangpinMailSender shangpinMailSender;
+	
+//	@Test
+//	public void testMail(){
+//		String text = "供价记录推送消息队列失败，supplierPriceChangeRecordId：3333333333333333，异常信息：异常"
+//		+"<br>"
+//		+"【推送失败的消息是：{\"pageIndex\":4,\"pageSize\":200,\"supplierId\":\"2016050401882\",\"marketSeason\":\"春夏\"}】"; 
+//		ShangpinMail shangpinMail = new ShangpinMail();
+//		shangpinMail.setFrom("chengxu@shangpin.com");
+//		shangpinMail.setSubject("testMail");
+//		shangpinMail.setText(text);
+//		shangpinMail.setTo("lubaijiang@shangpin.com");
+//		try {
+//			shangpinMailSender.sendShangpinMail(shangpinMail);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} 
 //	}
 
 }
