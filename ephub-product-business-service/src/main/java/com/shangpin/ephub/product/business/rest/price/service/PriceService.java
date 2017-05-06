@@ -26,6 +26,8 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRe
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.conf.mail.message.ShangpinMail;
+import com.shangpin.ephub.product.business.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ephub.product.business.rest.price.dto.PriceQuery;
 import com.shangpin.ephub.product.business.rest.price.vo.ProductPrice;
 
@@ -50,6 +52,8 @@ public class PriceService {
 	private PriceMqGateWay priceMqGateWay;
 	@Autowired 
 	private HubSupplierPriceGateWay hubSupplierPriceGateWay;
+	@Autowired
+	private ShangpinMailSender shangpinMailSender;
 	
 	/**
 	 * 保存价格并推送消息
@@ -237,6 +241,10 @@ public class PriceService {
 		} catch (Exception e) {
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED_ERROR);
 			log.error("【推送失败的消息是："+JsonUtil.serialize(retryPrice)+"】");
+			String text = "供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage()
+			+"<br>"
+			+"【推送失败的消息是："+JsonUtil.serialize(retryPrice)+"】"; 
+			sendMail("供价记录推送消息队列失败",text);
 			throw new Exception("供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage());
 		}
 	}
@@ -295,5 +303,22 @@ public class PriceService {
 
 	}
 
+	/**
+	 * 发送邮件
+	 * @param subject
+	 * @param text
+	 */
+	public void sendMail(String subject,String text){
+		try {
+			ShangpinMail shangpinMail = new ShangpinMail();
+			shangpinMail.setFrom("chengxu@shangpin.com");
+			shangpinMail.setSubject(subject);
+			shangpinMail.setText(text);
+			shangpinMail.setTo("ephub_support.list@shangpin.com");
+			shangpinMailSender.sendShangpinMail(shangpinMail);
+		} catch (Exception e) {
+			log.error("发送邮件失败："+e.getMessage(),e); 
+		}
+	}
 	
 }
