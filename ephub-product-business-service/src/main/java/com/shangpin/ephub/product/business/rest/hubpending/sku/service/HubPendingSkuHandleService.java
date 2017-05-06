@@ -244,15 +244,15 @@ public class HubPendingSkuHandleService {
 		}
 		Map<String, String> commonSizeMap = getCommonSupplierSizeMapping();
 		if (null != commonSizeMap && commonSizeMap.size() > 0) {
-
 			Set<String> sizeSet = commonSizeMap.keySet();// sizeMap.keySet();
 			String replaceKey = "";
 			for (String sizeKey : sizeSet) {
+				System.out.println(sizeKey);
 				if ("++".equals(sizeKey)) {
 					replaceKey = "\\++";
 				} else if ("+".equals(sizeKey)) {
 					replaceKey = "\\+";
-				} else {
+				}else {
 					replaceKey = sizeKey;
 				}
 				if (size.indexOf(sizeKey) >= 0) {
@@ -260,11 +260,13 @@ public class HubPendingSkuHandleService {
 				}
 			}
 		}
+		if(size.indexOf(".") >= 0){
+			size = size.split("\\.")[0].trim() +"." +size.split("\\.")[1].trim();
+		}
 		return size;
 	}
 
 	public Map<String, String> getCommonSupplierSizeMapping() {
-
 		String supplierValueMapping = shangpinRedis.get(ConstantProperty.REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY);
 		List<SupplierSizeMappingDto> supplierSizeMappingDtos = null;
 		ObjectMapper mapper = new ObjectMapper();

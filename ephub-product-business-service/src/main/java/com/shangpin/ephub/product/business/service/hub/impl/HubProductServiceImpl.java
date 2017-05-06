@@ -21,7 +21,9 @@ import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
@@ -170,13 +172,42 @@ public class HubProductServiceImpl implements HubProductService {
     private void handleSendToScm(SpProductOrgInfoEntity spSpuInfo, ApiProductOrgExtendDom spSpuExtendInfo, List<ApiSkuOrgDom> skuOrgDoms) throws JsonProcessingException {
 
         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+        	String hubSkuNo = skuOrg.getHubSkuNo();
+        	String supplierNo = skuOrg.getSupplierNo();
+        	//判断是否同一供应商下含有多个相同的hubSkuNo
+        	if(checkIsExistMulHubSkuNo(hubSkuNo,supplierNo)){
+        		continue;
+        	}
             SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
                      apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
             executor.execute(task);
         }
     }
 
-    private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) throws JsonProcessingException {
+    private boolean checkIsExistMulHubSkuNo(String hubSkuNo, String supplierNo) {
+    	if(hubSkuNo!=null&&supplierNo!=null){
+    		HubSkuSupplierMappingCriteriaDto criteria = new HubSkuSupplierMappingCriteriaDto();
+    		criteria.createCriteria().andSupplierNoEqualTo(supplierNo).andSkuNoEqualTo(hubSkuNo);
+    		List<HubSkuSupplierMappingDto> list = skuSupplierMappingGateWay.selectByCriteria(criteria);
+    		if(list!=null&&list.size()>1){
+    			HubSkuSupplierMappingWithCriteriaDto criteriaDto = new HubSkuSupplierMappingWithCriteriaDto();
+        		criteria.createCriteria().andSupplierSelectStateNotEqualTo((byte)SupplierSelectState.SELECTED.getIndex());
+        		criteriaDto.setCriteria(criteria);
+        		
+        		HubSkuSupplierMappingDto mapp = new HubSkuSupplierMappingDto();
+        		mapp.setSupplierSelectState((byte)6);
+        		mapp.setUpdateTime(new Date());
+        		mapp.setUpdateUser("chenxu");
+        		mapp.setMemo("同一供应商下含有多个相同的hubSkuNo");
+        		criteriaDto.setHubSkuSupplierMapping(mapp);
+        		skuSupplierMappingGateWay.updateByCriteriaSelective(criteriaDto);
+        		return true;
+    		}
+    	}
+    	return false;
+	}
+
+	private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) throws JsonProcessingException {
         SopSkuQueryDto queryDto = new SopSkuQueryDto();
         queryDto.setSopUserNo(supplierId);
         List<String> supplierSkuNoList = new ArrayList<>();

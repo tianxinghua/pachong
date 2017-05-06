@@ -158,6 +158,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         Map<String,List<HubSkuPending>> sizeSkuMap = new HashMap<>();
         //根据尺码合并不同供货商的SKU信息
         setSizeSkuMap(spuPendingIds, sizeSkuMap);
+        log.info("sizeSkuMap:"+sizeSkuMap.toString());
         if(sizeSkuMap.size()>0){
             //插入新的SPU
             HubSpu hubSpu = new HubSpu();

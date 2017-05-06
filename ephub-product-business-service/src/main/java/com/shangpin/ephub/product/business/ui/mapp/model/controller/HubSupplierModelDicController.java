@@ -143,6 +143,7 @@ public class HubSupplierModelDicController {
 			log.info("修改参数：{}",dto);
 			HubBrandModelRuleDto dicDto = new HubBrandModelRuleDto();
 			BeanUtils.copyProperties(dto, dicDto);
+			dicDto.setUpdateTime(new Date());
 			hubBrandModelDicService.updateHubBrandModelRuleById(dicDto);
 			return HubResponse.successResp(null);
 		} catch (Exception e) {

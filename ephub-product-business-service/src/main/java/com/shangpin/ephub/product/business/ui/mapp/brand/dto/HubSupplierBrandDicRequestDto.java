@@ -16,7 +16,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSupplierBrandDicRequestDto {
 	
-	private Long supplierCategoryDicId;
+	private Long supplierBrandDicId;
 	private String supplierNo;
 	private String supplierId;
 	private int pageNo;

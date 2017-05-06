@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.common.hubDic.season;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -77,5 +78,50 @@ public class HubSeasonDicService {
 				throw e;
 			}
 		}
+	}
+
+	public int countHubSeason(String supplierSeason, String hubMarketTime, String hubSeason, Byte type) {
+		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		if(StringUtils.isNotBlank(supplierSeason)){
+			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason);
+		}
+		if(StringUtils.isNotBlank(hubMarketTime)){
+			criteria.createCriteria().andHubMarketTimeEqualTo(hubMarketTime);
+		}
+		if(StringUtils.isNotBlank(hubSeason)){
+			criteria.createCriteria().andHubSeasonEqualTo(hubSeason);
+		}
+		criteria.createCriteria().andPushStateEqualTo(type);
+		return hubSeasonDicGateWay.countByCriteria(criteria);
+	}
+
+	public List<HubSeasonDicDto> getHubSeason(String supplierSeason, String hubMarketTime, String hubSeason, Byte type,
+			int pageNo, int pageSize) {
+		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
+		if(StringUtils.isNotBlank(supplierSeason)){
+			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason);
+		}
+		if(StringUtils.isNotBlank(hubMarketTime)){
+			criteria.createCriteria().andHubMarketTimeEqualTo(hubMarketTime);
+		}
+		if(StringUtils.isNotBlank(hubSeason)){
+			criteria.createCriteria().andHubSeasonEqualTo(hubSeason);
+		}
+		criteria.createCriteria().andPushStateEqualTo(type);
+		return hubSeasonDicGateWay.selectByCriteria(criteria);
+	}
+
+	public HubSeasonDicDto getSupplierSeasonById(Long id) {
+		return hubSeasonDicGateWay.selectByPrimaryKey(id);
+	}
+
+	public void saveHubSeason(HubSeasonDicDto dicDto) {
+		hubSeasonDicGateWay.insertSelective(dicDto);
+	}
+
+	public void deleteHubSeasonById(Long id) {
+		hubSeasonDicGateWay.deleteByPrimaryKey(id);	
 	}
 }

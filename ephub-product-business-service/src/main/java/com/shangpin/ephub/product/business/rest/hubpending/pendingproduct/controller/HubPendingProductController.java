@@ -111,19 +111,20 @@ public class HubPendingProductController {
 		List<HubSupplierSkuDto> hubSkuPendingList = supplierSkuGateWay.selectByCriteria(criteria);
 		if(hubSkuPendingList!=null&&hubSkuPendingList.size()>0){
 			HubSupplierSkuDto hubSkuPendingOrigion = hubSkuPendingList.get(0);
-			
-			HubSupplierSkuDto hubSkuPending = new HubSupplierSkuDto();
-			hubSkuPending.setSpSkuNo( dto.getSkuNo());
-			hubSkuPending.setMemo(dto.getErrorReason());
-			hubSkuPending.setSupplierSkuId(hubSkuPendingOrigion.getSupplierSkuId());
-			supplierSkuGateWay.updateByPrimaryKeySelective(hubSkuPending);
-			HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
-			hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
-			log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
-			try{
-				priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE);	
-			}catch(Exception e){
-				log.error("推送价格队列失败",e);
+			if(hubSkuPendingOrigion.getSupplierSpuId()!=null){
+				HubSupplierSkuDto hubSkuPending = new HubSupplierSkuDto();
+				hubSkuPending.setSpSkuNo( dto.getSkuNo());
+				hubSkuPending.setMemo(dto.getErrorReason());
+				hubSkuPending.setSupplierSkuId(hubSkuPendingOrigion.getSupplierSkuId());
+				supplierSkuGateWay.updateByPrimaryKeySelective(hubSkuPending);
+				HubSupplierSpuDto hubSupplierSpuDto = supplierSpuGateWay.selectByPrimaryKey(hubSkuPendingOrigion.getSupplierSpuId());
+				hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
+				log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
+				try{
+					priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE);	
+				}catch(Exception e){
+					log.error("推送价格队列失败",e);
+				}
 			}
 		}
 		
@@ -155,7 +156,7 @@ public class HubPendingProductController {
 	}
 
 	private void updateHubSkuSpSkuNo(SpSkuNoDto dto, HubSkuPendingDto searchSkuPending) {
-		if(null!=searchSkuPending){
+		if(null!=searchSkuPending&&searchSkuPending.getHubSkuNo()!=null){
 //			HubSkuCriteriaDto criteriaSku = new HubSkuCriteriaDto();
 			HubSkuDto hubSku = new HubSkuDto();
 			hubSku.setSpSkuNo(dto.getSkuNo());

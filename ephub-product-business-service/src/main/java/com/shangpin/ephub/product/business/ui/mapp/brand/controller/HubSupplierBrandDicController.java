@@ -183,7 +183,7 @@ public class HubSupplierBrandDicController {
 	}
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
-	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
+	public HubResponse deleteHubSupplierBrandDetail(@PathVariable("id") Long id) {
 //		try {
 //			if (id != null) {
 //				hubBrandDicService.deleteHubBrandById(id);
