@@ -45,6 +45,15 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        pendingAuditProducer:
+                            destination: supplier.spupending.audit
+                            content-type: application/json
+                        pendingAuditConsumer:
+                             destination: supplier.spupending.audit
+                             group: one
+                             consumer:
+                                      concurrency: 5
+                                      maxAttempts: 1
               rabbit: 
                       bindings: 
                             pendingProductImportTask: 
@@ -69,6 +78,15 @@ spring:
                                  producer:
                                       prefix: HA.
                             supplierSkuSelectedConsumer:
+                                 consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
+                            pendingAuditProducer:
+                                 producer:
+                                      prefix: HA.
+                            pendingAuditConsumer:
                                  consumer:
                                       prefix: HA.
                                       autoBindDlq: false
