@@ -3,6 +3,8 @@
 <mapper namespace="com.shangpin.ephub.data.mysql.price.unionselect.mapper.HubSupplierPriceMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.price.unionselect.po.HubSupplierPrice" >
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_sku_id" property="supplierSkuId" />
+    <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
     <result column="supplier_seasonname" property="supplierSeasonName" jdbcType="VARCHAR" />
     <result column="hub_market_time" property="spSeasonYear" jdbcType="VARCHAR" />
     <result column="hub_season" property="spSeasonName" jdbcType="VARCHAR" />
@@ -13,12 +15,12 @@
   </resultMap>
   
   <select id="selectByPriceQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.price.unionselect.bean.PriceQueryDto" >
-    select sku.supplier_id,sku.market_price,sku.sp_sku_no,
+    select sku.supplier_id,sku.market_price,sku.sp_sku_no,.sku.supplier_sku_no,sku.supplier_sku_id,
     spu.supplier_seasonname,spu.supplier_categoryname,spu.supplier_brandname,
     dic.hub_market_time,dic.hub_season
     from hub_supplier_sku sku
-    left join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
-    left join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
+    inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
+    inner join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
     <where>
     sku.sp_sku_no is not null and sku.sp_sku_no != ""
     <if test="supplierId != null">
@@ -36,7 +38,7 @@
     <if test="marketYear != null">
     	and dic.hub_market_time = #{marketYear}
     </if>
-    ORDER BY sku.create_time desc
+    ORDER BY sku.sp_sku_no
     <if test="startRow != null" >
       limit #{startRow} , #{pageSize}
     </if>
@@ -47,8 +49,8 @@
   <select id="countByQuery" resultType="java.lang.Integer" parameterType="com.shangpin.ephub.data.mysql.price.unionselect.bean.PriceQueryDto">
   	select count(*)
   	from hub_supplier_sku sku
-    left join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
-    left join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
+    inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
+    inner join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
     <where>
     sku.sp_sku_no is not null and sku.sp_sku_no != ""
     <if test="supplierId != null">
