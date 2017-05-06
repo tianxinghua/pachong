@@ -86,7 +86,7 @@ public class SupplierProductPictureService {
 				if(picUrl.startsWith("http")){
 					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 				}else if(picUrl.startsWith("ftp")){
-					//TODO
+					pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
 				}
 				
 				if (code == 404 || code == 400) {
@@ -171,22 +171,52 @@ public class SupplierProductPictureService {
 		dto.setUpdateTime(new Date());
 		return flag;
 	}
-	
+	/**
+	 * 从ftp下载图片并上传图片服务器
+	 * @param picUrl
+	 * @param dto
+	 * @param authenticationInformation
+	 * @return
+	 */
 	private int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
-		
+		InputStream inputStream = null;
 		int flag = 0;
 		try {
-			String ip = picUrl.substring(picUrl.indexOf("@")+1,picUrl.indexOf("/"));
-			int port = 21;
-			String remotePath =  "";
+			String url = picUrl.substring(picUrl.indexOf("@")+1);
+			String ip = url.substring(0,url.indexOf("/"));
+			String remotePath =  url.substring(url.indexOf("/"),url.lastIndexOf("/")); 
 			String remoteFileName = picUrl.substring(picUrl.lastIndexOf("/")+1);
-			FtpUtil ftpUtil = FtpUtil.getFtpUtil();
-			ftpUtil.downFile(authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
+			int port = 21;
+			inputStream = FtpUtil.getFtpUtil().downFile(authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
+			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			if (byteArray == null || byteArray.length == 0) {
+				throw new RuntimeException("ftp读取到的图片字节为空,无法获取图片");
+			}
+			String base64 = new BASE64Encoder().encode(byteArray);
+			log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+picUrl+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
+			UploadPicDto uploadPicDto = new UploadPicDto();
+			uploadPicDto.setRequestId(String.valueOf(dto.getSpuPendingPicId()));
+			uploadPicDto.setBase64(base64);
+			uploadPicDto.setExtension(getExtension(picUrl));
+			String fdfsURL = supplierProductPictureManager.uploadPic(uploadPicDto);
+			log.info("id="+dto.getSpuPendingPicId()+"==第四步==>> 调用图片服务上传图片后返回的图片URL为"+fdfsURL+"， 下一步将更改数据库");
+			dto.setSpPicUrl(fdfsURL);
+			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
+			dto.setMemo("图片拉取成功");
+		
 		} catch (Throwable e) {
-			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
+			log.error("系统拉取ftp图片时发生异常,url ="+picUrl,e);
 			e.printStackTrace();
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
 			dto.setMemo("图片拉取失败:"+flag);
+		}finally {
+			if(null != inputStream){
+				try {
+					inputStream.close();
+				} catch (Exception e2) {
+					log.error("关闭资源流发生异常", e2);
+				}
+			}
 		}
 		dto.setUpdateTime(new Date());
 		return flag;
