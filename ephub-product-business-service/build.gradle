@@ -44,6 +44,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('commons-net:commons-net:3.3')
 	compile('org.apache.poi:poi-ooxml:3.8')
+	compile('org.apache.velocity:velocity:1.7')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
 	//compile('org.apache.poi:poi:3.15')
