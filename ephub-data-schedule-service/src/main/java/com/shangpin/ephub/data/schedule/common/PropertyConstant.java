@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.common;
+package com.shangpin.ephub.data.schedule.common;
 
 /**
  * Created by lizhongren on 2017/3/31.

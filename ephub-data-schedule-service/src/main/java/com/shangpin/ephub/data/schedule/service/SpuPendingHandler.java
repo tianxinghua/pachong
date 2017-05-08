@@ -1,7 +1,8 @@
-package com.shangpin.pending.product.consumer.supplier.common;
+package com.shangpin.ephub.data.schedule.service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
@@ -9,7 +10,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,11 +33,11 @@ public class SpuPendingHandler {
     public boolean updateSpuStateFromWaitAuditToWaitHandle(Long spuPendingId){
         boolean  result = true;
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-        hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+        hubSpuPending.setSpuState(SpuState.INFO_PECCABLE.getIndex());
         hubSpuPending.setUpdateTime(new Date());
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
-                .andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+                .andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
         HubSpuPendingWithCriteriaDto criteriaSpu = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteria);
         spuPendingGateWay.updateByCriteriaSelective(criteriaSpu);
         return result;
@@ -46,7 +47,7 @@ public class SpuPendingHandler {
     public boolean updateSpuStateFromHandledToWaitHandle(Long spuPendingId){
         boolean  result = true;
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-        hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+        hubSpuPending.setSpuState(SpuState.INFO_PECCABLE.getIndex());
         hubSpuPending.setSpuPendingId(spuPendingId);
         hubSpuPending.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
         hubSpuPending.setHandleState(HandleState.HUB_EXIST.getIndex());
@@ -60,14 +61,14 @@ public class SpuPendingHandler {
         boolean  result = true;
         HubSkuPendingCriteriaDto criteriaDto = new HubSkuPendingCriteriaDto();
         criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
-                .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue())
-                .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())
-                .andFilterFlagEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());//借用过滤枚举 为1的不过滤的
+                .andSkuStateNotEqualTo(SpuState.HANDLED.getIndex())
+                .andSkuStateNotEqualTo(SpuState.HANDLING.getIndex())
+                .andFilterFlagEqualTo(SpuState.INFO_IMPECCABLE.getIndex());//借用过滤枚举 为1的不过滤的
 
         int i= hubSkuPendingGateWay.countByCriteria(criteriaDto);
         if(i>0){
             HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+            hubSpuPending.setSpuState(SpuState.INFO_PECCABLE.getIndex());
             hubSpuPending.setSpuPendingId(spuPendingId);
             hubSpuPending.setUpdateTime(new Date());
             spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
@@ -80,7 +81,7 @@ public class SpuPendingHandler {
     public boolean updateSpuStateToHandle(Long spuPendingId){
         boolean  result = true;
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
-        hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+        hubSpuPending.setSpuState(SpuState.HANDLED.getIndex());
         hubSpuPending.setSpuPendingId(spuPendingId);
         hubSpuPending.setUpdateTime(new Date());
         spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
@@ -100,6 +101,13 @@ public class SpuPendingHandler {
         criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
         HubSpuPendingWithCriteriaDto criteriaSpu = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteria);
         spuPendingGateWay.updateByCriteriaSelective(criteriaSpu);
+
+    }
+
+
+    public int getStockTotalBySpuPendingId(Long spuPendingId){
+
+        return hubSkuPendingGateWay.sumStockBySpuPendingId(spuPendingId);
 
     }
 }

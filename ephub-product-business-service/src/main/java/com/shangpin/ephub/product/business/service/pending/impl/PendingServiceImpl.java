@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -61,6 +62,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     PengdingToHubGateWay pengdingToHubGateWay;
+
+    @Autowired
+    HubSpuPendingAuditGateWay hubSpuPendingAuditGateWay;
 
     @Autowired
     private TaskExecutor executor;
@@ -284,8 +288,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 }
                 spuModelVO.setSpuPendingIds(spuPendingIdList);
 
-                CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
-                executor.execute(task);
+//                CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
+//                executor.execute(task);
+                hubSpuPendingAuditGateWay.auditSpu(spuModelVO);
+
                 return true;
 //             //获取
 //             SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();

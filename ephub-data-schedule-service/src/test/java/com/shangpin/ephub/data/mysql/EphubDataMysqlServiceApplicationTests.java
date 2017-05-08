@@ -1,4 +1,4 @@
-//package com.shangpin.ephub.data.mysql;
+package com.shangpin.ephub.data.mysql;//package com.shangpin.ephub.data.mysql;
 //
 //import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 //import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;

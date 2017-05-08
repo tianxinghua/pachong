@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.conf.redis;
+package com.shangpin.ephub.data.schedule.conf.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
