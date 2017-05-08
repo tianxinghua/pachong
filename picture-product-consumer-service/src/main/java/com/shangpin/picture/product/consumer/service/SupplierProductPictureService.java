@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -86,7 +87,7 @@ public class SupplierProductPictureService {
 				if(picUrl.startsWith("http")){
 					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 				}else if(picUrl.startsWith("ftp")){
-					pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+					code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
 				}
 				
 				if (code == 404 || code == 400) {
@@ -173,12 +174,13 @@ public class SupplierProductPictureService {
 	}
 	/**
 	 * 从ftp下载图片并上传图片服务器
-	 * @param picUrl
+	 * @param picUrl 供应商原始链接，格式必须为：ftp://user:password@ip/urlpath
 	 * @param dto
-	 * @param authenticationInformation
+	 * @param authenticationInformation 必须将ftp的用户名密码配置到配置文件
 	 * @return
 	 */
 	private int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+		FTPClient ftpClient = null;
 		InputStream inputStream = null;
 		int flag = 0;
 		try {
@@ -187,7 +189,10 @@ public class SupplierProductPictureService {
 			String remotePath =  url.substring(url.indexOf("/"),url.lastIndexOf("/")); 
 			String remoteFileName = picUrl.substring(picUrl.lastIndexOf("/")+1);
 			int port = 21;
-			inputStream = FtpUtil.getFtpUtil().downFile(authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
+			inputStream = FtpUtil.getFtpUtil().downFile(ftpClient,authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
+			if(null == inputStream){
+				return 404;
+			}
 			byte[] byteArray = IOUtils.toByteArray(inputStream);
 			if (byteArray == null || byteArray.length == 0) {
 				throw new RuntimeException("ftp读取到的图片字节为空,无法获取图片");
@@ -210,13 +215,7 @@ public class SupplierProductPictureService {
 			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
 			dto.setMemo("图片拉取失败:"+flag);
 		}finally {
-			if(null != inputStream){
-				try {
-					inputStream.close();
-				} catch (Exception e2) {
-					log.error("关闭资源流发生异常", e2);
-				}
-			}
+			closeFtp(inputStream,ftpClient);
 		}
 		dto.setUpdateTime(new Date());
 		return flag;
@@ -246,6 +245,32 @@ public class SupplierProductPictureService {
 			}
 		}
 	}
+	/**
+	 * 关闭ftp资源流以及连接
+	 * @param inputStream
+	 * @param ftpClient
+	 */
+	private void closeFtp(InputStream inputStream,FTPClient ftpClient){
+		if (inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (Throwable e) {
+				log.error("关闭ftp资源流发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭ftp资源流发生异常");
+			}
+		}
+		if(null != ftpClient){
+			try {
+				ftpClient.disconnect();
+			} catch (Throwable e) {
+				log.error("关闭ftp链接发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭ftp链接发生异常");
+			}
+		}
+	}
+	
 	/**
 	 * 获取图片扩张名
 	 * @param url 图片地址
@@ -328,7 +353,14 @@ public class SupplierProductPictureService {
 						information = getAuthentication(supplierId);
 				}
 				deleteImage(hubSpuPendingPicDto);
-				int code = pullPicAndPushToPicServer(hubSpuPendingPicDto.getPicUrl(), updateDto, information);
+				String picUrl = hubSpuPendingPicDto.getPicUrl();
+				int code = 0;
+				if(picUrl.startsWith("http")){
+					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
+				}else if(picUrl.startsWith("ftp")){
+					code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+				}
+				
 				if (code == 404 || code == 400) {
 					supplierProductPictureManager.deleteById(spuPendingPicId);
 				} else { 
