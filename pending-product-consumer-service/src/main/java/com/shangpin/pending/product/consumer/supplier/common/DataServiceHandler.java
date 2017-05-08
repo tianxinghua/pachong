@@ -774,6 +774,7 @@ public class DataServiceHandler {
                 skuSupplierMapping.setSupplierSkuId(supplierSkuDto.getSupplierSkuId());
 
             }
+			skuSupplierMapping.setSupplierNo(skuPendingDto.getSupplierNo());
 			skuSupplierMapping.setSupplierSelectState(SupplierSelectState.WAIT_SELECT.getIndex().byteValue());
 			log.info("skuMapping = " +skuSupplierMapping.toString());
 			skuSupplierMappingGateWay.insert(skuSupplierMapping);
@@ -795,6 +796,7 @@ public class DataServiceHandler {
 		hubSku.setSkuSize(hubSkuPending.getHubSkuSize());
 		hubSku.setSkuSizeId(hubSkuPending.getScreenSize());
 		hubSku.setCreateTime(date);
+		hubSku.setSkuSizeType(hubSkuPending.getHubSkuSizeType());
 		hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
 		hubSku.setUpdateTime(date);
 		hubSkuGateWay.insert(hubSku);
