@@ -22,9 +22,9 @@ public class HubSupplierSeasonDicResponseDto {
 	private String supplierSeason;
 	private String hubMarketTime;
 	private String hubSeason;
-	 private Byte filterFlag;//1、当季  0：非当季
-	 private String updateTime;
-	 private String createTime;
-	 private String updateUser;
+	private Byte filterFlag;//1、当季  0：非当季
+	private String updateTime;
+	private String createTime;
+	private String updateUser;
 
 }

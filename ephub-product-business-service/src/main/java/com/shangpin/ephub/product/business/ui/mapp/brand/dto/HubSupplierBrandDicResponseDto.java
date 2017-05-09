@@ -17,8 +17,10 @@ import lombok.ToString;
 public class HubSupplierBrandDicResponseDto {
 	
 	private Long supplierBrandDicId;
+	private Long brandDicId;
 	private String supplierId;
 	private String supplierNo;
+	private String supplierName;
 	private String supplierBrand;
 	private String hubBrandNo;
 	 private String updateTime;

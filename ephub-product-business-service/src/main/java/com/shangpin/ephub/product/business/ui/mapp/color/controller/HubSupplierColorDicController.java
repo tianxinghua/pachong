@@ -153,7 +153,7 @@ public class HubSupplierColorDicController {
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse selectHubColorDetail(@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
 		try {
-			log.info("详情请求参数：{}",hubSupplierColorDicRequestDto);
+			log.info("颜色详情请求参数：{}",hubSupplierColorDicRequestDto);
 			
 			int total = hubColorDicService.countHubColorDicByHubColorId(hubSupplierColorDicRequestDto.getColorDicId());
 			log.info("返回个数："+total);

@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.dictionary.season.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +35,8 @@ public class HubSeasonDicController {
     public int deleteByCriteria(@RequestBody HubSeasonDicCriteria criteria){
     	return hubSeasonDicService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long seasonDicId){
+	@RequestMapping(value = "/delete-by-primary-key/{seasonDicId}")
+    public int deleteByPrimaryKey(@PathVariable("seasonDicId") Long seasonDicId){
     	return hubSeasonDicService.deleteByPrimaryKey(seasonDicId);
     }
 	@RequestMapping(value = "/insert")
