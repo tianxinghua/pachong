@@ -672,8 +672,17 @@ public abstract class AbsUpdateProductStock {
 		long theEnd = 0;
 		if(StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)){
 			loggerInfo.info("在"+startTime+"到"+endTime+"时间段内，只更新供应商库存小于尚品库存的sku"); 
-			theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
-			theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
+			String startStr = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime;
+			long start = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(startStr,"yyyy-MM-dd HH:mm:ss").getTime();
+			String endString = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime;
+			long end = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(endString,"yyyy-MM-dd HH:mm:ss").getTime();
+			if(end < start){
+				theStart = end;
+				theEnd = start;
+			}else{
+				theStart = end - 1000*60*60*24;
+				theEnd = start;
+			}
 		}
 		if(null!=skuIceArray){
 			// get update supplier date
@@ -682,21 +691,21 @@ public abstract class AbsUpdateProductStock {
 				if(iceStock.containsKey(skuIce.SkuNo)){
 					loggerInfo.info("sop skuNo ：--------" + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
 					if( iceStock.get(skuIce.SkuNo)!=skuIce.InventoryQuantity){
-						
-						//在8:00:00到23:59:59时间段内，只有当供应商库存小于尚品库存时，才去更新尚品库存
-						if(theStart != 0 && theEnd != 0 && nowTime.getTime() >= theStart && nowTime.getTime() <= theEnd){
+						if( nowTime.getTime() > theStart && nowTime.getTime() < theEnd){
+							//全量更新
+							toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
+						}else{
+							//只更新小于尚品的库存
 							if(iceStock.get(skuIce.SkuNo) < skuIce.InventoryQuantity){
 								toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 							}else{
 							    if(isNeedHandle){
 									toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 								}else{
-                                    loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>sop skuNo: " + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
+                                    loggerInfo.info(">>>>>>该时段，供应商库存大于尚品库存，不更新>>>>>sop skuNo: " + skuIce.SkuNo + " suppliersku: " + skuIce.SupplierSkuNo +" supplier quantity =" + iceStock.get(skuIce.SkuNo) + " shangpin quantity = " + skuIce.InventoryQuantity );
 								}
 							}
-						}else{
 							
-							toUpdateIce.put(skuIce.SkuNo, iceStock.get(skuIce.SkuNo));
 						}
 					}
 					
@@ -1236,13 +1245,29 @@ public abstract class AbsUpdateProductStock {
 	}
 	
 //	public static void main(String[] args) {
-//		Date nowTime =com.shangpin.iog.common.utils.DateTimeUtil.convertFormat("2016-11-16 07:59:59", "yyyy-MM-dd HH:mm:ss");
-//		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss"));
-//		System.out.println(com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss"));
-//		long theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
-//		long theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
-//		if(nowTime.getTime() >=theStart && nowTime.getTime() <= theEnd){
-//			System.out.println("true"); 
+//		Date nowTime =com.shangpin.iog.common.utils.DateTimeUtil.convertFormat("2016-05-09 05:00:00", "yyyy-MM-dd HH:mm:ss");
+//		loggerInfo.info("nowTime============="+com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime,"yyyy-MM-dd HH:mm:ss")); 
+//		long theStart = 0;
+//		long theEnd = 0;
+//		if(StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)){
+//			String startStr = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime;
+//			long start = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(startStr,"yyyy-MM-dd HH:mm:ss").getTime();
+//			String endString = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime;
+//			long end = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(endString,"yyyy-MM-dd HH:mm:ss").getTime();
+//			if(end < start){
+//				theStart = end;
+//				theEnd = start;
+//			}else{
+//				theStart = end - 1000*60*60*24;
+//				theEnd = start;
+//			}
+//		}
+//		System.out.println("start==="+theStart);
+//		System.out.println("end==="+theEnd);
+//		System.out.println("now===="+nowTime.getTime());
+//		if(nowTime.getTime() > theStart && nowTime.getTime() < theEnd){
+////			System.out.println("需要比较库存，只更新库存小于供应商的产品"); 
+//			System.out.println("这个时间段内需要全量更新");
 //		}
 //	}
 		

@@ -40,6 +40,7 @@ include 'stockclean'
 include 'OpenTest'
 include 'syn-spsku-hub'
 include 'synchSupplierIdAndSpId'
+include 'studio69'
 
 
 
