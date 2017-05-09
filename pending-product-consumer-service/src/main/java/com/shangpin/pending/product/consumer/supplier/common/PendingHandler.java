@@ -305,18 +305,18 @@ public class PendingHandler extends VariableInit {
                 hubSpuPending = new SpuPending();
                 BeanUtils.copyProperties(tmp, hubSpuPending);
 
-				//判断HUB_SPU是否存
-				if (hubSpuPending.getSpuBrandState().intValue()==PropertyStatus.MESSAGE_HANDLED.getIndex()
-						&& null != hubSpuPending.getSpuModel()) {
-					HubSpuDto hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),
-							hubSpuPending.getSpuModel());
-					if(null!=hubSpuDto){
-						if(hubSpuPending.getSpuState().intValue()==SpuStatus.SPU_WAIT_HANDLE.getIndex()){
-						   spuPendingHandler.updateSpuStateToHandle(hubSpuPending.getSpuPendingId());
-							hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
-						}
-					}
-				}
+				//判断HUB_SPU是否存   （现无需再判断，在insert hub_sku_pending里处理）
+//				if (hubSpuPending.getSpuBrandState().intValue()==PropertyStatus.MESSAGE_HANDLED.getIndex()
+//						&& null != hubSpuPending.getSpuModel()&&PropertyStatus.MESSAGE_HANDLED.getIndex()==hubSpuPending.getSpuModelState().intValue()) {
+//					HubSpuDto hubSpuDto = dataServiceHandler.getHubSpuByHubBrandNoAndProductModel(hubSpuPending.getHubBrandNo(),
+//							hubSpuPending.getSpuModel());
+//					if(null!=hubSpuDto){
+//						if(hubSpuPending.getSpuState().intValue()==SpuStatus.SPU_WAIT_HANDLE.getIndex()){
+//						   spuPendingHandler.updateSpuStateToHandle(hubSpuPending.getSpuPendingId());
+//							hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+//						}
+//					}
+//				}
 
 
             } else {// 如果不存在 说明是消息队列混乱了
@@ -631,7 +631,14 @@ public class PendingHandler extends VariableInit {
 		}
 
 	    //判断HUBSPU  是否存在 其它状态 比如过滤的 不在处理的 认为不存在HUB_SPU 即使已经存在HUB_SPU
-		if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()) {
+		if (SpuStatus.SPU_HANDLED.getIndex() == hubSpuPending.getSpuState().intValue()
+				||(SpuStatus.SPU_WAIT_HANDLE.getIndex()==hubSpuPending.getSpuState().intValue()
+				&&StringUtils.isNotBlank(hubSpuPending.getHubSpuNo()))
+				||(SpuStatus.SPU_WAIT_AUDIT.getIndex()==hubSpuPending.getSpuState().intValue()
+				&&StringUtils.isNotBlank(hubSpuPending.getHubSpuNo()))
+				||(SpuStatus.SPU_HANDLING.getIndex()==hubSpuPending.getSpuState().intValue()
+				&&StringUtils.isNotBlank(hubSpuPending.getHubSpuNo()))
+				) {
 			// 查询HUBSKU
 			log.info("hubSpu 存在："+(null==hubSpuPending.getHubSpuNo()?"":hubSpuPending.getHubSpuNo()) + ""+
 					" hubSize = " +hubSize + " query parameter: category=" + hubSpuPending.getHubCategoryNo() + "  brandno="+hubSpuPending.getHubBrandNo()
@@ -643,6 +650,7 @@ public class PendingHandler extends VariableInit {
 			if ("".equals(hubSize)) {
 
 				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+				hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
 				// 如果是待审核的 因为尺码问题 不能通过(现可部分审核，不修改状态）
 //					if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()) {
 //						spuPendingHandler.updateSpuStateFromWaitAuditToWaitHandle(hubSpuPending.getSpuPendingId());
@@ -654,6 +662,7 @@ public class PendingHandler extends VariableInit {
 					setSkuPendingSizePropertyValue(hubSkuPending, hubSize);
 				}
 			}
+
 			hubSkuPending.setFilterFlag(filterFlag);
 			//spu pending stock state handle
 			updateSpuStockStateForInsertSku(hubSpuPending, hubSkuPending);
@@ -740,7 +749,7 @@ public class PendingHandler extends VariableInit {
 
 
             hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-            hubSkuPending.setSkuState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+            hubSkuPending.setSkuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
 
             HubSkuDto hubSku = dataServiceHandler.getSkuBySpuNoAndSizeAndSizeType(hubSpuPending.getHubSpuNo(),
                     null==hubSkuPending.getHubSkuSize()?"":hubSkuPending.getHubSkuSize(),
@@ -753,7 +762,7 @@ public class PendingHandler extends VariableInit {
                 // 保存对应关系
                 dataServiceHandler.saveSkuSupplierMapping(hubSku.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
             } else { // 不存在 创建hubsku 并创建 对应关系
-            	//先创建hub_sku 然后反写到SKUPENDING 中
+				//先创建hub_sku 然后反写到SKUPENDING 中
 
 				HubSkuDto hubSkuNo = dataServiceHandler.insertHubSku(hubSpuPending.getHubSpuNo(), hubSpuPending.getHubColor(), date,
                         hubSkuPending);

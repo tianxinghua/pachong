@@ -794,6 +794,7 @@ public class DataServiceHandler {
 		hubSku.setSkuNo(hubSkuGateWay.createSkuNo(hubSpuNo));
 		hubSku.setColor(color);
 		hubSku.setSkuSize(hubSkuPending.getHubSkuSize());
+		hubSku.setSkuSizeType(hubSkuPending.getHubSkuSizeType());
 		hubSku.setSkuSizeId(hubSkuPending.getScreenSize());
 		hubSku.setCreateTime(date);
 		hubSku.setSkuSizeType(hubSkuPending.getHubSkuSizeType());

@@ -238,7 +238,7 @@ shangpin:
                   openApiKey: bbe7f9392d9148f697241b82e6e1f394
                   openApiSecret: 932aafdc45ad477f9d20b0ebb9a22f2a
           leam:
-                  url: http://62.101.102.194:1080/ws_sito_p15/ws_sito_p15.asmx/
+                  url: http://31.27.194.207:1080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace

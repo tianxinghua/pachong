@@ -65,10 +65,10 @@ public class ParisiHandler implements ISupplierHandler {
 					hubSkus.add(hubSku);
 				}
 				//处理图片				
-				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
-					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(product.getImages()));
-				}
+//				SupplierPicture supplierPicture = null;
+//				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
+				SupplierPicture	supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(product.getImages()));
+//				}
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}

@@ -56,10 +56,10 @@ public class DellaHandler implements ISupplierHandler {
 
 				}
                  //处理图片
-				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
-					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
-				}
+//				SupplierPicture supplierPicture = null;
+//				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
+				SupplierPicture	supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
+//				}
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
