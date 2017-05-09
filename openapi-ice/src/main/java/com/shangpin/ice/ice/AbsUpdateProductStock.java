@@ -816,7 +816,7 @@ public abstract class AbsUpdateProductStock {
 			//获取采购单信息   key为尚品的SKU
 			Map<String,Integer> sopPurchaseMap = new HashMap<>();
 			if(!ORDER){
-				sopPurchaseMap = this.getSopPuchase(supplierId);
+//				sopPurchaseMap = this.getSopPuchase(supplierId);
 			}
 
 			String result = "",stockTemp="",priceResult="";
@@ -950,7 +950,7 @@ public abstract class AbsUpdateProductStock {
 		statusList.add(1);
 		statusList.add(2);
 		while(hasNext){
-//			List<PurchaseOrderDetail> orderDetails = null;
+
 			boolean fetchSuccess=true;
 			PurchaseOrderInfoApiDto purchaseOrderInfoApiDto = null;
 			for(int i=0;i<2;i++){  //允许调用失败后，再次调用一次
@@ -958,9 +958,7 @@ public abstract class AbsUpdateProductStock {
 
 					PurchaseOrderQueryDto orderQueryDto = new PurchaseOrderQueryDto(startTime,endTime,statusList
 							,pageIndex,pageSize);
-//					PurchaseOrderDetailPage orderDetailPage=
-//							servant.FindPurchaseOrderDetailPaged(supplierId, orderQueryDto);
-//					orderDetails = orderDetailPage.PurchaseOrderDetails;
+
 					purchaseOrderInfoApiDto = servant.FindPurchaseOrderDetailCountPaged(supplierId, orderQueryDto);
 					if(null==purchaseOrderInfoApiDto){
 						fetchSuccess=false;
@@ -990,23 +988,7 @@ public abstract class AbsUpdateProductStock {
 //				return sopPurchaseMap;
 			}
 
-//			if (!fetchSuccess) {
-//				loggerError.error("两次获取采购单均失败");
-//				return sopPurchaseMap;
-//			}
-//			for (PurchaseOrderDetail orderDetail : orderDetails) {
-//				supplierSkuNo  = orderDetail.SupplierSkuNo;
-//				if(sopPurchaseMap.containsKey(supplierSkuNo)){
-//					//
-//
-//					sopPurchaseMap.put(supplierSkuNo,sopPurchaseMap.get(supplierSkuNo)+1);
-//				}else{
-//
-//					sopPurchaseMap.put(supplierSkuNo,1);
-//				}
-//
-//
-//			}
+
 			pageIndex++;
 			hasNext=(pageSize==detilApiDtos.size());
 
@@ -1058,26 +1040,27 @@ public abstract class AbsUpdateProductStock {
 				}
 				for (PurchaseOrderDetail orderDetail : orderDetails) {
 
-					SpecialSkuDTO spec = new SpecialSkuDTO();
-					String supplierSkuNo  = orderDetail.SupplierSkuNo;
-					spec.setSupplierId(supplierId);
-					spec.setSupplierSkuId(supplierSkuNo);
-					try {
-						logger.info("采购异常的信息："+spec.toString());
-						specialSkuService.saveDTO(spec);
-					} catch (ServiceMessageException e) {
-						e.printStackTrace();
+
+					if(7!=orderDetail.GiveupType){
+						SpecialSkuDTO spec = new SpecialSkuDTO();
+						String supplierSkuNo  = orderDetail.SupplierSkuNo;
+						spec.setSupplierId(supplierId);
+						spec.setSupplierSkuId(supplierSkuNo);
+						try {
+							logger.info("采购异常的信息："+spec.toString());
+							specialSkuService.saveDTO(spec);
+						} catch (ServiceMessageException e) {
+							e.printStackTrace();
+						}
+						//直接调用库存更新  库存为0
+						try {
+							servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
+						} catch (Exception e) {
+							loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
+						}
+					}else{
+						logger.info("异常采购信息："+ orderDetail.SopPurchaseOrderNo + " 因质量问题采购异常，可继续更新库存");
 					}
-					//直接调用库存更新  库存为0
-					try {
-						servant.UpdateStock(supplierId, orderDetail.SkuNo, 0);
-					} catch (Exception e) {
-						loggerError.error("采购异常的商品 "+ orderDetail.SkuNo + " 库存更新失败。");
-					}
-//					if(7!=orderDetail.GiveupType){
-//					}else{
-//						logger.info("异常采购信息："+ orderDetail.SopPurchaseOrderNo + " 因质量问题采购异常，可继续更新库存");
-//					}
 
 				}
 			} catch (Exception e) {
