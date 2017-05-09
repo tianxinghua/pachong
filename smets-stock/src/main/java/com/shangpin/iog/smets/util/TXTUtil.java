@@ -38,7 +38,6 @@ public class TXTUtil {
 			throws Exception {
 		List<T> dtoList = new ArrayList<T>();
 		if(in == null){
-			System.out.println("FTP下载失败！！！！！！！！！！");
 			log.error("FTP下载失败！！！！！！！！！！");
 		}
 		String rowString = null;
@@ -49,7 +48,6 @@ public class TXTUtil {
 		//cr = new CsvReader(result);
 		
 		cr = new CsvReader(in,Charset.forName("unicode"));
-		System.out.println("创建cr对象成功");
 		// 得到列名集合
 //		cr.readRecord();
 		int a = 0;
@@ -62,7 +60,6 @@ public class TXTUtil {
 				T t = fillDTO(clazz.newInstance(), colValueList);
 				dtoList.add(t);
 			}
-			System.out.println(a);
 		}
 		in.close();
 		return dtoList;
@@ -89,32 +86,39 @@ public class TXTUtil {
         try {  
             ftpClient = new FTPClient();  
             ftpClient.setConnectTimeout(1000*60*30);
-            System.out.println("开始连接");
             log.info("开始连接");
             ftpClient.connect("194.154.193.146");// 连接FTP服务器  
             boolean login = ftpClient.login("shangpin", "SmetsXShangpin");
-            System.out.println("连接"+login);
             log.info("连接"+login);
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.changeWorkingDirectory("/Connexion CEGID");
 //			String[] names = ftpClient.listNames("/Connexion CEGID");
-			FTPFile[] files = ftpClient.listFiles("/Connexion CEGID", getFilter());
+			Date now = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String lastDay = sdf.format(now);
+			FTPFile[] files = ftpClient.listFiles("/Connexion CEGID", getFilter(lastDay));
+			int wait = 1;
+			Date finalDate = null;
 			
-//			String[] names = ftpClient.listNames();
-			int wait = 0;
-			while(null == files && wait < 20){
-				try {					
-					files = ftpClient.listFiles("/Connexion CEGID", getFilter());	
+			while((null == files||files.length<1) && wait < 10){
+				try {				
+					finalDate = new Date(now.getTime()-86400000*wait);
+					lastDay = sdf.format(finalDate);
+					log.info("lastDay:"+lastDay);
+					files = ftpClient.listFiles("/Connexion CEGID", getFilter(lastDay));	
 				} catch (Exception e) {
 					e.printStackTrace();
 				}finally{
 					wait ++;
 				}
 			}
+			if(null == files||files.length<1){
+				return null;
+			}
 			log.info("获取文件名列表的次数是=============="+wait); 
-			FTPFile filename = getFileName(files,new Date());
+			sdf = new SimpleDateFormat("yyyyMMdd HH");
+			FTPFile filename = getFileName(files,sdf.parse(lastDay+" 23"));
 			log.info("本次获取的文件名称是==========="+filename.getName()); 
-            System.out.println("读取txt");
             ftpClient.setControlEncoding("UTF-8");
             ftpClient.setDataTimeout(1000*60*30);
             
@@ -141,17 +145,13 @@ public class TXTUtil {
         }
         return dtoList;
 	}
-	
-	private static FTPFileFilter getFilter() {
+	private static FTPFileFilter getFilter(final String lastDay) {
 		
 		FTPFileFilter filter = new FTPFileFilter() {			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");	
-			Date now = new Date();
-			String dateStr = sdf.format(now);
-			String lastDay = sdf.format(new Date(now.getTime()-86400000));
+			
 			@Override
 			public boolean accept(FTPFile file) {
-				if (file.getName().contains(dateStr) || file.getName().contains(lastDay)) {
+				if (file.getName().contains(lastDay)) {
 	                return true;
 	            }	            
 				return false;
@@ -161,9 +161,25 @@ public class TXTUtil {
 	}
 	
 	private static FTPFile getFileName(FTPFile[] files,Date date){
+		FTPFile file = getFile(files, date);
+        int wait = 1;
+        while(null == file&& wait < 24){
+			try {				
+				file = getFile(files, new Date(date.getTime()-3600000*wait));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				wait ++;
+			}
+		}
+        log.info("获取文件名列表的次数是=============="+wait); 
+		return file;
+	}
+	
+	private static FTPFile getFile(FTPFile[] files,Date date){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HH");
 		String dateStr = sdf.format(date);
-		System.out.println(dateStr); 
+		log.info(dateStr); 
 		FTPFile file = null;
         for (int i = files.length-1; i>=0; i--) {
         	if (files[i].getName().contains(dateStr)) {
@@ -171,13 +187,13 @@ public class TXTUtil {
 				break;
 			}
 		}
-        if (null == file) {
-			file = getFileName(files, new Date(date.getTime()-3600000));
-		}
-		return file;
+        return file;
 	}
 	public static void main(String[] args) {
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");	
+		Date now = new Date();
+		String dateStr = sdf.format(now);
+		String lastDay = sdf.format(new Date(now.getTime()-86400000*24));
 ////		String aaa= "3000003587604,3000003587611,3000003587628,3000003587635,3000003587642,3000003587659,3000003587666";
 //		try {
 			List<TxtDTO> list = TXTUtil.downloadFTP(TxtDTO.class, ";");
