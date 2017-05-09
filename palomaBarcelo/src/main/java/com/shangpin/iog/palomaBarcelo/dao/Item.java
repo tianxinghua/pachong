@@ -35,7 +35,7 @@ public class Item {
 
 //	private String category;
 	private String price;
-	private String price_IT;
+	private String base_price;
 	private String currency;
 //	private String details_link;
 

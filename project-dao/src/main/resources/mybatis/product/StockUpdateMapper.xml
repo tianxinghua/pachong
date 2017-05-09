@@ -8,13 +8,14 @@
         <result column="ERRORNUM" property="errorNum" />
         <result column="RIGHTNUM" property="rightNum" />
         <result column="TOTALNUM" property="totalNum" />
-        <result column="EMAIL" property="email" />
         <result column="STATUS" property="status" />
+        <result column="EMAIL" property="email" />
+        <result column="SPARE" property="spare" />
 	</resultMap>
 		
 	<insert id="saveStockUpdateDTO" parameterType="iog_stockUpdate">
-		insert into UPDATE_STOCK (SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM)
-		values (#{supplierId},#{updateTime},#{errorNum},#{rightNum})
+		insert into UPDATE_STOCK (SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM,SPARE)
+		values (#{supplierId},#{updateTime},#{errorNum},#{rightNum},#{spare})
 	
 	</insert>
 
@@ -39,6 +40,9 @@
               <if test="totalNum!=null">
               	TOTALNUM = #{totalNum}
               </if>
+              <if test="spare!=null">
+                  SPARE = #{spare}
+              </if>
           </set>
           where  SUPPLIER_ID = #{supplierId}
     </update>
@@ -57,7 +61,7 @@
     </update>
     
     <select id="findStockUpdateBySUpplierId" resultMap="suMap">
-    	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM,TOTALNUM,EMAIL,STATUS
+    	select SUPPLIER_ID,UPDATE_TIME,ERRORNUM,RIGHTNUM,TOTALNUM,EMAIL,STATUS,SPARE
     	from UPDATE_STOCK
     	<where>
     		SUPPLIER_ID = #{supplierId}

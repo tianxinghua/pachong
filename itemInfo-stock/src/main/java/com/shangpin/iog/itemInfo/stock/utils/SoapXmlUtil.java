@@ -77,6 +77,8 @@ public class SoapXmlUtil {
 	public static String downloadSoapXmlAsFile(String serviceUrl ,String sopAction,String contentType,String soapRequestData,String localUrl){
 		
 		HttpClient httpClient = new HttpClient();
+		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000*60*30);
+		httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000*60*30);
 		PostMethod postMethod = new PostMethod(serviceUrl);
         postMethod.setRequestHeader("SOAPAction", sopAction);
         postMethod.setRequestHeader("Content-Type", contentType);

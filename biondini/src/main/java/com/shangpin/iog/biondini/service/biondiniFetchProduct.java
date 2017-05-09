@@ -36,7 +36,7 @@ import com.shangpin.product.AbsSaveProduct;
 /**
  * Created by 赵根春 on 2015/12/25.
  */
-@Component
+@Component("biondini")
 public class biondiniFetchProduct extends AbsSaveProduct {
 
 	@Autowired

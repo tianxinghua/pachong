@@ -85,7 +85,7 @@ public class FetchProduct extends AbsSaveProduct{
 	        Gson gson = new Gson();
 	
 	        String[]  databaseArray = new String[] {"Default"}; //
-	        OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2);
+	        OutTimeConfig outTimeConfig  = new OutTimeConfig(1000*60*20,1000*60*20,1000*60*20);
 	        for(String database:databaseArray){
 	        	String seasonUrl = seasonUri.replace("@database@", database);
 	            String season_json = HttpUtil45.get(seasonUrl,outTimeConfig,null);
@@ -95,7 +95,9 @@ public class FetchProduct extends AbsSaveProduct{
 	            }.getType());
 	
 	            String producturl ="";
-	
+	            if(season_list==null){
+	            	return null;
+	            }
 	            for (Seasoncode obj : season_list.getSeasonCode()){
 	                int i = 1;
 	                while (true){
@@ -143,7 +145,6 @@ public class FetchProduct extends AbsSaveProduct{
 	                                spudto.setSpuId(spu.getProduct_id());
 	                                spudto.setId(UUIDGenerator.getUUID());
 	                                spudto.setMaterial(spu.getProduct_Material());
-	                                spudto.setPicUrl(spu.getUrl());
 	                                spudto.setSpuName(spu.getDescription());
 	                                spudto.setProductOrigin(spu.getProduct_MadeIn());
 	                                

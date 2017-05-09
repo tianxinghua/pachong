@@ -1,5 +1,30 @@
 package com.shangpin.sop;
 
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.ServiceMessageException;
 import com.shangpin.iog.common.utils.SendMail;
@@ -9,24 +34,21 @@ import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.service.SkuRelationService;
 import com.shangpin.iog.service.SpecialSkuService;
-import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.iog.service.SupplierService;
+import com.shangpin.iog.service.UpdateStockService;
 import com.shangpin.openapi.api.sdk.client.SpClient;
-import com.shangpin.openapi.api.sdk.model.*;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import com.shangpin.openapi.api.sdk.model.ApiResponse;
+import com.shangpin.openapi.api.sdk.model.PurchaseOrderDetail;
+import com.shangpin.openapi.api.sdk.model.PurchaseOrderDetailPage;
+import com.shangpin.openapi.api.sdk.model.PurchaseOrderDetilApiDto;
+import com.shangpin.openapi.api.sdk.model.PurchaseOrderInfoApiDto;
+import com.shangpin.openapi.api.sdk.model.PurchaseOrderQueryDto;
+import com.shangpin.openapi.api.sdk.model.SopProductSku;
+import com.shangpin.openapi.api.sdk.model.SopProductSkuPage;
+import com.shangpin.openapi.api.sdk.model.SopProductSkuPageQuery;
+import com.shangpin.openapi.api.sdk.model.SopSku;
+import com.shangpin.openapi.api.sdk.model.SopSkuInventory;
+import com.shangpin.openapi.api.sdk.model.StockInfo;
 
 /**
  * 更新主站库存的抽象类<br/>
@@ -43,6 +65,25 @@ public abstract class AbsUpdateProductStock {
 			.getLogger("info");
 	private static org.apache.log4j.Logger loggerError = org.apache.log4j.Logger
 			.getLogger("error");
+	
+	private static ResourceBundle bdl = null;
+//	private static String spe_supplier = null;
+//	private static Map<String,String> speMap = new HashMap<String,String>();
+	private static String startTime = null;
+	private static String endTime = null;
+	
+	 static {
+	        try {
+	            if(null==bdl){
+	                bdl=ResourceBundle.getBundle("special");
+	            }
+	            startTime = bdl.getString("startTime");
+	            endTime = bdl.getString("endTime");
+	        }catch (Exception e) {
+	            loggerError.error("读取special.properties失败 "+e.toString()); 
+	        }
+	 }
+	
 	private boolean useThread = false;
 	private int skuCount4Thread = 100;
 
@@ -343,7 +384,7 @@ public abstract class AbsUpdateProductStock {
 				fct += totoalFailCnt.get(k);
 			}
 			if (fct >= 0) {// 如果待更新的数据不为0，则更新时间
-				this.updateStockTime(app_key);
+				this.updateStockTimeAndState(app_key);
 			}
 
 			return fct;
@@ -461,7 +502,7 @@ public abstract class AbsUpdateProductStock {
 				app_secret, skuNoSet, localAndIceSkuId);
 		int failCount = updateIceStock(host, app_key, app_secret, iceStock);
 		if (failCount >= 0) {// 更新库存失败数大于等于0时，更新时间
-			this.updateStockTime(app_key);
+			this.updateStockTimeAndState(app_key);
 		}
 		return failCount;
 	}
@@ -495,6 +536,8 @@ public abstract class AbsUpdateProductStock {
 //	    		}
 //			}
 			return -1;
+		}else{
+			updateStockTime(app_key);
 		}
 
 		// logger.warn("{}---更新ice--,数量：{}",Thread.currentThread().getName(),iceStock.size());
@@ -633,6 +676,26 @@ public abstract class AbsUpdateProductStock {
 			loggerError.error("更新库存更新时间业务失败===" + e);
 		}
 	}
+	/**
+	 * 更新时间及状态
+	 * @param supplier
+	 */
+	private void updateStockTimeAndState(String supplier){
+		try {
+//			if(null!=updateStockService){
+//				updateStockService.updateTime(supplier);
+			loggerInfo.info("key=" + supplier + "记录更新时间开始");
+			StockUpdateDTO stockUpdateDTO = new StockUpdateDTO();
+			stockUpdateDTO.setSupplierId(supplier);
+			stockUpdateDTO.setUpdateTime(new Date());
+			//
+			stockUpdateDTO.setSpare(String.valueOf(stockUpdateDTO.getUpdateTime().getTime()));
+			updateStockService.updateStatus(stockUpdateDTO);
+//			}
+		} catch (Exception e) {
+			loggerError.error("更新库存更新时间业务失败======"+e);
+		}
+	}
 	
 	/**
 	 * 将供货商添加到UPDATE_STOCK表中
@@ -701,7 +764,7 @@ public abstract class AbsUpdateProductStock {
 
 		// 查找未维护库存的SKU
 		if (null != skuArray && skuArray.length != skuNoShangpinList.size()) {
-			Map<String, String> sopSkuMap = new HashMap();
+			Map<String, String> sopSkuMap = new HashMap<String, String>();
 			for (SopSkuInventory skuIce : skuArray) {
 				sopSkuMap.put(skuIce.getSkuNo(), "");
 			}
@@ -725,7 +788,19 @@ public abstract class AbsUpdateProductStock {
 		}
 
 		// 排除无用的库存
+		
+		Date nowTime = new Date();
+		loggerInfo.info("nowTime============="+com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime,"yyyy-MM-dd HH:mm:ss")); 
+		long theStart = 0;
+		long theEnd = 0;
+		if(StringUtils.isNotBlank(startTime) && StringUtils.isNotBlank(endTime)){
+			loggerInfo.info("在"+startTime+"到"+endTime+"时间段内，只更新供应商库存小于尚品库存的sku"); 
+			theStart = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+startTime),"yyyy-MM-dd HH:mm:ss").getTime();
+			theEnd = com.shangpin.iog.common.utils.DateTimeUtil.convertFormat((com.shangpin.iog.common.utils.DateTimeUtil.convertFormat(nowTime, "yyyy-MM-dd")+" "+endTime),"yyyy-MM-dd HH:mm:ss").getTime();
+		}
+		
 		if (null != skuArray) {
+			boolean isNeedHandle = isNeedUpdateStock(app_key);
 			for (SopSkuInventory skuIce : skuArray) {
 				if (iceStock.containsKey(skuIce.getSkuNo())) {
 					logger.warn("skuNo ：--------" + skuIce.getSkuNo()
@@ -745,8 +820,27 @@ public abstract class AbsUpdateProductStock {
 					// " shangpin quantity = "+ skuIce.InventoryQuantity);
 					if (!iceStock.get(skuIce.getSkuNo()).toString()
 							.equals(skuIce.getInventoryQuantity())) {
-						toUpdateIce.put(skuIce.getSkuNo(),
-								iceStock.get(skuIce.getSkuNo()));
+						
+						//在8:00:00到23:59:59时间段内，只有当供应商库存小于尚品库存时，才去更新尚品库存
+						if(theStart != 0 && theEnd != 0 && nowTime.getTime() >= theStart && nowTime.getTime() <= theEnd){
+							if(iceStock.get(skuIce.getSkuNo()) < Integer.parseInt(skuIce.getInventoryQuantity())){
+								toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+							}else{
+								if(isNeedHandle){
+									toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+								}else {
+									loggerInfo.info(">>>>>>特殊的供应商，供应商库存大于现有，不更新>>>>>skuNo: " + skuIce.getSkuNo()
+											+ " supplierIdsku :" + skuIce.getSupplierSkuNo()
+											+ " supplier quantity ="
+											+ iceStock.get(skuIce.getSkuNo())
+											+ " shangpin quantity = "
+											+ skuIce.getInventoryQuantity());
+								}
+							}
+						}else{
+							toUpdateIce.put(skuIce.getSkuNo(),iceStock.get(skuIce.getSkuNo()));
+						}
+																	
 					}
 				} else {
 					loggerError.error("  skuNo ：--------" + skuIce.getSkuNo()
@@ -765,6 +859,36 @@ public abstract class AbsUpdateProductStock {
 			}
 		}
 
+	}
+	
+	/**
+	 * 超过两个小时未更新的 可以更新库存
+	 * @param supplier
+	 * @return
+     */
+	private boolean isNeedUpdateStock(String supplier) {
+		boolean result = false;
+
+		try {
+            StockUpdateDTO stockUpdateDTO = updateStockService.findStockUpdateBySUpplierId(supplier);
+			if(null!=stockUpdateDTO){
+				Date now  = new Date();
+				if(StringUtils.isNotBlank(stockUpdateDTO.getSpare())){
+
+					Long  updateStockTime = Long.valueOf(stockUpdateDTO.getSpare());
+					if(now.getTime() - updateStockTime > 1000*60*60*2){
+						loggerInfo.info("########供应商已超过2小时没更新库存，现在全量更新。#########");
+						result = true;
+					}
+				}
+
+			}
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return result;
 	}
 
 	/**
@@ -849,15 +973,15 @@ public abstract class AbsUpdateProductStock {
 			}
 
 			// 获取采购单信息  现更新接口内实现
-//			try {
-//				loggerInfo.info("获取采购单开始");
-//				if (!ORDER)
-//					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
-//							app_secret);
-//			} catch (Exception e) {
-//				// e.printStackTrace();
-//				loggerError.error("获取采购单失败" + e.getMessage(), e);
-//			}
+			try {
+				loggerInfo.info("获取采购单开始");
+				if (!ORDER)
+					sopPurchaseMap = this.getPurchaseOrder(host, app_key,
+							app_secret);
+			} catch (Exception e) {
+				// e.printStackTrace();
+				loggerError.error("获取采购单失败" + e.getMessage(), e);
+			}
 
 			String iceSku = "";
 			for (String skuNo : skuNos) {
@@ -876,7 +1000,7 @@ public abstract class AbsUpdateProductStock {
 							stock = 0;
 						loggerInfo.info(skuNo + "供货商库存：" + stock + " 采购单数量 : "
 								+ sopPurchaseMap.get(iceSku));
-//						stock = stock - sopPurchaseMap.get(iceSku);
+						stock = stock - sopPurchaseMap.get(iceSku);
 						
 						loggerInfo.info("最终库存 ：" + stock);
 						if (stock < 0)
@@ -984,101 +1108,6 @@ public abstract class AbsUpdateProductStock {
 	 * @return
 	 * @throws Exception
 	 */
-	// public Map<String,Integer> getPurchaseOrder(String host,String app_key,
-	// String app_secret) throws Exception{
-	// int pageIndex=1,pageSize=20;
-	// boolean hasNext=true;
-	// logger.warn("获取SOP采购单 开始");
-	// Map<String,Integer> purchaseOrderMap = new HashMap<>();
-	// String supplierSkuNo = "";
-	// String startTime="" , endTime="";
-	//
-	// SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	// Date endDate = new Date();
-	// endTime = format.format(endDate);
-	//
-	// startTime =
-	// format.format(this.getAppointDayFromSpecifiedDay(endDate,-2,"M"));
-	//
-	//
-	// List<Integer> detailStatus = new ArrayList<>();
-	// ApiResponse<PurchaseOrderDetailPage> response = null;
-	// while(hasNext){
-	// List<PurchaseOrderDetail> orderDetails = null;
-	// PurchaseOrderQueryDto queryDto = new PurchaseOrderQueryDto();
-	//
-	// queryDto.setUpdateTimeBegin(startTime);
-	// queryDto.setUpdateTimeEnd(endTime);
-	// queryDto.setPageIndex(pageIndex);
-	// queryDto.setPageSize(pageSize);
-	// detailStatus.add(1);
-	// detailStatus.add(2);
-	// queryDto.setDetailStatus(detailStatus);
-	//
-	//
-	// boolean fetchSuccess=true;
-	// for(int i=0;i<2;i++){ //允许调用失败后，再次调用一次
-	// try {
-	//
-	// response = SpClient.FindPOrderByPage(host, app_key, app_secret, new
-	// Date(), queryDto);
-	//
-	// PurchaseOrderDetailPage orderDetailPage = response.getResponse();
-	//
-	// orderDetails=orderDetailPage.getPurchaseOrderDetails();
-	// if(null==orderDetails){
-	// fetchSuccess=false;
-	// }
-	// } catch (Exception e) {
-	// fetchSuccess=false;
-	// loggerError.error("获取采购单失败",e);
-	// }
-	// if(fetchSuccess){
-	// i=2;
-	// }else{
-	// loggerError.error("获取采购单失败");
-	// }
-	// }
-	//
-	//
-	// if(!fetchSuccess){
-	// return purchaseOrderMap;
-	// }
-	//
-	// for (PurchaseOrderDetail orderDetail : orderDetails) {
-	// supplierSkuNo = orderDetail.getSupplierSkuNo();
-	// if(purchaseOrderMap.containsKey(supplierSkuNo)){
-	// purchaseOrderMap.put(supplierSkuNo, purchaseOrderMap.get(supplierSkuNo)+
-	// 1);
-	//
-	// }else{
-	// purchaseOrderMap.put(supplierSkuNo,1);
-	// }
-	//
-	//
-	// }
-	//
-	//
-	// pageIndex++;
-	// hasNext=(pageSize==orderDetails.size());
-	//
-	// }
-	//
-	// logger.warn("获取SOP采购单 结束");
-	//
-	// return purchaseOrderMap;
-	//
-	// }
-
-	/**
-	 * 获取采购单
-	 * 
-	 * @param host
-	 * @param app_key
-	 * @param app_secret
-	 * @return
-	 * @throws Exception
-	 */
 	public Map<String, Integer> getPurchaseOrder(String host, String app_key,
 			String app_secret) throws Exception {
 		int pageIndex = 1, pageSize = 20;
@@ -1163,10 +1192,7 @@ public abstract class AbsUpdateProductStock {
 		int pageIndex = 1, pageSize = 20;
 		boolean hasNext = true;
 		logger.warn("获取SOP采购单 开始");
-		Map<String, Integer> purchaseOrderMap = new HashMap<>();
-		String supplierSkuNo = "";
 		String startTime = "", endTime = "";
-
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		Date endDate = new Date();
 		endTime = format.format(endDate);
@@ -1308,6 +1334,7 @@ public abstract class AbsUpdateProductStock {
 	private static String to = "lizhongren@shangpin.com,lubaijiang@shangpin.com,zhaogenchun@shangpin.com,amanda.lee@shangpin.com,wangsaying@shangpin.com,maggie.zhang@shangpin.com,liufang@shangpin.com";
 	private static String messageType = "text/html;charset=utf-8";
 	
+	@SuppressWarnings("unused")
 	private void sendMail(String app_key,long hours){
 		try {	
 			SupplierDTO supplier = SupplierService.findBysupplierId(app_key);

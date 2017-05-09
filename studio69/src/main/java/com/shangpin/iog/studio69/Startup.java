@@ -14,6 +14,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class Startup
 {
@@ -27,6 +28,20 @@ public class Startup
         factory = new AnnotationConfigApplicationContext(AppContext.class);
 	}
 	
+	private static ResourceBundle bdl=null;
+    private static String supplierId = "";
+    private static String picpath = "";
+    private static int day;
+    
+    static {
+        if(null==bdl)
+         bdl=ResourceBundle.getBundle("conf");
+        supplierId = bdl.getString("supplierId");
+        day = Integer.valueOf(bdl.getString("day"));
+        picpath = bdl.getString("picpath");
+        
+    }
+	
 	public static void main(String[] args)
 	{
 
@@ -37,17 +52,12 @@ public class Startup
         //拉取数据
         FetchProduct fetchProduct =(FetchProduct)factory.getBean("studio69");
         try {
-            fetchProduct.fetchProductAndSave();
+        	fetchProduct.handleData("spu", supplierId, day, picpath);
         } catch (Exception e) {
         	e.printStackTrace();
            loggerError.error("拉取失败。" + e.getMessage());
         }
 
-        log.info("----拉取studio69数据完成----");
-
-
-		System.out.println("-------fetch end---------");
-        System.exit(0);
 	}
 
 }

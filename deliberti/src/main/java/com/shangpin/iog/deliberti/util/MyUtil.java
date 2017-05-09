@@ -57,18 +57,19 @@ public class MyUtil {
 		int a = 0;
 		while (cr.readRecord()) {
 			a++;
-			System.out.println("a="+a);
 			rowString = cr.getRawRecord();
 			rowString = rowString.replace("<br>", "");
-			System.out.println(rowString);
 			if (StringUtils.isNotBlank(rowString)) {
-				split = rowString.split("[|]");
+				split = rowString.split("[|]",-1);
 				colValueList = Arrays.asList(split);
-				System.out.println("第"+a+"行长度为:"+colValueList.size());
-				T t = fillDTO(clazz.newInstance(),colValueList);
-				//过滤重复的dto。。。sku,
-				//dtoSet.add(t);
-				dtoList.add(t);
+				if(colValueList.size()!=51){
+					System.out.println("第"+a+"	:"+colValueList.size());	
+				}else{
+					T t = fillDTO(clazz.newInstance(),colValueList);
+					//过滤重复的dto。。。sku,
+					//dtoSet.add(t);
+					dtoList.add(t);
+				}
 			}
 
 		}

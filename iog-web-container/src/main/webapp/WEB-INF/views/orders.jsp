@@ -23,7 +23,7 @@ function test(){
         type : "POST",
         dataType : "json",
         async: false,
-        url : "orderPage",
+        url : "orderList",
         data : {
             'page' : 1,
             'rows' : 100,
@@ -117,7 +117,7 @@ $(function(){
 				}
 }, 
 	        {field:'spSku',title:'spSkuId',width:'150',
-	styler: function(index,row,index){
+				styler: function(index,row,index){
 		return 'font-size:15px';
 		}	}, 
 	        {field:'supplierSku',title:'supplierSkuId',width:'150',
@@ -125,23 +125,23 @@ $(function(){
         		return 'font-size:15px';
         		}	}, 
 	        {field:'createTime',title:'CreateTime',width:'150',
-    	        	styler: function(index,row,index){
-    	        		return 'font-size:15px';
-    	        		}	
-	        	,formatter: function (value, row, index) {
-		        	var time = getDate(new Date(row.createTime.time));
-	                 return time;                                 
-	            }
-			}, 
-	        {field:'updateTime',title:'UpdateTime',width:'150',
 	        	styler: function(index,row,index){
 	        		return 'font-size:15px';
 	        		}	
-				,formatter: function (value, row, index) {
-		        	var time = getDate(new Date(row.updateTime.time));
-	                 return time;                                 
-	            }
-			}, 
+        	,formatter: function (value, row, index) {
+	        	var time = getDate(new Date(value.time));
+                 return time;                                 
+            }
+		}, 
+        {field:'updateTime',title:'UpdateTime',width:'150',
+        	styler: function(index,row,index){
+        		return 'font-size:15px';
+        		}	
+			,formatter: function (value, row, index) {
+	        	var time = getDate(new Date(value.time));
+                 return time;                                 
+            }
+		}, 
 	        {field:'excDesc',title:'异常原因',width:'300',
 	        	styler: function(index,row,index){
 	        		return 'font-size:15px';
@@ -154,38 +154,72 @@ $(function(){
 	}); 
 	
     var pager=$('#dg').datagrid('getPager');
-//     find(1,10);
-    pager.pagination({
+    	pager.pagination({
         pageNumber : 1,
         pageSize:100,
-        pageList : [ 10,20,30,50,100 ],// 可以设置每页记录条数的列表
+        pageList : [50,100,300,500],// 可以设置每页记录条数的列表
         onSelectPage: function (pageNumber, pageSize) {//分页触发  
             find(pageNumber, pageSize);  
+            //query(pageNumber, pageSize);
         }
-    });
-  //设置分页控件  
-//     var p = $('#tt').datagrid('getPager');  
-//     p.pagination({  
-//         pageSize: 5,//每页显示的记录条数，默认为10  
-//         pageList: [5, 10, 15],//可以设置每页记录条数的列表  
-//         beforePageText: '第',//页数文本框前显示的汉字  
-//         afterPageText: '页    共 {pages} 页',  
-//         displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录'  
-//     });  
+    });		
 
 });
-function find(pageNumber, pageSize)
-{
-        $("#dg").datagrid('getPager').pagination({pageSize : pageSize, pageNumber : pageNumber});//重置
+
+	function find(pageNumber, pageSize)
+	{
+	        $("#dg").datagrid('getPager').pagination({pageSize : pageSize, pageNumber : pageNumber});//重置
+	        $("#dg").datagrid("loading"); //加屏蔽
+	        $.ajax({
+	            type : "POST",
+	            dataType : "json",
+	            url : "orderList",
+	            data : {
+                	 'page' : pageNumber,
+                     'rows' : pageSize,
+                     'supplierId':'${supplierId}',
+                     'CGD':	$("#CGD").val(),
+                     'supplierSkuId':$("#supplierSkuId").val(),
+                     'spSkuId':$("#spSkuId").val(),
+                     'status':$("#status").val()
+	                
+	            },
+	            success : function(data) {
+	                $("#dg").datagrid('loadData',pageData(data.rows,data.total));//这里的pageData是我自己创建的一个对象，用来封装获取的总条数，和数据，data.rows是我在控制器里面添加的一个map集合的键的名称
+	                var total =data.total;
+	                console.info(data);
+	                $("#dg").datagrid('getPager').pagination({total : total});//重置
+	                $("#dg").datagrid("loaded"); //移除屏蔽
+	            },
+	            error : function(err) {
+	                $.messager.alert('操作提示', '获取信息失败...请联系管理员!', 'error');
+	                $("#dg").datagrid("loaded"); //移除屏蔽
+	            }
+	        });
+	}
+	function pageData(list,total){
+	    var obj=new Object(); 
+	    obj.total=total; 
+	    obj.rows=list; 
+	    return obj; 
+	}
+	function query(pageNumber, pageSize){
+		$("#dg").datagrid('getPager').pagination({pageSize : pageSize, pageNumber : pageNumber});//重置
         $("#dg").datagrid("loading"); //加屏蔽
+
         $.ajax({
             type : "POST",
             dataType : "json",
-            url : "orderPage",
+            url : "orderList",
             data : {
                 'page' : pageNumber,
                 'rows' : pageSize,
-                'supplierId':'${supplierId}'
+                'supplierId':'${supplierId}',
+                'CGD':	$("#CGD").val(),
+                'supplierSkuId':$("#supplierSkuId").val(),
+                'spSkuId':$("#spSkuId").val(),
+                'status':$("#status").val()
+                
             },
             success : function(data) {
                 $("#dg").datagrid('loadData',pageData(data.rows,data.total));//这里的pageData是我自己创建的一个对象，用来封装获取的总条数，和数据，data.rows是我在控制器里面添加的一个map集合的键的名称
@@ -193,79 +227,37 @@ function find(pageNumber, pageSize)
                 console.info(data);
                 $("#dg").datagrid('getPager').pagination({total : total});//重置
                 $("#dg").datagrid("loaded"); //移除屏蔽
-            },
-            error : function(err) {
-                $.messager.alert('操作提示', '获取信息失败...请联系管理员!', 'error');
-                $("#dg").datagrid("loaded"); //移除屏蔽
             }
         });
-}
-function pageData(list,total){
-    var obj=new Object(); 
-    obj.total=total; 
-    obj.rows=list; 
-    return obj; 
-}
-// $('#pp').pagination({total:100});
-// $('#pp').pagination({
-//     pageSize:10,//每页显示的大小。
-//     pageList: [10,20,50,100],//选择每页显示的记录数的下拉框的值。
-//     onSelectPage: function(pageNumber, pageSize){//选择相应的页码时刷新显示内容列表。
-//     	  $("#high_light1").html("");
-//         var search = {
-//   	          supplier:   $('#supplierId').val(),
-//   	          startDate:    null,
-//   	          endDate:      null,
-//   	          pageIndex: pageNumber,
-//   	          pageSize:pageSize,
-//   	          supplierName:null,
-//   	          flag:null
-//   	      };
-    	
-//     	var html="";
-//     	html += "<table width='100%' width='100%' class='table_border' border='0' id='high_light1' lang='tabRowData' cellpadding='0' cellspacing='0' bgcolor='#C7EDCC' >";
-//     	html += "<tr><td width='50'>序号</td>";
-//     	html += "<td width='50'>供货商名称</td>";
-//     	html += "<td width='50'>尚品订单编号</td>";
-//     	html += "<td width='50'>采购单编号</td>";
-//     	html += "<td width='50'>订单状态</td>";
-//     	html += "<td width='50'>Detail</td>";
-//     	html += "<td width='50'>Memo</td>";
-//     	html += "<td width='50'>CreateTime</td>";
-//     	html += "<td width='50'>UpdateTime</td>";
-//     	html += "<td width='50'>异常原因</td>";
-//     	html += "<td width='50'>UuId</td></tr>";
-//     	alert('pageNumber:'+pageNumber+',pageSize:'+pageSize);
-//     	$.ajax({
-//             type: "GET",
-//             async: false,
-//             url: 'orders?queryJson='+$.toJSON(search),
-//             data: {username:$("#username").val(), content:$("#content").val()},
-//             dataType: "json",
-//             success: function(data){
-//             	var array = eval(data).orderList;
-//             	var htmlTemp ="";
-//             	console.info(array);
-//             }
-//     	});
-//     	html+="</table>";
-//     	console.info(html);
-//         $("#high_light1").html(html); 
-// //         $('#pp').pagination({total:100});
-//     	$(this).pagination('loading');  
-//         $(this).pagination('loaded'); 
-//  	}});
- 
-// 	function filter(){
-	  
-// 	      return search;
-// 	}
+		
+	}
 
 </script>
 </head>
-<body class="easyui-layout" onload="test();">  
-    <div data-options="region:'center'">
-		<table id="dg"></table>
-    </div>   
-</body>
+
+	<body class="easyui-layout" onload="test();">  
+	 <div data-options="region:'north'">
+		 
+		  	<strong>CGD：</strong>
+			           <input class="easyui-validatebox" type="text" name="CGD" id="CGD"></input>
+			   <strong>supplierSkuId：</strong>
+			           <input class="easyui-validatebox" type="text" name="supplierSkuId" id="supplierSkuId"></input>
+			            <strong>spSkuId：</strong>
+			  
+			            <input class="easyui-validatebox" type="text" name="spSkuId" id="spSkuId" ></input>
+			        <select name="search_type" id="status" >
+			            <option value="">--请选择--</option>
+			            <option value="confirmed" >confirmed</option>
+			            <option value="nohandle" >nohandle</option>
+			            <option value="purExpSuc" >purExpSuc</option>
+			            <option value="SHpurExp" >SHpurExp</option>
+			            <option value="yuShou" >yuShou</option>
+			            <option value="purExpErr" >purExpErr</option>
+			        </select>
+			        <button value="ssss" onclick="query(1,100)">Query</button>
+		 </div>
+	    <div data-options="region:'center'">
+			<table id="dg"></table>
+	    </div>  
+	</body>
 </html>

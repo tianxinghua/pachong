@@ -136,8 +136,8 @@ public class HttpUtils {
 							"post",
 							"soap",
 							"http://81.161.58.250:8080/LCVMAGWSV8_WEB/awws/LcvMagWS.awws?op=LectureDesModelesAvecPrix",
-							new OutTimeConfig(1000 * 60 * 60, 1000 * 60 * 60,
-									1000 * 60 * 60), map, xx, null, null);
+							new OutTimeConfig(1000 * 60 * 120, 1000 * 60 * 120,
+									1000 * 60 * 120), map, xx, null, null);
 			System.out.println("product length:"+json.length());
 			System.out.println("==over===");
 			System.out.println("=================product fetch end====================================");

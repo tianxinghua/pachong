@@ -20,7 +20,8 @@ public class FTPUtils {
         ftpClient.connect(ip, port);// 连接FTP服务器  
         ftpClient.login(userName, password);// 登陆FTP服务器              
         ftpClient.setControlEncoding("UTF-8"); // 中文支持  
-        ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);  
+        ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
+		ftpClient.enterLocalActiveMode();
         ftpClient.enterLocalPassiveMode();  
         ftpClient.setConnectTimeout(1000*60*60*10); 
         ftpClient.setDataTimeout(1000*60*60*3); 

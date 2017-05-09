@@ -1,6 +1,7 @@
 package com.shangpin.iog.biondini.util;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +47,30 @@ public class SoapUtil {
 
 		return listTabArtIdTable;
 	}
-
+	private static void readLine(String content){
+    	File file = new File("C://biondi2.xml");
+    	FileWriter fwriter = null;
+    	   try {
+    	    fwriter = new FileWriter(file);
+    	    fwriter.write(content);
+    	   } catch (Exception ex) {
+    	    ex.printStackTrace();
+    	   } finally {
+    	    try {
+    	     fwriter.flush();
+    	     fwriter.close();
+    	    } catch (Exception ex) {
+    	     ex.printStackTrace();
+    	    }
+    	   }
+    }
 	public static List<Modele> getProductList() {
 		
 		SOAP ps = null;
 		List<Modele> array = null;
 		try {
 			String xml = HttpUtils.getProductsBySoap();
+			readLine(xml);
 			if (xml.equals(HttpUtil45.errorResult)) {
 				System.out.println("===========链接超时==============");
 				logger.info("===========链接超时==============");

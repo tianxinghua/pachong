@@ -4,6 +4,7 @@ package com.shangpin.iog.product.dao;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
+import com.shangpin.iog.dto.ProductCodeDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductOfSpecDTO;
 
@@ -243,6 +244,13 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
      * @throws ServiceException
      */
     public List<ProductDTO> findProductOfHasSpSkuId(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
+    
+    /**
+     * 根据尚品品牌名称查找供应商的品牌，货号
+     * @param brandName 尚品品牌名称
+     * @return
+     */
+    public List<ProductCodeDTO> findBySpBrandName(@Param("brandName") String brandName);
     
 }
 

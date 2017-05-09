@@ -136,7 +136,8 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
             @Param("status") String status,@Param("startTime")String startTime,@Param("endTime")String endTime) ;
 
     public List<OrderDetailDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate,
-    		@Param("endDate")Date endDate,RowBounds rowBounds);
+    		@Param("endDate")Date endDate,@Param("CGD")String CGD,@Param("spSkuId")String spSkuId,
+    		@Param("supplierSkuId")String supplierSkuId,@Param("status")String status,RowBounds rowBounds);
     
     public List<OrderDetailDTO> getOrderBySupplierIdAndTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate, @Param("endDate")Date endDate);
     /**
@@ -179,8 +180,18 @@ public interface OrderDetailMapper extends IBaseDao<OrderDetailDTO> {
      */
     public List<OrderDetailDTO> getDetailDTOByEpMasterOrderNo(@Param("epMasterOrderNo") String epMasterOrderNo);
 
-	public int getOrderTotalBySupplierIdAndTime(@Param("supplierId") String supplier);
+	public int getOrderTotalBySupplierIdAndTime(@Param("supplierId") String supplier,@Param("startDate") String startTime,@Param("endDate") String endTime,@Param("CGD") String CGD,
+					@Param("spSkuId") String spSkuId,@Param("supplierSkuId") String supplierSkuId,@Param("status") String status);
 
 	public int getOrderTotalBySpPurchaseNo(@Param("supplierId") String supplierId,
             @Param("startTime")String startTime,@Param("endTime")String endTime);
+	
+	/**
+	 * 根据供应商门户编号，以及更新时间查找状态为nohandle、refunded、SHpurExp的订单
+	 * @param supplier
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public List<OrderDetailDTO> findPushFailOrdersByUpdateTime(@Param("supplierId")String supplier, @Param("startDate")Date startDate, @Param("endDate")Date endDate);
 }

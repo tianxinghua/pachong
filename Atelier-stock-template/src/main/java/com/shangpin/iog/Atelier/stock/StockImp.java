@@ -90,7 +90,7 @@ public class StockImp  extends AbsUpdateProductStock {
 	 * @return
 	 */
 	private List<AtelierSku> handleSkuData(){
-		String skuData = getInterfaceData(sku_interface,new OutTimeConfig(1000*60*60,1000*60*5,1000*60*60));
+		String skuData = getInterfaceData(sku_interface,new OutTimeConfig(1000*60*60,1000*60*30,1000*60*60));
 		if(HttpUtil45.errorResult.equals(skuData)){
 			return null;
 		}else{
@@ -184,7 +184,7 @@ public class StockImp  extends AbsUpdateProductStock {
     	
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
     	//加载spring
         loadSpringContext();       
     }

@@ -6,6 +6,7 @@ dependencies {
             "commons-net:commons-net:1.4.1",
             project(':project-common'),
             project(':iog-common-product'),
+            project(':iog-product-framework'),
 
     )
 }

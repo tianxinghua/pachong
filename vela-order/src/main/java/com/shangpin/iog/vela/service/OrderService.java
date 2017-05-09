@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
@@ -23,6 +24,7 @@ import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.ProductSpecSearchService;
 import com.shangpin.iog.vela.dto.Parameters;
 import com.shangpin.iog.vela.dto.Parameters2;
+import com.shangpin.iog.vela.dto.Quantity;
 import com.shangpin.iog.vela.dto.ResponseObject;
 
 
@@ -141,6 +143,10 @@ public class OrderService extends AbsOrderService {
 		// 获取订单信息
 		Parameters order = getOrder( orderDTO);
 		Gson gson = new Gson();
+		
+		//下单前查询下库存
+		int stock = getSearchStock(order.getBarcode());
+		logger.info("下单前查询库存结果>>>>>>>>>>"+order.getBarcode()+":"+stock);
 
 		String json = gson.toJson(order, Parameters.class);
 		System.out.println("request json == " + json);
@@ -211,6 +217,11 @@ public class OrderService extends AbsOrderService {
 				orderDTO.setStatus(OrderStatus.CONFIRMED);
 				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
 			}
+			
+			//下单后查询下库存
+			int stockAfter = getSearchStock(order.getBarcode());
+			logger.info("下单后查询库存结果>>>>>>>>>>"+order.getBarcode()+":"+stockAfter);
+			
 		} catch (Exception e) {
 			// loggerError.error("Failed Response ：" + e.getMessage() + ",
 			// shopOrderId:"+order.getBarcode());
@@ -369,6 +380,41 @@ public class OrderService extends AbsOrderService {
 			}
 		});
 		t.start();
+
+	}
+	
+	public int getSearchStock(String supplierSkuNo){
+
+		String url = "http://185.58.119.177/velashopapi/Myapi/Productslist/GetQuantityByBarcode?DBContext=Default&barcode=[[itemId]]&key=MPm32XJp7M";
+		url = url.replaceAll("\\[\\[itemId\\]\\]", supplierSkuNo.trim());
+		String json = null;
+		OutTimeConfig outTimeConfig = new OutTimeConfig(1000 * 60, 1000 * 60,
+				1000 * 60);
+		try {
+			json = HttpUtil45.get(url, outTimeConfig, null);
+			logger.info("下单前查询库存返回结果>>>>>>>>>>" + json);
+		} catch (Exception e) {
+			json = HttpUtil45.get(url, outTimeConfig, null);
+			logger.info("下单前查询库存返回结果>>>>>>>>>>" + json);
+		}
+		try {
+			if (json != null && !json.isEmpty()) {
+				Gson gson = new Gson();
+				if (json.equals("{\"Result\":\"No Record Found\"}")) { // 未找到
+					return 0;
+				} else {// 找到赋值
+
+					Quantity result = gson.fromJson(json,
+							new TypeToken<Quantity>() {
+							}.getType());
+					return Integer.parseInt(result.getResult());
+				}
+			} else {
+				return -1;
+			}
+		} catch (Exception e) {
+			return -1;
+		}
 
 	}
 

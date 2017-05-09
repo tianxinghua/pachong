@@ -28,8 +28,8 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     private static LoggerUtil logError = LoggerUtil.getLogger("error");
     
     private static ResourceBundle bdl=null;
-    private static String supplierId;
-    private static ApplicationContext factory;
+    @SuppressWarnings("unused")
+	private static ApplicationContext factory;
     private static void loadSpringContext()
     {
         factory = new AnnotationConfigApplicationContext(AppContext.class);
@@ -37,7 +37,6 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     static {
         if(null==bdl)
             bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
     }
     @Override
     public Map<String,String> grabStock(Collection<String> skuNo) throws ServiceException, Exception {
@@ -112,10 +111,6 @@ public class StockImpNotUseThread  extends AbsUpdateProductStock {
     //test main
     public static void main(String[] args) throws Exception {
     	//加载spring
-//        loadSpringContext();    
-
-    	StockImpNotUseThread stockImp = new StockImpNotUseThread();
-    	 stockImp.grabStock(null);
-    	
+        loadSpringContext();    
     }
 }

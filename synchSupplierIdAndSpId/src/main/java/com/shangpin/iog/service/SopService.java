@@ -1,12 +1,9 @@
 package com.shangpin.iog.service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,7 @@ import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.product.dao.SkuMapper;
+import com.shangpin.iog.util.JsonUtil;
 import com.shangpin.openapi.api.sdk.client.SpClient;
 import com.shangpin.openapi.api.sdk.model.ApiResponse;
 import com.shangpin.openapi.api.sdk.model.SopProductSku;
@@ -60,6 +58,7 @@ public class SopService {
 				}
 			}else{
 				List<SupplierDTO> sus = supplierService.hkFindAllByState("1");
+				loggerInfo.info(JsonUtil.serialize(sus)); 
 				for(SupplierDTO supplier : sus){
 					try {
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"开始同步========================");
@@ -117,6 +116,7 @@ public class SopService {
 				startDate = System.currentTimeMillis();
 				Date timestamp = new Date(); //
 				try {
+					loggerInfo.info(host+" ==== "+app_key+" ====== "+app_secret);
 					result = SpClient.FindCommodityByPage(host, app_key,
 							app_secret, timestamp, request);
 					SopProductSkuPage products = result.getResponse();
@@ -151,10 +151,14 @@ public class SopService {
 					}
 					if (StringUtils.isNotBlank(ice.getSkuNo()) && StringUtils.isNotBlank(ice.getSupplierSkuNo())){						
 						try {
-							if(StringUtils.isBlank(skuSpSkuMap.get(ice.getSupplierSkuNo())) || StringUtils.isBlank(skuSpProductCodeMap.get(ice.getSupplierSkuNo()))){
-								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), ice.getSkuNo(),""+ice.getSkuStatus(),sku.getProductModel());
+							if(!skuSpSkuMap.containsKey(ice.getSupplierSkuNo()) || !skuSpSkuMap.get(ice.getSupplierSkuNo()).equals(ice.getSkuNo())){
+								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), ice.getSkuNo(),String.valueOf(ice.getSkuStatus()),null);
 								loggerInfo.info(ice.getSupplierSkuNo()+"--------------"+ ice.getSkuNo());
-							}							
+							}	
+							if(!skuSpProductCodeMap.containsKey(ice.getSupplierSkuNo())){
+								productFetchService.updateSpSkuIdBySupplier(supplierId, ice.getSupplierSkuNo(), null,String.valueOf(ice.getSkuStatus()),sku.getProductModel());
+								loggerInfo.info(ice.getSupplierSkuNo()+"--------------"+ sku.getProductModel());
+							}	
 						} catch (Exception e) {
 							loggerError.error(e.getMessage()); 
 						}

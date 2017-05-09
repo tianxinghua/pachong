@@ -91,7 +91,7 @@ public class FetchProduct {
 										.getTableMdle();
 								for (TableMdle tb : tbList) {
 									if (item.getRayon().equals(tb.getCode())) {
-										spu.setCategoryGender(tb.getLibelle());
+										spu.setCategoryGender(item.getRayon());
 										flag = true;
 										break;
 									}
