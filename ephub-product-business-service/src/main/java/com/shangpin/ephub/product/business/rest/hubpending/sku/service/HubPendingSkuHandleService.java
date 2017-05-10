@@ -88,7 +88,6 @@ public class HubPendingSkuHandleService {
 			handleNewHubSkuPending(hubSkuPendingDto);
 		}
 	}
-
 	private void handleOldHubSkuPending(HubSkuPendingDto hubSkuPendingIsExist, HubSkuPendingDto hubSkuPendingDto) throws Exception {
 		
 		if (hubSkuPendingIsExist.getSkuState()!=null&&(hubSkuPendingIsExist.getSkuState() == SpuState.HANDLED.getIndex()
@@ -168,6 +167,7 @@ public class HubPendingSkuHandleService {
 		setSkuPendingValue(hubSkuPendingDto);
 		Map<String, String> sizeMap = getSupplierSizeMapping(hubSkuPendingDto.getSupplierId());
 		//映射尺码
+		hubSkuPendingDto.setHubSkuSize(StringUtils.deleteWhitespace(hubSkuPendingDto.getHubSkuSize()));
 		if (sizeMap.containsKey(hubSkuPendingDto.getHubSkuSize())) {
 			String spSize = sizeMap.get(hubSkuPendingDto.getHubSkuSize());
 			String spSizeTypeAndSize = spSize.substring(0, spSize.indexOf(","));
