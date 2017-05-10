@@ -31,6 +31,8 @@ public class SopSkuDto implements Serializable {
     private String  sopSkuNo;
     @JsonIgnore
     private String  sopProductNo;
+    @JsonIgnore
+    private String barCode;
 
     @JsonProperty("SkuNo")
     public String getSkuNo() {
@@ -88,5 +90,15 @@ public class SopSkuDto implements Serializable {
     @JsonProperty("SopProductNo")
     public void setSopProductNo(String sopProductNo) {
         this.sopProductNo = sopProductNo;
+    }
+
+    @JsonProperty("BarCode")
+    public String getBarCode() {
+        return barCode;
+    }
+
+    @JsonProperty("BarCode")
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
     }
 }

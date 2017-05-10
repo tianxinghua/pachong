@@ -18,4 +18,5 @@ public class SopSkuQueryDto implements Serializable{
 	private static final long serialVersionUID = 5330004526971904061L;
 	private String sopUserNo;
     private List<String> lstSupplierSkuNo;
+    private List<String> lstBarCode;
 }
