@@ -29,6 +29,7 @@ import com.shangpin.picture.product.consumer.conf.stream.source.sender.RetryPict
 import com.shangpin.picture.product.consumer.e.PicHandleState;
 import com.shangpin.picture.product.consumer.manager.SpuPicStatusServiceManager;
 import com.shangpin.picture.product.consumer.manager.SupplierProductPictureManager;
+import com.shangpin.picture.product.consumer.util.FtpUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Encoder;
@@ -81,7 +82,13 @@ public class SupplierProductPictureService {
 				if (StringUtils.isNotBlank(supplierId)) {
 					information = getAuthentication(supplierId);
 				}
-				int code = pullPicAndPushToPicServer(picUrl, updateDto, information);
+				int code = 0;
+				if(picUrl.startsWith("http")){
+					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
+				}else if(picUrl.startsWith("ftp")){
+					//TODO
+				}
+				
 				if (code == 404 || code == 400) {
 					supplierProductPictureManager.deleteById(spuPendingPicId);
 				} else {
@@ -160,6 +167,26 @@ public class SupplierProductPictureService {
 			dto.setMemo("图片拉取失败:"+flag);
 		} finally {
 			close(inputStream, httpUrlConnection);
+		}
+		dto.setUpdateTime(new Date());
+		return flag;
+	}
+	
+	private int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+		
+		int flag = 0;
+		try {
+			String ip = picUrl.substring(picUrl.indexOf("@")+1,picUrl.indexOf("/"));
+			int port = 21;
+			String remotePath =  "";
+			String remoteFileName = picUrl.substring(picUrl.lastIndexOf("/")+1);
+			FtpUtil ftpUtil = FtpUtil.getFtpUtil();
+			ftpUtil.downFile(authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
+		} catch (Throwable e) {
+			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
+			e.printStackTrace();
+			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
+			dto.setMemo("图片拉取失败:"+flag);
 		}
 		dto.setUpdateTime(new Date());
 		return flag;

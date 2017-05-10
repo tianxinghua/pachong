@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.49
+           host: 172.20.11.50
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -51,18 +51,18 @@ spring:
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
-                        palomaPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
                         lamborghiniPendingProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
+                              destination: lamborghini.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        palomaPendingProduct:
+                              destination: paloma.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
                         coltortiPendingProduct: 
                               destination: coltorti.pending.product
                               group: one

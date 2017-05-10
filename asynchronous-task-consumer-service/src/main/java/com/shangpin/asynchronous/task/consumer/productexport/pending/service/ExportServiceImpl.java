@@ -459,9 +459,9 @@ public class ExportServiceImpl {
 					row.createCell(i).setCellValue(buffer.toString());
 				} else if ("spuState".equals(rowTemplate[i])) {
 					if (SpuState.INFO_PECCABLE.getIndex() == product.getSpuState()) {
-						row.createCell(i).setCellValue("信息待完善");
+						row.createCell(i).setCellValue("待处理");
 					} else if (SpuState.INFO_IMPECCABLE.getIndex() == product.getSpuState()) {
-						row.createCell(i).setCellValue("信息已完善");
+						row.createCell(i).setCellValue("待复核");
 					} else if (SpuState.HANDLED.getIndex() == product.getSpuState()) {
 						row.createCell(i).setCellValue("已处理");
 					} else if (SpuState.FILTER.getIndex() == product.getSpuState()) {
@@ -470,6 +470,8 @@ public class ExportServiceImpl {
 						row.createCell(i).setCellValue("无法处理");
 					} else if (SpuState.HANDLING.getIndex() == product.getSpuState()) {
 						row.createCell(i).setCellValue("审核中");
+					} else if(SpuState.EXISTED_IN_HUB.getIndex() == product.getSpuState()){
+						row.createCell(i).setCellValue("SPU在HUB已存在");
 					}
 				} else if("productInfoUrl".equals(rowTemplate[i])){
 					row.createCell(i).setCellValue(apiAddressProperties.getPendingProductInfoUrl()+product.getSpuPendingId());
