@@ -43,7 +43,7 @@ public class MonnierfreresServiceImpl {
 			if(null != orderDetails && orderDetails.size() >0){
 				log.info("monnierfreres查询到的订单的数量是========="+orderDetails.size());
 				StringBuffer buffer = new StringBuffer();
-				buffer.append(header).append("\r\n");
+				buffer.append(header).append("\n");
 				String dayTime = DateTimeUtil.strForDate(endTime);
 				for(HubOrderDetail orderDetail : orderDetails){
 					buffer.append(orderDetail.getOrderNo()).append(split)
@@ -66,7 +66,7 @@ public class MonnierfreresServiceImpl {
 					for(int i=0;i<36;i++){
 						buffer.append(split);
 					}
-					buffer.append("\r\n"); 
+					buffer.append("\n"); 
 				}
 				String orders = buffer.toString();
 				log.info("monnierfreres今日推送订单："+orders);
