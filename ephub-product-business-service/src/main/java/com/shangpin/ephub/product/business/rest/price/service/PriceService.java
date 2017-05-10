@@ -122,7 +122,7 @@ public class PriceService {
 		//发送消息队列
 		ProductPriceDTO productPrice  = new ProductPriceDTO();
 		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);
-		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
+		sendMessageToPriceConsumer(supplierNo,supplierPriceChangeRecordId,productPrice);
 		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
 	}
 	
@@ -233,8 +233,9 @@ public class PriceService {
 	 * @param retryPrice
 	 */
 
-	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
+	public void sendMessageToPriceConsumer(String supplierNo, Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
 		try {
+			retryPrice.setSupplierNo(supplierNo);
 			retryPrice.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId); 
 			priceMqGateWay.transPrice(retryPrice);
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
