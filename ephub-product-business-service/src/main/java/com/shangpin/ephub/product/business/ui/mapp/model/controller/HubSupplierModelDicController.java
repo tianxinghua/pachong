@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandModelDicService;
@@ -67,6 +68,7 @@ public class HubSupplierModelDicController {
 					for (HubBrandModelRuleDto dicDto : list) {
 						HuBrandModelDicResponseDto dic = new HuBrandModelDicResponseDto();
 						BeanUtils.copyProperties(dicDto, dic);
+						
 						if(dicDto.getCreateTime()!=null){
 							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
 						}
@@ -93,6 +95,7 @@ public class HubSupplierModelDicController {
 	@RequestMapping(value = "/detail/{id}", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
+			log.info("品牌货号规则详情参数："+id);
 			if (id != null) {
 				HubBrandModelRuleDto detail = hubBrandModelDicService.getHubBrandModelRuleById(id);
 				if (detail != null) {
@@ -123,12 +126,13 @@ public class HubSupplierModelDicController {
 		try {
 			HubBrandModelRuleDto dicDto = new HubBrandModelRuleDto();
 			BeanUtils.copyProperties(dto, dicDto);
-			log.info("======供应商品类映射hub品类变更：{}",dto);
+			log.info("======保存品牌货号规则参数：{}",dto);
 			dicDto.setUpdateTime(new Date());
 			dicDto.setCreateTime(new Date());
 			dicDto.setUpdateUser(dto.getCreateUser());
+			dicDto.setBrandModelRuleId(null);
 			hubBrandModelDicService.insertHubBrandModelRule(dicDto);
-			return HubResponse.successResp("success");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("保存失败：{}", e);
 		}
@@ -138,17 +142,18 @@ public class HubSupplierModelDicController {
 	@RequestMapping(value = "/updateAndRefresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse update(@RequestBody HubBrandModelDicRequestDto dto) {
 		try {
+			log.info("修改参数：{}",dto);
 			HubBrandModelRuleDto dicDto = new HubBrandModelRuleDto();
 			BeanUtils.copyProperties(dto, dicDto);
+			dicDto.setUpdateTime(new Date());
 			hubBrandModelDicService.updateHubBrandModelRuleById(dicDto);
-			return HubResponse.successResp("success");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);
 		}
 		return HubResponse.errorResp("刷新异常");
 	}
 	
-//	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
 //	public HubResponse refresh(@RequestBody HubBrandModelDicRequestDto dto) {
 //		try {
 //			HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
@@ -162,11 +167,11 @@ public class HubSupplierModelDicController {
 //		}
 //		return HubResponse.errorResp("刷新异常");
 //	}
-//	
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
+			log.info("删除货号规则参数："+id);
 			if (id != null) {
 				hubBrandModelDicService.deleteHubBrandModelRuleById(id);
 				return HubResponse.successResp(null);

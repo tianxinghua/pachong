@@ -133,17 +133,21 @@ public class PriceService {
 	 */
 	public ProductPrice priceList(PriceQuery priceQuery){
 		try {
+			log.info("供价记录查询参数："+JsonUtil.serialize(priceQuery));  
 			if(null == priceQuery.getPageIndex() && null == priceQuery.getPageSize() && CollectionUtils.isEmpty(priceQuery.getSpSkuIds())){
 				return null;
 			}
 			PriceQueryDto priceQueryDto = copyPriceQueryToPriceQueryDto(priceQuery);
+			log.info("转换后的查询参数："+JsonUtil.serialize(priceQueryDto));  
 			ProductPrice productPrice = new ProductPrice();
 			int total = hubSupplierPriceGateWay.countByQuery(priceQueryDto);
+			log.info("供价记录查询总数："+total); 
 			productPrice.setTotal(total); 
 			if(total > 0){
 				List<HubSupplierPrice> productPriceList = hubSupplierPriceGateWay.selectByQuery(priceQueryDto);
 				productPrice.setProductPriceList(productPriceList); 
 			}
+			log.info("供价记录查询返回数据："+JsonUtil.serialize(productPrice));  
 			return productPrice;
 		} catch (Exception e) {
 			log.error("查询共价变化记录出错："+e.getMessage(),e);

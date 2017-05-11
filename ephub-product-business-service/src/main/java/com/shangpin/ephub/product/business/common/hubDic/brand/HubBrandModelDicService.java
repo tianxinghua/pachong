@@ -78,7 +78,11 @@ public class HubBrandModelDicService {
 			hubBrandModelRuleCriteriaDto.createCriteria().andHubBrandNoEqualTo(hubBrandNo);	
 		}
 		if(StringUtils.isNotBlank(hubCategoryNo)){
-			hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoEqualTo(hubCategoryNo);	
+			if("specialCategory".equals(hubCategoryNo)){
+				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNotNull();	
+			}else if("allCategory".equals(hubCategoryNo)){
+				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNull();
+			}
 		}
 		return hubBrandModelRuleGateWay.countByCriteria(hubBrandModelRuleCriteriaDto);
 	}
@@ -90,10 +94,15 @@ public class HubBrandModelDicService {
 			hubBrandModelRuleCriteriaDto.createCriteria().andHubBrandNoEqualTo(hubBrandNo);	
 		}
 		if(StringUtils.isNotBlank(hubCategoryNo)){
-			hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoEqualTo(hubCategoryNo);	
+			if("specialCategory".equals(hubCategoryNo)){
+				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNotNull();	
+			}else if("allCategory".equals(hubCategoryNo)){
+				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNull();
+			}
 		}
 		hubBrandModelRuleCriteriaDto.setPageNo(pageNo);
 		hubBrandModelRuleCriteriaDto.setPageSize(pageSize);
+		hubBrandModelRuleCriteriaDto.setOrderByClause("update_time desc");
 		return hubBrandModelRuleGateWay.selectByCriteria(hubBrandModelRuleCriteriaDto);
 	}
 

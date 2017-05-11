@@ -209,7 +209,6 @@ public class HubSupplierSizeDicController {
 			}
 			HubSupplierValueMappingDto hubSupplierValueMappingDto = new HubSupplierValueMappingDto();
 			hubSupplierValueMappingDto.setSupplierVal(dto.getSupplierVal());
-			hubSupplierValueMappingDto.setHubVal(dto.getHubVal());
 			String supplierNo = dto.getSupplierNo();
 			if(StringUtils.isNotBlank(supplierNo)){
 				if("quanju".equals(supplierNo)){
@@ -223,6 +222,7 @@ public class HubSupplierSizeDicController {
 			
 			List<HubSupplierValueMappingDto> tempList = hubSizeDicService.getHubSupplierValueMappingBySupplierIdAndSize(hubSupplierValueMappingDto.getSupplierId(),dto.getSupplierVal());
 			if(tempList!=null&&tempList.size()>0){
+				log.info("该尺码已存在不添加："+dto.getSupplierVal());
 				return HubResponse.successResp(null);
 			}
 			
@@ -231,7 +231,8 @@ public class HubSupplierSizeDicController {
 			hubSupplierValueMappingDto.setUpdateTime(new Date());
 			hubSupplierValueMappingDto.setCreateUser(dto.getUpdateUser());
 			hubSupplierValueMappingDto.setUpdateUser(dto.getUpdateUser());
-			if(StringUtils.isNotBlank(dto.getHubVal())){
+			if(dto.getHubVal()!=null){
+				hubSupplierValueMappingDto.setHubVal(dto.getHubVal().trim());
 				hubSupplierValueMappingDto.setMappingType((byte)1);
 				flag = true;
 			}else{
@@ -261,4 +262,5 @@ public class HubSupplierSizeDicController {
 		}
 		return HubResponse.errorResp("刷新异常");
     }
+	
 }

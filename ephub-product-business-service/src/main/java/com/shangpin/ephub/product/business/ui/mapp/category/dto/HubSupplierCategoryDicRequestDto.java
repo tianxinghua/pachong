@@ -1,5 +1,8 @@
 package com.shangpin.ephub.product.business.ui.mapp.category.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -28,6 +31,13 @@ public class HubSupplierCategoryDicRequestDto {
 	private String updateUser;
 	private byte refreshDicType;
 	
-	
+	public static void main(String[] args) {
+		
+		Map<String,String> map = new HashMap<>();
+		map.put(" .5", "1");
+		if(map.containsKey(" .5")){
+			System.out.println(map.get(" .5"));
+		}
+	}
 
 }

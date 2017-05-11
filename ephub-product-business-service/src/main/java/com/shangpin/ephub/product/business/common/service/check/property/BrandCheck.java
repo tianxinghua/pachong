@@ -85,7 +85,7 @@ public class BrandCheck extends CommonCheckBase {
 				result = false;
 				hubSpuPendingIsExist.setSpuBrandState(InfoState.IMPERFECT.getIndex());
 				hubSpuPendingIsExist.setHubBrandNo(hubSpuPending.getHubBrandNo());
-				hubBrandDicService.saveBrand(hubSpuPending.getSupplierId(), hubSpuPending.getHubBrandNo().trim());
+				hubBrandDicService.saveSupplierBrand(hubSpuPending.getSupplierId(), hubSpuPending.getHubBrandNo().trim());
 			}
 		} else {
 			result = false;

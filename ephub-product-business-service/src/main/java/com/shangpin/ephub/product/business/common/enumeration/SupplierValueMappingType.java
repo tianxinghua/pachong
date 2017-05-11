@@ -9,7 +9,7 @@ public enum SupplierValueMappingType {
     TYPE_CATEGORY(2,"品类类型"),
     TYPE_ORIGIN(3,"产地类型"),
     TYPE_SIZE(4,"尺码"),
-    TYPE_SUPPLIER(4,"供应商");
+    TYPE_SUPPLIER(5,"供应商");
 
 
     /**

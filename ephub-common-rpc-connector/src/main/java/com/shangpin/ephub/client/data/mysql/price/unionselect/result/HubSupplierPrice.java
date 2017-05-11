@@ -12,6 +12,14 @@ public class HubSupplierPrice {
 	 */
 	private String supplierId;
 	/**
+	 * 主键
+	 */
+	private String supplierSkuId;
+	/**
+	 * 供应商的sku no
+	 */
+	private String supplierSkuNo;
+	/**
 	 * 供应商季节名称
 	 */
 	private String supplierSeasonName;

@@ -137,6 +137,7 @@ public class HubColorDicService {
 		if(type==0){
 			hubColorDicItemCriteriaDto.or(criteria.andPushStateIsNull());
 		}
+		hubColorDicItemCriteriaDto.setOrderByClause("update_time desc");
 		return hubColorDicItemGateWay.selectByCriteria(hubColorDicItemCriteriaDto);
 	}
 
@@ -193,5 +194,9 @@ public class HubColorDicService {
 
 	public void updateSupplierColorById(HubColorDicItemDto dicDto) {
 		hubColorDicItemGateWay.updateByPrimaryKeySelective(dicDto);
+	}
+
+	public void deleteHubSupplierColorById(Long id) {
+		hubColorDicItemGateWay.deleteByPrimaryKey(id);		
 	}
 }
