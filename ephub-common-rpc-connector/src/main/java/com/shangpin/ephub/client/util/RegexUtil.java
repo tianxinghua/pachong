@@ -82,13 +82,13 @@ public class RegexUtil {
     }
 
     private static String judgeNum(String val){
-          int total = 0;
+          double total = 0;
           String tmp = "";
           val =  replaceBlank(val);
           while(val.indexOf("%")>0){
               tmp =  val.substring(0,val.indexOf("%"));
               val = val.substring(val.indexOf("%")+1,val.length());
-              total = total + getNum(tmp,3);
+              total = total + getNum(tmp,4);
 
           }
           if(total==0){
@@ -102,16 +102,16 @@ public class RegexUtil {
           }
     }
 
-    public  static int getNum(String val,int length){
+    public  static double getNum(String val,int length){
          @SuppressWarnings("unused")
-		int num = 0;
+         double num = 0;
          if(length==0){
              return 0;
          }else{
 
              try {
                  val = val.substring(val.length()-length);
-                 return Integer.valueOf(val);
+                 return Double.valueOf(val);
 
              } catch (Exception e) {
                  return getNum(val,length-1);
@@ -144,7 +144,8 @@ public class RegexUtil {
 //        System.out.println(RegexUtil.excludeLetter("skdj"));
 //        System.out.println(RegexUtil.excludeLetter(" skdj  中国 "));
 //        System.out.println(RegexUtil.excludeLetter("  100%  中国 ,93 % "));
-        System.out.println(RegexUtil.specialCategoryMatch("A0123"," 50% 棉 ,100% 面部，快点看看 50%"));
+        System.out.println(RegexUtil.specialCategoryMatch("A0123"," 棉45% 棉 ,100% 面部，快点看看55%"));
+        System.out.println(RegexUtil.specialCategoryMatch("A0123"," 45.5% 棉 ,100% 面部，快点看看54.5%"));
         System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A"," sdkj pvc kkd"));
         System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A","PVC"));
         System.out.println("pvc = "+ RegexUtil.specialCategoryMatch("A13B01C01D02","100%pvc"));
