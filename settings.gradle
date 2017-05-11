@@ -17,30 +17,17 @@ include 'iog-generater-util'
 include 'report'
 include 'picturedown'
 
-include 'Della-stock'
 
-include 'optical-stock'
-include 'eleonorabonucci-stock'
-include 'grouppo-stock'
-include 'filippo-stock'
-include 'monnierfreres-stock'
-include 'Atelier-stock-template'
-include 'lungolivigno-order'
-include 'lungolivigno'
-include 'giglio-stock'
-include 'optical'
-include 'baseBlu'
-include 'itemInfo-stock'
-include 'stefaniamode'
-include 'smets-stock'
 include 'iog-web-container'
 include 'project-mq'
-include 'stockMontiHK'
+
 include 'stockclean'
 include 'OpenTest'
 include 'syn-spsku-hub'
 include 'synchSupplierIdAndSpId'
 include 'studio69'
+include 'atelier-ostore-stock'
+
 
 
 
