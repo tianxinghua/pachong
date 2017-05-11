@@ -22,7 +22,7 @@
     inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
     inner join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
     <where>
-    sku.sp_sku_no is not null and sku.sp_sku_no != ""
+    sku.sp_sku_no is not null and sku.sp_sku_no != "" and sku.market_price is not null
     <if test="supplierId != null">
     	and sku.supplier_id = #{supplierId}
     </if>
@@ -52,7 +52,7 @@
     inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
     inner join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
     <where>
-    sku.sp_sku_no is not null and sku.sp_sku_no != ""
+    sku.sp_sku_no is not null and sku.sp_sku_no != "" and sku.market_price is not null
     <if test="supplierId != null">
     	and sku.supplier_id = #{supplierId}
     </if>
