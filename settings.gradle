@@ -41,6 +41,8 @@ include 'OpenTest'
 include 'syn-spsku-hub'
 include 'synchSupplierIdAndSpId'
 include 'studio69'
+include 'Atelier-template'
+include 'coltorti'
 
 
 
