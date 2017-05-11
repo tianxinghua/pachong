@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.mapp.season.dto;
+package com.shangpin.ephub.product.business.ui.mapp.material.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,15 +14,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierSeasonDicResponseDto {
+public class HubSupplierColorDicResponseDto {
 	
-	private Long seasonDicId;
-	private String supplierId;
-	private String supplierNo;
-	private String supplierSeason;
-	private String hubMarketTime;
-	private String hubSeason;
-	private Byte filterFlag;//1、当季  0：非当季
+	private Long colorDicItemId;
+	private Long colorDicId;
+	private String supplierColor;
+	private String hubColor;
 	private String updateTime;
 	private String createTime;
 	private String updateUser;

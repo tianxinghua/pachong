@@ -3,16 +3,19 @@ package com.shangpin.ephub.product.business.common.hubDic.season;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
 import com.shangpin.ephub.product.business.common.util.ConstantProperty;
+import com.shangpin.ephub.product.business.ui.mapp.season.dto.HubSupplierSeasonDicRequestDto;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理
@@ -77,5 +80,65 @@ public class HubSeasonDicService {
 				throw e;
 			}
 		}
+	}
+
+	public int countHubSeason(String supplierId,String supplierSeason, String hubMarketTime, String hubSeason, Byte type) {
+		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		if(StringUtils.isNotBlank(supplierSeason)){
+			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason);
+		}
+		if(StringUtils.isNotBlank(hubMarketTime)){
+			criteria.createCriteria().andHubMarketTimeEqualTo(hubMarketTime);
+		}
+		if(StringUtils.isNotBlank(supplierId)){
+			criteria.createCriteria().andSupplieridEqualTo(supplierId);
+		}
+		if(StringUtils.isNotBlank(hubSeason)){
+			criteria.createCriteria().andHubSeasonEqualTo(hubSeason);
+		}
+		if(type!=null){
+			criteria.createCriteria().andPushStateEqualTo(type);	
+		}
+		return hubSeasonDicGateWay.countByCriteria(criteria);
+	}
+
+	public List<HubSeasonDicDto> getHubSeason(String supplierId,String supplierSeason, String hubMarketTime, String hubSeason, Byte type,
+			int pageNo, int pageSize) {
+		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
+		if(StringUtils.isNotBlank(supplierSeason)){
+			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason);
+		}
+		if(StringUtils.isNotBlank(hubMarketTime)){
+			criteria.createCriteria().andHubMarketTimeEqualTo(hubMarketTime);
+		}
+		if(StringUtils.isNotBlank(supplierId)){
+			criteria.createCriteria().andSupplieridEqualTo(supplierId);
+		}
+		if(StringUtils.isNotBlank(hubSeason)){
+			criteria.createCriteria().andHubSeasonEqualTo(hubSeason);
+		}
+		if(type!=null){
+			criteria.createCriteria().andPushStateEqualTo(type);
+		}
+		criteria.setOrderByClause("update_time desc");
+		return hubSeasonDicGateWay.selectByCriteria(criteria);
+	}
+
+	public HubSeasonDicDto getSupplierSeasonById(Long id) {
+		return hubSeasonDicGateWay.selectByPrimaryKey(id);
+	}
+
+	public void saveHubSeason(HubSeasonDicDto dicDto) {
+		hubSeasonDicGateWay.insertSelective(dicDto);
+	}
+
+	public void deleteHubSeasonById(Long id) {
+		hubSeasonDicGateWay.deleteByPrimaryKey(id);	
+	}
+
+	public void updateHubSeasonDicById(HubSeasonDicDto dicDto) {
+		hubSeasonDicGateWay.updateByPrimaryKeySelective(dicDto);
 	}
 }

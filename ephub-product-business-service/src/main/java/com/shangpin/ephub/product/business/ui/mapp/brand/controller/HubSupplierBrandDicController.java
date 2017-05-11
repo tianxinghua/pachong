@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.mapp.brand.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
@@ -23,6 +26,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseWithPageDto;
+import com.shangpin.ephub.product.business.ui.mapp.season.dto.HubSupplierSeasonDicRequestDto;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -122,6 +126,14 @@ public class HubSupplierBrandDicController {
 				for (HubSupplierBrandDicDto dicDto : list) {
 					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
 					BeanUtils.copyProperties(dicDto, dic);
+					
+					
+					List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
+					if(listMapp!=null&&listMapp.size()>0){
+						dic.setSupplierNo(listMapp.get(0).getHubValNo());
+						dic.setSupplierName(listMapp.get(0).getHubVal());
+					}	
+					
 					responseList.add(dic);
 				}
 				HubSupplierBrandDicResponseWithPageDto response = new HubSupplierBrandDicResponseWithPageDto();
@@ -136,17 +148,26 @@ public class HubSupplierBrandDicController {
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryDetail(@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
 		try {
-			if (hubSupplierBrandDicRequestDto != null) {
-				List<HubBrandDicDto> detail = hubBrandDicService.getSupplierBrandByHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(),hubSupplierBrandDicRequestDto.getPageSize());
-				if (detail != null) {
-					List<HubBrandDicDto> responseList = new ArrayList<HubBrandDicDto>();
-					HubBrandDicDto dic = new HubBrandDicDto();
-					BeanUtils.copyProperties(detail, dic);
-					responseList.add(dic);
-					return HubResponse.successResp(responseList);
-				} else {
-					return HubResponse.errorResp("列表页为空");
+			log.info("===品牌详情请求参数：{}",hubSupplierBrandDicRequestDto);
+			if (hubSupplierBrandDicRequestDto != null&&StringUtils.isNotBlank(hubSupplierBrandDicRequestDto.getHubBrandNo())) {
+				HubSupplierBrandDicResponseWithPageDto page = new HubSupplierBrandDicResponseWithPageDto();
+				int total = hubBrandDicService.countHubBrandByHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo());
+				log.info("===品牌详情返回总数："+total);
+				if(total>0){
+					List<HubBrandDicDto> detail = hubBrandDicService.getSupplierBrandByHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(),hubSupplierBrandDicRequestDto.getPageSize());
+					if (detail != null) {
+						List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
+						HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
+						BeanUtils.copyProperties(detail, dic);
+						responseList.add(dic);
+						
+						page.setTotal(total);
+						page.setList(responseList);
+						return HubResponse.successResp(page);
+					}
 				}
+				return HubResponse.errorResp("列表页为空");
+				
 			} else {
 				return HubResponse.errorResp("传值为空");
 			}
@@ -155,7 +176,21 @@ public class HubSupplierBrandDicController {
 			return HubResponse.errorResp("获取列表失败");
 		}
 	}
-
+	@RequestMapping(value = "/updateAndRefresh", method = { RequestMethod.POST, RequestMethod.GET })
+	public HubResponse update(@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+		try {
+			log.info("修改参数：{}",hubSupplierBrandDicRequestDto);
+			HubSupplierBrandDicDto dicDto = new HubSupplierBrandDicDto();
+			BeanUtils.copyProperties(hubSupplierBrandDicRequestDto, dicDto);
+			dicDto.setUpdateTime(new Date());
+			dicDto.setPushState((byte)1);
+			hubBrandDicService.updateHubBrandDicById(dicDto);
+			return HubResponse.successResp(null);
+		} catch (Exception e) {
+			log.error("刷新失败：{}", e);
+		}
+		return HubResponse.errorResp("刷新异常");
+	}
 	/**
 	 * 导出查询商品
 	 * @param dto
@@ -183,7 +218,7 @@ public class HubSupplierBrandDicController {
 	}
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
-	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
+	public HubResponse deleteHubSupplierBrandDetail(@PathVariable("id") Long id) {
 //		try {
 //			if (id != null) {
 //				hubBrandDicService.deleteHubBrandById(id);

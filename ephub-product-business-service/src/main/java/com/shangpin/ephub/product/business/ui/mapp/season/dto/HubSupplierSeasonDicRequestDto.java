@@ -25,6 +25,7 @@ public class HubSupplierSeasonDicRequestDto {
 	private String hubMarketTime;
 	private String hubSeason;
 	private Byte type;
+	private Byte filterFlag;//1、当季  0：非当季
 	private String updateUser;
 	private byte refreshDicType;
 

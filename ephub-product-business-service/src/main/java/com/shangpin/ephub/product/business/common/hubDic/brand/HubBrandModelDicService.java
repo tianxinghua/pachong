@@ -79,7 +79,7 @@ public class HubBrandModelDicService {
 		}
 		if(StringUtils.isNotBlank(hubCategoryNo)){
 			if("specialCategory".equals(hubCategoryNo)){
-				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoEqualTo(hubCategoryNo);	
+				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNotNull();	
 			}else if("allCategory".equals(hubCategoryNo)){
 				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNull();
 			}
@@ -95,7 +95,7 @@ public class HubBrandModelDicService {
 		}
 		if(StringUtils.isNotBlank(hubCategoryNo)){
 			if("specialCategory".equals(hubCategoryNo)){
-				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoEqualTo(hubCategoryNo);	
+				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNotNull();	
 			}else if("allCategory".equals(hubCategoryNo)){
 				hubBrandModelRuleCriteriaDto.createCriteria().andHubCategoryNoIsNull();
 			}

@@ -28,7 +28,7 @@ public class PendingToHubController {
     @RequestMapping(value = "/create-hubspu-and-hubsku")
     public boolean auditPending(@RequestBody SpuModelDto dto){
         try {
-//            log.info("spumodeldto = "+ new ObjectMapper().writeValueAsString(dto));
+            log.info("spumodeldto = "+ new ObjectMapper().writeValueAsString(dto));
             pengingToHubService.auditPending(dto);
         } catch (Exception e) {
             e.printStackTrace();

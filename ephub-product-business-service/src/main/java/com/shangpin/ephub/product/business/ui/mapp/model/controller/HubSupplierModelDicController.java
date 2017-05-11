@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandModelDicService;
@@ -67,6 +68,7 @@ public class HubSupplierModelDicController {
 					for (HubBrandModelRuleDto dicDto : list) {
 						HuBrandModelDicResponseDto dic = new HuBrandModelDicResponseDto();
 						BeanUtils.copyProperties(dicDto, dic);
+						
 						if(dicDto.getCreateTime()!=null){
 							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
 						}
@@ -143,6 +145,7 @@ public class HubSupplierModelDicController {
 			log.info("修改参数：{}",dto);
 			HubBrandModelRuleDto dicDto = new HubBrandModelRuleDto();
 			BeanUtils.copyProperties(dto, dicDto);
+			dicDto.setUpdateTime(new Date());
 			hubBrandModelDicService.updateHubBrandModelRuleById(dicDto);
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
@@ -151,7 +154,6 @@ public class HubSupplierModelDicController {
 		return HubResponse.errorResp("刷新异常");
 	}
 	
-//	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
 //	public HubResponse refresh(@RequestBody HubBrandModelDicRequestDto dto) {
 //		try {
 //			HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
@@ -165,7 +167,6 @@ public class HubSupplierModelDicController {
 //		}
 //		return HubResponse.errorResp("刷新异常");
 //	}
-//	
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
