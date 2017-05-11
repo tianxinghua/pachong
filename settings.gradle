@@ -19,6 +19,7 @@ include 'iog-web-apiHandler'
 
 
 include 'tony-fetchstock'
+include  'atelier-ostore-stock'
 
 
 
