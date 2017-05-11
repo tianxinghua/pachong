@@ -93,7 +93,7 @@ public class PendingHandler extends VariableInit {
 				refreshPendingCategory(message.getData(),tmp);
 			}else if (spuStatus == InfoState.RefreshSize.getIndex()) {
 				//刷新尺码
-				refreshHubSize(message.getData(),tmp);
+				refreshHubSize(message.getSupplierId(),message.getData(),tmp);
 			}else{
 				//spu pending 处理
 				hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
@@ -123,8 +123,26 @@ public class PendingHandler extends VariableInit {
 		}
 	}
 	
+	private boolean commonSize(String supplierId,PendingSku supplierSku,HubSkuPendingDto updateSkuPending){
+		boolean flag = false;
+		Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(supplierId);
+		if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
+			flag = true;
+			String spSize = sizeMap.get(supplierSku.getHubSkuSize());
+			String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
+			if(spSizeTypeAndSize.indexOf(":")>=0){
+				updateSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
+				updateSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+			} else{
+				updateSkuPending.setHubSkuSize(spSizeTypeAndSize);
+			}
+			updateSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
+		}
+		return flag;
+	}
+	
 	// 刷新尺码
-	private void refreshHubSize(PendingSpu spu, HubSpuPendingDto spuPendingDto) throws Exception {
+	private void refreshHubSize(String supplierId,PendingSpu spu, HubSpuPendingDto spuPendingDto) throws Exception {
 
 		if (null != spuPendingDto) {
 			List<PendingSku> skuList = spu.getSkus();
@@ -141,25 +159,34 @@ public class PendingHandler extends VariableInit {
 						if(hubSkuPending.getSkuState()!=null&&(hubSkuPending.getSkuState()==2||hubSkuPending.getSkuState()==5)){
 							continue ;
 						}
-						boolean flag = false;
+//						boolean flag = false;
 						HubSkuPendingDto updateSkuPending = new HubSkuPendingDto();
-						Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(hubSkuPending.getSupplierId());
-						if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
-							String spSize = sizeMap.get(supplierSku.getHubSkuSize());
-							String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
-							if(spSizeTypeAndSize.indexOf(":")>=0){
-								updateSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
-								updateSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
-							} else{
-								updateSkuPending.setHubSkuSize(spSizeTypeAndSize);
-								flag = true;
+						supplierSku.setHubSkuSize(StringUtils.deleteWhitespace(supplierSku.getHubSkuSize()));
+						if(!commonSize(supplierId, supplierSku, updateSkuPending)){
+							if(!commonSize("quanju", supplierSku, updateSkuPending)){
+								updateSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
+//								flag = true;
 							}
-							updateSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
-						} else {
-							updateSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
-							flag = true;
 						}
-						if(flag){
+						
+//						Map<String, String> sizeMap = dataSverviceUtil.getSupplierSizeMapping(supplierId);
+//						if (sizeMap.containsKey(supplierSku.getHubSkuSize())) {
+//							String spSize = sizeMap.get(supplierSku.getHubSkuSize());
+//							String spSizeTypeAndSize =   spSize.substring(0,spSize.indexOf(","));
+//							if(spSizeTypeAndSize.indexOf(":")>=0){
+//								updateSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
+//								updateSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":"),spSizeTypeAndSize.length()));
+//							} else{
+//								updateSkuPending.setHubSkuSize(spSizeTypeAndSize);
+//								flag = true;
+//							}
+//							updateSkuPending.setScreenSize(spSize.substring(spSize.indexOf(",")+1,spSize.length()));
+//						} else {
+//							
+//							updateSkuPending.setHubSkuSize(dataSverviceUtil.sizeCommonReplace(supplierSku.getHubSkuSize()));
+//							flag = true;
+//						}
+						if(true){
 							MatchSizeResult matchSizeResult = null;
 							if(spuPendingDto.getCatgoryState()!=null&&spuPendingDto.getSpuBrandState()!=null&&spuPendingDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()&&spuPendingDto.getSpuBrandState()==SpuBrandState.HANDLED.getIndex()){
 								MatchSizeDto match = new MatchSizeDto();
