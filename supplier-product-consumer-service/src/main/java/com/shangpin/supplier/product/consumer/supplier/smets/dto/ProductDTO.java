@@ -1,7 +1,5 @@
 package com.shangpin.supplier.product.consumer.supplier.smets.dto;
 
-import java.util.Date;
-
 public class ProductDTO {
     private String id;
     private String supplierId;
@@ -81,11 +79,11 @@ public class ProductDTO {
 
     private String stock;//库存
 
-    private Date createTime;
-    private Date lastTime;//修改时间
-    //活动时间添加
-    private Date eventStartTime;
-    private Date eventEndTime;
+//    private Date createTime;
+//    private Date lastTime;//修改时间
+//    //活动时间添加
+//    private Date eventStartTime;
+//    private Date eventEndTime;
     //新的市场价 销售价 供货价添加
     private String newMarketPrice;
     private String newSalePrice;
@@ -387,21 +385,21 @@ public class ProductDTO {
         this.stock = stock;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getLastTime() {
-        return lastTime;
-    }
-
-    public void setLastTime(Date lastTime) {
-        this.lastTime = lastTime;
-    }
+//    public Date getCreateTime() {
+//        return createTime;
+//    }
+//
+//    public void setCreateTime(Date createTime) {
+//        this.createTime = createTime;
+//    }
+//
+//    public Date getLastTime() {
+//        return lastTime;
+//    }
+//
+//    public void setLastTime(Date lastTime) {
+//        this.lastTime = lastTime;
+//    }
 
     public String getCategoryGender() {
         return categoryGender;
@@ -490,21 +488,21 @@ public class ProductDTO {
         this.salePrice = salePrice;
     }
 
-	public Date getEventStartTime() {
-		return eventStartTime;
-	}
-
-	public void setEventStartTime(Date eventStartTime) {
-		this.eventStartTime = eventStartTime;
-	}
-
-	public Date getEventEndTime() {
-		return eventEndTime;
-	}
-
-	public void setEventEndTime(Date eventEndTime) {
-		this.eventEndTime = eventEndTime;
-	}
+//	public Date getEventStartTime() {
+//		return eventStartTime;
+//	}
+//
+//	public void setEventStartTime(Date eventStartTime) {
+//		this.eventStartTime = eventStartTime;
+//	}
+//
+//	public Date getEventEndTime() {
+//		return eventEndTime;
+//	}
+//
+//	public void setEventEndTime(Date eventEndTime) {
+//		this.eventEndTime = eventEndTime;
+//	}
 
 	public String getNewMarketPrice() {
 		return newMarketPrice;
