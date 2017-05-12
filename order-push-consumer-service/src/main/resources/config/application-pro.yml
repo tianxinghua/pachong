@@ -226,7 +226,7 @@ shangpin:
                   openApiKey: bbe7f9392d9148f697241b82e6e1f394
                   openApiSecret: 932aafdc45ad477f9d20b0ebb9a22f2a
           leam:
-                  url: http://62.101.102.194:1080/ws_sito_p15/ws_sito_p15.asmx/
+                  url: http://31.27.194.207:1080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -428,6 +428,18 @@ shangpin:
                   isPurchaseExp: false
                   openApiKey:
                   openApiSecret:
+          dlrboutique: 
+                  url: http://79.60.189.204/WS_SITO_P15/WS_SITO_P15.ASMX/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: shang2004
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
           supplier:
                   delayTime: 1000
                   retry: 120

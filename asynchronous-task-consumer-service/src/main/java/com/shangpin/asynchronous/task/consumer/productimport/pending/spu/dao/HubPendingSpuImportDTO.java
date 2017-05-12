@@ -20,6 +20,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubPendingSpuImportDTO {
 	private String spPicUrl;
+	private String productInfoUrl;
 	private String supplierId;
 	private String supplierNo;
 	private String supplierName;

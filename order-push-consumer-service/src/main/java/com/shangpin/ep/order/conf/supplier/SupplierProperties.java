@@ -34,6 +34,8 @@ public class SupplierProperties {
 	
 	private Creative99 creative99;
 	
+	private Dlrboutique dlrboutique;
+	
 	private Daniello daniello;
 	
 	private Deliberti deliberti;

@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service.PendingSkuImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingSpuImportService;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +36,7 @@ public class PendingProductImportHandler {
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
-	public void pendingImportStreamListen(ProductImportTask message, Map<String, Object> headers) {
+	public void pendingImportStreamListen(Task message, Map<String, Object> headers) {
 		try {
 			
 			log.info("pending任务接受到消息：{}",message);
@@ -47,9 +47,9 @@ public class PendingProductImportHandler {
 			log.info("任务编号：" + message.getTaskNo() + "状态更新为正在处理");
 			
 			String resultFile = null;
-			if(TaskImportTpye.PENDING_SKU.getIndex().equals(message.getType())){
+			if(TaskType.PENDING_SKU.getIndex().equals(message.getType())){
 				resultFile = PendingSkuImportService.handMessage(message);
-			}else if(TaskImportTpye.PENDING_SPU.getIndex().equals(message.getType())){
+			}else if(TaskType.PENDING_SPU.getIndex().equals(message.getType())){
 				resultFile = PendingSpuImportService.handMessage(message);
 			}
 			

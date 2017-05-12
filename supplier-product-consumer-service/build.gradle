@@ -22,14 +22,16 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+
+	mavenLocal()
 	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
 	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
+	mavenCentral()
 }
 
 
 dependencies {
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.13.43-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.13.45-SNAPSHOT')
 	compile('com.alibaba:fastjson:1.2.22')
 	compile('com.google.code.gson:gson:2.2.2')
 	compile('org.springframework.boot:spring-boot-starter-actuator')

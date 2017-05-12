@@ -56,10 +56,10 @@ public class DellaHandler implements ISupplierHandler {
 
 				}
                  //处理图片
-				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
-					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
-				}
+//				SupplierPicture supplierPicture = null;
+//				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
+				SupplierPicture	supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
+//				}
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
@@ -131,13 +131,13 @@ public class DellaHandler implements ISupplierHandler {
 		if(null != item){			
 			
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(item.getSupplier_item_code().replaceAll("\"", "").trim());
-			hubSpu.setSupplierSpuModel(item.getSupplier_item_code().replaceAll("\"", "").trim());
+			hubSpu.setSupplierSpuModel(item.getSupplier_item_code().replaceAll("\"", "").trim()+"-"+item.getColor_code().replaceAll("\"", "").trim());
+			hubSpu.setSupplierSpuNo(hubSpu.getSupplierSpuModel());
 			hubSpu.setSupplierSpuColor(item.getColor_description().replaceAll("\"", ""));
-			hubSpu.setSupplierGender(item.getGender().replaceAll("\"", ""));
-			hubSpu.setSupplierCategoryname(item.getBrand_line().replaceAll("\"", ""));
-			hubSpu.setSupplierBrandname(item.getBrand_name().replaceAll("\"", ""));
-			hubSpu.setSupplierSeasonname(item.getSeason().trim());
+			hubSpu.setSupplierGender(null==item.getGender()?"":item.getGender().replaceAll("\"", ""));
+			hubSpu.setSupplierCategoryname(null==item.getBrand_line()?"":item.getBrand_line().replaceAll("\"", ""));
+			hubSpu.setSupplierBrandname(null==item.getBrand_name()?"":item.getBrand_name().replaceAll("\"", ""));
+			hubSpu.setSupplierSeasonname(null==item.getSeason()?"":item.getSeason().trim());
 			String material = item.getItem_detailed_info();
 			try{
 				material = material.substring(material.lastIndexOf(":")+1);
@@ -145,9 +145,9 @@ public class DellaHandler implements ISupplierHandler {
 				e.printStackTrace();
 			}
 			hubSpu.setSupplierMaterial(material);
-			hubSpu.setSupplierOrigin(item.getSeason().replaceAll("\"", ""));
+			hubSpu.setSupplierOrigin(null==item.getMade_in()?"":item.getMade_in().replaceAll("\"", ""));
 			hubSpu.setSupplierSpuDesc(standard(item.getItem_detailed_info().replaceAll(",", ".").replaceAll("\"", "")));
-			hubSpu.setSupplierSpuName((item.getBrand_name()+" "+item.getBrand_line()).replaceAll("\"", ""));
+			hubSpu.setSupplierSpuName((item.getBrand_name()+" "+(null==item.getBrand_line()?"":item.getBrand_line()).replaceAll("\"", "")));
 
 
 
@@ -168,7 +168,7 @@ public class DellaHandler implements ISupplierHandler {
 		if(null != item){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(item.getItem_code().trim());
-			hubSku.setSupplierBarcode(item.getItem_code()); //无货号
+			hubSku.setSupplierBarcode(item.getItem_code()); //
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getRetail_price())));
 			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(item.getSold_price())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getYour_price())));

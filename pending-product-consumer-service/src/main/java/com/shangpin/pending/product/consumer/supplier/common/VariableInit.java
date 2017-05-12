@@ -18,12 +18,12 @@ import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
+import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
+import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
+import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.DateUtils;
-import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.common.enumeration.SeasonType;
-import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
+import com.shangpin.pending.product.consumer.common.enumeration.*;
 import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.pending.product.consumer.supplier.dto.*;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
@@ -63,6 +63,8 @@ public class VariableInit {
     @Autowired
     HubBrandModelRuleGateWay brandModelRuleGateWay;
 
+    @Autowired
+    MatchSizeGateWay matchSizeGateWay;
 
 
     @Autowired
@@ -148,8 +150,9 @@ public class VariableInit {
                     && StringUtils.isNotBlank(dicDto.getMemo())) {
 
                 seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
-                        dicDto.getHubMarketTime().trim() + "_" + dicDto.getHubSeason().trim() + "|"
-                                + dicDto.getMemo().trim());
+                        (null==dicDto.getHubMarketTime()?"":dicDto.getHubMarketTime().trim()) + "_" +
+                                (null==dicDto.getHubSeason()?"":dicDto.getHubSeason().trim()) + "|"
+                                + (null==dicDto.getMemo()?"":dicDto.getMemo().trim()));
                 hubSeasonStaticMap.put(dicDto.getHubMarketTime() + "_" + dicDto.getHubSeason(), "");
             }
         }
@@ -215,7 +218,7 @@ public class VariableInit {
         if (null == brandStaticMap) {
             brandStaticMap = new HashMap<>();
             hubBrandStaticMap = new HashMap<>();
-            List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getBrand();
+            List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
             for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
                 brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
                         hubBrandDicDto.getHubBrandNo());
@@ -225,7 +228,7 @@ public class VariableInit {
 
         } else {
             if (pendingCommonHandler.isNeedHandle()) {
-                List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getBrand();
+                List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
                 for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
                     brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
                             hubBrandDicDto.getHubBrandNo());
@@ -406,16 +409,38 @@ public class VariableInit {
         return result;
     }
 
+
+    protected String getHubSize(String hubCategoryNo, String hubBrandNo,  String supplierSize){
+        MatchSizeDto sizeDto = new MatchSizeDto();
+        sizeDto.setHubBrandNo(hubBrandNo);
+        sizeDto.setHubCategoryNo(hubCategoryNo);
+        sizeDto.setSize(supplierSize);
+        MatchSizeResult matchSizeResult = matchSizeGateWay.matchSize(sizeDto);
+        if(null==matchSizeResult){
+            return "";
+        }else{
+            if(matchSizeResult.isPassing()) {
+                return (null==matchSizeResult.getSizeId()||"null".equals(matchSizeResult.getSizeId())?"":matchSizeResult.getSizeId())+","+ matchSizeResult.getSizeType()+":"+matchSizeResult.getSizeValue();
+            }else{
+                return "";
+            }
+        }
+    }
+
+
+
+
     protected void setSkuPendingSizePropertyValue(HubSkuPendingDto hubSkuPending, String hubSize) {
         String[] sizeAndIdArray = hubSize.split(",");
         hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-
+        hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 
         String spSizeTypeAndSize =   sizeAndIdArray[1];
         hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
         hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
 
-        hubSkuPending.setScreenSize(sizeAndIdArray[0]);
+        hubSkuPending.setScreenSize(null==sizeAndIdArray[0]?"":sizeAndIdArray[0]);
+
     }
 
 
@@ -712,9 +737,9 @@ public class VariableInit {
         boolean result = true;
         String spuModel = "";
 
-        if (!StringUtils.isEmpty(hubSpuPending.getHubBrandNo())) {
+        if (StringUtils.isNotBlank(hubSpuPending.getHubBrandNo())&&StringUtils.isNotBlank(spu.getSpuModel())) {
             BrandModelDto queryDto = new BrandModelDto();
-            queryDto.setBrandMode(spu.getSpuModel());
+            queryDto.setBrandMode(spu.getSpuModel().trim().toUpperCase());
             queryDto.setHubBrandNo(hubSpuPending.getHubBrandNo());
             queryDto.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
             BrandModelResult verify = brandModelRuleGateWay.verify(queryDto);

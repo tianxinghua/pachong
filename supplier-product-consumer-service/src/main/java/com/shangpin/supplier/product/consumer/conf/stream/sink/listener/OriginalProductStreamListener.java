@@ -66,19 +66,19 @@ public class OriginalProductStreamListener {
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
-	@StreamListener(OriginalProductSink.lamborghini)
+	/*@StreamListener(OriginalProductSink.lamborghini)
 	public void lamborghiniStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.gebStreamListen(message,headers);
-	}
+	}*/
 	/**
 	 * 供应商paloma原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
-	@StreamListener(OriginalProductSink.paloma)
+	/*@StreamListener(OriginalProductSink.paloma)
 	public void palomaStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.gebStreamListen(message,headers);
-	}
+	}*/
 	/**
 	 * 供应商OSTORE原始商品数据流通道监听者
 	 * @param message 消息
@@ -588,5 +588,15 @@ public class OriginalProductStreamListener {
 	@StreamListener(OriginalProductSink.EMONTI)
 	public void emontiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.emontiStreamListen(message, headers);
+	}
+	/**
+	 * 供应商DLRBOUTIQUE原始数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.DLRBOUTIQUE)
+	public void dlrboutiqueStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.dlrboutiqueStreamListen(message, headers);
 	}
 }

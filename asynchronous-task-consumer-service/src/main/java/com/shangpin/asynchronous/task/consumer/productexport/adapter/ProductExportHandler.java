@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.asynchronous.task.consumer.productexport.pending.service.AllProductServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskImportTpye;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,31 +32,36 @@ public class ProductExportHandler {
 	private ExportServiceImpl exportServiceImpl;
 	@Autowired
 	TaskImportService taskService;
+	@Autowired
+	AllProductServiceImpl allProductServiceImpl;
 	
 	/**
 	 * 商品导出数据流监听
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
-	public void productExportTask(ProductImportTask message, Map<String, Object> headers) {
+	public void productExportTask(Task message, Map<String, Object> headers) {
 		try{
 			if(!StringUtils.isEmpty(message.getData())){
 				
 				log.info("接收到导出任务："+message.getData());
-				if(message.getType() == TaskImportTpye.EXPORT_PENDING_SKU.getIndex()){
+				if(message.getType() == TaskType.EXPORT_PENDING_SKU.getIndex() || message.getType() == TaskType.EXPORT_SKU_ALL.getIndex()){
 					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					exportServiceImpl.exportSku(message.getTaskNo(),pendingQuryDto);
-				}else if(message.getType() == TaskImportTpye.EXPORT_PENDING_SPU.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_PENDING_SPU.getIndex() || message.getType() == TaskType.EXPORT_SPU_ALL.getIndex()){
 					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
-				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_SELECTED.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_HUB_SELECTED.getIndex()){
 					exportServiceImpl.exportHubSelected(message); 
-				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_PIC.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_HUB_PIC.getIndex()){
 					exportServiceImpl.exportHubPicSelected(message); 
-				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_NOT_HANDLE_PIC.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_HUB_NOT_HANDLE_PIC.getIndex()){
 					exportServiceImpl.exportHubPicSelected2(message); 
-				}else if(message.getType() == TaskImportTpye.EXPORT_HUB_CHECK_PIC.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_HUB_CHECK_PIC.getIndex()){
 					exportServiceImpl.exportHubCheckPicSelected(message); 
+				}else if(message.getType() == TaskType.ALL_PRODUCT.getIndex()){
+					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
+					allProductServiceImpl.exportproductAll(message.getTaskNo(), pendingQuryDto);
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

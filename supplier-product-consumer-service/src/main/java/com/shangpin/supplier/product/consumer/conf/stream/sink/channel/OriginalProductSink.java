@@ -20,8 +20,10 @@ public interface OriginalProductSink {
 	public static final String STEFANIA = "stefaniaOriginalProduct";
 	
 	public static final String GEB = "gebOriginalProduct";
-	public static final String paloma = "palomaOriginalProduct";
-	public static final String lamborghini = "lamborghiniOriginalProduct";
+	/*以下配置暂未对接，需要时再放开
+	public static final String paloma = "palomaOriginalProduct";*/
+	/*以下配置暂未对接，需要时再放开
+	public static final String lamborghini = "lamborghiniOriginalProduct";*/
 	
 	public static final String COLTORTI = "coltortiOriginalProduct";
 	
@@ -132,6 +134,8 @@ public interface OriginalProductSink {
 	public static final String MCLABLES = "mclablesOriginalProduct";
 	
 	public static final String EMONTI = "emontiOriginalProduct";
+	
+	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
 	//===============================
 	/**
 	 * 供货商SPINNAKER通道组件配置
@@ -161,14 +165,14 @@ public interface OriginalProductSink {
 	 * 供货商lamborghini通道组件配置
 	 * @return lamborghini通道组件
 	 */
-	@Input(value = OriginalProductSink.lamborghini)
-    public SubscribableChannel lamborghiniOriginalProduct();
+	/*@Input(value = OriginalProductSink.lamborghini)
+    public SubscribableChannel lamborghiniOriginalProduct();*/
 	/**
 	 * 供货商paloma通道组件配置
 	 * @return paloma通道组件
 	 */
-	@Input(value = OriginalProductSink.paloma)
-	public SubscribableChannel palomaOriginalProduct();
+	/*@Input(value = OriginalProductSink.paloma)
+	public SubscribableChannel palomaOriginalProduct();*/
 	/**
 	 * 供货商GEB通道组件配置
 	 * @return GEB通道组件
@@ -505,4 +509,10 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.EMONTI)
 	public SubscribableChannel emontiOriginalProduct();
+	/**
+	 * 供应商DLRBOUTIQUE通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.DLRBOUTIQUE)
+	public SubscribableChannel dlrboutiqueOriginalProduct();
 }

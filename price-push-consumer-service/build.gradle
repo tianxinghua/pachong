@@ -35,9 +35,9 @@ repositories {
 
 dependencies {
     compile('com.shangpin:openapi-api-sdk:4.7')
-    compile('com.shangpin:openapi-api:4.7.7-test')
+    compile('com.shangpin:openapi-api:4.7.10-test')
     compile('ZeroC:Ice:3.5.1')
-    compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.13.34-SNAPSHOT')
+    compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.14.10-dev-SNAPSHOT')
     compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
     compile('commons-codec:commons-codec:1.10')
     compile('commons-io:commons-io:2.5')
@@ -52,6 +52,7 @@ dependencies {
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+    testCompile('junit:junit:4.12')
 }
 dependencyManagement {
     imports {

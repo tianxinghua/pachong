@@ -26,7 +26,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.message.task.product.body.ProductImportTask;
+import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
@@ -60,7 +60,7 @@ public class PendingSpuImportService {
 		pendingSpuValueTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
 	}
 
-	public String handMessage(ProductImportTask task) throws Exception {
+	public String handMessage(Task task) throws Exception {
 		
 		//从ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
@@ -141,7 +141,7 @@ public class PendingSpuImportService {
 		}
 				
 	}
-	private List<HubPendingSpuImportDTO> handlePendingSpuXlsx(InputStream in, ProductImportTask task, String type)
+	private List<HubPendingSpuImportDTO> handlePendingSpuXlsx(InputStream in, Task task, String type)
 			throws Exception {
 
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, type);
@@ -160,7 +160,7 @@ public class PendingSpuImportService {
 		return listHubProduct;
 	}
 
-	private List<HubPendingSpuImportDTO> handlePendingSpuXls(InputStream in, ProductImportTask task, String type)
+	private List<HubPendingSpuImportDTO> handlePendingSpuXls(InputStream in, Task task, String type)
 			throws Exception {
 		HSSFSheet xssfSheet = taskService.checkXlsExcel(in, task, type);
 		if (xssfSheet == null) {

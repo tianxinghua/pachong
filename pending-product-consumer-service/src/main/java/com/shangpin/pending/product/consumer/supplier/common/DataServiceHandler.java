@@ -14,6 +14,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.*;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectState;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -79,6 +80,7 @@ import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
  * Created by loyalty on 16/12/16. 数据层的处理
  */
 @Service
+@Slf4j
 public class DataServiceHandler {
 
 	@Autowired
@@ -202,6 +204,16 @@ public class DataServiceHandler {
 		return brandDicGateway.selectByCriteria(criteria);
 
 	}
+
+	public List<HubBrandDicDto> getAvailableBrand() throws Exception {
+		HubBrandDicCriteriaDto criteria = new HubBrandDicCriteriaDto();
+		criteria.setPageNo(1);
+		criteria.setPageSize(ConstantProperty.MAX_BRANDK_MAPPING_QUERY_NUM);
+		criteria.createCriteria().andDataStateEqualTo(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+		return brandDicGateway.selectByCriteria(criteria);
+
+	}
+
 
 	public HubSpuDto getHubSpuByBrandNoAndProductModel(String brandNo, String spuModel) {
 		HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
@@ -723,25 +735,54 @@ public class DataServiceHandler {
 		}
 	}
 
-	public void saveSkuSupplierMapping(SpuPending hubSpuPending, HubSkuPendingDto skuPendingDto, PendingSpu supplierSpu,
+	public HubSkuDto getSkuBySpuNoAndSizeAndSizeType(String spuNo,String size,String sizeType){
+
+		//如果size类型=尺寸 不需要查询尺寸
+		HubSkuCriteriaDto hubSkuCriteria =new HubSkuCriteriaDto();
+		if(ConstantProperty.SIZE_TYPE.equals(sizeType)){
+			hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeTypeEqualTo(sizeType);
+		}else{
+			hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeEqualTo(size).andSkuSizeTypeEqualTo(sizeType);
+		}
+		List<HubSkuDto> hubSkuDtos =   hubSkuGateWay.selectByCriteria(hubSkuCriteria);
+		if(null!=hubSkuDtos&&hubSkuDtos.size()>0){
+			return hubSkuDtos.get(0);
+		}else{
+			return null;
+		}
+
+
+	}
+
+	public void saveSkuSupplierMapping(String  hubSkuNo, HubSkuPendingDto skuPendingDto, PendingSpu supplierSpu,
 			PendingSku sku) {
 
-		HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
-		skuSupplierMapping.setBarcode(skuPendingDto.getSupplierBarcode());
-		skuSupplierMapping.setCreateTime(skuPendingDto.getCreateTime());
-		skuSupplierMapping.setUpdateTime(skuPendingDto.getCreateTime());
-		skuSupplierMapping.setCreateUser(ConstantProperty.DATA_CREATE_USER);
-		skuSupplierMapping.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
-		skuSupplierMapping.setSupplierSpuModel(supplierSpu.getSpuModel());
-		skuSupplierMapping.setSupplierSkuNo(sku.getSupplierSkuNo());
-		HubSupplierSkuDto supplierSkuDto = this.getSupplierSku(sku.getSupplierId(), sku.getSupplierSkuNo());
-		if (null != supplierSkuDto) {
-			skuSupplierMapping.setSupplierSkuId(supplierSkuDto.getSupplierSkuId());
+		try {
+			HubSkuSupplierMappingDto skuSupplierMapping = new HubSkuSupplierMappingDto();
+			skuSupplierMapping.setSkuNo(hubSkuNo);
+			skuSupplierMapping.setBarcode(null==skuPendingDto.getSupplierBarcode()?skuPendingDto.getSupplierSkuNo():skuPendingDto.getSupplierBarcode());
+			skuSupplierMapping.setCreateTime(skuPendingDto.getCreateTime());
+			skuSupplierMapping.setUpdateTime(skuPendingDto.getCreateTime());
+			skuSupplierMapping.setCreateUser(ConstantProperty.DATA_CREATE_USER);
+			skuSupplierMapping.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
+			skuSupplierMapping.setSupplierSpuModel(supplierSpu.getSpuModel());
+			skuSupplierMapping.setSupplierSkuNo(sku.getSupplierSkuNo());
+			skuSupplierMapping.setSupplierId(skuPendingDto.getSupplierId());
+			HubSupplierSkuDto supplierSkuDto = this.getSupplierSku(sku.getSupplierId(), sku.getSupplierSkuNo());
+			if (null != supplierSkuDto) {
+
+                skuSupplierMapping.setSupplierSkuId(supplierSkuDto.getSupplierSkuId());
+
+            }
+			skuSupplierMapping.setSupplierNo(skuPendingDto.getSupplierNo());
+			skuSupplierMapping.setSupplierSelectState(SupplierSelectState.WAIT_SELECT.getIndex().byteValue());
+			log.info("skuMapping = " +skuSupplierMapping.toString());
+			skuSupplierMappingGateWay.insert(skuSupplierMapping);
+
+		} catch (Exception e) {
+			log.error("save sku mapping error :" + e.getMessage(),e);
 
 		}
-		skuSupplierMapping.setSupplierSelectState(SupplierSelectState.WAIT_SELECT.getIndex().byteValue());
-
-		skuSupplierMappingGateWay.insert(skuSupplierMapping);
 
 	}
 
@@ -753,6 +794,7 @@ public class DataServiceHandler {
 		hubSku.setSkuNo(hubSkuGateWay.createSkuNo(hubSpuNo));
 		hubSku.setColor(color);
 		hubSku.setSkuSize(hubSkuPending.getHubSkuSize());
+		hubSku.setSkuSizeType(hubSkuPending.getHubSkuSizeType());
 		hubSku.setSkuSizeId(hubSkuPending.getScreenSize());
 		hubSku.setCreateTime(date);
 		hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);

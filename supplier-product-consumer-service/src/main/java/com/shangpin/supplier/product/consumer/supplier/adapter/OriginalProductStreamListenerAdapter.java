@@ -110,6 +110,11 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("dellaHandler")
 	private ISupplierHandler dellaHandler;
+
+
+	@Autowired
+	@Qualifier("emontiHandler")
+	private ISupplierHandler emontiHandler;
 	
 	@Autowired
 	@Qualifier("mclablesHandler") 
@@ -523,8 +528,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void smetsStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		frmodaHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * sarenza供货商原始数据监听方法
@@ -633,6 +637,15 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void emontiStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO
+		emontiHandler.handleOriginalProduct(message, headers);
+	}
+
+	/**
+	 * dlrboutique供应商原始数据监听方法
+	 * @param message
+	 * @param headers
+	 */
+	public void dlrboutiqueStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);				
 	}
 }

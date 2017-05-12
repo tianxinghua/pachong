@@ -54,10 +54,10 @@ public class MonnierHandler implements ISupplierHandler {
 					hubSkus.add(hubSku);
 				}
 				//处理图片				
-				SupplierPicture supplierPicture = null;
-				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
-					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
-				}
+//				SupplierPicture supplierPicture = null;
+//				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
+				SupplierPicture	supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
+//				}
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
@@ -96,9 +96,11 @@ public class MonnierHandler implements ISupplierHandler {
 		if(null != itemImages){			
 			if(img.length>0){
 				for(String url : img){
-					Image image = new Image();
-					image.setUrl(url);
-					images.add(image);
+					if(!url.contains("_COLOR")){//将带 _COLOR 的小图屏蔽掉
+						Image image = new Image();
+						image.setUrl(url);
+						images.add(image);
+					}
 				}
 			}
 		}

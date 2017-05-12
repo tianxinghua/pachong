@@ -17,7 +17,7 @@ spring:
             register: false
             register-health-check: false
         stream: 
-              bindings: 
+              bindings:
                         pendingProductImportTask: 
                               destination: pending.product.import.task
                               group: one
@@ -36,6 +36,24 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        supplierSkuSelectedProducer:
+                             destination: supplier.sku.selected
+                             content-type: application/json
+                        supplierSkuSelectedConsumer:
+                              destination: supplier.sku.selected
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        pendingAuditProducer:
+                            destination: supplier.spupending.audit
+                            content-type: application/json
+                        pendingAuditConsumer:
+                             destination: supplier.spupending.audit
+                             group: one
+                             consumer:
+                                      concurrency: 5
+                                      maxAttempts: 1
               rabbit: 
                       bindings: 
                             pendingProductImportTask: 
@@ -56,6 +74,24 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            supplierSkuSelectedProducer:
+                                 producer:
+                                      prefix: HA.
+                            supplierSkuSelectedConsumer:
+                                 consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
+                            pendingAuditProducer:
+                                 producer:
+                                      prefix: HA.
+                            pendingAuditConsumer:
+                                 consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
@@ -83,3 +119,8 @@ banner:
        location: classpath:banner/banner.txt # Banner file location.
        image:
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+shangpin: 
+   hub: 
+       callAddress: 
+             pendingProductInfoUrl: http://qa.scm.shangpin.com/gms/HubSupplierProduct/PendingProductInfo?productId=
+             gmsAddProductUrl: http://qa.scmapi.shangpin.com/gms/Product/AddProduct

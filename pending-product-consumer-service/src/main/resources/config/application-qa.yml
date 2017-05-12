@@ -17,8 +17,8 @@ spring:
             register: false
             register-health-check: false
         stream: 
-              bindings: 
-                        spinnakerPendingProduct: 
+              bindings:
+                        spinnakerPendingProduct:
                               destination: spinnaker.pending.product
                               group: one
                               consumer: 
@@ -389,9 +389,15 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                             
+                                       maxAttempts: 1   
+                        dlrboutiquePendingProduct: 
+                              destination: dlrboutique.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                          
               rabbit: 
-                      bindings: 
+                      bindings:
                             spinnakerPendingProduct: 
                                   consumer: 
                                        prefix: HA.
@@ -759,6 +765,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             emontiPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false 
+                            dlrboutiquePendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
