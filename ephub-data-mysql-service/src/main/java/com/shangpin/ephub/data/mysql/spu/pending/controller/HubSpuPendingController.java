@@ -42,9 +42,8 @@ public class HubSpuPendingController {
     }
 	@RequestMapping(value = "/insert")
     public Long insert(@RequestBody HubSpuPending hubSpuPending){
-		throw new DuplicateKeyException("DuplicateKeyException");
-//    	 hubSpuPendingService.insert(hubSpuPending);
-//    	 return hubSpuPending.getSpuPendingId();
+    	 hubSpuPendingService.insert(hubSpuPending);
+    	 return hubSpuPending.getSpuPendingId();
     }
 	@RequestMapping(value = "/insert-selective")
     public Long insertSelective(@RequestBody HubSpuPending hubSpuPending){
