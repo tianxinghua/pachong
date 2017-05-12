@@ -1,10 +1,8 @@
-package com.shangpin.ep.order.module.supplier.bean;
+package com.shangpin.ephub.price.consumer.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by lizhongren on 2016/10/25.
@@ -41,6 +39,12 @@ public class SupplierDTO {
     private String openApiSecret; //调用API secret
     @JsonIgnore
     private Boolean  isPurchaseException;//是否需要设置采购异常
+
+    @JsonIgnore
+    private SupplierContractDTO supplierContract;
+
+    @JsonIgnore
+    private String currency ;
 
     @JsonProperty("ButtJointId")
     public void setButtJointId(long buttJointId) {
@@ -158,5 +162,22 @@ public class SupplierDTO {
     @JsonProperty("SupplierName")
     public void setSupplierName(String supplierName) {
         this.supplierName = supplierName;
+    }
+
+    @JsonProperty("SupplierContract")
+    public SupplierContractDTO getSupplierContract() {
+        return supplierContract;
+    }
+    @JsonProperty("SupplierContract")
+    public void setSupplierContract(SupplierContractDTO supplierContract) {
+        this.supplierContract = supplierContract;
+    }
+    @JsonProperty("Currency")
+    public String getCurrency() {
+        return currency;
+    }
+    @JsonProperty("Currency")
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }
