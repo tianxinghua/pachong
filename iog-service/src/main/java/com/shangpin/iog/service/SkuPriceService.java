@@ -62,7 +62,7 @@ public interface SkuPriceService {
     public void synchPrice(SkuDTO skuDTO) throws ServiceException;
     /**
      * 得到NewPriceDTO对象
-     * @param supplierIdskuId
+     * @param
      * @throws ServiceException
      */
     public NewPriceDTO getNewPriceDTO(String supplierId,String skuId) throws ServiceException;

@@ -4,27 +4,15 @@ rootProject.name = 'iog'
 include 'project-framework'
 include "project-common"
 include 'iog-facade'
-include 'iog-facade-dubbo'
-include 'iog-order-dubbo'
+
 include 'project-dao'
 include 'iog-service'
 include 'iog-common-product'
 include 'iog-product-framework'
 include 'openapi-ice'
-include 'iog-facade-impl'
-include 'iog-sop'
-include 'iog-generater-util'
-include 'report'
-include 'picturedown'
 
 
-include 'iog-web-container'
-include 'project-mq'
 
-include 'stockclean'
-include 'OpenTest'
-include 'syn-spsku-hub'
-include 'synchSupplierIdAndSpId'
 include 'studio69'
 include 'Atelier-stock-template'
 
