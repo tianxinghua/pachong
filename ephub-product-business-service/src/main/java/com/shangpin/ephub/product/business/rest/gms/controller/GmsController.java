@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.gms.controller;
 
+import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +12,6 @@ import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
-import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
 import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.rest.gms.service.SizeService;
@@ -43,7 +43,7 @@ public class GmsController {
 	@Autowired
 	SupplierService supplierService;
 	/**
-	 * @param dto 数据传输对象
+	 * @param  brandNo 数据传输对象
 	 * @return 校验结果
 	 */
 	@RequestMapping(value = "/select-brand/{brandNo}")
@@ -53,7 +53,7 @@ public class GmsController {
 	}
 	
 	/**
-	 * @param dto 数据传输对象
+	 * @param  categoryNo 数据传输对象
 	 * @return 校验结果
 	 */
 	@RequestMapping(value = "/select-category/{categoryNo}")
@@ -62,7 +62,7 @@ public class GmsController {
 	}
 	
 	/**
-	 * @param dto 数据传输对象
+	 *
 	 * @return 校验结果
 	 */
 	@RequestMapping(value = "/select-size/{hubBrandNo}/{hubCategoryNo}")
@@ -72,7 +72,7 @@ public class GmsController {
 	}
 	
 	/**
-	 * @param dto 数据传输对象
+	 * @param queryDto 数据传输对象
 	 * @return 校验结果
 	 */
 	@RequestMapping(value = "/select-sopSkuNo")
@@ -86,7 +86,7 @@ public class GmsController {
 		return null;
 	}
 	/**
-	 * @param dto 数据传输对象
+	 * @param supplierNo 数据传输对象
 	 * @return 校验结果
 	 */
 	@RequestMapping(value = "/select-supplier/{supplierNo}")

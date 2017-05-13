@@ -115,6 +115,8 @@ public class HubProductServiceImpl implements HubProductService {
                         List<ApiSkuOrgDom> skuOrgDoms = new ArrayList<>();
                         Set<Map.Entry<String, ApiSkuOrgDom>> entries = apiSkuOrgDomMap.entrySet();
                         for(Map.Entry<String,ApiSkuOrgDom> entry:entries){
+                            //合并所有尺码下的SKU信息
+
                             skuOrgDoms.add(entry.getValue());
                         }
 

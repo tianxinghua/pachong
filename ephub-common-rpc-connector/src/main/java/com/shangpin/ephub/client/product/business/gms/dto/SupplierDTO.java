@@ -78,10 +78,12 @@ public class SupplierDTO {
 	private List<?> spSupplierButtJointMapping;
 	@JsonIgnore
 	private String supplierQualification;
-	@JsonIgnore
-	private String supplierContract;
+//	@JsonIgnore
+//	private String supplierContract;
 	@JsonIgnore
 	private String sopUserNo;
+	@JsonIgnore
+    private SupplierContractDTO supplierContract;
 	
 	@JsonProperty("SupplierId")
 	public String getSupplierId() {
@@ -323,12 +325,12 @@ public class SupplierDTO {
 	public void setSupplierQualification(String supplierQualification) {
 		this.supplierQualification = supplierQualification;
 	}
-	@JsonProperty("Contract")
-	public String getSupplierContract() {
+	@JsonProperty("SupplierContract")
+	public SupplierContractDTO getSupplierContract() {
 		return supplierContract;
 	}
-	@JsonProperty("Contract")
-	public void setSupplierContract(String supplierContract) {
+	@JsonProperty("SupplierContract")
+	public void setSupplierContract(SupplierContractDTO supplierContract) {
 		this.supplierContract = supplierContract;
 	}
 	@JsonProperty("SopUserNo")
