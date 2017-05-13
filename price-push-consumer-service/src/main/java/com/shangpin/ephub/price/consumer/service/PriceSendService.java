@@ -95,7 +95,7 @@ public class PriceSendService {
 
             content = om.writeValueAsString(productDTOList);
             //返回更新失败的sku map
-            String result  = openapiPriceHandleService.pushPurchasePriceMessage(productPriceDTO.getSupplierNo(),content);
+            String result  = openapiPriceHandleService.pushPurchasePriceMessage(productPriceDTO.getSopUserNo(),content);
             log.info("call api result of supply price = " + result);
             //失败的推送到消息队列
             if(StringUtils.isNotBlank(result)){

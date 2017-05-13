@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
+
+import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.price.consumer.common.GlobalConstant;
 import com.shangpin.ephub.price.consumer.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.price.consumer.service.dto.SupplierDTO;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,6 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-
 public class SupplierService {
 
     @Autowired
@@ -46,7 +48,12 @@ public class SupplierService {
         if(StringUtils.isNotBlank(supplierMsg)){
             try {
                 dto = om.readValue(supplierMsg, SupplierDTO.class);
-                return dto;
+                if(null!=dto){
+                    if(null!=dto.getSupplierContract()&&null!=dto.getSupplierContract().get(0).getQuoteMode()){
+                        return dto;
+                    }
+
+                }
             } catch (Exception e) {
                 log.error("供货商"+supplierNo + "从redis中获取信息后，转化对象失败");
             }
@@ -56,15 +63,16 @@ public class SupplierService {
 
         try {
             String supplierUrl =apiAddressProperties.getScmsSupplierInfoUrl()+supplierNo;
-            ResponseEntity<HubResponseDto<SupplierDTO>> entity = restTemplate.exchange(supplierUrl, HttpMethod.POST, null, new ParameterizedTypeReference<HubResponseDto<SupplierDTO>>() {});
-
-            HubResponseDto<SupplierDTO>  supplierDTOHubResponseDto = entity.getBody();
-            dto = supplierDTOHubResponseDto.getResDatas().get(0);
+            log.info("supplierUrl = " +supplierUrl);
+            String reSupplierMsg = restTemplate.getForObject(supplierUrl, String.class);
+            log.info("reSupplierMsg = " +reSupplierMsg);
+            dto = om.readValue(reSupplierMsg, SupplierDTO.class);
             //记录到REDIS缓存中
             shangpinRedis.setex(GlobalConstant.REDIS_PRICE_PUSH_CONSUMER_SERVICE_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,om.writeValueAsString(dto));
 
         } catch (Exception e) {
-            log.error("未获取到供货商信息");
+            log.error("未获取到供货商信息. reason：" +e.getMessage(),e);
+
 
         }
 

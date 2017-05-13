@@ -10,10 +10,11 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingC
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
+import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
 import com.shangpin.ephub.price.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.price.consumer.conf.stream.source.message.ProductPriceDTO;
 
-import com.shangpin.ephub.price.consumer.service.dto.SupplierDTO;
+
 import com.shangpin.iog.ice.dto.SupplierMessageDTO;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +66,7 @@ public class SupplierPriceService {
         List<String> spSkus  = new ArrayList<>();
         spSkus.add(productPriceDTO.getSkuNo());
         try {
-            SupplierMessageDTO supplierMessageDTO = this.getSupplierMsg(productPriceDTO.getSopUserNo());
+            SupplierMessageDTO supplierMessageDTO = this.getSupplierMsg(productPriceDTO.getSupplierNo());
             if(null!=supplierMessageDTO){
 
                 String supplierType = supplierMessageDTO.getQuoteMode();;
@@ -90,6 +91,8 @@ public class SupplierPriceService {
                     priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),spSkus, PriceHandleState.PUSHED_ERROR.getIndex(),"无供货商信息");
                     return false;
                 }
+            }else{
+                //TODO 发邮件通知
             }
 
 
@@ -153,9 +156,9 @@ public class SupplierPriceService {
         SupplierDTO supplierDTO= supplierService.getSupplier(suppplierNo);// openapiSupplier.getSupplierMessage(suppplierId);
         if(null==supplierDTO) return null;
         SupplierMessageDTO supplierMessageDTO = new SupplierMessageDTO();
-        supplierMessageDTO.setQuoteMode(supplierDTO.getSupplierContract().getQuoteMode().toString());
+        supplierMessageDTO.setQuoteMode(supplierDTO.getSupplierContract().get(0).getQuoteMode().toString());
         supplierMessageDTO.setCurrency(supplierDTO.getCurrency());
-        supplierMessageDTO.setSopUserNo(supplierDTO.getSopUserNo());
+        supplierMessageDTO.setSopUserNo(Long.valueOf(supplierDTO.getSopUserNo().toString()));
         return supplierMessageDTO;
 
 
