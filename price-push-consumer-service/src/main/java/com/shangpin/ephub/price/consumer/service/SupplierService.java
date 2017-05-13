@@ -8,6 +8,8 @@ import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.price.consumer.common.GlobalConstant;
+import com.shangpin.ephub.price.consumer.conf.mail.message.ShangpinMail;
+import com.shangpin.ephub.price.consumer.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ephub.price.consumer.conf.rpc.ApiAddressProperties;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +39,9 @@ public class SupplierService {
     private ApiAddressProperties apiAddressProperties;
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    ShangpinMailSender shangpinMailSender;
 
     ObjectMapper om = new ObjectMapper();
 
@@ -72,10 +77,26 @@ public class SupplierService {
 
         } catch (Exception e) {
             log.error("未获取到供货商信息. reason：" +e.getMessage(),e);
-
+            this.sendMail(supplierNo);
 
         }
 
         return  dto;
+    }
+
+
+    public void sendMail(String supplierNO){
+        String text = "编号" +supplierNO+ "未找到供货商信息";
+        ShangpinMail shangpinMail = new ShangpinMail();
+        shangpinMail.setFrom("chengxu@shangpin.com");
+        shangpinMail.setSubject("price_send_Mail");
+        shangpinMail.setText(text);
+        shangpinMail.setTo("ephub_support.list@shangpin.com");
+        try {
+            shangpinMailSender.sendShangpinMail(shangpinMail);
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 }
