@@ -74,7 +74,7 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 			Gson gson = new Gson();
 			OrderJson oj = new OrderJson();
-			oj.setCustomer(new Customer("FilippoTroina", "FilippoTroina", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "IT (ITALY)"));
+			oj.setCustomer(new Customer("FilippoTroina", "FilippoTroina", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "CODE ISO: IT (ITALY)"));
 
 			oj.setOrder_id(orderDTO.getPurchaseNo());
 
