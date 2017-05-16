@@ -55,11 +55,21 @@ public class SupplierService {
         //调用接口获取供货商信息
 
         try {
+        	
+//        	Map<String, String> paraMap = new HashMap<>();
+//			paraMap.put("supplierNo", supplierNo);
+//			  String supplierUrl =apiAddressProperties.getScmsSupplierInfoUrl()+supplierNo;
+//			log.info("supplierNo:"+supplierNo);
+//			String reSupplierMsg = restTemplate.getForObject(supplierUrl, String.class);
+//        	
+//        	
+        	
+        	
             String supplierUrl =apiAddressProperties.getScmsSupplierInfoUrl()+supplierNo;
-            ResponseEntity<HubResponseDto<SupplierDTO>> entity = restTemplate.exchange(supplierUrl, HttpMethod.POST, null, new ParameterizedTypeReference<HubResponseDto<SupplierDTO>>() {});
+            ResponseEntity<SupplierDTO> entity = restTemplate.exchange(supplierUrl, HttpMethod.POST, null, new ParameterizedTypeReference<SupplierDTO>() {});
 
-            HubResponseDto<SupplierDTO>  supplierDTOHubResponseDto = entity.getBody();
-            dto = supplierDTOHubResponseDto.getResDatas().get(0);
+            SupplierDTO  supplierDTOHubResponseDto = entity.getBody();
+//            dto = supplierDTOHubResponseDto.getResDatas().get(0);
             //记录到REDIS缓存中
             shangpinRedis.setex(GlobalConstant.REDIS_PRICE_PUSH_CONSUMER_SERVICE_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,om.writeValueAsString(dto));
 
