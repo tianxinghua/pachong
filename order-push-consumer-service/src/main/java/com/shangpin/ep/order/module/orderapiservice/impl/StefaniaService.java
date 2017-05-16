@@ -1,5 +1,11 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
@@ -15,13 +21,6 @@ import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.ArrayOfOrderDetail;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.CreateOrder;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.CreateOrderResponse;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.OrderDetail;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by lubaijiang

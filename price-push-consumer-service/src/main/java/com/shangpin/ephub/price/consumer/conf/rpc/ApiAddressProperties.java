@@ -1,10 +1,9 @@
-package com.shangpin.asynchronous.task.consumer.conf.rpc;
+package com.shangpin.ephub.price.consumer.conf.rpc;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
 
 
 /**
@@ -20,8 +19,16 @@ public class ApiAddressProperties {
 	
 	public static final String API_ADDRESS_PREFIX = "shangpin.hub.callAddress";
 
-	private String pendingProductInfoUrl;
+	private String gmsSizeUrl;
 
-	private String  gmsAddProductUrl;
+	private String gmsAddProductUrl;
+
+	private String gmsBrandUrl;
+
+	private String gmsCategoryUrl;
+	
+	private String scmsSupplierInfoUrl;
+
+	private String sopSkuListBySupplierSkuNoUrl;
 	
 }
