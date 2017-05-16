@@ -143,6 +143,8 @@ public class SupplierProductPictureService {
 			flag = httpUrlConnection.getResponseCode();
 			if (flag == 404 || flag == 400) {
 				return flag;
+			}else if(flag == 301 || flag == 302){
+				
 			}
 			inputStream = openConnection.getInputStream();
 			byte[] byteArray = IOUtils.toByteArray(inputStream);
