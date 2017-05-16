@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.mapp.material.dto;
+package com.shangpin.ephub.product.business.ui.mapp.origin.dto;
 
 import java.util.List;
 
@@ -16,9 +16,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierColorDicResponseWithPageDto {
+public class HubSupplierOriginDicResponseWithPageDto {
 	
 	private int total;
-	private List<HubSupplierColorDicResponseDto> list;
-
+	private List<HubSupplierOriginDicResponseDto> list;
 }
