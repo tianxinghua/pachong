@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.mapp.material.dto;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
@@ -14,14 +16,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierColorDicRequestDto {
+public class HubSupplierMaterialDicResponseWithPageDto {
 	
-	private Long material_mapping_id;
-	private int pageNo;
-	private int pageSize;
-	private String supplierMaterial;
-	private String hubMaterial;
-	private Byte mappingLevel;
-	private String updateUser;
-	private String createUser;
+	private int total;
+	private List<HubSupplierMaterialDicResponseDto> list;
+
 }
