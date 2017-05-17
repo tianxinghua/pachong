@@ -83,7 +83,10 @@ public class SupplierDTO {
 	@JsonIgnore
 	private String sopUserNo;
 	@JsonIgnore
-    private SupplierContractDTO supplierContract;
+    private List<SupplierContractDTO> supplierContract;
+
+	@JsonIgnore
+	private String currency ;
 	
 	@JsonProperty("SupplierId")
 	public String getSupplierId() {
@@ -326,13 +329,14 @@ public class SupplierDTO {
 		this.supplierQualification = supplierQualification;
 	}
 	@JsonProperty("SupplierContract")
-	public SupplierContractDTO getSupplierContract() {
+	public List<SupplierContractDTO> getSupplierContract() {
 		return supplierContract;
 	}
 	@JsonProperty("SupplierContract")
-	public void setSupplierContract(SupplierContractDTO supplierContract) {
+	public void setSupplierContract(List<SupplierContractDTO> supplierContract) {
 		this.supplierContract = supplierContract;
 	}
+
 	@JsonProperty("SopUserNo")
 	public String getSopUserNo() {
 		return sopUserNo;
@@ -340,6 +344,15 @@ public class SupplierDTO {
 	@JsonProperty("SopUserNo")
 	public void setSopUserNo(String sopUserNo) {
 		this.sopUserNo = sopUserNo;
+	}
+
+	@JsonProperty("Currency")
+	public String getCurrency() {
+		return currency;
+	}
+	@JsonProperty("Currency")
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 	
 	

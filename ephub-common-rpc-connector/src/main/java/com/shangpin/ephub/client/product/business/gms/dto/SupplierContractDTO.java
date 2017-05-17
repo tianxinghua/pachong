@@ -13,6 +13,9 @@ public class SupplierContractDTO {
     @JsonIgnore
     private Integer quoteMode;
 
+    @JsonIgnore
+    private float serviceRate;
+
     @JsonProperty("QuoteMode")
     public Integer getQuoteMode() {
         return quoteMode;
@@ -21,5 +24,14 @@ public class SupplierContractDTO {
     @JsonProperty("QuoteMode")
     public void setQuoteMode(Integer quoteMode) {
         this.quoteMode = quoteMode;
+    }
+
+    @JsonProperty("ServiceRate")
+    public float getServiceRate() {
+        return serviceRate;
+    }
+    @JsonProperty("ServiceRate")
+    public void setServiceRate(float serviceRate) {
+        this.serviceRate = serviceRate;
     }
 }

@@ -123,7 +123,10 @@ public class HubProductServiceImpl implements HubProductService {
                         //推送
                         //---------------------------------- 推送前先调用接口  看是否存在  存在则不用推送
                         Map<String,SopSkuDto> existSopSkuMap = new HashMap<>();
-                        List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
+                        Map<String,SopSkuDto> errorSopSkuMap = new HashMap<>();
+                        List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap,errorSopSkuMap);
+                        //处理错误的  主要是barcode 已存在
+
                         //处理已经存在的
                         if(existSkuOrgDoms.size()>0){
                             log.info("SPSKUNO已存在");
@@ -209,13 +212,13 @@ public class HubProductServiceImpl implements HubProductService {
     	return false;
 	}
 
-	private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) throws JsonProcessingException {
+	private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap,Map<String,SopSkuDto> errorSopSkuMap) throws JsonProcessingException {
         SopSkuQueryDto queryDto = new SopSkuQueryDto();
         queryDto.setSopUserNo(supplierId);
         List<String> supplierSkuNoList = new ArrayList<>();
         List<String> supplierBarcodeList = new ArrayList<>();
         for(ApiSkuOrgDom apiSkuOrgDom:skuOrgDoms){
-            //因为拉取后 存在的要改成其它的状态 所以 没有可以在推送前就查询 (咱不开启)
+            //因为拉取后 存在的要改成其它的状态 所以 没有可以在推送前就查询 (暂不开启)
            // if(apiSkuOrgDom.isRetry()){
 
                 supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
@@ -242,17 +245,23 @@ public class HubProductServiceImpl implements HubProductService {
         if(null!=sopSkuResponseDto&&sopSkuResponseDto.getIsSuccess()){
             List<SopSkuDto> sopSkuDtos =  sopSkuResponseDto.getResDatas();
             if(null!=sopSkuDtos&&sopSkuDtos.size()>0){
-               for( SopSkuDto  sopSkuDto:sopSkuDtos ){
-                   existSopSkuMap.put(sopSkuDto.getSupplierSkuNo(),sopSkuDto);
-               }
-               for(int i=0 ;i<skuOrgDoms.size();i++){
-                   ApiSkuOrgDom skuOrgDom = skuOrgDoms.get(i);
-                   if(existSopSkuMap.containsKey(skuOrgDom.getSupplierSkuNo())){
-                       existApiSkuOrgDoms.add(skuOrgDom);
-                       skuOrgDoms.remove(i);
-                       i--;
-                   }
-               }
+                if(sopSkuDtos.size()>1){//supplier_sku_no
+
+                }else{
+
+                    for( SopSkuDto  sopSkuDto:sopSkuDtos ){
+                        existSopSkuMap.put(sopSkuDto.getSupplierSkuNo(),sopSkuDto);
+                    }
+
+                }
+                for(int i=0 ;i<skuOrgDoms.size();i++){
+                    ApiSkuOrgDom skuOrgDom = skuOrgDoms.get(i);
+                    if(existSopSkuMap.containsKey(skuOrgDom.getSupplierSkuNo())){
+                        existApiSkuOrgDoms.add(skuOrgDom);
+                        skuOrgDoms.remove(i);
+                        i--;
+                    }
+                }
             }
         }
         return existApiSkuOrgDoms;
