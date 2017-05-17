@@ -77,31 +77,31 @@ public class PriceService {
 			boolean supplyPriceChanged = supplierProductService.isSupplyPriceChanged(skuDto);
 			boolean marketPriceChanged = supplierProductService.isMarketPriceChanged(skuDto);
 			if(marketPriceChanged && supplyPriceChanged && newSeasons.containsKey(skuDto.getSupplierSkuNo())){
-				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、供价、季节都发生了变化。 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
+				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、供价、季节都发生了变化。 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.MARKET_SUPPLY_SEASON_CHANGED);
 				newSeasons.remove(skuDto.getSupplierSkuNo());
 			}else if(marketPriceChanged && supplyPriceChanged){
-				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、供价发生了变化。 新市场价："+skuDto.getMarketPrice()+"】");
+				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、供价发生了变化。 新市场价："+skuDto.getMarketPrice()+"】");
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.MARKET_SUPPLY_CHANGED);
 			}else if(marketPriceChanged && newSeasons.containsKey(skuDto.getSupplierSkuNo())){
-				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、季节发生了变化。 新市场价："+skuDto.getMarketPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
+				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、季节发生了变化。 新市场价："+skuDto.getMarketPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.MARKET_SEASON_CHANGED);
 				newSeasons.remove(skuDto.getSupplierSkuNo());
 			}else if(supplyPriceChanged && newSeasons.containsKey(skuDto.getSupplierSkuNo())){
-				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"供价、季节发生了变化。 新供价："+skuDto.getSupplyPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
+				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"供价、季节发生了变化。 新供价："+skuDto.getSupplyPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SUPPLY_SEASON_CHANGED);
 				newSeasons.remove(skuDto.getSupplierSkuNo());
 			}else if(marketPriceChanged){
-				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价发生了变化。 新市场价："+skuDto.getMarketPrice()+"】");
+				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价发生了变化。 新市场价："+skuDto.getMarketPrice()+"】");
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.MARKET_PRICE_CHANGED);
 			}else if(supplyPriceChanged){
-				log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"供价发生了变化。 新供价："+skuDto.getSupplyPrice()+" 】"); 
+				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"供价发生了变化。 新供价："+skuDto.getSupplyPrice()+" 】"); 
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SUPPLY_PRICE_CHANGED);
 			}
 		}
 		if(newSeasons.size() > 0){
 			for(HubSupplierSkuDto skuDto : newSeasons.values()){
-				log.info("【"+supplierSpuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"只有季节发生了变化。 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商spu编号："+supplierSpuDto.getSupplierSpuNo()+"】");
+				log.info("【推送供价记录："+supplierSpuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"只有季节发生了变化。 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商spu编号："+supplierSpuDto.getSupplierSpuNo()+"】");
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON_CHANGED);
 			}
 		}
@@ -126,12 +126,12 @@ public class PriceService {
 		HubSupplierPriceChangeRecordDto recordDto = new HubSupplierPriceChangeRecordDto();
 		convertPriceDtoToRecordDto(supplierNo,supplierSpuDto,skuDto,recordDto, type,seasonDicDto);
 		Long supplierPriceChangeRecordId = saveHubSupplierPriceChangeRecordDto(recordDto);
-		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"】");
+		log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"】");
 		//发送消息队列
 		ProductPriceDTO productPrice  = new ProductPriceDTO();
 		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,type, seasonDicDto);
 		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
-		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
+		log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
 	}
 	
 	/**
@@ -251,6 +251,7 @@ public class PriceService {
 	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
 		try {
 			retryPrice.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId); 
+			log.info("【推送供价消息体："+JsonUtil.serialize(retryPrice)+"】"); 
 			priceMqGateWay.transPrice(retryPrice);
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
 		} catch (Exception e) {
