@@ -8,6 +8,11 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
  *
  */
 public enum PriceHandleType {
+	
+	/**
+	 * 初始化状态
+	 */
+	NEW_DEFAULT((byte)0,"new_default"),
 	/**
 	 * 市场价发生变化
 	 */
