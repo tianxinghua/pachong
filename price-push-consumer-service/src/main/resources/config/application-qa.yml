@@ -12,7 +12,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.174
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -64,16 +64,16 @@ spring:
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
-#  mail:
-#       default-recipient: yan_xiao_bin@126.com
-#       default-sender: yanxiaobin@shangpin.com
-#       default-encoding: UTF-8
-#       host: smtp.263.net
-#       port: 25
-#       protocol: smtp
-#       username: yanxiaobin@shangpin.com
-#       password: 123.com
-#       test-connection: false
+  mail:
+       default-recipient: yan_xiao_bin@126.com
+       default-sender: yanxiaobin@shangpin.com
+       default-encoding: UTF-8
+       host: smtp.263.net
+       port: 25
+       protocol: smtp
+       username: yanxiaobin@shangpin.com
+       password: 123.com
+       test-connection: false
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.

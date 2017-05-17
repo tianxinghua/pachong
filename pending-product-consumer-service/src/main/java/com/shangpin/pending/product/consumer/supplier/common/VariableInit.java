@@ -861,17 +861,20 @@ public class VariableInit {
                     hubSpuPending.setSpuSeasonState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
                 } else {
                     result = false;
+                    hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
                     hubSpuPending.setSpuSeasonState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
                 }
 
             } else {
                 result = false;
+                hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
                 hubSpuPending.setSpuSeasonState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
                 dataServiceHandler.saveSeason(spu.getSupplierId(), spu.getHubSeason());
             }
 
         } else {//
             result = false;
+            hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_NOT_CURRENT.getIndex().byteValue());
             hubSpuPending.setSpuSeasonState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }
         return result;

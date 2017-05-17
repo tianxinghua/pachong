@@ -77,7 +77,7 @@ public class SupplierService {
 
         } catch (Exception e) {
             log.error("未获取到供货商信息. reason：" +e.getMessage(),e);
-            this.sendMail(supplierNo);
+
 
         }
 

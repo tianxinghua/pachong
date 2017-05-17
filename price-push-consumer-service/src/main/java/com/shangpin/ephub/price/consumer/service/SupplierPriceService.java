@@ -1,6 +1,7 @@
 package com.shangpin.ephub.price.consumer.service;
 
 import IceUtilInternal.StringUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
@@ -57,6 +58,8 @@ public class SupplierPriceService {
     @Autowired
     SupplierService supplierService;
 
+    ObjectMapper mapper = new ObjectMapper();
+
 
     public Boolean  sendPriceMessageToScm(ProductPriceDTO productPriceDTO,Map<String, Object> headers ) throws Exception {
 
@@ -69,6 +72,7 @@ public class SupplierPriceService {
             SupplierMessageDTO supplierMessageDTO = this.getSupplierMsg(productPriceDTO.getSupplierNo());
             if(null!=supplierMessageDTO){
 
+
                 String supplierType = supplierMessageDTO.getQuoteMode();;
                 log.info("supplier type ="+ supplierType);
                 if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
@@ -76,7 +80,7 @@ public class SupplierPriceService {
                     if(supplierMap.containsKey(productPriceDTO.getSopUserNo())){
                         //重新计算价格
                         reSetPrice(supplierMessageDTO,productPriceDTO);
-
+                        productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
                         handSupplyPrice(productPriceDTO);
                     }else{
                         priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),spSkus, PriceHandleState.HANDLED_SUCCESS.getIndex(),"暂不处理");
@@ -92,7 +96,8 @@ public class SupplierPriceService {
                     return false;
                 }
             }else{
-                //TODO 发邮件通知
+
+                supplierService.sendMail(productPriceDTO.getSupplierNo());
             }
 
 
@@ -151,14 +156,18 @@ public class SupplierPriceService {
      * @return
      * @throws Exception
      */
-    private SupplierMessageDTO getSupplierMsg(String suppplierNo) throws Exception{
+    public  SupplierMessageDTO getSupplierMsg(String suppplierNo) throws Exception{
 
         SupplierDTO supplierDTO= supplierService.getSupplier(suppplierNo);// openapiSupplier.getSupplierMessage(suppplierId);
         if(null==supplierDTO) return null;
+        if(null==supplierDTO.getSupplierContract()||supplierDTO.getSupplierContract().size()<1) return null;
         SupplierMessageDTO supplierMessageDTO = new SupplierMessageDTO();
         supplierMessageDTO.setQuoteMode(supplierDTO.getSupplierContract().get(0).getQuoteMode().toString());
         supplierMessageDTO.setCurrency(supplierDTO.getCurrency());
         supplierMessageDTO.setSopUserNo(Long.valueOf(supplierDTO.getSopUserNo().toString()));
+        supplierMessageDTO.setSupplierNo(suppplierNo);
+        supplierMessageDTO.setServiceRate(String.valueOf((supplierDTO.getSupplierContract().get(0).getServiceRate())));
+        log.info("supplier message  = " + mapper.writeValueAsString(supplierMessageDTO));
         return supplierMessageDTO;
 
 
