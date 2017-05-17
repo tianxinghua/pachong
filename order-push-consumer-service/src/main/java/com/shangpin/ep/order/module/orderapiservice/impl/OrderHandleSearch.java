@@ -245,8 +245,8 @@ public class OrderHandleSearch {
 			return giglioServiceImpl;
 		}else if("2016022301781".equals(supplierId)){ 
 			return antonacciOrderImpl;
-//		}else if("2017042601969".equals(supplierId)){
-//			return dlrboutiqueServiceImpl;
+		}else if("2017042601969".equals(supplierId)){
+			return dlrboutiqueServiceImpl;
 		}else {
 			return null;
 		}
@@ -328,10 +328,9 @@ public class OrderHandleSearch {
 			return supplierProperties.getTessabit();
 		}else if("2016022301781".equals(supplierId)){
 			return supplierProperties.getAntonacci();
+		}else if("2017042601969".equals(supplierId)){
+			return supplierProperties.getDlrboutique();
 		}
-//		else if("2017042601969".equals(supplierId)){
-//			return supplierProperties.getDlrboutique();
-//		}
 		else {
 			return null;
 		}
