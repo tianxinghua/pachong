@@ -17,6 +17,7 @@ import lombok.ToString;
 public class ProductPriceDTO {
 	Long supplierPriceChangeRecordId;//主键
     String sopUserNo; //门户编号
+    String supplierNo;//供货商编号
     String skuNo;     //尚品的SKU编号
     String supplierSkuNo;//供货商skuNo
     String marketPrice;//市场价
@@ -26,6 +27,8 @@ public class ProductPriceDTO {
     String marketSeason;
     String currency;
     String memo;
+    Byte priceHandleType;
+    
     @JsonProperty("SupplierPriceChangeRecordId")
     public Long getSupplierPriceChangeRecordId(){
     	return this.supplierPriceChangeRecordId;
@@ -42,6 +45,16 @@ public class ProductPriceDTO {
     @JsonProperty("SopUserNo")
     public void setSopUserNo(String sopUserNo) {
         this.sopUserNo = sopUserNo;
+    }
+
+
+    @JsonProperty("SupplierNo")
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+    @JsonProperty("SupplierNo")
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo;
     }
 
     @JsonProperty("SkuNo")
@@ -127,5 +140,13 @@ public class ProductPriceDTO {
     @JsonProperty("Currency")
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+    
+    public void setPriceHandleType(Byte priceHandleType){
+    	this.priceHandleType = priceHandleType;
+    }
+    
+    public Byte getPriceHandleType(){
+    	return this.priceHandleType;
     }
 }

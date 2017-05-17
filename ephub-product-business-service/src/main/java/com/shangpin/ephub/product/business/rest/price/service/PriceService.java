@@ -67,7 +67,6 @@ public class PriceService {
 			List<HubSupplierSkuDto> hubSkus = supplierProductService.findSupplierSkus(spuDtoSel.getSupplierSpuId());
 			if(CollectionUtils.isNotEmpty(hubSkus)){
 				for(HubSupplierSkuDto skuDto : hubSkus){
-					log.info("【"+supplierSpuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商spu编号："+supplierSpuDto.getSupplierSpuNo()+"】");  
 					newSeasons.put(skuDto.getSupplierSkuNo(), skuDto);
 				}
 			}
@@ -102,6 +101,7 @@ public class PriceService {
 		}
 		if(newSeasons.size() > 0){
 			for(HubSupplierSkuDto skuDto : newSeasons.values()){
+				log.info("【"+supplierSpuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"只有季节发生了变化。 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商spu编号："+supplierSpuDto.getSupplierSpuNo()+"】");
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON_CHANGED);
 			}
 		}
@@ -129,7 +129,7 @@ public class PriceService {
 		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"保存hub_supplier_price_change_record成功 "+supplierPriceChangeRecordId+"】");
 		//发送消息队列
 		ProductPriceDTO productPrice  = new ProductPriceDTO();
-		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,seasonDicDto);
+		convertPriceDtoToProductPriceDTO(supplierNo,skuDto,productPrice,type, seasonDicDto);
 		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
 		log.info("【"+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
 	}
@@ -191,9 +191,12 @@ public class PriceService {
 	 * @param supplierNo 供应商门户编号
 	 * @param supplierSkuDto 供应商原始sku表对象
 	 * @param productPrice 供价记录消息体
+	 * @param type 记录类型
 	 * @param seasonDicDto 尚品季节信息
 	 */
-	public void convertPriceDtoToProductPriceDTO(String supplierNo,HubSupplierSkuDto supplierSkuDto,ProductPriceDTO productPrice,HubSeasonDicDto seasonDicDto){
+	public void convertPriceDtoToProductPriceDTO(String supplierNo,HubSupplierSkuDto supplierSkuDto,ProductPriceDTO productPrice,PriceHandleType type,HubSeasonDicDto seasonDicDto){
+		productPrice.setPriceHandleType(type.getIndex()); 
+		productPrice.setSupplierNo(supplierNo); 
 		productPrice.setSopUserNo(supplierSkuDto.getSupplierId());
 		productPrice.setSkuNo(supplierSkuDto.getSpSkuNo());
 		productPrice.setSupplierSkuNo(supplierSkuDto.getSupplierSkuNo());
