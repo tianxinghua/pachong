@@ -144,7 +144,9 @@ public class SupplierProductPictureService {
 			if (flag == 404 || flag == 400) {
 				return flag;
 			}else if(flag == 301 || flag == 302){
-				
+				log.info("id="+dto.getSpuPendingPicId()+"链接重定向，原始url="+picUrl);
+				String newPicUrl = picUrl.replaceFirst("http", "https");
+				return pullPicAndPushToPicServer(newPicUrl,dto,authenticationInformation);
 			}
 			inputStream = openConnection.getInputStream();
 			byte[] byteArray = IOUtils.toByteArray(inputStream);
