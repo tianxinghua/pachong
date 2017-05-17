@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
+import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.exception.ServiceException;
@@ -23,6 +24,7 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.ColtortiUt
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.Customer;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.OrderJson;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.Product;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.ResponseMessage;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
@@ -74,7 +76,7 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			Map<String,String> param=ColtortiUtil.getCommonParam(0,0);
 			Gson gson = new Gson();
 			OrderJson oj = new OrderJson();
-			oj.setCustomer(new Customer("FilippoTroina", "FilippoTroina", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "CODE ISO: IT"));
+			oj.setCustomer(new Customer("FilippoTroina", "FilippoTroina", "VIAG.LEOPARDI 27，22075 LURATE CACCIVIO (COMO)", "22075", "LURATE CACCIVIO", "COMO", "IT"));
 
 			oj.setOrder_id(orderDTO.getPurchaseNo());
 
@@ -90,7 +92,7 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			products.add(new Product(skuId,"",param2));
 			oj.setProducts(products );
 			json = gson.toJson(oj);
-			orderDTO.setLogContent("推送订单数据为："+json);
+			orderDTO.setLogContent("【oltorti推送订单数据为："+json+"】");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			orderDTO.setLogContent("初始化token");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -102,17 +104,24 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			orderDTO.setLogContent("开始推送订单");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			operateData = coltortiPushOrder("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2), null, jsonValue,param1,"SHANGPIN", "12345678",orderDTO);
-			orderDTO.setLogContent("推送成功："+json+" 推送订单数据为："+json);
+			orderDTO.setLogContent("【coltorti下单返回结果>>>>>>>>>>>"+operateData+"】");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			orderDTO.setSupplierOrderNo(orderDTO.getPurchaseNo());
-			orderDTO.setConfirmTime(new Date());
-			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+			ResponseMessage responseMessage = gson.fromJson(operateData, ResponseMessage.class);
+			if("order has been processed successfully".equals(responseMessage.getMessage())){
+				orderDTO.setSupplierOrderNo(orderDTO.getPurchaseNo());
+				orderDTO.setConfirmTime(new Date());
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+			}else{
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
+				orderDTO.setDescription("coltorti下单失败,返回结果：" + operateData);
+			}
 
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			handleException.handleException(orderDTO,e);
 			String message = e.getMessage();
-			orderDTO.setLogContent("订单失败"+e.getMessage()+" 推送订单数据为："+json);
+			orderDTO.setLogContent("【coltorti推送订单失败，失败原因："+message+" 推送订单数据为："+json+"】");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			if (message.contains("状态码")) {
 				String statusCode = message.split(":")[1];
@@ -174,14 +183,14 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 //		}
 //		orderDTO.setExcState("0");
 //	}
-	public static void main(String[] args) {
-		try {
-			OrderDTO o = new OrderDTO();
-			o.setPurchaseNo("CGDF2016121383811");
-			o.setDetail("162414ABS000029-08QU#1:1");
-			new ColtortiOrderServiceImpl().handleConfirmOrder(o);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			OrderDTO o = new OrderDTO();
+//			o.setPurchaseNo("CGDF201705173433");
+//			o.setDetail("171001LCX000021-848#19:1");
+//			new ColtortiOrderServiceImpl().handleConfirmOrder(o);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 }
