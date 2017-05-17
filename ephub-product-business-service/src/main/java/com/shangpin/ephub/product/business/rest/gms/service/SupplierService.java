@@ -3,18 +3,16 @@ package com.shangpin.ephub.product.business.rest.gms.service;
 import java.util.HashMap;
 import java.util.Map;
 
-
-import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-
 
 import lombok.extern.slf4j.Slf4j;
 /**

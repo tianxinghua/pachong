@@ -121,7 +121,7 @@ public class HubPendingProductController {
 				hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
 				log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
 				try{
-					priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE);	
+					priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.NEW_DEFAULT);
 				}catch(Exception e){
 					log.error("推送价格队列失败",e);
 				}
@@ -129,6 +129,7 @@ public class HubPendingProductController {
 		}
 		
 	}
+	
 	private void getExistSpSkuNo(SpSkuNoDto dto) {
 		if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
             //如果是已存在的错误，调用接口  组装

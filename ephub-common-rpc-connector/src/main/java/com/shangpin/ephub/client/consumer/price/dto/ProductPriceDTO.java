@@ -27,6 +27,8 @@ public class ProductPriceDTO {
     String marketSeason;
     String currency;
     String memo;
+    Byte priceHandleType;
+    
     @JsonProperty("SupplierPriceChangeRecordId")
     public Long getSupplierPriceChangeRecordId(){
     	return this.supplierPriceChangeRecordId;
@@ -138,5 +140,13 @@ public class ProductPriceDTO {
     @JsonProperty("Currency")
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+    
+    public void setPriceHandleType(Byte priceHandleType){
+    	this.priceHandleType = priceHandleType;
+    }
+    
+    public Byte getPriceHandleType(){
+    	return this.priceHandleType;
     }
 }

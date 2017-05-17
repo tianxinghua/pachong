@@ -14,12 +14,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubSupplierColorDicResponseDto {
+public class HubSupplierMaterialDicResponseDto {
 	
-	private Long colorDicItemId;
-	private Long colorDicId;
-	private String supplierColor;
-	private String hubColor;
+	private Long materialMappingId;
+	private String supplierMaterial;
+	private String hubMaterial;
 	private String updateTime;
 	private String createTime;
 	private String updateUser;
