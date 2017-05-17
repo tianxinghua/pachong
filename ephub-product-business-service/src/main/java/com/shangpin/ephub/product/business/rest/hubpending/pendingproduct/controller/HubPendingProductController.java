@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
@@ -30,6 +29,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
@@ -121,7 +121,8 @@ public class HubPendingProductController {
 				hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
 				log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
 				try{
-					priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE);	
+					PriceDto priceDto = convertPriceDto(dto.getSupplierNo(),hubSupplierSpuDto,hubSkuPendingOrigion);
+					priceService.savePriceRecordAndSendConsumer(priceDto);
 				}catch(Exception e){
 					log.error("推送价格队列失败",e);
 				}
@@ -129,6 +130,23 @@ public class HubPendingProductController {
 		}
 		
 	}
+	/**
+	 * 做转换
+	 * @param supplierNo
+	 * @param hubSpu
+	 * @param supplierSku
+	 * @return
+	 */
+	private PriceDto convertPriceDto(String supplierNo, HubSupplierSpuDto hubSpu, HubSupplierSkuDto supplierSku){
+		PriceDto priceDto = new PriceDto();
+		priceDto.setSupplierNo(supplierNo);
+		priceDto.setHubSpu(hubSpu);
+		List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+		hubSkus.add(supplierSku);
+		priceDto.setHubSkus(hubSkus); 
+		return priceDto;
+	}
+	
 	private void getExistSpSkuNo(SpSkuNoDto dto) {
 		if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
             //如果是已存在的错误，调用接口  组装
