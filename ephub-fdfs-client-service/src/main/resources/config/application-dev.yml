@@ -3,7 +3,7 @@ feign.hystrix.enabled: false
 spring: 
   cloud: 
         consul: 
-          host: 192.168.20.235
+          host: 192.168.20.105
           port: 8500
           discovery: 
               prefer-agent-address: true

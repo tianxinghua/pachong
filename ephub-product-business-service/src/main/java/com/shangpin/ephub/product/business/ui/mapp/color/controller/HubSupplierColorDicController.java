@@ -16,16 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
-import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.enumeration.HubColorDic;
 import com.shangpin.ephub.product.business.common.hubDic.color.service.HubColorDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
-import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicRequestDto;
-import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicResponseWithPageDto;
@@ -72,54 +68,59 @@ public class HubSupplierColorDicController {
 			}else if(type==1){
 				total = HubColorDic.getHubColorMap().size();
 			}
-			
-			List<HubColorDicItemDto> list = hubColorDicService.getSupplierColorByType(hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
-			Map<Long,HubColorDicItemDto> map = new HashMap<>();
-			List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
-			if (list != null && list.size() > 0) {
-				for (HubColorDicItemDto dicDto : list) {
-					if(type==0){
-						HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
-						dic.setColorDicId(dicDto.getColorDicId());
-						dic.setColorDicItemId(dicDto.getColorDicItemId());
-						dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
-						dic.setSupplierColor(dicDto.getColorItemName());
-						responseList.add(dic);
-					}
-					if(type==1){
-						if(map.containsKey(dicDto.getColorDicId())){
-							HubColorDicItemDto temp = map.get(dicDto.getColorDicId());
-							temp.setColorItemName(temp.getColorItemName()+","+dicDto.getColorItemName());
-						}else{
-							map.put(dicDto.getColorDicId(), dicDto);
-						}
-					}
-				}
-			}
 			log.info("返回个数："+total);
-			if(type==1){
-				if(map!=null&&map.size()>0){
-					for(Map.Entry<Long,HubColorDicItemDto> entry:map.entrySet()){
-						HubColorDicItemDto dicDto = entry.getValue();
-						HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
-						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
-						if(dicDto.getUpdateTime()!=null){
-							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+			if(total>0){
+				List<HubColorDicItemDto> list = hubColorDicService.getSupplierColorByType(hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
+				Map<Long,HubColorDicItemDto> map = new HashMap<>();
+				List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
+				if (list != null && list.size() > 0) {
+					for (HubColorDicItemDto dicDto : list) {
+						if(type==0){
+							HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
+							dic.setColorDicId(dicDto.getColorDicId());
+							dic.setColorDicItemId(dicDto.getColorDicItemId());
+							dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
+							dic.setSupplierColor(dicDto.getColorItemName());
+							responseList.add(dic);
 						}
-						dic.setColorDicId(dicDto.getColorDicId());
-						dic.setColorDicItemId(dicDto.getColorDicItemId());
-						dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
-						dic.setSupplierColor(dicDto.getColorItemName());
-						dic.setUpdateUser(dicDto.getUpdateUser());
-						responseList.add(dic);
+						if(type==1){
+							if(map.containsKey(dicDto.getColorDicId())){
+								HubColorDicItemDto temp = map.get(dicDto.getColorDicId());
+								temp.setColorItemName(temp.getColorItemName()+","+dicDto.getColorItemName());
+							}else{
+								map.put(dicDto.getColorDicId(), dicDto);
+							}
+						}
 					}
 				}
+				
+				if(type==1){
+					if(map!=null&&map.size()>0){
+						for(Map.Entry<Long,HubColorDicItemDto> entry:map.entrySet()){
+							HubColorDicItemDto dicDto = entry.getValue();
+							HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
+							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+							if(dicDto.getUpdateTime()!=null){
+								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+							}
+							dic.setColorDicId(dicDto.getColorDicId());
+							dic.setColorDicItemId(dicDto.getColorDicItemId());
+							dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
+							dic.setSupplierColor(dicDto.getColorItemName());
+							dic.setUpdateUser(dicDto.getUpdateUser());
+							responseList.add(dic);
+						}
+					}
+				}
+				
+				HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
+				response.setTotal(total);
+				response.setList(responseList);
+				return HubResponse.successResp(response);
 			}
 			
-			HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
-			response.setTotal(total);
-			response.setList(responseList);
-			return HubResponse.successResp(response);
+			return HubResponse.errorResp("获取列表为空");
+			
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
