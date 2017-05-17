@@ -9,17 +9,33 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
  */
 public enum PriceHandleType {
 	/**
-	 * 价格
+	 * 市场价发生变化
 	 */
-	PRICE((byte)1,"价格"),
+	MARKET_PRICE_CHANGED((byte) 1, "market_price_changed"),
 	/**
-	 * 季节
+	 * 供价发生了变化
 	 */
-	SEASON((byte)2,"季节"),
+	SUPPLY_PRICE_CHANGED((byte) 2, "supply_price_changed"),
 	/**
-	 * 价格和季节
+	 * 季节发生了变化
 	 */
-	PRICEANDSEASON((byte)3,"季节和价格");
+	SEASON_CHANGED((byte)3,"season_changed"),
+	/**
+	 * 市场价、供价发生了变化
+	 */
+	MARKET_SUPPLY_CHANGED((byte)12,"market_supply_changed"),
+	/**
+	 * 市场价、季节发生了变化
+	 */
+	MARKET_SEASON_CHANGED((byte)13,"market_season_changed"),
+	/**
+	 * 供价、季节发生了变化
+	 */
+	SUPPLY_SEASON_CHANGED((byte)23,"supply_season_changed"),
+	/**
+	 * 市场价、供价、季节都发生了变化
+	 */
+	MARKET_SUPPLY_SEASON_CHANGED((byte)123,"market_supply_season_changed");
 
 	/**
      * 数字索引标识
