@@ -30,6 +30,8 @@ public class SupplierProperties {
 	
 	private Brunarosso brunarosso;
 	
+	private Zitafabiani zitafabiani;
+	
 	private Coltorti coltorti;
 	
 	private Creative99 creative99;

@@ -12,7 +12,7 @@ spring:
            virtual-host: /scm-message-service
   cloud: 
         consul: 
-          host: 192.168.20.235
+          host: 192.168.20.105
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -76,4 +76,7 @@ shangpin:
                       password: Atelier2015
                   2016012101751:                                     
                       username: shangpin
-                      password: Atelier2015                    
+                      password: Atelier2015  
+                  2015112001671: 
+                      username: mosuftp
+                      password: inter2015£                  

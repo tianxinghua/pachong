@@ -122,6 +122,18 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
+          zitafabiani:
+                  url: http://87.25.100.1:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: Shangpin
+                  password: Shang1004
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: 641bd1f4f41047e49789bbf0f33fb8c7
+                  openApiSecret: 87cdf3ad12474b3ea992bebf27440599
           coltorti:
                   userName: SHANGPIN
                   password: 12345678
@@ -226,7 +238,7 @@ shangpin:
                   openApiKey: bbe7f9392d9148f697241b82e6e1f394
                   openApiSecret: 932aafdc45ad477f9d20b0ebb9a22f2a
           leam:
-                  url: http://62.101.102.194:1080/ws_sito_p15/ws_sito_p15.asmx/
+                  url: http://31.27.194.207:1080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -438,8 +450,8 @@ shangpin:
                   password: shang2004
                   messageType: text/html;charset=utf-8
                   isPurchaseExp:
-                  openApiKey: 
-                  openApiSecret: 
+                  openApiKey: 0173a41214d345dd88f78a9d3e82837b
+                  openApiSecret: 8468cca27d904e929c5330d7f57d6d30 
           supplier:
                   delayTime: 1000
                   retry: 120

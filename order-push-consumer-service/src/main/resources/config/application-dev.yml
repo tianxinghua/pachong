@@ -414,8 +414,8 @@ shangpin:
               password: shang2004
               messageType: text/html;charset=utf-8
               isPurchaseExp:
-              openApiKey: 
-              openApiSecret: 
+              openApiKey: 0173a41214d345dd88f78a9d3e82837b
+              openApiSecret: 8468cca27d904e929c5330d7f57d6d30
       supplier:
               delayTime: 1000
               retry: 120
