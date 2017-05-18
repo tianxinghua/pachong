@@ -3,6 +3,7 @@ package com.shangpin.ep.order.module.orderapiservice.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,9 @@ public class StefaniaService implements IOrderService {
     HubSkuMapper skuDAO;
     @Autowired
     OpenApiService openApiService;
+
+    @Autowired
+	PriceService priceService;
     
     /**
      * 推送订单
@@ -87,7 +91,8 @@ public class StefaniaService implements IOrderService {
 			detail.setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
 			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1])));
 
-			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
 			orderDTO.setPurchasePriceDetail(price.toString());
 //			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));

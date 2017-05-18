@@ -15,6 +15,7 @@ import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.order.bean.ReturnOrderDTO;
 import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
 import com.shangpin.ep.order.module.order.service.impl.OrderCommonUtil;
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
@@ -54,7 +55,11 @@ public class EfashionOrderImpl  implements IOrderService {
     @Autowired
     HandleException handleException;  
     @Autowired
-    OpenApiService openApiService;  
+    OpenApiService openApiService;
+
+    @Autowired
+	PriceService priceService;
+
     private  String cancelUrl;
     private  String placeUrl;
     private  String appKey;
@@ -253,6 +258,7 @@ public class EfashionOrderImpl  implements IOrderService {
 			}else{
 				try{
 					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 					String price = priceInt.divide(new BigDecimal(1.05), 2)
 							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 					orderDTO.setPurchasePriceDetail(price);

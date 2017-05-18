@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,7 +53,8 @@ public class LungolivignoOrderService implements IOrderService{
     HandleException handleException;
     @Autowired
     OpenApiService openApiService;  
-    
+    @Autowired
+	PriceService priceService;
     
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*2, 1000*60 * 2, 1000*60 * 2);	
 	    
@@ -233,6 +235,7 @@ public class LungolivignoOrderService implements IOrderService{
 		String openApiKey =  supplierProperties.getLungolivigno().getOpenApiKey();
 		String openApiSecret = supplierProperties.getLungolivigno().getOpenApiSecret();
 		BigDecimal priceInt = openApiService.getPurchasePrice(openApiKey, openApiSecret, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//		BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 		String price = priceInt.divide(new BigDecimal(1.05), 2)
 				.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 		return price;

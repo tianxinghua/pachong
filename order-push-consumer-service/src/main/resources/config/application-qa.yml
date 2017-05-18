@@ -64,6 +64,9 @@ shangpin:
       findporder: /purchase/findporder
       cancelpurchase: /purchase/cancelpurchase
       supplyfindinfo: /supply/findinfo
+      pricehost: http://qa.sopoutapi.shangpin.com
+      findsupplyprice: /Product/FindSupplyInfo
+
     Supplier: #以下配置为各个供货商的配置
       lungolivigno:
               url_login: http://lungolivigno.vdr-s.com/BSWebApi20/api/User/Login

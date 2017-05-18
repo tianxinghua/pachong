@@ -39,4 +39,15 @@ public class OpenApi {
 	 */
 	private String supplyfindinfo;
 
+	/**
+	 * 价格查询host
+	 */
+	private String pricehost;
+
+
+	/**
+	 * 新供货价格查询
+	 */
+	private String findsupplyprice;
+
 }
