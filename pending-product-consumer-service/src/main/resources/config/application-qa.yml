@@ -18,16 +18,7 @@ spring:
             register-health-check: false
         stream: 
               bindings:
-                        supplierSkuSelectedProducer:
-                             destination: supplier.sku.selected
-                             content-type: application/json
-                        supplierSkuSelectedConsumer:
-                              destination: supplier.sku.selected
-                              group: one
-                              consumer:
-                                       concurrency: 5
-                                       maxAttempts: 1
-                        spinnakerPendingProduct: 
+                        spinnakerPendingProduct:
                               destination: spinnaker.pending.product
                               group: one
                               consumer: 
@@ -406,7 +397,7 @@ spring:
                                        concurrency: 5
                                        maxAttempts: 1                                                                                                                                                                                                                                                                                                          
               rabbit: 
-                      bindings: 
+                      bindings:
                             spinnakerPendingProduct: 
                                   consumer: 
                                        prefix: HA.

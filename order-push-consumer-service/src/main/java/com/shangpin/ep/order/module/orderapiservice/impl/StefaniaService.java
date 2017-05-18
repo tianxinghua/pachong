@@ -1,5 +1,11 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
@@ -15,13 +21,6 @@ import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.ArrayOfOrderDetail;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.CreateOrder;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.CreateOrderResponse;
 import com.shangpin.ep.order.util.axis.Orders_v1_0Stub.OrderDetail;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by lubaijiang
@@ -74,10 +73,10 @@ public class StefaniaService implements IOrderService {
 //			System.setProperty("javax.net.ssl.trustStore", supplierProperties.getStefania().getJssecacerts()+ File.separator+"jssecacerts");
 			
 			CreateOrder createOrder = new CreateOrder();
-//			createOrder.setAuthKey("270Api002#3gU8zXs");
-//			createOrder.setChannel("SHANGPIN");
-			createOrder.setAuthKey(supplierProperties.getStefania().getAuthKey());
-			createOrder.setChannel(supplierProperties.getStefania().getChannel());
+			createOrder.setAuthKey("270Api002#3gU8zXs");
+			createOrder.setChannel("SHANGPIN");
+//			createOrder.setAuthKey(supplierProperties.getStefania().getAuthKey());
+//			createOrder.setChannel(supplierProperties.getStefania().getChannel());
 			createOrder.setCustomerID("");
 			createOrder.setDestCustID("");
 			createOrder.setDestinationID(""); 
@@ -88,11 +87,11 @@ public class StefaniaService implements IOrderService {
 			detail.setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
 			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1])));
 
-			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
-			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
-			orderDTO.setPurchasePriceDetail(price.toString());
-//			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
-			detail.setPRICE(price);
+//			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
+//			orderDTO.setPurchasePriceDetail(price.toString());
+			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
+//			detail.setPRICE(price);
 			orderDetail[0] = detail;
 			arrayOfOrderDetail.setOrderDetail(orderDetail); 
 			createOrder.setOrderDetailsList(arrayOfOrderDetail);
@@ -128,6 +127,7 @@ public class StefaniaService implements IOrderService {
 			
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
 			handleException.handleException(orderDTO,e);
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -153,9 +153,9 @@ public class StefaniaService implements IOrderService {
 		StefaniaService orderService = new StefaniaService();
 		OrderDTO orderDTO = new OrderDTO();
 		//CGD2016082400193 
-		orderDTO.setPurchaseNo("CGDF2017010829445");
-		orderDTO.setDetail("LW0S0A04#VNW#N91######35:1,");
-		orderDTO.setPurchasePriceDetail("242.21");
+		orderDTO.setPurchaseNo("CGDF2017051872758");
+		orderDTO.setDetail("Y1H177#YBT1A#80009######OS:1,");
+		orderDTO.setPurchasePriceDetail("568.03");
 		orderService.handleConfirmOrder(orderDTO); 
 	}
 

@@ -71,7 +71,7 @@ public class OpticalHandler implements ISupplierHandler {
 	private List<Image> converImage(List<String> item){
 		List<Image> images = new ArrayList<Image>();
 		String url ="";
-		for(int i=13;i<=17;i++){
+		for(int i=11;i<=17;i++){
 			if(item.size()==i){
 				break;
 			}

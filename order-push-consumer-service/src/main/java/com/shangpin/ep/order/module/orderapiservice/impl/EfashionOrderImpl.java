@@ -1,6 +1,7 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.esotericsoftware.minlog.Log;
 import com.google.gson.Gson;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.shangpin.ep.order.common.HandleException;
@@ -148,8 +149,9 @@ public class EfashionOrderImpl  implements IOrderService {
 		}catch(Exception e){
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			handleException.handleException(orderDTO,e);
-			orderDTO.setLogContent("推送订单异常==== "+e.getMessage());
+			orderDTO.setLogContent("推送订单异常="+e.getMessage()+",推送的参数="+json);
 			orderDTO.setDescription(orderDTO.getLogContent());
+			orderDTO.setErrorType(ErrorStatus.API_ERROR);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
 		
@@ -249,11 +251,16 @@ public class EfashionOrderImpl  implements IOrderService {
 			if(flag){
 				item.setPurchase_price("1");
 			}else{
-				BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
-				String price = priceInt.divide(new BigDecimal(1.05), 2)
-						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-				orderDTO.setPurchasePriceDetail(price);
-				item.setPurchase_price(price);
+				try{
+					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+					String price = priceInt.divide(new BigDecimal(1.05), 2)
+							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+					orderDTO.setPurchasePriceDetail(price);
+					item.setPurchase_price(price);
+				}catch(Exception e){
+					Log.info(orderDTO.getPurchaseNo()+"geb获取采购价失败");
+					item.setPurchase_price("1");
+				}
 			}
 			Item[] i = { item };
 			obj.setItems(i);
@@ -316,14 +323,14 @@ public class EfashionOrderImpl  implements IOrderService {
 	public static void main(String[] args) {
 		EfashionOrderImpl ompl = new EfashionOrderImpl();
 //		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
-		String d = "57fdf307b55c3db5aa5986aa-39:1";
+		String d = "5908a9bafd7955c0bff4afdd-XXL:1";
 //		orderDTO.setDetail(d);
 //		orderDTO.setSpOrderId("201609134249189");
 //		orderDTO.setCreateTime(new Date());
 		
 		OrderDTO orderDTO1 = new OrderDTO();
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201701085193725");
+		orderDTO1.setSpOrderId("201705175613397");
 		orderDTO1.setCreateTime(new Date());
 		orderDTO1.setPurchasePriceDetail("110.45");
 		

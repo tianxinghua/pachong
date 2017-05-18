@@ -54,13 +54,13 @@ spring:
                         lamborghiniPendingProduct: 
                               destination: lamborghini.pending.product
                               group: one
-                              consumer: 
+                              consumer:
                                        concurrency: 1
                                        maxAttempts: 1
-                        palomaPendingProduct: 
+                        palomaPendingProduct:
                               destination: paloma.pending.product
                               group: one
-                              consumer: 
+                              consumer:
                                        concurrency: 1
                                        maxAttempts: 1
                         coltortiPendingProduct: 

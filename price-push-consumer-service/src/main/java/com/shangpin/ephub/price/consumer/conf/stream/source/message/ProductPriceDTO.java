@@ -15,6 +15,7 @@ import lombok.*;
 public class ProductPriceDTO {
     Long  supplierPriceChangeRecordId;
     String sopUserNo; //门户编号
+    String supplierNo;//供货商编号
     String skuNo;     //尚品的SKU编号
     String supplierSkuNo;//供货商skuNo
     String marketPrice;//市场价
@@ -32,6 +33,14 @@ public class ProductPriceDTO {
     @JsonProperty("SupplierPriceChangeRecordId")
     public void setSupplierPriceChangeRecordId(Long supplierPriceChangeRecordId){
         this.supplierPriceChangeRecordId = supplierPriceChangeRecordId;
+    }
+    @JsonProperty("SupplierNo")
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+    @JsonProperty("SupplierNo")
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo;
     }
 
     @JsonProperty("SopUserNo")
