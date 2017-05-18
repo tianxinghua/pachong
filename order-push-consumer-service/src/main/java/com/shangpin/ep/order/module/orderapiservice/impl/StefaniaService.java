@@ -102,6 +102,8 @@ public class StefaniaService implements IOrderService {
 
 //			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+			orderDTO.setLogContent("【stefania在推送订单时获取采购价："+priceInt.toString()+"】"); 
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
 			orderDTO.setPurchasePriceDetail(price.toString());
 //			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
