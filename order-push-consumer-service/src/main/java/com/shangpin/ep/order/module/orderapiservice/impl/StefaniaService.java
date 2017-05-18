@@ -127,6 +127,7 @@ public class StefaniaService implements IOrderService {
 			
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
 			handleException.handleException(orderDTO,e);
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
