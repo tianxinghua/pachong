@@ -186,7 +186,7 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 //	public static void main(String[] args) {
 //		try {
 //			OrderDTO o = new OrderDTO();
-//			o.setPurchaseNo("CGDF201705173433");
+//			o.setPurchaseNo("CGDF201705171901");
 //			o.setDetail("171001LCX000021-848#19:1");
 //			new ColtortiOrderServiceImpl().handleConfirmOrder(o);
 //		} catch (Exception e) {
