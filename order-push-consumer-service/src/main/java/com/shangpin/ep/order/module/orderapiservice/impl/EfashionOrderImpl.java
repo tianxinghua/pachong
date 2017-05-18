@@ -1,26 +1,17 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.esotericsoftware.minlog.Log;
-import com.google.gson.Gson;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.shangpin.ep.order.common.HandleException;
-import com.shangpin.ep.order.common.LogCommon;
-import com.shangpin.ep.order.conf.supplier.SupplierProperties;
-import com.shangpin.ep.order.enumeration.ErrorStatus;
-import com.shangpin.ep.order.enumeration.LogTypeStatus;
-import com.shangpin.ep.order.enumeration.OrderStatus;
-import com.shangpin.ep.order.enumeration.PushStatus;
-import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.module.order.bean.ReturnOrderDTO;
-import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
-import com.shangpin.ep.order.module.order.service.impl.OrderCommonUtil;
-import com.shangpin.ep.order.module.order.service.impl.PriceService;
-import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -35,13 +26,22 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.shangpin.ep.order.common.HandleException;
+import com.shangpin.ep.order.common.LogCommon;
+import com.shangpin.ep.order.conf.supplier.SupplierProperties;
+import com.shangpin.ep.order.enumeration.ErrorStatus;
+import com.shangpin.ep.order.enumeration.LogTypeStatus;
+import com.shangpin.ep.order.enumeration.PushStatus;
+import com.shangpin.ep.order.module.order.bean.OrderDTO;
+import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
+import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
 
 @Component
 public class EfashionOrderImpl  implements IOrderService {
@@ -91,8 +91,9 @@ public class EfashionOrderImpl  implements IOrderService {
 	@Override
 	public void handleConfirmOrder(final OrderDTO orderDTO) {
 
-		String json = getJsonData(orderDTO,false);
+		String json = null;
 		try{
+			json = getJsonData(orderDTO,false);
 			String rtnData= null;
 			rtnData = efashionPushOrder(orderDTO,placeUrl,json);
 //			rtnData = efashionPushOrder(orderDTO,"http://geb-production.edstema.it/api/v3.0/place/order.json?storeCode=DW3LT",json);
@@ -227,10 +228,10 @@ public class EfashionOrderImpl  implements IOrderService {
 		}
 	}
 
-	private String getJsonData(OrderDTO orderDTO, boolean flag) {
+	private String getJsonData(OrderDTO orderDTO, boolean flag) throws Exception{
 
 		Object array = null;
-		try {
+//		try {
 			RequestObject obj = new RequestObject();
 			obj.setOrder_number(orderDTO.getSpOrderId());
 			obj.setItems_count("1");
@@ -256,25 +257,25 @@ public class EfashionOrderImpl  implements IOrderService {
 			if(flag){
 				item.setPurchase_price("1");
 			}else{
-				try{
+//				try{
 					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 //					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 					String price = priceInt.divide(new BigDecimal(1.05), 2)
 							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 					orderDTO.setPurchasePriceDetail(price);
 					item.setPurchase_price(price);
-				}catch(Exception e){
-					Log.info(orderDTO.getPurchaseNo()+"geb获取采购价失败");
-					item.setPurchase_price("1");
-				}
+//				}catch(Exception e){
+//					Log.info(orderDTO.getPurchaseNo()+"geb获取采购价失败");
+//					item.setPurchase_price("1");
+//				}
 			}
 			Item[] i = { item };
 			obj.setItems(i);
 			
 			array = JSONObject.toJSON(obj);
-		} catch (Exception ex) {
-
-		}
+//		} catch (Exception ex) {
+//
+//		}
 		if (array != null) {
 			return array.toString();
 		} else {
