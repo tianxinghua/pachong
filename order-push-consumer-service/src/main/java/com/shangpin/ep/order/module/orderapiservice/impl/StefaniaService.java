@@ -63,6 +63,15 @@ public class StefaniaService implements IOrderService {
 	
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
+	
+		try {
+			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+			orderDTO.setLogContent("【stefania在创建订单时获取采购价："+priceInt.toString()+"】"); 
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		orderDTO.setLockStockTime(new Date());
 		orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
 		orderDTO.setLogContent("------锁库结束-------");
