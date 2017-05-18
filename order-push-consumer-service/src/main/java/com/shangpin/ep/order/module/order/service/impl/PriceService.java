@@ -25,8 +25,7 @@ import java.math.BigDecimal;
 @Component
 public class PriceService {
 
-    @Autowired
-    RestTemplate restTemplate;
+
 
     @Autowired
     OpenApiProperties openApiProperties;
@@ -44,7 +43,7 @@ public class PriceService {
     public BigDecimal getPurchasePrice(String supplierId,String purchaseNo,  String skuNo)  throws Exception{
         String request = "",url="";
         request = "{\"OrderTime\":\"\",\"SkuNo\":\"" + skuNo +"\",\"SupplierId\":\""+supplierId+"\"}";
-        url= openApiProperties.getOpenApi().getSupplyfindinfo();
+        url= "http://qa.sopoutapi.shangpin.com/Product/FindSupplyInfo";//openApiProperties.getOpenApi().getSupplyfindinfo();
 
         String result = this.getSupplyPrice(url,request);
         String purchasePrice = "10";  //默认给个值
@@ -53,9 +52,9 @@ public class PriceService {
         //获取采购单明细
         if(result!=null){
             JSONObject json = JSONObject.parseObject(result);
-            if("0".equals(json.getString("responseCode"))){
+            if((boolean)json.get("IsSuccess")){
 
-                JSONArray arr = json.getJSONArray("response");
+                JSONArray arr = json.getJSONArray("ResDatas");
                 if(null!=arr&&arr.size()>0){
                     for(int i=0;i<arr.size();i++){
                         priceStatus  = arr.getJSONObject(i).getIntValue("PriceStatus");
@@ -89,4 +88,13 @@ public class PriceService {
         return "";
     }
 
+
+    public static void main(String[] args){
+        PriceService priceService = new PriceService();
+        try {
+            priceService.getPurchasePrice("2017031001865","","30670513001");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
