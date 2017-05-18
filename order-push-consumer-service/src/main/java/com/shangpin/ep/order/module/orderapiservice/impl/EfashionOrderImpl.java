@@ -258,8 +258,8 @@ public class EfashionOrderImpl  implements IOrderService {
 				item.setPurchase_price("1");
 			}else{
 //				try{
-					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
-//					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+//					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 					String price = priceInt.divide(new BigDecimal(1.05), 2)
 							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 					orderDTO.setPurchasePriceDetail(price);
