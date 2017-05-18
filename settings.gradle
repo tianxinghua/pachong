@@ -15,6 +15,10 @@ include 'openapi-ice'
 
 include 'studio69'
 include 'Atelier-stock-template'
+include 'coltorti'
+include 'justFashion-order'
+include 'coltorti-purchase'
+include 'stockMonti'
 
 
 

@@ -10,15 +10,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,15 +30,13 @@ import ShangPin.SOP.Entity.Api.Product.SopSkuIce;
 import ShangPin.SOP.Servant.OpenApiServantPrx;
 
 import com.shangpin.ice.ice.IcePrxHelper;
+import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.SendMail;
 import com.shangpin.iog.dto.StockUpdateDTO;
 import com.shangpin.iog.dto.SupplierDTO;
 import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.service.SkuPriceService;
 import com.shangpin.iog.service.UpdateStockService;
-
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 
 @Component("stockMontiService")
@@ -54,7 +52,10 @@ public class StockMontiService {
 	private static String fromUserPassword = null;
 	private static String to = null;
 	private static String hours = null;
-	private static String messageType = null;
+//	private static String messageType = null;
+	private static String not_clean_time_start = null;
+	private static String not_clean_time_end = null;
+	private static String clean_suppliers = null;
 
     static {
         if(null==bdl)
@@ -66,13 +67,20 @@ public class StockMontiService {
 		fromUserPassword = bdl.getString("fromUserPassword");
 		to = bdl.getString("to");
 		hours = bdl.getString("hours");
-		messageType = bdl.getString("messageType");
+//		messageType = bdl.getString("messageType");
         try {
 			servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);
 		} catch (Exception e) {
 			logger.error("ICE 代理失败");
 		}
+        
+        not_clean_time_start = bdl.getString("not_clean_time_start");
+        not_clean_time_end = bdl.getString("not_clean_time_end");
+        clean_suppliers = bdl.getString("clean_suppliers");
     }
+    
+    private static String pattern = "yyyy-MM-dd HH:mm:ss";
+    
     ExecutorService exe = new ThreadPoolExecutor(10, Integer.MAX_VALUE, 500, TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
 	@Autowired
 	SkuPriceService skuPriceService;
@@ -83,36 +91,27 @@ public class StockMontiService {
 		
 		List<StockUpdateDTO> list = null;
 		try {
-			
+			long nowTime = new Date().getTime();
 			StringBuffer messageText = new StringBuffer();
 			List<StockUpdateDTO> toUpdateSuppliers = new ArrayList<StockUpdateDTO>();//待更新的供应商，也就是超时的供应商
-			
 			list = updateStockService.getAll();
 			for(StockUpdateDTO stockUpdateDTO:list){
-				if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
-					if(stockUpdateDTO.getSupplierId().equals(supplierId)){
-						continue;
+				if(StringUtils.isNotBlank(not_clean_time_start) && StringUtils.isNotBlank(not_clean_time_end)){
+					long startDate = DateTimeUtil.convertFormat(not_clean_time_start, pattern).getTime();
+					long endDate = DateTimeUtil.convertFormat(not_clean_time_end, pattern).getTime();
+					if(startDate <= nowTime &&  nowTime <= endDate){
+						Map<String,String> cleanMaps = getCleanSuppliers();
+						if(cleanMaps.containsKey(stockUpdateDTO.getSupplierId())){
+							logger.info("【供应商"+stockUpdateDTO.getSupplierId()+"在"+not_clean_time_start+"到"+not_clean_time_end+"之间正常检测更新状态，超时会清零】"); 
+							findSupplierToUpdate(messageText, toUpdateSuppliers,stockUpdateDTO);
+						}else{
+							logger.info("【供应商"+stockUpdateDTO.getSupplierId()+"在"+not_clean_time_start+"到"+not_clean_time_end+"之间不检测更新状态，不清零】"); 
+						}
+					}else{
+						findSupplierToUpdate(messageText, toUpdateSuppliers,stockUpdateDTO);
 					}
-					
-					if("1".equals(stockUpdateDTO.getStatus())){						
-						long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
-			    		long hour = diff / (1000 * 60 * 60);
-			    		long maxHousr = Long.parseLong(hours);
-			    		logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
-			    		
-			    		if(hour >= maxHousr){
-			    			//将超时的供应商添加到待更新列表中
-			    			toUpdateSuppliers.add(stockUpdateDTO);
-			    			String supplierName = "";
-			    			try {
-			    				SupplierDTO supplier = supplierDAO.findBysupplierId(stockUpdateDTO.getSupplierId());
-			    				supplierName = supplier.getSupplierName();
-			    			} catch (Exception e) {
-							}
-			    			messageText.append("供应商"+supplierName+" 门户编号："+stockUpdateDTO.getSupplierId()+"，即将所有库存更新为0，库存已超过"+hour+"小时。").append("<br>");
-			    		}
-					}
-					
+				}else{
+					findSupplierToUpdate(messageText, toUpdateSuppliers,stockUpdateDTO);
 				}
 			}
 			
@@ -135,6 +134,61 @@ public class StockMontiService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	/**
+	 * 配置的需要清理的供应商
+	 * @return
+	 */
+	private Map<String,String> getCleanSuppliers(){
+		Map<String,String> cleanMaps = new HashMap<String,String>();
+		if(StringUtils.isNotBlank(clean_suppliers)){
+			String[] cleanSuppliers = clean_suppliers.split(",");
+			for(String cleanSupplier : cleanSuppliers){
+				cleanMaps.put(cleanSupplier, null);
+			}
+		}
+		return cleanMaps;
+	}
+
+	/**
+	 * 查找需要将库存更新为0的供应商
+	 * @param messageText
+	 * @param toUpdateSuppliers
+	 * @param stockUpdateDTO
+	 */
+	private void findSupplierToUpdate(StringBuffer messageText,	List<StockUpdateDTO> toUpdateSuppliers,	StockUpdateDTO stockUpdateDTO) {
+		if(null !=stockUpdateDTO && null !=stockUpdateDTO.getUpdateTime()){
+			if(stockUpdateDTO.getSupplierId().equals(supplierId)){
+				return;
+			}
+			if("1".equals(stockUpdateDTO.getStatus())){						
+				long diff = new Date().getTime()-stockUpdateDTO.getUpdateTime().getTime();
+				long hour = diff / (1000 * 60 * 60);
+				long maxHousr = Long.parseLong(hours);
+				logger.info("供应商："+stockUpdateDTO.getSupplierId()+"未更新时间："+hour);
+				if(hour >= maxHousr){
+					//将超时的供应商添加到待更新列表中
+					toUpdateSuppliers.add(stockUpdateDTO);
+					String supplierName = getSupplierName(stockUpdateDTO);
+					messageText.append("供应商"+supplierName+" 门户编号："+stockUpdateDTO.getSupplierId()+"，即将所有库存更新为0，库存已超过"+hour+"小时。").append("<br>");
+				}
+			}
+			
+		}
+	}
+	/**
+	 * 查找供应商名称
+	 * @param stockUpdateDTO
+	 * @return
+	 */
+	private String getSupplierName(StockUpdateDTO stockUpdateDTO) {
+		String supplierName = "";
+		try {
+			SupplierDTO supplier = supplierDAO.findBysupplierId(stockUpdateDTO.getSupplierId());
+			supplierName = supplier.getSupplierName();
+		} catch (Exception e) {
+		}
+		return supplierName;
 	}
 	
 	class UpdateThread extends Thread{
@@ -215,15 +269,12 @@ public class StockMontiService {
 		boolean hasNext=true;
 		Set<String> skuIds = new HashSet<String>();
 
-		Date date  = new Date();
 		while(hasNext){
-			long startDate = System.currentTimeMillis();
 			SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
 			List<SopProductSkuIce> skus = null;
 
 			//如果异常次数超过5次就跳出
 			for(int i=0;i<5;i++){
-				startDate = System.currentTimeMillis();
 				try {
 					SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
 					skus = products.SopProductSkuIces;
@@ -258,5 +309,4 @@ public class StockMontiService {
 
 		return skuIds;
 	}
-	
 }

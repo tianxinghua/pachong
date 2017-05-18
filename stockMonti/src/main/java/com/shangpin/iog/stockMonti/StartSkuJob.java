@@ -32,8 +32,9 @@ public class StartSkuJob {
             System.out.println("-------fetch end---------");
 		} catch (Exception e) {
 			log.info(e.toString()); 
+		}finally{
+			System.exit(0);
 		}
-        System.exit(0);
     }
     
 }
