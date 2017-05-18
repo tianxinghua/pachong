@@ -6,6 +6,7 @@ import com.shangpin.commons.redis.IShangpinRedis;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
@@ -76,6 +77,7 @@ public class SupplierPriceService {
                 String supplierType = supplierMessageDTO.getQuoteMode();;
                 log.info("supplier type ="+ supplierType);
                 if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
+
                     Map<String,String> supplierMap = this.getValidSupplier();
                     if(supplierMap.containsKey(productPriceDTO.getSopUserNo())){
                         //重新计算价格
@@ -200,6 +202,25 @@ public class SupplierPriceService {
             }
         }
         return supplierMap;
+    }
+
+    private boolean isNeedPushForMarketPrice(ProductPriceDTO productPriceDTO){
+        if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+            return  true;
+        }else{
+            return false;
+        }
+
+    }
+
+
+    private boolean isNeedPushForSupplyPrice(ProductPriceDTO productPriceDTO){
+        if(PriceHandleType.MARKET_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+            return  true;
+        }else{
+            return false;
+        }
     }
 
 }

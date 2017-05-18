@@ -23,6 +23,7 @@ public class ProductPriceDTO {
     String createUserName;
     String marketYear;
     String marketSeason;
+    Integer   priceHandleType;
     String currency;
     String memo;
 
@@ -135,5 +136,13 @@ public class ProductPriceDTO {
     @JsonProperty("Currency")
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Integer getPriceHandleType() {
+        return priceHandleType;
+    }
+
+    public void setPriceHandleType(Integer priceHandleType) {
+        this.priceHandleType = priceHandleType;
     }
 }
