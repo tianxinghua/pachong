@@ -234,8 +234,10 @@ public class LungolivignoOrderService implements IOrderService{
 	private String getpriceDetail(OrderDTO orderDTO) throws Exception{
 		String openApiKey =  supplierProperties.getLungolivigno().getOpenApiKey();
 		String openApiSecret = supplierProperties.getLungolivigno().getOpenApiSecret();
-		BigDecimal priceInt = openApiService.getPurchasePrice(openApiKey, openApiSecret, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
-//		BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+//		BigDecimal priceInt = openApiService.getPurchasePrice(openApiKey, openApiSecret, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+		BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+		orderDTO.setLogContent("【lungolivigno在推送订单时获取采购价："+priceInt.toString()+"】"); 
+		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		String price = priceInt.divide(new BigDecimal(1.05), 2)
 				.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 		return price;

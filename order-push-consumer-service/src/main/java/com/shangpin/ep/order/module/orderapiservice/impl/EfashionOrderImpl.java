@@ -260,6 +260,8 @@ public class EfashionOrderImpl  implements IOrderService {
 //				try{
 //					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+					orderDTO.setLogContent("【geb在推送订单时获取采购价："+priceInt.toString()+"】"); 
+					logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 					String price = priceInt.divide(new BigDecimal(1.05), 2)
 							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 					orderDTO.setPurchasePriceDetail(price);
