@@ -33,6 +33,7 @@ public class SopSkuService {
 	        ResponseEntity<HubResponseDto<SopSkuDto>> entity = restTemplate.exchange(apiAddressProperties.getSopSkuListBySupplierSkuNoUrl(), HttpMethod.POST,
 	                requestEntity, new ParameterizedTypeReference<HubResponseDto<SopSkuDto>>() {
 	                });
+	        log.info(" entity.getBody返回结果：{}", entity.getBody());
 	        return entity.getBody();
 	    }
 }
