@@ -1,16 +1,15 @@
 package com.shangpin.asynchronous.task.consumer.service.pending;
 
-import com.esotericsoftware.minlog.Log;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.asynchronous.task.consumer.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiSkuOrgDom;
-import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
-import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
@@ -21,21 +20,8 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/5/4.
