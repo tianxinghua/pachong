@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
 import com.shangpin.ephub.client.product.business.gms.result.BrandDom;
 import com.shangpin.ephub.client.product.business.gms.result.CategoryScreenSizeDom;
 import com.shangpin.ephub.client.product.business.gms.result.FourLevelCategory;
+import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 
 /**

@@ -120,6 +120,7 @@ public class HubSupplierSeasonDicController {
 			BeanUtils.copyProperties(hubSupplierSeasonDicRequestDto, dicDto);
 			dicDto.setUpdateTime(new Date());
 			dicDto.setPushState((byte)1);
+			dicDto.setMemo(String.valueOf(hubSupplierSeasonDicRequestDto.getFilterFlag()));
 			hubSeasonDicService.updateHubSeasonDicById(dicDto);
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
@@ -172,8 +173,8 @@ public class HubSupplierSeasonDicController {
 				if(supplierDto!=null){
 					dicDto.setSupplierid(supplierDto.getSopUserNo());
 				}	
-				
 			}
+			dicDto.setMemo(String.valueOf(hubSupplierSeasonDicRequestDto.getFilterFlag()));
 			dicDto.setPushState((byte)1);
 			//待处理保存更新
 			hubSeasonDicService.saveHubSeason(dicDto);

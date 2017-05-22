@@ -5,6 +5,8 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -31,6 +33,8 @@ public class SopSkuDto implements Serializable {
     private String  sopSkuNo;
     @JsonIgnore
     private String  sopProductNo;
+    @JsonIgnore
+    private String  barCode;
 
     @JsonProperty("SkuNo")
     public String getSkuNo() {
@@ -40,6 +44,17 @@ public class SopSkuDto implements Serializable {
     public void setSkuNo(String skuNo) {
         this.skuNo = skuNo;
     }
+    
+    @JsonProperty("BarCode")
+    public String getBarCode() {
+        return barCode;
+    }
+    @JsonProperty("BarCode")
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+    
+    
     @JsonProperty("ProductNo")
     public String getProductNo() {
         return productNo;

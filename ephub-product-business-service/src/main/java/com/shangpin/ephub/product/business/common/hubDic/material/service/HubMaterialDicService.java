@@ -54,12 +54,10 @@ public class HubMaterialDicService {
 		if(type!=null){
 			criteria.createCriteria().andMappingLevelEqualTo(type);
 			if(type==0){
-				criteria.or().andMappingLevelIsNull();
+				criteria.or(criteria.createCriteria().andMappingLevelIsNull());
 			}
 		}
-		
-		hubMaterialMappingGateWay.countByCriteria(criteria);
-		return 0;
+		return hubMaterialMappingGateWay.countByCriteria(criteria);
 	}
 	public List<HubMaterialMappingDto> getSupplierMaterialByType(int pageNo, int pageSize, Byte type,
 			String supplierMaterial, String hubMaterial) {
@@ -73,24 +71,24 @@ public class HubMaterialDicService {
 		if(type!=null){
 			criteria.createCriteria().andMappingLevelEqualTo(type);
 			if(type==0){
-				criteria.or().andMappingLevelIsNull();
+				criteria.or(criteria.createCriteria().andMappingLevelIsNull());
 			}
 		}
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
 		return hubMaterialMappingGateWay.selectByCriteria(criteria);
 	}
-	public int countHubMaterialDicByHubMaterialId(Long materialMappingId) {
+	public int countHubMaterialDicByHubMaterialId(String materialMappingId) {
 		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
-		criteria.createCriteria().andMaterialMappingIdEqualTo(materialMappingId);
+		criteria.createCriteria().andHubMaterialEqualTo(materialMappingId);
 		return hubMaterialMappingGateWay.countByCriteria(criteria);
 	}
-	public List<HubMaterialMappingDto> getSupplierMaterialByHubMaterialId(Long materialMappingId, int pageNo,
+	public List<HubMaterialMappingDto> getSupplierMaterialByHubMaterialId(String materialMappingId, int pageNo,
 			int pageSize) {
 		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
-		criteria.createCriteria().andMaterialMappingIdEqualTo(materialMappingId);
+		criteria.createCriteria().andHubMaterialEqualTo(materialMappingId);
 		return hubMaterialMappingGateWay.selectByCriteria(criteria);
 	}
 	public void saveHubSupplierMaterial(HubMaterialMappingDto dicDto) {

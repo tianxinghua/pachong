@@ -1,5 +1,4 @@
 package com.shangpin.ephub.product.business.common.hubDic.color.service;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemCriteriaDto;
@@ -26,7 +24,6 @@ import com.shangpin.ephub.product.business.common.util.ConstantProperty;
  */
 @Service
 public class HubColorDicService {
-
 
 	@Autowired
 	private HubColorDicItemGateWay hubColorDicItemGateWay;
@@ -117,7 +114,7 @@ public class HubColorDicService {
 		}
 		criteria.andPushStateEqualTo(type);
 		if(type==0){
-			hubColorDicItemCriteriaDto.or(criteria.andPushStateIsNull());
+			hubColorDicItemCriteriaDto.or(hubColorDicItemCriteriaDto.createCriteria().andPushStateIsNull());
 		}
 		return hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
 	}
@@ -135,7 +132,7 @@ public class HubColorDicService {
 		}
 		criteria.andPushStateEqualTo(type);
 		if(type==0){
-			hubColorDicItemCriteriaDto.or(criteria.andPushStateIsNull());
+			hubColorDicItemCriteriaDto.or(hubColorDicItemCriteriaDto.createCriteria().andPushStateIsNull());	
 		}
 		hubColorDicItemCriteriaDto.setOrderByClause("update_time desc");
 		return hubColorDicItemGateWay.selectByCriteria(hubColorDicItemCriteriaDto);
