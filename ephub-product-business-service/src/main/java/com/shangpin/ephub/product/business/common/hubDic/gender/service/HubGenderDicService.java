@@ -85,4 +85,66 @@ public class HubGenderDicService {
 			return null;
 		}
 	}
+
+	public int countSupplierGenderByType(Byte type, String supplierGender, String hubGender) {
+		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
+		criteria.createCriteria().andPushStateEqualTo(type);
+		if(StringUtils.isNotBlank(supplierGender)){
+			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+		}
+		if(StringUtils.isNotBlank(hubGender)){
+			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+		}
+		return hubGenderDicGateWay.countByCriteria(criteria);
+	}
+
+	public List<HubGenderDicDto> getSupplierGenderByType(int pageNo, int pageSize, Byte type, String supplierGender,
+			String hubGender) {
+		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
+		criteria.createCriteria().andPushStateEqualTo(type);
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
+		if(StringUtils.isNotBlank(supplierGender)){
+			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+		}
+		if(StringUtils.isNotBlank(hubGender)){
+			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+		}
+		return hubGenderDicGateWay.selectByCriteria(criteria);
+	}
+
+	public void updateHubGenderById(HubGenderDicDto dicDto) {
+		hubGenderDicGateWay.updateByPrimaryKeySelective(dicDto);
+	}
+
+	public void deleteHubSupplierGenderById(Long id) {
+		hubGenderDicGateWay.deleteByPrimaryKey(id);
+	}
+
+	public void saveGenderItem(HubGenderDicDto dicDto) {
+		hubGenderDicGateWay.insertSelective(dicDto);
+	}
+
+	public List<HubGenderDicDto> getHubGenderDicItemBySupplierGender(String supplierGender) {
+		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
+		if(StringUtils.isNotBlank(supplierGender)){
+			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+		}
+		return hubGenderDicGateWay.selectByCriteria(criteria);
+	}
+
+	public int countHubGenderDicByHubGender(String hubGender) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public List<HubGenderDicDto> getSupplierGenderByHubGender(String hubGender, int pageNo, int pageSize) {
+		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
+		criteria.setPageNo(pageNo);
+		criteria.setPageSize(pageSize);
+		if(StringUtils.isNotBlank(hubGender)){
+			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+		}
+		return hubGenderDicGateWay.selectByCriteria(criteria);
+	}
 }

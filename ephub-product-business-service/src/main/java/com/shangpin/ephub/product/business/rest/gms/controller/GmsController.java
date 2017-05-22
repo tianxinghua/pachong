@@ -7,18 +7,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
+import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
+import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
-import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
 import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.rest.gms.service.SizeService;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
-import com.shangpin.ephub.product.business.service.hub.dto.SopSkuDto;
-import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,8 +78,10 @@ public class GmsController {
 	@RequestMapping(value = "/select-sopSkuNo")
 	public HubResponseDto<SopSkuDto> findSopSkuNo(@RequestBody SopSkuQueryDto queryDto){
 		try {
-			return sopSkuService.querySpSkuNoFromScm(queryDto);
-		} catch (JsonProcessingException e) {
+			HubResponseDto<SopSkuDto> s = sopSkuService.querySpSkuNoFromScm(queryDto);
+			log.info("从scm获取sopSkuNo返回结果{}",s);
+			return s;
+		} catch (Exception e) {
 			log.error("从scm获取sopSkuNo失败,{}",e);
 			e.printStackTrace();
 		}

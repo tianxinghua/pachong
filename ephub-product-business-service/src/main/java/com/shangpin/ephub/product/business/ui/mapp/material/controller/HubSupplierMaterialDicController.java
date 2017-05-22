@@ -53,7 +53,7 @@ public class HubSupplierMaterialDicController {
 		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierMaterialDicRequestDto);
 			int total =0;
-			byte type = hubSupplierMaterialDicRequestDto.getType();
+			byte type = hubSupplierMaterialDicRequestDto.getMappingLevel();
 			total = hubMaterialDicService.countSupplierMaterialByType(type,hubSupplierMaterialDicRequestDto.getSupplierMaterial(),hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
 			if(total>0){
@@ -114,12 +114,11 @@ public class HubSupplierMaterialDicController {
 		try {
 			log.info("颜色详情请求参数：{}",hubSupplierMaterialDicRequestDto);
 			
-			int total = hubMaterialDicService.countHubMaterialDicByHubMaterialId(hubSupplierMaterialDicRequestDto.getMaterialMappingId());
+			int total = hubMaterialDicService.countHubMaterialDicByHubMaterialId(hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
 			if(total>0){
-				List<HubMaterialMappingDto> detailList = hubMaterialDicService.getSupplierMaterialByHubMaterialId(hubSupplierMaterialDicRequestDto.getMaterialMappingId(),
+				List<HubMaterialMappingDto> detailList = hubMaterialDicService.getSupplierMaterialByHubMaterialId(hubSupplierMaterialDicRequestDto.getHubMaterial(),
 						hubSupplierMaterialDicRequestDto.getPageNo(),hubSupplierMaterialDicRequestDto.getPageSize());
-			
 				if (detailList != null&&detailList.size()>0) {
 					List<HubSupplierMaterialDicResponseDto> responseList = new ArrayList<HubSupplierMaterialDicResponseDto>();
 					for(HubMaterialMappingDto dicDto:detailList){
