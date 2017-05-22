@@ -1,6 +1,12 @@
 package com.shangpin.ephub.product.business.service.hub.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +36,6 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
@@ -44,6 +49,7 @@ import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
 import com.shangpin.ephub.product.business.service.hub.dto.PlaceOrigin;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import com.shangpin.ephub.product.business.service.hub.dto.SpProductOrgInfoEntity;
 
 import lombok.extern.slf4j.Slf4j;
