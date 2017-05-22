@@ -21,6 +21,11 @@ import org.springframework.web.client.RestTemplate;
 import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiProductOrgExtendDom;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiSkuOrgDom;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.SpProductOrgInfoEntity;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.gateway.SkuSupplierMappingSelectGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
@@ -44,13 +49,10 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
-import com.shangpin.ephub.product.business.service.hub.dto.ApiProductOrgExtendDom;
-import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
 import com.shangpin.ephub.product.business.service.hub.dto.PlaceOrigin;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
-import com.shangpin.ephub.product.business.service.hub.dto.SpProductOrgInfoEntity;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,6 +82,9 @@ public class HubProductServiceImpl implements HubProductService {
     ApiAddressProperties apiAddressProperties;
     @Autowired
     SopSkuService sopSkuService;
+
+    @Autowired
+    SkuSupplierMappingSelectGateWay skuSupplierMappingSelectGateWay;
 
     @Autowired
     private TaskExecutor executor;
@@ -192,15 +197,27 @@ public class HubProductServiceImpl implements HubProductService {
     private void handleSendToScm(SpProductOrgInfoEntity spSpuInfo, ApiProductOrgExtendDom spSpuExtendInfo, List<ApiSkuOrgDom> skuOrgDoms) throws JsonProcessingException {
 
         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+
         	String hubSkuNo = skuOrg.getHubSkuNo();
         	String supplierNo = skuOrg.getSupplierNo();
         	//判断是否同一供应商下含有多个相同的hubSkuNo
         	if(checkIsExistMulHubSkuNo(hubSkuNo,supplierNo)){
         		continue;
         	}
-            SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
-                     apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
-            executor.execute(task);
+//            SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
+//                     apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
+//            executor.execute(task);
+
+
+            ProductMessageDto productDto = new ProductMessageDto();
+            productDto.setProductOrgInfo(spSpuInfo);
+            productDto.setProductOrgInfoExtend(spSpuExtendInfo);
+            List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
+            sendSkuList.add(skuOrg);
+            productDto.setSkuList(sendSkuList);
+            skuSupplierMappingSelectGateWay.select(productDto);
+
+
         }
     }
 
@@ -397,7 +414,7 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
     private ApiSkuOrgDom setScmSku(HubSpuDto hubSpuDto,HubSkuDto hubSkuDto,SpProductOrgInfoEntity spSpuInfo, HubSkuSupplierMappingDto hubSkuSupplierMappingDto) {
-        ApiSkuOrgDom  skuOrgDom =new ApiSkuOrgDom();
+        ApiSkuOrgDom skuOrgDom =new ApiSkuOrgDom();
         skuOrgDom.setProductOrgInfoId(0L);
         skuOrgDom.setSkuOrgInfoId(0L);
         skuOrgDom.setSkuOrgName(hubSpuDto.getSpuName());
@@ -593,7 +610,7 @@ class SendToScmTask implements Runnable{
 
     @Override
     public void run() {
-        HubProductDto productDto = new HubProductDto();
+        ProductMessageDto productDto = new ProductMessageDto();
         productDto.setProductOrgInfo(spSpuInfo);
         productDto.setProductOrgInfoExtend(spSpuExtendInfo);
         List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
@@ -631,8 +648,8 @@ class SendToScmTask implements Runnable{
     }
 
     @SuppressWarnings("unused")
-	private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
-        HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+	private HubResponseDto<String> sendToScm(ProductMessageDto productDto) throws JsonProcessingException {
+        HttpEntity<ProductMessageDto> requestEntity = new HttpEntity<ProductMessageDto>(productDto);
         ObjectMapper mapper = new ObjectMapper();
 //        log.info("send scm parameter: " + mapper.writeValueAsString(productDto));
 
