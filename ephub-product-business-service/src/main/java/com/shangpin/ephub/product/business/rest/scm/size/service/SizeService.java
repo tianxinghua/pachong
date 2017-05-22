@@ -10,11 +10,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.rest.gms.dto.HubResponseDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 
 import lombok.extern.slf4j.Slf4j;
