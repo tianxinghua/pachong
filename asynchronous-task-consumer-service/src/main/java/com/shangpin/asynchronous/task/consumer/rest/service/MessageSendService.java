@@ -1,12 +1,11 @@
 package com.shangpin.asynchronous.task.consumer.rest.service;
 
 
-import com.shangpin.asynchronous.task.consumer.conf.stream.source.sender.HubSkuSupplierSelectStreamSender;
-import com.shangpin.asynchronous.task.consumer.conf.stream.source.sender.SpuPendingAuditStreamSender;
-import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.shangpin.asynchronous.task.consumer.conf.stream.source.sender.SpuPendingAuditStreamSender;
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 
 /**
 
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 
  */
 @Service
-public class SpuPendingAuditService {
+public class MessageSendService {
 	
 	@Autowired
 	private SpuPendingAuditStreamSender spuPendingAuditStreamSender;
