@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiProductOrgExtendDom;
 import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiSkuOrgDom;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.PlaceOrigin;
 import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
 import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.SpProductOrgInfoEntity;
 import com.shangpin.ephub.client.consumer.hubskusuppliermapping.gateway.SkuSupplierMappingSelectGateWay;
@@ -51,7 +51,6 @@ import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
-import com.shangpin.ephub.product.business.service.hub.dto.PlaceOrigin;
 import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -85,9 +84,6 @@ public class HubProductServiceImpl implements HubProductService {
 
     @Autowired
     SkuSupplierMappingSelectGateWay skuSupplierMappingSelectGateWay;
-
-    @Autowired
-    private TaskExecutor executor;
 
     ObjectMapper objectMapper =new ObjectMapper();
 
@@ -191,6 +187,8 @@ public class HubProductServiceImpl implements HubProductService {
             updateSkuPendingStatus(sopSkuDto);
             // 更新 hubsku
             updateHubSkuSpSkuNo(skuOrgDom.getHubSkuNo(),sopSkuDto.getSkuNo());
+            //TODO add hub_supplier_sku
+            
         }
     }
 
