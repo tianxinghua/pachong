@@ -67,8 +67,7 @@ public class SupplierPriceService {
         if(null==productPriceDTO) return true;
         //获取供货商信息
 
-        List<String> spSkus  = new ArrayList<>();
-        spSkus.add(productPriceDTO.getSkuNo());
+
         try {
             SupplierMessageDTO supplierMessageDTO = this.getSupplierMsg(productPriceDTO.getSupplierNo());
             if(null!=supplierMessageDTO){
@@ -80,21 +79,34 @@ public class SupplierPriceService {
 
                     Map<String,String> supplierMap = this.getValidSupplier();
                     if(supplierMap.containsKey(productPriceDTO.getSopUserNo())){
-                        //重新计算价格
-                        reSetPrice(supplierMessageDTO,productPriceDTO);
-                        productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
-                        handSupplyPrice(productPriceDTO);
+                        if(this.isNeedPushForSupplyPrice(productPriceDTO)){
+                            //重新计算价格
+                            reSetPrice(supplierMessageDTO,productPriceDTO);
+                            productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
+                            handSupplyPrice(productPriceDTO);
+                        }else{
+                            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                                    productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"供价制非供价发生变化，不需要推送");
+                        }
                     }else{
-                        priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),spSkus, PriceHandleState.HANDLED_SUCCESS.getIndex(),"暂不处理");
+                        priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                                productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"暂不处理");
 
                     }
 
                 }else if("3".equals(supplierType)||"MarketDiscount".equals(supplierType)){ // 市场价 (原来定义的是3）
-                    handleMarketPrice(productPriceDTO);
+                    if(this.isNeedPushForMarketPrice(productPriceDTO)){
+                        handleMarketPrice(productPriceDTO);
+                    }else{
+                        priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                                productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"市场价折扣制非市场价发生变化，不需要推送");
+                    }
+
                 }else{
                     //无类型
 
-                    priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),spSkus, PriceHandleState.PUSHED_ERROR.getIndex(),"无供货商信息");
+                    priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                            productPriceDTO.getSkuNo(), PriceHandleState.PUSHED_ERROR.getIndex(),"无供货商信息");
                     return false;
                 }
             }else{
@@ -110,7 +122,7 @@ public class SupplierPriceService {
             if(season.length()>1500){
                 season = season.substring(0,1500);
             }
-            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSopUserNo(),spSkus, PriceHandleState.PUSHED_ERROR.getIndex(),season);
+            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),productPriceDTO.getSkuNo(), PriceHandleState.PUSHED_ERROR.getIndex(),season);
             throw e;
 
         }
@@ -206,7 +218,11 @@ public class SupplierPriceService {
 
     private boolean isNeedPushForMarketPrice(ProductPriceDTO productPriceDTO){
         if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
-                PriceHandleType.MARKET_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+                PriceHandleType.MARKET_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_SUPPLY_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
             return  true;
         }else{
             return false;
@@ -216,7 +232,9 @@ public class SupplierPriceService {
 
 
     private boolean isNeedPushForSupplyPrice(ProductPriceDTO productPriceDTO){
-        if(PriceHandleType.MARKET_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+        if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.SUPPLY_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
             return  true;
         }else{
             return false;
