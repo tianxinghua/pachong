@@ -487,7 +487,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void zitafabianiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		zitafabianiHandler.handleOriginalProduct(message, headers); 
+		atelierCommonHandler.handleOriginalProduct(message, headers); 
 		
 	}
 	
