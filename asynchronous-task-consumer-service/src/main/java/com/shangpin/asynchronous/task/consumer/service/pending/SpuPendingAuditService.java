@@ -20,6 +20,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,8 +48,9 @@ public class SpuPendingAuditService {
 
     ObjectMapper mapper = new ObjectMapper();
     public void auditSpuPending(SpuModelDto dto,Map<String,Object> header) {
-
+    	log.info("待复核接收到的消息体是=====>>"+JsonUtil.serialize(dto)); 
         boolean result= pengdingToHubGateWay.auditPending(dto);
+        log.info("复核结果=============>>"+result); 
         if(result){
             this.updateHubSpuState(dto, SpuState.HANDLED.getIndex());
         }else{
