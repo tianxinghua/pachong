@@ -19,7 +19,7 @@ public class RedisConf {
 	/**
 	 * 应用编号：可以配置多个应用
 	 */
-	private static final String applicationId = "ephub-data-mysql-service";
+	private static final String applicationId = "ephub-data-schedule-service";
 	/**
 	 * 应用下的集群编号：一个应用下可以有多个集群
 	 */

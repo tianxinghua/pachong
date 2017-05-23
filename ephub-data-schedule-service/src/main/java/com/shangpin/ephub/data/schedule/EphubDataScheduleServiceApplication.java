@@ -5,7 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import com.shangpin.ephub.data.schedule.conf.client.ClientConf;
 
 /**
  * <p>Title:EphubDataScheduleServiceApplication.java </p>
@@ -17,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableScheduling
+@EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)
 public class EphubDataScheduleServiceApplication {
 
 	public static void main(String[] args) {
