@@ -6,14 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
-import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
@@ -33,6 +31,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
@@ -69,9 +68,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     HubSpuPendingAuditGateWay hubSpuPendingAuditGateWay;
-
-    @Autowired
-    private TaskExecutor executor;
 
     @Autowired
     private CategoryService categoryService;

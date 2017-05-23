@@ -52,12 +52,9 @@ public class PricePushDataService {
             criteriaDto.createCriteria().andSupplierIdEqualTo(dto.getSupplierId()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo()).andMarketSeasonIsNotNull()
             .andCreateTimeGreaterThan(dto.getCreateTime());
             List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteriaDto);
-            if(null!=hubSupplierPriceChangeRecordDtos&&hubSupplierPriceChangeRecordDtos.size()>0){
-                needHandles.add(hubSupplierPriceChangeRecordDtos.get(0));
-            }else{
-                needHandles.add(dto);
+            if(null ==hubSupplierPriceChangeRecordDtos || hubSupplierPriceChangeRecordDtos.size()== 0){
+            	needHandles.add(dto);
             }
-
         }
         return needHandles;
 
