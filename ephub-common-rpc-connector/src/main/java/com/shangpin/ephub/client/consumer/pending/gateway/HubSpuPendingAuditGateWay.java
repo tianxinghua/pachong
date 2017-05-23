@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.product.business.hubpending.spu.gateway;
+package com.shangpin.ephub.client.consumer.pending.gateway;
 
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
