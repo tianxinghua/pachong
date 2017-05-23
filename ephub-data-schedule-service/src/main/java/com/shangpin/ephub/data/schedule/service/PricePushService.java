@@ -1,16 +1,17 @@
 package com.shangpin.ephub.data.schedule.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
-import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
+import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
+import com.shangpin.ephub.client.util.JsonUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/5/23.
@@ -23,20 +24,15 @@ public class PricePushService {
     @Autowired
     PriceMqGateWay priceMqGateWay;
 
-    ObjectMapper mapper = new ObjectMapper();
-
-    public void handleErrorPush(){
+    public void handleErrorPush() throws Exception{
         List<HubSupplierPriceChangeRecordDto> pushMqErrorRecordList = pricePushDataService.findPushMqErrorRecordList();
         List<HubSupplierPriceChangeRecordDto> needHandleRecords = pricePushDataService.findNeedHandleRecord(pushMqErrorRecordList);
         for(HubSupplierPriceChangeRecordDto tryDao:needHandleRecords){
             ProductPriceDTO productPriceDTO = new ProductPriceDTO();
             this.transObject(tryDao,productPriceDTO);
-            try {
-                log.info("retry send mq:"+ mapper.writeValueAsString(productPriceDTO));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            log.info("重推价格消息体："+ JsonUtil.serialize(productPriceDTO));
             priceMqGateWay.transPrice(productPriceDTO);
+            log.info(productPriceDTO.getSopUserNo()+" "+productPriceDTO.getSupplierSkuNo()+" 发送队列成功。");
         }
     }
 
@@ -50,5 +46,7 @@ public class PricePushService {
         targetObj.setSkuNo(sourceObj.getSpSkuNo());
         targetObj.setSupplierSkuNo(sourceObj.getSupplierSkuNo());
         targetObj.setSopUserNo(sourceObj.getSupplierId());
+        targetObj.setSupplierNo(sourceObj.getSupplierNo()); 
+        targetObj.setPriceHandleType(PriceHandleType.NEW_DEFAULT.getIndex());
     }
 }

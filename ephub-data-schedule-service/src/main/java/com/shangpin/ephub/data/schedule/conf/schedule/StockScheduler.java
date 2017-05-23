@@ -30,12 +30,13 @@ public class StockScheduler {
 	}
 
 
-	@Scheduled(cron = "00 40 19 * * ?")
+	@Scheduled(cron = "00 52 19 * * ?")
 	public void pricePush() {
 		try {
+			log.info("===========任务开始============"); 
 			pricePushService.handleErrorPush();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("重推价格服务异常："+e.getMessage(),e);
 		}
 	}
 }
