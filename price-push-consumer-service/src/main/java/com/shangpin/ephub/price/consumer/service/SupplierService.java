@@ -1,28 +1,19 @@
 package com.shangpin.ephub.price.consumer.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
-import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
-
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
-import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.price.consumer.common.GlobalConstant;
 import com.shangpin.ephub.price.consumer.conf.mail.message.ShangpinMail;
 import com.shangpin.ephub.price.consumer.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ephub.price.consumer.conf.rpc.ApiAddressProperties;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/5/9.

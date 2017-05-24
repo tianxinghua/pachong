@@ -1,9 +1,15 @@
 package com.shangpin.ephub.price.consumer.service;
 
-import IceUtilInternal.StringUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.commons.redis.IShangpinRedis;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
@@ -11,28 +17,11 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
-import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
-import com.shangpin.ephub.price.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.price.consumer.conf.stream.source.message.ProductPriceDTO;
-
-
 import com.shangpin.iog.ice.dto.SupplierMessageDTO;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/3/30.
@@ -80,10 +69,15 @@ public class SupplierPriceService {
                     Map<String,String> supplierMap = this.getValidSupplier();
                     if(supplierMap.containsKey(productPriceDTO.getSopUserNo())){
                         if(this.isNeedPushForSupplyPrice(productPriceDTO)){
-                            //重新计算价格
-                            reSetPrice(supplierMessageDTO,productPriceDTO);
-                            productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
-                            handSupplyPrice(productPriceDTO);
+                        	if(StringUtils.isNotBlank(productPriceDTO.getMarketPrice())){
+                        		//重新计算价格
+                                reSetPrice(supplierMessageDTO,productPriceDTO);
+                                productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
+                                handSupplyPrice(productPriceDTO);
+                        	}else{
+                        		priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                                        productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"市场价为空不能推送");
+                        	}
                         }else{
                             priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
                                     productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"供价制非供价发生变化，不需要推送");
