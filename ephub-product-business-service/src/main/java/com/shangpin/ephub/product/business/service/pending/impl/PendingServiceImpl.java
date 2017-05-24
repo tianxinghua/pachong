@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
@@ -68,6 +69,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     HubSpuPendingAuditGateWay hubSpuPendingAuditGateWay;
+
+    @Autowired
+    private TaskExecutor executor;
 
     @Autowired
     private CategoryService categoryService;
@@ -290,10 +294,10 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 }
                 spuModelVO.setSpuPendingIds(spuPendingIdList);
 
-//                CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
-//                executor.execute(task);
-                log.info("待复核全部校验通过，调用接口=======>>>"+JsonUtil.serialize(spuModelVO)); 
-                hubSpuPendingAuditGateWay.auditSpu(spuModelVO);
+                CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
+                executor.execute(task);
+//                log.info("待复核全部校验通过，调用接口=======>>>"+JsonUtil.serialize(spuModelVO));
+//                hubSpuPendingAuditGateWay.auditSpu(spuModelVO);
 
                 return true;
 //             //获取
@@ -304,16 +308,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 //             SpuModelMsgVO spuModelMsgVO=this.getSpuModel(queryVO);
 //
 //             List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
-//             for(SpuModelVO spuModelVO:spuModels){
-//                 //TODO 扔进消息队列中
-//
-//                 spuModelVO.setCategoryNo(auditVO.getCategoryNo());
-//                 spuModelVO.setColor(auditVO.getColor());
-//                 spuModelVO.setOrigin(auditVO.getOrigin());
-//                 spuModelVO.setMaterial(auditVO.getMaterial());
-//                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
-//                 executor.execute(task);
-//             }
+
             }else{
                 return true;
             }
