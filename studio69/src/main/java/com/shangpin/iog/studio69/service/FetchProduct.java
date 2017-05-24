@@ -128,7 +128,8 @@ public class FetchProduct extends AbsSaveProduct{
 									productName = good.getGoodsName();
 									sku.setProductName(guolv(productName));
 									//TODO 暂时设置为市场价
-									sku.setMarketPrice(good.getPrice());
+									sku.setSupplierPrice(good.getPrice());
+									sku.setMarketPrice(good.getReferencePrice());
 									//TODO 暂时设置为euro
 									sku.setSaleCurrency("EURO");
 									logger.info(sku.getSkuId()+" save good------------"); 

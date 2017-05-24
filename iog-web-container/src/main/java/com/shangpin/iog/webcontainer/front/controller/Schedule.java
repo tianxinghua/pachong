@@ -159,6 +159,9 @@ public class Schedule {
 						e.printStackTrace();
 						log.error(e.getMessage());
 					}
+				}else{
+					System.out.println("今天没有价格发生变化的产品");
+					log.info("今天没有价格发生变化的产品"); 
 				}
 				
 			}
@@ -360,6 +363,9 @@ public class Schedule {
 							e.printStackTrace();
 							log.error(e.getMessage());
 						}
+					}else{
+						System.out.println("今天没有季节发生变化的产品。");
+						log.info("今天没有季节发生变化的产品。"); 
 					}
 				}			
 			}
