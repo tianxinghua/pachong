@@ -1,15 +1,19 @@
+feign.hystrix.enabled: false
+ribbon:
+  ConnectTimeout: 120000
+  ReadTimeout: 120000
 spring: 
   cloud: 
        consul: 
-         host: localhost
-         port: 8500
-         discovery: 
-           prefer-agent-address: true
-           prefer-ip-address: true
-           health-check-interval: 15s
-           health-check-timeout: 15s
-           register: true
-           register-health-check: true
+          host: localhost
+          port: 8500
+          discovery: 
+            prefer-agent-address: true
+            prefer-ip-address: true
+            health-check-interval: 10s
+            health-check-timeout: 10s            
+            register: true
+            register-health-check: true
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
