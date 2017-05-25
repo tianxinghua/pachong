@@ -234,7 +234,10 @@ public class PendingProductService extends PendingSkuService{
                              	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));  
                              }
                      	}
-                         hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+                     	hubSkuPendingDto.setSupplyPrice(null);
+                     	hubSkuPendingDto.setMarketPrice(null);
+                     	hubSkuPendingDto.setSalesPrice(null);
+                        hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                      }
             		 
             		 if(!isSkuPass){
