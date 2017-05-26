@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -121,7 +121,9 @@ public class HubPendingProductController {
 				hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
 				log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
 				try{
-					priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.NEW_DEFAULT);
+					if(!StringUtils.isEmpty(hubSkuPendingOrigion.getMarketPrice()) && !StringUtils.isEmpty(hubSkuPendingOrigion.getSupplyPrice())){
+						priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.NEW_DEFAULT);
+					}
 				}catch(Exception e){
 					log.error("推送价格队列失败",e);
 				}
@@ -175,7 +177,7 @@ public class HubPendingProductController {
 
 		HubSkuSupplierMappingDto hubSkuSupplierMapping = new HubSkuSupplierMappingDto();
 		if(dto.getSign()==1){
-			if(StringUtils.isBlank(dto.getSkuNo())){
+			if(StringUtils.isEmpty(dto.getSkuNo())){
 				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
 				hubSkuSupplierMapping.setMemo("尚品SKU未生成");
 			}else{
