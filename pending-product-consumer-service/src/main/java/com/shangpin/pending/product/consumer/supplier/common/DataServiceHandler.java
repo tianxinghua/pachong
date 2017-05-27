@@ -797,6 +797,7 @@ public class DataServiceHandler {
 		hubSku.setSkuSizeType(hubSkuPending.getHubSkuSizeType());
 		hubSku.setSkuSizeId(hubSkuPending.getScreenSize());
 		hubSku.setCreateTime(date);
+		hubSku.setSkuSizeType(hubSkuPending.getHubSkuSizeType());
 		hubSku.setCreateUser(ConstantProperty.DATA_CREATE_USER);
 		hubSku.setUpdateTime(date);
 		hubSkuGateWay.insert(hubSku);

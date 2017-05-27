@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoCo
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import com.shangpin.picture.product.consumer.conf.client.ClientConf;
 /**
  * <p>Title:PictureProductConsumerServiceApplication.java </p>
  * <p>Description: 图片处理消费者</p>
@@ -14,7 +15,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @date 2017年1月1日 下午7:32:45
  */
 
-import com.shangpin.picture.product.consumer.conf.client.ClientConf;
 @SpringBootApplication(exclude = {RedisAutoConfiguration.class,RedisRepositoriesAutoConfiguration.class})
 @EnableDiscoveryClient
 @EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)

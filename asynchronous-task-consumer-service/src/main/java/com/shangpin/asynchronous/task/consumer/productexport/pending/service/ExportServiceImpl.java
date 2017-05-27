@@ -784,6 +784,7 @@ public class ExportServiceImpl {
 		HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
 		try {
 			sopSkuResponseDto = gmsGateWay.findSopSkuNo(queryDto);
+			log.info("sopSkuResponseDto:{}",sopSkuResponseDto);
 			if (sopSkuResponseDto != null && sopSkuResponseDto.getIsSuccess()
 					&& sopSkuResponseDto.getResDatas().size() > 0) {
 				return sopSkuResponseDto.getResDatas().get(0).getSopSkuNo();

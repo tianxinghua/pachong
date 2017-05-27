@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 
 import com.shangpin.ep.order.enumeration.LogLeve;
 import com.shangpin.ep.order.module.order.service.impl.OpenApiService;
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,9 @@ public class TonyOrderImpl implements IOrderService {
 	private  String appSe;
 	@Autowired
 	OpenApiService openApiService;
+
+	@Autowired
+	PriceService priceService;
 
 	@PostConstruct
     public void init(){
@@ -364,7 +368,10 @@ public class TonyOrderImpl implements IOrderService {
     private String getPurchasePrice(OrderDTO orderDTO){
 		String price = "10";
 		try {
-			BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//			BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+			orderDTO.setLogContent("【tony在推送订单时获取采购价："+priceInt.toString()+"】"); 
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			price = priceInt.divide(new BigDecimal(1.05), 2)
                     .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 			orderDTO.setPurchasePriceDetail(price);

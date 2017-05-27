@@ -104,7 +104,9 @@ public class SupplierProductMysqlService {
 		try {
 			HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 			if(null == hubSkuSel){
-				hubSku.setCreateTime(new Date());
+				Date nowTime = new Date();
+				hubSku.setCreateTime(nowTime);
+				hubSku.setLastPullTime(nowTime); 
 				Long skuId = hubSupplierSkuGateWay.insert(hubSku);
 				hubSku.setSupplierSkuId(skuId); 
 				convertHubSkuToPendingSku(hubSku,pendingSku);
@@ -113,11 +115,14 @@ public class SupplierProductMysqlService {
 				hubSku.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
 				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
 				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
+				Date nowTime = new Date();
 				if(isChanged){
-					hubSkuUpdated.setUpdateTime(new Date()); 
+					hubSkuUpdated.setUpdateTime(nowTime); 
+					hubSkuUpdated.setLastPullTime(nowTime); 
 					updateHubSku(hubSkuUpdated);
 					return ProductStatus.MODIFY_PRICE;
 				}else{
+					updateLastPullTime(hubSkuUpdated.getSupplierId(),hubSkuUpdated.getSupplierSkuNo(),nowTime);
 					return ProductStatus.NO_NEED_HANDLE;
 				}
 			}
@@ -264,6 +269,25 @@ public class SupplierProductMysqlService {
 		criteriaDto.setCriteria(hubSupplierSkuCriteriaDto);
 		hubSupplierSkuGateWay.updateByCriteriaSelective(criteriaDto);		
 	}
+	/**
+	 * 更新最后拉去时间
+	 * @param supplierId
+	 * @param supplierSkuNo
+	 * @param lastPullTime
+	 */
+	private void updateLastPullTime(String supplierId,String supplierSkuNo,Date lastPullTime){
+		HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
+		hubSkuUpdated.setSupplierId(supplierId);
+		hubSkuUpdated.setSupplierSkuNo(supplierSkuNo);
+		hubSkuUpdated.setLastPullTime(lastPullTime); 
+		HubSupplierSkuWithCriteriaDto criteriaDto = new HubSupplierSkuWithCriteriaDto();
+		HubSupplierSkuCriteriaDto hubSupplierSkuCriteriaDto = new HubSupplierSkuCriteriaDto();
+		hubSupplierSkuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSkuUpdated .getSupplierId()).andSupplierSkuNoEqualTo(hubSkuUpdated.getSupplierSkuNo());
+		criteriaDto.setHubSupplierSku(hubSkuUpdated);
+		criteriaDto.setCriteria(hubSupplierSkuCriteriaDto);
+		hubSupplierSkuGateWay.updateByCriteriaSelective(criteriaDto);
+	}
+	
 	/**
 	 * 将hubSpu转换成pendingSpu
 	 * @param hubSpu

@@ -3,6 +3,7 @@ package com.shangpin.ep.order.module.orderapiservice.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,9 @@ public class StefaniaService implements IOrderService {
     HubSkuMapper skuDAO;
     @Autowired
     OpenApiService openApiService;
+
+    @Autowired
+	PriceService priceService;
     
     /**
      * 推送订单
@@ -59,6 +63,15 @@ public class StefaniaService implements IOrderService {
 	
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
+	
+		try {
+			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+			orderDTO.setLogContent("【stefania在创建订单时获取采购价："+priceInt.toString()+"】"); 
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		orderDTO.setLockStockTime(new Date());
 		orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
 		orderDTO.setLogContent("------锁库结束-------");
@@ -87,7 +100,10 @@ public class StefaniaService implements IOrderService {
 			detail.setSKU(orderDTO.getDetail().split(",")[0].split(":")[0]);
 			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1])));
 
-			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+			orderDTO.setLogContent("【stefania在推送订单时获取采购价："+priceInt.toString()+"】"); 
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
 			orderDTO.setPurchasePriceDetail(price.toString());
 //			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
@@ -127,6 +143,7 @@ public class StefaniaService implements IOrderService {
 			
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
 			handleException.handleException(orderDTO,e);
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);

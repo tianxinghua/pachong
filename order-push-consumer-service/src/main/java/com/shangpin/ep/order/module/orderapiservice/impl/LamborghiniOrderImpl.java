@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -58,7 +59,11 @@ public class LamborghiniOrderImpl  implements IOrderService {
     private  String appKey;
     private  String appSe;
     @Autowired
-    private OpenApiService openApiService;  
+    private OpenApiService openApiService;
+
+    @Autowired
+	private PriceService priceService;
+
     @PostConstruct
     public void init(){
     	cancelUrl = supplierProperties.getLamborghiniConf().getCancelUrl();
@@ -248,7 +253,10 @@ public class LamborghiniOrderImpl  implements IOrderService {
 			if(flag){
 				item.setPurchase_price("10");
 			}else{
-				BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//				BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+				BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+				orderDTO.setLogContent("【lamborghini在推送订单时获取采购价："+priceInt.toString()+"】"); 
+				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 				String price = priceInt.divide(new BigDecimal(1.05), 2)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 				orderDTO.setPurchasePriceDetail(price);
