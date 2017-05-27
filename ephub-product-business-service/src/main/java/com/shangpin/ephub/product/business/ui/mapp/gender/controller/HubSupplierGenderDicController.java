@@ -61,48 +61,23 @@ public class HubSupplierGenderDicController {
 		try {
 			log.info("===性别映射list请求参数：{}",hubSupplierGenderDicRequestDto);
 			int total =0;
-			byte type = hubSupplierGenderDicRequestDto.getType();
 			total = hubGenderDicService.countSupplierGenderByType(hubSupplierGenderDicRequestDto.getType(),hubSupplierGenderDicRequestDto.getSupplierGender(),hubSupplierGenderDicRequestDto.getHubGender());
 			log.info("返回个数："+total);
 			if(total>0){
 				List<HubGenderDicDto> list = hubGenderDicService.getSupplierGenderByType(hubSupplierGenderDicRequestDto.getPageNo(),hubSupplierGenderDicRequestDto.getPageSize(),hubSupplierGenderDicRequestDto.getType(),hubSupplierGenderDicRequestDto.getSupplierGender(),hubSupplierGenderDicRequestDto.getHubGender());
-				Map<String,HubGenderDicDto> map = new HashMap<>();
 				List<HubSupplierGenderDicResponseDto> responseList = new ArrayList<HubSupplierGenderDicResponseDto>();
 				if (list != null && list.size() > 0) {
 					for (HubGenderDicDto dicDto : list) {
-						if(type==0){
-							HubSupplierGenderDicResponseDto dic = new HubSupplierGenderDicResponseDto();
-							dic.setGenderDicId(dicDto.getGenderDicId());
-							dic.setHubGender(dicDto.getHubGender());
-							dic.setSupplierGender(dicDto.getSupplierGender());
-							responseList.add(dic);
+						HubSupplierGenderDicResponseDto dic = new HubSupplierGenderDicResponseDto();
+						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+						if(dicDto.getUpdateTime()!=null){
+							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}
-						if(type==1){
-							if(map.containsKey(dicDto.getHubGender())){
-								HubGenderDicDto temp = map.get(dicDto.getHubGender());
-								temp.setHubGender(temp.getHubGender()+","+dicDto.getHubGender());
-							}else{
-								map.put(dicDto.getHubGender(), dicDto);
-							}
-						}
-					}
-				}
-				
-				if(type==1){
-					if(map!=null&&map.size()>0){
-						for(Map.Entry<String,HubGenderDicDto> entry:map.entrySet()){
-							HubGenderDicDto dicDto = entry.getValue();
-							HubSupplierGenderDicResponseDto dic = new HubSupplierGenderDicResponseDto();
-							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
-							if(dicDto.getUpdateTime()!=null){
-								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
-							}
-							dic.setGenderDicId(dicDto.getGenderDicId());
-							dic.setHubGender(dicDto.getHubGender());
-							dic.setSupplierGender(dicDto.getSupplierGender());
-							dic.setUpdateUser(dicDto.getUpdateUser());
-							responseList.add(dic);
-						}
+						dic.setGenderDicId(dicDto.getGenderDicId());
+						dic.setHubGender(dicDto.getHubGender());
+						dic.setSupplierGender(dicDto.getSupplierGender());
+						dic.setUpdateUser(dicDto.getUpdateUser());
+						responseList.add(dic);
 					}
 				}
 				
@@ -123,7 +98,7 @@ public class HubSupplierGenderDicController {
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse selectHubGenderDetail(@RequestBody HubSupplierGenderDicRequestDto hubSupplierGenderDicRequestDto) {
 		try {
-			log.info("颜色详情请求参数：{}",hubSupplierGenderDicRequestDto);
+			log.info("性别详情请求参数：{}",hubSupplierGenderDicRequestDto);
 			
 			int total = hubGenderDicService.countHubGenderDicByHubGender(hubSupplierGenderDicRequestDto.getHubGender());
 			log.info("返回个数："+total);
@@ -160,7 +135,7 @@ public class HubSupplierGenderDicController {
 	 */
 	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse save(@RequestBody HubSupplierGenderDicRequestDto dto) {
-
+		log.info("性别保存参数：{}",dto);
 		try {
 			HubGenderDicDto dicDto = new HubGenderDicDto();
 			BeanUtils.copyProperties(dto, dicDto);
@@ -174,6 +149,7 @@ public class HubSupplierGenderDicController {
 					dicDto.setSupplierGender(supplierGender);
 					dicDto.setCreateTime(new Date());
 					dicDto.setUpdateTime(new Date());
+					dicDto.setPushState((byte)1);
 					dicDto.setCreateUser(dto.getCreateUser());
 					hubGenderDicService.saveGenderItem(dicDto);
 				}
@@ -187,16 +163,18 @@ public class HubSupplierGenderDicController {
 
 	@RequestMapping(value = "/updateAndRefresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse refresh(@RequestBody HubSupplierGenderDicRequestDto dto) {
+		
 		try {
-			log.info("颜色修改参数：{}",dto);
+			log.info("性别修改参数：{}",dto);
 			if(StringUtils.isNotBlank(dto.getHubGender())){
 				String [] supplierGenderArr = dto.getHubGender().trim().split(",",-1);
-				for(String supplierGender:supplierGenderArr){
+				for(String hubGender:supplierGenderArr){
 					HubGenderDicDto dicDto = new HubGenderDicDto();
 					dicDto.setGenderDicId(dto.getGenderDicId());
 					dicDto.setUpdateTime(new Date());
 					dicDto.setUpdateUser(dto.getUpdateUser());
-					dicDto.setHubGender(supplierGender);
+					dicDto.setHubGender(hubGender);
+					dicDto.setPushState((byte)1);
 					hubGenderDicService.updateHubGenderById(dicDto);
 				}
 				return	HubResponse.successResp(null);

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.gms.controller;
 
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;

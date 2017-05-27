@@ -181,7 +181,7 @@ public class HubSupplierOriginDicController {
 		}
 	}
 
-	@RequestMapping(value = "/insert",method ={RequestMethod.POST,RequestMethod.GET})
+	@RequestMapping(value = "/save",method ={RequestMethod.POST,RequestMethod.GET})
     public HubResponse insert(@RequestBody HubSupplierSizeDicRequestDto dto){
 		
 		try {
