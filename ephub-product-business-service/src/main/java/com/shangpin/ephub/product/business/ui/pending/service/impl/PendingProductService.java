@@ -130,7 +130,7 @@ public class PendingProductService extends PendingSkuService{
     
 	@Override
     public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto){
-    	log.info("接收到的待校验的数据：{}",pendingProductDto);
+    	log.info("接收到的待校验的数据：{}"+JsonUtil.serialize(pendingProductDto)); 
     	HubResponse<PendingUpdatedVo> response = new HubResponse<PendingUpdatedVo>();
     	response.setCode("0"); //初始设置为成功
     	PendingUpdatedVo updatedVo = null;
@@ -234,7 +234,10 @@ public class PendingProductService extends PendingSkuService{
                              	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));  
                              }
                      	}
-                         hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+                     	hubSkuPendingDto.setSupplyPrice(null);
+                     	hubSkuPendingDto.setMarketPrice(null);
+                     	hubSkuPendingDto.setSalesPrice(null);
+                        hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                      }
             		 
             		 if(!isSkuPass){

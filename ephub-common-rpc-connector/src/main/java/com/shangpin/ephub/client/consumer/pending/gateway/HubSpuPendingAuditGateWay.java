@@ -1,12 +1,11 @@
-package com.shangpin.ephub.client.product.business.hubpending.spu.gateway;
+package com.shangpin.ephub.client.consumer.pending.gateway;
 
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 
 /**
    spu pending audit

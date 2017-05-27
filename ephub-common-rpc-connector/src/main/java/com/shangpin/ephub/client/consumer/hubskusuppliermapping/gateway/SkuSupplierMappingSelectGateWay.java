@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
     SKU选品服务
  */
 @FeignClient("asynchronous-task-consumer-service")
-public interface HubSkuSupplierMappingGateWay {
+public interface SkuSupplierMappingSelectGateWay {
 	
 	/**
 

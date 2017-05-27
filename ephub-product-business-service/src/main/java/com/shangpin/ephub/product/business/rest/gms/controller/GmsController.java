@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
@@ -19,6 +18,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.rest.gms.service.SizeService;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 
 import lombok.extern.slf4j.Slf4j;
 
