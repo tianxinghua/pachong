@@ -230,6 +230,7 @@ public class HubSupplierColorDicController {
 					dicDto.setUpdateTime(new Date());
 					dicDto.setUpdateUser(dto.getUpdateUser());
 					dicDto.setColorItemName(supplierColor);
+					dicDto.setPushState((byte)1);
 					hubColorDicService.updateSupplierColorById(dicDto);
 				}
 				return	HubResponse.successResp(null);
