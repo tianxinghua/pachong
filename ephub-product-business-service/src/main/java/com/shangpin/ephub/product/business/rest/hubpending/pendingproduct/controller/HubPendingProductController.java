@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,13 +30,13 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
-import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
 import com.shangpin.ephub.product.business.rest.price.service.PriceService;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -121,7 +121,9 @@ public class HubPendingProductController {
 				hubSkuPendingOrigion.setSpSkuNo(dto.getSkuNo());
 				log.info("查询hubSupplierSpu:{}",hubSupplierSpuDto);
 				try{
-					priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.PRICE);	
+					if(!StringUtils.isEmpty(hubSkuPendingOrigion.getMarketPrice()) && !StringUtils.isEmpty(hubSkuPendingOrigion.getSupplyPrice())){
+						priceService.savePriceRecordAndSendConsumer(hubSupplierSpuDto, dto.getSupplierNo(), hubSkuPendingOrigion, PriceHandleType.NEW_DEFAULT);
+					}
 				}catch(Exception e){
 					log.error("推送价格队列失败",e);
 				}
@@ -129,6 +131,7 @@ public class HubPendingProductController {
 		}
 		
 	}
+	
 	private void getExistSpSkuNo(SpSkuNoDto dto) {
 		if(ServiceConstant.HUB_SEND_TO_SCM_EXIST_SCM_ERROR.equals(dto.getErrorReason())){
             //如果是已存在的错误，调用接口  组装
@@ -174,7 +177,7 @@ public class HubPendingProductController {
 
 		HubSkuSupplierMappingDto hubSkuSupplierMapping = new HubSkuSupplierMappingDto();
 		if(dto.getSign()==1){
-			if(StringUtils.isBlank(dto.getSkuNo())){
+			if(StringUtils.isEmpty(dto.getSkuNo())){
 				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
 				hubSkuSupplierMapping.setMemo("尚品SKU未生成");
 			}else{

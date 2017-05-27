@@ -1,0 +1,5 @@
+﻿server.port: 8010
+spring:  
+  profiles: 
+    active: pro
+  application.name: ephub-data-schedule-service

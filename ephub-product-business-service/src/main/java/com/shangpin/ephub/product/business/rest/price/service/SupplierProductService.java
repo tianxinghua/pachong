@@ -66,15 +66,12 @@ public class SupplierProductService {
 		}
 	} 
 	/**
-	 * 查询价格是否变化
+	 * 判断供价是否变化
 	 * @param hubSku
 	 * @return
 	 */
-	public boolean isPriceChanged(HubSupplierSkuDto hubSku) throws Exception{
-		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
-		criteriaDto.setFields("supply_price,market_price,sp_sku_no");
-		criteriaDto.createCriteria().andSupplierIdEqualTo(hubSku.getSupplierId()).andSupplierSkuNoEqualTo(hubSku.getSupplierSkuNo());
-		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+	public boolean isSupplyPriceChanged(HubSupplierSkuDto hubSku) throws Exception{
+		List<HubSupplierSkuDto> hubSkus = selectHubSupplierSku(hubSku.getSupplierId(),hubSku.getSupplierSkuNo());
 		if(CollectionUtils.isNotEmpty(hubSkus)){
 			HubSupplierSkuDto hubSkuSel = hubSkus.get(0);
 			hubSku.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : ""); 
@@ -85,6 +82,20 @@ public class SupplierProductService {
 					return true;
 				}
 			}
+		}
+		return false;
+	}
+	/**
+	 * 判断市场价是否变化
+	 * @param hubSku
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isMarketPriceChanged(HubSupplierSkuDto hubSku) throws Exception{
+		List<HubSupplierSkuDto> hubSkus = selectHubSupplierSku(hubSku.getSupplierId(),hubSku.getSupplierSkuNo());
+		if(CollectionUtils.isNotEmpty(hubSkus)){
+			HubSupplierSkuDto hubSkuSel = hubSkus.get(0);
+			hubSku.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : ""); 
 			BigDecimal marketPrice = null;
 			if(hubSku.getMarketPrice()!=null){
 				marketPrice =  hubSku.getMarketPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
@@ -95,8 +106,22 @@ public class SupplierProductService {
 		}
 		return false;
 	}
+
 	/**
-	 * 根据supplierSpuId查找该spu下的所有sku
+	 * 根据供应商门户编号和供应商sku编号查询
+	 * @param supplierId
+	 * @param supplierSkuNo
+	 * @return
+	 */
+	private List<HubSupplierSkuDto> selectHubSupplierSku(String supplierId,String supplierSkuNo) {
+		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+		criteriaDto.setFields("supply_price,market_price,sp_sku_no");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo(""); 
+		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+		return hubSkus;
+	}
+	/**
+	 * 根据supplierSpuId查找该spu下所有尚品sku编号不为空的sku
 	 * @param supplierSpuId
 	 * @return
 	 * @throws Exception
@@ -105,7 +130,7 @@ public class SupplierProductService {
 		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
 		criteriaDto.setPageNo(1);
 		criteriaDto.setPageSize(1000); 
-		criteriaDto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		criteriaDto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo(""); 
 		return hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
 	}
 	/**

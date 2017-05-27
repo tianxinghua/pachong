@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
@@ -30,7 +30,9 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
 import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
@@ -42,11 +44,14 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Created by loyalty on 16/12/24.
  * @param
  */
 @Service
+@Slf4j
 public class PendingServiceImpl implements com.shangpin.ephub.product.business.service.pending.PendingService {
 
     @Autowired
@@ -61,6 +66,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     PengdingToHubGateWay pengdingToHubGateWay;
+
+    @Autowired
+    HubSpuPendingAuditGateWay hubSpuPendingAuditGateWay;
 
     @Autowired
     private TaskExecutor executor;
@@ -238,12 +246,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
      *
      */
     public boolean audit(SpuPendingAuditVO auditVO) throws Exception {
+    	log.info(auditVO.getSpuModel()+" >>>开始复核校验");
         //更新状态
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         hubSpuPending.setUpdateTime(new Date());
         //设置审核状态 返回成功的则返回
         if (setAuditMsg(auditVO, hubSpuPending)) return false;
-
+        log.info(auditVO.getSpuModel()+" >>>待复核设置审核状态OK");
 
         //设置查询条件
         HubSpuPendingCriteriaDto criteria = getHubSpuPendingCriteriaDto(auditVO, hubSpuPending);
@@ -255,7 +264,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             //不通过 直接修改SPU的状态为待处理
             if (judgeCategory(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
         }
-
+        log.info(auditVO.getSpuModel()+" >>>待复核校验品类OK");
 
         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
             if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
@@ -263,6 +272,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 if (auditSize(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
 
             }
+            log.info(auditVO.getSpuModel()+" >>>待复核校验尺码OK");
             HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( hubSpuPending,  criteria);
             //更新spuPending 状态
             spuPendingGateWay.updateByCriteriaSelective(criteriaDto);
@@ -286,6 +296,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
                 executor.execute(task);
+//                log.info("待复核全部校验通过，调用接口=======>>>"+JsonUtil.serialize(spuModelVO));
+//                hubSpuPendingAuditGateWay.auditSpu(spuModelVO);
+
                 return true;
 //             //获取
 //             SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();
@@ -295,16 +308,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 //             SpuModelMsgVO spuModelMsgVO=this.getSpuModel(queryVO);
 //
 //             List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
-//             for(SpuModelVO spuModelVO:spuModels){
-//                 //TODO 扔进消息队列中
-//
-//                 spuModelVO.setCategoryNo(auditVO.getCategoryNo());
-//                 spuModelVO.setColor(auditVO.getColor());
-//                 spuModelVO.setOrigin(auditVO.getOrigin());
-//                 spuModelVO.setMaterial(auditVO.getMaterial());
-//                 CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
-//                 executor.execute(task);
-//             }
+
             }else{
                 return true;
             }

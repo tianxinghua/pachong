@@ -1,0 +1,104 @@
+package com.shangpin.ephub.product.business.service.hub.dto;
+
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.ToString;
+
+/**
+ * Created by lizhongren on 2017/2/14.
+ */
+
+@ToString
+public class SopSkuDto implements Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3972797080044524443L;
+	@JsonIgnore
+    private String  skuNo;
+    @JsonIgnore
+    private String  productNo;
+    @JsonIgnore
+    private Long   sopUserNo;
+    @JsonIgnore
+    private String  supplierSkuNo;
+    @JsonIgnore
+    private String  productModel;
+    @JsonIgnore
+    private String  sopSkuNo;
+    @JsonIgnore
+    private String  sopProductNo;
+    @JsonIgnore
+    private String barCode;
+
+    @JsonProperty("SkuNo")
+    public String getSkuNo() {
+        return skuNo;
+    }
+    @JsonProperty("SkuNo")
+    public void setSkuNo(String skuNo) {
+        this.skuNo = skuNo;
+    }
+    @JsonProperty("ProductNo")
+    public String getProductNo() {
+        return productNo;
+    }
+    @JsonProperty("ProductNo")
+    public void setProductNo(String productNo) {
+        this.productNo = productNo;
+    }
+    @JsonProperty("SopUserNo")
+    public Long getSopUserNo() {
+        return sopUserNo;
+    }
+    @JsonProperty("SopUserNo")
+    public void setSopUserNo(Long sopUserNo) {
+        this.sopUserNo = sopUserNo;
+    }
+    @JsonProperty("SupplierSkuNo")
+    public String getSupplierSkuNo() {
+        return supplierSkuNo;
+    }
+    @JsonProperty("SupplierSkuNo")
+    public void setSupplierSkuNo(String supplierSkuNo) {
+        this.supplierSkuNo = supplierSkuNo;
+    }
+    @JsonProperty("ProductModel")
+    public String getProductModel() {
+        return productModel;
+    }
+    @JsonProperty("ProductModel")
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
+    }
+
+    @JsonProperty("SopSkuNo")
+    public String getSopSkuNo() {
+        return sopSkuNo;
+    }
+    @JsonProperty("SopSkuNo")
+    public void setSopSkuNo(String sopSkuNo) {
+        this.sopSkuNo = sopSkuNo;
+    }
+    @JsonProperty("SopProductNo")
+    public String getSopProductNo() {
+        return sopProductNo;
+    }
+    @JsonProperty("SopProductNo")
+    public void setSopProductNo(String sopProductNo) {
+        this.sopProductNo = sopProductNo;
+    }
+
+    @JsonProperty("BarCode")
+    public String getBarCode() {
+        return barCode;
+    }
+
+    @JsonProperty("BarCode")
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
+}

@@ -78,10 +78,15 @@ public class SupplierDTO {
 	private List<?> spSupplierButtJointMapping;
 	@JsonIgnore
 	private String supplierQualification;
-	@JsonIgnore
-	private String supplierContract;
+//	@JsonIgnore
+//	private String supplierContract;
 	@JsonIgnore
 	private String sopUserNo;
+	@JsonIgnore
+    private List<SupplierContractDTO> supplierContract;
+
+	@JsonIgnore
+	private String currency ;
 	
 	@JsonProperty("SupplierId")
 	public String getSupplierId() {
@@ -323,14 +328,15 @@ public class SupplierDTO {
 	public void setSupplierQualification(String supplierQualification) {
 		this.supplierQualification = supplierQualification;
 	}
-	@JsonProperty("Contract")
-	public String getSupplierContract() {
+	@JsonProperty("SupplierContract")
+	public List<SupplierContractDTO> getSupplierContract() {
 		return supplierContract;
 	}
-	@JsonProperty("Contract")
-	public void setSupplierContract(String supplierContract) {
+	@JsonProperty("SupplierContract")
+	public void setSupplierContract(List<SupplierContractDTO> supplierContract) {
 		this.supplierContract = supplierContract;
 	}
+
 	@JsonProperty("SopUserNo")
 	public String getSopUserNo() {
 		return sopUserNo;
@@ -338,6 +344,15 @@ public class SupplierDTO {
 	@JsonProperty("SopUserNo")
 	public void setSopUserNo(String sopUserNo) {
 		this.sopUserNo = sopUserNo;
+	}
+
+	@JsonProperty("Currency")
+	public String getCurrency() {
+		return currency;
+	}
+	@JsonProperty("Currency")
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 	
 	

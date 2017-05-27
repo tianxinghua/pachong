@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.service.hub.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,12 @@ import org.springframework.web.client.RestTemplate;
 import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiProductOrgExtendDom;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ApiSkuOrgDom;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.PlaceOrigin;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.SpProductOrgInfoEntity;
+import com.shangpin.ephub.client.consumer.hubskusuppliermapping.gateway.SkuSupplierMappingSelectGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
@@ -35,7 +42,6 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.client.product.business.gms.dto.SopSkuQueryDto;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
@@ -44,12 +50,9 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.gms.service.SopSkuService;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.hub.HubProductService;
-import com.shangpin.ephub.product.business.service.hub.dto.ApiProductOrgExtendDom;
-import com.shangpin.ephub.product.business.service.hub.dto.ApiSkuOrgDom;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductDto;
 import com.shangpin.ephub.product.business.service.hub.dto.HubProductIdDto;
-import com.shangpin.ephub.product.business.service.hub.dto.PlaceOrigin;
-import com.shangpin.ephub.product.business.service.hub.dto.SpProductOrgInfoEntity;
+import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -79,6 +82,9 @@ public class HubProductServiceImpl implements HubProductService {
     ApiAddressProperties apiAddressProperties;
     @Autowired
     SopSkuService sopSkuService;
+
+    @Autowired
+    SkuSupplierMappingSelectGateWay skuSupplierMappingSelectGateWay;
 
     @Autowired
     private TaskExecutor executor;
@@ -115,6 +121,8 @@ public class HubProductServiceImpl implements HubProductService {
                         List<ApiSkuOrgDom> skuOrgDoms = new ArrayList<>();
                         Set<Map.Entry<String, ApiSkuOrgDom>> entries = apiSkuOrgDomMap.entrySet();
                         for(Map.Entry<String,ApiSkuOrgDom> entry:entries){
+                            //合并所有尺码下的SKU信息
+
                             skuOrgDoms.add(entry.getValue());
                         }
 
@@ -146,6 +154,16 @@ public class HubProductServiceImpl implements HubProductService {
 
     }
 
+    private void handleSkuOfErrorBarcode(List<ApiSkuOrgDom> errorSkuOrgDoms,Map<String, SopSkuDto> errorSopSkuMap) {
+        for(ApiSkuOrgDom skuOrgDom:errorSkuOrgDoms){
+            SopSkuDto sopSkuDto = errorSopSkuMap.get(skuOrgDom.getSupplierSkuNo());
+            log.info("exist barcode sopSkuDto  = " + sopSkuDto.toString());
+
+            updateSkuMappingStatus(Long.valueOf(skuOrgDom.getSkuOrginalFromId()), SupplierSelectState.SELECTE_FAIL,"供货商SKUNO不存在，但BARCODE存在");
+
+        }
+    }
+
     private void handleExistSku(List<ApiSkuOrgDom> existSkuOrgDoms,Map<String,SopSkuDto> existSopSkuMap,HubSpuDto hubSpuDto) {
         for(ApiSkuOrgDom skuOrgDom:existSkuOrgDoms){
             SopSkuDto sopSkuDto = existSopSkuMap.get(skuOrgDom.getSupplierSkuNo());
@@ -166,12 +184,15 @@ public class HubProductServiceImpl implements HubProductService {
             updateSkuPendingStatus(sopSkuDto);
             // 更新 hubsku
             updateHubSkuSpSkuNo(skuOrgDom.getHubSkuNo(),sopSkuDto.getSkuNo());
+            //TODO add hub_supplier_sku
+            
         }
     }
 
     private void handleSendToScm(SpProductOrgInfoEntity spSpuInfo, ApiProductOrgExtendDom spSpuExtendInfo, List<ApiSkuOrgDom> skuOrgDoms) throws JsonProcessingException {
 
         for(ApiSkuOrgDom skuOrg:skuOrgDoms){
+
         	String hubSkuNo = skuOrg.getHubSkuNo();
         	String supplierNo = skuOrg.getSupplierNo();
         	//判断是否同一供应商下含有多个相同的hubSkuNo
@@ -181,6 +202,17 @@ public class HubProductServiceImpl implements HubProductService {
             SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
                      apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
             executor.execute(task);
+
+
+//            ProductMessageDto productDto = new ProductMessageDto();
+//            productDto.setProductOrgInfo(spSpuInfo);
+//            productDto.setProductOrgInfoExtend(spSpuExtendInfo);
+//            List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
+//            sendSkuList.add(skuOrg);
+//            productDto.setSkuList(sendSkuList);
+//            skuSupplierMappingSelectGateWay.select(productDto);
+
+
         }
     }
 
@@ -207,16 +239,28 @@ public class HubProductServiceImpl implements HubProductService {
     	return false;
 	}
 
-	private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) throws JsonProcessingException {
+
+    /**
+     *
+     * @param supplierId
+     * @param skuOrgDoms : 相同供货商不同尺码的集合
+     * @param existSopSkuMap
+
+     * @return
+     * @throws JsonProcessingException
+     */
+    private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap) throws JsonProcessingException {
         SopSkuQueryDto queryDto = new SopSkuQueryDto();
         queryDto.setSopUserNo(supplierId);
         List<String> supplierSkuNoList = new ArrayList<>();
+        List<String> supplierBarcodeList = new ArrayList<>();
         for(ApiSkuOrgDom apiSkuOrgDom:skuOrgDoms){
             //因为拉取后 存在的要改成其它的状态 所以 没有可以在推送前就查询 (咱不开启)
-           // if(apiSkuOrgDom.isRetry()){
+            // if(apiSkuOrgDom.isRetry()){
 
-                supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
-           // }
+            supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
+//            supplierBarcodeList.add(apiSkuOrgDom.getBarCode());
+            // }
         }
         queryDto.setLstSupplierSkuNo(supplierSkuNoList);
 
@@ -238,20 +282,127 @@ public class HubProductServiceImpl implements HubProductService {
         if(null!=sopSkuResponseDto&&sopSkuResponseDto.getIsSuccess()){
             List<SopSkuDto> sopSkuDtos =  sopSkuResponseDto.getResDatas();
             if(null!=sopSkuDtos&&sopSkuDtos.size()>0){
-               for( SopSkuDto  sopSkuDto:sopSkuDtos ){
-                   existSopSkuMap.put(sopSkuDto.getSupplierSkuNo(),sopSkuDto);
-               }
-               for(int i=0 ;i<skuOrgDoms.size();i++){
-                   ApiSkuOrgDom skuOrgDom = skuOrgDoms.get(i);
-                   if(existSopSkuMap.containsKey(skuOrgDom.getSupplierSkuNo())){
-                       existApiSkuOrgDoms.add(skuOrgDom);
-                       skuOrgDoms.remove(i);
-                       i--;
-                   }
-               }
+                for( SopSkuDto  sopSkuDto:sopSkuDtos ){
+                    existSopSkuMap.put(sopSkuDto.getSupplierSkuNo(),sopSkuDto);
+                }
+                for(int i=0 ;i<skuOrgDoms.size();i++){
+                    ApiSkuOrgDom skuOrgDom = skuOrgDoms.get(i);
+                    if(existSopSkuMap.containsKey(skuOrgDom.getSupplierSkuNo())){
+                        existApiSkuOrgDoms.add(skuOrgDom);
+                        skuOrgDoms.remove(i);
+                        i--;
+                    }
+                }
             }
         }
         return existApiSkuOrgDoms;
+    }
+
+
+	private List<ApiSkuOrgDom>  getExistSku(String supplierId,List<ApiSkuOrgDom> skuOrgDoms,Map<String,SopSkuDto> existSopSkuMap,
+                                            Map<String,SopSkuDto> errorSopSkuMap,List<ApiSkuOrgDom> errorSkuOrgDoms) throws JsonProcessingException {
+        SopSkuQueryDto queryDto = new SopSkuQueryDto();
+        queryDto.setSopUserNo(supplierId);
+        List<ApiSkuOrgDom> existApiSkuOrgDoms = new ArrayList<>();
+        List<String> supplierSkuNoList = new ArrayList<>();
+        List<String> supplierBarcodeList = new ArrayList<>();
+        Map<String,ApiSkuOrgDom> skuNoApiSkuMap = new HashMap<>();
+        Map<String,ApiSkuOrgDom> barcodeApiSkuMap = new HashMap<>();
+        String split = "|||";
+        //一次查询所有的 如果一个一个的查 后续逻辑好处理  但调用接口过多 性能不好
+        HubResponseDto<SopSkuDto> sopSkuResponseDto = getSopSkuDtoFromScm(skuOrgDoms, queryDto, supplierSkuNoList, supplierBarcodeList, skuNoApiSkuMap, barcodeApiSkuMap);
+
+        Map<String,SopSkuDto> searchSpSkuMap  = new HashMap<>();
+        if(null!=sopSkuResponseDto&&sopSkuResponseDto.getIsSuccess()){
+            List<SopSkuDto> sopSkuDtos =  sopSkuResponseDto.getResDatas();
+            if(null!=sopSkuDtos&&sopSkuDtos.size()>0){
+                for( SopSkuDto  sopSkuDto:sopSkuDtos ){
+                    searchSpSkuMap.put(sopSkuDto.getSupplierSkuNo()+split+sopSkuDto.getBarCode(),sopSkuDto);
+
+                }
+
+            }
+        }
+        //排除找到的数据
+        for(int i=0 ;i<skuOrgDoms.size();i++){
+            ApiSkuOrgDom apiSkuOrgDom = skuOrgDoms.get(i);
+            if(searchSpSkuMap.containsKey(apiSkuOrgDom.getSupplierSkuNo()+split+apiSkuOrgDom.getBarCode())){
+                existApiSkuOrgDoms.add(apiSkuOrgDom);
+                skuOrgDoms.remove(i);
+                i--;
+                existSopSkuMap.put(apiSkuOrgDom.getSupplierSkuNo(),searchSpSkuMap.get(apiSkuOrgDom.getSupplierSkuNo()+split+apiSkuOrgDom.getBarCode()));
+                searchSpSkuMap.remove(apiSkuOrgDom.getSupplierSkuNo()+split+apiSkuOrgDom.getBarCode());
+            }
+        }
+        //有supplierSKUNO 加 barcode 某个不符
+        if(searchSpSkuMap.size()>0){
+            Set<Map.Entry<String, SopSkuDto>> entrySet = searchSpSkuMap.entrySet();
+            Iterator<Map.Entry<String, SopSkuDto>> iterator = entrySet.iterator();
+            String key="",supplierSkuNO ="",barcode="";
+            while(iterator.hasNext()){
+                Map.Entry<String, SopSkuDto> entry = iterator.next();
+                key = entry.getKey();
+                supplierSkuNO = key.substring(0,key.indexOf(split));
+                barcode = key.substring(key.indexOf(split)+3);
+
+                if(skuNoApiSkuMap.containsKey(supplierSkuNO)){
+                    //供货商的SKUNO 存在  但barcode 不一样，但现不做处理 认为是一个
+                    ApiSkuOrgDom apiSkuOrgDom =skuNoApiSkuMap.get(supplierSkuNO);
+
+                    existApiSkuOrgDoms.add(apiSkuOrgDom);
+                    existSopSkuMap.put(apiSkuOrgDom.getSupplierSkuNo(),entry.getValue());
+                    skuOrgDoms.remove(apiSkuOrgDom);
+
+                }else if(barcodeApiSkuMap.containsKey(barcode)){
+                    // barcode 可查询到
+                    ApiSkuOrgDom apiSkuOrgDom =barcodeApiSkuMap.get(barcode);
+                    errorSopSkuMap.put(apiSkuOrgDom.getSupplierSkuNo(), entry.getValue());
+                    errorSkuOrgDoms.add(apiSkuOrgDom);
+                    skuOrgDoms.remove(apiSkuOrgDom);
+                }
+           }
+           //移除errorSopSkuMap 中在 existApiSkuOrgDoms有的 (同一个商品 skuno 和 barcode 都查询出来一个商品 ，认为这个商品已存在，不需要提送）
+            for(ApiSkuOrgDom apiSkuOrgDom:existApiSkuOrgDoms){
+                if(errorSopSkuMap.containsKey(apiSkuOrgDom.getSupplierSkuNo())){
+                    errorSopSkuMap.remove(apiSkuOrgDom.getSupplierSkuNo());
+                    errorSkuOrgDoms.remove(apiSkuOrgDom);
+                }
+            }
+        }
+
+
+
+
+        return existApiSkuOrgDoms;
+    }
+
+    private HubResponseDto<SopSkuDto> getSopSkuDtoFromScm(List<ApiSkuOrgDom> skuOrgDoms, SopSkuQueryDto queryDto, List<String> supplierSkuNoList, List<String> supplierBarcodeList, Map<String, ApiSkuOrgDom> skuNoApiSkuMap, Map<String, ApiSkuOrgDom> barcodeApiSkuMap) throws JsonProcessingException {
+        for(ApiSkuOrgDom apiSkuOrgDom:skuOrgDoms) {
+            skuNoApiSkuMap.put(apiSkuOrgDom.getSupplierSkuNo(),apiSkuOrgDom);
+            barcodeApiSkuMap.put(apiSkuOrgDom.getBarCode(),apiSkuOrgDom);
+            //因为拉取后 存在的要改成其它的状态 所以 没有可以在推送前就查询 (暂不开启)
+            // if(apiSkuOrgDom.isRetry()){
+
+            supplierSkuNoList.add(apiSkuOrgDom.getSupplierSkuNo());
+            supplierBarcodeList.add(apiSkuOrgDom.getBarCode());
+            // }
+
+        }
+        queryDto.setLstSupplierSkuNo(supplierSkuNoList);
+        queryDto.setLstBarCode(supplierBarcodeList);
+        HubResponseDto<SopSkuDto> sopSkuResponseDto = null;
+        try {
+            if(supplierSkuNoList.size()>0){
+                sopSkuResponseDto = sopSkuService.querySpSkuNoFromScm(queryDto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(null!=sopSkuResponseDto){
+            log.info("　get  spSku　" + objectMapper.writeValueAsString(sopSkuResponseDto) +
+                    " query parameter: " + objectMapper.writeValueAsString(queryDto));
+        }
+        return sopSkuResponseDto;
     }
 
     private void setScmSkuValue(List<HubProductIdDto> skus, SpProductOrgInfoEntity spSpuInfo, HubSpuDto hubSpuDto, Map<String, Map<String, ApiSkuOrgDom>> supplierSizeMap) {
@@ -309,7 +460,7 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
     private ApiSkuOrgDom setScmSku(HubSpuDto hubSpuDto,HubSkuDto hubSkuDto,SpProductOrgInfoEntity spSpuInfo, HubSkuSupplierMappingDto hubSkuSupplierMappingDto) {
-        ApiSkuOrgDom  skuOrgDom =new ApiSkuOrgDom();
+        ApiSkuOrgDom skuOrgDom =new ApiSkuOrgDom();
         skuOrgDom.setProductOrgInfoId(0L);
         skuOrgDom.setSkuOrgInfoId(0L);
         skuOrgDom.setSkuOrgName(hubSpuDto.getSpuName());
@@ -505,7 +656,7 @@ class SendToScmTask implements Runnable{
 
     @Override
     public void run() {
-        HubProductDto productDto = new HubProductDto();
+        ProductMessageDto productDto = new ProductMessageDto();
         productDto.setProductOrgInfo(spSpuInfo);
         productDto.setProductOrgInfoExtend(spSpuExtendInfo);
         List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
@@ -543,8 +694,8 @@ class SendToScmTask implements Runnable{
     }
 
     @SuppressWarnings("unused")
-	private HubResponseDto<String> sendToScm(HubProductDto productDto) throws JsonProcessingException {
-        HttpEntity<HubProductDto> requestEntity = new HttpEntity<HubProductDto>(productDto);
+	private HubResponseDto<String> sendToScm(ProductMessageDto productDto) throws JsonProcessingException {
+        HttpEntity<ProductMessageDto> requestEntity = new HttpEntity<ProductMessageDto>(productDto);
         ObjectMapper mapper = new ObjectMapper();
 //        log.info("send scm parameter: " + mapper.writeValueAsString(productDto));
 
