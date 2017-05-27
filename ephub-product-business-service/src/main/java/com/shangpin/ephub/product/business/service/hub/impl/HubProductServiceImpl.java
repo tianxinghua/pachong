@@ -199,18 +199,18 @@ public class HubProductServiceImpl implements HubProductService {
         	if(checkIsExistMulHubSkuNo(hubSkuNo,supplierNo)){
         		continue;
         	}
-            SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
-                     apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
-            executor.execute(task);
+//            SendToScmTask task = new  SendToScmTask( skuSupplierMappingGateWay, skuOrg, restTemplate,
+//                     apiAddressProperties, spSpuInfo,  spSpuExtendInfo);
+//            executor.execute(task);
 
 
-//            ProductMessageDto productDto = new ProductMessageDto();
-//            productDto.setProductOrgInfo(spSpuInfo);
-//            productDto.setProductOrgInfoExtend(spSpuExtendInfo);
-//            List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
-//            sendSkuList.add(skuOrg);
-//            productDto.setSkuList(sendSkuList);
-//            skuSupplierMappingSelectGateWay.select(productDto);
+            ProductMessageDto productDto = new ProductMessageDto();
+            productDto.setProductOrgInfo(spSpuInfo);
+            productDto.setProductOrgInfoExtend(spSpuExtendInfo);
+            List<ApiSkuOrgDom> sendSkuList = new ArrayList<>();
+            sendSkuList.add(skuOrg);
+            productDto.setSkuList(sendSkuList);
+            skuSupplierMappingSelectGateWay.select(productDto);
 
 
         }

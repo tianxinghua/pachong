@@ -294,20 +294,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 }
                 spuModelVO.setSpuPendingIds(spuPendingIdList);
 
-                CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
-                executor.execute(task);
-//                log.info("待复核全部校验通过，调用接口=======>>>"+JsonUtil.serialize(spuModelVO));
-//                hubSpuPendingAuditGateWay.auditSpu(spuModelVO);
+//                CreateSpuAndSkuTask task = new CreateSpuAndSkuTask(pengdingToHubGateWay,spuModelVO,spuPendingGateWay,skuPendingGateWay);
+//                executor.execute(task);
+                log.info("待复核全部校验通过，调用接口=======>>>"+JsonUtil.serialize(spuModelVO));
+                hubSpuPendingAuditGateWay.auditSpu(spuModelVO);
 
                 return true;
-//             //获取
-//             SpuPendingAuditQueryVO queryVO = new SpuPendingAuditQueryVO();
-//             BeanUtils.copyProperties(auditVO,queryVO);
-//             //查询审核中的
-//             queryVO.setStatus(SpuStatus.SPU_HANDLING.getIndex());
-//             SpuModelMsgVO spuModelMsgVO=this.getSpuModel(queryVO);
-//
-//             List<SpuModelVO> spuModels = spuModelMsgVO.getSpuModels();
+
 
             }else{
                 return true;
