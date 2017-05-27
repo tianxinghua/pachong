@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.49
+           host: 172.20.11.50
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -16,8 +16,8 @@ spring:
           discovery: 
             prefer-agent-address: true
             prefer-ip-address: true
-            health-check-interval: 15s
-            health-check-timeout: 15s            
+            health-check-interval: 90s
+            health-check-timeout: 60s
             register: true
             register-health-check: true
         stream:
@@ -78,18 +78,12 @@ banner:
        location: classpath:banner/banner.txt # Banner file location.
        image:
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
-shangpin: 
-       certificate: 
-             usernameAndPassword: 
-                  2016030701799: 
-                      username: shangpin
-                      password: Shang2016
-                  2016083001937: 
-                      username: shangpin
-                      password: Shang1808
-                  2016011201731: 
-                      username: shangpin
-                      password: Atelier2015
-                  2016012101751:                                     
-                      username: shangpin
-                      password: Atelier2015             
+shangpin:
+   hub:
+       callAddress:
+              gmsAddProductUrl: http://scmapi.spidc1.com/gms/Product/AddProduct
+              gmsSizeUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetProductSize
+              gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
+              gmsCategoryUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetCategory
+              scmsSupplierInfoUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
+              sopSkuListBySupplierSkuNoUrl: http://sopoutapi.spidc1.com/Product/GetSopSkuListBySupplierSkuNo

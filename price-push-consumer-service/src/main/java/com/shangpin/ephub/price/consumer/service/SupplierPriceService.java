@@ -63,20 +63,22 @@ public class SupplierPriceService {
 
 
                 String supplierType = supplierMessageDTO.getQuoteMode();;
-                log.info("supplier type ="+ supplierType);
+//                log.info("supplier type ="+ supplierType);
                 if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
 
                     Map<String,String> supplierMap = this.getValidSupplier();
                     if(supplierMap.containsKey(productPriceDTO.getSopUserNo())){
                         if(this.isNeedPushForSupplyPrice(productPriceDTO)){
-                        	if(StringUtils.isNotBlank(productPriceDTO.getMarketPrice())){
+                        	if(StringUtils.isNotBlank(productPriceDTO.getMarketPrice())&&StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
                         		//重新计算价格
+                                String originSupplyPrice = productPriceDTO.getPurchasePrice();
+
                                 reSetPrice(supplierMessageDTO,productPriceDTO);
                                 productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
-                                handSupplyPrice(productPriceDTO);
+                                handSupplyPrice(productPriceDTO,originSupplyPrice);
                         	}else{
                         		priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
-                                        productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"市场价为空不能推送");
+                                        productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"市场价为空或供价为空不能推送");
                         	}
                         }else{
                             priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
@@ -124,8 +126,8 @@ public class SupplierPriceService {
 
     }
 
-    private void handSupplyPrice(ProductPriceDTO productPriceDTO) throws Exception {
-        if(priceSendService.sendSupplyPriceMsgToScm(productPriceDTO)){
+    private void handSupplyPrice(ProductPriceDTO productPriceDTO,String originPurchasePrice) throws Exception {
+        if(priceSendService.sendSupplyPriceMsgToScm(productPriceDTO,originPurchasePrice)){
             priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
                     productPriceDTO.getSkuNo(), PriceHandleState.PUSHED_OPENAPI_SUCCESS.getIndex(),""  );
         }else{
@@ -172,7 +174,7 @@ public class SupplierPriceService {
         SupplierMessageDTO supplierMessageDTO = new SupplierMessageDTO();
         supplierMessageDTO.setQuoteMode(supplierDTO.getSupplierContract().get(0).getQuoteMode().toString());
         supplierMessageDTO.setCurrency(supplierDTO.getCurrency());
-        supplierMessageDTO.setSopUserNo(Long.valueOf(supplierDTO.getSopUserNo().toString()));
+        supplierMessageDTO.setSopUserNo(Long.valueOf(supplierDTO.getSopUserNo()));
         supplierMessageDTO.setSupplierNo(suppplierNo);
         supplierMessageDTO.setServiceRate(String.valueOf((supplierDTO.getSupplierContract().get(0).getServiceRate())));
         log.info("supplier message  = " + mapper.writeValueAsString(supplierMessageDTO));

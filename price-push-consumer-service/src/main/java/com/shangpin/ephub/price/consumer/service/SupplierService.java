@@ -40,7 +40,7 @@ public class SupplierService {
         SupplierDTO dto = null;
         //先获取缓存中的数据
         String supplierMsg = shangpinRedis.get(GlobalConstant.REDIS_PRICE_PUSH_CONSUMER_SERVICE_SUPPLIER_KEY+"_"+supplierNo);
-
+        log.info("supplierMsg = " +supplierMsg);
         if(StringUtils.isNotBlank(supplierMsg)){
             try {
                 dto = om.readValue(supplierMsg, SupplierDTO.class);
@@ -59,9 +59,9 @@ public class SupplierService {
 
         try {
             String supplierUrl =apiAddressProperties.getScmsSupplierInfoUrl()+supplierNo;
-            log.info("supplierUrl = " +supplierUrl);
+
             String reSupplierMsg = restTemplate.getForObject(supplierUrl, String.class);
-            log.info("reSupplierMsg = " +reSupplierMsg);
+            log.info("SupplierMsg from api = " +reSupplierMsg);
             dto = om.readValue(reSupplierMsg, SupplierDTO.class);
             //记录到REDIS缓存中
             shangpinRedis.setex(GlobalConstant.REDIS_PRICE_PUSH_CONSUMER_SERVICE_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,om.writeValueAsString(dto));
