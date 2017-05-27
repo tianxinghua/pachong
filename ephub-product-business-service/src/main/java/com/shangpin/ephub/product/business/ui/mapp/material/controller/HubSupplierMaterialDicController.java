@@ -53,7 +53,7 @@ public class HubSupplierMaterialDicController {
 		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierMaterialDicRequestDto);
 			int total =0;
-			byte type = hubSupplierMaterialDicRequestDto.getType();
+			byte type = hubSupplierMaterialDicRequestDto.getMappingLevel();
 			total = hubMaterialDicService.countSupplierMaterialByType(type,hubSupplierMaterialDicRequestDto.getSupplierMaterial(),hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
 			if(total>0){

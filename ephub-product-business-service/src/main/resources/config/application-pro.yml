@@ -16,8 +16,8 @@ spring:
           discovery: 
             prefer-agent-address: true
             prefer-ip-address: true
-            health-check-interval: 10s
-            health-check-timeout: 10s            
+            health-check-interval: 35s
+            health-check-timeout: 30s            
             register: true
             register-health-check: true
         stream: 

@@ -30,7 +30,7 @@ public class StockScheduler {
 	}
 
 
-	@Scheduled(cron = "00 52 10 * * ?")
+	@Scheduled(cron = "00 03 11 * * ?")
 	public void pricePush() {
 		try {
 			log.info("===========任务开始============"); 
