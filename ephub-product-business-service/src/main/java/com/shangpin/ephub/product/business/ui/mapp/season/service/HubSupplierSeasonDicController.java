@@ -90,7 +90,9 @@ public class HubSupplierSeasonDicController {
 					HubSupplierSeasonDicResponseDto dic = new HubSupplierSeasonDicResponseDto();
 					dic.setSupplierId(dicDto.getSupplierid());
 					BeanUtils.copyProperties(dicDto, dic);
-					dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+					if(dicDto.getCreateTime()!=null){
+						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));						
+					}
 					if(dicDto.getUpdateTime()!=null){
 						dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 					}

@@ -17,7 +17,6 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
@@ -26,7 +25,6 @@ import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.brand.dto.HubSupplierBrandDicResponseWithPageDto;
-import com.shangpin.ephub.product.business.ui.mapp.season.dto.HubSupplierSeasonDicRequestDto;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -117,23 +115,22 @@ public class HubSupplierBrandDicController {
 
 	private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
 		
-		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand());
+		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo());
+
 		log.info("返回个数："+total);
 		if(total>0){
-			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),
+					hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
 			if (list != null && list.size() > 0) {
 				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
 				for (HubSupplierBrandDicDto dicDto : list) {
 					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
 					BeanUtils.copyProperties(dicDto, dic);
-					
-					
 					List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
 					if(listMapp!=null&&listMapp.size()>0){
 						dic.setSupplierNo(listMapp.get(0).getHubValNo());
 						dic.setSupplierName(listMapp.get(0).getHubVal());
 					}	
-					
 					responseList.add(dic);
 				}
 				HubSupplierBrandDicResponseWithPageDto response = new HubSupplierBrandDicResponseWithPageDto();
@@ -200,6 +197,7 @@ public class HubSupplierBrandDicController {
 	public HubResponse save(@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
 
 		try {
+			log.info("保存参数：{}",hubSupplierBrandDicRequestDto);
 			HubSupplierBrandDicDto dicDto = new HubSupplierBrandDicDto();
 			BeanUtils.copyProperties(hubSupplierBrandDicRequestDto, dicDto);
 			if(StringUtils.isNotBlank(hubSupplierBrandDicRequestDto.getSupplierNo())){
