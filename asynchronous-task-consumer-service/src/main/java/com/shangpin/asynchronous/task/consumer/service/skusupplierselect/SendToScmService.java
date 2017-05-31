@@ -1,5 +1,17 @@
 package com.shangpin.asynchronous.task.consumer.service.skusupplierselect;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,24 +21,9 @@ import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessa
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.client.product.business.gms.dto.HubResponseDto;
-import com.shangpin.ephub.client.product.business.hubproduct.dto.HubProductDto;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/5/4.

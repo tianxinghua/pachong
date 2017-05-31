@@ -1,15 +1,14 @@
 package com.shangpin.asynchronous.task.consumer.conf.stream.source.sender;
 
 
-import com.shangpin.asynchronous.task.consumer.conf.stream.source.channel.HubSkuSupplierSelectSource;
-import com.shangpin.asynchronous.task.consumer.conf.stream.source.channel.SpuPendingAuditSource;
-import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
-import java.util.Map;
+import com.shangpin.asynchronous.task.consumer.conf.stream.source.channel.SpuPendingAuditSource;
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 
 /**
 

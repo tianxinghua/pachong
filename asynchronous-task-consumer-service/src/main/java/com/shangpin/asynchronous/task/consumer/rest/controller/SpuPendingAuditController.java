@@ -1,15 +1,14 @@
 package com.shangpin.asynchronous.task.consumer.rest.controller;
 
 
-import com.shangpin.asynchronous.task.consumer.rest.service.SkuSelectedMappingService;
-import com.shangpin.asynchronous.task.consumer.rest.service.SpuPendingAuditService;
-import com.shangpin.ephub.client.consumer.hubskusuppliermapping.dto.ProductMessageDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.shangpin.asynchronous.task.consumer.rest.service.MessageSendService;
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 
 /**
 
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SpuPendingAuditController {
 	
 	@Autowired
-	private SpuPendingAuditService spuPendingAuditService;
+	private MessageSendService spuPendingAuditService;
 	/**
 	 *
 	 * @throws Exception

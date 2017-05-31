@@ -139,6 +139,7 @@ public class TonyHandler implements ISupplierHandler {
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierSkuNo(tonyItems.getSku());
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(tonyItems.getStock_price())));
+			hubSku.setSupplyPrice(new BigDecimal("0.00"));
 			hubSku.setSupplierBarcode(tonyItems.getBarcode());
 			hubSku.setSupplierSkuSize(tonyItems.getSize());
 			hubSku.setStock(StringUtil.verifyStock(tonyItems.getQty()));

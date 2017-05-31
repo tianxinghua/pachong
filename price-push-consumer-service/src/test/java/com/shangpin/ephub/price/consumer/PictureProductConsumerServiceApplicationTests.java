@@ -1,5 +1,6 @@
 package com.shangpin.ephub.price.consumer;
 
+import com.shangpin.ephub.price.consumer.service.SupplierPriceService;
 import com.shangpin.ephub.price.consumer.service.SupplierService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,9 +14,16 @@ public class PictureProductConsumerServiceApplicationTests {
     @Autowired
 	SupplierService supplierService;
 
+    @Autowired
+	SupplierPriceService supplierPriceService;
+
 	@Test
 	public void contextLoads() {
-		supplierService.getSupplier("S0000394");
+		try {
+			supplierPriceService.getSupplierMsg("S0000394");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	/*public static void main(String[] args) throws Throwable {
 		try {

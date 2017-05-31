@@ -1,22 +1,17 @@
 package com.shangpin.ep.order.module.order.service.impl;
 
+import java.math.BigDecimal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.openapi.OpenApiProperties;
 import com.shangpin.ep.order.enumeration.LogLeve;
-import com.shangpin.ep.order.exception.ServiceException;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.math.BigDecimal;
 
 /**
  * Created by lizhongren on 2017/5/17.

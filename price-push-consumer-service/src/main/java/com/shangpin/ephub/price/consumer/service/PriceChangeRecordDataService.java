@@ -29,19 +29,19 @@ public class PriceChangeRecordDataService {
     * @param memo
     * @return
     */
-   public boolean updatePriceSendState(String supplierId, List<String> spSkuNos, Byte state,String memo) throws Exception{
-      boolean result = false;
-      HubSupplierPriceChangeRecordDto hubSupplierPriceChangeRecordDto = new HubSupplierPriceChangeRecordDto();
-      hubSupplierPriceChangeRecordDto.setState(state);
-      hubSupplierPriceChangeRecordDto.setMemo(memo);
-      hubSupplierPriceChangeRecordDto.setUpdateTime(new Date());
-      HubSupplierPriceChangeRecordCriteriaDto criteriaDto  = new HubSupplierPriceChangeRecordCriteriaDto();
-      criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSpSkuNoIn(spSkuNos);
-      HubSupplierPriceChangeRecordWithCriteriaDto withCriteriaDto = new HubSupplierPriceChangeRecordWithCriteriaDto(hubSupplierPriceChangeRecordDto,criteriaDto);
-      int i = hubSupplierPriceChangeRecordGateWay.updateByCriteriaSelective(withCriteriaDto);
-      result = true;
-      return result;
-   }
+//   public boolean updatePriceSendState(String supplierId, List<String> spSkuNos, Byte state,String memo) throws Exception{
+//      boolean result = false;
+//      HubSupplierPriceChangeRecordDto hubSupplierPriceChangeRecordDto = new HubSupplierPriceChangeRecordDto();
+//      hubSupplierPriceChangeRecordDto.setState(state);
+//      hubSupplierPriceChangeRecordDto.setMemo(memo);
+//      hubSupplierPriceChangeRecordDto.setUpdateTime(new Date());
+//      HubSupplierPriceChangeRecordCriteriaDto criteriaDto  = new HubSupplierPriceChangeRecordCriteriaDto();
+//      criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSpSkuNoIn(spSkuNos);
+//      HubSupplierPriceChangeRecordWithCriteriaDto withCriteriaDto = new HubSupplierPriceChangeRecordWithCriteriaDto(hubSupplierPriceChangeRecordDto,criteriaDto);
+//      int i = hubSupplierPriceChangeRecordGateWay.updateByCriteriaSelective(withCriteriaDto);
+//      result = true;
+//      return result;
+//   }
 
 
    /**
