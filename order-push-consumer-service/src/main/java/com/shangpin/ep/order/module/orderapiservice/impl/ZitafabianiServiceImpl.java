@@ -252,6 +252,9 @@ public class ZitafabianiServiceImpl implements IOrderService {
 		return returnData;
 	}
 	
+	public static void main(String[] args) {
+		
+	}
 	/**
 	 * 获取订单状态
 	 * @param code 订单编号

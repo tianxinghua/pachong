@@ -155,6 +155,9 @@ public class OrderHandleSearch {
 	@Qualifier("dlrboutiqueServiceImpl") 
 	IOrderService dlrboutiqueServiceImpl;
 
+	@Autowired
+	@Qualifier("zitafabianiServiceImpl") 
+	IOrderService zitafabianiServiceImpl;
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -247,6 +250,8 @@ public class OrderHandleSearch {
 			return antonacciOrderImpl;
 		}else if("2017042601969".equals(supplierId)){
 			return dlrboutiqueServiceImpl;
+		}else if("2016032101816".equals(supplierId)){
+			return zitafabianiServiceImpl;
 		}else {
 			return null;
 		}
@@ -330,6 +335,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getAntonacci();
 		}else if("2017042601969".equals(supplierId)){
 			return supplierProperties.getDlrboutique();
+		}else if("2016032101816".equals(supplierId)){
+			return supplierProperties.getZitafabiani();
 		}
 		else {
 			return null;
