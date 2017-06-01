@@ -14,6 +14,7 @@
 //import org.springframework.cloud.netflix.feign.EnableFeignClients;
 //import org.springframework.test.context.junit4.SpringRunner;
 //
+//import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 //import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 //import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 //import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
@@ -38,6 +39,12 @@
 //
 //	@Test
 //	public void contextLoads() {
+//		
+//		HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
+//		hubSkuUpdated.setStock(2);
+//		String ss = JsonUtil.serialize(hubSkuUpdated);
+//		System.out.println(ss);
+//		System.out.println(hubSkuUpdated.getMarketPrice()); 
 ////		try {
 ////			HubSupplierSpuDto dto = new HubSupplierSpuDto();
 ////			dto.setSupplierId("99999999999999");
