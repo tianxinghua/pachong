@@ -127,4 +127,4 @@ shangpin:
    hub: 
        callAddress: 
              pendingProductInfoUrl: http://scm.shangpin.com/gms/HubSupplierProduct/PendingProductInfo?productId=
-             gmsAddProductUrl: http://scmapi.shangpin.com/gms/Product/AddProduct
+             gmsAddProductUrl: http://scmapi.spidc1.com/gms/Product/AddProduct
