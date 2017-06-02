@@ -20,12 +20,14 @@ public class StockScheduler {
     @Autowired
 	PricePushService pricePushService;
 
-	@Scheduled(cron = "00 21 12 * * ?")
+	@Scheduled(cron = "00 21 19 * * ?")
 	public void stockTask() {
 		try {
+			log.info("======================清除库存定时任务开始======================");
 			stockService.updateStockToZero();
+			log.info("======================清除库存定时任务结束======================");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("清除库存定时任务执行失败："+e.getMessage(),e);
 		}
 	}
 

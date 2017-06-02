@@ -35,6 +35,7 @@ public class StockService {
     public void updateStockToZero() throws Exception{
 
         List<HubSupplierSkuDto> skuDtos = this.findSupplierSkuNoUpdateOutSevenDay();
+        log.info("需要清除库存的产品的总数是："+skuDtos.size()); 
         for(HubSupplierSkuDto supplierSkuDto:skuDtos){
             if(supplierSkuDto.getStock()>0){
                 try {
