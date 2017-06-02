@@ -20,7 +20,7 @@ public class StockScheduler {
     @Autowired
 	PricePushService pricePushService;
 
-	//@Scheduled(cron = "00 21 12 * * ?")
+	@Scheduled(cron = "00 21 12 * * ?")
 	public void stockTask() {
 		try {
 			stockService.updateStockToZero();
@@ -30,7 +30,7 @@ public class StockScheduler {
 	}
 
 
-	@Scheduled(cron = "00 03 11 * * ?")
+	//@Scheduled(cron = "00 03 11 * * ?")
 	public void pricePush() {
 		try {
 			log.info("===========任务开始============"); 
