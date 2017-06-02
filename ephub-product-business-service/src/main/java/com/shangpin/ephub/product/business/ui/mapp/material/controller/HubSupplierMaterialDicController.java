@@ -72,7 +72,7 @@ public class HubSupplierMaterialDicController {
 						if(type==1){
 							if(map.containsKey(dicDto.getHubMaterial())){
 								HubMaterialMappingDto temp = map.get(dicDto.getHubMaterial());
-								temp.setSupplierMaterial(temp.getHubMaterial()+","+dicDto.getHubMaterial());
+								temp.setSupplierMaterial(temp.getSupplierMaterial()+","+dicDto.getSupplierMaterial());
 							}else{
 								map.put(dicDto.getHubMaterial(), dicDto);
 							}
@@ -84,7 +84,10 @@ public class HubSupplierMaterialDicController {
 						for(Map.Entry<String,HubMaterialMappingDto> entry:map.entrySet()){
 							HubMaterialMappingDto dicDto = entry.getValue();
 							HubSupplierMaterialDicResponseDto dic = new HubSupplierMaterialDicResponseDto();
-							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+							if(dicDto.getCreateTime()!=null){
+								dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
+							}
+							
 							if(dicDto.getUpdateTime()!=null){
 								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 							}
@@ -111,7 +114,7 @@ public class HubSupplierMaterialDicController {
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse selectHubMaterialDetail(@RequestBody HubSupplierMaterialDicRequestDto hubSupplierMaterialDicRequestDto) {
 		try {
-			log.info("颜色详情请求参数：{}",hubSupplierMaterialDicRequestDto);
+			log.info("材质详情请求参数：{}",hubSupplierMaterialDicRequestDto);
 			
 			int total = hubMaterialDicService.countHubMaterialDicByHubMaterialId(hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
@@ -146,10 +149,10 @@ public class HubSupplierMaterialDicController {
 	 */
 	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse save(@RequestBody HubSupplierMaterialDicRequestDto dto) {
-
+		log.info("===材质保存请求参数：{}",dto);
 		try {
 			HubMaterialMappingDto dicDto = new HubMaterialMappingDto();
-			BeanUtils.copyProperties(dto, dicDto);
+//			BeanUtils.copyProperties(dto, dicDto);
 			if(StringUtils.isNotBlank(dto.getSupplierMaterial())){
 				String [] supplierMaterialArr = dto.getSupplierMaterial().trim().split(",",-1);
 				for(String supplierMaterial:supplierMaterialArr){
@@ -161,6 +164,8 @@ public class HubSupplierMaterialDicController {
 					dicDto.setUpdateTime(new Date());
 					dicDto.setCreateUser(dto.getCreateUser());
 					dicDto.setMappingLevel((byte)1);
+					dicDto.setHubMaterial(dto.getHubMaterial());
+					dicDto.setSupplierMaterial(supplierMaterial);
 					hubMaterialDicService.saveHubSupplierMaterial(dicDto);
 				}
 			}
@@ -180,6 +185,7 @@ public class HubSupplierMaterialDicController {
 				String [] supplierMaterialArr = dto.getSupplierMaterial().trim().split(",",-1);
 				for(String supplierMaterial:supplierMaterialArr){
 					HubMaterialMappingDto dicDto = new HubMaterialMappingDto();
+					BeanUtils.copyProperties(dto, dicDto);
 					dicDto.setUpdateTime(new Date());
 					dicDto.setUpdateUser(dto.getUpdateUser());
 					dicDto.setSupplierMaterial(supplierMaterial);
