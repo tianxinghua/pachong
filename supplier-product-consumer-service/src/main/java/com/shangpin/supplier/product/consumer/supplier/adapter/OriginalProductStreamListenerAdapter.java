@@ -81,9 +81,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("frmodaHandler")
 	private ISupplierHandler frmodaHandler;
-	@Autowired
-	@Qualifier("zitafabianiHandler")
-	private ISupplierHandler zitafabianiHandler;
+//	@Autowired
+//	@Qualifier("zitafabianiHandler")
+//	private ISupplierHandler zitafabianiHandler;
 
 	@Autowired
 	@Qualifier("opticalHandler")

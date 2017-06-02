@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.esotericsoftware.minlog.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.asynchronous.task.consumer.conf.rpc.ApiAddressProperties;
@@ -22,6 +21,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
+import com.shangpin.ephub.client.util.JsonUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,9 +50,9 @@ public class SendToScmService {
 
         HubResponseDto<String> responseDto = null;
         try {
-            Log.info("推送scm参数:"+productDto.toString());
+            log.info("推送scm参数:"+JsonUtil.serialize(productDto));
             responseDto = sendToScm(productDto);
-            Log.info("推送scm返回结果:"+responseDto.toString());
+            log.info("推送scm返回结果:"+JsonUtil.serialize(responseDto));
         } catch (Exception e) {
             try {
                 log.error("推送SCM发生异常：推送请求"+ mapper.writeValueAsString(productDto) + " reason :"

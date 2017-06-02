@@ -210,13 +210,13 @@ public class DataSverviceUtil {
                 if(null!=supplierSku.getStock()){
                     hubSkuPending.setStock(supplierSku.getStock());
                 }
-                if(null!=supplierSku.getMarketPrice()){
+                if(null!=supplierSku.getMarketPrice()&&0!=supplierSku.getMarketPrice().intValue()){
                     hubSkuPending.setMarketPrice(supplierSku.getMarketPrice());
                 }
-                if(null!=supplierSku.getSalesPrice()){
+                if(null!=supplierSku.getSalesPrice()&&0!=supplierSku.getSalesPrice().intValue()){
                     hubSkuPending.setSalesPrice(supplierSku.getSalesPrice());
                 }
-                if(null!=supplierSku.getSupplyPrice()){
+                if(null!=supplierSku.getSupplyPrice()&&0!=supplierSku.getSupplyPrice().intValue()){
                     hubSkuPending.setSupplyPrice(supplierSku.getSupplyPrice());
                 }
                 Date date = new Date();
