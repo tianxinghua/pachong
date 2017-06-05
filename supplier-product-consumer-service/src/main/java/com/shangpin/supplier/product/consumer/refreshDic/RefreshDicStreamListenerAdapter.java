@@ -61,7 +61,6 @@ public class RefreshDicStreamListenerAdapter {
 	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 	@Autowired
 	SupplierProductMysqlService supplierProductMysqlService;
-
 	/**
 	 * 数据监听方法
 	 * 
@@ -83,6 +82,7 @@ public class RefreshDicStreamListenerAdapter {
 				refreshSize(json, InfoState.RefreshSize.getIndex());
 			}
 		}
+		updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, null);
 	}
 	
 	private void refreshSize(JSONObject json, byte state) throws Exception{
