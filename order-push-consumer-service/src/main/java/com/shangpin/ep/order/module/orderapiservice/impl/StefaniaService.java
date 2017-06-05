@@ -101,6 +101,7 @@ public class StefaniaService implements IOrderService {
 			detail.setQTY(new BigDecimal(Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1])));
 
 //			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
+//			BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
 			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 			orderDTO.setLogContent("【stefania在推送订单时获取采购价："+priceInt.toString()+"】"); 
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -169,9 +170,9 @@ public class StefaniaService implements IOrderService {
 		StefaniaService orderService = new StefaniaService();
 		OrderDTO orderDTO = new OrderDTO();
 		//CGD2016082400193 
-		orderDTO.setPurchaseNo("CGDF2017010829445");
-		orderDTO.setDetail("LW0S0A04#VNW#N91######35:1,");
-		orderDTO.setPurchasePriceDetail("242.21");
+		orderDTO.setPurchaseNo("CGDF2017060437340");
+		orderDTO.setDetail("FY0811#S0F#F0BVE######48:1,");
+		orderDTO.setPurchasePriceDetail("172.13");
 		orderService.handleConfirmOrder(orderDTO); 
 	}
 

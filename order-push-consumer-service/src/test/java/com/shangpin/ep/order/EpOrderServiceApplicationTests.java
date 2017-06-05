@@ -121,5 +121,15 @@ public class EpOrderServiceApplicationTests {
 		}
 		System.out.println("over");
 	}
+	
+	@Autowired
+	BaseBluServiceImpl baseBluServiceImpl;
+	
+	@Test
+	public void pushOrder(){
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setDetail("9900042228107:1,");
+		baseBluServiceImpl.handleConfirmOrder(orderDTO);
+	}
 
 }
