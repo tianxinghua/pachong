@@ -13,7 +13,7 @@ public interface StudioSlotSpuSendDetailMapper {
 
     int deleteByExample(StudioSlotSpuSendDetailCriteria example);
 
-    int deleteByPrimaryKey(Long studioSlotSpuSupplierMappingId);
+    int deleteByPrimaryKey(Long studioSlotSpuSendDetailId);
 
     int insert(StudioSlotSpuSendDetail record);
 
@@ -23,7 +23,7 @@ public interface StudioSlotSpuSendDetailMapper {
 
     List<StudioSlotSpuSendDetail> selectByExample(StudioSlotSpuSendDetailCriteria example);
 
-    StudioSlotSpuSendDetail selectByPrimaryKey(Long studioSlotSpuSupplierMappingId);
+    StudioSlotSpuSendDetail selectByPrimaryKey(Long studioSlotSpuSendDetailId);
 
     int updateByExampleSelective(@Param("record") StudioSlotSpuSendDetail record, @Param("example") StudioSlotSpuSendDetailCriteria example);
 

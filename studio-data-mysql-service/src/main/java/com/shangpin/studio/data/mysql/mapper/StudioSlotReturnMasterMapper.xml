@@ -124,6 +124,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
+    <selectKey keyColumn="studio_slot_return_master_id" keyProperty="studioSlotReturnMasterId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_return_master_id
+    </selectKey>
     insert into studio_slot_return_master (studio_slot_return_master_id, studio_send_no, 
       quantity, actual_quantity, track_no, 
       state, memo, send_user, 
@@ -140,6 +143,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
+    <selectKey keyColumn="studio_slot_return_master_id" keyProperty="studioSlotReturnMasterId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_return_master_id
+    </selectKey>
     insert into studio_slot_return_master
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotReturnMasterId != null" >

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotSpuSendDetailMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
-    <id column="studio_slot_spu_supplier_mapping_id" property="studioSlotSpuSupplierMappingId" jdbcType="BIGINT" />
+    <id column="studio_slot_spu_send_detail_id" property="studioSlotSpuSendDetailId" jdbcType="BIGINT" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
@@ -88,7 +88,7 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_slot_spu_supplier_mapping_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
+      studio_slot_spu_send_detail_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
       supplier_spu_id, slot_spu_no, supplier_spu_name, supplier_spu_model, supplier_brand_name, 
       supplier_category_name, supplier_season_name, send_state, arrive_state, memo, create_time, 
       create_user, send_user, send_time, arrive_user, arrive_time, update_time, update_user, 
@@ -117,13 +117,13 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_spu_supplier_mapping_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
+    studio_slot_spu_send_detail_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
     from studio_slot_spu_send_detail
-    where studio_slot_spu_supplier_mapping_id = #{studioSlotSpuSupplierMappingId,jdbcType=BIGINT}
+    where studio_slot_spu_send_detail_id = #{studioSlotSpuSendDetailId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from studio_slot_spu_send_detail
-    where studio_slot_spu_supplier_mapping_id = #{studioSlotSpuSupplierMappingId,jdbcType=BIGINT}
+    where studio_slot_spu_send_detail_id = #{studioSlotSpuSendDetailId,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetailCriteria" >
     delete from studio_slot_spu_send_detail
@@ -132,7 +132,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
-    insert into studio_slot_spu_send_detail (studio_slot_spu_supplier_mapping_id, slot_no, 
+    <selectKey keyColumn="studio_slot_spu_send_detail_id" keyProperty="studioSlotSpuSendDetailId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_spu_send_detail_id
+    </selectKey>
+    insert into studio_slot_spu_send_detail (studio_slot_spu_send_detail_id, slot_no, 
       supplier_no, supplier_id, spu_pending_id, 
       supplier_spu_id, slot_spu_no, supplier_spu_name, 
       supplier_spu_model, supplier_brand_name, supplier_category_name, 
@@ -141,7 +144,7 @@
       send_user, send_time, arrive_user, 
       arrive_time, update_time, update_user, 
       data_state, version)
-    values (#{studioSlotSpuSupplierMappingId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
+    values (#{studioSlotSpuSendDetailId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
       #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, 
       #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, 
       #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierBrandName,jdbcType=VARCHAR}, #{supplierCategoryName,jdbcType=VARCHAR}, 
@@ -152,10 +155,13 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
+    <selectKey keyColumn="studio_slot_spu_send_detail_id" keyProperty="studioSlotSpuSendDetailId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_spu_send_detail_id
+    </selectKey>
     insert into studio_slot_spu_send_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="studioSlotSpuSupplierMappingId != null" >
-        studio_slot_spu_supplier_mapping_id,
+      <if test="studioSlotSpuSendDetailId != null" >
+        studio_slot_spu_send_detail_id,
       </if>
       <if test="slotNo != null" >
         slot_no,
@@ -231,8 +237,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="studioSlotSpuSupplierMappingId != null" >
-        #{studioSlotSpuSupplierMappingId,jdbcType=BIGINT},
+      <if test="studioSlotSpuSendDetailId != null" >
+        #{studioSlotSpuSendDetailId,jdbcType=BIGINT},
       </if>
       <if test="slotNo != null" >
         #{slotNo,jdbcType=VARCHAR},
@@ -317,8 +323,8 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update studio_slot_spu_send_detail
     <set >
-      <if test="record.studioSlotSpuSupplierMappingId != null" >
-        studio_slot_spu_supplier_mapping_id = #{record.studioSlotSpuSupplierMappingId,jdbcType=BIGINT},
+      <if test="record.studioSlotSpuSendDetailId != null" >
+        studio_slot_spu_send_detail_id = #{record.studioSlotSpuSendDetailId,jdbcType=BIGINT},
       </if>
       <if test="record.slotNo != null" >
         slot_no = #{record.slotNo,jdbcType=VARCHAR},
@@ -399,7 +405,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update studio_slot_spu_send_detail
-    set studio_slot_spu_supplier_mapping_id = #{record.studioSlotSpuSupplierMappingId,jdbcType=BIGINT},
+    set studio_slot_spu_send_detail_id = #{record.studioSlotSpuSendDetailId,jdbcType=BIGINT},
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
@@ -504,7 +510,7 @@
         version = #{version,jdbcType=BIGINT},
       </if>
     </set>
-    where studio_slot_spu_supplier_mapping_id = #{studioSlotSpuSupplierMappingId,jdbcType=BIGINT}
+    where studio_slot_spu_send_detail_id = #{studioSlotSpuSendDetailId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
     update studio_slot_spu_send_detail
@@ -532,7 +538,7 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
-    where studio_slot_spu_supplier_mapping_id = #{studioSlotSpuSupplierMappingId,jdbcType=BIGINT}
+    where studio_slot_spu_send_detail_id = #{studioSlotSpuSendDetailId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetailCriteria" id="selectByExampleWithRowbounds" >
     select

@@ -7,7 +7,7 @@ public class StudioSlotSpuSendDetail implements Serializable {
     /**
      * 主键
      */
-    private Long studioSlotSpuSupplierMappingId;
+    private Long studioSlotSpuSendDetailId;
 
     /**
      * slot编号
@@ -131,12 +131,12 @@ public class StudioSlotSpuSendDetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getStudioSlotSpuSupplierMappingId() {
-        return studioSlotSpuSupplierMappingId;
+    public Long getStudioSlotSpuSendDetailId() {
+        return studioSlotSpuSendDetailId;
     }
 
-    public void setStudioSlotSpuSupplierMappingId(Long studioSlotSpuSupplierMappingId) {
-        this.studioSlotSpuSupplierMappingId = studioSlotSpuSupplierMappingId;
+    public void setStudioSlotSpuSendDetailId(Long studioSlotSpuSendDetailId) {
+        this.studioSlotSpuSendDetailId = studioSlotSpuSendDetailId;
     }
 
     public String getSlotNo() {
@@ -337,7 +337,7 @@ public class StudioSlotSpuSendDetail implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", studioSlotSpuSupplierMappingId=").append(studioSlotSpuSupplierMappingId);
+        sb.append(", studioSlotSpuSendDetailId=").append(studioSlotSpuSendDetailId);
         sb.append(", slotNo=").append(slotNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
@@ -379,7 +379,7 @@ public class StudioSlotSpuSendDetail implements Serializable {
             return false;
         }
         StudioSlotSpuSendDetail other = (StudioSlotSpuSendDetail) that;
-        return (this.getStudioSlotSpuSupplierMappingId() == null ? other.getStudioSlotSpuSupplierMappingId() == null : this.getStudioSlotSpuSupplierMappingId().equals(other.getStudioSlotSpuSupplierMappingId()))
+        return (this.getStudioSlotSpuSendDetailId() == null ? other.getStudioSlotSpuSendDetailId() == null : this.getStudioSlotSpuSendDetailId().equals(other.getStudioSlotSpuSendDetailId()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
@@ -410,7 +410,7 @@ public class StudioSlotSpuSendDetail implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getStudioSlotSpuSupplierMappingId() == null) ? 0 : getStudioSlotSpuSupplierMappingId().hashCode());
+        result = prime * result + ((getStudioSlotSpuSendDetailId() == null) ? 0 : getStudioSlotSpuSendDetailId().hashCode());
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());

@@ -124,6 +124,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
+    <selectKey keyColumn="studio_id" keyProperty="studioId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_id
+    </selectKey>
     insert into studio (studio_id, studio_name, studio_no, 
       studio_type, studio_status, studio_contacts, 
       contact_info, telephone, email, 
@@ -140,6 +143,9 @@
       #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
+    <selectKey keyColumn="studio_id" keyProperty="studioId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_id
+    </selectKey>
     insert into studio
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioId != null" >
