@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotDefectiveSpuMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    <id column="studio_slot_defective_spu_id" property="studioSlotDefectiveSpuId" jdbcType="BIGINT" />
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioMatchSpuMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioMatchSpu" >
+    <id column="studio_match_spu_id" property="studioMatchSpuId" jdbcType="BIGINT" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
+    <result column="track_no" property="trackNo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
     <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
     <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="supplier_spu_name" property="supplierSpuName" jdbcType="VARCHAR" />
+    <result column="supplier_spu_model" property="supplierSpuModel" jdbcType="VARCHAR" />
+    <result column="supplier_brand_name" property="supplierBrandName" jdbcType="VARCHAR" />
+    <result column="supplier_category_name" property="supplierCategoryName" jdbcType="VARCHAR" />
+    <result column="supplier_season_name" property="supplierSeasonName" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -77,21 +85,22 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_slot_defective_spu_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, slot_spu_no, memo, create_user, create_time, update_time, update_user, 
-      data_state, version
+      studio_match_spu_id, slot_no, track_no, supplier_no, supplier_id, spu_pending_id, 
+      supplier_spu_id, slot_spu_no, type, state, supplier_spu_name, supplier_spu_model, 
+      supplier_brand_name, supplier_category_name, supplier_season_name, memo, create_user, 
+      create_time, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpuCriteria" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from studio_slot_defective_spu
+    from studio_match_spu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -104,42 +113,49 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_defective_spu_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,memo,create_user,create_time,update_time,update_user,data_state,version
-    from studio_slot_defective_spu
-    where studio_slot_defective_spu_id = #{studioSlotDefectiveSpuId,jdbcType=BIGINT}
+    studio_match_spu_id,slot_no,track_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,type,state,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,memo,create_user,create_time,update_time,update_user,data_state,version
+    from studio_match_spu
+    where studio_match_spu_id = #{studioMatchSpuId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from studio_slot_defective_spu
-    where studio_slot_defective_spu_id = #{studioSlotDefectiveSpuId,jdbcType=BIGINT}
+    delete from studio_match_spu
+    where studio_match_spu_id = #{studioMatchSpuId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" >
-    delete from studio_slot_defective_spu
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpuCriteria" >
+    delete from studio_match_spu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    insert into studio_slot_defective_spu (studio_slot_defective_spu_id, slot_no, 
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpu" >
+    insert into studio_match_spu (studio_match_spu_id, slot_no, track_no, 
       supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, slot_spu_no, memo, 
-      create_user, create_time, update_time, 
-      update_user, data_state, version
-      )
-    values (#{studioSlotDefectiveSpuId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
+      supplier_spu_id, slot_spu_no, type, 
+      state, supplier_spu_name, supplier_spu_model, 
+      supplier_brand_name, supplier_category_name, 
+      supplier_season_name, memo, create_user, 
+      create_time, update_time, update_user, 
+      data_state, version)
+    values (#{studioMatchSpuId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, #{trackNo,jdbcType=VARCHAR}, 
       #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, 
-      #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+      #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, 
+      #{state,jdbcType=TINYINT}, #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, 
+      #{supplierBrandName,jdbcType=VARCHAR}, #{supplierCategoryName,jdbcType=VARCHAR}, 
+      #{supplierSeasonName,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    insert into studio_slot_defective_spu
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpu" >
+    insert into studio_match_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="studioSlotDefectiveSpuId != null" >
-        studio_slot_defective_spu_id,
+      <if test="studioMatchSpuId != null" >
+        studio_match_spu_id,
       </if>
       <if test="slotNo != null" >
         slot_no,
+      </if>
+      <if test="trackNo != null" >
+        track_no,
       </if>
       <if test="supplierNo != null" >
         supplier_no,
@@ -155,6 +171,27 @@
       </if>
       <if test="slotSpuNo != null" >
         slot_spu_no,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="supplierSpuName != null" >
+        supplier_spu_name,
+      </if>
+      <if test="supplierSpuModel != null" >
+        supplier_spu_model,
+      </if>
+      <if test="supplierBrandName != null" >
+        supplier_brand_name,
+      </if>
+      <if test="supplierCategoryName != null" >
+        supplier_category_name,
+      </if>
+      <if test="supplierSeasonName != null" >
+        supplier_season_name,
       </if>
       <if test="memo != null" >
         memo,
@@ -179,11 +216,14 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="studioSlotDefectiveSpuId != null" >
-        #{studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      <if test="studioMatchSpuId != null" >
+        #{studioMatchSpuId,jdbcType=BIGINT},
       </if>
       <if test="slotNo != null" >
         #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trackNo != null" >
+        #{trackNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierNo != null" >
         #{supplierNo,jdbcType=VARCHAR},
@@ -199,6 +239,27 @@
       </if>
       <if test="slotSpuNo != null" >
         #{slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="supplierSpuName != null" >
+        #{supplierSpuName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuModel != null" >
+        #{supplierSpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBrandName != null" >
+        #{supplierBrandName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCategoryName != null" >
+        #{supplierCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeasonName != null" >
+        #{supplierSeasonName,jdbcType=VARCHAR},
       </if>
       <if test="memo != null" >
         #{memo,jdbcType=VARCHAR},
@@ -223,20 +284,23 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" resultType="java.lang.Integer" >
-    select count(*) from studio_slot_defective_spu
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpuCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio_match_spu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update studio_slot_defective_spu
+    update studio_match_spu
     <set >
-      <if test="record.studioSlotDefectiveSpuId != null" >
-        studio_slot_defective_spu_id = #{record.studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      <if test="record.studioMatchSpuId != null" >
+        studio_match_spu_id = #{record.studioMatchSpuId,jdbcType=BIGINT},
       </if>
       <if test="record.slotNo != null" >
         slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.trackNo != null" >
+        track_no = #{record.trackNo,jdbcType=VARCHAR},
       </if>
       <if test="record.supplierNo != null" >
         supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
@@ -252,6 +316,27 @@
       </if>
       <if test="record.slotSpuNo != null" >
         slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=TINYINT},
+      </if>
+      <if test="record.state != null" >
+        state = #{record.state,jdbcType=TINYINT},
+      </if>
+      <if test="record.supplierSpuName != null" >
+        supplier_spu_name = #{record.supplierSpuName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSpuModel != null" >
+        supplier_spu_model = #{record.supplierSpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierBrandName != null" >
+        supplier_brand_name = #{record.supplierBrandName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierCategoryName != null" >
+        supplier_category_name = #{record.supplierCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSeasonName != null" >
+        supplier_season_name = #{record.supplierSeasonName,jdbcType=VARCHAR},
       </if>
       <if test="record.memo != null" >
         memo = #{record.memo,jdbcType=VARCHAR},
@@ -280,14 +365,22 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update studio_slot_defective_spu
-    set studio_slot_defective_spu_id = #{record.studioSlotDefectiveSpuId,jdbcType=BIGINT},
+    update studio_match_spu
+    set studio_match_spu_id = #{record.studioMatchSpuId,jdbcType=BIGINT},
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      track_no = #{record.trackNo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
       supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
       slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=TINYINT},
+      state = #{record.state,jdbcType=TINYINT},
+      supplier_spu_name = #{record.supplierSpuName,jdbcType=VARCHAR},
+      supplier_spu_model = #{record.supplierSpuModel,jdbcType=VARCHAR},
+      supplier_brand_name = #{record.supplierBrandName,jdbcType=VARCHAR},
+      supplier_category_name = #{record.supplierCategoryName,jdbcType=VARCHAR},
+      supplier_season_name = #{record.supplierSeasonName,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -299,11 +392,14 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    update studio_slot_defective_spu
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpu" >
+    update studio_match_spu
     <set >
       <if test="slotNo != null" >
         slot_no = #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trackNo != null" >
+        track_no = #{trackNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierNo != null" >
         supplier_no = #{supplierNo,jdbcType=VARCHAR},
@@ -319,6 +415,27 @@
       </if>
       <if test="slotSpuNo != null" >
         slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="supplierSpuName != null" >
+        supplier_spu_name = #{supplierSpuName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSpuModel != null" >
+        supplier_spu_model = #{supplierSpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierBrandName != null" >
+        supplier_brand_name = #{supplierBrandName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierCategoryName != null" >
+        supplier_category_name = #{supplierCategoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSeasonName != null" >
+        supplier_season_name = #{supplierSeasonName,jdbcType=VARCHAR},
       </if>
       <if test="memo != null" >
         memo = #{memo,jdbcType=VARCHAR},
@@ -342,16 +459,24 @@
         version = #{version,jdbcType=BIGINT},
       </if>
     </set>
-    where studio_slot_defective_spu_id = #{studioSlotDefectiveSpuId,jdbcType=BIGINT}
+    where studio_match_spu_id = #{studioMatchSpuId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    update studio_slot_defective_spu
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpu" >
+    update studio_match_spu
     set slot_no = #{slotNo,jdbcType=VARCHAR},
+      track_no = #{trackNo,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
       supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
       slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      state = #{state,jdbcType=TINYINT},
+      supplier_spu_name = #{supplierSpuName,jdbcType=VARCHAR},
+      supplier_spu_model = #{supplierSpuModel,jdbcType=VARCHAR},
+      supplier_brand_name = #{supplierBrandName,jdbcType=VARCHAR},
+      supplier_category_name = #{supplierCategoryName,jdbcType=VARCHAR},
+      supplier_season_name = #{supplierSeasonName,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -359,15 +484,15 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
-    where studio_slot_defective_spu_id = #{studioSlotDefectiveSpuId,jdbcType=BIGINT}
+    where studio_match_spu_id = #{studioMatchSpuId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioMatchSpuCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from studio_slot_defective_spu
+    from studio_match_spu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>

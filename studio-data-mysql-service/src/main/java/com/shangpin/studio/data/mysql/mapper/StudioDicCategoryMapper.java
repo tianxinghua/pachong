@@ -1,9 +1,10 @@
 package com.shangpin.studio.data.mysql.mapper;
 
-import com.shangpin.studio.data.mysql.po.dic.StudioDicCategory;
-import com.shangpin.studio.data.mysql.po.dic.StudioDicCategoryCriteria;
+
 import java.util.List;
 
+import com.shangpin.studio.data.mysql.po.dic.StudioDicCategory;
+import com.shangpin.studio.data.mysql.po.dic.StudioDicCategoryCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;

@@ -122,9 +122,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
-    <selectKey keyColumn="studio_slot_logistict_track_id" keyProperty="studioSlotLogistictTrackId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_logistict_track_id
-    </selectKey>
     insert into studio_slot_logistict_track (studio_slot_logistict_track_id, track_name, 
       track_no, track_status, quantity, 
       actual_number, plan_arrive_time, track_receiver, 
@@ -141,9 +138,6 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
-    <selectKey keyColumn="studio_slot_logistict_track_id" keyProperty="studioSlotLogistictTrackId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_logistict_track_id
-    </selectKey>
     insert into studio_slot_logistict_track
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotLogistictTrackId != null" >

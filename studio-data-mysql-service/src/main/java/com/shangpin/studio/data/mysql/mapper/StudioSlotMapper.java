@@ -13,7 +13,7 @@ public interface StudioSlotMapper {
 
     int deleteByExample(StudioSlotCriteria example);
 
-    int deleteByPrimaryKey(Long studioDicSlotId);
+    int deleteByPrimaryKey(Long studioSlotId);
 
     int insert(StudioSlot record);
 
@@ -23,7 +23,7 @@ public interface StudioSlotMapper {
 
     List<StudioSlot> selectByExample(StudioSlotCriteria example);
 
-    StudioSlot selectByPrimaryKey(Long studioDicSlotId);
+    StudioSlot selectByPrimaryKey(Long studioSlotId);
 
     int updateByExampleSelective(@Param("record") StudioSlot record, @Param("example") StudioSlotCriteria example);
 

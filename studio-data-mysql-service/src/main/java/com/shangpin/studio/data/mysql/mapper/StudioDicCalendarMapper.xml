@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioDicCalendarMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendar" >
-    <id column="studio_dic_calender_id" property="studioDicCalenderId" jdbcType="BIGINT" />
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    <id column="studio_dic_calendar_id" property="studioDicCalendarId" jdbcType="BIGINT" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />
     <result column="calender_template_id" property="calenderTemplateId" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
@@ -73,20 +73,20 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_dic_calender_id, studio_id, calender_template_id, memo, create_time, create_user, 
+      studio_dic_calendar_id, studio_id, calender_template_id, memo, create_time, create_user, 
       update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendarCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendarCriteria" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from studio_dic_calender
+    from studio_dic_calendar
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -99,41 +99,35 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_dic_calender_id,studio_id,calender_template_id,memo,create_time,create_user,update_time,update_user,data_state,version
-    from studio_dic_calender
-    where studio_dic_calender_id = #{studioDicCalenderId,jdbcType=BIGINT}
+    studio_dic_calendar_id,studio_id,calender_template_id,memo,create_time,create_user,update_time,update_user,data_state,version
+    from studio_dic_calendar
+    where studio_dic_calendar_id = #{studioDicCalendarId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from studio_dic_calender
-    where studio_dic_calender_id = #{studioDicCalenderId,jdbcType=BIGINT}
+    delete from studio_dic_calendar
+    where studio_dic_calendar_id = #{studioDicCalendarId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendarCriteria" >
-    delete from studio_dic_calender
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendarCriteria" >
+    delete from studio_dic_calendar
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendar" >
-    <selectKey keyColumn="studio_dic_calender_id" keyProperty="studioDicCalenderId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_dic_calender_id
-    </selectKey>
-    insert into studio_dic_calender (studio_dic_calender_id, studio_id, calender_template_id, 
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    insert into studio_dic_calendar (studio_dic_calendar_id, studio_id, calender_template_id, 
       memo, create_time, create_user, 
       update_time, update_user, data_state, 
       version)
-    values (#{studioDicCalenderId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{calenderTemplateId,jdbcType=VARCHAR}, 
+    values (#{studioDicCalendarId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{calenderTemplateId,jdbcType=VARCHAR}, 
       #{memo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
       #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendar" >
-    <selectKey keyColumn="studio_dic_calender_id" keyProperty="studioDicCalenderId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_dic_calender_id
-    </selectKey>
-    insert into studio_dic_calender
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    insert into studio_dic_calendar
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="studioDicCalenderId != null" >
-        studio_dic_calender_id,
+      <if test="studioDicCalendarId != null" >
+        studio_dic_calendar_id,
       </if>
       <if test="studioId != null" >
         studio_id,
@@ -164,8 +158,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="studioDicCalenderId != null" >
-        #{studioDicCalenderId,jdbcType=BIGINT},
+      <if test="studioDicCalendarId != null" >
+        #{studioDicCalendarId,jdbcType=BIGINT},
       </if>
       <if test="studioId != null" >
         #{studioId,jdbcType=BIGINT},
@@ -196,17 +190,17 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendarCriteria" resultType="java.lang.Integer" >
-    select count(*) from studio_dic_calender
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendarCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio_dic_calendar
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update studio_dic_calender
+    update studio_dic_calendar
     <set >
-      <if test="record.studioDicCalenderId != null" >
-        studio_dic_calender_id = #{record.studioDicCalenderId,jdbcType=BIGINT},
+      <if test="record.studioDicCalendarId != null" >
+        studio_dic_calendar_id = #{record.studioDicCalendarId,jdbcType=BIGINT},
       </if>
       <if test="record.studioId != null" >
         studio_id = #{record.studioId,jdbcType=BIGINT},
@@ -241,8 +235,8 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update studio_dic_calender
-    set studio_dic_calender_id = #{record.studioDicCalenderId,jdbcType=BIGINT},
+    update studio_dic_calendar
+    set studio_dic_calendar_id = #{record.studioDicCalendarId,jdbcType=BIGINT},
       studio_id = #{record.studioId,jdbcType=BIGINT},
       calender_template_id = #{record.calenderTemplateId,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
@@ -256,8 +250,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendar" >
-    update studio_dic_calender
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    update studio_dic_calendar
     <set >
       <if test="studioId != null" >
         studio_id = #{studioId,jdbcType=BIGINT},
@@ -287,10 +281,10 @@
         version = #{version,jdbcType=BIGINT},
       </if>
     </set>
-    where studio_dic_calender_id = #{studioDicCalenderId,jdbcType=BIGINT}
+    where studio_dic_calendar_id = #{studioDicCalendarId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendar" >
-    update studio_dic_calender
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    update studio_dic_calendar
     set studio_id = #{studioId,jdbcType=BIGINT},
       calender_template_id = #{calenderTemplateId,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
@@ -300,15 +294,15 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
-    where studio_dic_calender_id = #{studioDicCalenderId,jdbcType=BIGINT}
+    where studio_dic_calendar_id = #{studioDicCalendarId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicCalendarCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendarCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from studio_dic_calender
+    from studio_dic_calendar
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>

@@ -13,6 +13,8 @@ public interface StudioSlotDefectiveSpuMapper {
 
     int deleteByExample(StudioSlotDefectiveSpuCriteria example);
 
+    int deleteByPrimaryKey(Long studioSlotDefectiveSpuId);
+
     int insert(StudioSlotDefectiveSpu record);
 
     int insertSelective(StudioSlotDefectiveSpu record);
@@ -21,7 +23,13 @@ public interface StudioSlotDefectiveSpuMapper {
 
     List<StudioSlotDefectiveSpu> selectByExample(StudioSlotDefectiveSpuCriteria example);
 
+    StudioSlotDefectiveSpu selectByPrimaryKey(Long studioSlotDefectiveSpuId);
+
     int updateByExampleSelective(@Param("record") StudioSlotDefectiveSpu record, @Param("example") StudioSlotDefectiveSpuCriteria example);
 
     int updateByExample(@Param("record") StudioSlotDefectiveSpu record, @Param("example") StudioSlotDefectiveSpuCriteria example);
+
+    int updateByPrimaryKeySelective(StudioSlotDefectiveSpu record);
+
+    int updateByPrimaryKey(StudioSlotDefectiveSpu record);
 }

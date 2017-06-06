@@ -150,63 +150,63 @@ public class StudioDicCalendarCriteriaDto {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andStudioDicCalenderIdIsNull() {
-            addCriterion("studio_dic_calender_id is null");
+        public Criteria andStudioDicCalendarIdIsNull() {
+            addCriterion("studio_dic_calendar_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdIsNotNull() {
-            addCriterion("studio_dic_calender_id is not null");
+        public Criteria andStudioDicCalendarIdIsNotNull() {
+            addCriterion("studio_dic_calendar_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id =", value, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdEqualTo(Long value) {
+            addCriterion("studio_dic_calendar_id =", value, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdNotEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id <>", value, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdNotEqualTo(Long value) {
+            addCriterion("studio_dic_calendar_id <>", value, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdGreaterThan(Long value) {
-            addCriterion("studio_dic_calender_id >", value, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdGreaterThan(Long value) {
+            addCriterion("studio_dic_calendar_id >", value, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id >=", value, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_dic_calendar_id >=", value, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdLessThan(Long value) {
-            addCriterion("studio_dic_calender_id <", value, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdLessThan(Long value) {
+            addCriterion("studio_dic_calendar_id <", value, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdLessThanOrEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id <=", value, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_dic_calendar_id <=", value, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdIn(List<Long> values) {
-            addCriterion("studio_dic_calender_id in", values, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdIn(List<Long> values) {
+            addCriterion("studio_dic_calendar_id in", values, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdNotIn(List<Long> values) {
-            addCriterion("studio_dic_calender_id not in", values, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdNotIn(List<Long> values) {
+            addCriterion("studio_dic_calendar_id not in", values, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdBetween(Long value1, Long value2) {
-            addCriterion("studio_dic_calender_id between", value1, value2, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdBetween(Long value1, Long value2) {
+            addCriterion("studio_dic_calendar_id between", value1, value2, "studioDicCalendarId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdNotBetween(Long value1, Long value2) {
-            addCriterion("studio_dic_calender_id not between", value1, value2, "studioDicCalenderId");
+        public Criteria andStudioDicCalendarIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_dic_calendar_id not between", value1, value2, "studioDicCalendarId");
             return (Criteria) this;
         }
 

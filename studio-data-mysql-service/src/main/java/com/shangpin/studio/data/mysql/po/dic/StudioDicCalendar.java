@@ -7,7 +7,7 @@ public class StudioDicCalendar implements Serializable {
     /**
      * 主键
      */
-    private Long studioDicCalenderId;
+    private Long studioDicCalendarId;
 
     /**
      * 摄影棚id
@@ -56,12 +56,12 @@ public class StudioDicCalendar implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getStudioDicCalenderId() {
-        return studioDicCalenderId;
+    public Long getStudioDicCalendarId() {
+        return studioDicCalendarId;
     }
 
-    public void setStudioDicCalenderId(Long studioDicCalenderId) {
-        this.studioDicCalenderId = studioDicCalenderId;
+    public void setStudioDicCalendarId(Long studioDicCalendarId) {
+        this.studioDicCalendarId = studioDicCalendarId;
     }
 
     public Long getStudioId() {
@@ -142,7 +142,7 @@ public class StudioDicCalendar implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", studioDicCalenderId=").append(studioDicCalenderId);
+        sb.append(", studioDicCalendarId=").append(studioDicCalendarId);
         sb.append(", studioId=").append(studioId);
         sb.append(", calenderTemplateId=").append(calenderTemplateId);
         sb.append(", memo=").append(memo);
@@ -169,7 +169,7 @@ public class StudioDicCalendar implements Serializable {
             return false;
         }
         StudioDicCalendar other = (StudioDicCalendar) that;
-        return (this.getStudioDicCalenderId() == null ? other.getStudioDicCalenderId() == null : this.getStudioDicCalenderId().equals(other.getStudioDicCalenderId()))
+        return (this.getStudioDicCalendarId() == null ? other.getStudioDicCalendarId() == null : this.getStudioDicCalendarId().equals(other.getStudioDicCalendarId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
             && (this.getCalenderTemplateId() == null ? other.getCalenderTemplateId() == null : this.getCalenderTemplateId().equals(other.getCalenderTemplateId()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
@@ -185,7 +185,7 @@ public class StudioDicCalendar implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getStudioDicCalenderId() == null) ? 0 : getStudioDicCalenderId().hashCode());
+        result = prime * result + ((getStudioDicCalendarId() == null) ? 0 : getStudioDicCalendarId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
         result = prime * result + ((getCalenderTemplateId() == null) ? 0 : getCalenderTemplateId().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());

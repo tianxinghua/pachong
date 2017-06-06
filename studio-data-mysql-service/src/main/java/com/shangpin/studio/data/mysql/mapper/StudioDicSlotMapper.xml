@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioDicCategoryMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioDicCategory" >
-    <id column="studio_dic_category_id" property="studioDicCategoryId" jdbcType="BIGINT" />
-    <result column="category_first" property="categoryFirst" jdbcType="VARCHAR" />
-    <result column="category_second" property="categorySecond" jdbcType="VARCHAR" />
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioDicSlotMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    <id column="studio_dic_slot_id" property="studioDicSlotId" jdbcType="BIGINT" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />
+    <result column="slot_number" property="slotNumber" jdbcType="INTEGER" />
+    <result column="slot_min_number" property="slotMinNumber" jdbcType="INTEGER" />
+    <result column="slot_efficiency" property="slotEfficiency" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -73,20 +74,20 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_dic_category_id, category_first, category_second, studio_id, create_time, 
+      studio_dic_slot_id, studio_id, slot_number, slot_min_number, slot_efficiency, create_time, 
       create_user, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategoryCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlotCriteria" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from studio_dic_category
+    from studio_dic_slot
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -99,44 +100,47 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_dic_category_id,category_first,category_second,studio_id,create_time,create_user,update_time,update_user,data_state,version
-    from studio_dic_category
-    where studio_dic_category_id = #{studioDicCategoryId,jdbcType=BIGINT}
+    studio_dic_slot_id,studio_id,slot_number,slot_min_number,slot_efficiency,create_time,create_user,update_time,update_user,data_state,version
+    from studio_dic_slot
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from studio_dic_category
-    where studio_dic_category_id = #{studioDicCategoryId,jdbcType=BIGINT}
+    delete from studio_dic_slot
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategoryCriteria" >
-    delete from studio_dic_category
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlotCriteria" >
+    delete from studio_dic_slot
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategory" >
-    insert into studio_dic_category (studio_dic_category_id, category_first, 
-      category_second, studio_id, create_time, 
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    insert into studio_dic_slot (studio_dic_slot_id, studio_id, slot_number, 
+      slot_min_number, slot_efficiency, create_time, 
       create_user, update_time, update_user, 
       data_state, version)
-    values (#{studioDicCategoryId,jdbcType=BIGINT}, #{categoryFirst,jdbcType=VARCHAR}, 
-      #{categorySecond,jdbcType=VARCHAR}, #{studioId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{studioDicSlotId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{slotNumber,jdbcType=INTEGER}, 
+      #{slotMinNumber,jdbcType=INTEGER}, #{slotEfficiency,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategory" >
-    insert into studio_dic_category
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    insert into studio_dic_slot
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="studioDicCategoryId != null" >
-        studio_dic_category_id,
-      </if>
-      <if test="categoryFirst != null" >
-        category_first,
-      </if>
-      <if test="categorySecond != null" >
-        category_second,
+      <if test="studioDicSlotId != null" >
+        studio_dic_slot_id,
       </if>
       <if test="studioId != null" >
         studio_id,
+      </if>
+      <if test="slotNumber != null" >
+        slot_number,
+      </if>
+      <if test="slotMinNumber != null" >
+        slot_min_number,
+      </if>
+      <if test="slotEfficiency != null" >
+        slot_efficiency,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -158,17 +162,20 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="studioDicCategoryId != null" >
-        #{studioDicCategoryId,jdbcType=BIGINT},
-      </if>
-      <if test="categoryFirst != null" >
-        #{categoryFirst,jdbcType=VARCHAR},
-      </if>
-      <if test="categorySecond != null" >
-        #{categorySecond,jdbcType=VARCHAR},
+      <if test="studioDicSlotId != null" >
+        #{studioDicSlotId,jdbcType=BIGINT},
       </if>
       <if test="studioId != null" >
         #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="slotNumber != null" >
+        #{slotNumber,jdbcType=INTEGER},
+      </if>
+      <if test="slotMinNumber != null" >
+        #{slotMinNumber,jdbcType=INTEGER},
+      </if>
+      <if test="slotEfficiency != null" >
+        #{slotEfficiency,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -190,26 +197,29 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategoryCriteria" resultType="java.lang.Integer" >
-    select count(*) from studio_dic_category
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlotCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio_dic_slot
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update studio_dic_category
+    update studio_dic_slot
     <set >
-      <if test="record.studioDicCategoryId != null" >
-        studio_dic_category_id = #{record.studioDicCategoryId,jdbcType=BIGINT},
-      </if>
-      <if test="record.categoryFirst != null" >
-        category_first = #{record.categoryFirst,jdbcType=VARCHAR},
-      </if>
-      <if test="record.categorySecond != null" >
-        category_second = #{record.categorySecond,jdbcType=VARCHAR},
+      <if test="record.studioDicSlotId != null" >
+        studio_dic_slot_id = #{record.studioDicSlotId,jdbcType=BIGINT},
       </if>
       <if test="record.studioId != null" >
         studio_id = #{record.studioId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotNumber != null" >
+        slot_number = #{record.slotNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.slotMinNumber != null" >
+        slot_min_number = #{record.slotMinNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.slotEfficiency != null" >
+        slot_efficiency = #{record.slotEfficiency,jdbcType=INTEGER},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -235,11 +245,12 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update studio_dic_category
-    set studio_dic_category_id = #{record.studioDicCategoryId,jdbcType=BIGINT},
-      category_first = #{record.categoryFirst,jdbcType=VARCHAR},
-      category_second = #{record.categorySecond,jdbcType=VARCHAR},
+    update studio_dic_slot
+    set studio_dic_slot_id = #{record.studioDicSlotId,jdbcType=BIGINT},
       studio_id = #{record.studioId,jdbcType=BIGINT},
+      slot_number = #{record.slotNumber,jdbcType=INTEGER},
+      slot_min_number = #{record.slotMinNumber,jdbcType=INTEGER},
+      slot_efficiency = #{record.slotEfficiency,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -250,17 +261,20 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategory" >
-    update studio_dic_category
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    update studio_dic_slot
     <set >
-      <if test="categoryFirst != null" >
-        category_first = #{categoryFirst,jdbcType=VARCHAR},
-      </if>
-      <if test="categorySecond != null" >
-        category_second = #{categorySecond,jdbcType=VARCHAR},
-      </if>
       <if test="studioId != null" >
         studio_id = #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="slotNumber != null" >
+        slot_number = #{slotNumber,jdbcType=INTEGER},
+      </if>
+      <if test="slotMinNumber != null" >
+        slot_min_number = #{slotMinNumber,jdbcType=INTEGER},
+      </if>
+      <if test="slotEfficiency != null" >
+        slot_efficiency = #{slotEfficiency,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -281,28 +295,29 @@
         version = #{version,jdbcType=BIGINT},
       </if>
     </set>
-    where studio_dic_category_id = #{studioDicCategoryId,jdbcType=BIGINT}
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategory" >
-    update studio_dic_category
-    set category_first = #{categoryFirst,jdbcType=VARCHAR},
-      category_second = #{categorySecond,jdbcType=VARCHAR},
-      studio_id = #{studioId,jdbcType=BIGINT},
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    update studio_dic_slot
+    set studio_id = #{studioId,jdbcType=BIGINT},
+      slot_number = #{slotNumber,jdbcType=INTEGER},
+      slot_min_number = #{slotMinNumber,jdbcType=INTEGER},
+      slot_efficiency = #{slotEfficiency,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
-    where studio_dic_category_id = #{studioDicCategoryId,jdbcType=BIGINT}
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCategoryCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlotCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from studio_dic_category
+    from studio_dic_slot
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
