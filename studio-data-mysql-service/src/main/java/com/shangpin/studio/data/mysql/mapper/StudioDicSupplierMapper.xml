@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioDicSupplierMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier" >
-    <id column="supplier_studio_id" property="supplierStudioId" jdbcType="BIGINT" />
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
+    <id column="studio_dic_supplier_id" property="studioDicSupplierId" jdbcType="BIGINT" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />
@@ -74,14 +74,14 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      supplier_studio_id, supplier_id, supplier_no, studio_id, studio_index, create_time, 
+      studio_dic_supplier_id, supplier_id, supplier_no, studio_id, studio_index, create_time, 
       create_user, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplierCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplierCriteria" >
     select
     <if test="distinct" >
       distinct
@@ -100,35 +100,35 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    supplier_studio_id,supplier_id,supplier_no,studio_id,studio_index,create_time,create_user,update_time,update_user,data_state,version
+    studio_dic_supplier_id,supplier_id,supplier_no,studio_id,studio_index,create_time,create_user,update_time,update_user,data_state,version
     from studio_dic_supplier
-    where supplier_studio_id = #{supplierStudioId,jdbcType=BIGINT}
+    where studio_dic_supplier_id = #{studioDicSupplierId,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from studio_dic_supplier
-    where supplier_studio_id = #{supplierStudioId,jdbcType=BIGINT}
+    where studio_dic_supplier_id = #{studioDicSupplierId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplierCriteria" >
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplierCriteria" >
     delete from studio_dic_supplier
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier" >
-    insert into studio_dic_supplier (supplier_studio_id, supplier_id, supplier_no, 
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
+    insert into studio_dic_supplier (studio_dic_supplier_id, supplier_id, supplier_no, 
       studio_id, studio_index, create_time, 
       create_user, update_time, update_user, 
       data_state, version)
-    values (#{supplierStudioId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
+    values (#{studioDicSupplierId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
       #{studioId,jdbcType=BIGINT}, #{studioIndex,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier" >
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
     insert into studio_dic_supplier
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="supplierStudioId != null" >
-        supplier_studio_id,
+      <if test="studioDicSupplierId != null" >
+        studio_dic_supplier_id,
       </if>
       <if test="supplierId != null" >
         supplier_id,
@@ -162,8 +162,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="supplierStudioId != null" >
-        #{supplierStudioId,jdbcType=BIGINT},
+      <if test="studioDicSupplierId != null" >
+        #{studioDicSupplierId,jdbcType=BIGINT},
       </if>
       <if test="supplierId != null" >
         #{supplierId,jdbcType=VARCHAR},
@@ -197,7 +197,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplierCriteria" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplierCriteria" resultType="java.lang.Integer" >
     select count(*) from studio_dic_supplier
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -206,8 +206,8 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update studio_dic_supplier
     <set >
-      <if test="record.supplierStudioId != null" >
-        supplier_studio_id = #{record.supplierStudioId,jdbcType=BIGINT},
+      <if test="record.studioDicSupplierId != null" >
+        studio_dic_supplier_id = #{record.studioDicSupplierId,jdbcType=BIGINT},
       </if>
       <if test="record.supplierId != null" >
         supplier_id = #{record.supplierId,jdbcType=VARCHAR},
@@ -246,7 +246,7 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update studio_dic_supplier
-    set supplier_studio_id = #{record.supplierStudioId,jdbcType=BIGINT},
+    set studio_dic_supplier_id = #{record.studioDicSupplierId,jdbcType=BIGINT},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       studio_id = #{record.studioId,jdbcType=BIGINT},
@@ -261,7 +261,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
     update studio_dic_supplier
     <set >
       <if test="supplierId != null" >
@@ -295,9 +295,9 @@
         version = #{version,jdbcType=BIGINT},
       </if>
     </set>
-    where supplier_studio_id = #{supplierStudioId,jdbcType=BIGINT}
+    where studio_dic_supplier_id = #{studioDicSupplierId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier" >
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
     update studio_dic_supplier
     set supplier_id = #{supplierId,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
@@ -309,9 +309,9 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
-    where supplier_studio_id = #{supplierStudioId,jdbcType=BIGINT}
+    where studio_dic_supplier_id = #{studioDicSupplierId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.dic.StudioDicSupplierCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplierCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct

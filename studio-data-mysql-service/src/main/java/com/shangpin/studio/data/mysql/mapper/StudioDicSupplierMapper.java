@@ -1,9 +1,10 @@
 package com.shangpin.studio.data.mysql.mapper;
 
-import com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier;
-import com.shangpin.studio.data.mysql.po.dic.StudioDicSupplierCriteria;
+
 import java.util.List;
 
+import com.shangpin.studio.data.mysql.po.dic.StudioDicSupplier;
+import com.shangpin.studio.data.mysql.po.dic.StudioDicSupplierCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
@@ -13,7 +14,7 @@ public interface StudioDicSupplierMapper {
 
     int deleteByExample(StudioDicSupplierCriteria example);
 
-    int deleteByPrimaryKey(Long supplierStudioId);
+    int deleteByPrimaryKey(Long studioDicSupplierId);
 
     int insert(StudioDicSupplier record);
 
@@ -23,7 +24,7 @@ public interface StudioDicSupplierMapper {
 
     List<StudioDicSupplier> selectByExample(StudioDicSupplierCriteria example);
 
-    StudioDicSupplier selectByPrimaryKey(Long supplierStudioId);
+    StudioDicSupplier selectByPrimaryKey(Long studioDicSupplierId);
 
     int updateByExampleSelective(@Param("record") StudioDicSupplier record, @Param("example") StudioDicSupplierCriteria example);
 

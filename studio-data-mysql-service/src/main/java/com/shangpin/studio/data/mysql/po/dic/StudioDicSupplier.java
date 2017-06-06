@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class StudioDicSupplier implements Serializable {
-    private Long supplierStudioId;
+    private Long studioDicSupplierId;
 
     private String supplierId;
 
@@ -37,12 +37,12 @@ public class StudioDicSupplier implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getSupplierStudioId() {
-        return supplierStudioId;
+    public Long getStudioDicSupplierId() {
+        return studioDicSupplierId;
     }
 
-    public void setSupplierStudioId(Long supplierStudioId) {
-        this.supplierStudioId = supplierStudioId;
+    public void setStudioDicSupplierId(Long studioDicSupplierId) {
+        this.studioDicSupplierId = studioDicSupplierId;
     }
 
     public String getSupplierId() {
@@ -131,7 +131,7 @@ public class StudioDicSupplier implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", supplierStudioId=").append(supplierStudioId);
+        sb.append(", studioDicSupplierId=").append(studioDicSupplierId);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", studioId=").append(studioId);
@@ -159,7 +159,7 @@ public class StudioDicSupplier implements Serializable {
             return false;
         }
         StudioDicSupplier other = (StudioDicSupplier) that;
-        return (this.getSupplierStudioId() == null ? other.getSupplierStudioId() == null : this.getSupplierStudioId().equals(other.getSupplierStudioId()))
+        return (this.getStudioDicSupplierId() == null ? other.getStudioDicSupplierId() == null : this.getStudioDicSupplierId().equals(other.getStudioDicSupplierId()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
@@ -176,7 +176,7 @@ public class StudioDicSupplier implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getSupplierStudioId() == null) ? 0 : getSupplierStudioId().hashCode());
+        result = prime * result + ((getStudioDicSupplierId() == null) ? 0 : getStudioDicSupplierId().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());

@@ -7,7 +7,7 @@ public class StudioSlot implements Serializable {
     /**
      * 主键
      */
-    private Long studioDicSlotId;
+    private Long studioSlotId;
 
     /**
      * 摄影棚Id
@@ -121,12 +121,12 @@ public class StudioSlot implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getStudioDicSlotId() {
-        return studioDicSlotId;
+    public Long getStudioSlotId() {
+        return studioSlotId;
     }
 
-    public void setStudioDicSlotId(Long studioDicSlotId) {
-        this.studioDicSlotId = studioDicSlotId;
+    public void setStudioSlotId(Long studioSlotId) {
+        this.studioSlotId = studioSlotId;
     }
 
     public Long getStudioId() {
@@ -311,7 +311,7 @@ public class StudioSlot implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", studioDicSlotId=").append(studioDicSlotId);
+        sb.append(", studioSlotId=").append(studioSlotId);
         sb.append(", studioId=").append(studioId);
         sb.append(", slotNo=").append(slotNo);
         sb.append(", slotStatus=").append(slotStatus);
@@ -351,7 +351,7 @@ public class StudioSlot implements Serializable {
             return false;
         }
         StudioSlot other = (StudioSlot) that;
-        return (this.getStudioDicSlotId() == null ? other.getStudioDicSlotId() == null : this.getStudioDicSlotId().equals(other.getStudioDicSlotId()))
+        return (this.getStudioSlotId() == null ? other.getStudioSlotId() == null : this.getStudioSlotId().equals(other.getStudioSlotId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSlotStatus() == null ? other.getSlotStatus() == null : this.getSlotStatus().equals(other.getSlotStatus()))
@@ -380,7 +380,7 @@ public class StudioSlot implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getStudioDicSlotId() == null) ? 0 : getStudioDicSlotId().hashCode());
+        result = prime * result + ((getStudioSlotId() == null) ? 0 : getStudioSlotId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSlotStatus() == null) ? 0 : getSlotStatus().hashCode());

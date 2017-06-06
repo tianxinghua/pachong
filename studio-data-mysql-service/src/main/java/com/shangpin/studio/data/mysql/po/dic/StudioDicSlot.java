@@ -3,45 +3,23 @@ package com.shangpin.studio.data.mysql.po.dic;
 import java.io.Serializable;
 import java.util.Date;
 
-public class StudioDicCalendar implements Serializable {
-    /**
-     * 主键
-     */
-    private Long studioDicCalendarId;
+public class StudioDicSlot implements Serializable {
+    private Long studioDicSlotId;
 
-    /**
-     * 摄影棚id
-     */
     private Long studioId;
 
-    /**
-     * 日历模板编号
-     */
-    private String calenderTemplateId;
+    private Integer slotNumber;
 
-    /**
-     * 备注
-     */
-    private String memo;
+    private Integer slotMinNumber;
 
-    /**
-     * 创建时间
-     */
+    private Integer slotEfficiency;
+
     private Date createTime;
 
-    /**
-     * 创建人
-     */
     private String createUser;
 
-    /**
-     * 更新时间
-     */
     private Date updateTime;
 
-    /**
-     * 更新人
-     */
     private String updateUser;
 
     /**
@@ -56,12 +34,12 @@ public class StudioDicCalendar implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getStudioDicCalendarId() {
-        return studioDicCalendarId;
+    public Long getStudioDicSlotId() {
+        return studioDicSlotId;
     }
 
-    public void setStudioDicCalendarId(Long studioDicCalendarId) {
-        this.studioDicCalendarId = studioDicCalendarId;
+    public void setStudioDicSlotId(Long studioDicSlotId) {
+        this.studioDicSlotId = studioDicSlotId;
     }
 
     public Long getStudioId() {
@@ -72,20 +50,28 @@ public class StudioDicCalendar implements Serializable {
         this.studioId = studioId;
     }
 
-    public String getCalenderTemplateId() {
-        return calenderTemplateId;
+    public Integer getSlotNumber() {
+        return slotNumber;
     }
 
-    public void setCalenderTemplateId(String calenderTemplateId) {
-        this.calenderTemplateId = calenderTemplateId == null ? null : calenderTemplateId.trim();
+    public void setSlotNumber(Integer slotNumber) {
+        this.slotNumber = slotNumber;
     }
 
-    public String getMemo() {
-        return memo;
+    public Integer getSlotMinNumber() {
+        return slotMinNumber;
     }
 
-    public void setMemo(String memo) {
-        this.memo = memo == null ? null : memo.trim();
+    public void setSlotMinNumber(Integer slotMinNumber) {
+        this.slotMinNumber = slotMinNumber;
+    }
+
+    public Integer getSlotEfficiency() {
+        return slotEfficiency;
+    }
+
+    public void setSlotEfficiency(Integer slotEfficiency) {
+        this.slotEfficiency = slotEfficiency;
     }
 
     public Date getCreateTime() {
@@ -142,10 +128,11 @@ public class StudioDicCalendar implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", studioDicCalendarId=").append(studioDicCalendarId);
+        sb.append(", studioDicSlotId=").append(studioDicSlotId);
         sb.append(", studioId=").append(studioId);
-        sb.append(", calenderTemplateId=").append(calenderTemplateId);
-        sb.append(", memo=").append(memo);
+        sb.append(", slotNumber=").append(slotNumber);
+        sb.append(", slotMinNumber=").append(slotMinNumber);
+        sb.append(", slotEfficiency=").append(slotEfficiency);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateTime=").append(updateTime);
@@ -168,11 +155,12 @@ public class StudioDicCalendar implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        StudioDicCalendar other = (StudioDicCalendar) that;
-        return (this.getStudioDicCalendarId() == null ? other.getStudioDicCalendarId() == null : this.getStudioDicCalendarId().equals(other.getStudioDicCalendarId()))
+        StudioDicSlot other = (StudioDicSlot) that;
+        return (this.getStudioDicSlotId() == null ? other.getStudioDicSlotId() == null : this.getStudioDicSlotId().equals(other.getStudioDicSlotId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
-            && (this.getCalenderTemplateId() == null ? other.getCalenderTemplateId() == null : this.getCalenderTemplateId().equals(other.getCalenderTemplateId()))
-            && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
+            && (this.getSlotNumber() == null ? other.getSlotNumber() == null : this.getSlotNumber().equals(other.getSlotNumber()))
+            && (this.getSlotMinNumber() == null ? other.getSlotMinNumber() == null : this.getSlotMinNumber().equals(other.getSlotMinNumber()))
+            && (this.getSlotEfficiency() == null ? other.getSlotEfficiency() == null : this.getSlotEfficiency().equals(other.getSlotEfficiency()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -185,10 +173,11 @@ public class StudioDicCalendar implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getStudioDicCalendarId() == null) ? 0 : getStudioDicCalendarId().hashCode());
+        result = prime * result + ((getStudioDicSlotId() == null) ? 0 : getStudioDicSlotId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
-        result = prime * result + ((getCalenderTemplateId() == null) ? 0 : getCalenderTemplateId().hashCode());
-        result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
+        result = prime * result + ((getSlotNumber() == null) ? 0 : getSlotNumber().hashCode());
+        result = prime * result + ((getSlotMinNumber() == null) ? 0 : getSlotMinNumber().hashCode());
+        result = prime * result + ((getSlotEfficiency() == null) ? 0 : getSlotEfficiency().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());

@@ -177,63 +177,63 @@ public class StudioSlotCriteria {
             addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
         }
 
-        public Criteria andStudioDicSlotIdIsNull() {
-            addCriterion("studio_dic_slot_id is null");
+        public Criteria andStudioSlotIdIsNull() {
+            addCriterion("studio_slot_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdIsNotNull() {
-            addCriterion("studio_dic_slot_id is not null");
+        public Criteria andStudioSlotIdIsNotNull() {
+            addCriterion("studio_slot_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdEqualTo(Long value) {
-            addCriterion("studio_dic_slot_id =", value, "studioDicSlotId");
+        public Criteria andStudioSlotIdEqualTo(Long value) {
+            addCriterion("studio_slot_id =", value, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdNotEqualTo(Long value) {
-            addCriterion("studio_dic_slot_id <>", value, "studioDicSlotId");
+        public Criteria andStudioSlotIdNotEqualTo(Long value) {
+            addCriterion("studio_slot_id <>", value, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdGreaterThan(Long value) {
-            addCriterion("studio_dic_slot_id >", value, "studioDicSlotId");
+        public Criteria andStudioSlotIdGreaterThan(Long value) {
+            addCriterion("studio_slot_id >", value, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("studio_dic_slot_id >=", value, "studioDicSlotId");
+        public Criteria andStudioSlotIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_slot_id >=", value, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdLessThan(Long value) {
-            addCriterion("studio_dic_slot_id <", value, "studioDicSlotId");
+        public Criteria andStudioSlotIdLessThan(Long value) {
+            addCriterion("studio_slot_id <", value, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdLessThanOrEqualTo(Long value) {
-            addCriterion("studio_dic_slot_id <=", value, "studioDicSlotId");
+        public Criteria andStudioSlotIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_slot_id <=", value, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdIn(List<Long> values) {
-            addCriterion("studio_dic_slot_id in", values, "studioDicSlotId");
+        public Criteria andStudioSlotIdIn(List<Long> values) {
+            addCriterion("studio_slot_id in", values, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdNotIn(List<Long> values) {
-            addCriterion("studio_dic_slot_id not in", values, "studioDicSlotId");
+        public Criteria andStudioSlotIdNotIn(List<Long> values) {
+            addCriterion("studio_slot_id not in", values, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdBetween(Long value1, Long value2) {
-            addCriterion("studio_dic_slot_id between", value1, value2, "studioDicSlotId");
+        public Criteria andStudioSlotIdBetween(Long value1, Long value2) {
+            addCriterion("studio_slot_id between", value1, value2, "studioSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicSlotIdNotBetween(Long value1, Long value2) {
-            addCriterion("studio_dic_slot_id not between", value1, value2, "studioDicSlotId");
+        public Criteria andStudioSlotIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_slot_id not between", value1, value2, "studioSlotId");
             return (Criteria) this;
         }
 
@@ -1626,6 +1626,7 @@ public class StudioSlotCriteria {
     }
 
     public static class Criterion {
+
 
         public Criterion() {
             super();
