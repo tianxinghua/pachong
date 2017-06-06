@@ -1,6 +1,7 @@
 package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
 
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
@@ -32,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AllProductServiceImpl {
 	
 	private static final Integer PAGESIZE = 50;
+	private static SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Autowired
 	private ExportServiceImpl exportServiceImpl;
@@ -39,6 +44,8 @@ public class AllProductServiceImpl {
 	private HubPendingSkuCheckGateWay hubPendingSkuClient;
 	@Autowired
 	private MatchSizeGateWay matchSizeGateWay;
+	@Autowired
+	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
 
 	public void exportproductAll(String taskNo, PendingQuryDto pendingQuryDto) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -85,6 +92,17 @@ public class AllProductServiceImpl {
 	
 	private void insertProductOfRow(HSSFRow row, PendingProductDto product, HubSkuPendingDto sku,
 			String[] rowTemplate) throws Exception {
+		/**
+		 * 价格、库存、最后拉去时间从供应商原始数据中获取
+		 */
+		HubSupplierSkuDto supplierSku = selectSupplierSku(sku.getSupplierId(),sku.getSupplierSkuNo());
+		if(null != supplierSku){
+			sku.setMarketPrice(supplierSku.getMarketPrice());
+			sku.setSalesPrice(supplierSku.getSalesPrice());
+			sku.setSupplyPrice(supplierSku.getSupplyPrice());
+			sku.setStock(supplierSku.getStock()); 
+		}
+		
 		Class<?> spuClazz = product.getClass();
 		Class<?> skuClazz = sku.getClass();
 		Method fieldSetMet = null;
@@ -109,7 +127,9 @@ public class AllProductServiceImpl {
 					fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
 					row.createCell(i).setCellValue(null != value ? value.toString() : "");
-				} else if ("hubSkuSizeType".equals(rowTemplate[i])) {
+				}else if("lastPullTime".equals(rowTemplate[i])){
+					row.createCell(i).setCellValue((null != supplierSku && supplierSku.getLastPullTime() != null)? format.format(supplierSku.getLastPullTime()) : "");
+				}else if ("hubSkuSizeType".equals(rowTemplate[i])) {
 					fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
 					if (value != null&&!"排除".equals(value)) {
@@ -191,5 +211,17 @@ public class AllProductServiceImpl {
 			return buffer.toString();
 		}
 		return "";
+	}
+	
+	private HubSupplierSkuDto selectSupplierSku(String supplierId,String supplierSkuNo){
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.setFields("market_price,sales_price,supply_price,stock,last_pull_time");
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+		List<HubSupplierSkuDto> skus = hubSupplierSkuGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(skus)){
+			return skus.get(0);
+		}else{
+			return null;
+		}
 	}
 }
