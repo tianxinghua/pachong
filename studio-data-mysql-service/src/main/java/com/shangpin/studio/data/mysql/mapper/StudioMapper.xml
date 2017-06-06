@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.Studio" >
+    <id column="studio_id" property="studioId" jdbcType="BIGINT" />
+    <result column="studio_name" property="studioName" jdbcType="VARCHAR" />
+    <result column="studio_no" property="studioNo" jdbcType="VARCHAR" />
+    <result column="studio_type" property="studioType" jdbcType="TINYINT" />
+    <result column="studio_status" property="studioStatus" jdbcType="TINYINT" />
+    <result column="studio_contacts" property="studioContacts" jdbcType="VARCHAR" />
+    <result column="contact_info" property="contactInfo" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="period" property="period" jdbcType="INTEGER" />
+    <result column="country" property="country" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      studio_id, studio_name, studio_no, studio_type, studio_status, studio_contacts, contact_info, 
+      telephone, email, period, country, address, memo, create_time, create_user, update_time, 
+      update_user, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    studio_id,studio_name,studio_no,studio_type,studio_status,studio_contacts,contact_info,telephone,email,period,country,address,memo,create_time,create_user,update_time,update_user,data_state,version
+    from studio
+    where studio_id = #{studioId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from studio
+    where studio_id = #{studioId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioCriteria" >
+    delete from studio
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
+    insert into studio (studio_id, studio_name, studio_no, 
+      studio_type, studio_status, studio_contacts, 
+      contact_info, telephone, email, 
+      period, country, address, 
+      memo, create_time, create_user, 
+      update_time, update_user, data_state, 
+      version)
+    values (#{studioId,jdbcType=BIGINT}, #{studioName,jdbcType=VARCHAR}, #{studioNo,jdbcType=VARCHAR}, 
+      #{studioType,jdbcType=TINYINT}, #{studioStatus,jdbcType=TINYINT}, #{studioContacts,jdbcType=VARCHAR}, 
+      #{contactInfo,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{period,jdbcType=INTEGER}, #{country,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{memo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
+    insert into studio
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studioId != null" >
+        studio_id,
+      </if>
+      <if test="studioName != null" >
+        studio_name,
+      </if>
+      <if test="studioNo != null" >
+        studio_no,
+      </if>
+      <if test="studioType != null" >
+        studio_type,
+      </if>
+      <if test="studioStatus != null" >
+        studio_status,
+      </if>
+      <if test="studioContacts != null" >
+        studio_contacts,
+      </if>
+      <if test="contactInfo != null" >
+        contact_info,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="period != null" >
+        period,
+      </if>
+      <if test="country != null" >
+        country,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="studioId != null" >
+        #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="studioName != null" >
+        #{studioName,jdbcType=VARCHAR},
+      </if>
+      <if test="studioNo != null" >
+        #{studioNo,jdbcType=VARCHAR},
+      </if>
+      <if test="studioType != null" >
+        #{studioType,jdbcType=TINYINT},
+      </if>
+      <if test="studioStatus != null" >
+        #{studioStatus,jdbcType=TINYINT},
+      </if>
+      <if test="studioContacts != null" >
+        #{studioContacts,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null" >
+        #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="period != null" >
+        #{period,jdbcType=INTEGER},
+      </if>
+      <if test="country != null" >
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update studio
+    <set >
+      <if test="record.studioId != null" >
+        studio_id = #{record.studioId,jdbcType=BIGINT},
+      </if>
+      <if test="record.studioName != null" >
+        studio_name = #{record.studioName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.studioNo != null" >
+        studio_no = #{record.studioNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.studioType != null" >
+        studio_type = #{record.studioType,jdbcType=TINYINT},
+      </if>
+      <if test="record.studioStatus != null" >
+        studio_status = #{record.studioStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.studioContacts != null" >
+        studio_contacts = #{record.studioContacts,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contactInfo != null" >
+        contact_info = #{record.contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.telephone != null" >
+        telephone = #{record.telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.period != null" >
+        period = #{record.period,jdbcType=INTEGER},
+      </if>
+      <if test="record.country != null" >
+        country = #{record.country,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null" >
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update studio
+    set studio_id = #{record.studioId,jdbcType=BIGINT},
+      studio_name = #{record.studioName,jdbcType=VARCHAR},
+      studio_no = #{record.studioNo,jdbcType=VARCHAR},
+      studio_type = #{record.studioType,jdbcType=TINYINT},
+      studio_status = #{record.studioStatus,jdbcType=TINYINT},
+      studio_contacts = #{record.studioContacts,jdbcType=VARCHAR},
+      contact_info = #{record.contactInfo,jdbcType=VARCHAR},
+      telephone = #{record.telephone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      period = #{record.period,jdbcType=INTEGER},
+      country = #{record.country,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
+    update studio
+    <set >
+      <if test="studioName != null" >
+        studio_name = #{studioName,jdbcType=VARCHAR},
+      </if>
+      <if test="studioNo != null" >
+        studio_no = #{studioNo,jdbcType=VARCHAR},
+      </if>
+      <if test="studioType != null" >
+        studio_type = #{studioType,jdbcType=TINYINT},
+      </if>
+      <if test="studioStatus != null" >
+        studio_status = #{studioStatus,jdbcType=TINYINT},
+      </if>
+      <if test="studioContacts != null" >
+        studio_contacts = #{studioContacts,jdbcType=VARCHAR},
+      </if>
+      <if test="contactInfo != null" >
+        contact_info = #{contactInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="period != null" >
+        period = #{period,jdbcType=INTEGER},
+      </if>
+      <if test="country != null" >
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where studio_id = #{studioId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
+    update studio
+    set studio_name = #{studioName,jdbcType=VARCHAR},
+      studio_no = #{studioNo,jdbcType=VARCHAR},
+      studio_type = #{studioType,jdbcType=TINYINT},
+      studio_status = #{studioStatus,jdbcType=TINYINT},
+      studio_contacts = #{studioContacts,jdbcType=VARCHAR},
+      contact_info = #{contactInfo,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      period = #{period,jdbcType=INTEGER},
+      country = #{country,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      memo = #{memo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where studio_id = #{studioId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotDefectiveSpuMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
+    <result column="studio_slot_defective_spu_id" property="studioSlotDefectiveSpuId" jdbcType="BIGINT" />
+    <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
+    <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
+    <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      studio_slot_defective_spu_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
+      supplier_spu_id, slot_spu_no, memo, create_user, create_time, update_time, update_user, 
+      data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio_slot_defective_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" >
+    delete from studio_slot_defective_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
+    insert into studio_slot_defective_spu (studio_slot_defective_spu_id, slot_no, 
+      supplier_no, supplier_id, spu_pending_id, 
+      supplier_spu_id, slot_spu_no, memo, 
+      create_user, create_time, update_time, 
+      update_user, data_state, version
+      )
+    values (#{studioSlotDefectiveSpuId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
+      #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, 
+      #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
+    insert into studio_slot_defective_spu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studioSlotDefectiveSpuId != null" >
+        studio_slot_defective_spu_id,
+      </if>
+      <if test="slotNo != null" >
+        slot_no,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="spuPendingId != null" >
+        spu_pending_id,
+      </if>
+      <if test="supplierSpuId != null" >
+        supplier_spu_id,
+      </if>
+      <if test="slotSpuNo != null" >
+        slot_spu_no,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="studioSlotDefectiveSpuId != null" >
+        #{studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="slotNo != null" >
+        #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="spuPendingId != null" >
+        #{spuPendingId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierSpuId != null" >
+        #{supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuNo != null" >
+        #{slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio_slot_defective_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update studio_slot_defective_spu
+    <set >
+      <if test="record.studioSlotDefectiveSpuId != null" >
+        studio_slot_defective_spu_id = #{record.studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotNo != null" >
+        slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuPendingId != null" >
+        spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierSpuId != null" >
+        supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotSpuNo != null" >
+        slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update studio_slot_defective_spu
+    set studio_slot_defective_spu_id = #{record.studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
+      supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpuCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio_slot_defective_spu
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

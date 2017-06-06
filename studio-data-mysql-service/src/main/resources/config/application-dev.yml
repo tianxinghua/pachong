@@ -1,0 +1,59 @@
+spring: 
+  cloud: 
+       consul: 
+         host: 192.168.20.105
+         port: 8500
+         discovery: 
+           prefer-agent-address: true
+           prefer-ip-address: true
+           health-check-interval: 10s
+           register: true
+           register-health-check: true
+           #health-check-timeout: 5s
+           #instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+           #ip-address: 192.168.3.211
+           #hostname: 192.168.3.211
+           #port: ${server.port}
+           #healthCheckUrl: http://192.168.3.211:8001/info 
+  jackson: 
+       date-format: yyyy-MM-dd HH:mm:ss
+       time-zone: GMT+8
+  boot: 
+       admin: 
+           url: http://localhost:8080
+           client: 
+                  prefer-ip: true
+shangpin: 
+  studio:
+    dataSource:
+      clusters: 
+        - 
+            id: studio-data-mysql-service
+            clustertype: READWRITE
+            strategy: RANDOM
+            retrytime: 200
+            minimumConnectionCount: 20
+            maximumConnectionCount: 20
+            trace: true
+            prototypeCount: 10
+            houseKeepingTestSql: select 1 from dual
+            simultaneousBuildThrottle: 100
+            maximumActiveTime: 600000
+            nodes: 
+               - 
+                  id: shangpin-studio-data-mysql-service-db-cluster-one
+                  driver: com.mysql.jdbc.Driver
+                  url: "jdbc:mysql://192.168.9.135:3306/studio?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
+                  user: writer
+                  password: wt@sp520
+                  trailnumber: 
+mybatis: 
+  configLocation: classpath:mybatis/mybatis-configuration.xml
+banner: 
+       charset: UTF-8 # Banner file encoding.
+       location: classpath:banner/banner.txt # Banner file location.
+       image: 
+             location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+logging: 
+       path: /usr/local/share/applications/studio-data-mysql-service/logs/
+       file: shangpin-studio-data-mysql-service-error.%d{yyyy-MM-dd}.log

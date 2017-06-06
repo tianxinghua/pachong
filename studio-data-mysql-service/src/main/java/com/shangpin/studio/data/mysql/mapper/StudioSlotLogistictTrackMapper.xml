@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotLogistictTrackMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
+    <id column="studio_slot_logistict_track_id" property="studioSlotLogistictTrackId" jdbcType="BIGINT" />
+    <result column="track_name" property="trackName" jdbcType="VARCHAR" />
+    <result column="track_no" property="trackNo" jdbcType="VARCHAR" />
+    <result column="track_status" property="trackStatus" jdbcType="TINYINT" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="actual_number" property="actualNumber" jdbcType="INTEGER" />
+    <result column="plan_arrive_time" property="planArriveTime" jdbcType="DATE" />
+    <result column="track_receiver" property="trackReceiver" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="send_master_id" property="sendMasterId" jdbcType="BIGINT" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      studio_slot_logistict_track_id, track_name, track_no, track_status, quantity, actual_number, 
+      plan_arrive_time, track_receiver, type, send_master_id, memo, create_time, create_user, 
+      update_time, update_user, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrackCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio_slot_logistict_track
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    studio_slot_logistict_track_id,track_name,track_no,track_status,quantity,actual_number,plan_arrive_time,track_receiver,type,send_master_id,memo,create_time,create_user,update_time,update_user,data_state,version
+    from studio_slot_logistict_track
+    where studio_slot_logistict_track_id = #{studioSlotLogistictTrackId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from studio_slot_logistict_track
+    where studio_slot_logistict_track_id = #{studioSlotLogistictTrackId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrackCriteria" >
+    delete from studio_slot_logistict_track
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
+    insert into studio_slot_logistict_track (studio_slot_logistict_track_id, track_name, 
+      track_no, track_status, quantity, 
+      actual_number, plan_arrive_time, track_receiver, 
+      type, send_master_id, memo, 
+      create_time, create_user, update_time, 
+      update_user, data_state, version
+      )
+    values (#{studioSlotLogistictTrackId,jdbcType=BIGINT}, #{trackName,jdbcType=VARCHAR}, 
+      #{trackNo,jdbcType=VARCHAR}, #{trackStatus,jdbcType=TINYINT}, #{quantity,jdbcType=INTEGER}, 
+      #{actualNumber,jdbcType=INTEGER}, #{planArriveTime,jdbcType=DATE}, #{trackReceiver,jdbcType=VARCHAR}, 
+      #{type,jdbcType=TINYINT}, #{sendMasterId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
+    insert into studio_slot_logistict_track
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studioSlotLogistictTrackId != null" >
+        studio_slot_logistict_track_id,
+      </if>
+      <if test="trackName != null" >
+        track_name,
+      </if>
+      <if test="trackNo != null" >
+        track_no,
+      </if>
+      <if test="trackStatus != null" >
+        track_status,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+      <if test="actualNumber != null" >
+        actual_number,
+      </if>
+      <if test="planArriveTime != null" >
+        plan_arrive_time,
+      </if>
+      <if test="trackReceiver != null" >
+        track_receiver,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="sendMasterId != null" >
+        send_master_id,
+      </if>
+      <if test="memo != null" >
+        memo,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="studioSlotLogistictTrackId != null" >
+        #{studioSlotLogistictTrackId,jdbcType=BIGINT},
+      </if>
+      <if test="trackName != null" >
+        #{trackName,jdbcType=VARCHAR},
+      </if>
+      <if test="trackNo != null" >
+        #{trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trackStatus != null" >
+        #{trackStatus,jdbcType=TINYINT},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="actualNumber != null" >
+        #{actualNumber,jdbcType=INTEGER},
+      </if>
+      <if test="planArriveTime != null" >
+        #{planArriveTime,jdbcType=DATE},
+      </if>
+      <if test="trackReceiver != null" >
+        #{trackReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="sendMasterId != null" >
+        #{sendMasterId,jdbcType=BIGINT},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrackCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio_slot_logistict_track
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update studio_slot_logistict_track
+    <set >
+      <if test="record.studioSlotLogistictTrackId != null" >
+        studio_slot_logistict_track_id = #{record.studioSlotLogistictTrackId,jdbcType=BIGINT},
+      </if>
+      <if test="record.trackName != null" >
+        track_name = #{record.trackName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.trackNo != null" >
+        track_no = #{record.trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.trackStatus != null" >
+        track_status = #{record.trackStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.quantity != null" >
+        quantity = #{record.quantity,jdbcType=INTEGER},
+      </if>
+      <if test="record.actualNumber != null" >
+        actual_number = #{record.actualNumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.planArriveTime != null" >
+        plan_arrive_time = #{record.planArriveTime,jdbcType=DATE},
+      </if>
+      <if test="record.trackReceiver != null" >
+        track_receiver = #{record.trackReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="record.type != null" >
+        type = #{record.type,jdbcType=TINYINT},
+      </if>
+      <if test="record.sendMasterId != null" >
+        send_master_id = #{record.sendMasterId,jdbcType=BIGINT},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update studio_slot_logistict_track
+    set studio_slot_logistict_track_id = #{record.studioSlotLogistictTrackId,jdbcType=BIGINT},
+      track_name = #{record.trackName,jdbcType=VARCHAR},
+      track_no = #{record.trackNo,jdbcType=VARCHAR},
+      track_status = #{record.trackStatus,jdbcType=TINYINT},
+      quantity = #{record.quantity,jdbcType=INTEGER},
+      actual_number = #{record.actualNumber,jdbcType=INTEGER},
+      plan_arrive_time = #{record.planArriveTime,jdbcType=DATE},
+      track_receiver = #{record.trackReceiver,jdbcType=VARCHAR},
+      type = #{record.type,jdbcType=TINYINT},
+      send_master_id = #{record.sendMasterId,jdbcType=BIGINT},
+      memo = #{record.memo,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
+    update studio_slot_logistict_track
+    <set >
+      <if test="trackName != null" >
+        track_name = #{trackName,jdbcType=VARCHAR},
+      </if>
+      <if test="trackNo != null" >
+        track_no = #{trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="trackStatus != null" >
+        track_status = #{trackStatus,jdbcType=TINYINT},
+      </if>
+      <if test="quantity != null" >
+        quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="actualNumber != null" >
+        actual_number = #{actualNumber,jdbcType=INTEGER},
+      </if>
+      <if test="planArriveTime != null" >
+        plan_arrive_time = #{planArriveTime,jdbcType=DATE},
+      </if>
+      <if test="trackReceiver != null" >
+        track_receiver = #{trackReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="sendMasterId != null" >
+        send_master_id = #{sendMasterId,jdbcType=BIGINT},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where studio_slot_logistict_track_id = #{studioSlotLogistictTrackId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrack" >
+    update studio_slot_logistict_track
+    set track_name = #{trackName,jdbcType=VARCHAR},
+      track_no = #{trackNo,jdbcType=VARCHAR},
+      track_status = #{trackStatus,jdbcType=TINYINT},
+      quantity = #{quantity,jdbcType=INTEGER},
+      actual_number = #{actualNumber,jdbcType=INTEGER},
+      plan_arrive_time = #{planArriveTime,jdbcType=DATE},
+      track_receiver = #{trackReceiver,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      send_master_id = #{sendMasterId,jdbcType=BIGINT},
+      memo = #{memo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where studio_slot_logistict_track_id = #{studioSlotLogistictTrackId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotLogistictTrackCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio_slot_logistict_track
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="logImpl" value="STDOUT_LOGGING" />
+		<setting name="mapUnderscoreToCamelCase" value="true" />
+		<setting name="logPrefix" value="mybatis.log."/>
+		<!--设为True时,当返回的Map或者实体类的某一属性为空时,依然返回该属性,默认为false-->
+        <setting name="callSettersOnNulls" value="true"/>
+        <setting name="safeResultHandlerEnabled" value="false"/>
+	</settings>
+</configuration>

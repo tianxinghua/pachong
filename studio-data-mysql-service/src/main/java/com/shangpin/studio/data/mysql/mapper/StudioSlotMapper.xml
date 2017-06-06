@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    <id column="studio_dic_slot_id" property="studioDicSlotId" jdbcType="BIGINT" />
+    <result column="studio_id" property="studioId" jdbcType="BIGINT" />
+    <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
+    <result column="slot_status" property="slotStatus" jdbcType="TINYINT" />
+    <result column="apply_status" property="applyStatus" jdbcType="TINYINT" />
+    <result column="apply_supplier_id" property="applySupplierId" jdbcType="VARCHAR" />
+    <result column="apply_user" property="applyUser" jdbcType="VARCHAR" />
+    <result column="apply_time" property="applyTime" jdbcType="TIMESTAMP" />
+    <result column="send_user" property="sendUser" jdbcType="VARCHAR" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="send_state" property="sendState" jdbcType="TINYINT" />
+    <result column="plan_arrive_time" property="planArriveTime" jdbcType="DATE" />
+    <result column="arrive_status" property="arriveStatus" jdbcType="TINYINT" />
+    <result column="arrive_time" property="arriveTime" jdbcType="TIMESTAMP" />
+    <result column="arrive_user" property="arriveUser" jdbcType="VARCHAR" />
+    <result column="shot_status" property="shotStatus" jdbcType="TINYINT" />
+    <result column="plan_shot_time" property="planShotTime" jdbcType="TIMESTAMP" />
+    <result column="shot_time" property="shotTime" jdbcType="TIMESTAMP" />
+    <result column="track_no" property="trackNo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      studio_dic_slot_id, studio_id, slot_no, slot_status, apply_status, apply_supplier_id, 
+      apply_user, apply_time, send_user, send_time, send_state, plan_arrive_time, arrive_status, 
+      arrive_time, arrive_user, shot_status, plan_shot_time, shot_time, track_no, create_time, 
+      update_time, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio_slot
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    studio_dic_slot_id,studio_id,slot_no,slot_status,apply_status,apply_supplier_id,apply_user,apply_time,send_user,send_time,send_state,plan_arrive_time,arrive_status,arrive_time,arrive_user,shot_status,plan_shot_time,shot_time,track_no,create_time,update_time,data_state,version
+    from studio_slot
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from studio_slot
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotCriteria" >
+    delete from studio_slot
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    insert into studio_slot (studio_dic_slot_id, studio_id, slot_no, 
+      slot_status, apply_status, apply_supplier_id, 
+      apply_user, apply_time, send_user, 
+      send_time, send_state, plan_arrive_time, 
+      arrive_status, arrive_time, arrive_user, 
+      shot_status, plan_shot_time, shot_time, 
+      track_no, create_time, update_time, 
+      data_state, version)
+    values (#{studioDicSlotId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
+      #{slotStatus,jdbcType=TINYINT}, #{applyStatus,jdbcType=TINYINT}, #{applySupplierId,jdbcType=VARCHAR}, 
+      #{applyUser,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, #{sendUser,jdbcType=VARCHAR}, 
+      #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, #{planArriveTime,jdbcType=DATE}, 
+      #{arriveStatus,jdbcType=TINYINT}, #{arriveTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, 
+      #{shotStatus,jdbcType=TINYINT}, #{planShotTime,jdbcType=TIMESTAMP}, #{shotTime,jdbcType=TIMESTAMP}, 
+      #{trackNo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    insert into studio_slot
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="studioDicSlotId != null" >
+        studio_dic_slot_id,
+      </if>
+      <if test="studioId != null" >
+        studio_id,
+      </if>
+      <if test="slotNo != null" >
+        slot_no,
+      </if>
+      <if test="slotStatus != null" >
+        slot_status,
+      </if>
+      <if test="applyStatus != null" >
+        apply_status,
+      </if>
+      <if test="applySupplierId != null" >
+        apply_supplier_id,
+      </if>
+      <if test="applyUser != null" >
+        apply_user,
+      </if>
+      <if test="applyTime != null" >
+        apply_time,
+      </if>
+      <if test="sendUser != null" >
+        send_user,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="sendState != null" >
+        send_state,
+      </if>
+      <if test="planArriveTime != null" >
+        plan_arrive_time,
+      </if>
+      <if test="arriveStatus != null" >
+        arrive_status,
+      </if>
+      <if test="arriveTime != null" >
+        arrive_time,
+      </if>
+      <if test="arriveUser != null" >
+        arrive_user,
+      </if>
+      <if test="shotStatus != null" >
+        shot_status,
+      </if>
+      <if test="planShotTime != null" >
+        plan_shot_time,
+      </if>
+      <if test="shotTime != null" >
+        shot_time,
+      </if>
+      <if test="trackNo != null" >
+        track_no,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="studioDicSlotId != null" >
+        #{studioDicSlotId,jdbcType=BIGINT},
+      </if>
+      <if test="studioId != null" >
+        #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="slotNo != null" >
+        #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="slotStatus != null" >
+        #{slotStatus,jdbcType=TINYINT},
+      </if>
+      <if test="applyStatus != null" >
+        #{applyStatus,jdbcType=TINYINT},
+      </if>
+      <if test="applySupplierId != null" >
+        #{applySupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="applyUser != null" >
+        #{applyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null" >
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendUser != null" >
+        #{sendUser,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendState != null" >
+        #{sendState,jdbcType=TINYINT},
+      </if>
+      <if test="planArriveTime != null" >
+        #{planArriveTime,jdbcType=DATE},
+      </if>
+      <if test="arriveStatus != null" >
+        #{arriveStatus,jdbcType=TINYINT},
+      </if>
+      <if test="arriveTime != null" >
+        #{arriveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="arriveUser != null" >
+        #{arriveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="shotStatus != null" >
+        #{shotStatus,jdbcType=TINYINT},
+      </if>
+      <if test="planShotTime != null" >
+        #{planShotTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shotTime != null" >
+        #{shotTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trackNo != null" >
+        #{trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotCriteria" resultType="java.lang.Integer" >
+    select count(*) from studio_slot
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update studio_slot
+    <set >
+      <if test="record.studioDicSlotId != null" >
+        studio_dic_slot_id = #{record.studioDicSlotId,jdbcType=BIGINT},
+      </if>
+      <if test="record.studioId != null" >
+        studio_id = #{record.studioId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotNo != null" >
+        slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.slotStatus != null" >
+        slot_status = #{record.slotStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.applyStatus != null" >
+        apply_status = #{record.applyStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.applySupplierId != null" >
+        apply_supplier_id = #{record.applySupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyUser != null" >
+        apply_user = #{record.applyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.applyTime != null" >
+        apply_time = #{record.applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sendUser != null" >
+        send_user = #{record.sendUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sendTime != null" >
+        send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sendState != null" >
+        send_state = #{record.sendState,jdbcType=TINYINT},
+      </if>
+      <if test="record.planArriveTime != null" >
+        plan_arrive_time = #{record.planArriveTime,jdbcType=DATE},
+      </if>
+      <if test="record.arriveStatus != null" >
+        arrive_status = #{record.arriveStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.arriveTime != null" >
+        arrive_time = #{record.arriveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.arriveUser != null" >
+        arrive_user = #{record.arriveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.shotStatus != null" >
+        shot_status = #{record.shotStatus,jdbcType=TINYINT},
+      </if>
+      <if test="record.planShotTime != null" >
+        plan_shot_time = #{record.planShotTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.shotTime != null" >
+        shot_time = #{record.shotTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.trackNo != null" >
+        track_no = #{record.trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update studio_slot
+    set studio_dic_slot_id = #{record.studioDicSlotId,jdbcType=BIGINT},
+      studio_id = #{record.studioId,jdbcType=BIGINT},
+      slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      slot_status = #{record.slotStatus,jdbcType=TINYINT},
+      apply_status = #{record.applyStatus,jdbcType=TINYINT},
+      apply_supplier_id = #{record.applySupplierId,jdbcType=VARCHAR},
+      apply_user = #{record.applyUser,jdbcType=VARCHAR},
+      apply_time = #{record.applyTime,jdbcType=TIMESTAMP},
+      send_user = #{record.sendUser,jdbcType=VARCHAR},
+      send_time = #{record.sendTime,jdbcType=TIMESTAMP},
+      send_state = #{record.sendState,jdbcType=TINYINT},
+      plan_arrive_time = #{record.planArriveTime,jdbcType=DATE},
+      arrive_status = #{record.arriveStatus,jdbcType=TINYINT},
+      arrive_time = #{record.arriveTime,jdbcType=TIMESTAMP},
+      arrive_user = #{record.arriveUser,jdbcType=VARCHAR},
+      shot_status = #{record.shotStatus,jdbcType=TINYINT},
+      plan_shot_time = #{record.planShotTime,jdbcType=TIMESTAMP},
+      shot_time = #{record.shotTime,jdbcType=TIMESTAMP},
+      track_no = #{record.trackNo,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    update studio_slot
+    <set >
+      <if test="studioId != null" >
+        studio_id = #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="slotNo != null" >
+        slot_no = #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="slotStatus != null" >
+        slot_status = #{slotStatus,jdbcType=TINYINT},
+      </if>
+      <if test="applyStatus != null" >
+        apply_status = #{applyStatus,jdbcType=TINYINT},
+      </if>
+      <if test="applySupplierId != null" >
+        apply_supplier_id = #{applySupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="applyUser != null" >
+        apply_user = #{applyUser,jdbcType=VARCHAR},
+      </if>
+      <if test="applyTime != null" >
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendUser != null" >
+        send_user = #{sendUser,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendState != null" >
+        send_state = #{sendState,jdbcType=TINYINT},
+      </if>
+      <if test="planArriveTime != null" >
+        plan_arrive_time = #{planArriveTime,jdbcType=DATE},
+      </if>
+      <if test="arriveStatus != null" >
+        arrive_status = #{arriveStatus,jdbcType=TINYINT},
+      </if>
+      <if test="arriveTime != null" >
+        arrive_time = #{arriveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="arriveUser != null" >
+        arrive_user = #{arriveUser,jdbcType=VARCHAR},
+      </if>
+      <if test="shotStatus != null" >
+        shot_status = #{shotStatus,jdbcType=TINYINT},
+      </if>
+      <if test="planShotTime != null" >
+        plan_shot_time = #{planShotTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shotTime != null" >
+        shot_time = #{shotTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="trackNo != null" >
+        track_no = #{trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    update studio_slot
+    set studio_id = #{studioId,jdbcType=BIGINT},
+      slot_no = #{slotNo,jdbcType=VARCHAR},
+      slot_status = #{slotStatus,jdbcType=TINYINT},
+      apply_status = #{applyStatus,jdbcType=TINYINT},
+      apply_supplier_id = #{applySupplierId,jdbcType=VARCHAR},
+      apply_user = #{applyUser,jdbcType=VARCHAR},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      send_user = #{sendUser,jdbcType=VARCHAR},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      send_state = #{sendState,jdbcType=TINYINT},
+      plan_arrive_time = #{planArriveTime,jdbcType=DATE},
+      arrive_status = #{arriveStatus,jdbcType=TINYINT},
+      arrive_time = #{arriveTime,jdbcType=TIMESTAMP},
+      arrive_user = #{arriveUser,jdbcType=VARCHAR},
+      shot_status = #{shotStatus,jdbcType=TINYINT},
+      plan_shot_time = #{planShotTime,jdbcType=TIMESTAMP},
+      shot_time = #{shotTime,jdbcType=TIMESTAMP},
+      track_no = #{trackNo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where studio_dic_slot_id = #{studioDicSlotId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from studio_slot
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>
