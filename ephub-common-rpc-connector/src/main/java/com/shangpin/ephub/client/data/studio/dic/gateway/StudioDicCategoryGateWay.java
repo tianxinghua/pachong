@@ -1,15 +1,16 @@
 package com.shangpin.ephub.client.data.studio.dic.gateway;
 
-import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCategoryCriteriaDto;
-import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCategoryCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSupplierDto;
+import java.util.List;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
+import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCategoryCriteriaDto;
+import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCategoryCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCategoryDto;
 
 /**
 
@@ -28,19 +29,19 @@ public interface StudioDicCategoryGateWay {
     public int deleteByPrimaryKey(Long skuId);
 	
 	@RequestMapping(value = "/studio-dic-category/insert", method = RequestMethod.POST,consumes = "application/json")
-    public Long insert(@RequestBody StudioDicSupplierDto hubSku);
+    public Long insert(@RequestBody StudioDicCategoryDto hubSku);
 	
 	@RequestMapping(value = "/studio-dic-category/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public Long insertSelective(@RequestBody StudioDicSupplierDto hubSku);
+    public Long insertSelective(@RequestBody StudioDicCategoryDto hubSku);
 	
 	@RequestMapping(value = "/studio-dic-category/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
-    public List<StudioDicSupplierDto> selectByCriteriaWithRowbounds(@RequestBody StudioDicCategoryCriteriaWithRowBoundsDto criteriaWithRowBounds);
+    public List<StudioDicCategoryDto> selectByCriteriaWithRowbounds(@RequestBody StudioDicCategoryCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/studio-dic-category/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public List<StudioDicSupplierDto> selectByCriteria(@RequestBody StudioDicCategoryCriteriaDto criteria);
+    public List<StudioDicCategoryDto> selectByCriteria(@RequestBody StudioDicCategoryCriteriaDto criteria);
 	
 	@RequestMapping(value = "/studio-dic-category/select-by-primary-key/{skuId}", method = RequestMethod.POST,consumes = "application/json")
-    public StudioDicSupplierDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
+    public StudioDicCategoryDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/studio-dic-category/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody StudioDicCategoryCriteriaDto hubSkuWithCriteria);
@@ -49,10 +50,10 @@ public interface StudioDicCategoryGateWay {
     public int updateByCriteria(@RequestBody StudioDicCategoryCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-dic-category/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKeySelective(@RequestBody StudioDicSupplierDto hubSku);
+    public int updateByPrimaryKeySelective(@RequestBody StudioDicCategoryDto hubSku);
 	
 	@RequestMapping(value = "/studio-dic-category/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKey(@RequestBody StudioDicSupplierDto hubSku);
+    public int updateByPrimaryKey(@RequestBody StudioDicCategoryDto hubSku);
 
 
 
