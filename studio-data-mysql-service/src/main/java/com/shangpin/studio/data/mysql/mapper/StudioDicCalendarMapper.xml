@@ -114,6 +114,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    <selectKey keyColumn="studio_dic_calendar_id" keyProperty="studioDicCalendarId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_dic_calendar_id
+    </selectKey>
     insert into studio_dic_calendar (studio_dic_calendar_id, studio_id, calender_template_id, 
       memo, create_time, create_user, 
       update_time, update_user, data_state, 
@@ -124,6 +127,9 @@
       #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicCalendar" >
+    <selectKey keyColumn="studio_dic_calendar_id" keyProperty="studioDicCalendarId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_dic_calendar_id
+    </selectKey>
     insert into studio_dic_calendar
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioDicCalendarId != null" >

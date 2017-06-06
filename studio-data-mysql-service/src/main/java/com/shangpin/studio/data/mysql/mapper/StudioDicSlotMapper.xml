@@ -115,6 +115,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    <selectKey keyColumn="studio_dic_slot_id" keyProperty="studioDicSlotId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_dic_slot_id
+    </selectKey>
     insert into studio_dic_slot (studio_dic_slot_id, studio_id, slot_number, 
       slot_min_number, slot_efficiency, create_time, 
       create_user, update_time, update_user, 
@@ -125,6 +128,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSlot" >
+    <selectKey keyColumn="studio_dic_slot_id" keyProperty="studioDicSlotId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_dic_slot_id
+    </selectKey>
     insert into studio_dic_slot
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioDicSlotId != null" >

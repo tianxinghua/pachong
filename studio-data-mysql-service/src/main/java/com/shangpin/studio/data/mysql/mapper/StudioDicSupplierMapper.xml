@@ -115,6 +115,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
+    <selectKey keyColumn="studio_dic_supplier_id" keyProperty="studioDicSupplierId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_dic_supplier_id
+    </selectKey>
     insert into studio_dic_supplier (studio_dic_supplier_id, supplier_id, supplier_no, 
       studio_id, studio_index, create_time, 
       create_user, update_time, update_user, 
@@ -125,6 +128,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioDicSupplier" >
+    <selectKey keyColumn="studio_dic_supplier_id" keyProperty="studioDicSupplierId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_dic_supplier_id
+    </selectKey>
     insert into studio_dic_supplier
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioDicSupplierId != null" >
