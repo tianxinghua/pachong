@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StudioDicCalendarCriteria {
+public class StudioDicSlotCriteria {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -21,7 +21,7 @@ public class StudioDicCalendarCriteria {
 
     protected String fields;
 
-    public StudioDicCalendarCriteria() {
+    public StudioDicSlotCriteria() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -150,63 +150,63 @@ public class StudioDicCalendarCriteria {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andStudioDicCalenderIdIsNull() {
-            addCriterion("studio_dic_calender_id is null");
+        public Criteria andStudioDicSlotIdIsNull() {
+            addCriterion("studio_dic_slot_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdIsNotNull() {
-            addCriterion("studio_dic_calender_id is not null");
+        public Criteria andStudioDicSlotIdIsNotNull() {
+            addCriterion("studio_dic_slot_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id =", value, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdEqualTo(Long value) {
+            addCriterion("studio_dic_slot_id =", value, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdNotEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id <>", value, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdNotEqualTo(Long value) {
+            addCriterion("studio_dic_slot_id <>", value, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdGreaterThan(Long value) {
-            addCriterion("studio_dic_calender_id >", value, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdGreaterThan(Long value) {
+            addCriterion("studio_dic_slot_id >", value, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id >=", value, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_dic_slot_id >=", value, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdLessThan(Long value) {
-            addCriterion("studio_dic_calender_id <", value, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdLessThan(Long value) {
+            addCriterion("studio_dic_slot_id <", value, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdLessThanOrEqualTo(Long value) {
-            addCriterion("studio_dic_calender_id <=", value, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_dic_slot_id <=", value, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdIn(List<Long> values) {
-            addCriterion("studio_dic_calender_id in", values, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdIn(List<Long> values) {
+            addCriterion("studio_dic_slot_id in", values, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdNotIn(List<Long> values) {
-            addCriterion("studio_dic_calender_id not in", values, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdNotIn(List<Long> values) {
+            addCriterion("studio_dic_slot_id not in", values, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdBetween(Long value1, Long value2) {
-            addCriterion("studio_dic_calender_id between", value1, value2, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdBetween(Long value1, Long value2) {
+            addCriterion("studio_dic_slot_id between", value1, value2, "studioDicSlotId");
             return (Criteria) this;
         }
 
-        public Criteria andStudioDicCalenderIdNotBetween(Long value1, Long value2) {
-            addCriterion("studio_dic_calender_id not between", value1, value2, "studioDicCalenderId");
+        public Criteria andStudioDicSlotIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_dic_slot_id not between", value1, value2, "studioDicSlotId");
             return (Criteria) this;
         }
 
@@ -270,143 +270,183 @@ public class StudioDicCalendarCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdIsNull() {
-            addCriterion("calender_template_id is null");
+        public Criteria andSlotNumberIsNull() {
+            addCriterion("slot_number is null");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdIsNotNull() {
-            addCriterion("calender_template_id is not null");
+        public Criteria andSlotNumberIsNotNull() {
+            addCriterion("slot_number is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdEqualTo(String value) {
-            addCriterion("calender_template_id =", value, "calenderTemplateId");
+        public Criteria andSlotNumberEqualTo(Integer value) {
+            addCriterion("slot_number =", value, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdNotEqualTo(String value) {
-            addCriterion("calender_template_id <>", value, "calenderTemplateId");
+        public Criteria andSlotNumberNotEqualTo(Integer value) {
+            addCriterion("slot_number <>", value, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdGreaterThan(String value) {
-            addCriterion("calender_template_id >", value, "calenderTemplateId");
+        public Criteria andSlotNumberGreaterThan(Integer value) {
+            addCriterion("slot_number >", value, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdGreaterThanOrEqualTo(String value) {
-            addCriterion("calender_template_id >=", value, "calenderTemplateId");
+        public Criteria andSlotNumberGreaterThanOrEqualTo(Integer value) {
+            addCriterion("slot_number >=", value, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdLessThan(String value) {
-            addCriterion("calender_template_id <", value, "calenderTemplateId");
+        public Criteria andSlotNumberLessThan(Integer value) {
+            addCriterion("slot_number <", value, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdLessThanOrEqualTo(String value) {
-            addCriterion("calender_template_id <=", value, "calenderTemplateId");
+        public Criteria andSlotNumberLessThanOrEqualTo(Integer value) {
+            addCriterion("slot_number <=", value, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdLike(String value) {
-            addCriterion("calender_template_id like", value, "calenderTemplateId");
+        public Criteria andSlotNumberIn(List<Integer> values) {
+            addCriterion("slot_number in", values, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdNotLike(String value) {
-            addCriterion("calender_template_id not like", value, "calenderTemplateId");
+        public Criteria andSlotNumberNotIn(List<Integer> values) {
+            addCriterion("slot_number not in", values, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdIn(List<String> values) {
-            addCriterion("calender_template_id in", values, "calenderTemplateId");
+        public Criteria andSlotNumberBetween(Integer value1, Integer value2) {
+            addCriterion("slot_number between", value1, value2, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdNotIn(List<String> values) {
-            addCriterion("calender_template_id not in", values, "calenderTemplateId");
+        public Criteria andSlotNumberNotBetween(Integer value1, Integer value2) {
+            addCriterion("slot_number not between", value1, value2, "slotNumber");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdBetween(String value1, String value2) {
-            addCriterion("calender_template_id between", value1, value2, "calenderTemplateId");
+        public Criteria andSlotMinNumberIsNull() {
+            addCriterion("slot_min_number is null");
             return (Criteria) this;
         }
 
-        public Criteria andCalenderTemplateIdNotBetween(String value1, String value2) {
-            addCriterion("calender_template_id not between", value1, value2, "calenderTemplateId");
+        public Criteria andSlotMinNumberIsNotNull() {
+            addCriterion("slot_min_number is not null");
             return (Criteria) this;
         }
 
-        public Criteria andMemoIsNull() {
-            addCriterion("memo is null");
+        public Criteria andSlotMinNumberEqualTo(Integer value) {
+            addCriterion("slot_min_number =", value, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoIsNotNull() {
-            addCriterion("memo is not null");
+        public Criteria andSlotMinNumberNotEqualTo(Integer value) {
+            addCriterion("slot_min_number <>", value, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoEqualTo(String value) {
-            addCriterion("memo =", value, "memo");
+        public Criteria andSlotMinNumberGreaterThan(Integer value) {
+            addCriterion("slot_min_number >", value, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoNotEqualTo(String value) {
-            addCriterion("memo <>", value, "memo");
+        public Criteria andSlotMinNumberGreaterThanOrEqualTo(Integer value) {
+            addCriterion("slot_min_number >=", value, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoGreaterThan(String value) {
-            addCriterion("memo >", value, "memo");
+        public Criteria andSlotMinNumberLessThan(Integer value) {
+            addCriterion("slot_min_number <", value, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoGreaterThanOrEqualTo(String value) {
-            addCriterion("memo >=", value, "memo");
+        public Criteria andSlotMinNumberLessThanOrEqualTo(Integer value) {
+            addCriterion("slot_min_number <=", value, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoLessThan(String value) {
-            addCriterion("memo <", value, "memo");
+        public Criteria andSlotMinNumberIn(List<Integer> values) {
+            addCriterion("slot_min_number in", values, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoLessThanOrEqualTo(String value) {
-            addCriterion("memo <=", value, "memo");
+        public Criteria andSlotMinNumberNotIn(List<Integer> values) {
+            addCriterion("slot_min_number not in", values, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoLike(String value) {
-            addCriterion("memo like", value, "memo");
+        public Criteria andSlotMinNumberBetween(Integer value1, Integer value2) {
+            addCriterion("slot_min_number between", value1, value2, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoNotLike(String value) {
-            addCriterion("memo not like", value, "memo");
+        public Criteria andSlotMinNumberNotBetween(Integer value1, Integer value2) {
+            addCriterion("slot_min_number not between", value1, value2, "slotMinNumber");
             return (Criteria) this;
         }
 
-        public Criteria andMemoIn(List<String> values) {
-            addCriterion("memo in", values, "memo");
+        public Criteria andSlotEfficiencyIsNull() {
+            addCriterion("slot_efficiency is null");
             return (Criteria) this;
         }
 
-        public Criteria andMemoNotIn(List<String> values) {
-            addCriterion("memo not in", values, "memo");
+        public Criteria andSlotEfficiencyIsNotNull() {
+            addCriterion("slot_efficiency is not null");
             return (Criteria) this;
         }
 
-        public Criteria andMemoBetween(String value1, String value2) {
-            addCriterion("memo between", value1, value2, "memo");
+        public Criteria andSlotEfficiencyEqualTo(Integer value) {
+            addCriterion("slot_efficiency =", value, "slotEfficiency");
             return (Criteria) this;
         }
 
-        public Criteria andMemoNotBetween(String value1, String value2) {
-            addCriterion("memo not between", value1, value2, "memo");
+        public Criteria andSlotEfficiencyNotEqualTo(Integer value) {
+            addCriterion("slot_efficiency <>", value, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyGreaterThan(Integer value) {
+            addCriterion("slot_efficiency >", value, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("slot_efficiency >=", value, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyLessThan(Integer value) {
+            addCriterion("slot_efficiency <", value, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyLessThanOrEqualTo(Integer value) {
+            addCriterion("slot_efficiency <=", value, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyIn(List<Integer> values) {
+            addCriterion("slot_efficiency in", values, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyNotIn(List<Integer> values) {
+            addCriterion("slot_efficiency not in", values, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyBetween(Integer value1, Integer value2) {
+            addCriterion("slot_efficiency between", value1, value2, "slotEfficiency");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotEfficiencyNotBetween(Integer value1, Integer value2) {
+            addCriterion("slot_efficiency not between", value1, value2, "slotEfficiency");
             return (Criteria) this;
         }
 

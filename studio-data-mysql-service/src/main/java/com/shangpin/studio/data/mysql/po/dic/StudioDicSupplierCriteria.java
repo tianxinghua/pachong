@@ -119,6 +119,7 @@ public class StudioDicSupplierCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
+
         @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
@@ -149,63 +150,63 @@ public class StudioDicSupplierCriteria {
             criteria.add(new Criterion(condition, value1, value2));
         }
 
-        public Criteria andSupplierStudioIdIsNull() {
-            addCriterion("supplier_studio_id is null");
+        public Criteria andStudioDicSupplierIdIsNull() {
+            addCriterion("studio_dic_supplier_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdIsNotNull() {
-            addCriterion("supplier_studio_id is not null");
+        public Criteria andStudioDicSupplierIdIsNotNull() {
+            addCriterion("studio_dic_supplier_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdEqualTo(Long value) {
-            addCriterion("supplier_studio_id =", value, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdEqualTo(Long value) {
+            addCriterion("studio_dic_supplier_id =", value, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdNotEqualTo(Long value) {
-            addCriterion("supplier_studio_id <>", value, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdNotEqualTo(Long value) {
+            addCriterion("studio_dic_supplier_id <>", value, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdGreaterThan(Long value) {
-            addCriterion("supplier_studio_id >", value, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdGreaterThan(Long value) {
+            addCriterion("studio_dic_supplier_id >", value, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("supplier_studio_id >=", value, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_dic_supplier_id >=", value, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdLessThan(Long value) {
-            addCriterion("supplier_studio_id <", value, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdLessThan(Long value) {
+            addCriterion("studio_dic_supplier_id <", value, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdLessThanOrEqualTo(Long value) {
-            addCriterion("supplier_studio_id <=", value, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_dic_supplier_id <=", value, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdIn(List<Long> values) {
-            addCriterion("supplier_studio_id in", values, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdIn(List<Long> values) {
+            addCriterion("studio_dic_supplier_id in", values, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdNotIn(List<Long> values) {
-            addCriterion("supplier_studio_id not in", values, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdNotIn(List<Long> values) {
+            addCriterion("studio_dic_supplier_id not in", values, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdBetween(Long value1, Long value2) {
-            addCriterion("supplier_studio_id between", value1, value2, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdBetween(Long value1, Long value2) {
+            addCriterion("studio_dic_supplier_id between", value1, value2, "studioDicSupplierId");
             return (Criteria) this;
         }
 
-        public Criteria andSupplierStudioIdNotBetween(Long value1, Long value2) {
-            addCriterion("supplier_studio_id not between", value1, value2, "supplierStudioId");
+        public Criteria andStudioDicSupplierIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_dic_supplier_id not between", value1, value2, "studioDicSupplierId");
             return (Criteria) this;
         }
 
@@ -862,6 +863,7 @@ public class StudioDicSupplierCriteria {
         public Criterion() {
             super();
         }
+
         private String condition;
 
         private Object value;

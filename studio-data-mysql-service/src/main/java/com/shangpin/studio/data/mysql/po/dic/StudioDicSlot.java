@@ -1,21 +1,18 @@
-package com.shangpin.ephub.client.data.studio.dic.dto;
+package com.shangpin.studio.data.mysql.po.dic;
 
 import java.io.Serializable;
 import java.util.Date;
 
-public class StudioDicSupplierDto implements Serializable {
-    private Long studioDicSupplierId;
-
-    private String supplierId;
-
-    private String supplierNo;
+public class StudioDicSlot implements Serializable {
+    private Long studioDicSlotId;
 
     private Long studioId;
 
-    /**
-     * 第一 第二 
-     */
-    private Byte studioIndex;
+    private Integer slotNumber;
+
+    private Integer slotMinNumber;
+
+    private Integer slotEfficiency;
 
     private Date createTime;
 
@@ -37,28 +34,12 @@ public class StudioDicSupplierDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getStudioDicSupplierId() {
-        return studioDicSupplierId;
+    public Long getStudioDicSlotId() {
+        return studioDicSlotId;
     }
 
-    public void setStudioDicSupplierId(Long studioDicSupplierId) {
-        this.studioDicSupplierId = studioDicSupplierId;
-    }
-
-    public String getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(String supplierId) {
-        this.supplierId = supplierId == null ? null : supplierId.trim();
-    }
-
-    public String getSupplierNo() {
-        return supplierNo;
-    }
-
-    public void setSupplierNo(String supplierNo) {
-        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
+    public void setStudioDicSlotId(Long studioDicSlotId) {
+        this.studioDicSlotId = studioDicSlotId;
     }
 
     public Long getStudioId() {
@@ -69,12 +50,28 @@ public class StudioDicSupplierDto implements Serializable {
         this.studioId = studioId;
     }
 
-    public Byte getStudioIndex() {
-        return studioIndex;
+    public Integer getSlotNumber() {
+        return slotNumber;
     }
 
-    public void setStudioIndex(Byte studioIndex) {
-        this.studioIndex = studioIndex;
+    public void setSlotNumber(Integer slotNumber) {
+        this.slotNumber = slotNumber;
+    }
+
+    public Integer getSlotMinNumber() {
+        return slotMinNumber;
+    }
+
+    public void setSlotMinNumber(Integer slotMinNumber) {
+        this.slotMinNumber = slotMinNumber;
+    }
+
+    public Integer getSlotEfficiency() {
+        return slotEfficiency;
+    }
+
+    public void setSlotEfficiency(Integer slotEfficiency) {
+        this.slotEfficiency = slotEfficiency;
     }
 
     public Date getCreateTime() {
@@ -131,11 +128,11 @@ public class StudioDicSupplierDto implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", studioDicSupplierId=").append(studioDicSupplierId);
-        sb.append(", supplierId=").append(supplierId);
-        sb.append(", supplierNo=").append(supplierNo);
+        sb.append(", studioDicSlotId=").append(studioDicSlotId);
         sb.append(", studioId=").append(studioId);
-        sb.append(", studioIndex=").append(studioIndex);
+        sb.append(", slotNumber=").append(slotNumber);
+        sb.append(", slotMinNumber=").append(slotMinNumber);
+        sb.append(", slotEfficiency=").append(slotEfficiency);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateTime=").append(updateTime);
@@ -158,12 +155,12 @@ public class StudioDicSupplierDto implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        StudioDicSupplierDto other = (StudioDicSupplierDto) that;
-        return (this.getStudioDicSupplierId() == null ? other.getStudioDicSupplierId() == null : this.getStudioDicSupplierId().equals(other.getStudioDicSupplierId()))
-            && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
+        StudioDicSlot other = (StudioDicSlot) that;
+        return (this.getStudioDicSlotId() == null ? other.getStudioDicSlotId() == null : this.getStudioDicSlotId().equals(other.getStudioDicSlotId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
-            && (this.getStudioIndex() == null ? other.getStudioIndex() == null : this.getStudioIndex().equals(other.getStudioIndex()))
+            && (this.getSlotNumber() == null ? other.getSlotNumber() == null : this.getSlotNumber().equals(other.getSlotNumber()))
+            && (this.getSlotMinNumber() == null ? other.getSlotMinNumber() == null : this.getSlotMinNumber().equals(other.getSlotMinNumber()))
+            && (this.getSlotEfficiency() == null ? other.getSlotEfficiency() == null : this.getSlotEfficiency().equals(other.getSlotEfficiency()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -176,11 +173,11 @@ public class StudioDicSupplierDto implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getStudioDicSupplierId() == null) ? 0 : getStudioDicSupplierId().hashCode());
-        result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
-        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
+        result = prime * result + ((getStudioDicSlotId() == null) ? 0 : getStudioDicSlotId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
-        result = prime * result + ((getStudioIndex() == null) ? 0 : getStudioIndex().hashCode());
+        result = prime * result + ((getSlotNumber() == null) ? 0 : getSlotNumber().hashCode());
+        result = prime * result + ((getSlotMinNumber() == null) ? 0 : getSlotMinNumber().hashCode());
+        result = prime * result + ((getSlotEfficiency() == null) ? 0 : getSlotEfficiency().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());

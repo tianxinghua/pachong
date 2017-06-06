@@ -129,6 +129,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    <selectKey keyColumn="studio_slot_logistict_track_id" keyProperty="studioSlotLogistictTrackId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_logistict_track_id
+    </selectKey>
     insert into studio_slot (studio_dic_slot_id, studio_id, slot_no, 
       slot_status, apply_status, apply_supplier_id, 
       apply_user, apply_time, send_user, 

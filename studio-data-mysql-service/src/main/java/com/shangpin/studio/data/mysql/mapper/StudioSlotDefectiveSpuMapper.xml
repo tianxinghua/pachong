@@ -109,6 +109,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
+    <selectKey keyColumn="studio_slot_defective_spu_id" keyProperty="studioSlotDefectiveSpuId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_defective_spu_id
+    </selectKey>
     insert into studio_slot_defective_spu (studio_slot_defective_spu_id, slot_no, 
       supplier_no, supplier_id, spu_pending_id, 
       supplier_spu_id, slot_spu_no, memo, 
@@ -123,6 +126,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
+    <selectKey keyColumn="studio_slot_defective_spu_id" keyProperty="studioSlotDefectiveSpuId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_defective_spu_id
+    </selectKey>
     insert into studio_slot_defective_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotDefectiveSpuId != null" >
