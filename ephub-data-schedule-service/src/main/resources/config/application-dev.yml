@@ -1,3 +1,7 @@
+feign.hystrix.enabled: false
+ribbon:
+  ConnectTimeout: 120000
+  ReadTimeout: 120000
 spring: 
   cloud: 
        consul: 

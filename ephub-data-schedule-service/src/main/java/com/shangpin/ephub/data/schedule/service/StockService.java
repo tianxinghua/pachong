@@ -84,9 +84,10 @@ public class StockService {
          */
         List<String> values = new ArrayList<String>();
         values.add("2015092801542");
-        values.add("2015101501616");
-        criteriaDto.or(criteriaDto.createCriteria().andLastPullTimeIsNull().andSupplierIdNotIn(values ).andStockGreaterThan(0));
+        values.add("2015101501616");       
+        
 		criteriaDto.createCriteria().andLastPullTimeLessThan(date).andSupplierIdNotIn(values ).andStockGreaterThan(0);
+		criteriaDto.or(criteriaDto.createCriteria().andLastPullTimeIsNull().andSupplierIdNotIn(values ).andStockGreaterThan(0));
         return  hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
     }
 
