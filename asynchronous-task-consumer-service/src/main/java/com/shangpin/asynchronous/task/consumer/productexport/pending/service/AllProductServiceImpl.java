@@ -20,7 +20,10 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
@@ -46,6 +49,8 @@ public class AllProductServiceImpl {
 	private MatchSizeGateWay matchSizeGateWay;
 	@Autowired
 	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
+	@Autowired
+	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
 
 	public void exportproductAll(String taskNo, PendingQuryDto pendingQuryDto) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -102,6 +107,10 @@ public class AllProductServiceImpl {
 			sku.setSupplyPrice(supplierSku.getSupplyPrice());
 			sku.setStock(supplierSku.getStock()); 
 		}
+		/**
+		 * 查找出供应商原始季节
+		 */
+		HubSupplierSpuDto supplierSpu = selectSupplierSpu(product.getSupplierSpuId());
 		
 		Class<?> spuClazz = product.getClass();
 		Class<?> skuClazz = sku.getClass();
@@ -148,6 +157,8 @@ public class AllProductServiceImpl {
 					exportServiceImpl.setRowOfSeasonYear(row, product, spuClazz, i);
 				} else if ("seasonName".equals(rowTemplate[i])) {
 					exportServiceImpl.setRowOfSeasonName(row, product, spuClazz, i);
+				} else if("supplierSeasonName".equals(rowTemplate[i])){
+					row.createCell(i).setCellValue((null != supplierSpu && StringUtils.isNotBlank(supplierSpu.getSupplierSeasonname())) ? supplierSpu.getSupplierSeasonname() : "");
 				} else if ("specification".equals(rowTemplate[i])) {
 					fieldSetMet = skuClazz.getMethod("getHubSkuSizeType");
 					value = fieldSetMet.invoke(sku);
@@ -213,6 +224,12 @@ public class AllProductServiceImpl {
 		return "";
 	}
 	
+	/**
+	 * 根据供应商门户编号和供应商sku编号查找供应商原始信息
+	 * @param supplierId
+	 * @param supplierSkuNo
+	 * @return
+	 */
 	private HubSupplierSkuDto selectSupplierSku(String supplierId,String supplierSkuNo){
 		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
 		criteria.setFields("market_price,sales_price,supply_price,stock,last_pull_time");
@@ -223,5 +240,22 @@ public class AllProductServiceImpl {
 		}else{
 			return null;
 		}
+	}
+	/**
+	 * 根据供应商门户编号和供应商spu编号查找供应商原始信息
+	 * @param supplierSpuId
+	 * @return
+	 */
+	private HubSupplierSpuDto selectSupplierSpu(Long supplierSpuId){
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		criteria.setFields("supplier_seasonname");
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		List<HubSupplierSpuDto> spus = hubSupplierSpuGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(spus)){
+			return spus.get(0);
+		}else{
+			return null;
+		}
+		
 	}
 }
