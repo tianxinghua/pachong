@@ -20,7 +20,7 @@ import java.util.List;
 
  */
 @RestController
-@RequestMapping("/studio-slot")
+@RequestMapping("/studio-dic-calendar")
 public class StudioDicCalendarController {
 
 	@Autowired

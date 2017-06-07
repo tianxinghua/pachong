@@ -20,7 +20,7 @@ import java.util.List;
 
  */
 @RestController
-@RequestMapping("/studio-slot")
+@RequestMapping("/studio-dic-supplier")
 public class StudioDicSupplierController {
 
 	@Autowired
