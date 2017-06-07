@@ -5,11 +5,6 @@ import org.springframework.context.annotation.Configuration;
 
 import feign.Retryer;
 
-/**
- * 客户端请求配置
- * @author yanxiaobin
- *
- */
 @Configuration
 public class ClientConf {
 
