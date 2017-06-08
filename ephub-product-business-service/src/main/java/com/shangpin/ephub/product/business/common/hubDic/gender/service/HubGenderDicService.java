@@ -100,18 +100,19 @@ public class HubGenderDicService {
 
 	public List<HubGenderDicDto> getSupplierGenderByType(int pageNo, int pageSize, Byte type, String supplierGender,
 			String hubGender) {
-		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
-		criteria.createCriteria().andPushStateEqualTo(type);
-		criteria.setPageNo(pageNo);
-		criteria.setPageSize(pageSize);
+		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
+		HubGenderDicCriteriaDto.Criteria criteria = hubGenderDicCriteriaDto.createCriteria();
+		criteria.andPushStateEqualTo(type);
+		hubGenderDicCriteriaDto.setPageNo(pageNo);
+		hubGenderDicCriteriaDto.setPageSize(pageSize);
 		if(StringUtils.isNotBlank(supplierGender)){
-			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+			criteria.andSupplierGenderEqualTo(supplierGender);
 		}
 		if(StringUtils.isNotBlank(hubGender)){
-			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+			criteria.andHubGenderEqualTo(hubGender);
 		}
-		criteria.setOrderByClause("update_time desc");
-		return hubGenderDicGateWay.selectByCriteria(criteria);
+		hubGenderDicCriteriaDto.setOrderByClause("update_time desc");
+		return hubGenderDicGateWay.selectByCriteria(hubGenderDicCriteriaDto);
 	}
 
 	public void updateHubGenderById(HubGenderDicDto dicDto) {
