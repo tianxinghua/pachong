@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.data.mysql.spu.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,7 +119,8 @@ public class HubSpuPendingCriteriaDto {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-        
+
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -3106,22 +3109,212 @@ public class HubSpuPendingCriteriaDto {
             addCriterion("handle_state not between", value1, value2, "handleState");
             return (Criteria) this;
         }
+
+        public Criteria andSlotStateIsNull() {
+            addCriterion("slot_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateIsNotNull() {
+            addCriterion("slot_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateEqualTo(Byte value) {
+            addCriterion("slot_state =", value, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateNotEqualTo(Byte value) {
+            addCriterion("slot_state <>", value, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateGreaterThan(Byte value) {
+            addCriterion("slot_state >", value, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("slot_state >=", value, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateLessThan(Byte value) {
+            addCriterion("slot_state <", value, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateLessThanOrEqualTo(Byte value) {
+            addCriterion("slot_state <=", value, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateIn(List<Byte> values) {
+            addCriterion("slot_state in", values, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateNotIn(List<Byte> values) {
+            addCriterion("slot_state not in", values, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateBetween(Byte value1, Byte value2) {
+            addCriterion("slot_state between", value1, value2, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("slot_state not between", value1, value2, "slotState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateIsNull() {
+            addCriterion("slot_handle_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateIsNotNull() {
+            addCriterion("slot_handle_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateEqualTo(Date value) {
+            addCriterion("slot_handle_date =", value, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateNotEqualTo(Date value) {
+            addCriterion("slot_handle_date <>", value, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateGreaterThan(Date value) {
+            addCriterion("slot_handle_date >", value, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("slot_handle_date >=", value, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateLessThan(Date value) {
+            addCriterion("slot_handle_date <", value, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateLessThanOrEqualTo(Date value) {
+            addCriterion("slot_handle_date <=", value, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateIn(List<Date> values) {
+            addCriterion("slot_handle_date in", values, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateNotIn(List<Date> values) {
+            addCriterion("slot_handle_date not in", values, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateBetween(Date value1, Date value2) {
+            addCriterion("slot_handle_date between", value1, value2, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleDateNotBetween(Date value1, Date value2) {
+            addCriterion("slot_handle_date not between", value1, value2, "slotHandleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserIsNull() {
+            addCriterion("slot_handle_user is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserIsNotNull() {
+            addCriterion("slot_handle_user is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserEqualTo(String value) {
+            addCriterion("slot_handle_user =", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserNotEqualTo(String value) {
+            addCriterion("slot_handle_user <>", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserGreaterThan(String value) {
+            addCriterion("slot_handle_user >", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserGreaterThanOrEqualTo(String value) {
+            addCriterion("slot_handle_user >=", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserLessThan(String value) {
+            addCriterion("slot_handle_user <", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserLessThanOrEqualTo(String value) {
+            addCriterion("slot_handle_user <=", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserLike(String value) {
+            addCriterion("slot_handle_user like", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserNotLike(String value) {
+            addCriterion("slot_handle_user not like", value, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserIn(List<String> values) {
+            addCriterion("slot_handle_user in", values, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserNotIn(List<String> values) {
+            addCriterion("slot_handle_user not in", values, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserBetween(String value1, String value2) {
+            addCriterion("slot_handle_user between", value1, value2, "slotHandleUser");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotHandleUserNotBetween(String value1, String value2) {
+            addCriterion("slot_handle_user not between", value1, value2, "slotHandleUser");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
 
-    	public Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-    	
-        public Criterion() {
-			super();
-		}
 
-		private String condition;
+        public Criterion() {
+            super();
+        }
+
+        private String condition;
 
         private Object value;
 

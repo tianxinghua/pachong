@@ -76,6 +76,7 @@ public class HubMaterialDicService {
 		}
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
+		criteria.setOrderByClause("update_time desc");
 		return hubMaterialMappingGateWay.selectByCriteria(criteria);
 	}
 	public int countHubMaterialDicByHubMaterialId(String materialMappingId) {

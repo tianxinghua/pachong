@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.studio.mapper.StudioSpuMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.shangpin.ephub.data.mysql.studio.po.StudioSpu">
+        <result column="supplier_no" property="supplierNo"/>
+        <result column="spu_no" property="spuNo"/>
+        <result column="brand_no" property="brandNo"/>
+        <result column="brand_name" property="brandName"/>
+        <result column="category_no" property="categoryNo"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="season" property="Season"/>
+        <result column="spu_date" property="spuDate"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `supplier_no`,
+        `spu_no`,
+        `brand_no`,
+        `brand_name`,
+        `category_no`,
+        `category_name`,
+        `season`,
+        `spu_date`
+    </sql>
+
+
+
+
+</mapper>
+

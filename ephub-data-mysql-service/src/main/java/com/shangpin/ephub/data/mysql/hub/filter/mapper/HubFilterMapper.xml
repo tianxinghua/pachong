@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.hub.filter.mapper.HubFilterMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.hub.filter.po.HubFilterResponse" >
+    
+    <result column="hub_gender" property="hubGender" jdbcType="VARCHAR" />
+    <result column="hub_category_no" property="hubCategoryNo" jdbcType="VARCHAR" />
+    <result column="hub_brand_no" property="hubBrandNo" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+ 	<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="selectHubBrandByHubCategory" resultMap="BaseResultMap" >
+    select
+   	*
+   	from hub_filter
+    where 
+    	1=1
+	   <if test="null!= hubCategoryNo">
+	           and  hub_category_no = #{hubCategoryNo} 
+	 </if>
+	  <if test="null!= filterType">
+	           and  filter_type = #{filterType}
+	 </if>
+  </select>
+</mapper>

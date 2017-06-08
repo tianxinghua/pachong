@@ -1,5 +1,4 @@
 package com.shangpin.ephub.product.business.ui.mapp.material.controller;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import com.shangpin.ephub.product.business.ui.mapp.material.dto.HubSupplierMater
 import com.shangpin.ephub.product.business.ui.mapp.material.dto.HubSupplierMaterialDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.material.dto.HubSupplierMaterialDicResponseWithPageDto;
 import com.shangpin.ephub.response.HubResponse;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,13 +49,14 @@ public class HubSupplierMaterialDicController {
 	public HubResponse selectHubSupplierMaterialList(
 			@RequestBody HubSupplierMaterialDicRequestDto hubSupplierMaterialDicRequestDto) {
 		try {
-			log.info("===颜色映射list请求参数：{}",hubSupplierMaterialDicRequestDto);
+			log.info("===材质映射list请求参数：{}",hubSupplierMaterialDicRequestDto);
 			int total =0;
 			byte type = hubSupplierMaterialDicRequestDto.getMappingLevel();
 			total = hubMaterialDicService.countSupplierMaterialByType(type,hubSupplierMaterialDicRequestDto.getSupplierMaterial(),hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
 			if(total>0){
-				List<HubMaterialMappingDto> list = hubMaterialDicService.getSupplierMaterialByType(hubSupplierMaterialDicRequestDto.getPageNo(),hubSupplierMaterialDicRequestDto.getPageSize(),hubSupplierMaterialDicRequestDto.getType(),hubSupplierMaterialDicRequestDto.getSupplierMaterial(),
+				List<HubMaterialMappingDto> list = hubMaterialDicService.getSupplierMaterialByType(hubSupplierMaterialDicRequestDto.getPageNo(),hubSupplierMaterialDicRequestDto.getPageSize(),
+						hubSupplierMaterialDicRequestDto.getMappingLevel(),hubSupplierMaterialDicRequestDto.getSupplierMaterial(),
 						hubSupplierMaterialDicRequestDto.getHubMaterial());
 				Map<String,HubMaterialMappingDto> map = new HashMap<>();
 				List<HubSupplierMaterialDicResponseDto> responseList = new ArrayList<HubSupplierMaterialDicResponseDto>();
@@ -73,7 +72,7 @@ public class HubSupplierMaterialDicController {
 						if(type==1){
 							if(map.containsKey(dicDto.getHubMaterial())){
 								HubMaterialMappingDto temp = map.get(dicDto.getHubMaterial());
-								temp.setSupplierMaterial(temp.getHubMaterial()+","+dicDto.getHubMaterial());
+								temp.setSupplierMaterial(temp.getSupplierMaterial()+","+dicDto.getSupplierMaterial());
 							}else{
 								map.put(dicDto.getHubMaterial(), dicDto);
 							}
@@ -85,7 +84,10 @@ public class HubSupplierMaterialDicController {
 						for(Map.Entry<String,HubMaterialMappingDto> entry:map.entrySet()){
 							HubMaterialMappingDto dicDto = entry.getValue();
 							HubSupplierMaterialDicResponseDto dic = new HubSupplierMaterialDicResponseDto();
-							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+							if(dicDto.getCreateTime()!=null){
+								dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
+							}
+							
 							if(dicDto.getUpdateTime()!=null){
 								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 							}
@@ -112,7 +114,7 @@ public class HubSupplierMaterialDicController {
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse selectHubMaterialDetail(@RequestBody HubSupplierMaterialDicRequestDto hubSupplierMaterialDicRequestDto) {
 		try {
-			log.info("颜色详情请求参数：{}",hubSupplierMaterialDicRequestDto);
+			log.info("材质详情请求参数：{}",hubSupplierMaterialDicRequestDto);
 			
 			int total = hubMaterialDicService.countHubMaterialDicByHubMaterialId(hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
@@ -142,16 +144,15 @@ public class HubSupplierMaterialDicController {
 	}
 
 	/**
-	 * 
 	 * @param dto
 	 * @return
 	 */
 	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse save(@RequestBody HubSupplierMaterialDicRequestDto dto) {
-
+		log.info("===材质保存请求参数：{}",dto);
 		try {
 			HubMaterialMappingDto dicDto = new HubMaterialMappingDto();
-			BeanUtils.copyProperties(dto, dicDto);
+//			BeanUtils.copyProperties(dto, dicDto);
 			if(StringUtils.isNotBlank(dto.getSupplierMaterial())){
 				String [] supplierMaterialArr = dto.getSupplierMaterial().trim().split(",",-1);
 				for(String supplierMaterial:supplierMaterialArr){
@@ -162,6 +163,9 @@ public class HubSupplierMaterialDicController {
 					dicDto.setCreateTime(new Date());
 					dicDto.setUpdateTime(new Date());
 					dicDto.setCreateUser(dto.getCreateUser());
+					dicDto.setMappingLevel((byte)1);
+					dicDto.setHubMaterial(dto.getHubMaterial());
+					dicDto.setSupplierMaterial(supplierMaterial);
 					hubMaterialDicService.saveHubSupplierMaterial(dicDto);
 				}
 			}
@@ -174,15 +178,21 @@ public class HubSupplierMaterialDicController {
 
 	@RequestMapping(value = "/updateAndRefresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse refresh(@RequestBody HubSupplierMaterialDicRequestDto dto) {
+		
 		try {
-			log.info("颜色修改参数：{}",dto);
+			log.info("材质修改参数：{}",dto);
 			if(StringUtils.isNotBlank(dto.getSupplierMaterial())){
 				String [] supplierMaterialArr = dto.getSupplierMaterial().trim().split(",",-1);
 				for(String supplierMaterial:supplierMaterialArr){
 					HubMaterialMappingDto dicDto = new HubMaterialMappingDto();
+					BeanUtils.copyProperties(dto, dicDto);
 					dicDto.setUpdateTime(new Date());
 					dicDto.setUpdateUser(dto.getUpdateUser());
 					dicDto.setSupplierMaterial(supplierMaterial);
+					if(StringUtils.isNotBlank(dto.getHubMaterial())){
+						dicDto.setHubMaterial(dto.getHubMaterial());	
+					}
+					dicDto.setMappingLevel((byte)1);
 					hubMaterialDicService.updateSupplierMaterialById(dicDto);
 				}
 				return	HubResponse.successResp(null);
@@ -192,7 +202,6 @@ public class HubSupplierMaterialDicController {
 		}
 		return HubResponse.errorResp("刷新异常");
 	}
-	
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
