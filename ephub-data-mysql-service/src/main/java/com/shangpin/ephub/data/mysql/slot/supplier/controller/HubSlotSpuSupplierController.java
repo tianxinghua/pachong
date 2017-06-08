@@ -10,7 +10,10 @@ import com.shangpin.ephub.data.mysql.slot.supplier.bean.HubSlotSpuSupplierWithCr
 import com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier;
 import com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplierCriteria;
 import com.shangpin.ephub.data.mysql.slot.supplier.service.HubSlotSpuSupplierService;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/hub-sku-pending")
 public class HubSlotSpuSupplierController {
 	@Autowired
 	private HubSlotSpuSupplierService hubSlotSpuSupplierService;
