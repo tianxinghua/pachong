@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.dictionary.gender.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +35,8 @@ public class HubGenderDicController {
     public int deleteByCriteria(@RequestBody HubGenderDicCriteria criteria){
     	return hubGenderDicService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long genderDicId){
+	@RequestMapping(value = "/delete-by-primary-key/{genderDicId}")
+    public int deleteByPrimaryKey(@PathVariable("genderDicId") Long genderDicId){
     	return hubGenderDicService.deleteByPrimaryKey(genderDicId);
     }
 	@RequestMapping(value = "/insert")

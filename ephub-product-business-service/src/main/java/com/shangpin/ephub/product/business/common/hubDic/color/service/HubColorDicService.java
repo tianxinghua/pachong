@@ -107,7 +107,7 @@ public class HubColorDicService {
 		HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto = new HubColorDicItemCriteriaDto();
 		HubColorDicItemCriteriaDto.Criteria criteria = hubColorDicItemCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(supplierColor)){
-			criteria.andColorItemNameEqualTo(supplierColor);
+			criteria.andColorItemNameLike("%"+supplierColor+"%");
 		}
 		if(colorDicId!=null){
 			criteria.andColorDicIdEqualTo(colorDicId);
@@ -132,7 +132,7 @@ public class HubColorDicService {
 		}
 		criteria.andPushStateEqualTo(type);
 		if(type==0){
-			hubColorDicItemCriteriaDto.or(hubColorDicItemCriteriaDto.createCriteria().andPushStateIsNull());	
+			hubColorDicItemCriteriaDto.or(hubColorDicItemCriteriaDto.createCriteria().andPushStateIsNull());
 		}
 		hubColorDicItemCriteriaDto.setOrderByClause("update_time desc");
 		return hubColorDicItemGateWay.selectByCriteria(hubColorDicItemCriteriaDto);

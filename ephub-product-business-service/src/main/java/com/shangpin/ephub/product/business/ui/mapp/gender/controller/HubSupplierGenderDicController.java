@@ -2,9 +2,7 @@ package com.shangpin.ephub.product.business.ui.mapp.gender.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -80,15 +78,12 @@ public class HubSupplierGenderDicController {
 						responseList.add(dic);
 					}
 				}
-				
 				HubSupplierGenderDicResponseWithPageDto response = new HubSupplierGenderDicResponseWithPageDto();
 				response.setTotal(total);
 				response.setList(responseList);
 				return HubResponse.successResp(response);
 			}
-			
 			return HubResponse.errorResp("获取列表为空");
-			
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");

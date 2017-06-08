@@ -110,6 +110,7 @@ public class HubGenderDicService {
 		if(StringUtils.isNotBlank(hubGender)){
 			criteria.createCriteria().andHubGenderEqualTo(hubGender);
 		}
+		criteria.setOrderByClause("update_time desc");
 		return hubGenderDicGateWay.selectByCriteria(criteria);
 	}
 

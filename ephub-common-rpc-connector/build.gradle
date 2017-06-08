@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'maven'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -8,7 +9,7 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
-version = '1.0.1-SNAPSHOT'
+version = '1.0.3-SNAPSHOT'
 
 jar {
     manifest {
