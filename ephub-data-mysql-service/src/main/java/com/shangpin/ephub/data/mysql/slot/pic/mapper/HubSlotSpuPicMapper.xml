@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.slot.pic.mapper.HubSlotSpuPicMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+    <id column="slot_spu_pic_id" property="slotSpuPicId" jdbcType="BIGINT" />
+    <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
+    <result column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
+    <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="sp_pic_url" property="spPicUrl" jdbcType="VARCHAR" />
+    <result column="pic_type" property="picType" jdbcType="TINYINT" />
+    <result column="sort_value" property="sortValue" jdbcType="TINYINT" />
+    <result column="pic_extension" property="picExtension" jdbcType="VARCHAR" />
+    <result column="pic_handle_state" property="picHandleState" jdbcType="TINYINT" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+    <result column="version" property="version" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      slot_spu_pic_id, slot_spu_id, slot_spu_supplier_id, slot_spu_no, supplier_no, supplier_id, 
+      create_time, create_user, update_time, sp_pic_url, pic_type, sort_value, pic_extension, 
+      pic_handle_state, data_state, version
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_slot_spu_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    slot_spu_pic_id,slot_spu_id,slot_spu_supplier_id,slot_spu_no,supplier_no,supplier_id,create_time,create_user,update_time,sp_pic_url,pic_type,sort_value,pic_extension,pic_handle_state,data_state,version
+    from hub_slot_spu_pic
+    where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_slot_spu_pic
+    where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" >
+    delete from hub_slot_spu_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+    insert into hub_slot_spu_pic (slot_spu_pic_id, slot_spu_id, slot_spu_supplier_id, 
+      slot_spu_no, supplier_no, supplier_id, 
+      create_time, create_user, update_time, 
+      sp_pic_url, pic_type, sort_value, 
+      pic_extension, pic_handle_state, data_state, 
+      version)
+    values (#{slotSpuPicId,jdbcType=BIGINT}, #{slotSpuId,jdbcType=BIGINT}, #{slotSpuSupplierId,jdbcType=BIGINT}, 
+      #{slotSpuNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{spPicUrl,jdbcType=VARCHAR}, #{picType,jdbcType=TINYINT}, #{sortValue,jdbcType=TINYINT}, 
+      #{picExtension,jdbcType=VARCHAR}, #{picHandleState,jdbcType=TINYINT}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+    insert into hub_slot_spu_pic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="slotSpuPicId != null" >
+        slot_spu_pic_id,
+      </if>
+      <if test="slotSpuId != null" >
+        slot_spu_id,
+      </if>
+      <if test="slotSpuSupplierId != null" >
+        slot_spu_supplier_id,
+      </if>
+      <if test="slotSpuNo != null" >
+        slot_spu_no,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="spPicUrl != null" >
+        sp_pic_url,
+      </if>
+      <if test="picType != null" >
+        pic_type,
+      </if>
+      <if test="sortValue != null" >
+        sort_value,
+      </if>
+      <if test="picExtension != null" >
+        pic_extension,
+      </if>
+      <if test="picHandleState != null" >
+        pic_handle_state,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="slotSpuPicId != null" >
+        #{slotSpuPicId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuId != null" >
+        #{slotSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuSupplierId != null" >
+        #{slotSpuSupplierId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuNo != null" >
+        #{slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="spPicUrl != null" >
+        #{spPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="picType != null" >
+        #{picType,jdbcType=TINYINT},
+      </if>
+      <if test="sortValue != null" >
+        #{sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="picExtension != null" >
+        #{picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="picHandleState != null" >
+        #{picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_slot_spu_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_slot_spu_pic
+    <set >
+      <if test="record.slotSpuPicId != null" >
+        slot_spu_pic_id = #{record.slotSpuPicId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotSpuId != null" >
+        slot_spu_id = #{record.slotSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotSpuSupplierId != null" >
+        slot_spu_supplier_id = #{record.slotSpuSupplierId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotSpuNo != null" >
+        slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.spPicUrl != null" >
+        sp_pic_url = #{record.spPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picType != null" >
+        pic_type = #{record.picType,jdbcType=TINYINT},
+      </if>
+      <if test="record.sortValue != null" >
+        sort_value = #{record.sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="record.picExtension != null" >
+        pic_extension = #{record.picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="record.picHandleState != null" >
+        pic_handle_state = #{record.picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_slot_spu_pic
+    set slot_spu_pic_id = #{record.slotSpuPicId,jdbcType=BIGINT},
+      slot_spu_id = #{record.slotSpuId,jdbcType=BIGINT},
+      slot_spu_supplier_id = #{record.slotSpuSupplierId,jdbcType=BIGINT},
+      slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      sp_pic_url = #{record.spPicUrl,jdbcType=VARCHAR},
+      pic_type = #{record.picType,jdbcType=TINYINT},
+      sort_value = #{record.sortValue,jdbcType=TINYINT},
+      pic_extension = #{record.picExtension,jdbcType=VARCHAR},
+      pic_handle_state = #{record.picHandleState,jdbcType=TINYINT},
+      data_state = #{record.dataState,jdbcType=TINYINT},
+      version = #{record.version,jdbcType=BIGINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+    update hub_slot_spu_pic
+    <set >
+      <if test="slotSpuId != null" >
+        slot_spu_id = #{slotSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuSupplierId != null" >
+        slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuNo != null" >
+        slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="spPicUrl != null" >
+        sp_pic_url = #{spPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="picType != null" >
+        pic_type = #{picType,jdbcType=TINYINT},
+      </if>
+      <if test="sortValue != null" >
+        sort_value = #{sortValue,jdbcType=TINYINT},
+      </if>
+      <if test="picExtension != null" >
+        pic_extension = #{picExtension,jdbcType=VARCHAR},
+      </if>
+      <if test="picHandleState != null" >
+        pic_handle_state = #{picHandleState,jdbcType=TINYINT},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=BIGINT},
+      </if>
+    </set>
+    where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+    update hub_slot_spu_pic
+    set slot_spu_id = #{slotSpuId,jdbcType=BIGINT},
+      slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT},
+      slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      sp_pic_url = #{spPicUrl,jdbcType=VARCHAR},
+      pic_type = #{picType,jdbcType=TINYINT},
+      sort_value = #{sortValue,jdbcType=TINYINT},
+      pic_extension = #{picExtension,jdbcType=VARCHAR},
+      pic_handle_state = #{picHandleState,jdbcType=TINYINT},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT}
+    where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_slot_spu_pic
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>
