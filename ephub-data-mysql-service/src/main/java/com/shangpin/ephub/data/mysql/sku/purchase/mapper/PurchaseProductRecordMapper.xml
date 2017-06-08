@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.sku.purchase.mapper.PurchaseProductRecordMapper" >
+    <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.sku.purchase.po.PurchaseProductRecord" >
+        <result column="supplier_id" property="supplierId"/>
+        <result column="supplier_spu_no" property="spuId"/>
+        <result column="supplier_sku_no" property="skuId"/>
+        <result column="supplier_spu_name" property="productName"/>
+        <result column="supplier_sku_size" property="size"/>
+        <result column="supplier_spu_color" property="color"/>
+    </resultMap>
+
+    <select id="getProductWithPurchase" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sku.purchase.po.PurchaseProductCriteria">
+       select sku.supplier_id, sku.supplier_sku_no,spu.supplier_spu_no , spu.supplier_spu_name ,sku.supplier_sku_size,spu.supplier_spu_color
+        from hub_supplier_sku sku  inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
+        <where>
+          sku.sp_sku_no is not null and sku.sp_sku_no != ""
+            <if test="supplierId != null">
+                and sku.supplier_id = #{supplierId}
+            </if>
+            <if test="spSkuIds != null">
+                and sku.supplier_sku_no in
+                <foreach item="item" index="index" collection="spSkuIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

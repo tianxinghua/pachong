@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,7 @@ public class StockService {
     public void updateStockToZero() throws Exception{
 
         List<HubSupplierSkuDto> skuDtos = this.findSupplierSkuNoUpdateOutSevenDay();
+        log.info("需要清除库存的产品的总数是："+skuDtos.size()); 
         for(HubSupplierSkuDto supplierSkuDto:skuDtos){
             if(supplierSkuDto.getStock()>0){
                 try {
@@ -76,7 +78,13 @@ public class StockService {
         Date date = calendar.getTime();
 
         HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
-        criteriaDto.createCriteria().andLastPullTimeLessThan(date);
+        /**
+         * 以下2个供应商是暂时不检测的两个供应商
+         */
+        List<String> values = new ArrayList<String>();
+        values.add("2015092801542");
+        values.add("2015101501616");
+		criteriaDto.createCriteria().andLastPullTimeLessThan(date).andSupplierIdNotIn(values );
         return  hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
     }
 
