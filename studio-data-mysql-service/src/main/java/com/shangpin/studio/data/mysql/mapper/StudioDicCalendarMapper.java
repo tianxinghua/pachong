@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 @Mapper
 public interface StudioDicCalendarMapper {
+
     int countByExample(StudioDicCalendarCriteria example);
 
     int deleteByExample(StudioDicCalendarCriteria example);

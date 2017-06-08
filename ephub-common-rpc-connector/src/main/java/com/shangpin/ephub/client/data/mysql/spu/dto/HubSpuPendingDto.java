@@ -199,6 +199,15 @@ public class HubSpuPendingDto implements Serializable {
      */
     private Byte handleState;
 
+    /**
+     * 0:待拍照 1：已处理  2:已寄出
+     */
+    private Byte slotState;
+
+    private Date slotHandleDate;
+
+    private String slotHandleUser;
+
     private static final long serialVersionUID = 1L;
 
     public Long getSpuPendingId() {
@@ -569,6 +578,30 @@ public class HubSpuPendingDto implements Serializable {
         this.handleState = handleState;
     }
 
+    public Byte getSlotState() {
+        return slotState;
+    }
+
+    public void setSlotState(Byte slotState) {
+        this.slotState = slotState;
+    }
+
+    public Date getSlotHandleDate() {
+        return slotHandleDate;
+    }
+
+    public void setSlotHandleDate(Date slotHandleDate) {
+        this.slotHandleDate = slotHandleDate;
+    }
+
+    public String getSlotHandleUser() {
+        return slotHandleUser;
+    }
+
+    public void setSlotHandleUser(String slotHandleUser) {
+        this.slotHandleUser = slotHandleUser == null ? null : slotHandleUser.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -621,6 +654,9 @@ public class HubSpuPendingDto implements Serializable {
         sb.append(", auditOpinion=").append(auditOpinion);
         sb.append(", handleFrom=").append(handleFrom);
         sb.append(", handleState=").append(handleState);
+        sb.append(", slotState=").append(slotState);
+        sb.append(", slotHandleDate=").append(slotHandleDate);
+        sb.append(", slotHandleUser=").append(slotHandleUser);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -683,7 +719,10 @@ public class HubSpuPendingDto implements Serializable {
             && (this.getAuditUser() == null ? other.getAuditUser() == null : this.getAuditUser().equals(other.getAuditUser()))
             && (this.getAuditOpinion() == null ? other.getAuditOpinion() == null : this.getAuditOpinion().equals(other.getAuditOpinion()))
             && (this.getHandleFrom() == null ? other.getHandleFrom() == null : this.getHandleFrom().equals(other.getHandleFrom()))
-            && (this.getHandleState() == null ? other.getHandleState() == null : this.getHandleState().equals(other.getHandleState()));
+            && (this.getHandleState() == null ? other.getHandleState() == null : this.getHandleState().equals(other.getHandleState()))
+            && (this.getSlotState() == null ? other.getSlotState() == null : this.getSlotState().equals(other.getSlotState()))
+            && (this.getSlotHandleDate() == null ? other.getSlotHandleDate() == null : this.getSlotHandleDate().equals(other.getSlotHandleDate()))
+            && (this.getSlotHandleUser() == null ? other.getSlotHandleUser() == null : this.getSlotHandleUser().equals(other.getSlotHandleUser()));
     }
 
     @Override
@@ -736,6 +775,9 @@ public class HubSpuPendingDto implements Serializable {
         result = prime * result + ((getAuditOpinion() == null) ? 0 : getAuditOpinion().hashCode());
         result = prime * result + ((getHandleFrom() == null) ? 0 : getHandleFrom().hashCode());
         result = prime * result + ((getHandleState() == null) ? 0 : getHandleState().hashCode());
+        result = prime * result + ((getSlotState() == null) ? 0 : getSlotState().hashCode());
+        result = prime * result + ((getSlotHandleDate() == null) ? 0 : getSlotHandleDate().hashCode());
+        result = prime * result + ((getSlotHandleUser() == null) ? 0 : getSlotHandleUser().hashCode());
         return result;
     }
 }
