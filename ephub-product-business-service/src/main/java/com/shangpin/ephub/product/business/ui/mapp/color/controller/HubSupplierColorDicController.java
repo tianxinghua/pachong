@@ -128,7 +128,7 @@ public class HubSupplierColorDicController {
 	}
 
 	@RequestMapping(value = "/sp-color-list", method = RequestMethod.POST)
-	public HubResponse selectSpColorList(@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
+	public HubResponse selectSpColorList() {
 		try {
 			int total = HubColorDic.getHubColorMap().size();
 			List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();

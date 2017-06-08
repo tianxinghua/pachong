@@ -46,7 +46,7 @@ public class HubOriginDicService {
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 
-	public int countHubSupplierValueMapping(String hubVal, String supplierVal) {
+	public int countHubSupplierValueMapping(String hubVal, String supplierVal,Byte type) {
 		HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto  = new HubSupplierValueMappingCriteriaDto();
 		HubSupplierValueMappingCriteriaDto.Criteria criteria = hubSupplierValueMappingCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(hubVal)){
@@ -55,17 +55,23 @@ public class HubOriginDicService {
 		if(StringUtils.isNotBlank(supplierVal)){
 			criteria.andSupplierValEqualTo(supplierVal);
 		}
+		if(type!=null){
+			criteria.andMappingTypeEqualTo(type);
+		}
 		criteria.andHubValTypeEqualTo(SupplierValueMappingType.TYPE_ORIGIN.getIndex().byteValue());
 		return hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto);
 	}
 
 	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(String hubVal,
-			String supplierVal, int pageNo, int pageSize) {
+			String supplierVal, int pageNo, int pageSize,Byte type) {
 		HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto  = new HubSupplierValueMappingCriteriaDto();
 		HubSupplierValueMappingCriteriaDto.Criteria criteria = hubSupplierValueMappingCriteriaDto.createCriteria();
 		hubSupplierValueMappingCriteriaDto.setPageNo(pageNo);
 		hubSupplierValueMappingCriteriaDto.setPageSize(pageSize);
 		hubSupplierValueMappingCriteriaDto.setOrderByClause("update_time desc");
+		if(type!=null){
+			criteria.andMappingTypeEqualTo(type);
+		}
 		criteria.andHubValTypeEqualTo(SupplierValueMappingType.TYPE_ORIGIN.getIndex().byteValue());
 		if(StringUtils.isNotBlank(hubVal)){
 			criteria.andHubValEqualTo(hubVal);	
