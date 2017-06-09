@@ -6,7 +6,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.response.HubResponse;
-
+/**
+ * <p>Title: DefectiveProductController</p>
+ * <p>Description: 残次品记录页面所有接口 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年6月9日 下午6:11:36
+ *
+ */
 @RestController
 @RequestMapping("/defective-product")
 public class DefectiveProductController {
