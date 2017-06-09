@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.studio.dto;
+package com.shangpin.ephub.client.data.mysql.studio.spu.dto;
 
 import java.util.ArrayList;
 import java.util.Date;

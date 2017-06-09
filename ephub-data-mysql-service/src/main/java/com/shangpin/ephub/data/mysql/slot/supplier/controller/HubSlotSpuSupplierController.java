@@ -13,7 +13,7 @@ import com.shangpin.ephub.data.mysql.slot.supplier.service.HubSlotSpuSupplierSer
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/hub-sku-pending")
+@RequestMapping("/hub-slot-spu-supplier")
 public class HubSlotSpuSupplierController {
 	@Autowired
 	private HubSlotSpuSupplierService hubSlotSpuSupplierService;

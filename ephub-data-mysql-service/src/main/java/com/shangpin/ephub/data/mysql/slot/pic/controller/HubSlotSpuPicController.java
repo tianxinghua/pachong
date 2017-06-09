@@ -1,18 +1,19 @@
 package com.shangpin.ephub.data.mysql.slot.pic.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.data.mysql.slot.pic.bean.HubSlotSpuPicCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.slot.pic.bean.HubSlotSpuPicWithCriteria;
 import com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic;
 import com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPicCriteria;
 import com.shangpin.ephub.data.mysql.slot.pic.service.HubSlotSpuPicService;
 
+@RestController
+@RequestMapping("/hub-slot-spu-pic")
 public class HubSlotSpuPicController {
 	@Autowired
 	private HubSlotSpuPicService hubSlotSpuPicService;

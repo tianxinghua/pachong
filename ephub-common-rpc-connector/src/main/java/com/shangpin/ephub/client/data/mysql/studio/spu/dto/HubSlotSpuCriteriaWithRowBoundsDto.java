@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.studio.dto;
+package com.shangpin.ephub.client.data.mysql.studio.spu.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shangpin.ephub.client.common.dto.RowBoundsDto;
