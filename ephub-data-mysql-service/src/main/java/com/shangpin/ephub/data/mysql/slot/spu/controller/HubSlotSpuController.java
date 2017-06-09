@@ -12,7 +12,10 @@ import com.shangpin.ephub.data.mysql.slot.spu.bean.HubSlotSpuWithCriteria;
 import com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu;
 import com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpuCriteria;
 import com.shangpin.ephub.data.mysql.slot.spu.service.HubSlotSpuService;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/hub-slot-spu")
 public class HubSlotSpuController {
 	@Autowired
 	private HubSlotSpuService HubSlotSpuService;
