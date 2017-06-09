@@ -2,12 +2,12 @@ package com.shangpin.ephub.client.data.mysql.studio.supplier.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubSlotSpuSupplierWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
