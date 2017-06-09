@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.rest.studio.hub.controller;
 
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.rest.studio.hub.dto.MatchSizeDto;
+import com.shangpin.ephub.product.business.rest.studio.hub.service.HubSlotSpuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/match-size")
 @Slf4j
-public class MatchSizeController {
+public class HubSlotSpuController {
 	
 	@Autowired
-    MatchSizeService matchSizeService;
+	HubSlotSpuService hubSlotSpuService;
 	
 	/**
 	 * 匹配尺码类型
@@ -28,11 +29,6 @@ public class MatchSizeController {
 	 */
 	@RequestMapping(value = "/match")
 	public MatchSizeResult matchSize(@RequestBody MatchSizeDto dto){
-		long start = System.currentTimeMillis();
-		MatchSizeResult result = null;
-		log.info(MatchSizeController.class.getName()+".matchSize接收到的参数为:{}", dto.toString());
-		result = matchSizeService.matchSize(dto);
-		log.info(MatchSizeController.class.getName()+"验证结果为{}， 耗时{}milliseconds!", result.toString(), System.currentTimeMillis() - start);
-		return result;
+
 	}
 }

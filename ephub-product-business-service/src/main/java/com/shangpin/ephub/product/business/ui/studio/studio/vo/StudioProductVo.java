@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.vo;
+package com.shangpin.ephub.product.business.ui.studio.studio.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
