@@ -4,28 +4,44 @@
     <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.shangpin.ephub.data.mysql.studio.po.StudioSpu">
         <result column="supplier_no" property="supplierNo"/>
-        <result column="spu_no" property="spuNo"/>
-        <result column="brand_no" property="brandNo"/>
-        <result column="brand_name" property="brandName"/>
-        <result column="category_no" property="categoryNo"/>
-        <result column="category_name" property="categoryName"/>
-        <result column="season" property="Season"/>
-        <result column="spu_date" property="spuDate"/>
+        <result column="slot_no" property="slotNo"/>
+        <result column="supplier_id" property="supplierId"/>
+        <result column="spu_pending_id" property="spuPendingId"/>
+        <result column="supplier_spu_id" property="supplierSpuId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="version" property="version"/>
     </resultMap>
 
     <!--auto generated Code-->
     <sql id="all_column">
         `supplier_no`,
-        `spu_no`,
-        `brand_no`,
-        `brand_name`,
-        `category_no`,
-        `category_name`,
-        `season`,
-        `spu_date`
-    </sql>
+        `slot_no`,
+        `supplier_id`,
+        `spu_pending_id`,
+        `supplier_spu_id`,
+        `create_time`,
+        `create_user`,
+        `update_time`,
+        `update_user`,
+        `version`
+     </sql>
 
+    <select id="SelectPendingProducts" resultMap="AllColumnMap" parameterMap="com.shangpin.ephub.data.mysql.studio.po.StudioCriteria">
 
+        SELECT <include refid="all_column"/> FROM hub_slot_spu_supplier
+        <where>
+            data_state = 1
+            <if test="supplierId !=null">
+                supplier_no = #{supplierId}
+            </if>
+            <if test="status!=null">
+                state = #{status}
+            </if>
+        </where>
+    </select>
 
 
 </mapper>
