@@ -15,7 +15,7 @@ import com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria
 import com.shangpin.ephub.data.mysql.slot.dic.brand.service.HubDicStudioBrandService;
 
 @RestController
-@RequestMapping("/hub-dic-category-measure-template")
+@RequestMapping("/hub-dic-studio-brand")
 public class HubDicStudioBrandController {
 	@Autowired
 	private HubDicStudioBrandService hubDicStudioBrandService;

@@ -6,13 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.data.mysql.slot.appendix.bean.HubSlotSpuAppendixCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.slot.appendix.bean.HubSlotSpuAppendixWithCriteria;
 import com.shangpin.ephub.data.mysql.slot.appendix.po.HubSlotSpuAppendix;
 import com.shangpin.ephub.data.mysql.slot.appendix.po.HubSlotSpuAppendixCriteria;
 import com.shangpin.ephub.data.mysql.slot.appendix.service.HubSlotSpuAppendixService;
-
+@RestController
+@RequestMapping("/hub-slot-spu-appendix")
 public class HubSlotSpuAppendixController {
 	@Autowired
 	private HubSlotSpuAppendixService hubSlotSpuAppendixService;

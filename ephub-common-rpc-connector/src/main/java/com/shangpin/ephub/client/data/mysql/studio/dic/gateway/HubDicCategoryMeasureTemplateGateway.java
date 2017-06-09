@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.studio.hub.dic.gateway;
+package com.shangpin.ephub.client.data.mysql.studio.dic.gateway;
 
 import java.util.List;
 

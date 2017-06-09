@@ -15,7 +15,7 @@ import com.shangpin.ephub.data.mysql.slot.dic.category.po.HubDicCategoryMeasureT
 import com.shangpin.ephub.data.mysql.slot.dic.category.service.HubDicCategoryMeasureTemplateService;
 
 @RestController
-@RequestMapping("/hub-dic-studio-brand")
+@RequestMapping("/hub-dic-category-measure-template")
 public class HubDicCategoryMeasureTemplateController {
 	@Autowired
 	private HubDicCategoryMeasureTemplateService hubDicCategoryMeasureTemplateService;
