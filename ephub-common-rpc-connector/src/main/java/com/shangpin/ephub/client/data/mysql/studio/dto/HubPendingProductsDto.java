@@ -1,6 +1,5 @@
-package com.shangpin.ephub.data.mysql.studio.po;
+package com.shangpin.ephub.client.data.mysql.studio.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,14 +8,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Created by Administrator on 2017/6/8.
+ * Created by Administrator on 2017/6/9.
  */
 @Setter
 @Getter
 @ToString
-public class StudioSpu implements Serializable {
-
-    private static final long serialVersionUID = 7692545019994478857L;
+public class HubPendingProductsDto implements Serializable {
+    private static final long serialVersionUID = -4758627560356371288L;
 
     private int id;
     private int slotSpuId;  //slotspu主键
@@ -33,5 +31,4 @@ public class StudioSpu implements Serializable {
     private int repeatMarker; //多家供货标记  0：独家  1：多家
     private int supplierOperateSign;//供货商操作标记     0：自己寄出    1: 另外的供货商已寄出
     private Long version ;
-
 }
