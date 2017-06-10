@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 /**
  * Created by loyalty on 17/6/8.
  */
-@Service
-public class HubSlotSpuService {
+
+public interface HubSlotSpuService {
 
 
 
