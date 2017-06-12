@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubSlotSpuSupplierWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierWithCriteriaDto;
 /**
  * <p>Title:HubSlotSpuSupplierDtoGateway.java </p>
  * <p>Description: EPHUB品牌字典接口网关</p>

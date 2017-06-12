@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandWithCriteriaDto;
 /**
- * <p>Title:HubBrandDicDtoGateway.java </p>
+ * <p>Title:HubDicStudioBrandDtoGateway.java </p>
  * <p>Description: EPHUB品牌字典接口网关</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
@@ -22,38 +22,38 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto
 public interface HubDicStudioBrandGateway {
 
 	@RequestMapping(value = "/hub-dic-studio-brand/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int countByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public int countByCriteria(@RequestBody HubDicStudioBrandCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public int deleteByCriteria(@RequestBody HubDicStudioBrandCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/insert", method = RequestMethod.POST,consumes = "application/json")
-    public Long insert(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insert(@RequestBody HubDicStudioBrandDto HubDicStudioBrandDto);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public Long insertSelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insertSelective(@RequestBody HubDicStudioBrandDto HubDicStudioBrandDto);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubBrandDicDto> selectByCriteriaWithRowbounds(@RequestBody HubBrandDicCriteriaWithRowBoundsDto criteriaWithRowBounds);
+    public List<HubDicStudioBrandDto> selectByCriteriaWithRowbounds(@RequestBody HubDicStudioBrandCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubBrandDicDto> selectByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public List<HubDicStudioBrandDto> selectByCriteria(@RequestBody HubDicStudioBrandCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubBrandDicDto selectByPrimaryKey(Long brandDicId);
+    public HubDicStudioBrandDto selectByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody HubDicStudioBrandWithCriteriaDto HubDicStudioBrandDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
+    public int updateByCriteria(@RequestBody HubDicStudioBrandWithCriteriaDto HubDicStudioBrandDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKeySelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public int updateByPrimaryKeySelective(@RequestBody HubDicStudioBrandDto HubDicStudioBrandDto);
 	
 	@RequestMapping(value = "/hub-dic-studio-brand/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKey(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public int updateByPrimaryKey(@RequestBody HubDicStudioBrandDto HubDicStudioBrandDto);
 }

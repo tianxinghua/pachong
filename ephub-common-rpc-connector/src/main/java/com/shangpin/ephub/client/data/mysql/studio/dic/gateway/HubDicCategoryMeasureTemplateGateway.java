@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateDto;
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateWithCriteriaDto;
 /**
- * <p>Title:HubBrandDicDtoGateway.java </p>
+ * <p>Title:HubDicCategoryMeasureTemplateDtoGateway.java </p>
  * <p>Description: EPHUB品牌字典接口网关</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
@@ -22,38 +22,38 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto
 public interface HubDicCategoryMeasureTemplateGateway {
 
 	@RequestMapping(value = "/hub-dic-category-measure-template/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int countByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public int countByCriteria(@RequestBody HubDicCategoryMeasureTemplateCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public int deleteByCriteria(@RequestBody HubDicCategoryMeasureTemplateCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/insert", method = RequestMethod.POST,consumes = "application/json")
-    public Long insert(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insert(@RequestBody HubDicCategoryMeasureTemplateDto HubDicCategoryMeasureTemplateDto);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public Long insertSelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insertSelective(@RequestBody HubDicCategoryMeasureTemplateDto HubDicCategoryMeasureTemplateDto);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubBrandDicDto> selectByCriteriaWithRowbounds(@RequestBody HubBrandDicCriteriaWithRowBoundsDto criteriaWithRowBounds);
+    public List<HubDicCategoryMeasureTemplateDto> selectByCriteriaWithRowbounds(@RequestBody HubDicCategoryMeasureTemplateCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubBrandDicDto> selectByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public List<HubDicCategoryMeasureTemplateDto> selectByCriteria(@RequestBody HubDicCategoryMeasureTemplateCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubBrandDicDto selectByPrimaryKey(Long brandDicId);
+    public HubDicCategoryMeasureTemplateDto selectByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody HubDicCategoryMeasureTemplateWithCriteriaDto HubDicCategoryMeasureTemplateDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
+    public int updateByCriteria(@RequestBody HubDicCategoryMeasureTemplateWithCriteriaDto HubDicCategoryMeasureTemplateDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKeySelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public int updateByPrimaryKeySelective(@RequestBody HubDicCategoryMeasureTemplateDto HubDicCategoryMeasureTemplateDto);
 	
 	@RequestMapping(value = "/hub-dic-category-measure-template/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKey(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public int updateByPrimaryKey(@RequestBody HubDicCategoryMeasureTemplateDto HubDicCategoryMeasureTemplateDto);
 }
