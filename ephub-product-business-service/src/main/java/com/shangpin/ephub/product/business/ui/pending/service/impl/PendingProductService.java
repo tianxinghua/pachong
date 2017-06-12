@@ -31,7 +31,6 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendi
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
@@ -47,6 +46,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
+import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
