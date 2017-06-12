@@ -8,7 +8,6 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.shangpin.ephub.data.mysql.slot.appendix.po.HubSlotSpuAppendix;
 import com.shangpin.ephub.data.mysql.slot.appendix.po.HubSlotSpuAppendixCriteria;
-
 @Mapper
 public interface HubSlotSpuAppendixMapper {
     int countByExample(HubSlotSpuAppendixCriteria example);

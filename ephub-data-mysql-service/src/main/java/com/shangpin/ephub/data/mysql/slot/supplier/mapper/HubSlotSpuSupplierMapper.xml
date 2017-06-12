@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.ephub.data.mysql.slot.supplier.mapper.HubSlotSpuSupplierMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplier" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     <id column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
     <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
@@ -87,7 +87,7 @@
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplierCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplierCriteria" >
     select
     <if test="distinct" >
       distinct
@@ -114,13 +114,13 @@
     delete from hub_slot_spu_supplier
     where slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplierCriteria" >
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplierCriteria" >
     delete from hub_slot_spu_supplier
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplier" >
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     insert into hub_slot_spu_supplier (slot_spu_supplier_id, slot_spu_id, slot_no, 
       supplier_no, supplier_id, spu_pending_id, 
       supplier_spu_id, state, create_time, 
@@ -134,7 +134,7 @@
       #{repeatMarker,jdbcType=TINYINT}, #{supplierOperateSign,jdbcType=TINYINT}, #{dataState,jdbcType=TINYINT}, 
       #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplier" >
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     insert into hub_slot_spu_supplier
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="slotSpuSupplierId != null" >
@@ -237,7 +237,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplierCriteria" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplierCriteria" resultType="java.lang.Integer" >
     select count(*) from hub_slot_spu_supplier
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -321,7 +321,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplier" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     update hub_slot_spu_supplier
     <set >
       <if test="slotSpuId != null" >
@@ -372,7 +372,7 @@
     </set>
     where slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplier" >
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     update hub_slot_spu_supplier
     set slot_spu_id = #{slotSpuId,jdbcType=BIGINT},
       slot_no = #{slotNo,jdbcType=VARCHAR},
@@ -391,7 +391,7 @@
       version = #{version,jdbcType=BIGINT}
     where slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.HubSlotSpuSupplierCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplierCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct
