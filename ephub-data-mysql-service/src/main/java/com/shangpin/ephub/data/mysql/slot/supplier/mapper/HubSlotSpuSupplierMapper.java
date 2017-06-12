@@ -2,12 +2,14 @@ package com.shangpin.ephub.data.mysql.slot.supplier.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier;
 import com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplierCriteria;
 
+@Mapper
 public interface HubSlotSpuSupplierMapper {
     int countByExample(HubSlotSpuSupplierCriteria example);
 

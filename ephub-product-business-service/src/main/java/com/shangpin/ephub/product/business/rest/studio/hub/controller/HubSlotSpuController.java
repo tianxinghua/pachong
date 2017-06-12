@@ -27,8 +27,8 @@ public class HubSlotSpuController {
 	 * @param dto 数据传输对象
 	 * @return 校验结果
 	 */
-	@RequestMapping(value = "/match")
-	public MatchSizeResult matchSize(@RequestBody MatchSizeDto dto){
-
-	}
+//	@RequestMapping(value = "/match")
+//	public MatchSizeResult matchSize(@RequestBody MatchSizeDto dto){
+//
+//	}
 }

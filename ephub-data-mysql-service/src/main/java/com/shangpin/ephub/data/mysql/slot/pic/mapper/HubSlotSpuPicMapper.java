@@ -2,12 +2,14 @@ package com.shangpin.ephub.data.mysql.slot.pic.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic;
 import com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPicCriteria;
 
+@Mapper
 public interface HubSlotSpuPicMapper {
     int countByExample(HubSlotSpuPicCriteria example);
 

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.controller;
 
+import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class StudioController {
 
+    private IStudioService iStudioService;
     /*
     * 获取待处理商品列表
     * */
     @RequestMapping(value = "/spullist")
     public HubResponse<?> getPendingProductList(@RequestBody StudioQueryDto queryDto) {
-
-        return  null;//studioService.getStayProductList(supplierNo);
+        return  HubResponse.successResp(iStudioService.getPendingProductList(queryDto));
     }
 
     /*
