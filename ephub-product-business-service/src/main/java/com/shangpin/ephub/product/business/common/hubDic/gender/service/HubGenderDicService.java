@@ -87,24 +87,32 @@ public class HubGenderDicService {
 	}
 
 	public int countSupplierGenderByType(Byte type, String supplierGender, String hubGender) {
-		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
-		criteria.createCriteria().andPushStateEqualTo(type);
+		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
+		HubGenderDicCriteriaDto.Criteria criteria = hubGenderDicCriteriaDto.createCriteria();
+		if(type!=null){
+			criteria.andPushStateEqualTo(type);	
+		}
 		if(StringUtils.isNotBlank(supplierGender)){
-			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+			criteria.andSupplierGenderEqualTo(supplierGender);
 		}
 		if(StringUtils.isNotBlank(hubGender)){
-			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+			criteria.andHubGenderEqualTo(hubGender);
 		}
-		return hubGenderDicGateWay.countByCriteria(criteria);
+		return hubGenderDicGateWay.countByCriteria(hubGenderDicCriteriaDto);
 	}
 
 	public List<HubGenderDicDto> getSupplierGenderByType(int pageNo, int pageSize, Byte type, String supplierGender,
 			String hubGender) {
 		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
 		HubGenderDicCriteriaDto.Criteria criteria = hubGenderDicCriteriaDto.createCriteria();
-		criteria.andPushStateEqualTo(type);
+		if(type!=null){
+			criteria.andPushStateEqualTo(type);	
+		}
 		hubGenderDicCriteriaDto.setPageNo(pageNo);
 		hubGenderDicCriteriaDto.setPageSize(pageSize);
+		if(type!=null){
+			criteria.andPushStateEqualTo(type);	
+		}
 		if(StringUtils.isNotBlank(supplierGender)){
 			criteria.andSupplierGenderEqualTo(supplierGender);
 		}

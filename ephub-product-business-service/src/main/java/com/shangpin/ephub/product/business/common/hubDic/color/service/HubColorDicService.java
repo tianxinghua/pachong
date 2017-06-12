@@ -131,9 +131,6 @@ public class HubColorDicService {
 		if(StringUtils.isNotBlank(supplierColor)){
 			criteria.andColorItemNameLike("%"+supplierColor+"%");
 		}
-		if(colorDicId!=null){
-			criteria.andColorDicIdEqualTo(colorDicId);
-		}
 		criteria.andPushStateEqualTo(type);
 		if(type==0){
 			

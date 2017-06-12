@@ -81,25 +81,34 @@ public class HubSupplierColorDicController {
 							dic.setColorDicItemId(dicDto.getColorDicItemId());
 							dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
 							dic.setSupplierColor(dicDto.getColorItemName());
+							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+							if(dicDto.getUpdateTime()!=null){
+								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+							}
+							dic.setUpdateUser(dicDto.getUpdateUser());
 							responseList.add(dic);
 						}
 						if(type==1){
-							if(map.containsKey(dicDto.getColorDicId())){
-								HubColorDicItemDto temp = map.get(dicDto.getColorDicId());
-								temp.setColorItemName(temp.getColorItemName()+","+dicDto.getColorItemName());
-							}else{
-								map.put(dicDto.getColorDicId(), dicDto);
+							if(dicDto.getColorDicId()!=null){
+								if(map.containsKey(dicDto.getColorDicId())){
+									HubColorDicItemDto temp = map.get(dicDto.getColorDicId());
+									temp.setColorItemName(temp.getColorItemName()+","+dicDto.getColorItemName());
+									map.put(dicDto.getColorDicId(),temp);
+								}else{
+									map.put(dicDto.getColorDicId(), dicDto);
+								}	
 							}
 						}
 					}
 				}
-				
 				if(type==1){
 					if(map!=null&&map.size()>0){
 						for(Map.Entry<Long,HubColorDicItemDto> entry:map.entrySet()){
 							HubColorDicItemDto dicDto = entry.getValue();
 							HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
-							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+							if(dicDto.getCreateTime()!=null){
+								dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
+							}
 							if(dicDto.getUpdateTime()!=null){
 								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 							}
@@ -119,7 +128,7 @@ public class HubSupplierColorDicController {
 				return HubResponse.successResp(response);
 			}
 			
-			return HubResponse.errorResp("获取列表为空");
+			return HubResponse.successResp(null);
 			
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
@@ -177,7 +186,7 @@ public class HubSupplierColorDicController {
 					return HubResponse.successResp(response);
 				} 
 			}
-			return HubResponse.errorResp("列表页为空");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
@@ -194,6 +203,7 @@ public class HubSupplierColorDicController {
 	public HubResponse save(@RequestBody HubSupplierColorDicRequestDto dto) {
 
 		try {
+			log.info("颜色保存参数：{}",dto);
 			HubColorDicItemDto dicDto = new HubColorDicItemDto();
 			BeanUtils.copyProperties(dto, dicDto);
 			if(StringUtils.isNotBlank(dto.getSupplierColor())){
@@ -207,6 +217,7 @@ public class HubSupplierColorDicController {
 					dicDto.setCreateTime(new Date());
 					dicDto.setUpdateTime(new Date());
 					dicDto.setCreateUser(dto.getCreateUser());
+					dicDto.setPushState((byte)1);
 					hubColorDicService.saveColorItem(dicDto);
 				}
 			}
@@ -221,7 +232,7 @@ public class HubSupplierColorDicController {
 	public HubResponse refresh(@RequestBody HubSupplierColorDicRequestDto dto) {
 		try {
 			log.info("颜色修改参数：{}",dto);
-			if(StringUtils.isNotBlank(dto.getSupplierColor())){
+			if(StringUtils.isNotBlank(dto.getSupplierColor())&&StringUtils.isNotBlank(dto.getHubColor())){
 				String [] supplierColorArr = dto.getSupplierColor().trim().split(",",-1);
 				for(String supplierColor:supplierColorArr){
 					HubColorDicItemDto dicDto = new HubColorDicItemDto();
@@ -231,6 +242,7 @@ public class HubSupplierColorDicController {
 					dicDto.setUpdateUser(dto.getUpdateUser());
 					dicDto.setColorItemName(supplierColor);
 					dicDto.setPushState((byte)1);
+					dicDto.setColorDicId(HubColorDic.getHubColorId(dto.getHubColor()));
 					hubColorDicService.updateSupplierColorById(dicDto);
 				}
 				return	HubResponse.successResp(null);

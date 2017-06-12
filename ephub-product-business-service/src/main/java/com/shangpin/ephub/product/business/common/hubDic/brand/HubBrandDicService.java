@@ -76,7 +76,7 @@ public class HubBrandDicService {
 		}
 	}
 
-	public void saveHubBrand(String hubBrand, String supplierBrandName) throws Exception {
+	public void saveHubBrand(String hubBrand, String supplierBrandName,String createUser) throws Exception {
 		List<HubBrandDicDto> hubBrandList = getHubBrandDic(supplierBrandName);
 		if(hubBrandList!=null&&hubBrandList.size()>0){
 			return;
@@ -87,6 +87,7 @@ public class HubBrandDicService {
 		dic.setCreateTime(new Date());
 		dic.setUpdateTime(new Date());
 		dic.setDataState((byte)1);
+		dic.setCreateUser(createUser);
 		brandDicGateway.insertSelective(dic);
 	}
 	
@@ -118,6 +119,19 @@ public class HubBrandDicService {
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
+		criteria.andPushStateEqualTo((byte)0);
+		
+		HubSupplierBrandDicCriteriaDto.Criteria criteria2 = hubSupplierBrandDicCriteriaDto.createCriteria();
+		if(StringUtils.isNotBlank(supplierId)){
+			criteria2.andSupplierIdEqualTo(supplierId);	
+		}
+		if(StringUtils.isNotBlank(supplierBrand)){
+			criteria2.andSupplierBrandEqualTo(supplierBrand);
+		}
+		if(StringUtils.isNotBlank(hubBrandNo)){
+			criteria2.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
 		return supplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
 	}
 
@@ -136,6 +150,20 @@ public class HubBrandDicService {
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
+		criteria.andPushStateEqualTo((byte)0);
+		
+		HubSupplierBrandDicCriteriaDto.Criteria criteria2 = hubSupplierBrandDicCriteriaDto.createCriteria();
+		if(StringUtils.isNotBlank(supplierId)){
+			criteria2.andSupplierIdEqualTo(supplierId);	
+		}
+		if(StringUtils.isNotBlank(supplierBrand)){
+			criteria2.andSupplierBrandEqualTo(supplierBrand);
+		}
+		if(StringUtils.isNotBlank(hubBrandNo)){
+			criteria2.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
+		
 		hubSupplierBrandDicCriteriaDto.setOrderByClause("update_time desc");
 		return supplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto);
 	}
@@ -189,4 +217,7 @@ public class HubBrandDicService {
 		supplierBrandDicGateWay.updateByPrimaryKeySelective(dicDto);
 	}
 
+	public void deleteHubBrandById(Long id) {
+		brandDicGateway.deleteByPrimaryKey(id);
+	}
 }

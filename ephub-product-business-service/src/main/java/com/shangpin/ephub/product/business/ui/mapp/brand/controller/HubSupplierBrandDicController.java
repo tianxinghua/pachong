@@ -17,6 +17,7 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
@@ -102,6 +103,10 @@ public class HubSupplierBrandDicController {
 				for (HubBrandDicDto dicDto : list) {
 					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
 					BeanUtils.copyProperties(dicDto, dic);
+					dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+					if(dicDto.getUpdateTime()!=null){
+						dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+					}
 					responseList.add(dic);
 				}
 				HubSupplierBrandDicResponseWithPageDto response = new HubSupplierBrandDicResponseWithPageDto();
@@ -126,6 +131,12 @@ public class HubSupplierBrandDicController {
 				for (HubSupplierBrandDicDto dicDto : list) {
 					HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
 					BeanUtils.copyProperties(dicDto, dic);
+					if(dicDto.getCreateTime()!=null){
+						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
+					}
+					if(dicDto.getUpdateTime()!=null){
+						dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
+					}
 					List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
 					if(listMapp!=null&&listMapp.size()>0){
 						dic.setSupplierNo(listMapp.get(0).getHubValNo());
@@ -154,17 +165,17 @@ public class HubSupplierBrandDicController {
 					List<HubBrandDicDto> detail = hubBrandDicService.getSupplierBrandByHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(),hubSupplierBrandDicRequestDto.getPageSize());
 					if (detail != null) {
 						List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
-						HubSupplierBrandDicResponseDto dic = new HubSupplierBrandDicResponseDto();
-						BeanUtils.copyProperties(detail, dic);
-						responseList.add(dic);
-						
+						for(HubBrandDicDto dic : detail){
+							HubSupplierBrandDicResponseDto dicResponse = new HubSupplierBrandDicResponseDto();
+							BeanUtils.copyProperties(dic, dicResponse);
+							responseList.add(dicResponse);
+						}
 						page.setTotal(total);
 						page.setList(responseList);
 						return HubResponse.successResp(page);
 					}
 				}
-				return HubResponse.errorResp("列表页为空");
-				
+				return HubResponse.successResp(null);
 			} else {
 				return HubResponse.errorResp("传值为空");
 			}
@@ -181,7 +192,8 @@ public class HubSupplierBrandDicController {
 			BeanUtils.copyProperties(hubSupplierBrandDicRequestDto, dicDto);
 			dicDto.setUpdateTime(new Date());
 			dicDto.setPushState((byte)1);
-			hubBrandDicService.updateHubBrandDicById(dicDto);
+			hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
+			hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),dicDto.getUpdateUser());
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);
@@ -203,10 +215,10 @@ public class HubSupplierBrandDicController {
 			if(StringUtils.isNotBlank(hubSupplierBrandDicRequestDto.getSupplierNo())){
 				//待处理保存更新
 				hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
-				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand());
+				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getUpdateUser());
 			}else{
 				//已处理保存
-				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand());
+				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getUpdateUser());
 			}
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
@@ -217,17 +229,17 @@ public class HubSupplierBrandDicController {
 	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierBrandDetail(@PathVariable("id") Long id) {
-//		try {
-//			if (id != null) {
-//				hubBrandDicService.deleteHubBrandById(id);
+		try {
+			if (id != null) {
+				hubBrandDicService.deleteHubBrandById(id);
 				return HubResponse.successResp(null);
-//			} else {
-//				return HubResponse.errorResp("传值为空");
-//			}
-//		} catch (Exception e) {
-//			log.error("获取列表失败：{}", e);
-//			return HubResponse.errorResp("获取列表失败");
-//		}
+			} else {
+				return HubResponse.errorResp("传值为空");
+			}
+		} catch (Exception e) {
+			log.error("获取列表失败：{}", e);
+			return HubResponse.errorResp("获取列表失败");
+		}
 	}
 
 }
