@@ -1,6 +1,6 @@
-package com.shangpin.ephub.product.business.ui.studio.controller;
+package com.shangpin.ephub.product.business.ui.studio.studio.controller;
 
-import com.shangpin.ephub.product.business.ui.studio.vo.StudioQueryDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

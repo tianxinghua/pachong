@@ -2,6 +2,7 @@ package com.shangpin.ephub.client.data.studio.dic.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCalendarWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,10 +49,10 @@ public interface StudioDicCalendarGateWay {
     public StudioDicCalendarDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/studio-dic-calendar/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody StudioDicCalendarCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody StudioDicCalendarWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-dic-calendar/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody StudioDicCalendarCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteria(@RequestBody StudioDicCalendarWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-dic-calendar/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody StudioDicCalendarDto hubSku);

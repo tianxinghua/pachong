@@ -2,6 +2,7 @@ package com.shangpin.ephub.client.data.studio.match.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.match.dto.StudioMatchSpuWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,10 +50,10 @@ public interface StudioMatchSpuGateWay {
     public StudioMatchSpuDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/studio-match-spu/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody StudioMatchSpuCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody StudioMatchSpuWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-match-spu/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody StudioMatchSpuCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteria(@RequestBody StudioMatchSpuWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-match-spu/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody StudioMatchSpuDto hubSku);

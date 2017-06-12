@@ -2,6 +2,7 @@ package com.shangpin.ephub.client.data.studio.slot.spu.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,10 +50,10 @@ public interface StudioSlotSpuSendDetailGateWay {
     public StudioSlotSpuSendDetailDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/studio-slot-spu-send-detail/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody StudioSlotSpuSendDetailCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody StudioSlotSpuSendDetailWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-slot-spu-send-detail/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody StudioSlotSpuSendDetailCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteria(@RequestBody StudioSlotSpuSendDetailWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-slot-spu-send-detail/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody StudioSlotSpuSendDetailDto hubSku);

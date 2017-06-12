@@ -1187,123 +1187,123 @@ public class StudioSlotCriteria {
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeIsNull() {
-            addCriterion("plan_shot_time is null");
+        public Criteria andPlanShootTimeIsNull() {
+            addCriterion("plan_shoot_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeIsNotNull() {
-            addCriterion("plan_shot_time is not null");
+        public Criteria andPlanShootTimeIsNotNull() {
+            addCriterion("plan_shoot_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeEqualTo(Date value) {
-            addCriterion("plan_shot_time =", value, "planShotTime");
+        public Criteria andPlanShootTimeEqualTo(Date value) {
+            addCriterion("plan_shoot_time =", value, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeNotEqualTo(Date value) {
-            addCriterion("plan_shot_time <>", value, "planShotTime");
+        public Criteria andPlanShootTimeNotEqualTo(Date value) {
+            addCriterion("plan_shoot_time <>", value, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeGreaterThan(Date value) {
-            addCriterion("plan_shot_time >", value, "planShotTime");
+        public Criteria andPlanShootTimeGreaterThan(Date value) {
+            addCriterion("plan_shoot_time >", value, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("plan_shot_time >=", value, "planShotTime");
+        public Criteria andPlanShootTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("plan_shoot_time >=", value, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeLessThan(Date value) {
-            addCriterion("plan_shot_time <", value, "planShotTime");
+        public Criteria andPlanShootTimeLessThan(Date value) {
+            addCriterion("plan_shoot_time <", value, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeLessThanOrEqualTo(Date value) {
-            addCriterion("plan_shot_time <=", value, "planShotTime");
+        public Criteria andPlanShootTimeLessThanOrEqualTo(Date value) {
+            addCriterion("plan_shoot_time <=", value, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeIn(List<Date> values) {
-            addCriterion("plan_shot_time in", values, "planShotTime");
+        public Criteria andPlanShootTimeIn(List<Date> values) {
+            addCriterion("plan_shoot_time in", values, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeNotIn(List<Date> values) {
-            addCriterion("plan_shot_time not in", values, "planShotTime");
+        public Criteria andPlanShootTimeNotIn(List<Date> values) {
+            addCriterion("plan_shoot_time not in", values, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeBetween(Date value1, Date value2) {
-            addCriterion("plan_shot_time between", value1, value2, "planShotTime");
+        public Criteria andPlanShootTimeBetween(Date value1, Date value2) {
+            addCriterion("plan_shoot_time between", value1, value2, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andPlanShotTimeNotBetween(Date value1, Date value2) {
-            addCriterion("plan_shot_time not between", value1, value2, "planShotTime");
+        public Criteria andPlanShootTimeNotBetween(Date value1, Date value2) {
+            addCriterion("plan_shoot_time not between", value1, value2, "planShootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeIsNull() {
-            addCriterion("shot_time is null");
+        public Criteria andShootTimeIsNull() {
+            addCriterion("shoot_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeIsNotNull() {
-            addCriterion("shot_time is not null");
+        public Criteria andShootTimeIsNotNull() {
+            addCriterion("shoot_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeEqualTo(Date value) {
-            addCriterion("shot_time =", value, "shotTime");
+        public Criteria andShootTimeEqualTo(Date value) {
+            addCriterion("shoot_time =", value, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeNotEqualTo(Date value) {
-            addCriterion("shot_time <>", value, "shotTime");
+        public Criteria andShootTimeNotEqualTo(Date value) {
+            addCriterion("shoot_time <>", value, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeGreaterThan(Date value) {
-            addCriterion("shot_time >", value, "shotTime");
+        public Criteria andShootTimeGreaterThan(Date value) {
+            addCriterion("shoot_time >", value, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("shot_time >=", value, "shotTime");
+        public Criteria andShootTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("shoot_time >=", value, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeLessThan(Date value) {
-            addCriterion("shot_time <", value, "shotTime");
+        public Criteria andShootTimeLessThan(Date value) {
+            addCriterion("shoot_time <", value, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeLessThanOrEqualTo(Date value) {
-            addCriterion("shot_time <=", value, "shotTime");
+        public Criteria andShootTimeLessThanOrEqualTo(Date value) {
+            addCriterion("shoot_time <=", value, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeIn(List<Date> values) {
-            addCriterion("shot_time in", values, "shotTime");
+        public Criteria andShootTimeIn(List<Date> values) {
+            addCriterion("shoot_time in", values, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeNotIn(List<Date> values) {
-            addCriterion("shot_time not in", values, "shotTime");
+        public Criteria andShootTimeNotIn(List<Date> values) {
+            addCriterion("shoot_time not in", values, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeBetween(Date value1, Date value2) {
-            addCriterion("shot_time between", value1, value2, "shotTime");
+        public Criteria andShootTimeBetween(Date value1, Date value2) {
+            addCriterion("shoot_time between", value1, value2, "shootTime");
             return (Criteria) this;
         }
 
-        public Criteria andShotTimeNotBetween(Date value1, Date value2) {
-            addCriterion("shot_time not between", value1, value2, "shotTime");
+        public Criteria andShootTimeNotBetween(Date value1, Date value2) {
+            addCriterion("shoot_time not between", value1, value2, "shootTime");
             return (Criteria) this;
         }
 
@@ -1374,6 +1374,146 @@ public class StudioSlotCriteria {
 
         public Criteria andTrackNoNotBetween(String value1, String value2) {
             addCriterion("track_no not between", value1, value2, "trackNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoIsNull() {
+            addCriterion("origin_slot_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoIsNotNull() {
+            addCriterion("origin_slot_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoEqualTo(String value) {
+            addCriterion("origin_slot_no =", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoNotEqualTo(String value) {
+            addCriterion("origin_slot_no <>", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoGreaterThan(String value) {
+            addCriterion("origin_slot_no >", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoGreaterThanOrEqualTo(String value) {
+            addCriterion("origin_slot_no >=", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoLessThan(String value) {
+            addCriterion("origin_slot_no <", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoLessThanOrEqualTo(String value) {
+            addCriterion("origin_slot_no <=", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoLike(String value) {
+            addCriterion("origin_slot_no like", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoNotLike(String value) {
+            addCriterion("origin_slot_no not like", value, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoIn(List<String> values) {
+            addCriterion("origin_slot_no in", values, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoNotIn(List<String> values) {
+            addCriterion("origin_slot_no not in", values, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoBetween(String value1, String value2) {
+            addCriterion("origin_slot_no between", value1, value2, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSlotNoNotBetween(String value1, String value2) {
+            addCriterion("origin_slot_no not between", value1, value2, "originSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoIsNull() {
+            addCriterion("memo is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoIsNotNull() {
+            addCriterion("memo is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoEqualTo(String value) {
+            addCriterion("memo =", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoNotEqualTo(String value) {
+            addCriterion("memo <>", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoGreaterThan(String value) {
+            addCriterion("memo >", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoGreaterThanOrEqualTo(String value) {
+            addCriterion("memo >=", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoLessThan(String value) {
+            addCriterion("memo <", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoLessThanOrEqualTo(String value) {
+            addCriterion("memo <=", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoLike(String value) {
+            addCriterion("memo like", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoNotLike(String value) {
+            addCriterion("memo not like", value, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoIn(List<String> values) {
+            addCriterion("memo in", values, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoNotIn(List<String> values) {
+            addCriterion("memo not in", values, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoBetween(String value1, String value2) {
+            addCriterion("memo between", value1, value2, "memo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMemoNotBetween(String value1, String value2) {
+            addCriterion("memo not between", value1, value2, "memo");
             return (Criteria) this;
         }
 
@@ -1626,7 +1766,6 @@ public class StudioSlotCriteria {
     }
 
     public static class Criterion {
-
 
         public Criterion() {
             super();

@@ -1,6 +1,6 @@
-package com.shangpin.ephub.product.business.ui.studio.service;
+package com.shangpin.ephub.product.business.ui.studio.studio.service;
 
-import com.shangpin.ephub.product.business.ui.studio.vo.StudioQueryDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 /**
