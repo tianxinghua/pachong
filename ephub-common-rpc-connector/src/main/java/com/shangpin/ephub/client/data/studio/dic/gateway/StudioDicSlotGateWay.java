@@ -2,6 +2,7 @@ package com.shangpin.ephub.client.data.studio.dic.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,10 +49,10 @@ public interface StudioDicSlotGateWay {
     public StudioDicSlotDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/studio-dic-slot/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody StudioDicSlotCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody StudioDicSlotWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-dic-slot/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody StudioDicSlotCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteria(@RequestBody StudioDicSlotWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-dic-slot/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody StudioDicSlotDto hubSku);

@@ -7,7 +7,7 @@ public class StudioSlotDto implements Serializable {
     /**
      * 主键
      */
-    private Long studioDicSlotId;
+    private Long studioSlotId;
 
     /**
      * 摄影棚Id
@@ -87,17 +87,21 @@ public class StudioSlotDto implements Serializable {
     /**
      * 计划拍摄日期
      */
-    private Date planShotTime;
+    private Date planShootTime;
 
     /**
      * 拍摄日期
      */
-    private Date shotTime;
+    private Date shootTime;
 
     /**
      * 物流编号
      */
     private String trackNo;
+
+    private String originSlotNo;
+
+    private String memo;
 
     /**
      * 创建时间
@@ -121,12 +125,12 @@ public class StudioSlotDto implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Long getStudioDicSlotId() {
-        return studioDicSlotId;
+    public Long getStudioSlotId() {
+        return studioSlotId;
     }
 
-    public void setStudioDicSlotId(Long studioDicSlotId) {
-        this.studioDicSlotId = studioDicSlotId;
+    public void setStudioSlotId(Long studioSlotId) {
+        this.studioSlotId = studioSlotId;
     }
 
     public Long getStudioId() {
@@ -249,20 +253,20 @@ public class StudioSlotDto implements Serializable {
         this.shotStatus = shotStatus;
     }
 
-    public Date getPlanShotTime() {
-        return planShotTime;
+    public Date getPlanShootTime() {
+        return planShootTime;
     }
 
-    public void setPlanShotTime(Date planShotTime) {
-        this.planShotTime = planShotTime;
+    public void setPlanShootTime(Date planShootTime) {
+        this.planShootTime = planShootTime;
     }
 
-    public Date getShotTime() {
-        return shotTime;
+    public Date getShootTime() {
+        return shootTime;
     }
 
-    public void setShotTime(Date shotTime) {
-        this.shotTime = shotTime;
+    public void setShootTime(Date shootTime) {
+        this.shootTime = shootTime;
     }
 
     public String getTrackNo() {
@@ -271,6 +275,22 @@ public class StudioSlotDto implements Serializable {
 
     public void setTrackNo(String trackNo) {
         this.trackNo = trackNo == null ? null : trackNo.trim();
+    }
+
+    public String getOriginSlotNo() {
+        return originSlotNo;
+    }
+
+    public void setOriginSlotNo(String originSlotNo) {
+        this.originSlotNo = originSlotNo == null ? null : originSlotNo.trim();
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo == null ? null : memo.trim();
     }
 
     public Date getCreateTime() {
@@ -311,7 +331,7 @@ public class StudioSlotDto implements Serializable {
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
-        sb.append(", studioDicSlotId=").append(studioDicSlotId);
+        sb.append(", studioSlotId=").append(studioSlotId);
         sb.append(", studioId=").append(studioId);
         sb.append(", slotNo=").append(slotNo);
         sb.append(", slotStatus=").append(slotStatus);
@@ -327,9 +347,11 @@ public class StudioSlotDto implements Serializable {
         sb.append(", arriveTime=").append(arriveTime);
         sb.append(", arriveUser=").append(arriveUser);
         sb.append(", shotStatus=").append(shotStatus);
-        sb.append(", planShotTime=").append(planShotTime);
-        sb.append(", shotTime=").append(shotTime);
+        sb.append(", planShootTime=").append(planShootTime);
+        sb.append(", shootTime=").append(shootTime);
         sb.append(", trackNo=").append(trackNo);
+        sb.append(", originSlotNo=").append(originSlotNo);
+        sb.append(", memo=").append(memo);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", dataState=").append(dataState);
@@ -351,7 +373,7 @@ public class StudioSlotDto implements Serializable {
             return false;
         }
         StudioSlotDto other = (StudioSlotDto) that;
-        return (this.getStudioDicSlotId() == null ? other.getStudioDicSlotId() == null : this.getStudioDicSlotId().equals(other.getStudioDicSlotId()))
+        return (this.getStudioSlotId() == null ? other.getStudioSlotId() == null : this.getStudioSlotId().equals(other.getStudioSlotId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSlotStatus() == null ? other.getSlotStatus() == null : this.getSlotStatus().equals(other.getSlotStatus()))
@@ -367,9 +389,11 @@ public class StudioSlotDto implements Serializable {
             && (this.getArriveTime() == null ? other.getArriveTime() == null : this.getArriveTime().equals(other.getArriveTime()))
             && (this.getArriveUser() == null ? other.getArriveUser() == null : this.getArriveUser().equals(other.getArriveUser()))
             && (this.getShotStatus() == null ? other.getShotStatus() == null : this.getShotStatus().equals(other.getShotStatus()))
-            && (this.getPlanShotTime() == null ? other.getPlanShotTime() == null : this.getPlanShotTime().equals(other.getPlanShotTime()))
-            && (this.getShotTime() == null ? other.getShotTime() == null : this.getShotTime().equals(other.getShotTime()))
+            && (this.getPlanShootTime() == null ? other.getPlanShootTime() == null : this.getPlanShootTime().equals(other.getPlanShootTime()))
+            && (this.getShootTime() == null ? other.getShootTime() == null : this.getShootTime().equals(other.getShootTime()))
             && (this.getTrackNo() == null ? other.getTrackNo() == null : this.getTrackNo().equals(other.getTrackNo()))
+            && (this.getOriginSlotNo() == null ? other.getOriginSlotNo() == null : this.getOriginSlotNo().equals(other.getOriginSlotNo()))
+            && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
@@ -380,7 +404,7 @@ public class StudioSlotDto implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getStudioDicSlotId() == null) ? 0 : getStudioDicSlotId().hashCode());
+        result = prime * result + ((getStudioSlotId() == null) ? 0 : getStudioSlotId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSlotStatus() == null) ? 0 : getSlotStatus().hashCode());
@@ -396,9 +420,11 @@ public class StudioSlotDto implements Serializable {
         result = prime * result + ((getArriveTime() == null) ? 0 : getArriveTime().hashCode());
         result = prime * result + ((getArriveUser() == null) ? 0 : getArriveUser().hashCode());
         result = prime * result + ((getShotStatus() == null) ? 0 : getShotStatus().hashCode());
-        result = prime * result + ((getPlanShotTime() == null) ? 0 : getPlanShotTime().hashCode());
-        result = prime * result + ((getShotTime() == null) ? 0 : getShotTime().hashCode());
+        result = prime * result + ((getPlanShootTime() == null) ? 0 : getPlanShootTime().hashCode());
+        result = prime * result + ((getShootTime() == null) ? 0 : getShootTime().hashCode());
         result = prime * result + ((getTrackNo() == null) ? 0 : getTrackNo().hashCode());
+        result = prime * result + ((getOriginSlotNo() == null) ? 0 : getOriginSlotNo().hashCode());
+        result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());

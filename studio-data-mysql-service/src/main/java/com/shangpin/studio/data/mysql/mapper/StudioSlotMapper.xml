@@ -18,9 +18,11 @@
     <result column="arrive_time" property="arriveTime" jdbcType="TIMESTAMP" />
     <result column="arrive_user" property="arriveUser" jdbcType="VARCHAR" />
     <result column="shot_status" property="shotStatus" jdbcType="TINYINT" />
-    <result column="plan_shot_time" property="planShotTime" jdbcType="TIMESTAMP" />
-    <result column="shot_time" property="shotTime" jdbcType="TIMESTAMP" />
+    <result column="plan_shoot_time" property="planShootTime" jdbcType="TIMESTAMP" />
+    <result column="shoot_time" property="shootTime" jdbcType="TIMESTAMP" />
     <result column="track_no" property="trackNo" jdbcType="VARCHAR" />
+    <result column="origin_slot_no" property="originSlotNo" jdbcType="VARCHAR" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
@@ -88,8 +90,8 @@
     <if test="fields == null" >
       studio_slot_id, studio_id, slot_no, slot_status, apply_status, apply_supplier_id, 
       apply_user, apply_time, send_user, send_time, send_state, plan_arrive_time, arrive_status, 
-      arrive_time, arrive_user, shot_status, plan_shot_time, shot_time, track_no, create_time, 
-      update_time, data_state, version
+      arrive_time, arrive_user, shot_status, plan_shoot_time, shoot_time, track_no, origin_slot_no, 
+      memo, create_time, update_time, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -114,7 +116,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_id,studio_id,slot_no,slot_status,apply_status,apply_supplier_id,apply_user,apply_time,send_user,send_time,send_state,plan_arrive_time,arrive_status,arrive_time,arrive_user,shot_status,plan_shot_time,shot_time,track_no,create_time,update_time,data_state,version
+    studio_slot_id,studio_id,slot_no,slot_status,apply_status,apply_supplier_id,apply_user,apply_time,send_user,send_time,send_state,plan_arrive_time,arrive_status,arrive_time,arrive_user,shot_status,plan_shoot_time,shoot_time,track_no,origin_slot_no,memo,create_time,update_time,data_state,version
     from studio_slot
     where studio_slot_id = #{studioSlotId,jdbcType=BIGINT}
   </select>
@@ -129,30 +131,26 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
-    <selectKey keyColumn="studio_slot_id" keyProperty="studioSlotId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_id
-    </selectKey>
     insert into studio_slot (studio_slot_id, studio_id, slot_no, 
       slot_status, apply_status, apply_supplier_id, 
       apply_user, apply_time, send_user, 
       send_time, send_state, plan_arrive_time, 
       arrive_status, arrive_time, arrive_user, 
-      shot_status, plan_shot_time, shot_time, 
-      track_no, create_time, update_time, 
-      data_state, version)
+      shot_status, plan_shoot_time, shoot_time, 
+      track_no, origin_slot_no, memo, 
+      create_time, update_time, data_state, 
+      version)
     values (#{studioSlotId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
       #{slotStatus,jdbcType=TINYINT}, #{applyStatus,jdbcType=TINYINT}, #{applySupplierId,jdbcType=VARCHAR}, 
       #{applyUser,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, #{sendUser,jdbcType=VARCHAR}, 
       #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, #{planArriveTime,jdbcType=DATE}, 
       #{arriveStatus,jdbcType=TINYINT}, #{arriveTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, 
-      #{shotStatus,jdbcType=TINYINT}, #{planShotTime,jdbcType=TIMESTAMP}, #{shotTime,jdbcType=TIMESTAMP}, 
-      #{trackNo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+      #{shotStatus,jdbcType=TINYINT}, #{planShootTime,jdbcType=TIMESTAMP}, #{shootTime,jdbcType=TIMESTAMP}, 
+      #{trackNo,jdbcType=VARCHAR}, #{originSlotNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
-    <selectKey keyColumn="studio_slot_id" keyProperty="studioSlotId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_id
-    </selectKey>
     insert into studio_slot
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotId != null" >
@@ -203,14 +201,20 @@
       <if test="shotStatus != null" >
         shot_status,
       </if>
-      <if test="planShotTime != null" >
-        plan_shot_time,
+      <if test="planShootTime != null" >
+        plan_shoot_time,
       </if>
-      <if test="shotTime != null" >
-        shot_time,
+      <if test="shootTime != null" >
+        shoot_time,
       </if>
       <if test="trackNo != null" >
         track_no,
+      </if>
+      <if test="originSlotNo != null" >
+        origin_slot_no,
+      </if>
+      <if test="memo != null" >
+        memo,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -274,14 +278,20 @@
       <if test="shotStatus != null" >
         #{shotStatus,jdbcType=TINYINT},
       </if>
-      <if test="planShotTime != null" >
-        #{planShotTime,jdbcType=TIMESTAMP},
+      <if test="planShootTime != null" >
+        #{planShootTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="shotTime != null" >
-        #{shotTime,jdbcType=TIMESTAMP},
+      <if test="shootTime != null" >
+        #{shootTime,jdbcType=TIMESTAMP},
       </if>
       <if test="trackNo != null" >
         #{trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="originSlotNo != null" >
+        #{originSlotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        #{memo,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -354,14 +364,20 @@
       <if test="record.shotStatus != null" >
         shot_status = #{record.shotStatus,jdbcType=TINYINT},
       </if>
-      <if test="record.planShotTime != null" >
-        plan_shot_time = #{record.planShotTime,jdbcType=TIMESTAMP},
+      <if test="record.planShootTime != null" >
+        plan_shoot_time = #{record.planShootTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.shotTime != null" >
-        shot_time = #{record.shotTime,jdbcType=TIMESTAMP},
+      <if test="record.shootTime != null" >
+        shoot_time = #{record.shootTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.trackNo != null" >
         track_no = #{record.trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.originSlotNo != null" >
+        origin_slot_no = #{record.originSlotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memo != null" >
+        memo = #{record.memo,jdbcType=VARCHAR},
       </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -398,9 +414,11 @@
       arrive_time = #{record.arriveTime,jdbcType=TIMESTAMP},
       arrive_user = #{record.arriveUser,jdbcType=VARCHAR},
       shot_status = #{record.shotStatus,jdbcType=TINYINT},
-      plan_shot_time = #{record.planShotTime,jdbcType=TIMESTAMP},
-      shot_time = #{record.shotTime,jdbcType=TIMESTAMP},
+      plan_shoot_time = #{record.planShootTime,jdbcType=TIMESTAMP},
+      shoot_time = #{record.shootTime,jdbcType=TIMESTAMP},
       track_no = #{record.trackNo,jdbcType=VARCHAR},
+      origin_slot_no = #{record.originSlotNo,jdbcType=VARCHAR},
+      memo = #{record.memo,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       data_state = #{record.dataState,jdbcType=TINYINT},
@@ -457,14 +475,20 @@
       <if test="shotStatus != null" >
         shot_status = #{shotStatus,jdbcType=TINYINT},
       </if>
-      <if test="planShotTime != null" >
-        plan_shot_time = #{planShotTime,jdbcType=TIMESTAMP},
+      <if test="planShootTime != null" >
+        plan_shoot_time = #{planShootTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="shotTime != null" >
-        shot_time = #{shotTime,jdbcType=TIMESTAMP},
+      <if test="shootTime != null" >
+        shoot_time = #{shootTime,jdbcType=TIMESTAMP},
       </if>
       <if test="trackNo != null" >
         track_no = #{trackNo,jdbcType=VARCHAR},
+      </if>
+      <if test="originSlotNo != null" >
+        origin_slot_no = #{originSlotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memo != null" >
+        memo = #{memo,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -498,9 +522,11 @@
       arrive_time = #{arriveTime,jdbcType=TIMESTAMP},
       arrive_user = #{arriveUser,jdbcType=VARCHAR},
       shot_status = #{shotStatus,jdbcType=TINYINT},
-      plan_shot_time = #{planShotTime,jdbcType=TIMESTAMP},
-      shot_time = #{shotTime,jdbcType=TIMESTAMP},
+      plan_shoot_time = #{planShootTime,jdbcType=TIMESTAMP},
+      shoot_time = #{shootTime,jdbcType=TIMESTAMP},
       track_no = #{trackNo,jdbcType=VARCHAR},
+      origin_slot_no = #{originSlotNo,jdbcType=VARCHAR},
+      memo = #{memo,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       data_state = #{dataState,jdbcType=TINYINT},

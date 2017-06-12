@@ -2,6 +2,7 @@ package com.shangpin.ephub.client.data.studio.slot.returning.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,10 +50,10 @@ public interface StudioSlotReturnMasterGateWay {
     public StudioSlotReturnMasterDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
 	
 	@RequestMapping(value = "/studio-slot-return-master/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody StudioSlotReturnMasterCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody StudioSlotReturnMasterWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-slot-return-master/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody StudioSlotReturnMasterCriteriaDto hubSkuWithCriteria);
+    public int updateByCriteria(@RequestBody StudioSlotReturnMasterWithCriteriaDto hubSkuWithCriteria);
 	
 	@RequestMapping(value = "/studio-slot-return-master/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody StudioSlotReturnMasterDto hubSku);
