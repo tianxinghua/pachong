@@ -14,6 +14,10 @@ import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioPendingProd
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioPendingProducts;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,18 +27,23 @@ import java.util.stream.Collectors;
 /**
  * Created by Administrator on 2017/6/8.
  */
+@Service
+@Slf4j
 public class StudioServiceImpl implements IStudioService {
 
+    @Autowired
     HubSlotSpuSupplierGateway hubSlotSpuSupplierGateway;
+    @Autowired
     HubSupplierSpuGateWay hubSupplierSpuGateWay;
 
 
     public StudioPendingProducts getPendingProductList(StudioQueryDto queryDto){
 
         StudioPendingProducts products = new StudioPendingProducts();
-
+        String supplierId = queryDto.getSupplierId();
         HubSlotSpuSupplierCriteriaDto cdto = new HubSlotSpuSupplierCriteriaDto();
-        cdto.createCriteria().andSlotSpuSupplierIdEqualTo(queryDto.getSupplierId());
+        cdto.createCriteria().andSupplierIdEqualTo(supplierId);
+
         //cdto.createCriteria().andStateEqualTo(queryDto.getStatus());
         int total = hubSlotSpuSupplierGateway.countByCriteria(cdto);
         if(total>0) {
@@ -52,20 +61,26 @@ public class StudioServiceImpl implements IStudioService {
         List<StudioPendingProductVo> hubProducts = new ArrayList<StudioPendingProductVo>();
 
         if (null != results && results.size() > 0) {
-            List<Long> filtered = results.stream().map(n-> n.getSpuPendingId()).collect(Collectors.toList());
+            List<Long> filtered = results.stream().map(n-> n.getSupplierSpuId()).collect(Collectors.toList());
             HubSupplierSpuCriteriaDto dto = new HubSupplierSpuCriteriaDto();
             dto.createCriteria().andSupplierSpuIdIn(filtered);
             List<HubSupplierSpuDto> spuDtoList =  hubSupplierSpuGateWay.selectByCriteria(dto);
 
             for (HubSlotSpuSupplierDto x : results){
 
-                Optional<HubSupplierSpuDto> spuDto = spuDtoList.stream().filter(spu -> spu.getSupplierSpuId() == x.getSupplierSpuId()).findFirst();
+                Optional<HubSupplierSpuDto> spuDto = spuDtoList.stream().filter(spu -> spu.getSupplierSpuId() .equals(x.getSupplierSpuId()) ).findFirst();
 
                 StudioPendingProductVo product = new StudioPendingProductVo();
-
+                product.setSlotSpuSupplierId(x.getSlotSpuSupplierId());
                 product.setSupplierId(x.getSupplierId());
+                product.setSupplierNo(x.getSupplierNo());
+                product.setSpuPendingId(x.getSpuPendingId());
+                product.setSupplierSpuId(x.getSupplierSpuId());
                 product.setSlotNo(x.getSlotNo());
                 product.setSlotSpuId(x.getSlotSpuId());
+                product.setState(x.getState());
+                product.setCreateTime(x.getCreateTime());
+                product.setSupplierOperateSign(x.getSupplierOperateSign());
                 if(spuDto.isPresent()){
                     HubSupplierSpuDto spu = spuDto.get();
                     product.setBrandName(spu.getSupplierBrandname());

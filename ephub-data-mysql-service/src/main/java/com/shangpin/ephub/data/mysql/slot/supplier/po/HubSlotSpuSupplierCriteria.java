@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.slot.supplier.po;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class HubSlotSpuSupplierCriteria {
     protected String orderByClause;
@@ -109,7 +110,7 @@ public class HubSlotSpuSupplierCriteria {
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
-        protected GeneratedCriteria() {
+        public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -117,7 +118,7 @@ public class HubSlotSpuSupplierCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -1160,13 +1161,18 @@ public class HubSlotSpuSupplierCriteria {
 
     public static class Criteria extends GeneratedCriteria {
 
-        protected Criteria() {
+    	public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-        private String condition;
+    	
+        public Criterion() {
+			super();
+		}
+
+		private String condition;
 
         private Object value;
 

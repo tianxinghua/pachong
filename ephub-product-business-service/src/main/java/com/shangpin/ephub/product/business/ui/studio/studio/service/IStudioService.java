@@ -8,7 +8,9 @@ import com.shangpin.ephub.response.HubResponse;
  * Created by Administrator on 2017/6/8.
  */
 public interface IStudioService {
+
     public StudioPendingProducts getPendingProductList(StudioQueryDto queryDto);
+
     public HubResponse<?> getSupplierSlotList(StudioQueryDto queryDto);
     public HubResponse<?> getSlotInfo(StudioQueryDto queryDto);
     public HubResponse<?> addProductIntoSlot(StudioQueryDto queryDto);

@@ -4,6 +4,7 @@ import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioServi
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -11,16 +12,19 @@ import org.springframework.web.bind.annotation.*;
  * airshop studio
  */
 @RestController
-@RequestMapping("/Studio")
+@RequestMapping("/studio")
 @Slf4j
 public class StudioController {
 
+    @Autowired
     private IStudioService iStudioService;
     /*
     * 获取待处理商品列表
     * */
-    @RequestMapping(value = "/spullist")
+    @RequestMapping(value = "/spullist",method = RequestMethod.POST)
     public HubResponse<?> getPendingProductList(@RequestBody StudioQueryDto queryDto) {
+
+        log.info(queryDto.toString());
         return  HubResponse.successResp(iStudioService.getPendingProductList(queryDto));
     }
 
