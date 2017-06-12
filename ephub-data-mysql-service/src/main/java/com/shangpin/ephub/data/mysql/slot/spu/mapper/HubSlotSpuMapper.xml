@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.ephub.data.mysql.slot.spu.mapper.HubSlotSpuMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpu" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
     <id column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
     <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
     <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
@@ -96,7 +96,7 @@
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpuCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpuCriteria" >
     select
     <if test="distinct" >
       distinct
@@ -123,13 +123,13 @@
     delete from hub_slot_spu
     where slot_spu_id = #{slotSpuId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpuCriteria" >
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpuCriteria" >
     delete from hub_slot_spu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpu" >
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
     insert into hub_slot_spu (slot_spu_id, slot_spu_no, spu_model, 
       brand_no, category_no, second_category_no, 
       market_time, season, season_en, 
@@ -149,7 +149,7 @@
       #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpu" >
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
     insert into hub_slot_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="slotSpuId != null" >
@@ -300,7 +300,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpuCriteria" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpuCriteria" resultType="java.lang.Integer" >
     select count(*) from hub_slot_spu
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -416,7 +416,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpu" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
     update hub_slot_spu
     <set >
       <if test="slotSpuNo != null" >
@@ -491,7 +491,7 @@
     </set>
     where slot_spu_id = #{slotSpuId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpu" >
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
     update hub_slot_spu
     set slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
       spu_model = #{spuModel,jdbcType=VARCHAR},
@@ -518,7 +518,7 @@
       version = #{version,jdbcType=BIGINT}
     where slot_spu_id = #{slotSpuId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spu.HubSlotSpuCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpuCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct

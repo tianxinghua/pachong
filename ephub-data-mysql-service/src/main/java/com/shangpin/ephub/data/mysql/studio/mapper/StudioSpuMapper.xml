@@ -1,48 +1,48 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.ephub.data.mysql.studio.mapper.StudioSpuMapper">
-    <!--auto generated Code-->
-    <resultMap id="AllColumnMap" type="com.shangpin.ephub.data.mysql.studio.po.StudioSpu">
-        <result column="supplier_no" property="supplierNo"/>
-        <result column="slot_no" property="slotNo"/>
-        <result column="supplier_id" property="supplierId"/>
-        <result column="spu_pending_id" property="spuPendingId"/>
-        <result column="supplier_spu_id" property="supplierSpuId"/>
-        <result column="create_time" property="createTime"/>
-        <result column="create_user" property="createUser"/>
-        <result column="update_time" property="updateTime"/>
-        <result column="update_user" property="updateUser"/>
-        <result column="version" property="version"/>
-    </resultMap>
+<!-- <?xml version="1.0" encoding="UTF-8" ?> -->
+<!-- <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" > -->
+<!-- <mapper namespace="com.shangpin.ephub.data.mysql.studio.mapper.StudioSpuMapper"> -->
+<!--     auto generated Code -->
+<!--     <resultMap id="AllColumnMap" type="com.shangpin.ephub.data.mysql.studio.po.StudioSpu"> -->
+<!--         <result column="supplier_no" property="supplierNo"/> -->
+<!--         <result column="slot_no" property="slotNo"/> -->
+<!--         <result column="supplier_id" property="supplierId"/> -->
+<!--         <result column="spu_pending_id" property="spuPendingId"/> -->
+<!--         <result column="supplier_spu_id" property="supplierSpuId"/> -->
+<!--         <result column="create_time" property="createTime"/> -->
+<!--         <result column="create_user" property="createUser"/> -->
+<!--         <result column="update_time" property="updateTime"/> -->
+<!--         <result column="update_user" property="updateUser"/> -->
+<!--         <result column="version" property="version"/> -->
+<!--     </resultMap> -->
 
-    <!--auto generated Code-->
-    <sql id="all_column">
-        `supplier_no`,
-        `slot_no`,
-        `supplier_id`,
-        `spu_pending_id`,
-        `supplier_spu_id`,
-        `create_time`,
-        `create_user`,
-        `update_time`,
-        `update_user`,
-        `version`
-     </sql>
+<!--     auto generated Code -->
+<!--     <sql id="all_column"> -->
+<!--         `supplier_no`, -->
+<!--         `slot_no`, -->
+<!--         `supplier_id`, -->
+<!--         `spu_pending_id`, -->
+<!--         `supplier_spu_id`, -->
+<!--         `create_time`, -->
+<!--         `create_user`, -->
+<!--         `update_time`, -->
+<!--         `update_user`, -->
+<!--         `version` -->
+<!--      </sql> -->
 
-    <select id="SelectPendingProducts" resultMap="AllColumnMap" parameterMap="com.shangpin.ephub.data.mysql.studio.po.StudioCriteria">
+<!--     <select id="SelectPendingProducts" resultMap="AllColumnMap" parameterMap="com.shangpin.ephub.data.mysql.studio.po.StudioCriteria"> -->
 
-        SELECT <include refid="all_column"/> FROM hub_slot_spu_supplier
-        <where>
-            data_state = 1
-            <if test="supplierId !=null">
-                supplier_no = #{supplierId}
-            </if>
-            <if test="status!=null">
-                state = #{status}
-            </if>
-        </where>
-    </select>
+<!--         SELECT <include refid="all_column"/> FROM hub_slot_spu_supplier -->
+<!--         <where> -->
+<!--             data_state = 1 -->
+<!--             <if test="supplierId !=null"> -->
+<!--                 supplier_no = #{supplierId} -->
+<!--             </if> -->
+<!--             <if test="status!=null"> -->
+<!--                 state = #{status} -->
+<!--             </if> -->
+<!--         </where> -->
+<!--     </select> -->
 
 
-</mapper>
+<!-- </mapper> -->
 
