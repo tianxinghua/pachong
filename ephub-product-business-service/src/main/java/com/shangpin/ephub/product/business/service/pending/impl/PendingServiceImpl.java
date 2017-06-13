@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +35,6 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
@@ -43,6 +43,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
+import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -133,13 +134,21 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
 //            log.info("sartDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getStartDate() ));
-            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getShortDate(queryVO.getStartDate()  ));
+            try {
+				criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.parse(queryVO.getStartDate()  ));
+			} catch (ParseException e) {
+				log.error(e.getMessage(),e);
+			}
 //            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 08:00:00" ));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
 //            log.info("getEndDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getEndDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getEndDate()));
-            criterion.andUpdateTimeLessThan(DateTimeUtil.getShortDate(queryVO.getEndDate() ));
+            try {
+				criterion.andUpdateTimeLessThan(DateTimeUtil.parse(queryVO.getEndDate() ));
+			} catch (ParseException e) {
+				log.error(e.getMessage(),e);
+			}
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
