@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.service.hubslot;
+package com.shangpin.ephub.product.business.service.studio.hubslot;
 
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 

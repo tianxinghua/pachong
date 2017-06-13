@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.studio.hub.controller;
 
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

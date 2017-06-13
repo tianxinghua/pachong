@@ -3,21 +3,22 @@ package com.shangpin.ephub.client.data.studio.enumeration;
 /**
 
 
- STUDIO_SLOT表中 批次状态
+ STUDIO_SLOT表中 摄影棚收货状态
  *
  */
 public enum StudioSlotArriveState {
 
+    NOT_ARRIVE(0,"NOT_ARRIVE"),
 
     /**
      * 摄影棚收货
      */
-    RECEIVED(0,"RECEIVED"),
+    RECEIVED(1,"RECEIVED"),
 
     /**
      *
      */
-    DELAY(1,"DELAY");
+    DELAY(2,"DELAY");
 
 
 

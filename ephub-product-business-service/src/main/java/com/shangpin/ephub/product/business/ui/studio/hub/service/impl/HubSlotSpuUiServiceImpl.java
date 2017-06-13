@@ -2,8 +2,8 @@ package com.shangpin.ephub.product.business.ui.studio.hub.service.impl;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
-import com.shangpin.ephub.product.business.service.hubslot.HubSlotSpuService;
-import com.shangpin.ephub.product.business.service.hubslot.HubSlotSpuSupplierService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.ui.studio.hub.service.HubSlotSpuUiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

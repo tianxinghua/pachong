@@ -1,6 +1,7 @@
-package com.shangpin.ephub.product.business.service.hubslot;
+package com.shangpin.ephub.product.business.service.studio.hubslot;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 
 /**
  * Created by loyalty on 17/6/10.
@@ -16,10 +17,10 @@ public interface HubSlotSpuService {
 
     /**
      * 添加slo_spu
-     * @param hubSlotSpuDto
+     * @param pendingProductDto
      * @return
      * @throws Exception
      */
-    public boolean addHubSlotSpu(HubSlotSpuDto hubSlotSpuDto) throws Exception;
+    public boolean addSlotSpuAndSupplier(PendingProductDto pendingProductDto) throws Exception;
 
 }
