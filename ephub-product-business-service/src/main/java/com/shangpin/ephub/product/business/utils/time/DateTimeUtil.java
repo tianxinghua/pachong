@@ -20,6 +20,15 @@ public class DateTimeUtil {
 	   SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 	   return sdf.parse(param);
 	}
+	/**
+	 * 将日期转为字符串 yyyy-MM-dd
+	 * @param date
+	 * @return
+	 */
+	public static String format(Date date){
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		return sdf.format(date);
+	}
 	
 	public static int  getCurrentMin(){
         Calendar calendar = Calendar.getInstance();

@@ -7,24 +7,29 @@ package com.shangpin.ephub.client.data.studio.enumeration;
  *
  */
 public enum StudioSlotShootState {
+	
+	/**
+	 * 未拍摄（等待拍摄）
+	 */
+	WAIT_SHOOT(0,"WAIT_SHOOT"),
 
 	/**
 	 * 正常拍摄
 	 */
-	NORMAL(0,"NORMAL"),
+	NORMAL(1,"NORMAL"),
 
 
 	/**
 	 * 提前拍摄
 	 */
-	AHEAD_TIME(1,"AHEAD_TIME"),
+	AHEAD_TIME(2,"AHEAD_TIME"),
 
 
 
     /**
      * 未按计划拍摄
      */
-    DELAY_SHOOT(2,"DELAY_SHOOT");
+    DELAY_SHOOT(3,"DELAY_SHOOT");
 
 
 

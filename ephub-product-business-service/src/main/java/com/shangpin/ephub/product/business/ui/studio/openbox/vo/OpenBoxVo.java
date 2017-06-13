@@ -3,6 +3,8 @@ package com.shangpin.ephub.product.business.ui.studio.openbox.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -25,9 +27,9 @@ public class OpenBoxVo implements Serializable {
 	/**
 	 * 优先批次
 	 */
-	private List<StudioSlotVo> prioritySlots;
+	private List<StudioSlotDto> prioritySlots;
 	/**
 	 * 次要批次
 	 */
-	private List<StudioSlotVo> secondarySlots;
+	private List<StudioSlotDto> secondarySlots;
 }
