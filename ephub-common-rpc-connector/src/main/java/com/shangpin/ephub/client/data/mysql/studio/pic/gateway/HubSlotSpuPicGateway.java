@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
-import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicWithCriteriaDto;
 /**
- * <p>Title:HubBrandDicDtoGateway.java </p>
+ * <p>Title:HubSlotSpuPicDtoGateway.java </p>
  * <p>Description: EPHUB品牌字典接口网关</p>
  * <p>Company: www.shangpin.com</p> 
  * @author yanxiaobin
@@ -22,38 +22,38 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto
 public interface HubSlotSpuPicGateway {
 
 	@RequestMapping(value = "/hub-slot-spu-pic/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int countByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public int countByCriteria(@RequestBody HubSlotSpuPicCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public int deleteByCriteria(@RequestBody HubSlotSpuPicCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/insert", method = RequestMethod.POST,consumes = "application/json")
-    public Long insert(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insert(@RequestBody HubSlotSpuPicDto HubSlotSpuPicDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public Long insertSelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public Long insertSelective(@RequestBody HubSlotSpuPicDto HubSlotSpuPicDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubBrandDicDto> selectByCriteriaWithRowbounds(@RequestBody HubBrandDicCriteriaWithRowBoundsDto criteriaWithRowBounds);
+    public List<HubSlotSpuPicDto> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuPicCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubBrandDicDto> selectByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
+    public List<HubSlotSpuPicDto> selectByCriteria(@RequestBody HubSlotSpuPicCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubBrandDicDto selectByPrimaryKey(Long brandDicId);
+    public HubSlotSpuPicDto selectByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody HubSlotSpuPicWithCriteriaDto HubSlotSpuPicDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
+    public int updateByCriteria(@RequestBody HubSlotSpuPicWithCriteriaDto HubSlotSpuPicDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKeySelective(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public int updateByPrimaryKeySelective(@RequestBody HubSlotSpuPicDto HubSlotSpuPicDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-pic/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKey(@RequestBody HubBrandDicDto HubBrandDicDto);
+    public int updateByPrimaryKey(@RequestBody HubSlotSpuPicDto HubSlotSpuPicDto);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.ephub.data.mysql.slot.pic.mapper.HubSlotSpuPicMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic" >
     <id column="slot_spu_pic_id" property="slotSpuPicId" jdbcType="BIGINT" />
     <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
     <result column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
@@ -87,7 +87,7 @@
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPicCriteria" >
     select
     <if test="distinct" >
       distinct
@@ -114,13 +114,13 @@
     delete from hub_slot_spu_pic
     where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" >
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPicCriteria" >
     delete from hub_slot_spu_pic
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic" >
     insert into hub_slot_spu_pic (slot_spu_pic_id, slot_spu_id, slot_spu_supplier_id, 
       slot_spu_no, supplier_no, supplier_id, 
       create_time, create_user, update_time, 
@@ -134,7 +134,7 @@
       #{picExtension,jdbcType=VARCHAR}, #{picHandleState,jdbcType=TINYINT}, #{dataState,jdbcType=TINYINT}, 
       #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic" >
     insert into hub_slot_spu_pic
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="slotSpuPicId != null" >
@@ -237,7 +237,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPicCriteria" resultType="java.lang.Integer" >
     select count(*) from hub_slot_spu_pic
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -321,7 +321,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic" >
     update hub_slot_spu_pic
     <set >
       <if test="slotSpuId != null" >
@@ -372,7 +372,7 @@
     </set>
     where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPic" >
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPic" >
     update hub_slot_spu_pic
     set slot_spu_id = #{slotSpuId,jdbcType=BIGINT},
       slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT},
@@ -391,7 +391,7 @@
       version = #{version,jdbcType=BIGINT}
     where slot_spu_pic_id = #{slotSpuPicId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.pic.HubSlotSpuPicCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.pic.po.HubSlotSpuPicCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct

@@ -7,7 +7,6 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
@@ -17,6 +16,8 @@ import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendingService;
+import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,28 +58,28 @@ public class StudioPendingServiceImpl implements StudioPendingService {
                         spuPendingIds.add(pendingSpu.getSpuPendingId());
                     }
                     long start_sku = System.currentTimeMillis();
-                    Map<Long,List<HubSkuPendingDto>> pendingSkus = findPendingSku(spuPendingIds,flag);
-                    log.info("--->待处理查询sku耗时{}",System.currentTimeMillis()-start_sku);
-                    for(HubSpuPendingDto pendingSpu : pendingSpus){
-                        PendingProductDto pendingProduct = JavaUtil.convertHubSpuPendingDto2PendingProductDto(pendingSpu);
-                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
-                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
-                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
-                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
-                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
-                        List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
-                        pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
-                        List<HubSpuPendingPicDto> picurls = hubSpuPendingPicService.findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
-                        pendingProduct.setSpPicUrl(findMainUrl(picurls));
-                        pendingProduct.setPicUrls(findSpPicUrls(picurls));
-                        pendingProduct.setSupplierUrls(findSupplierUrls(picurls));
-                        pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : picReason);
-                        pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
-                        pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : "");
-                        pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : "");
-                        products.add(pendingProduct);
-                    }
+//                    Map<Long,List<HubSkuPendingDto>> pendingSkus = findPendingSku(spuPendingIds,flag);
+//                    log.info("--->待处理查询sku耗时{}",System.currentTimeMillis()-start_sku);
+//                    for(HubSpuPendingDto pendingSpu : pendingSpus){
+//                        PendingProductDto pendingProduct = JavaUtil.convertHubSpuPendingDto2PendingProductDto(pendingSpu);
+//                        SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
+//                        pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
+//                        FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
+//                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
+//                        BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
+//                        pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
+//                        List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
+//                        pendingProduct.setHubSkus(CollectionUtils.isNotEmpty(skus) ? skus : new ArrayList<HubSkuPendingDto>());
+//                        List<HubSpuPendingPicDto> picurls = hubSpuPendingPicService.findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
+//                        pendingProduct.setSpPicUrl(findMainUrl(picurls));
+//                        pendingProduct.setPicUrls(findSpPicUrls(picurls));
+//                        pendingProduct.setSupplierUrls(findSupplierUrls(picurls));
+//                        pendingProduct.setPicReason(CollectionUtils.isNotEmpty(picurls) ? picurls.get(0).getMemo() : picReason);
+//                        pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
+//                        pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : "");
+//                        pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : "");
+//                        products.add(pendingProduct);
+//                    }
                     pendingProducts.setProduts(products);
                 }
                 pendingProducts.setTotal(total);
@@ -201,22 +202,22 @@ public class StudioPendingServiceImpl implements StudioPendingService {
         if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
             criteria.andHubSeasonLike(pendingQuryDto.getHubYear()+"%");
         }
-        if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
-            Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat);
-            criteria.andUpdateTimeGreaterThanOrEqualTo(startTime);
-        }
-        if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
-            Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
-            criteria.andUpdateTimeLessThan(endTime);
-        }
-        if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeStart())){
-            Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeStart(), dateFormat);
-            criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
-        }
-        if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeEnd())){
-            Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeEnd(),dateFormat);
-            criteria.andCreateTimeLessThan(endTime);
-        }
+//        if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
+//            Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat);
+//            criteria.andUpdateTimeGreaterThanOrEqualTo(startTime);
+//        }
+//        if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
+//            Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
+//            criteria.andUpdateTimeLessThan(endTime);
+//        }
+//        if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeStart())){
+//            Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeStart(), dateFormat);
+//            criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
+//        }
+//        if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeEnd())){
+//            Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeEnd(),dateFormat);
+//            criteria.andCreateTimeLessThan(endTime);
+//        }
         if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
             criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
         }

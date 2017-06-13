@@ -46,7 +46,6 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
@@ -60,6 +59,7 @@ import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicS
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
