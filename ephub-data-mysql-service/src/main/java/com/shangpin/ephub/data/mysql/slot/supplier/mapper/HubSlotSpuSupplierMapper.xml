@@ -5,6 +5,7 @@
     <id column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
     <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
+    <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
@@ -79,9 +80,9 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      slot_spu_supplier_id, slot_spu_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, state, create_time, create_user, update_time, update_user, repeat_marker, 
-      supplier_operate_sign, data_state, version
+      slot_spu_supplier_id, slot_spu_id, slot_no, slot_spu_no, supplier_no, supplier_id, 
+      spu_pending_id, supplier_spu_id, state, create_time, create_user, update_time, update_user, 
+      repeat_marker, supplier_operate_sign, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -106,7 +107,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    slot_spu_supplier_id,slot_spu_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,state,create_time,create_user,update_time,update_user,repeat_marker,supplier_operate_sign,data_state,version
+    slot_spu_supplier_id,slot_spu_id,slot_no,slot_spu_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,state,create_time,create_user,update_time,update_user,repeat_marker,supplier_operate_sign,data_state,version
     from hub_slot_spu_supplier
     where slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT}
   </select>
@@ -122,17 +123,17 @@
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     insert into hub_slot_spu_supplier (slot_spu_supplier_id, slot_spu_id, slot_no, 
-      supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, state, create_time, 
-      create_user, update_time, update_user, 
-      repeat_marker, supplier_operate_sign, data_state, 
-      version)
+      slot_spu_no, supplier_no, supplier_id, 
+      spu_pending_id, supplier_spu_id, state, 
+      create_time, create_user, update_time, 
+      update_user, repeat_marker, supplier_operate_sign, 
+      data_state, version)
     values (#{slotSpuSupplierId,jdbcType=BIGINT}, #{slotSpuId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
-      #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, 
-      #{supplierSpuId,jdbcType=BIGINT}, #{state,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{repeatMarker,jdbcType=TINYINT}, #{supplierOperateSign,jdbcType=TINYINT}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{slotSpuNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
+      #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, #{state,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{repeatMarker,jdbcType=TINYINT}, #{supplierOperateSign,jdbcType=TINYINT}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     insert into hub_slot_spu_supplier
@@ -145,6 +146,9 @@
       </if>
       <if test="slotNo != null" >
         slot_no,
+      </if>
+      <if test="slotSpuNo != null" >
+        slot_spu_no,
       </if>
       <if test="supplierNo != null" >
         supplier_no,
@@ -195,6 +199,9 @@
       </if>
       <if test="slotNo != null" >
         #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="slotSpuNo != null" >
+        #{slotSpuNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierNo != null" >
         #{supplierNo,jdbcType=VARCHAR},
@@ -255,6 +262,9 @@
       <if test="record.slotNo != null" >
         slot_no = #{record.slotNo,jdbcType=VARCHAR},
       </if>
+      <if test="record.slotSpuNo != null" >
+        slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.supplierNo != null" >
         supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       </if>
@@ -304,6 +314,7 @@
     set slot_spu_supplier_id = #{record.slotSpuSupplierId,jdbcType=BIGINT},
       slot_spu_id = #{record.slotSpuId,jdbcType=BIGINT},
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
+      slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
@@ -329,6 +340,9 @@
       </if>
       <if test="slotNo != null" >
         slot_no = #{slotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="slotSpuNo != null" >
+        slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
       </if>
       <if test="supplierNo != null" >
         supplier_no = #{supplierNo,jdbcType=VARCHAR},
@@ -376,6 +390,7 @@
     update hub_slot_spu_supplier
     set slot_spu_id = #{slotSpuId,jdbcType=BIGINT},
       slot_no = #{slotNo,jdbcType=VARCHAR},
+      slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       spu_pending_id = #{spuPendingId,jdbcType=BIGINT},

@@ -20,6 +20,11 @@ public class HubSlotSpuSupplierDto implements Serializable {
     private String slotNo;
 
     /**
+     * slotspuno编号
+     */
+    private String slotSpuNo;
+
+    /**
      * 供货商编号
      */
     private String supplierNo;
@@ -108,6 +113,14 @@ public class HubSlotSpuSupplierDto implements Serializable {
 
     public void setSlotNo(String slotNo) {
         this.slotNo = slotNo == null ? null : slotNo.trim();
+    }
+
+    public String getSlotSpuNo() {
+        return slotSpuNo;
+    }
+
+    public void setSlotSpuNo(String slotSpuNo) {
+        this.slotSpuNo = slotSpuNo == null ? null : slotSpuNo.trim();
     }
 
     public String getSupplierNo() {
@@ -223,6 +236,7 @@ public class HubSlotSpuSupplierDto implements Serializable {
         sb.append(", slotSpuSupplierId=").append(slotSpuSupplierId);
         sb.append(", slotSpuId=").append(slotSpuId);
         sb.append(", slotNo=").append(slotNo);
+        sb.append(", slotSpuNo=").append(slotSpuNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", spuPendingId=").append(spuPendingId);
@@ -256,6 +270,7 @@ public class HubSlotSpuSupplierDto implements Serializable {
         return (this.getSlotSpuSupplierId() == null ? other.getSlotSpuSupplierId() == null : this.getSlotSpuSupplierId().equals(other.getSlotSpuSupplierId()))
             && (this.getSlotSpuId() == null ? other.getSlotSpuId() == null : this.getSlotSpuId().equals(other.getSlotSpuId()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
+            && (this.getSlotSpuNo() == null ? other.getSlotSpuNo() == null : this.getSlotSpuNo().equals(other.getSlotSpuNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getSpuPendingId() == null ? other.getSpuPendingId() == null : this.getSpuPendingId().equals(other.getSpuPendingId()))
@@ -278,6 +293,7 @@ public class HubSlotSpuSupplierDto implements Serializable {
         result = prime * result + ((getSlotSpuSupplierId() == null) ? 0 : getSlotSpuSupplierId().hashCode());
         result = prime * result + ((getSlotSpuId() == null) ? 0 : getSlotSpuId().hashCode());
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
+        result = prime * result + ((getSlotSpuNo() == null) ? 0 : getSlotSpuNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getSpuPendingId() == null) ? 0 : getSpuPendingId().hashCode());
