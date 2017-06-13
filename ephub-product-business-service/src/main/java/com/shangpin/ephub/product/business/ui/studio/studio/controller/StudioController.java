@@ -23,8 +23,6 @@ public class StudioController {
     * */
     @RequestMapping(value = "/spullist",method = RequestMethod.POST)
     public HubResponse<?> getPendingProductList(@RequestBody StudioQueryDto queryDto) {
-
-        log.info(queryDto.toString());
         return  HubResponse.successResp(iStudioService.getPendingProductList(queryDto));
     }
 
@@ -33,7 +31,7 @@ public class StudioController {
      */
     @RequestMapping(value = "/slotlist")
     public HubResponse<?> getSupplierSlotList(@RequestBody StudioQueryDto queryDto) {
-        return  null;//studioService.getSupplierSlotList(supplierNo,status);
+        return  HubResponse.successResp(iStudioService.getSupplierSlotList(queryDto));
     }
 
 
@@ -42,7 +40,7 @@ public class StudioController {
    * */
     @RequestMapping(value = "/slotinfo")
     public HubResponse<?> getSlotInfo(@RequestBody StudioQueryDto queryDto) {
-        return  null;//studioService.getSlotInfo(supplierNo,slotNo);
+        return  HubResponse.successResp(iStudioService.getSlotInfo(queryDto));
     }
 
 

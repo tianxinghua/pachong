@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/6/8.
@@ -15,21 +16,14 @@ import java.io.Serializable;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StudioPendingProductVo extends HubSlotSpuSupplierDto implements Serializable {
+public class StudioPendingProductVo  implements Serializable {
 
     private static final long serialVersionUID = 9106346918684398530L;
-
+    private List<StudioPendingProduct> hubProducts;
+    private int total;
 //    private Long slotSpuId;
 //    private String slotNo;
 //    public String supplierId;
 
-    public String brandNo;
-    public String brandName;
 
-    public String categoryNo;
-    public String categoryName;
-
-    public String supplierOrigin;
-
-    public String productName;
 }

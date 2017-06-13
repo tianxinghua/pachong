@@ -1,7 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.service;
 
-import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioPendingProducts;
-import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.*;
 import com.shangpin.ephub.response.HubResponse;
 
 /**
@@ -9,10 +8,10 @@ import com.shangpin.ephub.response.HubResponse;
  */
 public interface IStudioService {
 
-    public StudioPendingProducts getPendingProductList(StudioQueryDto queryDto);
+    public StudioPendingProductVo getPendingProductList(StudioQueryDto queryDto);
 
-    public HubResponse<?> getSupplierSlotList(StudioQueryDto queryDto);
-    public HubResponse<?> getSlotInfo(StudioQueryDto queryDto);
+    public SlotsVo getSupplierSlotList(StudioQueryDto queryDto);
+    public SlotInfoExtends getSlotInfo(StudioQueryDto queryDto);
     public HubResponse<?> addProductIntoSlot(StudioQueryDto queryDto);
     public HubResponse<?> delProductFromSlot(StudioQueryDto queryDto);
     public HubResponse<?> checkProductAndSendSlot(StudioQueryDto queryDto);
