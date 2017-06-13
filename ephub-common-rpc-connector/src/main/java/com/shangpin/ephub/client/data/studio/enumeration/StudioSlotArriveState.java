@@ -10,7 +10,7 @@ public enum StudioSlotArriveState {
 
 
     /**
-     * 摄影棚收货
+     * 收货
      */
     RECEIVED(0,"RECEIVED"),
 

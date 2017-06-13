@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.rest.studio.hub.controller;
+package com.shangpin.ephub.product.business.ui.studio.hub.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

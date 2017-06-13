@@ -3,17 +3,27 @@ package com.shangpin.ephub.client.data.studio.enumeration;
 /**
 
 
-  发货状态 状态
+ STUDIO_SLOT_RETURN_DETAIL  收货状态
  *
  */
-public enum StudioSlotSendState {
-
+public enum StudioSlotSupplierArriveState {
 
 
     /**
-     * 发货
+     * 收货
      */
-    SEND(0,"SEND");
+    RECEIVED(0,"RECEIVED"),
+
+    /**
+     *  不接受
+     */
+    NOT_ACCEPTANCE(1,"NOT_ACCEPTANCE"),
+
+    /**
+     * 未收到
+     */
+
+    NOT_ARRIVE(2,"NOT_ARRIVE");
 
 
 
@@ -27,7 +37,7 @@ public enum StudioSlotSendState {
      */
     private String description;
 
-    StudioSlotSendState(Integer index, String description){
+    StudioSlotSupplierArriveState(Integer index, String description){
 		this.index = index;
 		this.description = description;
 	}

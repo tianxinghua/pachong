@@ -9,7 +9,7 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
 public enum SpuPendingStudioState {
 
 	/**
-	 *
+	 * 等待处理
 	 */
 	WAIT_HANDLED(0,"WAIT_HANDLED"),
 
