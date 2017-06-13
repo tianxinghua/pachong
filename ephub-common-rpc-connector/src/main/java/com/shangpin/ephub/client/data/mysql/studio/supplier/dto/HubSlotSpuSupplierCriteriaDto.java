@@ -1,9 +1,12 @@
 package com.shangpin.ephub.client.data.mysql.studio.supplier.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 public class HubSlotSpuSupplierCriteriaDto {
     protected String orderByClause;
 
@@ -107,9 +110,9 @@ public class HubSlotSpuSupplierCriteriaDto {
     }
 
     protected abstract static class GeneratedCriteria {
-        protected List<Criterion> criteria;
+        public List<Criterion> criteria;
 
-        protected GeneratedCriteria() {
+        public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -118,6 +121,7 @@ public class HubSlotSpuSupplierCriteriaDto {
             return criteria.size() > 0;
         }
 
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -1160,12 +1164,15 @@ public class HubSlotSpuSupplierCriteriaDto {
 
     public static class Criteria extends GeneratedCriteria {
 
-        protected Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
+        public Criterion() {
+            super();
+        }
         private String condition;
 
         private Object value;
