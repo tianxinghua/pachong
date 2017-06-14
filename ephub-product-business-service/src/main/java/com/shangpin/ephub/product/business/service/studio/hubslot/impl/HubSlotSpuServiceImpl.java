@@ -2,8 +2,8 @@ package com.shangpin.ephub.product.business.service.studio.hubslot.impl;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuNoTypeDto;
-import com.shangpin.ephub.client.data.mysql.product.gateway.SpuNoGateWay;
+//import com.shangpin.ephub.client.data.mysql.product.dto.SpuNoTypeDto;
+//import com.shangpin.ephub.client.data.mysql.product.gateway.SpuNoGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
@@ -30,14 +30,14 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
     HubSlotSpuGateWay slotSpuGateWay;
 
-    @Autowired
-    SpuNoGateWay spuNoGateWay;
-
-    @Autowired
-    HubSlotSpuSupplierService hubSlotSpuSupplierService;
-
-
-    SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
+//    @Autowired
+//    SpuNoGateWay spuNoGateWay;
+//
+//    @Autowired
+//    HubSlotSpuSupplierService hubSlotSpuSupplierService;
+//
+//
+//    SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
 
     @Override
     public HubSlotSpuDto findHubSlotSpu(String brandNo, String spuModel) {
@@ -70,7 +70,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
             this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto.getSlotSpuId(),slotSpuDto.getSlotSpuNo());
 
-            hubSlotSpuSupplierService.addHubSloSpuSupplier(slotSpuSupplierDto);
+//            hubSlotSpuSupplierService.addHubSloSpuSupplier(slotSpuSupplierDto);
 
 
             return true;
@@ -98,8 +98,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         }
         target.setCreateTime(new Date());
         target.setCreateUser(target.getUpdateUser());
-        spuNoTypeDto.setType("slotspu");//常量在 中定义 只有此处用到 ，直接写死了
-        target.setSlotSpuNo(spuNoGateWay.getSpuNo(spuNoTypeDto));
+//        spuNoTypeDto.setType("slotspu");//常量在 中定义 只有此处用到 ，直接写死了
+//        target.setSlotSpuNo(spuNoGateWay.getSpuNo(spuNoTypeDto));
 
 
 

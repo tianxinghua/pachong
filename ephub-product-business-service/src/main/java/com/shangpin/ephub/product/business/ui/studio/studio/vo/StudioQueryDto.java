@@ -21,7 +21,9 @@ public class StudioQueryDto implements Serializable {
 
     private String supplierId;
     private String slotNo;
-//    private String spuNo;
+    private String spuNo;
+    private Long slotSSId; //待拍照的SPU下挂供货商 表字段Id SlotSpuSupplierId
+    private String createUser;
 //    private Byte status;
 //    private String type;
 

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.data.studio.enumeration.ArriveState;
+//import com.shangpin.ephub.client.data.studio.enumeration.ArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
@@ -79,7 +79,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		criteria.setOrderByClause("slot_no"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
-		criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue());
+//		criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue());
 //		.andShotStatusEqualTo(Studioshots);
 		Long studioId = getStudioId(openBoxQuery.getStudioNo());
 		if(null != studioId){
