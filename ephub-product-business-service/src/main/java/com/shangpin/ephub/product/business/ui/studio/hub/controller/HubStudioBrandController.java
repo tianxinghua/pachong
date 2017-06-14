@@ -1,7 +1,7 @@
-package com.shangpin.ephub.product.business.rest.studio.hub.controller;
+package com.shangpin.ephub.product.business.ui.studio.hub.controller;
 
-import com.shangpin.ephub.product.business.rest.studio.hub.dto.StudioBrandDto;
-import com.shangpin.ephub.product.business.rest.studio.hub.service.StudioBrandService;
+import com.shangpin.ephub.product.business.ui.studio.hub.dto.StudioBrandDto;
+import com.shangpin.ephub.product.business.ui.studio.hub.service.StudioBrandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HubStudioBrandController {
 
 	@Autowired
-	StudioBrandService studioBrandService;
+    StudioBrandService studioBrandService;
 
 	@RequestMapping(value = "/is-need-shoot")
 	public boolean  isNeedShoot(@RequestBody StudioBrandDto studioBrandDto){

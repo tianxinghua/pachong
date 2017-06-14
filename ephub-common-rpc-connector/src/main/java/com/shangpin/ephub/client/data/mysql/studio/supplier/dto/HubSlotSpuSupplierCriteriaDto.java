@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.data.mysql.studio.supplier.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -109,7 +111,7 @@ public class HubSlotSpuSupplierCriteriaDto {
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
-        protected GeneratedCriteria() {
+        public GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -118,6 +120,7 @@ public class HubSlotSpuSupplierCriteriaDto {
             return criteria.size() > 0;
         }
 
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -334,6 +337,76 @@ public class HubSlotSpuSupplierCriteriaDto {
 
         public Criteria andSlotNoNotBetween(String value1, String value2) {
             addCriterion("slot_no not between", value1, value2, "slotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoIsNull() {
+            addCriterion("slot_spu_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoIsNotNull() {
+            addCriterion("slot_spu_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoEqualTo(String value) {
+            addCriterion("slot_spu_no =", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoNotEqualTo(String value) {
+            addCriterion("slot_spu_no <>", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoGreaterThan(String value) {
+            addCriterion("slot_spu_no >", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoGreaterThanOrEqualTo(String value) {
+            addCriterion("slot_spu_no >=", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoLessThan(String value) {
+            addCriterion("slot_spu_no <", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoLessThanOrEqualTo(String value) {
+            addCriterion("slot_spu_no <=", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoLike(String value) {
+            addCriterion("slot_spu_no like", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoNotLike(String value) {
+            addCriterion("slot_spu_no not like", value, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoIn(List<String> values) {
+            addCriterion("slot_spu_no in", values, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoNotIn(List<String> values) {
+            addCriterion("slot_spu_no not in", values, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoBetween(String value1, String value2) {
+            addCriterion("slot_spu_no between", value1, value2, "slotSpuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuNoNotBetween(String value1, String value2) {
+            addCriterion("slot_spu_no not between", value1, value2, "slotSpuNo");
             return (Criteria) this;
         }
 
@@ -1160,12 +1233,17 @@ public class HubSlotSpuSupplierCriteriaDto {
 
     public static class Criteria extends GeneratedCriteria {
 
-        protected Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
+
+        public Criterion() {
+            super();
+        }
+
         private String condition;
 
         private Object value;

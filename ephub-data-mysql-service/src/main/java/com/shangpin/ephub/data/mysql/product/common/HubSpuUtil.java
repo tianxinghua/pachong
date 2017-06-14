@@ -55,6 +55,37 @@ public class HubSpuUtil {
        return result;
     }
 
+
+
+    /**
+     * 创建SLOTSPU编号
+     * 无法获取时 返回空值
+     * @return
+     */
+    public String createSlotSpuNo(Long num){
+        Long tmpSpuNo = 0L;
+        try {
+            if(num==0){
+                tmpSpuNo= shangpinRedis.incr(ConstantProperty.EP_HUB_SLOT_SPU_NO_CREATE_KEY);
+
+            }else{
+                tmpSpuNo= shangpinRedis.incrBy(ConstantProperty.EP_HUB_SLOT_SPU_NO_CREATE_KEY,num);
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            log.error("redis 出错，无法获取spu编号.reason :" + e.getMessage(),e);
+            String spuNo = hubSpuMapper.getMaxSpuNo();
+            tmpSpuNo = Long.valueOf(spuNo.substring(1,spuNo.length())) + 1;
+        }
+        String result = "";
+        result = "00000000" + String.valueOf(tmpSpuNo);
+        result = "7"+result.substring(result.length()-9,result.length());
+
+
+        return result;
+    }
+
     /**
      * 或许SPU下的SKU编号
      * @param spuNo  ：spu编号

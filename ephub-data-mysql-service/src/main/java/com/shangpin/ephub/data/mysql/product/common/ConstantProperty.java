@@ -7,6 +7,11 @@ public class ConstantProperty {
 
     public final static String EP_HUB_SPU_NO_CREATE_KEY="EP_HUB_SPU_NO_CREATE_KEY";
 
+    public final static String EP_HUB_SLOT_SPU_NO_CREATE_KEY="EP_HUB_SLOT_SPU_NO_CREATE_KEY";
+
+    public final static String SPU_NO_TYPE_FOR_HUB_SPU = "hubspu";
+
+    public final static String SPU_NO_TYPE_FOR_SLOT_SPU = "slotspu";
 
     public final static String  DATA_CREATE_USER = "pendingToHubService";
 

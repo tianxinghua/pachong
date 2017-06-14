@@ -1,25 +1,24 @@
 package com.shangpin.ephub.client.data.studio.enumeration;
 
 /**
- * <p>Title: ArriveState</p>
- * <p>Description: STUDIO_SLOT表中 到货状态 </p>
- * <p>Company: </p> 
- * @author lubaijiang
- * @date 2017年6月12日 下午5:22:19
+
+
+ STUDIO_SLOT表中 摄影棚收货状态
  *
  */
-public enum ArriveState {
+public enum StudioSlotArriveState {
 
-
-    /**
-     * 未到货
-     */
-    NOT_ARRIVED(0,"not_arrived"),
+    NOT_ARRIVE(0,"NOT_ARRIVE"),
 
     /**
-     *已到货
+     * 摄影棚收货
      */
-    ARRIVED(1,"arrived");
+    RECEIVED(1,"RECEIVED"),
+
+    /**
+     *
+     */
+    DELAY(2,"DELAY");
 
 
 
@@ -33,7 +32,7 @@ public enum ArriveState {
      */
     private String description;
 
-    ArriveState(Integer index, String description){
+    StudioSlotArriveState(Integer index, String description){
 		this.index = index;
 		this.description = description;
 	}

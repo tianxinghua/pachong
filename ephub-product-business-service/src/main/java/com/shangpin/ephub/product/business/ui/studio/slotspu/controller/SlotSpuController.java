@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.pending.controller;
+package com.shangpin.ephub.product.business.ui.studio.slotspu.controller;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -17,17 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * <p>Title:PendingProductController </p>
- * <p>Description: 待处理页面</p>
- * <p>Company: www.shangpin.com</p>
- * @author lubaijiang
- * @date 2016年12月21日 下午5:15:48
+
  *
  */
 @RestController
-@RequestMapping("/studio-pending")
+@RequestMapping("/slot-spu")
 @Slf4j
-public class StudioPendingController {
+public class SlotSpuController {
 	
 	private static String resultSuccess = "success";
 	private static String resultFail = "fail";
