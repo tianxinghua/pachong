@@ -10,11 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.ArriveState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
@@ -22,6 +26,7 @@ import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.openbox.dto.OpenBoxQuery;
 import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxService;
+import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
@@ -41,8 +46,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 
 	@Override
 	public OpenBoxVo slotList(OpenBoxQuery openBoxQuery) {
-		OpenBoxVo openBoxVo = new OpenBoxVo();
 		try {
+			OpenBoxVo openBoxVo = new OpenBoxVo();
 			log.info("开箱质检页面接受到的查询参数："+JsonUtil.serialize(openBoxQuery)); 
 			StudioSlotCriteriaDto criteria = getStudioSlotCriteria(openBoxQuery);
 			List<StudioSlotDto>  list = studioSlotGateWay.selectByCriteria(criteria);
@@ -62,11 +67,11 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 				openBoxVo.setPrioritySlots(prioritySlots);
 				openBoxVo.setSecondarySlots(secondarySlots); 
 			}
-			
+			return openBoxVo;
 		} catch (Exception e) {
 			log.error("开箱质检页面查询异常："+e.getMessage(),e);
 		}
-		return openBoxVo;
+		return null;
 	}
 	/**
 	 * 将传入的页面条件转换为数据库查询条件
@@ -79,8 +84,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		criteria.setOrderByClause("slot_no"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
-		criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue());
-//		.andShotStatusEqualTo(Studioshots);
+		criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue())
+		.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		Long studioId = getStudioId(openBoxQuery.getStudioNo());
 		if(null != studioId){
 			criteria.createCriteria().andStudioIdEqualTo(studioId);
@@ -113,7 +118,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	 * @param studioNo
 	 * @return
 	 */
-	private Long getStudioId(String studioNo) {
+	public Long getStudioId(String studioNo) {
 		if(StringUtils.isBlank(studioNo)){
 			return null;
 		}
@@ -139,6 +144,56 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			openBoxDetailVo.setDetails(list);
 		}
 		return openBoxDetailVo; 
+	}
+	@Override
+	public boolean slotDetailCheck(String slotNoSpuId) {
+		try {
+			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
+			Long spuPendingId = Long.valueOf(slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1));
+			StudioSlotSpuSendDetailWithCriteriaDto withCriteria = new StudioSlotSpuSendDetailWithCriteriaDto();
+			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+			criteria.createCriteria().andSlotNoEqualTo(slotNo).andSpuPendingIdEqualTo(spuPendingId);
+			withCriteria.setCriteria(criteria );
+			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
+			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
+			withCriteria.setStudioSlotSpuSendDetailDto(studioSlotSpuSendDetailDto );
+			studioSlotSpuSendDetailGateWay.updateByCriteria(withCriteria);
+			return true;
+		} catch (Exception e) {
+			log.error("扫码质检异常："+e.getMessage(),e); 
+		}
+		return false;
+	}
+	@Override
+	public CheckDetailVo checkResult(String slotNo) {
+		try {
+			CheckDetailVo checkDetailVo = new CheckDetailVo();
+			//先更新批次状态
+			StudioSlotWithCriteriaDto slotWithCriteria = new StudioSlotWithCriteriaDto();
+			StudioSlotCriteriaDto slotCriteria = new StudioSlotCriteriaDto();
+			slotCriteria.createCriteria().andSlotNoEqualTo(slotNo);
+			slotWithCriteria.setCriteria(slotCriteria );
+			StudioSlotDto studioSlotDto =  new StudioSlotDto();
+			studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
+			studioSlotDto.setShootTime(new Date()); 
+			slotWithCriteria.setStudioSlotDto(studioSlotDto );
+			studioSlotGateWay.updateByCriteria(slotWithCriteria);
+			//TODO 暂时没有盘盈
+			//下面是盘亏
+			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+			criteria.setOrderByClause("create_time");
+			criteria.setPageNo(1);
+			criteria.setPageSize(1000); 
+			criteria.createCriteria().andSlotNoEqualTo(slotNo).andArriveStateEqualTo(StudioSlotStudioArriveState.NOT_ARRIVE.getIndex().byteValue()); 
+			List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
+			if(CollectionUtils.isNotEmpty(list)){
+				checkDetailVo.setInventoryLosses(list); 
+			}
+			return checkDetailVo;
+		} catch (Exception e) {
+			log.info("确认批次时异常："+e.getMessage(),e); 
+		}
+		return null;
 	}
 
 }
