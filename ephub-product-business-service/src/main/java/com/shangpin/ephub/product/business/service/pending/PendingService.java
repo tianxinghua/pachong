@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.service.pending;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
@@ -34,4 +36,17 @@ public interface PendingService {
      * @throws Exception
      */
     public boolean audit(SpuPendingAuditVO auditVO) throws Exception;
+
+    /**
+     *
+     * @param spuPendingId
+     * @throws Exception
+     */
+    public void updatePendingSlotState(Long spuPendingId, SpuPendingStudioState studioState) throws Exception;
+
+
+    public boolean isCanUpdateSpuMode(Long spuPendingId);
+
+
+    public HubSpuPendingDto getSpuPendingByKey(Long spuPendingId);
 }

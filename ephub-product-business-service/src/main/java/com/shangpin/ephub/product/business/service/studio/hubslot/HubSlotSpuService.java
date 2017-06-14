@@ -23,4 +23,26 @@ public interface HubSlotSpuService {
      */
     public boolean addSlotSpuAndSupplier(PendingProductDto pendingProductDto) throws Exception;
 
+
+
+
+
+    /**
+     * 待处理修改
+     * @param pendingProductDto
+     * @return
+     * @throws Exception
+     */
+    public  boolean  updateSlotSpu(PendingProductDto pendingProductDto) throws Exception;
+
+
+    /**
+     * 跟新slotspu 中的品牌和货号
+     * @param slotSpuId
+     * @param pendingProductDto
+     * @return
+     * @throws Exception
+     */
+    public  boolean updateSpuModelAndBrandNo(Long slotSpuId,PendingProductDto pendingProductDto) throws Exception;
+
 }
