@@ -49,19 +49,19 @@ public class HubMaterialDicService {
 		criteria.andMappingLevelEqualTo(type);
 		
 		if(StringUtils.isNotBlank(hubMaterial)){
-			criteria.andHubMaterialEqualTo(hubMaterial);
+			criteria.andHubMaterialLike("%"+hubMaterial+"%");
 		}
 		if(StringUtils.isNotBlank(supplierMaterial)){
-			criteria.andSupplierMaterialEqualTo(supplierMaterial);
+			criteria.andSupplierMaterialLike("%"+supplierMaterial+"%");
 		}
 		
 		if(type==0){
 			HubMaterialMappingCriteriaDto.Criteria criteriaOr = hubMaterialMappingCriteriaDto.createCriteria();
 			if(StringUtils.isNotBlank(hubMaterial)){
-				criteriaOr.andHubMaterialEqualTo(hubMaterial);
+				criteriaOr.andHubMaterialLike("%"+hubMaterial+"%");
 			}
 			if(StringUtils.isNotBlank(supplierMaterial)){
-				criteriaOr.andSupplierMaterialEqualTo(supplierMaterial);
+				criteriaOr.andSupplierMaterialLike("%"+supplierMaterial+"%");
 			}
 			hubMaterialMappingCriteriaDto.or(criteriaOr.andMappingLevelIsNull());
 		}
@@ -73,18 +73,18 @@ public class HubMaterialDicService {
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
 		criteria.andMappingLevelEqualTo(type);
 		if(StringUtils.isNotBlank(hubMaterial)){
-			criteria.andHubMaterialEqualTo(hubMaterial);
+			criteria.andHubMaterialLike("%"+hubMaterial+"%");
 		}
 		if(StringUtils.isNotBlank(supplierMaterial)){
-			criteria.andSupplierMaterialEqualTo(supplierMaterial);
+			criteria.andSupplierMaterialLike("%"+supplierMaterial+"%");
 		}
 		if(type==0){
 			HubMaterialMappingCriteriaDto.Criteria criteriaOr = hubMaterialMappingCriteriaDto.createCriteria();
 			if(StringUtils.isNotBlank(hubMaterial)){
-				criteriaOr.andHubMaterialEqualTo(hubMaterial);
+				criteriaOr.andHubMaterialLike("%"+hubMaterial+"%");
 			}
 			if(StringUtils.isNotBlank(supplierMaterial)){
-				criteriaOr.andSupplierMaterialEqualTo(supplierMaterial);
+				criteriaOr.andSupplierMaterialLike("%"+supplierMaterial+"%");
 			}
 			hubMaterialMappingCriteriaDto.or(criteriaOr.andMappingLevelIsNull());
 		}
@@ -98,13 +98,8 @@ public class HubMaterialDicService {
 		criteria.createCriteria().andHubMaterialEqualTo(materialMappingId);
 		return hubMaterialMappingGateWay.countByCriteria(criteria);
 	}
-	public List<HubMaterialMappingDto> getSupplierMaterialByHubMaterialId(String materialMappingId, int pageNo,
-			int pageSize) {
-		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
-		criteria.setPageNo(pageNo);
-		criteria.setPageSize(pageSize);
-		criteria.createCriteria().andHubMaterialEqualTo(materialMappingId);
-		return hubMaterialMappingGateWay.selectByCriteria(criteria);
+	public HubMaterialMappingDto getSupplierMaterialByHubMaterialId(Long materialMappingId) {
+		return hubMaterialMappingGateWay.selectByPrimaryKey(materialMappingId);
 	}
 	public void saveHubSupplierMaterial(HubMaterialMappingDto dicDto) {
 		hubMaterialMappingGateWay.insertSelective(dicDto);

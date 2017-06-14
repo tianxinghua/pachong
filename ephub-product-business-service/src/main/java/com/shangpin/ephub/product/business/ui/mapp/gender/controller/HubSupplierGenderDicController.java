@@ -135,19 +135,18 @@ public class HubSupplierGenderDicController {
 			HubGenderDicDto dicDto = new HubGenderDicDto();
 			BeanUtils.copyProperties(dto, dicDto);
 			if(StringUtils.isNotBlank(dto.getSupplierGender())){
-				String [] supplierGenderArr = dto.getSupplierGender().trim().split(",",-1);
-				for(String supplierGender:supplierGenderArr){
+				String  supplierGender = dto.getSupplierGender();
 					List<HubGenderDicDto> listHubGender = hubGenderDicService.getHubGenderDicItemBySupplierGender(supplierGender);
 					if(listHubGender!=null&&listHubGender.size()>0){
-						continue;
+						return HubResponse.errorResp("添加失败，已存在");
 					}
 					dicDto.setSupplierGender(supplierGender);
 					dicDto.setCreateTime(new Date());
 					dicDto.setUpdateTime(new Date());
 					dicDto.setPushState((byte)1);
 					dicDto.setCreateUser(dto.getCreateUser());
+					dicDto.setUpdateUser(dto.getCreateUser());
 					hubGenderDicService.saveGenderItem(dicDto);
-				}
 			}
 			return HubResponse.successResp(null);
 		} catch (Exception e) {

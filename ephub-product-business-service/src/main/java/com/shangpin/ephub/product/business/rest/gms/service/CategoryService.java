@@ -71,6 +71,22 @@ public class CategoryService {
 		}
 		return null;
 	}
+	
+	public String getHubCategoryNameByHubCategory(String hubCategoryNo,FourLevelCategory category){
+		if(category!=null&&hubCategoryNo!=null){
+			if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
+				return category.getFourthName();
+			}else if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}")){
+				return category.getThirdName();
+			}else if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}")){
+				return category.getSecondName();
+			}else if(hubCategoryNo.matches("A[0-9]{2}")){
+				return category.getFirstName();
+			}			
+		}
+		return null;
+	}
+	
 	/**
 	 * 将品类缓存到redis
 	 * @param categoryNo

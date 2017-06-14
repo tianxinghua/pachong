@@ -82,12 +82,13 @@ public class HubCheckService {
 	SizeService sizeService;
 	
 	public boolean getCategoryName(String categoryNo) {
-		FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
-        if(null != category){
-        	return true;
-        }else{
-        	return false;
-        }
+		if(categoryNo!=null&&categoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
+			FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
+	        if(null != category){
+	        	return true;
+	        }
+		}
+		return false;
 	}
 	public boolean getBrand(String brandNo) {
 		BrandDom brand = brandService.getGmsBrand(brandNo);

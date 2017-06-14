@@ -423,7 +423,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {
         FourLevelCategory gmsCateGory = categoryService.getGmsCateGory(spuModelVO.getCategoryNo());
         if(null!=gmsCateGory){
-            spuModelVO.setSpuName(gmsCateGory.getFourthName());
+            spuModelVO.setSpuName(categoryService.getHubCategoryNameByHubCategory(spuModelVO.getCategoryNo(), gmsCateGory));
         }
 
 

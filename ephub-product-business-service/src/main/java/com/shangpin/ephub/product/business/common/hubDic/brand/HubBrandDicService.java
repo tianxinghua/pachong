@@ -14,7 +14,6 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteri
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
-import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.product.business.common.util.ConstantProperty;
@@ -168,6 +167,9 @@ public class HubBrandDicService {
 		return supplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto);
 	}
 
+	public int countHubBrand() {
+		return brandDicGateway.count();
+	}
 	public int countHubBrand(String supplierBrand, String hubBrandNo) {
 		HubBrandDicCriteriaDto cruteria = new HubBrandDicCriteriaDto();
 		HubBrandDicCriteriaDto.Criteria criteria = cruteria.createCriteria();
@@ -179,7 +181,6 @@ public class HubBrandDicService {
 		}
 		return brandDicGateway.countByCriteria(cruteria);
 	}
-
 	public List<HubBrandDicDto> getHubBrand(String supplierBrand, String hubBrandNo, int pageNo, int pageSize) {
 		HubBrandDicCriteriaDto cruteria = new HubBrandDicCriteriaDto();
 		HubBrandDicCriteriaDto.Criteria criteria = cruteria.createCriteria();
@@ -192,6 +193,9 @@ public class HubBrandDicService {
 		cruteria.setPageNo(pageNo);
 		cruteria.setPageSize(pageSize);
 		cruteria.setOrderByClause("update_time desc");
+
+//	    select hub_brand_no from hub_brand_dic  GROUP BY hub_brand_no LIMIT 10,10
+	    
 		return brandDicGateway.selectByCriteria(cruteria);
 	}
 
@@ -219,5 +223,13 @@ public class HubBrandDicService {
 
 	public void deleteHubBrandById(Long id) {
 		brandDicGateway.deleteByPrimaryKey(id);
+	}
+
+	public List<HubBrandDicDto> getHubBrandList(HubBrandDicCriteriaDto cruteria ) {
+		return brandDicGateway.selectHUbBrandNo(cruteria);
+	}
+
+	public HubBrandDicDto getHubBrandById(Long id) {
+		return brandDicGateway.selectByPrimaryKey(id);
 	}
 }

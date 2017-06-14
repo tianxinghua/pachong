@@ -194,13 +194,13 @@ public class HubSupplierCategoryDicController {
 				if(list!=null&&list.size()>0){
 					for(HubSupplierCategroyDicDto dic:list){
 						
-						if(dic.getCategoryType()==4){
+						if(dic.getCategoryType()!=null&&dic.getCategoryType()==4){
 							continue;
 						}
 						HubSupplierCategroyDicDto hubSupplierCategroyDicDto = new HubSupplierCategroyDicDto();
 						BeanUtils.copyProperties(dic, hubSupplierCategroyDicDto);
 						log.info("======供应商品类映射hub品类变更：{}",dic);
-						if(dic.getCategoryType()==4){
+						if(dic.getCategoryType()!=null&&dic.getCategoryType()==4){
 							dicDto.setMappingState((byte)1);		
 							dicDto.setPushState((byte)1);
 						}else{

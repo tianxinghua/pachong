@@ -62,12 +62,17 @@ public class HubSupplierColorDicController {
 		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
 			int total =0;
-			byte type = hubSupplierColorDicRequestDto.getType();
-			if(type==0){
-				total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
-			}else if(type==1){
-				total = HubColorDic.getHubColorMap().size();
+			
+			
+			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
+				hubSupplierColorDicRequestDto.setColorDicId(HubColorDic.getHubColorId(hubSupplierColorDicRequestDto.getHubColor()));
 			}
+			byte type = hubSupplierColorDicRequestDto.getType();
+//			if(type==0){
+				total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
+//			}else if(type==1){
+//				total = HubColorDic.getHubColorMap().size();
+//			}
 			log.info("返回个数："+total);
 			if(total>0){
 				List<HubColorDicItemDto> list = hubColorDicService.getSupplierColorByType(hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
@@ -75,7 +80,6 @@ public class HubSupplierColorDicController {
 				List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
 				if (list != null && list.size() > 0) {
 					for (HubColorDicItemDto dicDto : list) {
-						if(type==0){
 							HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
 							dic.setColorDicId(dicDto.getColorDicId());
 							dic.setColorDicItemId(dicDto.getColorDicItemId());
@@ -87,47 +91,13 @@ public class HubSupplierColorDicController {
 							}
 							dic.setUpdateUser(dicDto.getUpdateUser());
 							responseList.add(dic);
-						}
-						if(type==1){
-							if(dicDto.getColorDicId()!=null){
-								if(map.containsKey(dicDto.getColorDicId())){
-									HubColorDicItemDto temp = map.get(dicDto.getColorDicId());
-									temp.setColorItemName(temp.getColorItemName()+","+dicDto.getColorItemName());
-									map.put(dicDto.getColorDicId(),temp);
-								}else{
-									map.put(dicDto.getColorDicId(), dicDto);
-								}	
-							}
-						}
 					}
 				}
-				if(type==1){
-					if(map!=null&&map.size()>0){
-						for(Map.Entry<Long,HubColorDicItemDto> entry:map.entrySet()){
-							HubColorDicItemDto dicDto = entry.getValue();
-							HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
-							if(dicDto.getCreateTime()!=null){
-								dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
-							}
-							if(dicDto.getUpdateTime()!=null){
-								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
-							}
-							dic.setColorDicId(dicDto.getColorDicId());
-							dic.setColorDicItemId(dicDto.getColorDicItemId());
-							dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
-							dic.setSupplierColor(dicDto.getColorItemName());
-							dic.setUpdateUser(dicDto.getUpdateUser());
-							responseList.add(dic);
-						}
-					}
-				}
-				
 				HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
 				response.setTotal(total);
 				response.setList(responseList);
 				return HubResponse.successResp(response);
 			}
-			
 			return HubResponse.successResp(null);
 			
 		} catch (Exception e) {
@@ -160,33 +130,26 @@ public class HubSupplierColorDicController {
 		}
 	}
 	
-	@RequestMapping(value = "/detail", method = RequestMethod.POST)
-	public HubResponse selectHubColorDetail(@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
+	@RequestMapping(value = "/detail/{colorDicItemId}", method = RequestMethod.POST)
+	public HubResponse selectHubColorDetail(@PathVariable("colorDicItemId") Long colorDicItemId) {
 		try {
-			log.info("颜色详情请求参数：{}",hubSupplierColorDicRequestDto);
-			
-			int total = hubColorDicService.countHubColorDicByHubColorId(hubSupplierColorDicRequestDto.getColorDicId());
-			log.info("返回个数："+total);
-			if(total>0){
-				List<HubColorDicItemDto> detailList = hubColorDicService.getSupplierColorByHubColorId(hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize());
-			
-				if (detailList != null&&detailList.size()>0) {
-					List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
-					for(HubColorDicItemDto dicDto:detailList){
-						HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
-						dic.setColorDicId(dicDto.getColorDicId());
-						dic.setColorDicItemId(dicDto.getColorDicItemId());
-						dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
-						dic.setSupplierColor(dicDto.getColorItemName());
-						responseList.add(dic);
-					}
-					HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
-					response.setTotal(total);
-					response.setList(responseList);
-					return HubResponse.successResp(response);
-				} 
+			log.info("颜色详情请求参数：{}",colorDicItemId);
+			HubColorDicItemDto dicDto = hubColorDicService.getSupplierColorByHubColorId(colorDicItemId);
+			if(dicDto!=null){
+				List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
+				HubSupplierColorDicResponseDto dic = new HubSupplierColorDicResponseDto();
+				dic.setColorDicId(dicDto.getColorDicId());
+				dic.setColorDicItemId(dicDto.getColorDicItemId());
+				dic.setHubColor(HubColorDic.getHubColor(dicDto.getColorDicId()));
+				dic.setSupplierColor(dicDto.getColorItemName());
+				responseList.add(dic);
+			HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
+			response.setList(responseList);
+			return HubResponse.successResp(response);
+			}else{
+				return HubResponse.successResp(null);
 			}
-			return HubResponse.successResp(null);
+			
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");

@@ -194,7 +194,7 @@ public class HubSelectedService {
 	private String getCategoryName(String categoryNo) {
 		FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
         if(category!=null){
-           return category.getFourthName();
+        	return	categoryService.getHubCategoryNameByHubCategory(categoryNo,category);
         }else{
         	return categoryNo;
         }

@@ -53,7 +53,7 @@ public class HubCategoryDicService {
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
-				criterion.andMappingStateNotEqualTo((byte)1);
+				criterion.andCategoryTypeIsNull();
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}
@@ -76,7 +76,7 @@ public class HubCategoryDicService {
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
-				criterion.andMappingStateNotEqualTo((byte)1);
+				criterion.andCategoryTypeIsNull();
 			}else{
 				criterion.andCategoryTypeEqualTo(categoryType);
 			}

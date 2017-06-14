@@ -71,4 +71,12 @@ public class HubBrandDicService {
 	public int updateByPrimaryKey(HubBrandDic hubBrandDic) {
 		return hubBrandDicMapper.updateByPrimaryKey(hubBrandDic);
 	}
+
+	public int count() {
+		return hubBrandDicMapper.count();
+	}
+
+	public List<HubBrandDic> selectHUbBrandNo(HubBrandDicCriteria hubBrandDic) {
+		return hubBrandDicMapper.selectHUbBrandNo(hubBrandDic);
+	}
 }
