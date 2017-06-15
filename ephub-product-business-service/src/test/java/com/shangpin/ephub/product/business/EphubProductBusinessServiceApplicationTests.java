@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
@@ -268,14 +269,19 @@ public class EphubProductBusinessServiceApplicationTests {
 	public void testAddSlotSpu(){
 
 		PendingProductDto pendingProductDto = new PendingProductDto();
-		HubSpuPendingDto  spuPendingDto = gateWay.selectByPrimaryKey(4786L);
-		BeanUtils.copyProperties(spuPendingDto,pendingProductDto);
+		HubSpuPendingCriteriaDto criteriaDto = new HubSpuPendingCriteriaDto();
+		criteriaDto.createCriteria().andSpuPendingIdEqualTo(4786L);
+		List<HubSpuPendingDto> spuPendingDtos   = gateWay.selectByCriteria(criteriaDto);
+		if(null!=spuPendingDtos&&spuPendingDtos.size()>0){
+			BeanUtils.copyProperties(spuPendingDtos.get(0),pendingProductDto);
 
-		try {
-			hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
-		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+
 	}
 
 

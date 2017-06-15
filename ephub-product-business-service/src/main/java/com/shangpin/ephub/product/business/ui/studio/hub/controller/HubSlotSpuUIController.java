@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/hub-slot-spu")
 @Slf4j
-public class HubSlotSpuController {
+public class HubSlotSpuUIController {
 
     @Autowired
     HubSlotSpuService hubSlotSpuService;

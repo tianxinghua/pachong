@@ -2,12 +2,12 @@ package com.shangpin.ephub.client.data.mysql.studio.dic.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateDto;
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicCategoryMeasureTemplateWithCriteriaDto;
