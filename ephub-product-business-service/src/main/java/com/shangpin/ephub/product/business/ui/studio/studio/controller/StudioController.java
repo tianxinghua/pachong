@@ -83,10 +83,11 @@ public class StudioController {
         String supplierId = queryDto.getSupplierId();
         String slotNo = queryDto.getSlotNo();
         Long slotSSId = queryDto.getSlotSSId();
-        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo) || slotSSId==null){
+        Long slotSSDId = queryDto.getSlotSSDId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo)|| slotSSId==null || slotSSDId==null){
             return  HubResponse.errorResp("传入参数不正确");
         }
-        return iStudioService.delProductFromSlot(supplierId,slotNo, slotSSId ,queryDto.getCreateUser());
+        return iStudioService.delProductFromSlot(supplierId,slotNo,slotSSId, slotSSDId ,queryDto.getCreateUser());
     }
 
     /*

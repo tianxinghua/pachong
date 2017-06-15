@@ -31,8 +31,8 @@ public interface StudioSlotSpuSendDetailGateWay {
 	@RequestMapping(value = "/studio-slot-spu-send-detail/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody StudioSlotSpuSendDetailCriteriaDto criteria);
 	
-	@RequestMapping(value = "/studio-slot-spu-send-detail/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long skuId);
+	@RequestMapping(value = "/studio-slot-spu-send-detail/delete-by-primary-key/{id}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("id") Long id);
 	
 	@RequestMapping(value = "/studio-slot-spu-send-detail/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody StudioSlotSpuSendDetailDto hubSku);
