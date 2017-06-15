@@ -34,8 +34,14 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
     HubSlotSpuGateWay slotSpuGateWay;
 
-    @Autowired
-    SpuNoGateWay spuNoGateWay;
+//    @Autowired
+//    SpuNoGateWay spuNoGateWay;
+//
+//    @Autowired
+//    HubSlotSpuSupplierService hubSlotSpuSupplierService;
+//
+//
+//    SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
 
     @Autowired
     HubSlotSpuSupplierService hubSlotSpuSupplierService;
@@ -197,8 +203,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         }
         target.setCreateTime(new Date());
         target.setCreateUser(target.getUpdateUser());
-        spuNoTypeDto.setType("slotspu");//常量在 中定义 只有此处用到 ，直接写死了
-        target.setSlotSpuNo(spuNoGateWay.getSpuNo(spuNoTypeDto));
+//        spuNoTypeDto.setType("slotspu");//常量在 中定义 只有此处用到 ，直接写死了
+//        target.setSlotSpuNo(spuNoGateWay.getSpuNo(spuNoTypeDto));
 
 
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -29,4 +30,15 @@ public class SlotInfo extends StudioSlotDto implements Serializable {
     /*当前商品数
     * */
     private long countNum;
+
+    /**
+     * 映射商品分类编号 1
+     */
+    private String categoryFirst;
+
+    /*
+    * 映射商品分类编号 1
+    * */
+    private String categorySecond;
+
 }

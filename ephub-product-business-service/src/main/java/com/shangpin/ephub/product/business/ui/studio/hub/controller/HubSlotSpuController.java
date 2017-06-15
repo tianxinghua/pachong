@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
 
-   slotSpu 业务查询
+ slotSpu 业务查询
 
  */
 @RestController
 @RequestMapping(value = "/hub-slot-spu")
 @Slf4j
 public class HubSlotSpuController {
-	
-	@Autowired
-	HubSlotSpuService hubSlotSpuService;
-	
+
+    @Autowired
+    HubSlotSpuService hubSlotSpuService;
+
 
 }

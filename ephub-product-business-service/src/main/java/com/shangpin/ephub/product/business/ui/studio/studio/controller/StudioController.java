@@ -4,6 +4,7 @@ import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioServi
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,11 @@ public class StudioController {
     * */
     @RequestMapping(value = "/spullist",method = RequestMethod.POST)
     public HubResponse<?> getPendingProductList(@RequestBody StudioQueryDto queryDto) {
-        return  HubResponse.successResp(iStudioService.getPendingProductList(queryDto));
+        String supplierId = queryDto.getSupplierId();
+        if(StringUtils.isEmpty(supplierId) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return  HubResponse.successResp(iStudioService.getPendingProductList(supplierId));
     }
 
     /*
@@ -31,7 +36,11 @@ public class StudioController {
      */
     @RequestMapping(value = "/slotlist")
     public HubResponse<?> getSupplierSlotList(@RequestBody StudioQueryDto queryDto) {
-        return  HubResponse.successResp(iStudioService.getSupplierSlotList(queryDto));
+        String supplierId = queryDto.getSupplierId();
+        if(StringUtils.isEmpty(supplierId) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return  HubResponse.successResp(iStudioService.getSupplierSlotList(supplierId));
     }
 
 
@@ -40,7 +49,12 @@ public class StudioController {
    * */
     @RequestMapping(value = "/slotinfo")
     public HubResponse<?> getSlotInfo(@RequestBody StudioQueryDto queryDto) {
-        return  HubResponse.successResp(iStudioService.getSlotInfo(queryDto));
+        String supplierId = queryDto.getSupplierId();
+        String slotNo = queryDto.getSlotNo();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return  HubResponse.successResp(iStudioService.getSlotInfo(supplierId,slotNo));
     }
 
 
@@ -49,8 +63,15 @@ public class StudioController {
  * */
     @RequestMapping(value = "/addspu")
     public HubResponse<?> addProductIntoSlot(@RequestBody StudioQueryDto queryDto) {
+        String supplierId = queryDto.getSupplierId();
+        String slotNo = queryDto.getSlotNo();
+        Long slotSSId = queryDto.getSlotSSId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo) || slotSSId==null){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
 
-        return null;// studioService.addProductIntoSlot(supplierNo,slotNo,spuNo);
+
+        return iStudioService.addProductIntoSlot(supplierId,slotNo, slotSSId ,queryDto.getCreateUser());
     }
 
     /*
@@ -59,7 +80,13 @@ public class StudioController {
     @RequestMapping(value = "/delspu")
     public HubResponse<?> delProductFromSlot(@RequestBody StudioQueryDto queryDto) {
 
-        return null;//studioService.delProductFromSlot(supplierNo,slotNo,spuNo);
+        String supplierId = queryDto.getSupplierId();
+        String slotNo = queryDto.getSlotNo();
+        Long slotSSId = queryDto.getSlotSSId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo) || slotSSId==null){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return iStudioService.delProductFromSlot(supplierId,slotNo, slotSSId ,queryDto.getCreateUser());
     }
 
     /*
@@ -67,7 +94,11 @@ public class StudioController {
 * */
     @RequestMapping(value = "/sendslot")
     public HubResponse<?> checkProductAndSendSlot(@RequestBody StudioQueryDto queryDto) {
-
-        return null;//studioService.checkProductAndSendSlot(supplierNo,slotNo);
+        String supplierId = queryDto.getSupplierId();
+        String slotNo = queryDto.getSlotNo();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return  iStudioService.checkProductAndSendSlot(supplierId,slotNo);
     }
 }

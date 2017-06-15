@@ -8,12 +8,12 @@ import com.shangpin.ephub.response.HubResponse;
  */
 public interface IStudioService {
 
-    public StudioPendingProductVo getPendingProductList(StudioQueryDto queryDto);
+    public StudioPendingProductVo getPendingProductList(String supplierId);
 
-    public SlotsVo getSupplierSlotList(StudioQueryDto queryDto);
-    public SlotInfoExtends getSlotInfo(StudioQueryDto queryDto);
-    public HubResponse<?> addProductIntoSlot(StudioQueryDto queryDto);
-    public HubResponse<?> delProductFromSlot(StudioQueryDto queryDto);
-    public HubResponse<?> checkProductAndSendSlot(StudioQueryDto queryDto);
+    public SlotsVo getSupplierSlotList(String supplierId);
+    public SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
+    public HubResponse<?> addProductIntoSlot(String supplierId ,String slotNo,Long slotSSId,String createUser);
+    public HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,String createUser);
+    public HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,8 +44,8 @@ public interface HubSlotSpuSupplierGateway {
 	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSlotSpuSupplierDto> selectByCriteria(@RequestBody HubSlotSpuSupplierCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubSlotSpuSupplierDto selectByPrimaryKey(Long brandDicId);
+	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-primary-key/{id}", method = RequestMethod.POST,consumes = "application/json")
+    public HubSlotSpuSupplierDto selectByPrimaryKey(@PathVariable(value = "id") Long id);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSlotSpuSupplierWithCriteriaDto HubSlotSpuSupplierDtoWithCriteria);
