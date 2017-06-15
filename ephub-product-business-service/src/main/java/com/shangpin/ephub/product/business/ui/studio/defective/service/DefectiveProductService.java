@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.defective.service;
 
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
+import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 
 /**
@@ -18,7 +19,7 @@ public interface DefectiveProductService {
 	 * @param studioNo 摄影棚编号
 	 * @return
 	 */
-	public DefectiveProductVo list(String studioNo); 
+	public DefectiveProductVo list(DefectiveQuery defectiveQuery); 
 	/**
 	 * 添加残次品
 	 * @param slotNoSpuId

@@ -19,6 +19,7 @@ import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDe
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
+import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.service.impl.OpenBoxServiceImpl;
@@ -42,10 +43,10 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	
 
 	@Override
-	public DefectiveProductVo list(String studioNo) {
+	public DefectiveProductVo list(DefectiveQuery defectiveQuery) {
 		try {
 			DefectiveProductVo product = new DefectiveProductVo();
-			List<StudioSlotDto> studioSlots = findStudioSlot(studioNo);
+			List<StudioSlotDto> studioSlots = findStudioSlot(defectiveQuery.getStudioNo());
 			if(CollectionUtils.isNotEmpty(studioSlots)){
 				List<String> slotNos = new ArrayList<String>();
 				for(StudioSlotDto slotDto : studioSlots){
@@ -53,8 +54,10 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 				}
 				StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
 				criteria.setOrderByClause("create_time desc");
-				criteria.setPageNo(1);
-				criteria.setPageSize(1000); 
+				if(null != defectiveQuery.getPageIndex() && null != defectiveQuery.getPageSize()){
+					criteria.setPageNo(defectiveQuery.getPageIndex());
+					criteria.setPageSize(defectiveQuery.getPageSize()); 
+				}
 				criteria.createCriteria().andSlotNoIn(slotNos);
 				List<StudioSlotDefectiveSpuDto> list = defectiveSpuGateWay.selectByCriteria(criteria );
 				product.setDefectiveSpus(list); 
