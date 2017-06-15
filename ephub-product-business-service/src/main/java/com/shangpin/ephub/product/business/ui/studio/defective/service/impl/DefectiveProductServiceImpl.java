@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.client.data.studio.enumeration.ArriveState;
+//import com.shangpin.ephub.client.data.studio.enumeration.ArriveState;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
@@ -72,7 +72,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		criteria.setFields("slot_no");
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
-		criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue());
+		//criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue());
 		Long studioId = openBoxService.getStudioId(studioNo);
 		if(null != studioId){
 			criteria.createCriteria().andStudioIdEqualTo(studioId);

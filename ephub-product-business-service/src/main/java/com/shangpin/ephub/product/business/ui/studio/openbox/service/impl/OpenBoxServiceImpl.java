@@ -84,8 +84,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		criteria.setOrderByClause("slot_no"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
-		criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue())
-		.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
+		//criteria.createCriteria().andArriveStatusEqualTo(ArriveState.ARRIVED.getIndex().byteValue())
+		//.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		Long studioId = getStudioId(openBoxQuery.getStudioNo());
 		if(null != studioId){
 			criteria.createCriteria().andStudioIdEqualTo(studioId);
