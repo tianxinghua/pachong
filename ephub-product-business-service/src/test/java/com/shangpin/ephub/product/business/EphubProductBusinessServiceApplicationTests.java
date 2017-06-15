@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -77,7 +82,7 @@ public class EphubProductBusinessServiceApplicationTests {
 //		}
 //	}
 //	
-	@Test
+
 	public void testGetProductSize(){
 		try {
 			MatchSizeResult matchSizeResult = new MatchSizeResult();
@@ -252,5 +257,27 @@ public class EphubProductBusinessServiceApplicationTests {
 //			e.printStackTrace();
 //		} 
 //	}
+
+	@Autowired
+	HubSlotSpuService hubSlotSpuService;
+
+	@Autowired
+	HubSpuPendingGateWay gateWay;
+
+	@Test
+	public void testAddSlotSpu(){
+
+		PendingProductDto pendingProductDto = new PendingProductDto();
+		HubSpuPendingDto  spuPendingDto = gateWay.selectByPrimaryKey(4786L);
+		BeanUtils.copyProperties(spuPendingDto,pendingProductDto);
+
+		try {
+			hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
 
 }
