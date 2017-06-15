@@ -13,7 +13,7 @@ public interface IStudioService {
     public SlotsVo getSupplierSlotList(String supplierId);
     public SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
     public HubResponse<?> addProductIntoSlot(String supplierId ,String slotNo,Long slotSSId,String createUser);
-    public HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,String createUser);
+    public HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser);
     public HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
 
 }

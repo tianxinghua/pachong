@@ -466,14 +466,13 @@ public class StudioServiceImpl implements IStudioService {
      * @param createUser
      * @return
      */
-    public HubResponse<SlotProductEditVo> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,String createUser){
+    public HubResponse<SlotProductEditVo> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser){
         HubResponse<SlotProductEditVo> response = new HubResponse<SlotProductEditVo>();
         response.setCode("0");
         SlotProductEditVo updatedVo = null;
         try {
-
             HubSlotSpuSupplierDto product = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
-           int count =   studioSlotSpuSendDetailGateWay.deleteByPrimaryKey(slotSSId);
+           int count =   studioSlotSpuSendDetailGateWay.deleteByPrimaryKey(slotSSDId);
            if(count>0){
                HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
                upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
