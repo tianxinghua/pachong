@@ -31,4 +31,14 @@ public class SlotInfo extends StudioSlotDto implements Serializable {
     * */
     private long countNum;
 
+    /**
+     * 映射商品分类编号 1
+     */
+    private String categoryNoOne;
+
+    /*
+    * 映射商品分类编号 1
+    * */
+    private String categoryNoTwo;
+
 }

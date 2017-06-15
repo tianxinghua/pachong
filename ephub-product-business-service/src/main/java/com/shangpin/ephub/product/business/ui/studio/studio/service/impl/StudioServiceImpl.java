@@ -10,8 +10,9 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
-import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotCriteriaDto;
-import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotDto;
+import com.shangpin.ephub.client.data.studio.dic.dto.*;
+import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCalendarGateWay;
+import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWay;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicSlotGateWay;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
@@ -54,6 +55,9 @@ public class StudioServiceImpl implements IStudioService {
 
     @Autowired
     StudioDicSlotGateWay studioDicSlotGateWay;
+
+    @Autowired
+    StudioDicCategoryGateWay studioDicCategoryGateWay;
 
     @Autowired
     StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
@@ -156,6 +160,9 @@ public class StudioServiceImpl implements IStudioService {
             List<Long> filteredStudioIds = results.stream().map(StudioSlotDto::getStudioId).distinct().collect(Collectors.toList());
             List<StudioDicSlotDto> studioDicSlotDtos = getStudioDicSlotDtos(filteredStudioIds);
 
+            //获取slot可以选择商品的分类
+            List<StudioDicCategoryDto> studioDicCategoryDto = getStudioDicCategoryDtos(filteredStudioIds);
+
             //获取所有批次的当前包含商品数量
             List<String> filteredSlotNos = results.stream().map(StudioSlotDto::getSlotNo).distinct().collect(Collectors.toList());
             List<StudioSlotSpuSendDetailDto> studioSlotSpuSendDetailDto = getStudioSlotSpuSendDetail(filteredSlotNos);
@@ -172,6 +179,13 @@ public class StudioServiceImpl implements IStudioService {
                     s.setMaxNum(studio.getSlotNumber());
                     s.setMinNum(studio.getSlotMinNumber());
                 });
+                Optional<StudioDicCategoryDto> studioDicCategory = studioDicCategoryDto.stream().filter(spu -> spu.getStudioId() .equals(x.getStudioId()) ).findFirst();
+
+                studioDicCategory.ifPresent(c->{
+                    s.setCategoryNo(c.getCategoryFirst());
+                });
+
+
                 long count = studioSlotSpuSendDetailDto.stream().filter(spu -> spu.getSlotNo() .equals(x.getSlotNo()) ).count();
                 s.setCountNum(count);
                 list.add(s);
@@ -182,6 +196,14 @@ public class StudioServiceImpl implements IStudioService {
 
     }
     /*
+    * 获取slot可选择的商品分类
+    * */
+    private  List<StudioDicCategoryDto> getStudioDicCategoryDtos(List<Long> filteredStudioIds ){
+        StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.createCriteria().andStudioIdIn(filteredStudioIds);
+        return  studioDicCategoryGateWay.selectByCriteria(studioDto);
+    }
+    /*
     * 获取slot最大值，最小值
     * */
     private  List<StudioDicSlotDto> getStudioDicSlotDtos( List<Long> filteredStudioIds ){
@@ -189,6 +211,9 @@ public class StudioServiceImpl implements IStudioService {
         studioDto.createCriteria().andStudioIdIn(filteredStudioIds);
         return  studioDicSlotGateWay.selectByCriteria(studioDto);
     }
+
+
+
     /*
     * 获取slot最大值，最小值
     * */
@@ -197,6 +222,9 @@ public class StudioServiceImpl implements IStudioService {
         studioDto.createCriteria().andStudioIdEqualTo(StudioIds);
         return  studioDicSlotGateWay.selectByCriteria(studioDto);
     }
+
+
+
     /*
     * 获取所有批次的当前包含商品
     * */
@@ -314,6 +342,10 @@ public class StudioServiceImpl implements IStudioService {
 
                    if(updatedVo ==null) {
                        HubSupplierSpuDto supProduct = hubSupplierSpuGateWay.selectByPrimaryKey(product.getSupplierSpuId());
+
+                       String brandNo = supProduct.getSupplierBrandno();
+                       String categoryNo = supProduct.getSupplierCategoryno();
+                        //TODO 需要判断选择的商品类型
                        //验证成功后，进行添加
                        StudioSlotSpuSendDetailDto data = new StudioSlotSpuSendDetailDto();
                        data.setSlotNo(slotNo);
