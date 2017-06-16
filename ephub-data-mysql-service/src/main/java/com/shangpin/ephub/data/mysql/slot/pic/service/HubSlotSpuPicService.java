@@ -36,11 +36,11 @@ public class HubSlotSpuPicService {
 		return hubSlotSpuPicMapper.deleteByPrimaryKey(skuId);
 	}
 
-	public int insert(HubSlotSpuPic HubSlotSpuPic) {
+	public int  insert(HubSlotSpuPic HubSlotSpuPic) {
 		return hubSlotSpuPicMapper.insert(HubSlotSpuPic);
 	}
 
-	public int insertSelective(HubSlotSpuPic HubSlotSpuPic) {
+	public int  insertSelective(HubSlotSpuPic HubSlotSpuPic) {
 		return hubSlotSpuPicMapper.insertSelective(HubSlotSpuPic);
 	}
 

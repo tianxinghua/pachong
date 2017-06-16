@@ -318,10 +318,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     }
 
     @Override
-    public void updatePendingSlotState(Long spuPendingId, SpuPendingStudioState slotStudioState) throws Exception {
+    public void updatePendingSlotStateAndUser(Long spuPendingId,String operator, SpuPendingStudioState slotStudioState) throws Exception {
         HubSpuPendingDto spuPendingDto = new HubSpuPendingDto();
         spuPendingDto.setSpuPendingId(spuPendingId);
         spuPendingDto.setSlotState(slotStudioState.getIndex().byteValue());
+        spuPendingDto.setSlotHandleDate(new Date());
+        spuPendingDto.setSlotHandleUser(operator);
         int i = spuPendingGateWay.updateByPrimaryKeySelective(spuPendingDto);
     }
 

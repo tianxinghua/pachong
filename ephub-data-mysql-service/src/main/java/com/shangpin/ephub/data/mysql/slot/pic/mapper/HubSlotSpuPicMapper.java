@@ -16,9 +16,9 @@ public interface HubSlotSpuPicMapper {
 
     int deleteByPrimaryKey(Long slotSpuPicId);
 
-    int insert(HubSlotSpuPic record);
+    int  insert(HubSlotSpuPic record);
 
-    int insertSelective(HubSlotSpuPic record);
+    int  insertSelective(HubSlotSpuPic record);
 
     List<HubSlotSpuPic> selectByExampleWithRowbounds(HubSlotSpuPicCriteria example, RowBounds rowBounds);
 

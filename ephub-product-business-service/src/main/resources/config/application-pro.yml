@@ -32,7 +32,7 @@ spring:
                               destination: product.export.task
                               content-type: application/json
                         refreshDicTask: 
-                              destination: refresh.dic.task
+                              destination: refresh.diccategory.task
                               content-type: application/json
               rabbit: 
                       bindings: 
