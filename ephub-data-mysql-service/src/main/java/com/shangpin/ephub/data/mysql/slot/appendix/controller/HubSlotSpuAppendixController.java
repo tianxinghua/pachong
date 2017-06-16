@@ -32,12 +32,14 @@ public class HubSlotSpuAppendixController {
     	return hubSlotSpuAppendixService.deleteByPrimaryKey(skuId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSlotSpuAppendix HubSlotSpuAppendix){
-    	return hubSlotSpuAppendixService.insert(HubSlotSpuAppendix);
+    public Long  insert(@RequestBody HubSlotSpuAppendix hubSlotSpuAppendix){
+    	 hubSlotSpuAppendixService.insert(hubSlotSpuAppendix);
+    	 return hubSlotSpuAppendix.getSpuAppendixId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSlotSpuAppendix HubSlotSpuAppendix){
-    	return hubSlotSpuAppendixService.insertSelective(HubSlotSpuAppendix);
+    public Long  insertSelective(@RequestBody HubSlotSpuAppendix hubSlotSpuAppendix){
+    	 hubSlotSpuAppendixService.insertSelective(hubSlotSpuAppendix);
+		return hubSlotSpuAppendix.getSpuAppendixId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSlotSpuAppendix> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuAppendixCriteriaWithRowBounds criteriaWithRowBounds){

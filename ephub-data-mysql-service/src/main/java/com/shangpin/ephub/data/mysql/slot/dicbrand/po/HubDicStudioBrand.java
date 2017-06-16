@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.slot.dic.brand.po;
+package com.shangpin.ephub.data.mysql.slot.dicbrand.po;
 
 import java.io.Serializable;
 import java.util.Date;

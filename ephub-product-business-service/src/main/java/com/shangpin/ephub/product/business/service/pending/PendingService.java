@@ -42,7 +42,7 @@ public interface PendingService {
      * @param spuPendingId
      * @throws Exception
      */
-    public void updatePendingSlotState(Long spuPendingId, SpuPendingStudioState studioState) throws Exception;
+    public void updatePendingSlotStateAndUser(Long spuPendingId,String operator, SpuPendingStudioState studioState) throws Exception;
 
 
     public boolean isCanUpdateSpuMode(Long spuPendingId);

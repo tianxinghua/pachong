@@ -130,6 +130,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
+    <selectKey keyColumn="slot_spu_id" keyProperty="slotSpuId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS slot_spu_id
+    </selectKey>
     insert into hub_slot_spu (slot_spu_id, slot_spu_no, spu_model, 
       brand_no, category_no, second_category_no, 
       market_time, season, season_en, 
@@ -150,6 +153,9 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.spu.po.HubSlotSpu" >
+    <selectKey keyColumn="slot_spu_id" keyProperty="slotSpuId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS slot_spu_id
+    </selectKey>
     insert into hub_slot_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="slotSpuId != null" >
@@ -534,5 +540,13 @@
     <if test="startRow != null" >
       limit #{startRow} , #{pageSize}
     </if>
+  </select>
+
+
+
+  <!-- 以上部分为自动生产，如果需要自定义方法的话，请将自定义方法写在下方 -->
+  <select   id="getMaxSpuNo" resultType="java.lang.String">
+    select   max(spu_no)
+    from hub_slot_spu
   </select>
 </mapper>

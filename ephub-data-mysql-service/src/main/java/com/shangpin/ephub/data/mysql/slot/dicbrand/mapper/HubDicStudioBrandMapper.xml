@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.ephub.data.mysql.slot.dic.brand.mapper.HubDicStudioBrandMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand" >
+<mapper namespace="com.shangpin.ephub.data.mysql.slot.dicbrand.mapper.HubDicStudioBrandMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand" >
     <id column="studio_brand_id" property="studioBrandId" jdbcType="BIGINT" />
     <result column="sp_brand_no" property="spBrandNo" jdbcType="VARCHAR" />
     <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
@@ -80,7 +80,7 @@
       ${fields}
     </if>
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrandCriteria" >
     select
     <if test="distinct" >
       distinct
@@ -107,13 +107,16 @@
     delete from hub_dic_studio_brand
     where studio_brand_id = #{studioBrandId,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria" >
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrandCriteria" >
     delete from hub_dic_studio_brand
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand" >
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand" >
+    <selectKey keyColumn="studio_brand_id" keyProperty="studioBrandId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS studio_brand_id
+    </selectKey>
     insert into hub_dic_studio_brand (studio_brand_id, sp_brand_no, brand_name, 
       brand_name_en, create_time, create_user, 
       update_time, update_user, data_state, 
@@ -123,7 +126,10 @@
       #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
       #{version,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand" >
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand" >
+    <selectKey keyColumn="studio_brand_id" keyProperty="studioBrandId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS studio_brand_id
+    </selectKey>
     insert into hub_dic_studio_brand
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioBrandId != null" >
@@ -190,7 +196,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrandCriteria" resultType="java.lang.Integer" >
     select count(*) from hub_dic_studio_brand
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -250,7 +256,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand" >
     update hub_dic_studio_brand
     <set >
       <if test="spBrandNo != null" >
@@ -283,7 +289,7 @@
     </set>
     where studio_brand_id = #{studioBrandId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand" >
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand" >
     update hub_dic_studio_brand
     set sp_brand_no = #{spBrandNo,jdbcType=VARCHAR},
       brand_name = #{brandName,jdbcType=VARCHAR},
@@ -296,7 +302,7 @@
       version = #{version,jdbcType=BIGINT}
     where studio_brand_id = #{studioBrandId,jdbcType=BIGINT}
   </update>
-  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria" id="selectByExampleWithRowbounds" >
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrandCriteria" id="selectByExampleWithRowbounds" >
     select
     <if test="distinct" >
       distinct

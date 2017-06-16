@@ -29,12 +29,14 @@ public class HubSlotSpuController {
     	return HubSlotSpuService.deleteByCriteria(criteria);
     }
 	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long skuId){
-    	return HubSlotSpuService.deleteByPrimaryKey(skuId);
+    public int deleteByPrimaryKey(Long id){
+    	return HubSlotSpuService.deleteByPrimaryKey(id);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSlotSpu HubSlotSpu){
-    	return HubSlotSpuService.insert(HubSlotSpu);
+    public Long insert(@RequestBody HubSlotSpu hubSlotSpu){
+
+    	 HubSlotSpuService.insert(hubSlotSpu);
+		 return  hubSlotSpu.getSlotSpuId();
     }
 	@RequestMapping(value = "/insert-selective")
     public int insertSelective(@RequestBody HubSlotSpu HubSlotSpu){
@@ -48,13 +50,13 @@ public class HubSlotSpuController {
     public List<HubSlotSpu> selectByCriteria(@RequestBody HubSlotSpuCriteria criteria){
     	return HubSlotSpuService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key/{skuId}")
-    public HubSlotSpu selectByPrimaryKey(@PathVariable(value = "skuId") Long skuId){
-    	return HubSlotSpuService.selectByPrimaryKey(skuId);
+	@RequestMapping(value = "/select-by-primary-key/{id}")
+    public HubSlotSpu selectByPrimaryKey(@PathVariable(value = "id") Long id){
+    	return HubSlotSpuService.selectByPrimaryKey(id);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
-    public int updateByCriteriaSelective(@RequestBody HubSlotSpuWithCriteria HubSlotSpuWithCriteria){
-    	return HubSlotSpuService.updateByCriteriaSelective(HubSlotSpuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody HubSlotSpuWithCriteria hubSlotSpuWithCriteria){
+    	return HubSlotSpuService.updateByCriteriaSelective(hubSlotSpuWithCriteria);
     }
 	@RequestMapping(value = "/update-by-criteria")
     public int updateByCriteria(@RequestBody HubSlotSpuWithCriteria HubSlotSpuWithCriteria){

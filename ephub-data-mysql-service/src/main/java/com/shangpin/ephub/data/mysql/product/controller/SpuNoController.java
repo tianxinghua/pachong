@@ -1,6 +1,7 @@
 package com.shangpin.ephub.data.mysql.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.data.mysql.product.common.ConstantProperty;
 import com.shangpin.ephub.data.mysql.product.common.HubSpuUtil;
 import com.shangpin.ephub.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
@@ -29,7 +30,7 @@ public class SpuNoController {
     @RequestMapping(value = "/getspuno")
     public String  getSpuNo(@RequestBody SpuNoTypeDto dto){
         try {
-            if("SPU_NO_TYPE_FOR_SLOT_SPU".equals(dto.getType())){
+            if(ConstantProperty.SPU_NO_TYPE_FOR_HUB_SPU.equals(dto.getType())){
 
                return  hubSpuUtil.createHubSpuNo(1L);
             }else {

@@ -31,12 +31,15 @@ public class HubSlotSpuPicController {
     	return hubSlotSpuPicService.deleteByPrimaryKey(skuId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSlotSpuPic HubSlotSpuPic){
-    	return hubSlotSpuPicService.insert(HubSlotSpuPic);
+    public Long  insert(@RequestBody HubSlotSpuPic hubSlotSpuPic){
+
+    	 hubSlotSpuPicService.insert(hubSlotSpuPic);
+		return hubSlotSpuPic.getSlotSpuPicId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSlotSpuPic HubSlotSpuPic){
-    	return hubSlotSpuPicService.insertSelective(HubSlotSpuPic);
+    public Long insertSelective(@RequestBody HubSlotSpuPic hubSlotSpuPic){
+    	 hubSlotSpuPicService.insertSelective(hubSlotSpuPic);
+		return hubSlotSpuPic.getSlotSpuPicId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSlotSpuPic> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuPicCriteriaWithRowBounds criteriaWithRowBounds){

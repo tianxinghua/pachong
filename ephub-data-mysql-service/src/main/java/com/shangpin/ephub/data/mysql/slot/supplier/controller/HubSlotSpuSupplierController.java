@@ -31,12 +31,14 @@ public class HubSlotSpuSupplierController {
     	return hubSlotSpuSupplierService.deleteByPrimaryKey(skuId);
     }
 	@RequestMapping(value = "/insert")
-    public int insert(@RequestBody HubSlotSpuSupplier HubSlotSpuSupplier){
-    	return hubSlotSpuSupplierService.insert(HubSlotSpuSupplier);
+    public Long insert(@RequestBody HubSlotSpuSupplier hubSlotSpuSupplier){
+    	 hubSlotSpuSupplierService.insert(hubSlotSpuSupplier);
+    	 return hubSlotSpuSupplier.getSlotSpuSupplierId();
     }
 	@RequestMapping(value = "/insert-selective")
-    public int insertSelective(@RequestBody HubSlotSpuSupplier HubSlotSpuSupplier){
-    	return hubSlotSpuSupplierService.insertSelective(HubSlotSpuSupplier);
+    public Long  insertSelective(@RequestBody HubSlotSpuSupplier hubSlotSpuSupplier){
+    	 hubSlotSpuSupplierService.insertSelective(hubSlotSpuSupplier);
+		return hubSlotSpuSupplier.getSlotSpuSupplierId();
     }
 	@RequestMapping(value = "/select-by-criteria-with-rowbounds")
     public List<HubSlotSpuSupplier> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuSupplierCriteriaWithRowBounds criteriaWithRowBounds){
@@ -46,9 +48,9 @@ public class HubSlotSpuSupplierController {
     public List<HubSlotSpuSupplier> selectByCriteria(@RequestBody HubSlotSpuSupplierCriteria criteria){
     	return hubSlotSpuSupplierService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key/{skuId}")
-    public HubSlotSpuSupplier selectByPrimaryKey(@PathVariable(value = "skuId") Long skuId){
-    	return hubSlotSpuSupplierService.selectByPrimaryKey(skuId);
+	@RequestMapping(value = "/select-by-primary-key/{id}")
+    public HubSlotSpuSupplier selectByPrimaryKey(@PathVariable(value = "id") Long id){
+    	return hubSlotSpuSupplierService.selectByPrimaryKey(id);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
     public int updateByCriteriaSelective(@RequestBody HubSlotSpuSupplierWithCriteria HubSlotSpuSupplierWithCriteria){

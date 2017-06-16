@@ -118,6 +118,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.appendix.po.HubSlotSpuAppendix" >
+    <selectKey keyColumn="spu_appendix_id" keyProperty="spuAppendixId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS spu_appendix_id
+    </selectKey>
     insert into hub_slot_spu_appendix (spu_appendix_id, slot_spu_id, slot_spu_supplier_id, 
       slot_no, slot_spu_no, attribute_definition, 
       attribute_value, create_time, create_user, 
@@ -130,6 +133,9 @@
       #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.appendix.po.HubSlotSpuAppendix" >
+    <selectKey keyColumn="spu_appendix_id" keyProperty="spuAppendixId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS spu_appendix_id
+    </selectKey>
     insert into hub_slot_spu_appendix
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuAppendixId != null" >

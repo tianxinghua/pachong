@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.mysql.product.common;
 
+import com.shangpin.ephub.data.mysql.slot.spu.mapper.HubSlotSpuMapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,10 @@ public class HubSpuUtil {
 
     @Autowired
     HubSkuMapper hubSkuMapper;
+
+    @Autowired
+    HubSlotSpuMapper slotSpuMapper;
+
 
     /**
      * 创建SPU编号
@@ -75,7 +80,7 @@ public class HubSpuUtil {
 
             e.printStackTrace();
             log.error("redis 出错，无法获取spu编号.reason :" + e.getMessage(),e);
-            String spuNo = hubSpuMapper.getMaxSpuNo();
+            String spuNo = slotSpuMapper.getMaxSpuNo();
             tmpSpuNo = Long.valueOf(spuNo.substring(1,spuNo.length())) + 1;
         }
         String result = "";

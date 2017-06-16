@@ -1,10 +1,10 @@
-package com.shangpin.ephub.data.mysql.slot.dic.category.bean;
+package com.shangpin.ephub.data.mysql.slot.diccategory.bean;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.data.mysql.slot.dic.category.po.HubDicCategoryMeasureTemplate;
-import com.shangpin.ephub.data.mysql.slot.dic.category.po.HubDicCategoryMeasureTemplateCriteria;
+import com.shangpin.ephub.data.mysql.slot.diccategory.po.HubDicCategoryMeasureTemplate;
+import com.shangpin.ephub.data.mysql.slot.diccategory.po.HubDicCategoryMeasureTemplateCriteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

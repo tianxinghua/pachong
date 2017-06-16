@@ -1,11 +1,11 @@
-package com.shangpin.ephub.data.mysql.slot.dic.brand.bean;
+package com.shangpin.ephub.data.mysql.slot.diccategory.bean;
 
 import java.io.Serializable;
 
 import org.apache.ibatis.session.RowBounds;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria;
+import com.shangpin.ephub.data.mysql.slot.diccategory.po.HubDicCategoryMeasureTemplateCriteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,14 +18,14 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HubDicStudioBrandCriteriaWithRowBounds implements Serializable {
+public class HubDicCategoryMeasureTemplateCriteriaWithRowBounds implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6065866159180047611L;
 
-	private HubDicStudioBrandCriteria criteria;
+	private HubDicCategoryMeasureTemplateCriteria criteria;
 	
 	private RowBounds rowBounds;
 }

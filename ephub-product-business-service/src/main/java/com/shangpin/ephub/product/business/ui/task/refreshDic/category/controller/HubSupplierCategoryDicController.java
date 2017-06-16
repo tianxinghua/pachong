@@ -53,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @SuppressWarnings("rawtypes")
 //@RestController
-//@RequestMapping("/hub-supplier-category-dic")
+//@RequestMapping("/hub-supplier-category-diccategory")
 @Slf4j
 public class HubSupplierCategoryDicController {
 	@Autowired

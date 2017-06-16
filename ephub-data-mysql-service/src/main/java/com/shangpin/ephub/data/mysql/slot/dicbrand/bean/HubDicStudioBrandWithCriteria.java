@@ -1,11 +1,12 @@
-package com.shangpin.ephub.data.mysql.slot.dic.brand.bean;
+package com.shangpin.ephub.data.mysql.slot.dicbrand.bean;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand;
-import com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria;
 
+
+import com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand;
+import com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrandCriteria;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

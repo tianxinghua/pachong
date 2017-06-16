@@ -1,7 +1,7 @@
-package com.shangpin.ephub.data.mysql.slot.dic.brand.mapper;
+package com.shangpin.ephub.data.mysql.slot.dicbrand.mapper;
 
-import com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrand;
-import com.shangpin.ephub.data.mysql.slot.dic.brand.po.HubDicStudioBrandCriteria;
+import com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand;
+import com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrandCriteria;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -15,9 +15,9 @@ public interface HubDicStudioBrandMapper {
 
     int deleteByPrimaryKey(Long studioBrandId);
 
-    int insert(HubDicStudioBrand record);
+    int  insert(HubDicStudioBrand record);
 
-    int insertSelective(HubDicStudioBrand record);
+    int  insertSelective(HubDicStudioBrand record);
 
     List<HubDicStudioBrand> selectByExampleWithRowbounds(HubDicStudioBrandCriteria example, RowBounds rowBounds);
 
