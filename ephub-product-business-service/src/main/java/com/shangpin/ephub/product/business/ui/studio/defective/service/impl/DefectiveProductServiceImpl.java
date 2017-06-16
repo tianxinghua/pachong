@@ -8,11 +8,13 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuGateWay;
 import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuPicGateWay;
@@ -129,8 +131,39 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		StudioSlotDefectiveSpuPicDto spuPicDto = new StudioSlotDefectiveSpuPicDto();
 		spuPicDto.setStudioSlotDefectiveSpuPicId(studioSlotDefectiveSpuPicId);
 		spuPicDto.setSpPicUrl(spPicUrl);
+		spuPicDto.setDataState(DataState.NOT_DELETED.getIndex()); 
 		defectiveSpuPicGateWay.updateByPrimaryKeySelective(spuPicDto );
 		return true;
+	}
+
+	@Override
+	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(Long studioSlotDefectiveSpuId) {
+		StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
+		criteria.setOrderByClause("create_time"); 
+		criteria.setPageNo(1);
+		criteria.setPageSize(100); 
+		criteria.createCriteria().andStudioSlotDefectiveSpuIdEqualTo(studioSlotDefectiveSpuId).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		return defectiveSpuPicGateWay.selectByCriteria(criteria );
+	}
+
+	@Override
+	public StudioSlotDefectiveSpuDto selectByPrimarykey(Long studioSlotDefectiveSpuId) {
+		if(null != studioSlotDefectiveSpuId){
+			return defectiveSpuGateWay.selectByPrimaryKey(studioSlotDefectiveSpuId);
+		}else{
+			return null;
+		}
+	}
+
+	@Override
+	public boolean hasDefectiveSpuPic(String spPicUrl) {
+		StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
+		criteria.createCriteria().andSpPicUrlEqualTo(spPicUrl);
+		List<StudioSlotDefectiveSpuPicDto> list = defectiveSpuPicGateWay.selectByCriteria(criteria );
+		if(CollectionUtils.isNotEmpty(list)){
+			return true;
+		}
+		return false;
 	}
 
 }
