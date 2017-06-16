@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
+import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
@@ -41,8 +42,8 @@ public class DefectiveProductController {
 	private PictureService pictureService;
 	
 	@RequestMapping(value="/list",method = RequestMethod.POST)
-	public HubResponse<?> list(String studioNo){
-		DefectiveProductVo productVo = defectiveProductService.list(studioNo);
+	public HubResponse<?> list(DefectiveQuery defectiveQuery){
+		DefectiveProductVo productVo = defectiveProductService.list(defectiveQuery);
 		if(null != productVo){
 			return HubResponse.successResp(productVo);
 		}else{

@@ -286,6 +286,7 @@ public class StudioServiceImpl implements IStudioService {
                 slot.setCategoryFirst(StudioDicCategoryDto.get(0).getCategoryFirst());
                 slot.setCategorySecond(StudioDicCategoryDto.get(0).getCategorySecond());
             }
+            //region 属性封装
             slot.setStudioId(studioSlot.getStudioId());
             slot.setSlotStatus(studioSlot.getSlotStatus());
             slot.setStudioSlotId(studioSlot.getStudioSlotId());
@@ -303,6 +304,7 @@ public class StudioServiceImpl implements IStudioService {
             slot.setPlanArriveTime(studioSlot.getPlanArriveTime());
             List<SlotProduct> listProduct = SlotProductList(studioSlot.getSlotNo());
             slot.setCountNum(listProduct.size());
+            //endregion
             slot.setSlotProductList(listProduct);
         }
         return slot;
@@ -359,7 +361,7 @@ public class StudioServiceImpl implements IStudioService {
            if (slotInfo == null) {
                throw new EphubException("C1", "发货单没有找到");
            } else {
-               //判断是否处于可添加商品状态
+
                if (slotInfo.getApplyStatus() != StudioSlotApplyState.APPLYED.getIndex().byteValue() ||
                        slotInfo.getSendState() != StudioSlotSendState.WAIT_SEND.getIndex().byteValue()) {
                    throw new EphubException("C2", "发货单状态不正确");
@@ -372,6 +374,8 @@ public class StudioServiceImpl implements IStudioService {
                if (product == null) {
                    throw new EphubException("C4", "该商品不存在");
                } else {
+
+                   //region  判断是否处于可添加商品状态
                    if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                        throw new EphubException("C5", "该商品已经加入发货单了");
                    }
@@ -386,10 +390,11 @@ public class StudioServiceImpl implements IStudioService {
                            }
                        }
                    }
+                   //endregion
 
                    HubSupplierSpuDto supProduct = hubSupplierSpuGateWay.selectByPrimaryKey(product.getSupplierSpuId());
 
-                   //验证成功后，进行添加
+                   //region 验证成功后，进行添加
                    StudioSlotSpuSendDetailDto data = new StudioSlotSpuSendDetailDto();
                    data.setSlotNo(slotNo);
                    data.setSupplierId(supplierId);
@@ -420,7 +425,7 @@ public class StudioServiceImpl implements IStudioService {
                    } else {
                        throw new EphubException("W0", "商品加入发货单失败");
                    }
-
+                    //endregion
                }
            }
 
