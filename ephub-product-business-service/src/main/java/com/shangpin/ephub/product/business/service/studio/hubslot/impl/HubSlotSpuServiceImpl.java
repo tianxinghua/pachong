@@ -87,7 +87,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 this.transPendingToSlot(pendingProductDto,slotSpuDto);
                 try {
                     setSlotSpuNo(slotSpuDto);
-                    slotSpuGateWay.insert(slotSpuDto);
+                    slotSpuDto.setSlotSpuId(slotSpuGateWay.insert(slotSpuDto));
                 } catch (Exception e) {
                     //一般情况下是唯一索引冲突，需要获取数据
 
