@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotMapper" >
+<mapper namespace="com.shangpin.studio.data.mysqlmapper.StudioSlotMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlot" >
     <id column="studio_slot_id" property="studioSlotId" jdbcType="BIGINT" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />
+    <result column="slot_date" property="slotDate" jdbcType="DATE" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
     <result column="slot_status" property="slotStatus" jdbcType="TINYINT" />
     <result column="apply_status" property="applyStatus" jdbcType="TINYINT" />
@@ -88,7 +89,7 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_slot_id, studio_id, slot_no, slot_status, apply_status, apply_supplier_id, 
+      studio_slot_id, studio_id, slot_date, slot_no, slot_status, apply_status, apply_supplier_id, 
       apply_user, apply_time, send_user, send_time, send_state, plan_arrive_time, arrive_status, 
       arrive_time, arrive_user, shot_status, plan_shoot_time, shoot_time, track_no, origin_slot_no, 
       memo, create_time, update_time, data_state, version
@@ -116,7 +117,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_id,studio_id,slot_no,slot_status,apply_status,apply_supplier_id,apply_user,apply_time,send_user,send_time,send_state,plan_arrive_time,arrive_status,arrive_time,arrive_user,shot_status,plan_shoot_time,shoot_time,track_no,origin_slot_no,memo,create_time,update_time,data_state,version
+    studio_slot_id,studio_id,slot_date,slot_no,slot_status,apply_status,apply_supplier_id,apply_user,apply_time,send_user,send_time,send_state,plan_arrive_time,arrive_status,arrive_time,arrive_user,shot_status,plan_shoot_time,shoot_time,track_no,origin_slot_no,memo,create_time,update_time,data_state,version
     from studio_slot
     where studio_slot_id = #{studioSlotId,jdbcType=BIGINT}
   </select>
@@ -131,26 +132,32 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
-    insert into studio_slot (studio_slot_id, studio_id, slot_no, 
-      slot_status, apply_status, apply_supplier_id, 
-      apply_user, apply_time, send_user, 
-      send_time, send_state, plan_arrive_time, 
-      arrive_status, arrive_time, arrive_user, 
-      shot_status, plan_shoot_time, shoot_time, 
-      track_no, origin_slot_no, memo, 
-      create_time, update_time, data_state, 
-      version)
-    values (#{studioSlotId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
-      #{slotStatus,jdbcType=TINYINT}, #{applyStatus,jdbcType=TINYINT}, #{applySupplierId,jdbcType=VARCHAR}, 
-      #{applyUser,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, #{sendUser,jdbcType=VARCHAR}, 
-      #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, #{planArriveTime,jdbcType=DATE}, 
-      #{arriveStatus,jdbcType=TINYINT}, #{arriveTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, 
-      #{shotStatus,jdbcType=TINYINT}, #{planShootTime,jdbcType=TIMESTAMP}, #{shootTime,jdbcType=TIMESTAMP}, 
-      #{trackNo,jdbcType=VARCHAR}, #{originSlotNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+    <selectKey keyColumn="studio_slot_id" keyProperty="studioSlotId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_id
+    </selectKey>
+    insert into studio_slot (studio_slot_id, studio_id, slot_date, 
+      slot_no, slot_status, apply_status, 
+      apply_supplier_id, apply_user, apply_time, 
+      send_user, send_time, send_state, 
+      plan_arrive_time, arrive_status, arrive_time, 
+      arrive_user, shot_status, plan_shoot_time, 
+      shoot_time, track_no, origin_slot_no, 
+      memo, create_time, update_time, 
+      data_state, version)
+    values (#{studioSlotId,jdbcType=BIGINT}, #{studioId,jdbcType=BIGINT}, #{slotDate,jdbcType=DATE}, 
+      #{slotNo,jdbcType=VARCHAR}, #{slotStatus,jdbcType=TINYINT}, #{applyStatus,jdbcType=TINYINT}, 
+      #{applySupplierId,jdbcType=VARCHAR}, #{applyUser,jdbcType=VARCHAR}, #{applyTime,jdbcType=TIMESTAMP}, 
+      #{sendUser,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, 
+      #{planArriveTime,jdbcType=DATE}, #{arriveStatus,jdbcType=TINYINT}, #{arriveTime,jdbcType=TIMESTAMP}, 
+      #{arriveUser,jdbcType=VARCHAR}, #{shotStatus,jdbcType=TINYINT}, #{planShootTime,jdbcType=TIMESTAMP}, 
+      #{shootTime,jdbcType=TIMESTAMP}, #{trackNo,jdbcType=VARCHAR}, #{originSlotNo,jdbcType=VARCHAR}, 
+      #{memo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
+    <selectKey keyColumn="studio_slot_id" keyProperty="studioSlotId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS studio_slot_id
+    </selectKey>
     insert into studio_slot
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotId != null" >
@@ -158,6 +165,9 @@
       </if>
       <if test="studioId != null" >
         studio_id,
+      </if>
+      <if test="slotDate != null" >
+        slot_date,
       </if>
       <if test="slotNo != null" >
         slot_no,
@@ -235,6 +245,9 @@
       </if>
       <if test="studioId != null" >
         #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="slotDate != null" >
+        #{slotDate,jdbcType=DATE},
       </if>
       <if test="slotNo != null" >
         #{slotNo,jdbcType=VARCHAR},
@@ -322,6 +335,9 @@
       <if test="record.studioId != null" >
         studio_id = #{record.studioId,jdbcType=BIGINT},
       </if>
+      <if test="record.slotDate != null" >
+        slot_date = #{record.slotDate,jdbcType=DATE},
+      </if>
       <if test="record.slotNo != null" >
         slot_no = #{record.slotNo,jdbcType=VARCHAR},
       </if>
@@ -400,6 +416,7 @@
     update studio_slot
     set studio_slot_id = #{record.studioSlotId,jdbcType=BIGINT},
       studio_id = #{record.studioId,jdbcType=BIGINT},
+      slot_date = #{record.slotDate,jdbcType=DATE},
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
       slot_status = #{record.slotStatus,jdbcType=TINYINT},
       apply_status = #{record.applyStatus,jdbcType=TINYINT},
@@ -432,6 +449,9 @@
     <set >
       <if test="studioId != null" >
         studio_id = #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="slotDate != null" >
+        slot_date = #{slotDate,jdbcType=DATE},
       </if>
       <if test="slotNo != null" >
         slot_no = #{slotNo,jdbcType=VARCHAR},
@@ -508,6 +528,7 @@
   <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlot" >
     update studio_slot
     set studio_id = #{studioId,jdbcType=BIGINT},
+      slot_date = #{slotDate,jdbcType=DATE},
       slot_no = #{slotNo,jdbcType=VARCHAR},
       slot_status = #{slotStatus,jdbcType=TINYINT},
       apply_status = #{applyStatus,jdbcType=TINYINT},
