@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefect
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuGateWay;
 import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuPicGateWay;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
@@ -161,6 +163,22 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		criteria.createCriteria().andSpPicUrlEqualTo(spPicUrl);
 		List<StudioSlotDefectiveSpuPicDto> list = defectiveSpuPicGateWay.selectByCriteria(criteria );
 		if(CollectionUtils.isNotEmpty(list)){
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean deleteDefectivePic(String spPicUrl) {
+		if(StringUtils.isNotBlank(spPicUrl)){
+			StudioSlotDefectiveSpuPicWithCriteriaDto withCriteria = new StudioSlotDefectiveSpuPicWithCriteriaDto();
+			StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
+			criteria.createCriteria().andSpPicUrlEqualTo(spPicUrl);
+			withCriteria.setCriteria(criteria );
+			StudioSlotDefectiveSpuPicDto studioSlotDefectiveSpuPicDto = new StudioSlotDefectiveSpuPicDto();
+			studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
+			withCriteria.setStudioSlotDefectiveSpuPicDto(studioSlotDefectiveSpuPicDto );
+			defectiveSpuPicGateWay.updateByCriteria(withCriteria );
 			return true;
 		}
 		return false;

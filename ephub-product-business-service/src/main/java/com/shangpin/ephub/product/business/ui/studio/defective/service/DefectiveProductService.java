@@ -60,4 +60,10 @@ public interface DefectiveProductService {
 	 * @return
 	 */
 	public boolean hasDefectiveSpuPic(String spPicUrl);
+	/**
+	 * 删除图片
+	 * @param spPicUrl
+	 * @return
+	 */
+	public boolean deleteDefectivePic(String spPicUrl);
 }

@@ -128,4 +128,14 @@ public class DefectiveProductController {
 			return HubResponse.errorResp("查找详情图片失败"); 
 		}
 	}
+	
+	@RequestMapping(value="/delete-defective-pic", method = RequestMethod.POST)
+	public HubResponse<?> deleteDefectivePic(String spPicUrl){
+		boolean bool = defectiveProductService.deleteDefectivePic(spPicUrl);
+		if(bool){
+			return HubResponse.successResp("");
+		}else{
+			return HubResponse.errorResp("删图失败");
+		}
+	}
 }
