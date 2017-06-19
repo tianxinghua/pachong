@@ -19,7 +19,7 @@ public class StudioDicCategoryWithCriteriaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 5103951128810875746L;
 
-	private StudioDicCategoryDto studioDicCategoryDto;
+	private StudioDicCategoryDto studioDicCategory;
 	
 	private StudioDicCategoryCriteriaDto criteria;
 }

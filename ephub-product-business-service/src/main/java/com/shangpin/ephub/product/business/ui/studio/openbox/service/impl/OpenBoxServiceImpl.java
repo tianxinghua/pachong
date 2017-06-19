@@ -156,7 +156,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			withCriteria.setCriteria(criteria );
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
-			withCriteria.setStudioSlotSpuSendDetailDto(studioSlotSpuSendDetailDto );
+			withCriteria.setStudioSlotSpuSendDetail(studioSlotSpuSendDetailDto );
 			studioSlotSpuSendDetailGateWay.updateByCriteriaSelective(withCriteria);
 			return true;
 		} catch (Exception e) {
@@ -177,7 +177,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
 			studioSlotDto.setShootTime(new Date()); 
 			slotWithCriteria.setStudioSlotDto(studioSlotDto );
-			studioSlotGateWay.updateByCriteria(slotWithCriteria);
+			studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
 			//TODO 暂时没有盘盈
 			//下面是盘亏
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();

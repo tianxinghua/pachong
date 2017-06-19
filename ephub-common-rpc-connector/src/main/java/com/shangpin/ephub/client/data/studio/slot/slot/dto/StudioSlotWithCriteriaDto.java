@@ -19,7 +19,7 @@ public class StudioSlotWithCriteriaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 5103951128810875746L;
 
-	private StudioSlotDto studioSlotDto;
+	private StudioSlotDto studioSlot;
 	
 	private StudioSlotCriteriaDto criteria;
 }
