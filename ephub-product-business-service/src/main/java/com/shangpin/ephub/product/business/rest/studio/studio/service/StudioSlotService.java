@@ -186,7 +186,7 @@ public class StudioSlotService {
 					slotDto.setSlotDate(studioDto.getPlanShootTime());
 
 					StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
-					studioSlotCriteriaDto.createCriteria().andSlotDateGreaterThan(new Date()).andApplyStatusEqualTo((byte) 3);
+					studioSlotCriteriaDto.createCriteria().andSlotDateGreaterThan(studioDto.getPlanShootTime()).andApplyStatusEqualTo((byte) 3);
 					List<StudioSlotDto> listStudiodto = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
 					if(listStudiodto!=null&&listStudiodto.size()!=0){
 						String slotNo = listStudiodto.get(0).getOriginSlotNo();
