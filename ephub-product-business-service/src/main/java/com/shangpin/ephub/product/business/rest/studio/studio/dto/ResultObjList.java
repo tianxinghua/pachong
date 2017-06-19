@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.ToString;
-
+/**
+ * Created by wangchao on 2017/06/19.
+ */
 @ToString
 public class ResultObjList {
 
@@ -13,11 +15,11 @@ public class ResultObjList {
     @JsonIgnore
     public int isOffDay;
     
-    @JsonProperty("dT")
+    @JsonProperty("DT")
     public String getDT() {
         return dT;
     }
-    @JsonProperty("dT")
+    @JsonProperty("DT")
     public void setDT(String dT) {
         this.dT = dT;
     }

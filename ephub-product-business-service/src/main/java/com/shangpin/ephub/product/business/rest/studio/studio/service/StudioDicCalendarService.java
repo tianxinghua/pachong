@@ -16,12 +16,13 @@ import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCalendarGateWa
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.studio.studio.dto.ResultObjList;
+import com.shangpin.ephub.product.business.rest.studio.studio.dto.ResultResponseDto;
 import com.shangpin.ephub.product.business.rest.studio.studio.dto.StudioRequestDto;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Created by loyalty on 17/6/8.
+ * Created by wangchao on 2017/06/19.
  */
 @Service
 @Slf4j
@@ -41,17 +42,11 @@ public class StudioDicCalendarService {
 		log.info("查询摄影棚日历信息----end");
 		return studioDicCalendarDto;
 	}
-	public HubResponseDto<ResultObjList> getStudioOffDayCalendarByApi(String from,String to,String calenderTemplateId){
-		StudioRequestDto requestDto = new StudioRequestDto();
-		requestDto.setFrom(from);
-		requestDto.setTo(to);
-		requestDto.setCategoryNo(calenderTemplateId);
-        
-        log.info("摄影棚日历请求api参数：{},"+apiAddressProperties.getGetStudioOffDayCalendarUrl(),requestDto);
-        HttpEntity<StudioRequestDto> requestEntity = new HttpEntity<StudioRequestDto>(requestDto);
+	public ResultResponseDto<ResultObjList> getStudioOffDayCalendarByApi(String from,String to,String calenderTemplateId){
+        log.info("摄影棚日历请求api参数：{},"+apiAddressProperties.getGetStudioOffDayCalendarUrl(),"from:"+from+"to:"+to+"calendarNo:"+calenderTemplateId);
         String getGetStudioOffDayCalendarUrl = apiAddressProperties.getGetStudioOffDayCalendarUrl();
-		ResponseEntity<HubResponseDto<ResultObjList>> entity = restTemplate.exchange(getGetStudioOffDayCalendarUrl, HttpMethod.POST,
-                requestEntity, new ParameterizedTypeReference<HubResponseDto<ResultObjList>>() {
+		ResponseEntity<ResultResponseDto<ResultObjList>> entity = restTemplate.exchange(getGetStudioOffDayCalendarUrl+"?From="+from+"&To="+to+"&CalendarNo="+calenderTemplateId, HttpMethod.POST,
+				null, new ParameterizedTypeReference<ResultResponseDto<ResultObjList>>() {
                 });
         log.info("摄影棚日历api返回结果：{}",entity.getBody());
         return entity.getBody();
