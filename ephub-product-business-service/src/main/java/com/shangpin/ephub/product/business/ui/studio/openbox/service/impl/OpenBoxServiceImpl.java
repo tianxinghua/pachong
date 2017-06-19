@@ -176,7 +176,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			StudioSlotDto studioSlotDto =  new StudioSlotDto();
 			studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
 			studioSlotDto.setShootTime(new Date()); 
-			slotWithCriteria.setStudioSlotDto(studioSlotDto );
+			slotWithCriteria.setStudioSlot(studioSlotDto );
 			studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
 			//TODO 暂时没有盘盈
 			//下面是盘亏

@@ -177,7 +177,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 			withCriteria.setCriteria(criteria );
 			StudioSlotDefectiveSpuPicDto studioSlotDefectiveSpuPicDto = new StudioSlotDefectiveSpuPicDto();
 			studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
-			withCriteria.setStudioSlotDefectiveSpuPicDto(studioSlotDefectiveSpuPicDto );
+			withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
 			defectiveSpuPicGateWay.updateByCriteria(withCriteria );
 			return true;
 		}
