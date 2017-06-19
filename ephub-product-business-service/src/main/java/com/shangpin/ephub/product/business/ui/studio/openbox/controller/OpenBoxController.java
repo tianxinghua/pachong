@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.openbox.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +24,7 @@ import com.shangpin.ephub.response.HubResponse;
 @RequestMapping("/open-box")
 public class OpenBoxController {
 	
+	@Autowired
 	private OpenBoxService openBoxService;
 
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)

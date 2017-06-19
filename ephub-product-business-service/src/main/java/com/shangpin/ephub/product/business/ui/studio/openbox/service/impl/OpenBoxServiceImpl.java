@@ -157,7 +157,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 			withCriteria.setStudioSlotSpuSendDetailDto(studioSlotSpuSendDetailDto );
-			studioSlotSpuSendDetailGateWay.updateByCriteria(withCriteria);
+			studioSlotSpuSendDetailGateWay.updateByCriteriaSelective(withCriteria);
 			return true;
 		} catch (Exception e) {
 			log.error("扫码质检异常："+e.getMessage(),e); 
