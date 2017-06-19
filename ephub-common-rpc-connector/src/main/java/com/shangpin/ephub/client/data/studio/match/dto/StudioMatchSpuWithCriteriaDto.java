@@ -19,7 +19,7 @@ public class StudioMatchSpuWithCriteriaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 5103951128810875746L;
 
-	private StudioMatchSpuDto studioMatchSpuDto;
+	private StudioMatchSpuDto studioMatchSpu;
 	
 	private StudioMatchSpuCriteriaDto criteria;
 }
