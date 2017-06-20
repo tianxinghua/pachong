@@ -210,6 +210,126 @@ public class StudioSlotSpuSendDetailCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andStudioSlotIdIsNull() {
+            addCriterion("studio_slot_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdIsNotNull() {
+            addCriterion("studio_slot_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdEqualTo(Long value) {
+            addCriterion("studio_slot_id =", value, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdNotEqualTo(Long value) {
+            addCriterion("studio_slot_id <>", value, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdGreaterThan(Long value) {
+            addCriterion("studio_slot_id >", value, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_slot_id >=", value, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdLessThan(Long value) {
+            addCriterion("studio_slot_id <", value, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_slot_id <=", value, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdIn(List<Long> values) {
+            addCriterion("studio_slot_id in", values, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdNotIn(List<Long> values) {
+            addCriterion("studio_slot_id not in", values, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdBetween(Long value1, Long value2) {
+            addCriterion("studio_slot_id between", value1, value2, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioSlotIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_slot_id not between", value1, value2, "studioSlotId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdIsNull() {
+            addCriterion("slot_spu_supplier_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdIsNotNull() {
+            addCriterion("slot_spu_supplier_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdEqualTo(Long value) {
+            addCriterion("slot_spu_supplier_id =", value, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdNotEqualTo(Long value) {
+            addCriterion("slot_spu_supplier_id <>", value, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdGreaterThan(Long value) {
+            addCriterion("slot_spu_supplier_id >", value, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("slot_spu_supplier_id >=", value, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdLessThan(Long value) {
+            addCriterion("slot_spu_supplier_id <", value, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdLessThanOrEqualTo(Long value) {
+            addCriterion("slot_spu_supplier_id <=", value, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdIn(List<Long> values) {
+            addCriterion("slot_spu_supplier_id in", values, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdNotIn(List<Long> values) {
+            addCriterion("slot_spu_supplier_id not in", values, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdBetween(Long value1, Long value2) {
+            addCriterion("slot_spu_supplier_id between", value1, value2, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotSpuSupplierIdNotBetween(Long value1, Long value2) {
+            addCriterion("slot_spu_supplier_id not between", value1, value2, "slotSpuSupplierId");
+            return (Criteria) this;
+        }
+
         public Criteria andSlotNoIsNull() {
             addCriterion("slot_no is null");
             return (Criteria) this;
@@ -1799,6 +1919,7 @@ public class StudioSlotSpuSendDetailCriteria {
     }
 
     public static class Criterion {
+
         public Criterion() {
             super();
         }

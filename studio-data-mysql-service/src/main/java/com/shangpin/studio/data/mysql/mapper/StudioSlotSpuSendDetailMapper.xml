@@ -3,6 +3,8 @@
 <mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotSpuSendDetailMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
     <id column="studio_slot_spu_send_detail_id" property="studioSlotSpuSendDetailId" jdbcType="BIGINT" />
+    <result column="studio_slot_id" property="studioSlotId" jdbcType="BIGINT" />
+    <result column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
@@ -88,11 +90,11 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_slot_spu_send_detail_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, slot_spu_no, supplier_spu_name, supplier_spu_model, supplier_brand_name, 
-      supplier_category_name, supplier_season_name, send_state, arrive_state, memo, create_time, 
-      create_user, send_user, send_time, arrive_user, arrive_time, update_time, update_user, 
-      data_state, version
+      studio_slot_spu_send_detail_id, studio_slot_id, slot_spu_supplier_id, slot_no, supplier_no, 
+      supplier_id, spu_pending_id, supplier_spu_id, slot_spu_no, supplier_spu_name, supplier_spu_model, 
+      supplier_brand_name, supplier_category_name, supplier_season_name, send_state, arrive_state, 
+      memo, create_time, create_user, send_user, send_time, arrive_user, arrive_time, update_time, 
+      update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -117,7 +119,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_spu_send_detail_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
+    studio_slot_spu_send_detail_id,studio_slot_id,slot_spu_supplier_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
     from studio_slot_spu_send_detail
     where studio_slot_spu_send_detail_id = #{studioSlotSpuSendDetailId,jdbcType=BIGINT}
   </select>
@@ -135,19 +137,21 @@
     <selectKey keyColumn="studio_slot_spu_send_detail_id" keyProperty="studioSlotSpuSendDetailId" order="AFTER" resultType="long">
       SELECT LAST_INSERT_ID() AS studio_slot_spu_send_detail_id
     </selectKey>
-    insert into studio_slot_spu_send_detail (studio_slot_spu_send_detail_id, slot_no, 
-      supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, slot_spu_no, supplier_spu_name, 
-      supplier_spu_model, supplier_brand_name, supplier_category_name, 
+    insert into studio_slot_spu_send_detail (studio_slot_spu_send_detail_id, studio_slot_id, 
+      slot_spu_supplier_id, slot_no, supplier_no, 
+      supplier_id, spu_pending_id, supplier_spu_id, 
+      slot_spu_no, supplier_spu_name, supplier_spu_model, 
+      supplier_brand_name, supplier_category_name, 
       supplier_season_name, send_state, arrive_state, 
       memo, create_time, create_user, 
       send_user, send_time, arrive_user, 
       arrive_time, update_time, update_user, 
       data_state, version)
-    values (#{studioSlotSpuSendDetailId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
-      #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, 
-      #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, 
-      #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierBrandName,jdbcType=VARCHAR}, #{supplierCategoryName,jdbcType=VARCHAR}, 
+    values (#{studioSlotSpuSendDetailId,jdbcType=BIGINT}, #{studioSlotId,jdbcType=BIGINT}, 
+      #{slotSpuSupplierId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, 
+      #{slotSpuNo,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, 
+      #{supplierBrandName,jdbcType=VARCHAR}, #{supplierCategoryName,jdbcType=VARCHAR}, 
       #{supplierSeasonName,jdbcType=VARCHAR}, #{sendState,jdbcType=TINYINT}, #{arriveState,jdbcType=TINYINT}, 
       #{memo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
       #{sendUser,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, 
@@ -162,6 +166,12 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotSpuSendDetailId != null" >
         studio_slot_spu_send_detail_id,
+      </if>
+      <if test="studioSlotId != null" >
+        studio_slot_id,
+      </if>
+      <if test="slotSpuSupplierId != null" >
+        slot_spu_supplier_id,
       </if>
       <if test="slotNo != null" >
         slot_no,
@@ -239,6 +249,12 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="studioSlotSpuSendDetailId != null" >
         #{studioSlotSpuSendDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="studioSlotId != null" >
+        #{studioSlotId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuSupplierId != null" >
+        #{slotSpuSupplierId,jdbcType=BIGINT},
       </if>
       <if test="slotNo != null" >
         #{slotNo,jdbcType=VARCHAR},
@@ -326,6 +342,12 @@
       <if test="record.studioSlotSpuSendDetailId != null" >
         studio_slot_spu_send_detail_id = #{record.studioSlotSpuSendDetailId,jdbcType=BIGINT},
       </if>
+      <if test="record.studioSlotId != null" >
+        studio_slot_id = #{record.studioSlotId,jdbcType=BIGINT},
+      </if>
+      <if test="record.slotSpuSupplierId != null" >
+        slot_spu_supplier_id = #{record.slotSpuSupplierId,jdbcType=BIGINT},
+      </if>
       <if test="record.slotNo != null" >
         slot_no = #{record.slotNo,jdbcType=VARCHAR},
       </if>
@@ -406,6 +428,8 @@
   <update id="updateByExample" parameterType="map" >
     update studio_slot_spu_send_detail
     set studio_slot_spu_send_detail_id = #{record.studioSlotSpuSendDetailId,jdbcType=BIGINT},
+      studio_slot_id = #{record.studioSlotId,jdbcType=BIGINT},
+      slot_spu_supplier_id = #{record.slotSpuSupplierId,jdbcType=BIGINT},
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
@@ -437,6 +461,12 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
     update studio_slot_spu_send_detail
     <set >
+      <if test="studioSlotId != null" >
+        studio_slot_id = #{studioSlotId,jdbcType=BIGINT},
+      </if>
+      <if test="slotSpuSupplierId != null" >
+        slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT},
+      </if>
       <if test="slotNo != null" >
         slot_no = #{slotNo,jdbcType=VARCHAR},
       </if>
@@ -514,7 +544,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotSpuSendDetail" >
     update studio_slot_spu_send_detail
-    set slot_no = #{slotNo,jdbcType=VARCHAR},
+    set studio_slot_id = #{studioSlotId,jdbcType=BIGINT},
+      slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT},
+      slot_no = #{slotNo,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
