@@ -1,7 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.controller;
 
-import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.SlotSpuSupplierQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class StudioController {
     * 获取待处理商品列表
     * */
     @RequestMapping(value = "/spullist",method = RequestMethod.POST)
-    public HubResponse<?> getPendingProductList(@RequestBody StudioQueryDto queryDto) {
+    public HubResponse<?> getPendingProductList(@RequestBody SlotSpuSupplierQueryDto queryDto) {
         String supplierId = queryDto.getSupplierId();
         if(StringUtils.isEmpty(supplierId) ){
             return  HubResponse.errorResp("传入参数不正确");

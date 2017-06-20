@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IStudioService {
 
-    public StudioPendingProductVo getPendingProductList(String supplierId);
+    public StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto);
 
     public SlotsVo getSupplierSlotList(String supplierId);
     public SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
