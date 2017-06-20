@@ -87,7 +87,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 this.transPendingToSlot(pendingProductDto,slotSpuDto);
                 try {
                     setSlotSpuNo(slotSpuDto);
-                    slotSpuGateWay.insert(slotSpuDto);
+                    slotSpuDto.setSlotSpuId(slotSpuGateWay.insert(slotSpuDto));
                 } catch (Exception e) {
                     //一般情况下是唯一索引冲突，需要获取数据
 
@@ -154,13 +154,21 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                        if(slotSpuSupplierDtos.size()==1){//单个
                            this.updateSpuModelAndBrandNo(slotSpuSupplierDtos.get(0).getSlotSpuId(),pendingProductDto);
                        }else{
+                           boolean needupdateother = false;
+                           if(slotSpuSupplierDtos.size()==2) needupdateother = true;
                            for(HubSlotSpuSupplierDto dto:slotSpuSupplierDtos){
                                if(null==dto.getSpuPendingId()) continue;
                                if(dto.getSpuPendingId().toString().equals(pendingProductDto.getSpuPendingId().toString())){
-                                   //跟新老的记录为逻辑删除
+                                   //更新老的记录为逻辑删除
                                    hubSlotSpuSupplierService.deleteSlotSpuSupplierForLogic(dto.getSlotSpuSupplierId());
                                    //插入新记录
                                    this.addSlotSpuAndSupplier(pendingProductDto);
+                               }else{
+                                   if(needupdateother){
+                                       //更新状态为独家
+                                       hubSlotSpuSupplierService.resumeRepeatMarker(dto.getSlotSpuSupplierId());
+
+                                   }
                                }
                            }
 

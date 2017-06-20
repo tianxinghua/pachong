@@ -12,7 +12,7 @@ import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Created by loyalty on 17/6/8.
+ * Created by wangchao on 2017/06/19.
  */
 @Service
 @Slf4j
