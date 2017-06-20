@@ -16,7 +16,19 @@ public interface HubSlotSpuSupplierService {
      * @return
      * @throws Exception
      */
-    public  boolean addHubSloSpuSupplier(HubSlotSpuSupplierDto dto) throws  Exception;
+    public  boolean addHubSlotSpuSupplier(HubSlotSpuSupplierDto dto) throws  Exception;
+
+
+    /**
+     * 添加
+     * 需要判断是否存在其它供货商的数据 ，如果存在需要修改此SLOTSPU下所有的是否多家供货商供货状态
+     * @param dto
+     * @param sendSign
+     * @return
+     * @throws Exception
+     */
+    public boolean addHubSlotSpuSupplier(HubSlotSpuSupplierDto dto,Integer sendSign) throws  Exception;
+
 
     /**
      * 根据 slotSpuNo 和 供货商ID，查询未删除状态下是否存在

@@ -36,14 +36,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
     HubSlotSpuGateWay slotSpuGateWay;
 
-//    @Autowired
-//    SpuNoGateWay spuNoGateWay;
-//
-//    @Autowired
-//    HubSlotSpuSupplierService hubSlotSpuSupplierService;
-//
-//
-//    SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
+
 
     @Autowired
     HubSlotSpuSupplierService hubSlotSpuSupplierService;
@@ -106,7 +99,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
                 this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto.getSlotSpuId(),slotSpuDto.getSlotSpuNo());
 
-                hubSlotSpuSupplierService.addHubSloSpuSupplier(slotSpuSupplierDto);
+                hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto);
             }
 
             //spupending 处理
@@ -148,7 +141,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
                         HubSlotSpuSupplierDto slotSpuSupplierDto = new HubSlotSpuSupplierDto();
                         this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto.getSlotSpuId(),slotSpuDto.getSlotSpuNo());
-                        hubSlotSpuSupplierService.addHubSloSpuSupplier(slotSpuSupplierDto);
+                        hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto);
 
                     }else{
                        if(slotSpuSupplierDtos.size()==1){//单个

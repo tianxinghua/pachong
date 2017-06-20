@@ -1,11 +1,14 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot.impl;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierOperateSign;
 import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierRepeatMarker;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
+import com.shangpin.ephub.product.business.service.studio.studio.StudioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +25,11 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
     @Autowired
     HubSlotSpuSupplierGateway spuSupplierGateway;
 
+    @Autowired
+    StudioService studioService;
+
     @Override
-    public boolean addHubSloSpuSupplier(HubSlotSpuSupplierDto dto) throws Exception {
+    public boolean addHubSlotSpuSupplier(HubSlotSpuSupplierDto dto) throws Exception {
 
         try {
             List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(dto.getSlotSpuNo(),dto.getSupplierId());
@@ -31,7 +37,14 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 this.updateRepeatMarker(slotSpuSupplierDtos);
                 dto.setRepeatMarker(SlotSpuSupplierRepeatMarker.MULTI.getIndex().byteValue());
             }else{
+                //判断是否需要展示处理
+                if(studioService.isOwnerStudio(dto.getSupplierId())){
+                    dto.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_HANDLE.getIndex().byteValue());
+                }else{
+
+                }
                 dto.setRepeatMarker(SlotSpuSupplierRepeatMarker.SINGLE.getIndex().byteValue());
+
             }
             spuSupplierGateway.insert(dto);
 
@@ -42,6 +55,17 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
         }
         return false;
     }
+
+    @Override
+    public boolean addHubSlotSpuSupplier(HubSlotSpuSupplierDto dto, Integer sendSign) throws Exception {
+        if(sendSign== SlotSpuState.SEND.getIndex()){
+
+        }else{
+            this.addHubSlotSpuSupplier(dto);
+        }
+        return false;
+    }
+
 
     @Override
     public HubSlotSpuSupplierDto getSlotSpuSupplierOfValidBySpuNoAndSupplierId(String slotSpuNo, String supplierId) {
