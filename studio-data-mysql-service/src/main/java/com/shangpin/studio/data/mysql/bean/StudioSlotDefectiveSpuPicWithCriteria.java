@@ -21,7 +21,7 @@ public class StudioSlotDefectiveSpuPicWithCriteria implements Serializable {
 	 */
 	private static final long serialVersionUID = 5103951128810875746L;
 
-	private StudioSlotDefectiveSpuPic StudioSlotDefectiveSpuPic;
+	private StudioSlotDefectiveSpuPic studioSlotDefectiveSpuPic;
 	
 	private StudioSlotDefectiveSpuPicCriteria criteria;
 }

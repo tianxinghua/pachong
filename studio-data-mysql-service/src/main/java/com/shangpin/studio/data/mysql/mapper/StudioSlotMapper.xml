@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.studio.data.mysqlmapper.StudioSlotMapper" >
+<mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlot" >
     <id column="studio_slot_id" property="studioSlotId" jdbcType="BIGINT" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />

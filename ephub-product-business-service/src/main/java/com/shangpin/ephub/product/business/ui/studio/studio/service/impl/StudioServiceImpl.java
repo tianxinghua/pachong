@@ -318,7 +318,7 @@ public class StudioServiceImpl implements IStudioService {
         if(null!=results && results.size()>0){
             for (StudioSlotSpuSendDetailDto item :results){
                 SlotProduct p = new SlotProduct();
-                p.setId(item.getStudioSlotSpuSupplierMappingId());
+                p.setId(item.getStudioSlotSpuSendDetailId());
                 p.setSupplierNo(item.getSupplierNo());
                 p.setSupplierId(item.getSupplierId());
                 p.setSpuPendingId(item.getSpuPendingId());

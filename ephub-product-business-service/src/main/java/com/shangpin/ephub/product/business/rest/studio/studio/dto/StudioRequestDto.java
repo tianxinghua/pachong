@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.ToString;
-
+/**
+ * Created by wangchao on 2017/06/19.
+ */
 @ToString
 public class StudioRequestDto {
 
@@ -19,7 +21,7 @@ public class StudioRequestDto {
 	public String getFrom() {
 		return from;
 	}
-    @JsonProperty("BrandNo")
+    @JsonProperty("From")
 	public void setFrom(String from) {
 		this.from = from;
 	}
@@ -30,13 +32,13 @@ public class StudioRequestDto {
     @JsonProperty("To")
 	public void setTo(String to) {
 		this.to = to;
-	}
-    @JsonProperty("CategoryNo")
-	public String getCategoryNo() {
+	}              
+    @JsonProperty("CalendarNo")
+	public String getCalendarNo() {
 		return calendarNo;
 	}
-    @JsonProperty("CategoryNo")
-	public void setCategoryNo(String calendarNo) {
+    @JsonProperty("CalendarNo")
+	public void setCalendarNo(String calendarNo) {
 		this.calendarNo = calendarNo;
 	}
     

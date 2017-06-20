@@ -19,7 +19,7 @@ public class StudioSlotLogistictTrackWithCriteriaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = 5103951128810875746L;
 
-	private StudioSlotLogistictTrackDto  studioSlotLogistictTrackDto;
+	private StudioSlotLogistictTrackDto  studioSlotLogistictTrack;
 	
 	private StudioSlotLogistictTrackCriteriaDto  criteria;
 }
