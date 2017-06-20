@@ -136,7 +136,7 @@ public class StudioSlotController {
 	private StudioSlotDto createStudioSlotDto(long studioId, String DT, String studioNo, int num) {
 		StudioSlotDto dto = new StudioSlotDto();
 		dto.setStudioId(studioId);
-		String slotNo = sdf.format(new Date()).replaceAll("-", "") + studioNo + "00" + num;
+		String slotNo = DT.replaceAll("/", "") + studioNo + "00" + num;
 		dto.setSlotNo(slotNo);
 		dto.setSlotStatus((byte) 0);
 		dto.setApplyStatus((byte) 0);
@@ -151,7 +151,7 @@ public class StudioSlotController {
 		return dto;
 	}
 	public static void main(String[] args){
-		System.out.println("2017-06-19".replaceAll("-", ""));
+		System.out.println("2017/06/19".replaceAll("/", ""));
 		
 	}
 }

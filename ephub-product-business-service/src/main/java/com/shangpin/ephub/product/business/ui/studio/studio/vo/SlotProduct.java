@@ -22,6 +22,7 @@ public class SlotProduct implements Serializable {
     private Long spuPendingId;
     private Long supplierSpuId;
     private String slotSpuNo;
+    private Long slotSpuSupplierId;
     private String supplierSpuName;
     private String supplierBrandName;
     private String supplierCategoryName;
