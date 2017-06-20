@@ -47,7 +47,7 @@ public interface DefectiveProductService {
 	 * @param studioSlotDefectiveSpuId
 	 * @return
 	 */
-	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(Long studioSlotDefectiveSpuId);
+	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(String studioSlotDefectiveSpuId);
 	/**
 	 * 根据主键查找
 	 * @param studioSlotDefectiveSpuId

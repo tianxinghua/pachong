@@ -139,12 +139,12 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	}
 
 	@Override
-	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(Long studioSlotDefectiveSpuId) {
+	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(String studioSlotDefectiveSpuId) {
 		StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
 		criteria.setOrderByClause("create_time"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
-		criteria.createCriteria().andStudioSlotDefectiveSpuIdEqualTo(studioSlotDefectiveSpuId).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		criteria.createCriteria().andStudioSlotDefectiveSpuIdEqualTo(Long.valueOf(studioSlotDefectiveSpuId)).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		return defectiveSpuPicGateWay.selectByCriteria(criteria );
 	}
 
@@ -178,7 +178,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 			StudioSlotDefectiveSpuPicDto studioSlotDefectiveSpuPicDto = new StudioSlotDefectiveSpuPicDto();
 			studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
 			withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
-			defectiveSpuPicGateWay.updateByCriteria(withCriteria );
+			defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
 			return true;
 		}
 		return false;
