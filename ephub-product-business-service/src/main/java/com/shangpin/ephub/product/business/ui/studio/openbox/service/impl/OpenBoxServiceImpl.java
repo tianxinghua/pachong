@@ -113,11 +113,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		}*/
 		return criteria;
 	}
-	/**
-	 * 根据摄影棚编号获取主键
-	 * @param studioNo
-	 * @return
-	 */
+
+	@Override
 	public Long getStudioId(String studioNo) {
 		if(StringUtils.isBlank(studioNo)){
 			return null;
