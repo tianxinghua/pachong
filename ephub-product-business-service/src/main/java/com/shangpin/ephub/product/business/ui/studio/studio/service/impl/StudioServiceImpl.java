@@ -282,8 +282,7 @@ public class StudioServiceImpl implements IStudioService {
     public SlotInfoExtends getSlotInfo(String supplierId ,String slotNo){
         SlotInfoExtends slot  = new SlotInfoExtends();
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
-        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId);
-        cdto.createCriteria().andSlotNoEqualTo(slotNo);
+        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSlotNoEqualTo(slotNo);
         List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
 
 
@@ -341,6 +340,7 @@ public class StudioServiceImpl implements IStudioService {
                 p.setSpuPendingId(item.getSpuPendingId());
                 p.setSupplierSpuId(item.getSupplierSpuId());
                 p.setSlotSpuNo(item.getSlotSpuNo());
+                //p.setSlotSpuSupplierId(item.getSlotSpuSupplierId());
                 p.setSupplierSpuName(item.getSupplierSpuName());
                 p.setSupplierBrandName(item.getSupplierBrandName());
                 p.setSupplierCategoryName(item.getSupplierCategoryName());
@@ -628,7 +628,9 @@ public class StudioServiceImpl implements IStudioService {
         SlotProductEditVo updatedVo = null;
         try {
             HubSlotSpuSupplierDto product = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
-           int count =   studioSlotSpuSendDetailGateWay.deleteByPrimaryKey(slotSSDId);
+            StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
+            dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotSpuSupplierMappingIdEqualTo(slotSSDId);
+           int count =  studioSlotSpuSendDetailGateWay.deleteByCriteria(dto);
            if(count>0){
                HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
                upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
