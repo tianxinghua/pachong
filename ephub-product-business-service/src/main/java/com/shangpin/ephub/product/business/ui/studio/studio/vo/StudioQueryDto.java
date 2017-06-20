@@ -8,6 +8,7 @@ import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 
 import java.io.Serializable;
 import java.security.PublicKey;
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/6/8.
@@ -22,6 +23,7 @@ public class StudioQueryDto implements Serializable {
     private String supplierId;
     private String slotNo;
     private String spuNo;
+    private String slotSSIds; //待拍照的SPU下挂供货商 表字段Id SlotSpuSupplierId多个，使用","分隔
     private Long slotSSId; //待拍照的SPU下挂供货商 表字段Id SlotSpuSupplierId
     private Long slotSSDId; //待拍照的SPU发货明细Id
     private String createUser;

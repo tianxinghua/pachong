@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.controller;
 
+import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.StudioQueryDto;
 import com.shangpin.ephub.response.HubResponse;
@@ -7,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Administrator on 2017/6/8.
@@ -61,17 +66,20 @@ public class StudioController {
     /*
  * 批次添加商品
  * */
-    @RequestMapping(value = "/addspu")
+    @RequestMapping(value = "/addspu",method = RequestMethod.POST)
     public HubResponse<?> addProductIntoSlot(@RequestBody StudioQueryDto queryDto) {
+//    public HubResponse<?> addProductIntoSlot(@RequestParam("supplierId") String supplierId,
+//                                             @RequestParam("slotNo") String slotNo,
+//                                             @RequestParam("slotSSIds") List<String> slotSSIds,@RequestParam(value = "createUser",defaultValue = "") String createUser) {
+
         String supplierId = queryDto.getSupplierId();
         String slotNo = queryDto.getSlotNo();
-        Long slotSSId = queryDto.getSlotSSId();
-        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo) || slotSSId==null){
+        String slotSSIds = queryDto.getSlotSSIds();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo) || StringUtils.isEmpty(slotSSIds)){
             return  HubResponse.errorResp("传入参数不正确");
         }
-
-
-        return iStudioService.addProductIntoSlot(supplierId,slotNo, slotSSId ,queryDto.getCreateUser());
+        List<Long> ssids = Arrays.asList(slotSSIds.split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        return iStudioService.addProductIntoSlot(supplierId,slotNo, ssids ,queryDto.getCreateUser());
     }
 
     /*
@@ -87,7 +95,7 @@ public class StudioController {
         if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo)|| slotSSId==null || slotSSDId==null){
             return  HubResponse.errorResp("传入参数不正确");
         }
-        return iStudioService.delProductFromSlot(supplierId,slotNo,slotSSId, slotSSDId ,queryDto.getCreateUser());
+        return iStudioService.delProductFromSlot(supplierId,slotNo, slotSSId, slotSSDId ,queryDto.getCreateUser());
     }
 
     /*

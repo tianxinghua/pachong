@@ -189,6 +189,23 @@ public class StudioServiceImpl implements IStudioService {
                     s.setCategorySecond(c.getCategorySecond());
                 });
 
+                s.setStudioId(x.getStudioId());
+                s.setSlotStatus(x.getSlotStatus());
+                s.setStudioSlotId(x.getStudioSlotId());
+                s.setSlotNo(x.getSlotNo());
+                s.setApplySupplierId(x.getApplySupplierId());
+                s.setApplyUser(x.getApplyUser());
+                s.setApplyTime(x.getApplyTime());
+                s.setApplyStatus(x.getApplyStatus());
+                s.setSendState(x.getSendState());
+                s.setSendTime(x.getSendTime());
+                s.setSendUser(x.getSendUser());
+                s.setArriveStatus(x.getArriveStatus());
+                s.setArriveTime(x.getArriveTime());
+                s.setArriveUser(x.getArriveUser());
+                s.setPlanArriveTime(x.getPlanArriveTime());
+//                List<SlotProduct> listProduct = SlotProductList(x.getSlotNo());
+//                s.setCountNum(listProduct.size());
 
                 long count = studioSlotSpuSendDetailDto.stream().filter(spu -> spu.getSlotNo() .equals(x.getSlotNo()) ).count();
                 s.setCountNum(count);
@@ -340,107 +357,235 @@ public class StudioServiceImpl implements IStudioService {
         return  list;
     }
 
+    public HubResponse<SlotProductEditVo> addProductIntoSlot(String supplierId ,String slotNo, List<Long> slotSSIds,String createUser) {
 
+        HubResponse<SlotProductEditVo> response = new HubResponse<SlotProductEditVo>();
+        response.setCode("0");
+        SlotProductEditVo updatedVo = new SlotProductEditVo();
+        updatedVo.setSupplierId(supplierId);
+        updatedVo.setSlotNo(slotNo);
+        updatedVo.setCount(slotSSIds.size());
+        int successNum = 0 ,failNum = 0;
+
+        try {
+            //验证是否slot是否可以添加
+            SlotInfoExtends slotInfo = getSlotInfo(supplierId, slotNo);
+            //验证slot是否存在
+            if (slotInfo == null) {
+                throw new EphubException("C1", "发货单没有找到");
+            } else {
+
+                if (slotInfo.getApplyStatus() != StudioSlotApplyState.APPLYED.getIndex().byteValue() ||
+                        slotInfo.getSendState() != StudioSlotSendState.WAIT_SEND.getIndex().byteValue()) {
+                    throw new EphubException("C2", "发货单状态不正确");
+                }
+                if (slotInfo.getMaxNum() <= slotInfo.getSlotProductList().size()) {
+                    throw new EphubException("C3", "发货单已经达到最大商品数量");
+                }
+                HubSlotSpuSupplierCriteriaDto ssdto = new HubSlotSpuSupplierCriteriaDto();
+                ssdto.createCriteria().andSlotSpuSupplierIdIn(slotSSIds);
+
+                List<HubSlotSpuSupplierDto> products = hubSlotSpuSupplierGateway.selectByCriteria(ssdto);
+
+                if(products!=null && products.size()>0){
+
+                    for (HubSlotSpuSupplierDto product :products){
+                        //region  判断是否处于可添加商品状态
+                        if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
+                            //throw new EphubException("C5", "该商品已经加入发货单了");
+                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(), "C5", "该商品已经加入发货单了"));
+                            continue;
+                        }
+                        if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
+                           // throw new EphubException("C6", "该商品已经发货了");
+                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C6", "该商品已经发货了"));
+                            continue;
+                        }
+                        if (slotInfo.getCategoryFirst() != null) {
+                            HubSpuPendingDto pendingDtoList = hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
+                            if (pendingDtoList != null) {
+                                if (pendingDtoList.getHubCategoryNo() != null && !pendingDtoList.getHubCategoryNo().startsWith(slotInfo.getCategoryFirst())) {
+                                    //throw new EphubException("C7", "该商品与目标发货单类型不符");
+                                    updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C7", "该商品与目标发货单类型不符"));
+                                    continue;
+                                }
+                            }
+                        }
+                        //endregion
+
+                        HubSupplierSpuDto supProduct = hubSupplierSpuGateWay.selectByPrimaryKey(product.getSupplierSpuId());
+
+                        //region 验证成功后，进行添加
+                        StudioSlotSpuSendDetailDto data = new StudioSlotSpuSendDetailDto();
+                        data.setSlotNo(slotNo);
+                        data.setSupplierId(supplierId);
+                        data.setSupplierNo(product.getSupplierNo());
+                        data.setSpuPendingId(product.getSpuPendingId());
+                        data.setSupplierSpuId(product.getSupplierSpuId());
+                        data.setSlotSpuNo(product.getSlotNo());
+                        data.setSupplierSpuName(supProduct.getSupplierSpuName());
+                        data.setSupplierSpuModel(supProduct.getSupplierSpuModel());
+                        data.setSupplierBrandName(supProduct.getSupplierBrandname());
+                        data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
+                        data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
+                        data.setCreateTime(new Date());
+                        data.setCreateUser(createUser);
+                        Long id = studioSlotSpuSendDetailGateWay.insert(data);
+                        if (id > 0) {
+                            HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
+                            upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+                            upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
+                            hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+                            slotInfo.setCountNum(slotInfo.getCountNum() + 1);
+                            successNum  = successNum +1;
+//                            SlotProductEditVo successVo = new SlotProductEditVo();
+//                            successVo.setSupplierId(supplierId);
+//                            successVo.setSlotNo(slotNo);
+//                            successVo.setSlotInfo(slotInfo);
+//                            response.setMsg("商品加入发货单成功");
+//                            response.setContent(successVo);
+                        } else {
+                            //throw new EphubException("W0", "商品加入发货单失败");
+                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"W0", "商品加入发货单失败"));
+                        }
+                        //endregion
+                    }
+                    updatedVo.setSuccessCount(successNum);
+                    if(updatedVo.getErrorConent()!=null){
+                        failNum = updatedVo.getErrorConent().size();
+                    }
+                    updatedVo.setFailCount(failNum);
+                    updatedVo.setSlotInfo(slotInfo);
+                    response.setContent(updatedVo);
+                }else {
+                    throw new EphubException("C4", "没有找到商品");
+                }
+            }
+
+        } catch (EphubException e) {
+            log.info("addProductIntoSlot EphubException " + e.getErrcode() + e.getMessage());
+            updatedVo = setErrorMsg(response, slotNo, e.getErrcode(), e.getMessage());
+            response.setErrorMsg(updatedVo);
+            response.setMsg(e.getMessage());
+        } catch (Exception ex) {
+            log.info("addProductIntoSlot Exception " + ex.getMessage());
+            setErrorMsg(response, slotNo, "S0", "发货单添加商品时,发生服务器错误");
+        }
+        return response;
+    }
     /**
-     * 添加商品
+     * 添加商品  单件添加，废弃不用了。。。。。
+     *
      * @param supplierId 供货商编号
      * @param slotNo   批次号
      * @param slotSSId 待拍照的SPU下挂供货商 表字段Id
      * @param createUser 操作人
      * @return HubResponse<SlotProductEditVo>
      */
-    public HubResponse<SlotProductEditVo> addProductIntoSlot(String supplierId ,String slotNo,Long slotSSId,String createUser){
+//    public HubResponse<SlotProductEditVo> addProductIntoSlot(String supplierId ,String slotNo, Long slotSSId,String createUser){
+//
+//        HubResponse<SlotProductEditVo> response = new HubResponse<SlotProductEditVo>();
+//        response.setCode("0");
+//        SlotProductEditVo updatedVo = null;
+//       try {
+//           //验证是否slot是否可以添加
+//           SlotInfoExtends slotInfo = getSlotInfo(supplierId, slotNo);
+//           //验证slot是否存在
+//           if (slotInfo == null) {
+//               throw new EphubException("C1", "发货单没有找到");
+//           } else {
+//
+//               if (slotInfo.getApplyStatus() != StudioSlotApplyState.APPLYED.getIndex().byteValue() ||
+//                       slotInfo.getSendState() != StudioSlotSendState.WAIT_SEND.getIndex().byteValue()) {
+//                   throw new EphubException("C2", "发货单状态不正确");
+//               }
+//               if (slotInfo.getMaxNum() <= slotInfo.getSlotProductList().size()) {
+//                   throw new EphubException("C3", "发货单已经达到最大商品数量");
+//               }
+//
+//               HubSlotSpuSupplierDto product = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
+//               if (product == null) {
+//                   throw new EphubException("C4", "该商品不存在");
+//               } else {
+//
+//                   //region  判断是否处于可添加商品状态
+//                   if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
+//                       throw new EphubException("C5", "该商品已经加入发货单了");
+//                   }
+//                   if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
+//                       throw new EphubException("C6", "该商品已经发货了");
+//                   }
+//                   if(slotInfo.getCategoryFirst()!=null){
+//                       HubSpuPendingDto  pendingDtoList =  hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
+//                       if(pendingDtoList!=null){
+//                           if ( pendingDtoList.getHubCategoryNo()!=null && !pendingDtoList.getHubCategoryNo().startsWith(slotInfo.getCategoryFirst())) {
+//                               throw new EphubException("C7", "该商品与目标发货单类型不符");
+//                           }
+//                       }
+//                   }
+//                   //endregion
+//
+//                   HubSupplierSpuDto supProduct = hubSupplierSpuGateWay.selectByPrimaryKey(product.getSupplierSpuId());
+//
+//                   //region 验证成功后，进行添加
+//                   StudioSlotSpuSendDetailDto data = new StudioSlotSpuSendDetailDto();
+//                   data.setSlotNo(slotNo);
+//                   data.setSupplierId(supplierId);
+//                   data.setSupplierNo(product.getSupplierNo());
+//                   data.setSpuPendingId(product.getSpuPendingId());
+//                   data.setSupplierSpuId(product.getSupplierSpuId());
+//                   data.setSlotSpuNo(product.getSlotNo());
+//                   data.setSupplierSpuName(supProduct.getSupplierSpuName());
+//                   data.setSupplierSpuModel(supProduct.getSupplierSpuModel());
+//                   data.setSupplierBrandName(supProduct.getSupplierBrandname());
+//                   data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
+//                   data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
+//                   data.setCreateTime(new Date());
+//                   data.setCreateUser(createUser);
+//                   Long id = studioSlotSpuSendDetailGateWay.insert(data);
+//                   if (id > 0) {
+//                       HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
+//                       upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+//                       upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
+//                       hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+//                       slotInfo.setCountNum(slotInfo.getCountNum() + 1);
+//                       SlotProductEditVo successVo = new SlotProductEditVo();
+//                       successVo.setSupplierId(supplierId);
+//                       successVo.setSlotNo(slotNo);
+//                       successVo.setSlotInfo(slotInfo);
+//                       response.setMsg("商品加入发货单成功");
+//                       response.setContent(successVo);
+//                   } else {
+//                       throw new EphubException("W0", "商品加入发货单失败");
+//                   }
+//                    //endregion
+//               }
+//           }
+//
+//
+//       }catch (EphubException e){
+//           log.info("addProductIntoSlot EphubException " + e.getErrcode() +e.getMessage());
+//           updatedVo = setErrorMsg(response, slotNo, e.getErrcode(), e.getMessage());
+//           response.setErrorMsg(updatedVo);
+//       }catch (Exception ex){
+//           log.info("addProductIntoSlot Exception " + ex.getMessage());
+//           setErrorMsg(response,slotNo, "S0","发货单添加商品时,发生服务器错误");
+//       }
+//        return  response;
+//
+//    }
 
-        HubResponse<SlotProductEditVo> response = new HubResponse<SlotProductEditVo>();
-        response.setCode("0");
-        SlotProductEditVo updatedVo = null;
-       try {
-           //验证是否slot是否可以添加
-           SlotInfoExtends slotInfo = getSlotInfo(supplierId, slotNo);
-           //验证slot是否存在
-           if (slotInfo == null) {
-               throw new EphubException("C1", "发货单没有找到");
-           } else {
 
-               if (slotInfo.getApplyStatus() != StudioSlotApplyState.APPLYED.getIndex().byteValue() ||
-                       slotInfo.getSendState() != StudioSlotSendState.WAIT_SEND.getIndex().byteValue()) {
-                   throw new EphubException("C2", "发货单状态不正确");
-               }
-               if (slotInfo.getMaxNum() <= slotInfo.getSlotProductList().size()) {
-                   throw new EphubException("C3", "发货单已经达到最大商品数量");
-               }
-
-               HubSlotSpuSupplierDto product = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
-               if (product == null) {
-                   throw new EphubException("C4", "该商品不存在");
-               } else {
-
-                   //region  判断是否处于可添加商品状态
-                   if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
-                       throw new EphubException("C5", "该商品已经加入发货单了");
-                   }
-                   if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
-                       throw new EphubException("C6", "该商品已经发货了");
-                   }
-                   if(slotInfo.getCategoryFirst()!=null){
-                       HubSpuPendingDto  pendingDtoList =  hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
-                       if(pendingDtoList!=null){
-                           if ( pendingDtoList.getHubCategoryNo()!=null && !pendingDtoList.getHubCategoryNo().startsWith(slotInfo.getCategoryFirst())) {
-                               throw new EphubException("C7", "该商品与目标发货单类型不符");
-                           }
-                       }
-                   }
-                   //endregion
-
-                   HubSupplierSpuDto supProduct = hubSupplierSpuGateWay.selectByPrimaryKey(product.getSupplierSpuId());
-
-                   //region 验证成功后，进行添加
-                   StudioSlotSpuSendDetailDto data = new StudioSlotSpuSendDetailDto();
-                   data.setSlotNo(slotNo);
-                   data.setSupplierId(supplierId);
-                   data.setSupplierNo(product.getSupplierNo());
-                   data.setSpuPendingId(product.getSpuPendingId());
-                   data.setSupplierSpuId(product.getSupplierSpuId());
-                   data.setSlotSpuNo(product.getSlotNo());
-                   data.setSupplierSpuName(supProduct.getSupplierSpuName());
-                   data.setSupplierSpuModel(supProduct.getSupplierSpuModel());
-                   data.setSupplierBrandName(supProduct.getSupplierBrandname());
-                   data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
-                   data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
-                   data.setCreateTime(new Date());
-                   data.setCreateUser(createUser);
-                   Long id = studioSlotSpuSendDetailGateWay.insert(data);
-                   if (id > 0) {
-                       HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
-                       upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-                       upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
-                       hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
-                       slotInfo.setCountNum(slotInfo.getCountNum() + 1);
-                       SlotProductEditVo successVo = new SlotProductEditVo();
-                       successVo.setSupplierId(supplierId);
-                       successVo.setSlotNo(slotNo);
-                       successVo.setSlotInfo(slotInfo);
-                       response.setMsg("商品加入发货单成功");
-                       response.setContent(successVo);
-                   } else {
-                       throw new EphubException("W0", "商品加入发货单失败");
-                   }
-                    //endregion
-               }
-           }
-
-
-       }catch (EphubException e){
-           log.info("addProductIntoSlot EphubException " + e.getErrcode() +e.getMessage());
-           updatedVo = setErrorMsg(response, slotNo, e.getErrcode(), e.getMessage());
-           response.setErrorMsg(updatedVo);
-       }catch (Exception ex){
-           log.info("addProductIntoSlot Exception " + ex.getMessage());
-           setErrorMsg(response,slotNo, "S0","发货单添加商品时,发生服务器错误");
-       }
-        return  response;
-
+    private ErrorConent setCheckErrorMsg(Long spuNo,Long ssid,String errorCode,String errorMsg){
+        ErrorConent conent = new ErrorConent();
+        conent.setSpuNo(spuNo.toString());
+        conent.setSsid(ssid);
+        conent.setErrorCode(errorCode);
+        conent.setErrorMsg(errorMsg);
+        return conent;
     }
+
+
      /**
      * 设置校验失败结果
      * @param response
@@ -454,11 +599,17 @@ public class StudioServiceImpl implements IStudioService {
         response.setCode("1");
 
         SlotProductEditVo updatedVo = new SlotProductEditVo();
-        //updatedVo.setSupplierId(spuPengdingId);
-        updatedVo.setSlotNo(slotNo);
-        updatedVo.setErrorCode(errorCode);
-        updatedVo.setErrorMsg(errorMsg);
-        response.setErrorMsg(updatedVo);
+//        //updatedVo.setSupplierId(spuPengdingId);
+       updatedVo.setSlotNo(slotNo);
+//        updatedVo.setErrorConent(errorCode);
+//        updatedVo.setErrorMsg(errorMsg);
+//        ErrorConent error = new ErrorConent();
+//        error.setErrorCode(errorCode);
+//        error.setErrorMsg(errorMsg);
+//
+//        updatedVo.setErrorConent();
+//        response.setErrorMsg(updatedVo);
+        response.setMsg(errorMsg);
         return updatedVo;
     }
 
