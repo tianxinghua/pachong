@@ -122,6 +122,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
+    <selectKey keyColumn="slot_spu_supplier_id" keyProperty="slotSpuSupplierId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS slot_spu_supplier_id
+    </selectKey>
     insert into hub_slot_spu_supplier (slot_spu_supplier_id, slot_spu_id, slot_no, 
       slot_spu_no, supplier_no, supplier_id, 
       spu_pending_id, supplier_spu_id, state, 
@@ -136,6 +139,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
+    <selectKey keyColumn="slot_spu_supplier_id" keyProperty="slotSpuSupplierId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS slot_spu_supplier_id
+    </selectKey>
     insert into hub_slot_spu_supplier
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="slotSpuSupplierId != null" >

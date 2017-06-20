@@ -1,7 +1,9 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot.impl;
 
+import com.shangpin.ephub.client.data.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierOperateSign;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuNoTypeDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.SpuNoGateWay;
@@ -49,6 +51,9 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
     PendingService pendingService;
 
+    @Autowired
+    SpuNoGateWay spuNoGateWay;
+
 
     SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
 
@@ -81,7 +86,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             if(null==originSlotSpu){
                 this.transPendingToSlot(pendingProductDto,slotSpuDto);
                 try {
-                    slotSpuGateWay.insert(slotSpuDto);
+                    setSlotSpuNo(slotSpuDto);
+                    slotSpuDto.setSlotSpuId(slotSpuGateWay.insert(slotSpuDto));
                 } catch (Exception e) {
                     //一般情况下是唯一索引冲突，需要获取数据
 
@@ -104,7 +110,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             }
 
             //spupending 处理
-            pendingService.updatePendingSlotState(slotSpuSupplierDto.getSpuPendingId(), SpuPendingStudioState.HANDLED);
+            pendingService.updatePendingSlotStateAndUser(slotSpuSupplierDto.getSpuPendingId(),pendingProductDto.getUpdateUser(), SpuPendingStudioState.HANDLED);
 
 
 
@@ -116,6 +122,13 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             log.error("addSlotSpuAndSupplier  error. reasno:"+e.getMessage(),e);
         }
         return false;
+    }
+
+    private void setSlotSpuNo(HubSlotSpuDto slotSpuDto) {
+        SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
+        spuNoTypeDto.setType(ConstantProperty.SPU_NO_TYPE_FOR_SLOT_SPU);
+        String  spuNo = spuNoGateWay.getSpuNo(spuNoTypeDto);
+        slotSpuDto.setSlotSpuNo(spuNo);
     }
 
     @Override
@@ -141,12 +154,21 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                        if(slotSpuSupplierDtos.size()==1){//单个
                            this.updateSpuModelAndBrandNo(slotSpuSupplierDtos.get(0).getSlotSpuId(),pendingProductDto);
                        }else{
+                           boolean needupdateother = false;
+                           if(slotSpuSupplierDtos.size()==2) needupdateother = true;
                            for(HubSlotSpuSupplierDto dto:slotSpuSupplierDtos){
-                               if(dto.getSpuPendingId()==pendingProductDto.getSpuPendingId()){
-                                   //跟新老的记录为逻辑删除
+                               if(null==dto.getSpuPendingId()) continue;
+                               if(dto.getSpuPendingId().toString().equals(pendingProductDto.getSpuPendingId().toString())){
+                                   //更新老的记录为逻辑删除
                                    hubSlotSpuSupplierService.deleteSlotSpuSupplierForLogic(dto.getSlotSpuSupplierId());
                                    //插入新记录
                                    this.addSlotSpuAndSupplier(pendingProductDto);
+                               }else{
+                                   if(needupdateother){
+                                       //更新状态为独家
+                                       hubSlotSpuSupplierService.resumeRepeatMarker(dto.getSlotSpuSupplierId());
+
+                                   }
                                }
                            }
 
@@ -221,7 +243,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         target.setState(SlotSpuState.WAIT_SEND.getIndex().byteValue());
         target.setDataState(DataState.NOT_DELETED.getIndex());
         target.setCreateTime(new Date());
-        target.setCreateUser(resource.getCreateUser());
+        target.setCreateUser(resource.getUpdateUser());
+        target.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_HANDLE.getIndex().byteValue());
 
     }
 

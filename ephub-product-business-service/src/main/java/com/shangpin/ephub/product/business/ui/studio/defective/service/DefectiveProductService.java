@@ -1,6 +1,10 @@
 package com.shangpin.ephub.product.business.ui.studio.defective.service;
 
+import java.util.List;
+
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
+import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 
 /**
@@ -18,7 +22,7 @@ public interface DefectiveProductService {
 	 * @param studioNo 摄影棚编号
 	 * @return
 	 */
-	public DefectiveProductVo list(String studioNo); 
+	public DefectiveProductVo list(DefectiveQuery defectiveQuery); 
 	/**
 	 * 添加残次品
 	 * @param slotNoSpuId
@@ -38,4 +42,28 @@ public interface DefectiveProductService {
 	 * @return
 	 */
 	public boolean update(Long studioSlotDefectiveSpuPicId, String spPicUrl);
+	/**
+	 * 根据报残表主键查找查找所有图片
+	 * @param studioSlotDefectiveSpuId
+	 * @return
+	 */
+	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(Long studioSlotDefectiveSpuId);
+	/**
+	 * 根据主键查找
+	 * @param studioSlotDefectiveSpuId
+	 * @return
+	 */
+	public StudioSlotDefectiveSpuDto selectByPrimarykey(Long studioSlotDefectiveSpuId);
+	/**
+	 * 判断是否含有该图片url
+	 * @param spPicUrl
+	 * @return
+	 */
+	public boolean hasDefectiveSpuPic(String spPicUrl);
+	/**
+	 * 删除图片
+	 * @param spPicUrl
+	 * @return
+	 */
+	public boolean deleteDefectivePic(String spPicUrl);
 }

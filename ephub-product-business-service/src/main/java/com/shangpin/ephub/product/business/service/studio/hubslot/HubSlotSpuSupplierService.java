@@ -40,6 +40,13 @@ public interface HubSlotSpuSupplierService {
      */
     public void updateRepeatMarker(List<HubSlotSpuSupplierDto> slotSpuSupplierDtos) ;
 
+
+    /**
+     * 恢复独家状态
+     * @param slotSpuSupplierId
+     */
+    public void resumeRepeatMarker(Long slotSpuSupplierId);
+
     /**
      * 获取同一个SPU下的所有供货商
      * @param slotSpuId

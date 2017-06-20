@@ -297,6 +297,66 @@ public class StudioSlotCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andSlotDateIsNull() {
+            addCriterion("slot_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateIsNotNull() {
+            addCriterion("slot_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateEqualTo(Date value) {
+            addCriterionForJDBCDate("slot_date =", value, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateNotEqualTo(Date value) {
+            addCriterionForJDBCDate("slot_date <>", value, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateGreaterThan(Date value) {
+            addCriterionForJDBCDate("slot_date >", value, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateGreaterThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("slot_date >=", value, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateLessThan(Date value) {
+            addCriterionForJDBCDate("slot_date <", value, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateLessThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("slot_date <=", value, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateIn(List<Date> values) {
+            addCriterionForJDBCDate("slot_date in", values, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateNotIn(List<Date> values) {
+            addCriterionForJDBCDate("slot_date not in", values, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("slot_date between", value1, value2, "slotDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andSlotDateNotBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("slot_date not between", value1, value2, "slotDate");
+            return (Criteria) this;
+        }
+
         public Criteria andSlotNoIsNull() {
             addCriterion("slot_no is null");
             return (Criteria) this;

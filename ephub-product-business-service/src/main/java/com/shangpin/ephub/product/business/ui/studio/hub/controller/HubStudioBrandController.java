@@ -14,7 +14,7 @@
 //
 // */
 //@RestController
-//@RequestMapping(value = "/hub-dic-studio-brand")
+//@RequestMapping(value = "/hub-diccategory-studio-brand")
 //@Slf4j
 //public class HubStudioBrandController {
 //

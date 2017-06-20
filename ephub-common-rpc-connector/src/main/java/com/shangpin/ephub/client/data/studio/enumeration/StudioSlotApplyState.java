@@ -28,7 +28,15 @@ public enum StudioSlotApplyState {
     /**
      * 内部占用
      */
-    INTERNAL_OCCUPANCY(3,"INTERNAL_OCCUPANCY");
+    INTERNAL_OCCUPANCY(3,"INTERNAL_OCCUPANCY"),
+	/**
+     * 已补申请
+     */
+	HAS_APPLYED(4,"HAS_APPLYED"),
+	/**
+     * 已申请并生成了新的批次
+     */
+	HAS_APPLYED_AND_CREATE_STUDIO(5,"HAS_APPLYED_AND_CREATE_STUDIO");
 
 
 

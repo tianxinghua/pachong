@@ -14,6 +14,8 @@ public class StudioSlot implements Serializable {
      */
     private Long studioId;
 
+    private Date slotDate;
+
     /**
      * 批次号
      */
@@ -80,7 +82,7 @@ public class StudioSlot implements Serializable {
     private String arriveUser;
 
     /**
-     * 拍摄状态 0:未拍摄 1:已拍摄
+     * 拍摄状态 0:未拍摄 1:正常拍摄 2:提前拍摄 3:未按计划拍摄
      */
     private Byte shotStatus;
 
@@ -139,6 +141,14 @@ public class StudioSlot implements Serializable {
 
     public void setStudioId(Long studioId) {
         this.studioId = studioId;
+    }
+
+    public Date getSlotDate() {
+        return slotDate;
+    }
+
+    public void setSlotDate(Date slotDate) {
+        this.slotDate = slotDate;
     }
 
     public String getSlotNo() {
@@ -333,6 +343,7 @@ public class StudioSlot implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", studioSlotId=").append(studioSlotId);
         sb.append(", studioId=").append(studioId);
+        sb.append(", slotDate=").append(slotDate);
         sb.append(", slotNo=").append(slotNo);
         sb.append(", slotStatus=").append(slotStatus);
         sb.append(", applyStatus=").append(applyStatus);
@@ -375,6 +386,7 @@ public class StudioSlot implements Serializable {
         StudioSlot other = (StudioSlot) that;
         return (this.getStudioSlotId() == null ? other.getStudioSlotId() == null : this.getStudioSlotId().equals(other.getStudioSlotId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
+            && (this.getSlotDate() == null ? other.getSlotDate() == null : this.getSlotDate().equals(other.getSlotDate()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSlotStatus() == null ? other.getSlotStatus() == null : this.getSlotStatus().equals(other.getSlotStatus()))
             && (this.getApplyStatus() == null ? other.getApplyStatus() == null : this.getApplyStatus().equals(other.getApplyStatus()))
@@ -406,6 +418,7 @@ public class StudioSlot implements Serializable {
         int result = 1;
         result = prime * result + ((getStudioSlotId() == null) ? 0 : getStudioSlotId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
+        result = prime * result + ((getSlotDate() == null) ? 0 : getSlotDate().hashCode());
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSlotStatus() == null) ? 0 : getSlotStatus().hashCode());
         result = prime * result + ((getApplyStatus() == null) ? 0 : getApplyStatus().hashCode());
