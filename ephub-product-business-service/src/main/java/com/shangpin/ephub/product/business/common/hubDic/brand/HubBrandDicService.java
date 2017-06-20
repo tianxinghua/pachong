@@ -113,7 +113,7 @@ public class HubBrandDicService {
 			criteria.andSupplierIdEqualTo(supplierId);	
 		}
 		if(StringUtils.isNotBlank(supplierBrand)){
-			criteria.andSupplierBrandEqualTo(supplierBrand);
+			criteria.andSupplierBrandLike("%"+supplierBrand+"%");
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);
@@ -144,7 +144,7 @@ public class HubBrandDicService {
 			criteria.andSupplierIdEqualTo(supplierId);	
 		}
 		if(StringUtils.isNotBlank(supplierBrand)){
-			criteria.andSupplierBrandEqualTo(supplierBrand);
+			criteria.andSupplierBrandLike("%"+supplierBrand+"%");
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);

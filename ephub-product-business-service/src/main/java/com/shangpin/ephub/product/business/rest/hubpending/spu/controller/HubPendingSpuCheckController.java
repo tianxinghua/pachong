@@ -43,6 +43,7 @@ public class HubPendingSpuCheckController {
 	}
 	@RequestMapping(value = "/export")
 	public PendingProducts exportPengdingSpu(@RequestBody PendingQuryDto pendingQuryDto){
+		log.info("pendingSpu导出接受到数据：{}",pendingQuryDto);
 		PendingProducts products = new PendingProducts();
 		products.setCreateUser(pendingQuryDto.getCreateUser());
     	List<PendingProductDto> productList = pendingProductService.findPengdingSpu(pendingQuryDto);

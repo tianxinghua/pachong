@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import com.alibaba.fastjson.JSONObject;
+import com.shangpin.ephub.client.product.business.gms.dto.BasicDataResponse;
+import com.shangpin.ephub.client.product.business.gms.dto.CategoryRequestDto;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.gms.result.SopSkuDto;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
@@ -36,6 +38,30 @@ public class EphubProductBusinessServiceApplicationTests {
 	private RestTemplate httpClient;
 	@Autowired
 	ApiAddressProperties ApiAddressProperties;
+	@Test
+	public void testUserManager(){
+		
+		try {
+			String reSupplierMsg = httpClient.getForObject(
+					"http://192.168.20.121:8080/userLogin/login?username=admin&password=123456", String.class);
+			JSONObject supplierDto = JsonUtil.deserialize2(reSupplierMsg, JSONObject.class);
+			if(supplierDto.get("data")!=null){
+				String data = supplierDto.get("data").toString();
+				System.out.println(supplierDto.get("data"));
+				LinkedMultiValueMap<String,String> map=new LinkedMultiValueMap<String,String>() ; 
+				map.add("params", "[\""+data+"\",\"SCM\"]")  ;
+				HttpHeaders headers = new HttpHeaders();
+				MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded");
+				headers.setContentType(type);
+				HttpEntity<LinkedMultiValueMap<String,String>> req = new HttpEntity<LinkedMultiValueMap<String,String>>(map,headers);  
+				ResponseEntity<String> res=httpClient.postForEntity("http://192.168.20.121:8080/facade/json/com.shangpin.uaas.api/User/findMenusByAppCode",req,String.class)  ;
+				System.out.println(res.getBody());
+			
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	// @Test
 	// public void test(){
 	// try {
@@ -76,55 +102,27 @@ public class EphubProductBusinessServiceApplicationTests {
 	// }
 	// }
 	//
-	// @Test
-	// public void testGetCategory(){
-	// try {
-	// CategoryRequestDto request = new CategoryRequestDto();
-	// request.setCategoryNo("A01");
-	// BasicDataResponse<?> response =
-	// httpClient.postForObject(ApiAddressProperties.getGmsCategoryUrl(),
-	// request, BasicDataResponse.class);
-	// System.out.println(response);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
+//	 @Test
+	 public void testGetCategory(){
+	 try {
+	 CategoryRequestDto request = new CategoryRequestDto();
+	 request.setCategoryNo("A01B01");
+	 BasicDataResponse<?> response =
+	 httpClient.postForObject(ApiAddressProperties.getGmsCategoryUrl(),
+	 request, BasicDataResponse.class);
+	 System.out.println(response);
+	 } catch (Exception e) {
+	 e.printStackTrace();
+	 }
+	 }
 	//
-	@Test
+//	@Test
 	public void testGetProductSize() {
 
 		try {
-			String reSupplierMsg = httpClient.getForObject(
-					"http://192.168.20.121:8080/userLogin/login?username=admin&password=123456", String.class);
-			JSONObject supplierDto = JsonUtil.deserialize2(reSupplierMsg, JSONObject.class);
-
-//			HttpHeaders headers = new HttpHeaders();
-//			MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded");
-//			headers.setContentType(type);
-//			JSONObject jsonObj = new JSONObject();
-//			jsonObj.put("params", "[\"7b348637-b118-4184-a1ce-770d546440cf\",\"FMS\"]");
-//			HttpEntity<String> formEntity = new HttpEntity<String>(jsonObj.toString(), headers);
-//			String result1 = httpClient.postForObject(
-//					"http://192.168.20.121:8080/facade/json/com.shangpin.uaas.api/User/findMenusByAppCode", formEntity,
-//					String.class);
-//			
-//			 HttpEntity<JSONObject> requestEntity1 = new HttpEntity<JSONObject>(jsonObj);
-//				ResponseEntity<JSONObject> entity1 = httpClient.exchange(
-//						"http://192.168.20.121:8080/facade/json/com.shangpin.uaas.api/User/findMenusByAppCode", HttpMethod.POST, formEntity,
-//						new ParameterizedTypeReference<JSONObject>() {
-//						});
-				
-				LinkedMultiValueMap map=new LinkedMultiValueMap() ; 
-						map.add("params", "[\"7b348637-b118-4184-a1ce-770d546440cf\",\"FMS\"]")  ;
-						HttpHeaders headers = new HttpHeaders();
-						MediaType type = MediaType.parseMediaType("application/x-www-form-urlencoded");
-						headers.setContentType(type);
-//						headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)  ;
-						HttpEntity<LinkedMultiValueMap> req = new HttpEntity<LinkedMultiValueMap>(map,headers);  
-						ResponseEntity<String> res=httpClient.postForEntity("http://192.168.20.121:8080/facade/json/com.shangpin.uaas.api/User/findMenusByAppCode",req,String.class)  ;
-				
-				
-		
+			
+	
+			
 			// http://{host}/facade/json/com.shangpin.uaas.api/User/findMenusByAppCode
 			MatchSizeResult matchSizeResult = new MatchSizeResult();
 			String sizeValue = "36";
