@@ -20,7 +20,7 @@ public class Studio implements Serializable {
     private String studioNo;
 
     /**
-     * 摄影棚类型
+     * 摄影棚类型  0:专职摄影棚 1:合作供应商
      */
     private Byte studioType;
 
@@ -68,6 +68,10 @@ public class Studio implements Serializable {
      * 备注
      */
     private String memo;
+
+    private String supplierNo;
+
+    private String supplierId;
 
     /**
      * 创建时间
@@ -205,6 +209,22 @@ public class Studio implements Serializable {
         this.memo = memo == null ? null : memo.trim();
     }
 
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
+    }
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId == null ? null : supplierId.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -272,6 +292,8 @@ public class Studio implements Serializable {
         sb.append(", country=").append(country);
         sb.append(", address=").append(address);
         sb.append(", memo=").append(memo);
+        sb.append(", supplierNo=").append(supplierNo);
+        sb.append(", supplierId=").append(supplierId);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateTime=").append(updateTime);
@@ -308,6 +330,8 @@ public class Studio implements Serializable {
             && (this.getCountry() == null ? other.getCountry() == null : this.getCountry().equals(other.getCountry()))
             && (this.getAddress() == null ? other.getAddress() == null : this.getAddress().equals(other.getAddress()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
+            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
+            && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -333,6 +357,8 @@ public class Studio implements Serializable {
         result = prime * result + ((getCountry() == null) ? 0 : getCountry().hashCode());
         result = prime * result + ((getAddress() == null) ? 0 : getAddress().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
+        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
+        result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());

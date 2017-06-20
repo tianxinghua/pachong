@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -45,7 +44,7 @@ public class DefectiveProductController {
 	private PictureService pictureService;
 	
 	@RequestMapping(value="/list",method = RequestMethod.POST)
-	public HubResponse<?> list(DefectiveQuery defectiveQuery){
+	public HubResponse<?> list(@RequestBody DefectiveQuery defectiveQuery){
 		DefectiveProductVo productVo = defectiveProductService.list(defectiveQuery);
 		if(null != productVo){
 			return HubResponse.successResp(productVo);
@@ -88,7 +87,7 @@ public class DefectiveProductController {
 	}
 	
 	@RequestMapping(value="/modification", method = RequestMethod.POST)
-	public HubResponse<?> modify(@RequestParam Long studioSlotDefectiveSpuId, HttpServletRequest request){
+	public HubResponse<?> modify(@RequestBody Long studioSlotDefectiveSpuId, HttpServletRequest request){
 		try {
 			StudioSlotDefectiveSpuDto defctiveSouDot = defectiveProductService.selectByPrimarykey(studioSlotDefectiveSpuId);
 			if(null != defctiveSouDot){
@@ -120,7 +119,7 @@ public class DefectiveProductController {
 	}
 	
 	@RequestMapping(value="/detail", method = RequestMethod.POST)
-	public HubResponse<?> detail(@RequestParam Long studioSlotDefectiveSpuId){
+	public HubResponse<?> detail(@RequestBody String studioSlotDefectiveSpuId){
 		List<StudioSlotDefectiveSpuPicDto> list = defectiveProductService.selectDefectivePic(studioSlotDefectiveSpuId);
 		if(CollectionUtils.isNotEmpty(list)){
 			return HubResponse.successResp(list);
@@ -130,7 +129,7 @@ public class DefectiveProductController {
 	}
 	
 	@RequestMapping(value="/delete-defective-pic", method = RequestMethod.POST)
-	public HubResponse<?> deleteDefectivePic(String spPicUrl){
+	public HubResponse<?> deleteDefectivePic(@RequestBody String spPicUrl){
 		boolean bool = defectiveProductService.deleteDefectivePic(spPicUrl);
 		if(bool){
 			return HubResponse.successResp("");
