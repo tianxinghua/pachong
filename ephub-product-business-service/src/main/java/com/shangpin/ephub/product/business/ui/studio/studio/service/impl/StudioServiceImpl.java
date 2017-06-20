@@ -629,7 +629,7 @@ public class StudioServiceImpl implements IStudioService {
         try {
             HubSlotSpuSupplierDto product = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
             StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
-            dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotSpuSupplierMappingIdEqualTo(slotSSDId);
+            dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotSpuSendDetailIdEqualTo(slotSSDId);
            int count =  studioSlotSpuSendDetailGateWay.deleteByCriteria(dto);
            if(count>0){
                HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
