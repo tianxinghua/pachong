@@ -2,7 +2,7 @@ package com.shangpin.ephub.data.mysql.slot.spusupplierunion.controller;
 
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto;
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.po.SlotSpuSupplier;
-import com.shangpin.ephub.data.mysql.slot.spusupplierunion.service.HubSupplierPriceService;
+import com.shangpin.ephub.data.mysql.slot.spusupplierunion.service.SlotSupplierSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ import java.util.List;
 public class SpuSupplierSearchController {
 	
 	@Autowired
-	private HubSupplierPriceService service;
+	private SlotSupplierSearchService service;
 
 	@RequestMapping(value="/list")
 	public List<SlotSpuSupplier> listByQuery(@RequestBody SpuSupplierQueryDto queryDto){

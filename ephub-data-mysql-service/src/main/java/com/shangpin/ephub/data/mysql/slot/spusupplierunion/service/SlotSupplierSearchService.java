@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class HubSupplierPriceService {
+public class SlotSupplierSearchService {
 
 	@Autowired
 	private SlotSupplierSearchMapper mapper;
