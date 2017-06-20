@@ -78,6 +78,15 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
     }
 
     @Override
+    public void resumeRepeatMarker(Long slotSpuSupplierId) {
+        HubSlotSpuSupplierDto tmp = new HubSlotSpuSupplierDto();
+        tmp.setSlotSpuSupplierId(slotSpuSupplierId);
+        tmp.setRepeatMarker(SlotSpuSupplierRepeatMarker.SINGLE.getIndex().byteValue());
+        spuSupplierGateway.updateByPrimaryKeySelective(tmp);
+    }
+
+
+    @Override
     public List<HubSlotSpuSupplierDto> findSlotSpuSupplierListBySlotSpuId(Long slotSpuId) {
         HubSlotSpuSupplierCriteriaDto criteria = new HubSlotSpuSupplierCriteriaDto();
         criteria.createCriteria().andSlotSpuIdEqualTo(slotSpuId)
