@@ -7,9 +7,9 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
-import com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.dto.SlotSpuSupplierExtendQueryDto;
-import com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.gateway.HubSlotSpuSupplierExtendGateWay;
-import com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.result.HubSlotSpuSupplierExtend;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.dto.SlotSpuSupplierExtendQueryDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.gateway.HubSlotSpuSupplierExtendGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.result.HubSlotSpuSupplierExtend;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
@@ -106,6 +106,12 @@ public class StudioServiceImpl implements IStudioService {
             if(!StringUtils.isEmpty(queryDto.getSupplierSpuNo())){
                 cdto.setSupplierSpuNo(queryDto.getSupplierSpuNo());
             }
+            if(queryDto.getStartTime()!=null){
+                cdto.setStartTime(queryDto.getStartTime());
+            }
+            if(queryDto.getEndTime()!=null){
+                cdto.setEndTime(queryDto.getEndTime());
+            }
         }
         return cdto;
     }
@@ -121,9 +127,9 @@ public class StudioServiceImpl implements IStudioService {
         List<StudioPendingProduct> hubProducts = new ArrayList<StudioPendingProduct>();
 
         if (null != results && results.size() > 0) {
-            List<Long> filteredSpuId = results.stream().map(HubSlotSpuSupplierDto :: getSupplierSpuId).distinct().collect(Collectors.toList());
+            List<Long> filteredSpuId = results.stream().map(HubSlotSpuSupplierExtend :: getSupplierSpuId).distinct().collect(Collectors.toList());
 
-            List<Long> filteredPendingId = results.stream().map(HubSlotSpuSupplierDto :: getSpuPendingId).distinct().collect(Collectors.toList());
+            List<Long> filteredPendingId = results.stream().map(HubSlotSpuSupplierExtend :: getSpuPendingId).distinct().collect(Collectors.toList());
             HubSupplierSpuCriteriaDto dto = new HubSupplierSpuCriteriaDto();
             dto.createCriteria().andSupplierSpuIdIn(filteredSpuId);
             List<HubSupplierSpuDto> spuDtoList =  hubSupplierSpuGateWay.selectByCriteria(dto);
@@ -132,9 +138,9 @@ public class StudioServiceImpl implements IStudioService {
             pendDto.createCriteria().andSpuPendingIdIn(filteredPendingId);
             List<HubSpuPendingDto>  pendingDtoList =  hubSpuPendingGateWay.selectByCriteria(pendDto);
 
-            for (HubSlotSpuSupplierDto x : results){
+            for (HubSlotSpuSupplierExtend x : results){
 
-                Optional<HubSupplierSpuDto> spuDto = spuDtoList.stream().filter(spu -> spu.getSupplierSpuId() .equals(x.getSupplierSpuId()) ).findFirst();
+               // Optional<HubSupplierSpuDto> spuDto = spuDtoList.stream().filter(spu -> spu.getSupplierSpuId() .equals(x.getSupplierSpuId()) ).findFirst();
                 Optional<HubSpuPendingDto> pendingDto = pendingDtoList.stream().filter(spu -> spu.getSpuPendingId() .equals(x.getSpuPendingId()) ).findFirst();
                 StudioPendingProduct product = new StudioPendingProduct();
                 product.setSlotSpuSupplierId(x.getSlotSpuSupplierId());
@@ -148,20 +154,25 @@ public class StudioServiceImpl implements IStudioService {
                 product.setState(x.getState());
                 product.setCreateTime(x.getCreateTime());
                 product.setSupplierOperateSign(x.getSupplierOperateSign());
-                spuDto.ifPresent((spu)->{
-                    product.setBrandName(spu.getSupplierBrandname());
-                    product.setCategoryName(spu.getSupplierCategoryname());
-                    product.setSupplierOrigin(spu.getSupplierOrigin());
-                    product.setProductName(spu.getSupplierSpuName());
-                    product.setProductDesc(spu.getSupplierSpuDesc());
+                product.setBrandName(x.getBrandName());
+                product.setCategoryName(x.getCategoryName());
+                product.setProductName(x.getSupplierSpuName());
+                product.setSeasonName(x.getSeasonName());
+//                spuDto.ifPresent((spu)->{
+//                    product.setBrandName(spu.getSupplierBrandname());
+//                    product.setCategoryName(spu.getSupplierCategoryname());
+//                    product.setSupplierOrigin(spu.getSupplierOrigin());
+//                    product.setProductName(spu.getSupplierSpuName());
+//                    product.setProductDesc(spu.getSupplierSpuDesc());
+//                });
+                pendingDto.ifPresent((pending)->{
+                    product.setBrandNo(pending.getHubBrandNo());
+                    product.setCategoryNo(pending.getHubCategoryNo());
                 });
-                spuDto.ifPresent((pending)->{
-                    product.setBrandNo(pending.getSupplierBrandno());
-                    product.setCategoryNo(pending.getSupplierCategoryno());
-                });
+                product.setSupplierSpuNo(x.getSupplierSpuNo());
+                product.setSupplierSpuModel(x.getSupplierSpuModel());
                 product.setSupplierOperateSign(x.getSupplierOperateSign());
                 product.setRepeatMarker(x.getRepeatMarker());
-                product.setVersion(x.getVersion());
                 hubProducts.add(product);
             }
         }
@@ -316,8 +327,6 @@ public class StudioServiceImpl implements IStudioService {
         cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSlotNoEqualTo(slotNo);
         List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
 
-
-
         if (null != results && results.size() > 0) {
             StudioSlotDto studioSlot = results.get(0);
 
@@ -372,6 +381,7 @@ public class StudioServiceImpl implements IStudioService {
                 p.setSupplierSpuId(item.getSupplierSpuId());
                 p.setSlotSpuNo(item.getSlotSpuNo());
                 p.setSlotSpuSupplierId(item.getSlotSpuSupplierId());
+                p.setSupplierSpuModel(item.getSupplierSpuModel());
                 p.setSupplierSpuName(item.getSupplierSpuName());
                 p.setSupplierBrandName(item.getSupplierBrandName());
                 p.setSupplierCategoryName(item.getSupplierCategoryName());

@@ -26,6 +26,7 @@ public class SlotProduct implements Serializable {
     private String supplierSpuName;
     private String supplierBrandName;
     private String supplierCategoryName;
+    private String supplierSpuModel;
     private String supplierSeasonName;
     private Byte sendState;
     private Byte arriveState;

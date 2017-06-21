@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.mapper.HubSlotSpuSupplierExtendMapper" >
-  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.po.SlotSpuSupplier" >
-      <result column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
+<mapper namespace="com.shangpin.ephub.data.mysql.slot.spusupplierextend.mapper.HubSlotSpuSupplierExtendMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.spusupplierextend.po.SlotSpuSupplier" >
+      <id column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
       <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
       <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
       <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
@@ -10,18 +10,22 @@
       <result column="state" property="state" jdbcType="TINYINT" />
       <result column="repeat_marker" property="repeatMarker" jdbcType="TINYINT" />
       <result column="supplier_operate_sign" property="supplierOperateSign" jdbcType="TINYINT" />
-      <result column="supplier_spu_no" property="supplierSpuNo"/>
-      <result column="supplier_spu_model" property="supplierSpuModel"/>
-      <result column="supplier_spu_name" property="supplierSpuName"/>
-      <result column="supplier_categoryname" property="categoryName"/>
-      <result column="supplier_brandname" property="brandName"/>
-      <result column="supplier_seasonname" property="seasonName"/>
+      <result column="supplier_spu_no" property="supplierSpuNo" jdbcType="VARCHAR"/>
+      <result column="supplier_spu_model" property="supplierSpuModel" jdbcType="VARCHAR"/>
+      <result column="supplier_spu_name" property="supplierSpuName" jdbcType="VARCHAR"/>
+      <result column="supplier_categoryname" property="categoryName" jdbcType="VARCHAR"/>
+      <result column="supplier_brandname" property="brandName" jdbcType="VARCHAR"/>
+      <result column="supplier_seasonname" property="seasonName" jdbcType="VARCHAR"/>
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+      <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
+      <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
+      <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
   </resultMap>
   
-  <select id="findObjectByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.bean.SlotSpuSupplierQueryDto" >
+  <select id="findObjectByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierextend.bean.SlotSpuSupplierQueryDto" >
       select s.slot_spu_supplier_id,s.supplier_id,s.supplier_no,s.supplier_spu_id,s.state,s.repeat_marker,s.spu_pending_id,s.supplier_operate_sign,
-      p.supplier_spu_no,p.supplier_spu_model,p.supplier_categoryname,p.supplier_brandname,p.supplier_seasonname
-
+      p.supplier_spu_no,p.supplier_spu_model,p.supplier_categoryname,p.supplier_brandname,p.supplier_seasonname,
+      s.create_time, s.slot_spu_id,s.slot_no ,s.slot_spu_no
       from hub_slot_spu_supplier s inner join hub_supplier_spu p
       on s.supplier_spu_id = p.supplier_spu_id
 
@@ -51,11 +55,17 @@
           <if test="supplierSpuNo != null">
               and p.supplier_spu_no = #{supplierSpuNo}
           </if>
-          <if test="supplierSpuModel != null">
-              and p.supplier_spu_model like concat('',#{supplierSpuModel},'%')
+          <if test="spuModel != null">
+              and p.supplier_spu_model like concat('',#{spuModel},'%')
           </if>
           <if test="supplierSpuName != null">
               and p.supplier_spu_name like concat('',#{supplierSpuName},'%')
+          </if>
+          <if test="startTime != null">
+              and s.create_time >= #{startTime}
+          </if>
+          <if test="endTime != null">
+              and s.create_time >= #{endTime}
           </if>
         ORDER BY s.create_time desc
         <if test="startRow != null" >
@@ -66,7 +76,7 @@
   </select>
 
 
-    <select id="countByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.bean.SlotSpuSupplierQueryDto" >
+    <select id="countByQuery" resultType="java.lang.Integer" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierextend.bean.SlotSpuSupplierQueryDto" >
         select count(*)
         from hub_slot_spu_supplier s inner join hub_supplier_spu p
         on s.supplier_spu_id = p.supplier_spu_id
@@ -96,11 +106,17 @@
             <if test="supplierSpuNo != null">
                 and p.supplier_spu_no = #{supplierSpuNo}
             </if>
-            <if test="supplierSpuModel != null">
-                and p.supplier_spu_model like concat('',#{supplierSpuModel},'%')
+            <if test="spuModel != null">
+                and p.supplier_spu_model like concat('',#{spuModel},'%')
             </if>
             <if test="supplierSpuName != null">
                 and p.supplier_spu_name like concat('',#{supplierSpuName},'%')
+            </if>
+            <if test="startTime != null">
+                and s.create_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and s.create_time >= #{endTime}
             </if>
         </where>
 

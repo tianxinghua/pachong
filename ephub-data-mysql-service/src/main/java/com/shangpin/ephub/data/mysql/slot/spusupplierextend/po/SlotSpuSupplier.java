@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.po;
+package com.shangpin.ephub.data.mysql.slot.spusupplierextend.po;
 
 import lombok.*;
 
@@ -16,32 +16,15 @@ public class SlotSpuSupplier implements Serializable {
      * 主键
      */
     private Long slotSpuSupplierId;
-
-//    /**
-//     * slotspu主键
-//     */
-//    private Long slotSpuId;
-//
-//    /**
-//     * slot编号
-//     */
-//    private String slotNo;
-
-
-    /**
-     * 供货商编号
-     */
-    private String supplierNo;
-
     /**
      * 供货商门户编号
      */
     private String supplierId;
 
     /**
-     * SPUPENDING表主键
+     * 供货商编号
      */
-    private Long spuPendingId;
+    private String supplierNo;
 
     /**
      * 供货商SPU主键
@@ -53,18 +36,22 @@ public class SlotSpuSupplier implements Serializable {
      */
     private Byte state;
 
-
-
     /**
      * 多家供货标记  0：独家  1：多家
      */
     private Byte repeatMarker;
 
     /**
+     * SPUPENDING表主键
+     */
+    private Long spuPendingId;
+
+    /**
      * 供货商操作标记     0：自己寄出    1: 另外的供货商已寄出
      */
     private Byte supplierOperateSign;
 
+    private Date createTime;
 
     /**
      * 供货商商品编号
@@ -86,10 +73,20 @@ public class SlotSpuSupplier implements Serializable {
 
     private String seasonName;
 
-//    /**
-//     * slotspu编号
-//     */
-//    private String slotSpuNo;
+    /**
+     * slotspu主键
+     */
+    private Long slotSpuId;
+
+    /**
+     * slot编号
+     */
+    private String slotNo;
+
+    /**
+     * slotspu编号
+     */
+    private String slotSpuNo;
 //
 //    /**
 //     * 货号
