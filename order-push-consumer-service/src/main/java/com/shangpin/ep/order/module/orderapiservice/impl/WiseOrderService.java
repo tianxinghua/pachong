@@ -39,6 +39,8 @@ public class WiseOrderService implements IOrderService {
     HandleException handleException;
     @Autowired
     HubSkuMapper skuDAO;
+    @Autowired
+    private WiseServiceImpl wiseService;
     
     /**
      * 给对方推送数据
@@ -101,6 +103,11 @@ public class WiseOrderService implements IOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try {
+			/**
+			 * 先发份邮件
+			 */
+			wiseService.handleConfirmOrder(orderDTO); 
+			
 			String spOrderId = orderDTO.getSpOrderId();
 			if(spOrderId.contains("-")){
 				spOrderId = spOrderId.substring(0, spOrderId.indexOf("-")); 
@@ -185,6 +192,10 @@ public class WiseOrderService implements IOrderService {
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
+			/**
+			 * 先发份邮件
+			 */
+			wiseService.handleRefundlOrder(deleteOrder);
 			String spOrderId = deleteOrder.getSpOrderId();
 			if(spOrderId.contains("-")){
 				spOrderId = spOrderId.substring(0, spOrderId.indexOf("-")); 
