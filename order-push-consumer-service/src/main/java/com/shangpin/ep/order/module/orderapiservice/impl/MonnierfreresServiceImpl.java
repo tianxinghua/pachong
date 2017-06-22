@@ -46,16 +46,16 @@ public class MonnierfreresServiceImpl {
 				buffer.append(header).append("\n");
 				String dayTime = DateTimeUtil.strForDate(endTime);
 				for(HubOrderDetail orderDetail : orderDetails){
-					buffer.append(orderDetail.getOrderNo()).append(split)
+					buffer.append(orderDetail.getPurchaseNo().substring(4)).append(split) 
 					.append(dayTime).append(split)
 					.append("").append(split)
 					.append("").append(split)
 					.append("Shangpin").append(split)
-					.append("54").append(split)
+					.append("62").append(split)
 					.append(orderDetail.getOrderNo()).append(split)
 					.append("SHANGPIN").append(split)
 					.append("GENERTEC ITALIA").append(split)
-					.append("VIA GIACOMO LEOPARDI.27").append(split)
+					.append("VIA GIACOMO LEOPARDI,27").append(split)
 					.append("").append(split)
 					.append("LURATE CACCIVIO").append(split)
 					.append("22075").append(split)
