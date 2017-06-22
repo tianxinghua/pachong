@@ -402,6 +402,17 @@ shangpin:
               isPurchaseExp:
               openApiKey: 
               openApiSecret: 
+      wise: 
+              url: https://at98p.wiseboutique.com/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang1808
+              messageType: text/html;charset=utf-8
+              openApiKey: 
+              openApiSecret: 
       supplier:
               delayTime: 1000
               retry: 120

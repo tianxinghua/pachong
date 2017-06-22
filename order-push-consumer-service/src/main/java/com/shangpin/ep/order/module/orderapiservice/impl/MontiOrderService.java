@@ -3,11 +3,9 @@ package com.shangpin.ep.order.module.orderapiservice.impl;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +25,6 @@ import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 @Component("montiOrderService")
 public class MontiOrderService implements IOrderService {
 
-	private static Map<String, String> param = null;
 	@Autowired
     LogCommon logCommon;    
     @Autowired

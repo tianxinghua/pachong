@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
@@ -20,8 +19,15 @@ import com.shangpin.ep.order.module.sku.bean.HubSku;
 import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
-
-@Component("wiseServiceImpl")
+/**
+ * <p>Title: WiseServiceImpl</p>
+ * <p>Description: wise供应商订单以发送邮件的方式发送给对方，已弃用 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年6月22日 上午10:15:54
+ *
+ */
+@Deprecated
 @Slf4j
 public class WiseServiceImpl implements IOrderService {
 	

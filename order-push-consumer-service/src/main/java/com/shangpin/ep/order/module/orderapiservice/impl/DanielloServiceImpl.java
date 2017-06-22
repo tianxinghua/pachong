@@ -70,6 +70,7 @@ public class DanielloServiceImpl implements IOrderService {
     	
     }
     
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -78,6 +79,7 @@ public class DanielloServiceImpl implements IOrderService {
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
@@ -162,6 +164,7 @@ public class DanielloServiceImpl implements IOrderService {
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
@@ -192,6 +195,7 @@ public class DanielloServiceImpl implements IOrderService {
 	 * @param item_id
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);	
@@ -210,6 +214,7 @@ public class DanielloServiceImpl implements IOrderService {
 	 * @param qty 库存
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String newOrderMarketPlace(long id_order_mrkp, String barcode, int qty,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ID_ORDER_MRKP", String.valueOf(id_order_mrkp));
@@ -228,6 +233,7 @@ public class DanielloServiceImpl implements IOrderService {
 	 * @param code 订单号
 	 * @param status 可取值为:NEW, PROCESSING, SHIPPED, CANCELED
 	 */
+	@SuppressWarnings("static-access")
 	private String setStatusOrderMarketplace(String code, String status,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("CODE", code);

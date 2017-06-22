@@ -68,6 +68,7 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 		orderDTO.setLockStockTime(new Date());
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		String operateData ="";

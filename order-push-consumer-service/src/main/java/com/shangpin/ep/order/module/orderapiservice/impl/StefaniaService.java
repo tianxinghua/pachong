@@ -61,6 +61,7 @@ public class StefaniaService implements IOrderService {
 		return null;
     }
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 	
@@ -78,6 +79,7 @@ public class StefaniaService implements IOrderService {
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);		
 	}
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		

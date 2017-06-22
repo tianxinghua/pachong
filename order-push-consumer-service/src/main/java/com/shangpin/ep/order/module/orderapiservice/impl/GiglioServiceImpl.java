@@ -36,6 +36,7 @@ public class GiglioServiceImpl implements IOrderService{
 	@Autowired
     private HandleException handleException;
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -44,6 +45,7 @@ public class GiglioServiceImpl implements IOrderService{
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		try {
@@ -81,6 +83,7 @@ public class GiglioServiceImpl implements IOrderService{
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
@@ -124,7 +127,7 @@ public class GiglioServiceImpl implements IOrderService{
 		List<String> addTo = new ArrayList<>();
 		addTo.add("fabio@giglio.com");
 //		addTo.add("wangsaying@shangpin.com");
-		addTo.add("lubaijiang@shangpin.com");
+//		addTo.add("lubaijiang@shangpin.com");
 		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
