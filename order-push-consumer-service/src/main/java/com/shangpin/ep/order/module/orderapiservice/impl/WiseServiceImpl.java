@@ -40,6 +40,7 @@ public class WiseServiceImpl implements IOrderService {
 	@Autowired
     private HandleException handleException;
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -48,6 +49,7 @@ public class WiseServiceImpl implements IOrderService {
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		try {
@@ -87,6 +89,7 @@ public class WiseServiceImpl implements IOrderService {
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {

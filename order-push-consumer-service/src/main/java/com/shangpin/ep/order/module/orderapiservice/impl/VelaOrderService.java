@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,12 +33,12 @@ public class VelaOrderService implements IOrderService {
     @Autowired
     HandleException handleException;
 
-	private static Logger logger = Logger.getLogger("info");
-	private static Logger loggerError = Logger.getLogger("error");
+//	private static Logger logger = Logger.getLogger("info");
+//	private static Logger loggerError = Logger.getLogger("error");
 	
 	private static OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
     private  String cancelUrl = null;
-    private  String queryOrderUrl = null;
+//    private  String queryOrderUrl = null;
     private  String setOrderUrl = null;
     private  String dBContext = null;
     private  String key = null;
@@ -47,7 +46,7 @@ public class VelaOrderService implements IOrderService {
     @PostConstruct
     public void init(){
     	cancelUrl = supplierProperties.getVelaParam().getCancelUrl();
-    	queryOrderUrl = supplierProperties.getVelaParam().getQueryOrderUrl();
+//    	queryOrderUrl = supplierProperties.getVelaParam().getQueryOrderUrl();
     	setOrderUrl = supplierProperties.getVelaParam().getSetOrderUrl();
     	dBContext = supplierProperties.getVelaParam().getDBContext();
     	key = supplierProperties.getVelaParam().getKey();
