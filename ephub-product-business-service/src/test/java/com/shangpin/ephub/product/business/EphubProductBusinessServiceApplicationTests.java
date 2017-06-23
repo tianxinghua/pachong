@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicWithCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuPicGateWay;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
@@ -33,6 +39,7 @@ import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
 
 import sun.misc.BASE64Encoder;
 
@@ -321,11 +328,32 @@ public class EphubProductBusinessServiceApplicationTests {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-		
 	}
 
+	@Autowired
+	private PictureService pictureService;
+	@Test
+	public void testDeletePic(){
+		List<String> urls =  new ArrayList<String>();
+		urls.add("http://192.168.9.71/group2/M00/01/58/wKgJR1lMmNWAD8KKAAEsQm-Q7jY392.jpg");
+//		urls.add("11111.jpg");
+		Map<String, Integer> map = pictureService.deletePics(urls);
+		System.out.println(map); 
+	}
+	@Autowired
+	private StudioSlotDefectiveSpuPicGateWay defectiveSpuPicGateWay;
+	
+	@Test
+	public void testDelete(){
+		StudioSlotDefectiveSpuPicWithCriteriaDto withCriteria = new StudioSlotDefectiveSpuPicWithCriteriaDto();
+		StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
+		criteria.createCriteria().andSpPicUrlEqualTo("http://192.168.9.71:80/group2/M00/02/45/wKgJR1jSXnWAIbaAAAJt212IoZ8475.jpg");
+		withCriteria.setCriteria(criteria );
+		StudioSlotDefectiveSpuPicDto studioSlotDefectiveSpuPicDto = new StudioSlotDefectiveSpuPicDto();
+		studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
+		withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
+		int i = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
+		System.out.println(i);
+	}
 
 }

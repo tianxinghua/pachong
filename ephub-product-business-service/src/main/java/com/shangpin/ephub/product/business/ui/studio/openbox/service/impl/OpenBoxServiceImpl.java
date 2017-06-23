@@ -13,6 +13,7 @@ import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
@@ -116,27 +117,29 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		criteria.setOrderByClause("slot_no"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
-		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue())
+		Criteria createCriteria = criteria.createCriteria();
+		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue())
 		.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		Long studioId = getStudioId(openBoxQuery.getStudioNo());
 		if(null != studioId){
-			criteria.createCriteria().andStudioIdEqualTo(studioId);
+			createCriteria.andStudioIdEqualTo(studioId);
 		}else{
 			throw new Exception("未获得摄影棚编号");
 		}
 		if(StringUtils.isNotBlank(openBoxQuery.getTrackingNo())){
-			criteria.createCriteria().andTrackNoEqualTo(openBoxQuery.getTrackingNo());
+			createCriteria.andTrackNoEqualTo(openBoxQuery.getTrackingNo());
 		}
 		if(StringUtils.isNotBlank(openBoxQuery.getSlotName())){
-			criteria.createCriteria().andSlotNoLike(openBoxQuery.getSlotName()+"%");
+			createCriteria.andSlotNoLike(openBoxQuery.getSlotName()+"%");
 		}
-		if(StringUtils.isNotBlank(openBoxQuery.getOperateStartDate())){
-			Date startDate = DateTimeUtil.parse(openBoxQuery.getOperateStartDate());
-			criteria.createCriteria().andShootTimeGreaterThanOrEqualTo(startDate);
+		List<String> operateDate = openBoxQuery.getOperateDate();
+		if(CollectionUtils.isNotEmpty(operateDate)){
+			Date startDate = DateTimeUtil.parse(openBoxQuery.getOperateDate().get(0));
+			createCriteria.andShootTimeGreaterThanOrEqualTo(startDate);
 		}
-		if(StringUtils.isNotBlank(openBoxQuery.getOperateEndDate())){
-			Date endDate = DateTimeUtil.parse(openBoxQuery.getOperateEndDate());
-			criteria.createCriteria().andShootTimeLessThanOrEqualTo(endDate);
+		if(CollectionUtils.isNotEmpty(operateDate) && operateDate.size() > 1){
+			Date endDate = DateTimeUtil.parse(openBoxQuery.getOperateDate().get(1)); 
+			createCriteria.andShootTimeLessThanOrEqualTo(endDate);
 		}
 		/*
 		if(null != openBoxQuery.getPageIndex() && null != openBoxQuery.getPageSize()){

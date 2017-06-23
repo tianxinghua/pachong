@@ -21,7 +21,7 @@ public class UploadQuery {
 	 */
 	private String slotNoSpuId;
 	/**
-	 * 上传的文件的base64编码
+	 * 上传的文件的url
 	 */
 	private List<String> urls;
 
