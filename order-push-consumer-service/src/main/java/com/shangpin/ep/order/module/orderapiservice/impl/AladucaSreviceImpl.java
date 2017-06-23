@@ -50,7 +50,8 @@ public class AladucaSreviceImpl implements IOrderService {
 	}
 	
 	
-    @Override
+    @SuppressWarnings("static-access")
+	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
     	orderDTO.setLockStockTime(new Date());
 		orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
@@ -61,6 +62,7 @@ public class AladucaSreviceImpl implements IOrderService {
 	/**
 	 * 在线推送订单，已支付
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO spOrder) {
 		
@@ -137,6 +139,7 @@ public class AladucaSreviceImpl implements IOrderService {
 		orderDTO.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {		
 

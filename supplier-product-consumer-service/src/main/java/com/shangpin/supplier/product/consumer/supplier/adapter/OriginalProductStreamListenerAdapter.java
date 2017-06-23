@@ -128,6 +128,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("smetsHandler")
 	private ISupplierHandler smetsHandler;
 	
+	@Autowired
+	@Qualifier("filippoHandler")
+	private ISupplierHandler filippoHandler;
+	
 	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
@@ -621,7 +625,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void filippoStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO
+		filippoHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * dellaMartira供应商原始数据监听方法

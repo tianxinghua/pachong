@@ -58,7 +58,8 @@ public class LungolivignoOrderService implements IOrderService{
     
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*2, 1000*60 * 2, 1000*60 * 2);	
 	    
-    @Override
+    @SuppressWarnings("static-access")
+	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
 		orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
@@ -66,6 +67,7 @@ public class LungolivignoOrderService implements IOrderService{
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}	
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 
@@ -167,6 +169,7 @@ public class LungolivignoOrderService implements IOrderService{
 		}
 	}
 	
+	@SuppressWarnings("static-access")
 	private String getStoreCode(String sessionId, OrderDTO orderDTO,String skuId,String size) throws ServiceMessageException{
 		
 		String storeCode = null;
@@ -231,9 +234,10 @@ public class LungolivignoOrderService implements IOrderService{
 	 * @param orderDTO
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String getpriceDetail(OrderDTO orderDTO) throws Exception{
-		String openApiKey =  supplierProperties.getLungolivigno().getOpenApiKey();
-		String openApiSecret = supplierProperties.getLungolivigno().getOpenApiSecret();
+//		String openApiKey =  supplierProperties.getLungolivigno().getOpenApiKey();
+//		String openApiSecret = supplierProperties.getLungolivigno().getOpenApiSecret();
 //		BigDecimal priceInt = openApiService.getPurchasePrice(openApiKey, openApiSecret, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 		BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 		orderDTO.setLogContent("【lungolivigno在推送订单时获取采购价："+priceInt.toString()+"】"); 
@@ -249,6 +253,7 @@ public class LungolivignoOrderService implements IOrderService{
 	 * @param createOrderStr 下订单所需参数json格式
 	 * @param headMap
 	 */
+	@SuppressWarnings("static-access")
 	public void createOrder(OrderDTO orderDTO,String createOrderJsonParam,String sessionId) throws ServiceException{
 		
 		String url_createOrder = supplierProperties.getLungolivigno().getUrl_saveOrder()+sessionId;
@@ -279,6 +284,7 @@ public class LungolivignoOrderService implements IOrderService{
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {

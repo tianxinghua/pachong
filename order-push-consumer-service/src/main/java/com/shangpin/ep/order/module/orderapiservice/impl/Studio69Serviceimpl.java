@@ -58,6 +58,7 @@ public class Studio69Serviceimpl implements IOrderService{
     }
     
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -66,6 +67,7 @@ public class Studio69Serviceimpl implements IOrderService{
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);	
 	}
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
@@ -132,6 +134,7 @@ public class Studio69Serviceimpl implements IOrderService{
 				
 	}
 
+	@SuppressWarnings("static-access")
 	private Response createOrder(OrderDTO orderDTO, CreateNewOrder createNewOrder)
 			throws Exception {
 		CreateNewOrderResponse  cresponse = studio69PushOrder(createNewOrder,orderDTO);
@@ -160,6 +163,7 @@ public class Studio69Serviceimpl implements IOrderService{
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 	
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		

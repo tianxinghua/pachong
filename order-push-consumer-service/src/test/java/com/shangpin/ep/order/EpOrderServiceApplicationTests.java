@@ -10,6 +10,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
+import com.shangpin.ep.order.module.orderapiservice.impl.WiseOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.baseblu.OrderResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -120,6 +121,33 @@ public class EpOrderServiceApplicationTests {
 			e.printStackTrace();
 		}
 		System.out.println("over");
+	}
+	
+	@Autowired
+	BaseBluServiceImpl baseBluServiceImpl;
+	
+	@Test
+	public void pushOrder(){
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setDetail("9900042228107:1,");
+		baseBluServiceImpl.handleConfirmOrder(orderDTO);
+	}
+	@Autowired
+	WiseOrderService wise;
+	
+	@Test
+	public void wisePushOrder(){
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setSpOrderId("2017061958515151");
+    	orderDTO.setDetail("1163000-2013076855557:1,");
+		wise.handleConfirmOrder(orderDTO );
+	}
+	@Test
+	public void wiseRefund(){
+		OrderDTO deleteOrder = new OrderDTO();
+		deleteOrder.setSpOrderId("2017061958515151");
+		deleteOrder.setDetail("1163000-2013076855557:1,");
+		wise.handleRefundlOrder(deleteOrder );
 	}
 
 }

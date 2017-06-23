@@ -71,6 +71,7 @@ public class OstoreServiceImpl implements IOrderService {
     	
     }
     
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -79,6 +80,7 @@ public class OstoreServiceImpl implements IOrderService {
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
@@ -163,6 +165,7 @@ public class OstoreServiceImpl implements IOrderService {
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
@@ -193,6 +196,7 @@ public class OstoreServiceImpl implements IOrderService {
 	 * @param item_id
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);	
@@ -211,6 +215,7 @@ public class OstoreServiceImpl implements IOrderService {
 	 * @param qty 库存
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String newOrderMarketPlace(long id_order_mrkp, String barcode, int qty,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ID_ORDER_MRKP", String.valueOf(id_order_mrkp));
@@ -229,6 +234,7 @@ public class OstoreServiceImpl implements IOrderService {
 	 * @param code 订单号
 	 * @param status 可取值为:NEW, PROCESSING, SHIPPED, CANCELED
 	 */
+	@SuppressWarnings("static-access")
 	private String setStatusOrderMarketplace(String code, String status,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("CODE", code);
@@ -255,23 +261,5 @@ public class OstoreServiceImpl implements IOrderService {
 //		return returnData;
 //	}
 
-	
-	public static void main(String[] args) {
-		OstoreServiceImpl orderService = new OstoreServiceImpl();
-		OrderDTO orderDTO = new OrderDTO();
-//    	orderDTO.setSpPurchaseNo("CGD2016072500097");
-		orderDTO.setSpOrderId("201607254074169");
-    	orderDTO.setDetail("6794202-2107151150283:1,");
-//    	orderDTO.setPurchasePriceDetail("170.41");
-//    	orderService.handleConfirmOrder(orderDTO);
-		//201607284050007L, "2111344053718"
-		//201607284050011L, "2016398420885"
-//		orderService.newOrderMarketPlace(201607284050015L, "2109449363719", 1);
-//		orderService.getStatusOrderMarketplace("201607284050011");
-//		orderService.setStatusOrderMarketplace("201607284050015", "CANCELED"); 
-//		orderService.getStatusOrderMarketplace("201607284050011");
-		
-	}
-	
 	
 }

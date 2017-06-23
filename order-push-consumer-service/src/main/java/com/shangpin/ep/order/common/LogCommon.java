@@ -1,17 +1,16 @@
 package com.shangpin.ep.order.common;
 
-import com.shangpin.ep.order.enumeration.LogLeve;
-import com.shangpin.ep.order.enumeration.OrderBusinessType;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ep.order.enumeration.LogLeve;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by lizhongren on 2016/11/18.
