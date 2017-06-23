@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
+import com.shangpin.ephub.product.business.ui.studio.defective.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
@@ -55,7 +56,7 @@ public class DefectiveProductController {
 	}
 
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
-	public HubResponse<?> add(HttpServletRequest request){
+	public HubResponse<?> upload(HttpServletRequest request){
 		try {
 			log.info("========开始上传图片==========="); 
 			List<String> urls = new ArrayList<String>();
@@ -82,6 +83,12 @@ public class DefectiveProductController {
 			log.error("上传图片时异常："+e.getMessage(),e);
 		}
 		return HubResponse.errorResp("调用接口异常");
+	}
+	
+	@RequestMapping(value="/add",method = RequestMethod.POST)
+	public HubResponse<?> add(@RequestBody UploadQuery uploadQuery){
+		
+		return null;
 	}
 	
 	@RequestMapping(value="/modification", method = RequestMethod.POST)

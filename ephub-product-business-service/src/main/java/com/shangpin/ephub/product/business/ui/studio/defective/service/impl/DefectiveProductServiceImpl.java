@@ -28,6 +28,7 @@ import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuer
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.service.impl.OpenBoxServiceImpl;
+import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +46,8 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	private StudioSlotDefectiveSpuPicGateWay defectiveSpuPicGateWay;
 	@Autowired
 	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
+	@Autowired
+	private PictureService pictureService;
 	
 
 	@Override
@@ -183,6 +186,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	@Override
 	public boolean deleteDefectivePic(String spPicUrl) {
 		if(StringUtils.isNotBlank(spPicUrl)){
+			//先删除fsdfs上的资源
+			
+			//在删除数据库中的
 			StudioSlotDefectiveSpuPicWithCriteriaDto withCriteria = new StudioSlotDefectiveSpuPicWithCriteriaDto();
 			StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
 			criteria.createCriteria().andSpPicUrlEqualTo(spPicUrl);

@@ -23,6 +23,6 @@ public class UploadQuery {
 	/**
 	 * 上传的文件的base64编码
 	 */
-	private List<String> files;
+	private List<String> urls;
 
 }
