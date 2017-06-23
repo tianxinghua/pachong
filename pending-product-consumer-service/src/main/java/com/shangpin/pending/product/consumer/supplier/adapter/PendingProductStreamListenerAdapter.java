@@ -23,7 +23,6 @@ public class PendingProductStreamListenerAdapter {
 	@Autowired
 	PendingHandler pendingHandler;
 
-
 	private void messageHandle(PendingProduct message, Map<String, Object> headers){
 		try {
 			pendingHandler.receiveMsg(message,headers);
@@ -34,6 +33,15 @@ public class PendingProductStreamListenerAdapter {
 		}
 	}
 
+	/**
+	 * 供应商forzieri待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void forzieriPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
 	/**
 	 * 供应商biondioni待处理商品数据流监听
 	 * @param message 消息体

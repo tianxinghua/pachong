@@ -18,6 +18,12 @@ spring:
             register-health-check: false
         stream: 
               bindings:
+                        forzieriPendingProduct:
+                              destination: forzieri.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         spinnakerPendingProduct:
                               destination: spinnaker.pending.product
                               group: one
@@ -398,6 +404,12 @@ spring:
                                        maxAttempts: 1                                                                                                                                                                                                                                                                                                          
               rabbit: 
                       bindings:
+                            forzieriPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                             spinnakerPendingProduct: 
                                   consumer: 
                                        prefix: HA.

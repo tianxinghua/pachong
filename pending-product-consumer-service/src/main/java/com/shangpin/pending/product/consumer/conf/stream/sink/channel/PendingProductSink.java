@@ -11,6 +11,7 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface PendingProductSink {
 	
+	public static final String FORZIERI = "forzieriPendingProduct";
 	public static final String SPINNAKER = "spinnakerPendingProduct";
 	
 	public static final String OSTORE = "ostorePendingProduct";
@@ -134,6 +135,12 @@ public interface PendingProductSink {
 	public static final String EMONTI = "emontiPendingProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiquePendingProduct";
+	/**
+	 * 供货商FORZIERI通道组件配置
+	 * @return 供货商SPINNAKER通道组件
+	 */
+	@Input(value = PendingProductSink.FORZIERI)
+	public SubscribableChannel forzieriPendingProduct();
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件

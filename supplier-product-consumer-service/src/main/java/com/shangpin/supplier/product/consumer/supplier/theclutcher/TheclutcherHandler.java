@@ -62,7 +62,6 @@ public class TheclutcherHandler implements ISupplierHandler{
 		} catch (Exception e) {
 			log.error("theclutcher异常："+e.getMessage(),e);
 		}
-		
 	}
 	/**
 	 * 
@@ -86,11 +85,29 @@ public class TheclutcherHandler implements ISupplierHandler{
 			hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
 			hubSpu.setSupplierBrandname(studioSpuDto.getBrand());
 			hubSpu.setSupplierSeasonname(studioSpuDto.getSeason());
-			hubSpu.setSupplierMaterial(studioSpuDto.getNotes());
+		
 			String notes = studioSpuDto.getNotes();
+			hubSpu.setSupplierSpuDesc(studioSpuDto.getDescription()+","+notes);
+			String origin = null;
+			String material = null;
 			if(notes!=null&&notes.contains("Made in")){
-				hubSpu.setSupplierOrigin(notes.substring(notes.indexOf("Made in")));
+				String []arr = notes.split("\\.");
+				for(String a:arr){
+					if(a.contains("Made in")){
+						origin = a.substring(a.indexOf("Made in")+7).trim();
+					}
+					log.info("origin: "+a+"===>"+origin);
+					if(a.contains("Composition")){
+						material = a;
+					}
+				}
 			}
+			if(material!=null){
+				hubSpu.setSupplierMaterial(material);	
+			}else{
+				hubSpu.setSupplierMaterial(notes);
+			}
+			hubSpu.setSupplierOrigin(origin);
 			return true;
 		}
 	}

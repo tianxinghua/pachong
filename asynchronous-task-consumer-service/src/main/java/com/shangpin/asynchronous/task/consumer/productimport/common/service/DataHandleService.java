@@ -1,13 +1,12 @@
 package com.shangpin.asynchronous.task.consumer.productimport.common.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
@@ -19,6 +18,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
@@ -123,6 +123,22 @@ public class DataHandleService {
 			return skuList.get(0);
 		}
 		return null; 
+	}
+
+	public void updateHubSpuPending(HubSpuPendingDto hubPendingSpuDto) {
+		HubSpuPendingWithCriteriaDto hubSpuPendingWithCriteriaDto = new HubSpuPendingWithCriteriaDto();
+		HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(hubPendingSpuDto.getSupplierId()).andSupplierSpuNoEqualTo(hubPendingSpuDto.getSupplierSpuNo());
+		hubSpuPendingWithCriteriaDto.setCriteria(criteria);
+		HubSpuPendingDto dto = new HubSpuPendingDto();
+		dto.setUpdateTime(new Date());
+		dto.setAuditState((byte)0);
+		dto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+		dto.setAuditDate(new Date());
+		dto.setAuditUser("chenxu");
+		dto.setSpuState((byte)0);
+		hubSpuPendingWithCriteriaDto.setHubSpuPending(dto);
+		hubSpuPendingGateWay.updateByCriteriaSelective(hubSpuPendingWithCriteriaDto);
 	}
 	
 }

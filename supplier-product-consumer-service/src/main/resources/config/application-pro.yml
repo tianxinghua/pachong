@@ -21,6 +21,15 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1  
+                        forzieriOriginalProduct: 
+                              destination: forzieri.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        forzieriPendingProduct: 
+                              destination: forzieri.pending.product
+                              content-type: application/json
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               group: one
@@ -581,6 +590,15 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                              forzieriOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              forzieriPendingProduct: 
+                                    producer: 
+                                         prefix: HA. 
                               spinnakerOriginalProduct: 
                                       consumer: 
                                          prefix: HA.

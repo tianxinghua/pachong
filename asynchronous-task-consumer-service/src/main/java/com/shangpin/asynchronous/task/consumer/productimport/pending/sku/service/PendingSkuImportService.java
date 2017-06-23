@@ -119,6 +119,8 @@ public class PendingSkuImportService {
 		for (Map.Entry<Long, String> entry : spuMap.entrySet()) {
 			Long spuPendingId = entry.getKey();
 			HubSkuPendingCriteriaDto criate = new HubSkuPendingCriteriaDto();
+			criate.setPageNo(1);
+			criate.setPageSize(10000);
 			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andFilterFlagEqualTo((byte)1).andSpSkuSizeStateEqualTo((byte)1);
 			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criate);
 			boolean flag = false;

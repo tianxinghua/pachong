@@ -25,6 +25,15 @@ public class PendingProductStreamListener {
 	@Autowired
 	private PendingProductStreamListenerAdapter adapter;
 	/**
+	 * 供应商FORZIERI待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.FORZIERI)
+	public void forzieriPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.forzieriPendingProductStreamListen(message,headers);
+	}
+	/**
 	 * 供应商BIONDIONI待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

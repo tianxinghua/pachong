@@ -84,11 +84,14 @@ public class SupplierProductPictureService {
 					information = getAuthentication(supplierId);
 				}
 				int code = 0;
-				if(picUrl.startsWith("http")){
-					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
-				}else if(picUrl.startsWith("ftp")){
-					code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+				if(picUrl!=null){
+					if(picUrl.toUpperCase().startsWith("HTTP")){
+						code = pullPicAndPushToPicServer(picUrl, updateDto, information);
+					}else if(picUrl.toUpperCase().startsWith("FTP")){
+						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+					}	
 				}
+				
 				
 				if (code == 404 || code == 400) {
 					supplierProductPictureManager.deleteById(spuPendingPicId);

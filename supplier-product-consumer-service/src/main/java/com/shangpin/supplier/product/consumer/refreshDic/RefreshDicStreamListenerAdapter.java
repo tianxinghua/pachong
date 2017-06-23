@@ -197,7 +197,7 @@ public class RefreshDicStreamListenerAdapter {
 
 	private void loopProduct(HubSupplierSpuDto spu, byte state, HubSupplierSkuDto hubSku) throws Exception {
 
-		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId());
+		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId(),spu.getSupplierSeasonname());
 		if (season == null) {
 			log.info("====" + spu.getSupplierId() + ":" + spu.getSupplierSpuId() + ":" + spu.getSupplierSeasonname()
 					+ "非当季");
