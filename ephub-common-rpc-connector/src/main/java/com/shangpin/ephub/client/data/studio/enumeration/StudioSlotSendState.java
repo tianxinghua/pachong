@@ -13,11 +13,15 @@ public enum StudioSlotSendState {
     /**
      * 待发货
      */
-    WAIT_SEND(0,"SEND"),
+    WAIT_SEND(0,"WAIT_SEND"),
+    /**
+     * 待发货
+     */
+    ISPRINT(1,"ISPRINT"),
     /**
      * 发货
      */
-    SEND(1,"SEND");
+    SEND(2,"SEND");
 
 
 
