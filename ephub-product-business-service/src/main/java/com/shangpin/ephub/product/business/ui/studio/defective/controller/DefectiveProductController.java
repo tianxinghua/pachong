@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.defective.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @RestController
-@RequestMapping("/defective-product")
+@RequestMapping("/api/airstudio/defective-product")
 @Slf4j
 public class DefectiveProductController {
 	
@@ -53,35 +54,32 @@ public class DefectiveProductController {
 		}
 	}
 
-	@RequestMapping(value="/add",method = RequestMethod.POST)
-	public HubResponse<?> add(@RequestBody String slotNoSpuId, HttpServletRequest request){
+	@RequestMapping(value="/upload",method = RequestMethod.POST)
+	public HubResponse<?> add(HttpServletRequest request){
 		try {
-			StudioSlotDefectiveSpuDto defctiveSouDot = defectiveProductService.add(slotNoSpuId);
-			if(null != defctiveSouDot){
-				boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-				if(isMultipart){
-					MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
-					Map<String, MultipartFile> maps = mreq.getFileMap();
-					if(null != maps && maps.size()>0){
-						for(Entry<String,MultipartFile> entry : maps.entrySet()){
-							String fileName = entry.getKey();
-							MultipartFile file = entry.getValue();
-							String extension = pictureService.getExtension(fileName);
-							Long studioSlotDefectiveSpuPicId = defectiveProductService.insert(defctiveSouDot, extension);
-							String fdfsURL = pictureService.uploadPic(file.getBytes(), studioSlotDefectiveSpuPicId, extension);
-							defectiveProductService.update(studioSlotDefectiveSpuPicId, fdfsURL);
-						}
+			log.info("========开始上传图片==========="); 
+			List<String> urls = new ArrayList<String>();
+			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+			if(isMultipart){
+				MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
+				Map<String, MultipartFile> maps = mreq.getFileMap();
+				if(null != maps && maps.size()>0){
+					for(MultipartFile file : maps.values()){
+						String fileName = file.getOriginalFilename();
+						log.info("上传图片："+fileName);
+						String extension = pictureService.getExtension(fileName);
+						String fdfsURL = pictureService.uploadPic(file.getBytes(), extension);
+						log.info("上传成功："+fdfsURL);
+						urls.add(fdfsURL);
 					}
-				}else{
-					log.error("This request is not Multipart!"); 
-					return HubResponse.errorResp("This request is not Multipart!");
 				}
 			}else{
-				return HubResponse.errorResp("残次品入库时服务异常。");
+				log.error("This request is not Multipart!"); 
+				return HubResponse.errorResp("This request is not Multipart!");
 			}
-			return HubResponse.successResp("");
+			return HubResponse.successResp(urls);
 		} catch (Exception e) {
-			log.error("添加残次品时异常："+e.getMessage(),e);
+			log.error("上传图片时异常："+e.getMessage(),e);
 		}
 		return HubResponse.errorResp("调用接口异常");
 	}
@@ -102,8 +100,8 @@ public class DefectiveProductController {
 								MultipartFile file = entry.getValue();
 								String extension = pictureService.getExtension(fileName);
 								Long studioSlotDefectiveSpuPicId = defectiveProductService.insert(defctiveSouDot, extension);
-								String fdfsURL = pictureService.uploadPic(file.getBytes(), studioSlotDefectiveSpuPicId, extension);
-								defectiveProductService.update(studioSlotDefectiveSpuPicId, fdfsURL);
+//								String fdfsURL = pictureService.uploadPic(file.getBytes(), studioSlotDefectiveSpuPicId, extension);
+//								defectiveProductService.update(studioSlotDefectiveSpuPicId, fdfsURL);
 							}
 						}
 					}

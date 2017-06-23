@@ -21,7 +21,7 @@ import com.shangpin.ephub.response.HubResponse;
  *
  */
 @RestController
-@RequestMapping("/open-box")
+@RequestMapping("/api/airstudio/open-box")
 public class OpenBoxController {
 	
 	@Autowired

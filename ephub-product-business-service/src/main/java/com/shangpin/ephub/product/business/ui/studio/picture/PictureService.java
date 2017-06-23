@@ -25,14 +25,12 @@ public class PictureService {
 	/**
 	 * 上传图片
 	 * @param byteArray 上传的文件byte
-	 * @param picId 图片的唯一标识
 	 * @param extension 扩展名
 	 * @return fsdfs返回的图片链接
 	 */
-	public String uploadPic(byte[] byteArray, Long picId, String extension){
+	public String uploadPic(byte[] byteArray, String extension){
 		UploadPicDto uploadPicDto = new UploadPicDto();
-		uploadPicDto.setRequestId(String.valueOf(picId));
-		String base64 = new BASE64Encoder().encode(byteArray);
+		String base64 = new BASE64Encoder().encode(byteArray );
 		uploadPicDto.setBase64(base64);
 		uploadPicDto.setExtension(extension);
 		return uploadPicGateway.upload(uploadPicDto);

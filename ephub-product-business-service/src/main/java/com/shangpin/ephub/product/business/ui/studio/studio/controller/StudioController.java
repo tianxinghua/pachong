@@ -33,7 +33,8 @@ public class StudioController {
         if(StringUtils.isEmpty(supplierId) ){
             return  HubResponse.errorResp("传入参数不正确");
         }
-        return  HubResponse.successResp(iStudioService.getPendingProductList(supplierId));
+        //return  HubResponse.successResp(iStudioService.getPendingProductList(supplierId));
+        return null;
     }
 
     /*

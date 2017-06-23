@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
@@ -23,6 +21,9 @@ import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDe
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
@@ -41,9 +42,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	@Autowired
 	private StudioSlotDefectiveSpuGateWay defectiveSpuGateWay;
 	@Autowired
-	private HubSpuPendingGateWay hubSpuPendingGateWay;
-	@Autowired
 	private StudioSlotDefectiveSpuPicGateWay defectiveSpuPicGateWay;
+	@Autowired
+	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
 	
 
 	@Override
@@ -93,14 +94,14 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId) {
 		try {
 			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
-			Long spuPendingId = Long.valueOf(slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1));
-			HubSpuPendingDto hubSpuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(spuPendingId);
+			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+			StudioSlotSpuSendDetailDto hubSpuPendingDto = getStudioSlotSpuSendDetailDto(slotNo,slotSpuNo);
 			if(null != hubSpuPendingDto){
 				StudioSlotDefectiveSpuDto defectiveSpuDto = new StudioSlotDefectiveSpuDto();
 				defectiveSpuDto.setSlotNo(slotNo);
 				defectiveSpuDto.setSupplierNo(hubSpuPendingDto.getSupplierNo());
 				defectiveSpuDto.setSupplierId(hubSpuPendingDto.getSupplierId());
-				defectiveSpuDto.setSpuPendingId(spuPendingId);
+				defectiveSpuDto.setSpuPendingId(hubSpuPendingDto.getSpuPendingId());
 				defectiveSpuDto.setSupplierSpuId(hubSpuPendingDto.getSupplierSpuId());
 				Date date = new Date();
 				defectiveSpuDto.setCreateTime(date);
@@ -109,12 +110,23 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 				defectiveSpuDto.setStudioSlotDefectiveSpuId(studioSlotDefectiveSpuId); 
 				return defectiveSpuDto;
 			}else{
-				log.info("添加残次品时未在pending表中发现该商品，spuPendingId==="+spuPendingId); 
+				log.info("添加残次品时未在slot明细表中发现该商品，slotNoSpuId==="+slotNoSpuId); 
 			}
 		} catch (Exception e) {
 			log.error("添加残次品时发生异常："+e.getMessage(),e); 
 		}
 		return null;
+	}
+	
+	private StudioSlotSpuSendDetailDto getStudioSlotSpuSendDetailDto(String slotNo, String slotSpuNo){
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo);
+		List<StudioSlotSpuSendDetailDto> list  = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
 	}
 
 	@Override

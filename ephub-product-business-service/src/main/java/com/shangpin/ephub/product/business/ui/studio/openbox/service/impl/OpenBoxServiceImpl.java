@@ -29,6 +29,8 @@ import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxServ
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
+import com.shangpin.ephub.product.business.ui.studio.openbox.vo.StudioSlotSpuSendDetailVo;
+import com.shangpin.ephub.product.business.ui.studio.openbox.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,14 +56,16 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			log.info("开箱质检页面共查询到："+list.size()+"条数据。");  
 			String today = DateTimeUtil.format(new Date());
 			if(CollectionUtils.isNotEmpty(list)){
-				List<StudioSlotDto> prioritySlots = new ArrayList<StudioSlotDto>();
-				List<StudioSlotDto> secondarySlots = new ArrayList<StudioSlotDto>();
+				List<StudioSlotVo> prioritySlots = new ArrayList<StudioSlotVo>();
+				List<StudioSlotVo> secondarySlots = new ArrayList<StudioSlotVo>();
 				for(StudioSlotDto studioSlotDto : list){
 					String planShootTime = DateTimeUtil.format(studioSlotDto.getPlanShootTime());
 					if(today.equals(planShootTime)){
-						prioritySlots.add(studioSlotDto);
+						StudioSlotVo slotVo = formatDto(studioSlotDto);
+						prioritySlots.add(slotVo);
 					}else{
-						secondarySlots.add(studioSlotDto);
+						StudioSlotVo slotVo = formatDto(studioSlotDto);
+						secondarySlots.add(slotVo);
 					}
 				}
 				openBoxVo.setPrioritySlots(prioritySlots);
@@ -73,6 +77,34 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		}
 		return null;
 	}
+	/**
+	 * 转换
+	 * @param studioSlotDto
+	 * @return
+	 */
+	private StudioSlotVo formatDto(StudioSlotDto studioSlotDto) {
+		StudioSlotVo slotVo = new StudioSlotVo();
+		slotVo.setSlotNo(studioSlotDto.getSlotNo());
+		slotVo.setOperateDate(studioSlotDto.getShootTime());
+		slotVo.setQty(getDetailQty(studioSlotDto.getSlotNo()));
+		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
+		return slotVo;
+	}
+	/**
+	 * 获取详情数量
+	 * @param slotNo
+	 * @return
+	 */
+	private int getDetailQty(String slotNo){
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setOrderByClause("create_time");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		return studioSlotSpuSendDetailGateWay.countByCriteria(criteria);
+	}
+	
+	
 	/**
 	 * 将传入的页面条件转换为数据库查询条件
 	 * @param openBoxQuery
@@ -138,7 +170,17 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		criteria.createCriteria().andSlotNoEqualTo(slotNo);
 		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 		if(CollectionUtils.isNotEmpty(list)){
-			openBoxDetailVo.setDetails(list);
+			List<StudioSlotSpuSendDetailVo> details = new ArrayList<StudioSlotSpuSendDetailVo>();
+			for(StudioSlotSpuSendDetailDto dto : list){
+				StudioSlotSpuSendDetailVo vo = new StudioSlotSpuSendDetailVo();
+				vo.setBrand(dto.getSupplierBrandName());
+				vo.setItemCode(dto.getSupplierSpuModel());
+				vo.setItemName(dto.getSupplierSpuName());
+				vo.setOperator(dto.getUpdateUser());
+				vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+				details.add(vo);
+			}
+			openBoxDetailVo.setDetails(details);
 		}
 		return openBoxDetailVo; 
 	}
@@ -146,10 +188,10 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	public boolean slotDetailCheck(String slotNoSpuId) {
 		try {
 			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
-			Long spuPendingId = Long.valueOf(slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1));
+			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
 			StudioSlotSpuSendDetailWithCriteriaDto withCriteria = new StudioSlotSpuSendDetailWithCriteriaDto();
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-			criteria.createCriteria().andSlotNoEqualTo(slotNo).andSpuPendingIdEqualTo(spuPendingId);
+			criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo);
 			withCriteria.setCriteria(criteria );
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());

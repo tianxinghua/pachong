@@ -1,14 +1,12 @@
 package com.shangpin.ephub.product.business;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -21,15 +19,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
+import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
 import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
-import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.conf.mail.message.ShangpinMail;
 import com.shangpin.ephub.product.business.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+
+import sun.misc.BASE64Encoder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -287,6 +292,40 @@ public class EphubProductBusinessServiceApplicationTests {
 
 	}
 
+	
+	@Autowired
+	private UploadPicGateway uploadPicGateway;
+	
+	@Test
+	public void testUpload(){
+		
+		try {
+			File file = new File("E:\\other\\1.jpg");  
+            FileInputStream fis = new FileInputStream(file);  
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();  
+            byte[] b = new byte[1024];  
+            int n;  
+            while ((n = fis.read(b)) != -1)  
+            {  
+                bos.write(b, 0, n);  
+            }  
+            fis.close();  
+            bos.close();  
+            byte[] byteArray = bos.toByteArray();  
+            String base64 = new BASE64Encoder().encode(byteArray );
+            UploadPicDto dto = new UploadPicDto();
+            dto.setBase64(base64);
+            dto.setExtension("jpg");
+            String url = uploadPicGateway.upload(dto );
+    		System.out.println("url======"+url); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
 
 
 }
