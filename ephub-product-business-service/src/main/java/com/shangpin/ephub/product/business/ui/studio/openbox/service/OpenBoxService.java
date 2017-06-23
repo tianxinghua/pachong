@@ -6,6 +6,13 @@ import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
 
 public interface OpenBoxService {
+	
+	/**
+	 * 根据摄影棚编号获取主键
+	 * @param studioNo
+	 * @return
+	 */
+	public Long getStudioId(String studioNo);
 
 	/**
 	 * 根据页面传入的条件查询studio slot数据
