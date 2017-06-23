@@ -24,7 +24,11 @@ import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
+import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
+import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
+import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.product.business.common.exception.EphubException;
+import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.*;
 import com.shangpin.ephub.response.HubResponse;
@@ -42,6 +46,11 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class StudioServiceImpl implements IStudioService {
+
+    @Autowired
+    StudioGateWay studioGateWay;
+
+
 
     @Autowired
     HubSlotSpuSupplierGateway hubSlotSpuSupplierGateway;
@@ -224,12 +233,14 @@ public class StudioServiceImpl implements IStudioService {
                     s.setMaxNum(studio.getSlotNumber());
                     s.setMinNum(studio.getSlotMinNumber());
                 });
-                Optional<StudioDicCategoryDto> studioDicCategory = studioDicCategoryDto.stream().filter(spu -> spu.getStudioId() .equals(x.getStudioId()) ).findFirst();
 
-                studioDicCategory.ifPresent(c->{
-                    s.setCategoryFirst(c.getCategoryFirst());
-                    s.setCategorySecond(c.getCategorySecond());
-                });
+                List<StudioDicCategoryDto> studioDicCategory = studioDicCategoryDto.stream().filter(spu -> spu.getStudioId() .equals(x.getStudioId()) ).collect(Collectors.toList());
+                if(studioDicCategory!=null && studioDicCategory.size()>0) {
+                    List<String> firstCategory = studioDicCategory.stream().map(StudioDicCategoryDto::getCategoryFirst).distinct().collect(Collectors.toList());
+                    List<String> SecondCategory = studioDicCategory.stream().map(StudioDicCategoryDto::getCategorySecond).distinct().collect(Collectors.toList());
+                    s.setCategoryFirst(firstCategory);
+                    s.setCategorySecond(SecondCategory);
+                }
 
                 s.setStudioId(x.getStudioId());
                 s.setSlotStatus(x.getSlotStatus());
@@ -331,16 +342,18 @@ public class StudioServiceImpl implements IStudioService {
             StudioSlotDto studioSlot = results.get(0);
 
             List<StudioDicSlotDto> studioDicSlotDto  = getStudioDicSlotDtos(studioSlot.getStudioId());
-            List<StudioDicCategoryDto> StudioDicCategoryDto = getStudioDicCategoryDtos(studioSlot.getStudioId());
+            List<StudioDicCategoryDto> studioDicCategoryDtos = getStudioDicCategoryDtos(studioSlot.getStudioId());
 
             if(studioDicSlotDto!=null && studioDicSlotDto.size()>0){
                 slot.setMaxNum(studioDicSlotDto.get(0).getSlotNumber());
                 slot.setMinNum(studioDicSlotDto.get(0).getSlotMinNumber());
             }
 
-            if(StudioDicCategoryDto!=null && StudioDicCategoryDto.size()>0){
-                slot.setCategoryFirst(StudioDicCategoryDto.get(0).getCategoryFirst());
-                slot.setCategorySecond(StudioDicCategoryDto.get(0).getCategorySecond());
+            if(studioDicCategoryDtos!=null && studioDicCategoryDtos.size()>0){
+                List<String> firstCategory = studioDicCategoryDtos.stream().map(StudioDicCategoryDto::getCategoryFirst).distinct().collect(Collectors.toList());
+                List<String> SecondCategory = studioDicCategoryDtos.stream().map(StudioDicCategoryDto::getCategorySecond).distinct().collect(Collectors.toList());
+                slot.setCategoryFirst(firstCategory);
+                slot.setCategorySecond(SecondCategory);
             }
             //region 属性封装
             slot.setStudioId(studioSlot.getStudioId());
@@ -445,7 +458,7 @@ public class StudioServiceImpl implements IStudioService {
                         if (slotInfo.getCategoryFirst() != null) {
                             HubSpuPendingDto pendingDtoList = hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
                             if (pendingDtoList != null) {
-                                if (pendingDtoList.getHubCategoryNo() != null && !pendingDtoList.getHubCategoryNo().startsWith(slotInfo.getCategoryFirst())) {
+                                if (pendingDtoList.getHubCategoryNo() != null && slotInfo.getCategoryFirst().stream().filter(x-> pendingDtoList.getHubCategoryNo().startsWith(x.trim())).count()<=0) {
                                     //throw new EphubException("C7", "该商品与目标发货单类型不符");
                                     updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
                                     continue;
@@ -637,6 +650,119 @@ public class StudioServiceImpl implements IStudioService {
         return  response;
     }
 
+    /**
+     * 获取批次列表
+     * @param StudioId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos){
+        return getStudioSlot(StudioId,startTime,endTime,categoryNos,1,10);
+    }
+    public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize){
+        SlotsVo studioSlotsList = new SlotsVo();
+        StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
+        StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria().andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+        if(StudioId!=null){
+            criteria.andStudioIdEqualTo(StudioId);
+        }
+        //数据结构设计不合理，额外的需要验证分类
+        if(!StringUtils.isEmpty(categoryNos)){
+           List<String> list=  Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
+            StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+            if(list!=null && list.size()>0) {
+                studioDto.createCriteria().andCategoryFirstIn(list);
+            }
+            List<StudioDicCategoryDto> studioDicCategoryDtoList =  studioDicCategoryGateWay.selectByCriteria(studioDto);
+            List<Long> studioIds = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto::getStudioId).distinct().collect(Collectors.toList());
+            criteria.andStudioIdIn(studioIds);
+        }
+
+        if(startTime!=null && endTime ==null){
+            criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
+        }
+        if(startTime==null && endTime!=null){
+            criteria.andCreateTimeLessThan(endTime);
+        }
+        if(startTime!=null && endTime!=null){
+            criteria.andCreateTimeBetween(startTime,endTime);
+        }
+        dto.setPageNo(pageIndex > 0 ? pageIndex : 1);
+        dto.setPageSize(pageSize > 0 ? pageSize : 10);
 
 
+        int total = studioSlotGateWay.countByCriteria(dto);
+        if(total>0) {
+            List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(dto);
+            studioSlotsList.setSlotInfoList(SlotList(results));
+        }
+        studioSlotsList.setTotal(total);
+        return studioSlotsList;
+    }
+
+    /**
+     * 供货商申请批次
+     * @param upDto
+     * @return
+     */
+    public List<ErrorConent> applyUpdateSlot(StudioSlotQueryDto upDto){
+        List<Long> slotIds = Arrays.asList(upDto.getStudioSlotIds().split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+
+        StudioSlotDto studioSlotDto = new StudioSlotDto();
+        studioSlotDto.setApplySupplierId(upDto.getSupplierId().toString());
+        studioSlotDto.setApplyUser(upDto.getSupplierUser());
+        studioSlotDto.setApplyTime(new Date());
+        studioSlotDto.setApplyStatus(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+        List<ErrorConent> result = new ArrayList<ErrorConent>();
+        for (Long slotId : slotIds){
+            StudioSlotDto slotDto = studioSlotGateWay.selectByPrimaryKey(slotId);
+            int i =0 ;
+            byte status =slotDto.getApplyStatus();
+            if(slotDto.getApplyStatus()==StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue()){
+                studioSlotDto.setStudioSlotId(slotId);
+                 i = studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto);
+            }
+            if(status != StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue() || i==0){
+                ErrorConent errorConent = new ErrorConent();
+                errorConent.setErrorCode(slotId.toString());
+                errorConent.setErrorMsg(slotId.toString()+"Application failure");
+                result.add(errorConent);
+            }
+        }
+
+        return  result.size()>0 ? result :null;
+
+    }
+
+    public List<StudioDto> getStudioList(){
+        StudioCriteriaDto dto = new  StudioCriteriaDto();
+
+        return  studioGateWay.selectByCriteria(dto);
+
+    }
+
+    public List<StudioDto> getStudioListByCategory(List<String> categoryNos){
+        List<StudioDto> studioDtos = new ArrayList<StudioDto>();
+        StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        if(categoryNos!=null && categoryNos.size()>0) {
+            studioDto.createCriteria().andCategoryFirstIn(categoryNos);
+        }
+        else{
+                return getStudioList();
+        }
+
+        List<StudioDicCategoryDto> studioDicCategoryDtoList =  studioDicCategoryGateWay.selectByCriteria(studioDto);
+        if(studioDicCategoryDtoList!=null && studioDicCategoryDtoList.size()>0){
+
+            List<Long> filteredStudioId = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto :: getStudioId).distinct().collect(Collectors.toList());
+            StudioCriteriaDto dto = new  StudioCriteriaDto();
+            if(filteredStudioId!=null &&filteredStudioId.size()>0) {
+                dto.createCriteria().andStudioIdIn(filteredStudioId);
+            }
+            studioDtos =  studioGateWay.selectByCriteria(dto);
+        }
+        return studioDtos;
+
+    }
 }

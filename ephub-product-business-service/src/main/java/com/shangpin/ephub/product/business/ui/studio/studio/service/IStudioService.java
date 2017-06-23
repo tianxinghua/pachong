@@ -1,8 +1,12 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.service;
 
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.*;
 import com.shangpin.ephub.response.HubResponse;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,12 +14,18 @@ import java.util.List;
  */
 public interface IStudioService {
 
-    public StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto);
+    StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto);
+    SlotsVo getSupplierSlotList(String supplierId);
+    SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
+    HubResponse<?> addProductIntoSlot(String supplierId , String slotNo, List<Long> slotSSIds, String createUser);
+    HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser);
+    HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
 
-    public SlotsVo getSupplierSlotList(String supplierId);
-    public SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
-    public HubResponse<?> addProductIntoSlot(String supplierId , String slotNo, List<Long> slotSSIds, String createUser);
-    public HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser);
-    public HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
+    SlotsVo getStudioSlot(Long StudioId, Date startTime, Date endTime ,String categoryNos);
+    SlotsVo getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize);
+    List<ErrorConent> applyUpdateSlot(StudioSlotQueryDto upDto);
 
+
+    List<StudioDto> getStudioList();
+    List<StudioDto> getStudioListByCategory(List<String> categoryNos);
 }
