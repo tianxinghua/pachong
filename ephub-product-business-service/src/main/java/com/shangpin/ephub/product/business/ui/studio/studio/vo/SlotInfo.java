@@ -34,11 +34,11 @@ public class SlotInfo extends StudioSlotDto implements Serializable {
     /**
      * 映射商品分类编号 1
      */
-    private String categoryFirst;
+    private List<String> categoryFirst;
 
     /*
     * 映射商品分类编号 1
     * */
-    private String categorySecond;
+    private List<String> categorySecond;
 
 }

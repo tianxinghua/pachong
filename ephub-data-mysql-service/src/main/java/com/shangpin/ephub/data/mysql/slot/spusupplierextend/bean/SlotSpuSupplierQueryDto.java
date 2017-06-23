@@ -1,36 +1,31 @@
-package com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.dto;
+package com.shangpin.ephub.data.mysql.slot.spusupplierextend.bean;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 
 /**
- * <p>Title: PriceQueryDto</p>
- * <p>Description: 价格查询参数 </p>
- * <p>Company: </p> 
- * @author lubaijiang
- * @date 2017年3月31日 下午3:12:39
- *
+
+ * slotsupplier 查询对象
  */
 @Getter
 @Setter
-public class SlotSpuSupplierExtendQueryDto {
-
+public class SlotSpuSupplierQueryDto {
+	
 	private Integer pageIndex = 1;
-	private Integer pageSize = 10;
-
-	protected Integer startRow;
+    private Integer pageSize = 10;
+    
+    protected Integer startRow;
 
 	/**
 	 * 供应商Id
 	 */
 	private String supplierId;
-	/**
-	 * 供应商编号
-	 */
-	private String supplierNo;
+    /**
+     * 供应商编号
+     */
+    private String supplierNo;
 	/**
 	 * 货号
 	 */
@@ -44,28 +39,29 @@ public class SlotSpuSupplierExtendQueryDto {
 	 */
 	private Byte state;
 
-	/**
-	 * 供货商商品编号
-	 */
-	private String supplierSpuId;
+    /**
+     * 供货商商品编号
+     */
+    private String supplierSpuId;
 
-	/**
+    /**
 	 * 供货商商品编号
 	 */
 	private String supplierSpuNo;
 
-	/**
-	 * 尚品季节名称
-	 */
-	private String seasonName;
+    /**
+     * 尚品季节名称
+     */
+    private String seasonName;
 
-	private Date startTime;
+    private Date startTime;
 
-	private Date endTime;
+    private Date endTime;
 
+    private String supplierSpuName;
 
-
-	public Integer getPageIndex() {
+    
+    public Integer getPageIndex() {
 		return pageIndex;
 	}
 	public void setPageIndex(Integer pageIndex) {
@@ -79,6 +75,7 @@ public class SlotSpuSupplierExtendQueryDto {
 		this.pageSize = pageSize;
 		this.startRow = (pageIndex-1)*this.pageSize;
 	}
+
 
 
 }

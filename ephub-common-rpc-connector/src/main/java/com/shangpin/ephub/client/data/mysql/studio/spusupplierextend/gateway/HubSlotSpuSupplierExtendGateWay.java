@@ -1,7 +1,8 @@
-package com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.gateway;
+package com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.gateway;
 
-import com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.dto.SlotSpuSupplierExtendQueryDto;
-import com.shangpin.ephub.client.data.mysql.studio.spusupplier.joinselect.result.HubSlotSpuSupplierExtend;
+
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.dto.SlotSpuSupplierExtendQueryDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.result.HubSlotSpuSupplierExtend;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

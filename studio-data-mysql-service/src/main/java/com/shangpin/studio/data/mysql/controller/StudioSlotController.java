@@ -9,6 +9,7 @@ import com.shangpin.studio.data.mysql.po.StudioSlotCriteria;
 
 import com.shangpin.studio.data.mysql.service.StudioSlotService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class StudioSlotController {
     public List<StudioSlot> selectByCriteria(@RequestBody StudioSlotCriteria criteria){
     	return service.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public StudioSlot selectByPrimaryKey(Long skuPendingId){
+	@RequestMapping(value = "/select-by-primary-key/{skuPendingId}")
+    public StudioSlot selectByPrimaryKey(@PathVariable(name="skuPendingId") Long skuPendingId){
     	return service.selectByPrimaryKey(skuPendingId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
