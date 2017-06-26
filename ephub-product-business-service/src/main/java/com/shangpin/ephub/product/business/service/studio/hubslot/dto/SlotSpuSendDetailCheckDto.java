@@ -13,12 +13,12 @@ import java.io.Serializable;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SlotSpuSendDetailDto implements Serializable {
+public class SlotSpuSendDetailCheckDto implements Serializable {
 
     private Long studioSlotSpuSendDetailId;
     private Long slotSpuSupplierId;
     private String slotNo;
     private String memo;
-    private boolean isSuccess;
+    private boolean resultSign;
     private String userName;
 }

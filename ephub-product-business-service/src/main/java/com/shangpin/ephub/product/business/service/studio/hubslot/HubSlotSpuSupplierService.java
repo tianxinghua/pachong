@@ -2,6 +2,8 @@ package com.shangpin.ephub.product.business.service.studio.hubslot;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.product.business.common.dto.CommonResult;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSendDetailCheckDto;
 
 import java.util.List;
 
@@ -71,6 +73,20 @@ public interface HubSlotSpuSupplierService {
      * 当供货商操作数据后 更新slotSpuSupplier和slotSpu
      */
     public boolean  updateSlotSpuSupplierWhenSupplierHandle(Long slotSpuSupplierId,Integer supplierHandleState) throws Exception;
+
+    /**
+     * 供货商选择产品 更新状态
+     * @param dto
+     * @return
+     */
+    public CommonResult updateSlotSpuSupplierWhenSupplierSelectProduct(SlotSpuSendDetailCheckDto dto);
+
+    /**
+     * 供货商发货  更新状态
+     * @param dtos
+     * @return
+     */
+    public List<SlotSpuSendDetailCheckDto>  updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos);
 
     /**
      *

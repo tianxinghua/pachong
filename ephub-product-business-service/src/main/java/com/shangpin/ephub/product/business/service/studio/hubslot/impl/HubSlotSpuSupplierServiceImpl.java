@@ -9,12 +9,15 @@ import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
+import com.shangpin.ephub.product.business.common.dto.CommonResult;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
-import com.shangpin.ephub.product.business.service.studio.studio.StudioService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSendDetailCheckDto;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,8 +31,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
     @Autowired
     HubSlotSpuSupplierGateway spuSupplierGateway;
 
-    @Autowired
-    StudioService studioService;
+
 
     @Autowired
     HubSlotSpuGateWay slotSpuGateWay;
@@ -55,6 +57,8 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 }
 
                 dto.setRepeatMarker(SlotSpuSupplierRepeatMarker.SINGLE.getIndex().byteValue());
+
+                this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,slotSpuState);
 
             }
             spuSupplierGateway.insert(dto);
@@ -155,6 +159,103 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
 
         return false;
+    }
+
+    @Override
+    public CommonResult updateSlotSpuSupplierWhenSupplierSelectProduct(SlotSpuSendDetailCheckDto dto) {
+        CommonResult result = new CommonResult(true,"");
+
+        if(null!=dto){
+            if(null!=dto.getSlotSpuSupplierId()){
+                HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
+                if(null!=originDto){
+                    if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()||
+                            originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                        result.setSuccess(false);
+                        result.setErrorReason("no need handle");
+                        return result;
+                    }else{
+                        Date date  = new Date();
+                        //更新供货商信息
+                        HubSlotSpuSupplierDto tmp = new HubSlotSpuSupplierDto();
+                        tmp.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
+                        tmp.setUpdateTime(date);
+                        tmp.setUpdateUser(StringUtils.isNotBlank(dto.getUserName())?dto.getUserName():"");
+                        spuSupplierGateway.updateByPrimaryKeySelective(tmp);
+                        //更新slotspu信息
+                        HubSlotSpuDto slotSpuDto = slotSpuGateWay.selectByPrimaryKey(originDto.getSlotSpuId());
+                        HubSlotSpuDto slotSpuTmp = new HubSlotSpuDto();
+                        slotSpuTmp.setUpdateTime(date);
+                        slotSpuTmp.setUpdateUser(StringUtils.isNotBlank(dto.getUserName())?dto.getUserName():"");
+                        slotSpuTmp.setSpuState(SlotSpuState.ADD_INVOICE.getIndex().byteValue());
+                        slotSpuGateWay.updateByPrimaryKeySelective(slotSpuTmp);
+
+                        return result;
+                    }
+                }else{
+                    result.setSuccess(false);
+                    result.setErrorReason("no origin source");
+                    return result;
+                }
+            }else{
+                result.setSuccess(false);
+                result.setErrorReason("request error,no parameter value");
+                return result;
+            }
+        }else{
+            result.setSuccess(false);
+            result.setErrorReason("request error,no parameter value");
+            return result;
+        }
+
+    }
+
+    @Override
+    public List<SlotSpuSendDetailCheckDto> updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
+        List<SlotSpuSendDetailCheckDto> returnList = new ArrayList<>();
+        boolean blReturn = true;
+        List<HubSlotSpuSupplierDto> supplierDtos = new ArrayList<>();
+        for(SlotSpuSendDetailCheckDto dto:dtos){
+            HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
+            supplierDtos.add(originDto);
+            if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                errDto.setResultSign(false);
+                errDto.setMemo("no need send");
+                returnList.add(errDto);
+                blReturn = false;
+            }else if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                errDto.setResultSign(false);
+                errDto.setMemo("had been sent ,no need send");
+                returnList.add(errDto);
+                blReturn = false;
+            }
+        }
+        if(blReturn){
+            Date date = new Date();
+            for(HubSlotSpuSupplierDto supplierDto :supplierDtos){
+                //更新自己
+                HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
+                supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
+                supplierTmp.setState(SlotSpuSupplierState.SEND.getIndex().byteValue());
+                supplierTmp.setUpdateTime(date);
+                spuSupplierGateway.updateByPrimaryKeySelective(supplierTmp);
+                //更新slotspu
+                HubSlotSpuDto spuTmp = new HubSlotSpuDto();
+                spuTmp.setSpuState(SlotSpuState.SEND.getIndex().byteValue());
+
+                slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
+                //更新其它slotspusupplier状态
+                List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
+                this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuState.SEND.getIndex());
+
+            }
+        }
+
+        return returnList;
     }
 
     @Override
