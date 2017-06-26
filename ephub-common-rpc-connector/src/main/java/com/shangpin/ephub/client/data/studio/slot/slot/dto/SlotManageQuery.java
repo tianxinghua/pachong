@@ -28,6 +28,5 @@ public class SlotManageQuery {
 	private String planShootTime;
 	private String shootTime;
 	private String userName;
-	 private Integer pageSize;
 	
 }
