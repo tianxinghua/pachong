@@ -22,6 +22,10 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.ISpinnak
 public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
+	@Qualifier("forzieriHandler")
+	private ISupplierHandler forzieriHandler;	
+	
+	@Autowired
 	@Qualifier("stefaniaHandler")
 	private ISupplierHandler stefaniaHandler;	
 	
@@ -163,6 +167,14 @@ public class OriginalProductStreamListenerAdapter {
 		gebHandler.handleOriginalProduct(message, headers); 
 	}
 	
+	/**
+	 * forzieriHandler供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void forzieriStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		forzieriHandler.handleOriginalProduct(message,headers);
+	}
 	/**
 	 * stefania供货商原始数据监听方法
 	 * @param message 消息体

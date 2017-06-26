@@ -383,13 +383,23 @@ public class TaskImportService {
 			HubSpuDto list = dataHandleService.selectHubSpu(hubPendingSpuDto.getSpuModel(),hubPendingSpuDto.getHubBrandNo());
 			if (list != null) {
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				convertHubSpuToPendingSpu(hubPendingSpuDto, list);
-				hubSpuId = list.getSpuId();
-				hubSpuNo = list.getSpuNo();
-				spuIsPassing = true;
-				hubIsExist = true;
-				checkResult = spuModel+"在hub已存在";
-				hubPendingSpuCheckResult.setPassing(true);
+				if(list.getHubColor().equals(hubPendingSpuDto.getHubColor())){
+					convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+					hubSpuId = list.getSpuId();
+					hubSpuNo = list.getSpuNo();
+					spuIsPassing = true;
+					hubIsExist = true;
+					checkResult = spuModel+"在hub已存在";
+					hubPendingSpuCheckResult.setPassing(true);
+				}else{
+					//同品牌同货号不同颜色
+					spuIsPassing = false;
+					hubIsExist = false;
+					map.put("taskState", "校验失败");
+					map.put("processInfo", "同品牌同货号，颜色不一样");
+					checkResult =  "同品牌同货号，颜色不一样";
+					dataHandleService.updateHubSpuPending(hubPendingSpuDto);
+				}
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				if (hubPendingSpuCheckResult.isPassing()) {
@@ -410,7 +420,13 @@ public class TaskImportService {
 			checkResult = "货号校验失败";
 		}
 		String memo = "spu:"+checkResult+",sku:"+hubPendingSkuCheckResult.getMessage();
-		pendingSpuId = saveOrUpdatePendingSpu(hubIsExist,isPendingSpuExist, hubPendingSpuDto, hubPendingSpuCheckResult,skuIsPassing,memo);
+		boolean allFilter = false;
+		if(map.get("allFilter")!=null){
+			allFilter = Boolean.parseBoolean(map.get("allFilter"));
+		}
+		
+		
+		pendingSpuId = saveOrUpdatePendingSpu(allFilter,hubIsExist,isPendingSpuExist, hubPendingSpuDto, hubPendingSpuCheckResult,skuIsPassing,memo);
 		if (spuIsPassing==true&&skuIsPassing==true) {
 			map.put("taskState", "校验通过");
 			map.put("processInfo", "spu:"+checkResult+",sku:"+hubPendingSkuCheckResult.getMessage());
@@ -458,7 +474,7 @@ public class TaskImportService {
 		} 
 	}
 
-	private Long saveOrUpdatePendingSpu(boolean hubIsExist,HubSpuPendingDto isPendingSpuExist, HubSpuPendingDto hubPendingSpuDto,
+	private Long saveOrUpdatePendingSpu(boolean allFilter,boolean hubIsExist,HubSpuPendingDto isPendingSpuExist, HubSpuPendingDto hubPendingSpuDto,
 			HubPendingSpuCheckResult hubPendingSpuCheckResult,boolean skuIsPassing,String memo) {
 
 		Long pengingSpuId = null;
@@ -543,6 +559,13 @@ public class TaskImportService {
 			pengingSpuId = isPendingSpuExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
+			if(allFilter){
+				if(hubIsExist){
+					hubPendingSpuDto.setSpuState((byte)2);
+				}else{
+					hubPendingSpuDto.setSpuState((byte)1);	
+				}
+			}
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 		} else {
 			log.info("spu:" + hubPendingSpuDto.getSpuModel() + "不存在，插入新值");

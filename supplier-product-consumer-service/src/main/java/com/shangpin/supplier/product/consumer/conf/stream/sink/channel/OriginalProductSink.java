@@ -11,6 +11,7 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface OriginalProductSink {
 	
+	public static final String FORZIERI = "forzieriOriginalProduct";
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
 	
 	public static final String OSTORE = "ostoreOriginalProduct";
@@ -137,6 +138,12 @@ public interface OriginalProductSink {
 	
 	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
 	//===============================
+	/**
+	 * 供货商FORZIERI通道组件配置
+	 * @return FORZIERI通道组件
+	 */
+	@Input(value = OriginalProductSink.FORZIERI)
+	public SubscribableChannel forzieriOriginalProduct();
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return SPINNAKER通道组件

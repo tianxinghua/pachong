@@ -89,6 +89,15 @@ public class OriginalProductStreamListener {
 		adapter.ostoreStreamListen(message,headers);
     }
 	/**
+	 * 供应商FORZIERI原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.FORZIERI)
+	public void forzieriStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.forzieriStreamListen(message,headers);
+	}
+	/**
 	 * 供应商SPINNAKER原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

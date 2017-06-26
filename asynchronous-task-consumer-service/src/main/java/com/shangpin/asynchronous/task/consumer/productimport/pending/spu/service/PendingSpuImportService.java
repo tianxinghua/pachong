@@ -3,6 +3,7 @@ package com.shangpin.asynchronous.task.consumer.productimport.pending.spu.servic
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,10 @@ import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.Hub
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
@@ -51,6 +55,8 @@ public class PendingSpuImportService {
 	
 
 	@Autowired
+	HubSpuPendingGateWay hubSpuPendingGateWay;
+	@Autowired
 	DataHandleService dataHandleService;
 	@Autowired
 	TaskImportService taskService;
@@ -68,7 +74,6 @@ public class PendingSpuImportService {
 		String createUser = json.get("createUser").toString();
 		task.setData(filePath);
 		
-		
 		InputStream in = taskService.downFileFromFtp(task);
 		
 		//excel转对象
@@ -85,30 +90,46 @@ public class PendingSpuImportService {
 	}
 	// 校验数据以及保存到hub表
 	
-		public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
-				throws Exception {
-			
-			if (listHubProduct == null) {
-				return null;
-			}
-			
-			List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
-			Map<String, String> map = null;
-			for (HubPendingSpuImportDTO product : listHubProduct) {
-				if (product == null || StringUtils.isBlank(product.getSupplierId())) {
-					continue;
-				}
-				
-				map = new HashMap<String, String>();
-				map.put("taskNo", taskNo);
-				map.put("spuModel", product.getSpuModel());
-				loopHandleSpuImportDto(map,product,createUser);
-				listMap.add(map);
-			}
-
-			// 处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-			return taskService.convertExcel(listMap, taskNo);
+	public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
+			throws Exception {
+		
+		if (listHubProduct == null) {
+			return null;
 		}
+		
+		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
+		Map<String, String> map = null;
+		for (HubPendingSpuImportDTO product : listHubProduct) {
+			if (product == null || StringUtils.isBlank(product.getSupplierId())) {
+				continue;
+			}
+			
+			map = new HashMap<String, String>();
+			map.put("taskNo", taskNo);
+			map.put("spuModel", product.getSpuModel());
+			if(StringUtils.isNotBlank(product.getFilter())&&product.getFilter().trim().equals("排除")){
+				HubSpuPendingWithCriteriaDto croteria = new HubSpuPendingWithCriteriaDto();
+				HubSpuPendingDto hubPendingSpuDto = new HubSpuPendingDto();
+				hubPendingSpuDto.setSpuState((byte)4);
+				hubPendingSpuDto.setMemo("spu导入人工排除");
+				hubPendingSpuDto.setUpdateUser(createUser);
+				hubPendingSpuDto.setUpdateTime(new Date());
+				HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+				criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuNoEqualTo(product.getSupplierSpuNo());
+				croteria.setCriteria(criteria);
+				croteria.setHubSpuPending(hubPendingSpuDto);
+				map.put("taskState", "校验成功");
+				map.put("processInfo", "人工排除");
+				hubSpuPendingGateWay.updateByCriteriaSelective(croteria);
+			}else{
+				loopHandleSpuImportDto(map,product,createUser);	
+			}
+			listMap.add(map);
+		}
+
+		// 处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
+		return taskService.convertExcel(listMap, taskNo);
+	}
 	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO product,String createUser) throws Exception{
 		
 		//判断spuPending是否已存在
@@ -121,19 +142,25 @@ public class PendingSpuImportService {
 		//判断hubSpu是否已存在
 		HubSpuDto hubSpuDto = dataHandleService.selectHubSpu(hubPendingSpuDto.getSpuModel(),hubPendingSpuDto.getHubBrandNo());
 		if (hubSpuDto != null) {
-			Long hubSpuId = hubSpuDto.getSpuId();
-			String hubSpuNo = hubSpuDto.getSpuNo();
-			boolean hubIsExist = true;
-			map.put("hubIsExist", hubIsExist + "");
-			map.put("hubSpuId", hubSpuId + "");
-			map.put("hubSpuNo", hubSpuNo);
-			if(isSpuPendingExist!=null){
-				map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");	
+			if(hubSpuDto.getHubColor().equals(product.getHubColor())){
+				Long hubSpuId = hubSpuDto.getSpuId();
+				String hubSpuNo = hubSpuDto.getSpuNo();
+				boolean hubIsExist = true;
+				map.put("hubIsExist", hubIsExist + "");
+				map.put("hubSpuId", hubSpuId + "");
+				map.put("hubSpuNo", hubSpuNo);
+				if(isSpuPendingExist!=null){
+					map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");	
+				}	
+			}else{
+				//同品牌同货号不同颜色
+				map.put("taskState", "校验失败");
+				map.put("processInfo", "同品牌同货号，颜色不一样");
+				dataHandleService.updateHubSpuPending(hubPendingSpuDto);
+				return;
 			}
 		}
-		
 		HubPendingSkuCheckResult checkResult = selectAndcheckSku(product,isSpuPendingExist, map);
-
 		taskService.checkPendingSpu(isSpuPendingExist, checkResult, hubPendingSpuDto, map, checkResult.isPassing());
 		boolean isPassing = Boolean.parseBoolean(map.get("isPassing"));
 		if (isPassing) {
@@ -185,20 +212,25 @@ public class PendingSpuImportService {
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 		boolean flag = true;
 		StringBuffer str = new StringBuffer();
-		
 		if (isSpuPendingExist != null) {
-
+			
 			List<HubSkuPendingDto> listSku = dataHandleService.selectHubSkuPendingBySpuPendingId(isSpuPendingExist);
 			if (listSku != null && listSku.size() > 0) {
+				boolean allFliter = true;
 				for (HubSkuPendingDto hubSkuPendingDto : listSku) {
 					
 					if(hubSkuPendingDto.getSkuState()!=null&&(hubSkuPendingDto.getSkuState()==SpuState.HANDLED.getIndex()||hubSkuPendingDto.getSkuState()==SpuState.HANDLING.getIndex())){
+						allFliter = false;
 						continue;
 					}
 					HubPendingSkuCheckResult hubPendingSkuCheckResult = loopCheckHubSkuPending(hubSkuPendingDto,product,map);
+					if(hubSkuPendingDto.getFilterFlag()==1){
+						allFliter = false;
+					}
 					flag = hubPendingSkuCheckResult.isPassing();
 					str.append(hubPendingSkuCheckResult.getMessage()).append(",");
 				}
+				map.put("allFilter",allFliter+"");
 			} else {
 				flag = false;
 				str.append("无sku信息");

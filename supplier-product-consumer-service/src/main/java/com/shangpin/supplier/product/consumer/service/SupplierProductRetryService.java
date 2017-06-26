@@ -85,7 +85,7 @@ public class SupplierProductRetryService {
 
 	private void loopProduct(HubSupplierSpuDto spu,byte state,boolean flag) throws Exception{
 		
-		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId());
+		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId(),spu.getSupplierSeasonname());
 		if(season==null){
 			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+":"+spu.getSupplierSeasonname()+"非当季");
 			return;

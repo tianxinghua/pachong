@@ -2,6 +2,7 @@ package com.shangpin.supplier.product.consumer.manager;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,6 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 
 /**
@@ -57,15 +57,15 @@ public class SupplierProductRetryManager {
 	public void insert(HubSupplierValueMappingDto dto){
 		hubSupplierValueMappingGateWay.insert(dto);
 	}
-	public HubSeasonDicDto findCurrentSeason(String supplierId) {
-		
-		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
-		criteria.createCriteria().andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
-		List<HubSeasonDicDto> list = hubSeasonDicGateWay.selectByCriteria(criteria);
-		if(list!=null&&list.size()>0){
-			return list.get(0);
-		}else{
-			return null;
+	public HubSeasonDicDto findCurrentSeason(String supplierId,String supplierSeason) {
+		if(StringUtils.isNotBlank(supplierSeason)&&supplierId!=null){
+			HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason).andSupplieridEqualTo(supplierId).andFilterFlagEqualTo((byte)1);
+			List<HubSeasonDicDto> list = hubSeasonDicGateWay.selectByCriteria(criteria);
+			if(list!=null&&list.size()>0){
+				return list.get(0);
+			}		
 		}
+		return null;
 	}
 }
