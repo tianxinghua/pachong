@@ -2,8 +2,6 @@ package com.shangpin.ephub.product.business.ui.studio.openbox.vo;
 
 import java.util.List;
 
-import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
-
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -18,5 +16,5 @@ import lombok.Setter;
 @Setter
 public class OpenBoxDetailVo {
 
-	private List<StudioSlotSpuSendDetailDto> details;
+	private List<StudioSlotSpuSendDetailVo> details;
 }

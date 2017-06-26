@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.openbox.dto;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -27,13 +29,10 @@ public class OpenBoxQuery {
 	 */
 	private String slotName;
 	/**
-	 * 开始拍摄日期
+	 * 拍摄日期
 	 */
-	private String operateStartDate;
-	/**
-	 * 结束拍摄日期
-	 */
-	private String operateEndDate;
+	private List<String> operateDate;
+	
 	/**
 	 * 分页
 	 */

@@ -21,7 +21,7 @@ import com.shangpin.ephub.response.HubResponse;
  *
  */
 @RestController
-@RequestMapping("/incoming-slots")
+@RequestMapping("/api/airstudio/incoming-slots")
 public class IncomingSlotsController {
 	
 	@Autowired
