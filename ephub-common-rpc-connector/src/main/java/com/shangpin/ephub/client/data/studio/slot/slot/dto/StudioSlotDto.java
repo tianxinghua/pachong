@@ -124,6 +124,8 @@ public class StudioSlotDto implements Serializable {
      * 版本字段
      */
     private Long version;
+    //临时字段 不同步数据库
+    private String studioName;
 
     private static final long serialVersionUID = 1L;
 
@@ -158,6 +160,15 @@ public class StudioSlotDto implements Serializable {
     public void setSlotNo(String slotNo) {
         this.slotNo = slotNo == null ? null : slotNo.trim();
     }
+    
+    public String getStudioName() {
+        return studioName;
+    }
+
+    public void setStudioName(String studioName) {
+        this.studioName = studioName == null ? null : studioName.trim();
+    }
+
 
     public Byte getSlotStatus() {
         return slotStatus;
