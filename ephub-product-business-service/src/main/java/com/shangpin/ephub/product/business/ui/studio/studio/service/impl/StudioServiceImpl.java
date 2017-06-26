@@ -18,6 +18,9 @@ import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWa
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicSlotGateWay;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
+import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
+import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
@@ -72,6 +75,8 @@ public class StudioServiceImpl implements IStudioService {
     @Autowired
     StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
 
+    @Autowired
+    StudioSlotLogistictTrackGateWay studioSlotLogistictTrackGateWay;
 
     HashMap<String, String > categoryMap = new HashMap<String, String>(){{
         put("cloth", "A01");
@@ -203,7 +208,7 @@ public class StudioServiceImpl implements IStudioService {
 
         SlotsVo products = new SlotsVo();
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
-        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId);
+        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSendStateNotEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
         int total = studioSlotGateWay.countByCriteria(cdto);
         if(total>0) {
             List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
@@ -514,6 +519,7 @@ public class StudioServiceImpl implements IStudioService {
                         }
                         //endregion
                     }
+                    //TODO: 需要调用重任的添加接口
                     updatedVo.setSuccessCount(successNum);
                     if(updatedVo.getErrorConent()!=null){
                         failNum = updatedVo.getErrorConent().size();
@@ -589,9 +595,12 @@ public class StudioServiceImpl implements IStudioService {
                upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
                upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
                hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+
+               //TODO: 需要调用重任的删除接口
            }else {
                updatedVo = setErrorMsg(response, slotNo, "D0", "delete product to slot failed");
            }
+
             response.setErrorMsg(updatedVo);
         }
         catch (Exception ex){
@@ -637,7 +646,7 @@ public class StudioServiceImpl implements IStudioService {
                     response.setMsg("Slot is full and ready to ship");
                 }
 
-
+                //TODO: 需要调用重任的验证接口
                 StudioSlotDto studioSlotDto = new StudioSlotDto();
                 studioSlotDto.setStudioSlotId(slotInfo.getStudioSlotId());
                 studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
@@ -658,6 +667,46 @@ public class StudioServiceImpl implements IStudioService {
         }
         return  response;
     }
+
+
+    public boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser){
+       try {
+           StudioSlotLogistictTrackDto trackDto = new StudioSlotLogistictTrackDto();
+           trackDto.setTrackName(logisticName);
+           trackDto.setTrackNo(trackingNo);
+           trackDto.setSendMasterId(studioSlotId);
+           trackDto.setType((byte) 0);
+           trackDto.setCreateUser(createUser);
+           trackDto.setCreateTime(new Date());
+
+           return  studioSlotLogistictTrackGateWay.insertSelective(trackDto)>0;
+       }catch (Exception ex){
+           log.info("insertSlotLogistic Exception " + ex.getMessage());
+           return false;
+       }
+    }
+
+    public StudioSlotLogistictTrackDto  getSlotLogisticInfo(Long studioSlotId){
+        try {
+            StudioSlotLogistictTrackCriteriaDto dto = new StudioSlotLogistictTrackCriteriaDto();
+            dto.createCriteria().andSendMasterIdEqualTo(studioSlotId).andTypeEqualTo((byte)0);
+            List<StudioSlotLogistictTrackDto> result = studioSlotLogistictTrackGateWay.selectByCriteria(dto);
+            if(result!=null && result.size()>0){
+                return result.get(0);
+            }
+            else {
+                return new StudioSlotLogistictTrackDto();
+            }
+        }
+        catch (Exception ex){
+
+            log.info("getSlotLogisticInfo Exception " + ex.getMessage());
+            return null;
+        }
+
+    }
+
+
 
     /**
      * 获取批次列表

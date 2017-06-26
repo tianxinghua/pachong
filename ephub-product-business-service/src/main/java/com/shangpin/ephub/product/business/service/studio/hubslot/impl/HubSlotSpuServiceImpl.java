@@ -1,10 +1,10 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot.impl;
 
 import com.shangpin.ephub.client.data.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierOperateSign;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuNoTypeDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.SpuNoGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
@@ -36,14 +36,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
     HubSlotSpuGateWay slotSpuGateWay;
 
-//    @Autowired
-//    SpuNoGateWay spuNoGateWay;
-//
-//    @Autowired
-//    HubSlotSpuSupplierService hubSlotSpuSupplierService;
-//
-//
-//    SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
+
 
     @Autowired
     HubSlotSpuSupplierService hubSlotSpuSupplierService;
@@ -54,6 +47,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
     SpuNoGateWay spuNoGateWay;
 
+    @Autowired
+    HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 
     SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
 
@@ -79,12 +74,16 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         HubSlotSpuSupplierDto slotSpuSupplierDto  = new HubSlotSpuSupplierDto();
 
         try {
+            //判断供货商是否需要处理
+            boolean isShootSupplier =  this.isShootSupplier(pendingProductDto.getSupplierId());
+
             //slotspu 处理
             HubSlotSpuDto originSlotSpu = this.findHubSlotSpu(pendingProductDto.getHubBrandNo(),pendingProductDto.getSpuModel());
 
 
+
             if(null==originSlotSpu){
-                this.transPendingToSlot(pendingProductDto,slotSpuDto);
+                this.transPendingToSlot(pendingProductDto,slotSpuDto,isShootSupplier);
                 try {
                     setSlotSpuNo(slotSpuDto);
                     slotSpuDto.setSlotSpuId(slotSpuGateWay.insert(slotSpuDto));
@@ -97,6 +96,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             }else{
                 slotSpuDto.setSlotSpuId(originSlotSpu.getSlotSpuId());
                 slotSpuDto.setSlotSpuNo(originSlotSpu.getSlotSpuNo());
+                slotSpuDto.setSpuState(originSlotSpu.getSpuState());
+                updateSlotSpuState(slotSpuDto,isShootSupplier);
 
             }
 
@@ -104,9 +105,9 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
             if(null==hubSlotSpuSupplierService.getSlotSpuSupplierOfValidBySpuNoAndSupplierId(slotSpuDto.getSlotSpuNo(),pendingProductDto.getSupplierId())){
 
-                this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto.getSlotSpuId(),slotSpuDto.getSlotSpuNo());
+                this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto,isShootSupplier);
 
-                hubSlotSpuSupplierService.addHubSloSpuSupplier(slotSpuSupplierDto);
+                hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto,slotSpuDto.getSpuState().intValue());
             }
 
             //spupending 处理
@@ -124,6 +125,28 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         return false;
     }
 
+    /**
+     *更新slotspustate状态
+     * @param originSlotSpu
+     * @param isNeedShoot
+     */
+    private void updateSlotSpuState(HubSlotSpuDto originSlotSpu,boolean isNeedShoot) {
+        if(originSlotSpu.getSpuState().toString().equals(SlotSpuState.NO_NEED_HANDLE.getIndex().toString())){
+
+        }else if(originSlotSpu.getSpuState().toString().equals(SlotSpuState.SEND.getIndex().toString())){
+
+        }else{
+            if(isNeedShoot){
+
+            }else{
+                HubSlotSpuDto tmpDto = new HubSlotSpuDto();
+                tmpDto.setSlotSpuId(originSlotSpu.getSlotSpuId());
+                tmpDto.setSpuState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
+                slotSpuGateWay.updateByPrimaryKeySelective(tmpDto);
+            }
+        }
+    }
+
     private void setSlotSpuNo(HubSlotSpuDto slotSpuDto) {
         SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
         spuNoTypeDto.setType(ConstantProperty.SPU_NO_TYPE_FOR_SLOT_SPU);
@@ -138,17 +161,21 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         if(isNeedHandleSlotSpu(pendingProductDto,originSpuPendingDto)){
              //查找老数据
             try {
+                //判断供货商是否需要处理
+                boolean isShootSupplier =  this.isShootSupplier(pendingProductDto.getSupplierId());
                 HubSlotSpuDto slotSpuDto = this.findHubSlotSpu(originSpuPendingDto.getHubBrandNo(),originSpuPendingDto.getSpuModel());
 
                 if(null!=slotSpuDto){
+                    boolean isNeedShoot = false;
+
                     //查看是否有多个供货商 如果单个 直接修改老数据的SLOTSPU  如果多个 插入新的SLOTSPU
                     //并把老的SLOTSPUSUPPLIER 逻辑删除  ，并插入新的记录
                     List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = hubSlotSpuSupplierService.findSlotSpuSupplierListBySlotSpuId(slotSpuDto.getSlotSpuId());
                     if(null==slotSpuSupplierDtos||0==slotSpuSupplierDtos.size()){
 
                         HubSlotSpuSupplierDto slotSpuSupplierDto = new HubSlotSpuSupplierDto();
-                        this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto.getSlotSpuId(),slotSpuDto.getSlotSpuNo());
-                        hubSlotSpuSupplierService.addHubSloSpuSupplier(slotSpuSupplierDto);
+                        this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto,isShootSupplier);
+                        hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto,slotSpuDto.getSpuState().intValue());
 
                     }else{
                        if(slotSpuSupplierDtos.size()==1){//单个
@@ -156,20 +183,24 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                        }else{
                            boolean needupdateother = false;
                            if(slotSpuSupplierDtos.size()==2) needupdateother = true;
-                           for(HubSlotSpuSupplierDto dto:slotSpuSupplierDtos){
+
+                           //首先处理老数据
+                           for(int i= 0;i<slotSpuSupplierDtos.size();i++){
+                               HubSlotSpuSupplierDto dto  = slotSpuSupplierDtos.get(i);
                                if(null==dto.getSpuPendingId()) continue;
                                if(dto.getSpuPendingId().toString().equals(pendingProductDto.getSpuPendingId().toString())){
                                    //更新老的记录为逻辑删除
                                    hubSlotSpuSupplierService.deleteSlotSpuSupplierForLogic(dto.getSlotSpuSupplierId());
                                    //插入新记录
                                    this.addSlotSpuAndSupplier(pendingProductDto);
-                               }else{
-                                   if(needupdateother){
-                                       //更新状态为独家
-                                       hubSlotSpuSupplierService.resumeRepeatMarker(dto.getSlotSpuSupplierId());
-
-                                   }
                                }
+                               slotSpuSupplierDtos.remove(i);
+                               i--;
+                           }
+                           //处理剩下的
+                           if(slotSpuSupplierDtos.size()>0){
+
+                               hubSlotSpuSupplierService.updateSlotSpuSupplierStateWhenModifyHubData(slotSpuSupplierDtos,slotSpuDto);
                            }
 
                        }
@@ -208,7 +239,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     }
 
 
-    private void transPendingToSlot(PendingProductDto resource,HubSlotSpuDto target){
+    private void transPendingToSlot(PendingProductDto resource,HubSlotSpuDto target,boolean isShootSupplier){
 
         target.setSpuModel(resource.getSpuModel());
         target.setBrandNo(resource.getHubBrandNo());
@@ -225,6 +256,12 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         }
         target.setCreateTime(new Date());
         target.setCreateUser(target.getUpdateUser());
+
+        if(isShootSupplier){
+            target.setSpuState(SlotSpuState.WAIT_SEND.getIndex().byteValue());
+        }else{
+            target.setSpuState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
+        }
 //        spuNoTypeDto.setType("slotspu");//常量在 中定义 只有此处用到 ，直接写死了
 //        target.setSlotSpuNo(spuNoGateWay.getSpuNo(spuNoTypeDto));
 
@@ -233,18 +270,51 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
     }
 
-    private void transPendingToSlotSupplier(PendingProductDto resource,HubSlotSpuSupplierDto target,Long slotSpuId,String slotSpuNo){
-        target.setSlotSpuId(slotSpuId);
-        target.setSlotSpuNo(slotSpuNo);
+    private boolean  isShootSupplier(String supplierId){
+
+
+        HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
+        criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
+            .andSupplierValEqualTo(String.valueOf(DataState.NOT_DELETED.getIndex())).andSupplierIdEqualTo(supplierId);
+        List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
+        if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
+
+    private void transPendingToSlotSupplier(PendingProductDto resource,HubSlotSpuSupplierDto target,HubSlotSpuDto slotSpuDto,boolean isShootSupplier){
+        target.setSlotSpuId(slotSpuDto.getSlotSpuId());
+        target.setSlotSpuNo(slotSpuDto.getSlotSpuNo());
         target.setSupplierId(resource.getSupplierId());
         target.setSupplierNo(resource.getSupplierNo());
         target.setSpuPendingId(resource.getSpuPendingId());
         target.setSupplierSpuId(resource.getSupplierSpuId());
-        target.setState(SlotSpuState.WAIT_SEND.getIndex().byteValue());
         target.setDataState(DataState.NOT_DELETED.getIndex());
         target.setCreateTime(new Date());
         target.setCreateUser(resource.getUpdateUser());
-        target.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_HANDLE.getIndex().byteValue());
+
+        if(slotSpuDto.getSpuState().toString().equals(SlotSpuState.NO_NEED_HANDLE.getIndex().toString())){
+            //不需要处理
+            target.setState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
+            target.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_NEED_HANDLE.getIndex().byteValue());
+        }else if(slotSpuDto.getSpuState().toString().equals(SlotSpuState.SEND.getIndex().toString())){
+            //已寄出
+            target.setState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
+            target.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_NEED_HANDLE.getIndex().byteValue());
+        }else{
+            if(isShootSupplier){
+                target.setState(SlotSpuState.WAIT_SEND.getIndex().byteValue());
+                target.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_HANDLE.getIndex().byteValue());
+            }else{
+                target.setState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
+                target.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_NEED_HANDLE.getIndex().byteValue());
+            }
+        }
+
+
 
     }
 

@@ -282,16 +282,16 @@ public class EphubProductBusinessServiceApplicationTests {
 
 		PendingProductDto pendingProductDto = new PendingProductDto();
 		HubSpuPendingCriteriaDto criteriaDto = new HubSpuPendingCriteriaDto();
-		criteriaDto.createCriteria().andSpuPendingIdEqualTo(152000L);
+		criteriaDto.createCriteria().andSpuPendingIdEqualTo(259796L);
 		List<HubSpuPendingDto> spuPendingDtos   = gateWay.selectByCriteria(criteriaDto);
 		if(null!=spuPendingDtos&&spuPendingDtos.size()>0){
 			BeanUtils.copyProperties(spuPendingDtos.get(0),pendingProductDto);
 
-			pendingProductDto.setSpuModel("AC03WR17 404002");
+//			pendingProductDto.setSpuModel("AC03WR17 404002");
 
 			try {
-//				hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
-				hubSlotSpuService.updateSlotSpu(pendingProductDto);
+				hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+//				hubSlotSpuService.updateSlotSpu(pendingProductDto);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

@@ -9,27 +9,36 @@ package com.shangpin.ephub.client.data.mysql.enumeration;
 public enum SlotSpuSupplierOperateSign {
 
     /**
-     * 未操作
+     * 不需要操作
      */
 
-    NO_HANDLE(0,"NO_HANDLE"),
+    NO_NEED_HANDLE(0,"NO_NEED_HANDLE"),
+
+
+
+    /**
+     * 未处理
+     */
+    NO_HANDLE(1,"NO_HANDLE"),
+
+
 
 	/**
 	 * 自家寄出
 	 */
-    OWNER_SEND(1,"OWNER_SEND"),
+    OWNER_SEND(2,"OWNER_SEND"),
 
 
 	/**
 	 * 其它家寄出
 	 */
-	OTHER_SEND(2,"OTHER_SEND"),
+	OTHER_SEND(3,"OTHER_SEND"),
 
 
     /**
      * 取消寄送
      */
-    CANCEL_SEND(3,"CANCEL_SEND")
+    CANCEL_SEND(4,"CANCEL_SEND")
 
 
 

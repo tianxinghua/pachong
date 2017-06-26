@@ -26,7 +26,6 @@ public interface HubSlotSpuService {
 
 
 
-
     /**
      * 待处理修改
      * @param pendingProductDto
