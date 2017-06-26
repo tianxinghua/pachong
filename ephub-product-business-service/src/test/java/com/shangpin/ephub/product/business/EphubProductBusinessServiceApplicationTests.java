@@ -39,7 +39,7 @@ import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
-import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 
 import sun.misc.BASE64Encoder;
 

@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.openbox.dto;
+package com.shangpin.ephub.product.business.ui.studio.common.operation.dto;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 /**
  * <p>Title: OpenBoxQuery</p>
- * <p>Description: OpenBox页面查询参数 </p>
+ * <p>Description: studio operation页面查询参数 </p>
  * <p>Company: </p> 
  * @author lubaijiang
  * @date 2017年6月9日 下午2:03:07
@@ -14,7 +14,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class OpenBoxQuery {
+public class OperationQuery {
+	/**
+	 * 用来指定是那个页面
+	 */
+	private Integer operationQueryType;
 	/**
 	 * 摄影棚编号
 	 */

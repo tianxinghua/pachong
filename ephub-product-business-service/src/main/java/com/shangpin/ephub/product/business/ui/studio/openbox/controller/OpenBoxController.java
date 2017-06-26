@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.ui.studio.openbox.dto.OpenBoxQuery;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxService;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
@@ -28,7 +28,7 @@ public class OpenBoxController {
 	private OpenBoxService openBoxService;
 
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)
-	public HubResponse<?> slotList(@RequestBody OpenBoxQuery openBoxQuery){
+	public HubResponse<?> slotList(@RequestBody OperationQuery openBoxQuery){
 		OpenBoxVo openBoxVo = openBoxService.slotList(openBoxQuery); 
 		if(null != openBoxVo){
 			return HubResponse.successResp(openBoxVo);

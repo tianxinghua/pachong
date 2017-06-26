@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.openbox.vo;
+package com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail;
 
 
 import java.util.Date;
@@ -22,6 +22,8 @@ public class StudioSlotSpuSendDetailVo {
 	private String operator;
 	@JsonIgnore
 	private Date time;
+	@JsonIgnore
+	private byte arriveState;
 	
 	@JsonProperty("Brand")
 	public String getBrand() {
@@ -70,6 +72,14 @@ public class StudioSlotSpuSendDetailVo {
 	@JsonProperty("Time")
 	public void setTime(Date time) {
 		this.time = time;
+	}
+	@JsonProperty("ArriveState")
+	public byte getArriveState() {
+		return arriveState;
+	}
+	@JsonProperty("ArriveState")
+	public void setArriveState(byte arriveState) {
+		this.arriveState = arriveState;
 	}
 	
 }
