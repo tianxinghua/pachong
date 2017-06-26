@@ -40,7 +40,9 @@ public enum TaskType {
 	
 	EXPORT_SPU_ALL(12,"全部商品页-SPU导出"),
 	
-	EXPORT_SKU_ALL(13,"全部商品页-SKU导出");
+	EXPORT_SKU_ALL(13,"全部商品页-SKU导出"),
+	
+	EXPORT_SUTDIO_SLOT(14,"studio批次导出");
 	/**
      * 数字索引标识
      */

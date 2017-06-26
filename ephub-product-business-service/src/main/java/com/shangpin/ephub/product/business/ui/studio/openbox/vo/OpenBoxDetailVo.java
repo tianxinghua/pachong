@@ -2,6 +2,8 @@ package com.shangpin.ephub.product.business.ui.studio.openbox.vo;
 
 import java.util.List;
 
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
+
 import lombok.Getter;
 import lombok.Setter;
 /**

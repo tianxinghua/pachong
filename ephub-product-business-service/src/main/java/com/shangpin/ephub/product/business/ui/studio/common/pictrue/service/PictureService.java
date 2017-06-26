@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.picture;
+package com.shangpin.ephub.product.business.ui.studio.common.pictrue.service;
 
 import java.util.List;
 import java.util.Map;

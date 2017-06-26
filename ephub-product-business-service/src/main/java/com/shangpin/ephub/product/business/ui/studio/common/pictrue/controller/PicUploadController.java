@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.common.pic.controller;
+package com.shangpin.ephub.product.business.ui.studio.common.pictrue.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;

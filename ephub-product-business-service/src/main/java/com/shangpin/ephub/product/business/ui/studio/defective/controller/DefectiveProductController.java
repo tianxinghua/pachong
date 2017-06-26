@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
-import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
