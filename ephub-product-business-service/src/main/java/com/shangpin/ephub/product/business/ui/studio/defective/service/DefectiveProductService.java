@@ -24,9 +24,9 @@ public interface DefectiveProductService {
 	 */
 	public DefectiveProductVo list(DefectiveQuery defectiveQuery); 
 	/**
-	 * 添加残次品
+	 * 残次品如果存在则查询，否则添加
 	 * @param slotNoSpuId
-	 * @return
+	 * @return 该残次品实体
 	 */
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId);
 	/**
@@ -34,14 +34,7 @@ public interface DefectiveProductService {
 	 * @param defctiveSouDot 
 	 * @return
 	 */
-	public Long insert(StudioSlotDefectiveSpuDto defctiveSouDot, String extension);
-	/**
-	 * 残次品图片上传图片服务器后更新数据库
-	 * @param studioSlotDefectiveSpuPicId
-	 * @param spPicUrl
-	 * @return
-	 */
-	public boolean update(Long studioSlotDefectiveSpuPicId, String spPicUrl);
+	public Long insert(StudioSlotDefectiveSpuDto defctiveSouDot, String spPicUrl, String extension);
 	/**
 	 * 根据报残表主键查找查找所有图片
 	 * @param studioSlotDefectiveSpuId
