@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.ErrorConent;
@@ -72,10 +73,6 @@ public class StudioController {
  * */
     @RequestMapping(value = "/addspu",method = RequestMethod.POST)
     public HubResponse<?> addProductIntoSlot(@RequestBody StudioQueryDto queryDto) {
-//    public HubResponse<?> addProductIntoSlot(@RequestParam("supplierId") String supplierId,
-//                                             @RequestParam("slotNo") String slotNo,
-//                                             @RequestParam("slotSSIds") List<String> slotSSIds,@RequestParam(value = "createUser",defaultValue = "") String createUser) {
-
         String supplierId = queryDto.getSupplierId();
         String slotNo = queryDto.getSlotNo();
         String slotSSIds = queryDto.getSlotSSIds();
@@ -114,6 +111,39 @@ public class StudioController {
         }
         return  iStudioService.checkProductAndSendSlot(supplierId,slotNo);
     }
+
+    @RequestMapping(value = "/addslotLogistic")
+    public HubResponse<?> insertSlotLogistic (@RequestBody StudioQueryDto queryDto){
+        String supplierId = queryDto.getSupplierId();
+        Long studioSlotId = queryDto.getStudioSlotId();
+        String trackName = queryDto.getTrackName();
+        String trackingNo = queryDto.getTrackingNo();
+        if(StringUtils.isEmpty(supplierId) || studioSlotId ==null|| StringUtils.isEmpty(trackName)|| StringUtils.isEmpty(trackingNo)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+       if(iStudioService.insertSlotLogistic(studioSlotId,trackName,trackingNo,queryDto.getCreateUser())){
+           return  HubResponse.successResp(null);
+       }else {
+           return  HubResponse.errorResp("Logistics information added failed!");
+       }
+    }
+    @RequestMapping(value = "/slotlogisticinfo")
+    public HubResponse<?> getSlotLogisticInfo (@RequestBody StudioQueryDto queryDto){
+        String supplierId = queryDto.getSupplierId();
+        Long studioSlotId = queryDto.getStudioSlotId();
+
+        if(StringUtils.isEmpty(supplierId) || studioSlotId ==null){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        StudioSlotLogistictTrackDto result = iStudioService.getSlotLogisticInfo(studioSlotId);
+        if(result==null){
+            return HubResponse.errorResp("Get logistic info is fail!");
+        }else {
+            return HubResponse.successResp(result);
+        }
+
+    }
+
 
 
     @RequestMapping(value = "/studioslotlist")
