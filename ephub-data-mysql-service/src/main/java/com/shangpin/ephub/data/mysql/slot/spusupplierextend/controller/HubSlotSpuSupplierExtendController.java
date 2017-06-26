@@ -1,8 +1,8 @@
-package com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.controller;
+package com.shangpin.ephub.data.mysql.slot.spusupplierextend.controller;
 
-import com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.bean.SlotSpuSupplierQueryDto;
-import com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.po.SlotSpuSupplier;
-import com.shangpin.ephub.data.mysql.slot.spusupplier.joinselect.service.HubSlotSpuSupplierExtendService;
+import com.shangpin.ephub.data.mysql.slot.spusupplierextend.bean.SlotSpuSupplierQueryDto;
+import com.shangpin.ephub.data.mysql.slot.spusupplierextend.po.SlotSpuSupplier;
+import com.shangpin.ephub.data.mysql.slot.spusupplierextend.service.HubSlotSpuSupplierExtendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

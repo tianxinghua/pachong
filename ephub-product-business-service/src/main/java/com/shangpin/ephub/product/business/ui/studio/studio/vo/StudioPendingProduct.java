@@ -15,15 +15,19 @@ public class StudioPendingProduct extends HubSlotSpuSupplierDto implements Seria
 
     private static final long serialVersionUID = 4357243781682368686L;
 
-    public String brandNo;
-    public String brandName;
+    private String brandNo;
+    private String brandName;
 
-    public String categoryNo;
-    public String categoryName;
+    private String categoryNo;
+    private String categoryName;
 
-    public String supplierOrigin;
+    private String seasonName;
 
-    public String productName;
+    private String supplierOrigin;
 
-    public String productDesc;
+    private String productName;
+
+    private String productDesc;
+    private String supplierSpuNo;
+    private String supplierSpuModel;
 }
