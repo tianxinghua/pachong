@@ -3,6 +3,8 @@ package com.shangpin.ephub.product.business.ui.studio.openbox.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
+
 import lombok.Getter;
 import lombok.Setter;
 /**

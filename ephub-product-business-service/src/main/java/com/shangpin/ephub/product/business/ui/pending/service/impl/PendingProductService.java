@@ -514,6 +514,7 @@ public class PendingProductService extends PendingSkuService{
 		BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
 		BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
 		BrandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
+		@SuppressWarnings("deprecation")
 		BrandModelResult brandModelResult=  hubBrandModelRule.verify(BrandModelDto);
 		return brandModelResult;
 	}

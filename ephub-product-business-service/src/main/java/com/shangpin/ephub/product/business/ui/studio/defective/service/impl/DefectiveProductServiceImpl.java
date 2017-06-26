@@ -26,11 +26,11 @@ import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetai
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
-import com.shangpin.ephub.product.business.ui.studio.openbox.service.impl.OpenBoxServiceImpl;
-import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,8 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DefectiveProductServiceImpl implements DefectiveProductService {
 	
-	@Autowired
-	private OpenBoxServiceImpl openBoxService;
 	@Autowired
 	private StudioSlotGateWay studioSlotGateWay;
 	@Autowired
@@ -50,6 +48,8 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
 	@Autowired
 	private PictureService pictureService;
+	@Autowired
+	private OperationService operationService;
 	
 
 	@Override
@@ -86,7 +86,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
-		Long studioId = openBoxService.getStudioId(studioNo);
+		Long studioId = operationService.getStudioId(studioNo);
 		if(null != studioId){
 			criteria.createCriteria().andStudioIdEqualTo(studioId);
 		}else{

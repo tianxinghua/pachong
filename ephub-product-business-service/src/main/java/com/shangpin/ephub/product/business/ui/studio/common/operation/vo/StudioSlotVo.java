@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.openbox.vo;
+package com.shangpin.ephub.product.business.ui.studio.common.operation.vo;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -30,5 +30,9 @@ public class StudioSlotVo implements Serializable{
 	 * 运输单号
 	 */
 	private String trackingNo;
+	/**
+	 * 
+	 */
+	private int uploadQty;
 
 }
