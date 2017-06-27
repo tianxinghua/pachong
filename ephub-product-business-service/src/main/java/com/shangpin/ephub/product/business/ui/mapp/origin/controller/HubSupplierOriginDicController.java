@@ -56,7 +56,7 @@ public class HubSupplierOriginDicController {
     public HubResponse selectHubSupplierCateoryList(@RequestBody HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto){
 		try {
 			log.info("产地list接受到数据:{}",hubSupplierSizeDicRequestDto);
-			if(hubSupplierSizeDicRequestDto!=null&&hubSupplierSizeDicRequestDto.getType()!=null){
+			if(hubSupplierSizeDicRequestDto!=null){
 				return getCommonSizeMapp(hubSupplierSizeDicRequestDto);
 			}
 			return HubResponse.errorResp("传值为空");
@@ -69,12 +69,12 @@ public class HubSupplierOriginDicController {
 	private HubResponse getCommonSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
 		
 		int total = 0;
-		total = hubOriginDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal());
+		total = hubOriginDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal(),hubSupplierSizeDicRequestDto.getType());
 		log.info("查询总个数："+total);
 		if (total > 0) {
 			List<HubSupplierValueMappingDto> list = hubOriginDicService
 					.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal(),
-							hubSupplierSizeDicRequestDto.getPageNo(),hubSupplierSizeDicRequestDto.getPageSize());
+							hubSupplierSizeDicRequestDto.getPageNo(),hubSupplierSizeDicRequestDto.getPageSize(),hubSupplierSizeDicRequestDto.getType());
 			if (list != null && list.size() > 0) {
 
 				HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();
@@ -138,6 +138,7 @@ public class HubSupplierOriginDicController {
 			hubSupplierValueMappingDto.setHubVal(dto.getHubVal());
 			BeanUtils.copyProperties(dto, hubSupplierValueMappingDto);
 			hubSupplierValueMappingDto.setUpdateTime(new Date());
+			hubSupplierValueMappingDto.setMappingType((byte)1);
 			hubOriginDicService.updateHubSupplierValueMappingByPrimaryKey(hubSupplierValueMappingDto);
 			return HubResponse.successResp("success");
 		} catch (Exception e) {

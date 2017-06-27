@@ -17,9 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-/**
- * Created by lizhongren on 2017/1/13.
- */
 @Component
 @Slf4j
 public class SpuPendingHandler {
