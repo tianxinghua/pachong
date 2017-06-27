@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.service;
 
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import java.util.List;
@@ -10,5 +11,7 @@ import java.util.List;
  */
 public interface IReturnSlotService {
 
-    List<StudioSlotReturnMasterDto> getReturnSlotList(Long supplierId);
+    List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto);
+
+    boolean ReceiveReturnSlot(Long supplierId,Long id,String userName);
 }
