@@ -63,6 +63,7 @@ public class MonnierHandler implements ISupplierHandler {
 				}
 			}	
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error("monnier异常："+e.getMessage(),e); 
 		}
 		
@@ -96,7 +97,7 @@ public class MonnierHandler implements ISupplierHandler {
 		if(null != itemImages){			
 			if(img.length>0){
 				for(String url : img){
-					if(!url.contains("_COLOR")){//将带 _COLOR 的小图屏蔽掉
+					if(!StringUtils.isEmpty(url) && !url.contains("_COLOR")){//将带 _COLOR 的小图屏蔽掉
 						Image image = new Image();
 						image.setUrl(url);
 						images.add(image);
@@ -153,7 +154,7 @@ public class MonnierHandler implements ISupplierHandler {
 		if(null != item){			
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			String size = null;
+			String size = "";
 			String supplierSkuNo = item.getSku();
 			hubSku.setSupplierSkuNo(supplierSkuNo);
 			hubSku.setSupplierSkuName(item.getName());
