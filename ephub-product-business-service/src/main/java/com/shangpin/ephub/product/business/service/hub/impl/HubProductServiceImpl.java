@@ -129,7 +129,14 @@ public class HubProductServiceImpl implements HubProductService {
                         //推送
                         //---------------------------------- 推送前先调用接口  看是否存在  存在则不用推送
                         Map<String,SopSkuDto> existSopSkuMap = new HashMap<>();
-                        List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap);
+                        Map<String,SopSkuDto> errorSopSkuMap = new HashMap<>();//supplierskuno 查询不到 但barcode 可以查询到
+                        List<ApiSkuOrgDom> errorSkuOrgDoms = new ArrayList<>();
+                        List<ApiSkuOrgDom> existSkuOrgDoms = getExistSku(supplierId,skuOrgDoms,existSopSkuMap,errorSopSkuMap,errorSkuOrgDoms);
+                        //处理错误的
+                        if(errorSopSkuMap.size()>0){
+                            handleSkuOfErrorBarcode(errorSkuOrgDoms,errorSopSkuMap);
+                        }
+
                         //处理已经存在的
                         if(existSkuOrgDoms.size()>0){
                             log.info("SPSKUNO已存在");
