@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
     <id column="studio_slot_return_master_id" property="studioSlotReturnMasterId" jdbcType="BIGINT" />
     <result column="studio_send_no" property="studioSendNo" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="quantity" property="quantity" jdbcType="INTEGER" />
     <result column="actual_quantity" property="actualQuantity" jdbcType="INTEGER" />
     <result column="track_no" property="trackNo" jdbcType="VARCHAR" />
@@ -82,9 +84,10 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_slot_return_master_id, studio_send_no, quantity, actual_quantity, track_no, 
-      state, memo, send_user, send_time, send_state, arrive_user, arrive_time, arrive_state, 
-      create_time, create_user, update_time, update_user, data_state, version
+      studio_slot_return_master_id, studio_send_no, supplier_no, supplier_id, quantity, 
+      actual_quantity, track_no, state, memo, send_user, send_time, send_state, arrive_user, 
+      arrive_time, arrive_state, create_time, create_user, update_time, update_user, data_state, 
+      version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -109,7 +112,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_return_master_id,studio_send_no,quantity,actual_quantity,track_no,state,memo,send_user,send_time,send_state,arrive_user,arrive_time,arrive_state,create_time,create_user,update_time,update_user,data_state,version
+    studio_slot_return_master_id,studio_send_no,supplier_no,supplier_id,quantity,actual_quantity,track_no,state,memo,send_user,send_time,send_state,arrive_user,arrive_time,arrive_state,create_time,create_user,update_time,update_user,data_state,version
     from studio_slot_return_master
     where studio_slot_return_master_id = #{studioSlotReturnMasterId,jdbcType=BIGINT}
   </select>
@@ -124,28 +127,24 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
-    <selectKey keyColumn="studio_slot_return_master_id" keyProperty="studioSlotReturnMasterId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_return_master_id
-    </selectKey>
     insert into studio_slot_return_master (studio_slot_return_master_id, studio_send_no, 
-      quantity, actual_quantity, track_no, 
-      state, memo, send_user, 
-      send_time, send_state, arrive_user, 
-      arrive_time, arrive_state, create_time, 
-      create_user, update_time, update_user, 
-      data_state, version)
+      supplier_no, supplier_id, quantity, 
+      actual_quantity, track_no, state, 
+      memo, send_user, send_time, 
+      send_state, arrive_user, arrive_time, 
+      arrive_state, create_time, create_user, 
+      update_time, update_user, data_state, 
+      version)
     values (#{studioSlotReturnMasterId,jdbcType=BIGINT}, #{studioSendNo,jdbcType=VARCHAR}, 
-      #{quantity,jdbcType=INTEGER}, #{actualQuantity,jdbcType=INTEGER}, #{trackNo,jdbcType=VARCHAR}, 
-      #{state,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, #{sendUser,jdbcType=VARCHAR}, 
-      #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, #{arriveUser,jdbcType=VARCHAR}, 
-      #{arriveTime,jdbcType=TIMESTAMP}, #{arriveState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+      #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, 
+      #{actualQuantity,jdbcType=INTEGER}, #{trackNo,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, 
+      #{memo,jdbcType=VARCHAR}, #{sendUser,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, 
+      #{sendState,jdbcType=TINYINT}, #{arriveUser,jdbcType=VARCHAR}, #{arriveTime,jdbcType=TIMESTAMP}, 
+      #{arriveState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
-    <selectKey keyColumn="studio_slot_return_master_id" keyProperty="studioSlotReturnMasterId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_return_master_id
-    </selectKey>
     insert into studio_slot_return_master
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotReturnMasterId != null" >
@@ -153,6 +152,12 @@
       </if>
       <if test="studioSendNo != null" >
         studio_send_no,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
       </if>
       <if test="quantity != null" >
         quantity,
@@ -212,6 +217,12 @@
       </if>
       <if test="studioSendNo != null" >
         #{studioSendNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
       </if>
       <if test="quantity != null" >
         #{quantity,jdbcType=INTEGER},
@@ -281,6 +292,12 @@
       <if test="record.studioSendNo != null" >
         studio_send_no = #{record.studioSendNo,jdbcType=VARCHAR},
       </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
       <if test="record.quantity != null" >
         quantity = #{record.quantity,jdbcType=INTEGER},
       </if>
@@ -341,6 +358,8 @@
     update studio_slot_return_master
     set studio_slot_return_master_id = #{record.studioSlotReturnMasterId,jdbcType=BIGINT},
       studio_send_no = #{record.studioSendNo,jdbcType=VARCHAR},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       quantity = #{record.quantity,jdbcType=INTEGER},
       actual_quantity = #{record.actualQuantity,jdbcType=INTEGER},
       track_no = #{record.trackNo,jdbcType=VARCHAR},
@@ -367,6 +386,12 @@
     <set >
       <if test="studioSendNo != null" >
         studio_send_no = #{studioSendNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
       </if>
       <if test="quantity != null" >
         quantity = #{quantity,jdbcType=INTEGER},
@@ -425,6 +450,8 @@
   <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
     update studio_slot_return_master
     set studio_send_no = #{studioSendNo,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
       quantity = #{quantity,jdbcType=INTEGER},
       actual_quantity = #{actualQuantity,jdbcType=INTEGER},
       track_no = #{trackNo,jdbcType=VARCHAR},
