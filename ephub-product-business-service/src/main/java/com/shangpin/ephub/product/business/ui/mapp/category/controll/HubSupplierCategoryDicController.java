@@ -159,7 +159,7 @@ public class HubSupplierCategoryDicController {
 			}
 			dicDto.setUpdateTime(new Date());
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
-			return HubResponse.successResp("success");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("保存失败：{}", e);
 		}
@@ -187,15 +187,28 @@ public class HubSupplierCategoryDicController {
 				dicDto.setUpdateTime(new Date());
 				
 				HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
-				criteria.createCriteria().andSupplierIdNotEqualTo(dto.getSupplierId()).andSupplierCategoryEqualTo(dto.getSupplierCategory()).andSupplierGenderEqualTo(dto.getSupplierGender());
+				criteria.createCriteria().andSupplierCategoryEqualTo(dto.getSupplierCategory()).andSupplierGenderEqualTo(dto.getSupplierGender());
 				criteria.setPageNo(1);
 				criteria.setPageSize(10000);
 				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategory(criteria);
 				if(list!=null&&list.size()>0){
 					for(HubSupplierCategroyDicDto dic:list){
+						
 						if(dic.getCategoryType()==4){
 							continue;
 						}
+						HubSupplierCategroyDicDto hubSupplierCategroyDicDto = new HubSupplierCategroyDicDto();
+						BeanUtils.copyProperties(dic, hubSupplierCategroyDicDto);
+						log.info("======供应商品类映射hub品类变更：{}",dic);
+						if(dic.getCategoryType()==4){
+							dicDto.setMappingState((byte)1);		
+							dicDto.setPushState((byte)1);
+						}else{
+							dicDto.setMappingState((byte)2);
+						}
+						dicDto.setUpdateTime(new Date());
+						hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
+						return HubResponse.successResp(null);
 					}
 				}
 			}

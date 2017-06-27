@@ -44,39 +44,54 @@ public class HubMaterialDicService {
 
 	}
 	public int countSupplierMaterialByType(Byte type, String supplierMaterial, String hubMaterial) {
-		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
+		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
+		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
+		criteria.andMappingLevelEqualTo(type);
+		
 		if(StringUtils.isNotBlank(hubMaterial)){
-			criteria.createCriteria().andHubMaterialEqualTo(hubMaterial);
+			criteria.andHubMaterialEqualTo(hubMaterial);
 		}
 		if(StringUtils.isNotBlank(supplierMaterial)){
-			criteria.createCriteria().andSupplierMaterialEqualTo(supplierMaterial);
+			criteria.andSupplierMaterialEqualTo(supplierMaterial);
 		}
-		if(type!=null){
-			criteria.createCriteria().andMappingLevelEqualTo(type);
-			if(type==0){
-				criteria.or(criteria.createCriteria().andMappingLevelIsNull());
+		
+		if(type==0){
+			HubMaterialMappingCriteriaDto.Criteria criteriaOr = hubMaterialMappingCriteriaDto.createCriteria();
+			if(StringUtils.isNotBlank(hubMaterial)){
+				criteriaOr.andHubMaterialEqualTo(hubMaterial);
 			}
+			if(StringUtils.isNotBlank(supplierMaterial)){
+				criteriaOr.andSupplierMaterialEqualTo(supplierMaterial);
+			}
+			hubMaterialMappingCriteriaDto.or(criteriaOr.andMappingLevelIsNull());
 		}
-		return hubMaterialMappingGateWay.countByCriteria(criteria);
+		return hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto);
 	}
 	public List<HubMaterialMappingDto> getSupplierMaterialByType(int pageNo, int pageSize, Byte type,
 			String supplierMaterial, String hubMaterial) {
-		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
+		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
+		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
+		criteria.andMappingLevelEqualTo(type);
 		if(StringUtils.isNotBlank(hubMaterial)){
-			criteria.createCriteria().andHubMaterialEqualTo(hubMaterial);
+			criteria.andHubMaterialEqualTo(hubMaterial);
 		}
 		if(StringUtils.isNotBlank(supplierMaterial)){
-			criteria.createCriteria().andSupplierMaterialEqualTo(supplierMaterial);
+			criteria.andSupplierMaterialEqualTo(supplierMaterial);
 		}
-		if(type!=null){
-			criteria.createCriteria().andMappingLevelEqualTo(type);
-			if(type==0){
-				criteria.or(criteria.createCriteria().andMappingLevelIsNull());
+		if(type==0){
+			HubMaterialMappingCriteriaDto.Criteria criteriaOr = hubMaterialMappingCriteriaDto.createCriteria();
+			if(StringUtils.isNotBlank(hubMaterial)){
+				criteriaOr.andHubMaterialEqualTo(hubMaterial);
 			}
+			if(StringUtils.isNotBlank(supplierMaterial)){
+				criteriaOr.andSupplierMaterialEqualTo(supplierMaterial);
+			}
+			hubMaterialMappingCriteriaDto.or(criteriaOr.andMappingLevelIsNull());
 		}
-		criteria.setPageNo(pageNo);
-		criteria.setPageSize(pageSize);
-		return hubMaterialMappingGateWay.selectByCriteria(criteria);
+		hubMaterialMappingCriteriaDto.setPageNo(pageNo);
+		hubMaterialMappingCriteriaDto.setPageSize(pageSize);
+		hubMaterialMappingCriteriaDto.setOrderByClause("update_time desc");
+		return hubMaterialMappingGateWay.selectByCriteria(hubMaterialMappingCriteriaDto);
 	}
 	public int countHubMaterialDicByHubMaterialId(String materialMappingId) {
 		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();

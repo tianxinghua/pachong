@@ -117,10 +117,11 @@ public class HubBrandCategoryController {
 
 	private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
 		
-		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand());
+		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),null);
 		log.info("返回个数："+total);
 		if(total>0){
-			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),
+					null,hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
 			if (list != null && list.size() > 0) {
 				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
 				for (HubSupplierBrandDicDto dicDto : list) {
@@ -205,10 +206,10 @@ public class HubBrandCategoryController {
 			if(StringUtils.isNotBlank(hubSupplierBrandDicRequestDto.getSupplierNo())){
 				//待处理保存更新
 				hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
-				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand());
+				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getUpdateUser());
 			}else{
 				//已处理保存
-				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand());
+				hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getUpdateUser());
 			}
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
@@ -221,7 +222,7 @@ public class HubBrandCategoryController {
 	public HubResponse deleteHubSupplierBrandDetail(@PathVariable("id") Long id) {
 //		try {
 //			if (id != null) {
-//				hubBrandDicService.deleteHubBrandById(id);
+				hubBrandDicService.deleteHubBrandById(id);
 				return HubResponse.successResp(null);
 //			} else {
 //				return HubResponse.errorResp("传值为空");

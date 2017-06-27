@@ -263,6 +263,7 @@ public class PendingProductService extends PendingSkuService{
             	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
             pendingProductDto.setCreateTime(null); 
+            pendingProductDto.setPicState(null);
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());

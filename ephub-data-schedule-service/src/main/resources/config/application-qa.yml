@@ -5,7 +5,7 @@ ribbon:
 spring: 
   cloud: 
        consul: 
-         host: 192.168.20.105
+         host: localhost
          port: 8500
          discovery: 
            prefer-agent-address: true
