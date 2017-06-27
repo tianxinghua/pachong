@@ -4,6 +4,7 @@ import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryD
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IReturnSlotService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.ErrorConent;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.ReturnSlotInfo;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.SlotSpuSupplierQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class ReturnSlotController {
      * @param queryDto
      * @return
      */
-    @RequestMapping(value = "/receivereturnslot")
+    @RequestMapping(value = "/receiveslot")
     public HubResponse<?> ReceiveReturnSlot(@RequestBody ReturnSlotQueryDto queryDto) {
         try {
             Long supplierId = queryDto.getSupplierId();
@@ -60,4 +61,52 @@ public class ReturnSlotController {
             return HubResponse.errorResp(ex.getMessage());
         }
     }
+
+    /**
+     * 获取返回单，已经拣货的商品列表
+     * @param queryDto
+     * @return
+     */
+    @RequestMapping(value = "/receivedSlotInfo")
+    public HubResponse<?> getReceivedSlotInfo(@RequestBody ReturnSlotQueryDto queryDto) {
+        Long supplierId = queryDto.getSupplierId();
+        Long id = queryDto.getId();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return  HubResponse.successResp(iReturnSlotService.getReceivedSlotInfo(supplierId, id));
+    }
+
+    /**
+     * 扫描拣货
+     * @param queryDto
+     * @return
+     */
+    @RequestMapping(value = "/ScanProduct")
+    public HubResponse<?> addProductFromScan(@RequestBody ReturnSlotQueryDto queryDto) {
+        Long supplierId = queryDto.getSupplierId();
+        Long id = queryDto.getId();
+        Long spuId = queryDto.getSpuId();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id)||StringUtils.isEmpty(spuId) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+
+        return  HubResponse.successResp(iReturnSlotService.addProductFromScan(supplierId, id,spuId,queryDto.getSupplierUser()));
+    }
+    /**
+     * 拣货结果确认
+     * @param queryDto
+     * @return
+     */
+    @RequestMapping(value = "/confirmSlot")
+    public HubResponse<?> confirmSlotInfo(@RequestBody ReturnSlotQueryDto queryDto) {
+        Long supplierId = queryDto.getSupplierId();
+        Long id = queryDto.getId();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+
+        return  HubResponse.successResp(iReturnSlotService.confirmSlotInfo(supplierId, id));
+    }
+
 }
