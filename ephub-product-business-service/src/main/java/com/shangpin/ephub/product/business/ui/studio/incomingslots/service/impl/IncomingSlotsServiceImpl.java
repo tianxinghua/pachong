@@ -16,11 +16,11 @@ import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.ConfirmQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.IncomingSlotsQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.service.IncomingSlotsService;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotsVo;
-import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxService;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 	@Autowired
 	private StudioSlotGateWay studioSlotGateWay;
 	@Autowired
-	private OpenBoxService openBoxService;
+	private OperationService operationService;
 
 	@Override
 	public IncomingSlotsVo list(IncomingSlotsQuery query) {
@@ -79,7 +79,7 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 		criteria.setPageSize(100);
 		criteria.setOrderByClause("plan_arrive_time");
 		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
-		Long studioId = openBoxService.getStudioId(query.getStudioNo());
+		Long studioId = operationService.getStudioId(query.getStudioNo());
 		if(null != studioId){
 			criteria.createCriteria().andStudioIdEqualTo(studioId);
 		}else{

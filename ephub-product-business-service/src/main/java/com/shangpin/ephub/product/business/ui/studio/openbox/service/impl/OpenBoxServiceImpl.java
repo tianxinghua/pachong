@@ -5,11 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
@@ -20,17 +18,16 @@ import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetai
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
-import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
-import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
-import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.ui.studio.openbox.dto.OpenBoxQuery;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.enumeration.OperationQueryType;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxService;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
-import com.shangpin.ephub.product.business.ui.studio.openbox.vo.StudioSlotSpuSendDetailVo;
-import com.shangpin.ephub.product.business.ui.studio.openbox.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,19 +37,19 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenBoxServiceImpl implements OpenBoxService {
 	
 	@Autowired
-	private StudioSlotGateWay studioSlotGateWay;
-	@Autowired
-	private StudioGateWay studioGateWay;
-	@Autowired
 	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
+	@Autowired
+	private OperationService operationService;
+	@Autowired
+	private StudioSlotGateWay studioSlotGateWay;
 
 	@Override
-	public OpenBoxVo slotList(OpenBoxQuery openBoxQuery) {
+	public OpenBoxVo slotList(OperationQuery openBoxQuery) {
 		try {
+			openBoxQuery.setOperationQueryType(OperationQueryType.OPEN_BOX.getIndex());
 			OpenBoxVo openBoxVo = new OpenBoxVo();
 			log.info("开箱质检页面接受到的查询参数："+JsonUtil.serialize(openBoxQuery)); 
-			StudioSlotCriteriaDto criteria = getStudioSlotCriteria(openBoxQuery);
-			List<StudioSlotDto>  list = studioSlotGateWay.selectByCriteria(criteria);
+			List<StudioSlotDto>  list = operationService.slotList(openBoxQuery);
 			log.info("开箱质检页面共查询到："+list.size()+"条数据。");  
 			String today = DateTimeUtil.format(new Date());
 			if(CollectionUtils.isNotEmpty(list)){
@@ -61,10 +58,10 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 				for(StudioSlotDto studioSlotDto : list){
 					String planShootTime = DateTimeUtil.format(studioSlotDto.getPlanShootTime());
 					if(today.equals(planShootTime)){
-						StudioSlotVo slotVo = formatDto(studioSlotDto);
+						StudioSlotVo slotVo = operationService.formatDto(studioSlotDto);
 						prioritySlots.add(slotVo);
 					}else{
-						StudioSlotVo slotVo = formatDto(studioSlotDto);
+						StudioSlotVo slotVo = operationService.formatDto(studioSlotDto);
 						secondarySlots.add(slotVo);
 					}
 				}
@@ -77,89 +74,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		}
 		return null;
 	}
-	/**
-	 * 转换
-	 * @param studioSlotDto
-	 * @return
-	 */
-	private StudioSlotVo formatDto(StudioSlotDto studioSlotDto) {
-		StudioSlotVo slotVo = new StudioSlotVo();
-		slotVo.setSlotNo(studioSlotDto.getSlotNo());
-		slotVo.setOperateDate(studioSlotDto.getShootTime());
-		slotVo.setQty(getDetailQty(studioSlotDto.getSlotNo()));
-		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
-		return slotVo;
-	}
-	/**
-	 * 获取详情数量
-	 * @param slotNo
-	 * @return
-	 */
-	private int getDetailQty(String slotNo){
-		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setOrderByClause("create_time");
-		criteria.setPageNo(1);
-		criteria.setPageSize(1000); 
-		criteria.createCriteria().andSlotNoEqualTo(slotNo);
-		return studioSlotSpuSendDetailGateWay.countByCriteria(criteria);
-	}
 	
-	
-	/**
-	 * 将传入的页面条件转换为数据库查询条件
-	 * @param openBoxQuery
-	 * @return
-	 * @throws Exception
-	 */
-	private StudioSlotCriteriaDto getStudioSlotCriteria(OpenBoxQuery openBoxQuery) throws Exception{
-		StudioSlotCriteriaDto criteria = new StudioSlotCriteriaDto();
-		criteria.setOrderByClause("slot_no"); 
-		criteria.setPageNo(1);
-		criteria.setPageSize(100); 
-		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue())
-		.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
-		Long studioId = getStudioId(openBoxQuery.getStudioNo());
-		if(null != studioId){
-			criteria.createCriteria().andStudioIdEqualTo(studioId);
-		}else{
-			throw new Exception("未获得摄影棚编号");
-		}
-		if(StringUtils.isNotBlank(openBoxQuery.getTrackingNo())){
-			criteria.createCriteria().andTrackNoEqualTo(openBoxQuery.getTrackingNo());
-		}
-		if(StringUtils.isNotBlank(openBoxQuery.getSlotName())){
-			criteria.createCriteria().andSlotNoLike(openBoxQuery.getSlotName()+"%");
-		}
-		if(StringUtils.isNotBlank(openBoxQuery.getOperateStartDate())){
-			Date startDate = DateTimeUtil.parse(openBoxQuery.getOperateStartDate());
-			criteria.createCriteria().andShootTimeGreaterThanOrEqualTo(startDate);
-		}
-		if(StringUtils.isNotBlank(openBoxQuery.getOperateEndDate())){
-			Date endDate = DateTimeUtil.parse(openBoxQuery.getOperateEndDate());
-			criteria.createCriteria().andShootTimeLessThanOrEqualTo(endDate);
-		}
-		/*
-		if(null != openBoxQuery.getPageIndex() && null != openBoxQuery.getPageSize()){
-			criteria.setPageNo(openBoxQuery.getPageIndex());
-			criteria.setPageSize(openBoxQuery.getPageSize()); 
-		}*/
-		return criteria;
-	}
-
-	@Override
-	public Long getStudioId(String studioNo) {
-		if(StringUtils.isBlank(studioNo)){
-			return null;
-		}
-		StudioCriteriaDto criteria = new StudioCriteriaDto();
-		criteria.createCriteria().andStudioNoEqualTo(studioNo);
-		List<StudioDto> list = studioGateWay.selectByCriteria(criteria);
-		if(CollectionUtils.isNotEmpty(list)){
-			return list.get(0).getStudioId();
-		}else{
-			return null;
-		}
-	}
 	@Override
 	public OpenBoxDetailVo slotDetail(String slotNo) {
 		OpenBoxDetailVo openBoxDetailVo = new OpenBoxDetailVo();
@@ -172,17 +87,28 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		if(CollectionUtils.isNotEmpty(list)){
 			List<StudioSlotSpuSendDetailVo> details = new ArrayList<StudioSlotSpuSendDetailVo>();
 			for(StudioSlotSpuSendDetailDto dto : list){
-				StudioSlotSpuSendDetailVo vo = new StudioSlotSpuSendDetailVo();
-				vo.setBrand(dto.getSupplierBrandName());
-				vo.setItemCode(dto.getSupplierSpuModel());
-				vo.setItemName(dto.getSupplierSpuName());
-				vo.setOperator(dto.getUpdateUser());
-				vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+				StudioSlotSpuSendDetailVo vo = convertDto(dto);
 				details.add(vo);
 			}
 			openBoxDetailVo.setDetails(details);
 		}
 		return openBoxDetailVo; 
+	}
+	/**
+	 * 转换
+	 * @param dto
+	 * @return
+	 */
+	private StudioSlotSpuSendDetailVo convertDto(StudioSlotSpuSendDetailDto dto) {
+		StudioSlotSpuSendDetailVo vo = new StudioSlotSpuSendDetailVo();
+		vo.setArriveState(dto.getArriveState());
+		vo.setBrand(dto.getSupplierBrandName());
+		vo.setItemCode(dto.getSupplierSpuModel());
+		vo.setItemName(dto.getSupplierSpuName());
+		vo.setOperator(dto.getUpdateUser());
+		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+		vo.setTime(dto.getCreateTime());
+		return vo;
 	}
 	@Override
 	public boolean slotDetailCheck(String slotNoSpuId) {
@@ -226,7 +152,12 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			criteria.createCriteria().andSlotNoEqualTo(slotNo).andArriveStateEqualTo(StudioSlotStudioArriveState.NOT_ARRIVE.getIndex().byteValue()); 
 			List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 			if(CollectionUtils.isNotEmpty(list)){
-				checkDetailVo.setInventoryLosses(list); 
+				List<StudioSlotSpuSendDetailVo> details = new ArrayList<StudioSlotSpuSendDetailVo>();
+				for(StudioSlotSpuSendDetailDto dto : list){
+					StudioSlotSpuSendDetailVo vo = convertDto(dto);
+					details.add(vo);
+				}
+				checkDetailVo.setInventoryLosses(details); 
 			}
 			return checkDetailVo;
 		} catch (Exception e) {

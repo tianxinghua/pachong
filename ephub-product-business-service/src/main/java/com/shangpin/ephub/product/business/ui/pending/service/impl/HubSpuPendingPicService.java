@@ -61,6 +61,7 @@ public class HubSpuPendingPicService implements IHubSpuPendingPicService {
     	HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
     	criteria.setPageNo(1); 
     	criteria.setPageSize(100); 
+    	criteria.setOrderByClause("create_time");
     	criteria.setFields("sp_pic_url,memo,pic_url,pic_handle_state");
     	criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
     	List<HubSpuPendingPicDto> spuPendingPics = hubSpuPendingPicGateWay.selectByCriteria(criteria);

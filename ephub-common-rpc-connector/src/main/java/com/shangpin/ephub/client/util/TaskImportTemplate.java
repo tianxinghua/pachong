@@ -50,4 +50,13 @@ public class TaskImportTemplate {
 					"supplierUrl"};
 			return temp;
 	}
+	 
+	 /**
+	  * studio批次导出模板
+	  * @return
+	  */
+	 public static String[] getStudioSlotTemplate(){
+		 String[] headers = {"日期","摄影棚名称", "分配批次号","批次状态", "申请状态","申请方", "申请时间","到货状态","到货日期","拍摄状态","计划拍摄日期","拍摄日期","状态更新日期"};
+		 return headers;
+	 }
 }

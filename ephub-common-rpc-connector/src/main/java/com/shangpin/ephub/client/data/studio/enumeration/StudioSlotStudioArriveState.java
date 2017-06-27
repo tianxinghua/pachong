@@ -8,22 +8,22 @@ package com.shangpin.ephub.client.data.studio.enumeration;
  */
 public enum StudioSlotStudioArriveState {
 
+	 /**
+     * 未收到
+     */
+    NOT_ARRIVE(0,"NOT_ARRIVE"),
 
     /**
      * 摄影棚收货
      */
-    RECEIVED(0,"RECEIVED"),
+    RECEIVED(1,"RECEIVED"),
 
     /**
      *  不接受
      */
-    NOT_ACCEPTANCE(1,"NOT_ACCEPTANCE"),
+    NOT_ACCEPTANCE(2,"NOT_ACCEPTANCE");
 
-    /**
-     * 未收到
-     */
-
-    NOT_ARRIVE(2,"NOT_ARRIVE");
+   
 
 
 

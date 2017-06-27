@@ -1,28 +1,22 @@
 package com.shangpin.ephub.product.business.ui.studio.defective.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
+import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
+import com.shangpin.ephub.product.business.ui.studio.defective.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
-import com.shangpin.ephub.product.business.ui.studio.picture.PictureService;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,67 +47,27 @@ public class DefectiveProductController {
 			return HubResponse.errorResp("调用接口异常。");
 		}
 	}
-
-	@RequestMapping(value="/upload",method = RequestMethod.POST)
-	public HubResponse<?> add(HttpServletRequest request){
-		try {
-			log.info("========开始上传图片==========="); 
-			List<String> urls = new ArrayList<String>();
-			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-			if(isMultipart){
-				MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
-				Map<String, MultipartFile> maps = mreq.getFileMap();
-				if(null != maps && maps.size()>0){
-					for(MultipartFile file : maps.values()){
-						String fileName = file.getOriginalFilename();
-						log.info("上传图片："+fileName);
-						String extension = pictureService.getExtension(fileName);
-						String fdfsURL = pictureService.uploadPic(file.getBytes(), extension);
-						log.info("上传成功："+fdfsURL);
-						urls.add(fdfsURL);
-					}
-				}
-			}else{
-				log.error("This request is not Multipart!"); 
-				return HubResponse.errorResp("This request is not Multipart!");
-			}
-			return HubResponse.successResp(urls);
-		} catch (Exception e) {
-			log.error("上传图片时异常："+e.getMessage(),e);
-		}
-		return HubResponse.errorResp("调用接口异常");
-	}
 	
-	@RequestMapping(value="/modification", method = RequestMethod.POST)
-	public HubResponse<?> modify(@RequestBody Long studioSlotDefectiveSpuId, HttpServletRequest request){
+	@RequestMapping(value="/add",method = RequestMethod.POST)
+	public HubResponse<?> add(@RequestBody UploadQuery uploadQuery){
 		try {
-			StudioSlotDefectiveSpuDto defctiveSouDot = defectiveProductService.selectByPrimarykey(studioSlotDefectiveSpuId);
+			log.info("添加残次品接受到的数据："+JsonUtil.serialize(uploadQuery)); 
+			StudioSlotDefectiveSpuDto defctiveSouDot = defectiveProductService.add(uploadQuery.getSlotNoSpuId());
 			if(null != defctiveSouDot){
-				boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-				if(isMultipart){
-					MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
-					Map<String, MultipartFile> maps = mreq.getFileMap();
-					if(null != maps && maps.size()>0){
-						for(Entry<String,MultipartFile> entry : maps.entrySet()){
-							String fileName = entry.getKey();
-							if(!defectiveProductService.hasDefectiveSpuPic(fileName)){
-								MultipartFile file = entry.getValue();
-								String extension = pictureService.getExtension(fileName);
-								Long studioSlotDefectiveSpuPicId = defectiveProductService.insert(defctiveSouDot, extension);
-//								String fdfsURL = pictureService.uploadPic(file.getBytes(), studioSlotDefectiveSpuPicId, extension);
-//								defectiveProductService.update(studioSlotDefectiveSpuPicId, fdfsURL);
-							}
+				if(CollectionUtils.isNotEmpty(uploadQuery.getUrls())){
+					for(String spPicUrl : uploadQuery.getUrls()){
+						if(!defectiveProductService.hasDefectiveSpuPic(spPicUrl)){
+							String extension = pictureService.getExtension(spPicUrl);
+							defectiveProductService.insert(defctiveSouDot, spPicUrl, extension);
 						}
 					}
-				}else{
-					log.error("This request is not Multipart!"); 
-					return HubResponse.errorResp("This request is not Multipart!");
 				}
 			}
+			return HubResponse.successResp("添加成功");
 		} catch (Exception e) {
 			log.error("残次品页面修改图片发生异常："+e.getMessage(),e); 
 		}
-		return null;
+		return HubResponse.errorResp("添加失败");
 	}
 	
 	@RequestMapping(value="/detail", method = RequestMethod.POST)
@@ -129,8 +83,9 @@ public class DefectiveProductController {
 	@RequestMapping(value="/delete-defective-pic", method = RequestMethod.POST)
 	public HubResponse<?> deleteDefectivePic(@RequestBody String spPicUrl){
 		boolean bool = defectiveProductService.deleteDefectivePic(spPicUrl);
+		log.info("图片删除返回结果=========="+bool); 
 		if(bool){
-			return HubResponse.successResp("");
+			return HubResponse.successResp("删除成功");
 		}else{
 			return HubResponse.errorResp("删图失败");
 		}

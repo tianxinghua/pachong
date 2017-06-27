@@ -23,7 +23,15 @@ public enum SlotSpuState {
      * 已寄出
 	 */
 
-	SEND(2,"SEND");
+	SEND(2,"SEND"),
+
+    /**
+     * 不需要处理
+     */
+    NO_NEED_HANDLE(3,"NO_NEED_HANDLE");
+
+
+
 
 
 

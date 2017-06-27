@@ -19,7 +19,7 @@ import java.util.List;
 
  */
 @RestController
-@RequestMapping("/studio-slot-logistict-track")
+@RequestMapping("/studio-slot-logistic-track")
 public class StudioSlotLogistictTrackController {
 
 	@Autowired

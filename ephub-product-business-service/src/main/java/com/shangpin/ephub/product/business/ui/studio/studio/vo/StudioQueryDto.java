@@ -27,6 +27,10 @@ public class StudioQueryDto implements Serializable {
     private Long slotSSId; //待拍照的SPU下挂供货商 表字段Id SlotSpuSupplierId
     private Long slotSSDId; //待拍照的SPU发货明细Id
     private String createUser;
+    private Long studioSlotId;
+
+    private String trackName; //物流公司
+    private String trackingNo; //物流单号
 //    private Byte status;
 //    private String type;
 

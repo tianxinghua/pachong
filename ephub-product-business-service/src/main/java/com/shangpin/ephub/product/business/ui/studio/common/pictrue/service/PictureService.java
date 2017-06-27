@@ -1,10 +1,15 @@
-package com.shangpin.ephub.product.business.ui.studio.picture;
+package com.shangpin.ephub.product.business.ui.studio.common.pictrue.service;
+
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.fdfs.dto.DeletePicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
+import com.shangpin.ephub.client.fdfs.gateway.DeletePicGateWay;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
 
 import sun.misc.BASE64Encoder;
@@ -21,6 +26,8 @@ public class PictureService {
 	
 	@Autowired
 	private UploadPicGateway uploadPicGateway;
+	@Autowired
+	private DeletePicGateWay deletePicGateWay;
 
 	/**
 	 * 上传图片
@@ -34,6 +41,16 @@ public class PictureService {
 		uploadPicDto.setBase64(base64);
 		uploadPicDto.setExtension(extension);
 		return uploadPicGateway.upload(uploadPicDto);
+	}
+	/**
+	 * 删除图片
+	 * @param urls 要删除的图片链接
+	 * @return
+	 */
+	public Map<String,Integer> deletePics(List<String> urls){
+		DeletePicDto dto = new DeletePicDto();
+		dto.setUrls(urls);
+		return deletePicGateWay.delete(dto );
 	}
 	
 	/**

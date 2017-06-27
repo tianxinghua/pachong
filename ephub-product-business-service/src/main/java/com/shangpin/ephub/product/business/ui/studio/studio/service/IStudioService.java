@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.service;
 
+import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
@@ -20,6 +21,8 @@ public interface IStudioService {
     HubResponse<?> addProductIntoSlot(String supplierId , String slotNo, List<Long> slotSSIds, String createUser);
     HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser);
     HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
+    boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser);
+    StudioSlotLogistictTrackDto getSlotLogisticInfo(Long studioSlotId);
 
     SlotsVo getStudioSlot(Long StudioId, Date startTime, Date endTime ,String categoryNos);
     SlotsVo getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize);
@@ -28,4 +31,6 @@ public interface IStudioService {
 
     List<StudioDto> getStudioList();
     List<StudioDto> getStudioListByCategory(List<String> categoryNos);
+
+
 }
