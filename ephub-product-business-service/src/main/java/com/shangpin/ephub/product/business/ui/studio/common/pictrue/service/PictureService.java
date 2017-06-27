@@ -21,6 +21,7 @@ import sun.misc.BASE64Encoder;
  * @date 2017年6月14日 上午11:16:16
  *
  */
+@SuppressWarnings("restriction")
 @Service
 public class PictureService {
 	

@@ -1,9 +1,5 @@
 package com.shangpin.ephub.product.business.ui.studio.defective.vo;
 
-import java.util.List;
-
-import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
-
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -19,7 +15,23 @@ import lombok.Setter;
 public class DefectiveProductVo {
 
 	/**
-	 * 残次品记录
+	 * 逐主键
 	 */
-	private List<StudioSlotDefectiveSpuDto> defectiveSpus;
+	private Long studioSlotDefectiveSpuId;
+	/**
+	 * 品牌
+	 */
+	private String brand;
+	/**
+	 * 产品名称
+	 */
+	private String itemName;
+	/**
+	 * 产品的货号
+	 */
+	private String itemCode;
+	/**
+	 * 扫码的码
+	 */
+	private String studioCode;
 }
