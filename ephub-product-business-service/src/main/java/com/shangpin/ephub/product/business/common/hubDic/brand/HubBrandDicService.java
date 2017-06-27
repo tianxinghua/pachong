@@ -76,7 +76,7 @@ public class HubBrandDicService {
 		}
 	}
 
-	public void saveHubBrand(String hubBrand, String supplierBrandName) throws Exception {
+	public void saveHubBrand(String hubBrand, String supplierBrandName,String createUser) throws Exception {
 		List<HubBrandDicDto> hubBrandList = getHubBrandDic(supplierBrandName);
 		if(hubBrandList!=null&&hubBrandList.size()>0){
 			return;
@@ -87,6 +87,7 @@ public class HubBrandDicService {
 		dic.setCreateTime(new Date());
 		dic.setUpdateTime(new Date());
 		dic.setDataState((byte)1);
+		dic.setCreateUser(createUser);
 		brandDicGateway.insertSelective(dic);
 	}
 	
@@ -107,55 +108,86 @@ public class HubBrandDicService {
 
 	public int countSupplierBrandBySupplierIdAndType(String supplierId, String supplierBrand,String hubBrandNo) {
 		
-		HubSupplierBrandDicCriteriaDto criteria = new HubSupplierBrandDicCriteriaDto();
+		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
+		HubSupplierBrandDicCriteriaDto.Criteria criteria = hubSupplierBrandDicCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(supplierId)){
-			criteria.createCriteria().andSupplierIdEqualTo(supplierId);	
+			criteria.andSupplierIdEqualTo(supplierId);	
 		}
 		if(StringUtils.isNotBlank(supplierBrand)){
-			criteria.createCriteria().andSupplierBrandEqualTo(supplierBrand);
+			criteria.andSupplierBrandEqualTo(supplierBrand);
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
-			criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
+			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
-		return supplierBrandDicGateWay.countByCriteria(criteria);
+		criteria.andPushStateEqualTo((byte)0);
+		
+		HubSupplierBrandDicCriteriaDto.Criteria criteria2 = hubSupplierBrandDicCriteriaDto.createCriteria();
+		if(StringUtils.isNotBlank(supplierId)){
+			criteria2.andSupplierIdEqualTo(supplierId);	
+		}
+		if(StringUtils.isNotBlank(supplierBrand)){
+			criteria2.andSupplierBrandEqualTo(supplierBrand);
+		}
+		if(StringUtils.isNotBlank(hubBrandNo)){
+			criteria2.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
+		return supplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
 	}
 
 	public List<HubSupplierBrandDicDto> getSupplierBrandBySupplierIdAndType(String supplierId, String supplierBrand,String hubBrandNo,
 			int pageNo, int pageSize) {
-		HubSupplierBrandDicCriteriaDto criteria = new HubSupplierBrandDicCriteriaDto();
-		criteria.setPageNo(pageNo);
-		criteria.setPageSize(pageSize);
+		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
+		HubSupplierBrandDicCriteriaDto.Criteria criteria = hubSupplierBrandDicCriteriaDto.createCriteria();
+		hubSupplierBrandDicCriteriaDto.setPageNo(pageNo);
+		hubSupplierBrandDicCriteriaDto.setPageSize(pageSize);
 		if(StringUtils.isNotBlank(supplierId)){
-			criteria.createCriteria().andSupplierIdEqualTo(supplierId);	
+			criteria.andSupplierIdEqualTo(supplierId);	
 		}
 		if(StringUtils.isNotBlank(supplierBrand)){
-			criteria.createCriteria().andSupplierBrandEqualTo(supplierBrand);
+			criteria.andSupplierBrandEqualTo(supplierBrand);
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
-			criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
+			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
-		criteria.setOrderByClause("update_time desc");
-		return supplierBrandDicGateWay.selectByCriteria(criteria);
+		criteria.andPushStateEqualTo((byte)0);
+		
+		HubSupplierBrandDicCriteriaDto.Criteria criteria2 = hubSupplierBrandDicCriteriaDto.createCriteria();
+		if(StringUtils.isNotBlank(supplierId)){
+			criteria2.andSupplierIdEqualTo(supplierId);	
+		}
+		if(StringUtils.isNotBlank(supplierBrand)){
+			criteria2.andSupplierBrandEqualTo(supplierBrand);
+		}
+		if(StringUtils.isNotBlank(hubBrandNo)){
+			criteria2.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
+		
+		hubSupplierBrandDicCriteriaDto.setOrderByClause("update_time desc");
+		return supplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto);
 	}
 
 	public int countHubBrand(String supplierBrand, String hubBrandNo) {
 		HubBrandDicCriteriaDto cruteria = new HubBrandDicCriteriaDto();
+		HubBrandDicCriteriaDto.Criteria criteria = cruteria.createCriteria();
 		if(StringUtils.isNotBlank(hubBrandNo)){
-			cruteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
+			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
 		if(StringUtils.isNotBlank(supplierBrand)){
-			cruteria.createCriteria().andSupplierBrandEqualTo(supplierBrand);
+			criteria.andSupplierBrandEqualTo(supplierBrand);
 		}
 		return brandDicGateway.countByCriteria(cruteria);
 	}
 
 	public List<HubBrandDicDto> getHubBrand(String supplierBrand, String hubBrandNo, int pageNo, int pageSize) {
 		HubBrandDicCriteriaDto cruteria = new HubBrandDicCriteriaDto();
+		HubBrandDicCriteriaDto.Criteria criteria = cruteria.createCriteria();
 		if(StringUtils.isNotBlank(supplierBrand)){
-			cruteria.createCriteria().andSupplierBrandEqualTo(supplierBrand);
+			criteria.andSupplierBrandEqualTo(supplierBrand);
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
-			cruteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
+			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
 		cruteria.setPageNo(pageNo);
 		cruteria.setPageSize(pageSize);
@@ -185,4 +217,7 @@ public class HubBrandDicService {
 		supplierBrandDicGateWay.updateByPrimaryKeySelective(dicDto);
 	}
 
+	public void deleteHubBrandById(Long id) {
+		brandDicGateway.deleteByPrimaryKey(id);
+	}
 }

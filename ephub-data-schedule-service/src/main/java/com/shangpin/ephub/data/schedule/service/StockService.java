@@ -1,5 +1,14 @@
 package com.shangpin.ephub.data.schedule.service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -7,14 +16,9 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+
+
 
 /**
  * Created by lizhongren on 2017/5/6.
@@ -35,7 +39,7 @@ public class StockService {
     public void updateStockToZero() throws Exception{
 
         List<HubSupplierSkuDto> skuDtos = this.findSupplierSkuNoUpdateOutSevenDay();
-        log.info("需要清除库存的产品的总数是："+skuDtos.size()); 
+        log.info("需要清除库存的产品的总数是："+skuDtos.size());
         for(HubSupplierSkuDto supplierSkuDto:skuDtos){
             if(supplierSkuDto.getStock()>0){
                 try {
@@ -76,15 +80,19 @@ public class StockService {
         calendar.set(Calendar.SECOND,0);
         SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd");
         Date date = calendar.getTime();
+        log.info("今天库存清零的商品是"+format.format(date)+"之前的");
 
         HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+        criteriaDto.setPageSize(Integer.MAX_VALUE);
         /**
          * 以下2个供应商是暂时不检测的两个供应商
          */
         List<String> values = new ArrayList<String>();
         values.add("2015092801542");
         values.add("2015101501616");
-		criteriaDto.createCriteria().andLastPullTimeLessThan(date).andSupplierIdNotIn(values );
+
+		criteriaDto.createCriteria().andLastPullTimeLessThan(date).andSupplierIdNotIn(values ).andStockGreaterThan(0);
+		criteriaDto.or(criteriaDto.createCriteria().andLastPullTimeIsNull().andSupplierIdNotIn(values ).andStockGreaterThan(0));
         return  hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
     }
 

@@ -163,6 +163,7 @@ public class HubPendingSpuHandleService {
 		BeanUtils.copyProperties(hubSpuPendingDto, hubSpuPendingIsExist);
 		hubSpuPendingIsExist.setUpdateTime(new Date());
 		hubSpuPendingIsExist.setUpdateTime(new Date());
+		hubSpuPendingIsExist.setCreateTime(new Date());
 		hubSpuPendingIsExist.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 	}
 

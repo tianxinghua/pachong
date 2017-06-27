@@ -83,47 +83,49 @@ public class HubSeasonDicService {
 	}
 
 	public int countHubSeason(String supplierId,String supplierSeason, String hubMarketTime, String hubSeason, Byte type) {
-		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
+		HubSeasonDicCriteriaDto.Criteria criteria = hubSeasonDicCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(supplierSeason)){
-			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason);
+			criteria.andSupplierSeasonEqualTo(supplierSeason);
 		}
 		if(StringUtils.isNotBlank(hubMarketTime)){
-			criteria.createCriteria().andHubMarketTimeEqualTo(hubMarketTime);
+			criteria.andHubMarketTimeEqualTo(hubMarketTime);
 		}
 		if(StringUtils.isNotBlank(supplierId)){
-			criteria.createCriteria().andSupplieridEqualTo(supplierId);
+			criteria.andSupplieridEqualTo(supplierId);
 		}
 		if(StringUtils.isNotBlank(hubSeason)){
-			criteria.createCriteria().andHubSeasonEqualTo(hubSeason);
+			criteria.andHubSeasonEqualTo(hubSeason);
 		}
 		if(type!=null){
-			criteria.createCriteria().andPushStateEqualTo(type);	
+			criteria.andPushStateEqualTo(type);	
 		}
-		return hubSeasonDicGateWay.countByCriteria(criteria);
+		return hubSeasonDicGateWay.countByCriteria(hubSeasonDicCriteriaDto);
 	}
 
 	public List<HubSeasonDicDto> getHubSeason(String supplierId,String supplierSeason, String hubMarketTime, String hubSeason, Byte type,
 			int pageNo, int pageSize) {
-		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
-		criteria.setPageNo(pageNo);
-		criteria.setPageSize(pageSize);
+		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
+		hubSeasonDicCriteriaDto.setPageNo(pageNo);
+		hubSeasonDicCriteriaDto.setPageSize(pageSize);
+		HubSeasonDicCriteriaDto.Criteria criteria = hubSeasonDicCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(supplierSeason)){
-			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason);
+			criteria.andSupplierSeasonEqualTo(supplierSeason);
 		}
 		if(StringUtils.isNotBlank(hubMarketTime)){
-			criteria.createCriteria().andHubMarketTimeEqualTo(hubMarketTime);
+			criteria.andHubMarketTimeEqualTo(hubMarketTime);
 		}
 		if(StringUtils.isNotBlank(supplierId)){
-			criteria.createCriteria().andSupplieridEqualTo(supplierId);
+			criteria.andSupplieridEqualTo(supplierId);
 		}
 		if(StringUtils.isNotBlank(hubSeason)){
-			criteria.createCriteria().andHubSeasonEqualTo(hubSeason);
+			criteria.andHubSeasonEqualTo(hubSeason);
 		}
 		if(type!=null){
-			criteria.createCriteria().andPushStateEqualTo(type);
+			criteria.andPushStateEqualTo(type);
 		}
-		criteria.setOrderByClause("update_time desc");
-		return hubSeasonDicGateWay.selectByCriteria(criteria);
+		hubSeasonDicCriteriaDto.setOrderByClause("update_time desc");
+		return hubSeasonDicGateWay.selectByCriteria(hubSeasonDicCriteriaDto);
 	}
 
 	public HubSeasonDicDto getSupplierSeasonById(Long id) {
