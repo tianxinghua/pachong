@@ -1,0 +1,110 @@
+package com.shangpin.ephub.product.business.ui.studio.pending.controller;
+
+import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
+import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
+import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
+import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
+import com.shangpin.ephub.response.HubResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+
+  拍照待处理页面
+ *
+ */
+@RestController
+@RequestMapping("/shoot-product")
+@Slf4j
+public class ShootProductController {
+	
+	private static String resultSuccess = "success";
+	private static String resultFail = "fail";
+	
+	@Autowired
+	private IPendingProductService pendingProductService;
+	@Autowired
+	private IHubSpuPendingPicService pendingPicService;
+
+    @RequestMapping(value="/list",method=RequestMethod.POST)
+    public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
+		pendingQuryDto.setShoot(true);
+        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
+        return HubResponse.successResp(pendingProducts);
+    }
+    @RequestMapping(value="/update",method=RequestMethod.POST)
+    public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
+    	return pendingProductService.updatePendingProduct(pendingProductDto);
+    }
+    @RequestMapping(value="/batch-update",method=RequestMethod.POST)
+    public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
+        return pendingProductService.batchUpdatePendingProduct(pendingProducts);
+    }
+    @RequestMapping(value="/unable-to-process/{updateUser}",method=RequestMethod.POST)
+    public HubResponse<?> updateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody String id){
+    	try {
+    		boolean result = pendingProductService.updatePendingProductToUnableToProcess(updateUser,id);
+	        if(result){
+	            return HubResponse.successResp(resultSuccess);
+	        }else{
+	            return HubResponse.errorResp(resultFail);
+	        }
+		} catch (Exception e) {
+			return HubResponse.errorResp(e.getMessage());
+		}
+       
+    }
+    @RequestMapping(value="/batch-unable-to-process/{updateUser}",method=RequestMethod.POST)
+    public HubResponse<?> batchUpdateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody List<String> ids){
+        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(updateUser,ids);
+        if(result){
+            return HubResponse.successResp(resultSuccess);
+        }else{
+            return HubResponse.errorResp(resultFail);
+        }
+    }
+    @RequestMapping(value="/origin",method=RequestMethod.POST)
+    public HubResponse<?> findOrigin(@RequestBody PendingQuryDto pendingQuryDto){
+    	long start = System.currentTimeMillis();
+    	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto,true);
+    	PendingProductDto pendingProduct = products.getProduts().get(0);
+    	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
+    	HubBrandModelRuleDto brandModelRuleDto = pendingProductService.findHubBrandModelRule(pendingProduct.getHubBrandNo());
+    	PendingOriginVo pendingOriginVo = new PendingOriginVo();
+    	pendingOriginVo.setPendingProduct(pendingProduct);
+    	pendingOriginVo.setSupplierProduct(supplierProduct);
+    	pendingOriginVo.setBrandModelRuleDto(brandModelRuleDto); 
+    	log.info("--->查看原始总耗时{}",System.currentTimeMillis()-start); 
+    	return HubResponse.successResp(pendingOriginVo); 
+    }
+    @RequestMapping(value="/retry-pictures",method=RequestMethod.POST)
+    public HubResponse<?> retryPictures(@RequestBody List<String> spPicUrl){
+    	boolean bool = pendingPicService.retryPictures(spPicUrl);
+    	if(bool){
+    		return HubResponse.successResp("success");
+    	}else{
+    		return HubResponse.errorResp("error");
+    	}
+    }
+    @RequestMapping(value="/list-all",method=RequestMethod.POST)
+    public HubResponse<?> pendingListAll(@RequestBody PendingQuryDto pendingQuryDto){
+    	PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,true);
+        return HubResponse.successResp(pendingProducts);
+    } 
+    @RequestMapping(value="/update-to-infopeccable/{updateUser}",method=RequestMethod.POST)
+    public HubResponse<?> updateProductToInfoPeccable(@PathVariable String updateUser, @RequestBody List<String> ids){
+    	boolean bool = pendingProductService.updateProductToInfoPeccable(updateUser, ids);
+    	if(bool){
+    		return HubResponse.successResp("");
+    	}else{
+    		return HubResponse.errorResp("更新失败");
+    	}
+    }
+}
