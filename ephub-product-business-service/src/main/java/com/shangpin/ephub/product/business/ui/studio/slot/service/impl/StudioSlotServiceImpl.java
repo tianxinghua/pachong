@@ -1,72 +1,64 @@
-package com.shangpin.ephub.product.business.ui.studio.slot.service;
+package com.shangpin.ephub.product.business.ui.studio.slot.service.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.esotericsoftware.minlog.Log;
-import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
-import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
+import com.shangpin.ephub.client.message.task.product.body.Task;
+import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
+import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.studio.slot.dto.SlotManageQuery;
-import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
+import com.shangpin.ephub.product.business.ui.studio.slot.service.IStudioSlotService;
+import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
+import lombok.extern.slf4j.Slf4j;
 /**
- * <p>
- * Title: OpenBoxController
- * </p>
- * <p>
- * Description: 批次管理接口
- * </p>
- * <p>
- * Company:
- * </p>
- * 
- * @author zhaogenchun
- * @date 2017年6月12日
+ * <p>Title:PendingProductService </p>
+ * <p>Description: 待处理页面Service实现类</p>
+ * <p>Company: www.shangpin.com</p>
+ * @author lubaijiang
+ * @date 2016年12月21日 下午5:17:57
  *
  */
 @Service
-public class SlotManageService {
-
+@Slf4j
+public class StudioSlotServiceImpl implements IStudioSlotService{
+	
 	@Autowired
 	StudioSlotGateWay studioSlotGateWay;
 	@Autowired
 	StudioGateWay studioGateWay;
-	@Autowired
-	private IShangpinRedis shangpinRedis;
+    @Autowired 
+	private HubSpuImportTaskGateWay spuImportGateway;
+    @Autowired 
+    private TaskStreamSender tastSender;
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-	public HubResponse<?> findSlotManageList(SlotManageQuery slotManageQuery) {
-		StudioSlotsVo vo = new StudioSlotsVo();
-		try {
-			StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
+    public HubResponse<?> exportSpu(SlotManageQuery slotManageQuery,TaskType taskType){
+    	try {
+    		StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
 			Criteria criteria = studioSlotCriteriaDto.createCriteria();
-			StudioCriteriaDto studioCriteriaDto = new StudioCriteriaDto();
-			if (!shangpinRedis.exists("shangpinstudioslot")) {
-				List<StudioDto> studioDtoList = studioGateWay.selectByCriteria(studioCriteriaDto);
-				for (StudioDto studiotDto : studioDtoList) {
-					shangpinRedis.set("studioName" + studiotDto.getStudioId(), studiotDto.getStudioName());
-					shangpinRedis.set("period" + studiotDto.getStudioId(), studiotDto.getPeriod().toString());
-					shangpinRedis.set("studio_no" + studiotDto.getStudioId(), studiotDto.getStudioNo());
-				}
-				// 摄影棚基础数据初始化到redis 用于判断
-				shangpinRedis.set("shangpinstudioslot", "studioSlot");
-			}
-
-			Long studioId = null;
+    		StudioCriteriaDto studioCriteriaDto = new StudioCriteriaDto();
+    		
+    		Long studioId = null;
 			if (slotManageQuery.getStudioNo() != null && !slotManageQuery.getStudioNo().equals("")) {
 				studioCriteriaDto.createCriteria().andStudioNameEqualTo(slotManageQuery.getStudioNo());
 				List<StudioDto> studioDtoList = studioGateWay.selectByCriteria(studioCriteriaDto);
@@ -123,20 +115,52 @@ public class SlotManageService {
 				String shootTimeEnd = slotManageQuery.getShootTime() + " 23:59:59";
 				criteria.andShootTimeBetween(sdf.parse(shootTimeStart), sdf.parse(shootTimeEnd));
 			}
-
-			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
-			// 如果查询批次摄影棚名称参数为null，循环查询
-			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
-				// memo字段临时存取摄影棚名称字段 不更新数据库
-				studioSlotDto.setStudioName(shangpinRedis.get("studioName" + studioSlotDto.getStudioId()));
-			}
-			vo.setStudioSlotList(studioSlotDtoList);
-			vo.setTotal(studioSlotDtoList.size());
-
+			int total = studioSlotGateWay.countByCriteria(studioSlotCriteriaDto);
+			slotManageQuery.setPageSize(total);
+			HubSpuImportTaskDto taskDto = saveTaskIntoMysql(slotManageQuery.getUserName(),taskType.getIndex());
+			sendMessageToTask(taskDto.getTaskNo(),taskType.getIndex(),JsonUtil.serialize(slotManageQuery)); 
+        	return HubResponse.successResp(taskDto.getTaskNo()+":"+slotManageQuery.getUserName()+"_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {
-			Log.error("查询批次失败!");
-			e.printStackTrace();
+			log.error("导出spu失败，服务器发生错误:"+e.getMessage(),e);
+			return HubResponse.errorResp("导出失败，服务器发生错误");
 		}
-		return HubResponse.successResp(vo);
-	}
+    }
+    
+    /**
+     * 将任务记录保存到数据库
+     * @param createUser
+     * @return
+     */
+    protected HubSpuImportTaskDto saveTaskIntoMysql(String createUser,int taskType){
+    	HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
+    	Date date = new Date();
+		hubSpuTask.setTaskNo(new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date));
+		hubSpuTask.setTaskState((byte)TaskState.HANDLEING.getIndex());
+		hubSpuTask.setCreateTime(date);
+		hubSpuTask.setUpdateTime(date);
+		hubSpuTask.setImportType((byte)taskType);
+		hubSpuTask.setCreateUser(createUser); 
+		hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+		hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+		hubSpuTask.setResultFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
+		Long spuImportTaskId = spuImportGateway.insert(hubSpuTask);
+		hubSpuTask.setSpuImportTaskId(spuImportTaskId);
+		return hubSpuTask;
+    }
+    
+    /**
+	 * 构造消息体，并发送消息队列
+	 * @param taskNo
+	 * @param type
+	 * @param data
+	 */
+    protected void sendMessageToTask(String taskNo,int type,String data){
+    	Task productImportTask = new Task();
+    	productImportTask.setMessageId(UUID.randomUUID().toString());
+    	productImportTask.setTaskNo(taskNo);
+    	productImportTask.setMessageDate(DateTimeUtil.getTime(new Date())); 
+    	productImportTask.setData(data);
+    	productImportTask.setType(type);
+    	tastSender.productExportTaskStream(productImportTask, null);
+    }
 }

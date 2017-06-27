@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 /**
  * <p>Title: OperationService</p>
  * <p>Description: 通用service </p>
@@ -25,5 +26,11 @@ public interface OperationService {
 	 * @return
 	 */
 	public Long getStudioId(String studioNo);
+	/**
+	 * 将StudioSlotDto转换为StudioSlotVo
+	 * @param studioSlotDto
+	 * @return 转换后的StudioSlotVo对象
+	 */
+	public StudioSlotVo formatDto(StudioSlotDto studioSlotDto);
 
 }

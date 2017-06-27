@@ -10,16 +10,21 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.enumeration.OperationQueryType;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 @Service
@@ -29,6 +34,8 @@ public class OperationServiceImpl implements OperationService {
 	private StudioGateWay studioGateWay;
 	@Autowired
 	private StudioSlotGateWay studioSlotGateWay;
+	@Autowired
+	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
 
 	@Override
 	public List<StudioSlotDto> slotList(OperationQuery operationQuery) throws Exception {
@@ -97,6 +104,50 @@ public class OperationServiceImpl implements OperationService {
 		}else{
 			return null;
 		}
+	}
+	
+	@Override
+	public StudioSlotVo formatDto(StudioSlotDto studioSlotDto) {
+		StudioSlotVo slotVo = new StudioSlotVo();
+		slotVo.setSlotNo(studioSlotDto.getSlotNo());
+		slotVo.setOperateDate(studioSlotDto.getShootTime());
+		setDetailQty(studioSlotDto.getSlotNo(), slotVo);
+		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
+		return slotVo;
+	}
+	/**
+	 * 获取详情数量
+	 * @param slotNo
+	 * @return
+	 */
+	private void setDetailQty(String slotNo, StudioSlotVo slotVo){
+		List<StudioSlotSpuSendDetailDto> list = selectDetail(slotNo);
+		int qty = 0;
+		int uploadQty = 0;
+		if(CollectionUtils.isNotEmpty(list)){
+			qty = list.size();
+			for(StudioSlotSpuSendDetailDto dto : list){
+				if(dto.getArriveState() == StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()){
+					uploadQty ++ ;
+				}
+			}
+		}
+		slotVo.setQty(qty); 
+		slotVo.setUploadQty(uploadQty);
+	}
+	/**
+	 * 
+	 * @param slotNo
+	 * @return
+	 */
+	private List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo) {
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setFields("studio_slot_id,arrive_status");
+		criteria.setOrderByClause("create_time");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		return studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 	}
 
 }
