@@ -181,7 +181,7 @@ public class SupplierProductSaveAndSendToPending {
 		}else{
 			supplierSeason = supplierSeason.trim();
 			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
-			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason);
+			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason).andFilterFlagIsNotNull().andMemoIsNotNull();
 			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
 			if(CollectionUtils.isNotEmpty(dics)){
 				return dics.get(0); 
