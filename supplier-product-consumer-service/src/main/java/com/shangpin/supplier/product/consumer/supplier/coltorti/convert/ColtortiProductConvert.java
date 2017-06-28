@@ -3,8 +3,11 @@ package com.shangpin.supplier.product.consumer.supplier.coltorti.convert;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -88,12 +91,25 @@ public class ColtortiProductConvert {
 	 * @return
 	 */
 	public static List<Image> productPic(ColtortiProduct p){
-		List<String> imgurls=p.getImages();
-		if(null==imgurls) return null;
+		List<String> imgurls = p.getImages();
+		if (null == imgurls)
+			return null;
 		List<Image> ppc = new ArrayList<Image>(imgurls.size());
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		int[] a = new int[imgurls.size()];
 		for (String picUrl : imgurls) {
-			Image pc= new Image();
-			pc.setUrl(picUrl);
+			if (picUrl != null) {
+				String s = picUrl.substring(picUrl.lastIndexOf("-") + 1);
+				int num = Integer.parseInt(s.split("\\.")[0]);
+				a[0] = num;
+				map.put(num, picUrl);
+				System.out.println(s);
+			}
+		}
+		Arrays.sort(a); // 进行排序
+		for (int num : a) {
+			Image pc = new Image();
+			pc.setUrl(map.get(num));
 			ppc.add(pc);
 		}
 		return ppc;

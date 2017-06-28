@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
@@ -129,12 +130,18 @@ public class SupplierProductSaveAndSendToPending {
 			spuHead.setSkus(headSkus);	
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 			//发送图片
-			if(isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname())){
+			HubSeasonDicDto dicDto = isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname());
+			if(null != dicDto && dicDto.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex() && "1".equals(dicDto.getMemo())){
 				if(null != supplierPicture){
 					supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
 					pictureProductService.sendSupplierPicture(supplierPicture, null); 
 				}
 				return true;
+			}else if(null != dicDto && dicDto.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex() && "0".equals(dicDto.getMemo())){
+				if(null != supplierPicture){
+					supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+					pictureProductService.sendSupplierPicture(supplierPicture, null); 
+				}
 			}
 		} catch (Exception e) {
 			throw new EpHubSupplierProductConsumerException(e.getMessage(),e);
@@ -168,22 +175,20 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierSeason
 	 * @return
 	 */
-	public boolean isCurrentSeason(String supplierId,String supplierSeason){
+	public HubSeasonDicDto isCurrentSeason(String supplierId,String supplierSeason){
 		if(StringUtils.isEmpty(supplierSeason)){
-			return false;
+			return null;
 		}else{
 			supplierSeason = supplierSeason.trim();
 			HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
-			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason).andFilterFlagEqualTo((byte)1);
+			criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason).andFilterFlagIsNotNull().andMemoIsNotNull();
 			List<HubSeasonDicDto> dics = seasonClient.selectByCriteria(criteriaDto);
-			if(null != dics && dics.size() > 0){
-				return true;
+			if(CollectionUtils.isNotEmpty(dics)){
+				return dics.get(0); 
 			}else{
-				return false;
+				return null;
 			}
 		}
-		
-		
 	}
 	/**
 	 * 赋值Spu并返回

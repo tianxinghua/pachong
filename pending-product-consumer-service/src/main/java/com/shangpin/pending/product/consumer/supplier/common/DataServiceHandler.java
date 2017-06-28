@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -437,6 +438,7 @@ public class DataServiceHandler {
 		}
 		HubColorDicItemDto dto = new HubColorDicItemDto();
 		dto.setCreateTime(new Date());
+		dto.setUpdateTime(new Date());
 		dto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
 		dto.setColorItemName(supplierColor);
 		try {
@@ -847,6 +849,30 @@ public class DataServiceHandler {
 			return  hubSupplierSkuDtos.get(0);
 		}
 		return null;
+	}
+
+	public void saveSupplierOrigin(String supplierId, String supplierOrigin) {
+		List<HubSupplierValueMappingDto> list = getHubSupplierOrigin(supplierId, supplierOrigin);
+		if (null != list && list.size()>0) {// 重复不做处理
+			return;
+		}
+		
+		HubSupplierValueMappingDto dto = new HubSupplierValueMappingDto();
+		dto.setSupplierId(supplierId);
+		dto.setSupplierVal(supplierOrigin);
+		dto.setHubValType((byte)3);
+		dto.setUpdateTime(new Date());
+		dto.setCreateTime(new Date());
+		dto.setUpdateUser("pendingService");
+		dto.setCreateUser("pendingService");
+		dto.setMappingType((byte)0);
+		hubSupplierValueMappingGateWay.insertSelective(dto);		
+	}
+
+	private List<HubSupplierValueMappingDto> getHubSupplierOrigin(String supplierId, String supplierOrigin) {
+		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierValEqualTo(supplierOrigin).andHubValTypeEqualTo((byte)3);
+		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 
 }

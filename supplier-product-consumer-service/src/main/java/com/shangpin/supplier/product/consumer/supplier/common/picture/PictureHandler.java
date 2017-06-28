@@ -94,6 +94,8 @@ public class PictureHandler {
 	public Map<String,String> stefaniaPicExistsOfSpu(String supplierId,String supplierSpuNo){
 		Map<String,String> existPics = new HashMap<String,String>();
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
+		dto.setPageNo(1);
+		dto.setPageSize(1000);
 		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
@@ -101,6 +103,27 @@ public class PictureHandler {
 			for(HubSpuPendingPicDto picDto : pics){
 				picurl =  picDto.getPicUrl();
 				picurl = picurl.substring(0, picurl.indexOf("&U"));
+				existPics.put(picurl, null);
+			}
+		}
+		return existPics;
+	}
+	/**
+	 * 判断该spu是否存在图片
+	 * @param
+	 * @return
+	 */
+	public Map<String,String> checkPicExistsOfSpu(String supplierId,String supplierSpuNo){
+		Map<String,String> existPics = new HashMap<String,String>();
+		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
+		dto.setPageNo(1);
+		dto.setPageSize(1000);
+		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
+		if(null != pics && pics.size() >0){
+			String picurl = "";
+			for(HubSpuPendingPicDto picDto : pics){
+				picurl =  picDto.getPicUrl();
 				existPics.put(picurl, null);
 			}
 		}

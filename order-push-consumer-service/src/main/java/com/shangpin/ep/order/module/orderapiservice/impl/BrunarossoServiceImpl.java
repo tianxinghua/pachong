@@ -80,6 +80,7 @@ public class BrunarossoServiceImpl implements IOrderService {
     	
     }
     
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -176,6 +177,7 @@ public class BrunarossoServiceImpl implements IOrderService {
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {

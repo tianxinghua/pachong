@@ -1,5 +1,13 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
@@ -12,16 +20,6 @@ import com.shangpin.ep.order.module.sku.bean.HubSkuCriteria;
 import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
 
 @Component("paoloServiceImpl")
 public class PaoloServiceImpl implements IOrderService {
@@ -73,6 +71,7 @@ public class PaoloServiceImpl implements IOrderService {
     	
     }
     
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -81,6 +80,7 @@ public class PaoloServiceImpl implements IOrderService {
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
@@ -165,6 +165,7 @@ public class PaoloServiceImpl implements IOrderService {
 		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
 	}
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
@@ -195,6 +196,7 @@ public class PaoloServiceImpl implements IOrderService {
 	 * @param item_id
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);	
@@ -213,6 +215,7 @@ public class PaoloServiceImpl implements IOrderService {
 	 * @param qty 库存
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	private String newOrderMarketPlace(long id_order_mrkp, String barcode, int qty,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ID_ORDER_MRKP", String.valueOf(id_order_mrkp));
@@ -231,6 +234,7 @@ public class PaoloServiceImpl implements IOrderService {
 	 * @param code 订单号
 	 * @param status 可取值为:NEW, PROCESSING, SHIPPED, CANCELED
 	 */
+	@SuppressWarnings("static-access")
 	private String setStatusOrderMarketplace(String code, String status,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("CODE", code);
@@ -257,33 +261,5 @@ public class PaoloServiceImpl implements IOrderService {
 //		return returnData;
 //	}
 
-	
-	public static void main(String[] args) {
-//		try {
-//			
-//		
-		PaoloServiceImpl orderService = new PaoloServiceImpl();
-//		OrderDTO orderDTO = new OrderDTO();
-////    	orderDTO.setSpPurchaseNo("CGD2016072500097");
-//		orderDTO.setSpOrderId("201609264074169");
-//    	orderDTO.setDetail("6137974-2015343123475:1,");
-//    	orderDTO.setPurchasePriceDetail("685.24");
-//    	orderService.handleConfirmOrder(orderDTO);
-//		//201607284050007L, "2111344053718"
-//		//201607284050011L, "2016398420885"
-////		try {
-////			orderService.newOrderMarketPlace(201607284050015L, "2109590957966", 1);
-////		} catch (Exception e) {
-////			// TODO Auto-generated catch block
-////			e.printStackTrace();
-////		}
-////		orderService.getStatusOrderMarketplace("201607284050011");
-////		orderService.setStatusOrderMarketplace("201607284050015", "CANCELED"); 
-////		orderService.getStatusOrderMarketplace("201607284050011");
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-	}
-	
 	
 }

@@ -146,8 +146,9 @@ public class VariableInit {
     private void setSeasonStaticMap() {
         List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
         for (HubSeasonDicDto dicDto : hubSeasonDics) {
+        	System.out.println(dicDto.getSupplierid());
             if (StringUtils.isNotBlank(dicDto.getHubMarketTime()) && StringUtils.isNotBlank(dicDto.getHubSeason())
-                    && StringUtils.isNotBlank(dicDto.getMemo())) {
+                    && StringUtils.isNotBlank(dicDto.getMemo()) &&StringUtils.isNotBlank(dicDto.getSupplierSeason())) {
 
                 seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
                         (null==dicDto.getHubMarketTime()?"":dicDto.getHubMarketTime().trim()) + "_" +
@@ -164,15 +165,19 @@ public class VariableInit {
             hubColorStaticMap = new HashMap<>();
             List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
             for (ColorDTO dto : colorDTOS) {
-                colorStaticMap.put(dto.getSupplierColor(), dto.getHubColorName());
-                hubColorStaticMap.put(dto.getHubColorName(), "");
+            	if(dto.getSupplierColor()!=null){
+            		 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
+                     hubColorStaticMap.put(dto.getHubColorName(), "");
+            	}
             }
 
         } else {
             if (pendingCommonHandler.isNeedHandle()) {
                 for (ColorDTO dto : dataServiceHandler.getColorDTO()) {
-                    colorStaticMap.put(dto.getSupplierColor(), dto.getHubColorName());
-                    hubColorStaticMap.put(dto.getHubColorName(), "");
+                	if(dto.getSupplierColor()!=null){
+                		 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
+                         hubColorStaticMap.put(dto.getHubColorName(), "");
+                	}
                 }
 
                 // 无用的内容 暂时不考虑
@@ -222,7 +227,9 @@ public class VariableInit {
             for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
                 brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
                         hubBrandDicDto.getHubBrandNo());
-                hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");
+                if(hubBrandDicDto.getHubBrandNo()!=null){
+                	hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");	
+                }
             }
             ;
 
@@ -543,7 +550,7 @@ public class VariableInit {
         List<HubSupplierValueMappingDto> valueMappingDtos = dataServiceHandler
                 .getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
         for (HubSupplierValueMappingDto dto : valueMappingDtos) {
-            originStaticMap.put(dto.getSupplierVal(), dto.getHubVal());
+            originStaticMap.put(dto.getSupplierVal().toUpperCase(), dto.getHubVal());
 
         }
     }
@@ -666,14 +673,14 @@ public class VariableInit {
     protected boolean setOriginMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         Map<String, String> originMap = this.getOriginMap();
         if (StringUtils.isNotBlank(spu.getHubOrigin())) {
-
-            if (originMap.containsKey(spu.getHubOrigin().trim())) {
-                hubSpuPending.setHubOrigin(originMap.get(spu.getHubOrigin().trim()));
+            if (originMap.containsKey(spu.getHubOrigin().trim().toUpperCase())) {
+                hubSpuPending.setHubOrigin(originMap.get(spu.getHubOrigin().trim().toUpperCase()));
                 hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
                 return true;
             } else {
                 hubSpuPending.setHubOrigin(spu.getHubOrigin().trim());
                 hubSpuPending.setOriginState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                dataServiceHandler.saveSupplierOrigin(spu.getSupplierId(), spu.getHubOrigin().trim());
                 return false;
             }
         } else {
@@ -825,9 +832,9 @@ public class VariableInit {
     protected boolean setColorMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         Map<String, String> colorMap = this.getColorMap();
-        if (colorMap.containsKey(spu.getHubColor()) & !StringUtils.isEmpty(colorMap.get(spu.getHubColor()))) {
+        if (spu.getHubColor()!=null&&colorMap.containsKey(spu.getHubColor().toUpperCase()) & !StringUtils.isEmpty(colorMap.get(spu.getHubColor().toUpperCase()))) {
             // 包含时转化赋值
-            hubSpuPending.setHubColor(colorMap.get(spu.getHubColor()));
+            hubSpuPending.setHubColor(colorMap.get(spu.getHubColor().toUpperCase()));
             hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
         } else {

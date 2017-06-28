@@ -68,6 +68,12 @@ shangpin:
       pricehost: http://sopoutapi.spidc1.com
       findsupplyprice: /Product/FindSupplyInfo
     Supplier: #以下配置为各个供货商的配置
+          forzieri:
+                  host: https://api.forzieri.com/test/
+                  client_id: NTkyZThjNGI2NGY2NTY1
+                  client_secret: 3db7c25746f4a11bd8f877b1132dc4a5e739535e
+                  access_token: 1568010f445ffc910f7b34757ceae04f809d4b91
+                  refresh_token: 4ee98100e46f97845accf9d9f359a8175554de15
           lungolivigno:
                   url_login: http://lungolivigno.vdr-s.com/BSWebApi20/api/User/Login
                   url_saveOrder: http://lungolivigno.vdr-s.com/BSWebApi20/api/Order/SaveOrder?SessionId=
@@ -185,7 +191,7 @@ shangpin:
                   getStatusInterface: GetStatusOrderMarketplace
                   getItemStockInterface: GetItemStockBySizeMarketPlace
                   user: shangpin
-                  password: shang1210
+                  password: shang1606
                   isPurchaseExp:
                   openApiKey: 31c1ae971a484ceab29d13b1e98b1e39
                   openApiSecret: d79d948d65cf43398486cb1882bc2b94
@@ -454,6 +460,17 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 0173a41214d345dd88f78a9d3e82837b
                   openApiSecret: 8468cca27d904e929c5330d7f57d6d30 
+          wise: 
+              url: https://at98p.wiseboutique.com/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang1808
+              messageType: text/html;charset=utf-8
+              openApiKey: 71b18f9d51b0425fb81aa0f6f9c27ce8
+              openApiSecret: 066c25a42ee14a03b42b206df0068e9b
           supplier:
                   delayTime: 1000
                   retry: 120

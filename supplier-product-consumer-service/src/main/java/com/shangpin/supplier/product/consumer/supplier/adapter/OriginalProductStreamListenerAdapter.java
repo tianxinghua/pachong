@@ -22,6 +22,10 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.ISpinnak
 public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
+	@Qualifier("forzieri")
+	private ISupplierHandler forzieriHandler;	
+	
+	@Autowired
 	@Qualifier("stefaniaHandler")
 	private ISupplierHandler stefaniaHandler;	
 	
@@ -81,9 +85,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("frmodaHandler")
 	private ISupplierHandler frmodaHandler;
-	@Autowired
-	@Qualifier("zitafabianiHandler")
-	private ISupplierHandler zitafabianiHandler;
+//	@Autowired
+//	@Qualifier("zitafabianiHandler")
+//	private ISupplierHandler zitafabianiHandler;
 
 	@Autowired
 	@Qualifier("opticalHandler")
@@ -124,6 +128,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("smetsHandler")
 	private ISupplierHandler smetsHandler;
 	
+	@Autowired
+	@Qualifier("filippoHandler")
+	private ISupplierHandler filippoHandler;
+	
 	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
@@ -159,6 +167,14 @@ public class OriginalProductStreamListenerAdapter {
 		gebHandler.handleOriginalProduct(message, headers); 
 	}
 	
+	/**
+	 * forzieriHandler供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void forzieriStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		forzieriHandler.handleOriginalProduct(message,headers);
+	}
 	/**
 	 * stefania供货商原始数据监听方法
 	 * @param message 消息体
@@ -609,7 +625,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void filippoStreamListen(SupplierProduct message, Map<String, Object> headers){
-		//TODO
+		filippoHandler.handleOriginalProduct(message, headers); 
 	}
 	/**
 	 * dellaMartira供应商原始数据监听方法

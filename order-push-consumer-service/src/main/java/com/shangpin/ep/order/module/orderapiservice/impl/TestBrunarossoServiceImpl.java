@@ -9,6 +9,7 @@ import com.shangpin.ep.order.module.order.bean.OrderDTO;
 @Component("testBrunarossoServiceImpl")
 public class TestBrunarossoServiceImpl extends BrunarossoServiceImpl {
 
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		try {

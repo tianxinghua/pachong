@@ -20,5 +20,37 @@ public class Wise extends SupplierCommon implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 9189615156417346424L;
+	/**
+	 * 
+	 */
+	private String url;
+	/**
+	 * 
+	 */
+	private String createOrderInterface;
+	/**
+	 * 
+	 */
+	private String setStatusInterface;
+	/**
+	 * 
+	 */
+	private String getStatusInterface;
+	/**
+	 * 
+	 */
+	private String getItemStockInterface;
+	/**
+	 * 
+	 */
+	private String user;
+	/**
+	 * 
+	 */
+	private String password;
+	/**
+	 * 
+	 */
+	private String messageType;
 
 }

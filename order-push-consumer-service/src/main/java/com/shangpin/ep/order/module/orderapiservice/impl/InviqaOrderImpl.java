@@ -1,7 +1,6 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 
@@ -21,10 +20,8 @@ import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
-import com.shangpin.ep.order.enumeration.OrderStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.module.order.bean.ReturnOrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.inviqa.API;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.inviqa.Errors;
@@ -63,6 +60,7 @@ public class InviqaOrderImpl implements IOrderService {
 	/**
 	 * 锁库存
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		

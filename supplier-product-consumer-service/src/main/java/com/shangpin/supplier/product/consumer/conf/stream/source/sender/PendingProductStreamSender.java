@@ -21,6 +21,14 @@ public class PendingProductStreamSender {
 	@Autowired
 	private PendingProductSource pendingProductSource;
 	/**
+	 * 发送供应商forzieri商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean forzieriPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+		return pendingProductSource.forzieriPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+	/**
 	 * 发送供应商biondioni商品流数据
 	 * @param supplierProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false

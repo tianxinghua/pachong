@@ -1,48 +1,35 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.ep.order.common.HandleException;
-import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
 import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
-import com.shangpin.ep.order.enumeration.ErrorStatus;
-import com.shangpin.ep.order.enumeration.LogTypeStatus;
-import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.sku.bean.HubSku;
 import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
-
-@Component("wiseServiceImpl")
+/**
+ * <p>Title: WiseServiceImpl</p>
+ * <p>Description: wise供应商订单以发送邮件的方式发送给对方</p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年6月22日 上午10:15:54
+ *
+ */
+@Component("wiseMailService")
 @Slf4j
-public class WiseServiceImpl implements IOrderService {
+public class WiseServiceImpl{
 	
-	@Autowired
-    private LogCommon logCommon;    
 	@Autowired
 	private ShangpinMailSender shangpinMailSender;
 	@Autowired
 	private HubSkuService hubSkuService;
-	@Autowired
-    private HandleException handleException;
 
-	@Override
-	public void handleSupplierOrder(OrderDTO orderDTO) {
-		orderDTO.setLockStockTime(new Date());
-		orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
-		orderDTO.setLogContent("------锁库结束-------");
-		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
-	}
-
-	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		try {
 			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
@@ -57,31 +44,16 @@ public class WiseServiceImpl implements IOrderService {
 									"Status: confirmed";
 				log.info("wise推送订单参数："+messageText); 
 				sendMail("wise-order-shangpin",messageText);
-				orderDTO.setConfirmTime(new Date()); 
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
 				log.info("wise推送成功。"); 
 			}else{
 				log.info("wise根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku"+ orderDTO.getSupplierSkuNo());
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
-				orderDTO.setDescription("wise根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
-			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-			handleException.handleException(orderDTO,e);
-			orderDTO.setLogContent("wise推送订单异常========= "+e.getMessage());
-			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+			log.error("wise推送订单异常========= "+e.getMessage());
 		}
 		
 	}
 
-	@Override
-	public void handleCancelOrder(OrderDTO deleteOrder) {
-		deleteOrder.setCancelTime(new Date()); 
-		deleteOrder.setPushStatus(PushStatus.NO_LOCK_CANCELLED_API); 
-	}
-
-	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
 			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
@@ -95,19 +67,12 @@ public class WiseServiceImpl implements IOrderService {
 						"Status: cancelled";
 				log.info("wise退款单参数："+messageText); 
 				sendMail("wise-cancelled order-shangpin",messageText);
-				deleteOrder.setRefundTime(new Date());
-				deleteOrder.setPushStatus(PushStatus.REFUNDED);
 				log.info("wise退款成功。"); 
 			}else{
-				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
-				deleteOrder.setDescription("wise根据供应商门户编号和供应商skuid查找SKU失败");
+				log.error("wise根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
-			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-			handleException.handleException(deleteOrder, e); 
-			deleteOrder.setLogContent("wise退款发生异常============"+e.getMessage());
-			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);		
+			log.error("wise发送退款邮件发生异常============"+e.getMessage());
 		}
 	}
 	
