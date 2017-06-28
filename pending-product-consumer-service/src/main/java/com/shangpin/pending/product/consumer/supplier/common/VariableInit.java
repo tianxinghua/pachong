@@ -146,8 +146,9 @@ public class VariableInit {
     private void setSeasonStaticMap() {
         List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
         for (HubSeasonDicDto dicDto : hubSeasonDics) {
+        	System.out.println(dicDto.getSupplierid());
             if (StringUtils.isNotBlank(dicDto.getHubMarketTime()) && StringUtils.isNotBlank(dicDto.getHubSeason())
-                    && StringUtils.isNotBlank(dicDto.getMemo())) {
+                    && StringUtils.isNotBlank(dicDto.getMemo()) &&StringUtils.isNotBlank(dicDto.getSupplierSeason())) {
 
                 seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
                         (null==dicDto.getHubMarketTime()?"":dicDto.getHubMarketTime().trim()) + "_" +
@@ -226,7 +227,9 @@ public class VariableInit {
             for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
                 brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
                         hubBrandDicDto.getHubBrandNo());
-                hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");
+                if(hubBrandDicDto.getHubBrandNo()!=null){
+                	hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");	
+                }
             }
             ;
 

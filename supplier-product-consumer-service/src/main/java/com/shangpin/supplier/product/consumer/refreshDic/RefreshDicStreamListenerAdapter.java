@@ -80,11 +80,24 @@ public class RefreshDicStreamListenerAdapter {
 				refreshCategory(json, InfoState.RefreshCategory.getIndex());
 			}else if (dicType==InfoState.RefreshSize.getIndex()) {
 				refreshSize(json, InfoState.RefreshSize.getIndex());
+			}else if(dicType==InfoState.RefreshColor.getIndex()){
+				refreshColor(json, InfoState.RefreshColor.getIndex());
 			}
 		}
 		updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, null);
 	}
 	
+	private void refreshColor(JSONObject json, byte state)  throws Exception{
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		String supplierColor = json.get("supplierColor").toString();
+		criteria.createCriteria().andSupplierSpuColorEqualTo(supplierColor);;
+		int total = hubSupplierSpuGateWay.countByCriteria(criteria);
+		log.info("待刷新尺码total:"+total);
+		if(total>0){
+			sendSupplierSpu(total, criteria, state);
+		}
+	}
+
 	private void refreshSize(JSONObject json, byte state) throws Exception{
 		String supplierId = null;
 		if(json.get("supplierId")!=null){
@@ -121,11 +134,11 @@ public class RefreshDicStreamListenerAdapter {
 				.andSupplierGenderEqualTo(supplierGender);
 		int total = hubSupplierSpuGateWay.countByCriteria(criteria);
 		if (total > 0) {
-			sendCategory(total, criteria, state);
+			sendSupplierSpu(total, criteria, state);
 		}
 	}
 
-	private void sendCategory(int total,HubSupplierSpuCriteriaDto criteria,byte state) throws Exception{
+	private void sendSupplierSpu(int total,HubSupplierSpuCriteriaDto criteria,byte state) throws Exception{
 		int pageCount = getPageCount(total, PAGESIZE);// 页数
 		log.info("刷新总页数：" + pageCount);
 		for (int i = 1; i <= pageCount; i++) {

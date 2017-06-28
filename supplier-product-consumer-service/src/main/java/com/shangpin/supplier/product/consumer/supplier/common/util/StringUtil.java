@@ -3,7 +3,7 @@ package com.shangpin.supplier.product.consumer.supplier.common.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.shangpin.supplier.product.consumer.supplier.common.dto.Color;
 
@@ -15,7 +15,7 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String verifyPrice(String price){
-		if(StringUtils.isEmpty(price)){
+		if(StringUtils.isNotBlank(price)){
 			return "0.00";
 		}else{
 			return price.replaceAll(",", ".");
@@ -28,7 +28,7 @@ public class StringUtil {
 	 */
 	public static int verifyStock(String stock){
 		
-		if(StringUtils.isEmpty(stock)){
+		if(StringUtils.isNotBlank(stock)){
 			return 0;
 		}else{
 			if(stock.contains(".")){

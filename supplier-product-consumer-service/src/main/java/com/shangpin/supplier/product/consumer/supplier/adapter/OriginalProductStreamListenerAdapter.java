@@ -22,7 +22,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.ISpinnak
 public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
-	@Qualifier("forzieriHandler")
+	@Qualifier("forzieri")
 	private ISupplierHandler forzieriHandler;	
 	
 	@Autowired
