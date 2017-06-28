@@ -30,6 +30,10 @@ public class PendingCommonHandler {
     private IShangpinRedis shangpinRedis;
 
     static Integer isCurrentMin  =   DateUtils.getCurrentMin();
+
+    static Integer seasonCurrenMin = DateUtils.getCurrentMin();
+
+    static Integer colorCurrenMin = DateUtils.getCurrentMin();
 //	
     public  Map<String, String>  getSpCategoryValue(String supplierId) throws Exception {
     	
@@ -93,6 +97,28 @@ public class PendingCommonHandler {
         int min = DateUtils.getCurrentMin();
         if(min-isCurrentMin>=5||min-isCurrentMin<0){
             isCurrentMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public  boolean isNeedHandleSeasno() {
+        int min = DateUtils.getCurrentMin();
+        if(min-seasonCurrenMin>=5||min-seasonCurrenMin<0){
+            seasonCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public  boolean isNeedHandleCorlor() {
+        int min = DateUtils.getCurrentMin();
+        if(min-colorCurrenMin>=5||min-colorCurrenMin<0){
+            colorCurrenMin = min;
             return true;
         } else {
             return false;

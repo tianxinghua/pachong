@@ -135,7 +135,8 @@ public class VariableInit {
             setSeasonStaticMap();
 
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
+            if (pendingCommonHandler.isNeedHandleSeasno()) {
+                seasonStaticMap.clear();
                 setSeasonStaticMap();
             }
 
@@ -146,14 +147,14 @@ public class VariableInit {
     private void setSeasonStaticMap() {
         List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
         for (HubSeasonDicDto dicDto : hubSeasonDics) {
-        	System.out.println(dicDto.getSupplierid());
+//        	System.out.println(dicDto.getSupplierid());
             if (StringUtils.isNotBlank(dicDto.getHubMarketTime()) && StringUtils.isNotBlank(dicDto.getHubSeason())
-                    && StringUtils.isNotBlank(dicDto.getMemo()) &&StringUtils.isNotBlank(dicDto.getSupplierSeason())) {
+                    &&StringUtils.isNotBlank(dicDto.getSupplierSeason())) {
 
                 seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
                         (null==dicDto.getHubMarketTime()?"":dicDto.getHubMarketTime().trim()) + "_" +
                                 (null==dicDto.getHubSeason()?"":dicDto.getHubSeason().trim()) + "|"
-                                + (null==dicDto.getMemo()?"":dicDto.getMemo().trim()));
+                                + (null==dicDto.getFilterFlag()?"":dicDto.getFilterFlag().toString()));
                 hubSeasonStaticMap.put(dicDto.getHubMarketTime() + "_" + dicDto.getHubSeason(), "");
             }
         }
@@ -172,7 +173,8 @@ public class VariableInit {
             }
 
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
+            if (pendingCommonHandler.isNeedHandleCorlor()) {
+                colorStaticMap.clear();
                 for (ColorDTO dto : dataServiceHandler.getColorDTO()) {
                 	if(dto.getSupplierColor()!=null){
                 		 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
