@@ -15,6 +15,9 @@ import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
+import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
@@ -147,6 +150,83 @@ public class SupplierProductRetryService {
     	supplierProductSendToPending.dispatchSupplierProduct(pendingProduct, headers);
     	
 	}
+
+	/**
+	 * 获取总页数
+	 * 
+	 * @param totalSize
+	 *            总计路数
+	 * @param pagesize
+	 *            每页记录数
+	 * @return
+	 */
+	private Integer getPageCount(Integer totalSize, Integer pageSize) {
+		if (totalSize % pageSize == 0) {
+			return totalSize / pageSize;
+		} else {
+			return (totalSize / pageSize) + 1;
+		}
+	}
+
+	private void loopProduct(HubSupplierSpuDto spu, byte state, HubSupplierSkuDto hubSku) throws Exception {
+
+		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId(),spu.getSupplierSeasonname());
+		if (season == null) {
+			log.info("====" + spu.getSupplierId() + ":" + spu.getSupplierSpuId() + ":" + spu.getSupplierSeasonname()
+					+ "非当季");
+			return;
+		}
+
+		HubSupplierValueMappingDto supplier = supplierProductPictureManager
+				.findHubSupplierValueMapping(spu.getSupplierId());
+		if (supplier == null) {
+			log.info("====" + spu.getSupplierId() + "未找到供应商名称");
+			return;
+		}
+
+		Spu spuHead = new Spu();
+		spuHead.setSupplierId(spu.getSupplierId());
+		spuHead.setSpuNo(spu.getSupplierSpuNo());
+		spuHead.setStatus(state);
+
+		PendingProduct pendingProduct = new PendingProduct();
+		pendingProduct.setSupplierNo(supplier.getHubValNo());
+		pendingProduct.setSupplierId(spu.getSupplierId());
+		pendingProduct.setSupplierName(supplier.getHubVal());
+
+		PendingSpu pendingSpu = new PendingSpu();
+		supplierProductMysqlService.convertHubSpuToPendingSpu(spu, pendingSpu);
+		pendingSpu.setSupplierNo(supplier.getHubValNo());
+		pendingProduct.setData(pendingSpu);
+
+		if (hubSku!=null) {
+			// 开始构造sku消息头
+			List<PendingSku> skus = new ArrayList<PendingSku>();
+			List<Sku> headSkus = new ArrayList<Sku>();
+			try {
+				Sku headSku = new Sku();
+				PendingSku pendingSku = new PendingSku();
+				// 开始保存hubSku到数据库
+				convertHubSkuToPendingSku(hubSku, pendingSku);
+				skus.add(pendingSku);
+				headSku.setSupplierId(spu.getSupplierId());
+				headSku.setSkuNo(hubSku.getSupplierSkuNo());
+				headSku.setStatus(state);
+				headSkus.add(headSku);
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+			}
+			pendingSpu.setSkus(skus);
+			spuHead.setSkus(headSkus);
+		}
+
+		pendingProduct.setData(pendingSpu);
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
+		supplierProductSendToPending.dispatchSupplierProduct(pendingProduct, headers);
+
+	}
+
 	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) throws Exception {
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -161,19 +241,4 @@ public class SupplierProductRetryService {
 		pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
 		pendingSku.setSupplyPriceCurrency(hubSku.getSupplyPriceCurrency());
 	}
-	/**
-	 * 获取总页数
-	 * @param totalSize 总计路数
-	 * @param pagesize 每页记录数
-	 * @return
-	 */
-	@SuppressWarnings("unused")
-	private Integer getPageCount(Integer totalSize, Integer pageSize) {
-		if(totalSize % pageSize == 0){
-			return totalSize/pageSize;
-		}else{
-			return (totalSize/pageSize) + 1;
-		}
-	}
-	
 }

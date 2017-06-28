@@ -92,7 +92,7 @@ public class RefreshDicStreamListenerAdapter {
 		String supplierColor = json.get("supplierColor").toString();
 		criteria.createCriteria().andSupplierSpuColorEqualTo(supplierColor);;
 		int total = hubSupplierSpuGateWay.countByCriteria(criteria);
-		log.info("待刷新尺码total:"+total);
+		log.info("待刷新颜色:"+supplierColor+"总数total:"+total);
 		if(total>0){
 			sendSupplierSpu(total, criteria, state);
 		}
