@@ -18,6 +18,8 @@ public class StudioSlotReturnMaster implements Serializable {
 
     private String supplierId;
 
+    private Long studioId;
+
     /**
      * 数量
      */
@@ -135,6 +137,14 @@ public class StudioSlotReturnMaster implements Serializable {
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId == null ? null : supplierId.trim();
+    }
+
+    public Long getStudioId() {
+        return studioId;
+    }
+
+    public void setStudioId(Long studioId) {
+        this.studioId = studioId;
     }
 
     public Integer getQuantity() {
@@ -283,6 +293,7 @@ public class StudioSlotReturnMaster implements Serializable {
         sb.append(", studioSendNo=").append(studioSendNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", studioId=").append(studioId);
         sb.append(", quantity=").append(quantity);
         sb.append(", actualQuantity=").append(actualQuantity);
         sb.append(", trackNo=").append(trackNo);
@@ -321,6 +332,7 @@ public class StudioSlotReturnMaster implements Serializable {
             && (this.getStudioSendNo() == null ? other.getStudioSendNo() == null : this.getStudioSendNo().equals(other.getStudioSendNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
             && (this.getQuantity() == null ? other.getQuantity() == null : this.getQuantity().equals(other.getQuantity()))
             && (this.getActualQuantity() == null ? other.getActualQuantity() == null : this.getActualQuantity().equals(other.getActualQuantity()))
             && (this.getTrackNo() == null ? other.getTrackNo() == null : this.getTrackNo().equals(other.getTrackNo()))
@@ -348,6 +360,7 @@ public class StudioSlotReturnMaster implements Serializable {
         result = prime * result + ((getStudioSendNo() == null) ? 0 : getStudioSendNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
         result = prime * result + ((getQuantity() == null) ? 0 : getQuantity().hashCode());
         result = prime * result + ((getActualQuantity() == null) ? 0 : getActualQuantity().hashCode());
         result = prime * result + ((getTrackNo() == null) ? 0 : getTrackNo().hashCode());

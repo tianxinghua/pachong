@@ -1200,6 +1200,76 @@ public class StudioSlotSpuSendDetailCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andBarcodeIsNull() {
+            addCriterion("barcode is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIsNotNull() {
+            addCriterion("barcode is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeEqualTo(String value) {
+            addCriterion("barcode =", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotEqualTo(String value) {
+            addCriterion("barcode <>", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeGreaterThan(String value) {
+            addCriterion("barcode >", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeGreaterThanOrEqualTo(String value) {
+            addCriterion("barcode >=", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLessThan(String value) {
+            addCriterion("barcode <", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLessThanOrEqualTo(String value) {
+            addCriterion("barcode <=", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLike(String value) {
+            addCriterion("barcode like", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotLike(String value) {
+            addCriterion("barcode not like", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIn(List<String> values) {
+            addCriterion("barcode in", values, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotIn(List<String> values) {
+            addCriterion("barcode not in", values, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeBetween(String value1, String value2) {
+            addCriterion("barcode between", value1, value2, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotBetween(String value1, String value2) {
+            addCriterion("barcode not between", value1, value2, "barcode");
+            return (Criteria) this;
+        }
+
         public Criteria andMemoIsNull() {
             addCriterion("memo is null");
             return (Criteria) this;
