@@ -73,11 +73,7 @@ public class DefectiveProductController {
 	@RequestMapping(value="/detail", method = RequestMethod.POST)
 	public HubResponse<?> detail(@RequestBody String studioSlotDefectiveSpuId){
 		List<StudioSlotDefectiveSpuPicDto> list = defectiveProductService.selectDefectivePic(studioSlotDefectiveSpuId);
-		if(CollectionUtils.isNotEmpty(list)){
-			return HubResponse.successResp(list);
-		}else{
-			return HubResponse.errorResp("查找详情图片失败"); 
-		}
+		return HubResponse.successResp(list);
 	}
 	
 	@RequestMapping(value="/delete-defective-pic", method = RequestMethod.POST)
