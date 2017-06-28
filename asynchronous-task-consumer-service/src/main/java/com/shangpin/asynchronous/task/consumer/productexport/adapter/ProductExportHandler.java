@@ -12,6 +12,7 @@ import com.shangpin.asynchronous.task.consumer.productimport.common.service.Task
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
 
@@ -62,6 +63,9 @@ public class ProductExportHandler {
 				}else if(message.getType() == TaskType.ALL_PRODUCT.getIndex()){
 					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					allProductServiceImpl.exportproductAll(message.getTaskNo(), pendingQuryDto);
+				}else if(message.getType() == TaskType.EXPORT_SUTDIO_SLOT.getIndex()){
+					SlotManageQuery slotManageQuery = JsonUtil.deserialize(message.getData(), SlotManageQuery.class);
+					allProductServiceImpl.exportStudioSlot(message.getTaskNo(), slotManageQuery);
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

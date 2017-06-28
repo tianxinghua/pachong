@@ -3,7 +3,9 @@ package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +26,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
+import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
+import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
+import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProductDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
@@ -41,6 +51,8 @@ public class AllProductServiceImpl {
 	private static final Integer PAGESIZE = 50;
 	private static SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
+	private static final Map<String,Object> map = new HashMap<String,Object>();
+	
 	@Autowired
 	private ExportServiceImpl exportServiceImpl;
 	@Autowired
@@ -51,6 +63,10 @@ public class AllProductServiceImpl {
 	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
 	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
+	@Autowired
+	StudioSlotGateWay studioSlotGateWay;
+	@Autowired
+	StudioGateWay studioGateWay;
 
 	public void exportproductAll(String taskNo, PendingQuryDto pendingQuryDto) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -93,6 +109,142 @@ public class AllProductServiceImpl {
 			}
 		}
 		exportServiceImpl.saveAndUploadExcel(taskNo, pendingQuryDto.getCreateUser(), wb);
+	}
+	
+	public void exportStudioSlot(String taskNo, SlotManageQuery slotManageQuery) throws Exception {
+		if(!map.containsKey("studio")){
+			StudioCriteriaDto dto = new StudioCriteriaDto();
+			List<StudioDto> studioDtoLists = studioGateWay.selectByCriteria(dto);
+			for(StudioDto studioDto : studioDtoLists){
+				map.put("studio"+studioDto.getStudioId(), studioDto.getStudioName());
+			}
+			map.put("studio", "studio");
+		}
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("批次信息");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCellStyle style = wb.createCellStyle();
+		String[] row0 = TaskImportTemplate.getStudioSlotTemplate();
+		for (int i = 0; i < row0.length; i++) {
+			HSSFCell cell = row.createCell(i);
+			cell.setCellValue(row0[i]);
+			cell.setCellStyle(style);
+		}
+		StudioSlotCriteriaDto studioSlotCriteriaDto = getStudioSlotCriteriaDto(slotManageQuery);
+		int count = studioSlotGateWay.countByCriteria(studioSlotCriteriaDto);
+		int pageCount = getPageCount(count,10);
+		List<List<StudioSlotDto>> lists = new ArrayList<List<StudioSlotDto>>();
+		studioSlotCriteriaDto.setPageSize(10);
+		for (int i = 1; i <= pageCount; i++) {
+			studioSlotCriteriaDto.setPageNo(i);
+			lists.add(studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto));
+		}
+		int j = 0;
+		if (lists.size() > 0) {
+			for(int i=0;i<lists.size();i++){
+				List<StudioSlotDto> studioSlotDtoList = lists.get(i);
+				for(StudioSlotDto studioSlotDto : studioSlotDtoList){
+					try {
+						j++;
+						row = sheet.createRow(j);
+						insertStudioSlotOfRow(row, studioSlotDto);
+					} catch (Exception e) {
+						log.error("insertStudioSlotOfRow异常：" + e.getMessage(), e);
+						j--;
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		exportServiceImpl.saveAndUploadExcel(taskNo, "studio-slot", wb);
+	}
+	
+	
+	//批次生成excel
+	private void insertStudioSlotOfRow(HSSFRow row ,StudioSlotDto studioSlotDto
+			) throws Exception {
+	         row.createCell(0).setCellValue(null != studioSlotDto.getSlotDate() ? new SimpleDateFormat("yyyy-MM-dd").format(studioSlotDto.getSlotDate()).toString() : "");  
+	         row.createCell(1).setCellValue(map.get("studio"+studioSlotDto.getStudioId()).toString());  
+	         row.createCell(2).setCellValue(null != studioSlotDto.getSlotNo() ? studioSlotDto.getSlotNo() : "");  
+	         row.createCell(3).setCellValue(null != studioSlotDto.getSlotStatus() ? studioSlotDto.getSlotStatus().toString() : "");  
+	         row.createCell(4).setCellValue(null != studioSlotDto.getApplyStatus() ? studioSlotDto.getApplyStatus().toString() : "");  
+	         row.createCell(5).setCellValue(null != studioSlotDto.getApplyUser() ? studioSlotDto.getApplyUser() : "");  
+	         row.createCell(6).setCellValue(null != studioSlotDto.getApplyTime() ? format.format(studioSlotDto.getApplyTime()).toString() : "");  
+	         row.createCell(7).setCellValue(null != studioSlotDto.getArriveStatus() ? studioSlotDto.getArriveStatus().toString() : "");  
+	         row.createCell(8).setCellValue(null != studioSlotDto.getArriveTime() ? format.format(studioSlotDto.getArriveTime()).toString() : "");  
+	         row.createCell(9).setCellValue(null != studioSlotDto.getShotStatus() ? studioSlotDto.getShotStatus().toString() : "");  
+	         row.createCell(10).setCellValue(null != studioSlotDto.getPlanShootTime() ? format.format(studioSlotDto.getPlanShootTime()).toString() : "");  
+	         row.createCell(11).setCellValue(null != studioSlotDto.getShootTime() ? format.format(studioSlotDto.getShootTime()).toString() : "");  
+	         row.createCell(12).setCellValue(null != studioSlotDto.getUpdateTime() ? format.format(studioSlotDto.getUpdateTime()).toString() : ""); 
+	}
+	
+	private StudioSlotCriteriaDto getStudioSlotCriteriaDto(SlotManageQuery slotManageQuery){
+		SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
+		Criteria criteria = studioSlotCriteriaDto.createCriteria();
+		StudioCriteriaDto studioCriteriaDto = new StudioCriteriaDto();
+        try {
+			Long studioId = null;
+			if (slotManageQuery.getStudioNo() != null && !slotManageQuery.getStudioNo().equals("")) {
+				studioCriteriaDto.createCriteria().andStudioNameEqualTo(slotManageQuery.getStudioNo());
+				List<StudioDto> studioDtoList = studioGateWay.selectByCriteria(studioCriteriaDto);
+				if (studioDtoList.size() == 0 || studioDtoList == null) {
+					log.error(slotManageQuery.getStudioNo() + ":此摄影棚不存在!");
+					return null;
+				}
+				studioId = studioDtoList.get(0).getStudioId();
+				criteria.andStudioIdEqualTo(studioId);
+			}
+			if (slotManageQuery.getDate() != null && !slotManageQuery.getDate().equals("")) {
+				criteria.andSlotDateEqualTo(sdfomat.parse(slotManageQuery.getDate()));
+			}
+			if (slotManageQuery.getSlotNo() != null && !slotManageQuery.getSlotNo().equals("")) {
+				criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+			}
+			if (slotManageQuery.getSlotStatus() != null) {
+				criteria.andSlotStatusEqualTo(slotManageQuery.getSlotStatus());
+			}
+			if (slotManageQuery.getApplyStatus() != null) {
+				criteria.andApplyStatusEqualTo(slotManageQuery.getApplyStatus());
+			}
+			if (slotManageQuery.getApplySupplierId() != null && !slotManageQuery.getApplySupplierId().equals("")) {
+				criteria.andApplySupplierIdEqualTo(slotManageQuery.getApplySupplierId());
+			}
+			if (slotManageQuery.getApplyUser() != null && !slotManageQuery.getApplyUser().equals("")) {
+				criteria.andApplyUserEqualTo(slotManageQuery.getApplyUser());
+			}
+			if (slotManageQuery.getApplyTime() != null && !slotManageQuery.getApplyTime().equals("")) {
+				String applyTimeStart = slotManageQuery.getApplyTime() + " 00:00:00";
+				String applyTimeEnd = slotManageQuery.getApplyTime() + " 23:59:59";
+				criteria.andApplyTimeBetween(sdf.parse(applyTimeStart), sdf.parse(applyTimeEnd));
+			}
+			if (slotManageQuery.getArriveTime() != null && !slotManageQuery.getArriveTime().equals("")) {
+				String arriveTimeStart = slotManageQuery.getArriveTime() + " 00:00:00";
+				String arriveTimeEnd = slotManageQuery.getArriveTime() + " 23:59:59";
+				criteria.andArriveTimeBetween(sdf.parse(arriveTimeStart), sdf.parse(arriveTimeEnd));
+			}
+			if (slotManageQuery.getArriveStatus() != null) {
+				criteria.andArriveStatusEqualTo(slotManageQuery.getArriveStatus());
+			}
+			if (slotManageQuery.getShotStatus() != null) {
+				criteria.andShotStatusEqualTo(slotManageQuery.getShotStatus());
+			}
+			if (slotManageQuery.getPlanShootTime() != null && !slotManageQuery.getPlanShootTime().equals("")) {
+				String planShootTimeStart = slotManageQuery.getPlanShootTime() + " 00:00:00";
+				String planShootTimeEnd = slotManageQuery.getPlanShootTime() + " 23:59:59";
+				criteria.andPlanShootTimeBetween(sdf.parse(planShootTimeStart), sdf.parse(planShootTimeEnd));
+			}
+			if (slotManageQuery.getShootTime() != null && !slotManageQuery.getShootTime().equals("")) {
+				criteria.andShootTimeEqualTo(sdfomat.parse(slotManageQuery.getShootTime()));
+				String shootTimeStart = slotManageQuery.getShootTime() + " 00:00:00";
+				String shootTimeEnd = slotManageQuery.getShootTime() + " 23:59:59";
+				criteria.andShootTimeBetween(sdf.parse(shootTimeStart), sdf.parse(shootTimeEnd));
+			}
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+		return studioSlotCriteriaDto;
 	}
 	
 	private void insertProductOfRow(HSSFRow row, PendingProductDto product, HubSkuPendingDto sku,
@@ -257,5 +409,12 @@ public class AllProductServiceImpl {
 			return null;
 		}
 		
+	}
+	private Integer getPageCount(Integer totalSize, Integer pageSize) {
+		if (totalSize % pageSize == 0) {
+			return totalSize / pageSize;
+		} else {
+			return (totalSize / pageSize) + 1;
+		}
 	}
 }
