@@ -91,7 +91,7 @@ public class ReturnSlotController {
             return  HubResponse.errorResp("传入参数不正确");
         }
 
-        return  HubResponse.successResp(iReturnSlotService.addProductFromScan(supplierId, id,spuNo,queryDto.getSupplierUser()));
+        return iReturnSlotService.addProductFromScan(supplierId, id,spuNo,queryDto.getSupplierUser());
     }
     /**
      * 拣货结果确认

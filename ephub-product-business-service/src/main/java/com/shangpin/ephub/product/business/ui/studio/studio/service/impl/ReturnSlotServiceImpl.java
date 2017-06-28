@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.service.impl;
 
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.*;
 import com.shangpin.ephub.client.data.studio.slot.returning.gateway.StudioSlotReturnDetailGateWay;
 import com.shangpin.ephub.client.data.studio.slot.returning.gateway.StudioSlotReturnMasterGateWay;
@@ -96,8 +97,10 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param userName
      * @return
      */
-   public StudioSlotReturnDetailDto addProductFromScan(String supplierId,Long id,String spuNo,String userName){
+   public HubResponse<StudioSlotReturnDetailDto> addProductFromScan(String supplierId,Long id,String spuNo,String userName){
 
+       HubResponse<StudioSlotReturnDetailDto> result = new HubResponse<StudioSlotReturnDetailDto>();
+       result.setCode("0");
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
        dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotReturnMasterIdEqualTo(id).andSlotSpuNoEqualTo(spuNo);
 
@@ -106,17 +109,24 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        int i = 0;
        if (detailDtoList!=null && detailDtoList.size()>0){
            returnDetailDto = detailDtoList.get(0);
-           StudioSlotReturnDetailDto detailDto = new StudioSlotReturnDetailDto();
-           detailDto.setArriveState((byte)1);
-           detailDto.setArriveUser(userName);
-           detailDto.setArriveTime(new Date());
-           detailDto.setStudioSlotReturnDetailId(returnDetailDto.getStudioSlotReturnDetailId());
-           i = studioSlotReturnDetailGateWay.updateByPrimaryKeySelective(detailDto);
-           if(i>0){
-               returnDetailDto.setArriveState((byte)1);
+           if(returnDetailDto.getArriveState() == StudioSlotArriveState.RECEIVED.getIndex().byteValue()) {
+               result.setCode("1");
+               result.setMsg("Repetitive scanning!");
+
+           }else{
+               StudioSlotReturnDetailDto detailDto = new StudioSlotReturnDetailDto();
+               detailDto.setArriveState(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
+               detailDto.setArriveUser(userName);
+               detailDto.setArriveTime(new Date());
+               detailDto.setStudioSlotReturnDetailId(returnDetailDto.getStudioSlotReturnDetailId());
+               i = studioSlotReturnDetailGateWay.updateByPrimaryKeySelective(detailDto);
+               if (i > 0) {
+                   returnDetailDto.setArriveState(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
+               }
            }
        }
-       return returnDetailDto;
+       result.setContent(returnDetailDto);
+       return result;
    }
 
     /**
@@ -137,7 +147,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        result.setTrackNo(studioSlot.getTrackNo());
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
-       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo((byte)0);
+       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
        result.setDetailDtoList(detailDtoList);
