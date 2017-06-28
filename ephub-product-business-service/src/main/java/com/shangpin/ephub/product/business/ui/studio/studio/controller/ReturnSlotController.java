@@ -32,7 +32,7 @@ public class ReturnSlotController {
   * */
     @RequestMapping(value = "/returnslotlist",method = RequestMethod.POST)
     public HubResponse<?> getReturnSlotList(@RequestBody ReturnSlotQueryDto queryDto) {
-        Long supplierId = queryDto.getSupplierId();
+        String supplierId = queryDto.getSupplierId();
         if(StringUtils.isEmpty(supplierId) ){
             return  HubResponse.errorResp("传入参数不正确");
         }
@@ -47,7 +47,7 @@ public class ReturnSlotController {
     @RequestMapping(value = "/receiveslot")
     public HubResponse<?> ReceiveReturnSlot(@RequestBody ReturnSlotQueryDto queryDto) {
         try {
-            Long supplierId = queryDto.getSupplierId();
+            String supplierId = queryDto.getSupplierId();
             Long id = queryDto.getId();
             if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id) ){
                 return  HubResponse.errorResp("传入参数不正确");
@@ -69,7 +69,7 @@ public class ReturnSlotController {
      */
     @RequestMapping(value = "/receivedSlotInfo")
     public HubResponse<?> getReceivedSlotInfo(@RequestBody ReturnSlotQueryDto queryDto) {
-        Long supplierId = queryDto.getSupplierId();
+        String supplierId = queryDto.getSupplierId();
         Long id = queryDto.getId();
         if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id) ){
             return  HubResponse.errorResp("传入参数不正确");
@@ -82,16 +82,16 @@ public class ReturnSlotController {
      * @param queryDto
      * @return
      */
-    @RequestMapping(value = "/ScanProduct")
+    @RequestMapping(value = "/scanproduct")
     public HubResponse<?> addProductFromScan(@RequestBody ReturnSlotQueryDto queryDto) {
-        Long supplierId = queryDto.getSupplierId();
+        String supplierId = queryDto.getSupplierId();
         Long id = queryDto.getId();
-        Long spuId = queryDto.getSpuId();
-        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id)||StringUtils.isEmpty(spuId) ){
+        String spuNo = queryDto.getSpuNo();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id)||StringUtils.isEmpty(spuNo) ){
             return  HubResponse.errorResp("传入参数不正确");
         }
 
-        return  HubResponse.successResp(iReturnSlotService.addProductFromScan(supplierId, id,spuId,queryDto.getSupplierUser()));
+        return  HubResponse.successResp(iReturnSlotService.addProductFromScan(supplierId, id,spuNo,queryDto.getSupplierUser()));
     }
     /**
      * 拣货结果确认
@@ -100,7 +100,7 @@ public class ReturnSlotController {
      */
     @RequestMapping(value = "/confirmSlot")
     public HubResponse<?> confirmSlotInfo(@RequestBody ReturnSlotQueryDto queryDto) {
-        Long supplierId = queryDto.getSupplierId();
+        String supplierId = queryDto.getSupplierId();
         Long id = queryDto.getId();
         if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id) ){
             return  HubResponse.errorResp("传入参数不正确");

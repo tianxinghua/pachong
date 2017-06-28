@@ -15,12 +15,12 @@ public interface IReturnSlotService {
 
     List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto);
 
-    boolean ReceiveReturnSlot(Long supplierId,Long id,String userName);
+    boolean ReceiveReturnSlot(String supplierId,Long id,String userName);
 
-    ReturnSlotInfo getReceivedSlotInfo(Long supplierId, Long id);
+    ReturnSlotInfo getReceivedSlotInfo(String supplierId, Long id);
 
-    StudioSlotReturnDetailDto addProductFromScan(Long supplierId, Long id, Long spuId, String userName);
+    StudioSlotReturnDetailDto addProductFromScan(String supplierId, Long id, String spuNo, String userName);
 
-    ReturnSlotInfo confirmSlotInfo(Long supplierId, Long id);
+    ReturnSlotInfo confirmSlotInfo(String supplierId, Long id);
 
 }

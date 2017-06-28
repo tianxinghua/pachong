@@ -15,8 +15,8 @@ import java.io.Serializable;
 public class ReturnSlotQueryDto implements Serializable {
     private static final long serialVersionUID = 6762064994316701808L;
     private Long id;
-    private Long supplierId;
+    private String supplierId;
     private String supplierUser;
     private int arriveState;
-    private Long spuId;
+    private String spuNo;
 }
