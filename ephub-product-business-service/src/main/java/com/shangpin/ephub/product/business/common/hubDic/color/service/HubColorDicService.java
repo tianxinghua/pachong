@@ -88,6 +88,7 @@ public class HubColorDicService {
 		}
 		HubColorDicItemDto dto = new HubColorDicItemDto();
 		dto.setCreateTime(new Date());
+		dto.setUpdateTime(new Date());
 		dto.setCreateUser(ConstantProperty.DATA_CREATE_USER);
 		dto.setColorItemName(supplierColor);
 		dto.setPushState((byte)0);

@@ -56,7 +56,6 @@ public class EphubProductBusinessServiceApplicationTests {
 				HttpEntity<LinkedMultiValueMap<String,String>> req = new HttpEntity<LinkedMultiValueMap<String,String>>(map,headers);  
 				ResponseEntity<String> res=httpClient.postForEntity("http://192.168.20.121:8080/facade/json/com.shangpin.uaas.api/User/findMenusByAppCode",req,String.class)  ;
 				System.out.println(res.getBody());
-			
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

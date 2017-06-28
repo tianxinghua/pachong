@@ -187,7 +187,7 @@ public class HubPendingSpuHandleService {
 	private void checkIsExistPendingHanding(HubSpuPendingDto hubSpuPendingDto ){
 		HubSpuPendingDto hubSpuPendingDtoTemp = hubPendingSpuService.findHubSpuPendingBySpuModelAndBrandNoAndSpuState(hubSpuPendingDto.getSpuModel(),
 				hubSpuPendingDto.getHubBrandNo(),SpuState.INFO_IMPECCABLE.getIndex());	
-		if(hubSpuPendingDtoTemp!=null&&hubSpuPendingDtoTemp.getSpuState()!=null&&(hubSpuPendingDtoTemp.getSpuState()==SpuState.INFO_IMPECCABLE.getIndex()||hubSpuPendingDtoTemp.getSpuState()==SpuState.HANDLED.getIndex()||hubSpuPendingDtoTemp.getSpuState()==SpuState.HANDLING.getIndex())){
+		if(hubSpuPendingDtoTemp!=null){
 			convertExistHubSpuPendingToNewHubSpuPending(hubSpuPendingDto,hubSpuPendingDtoTemp);
 		}
 	}
@@ -195,8 +195,7 @@ public class HubPendingSpuHandleService {
 			HubSpuPendingDto hubSpuPendingDtoTemp) {
 		hubPendingSpuDto.setHubBrandNo(hubSpuPendingDtoTemp.getHubBrandNo());
 		hubPendingSpuDto.setHubCategoryNo(hubSpuPendingDtoTemp.getHubCategoryNo());
-		hubPendingSpuDto.setHubColor(hubSpuPendingDtoTemp.getHubColor());
-		hubPendingSpuDto.setHubColorNo(hubSpuPendingDtoTemp.getHubColorNo());
+		
 		hubPendingSpuDto.setHubGender(hubSpuPendingDtoTemp.getHubGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuPendingDtoTemp.getHubMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuPendingDtoTemp.getHubOrigin());
@@ -204,12 +203,17 @@ public class HubPendingSpuHandleService {
 		hubPendingSpuDto.setHubSpuNo(hubSpuPendingDtoTemp.getHubSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuPendingDtoTemp.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuPendingDtoTemp.getSpuName());
+		if(hubSpuPendingDtoTemp.getHubColor()!=null&&hubSpuPendingDtoTemp.getHubColor().equals(hubPendingSpuDto.getHubColor())){
+			hubPendingSpuDto.setHubColor(hubSpuPendingDtoTemp.getHubColor());
+			hubPendingSpuDto.setHubColorNo(hubSpuPendingDtoTemp.getHubColorNo());
+			hubPendingSpuDto.setSpuColorState((byte) 1);
+		}
 		hubPendingSpuDto.setSpuSeasonState((byte) 1);
 		hubPendingSpuDto.setCatgoryState((byte) 1);
 		hubPendingSpuDto.setMaterialState((byte) 1);
 		hubPendingSpuDto.setOriginState((byte) 1);
 		hubPendingSpuDto.setSpuBrandState((byte) 1);
-		hubPendingSpuDto.setSpuColorState((byte) 1);
+		
 		hubPendingSpuDto.setSpuGenderState((byte) 1);
 		hubPendingSpuDto.setSpuModelState((byte) 1);
 		hubPendingSpuDto.setHandleState(HandleState.PENDING_HANDING_EXIST.getIndex());
@@ -218,8 +222,7 @@ public class HubPendingSpuHandleService {
 	private void convertHubSpuToPendingSpu(HubSpuDto hubSpuDto,HubSpuPendingDto hubPendingSpuDto) {
 		hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
 		hubPendingSpuDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
-		hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
-		hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
+		
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
@@ -232,7 +235,11 @@ public class HubPendingSpuHandleService {
 		hubPendingSpuDto.setMaterialState((byte) 1);
 		hubPendingSpuDto.setOriginState((byte) 1);
 		hubPendingSpuDto.setSpuBrandState((byte) 1);
-		hubPendingSpuDto.setSpuColorState((byte) 1);
+		if(hubSpuDto.getHubColor()!=null&&hubSpuDto.getHubColor().equals(hubPendingSpuDto.getHubColor())){
+			hubPendingSpuDto.setSpuColorState((byte) 1);
+			hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
+			hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
+		}
 		hubPendingSpuDto.setSpuGenderState((byte) 1);
 		hubPendingSpuDto.setSpuModelState((byte) 1);
 //		hubPendingSpuDto.setPicState(PicState.HANDLED.getIndex());

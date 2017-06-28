@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.color.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.enumeration.HubColorDic;
 import com.shangpin.ephub.product.business.common.hubDic.color.service.HubColorDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
@@ -25,6 +29,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicRequestDto;
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicResponseDto;
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicResponseWithPageDto;
+import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +54,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HubSupplierColorDicController {
 	@Autowired
+	TaskImportService taskImportService;
+	@Autowired
 	HubColorDicService hubColorDicService;
 	@Autowired
 	HubSupplierSpuService hubSupplierSpuService;
@@ -62,7 +69,6 @@ public class HubSupplierColorDicController {
 		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
 			int total =0;
-			
 			
 			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
 				hubSupplierColorDicRequestDto.setColorDicId(HubColorDic.getHubColorId(hubSupplierColorDicRequestDto.getHubColor()));
@@ -207,6 +213,13 @@ public class HubSupplierColorDicController {
 					dicDto.setPushState((byte)1);
 					dicDto.setColorDicId(HubColorDic.getHubColorId(dto.getHubColor()));
 					hubColorDicService.updateSupplierColorById(dicDto);
+					Date date = new Date();
+					String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
+					taskImportService.saveTask(taskNo, "颜色映射:"+dto.getSupplierColor()+"=>"+dto.getHubColor(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+					dto.setRefreshDicType(InfoState.RefreshColor.getIndex());
+					taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
+//					shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
+					
 				}
 				return	HubResponse.successResp(null);
 			}

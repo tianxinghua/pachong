@@ -417,7 +417,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     	hubSpuPending.setAuditDate(new Date());
     	hubSpuPending.setAuditUser(auditUser);
     	hubSpuPending.setAuditOpinion(auditOpinion); 
-    	hubSpuPending.setUpdateUser(auditUser); 
     }
 
     private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {

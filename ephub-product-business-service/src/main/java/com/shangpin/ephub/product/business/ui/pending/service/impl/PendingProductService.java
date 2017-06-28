@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.pending.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -191,7 +192,7 @@ public class PendingProductService extends PendingSkuService{
                      		hubSkuPendingDto.setHubSkuSizeType("尺寸"); 
                      		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                      		if(null != hubSpuDto){
-                             	hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
+                             	hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                      		}else{
                      			hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());	
                      		}
@@ -212,7 +213,7 @@ public class PendingProductService extends PendingSkuService{
          					if(result.isPassing()){
          						if(null != hubSpuDto){
          							hubSkuPendingDto.setScreenSize(result.getSizeId()); 
-                                 	hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
+                                 	hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
          						}else{
@@ -254,12 +255,24 @@ public class PendingProductService extends PendingSkuService{
             if(0==pendingProductDto.getSupplierSpuId()){
                 pendingProductDto.setSupplierSpuId(null);
             }
+            if(null != hubSpuDto&&pendingProductDto!=null){
+            	if(pendingProductDto.getHubColor()!=null&&pendingProductDto.getHubColor().equals(hubSpuDto.getHubColor())){
+            		
+            	}else{
+            		pass = false;
+            		pendingProductDto.setUpdateTime(new Date());
+            		pendingProductDto.setAuditState((byte)0);
+            		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+            		pendingProductDto.setAuditDate(new Date());
+            		pendingProductDto.setAuditUser("chenxu");
+            	}
+            }
             if(pass &&isSkuPass&& null != hubSpuDto){
-            	HubPendingDto hubPendingDto = new HubPendingDto();
-                hubPendingDto.setHubSpuId(hubSpuDto.getSpuId());
-                hubPendingDto.setHubSpuPendingId(pendingProductDto.getSpuPendingId());
-                pendingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
-                pendingProductDto.setSpuState(SpuState.HANDLED.getIndex());
+//            	HubPendingDto hubPendingDto = new HubPendingDto();
+//                hubPendingDto.setHubSpuId(hubSpuDto.getSpuId());
+//                hubPendingDto.setHubSpuPendingId(pendingProductDto.getSpuPendingId());
+//                pendingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
+                pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }else if(pass&&isSkuPass){
             	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
@@ -527,7 +540,9 @@ public class PendingProductService extends PendingSkuService{
     private void convertHubSpuDtoToPendingSpu(HubSpuDto hubSpuDto,PendingProductDto hubPendingSpuDto){
     	hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
 		hubPendingSpuDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
-		hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
+		if(hubPendingSpuDto.getHubColor()!=null&&hubPendingSpuDto.getHubColor().equals(hubSpuDto.getHubColor())){
+			hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
+		}
 		hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
