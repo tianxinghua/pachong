@@ -34,11 +34,12 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      */
     public List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto){
         StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
+        //TODO:没有supplier
         StudioSlotReturnMasterCriteriaDto.Criteria  criteria = dto.createCriteria().andSendStateEqualTo((byte)1);
         if(StringUtils.isEmpty(queryDto.getArriveState())){
-            criteria.andSendStateEqualTo((byte)0);
+            criteria.andArriveStateEqualTo((byte)0);
         }else{
-            criteria.andSendStateEqualTo((byte)queryDto.getArriveState());
+            criteria.andArriveStateEqualTo((byte)queryDto.getArriveState());
         }
         return studioSlotReturnMasterGateWay.selectByCriteria(dto);
    }
@@ -50,7 +51,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param userName
      * @return
      */
-   public  boolean ReceiveReturnSlot(Long supplierId,Long id,String userName){
+   public  boolean ReceiveReturnSlot(String supplierId,Long id,String userName){
        StudioSlotReturnMasterDto dto = new StudioSlotReturnMasterDto();
        dto.setStudioSlotReturnMasterId(id);
        dto.setArriveUser(userName);
@@ -66,7 +67,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param id
      * @return
      */
-   public ReturnSlotInfo getReceivedSlotInfo(Long supplierId, Long id){
+   public ReturnSlotInfo getReceivedSlotInfo(String supplierId, Long id){
        ReturnSlotInfo result = new ReturnSlotInfo();
 
        StudioSlotReturnMasterDto studioSlot = studioSlotReturnMasterGateWay.selectByPrimaryKey(id);
@@ -91,14 +92,14 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      *
      * @param supplierId
      * @param id
-     * @param spuId
+     * @param spuNo
      * @param userName
      * @return
      */
-   public StudioSlotReturnDetailDto addProductFromScan(Long supplierId,Long id,Long spuId,String userName){
+   public StudioSlotReturnDetailDto addProductFromScan(String supplierId,Long id,String spuNo,String userName){
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
-       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andSupplierSpuIdEqualTo(spuId);
+       dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotReturnMasterIdEqualTo(id).andSlotSpuNoEqualTo(spuNo);
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
        StudioSlotReturnDetailDto returnDetailDto =null;
@@ -124,7 +125,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param id
      * @return
      */
-   public ReturnSlotInfo confirmSlotInfo(Long supplierId, Long id){
+   public ReturnSlotInfo confirmSlotInfo(String supplierId, Long id){
        ReturnSlotInfo result = new ReturnSlotInfo();
 
        StudioSlotReturnMasterDto studioSlot = studioSlotReturnMasterGateWay.selectByPrimaryKey(id);
