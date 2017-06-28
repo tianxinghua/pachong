@@ -17,6 +17,7 @@
     <result column="supplier_season_name" property="supplierSeasonName" jdbcType="VARCHAR" />
     <result column="send_state" property="sendState" jdbcType="TINYINT" />
     <result column="arrive_state" property="arriveState" jdbcType="TINYINT" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -92,8 +93,8 @@
       studio_slot_return_detail_id, studio_slot_return_master_id, slot_no, supplier_no, 
       supplier_id, spu_pending_id, supplier_spu_id, slot_spu_no, supplier_spu_name, supplier_spu_model, 
       supplier_brand_name, supplier_category_name, supplier_season_name, send_state, arrive_state, 
-      memo, create_time, create_user, send_user, send_time, arrive_user, arrive_time, update_time, 
-      update_user, data_state, version
+      barcode, memo, create_time, create_user, send_user, send_time, arrive_user, arrive_time, 
+      update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -118,7 +119,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_return_detail_id,studio_slot_return_master_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
+    studio_slot_return_detail_id,studio_slot_return_master_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,barcode,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
     from studio_slot_return_detail
     where studio_slot_return_detail_id = #{studioSlotReturnDetailId,jdbcType=BIGINT}
   </select>
@@ -133,34 +134,28 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnDetail" >
-    <selectKey keyColumn="studio_slot_return_detail_id" keyProperty="studioSlotReturnDetailId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_return_detail_id
-    </selectKey>
     insert into studio_slot_return_detail (studio_slot_return_detail_id, studio_slot_return_master_id, 
       slot_no, supplier_no, supplier_id, 
       spu_pending_id, supplier_spu_id, slot_spu_no, 
       supplier_spu_name, supplier_spu_model, supplier_brand_name, 
       supplier_category_name, supplier_season_name, 
-      send_state, arrive_state, memo, 
-      create_time, create_user, send_user, 
-      send_time, arrive_user, arrive_time, 
-      update_time, update_user, data_state, 
-      version)
+      send_state, arrive_state, barcode, 
+      memo, create_time, create_user, 
+      send_user, send_time, arrive_user, 
+      arrive_time, update_time, update_user, 
+      data_state, version)
     values (#{studioSlotReturnDetailId,jdbcType=BIGINT}, #{studioSlotReturnMasterId,jdbcType=BIGINT}, 
       #{slotNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
       #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, 
       #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierBrandName,jdbcType=VARCHAR}, 
       #{supplierCategoryName,jdbcType=VARCHAR}, #{supplierSeasonName,jdbcType=VARCHAR}, 
-      #{sendState,jdbcType=TINYINT}, #{arriveState,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{sendUser,jdbcType=VARCHAR}, 
-      #{sendTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, #{arriveTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{sendState,jdbcType=TINYINT}, #{arriveState,jdbcType=TINYINT}, #{barcode,jdbcType=VARCHAR}, 
+      #{memo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{sendUser,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, 
+      #{arriveTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnDetail" >
-    <selectKey keyColumn="studio_slot_return_detail_id" keyProperty="studioSlotReturnDetailId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_return_detail_id
-    </selectKey>
     insert into studio_slot_return_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotReturnDetailId != null" >
@@ -207,6 +202,9 @@
       </if>
       <if test="arriveState != null" >
         arrive_state,
+      </if>
+      <if test="barcode != null" >
+        barcode,
       </if>
       <if test="memo != null" >
         memo,
@@ -287,6 +285,9 @@
       </if>
       <if test="arriveState != null" >
         #{arriveState,jdbcType=TINYINT},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="memo != null" >
         #{memo,jdbcType=VARCHAR},
@@ -377,6 +378,9 @@
       <if test="record.arriveState != null" >
         arrive_state = #{record.arriveState,jdbcType=TINYINT},
       </if>
+      <if test="record.barcode != null" >
+        barcode = #{record.barcode,jdbcType=VARCHAR},
+      </if>
       <if test="record.memo != null" >
         memo = #{record.memo,jdbcType=VARCHAR},
       </if>
@@ -432,6 +436,7 @@
       supplier_season_name = #{record.supplierSeasonName,jdbcType=VARCHAR},
       send_state = #{record.sendState,jdbcType=TINYINT},
       arrive_state = #{record.arriveState,jdbcType=TINYINT},
+      barcode = #{record.barcode,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -492,6 +497,9 @@
       <if test="arriveState != null" >
         arrive_state = #{arriveState,jdbcType=TINYINT},
       </if>
+      <if test="barcode != null" >
+        barcode = #{barcode,jdbcType=VARCHAR},
+      </if>
       <if test="memo != null" >
         memo = #{memo,jdbcType=VARCHAR},
       </if>
@@ -544,6 +552,7 @@
       supplier_season_name = #{supplierSeasonName,jdbcType=VARCHAR},
       send_state = #{sendState,jdbcType=TINYINT},
       arrive_state = #{arriveState,jdbcType=TINYINT},
+      barcode = #{barcode,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},

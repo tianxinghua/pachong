@@ -420,6 +420,66 @@ public class StudioSlotReturnMasterCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andStudioIdIsNull() {
+            addCriterion("studio_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdIsNotNull() {
+            addCriterion("studio_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdEqualTo(Long value) {
+            addCriterion("studio_id =", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdNotEqualTo(Long value) {
+            addCriterion("studio_id <>", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdGreaterThan(Long value) {
+            addCriterion("studio_id >", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_id >=", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdLessThan(Long value) {
+            addCriterion("studio_id <", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_id <=", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdIn(List<Long> values) {
+            addCriterion("studio_id in", values, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdNotIn(List<Long> values) {
+            addCriterion("studio_id not in", values, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdBetween(Long value1, Long value2) {
+            addCriterion("studio_id between", value1, value2, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_id not between", value1, value2, "studioId");
+            return (Criteria) this;
+        }
+
         public Criteria andQuantityIsNull() {
             addCriterion("quantity is null");
             return (Criteria) this;

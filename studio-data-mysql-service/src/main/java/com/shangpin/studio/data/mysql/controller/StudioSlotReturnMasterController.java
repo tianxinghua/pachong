@@ -8,6 +8,7 @@ import com.shangpin.studio.data.mysql.po.StudioSlotReturnMasterCriteria;
 import com.shangpin.studio.data.mysql.service.StudioSlotReturnMasterService;
 import com.shangpin.studio.data.mysql.service.StudioSlotSpuSendDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,8 +56,8 @@ public class StudioSlotReturnMasterController {
     public List<StudioSlotReturnMaster> selectByCriteria(@RequestBody StudioSlotReturnMasterCriteria criteria){
     	return service.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public StudioSlotReturnMaster selectByPrimaryKey(Long id){
+	@RequestMapping(value = "/select-by-primary-key/{id}")
+    public StudioSlotReturnMaster selectByPrimaryKey(@PathVariable(value = "id")Long id){
     	return service.selectByPrimaryKey(id);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

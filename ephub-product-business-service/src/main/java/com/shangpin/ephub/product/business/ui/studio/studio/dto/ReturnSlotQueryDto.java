@@ -19,4 +19,5 @@ public class ReturnSlotQueryDto implements Serializable {
     private String supplierUser;
     private int arriveState;
     private String spuNo;
+    private String barcode;
 }
