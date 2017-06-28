@@ -39,4 +39,8 @@ public class Product {
 	 * 货号
 	 */
 	private String pvr_model;
+	/**
+	 * 产地
+	 */
+	private String origin;
 }
