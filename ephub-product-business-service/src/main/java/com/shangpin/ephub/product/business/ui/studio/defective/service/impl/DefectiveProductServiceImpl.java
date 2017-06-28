@@ -53,9 +53,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	
 
 	@Override
-	public DefectiveProductVo list(DefectiveQuery defectiveQuery) {
+	public List<DefectiveProductVo> list(DefectiveQuery defectiveQuery) {
 		try {
-			DefectiveProductVo product = new DefectiveProductVo();
+			List<DefectiveProductVo> products = new ArrayList<DefectiveProductVo>();
 			List<StudioSlotDto> studioSlots = findStudioSlot(defectiveQuery.getStudioNo());
 			if(CollectionUtils.isNotEmpty(studioSlots)){
 				List<String> slotNos = new ArrayList<String>();
@@ -70,13 +70,47 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 				}
 				criteria.createCriteria().andSlotNoIn(slotNos);
 				List<StudioSlotDefectiveSpuDto> list = defectiveSpuGateWay.selectByCriteria(criteria );
-				product.setDefectiveSpus(list); 
+				if(CollectionUtils.isNotEmpty(list)){
+					for(StudioSlotDefectiveSpuDto dto : list){
+						StudioSlotSpuSendDetailDto detailDto =  findDetail(dto.getSlotNo(),dto.getSlotSpuNo());
+						if(null != detailDto){
+							DefectiveProductVo vo = convertDto(dto, detailDto); 
+							products.add(vo);
+						}
+					}
+				}
+				
 			}
-			return product;
+			return products;
 		} catch (Exception e) {
 			log.error("查询残次品列表失败："+e.getMessage(),e); 
 		}
 		return null;
+	}
+	private DefectiveProductVo convertDto(StudioSlotDefectiveSpuDto dto, StudioSlotSpuSendDetailDto detailDto) {
+		DefectiveProductVo vo =  new DefectiveProductVo();
+		vo.setBrand(detailDto.getSupplierBrandName());
+		vo.setItemCode(detailDto.getSupplierSpuModel());
+		vo.setItemName(detailDto.getSupplierSpuName());
+		vo.setStudioCode(detailDto.getSlotNo()+"-"+detailDto.getSlotSpuNo());
+		vo.setStudioSlotDefectiveSpuId(dto.getStudioSlotDefectiveSpuId());
+		return vo;
+	}
+	/**
+	 * 查详情页
+	 * @param slotNo
+	 * @param slotSpuNo
+	 * @return
+	 */
+	private StudioSlotSpuSendDetailDto findDetail(String slotNo, String slotSpuNo){
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo);
+		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
 	}
 	
 	private List<StudioSlotDto> findStudioSlot(String studioNo ) throws Exception{

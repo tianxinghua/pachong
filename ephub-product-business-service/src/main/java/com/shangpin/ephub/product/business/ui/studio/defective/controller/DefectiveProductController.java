@@ -40,7 +40,7 @@ public class DefectiveProductController {
 	
 	@RequestMapping(value="/list",method = RequestMethod.POST)
 	public HubResponse<?> list(@RequestBody DefectiveQuery defectiveQuery){
-		DefectiveProductVo productVo = defectiveProductService.list(defectiveQuery);
+		List<DefectiveProductVo> productVo = defectiveProductService.list(defectiveQuery);
 		if(null != productVo){
 			return HubResponse.successResp(productVo);
 		}else{

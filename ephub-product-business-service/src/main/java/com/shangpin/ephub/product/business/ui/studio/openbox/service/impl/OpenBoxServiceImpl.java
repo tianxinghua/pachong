@@ -78,38 +78,11 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	@Override
 	public OpenBoxDetailVo slotDetail(String slotNo) {
 		OpenBoxDetailVo openBoxDetailVo = new OpenBoxDetailVo();
-		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setOrderByClause("create_time");
-		criteria.setPageNo(1);
-		criteria.setPageSize(1000); 
-		criteria.createCriteria().andSlotNoEqualTo(slotNo);
-		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
-		if(CollectionUtils.isNotEmpty(list)){
-			List<StudioSlotSpuSendDetailVo> details = new ArrayList<StudioSlotSpuSendDetailVo>();
-			for(StudioSlotSpuSendDetailDto dto : list){
-				StudioSlotSpuSendDetailVo vo = convertDto(dto);
-				details.add(vo);
-			}
-			openBoxDetailVo.setDetails(details);
-		}
+		List<StudioSlotSpuSendDetailVo> list = operationService.slotDetail(slotNo);
+		openBoxDetailVo.setDetails(list); 
 		return openBoxDetailVo; 
 	}
-	/**
-	 * 转换
-	 * @param dto
-	 * @return
-	 */
-	private StudioSlotSpuSendDetailVo convertDto(StudioSlotSpuSendDetailDto dto) {
-		StudioSlotSpuSendDetailVo vo = new StudioSlotSpuSendDetailVo();
-		vo.setArriveState(dto.getArriveState());
-		vo.setBrand(dto.getSupplierBrandName());
-		vo.setItemCode(dto.getSupplierSpuModel());
-		vo.setItemName(dto.getSupplierSpuName());
-		vo.setOperator(dto.getUpdateUser());
-		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
-		vo.setTime(dto.getCreateTime());
-		return vo;
-	}
+	
 	@Override
 	public boolean slotDetailCheck(String slotNoSpuId) {
 		try {
@@ -164,6 +137,23 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			log.info("确认批次时异常："+e.getMessage(),e); 
 		}
 		return null;
+	}
+	
+	/**
+	 * 转换
+	 * @param dto
+	 * @return
+	 */
+	private StudioSlotSpuSendDetailVo convertDto(StudioSlotSpuSendDetailDto dto) {
+		StudioSlotSpuSendDetailVo vo = new StudioSlotSpuSendDetailVo();
+		vo.setArriveState(dto.getArriveState());
+		vo.setBrand(dto.getSupplierBrandName());
+		vo.setItemCode(dto.getSupplierSpuModel());
+		vo.setItemName(dto.getSupplierSpuName());
+		vo.setOperator(dto.getUpdateUser());
+		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+		vo.setTime(dto.getCreateTime());
+		return vo;
 	}
 
 }

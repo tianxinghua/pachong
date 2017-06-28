@@ -13,6 +13,7 @@ import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioS
  * @date 2017年6月26日 下午4:27:12
  *
  */
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
 public interface OperationService {
 	/**
 	 * Studio Operation页面查询列表
@@ -32,5 +33,11 @@ public interface OperationService {
 	 * @return 转换后的StudioSlotVo对象
 	 */
 	public StudioSlotVo formatDto(StudioSlotDto studioSlotDto);
+	/**
+	 * 根据批次号查询该批次下的所有产品详情
+	 * @param slotNo
+	 * @return
+	 */
+	public List<StudioSlotSpuSendDetailVo> slotDetail(String slotNo);
 
 }
