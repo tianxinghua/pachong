@@ -36,7 +36,8 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
     public List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto){
         StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
         //TODO:没有supplier
-        StudioSlotReturnMasterCriteriaDto.Criteria  criteria = dto.createCriteria().andSendStateEqualTo((byte)1);
+        StudioSlotReturnMasterCriteriaDto.Criteria  criteria = dto.createCriteria()
+                .andSupplierIdEqualTo(queryDto.getSupplierId()).andSendStateEqualTo((byte)1);
         if(StringUtils.isEmpty(queryDto.getArriveState())){
             criteria.andArriveStateEqualTo((byte)0);
         }else{
@@ -80,7 +81,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        result.setTrackNo(studioSlot.getTrackNo());
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
-       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id);
+       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
        result.setDetailDtoList(detailDtoList);
@@ -90,19 +91,19 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
    }
 
     /**
-     *
+     * 扫描 拣货
      * @param supplierId
      * @param id
-     * @param spuNo
+     * @param barcode
      * @param userName
      * @return
      */
-   public HubResponse<StudioSlotReturnDetailDto> addProductFromScan(String supplierId,Long id,String spuNo,String userName){
+   public HubResponse<StudioSlotReturnDetailDto> addProductFromScan(String supplierId,Long id,String barcode,String userName){
 
        HubResponse<StudioSlotReturnDetailDto> result = new HubResponse<StudioSlotReturnDetailDto>();
        result.setCode("0");
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
-       dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotReturnMasterIdEqualTo(id).andSlotSpuNoEqualTo(spuNo);
+       dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotReturnMasterIdEqualTo(id).andBarcodeEqualTo(barcode);
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
        StudioSlotReturnDetailDto returnDetailDto =null;
@@ -124,8 +125,11 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
                    returnDetailDto.setArriveState(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
                }
            }
+           result.setContent(returnDetailDto);
+       }else {
+           result.setCode("1");
+           result.setMsg("Product information does not exist!");
        }
-       result.setContent(returnDetailDto);
        return result;
    }
 

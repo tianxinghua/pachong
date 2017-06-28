@@ -86,12 +86,12 @@ public class ReturnSlotController {
     public HubResponse<?> addProductFromScan(@RequestBody ReturnSlotQueryDto queryDto) {
         String supplierId = queryDto.getSupplierId();
         Long id = queryDto.getId();
-        String spuNo = queryDto.getSpuNo();
-        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id)||StringUtils.isEmpty(spuNo) ){
+        String barcode = queryDto.getBarcode();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id)||StringUtils.isEmpty(barcode) ){
             return  HubResponse.errorResp("传入参数不正确");
         }
 
-        return iReturnSlotService.addProductFromScan(supplierId, id,spuNo,queryDto.getSupplierUser());
+        return iReturnSlotService.addProductFromScan(supplierId, id,barcode,queryDto.getSupplierUser());
     }
     /**
      * 拣货结果确认
