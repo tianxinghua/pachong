@@ -201,6 +201,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(String studioSlotDefectiveSpuId) {
 		StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
 		criteria.setOrderByClause("create_time"); 
+		criteria.setFields("sp_pic_url"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		criteria.createCriteria().andStudioSlotDefectiveSpuIdEqualTo(Long.valueOf(studioSlotDefectiveSpuId)).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
