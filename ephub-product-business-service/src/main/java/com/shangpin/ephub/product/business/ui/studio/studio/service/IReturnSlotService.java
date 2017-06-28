@@ -19,7 +19,7 @@ public interface IReturnSlotService {
 
     ReturnSlotInfo getReceivedSlotInfo(String supplierId, Long id);
 
-    StudioSlotReturnDetailDto addProductFromScan(String supplierId, Long id, String spuNo, String userName);
+    HubResponse<StudioSlotReturnDetailDto> addProductFromScan(String supplierId, Long id, String barcode, String userName);
 
     ReturnSlotInfo confirmSlotInfo(String supplierId, Long id);
 

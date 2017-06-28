@@ -1,7 +1,10 @@
 package com.shangpin.ephub.product.business.ui.studio.imageupload.service;
 
 import java.util.List;
+import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
@@ -28,4 +31,27 @@ public interface ImageUploadService {
 	 * @return
 	 */
 	public List<StudioSlotSpuSendDetailVo> slotDetail(String slotNo);
+	/**
+	 * 判断spPics是否已存在数据库
+	 * @param spPics
+	 * @return
+	 */
+	public Map<String,String> hasSlotSpuPic(List<String> spPics);
+	/**
+	 * 插入hub_slot_spu_pic
+	 * @param slotSpuNo slotspu编号
+	 * @param spPicUrl 尚品图片编号
+	 * @param spuDto 
+	 * @param supplierDto
+	 * @param extension 扩展名
+	 * @return
+	 */
+	public boolean insertSlotSpuPic(String slotSpuNo, String spPicUrl, HubSlotSpuDto spuDto,
+			HubSlotSpuSupplierDto supplierDto, String extension);
+	/**
+	 * 删除图片
+	 * @param spPicUrl
+	 * @return
+	 */
+	public boolean deleteSlotSpuPic(String spPicUrl);
 }

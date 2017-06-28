@@ -1,10 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.slot.service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.SimpleFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

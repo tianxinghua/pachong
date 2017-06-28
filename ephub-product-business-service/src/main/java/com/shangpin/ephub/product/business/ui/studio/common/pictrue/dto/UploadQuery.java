@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.defective.dto;
+package com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto;
 
 import java.util.List;
 
