@@ -249,21 +249,29 @@ public class PriceService {
 	}
 	/**
 	 * 发送消息
-	 * @param retryPrice
+	 * @param productPriceDto
 	 */
 
-	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO retryPrice) throws Exception{
+	public void sendMessageToPriceConsumer(Long supplierPriceChangeRecordId, ProductPriceDTO productPriceDto) throws Exception{
 		try {
-			retryPrice.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId); 
-			log.info("【推送供价消息体："+JsonUtil.serialize(retryPrice)+"】"); 
-			priceMqGateWay.transPrice(retryPrice);
-			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
+			BigDecimal threshold = new BigDecimal("10.00");
+			String marketPriceStr = productPriceDto.getMarketPrice();
+			if(!StringUtils.isEmpty(marketPriceStr)){
+				BigDecimal marketPrice = new BigDecimal(marketPriceStr);
+				if(marketPrice.compareTo(threshold) == 1){
+					productPriceDto.setSupplierPriceChangeRecordId(supplierPriceChangeRecordId); 
+					log.info("【推送供价消息体："+JsonUtil.serialize(productPriceDto)+"】"); 
+					priceMqGateWay.transPrice(productPriceDto);
+					updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED);
+				}
+			}
+			
 		} catch (Exception e) {
 			updateState(supplierPriceChangeRecordId,PriceHandleState.PUSHED_ERROR);
-			log.error("【推送失败的消息是："+JsonUtil.serialize(retryPrice)+"】");
+			log.error("【推送失败的消息是："+JsonUtil.serialize(productPriceDto)+"】");
 			String text = "供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage()
 			+"<br>"
-			+"【推送失败的消息是："+JsonUtil.serialize(retryPrice)+"】"; 
+			+"【推送失败的消息是："+JsonUtil.serialize(productPriceDto)+"】"; 
 //			sendMail("供价记录推送消息队列失败",text);
 			throw new Exception("供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage());
 		}
