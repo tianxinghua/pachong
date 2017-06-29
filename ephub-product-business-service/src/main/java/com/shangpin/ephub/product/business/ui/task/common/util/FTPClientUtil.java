@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,23 +25,24 @@ public class FTPClientUtil {
 	private static String userName;
 	private static String password;
 	private static String ftpHubPatht;
-	
+
 	@PostConstruct
-	public void init(){
+	public void init() {
 		host = ftpProperties.getHost();
 		port = ftpProperties.getPort();
 		userName = ftpProperties.getUserName();
 		password = ftpProperties.getPassword();
 		ftpHubPatht = ftpProperties.getFtpHubPath();
 	}
+
 	/**
 	 * 
 	 * @param file
 	 *            上传的文件
 	 * @throws Exception
 	 */
-	public static String uploadFile(byte[] data,String fileName) throws Exception {
-		
+	public static String uploadFile(byte[] data, String fileName) throws Exception {
+
 		FTPClient ftp = new FTPClient();
 		int reply;
 		ftp.connect(host, Integer.parseInt(port));
@@ -52,16 +54,17 @@ public class FTPClientUtil {
 		}
 		InputStream sbs = new ByteArrayInputStream(data);
 		boolean flag = ftp.changeWorkingDirectory(ftpHubPatht);
-		if(!flag){
-			 ftp.makeDirectory(ftpHubPatht);
-			 ftp.changeWorkingDirectory(ftpHubPatht);
+		if (!flag) {
+			ftp.makeDirectory(ftpHubPatht);
+			ftp.changeWorkingDirectory(ftpHubPatht);
 		}
 		ftp.storeFile(fileName, sbs);
 		ftp.disconnect();
 		return ftpHubPatht;
 	}
-	public static InputStream downFile(String remotePath) throws Exception{
-		
+
+	public static InputStream downFile(String remotePath) throws Exception {
+
 		FTPClient ftp = new FTPClient();
 		int reply;
 		ftp.connect(host, Integer.parseInt(port));
@@ -71,15 +74,30 @@ public class FTPClientUtil {
 		if (!FTPReply.isPositiveCompletion(reply)) {
 			ftp.disconnect();
 		}
-		
-    	InputStream in = null;
-		if(null != ftp){
-	        if(StringUtils.isNotBlank(remotePath)){
-	        	in = ftp.retrieveFileStream(remotePath);
-	        	ftp.quit();
-	        }
+
+		InputStream in = null;
+		if (null != ftp) {
+			if (StringUtils.isNotBlank(remotePath)) {
+				in = ftp.retrieveFileStream(remotePath);
+				ftp.quit();
+			}
 		}
 		return in;
 	}
-	
+
+	public static FTPFile[] getFiles(String pathName) throws Exception {
+		FTPClient ftp = new FTPClient();
+		int reply;
+		ftp.connect(host, Integer.parseInt(port));
+		ftp.login(userName, password);
+		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+		reply = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftp.disconnect();
+		}
+		ftp.changeWorkingDirectory(pathName);
+		FTPFile[] files = ftp.listFiles();
+		return files;
+	}
+
 }

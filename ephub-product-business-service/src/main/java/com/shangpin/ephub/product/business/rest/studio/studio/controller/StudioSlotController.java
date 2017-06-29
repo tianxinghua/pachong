@@ -1,11 +1,18 @@
 package com.shangpin.ephub.product.business.rest.studio.studio.controller;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +27,8 @@ import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicC
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicSlotService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioSlotService;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
+import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +50,8 @@ public class StudioSlotController {
 	StudioSlotService studioSlotService;
 	@Autowired
 	StudioDicSlotService studioDicSlotService;
+	@Autowired
+	private PictureService pictureService;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy/MM/dd");
 
@@ -128,6 +139,44 @@ public class StudioSlotController {
 			return true;
 		} catch (Exception e) {
 			log.error("checkStudioSlot处理发生异常：{}", e);
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@RequestMapping(value = "/downloadImage")
+	public boolean downLoadImageByFtp() {
+		try {
+			String pathName=new String("ftpLoad/");
+			FTPFile[] files = FTPClientUtil.getFiles(pathName);
+			List<String> lists = new ArrayList<String>();
+			for (FTPFile file : files) {
+				try {
+					String fileName = file.getName();
+					//拼接下载地址 studioSlot/05(几号)/图片名称
+					String downLoadAddress = "ftpLoad/"+fileName;
+					InputStream in = FTPClientUtil.downFile(downLoadAddress);
+					
+					ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
+					byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
+					int rc = 0; 
+					while ((rc = in.read(buff, 0, 100)) > 0) { 
+					swapStream.write(buff, 0, rc); 
+					} 
+					byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
+					String extension = pictureService.getExtension(fileName);
+					String fdfsURL = pictureService.uploadPic(in_b, extension);
+					lists.add(fdfsURL);
+					in.close();
+				} catch (Exception e) {
+					log.error(file.getName()+"图片上传发生异常：{}", e);
+					e.printStackTrace();
+				}
+		}
+			
+			return true;
+		} catch (Exception e) {
+			log.error("downImgByFtp处理发生异常：{}", e);
 			e.printStackTrace();
 		}
 		return false;
