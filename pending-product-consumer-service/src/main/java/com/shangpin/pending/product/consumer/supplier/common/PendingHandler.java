@@ -90,10 +90,10 @@ public class PendingHandler extends VariableInit {
 			}else if (spuStatus == InfoState.RefreshCategory.getIndex()) {
 				//刷新品类
 				refreshPendingCategory(message.getData(),tmp);
-			}else if (spuStatus == InfoState.RefreshCategory.getIndex()) {
+			}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
 				//刷新颜色
 				refreshHubColor(message.getData(),tmp);
-			}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
+			}else if (spuStatus == InfoState.RefreshSize.getIndex()) {
 				//刷新尺码
 				refreshHubSize(message.getSupplierId(),message.getData(),tmp);
 			}else{
@@ -125,29 +125,33 @@ public class PendingHandler extends VariableInit {
 		}
 	}
 	//刷新品类
-		private void refreshPendingCategory(PendingSpu spu,HubSpuPendingDto spuPendingDto) throws Exception{
+		private void refreshPendingCategory(PendingSpu spu,HubSpuPendingDto existSpuPendingDto) throws Exception{
 			
-			if(null != spuPendingDto&&checkSpuPendingIsRefresh(spuPendingDto)){
+			if(null != existSpuPendingDto&&checkSpuPendingIsRefresh(existSpuPendingDto)){
 				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 				// 获取品类
 				pendingCommonHandler.getCategoryMap(spu, updateSpuPending);
-				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
-				log.info("===供应商spuPendingId:"+spuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+spuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
+				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
+				log.info("===供应商spuPendingId:"+existSpuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+existSpuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
 			}else{
 				saveAndRefreshPending(spu);
 			}
 		}
 
-	private void refreshHubColor(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception{
-		if(null != existSpuPendingDto&&checkSpuPendingIsRefresh(existSpuPendingDto)){
+	private void refreshHubColor(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
+		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
 			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 			// 获取品类
-			pendingCommonHandler.getColorMap(spuPendingDto, updateSpuPending);
-			dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
-			log.info("===供应商spuPendingId:"+spuPendingDto.getSpuPendingId()+"映射hub颜色刷新:"+spuPendingDto.getHubColor()+"==>"+updateSpuPending.getHubColor());
-		}else{
-//			saveAndRefreshPending(spuPendingDto);
-		}
+			Map<String, String> supplierColor = pendingCommonHandler.getSupplierColorMap();
+			if (supplierColor != null && spuPendingDto.getHubColor() != null
+					&& supplierColor.containsKey(spuPendingDto.getHubColor().toUpperCase())) {
+				updateSpuPending.setHubColor(supplierColor.get(spuPendingDto.getHubColor().toUpperCase()));
+				updateSpuPending.setSpuColorState((byte) 1);
+				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
+				log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub颜色刷新:"
+						+ existSpuPendingDto.getHubColor() + "==>" + updateSpuPending.getHubColor());
+			}
+		} 
 	}
 
 	private boolean commonSize(String supplierId,PendingSku supplierSku,HubSkuPendingDto updateSkuPending){

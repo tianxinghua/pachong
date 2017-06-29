@@ -47,7 +47,8 @@ public class ConstantProperty {
    public static int  REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_TIME = 60;
    //  -------------------  尺码end
    
-   public static String REDIS_EPHUB_COLOR_MAPPING_MAP_SUPPLIER_KEY;
+   public static String REDIS_EPHUB_HUB_COLOR_MAPPING_MAP_KEY = "REDIS_EPHUB_HUB_COLOR_MAPPING_MAP_KEY";
+   public static String REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY = "REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY";
 
    //品类下保留的所有的品牌
    public static String REDIS_EPHUB_CATEGORY_BRNAD_MAPPING_MAP_KEY="REDIS_EPHUB_CATEGORY_BRAND_MAPPING_MAP_KEY";

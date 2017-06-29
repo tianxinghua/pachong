@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.supplier.product.consumer.service.SupplierProductRetryService;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.supplier.product.consumer.refreshDic.service.SupplierProductRetryService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,10 +23,10 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0/30 * * * * ?")
+	@Scheduled(cron = "0/15 * * * * ?")
 	public void pictureTask() {
 		try {
-			supplierProductPictureService.processProduct((byte)4);
+			supplierProductPictureService.processProduct(InfoState.RefreshColor.getIndex());
 		} catch (Throwable e) {
 			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
 			e.printStackTrace();
@@ -36,16 +37,6 @@ public class Scheduler {
 	public void modelTask() {
 		try {
 			supplierProductPictureService.processProduct((byte)5);
-		} catch (Throwable e) {
-			log.info("=======系统扫描同款需要重新推送的数据事件发生异常======",e);
-			e.printStackTrace();
-		}
-	}
-	
-//	@Scheduled(cron = "0/30 * * * * ?")
-	public void smodelTask() {
-		try {
-			supplierProductPictureService.processProduct((byte)6);
 		} catch (Throwable e) {
 			log.info("=======系统扫描同款需要重新推送的数据事件发生异常======",e);
 			e.printStackTrace();
