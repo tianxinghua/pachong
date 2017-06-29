@@ -6,14 +6,17 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadPic;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -33,6 +36,16 @@ public class PicUploadController {
 	
 	@Autowired
 	private PictureService pictureService;
+	
+	@RequestMapping(value="/upload-pic",method = RequestMethod.POST)
+	public HubResponse<?> upload(@RequestBody UploadPic uploadPic){
+		List<String> list = pictureService.uploadPic(uploadPic);
+		if(CollectionUtils.isNotEmpty(list)){
+			return HubResponse.successResp(list);
+		}else{
+			return HubResponse.errorResp("上传失败");
+		}
+	}
 
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
 	public HubResponse<?> upload(HttpServletRequest request){
