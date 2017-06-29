@@ -95,5 +95,13 @@ public interface HubSlotSpuSupplierService {
      * @throws Exception
      */
     public boolean updateSlotSpuSupplierStateWhenModifyHubData(List<HubSlotSpuSupplierDto> slotSpuSupplierDtos,HubSlotSpuDto slotSpuDto)  throws Exception;
+    
+    /**
+     * 根据 slotNo查询 hub_slot_spu_supplier
+     * @param slotNo
+     * @return
+     */
+    public List<HubSlotSpuSupplierDto> getSlotSpuSupplierBySlotNo(String slotNo);
+
 
 }
