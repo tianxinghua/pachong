@@ -87,4 +87,16 @@ public class PendingSpuImportTaskController {
 	        return HubResponse.successResp(null);
 	}
 	
+	@RequestMapping(value = "/import-slot-spu",method = RequestMethod.POST)
+	public HubResponse<?> importSlotSpu(@RequestBody HubImportTaskRequestDto dto){
+		try {
+			log.info("带拍照上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.IMPORT_SLOT_SPU);
+		} catch (Exception e) {
+			log.error("带拍照上传文件失败",e);
+			e.printStackTrace();
+			return HubResponse.errorResp("带拍照上传文件失败，请重新上传");
+		}
+	}
+	
 }
