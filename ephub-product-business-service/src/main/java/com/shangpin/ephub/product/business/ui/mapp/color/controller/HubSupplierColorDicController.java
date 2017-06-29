@@ -155,7 +155,6 @@ public class HubSupplierColorDicController {
 			}else{
 				return HubResponse.successResp(null);
 			}
-			
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
@@ -170,7 +169,6 @@ public class HubSupplierColorDicController {
 	 */
 	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse save(@RequestBody HubSupplierColorDicRequestDto dto) {
-
 		try {
 			log.info("颜色保存参数：{}",dto);
 			HubColorDicItemDto dicDto = new HubColorDicItemDto();

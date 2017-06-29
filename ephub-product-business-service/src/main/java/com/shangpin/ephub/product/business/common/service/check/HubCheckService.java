@@ -107,7 +107,7 @@ public class HubCheckService {
 			brandModelDto.setBrandMode(spuModel);
 			brandModelDto.setHubBrandNo(hubBrandNo);
 			brandModelDto.setHubCategoryNo(hubCategoryNo);
-			BrandModelResult brandModelResult=  HubBrandModelRuleService.verify(brandModelDto);
+			BrandModelResult brandModelResult=  HubBrandModelRuleService.verifyWithCategory(brandModelDto);
 			if(brandModelResult.isPassing()){
 				model = brandModelResult.getBrandMode();
 			}
