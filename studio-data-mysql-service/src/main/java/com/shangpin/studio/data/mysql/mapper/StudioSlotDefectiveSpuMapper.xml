@@ -3,6 +3,8 @@
 <mapper namespace="com.shangpin.studio.data.mysql.mapper.StudioSlotDefectiveSpuMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
     <id column="studio_slot_defective_spu_id" property="studioSlotDefectiveSpuId" jdbcType="BIGINT" />
+    <result column="detail_id" property="detailId" jdbcType="BIGINT" />
+    <result column="detail_from" property="detailFrom" jdbcType="TINYINT" />
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
@@ -77,9 +79,9 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_slot_defective_spu_id, slot_no, supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, slot_spu_no, memo, create_user, create_time, update_time, update_user, 
-      data_state, version
+      studio_slot_defective_spu_id, detail_id, detail_from, slot_no, supplier_no, supplier_id, 
+      spu_pending_id, supplier_spu_id, slot_spu_no, memo, create_user, create_time, update_time, 
+      update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -104,7 +106,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_defective_spu_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,memo,create_user,create_time,update_time,update_user,data_state,version
+    studio_slot_defective_spu_id,detail_id,detail_from,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,memo,create_user,create_time,update_time,update_user,data_state,version
     from studio_slot_defective_spu
     where studio_slot_defective_spu_id = #{studioSlotDefectiveSpuId,jdbcType=BIGINT}
   </select>
@@ -119,30 +121,30 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    <selectKey keyColumn="studio_slot_defective_spu_id" keyProperty="studioSlotDefectiveSpuId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_defective_spu_id
-    </selectKey>
-    insert into studio_slot_defective_spu (studio_slot_defective_spu_id, slot_no, 
-      supplier_no, supplier_id, spu_pending_id, 
-      supplier_spu_id, slot_spu_no, memo, 
-      create_user, create_time, update_time, 
-      update_user, data_state, version
-      )
-    values (#{studioSlotDefectiveSpuId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
-      #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, 
-      #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+    insert into studio_slot_defective_spu (studio_slot_defective_spu_id, detail_id, 
+      detail_from, slot_no, supplier_no, 
+      supplier_id, spu_pending_id, supplier_spu_id, 
+      slot_spu_no, memo, create_user, 
+      create_time, update_time, update_user, 
+      data_state, version)
+    values (#{studioSlotDefectiveSpuId,jdbcType=BIGINT}, #{detailId,jdbcType=BIGINT}, 
+      #{detailFrom,jdbcType=TINYINT}, #{slotNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{supplierId,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, 
+      #{slotSpuNo,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
-    <selectKey keyColumn="studio_slot_defective_spu_id" keyProperty="studioSlotDefectiveSpuId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS studio_slot_defective_spu_id
-    </selectKey>
     insert into studio_slot_defective_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotDefectiveSpuId != null" >
         studio_slot_defective_spu_id,
+      </if>
+      <if test="detailId != null" >
+        detail_id,
+      </if>
+      <if test="detailFrom != null" >
+        detail_from,
       </if>
       <if test="slotNo != null" >
         slot_no,
@@ -187,6 +189,12 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="studioSlotDefectiveSpuId != null" >
         #{studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="detailId != null" >
+        #{detailId,jdbcType=BIGINT},
+      </if>
+      <if test="detailFrom != null" >
+        #{detailFrom,jdbcType=TINYINT},
       </if>
       <if test="slotNo != null" >
         #{slotNo,jdbcType=VARCHAR},
@@ -241,6 +249,12 @@
       <if test="record.studioSlotDefectiveSpuId != null" >
         studio_slot_defective_spu_id = #{record.studioSlotDefectiveSpuId,jdbcType=BIGINT},
       </if>
+      <if test="record.detailId != null" >
+        detail_id = #{record.detailId,jdbcType=BIGINT},
+      </if>
+      <if test="record.detailFrom != null" >
+        detail_from = #{record.detailFrom,jdbcType=TINYINT},
+      </if>
       <if test="record.slotNo != null" >
         slot_no = #{record.slotNo,jdbcType=VARCHAR},
       </if>
@@ -288,6 +302,8 @@
   <update id="updateByExample" parameterType="map" >
     update studio_slot_defective_spu
     set studio_slot_defective_spu_id = #{record.studioSlotDefectiveSpuId,jdbcType=BIGINT},
+      detail_id = #{record.detailId,jdbcType=BIGINT},
+      detail_from = #{record.detailFrom,jdbcType=TINYINT},
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
@@ -308,6 +324,12 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
     update studio_slot_defective_spu
     <set >
+      <if test="detailId != null" >
+        detail_id = #{detailId,jdbcType=BIGINT},
+      </if>
+      <if test="detailFrom != null" >
+        detail_from = #{detailFrom,jdbcType=TINYINT},
+      </if>
       <if test="slotNo != null" >
         slot_no = #{slotNo,jdbcType=VARCHAR},
       </if>
@@ -352,7 +374,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
     update studio_slot_defective_spu
-    set slot_no = #{slotNo,jdbcType=VARCHAR},
+    set detail_id = #{detailId,jdbcType=BIGINT},
+      detail_from = #{detailFrom,jdbcType=TINYINT},
+      slot_no = #{slotNo,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
