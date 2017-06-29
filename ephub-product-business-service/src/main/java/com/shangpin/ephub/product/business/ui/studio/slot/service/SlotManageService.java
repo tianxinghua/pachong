@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
@@ -15,7 +16,6 @@ import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
-import com.shangpin.ephub.product.business.ui.studio.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -74,7 +74,6 @@ public class SlotManageService {
 				studioId = studioDtoList.get(0).getStudioId();
 				criteria.andStudioIdEqualTo(studioId);
 			}
-			criteria.andStudioIdEqualTo(studioId);
 			if (slotManageQuery.getDate() != null && !slotManageQuery.getDate().equals("")) {
 				criteria.andSlotDateEqualTo(sdfomat.parse(slotManageQuery.getDate()));
 			}
@@ -120,6 +119,15 @@ public class SlotManageService {
 				String shootTimeEnd = slotManageQuery.getShootTime() + " 23:59:59";
 				criteria.andShootTimeBetween(sdf.parse(shootTimeStart), sdf.parse(shootTimeEnd));
 			}
+			int count = studioSlotGateWay.countByCriteria(studioSlotCriteriaDto);
+
+			if (slotManageQuery.getPageSize()!=null) {
+				studioSlotCriteriaDto.setPageSize(slotManageQuery.getPageSize());
+			}
+			if(slotManageQuery.getPageNo()!=null){
+				studioSlotCriteriaDto.setPageNo(slotManageQuery.getPageNo());
+			}
+			studioSlotCriteriaDto.setOrderByClause("slot_date");
 
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
 			// 如果查询批次摄影棚名称参数为null，循环查询
@@ -128,7 +136,7 @@ public class SlotManageService {
 				studioSlotDto.setStudioName(shangpinRedis.get("studioName" + studioSlotDto.getStudioId()));
 			}
 			vo.setStudioSlotList(studioSlotDtoList);
-			vo.setTotal(studioSlotDtoList.size());
+			vo.setTotal(count);
 
 		} catch (Exception e) {
 			Log.error("查询批次失败!");
