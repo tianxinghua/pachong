@@ -132,9 +132,9 @@ public class AllProductServiceImpl {
 		}
 		StudioSlotCriteriaDto studioSlotCriteriaDto = getStudioSlotCriteriaDto(slotManageQuery);
 		int count = studioSlotGateWay.countByCriteria(studioSlotCriteriaDto);
-		int pageCount = getPageCount(count,10);
+		int pageCount = getPageCount(count,50);
 		List<List<StudioSlotDto>> lists = new ArrayList<List<StudioSlotDto>>();
-		studioSlotCriteriaDto.setPageSize(10);
+		studioSlotCriteriaDto.setPageSize(50);
 		for (int i = 1; i <= pageCount; i++) {
 			studioSlotCriteriaDto.setPageNo(i);
 			lists.add(studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto));
