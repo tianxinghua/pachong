@@ -22,7 +22,7 @@ public interface DefectiveProductService {
 	 * @param studioNo 摄影棚编号
 	 * @return
 	 */
-	public DefectiveProductVo list(DefectiveQuery defectiveQuery); 
+	public List<DefectiveProductVo> list(DefectiveQuery defectiveQuery); 
 	/**
 	 * 残次品如果存在则查询，否则添加
 	 * @param slotNoSpuId

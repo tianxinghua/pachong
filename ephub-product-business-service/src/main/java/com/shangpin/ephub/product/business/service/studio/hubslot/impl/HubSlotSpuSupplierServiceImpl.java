@@ -301,6 +301,15 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
         return true;
 
     }
+    
+    @Override
+    public List<HubSlotSpuSupplierDto> getSlotSpuSupplierBySlotNo(String slotNo){
+       
+    	HubSlotSpuSupplierCriteriaDto dto = new HubSlotSpuSupplierCriteriaDto();
+    	dto.createCriteria().andSlotNoEqualTo(slotNo);
+    	List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoList = spuSupplierGateway.selectByCriteria(dto);
+        return hubSlotSpuSupplierDtoList;
+    }
 
 
     private boolean  isShootSupplier(String supplierId){

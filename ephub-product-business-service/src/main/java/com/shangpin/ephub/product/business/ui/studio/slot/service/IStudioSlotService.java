@@ -15,5 +15,5 @@ public interface IStudioSlotService {
 	 * @param exportSpu
 	 * @return
 	 */
-	public HubResponse<?> exportSpu(SlotManageQuery slotManageQuery,TaskType taskType);
+	public HubResponse<?> exportStudio(SlotManageQuery slotManageQuery,TaskType taskType);
 }

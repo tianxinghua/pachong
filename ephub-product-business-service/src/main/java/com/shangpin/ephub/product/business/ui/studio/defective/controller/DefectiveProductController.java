@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.defective.dto.DefectiveQuery;
-import com.shangpin.ephub.product.business.ui.studio.defective.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.defective.service.DefectiveProductService;
 import com.shangpin.ephub.product.business.ui.studio.defective.vo.DefectiveProductVo;
 import com.shangpin.ephub.response.HubResponse;
@@ -40,7 +40,7 @@ public class DefectiveProductController {
 	
 	@RequestMapping(value="/list",method = RequestMethod.POST)
 	public HubResponse<?> list(@RequestBody DefectiveQuery defectiveQuery){
-		DefectiveProductVo productVo = defectiveProductService.list(defectiveQuery);
+		List<DefectiveProductVo> productVo = defectiveProductService.list(defectiveQuery);
 		if(null != productVo){
 			return HubResponse.successResp(productVo);
 		}else{
@@ -73,17 +73,13 @@ public class DefectiveProductController {
 	@RequestMapping(value="/detail", method = RequestMethod.POST)
 	public HubResponse<?> detail(@RequestBody String studioSlotDefectiveSpuId){
 		List<StudioSlotDefectiveSpuPicDto> list = defectiveProductService.selectDefectivePic(studioSlotDefectiveSpuId);
-		if(CollectionUtils.isNotEmpty(list)){
-			return HubResponse.successResp(list);
-		}else{
-			return HubResponse.errorResp("查找详情图片失败"); 
-		}
+		return HubResponse.successResp(list);
 	}
 	
 	@RequestMapping(value="/delete-defective-pic", method = RequestMethod.POST)
 	public HubResponse<?> deleteDefectivePic(@RequestBody String spPicUrl){
 		boolean bool = defectiveProductService.deleteDefectivePic(spPicUrl);
-		log.info("图片删除返回结果=========="+bool); 
+		log.info("残次品图片删除返回结果=========="+bool); 
 		if(bool){
 			return HubResponse.successResp("删除成功");
 		}else{

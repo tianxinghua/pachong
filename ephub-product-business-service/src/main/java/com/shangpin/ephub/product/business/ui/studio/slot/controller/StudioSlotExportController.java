@@ -23,7 +23,7 @@ public class StudioSlotExportController {
 	private IStudioSlotService studioSlotService;
 
 	@RequestMapping(value="/slot",method=RequestMethod.POST)
-	public HubResponse<?> exportSpu(@RequestBody SlotManageQuery slotManageQuery){
-		return studioSlotService.exportSpu(slotManageQuery,TaskType.EXPORT_SUTDIO_SLOT);
+	public HubResponse<?> exportStudio(@RequestBody SlotManageQuery slotManageQuery){
+		return studioSlotService.exportStudio(slotManageQuery,TaskType.EXPORT_SUTDIO_SLOT);
 	}
 }

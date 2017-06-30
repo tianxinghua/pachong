@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.common.operation.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
@@ -25,6 +33,7 @@ import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.Operat
 import com.shangpin.ephub.product.business.ui.studio.common.operation.enumeration.OperationQueryType;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 @Service
@@ -36,6 +45,10 @@ public class OperationServiceImpl implements OperationService {
 	private StudioSlotGateWay studioSlotGateWay;
 	@Autowired
 	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
+	@Autowired
+	private HubSlotSpuGateWay hubSlotSpuGateWay;
+	@Autowired
+	private HubSlotSpuSupplierGateway hubSlotSpuSupplierGateway;
 
 	@Override
 	public List<StudioSlotDto> slotList(OperationQuery operationQuery) throws Exception {
@@ -142,12 +155,63 @@ public class OperationServiceImpl implements OperationService {
 	 */
 	private List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setFields("studio_slot_id,arrive_status");
+		criteria.setFields("studio_slot_id,arrive_state");
 		criteria.setOrderByClause("create_time");
 		criteria.setPageNo(1);
 		criteria.setPageSize(1000); 
 		criteria.createCriteria().andSlotNoEqualTo(slotNo);
 		return studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 	}
+
+	@Override
+	public List<StudioSlotSpuSendDetailVo> slotDetail(String slotNo) {
+		List<StudioSlotSpuSendDetailVo> details = new ArrayList<StudioSlotSpuSendDetailVo>();
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setOrderByClause("create_time");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			for(StudioSlotSpuSendDetailDto dto : list){
+				StudioSlotSpuSendDetailVo vo = convertDto(dto);
+				details.add(vo);
+			}
+		}
+		return details;
+	}
+	/**
+	 * 转换
+	 * @param dto
+	 * @return
+	 */
+	private StudioSlotSpuSendDetailVo convertDto(StudioSlotSpuSendDetailDto dto) {
+		StudioSlotSpuSendDetailVo vo = new StudioSlotSpuSendDetailVo();
+		vo.setArriveState(dto.getArriveState());
+		vo.setBrand(dto.getSupplierBrandName());
+		vo.setItemCode(dto.getSupplierSpuModel());
+		vo.setItemName(dto.getSupplierSpuName());
+		vo.setOperator(dto.getUpdateUser());
+		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+		vo.setTime(dto.getCreateTime());
+		return vo;
+	}
+
+	@Override
+	public HubSlotSpuDto findSlotSpu(String slotNo) {
+		HubSlotSpuCriteriaDto criteria = new HubSlotSpuCriteriaDto();
+		criteria.setFields("slot_spu_id");
+		criteria.createCriteria().andSlotSpuNoEqualTo(slotNo);
+		List<HubSlotSpuDto> list = hubSlotSpuGateWay.selectByCriteria(criteria );
+		return list.get(0); 
+	}
+
+	@Override
+	public HubSlotSpuSupplierDto findSlotSpuSupplier(String slotNo, String slotSpuNo) {
+		HubSlotSpuSupplierCriteriaDto criteria = new HubSlotSpuSupplierCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		List<HubSlotSpuSupplierDto> list = hubSlotSpuSupplierGateway.selectByCriteria(criteria );
+		return list.get(0);
+	} 
 
 }

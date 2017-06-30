@@ -1,8 +1,10 @@
 package com.shangpin.ephub.product.business.ui.studio.common.pictrue.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,9 @@ import com.shangpin.ephub.client.fdfs.dto.DeletePicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.DeletePicGateWay;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadPic;
 
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Encoder;
 /**
  * <p>Title: PictureService</p>
@@ -21,13 +25,33 @@ import sun.misc.BASE64Encoder;
  * @date 2017年6月14日 上午11:16:16
  *
  */
+@SuppressWarnings("restriction")
 @Service
+@Slf4j
 public class PictureService {
 	
 	@Autowired
 	private UploadPicGateway uploadPicGateway;
 	@Autowired
 	private DeletePicGateWay deletePicGateWay;
+	
+	public List<String> uploadPic(UploadPic uploadPic){
+		try {
+			List<String> list = new ArrayList<String>();
+			if(CollectionUtils.isNotEmpty(uploadPic.getFiles())){
+				for(String base64 : uploadPic.getFiles()){
+					UploadPicDto uploadPicDto = new UploadPicDto();
+					uploadPicDto.setBase64(base64);
+					uploadPicDto.setExtension(uploadPic.getExtension());
+					list.add(uploadPicGateway.upload(uploadPicDto));
+				}
+				return list;
+			}
+		} catch (Exception e) {
+			log.error("上传图片异常："+e.getMessage(),e); 
+		}
+		return null;
+	}
 
 	/**
 	 * 上传图片
