@@ -168,8 +168,8 @@ public class StudioSlotController {
 					String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
 					String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 					
-//					pathName = new String("/home/dev/"+newDate+"/"+slotNo+"/"+slotSpuNo+"/");
-					pathName = new String("/home/dev/ftpLoad/");
+					pathName = new String("/home/dev/"+newDate+"/"+slotNo+"/"+slotSpuNo+"/");
+//					pathName = new String("/home/dev/ftpLoad/");
 					FTPFile[] files = FTPClientUtil.getFiles(pathName);
 					for (FTPFile file : files) {
 						try {
