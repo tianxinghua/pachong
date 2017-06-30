@@ -101,10 +101,11 @@ spring:
        port: 21
        userName: dev
        password: shangpin@123
-       ftpHubPath: /hub/
-       ftpPendingPath: /pending/
-       exportPath: /pending_export/
-       localResultPath: /usr/local/share/applications/asynchronous-task-consumer-service/ftp/
+       ftpHubPath: hub/
+       ftpPendingPath: pending/
+       exportPath: pending_export/
+       studioPath: studio_export/
+       localResultPath: E:/testexcel/
   mail: 
        default-recipient: yan_xiao_bin@126.com
        default-sender: yanxiaobin@shangpin.com
