@@ -398,16 +398,18 @@ public class DataServiceHandler {
 		List<ColorDTO> colorDTOS = new ArrayList<>();
 
 		for (HubColorDicItemDto itemDto : hubColorDicItemDtos) {
-			ColorDTO colorDTO = new ColorDTO();
-			colorDTO.setColorItemId(itemDto.getColorDicItemId());
-			colorDTO.setSupplierColor(itemDto.getColorItemName().trim());
-			if (colorDicMap.containsKey(itemDto.getColorDicId())) {
-				colorDTO.setColorDicId(itemDto.getColorDicId());
-				colorDTO.setSupplierColor(itemDto.getColorItemName());
-				colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());
-				colorDTO.setHubColorName(colorDicMap.get(itemDto.getColorDicId()).getColorName());
+			if(itemDto.getColorItemName()!=null){
+				ColorDTO colorDTO = new ColorDTO();
+				colorDTO.setColorItemId(itemDto.getColorDicItemId());
+				colorDTO.setSupplierColor(itemDto.getColorItemName().trim());
+				if (colorDicMap.containsKey(itemDto.getColorDicId())) {
+					colorDTO.setColorDicId(itemDto.getColorDicId());
+					colorDTO.setSupplierColor(itemDto.getColorItemName());
+					colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());
+					colorDTO.setHubColorName(colorDicMap.get(itemDto.getColorDicId()).getColorName());
+				}
+				colorDTOS.add(colorDTO);
 			}
-			colorDTOS.add(colorDTO);
 		}
 		return colorDTOS;
 

@@ -33,6 +33,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
@@ -487,7 +488,8 @@ public class TaskImportService {
 		}
 		if (spuIsPassing&&skuIsPassing==true) {//&&skuIsPassing==true
 			if(hubIsExist){
-				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());	
+				//hub存在同品牌同货号，进入待复合
+				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());	
 			}else{
 				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 			}

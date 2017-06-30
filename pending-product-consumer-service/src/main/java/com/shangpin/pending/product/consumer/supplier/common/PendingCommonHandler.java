@@ -15,6 +15,8 @@ import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
+import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -224,4 +226,42 @@ public class PendingCommonHandler {
          } 
          return result;
     }
+
+	public void getColorMap(PendingSpu spuPendingDto, HubSpuPendingDto updateSpuPending) {
+		
+	}
+	
+	  protected Map<String, String> getSupplierColorMap() {
+		  Map<String, String> colorStaticMap = shangpinRedis.hgetAll(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY);
+          if(colorStaticMap==null||colorStaticMap.size()<1){
+        	log.info("redis为空");
+             colorStaticMap = new HashMap<>() ;
+            List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
+            for (ColorDTO dto : colorDTOS) {
+            	if(StringUtils.isNotBlank(dto.getSupplierColor())&&StringUtils.isNotBlank(dto.getHubColorName())){
+            		 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
+            	}
+            }
+                shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY,colorStaticMap);
+                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
+            }
+	        return colorStaticMap;
+	    }
+	  protected Map<String, String> getHubColorMap() {
+		  
+		  Map<String, String> hubColorStaticMap = shangpinRedis.hgetAll(ConstantProperty.REDIS_EPHUB_HUB_COLOR_MAPPING_MAP_KEY);
+	        if(hubColorStaticMap==null||hubColorStaticMap.size()<1){
+	        	log.info("redis为空");
+	            hubColorStaticMap = new HashMap<>() ;
+	            List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
+	            for (ColorDTO dto : colorDTOS) {
+	            	if(dto.getSupplierColor()!=null){
+	                     hubColorStaticMap.put(dto.getHubColorName(), "");
+	            	}
+	            }
+	                shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_HUB_COLOR_MAPPING_MAP_KEY,hubColorStaticMap);
+	                shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_HUB_COLOR_MAPPING_MAP_KEY,ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME*1000);
+	            }
+	        return hubColorStaticMap;
+	    }
 }

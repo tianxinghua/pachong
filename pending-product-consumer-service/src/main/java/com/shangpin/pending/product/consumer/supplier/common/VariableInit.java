@@ -823,7 +823,7 @@ public class VariableInit {
             queryDto.setBrandMode(spu.getSpuModel().trim().toUpperCase());
             queryDto.setHubBrandNo(hubSpuPending.getHubBrandNo());
             queryDto.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
-            BrandModelResult verify = brandModelRuleGateWay.verify(queryDto);
+            BrandModelResult verify = brandModelRuleGateWay.verifyWithCategory(queryDto);
             if (null != verify) {
                 if (verify.isPassing()) {
                     hubSpuPending.setSpuModel(verify.getBrandMode());

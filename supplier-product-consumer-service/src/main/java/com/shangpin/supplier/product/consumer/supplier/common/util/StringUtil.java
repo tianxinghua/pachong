@@ -15,7 +15,7 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String verifyPrice(String price){
-		if(StringUtils.isNotBlank(price)){
+		if(StringUtils.isBlank(price)){
 			return "0.00";
 		}else{
 			return price.replaceAll(",", ".");
@@ -28,7 +28,7 @@ public class StringUtil {
 	 */
 	public static int verifyStock(String stock){
 		
-		if(StringUtils.isNotBlank(stock)){
+		if(StringUtils.isBlank(stock)){
 			return 0;
 		}else{
 			if(stock.contains(".")){
