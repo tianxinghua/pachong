@@ -68,7 +68,7 @@ public class StudioSlotServiceImpl implements IStudioSlotService{
 		hubSpuTask.setCreateTime(date);
 		hubSpuTask.setUpdateTime(date);
 		hubSpuTask.setImportType((byte)taskType);
-		hubSpuTask.setCreateUser(createUser); 
+		hubSpuTask.setCreateUser(null != createUser ? createUser : ""); 
 		hubSpuTask.setTaskFtpFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 		hubSpuTask.setSysFileName(createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 
 		hubSpuTask.setResultFilePath("pending_export/"+createUser+"_" + hubSpuTask.getTaskNo()+".xls"); 

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.product.business.ui.studio.slot.dto.SlotManageQuery;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotManageService;
 import com.shangpin.ephub.response.HubResponse;
 /**

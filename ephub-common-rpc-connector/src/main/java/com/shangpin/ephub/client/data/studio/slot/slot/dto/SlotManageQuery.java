@@ -27,6 +27,7 @@ public class SlotManageQuery {
 	private Byte shotStatus;
 	private String planShootTime;
 	private String shootTime;
-	private String userName;
-	
+	private String operatorName;
+	private Integer pageNo;
+	private Integer pageSize;
 }
