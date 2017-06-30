@@ -33,7 +33,22 @@ public class PendingCommonHandler {
 
     static Integer seasonCurrenMin = DateUtils.getCurrentMin();
 
+    static Integer seasonFlagCurrenMin = DateUtils.getCurrentMin();
+
     static Integer colorCurrenMin = DateUtils.getCurrentMin();
+
+    static Integer materialCurrenMin = DateUtils.getCurrentMin();
+
+    static Integer brandCurrenMin = DateUtils.getCurrentMin();
+
+    static Integer supplierBrandCurrenMin = DateUtils.getCurrentMin();
+
+    static Integer originCurrenMin = DateUtils.getCurrentMin();
+
+    static Integer categoryCurrenMin = DateUtils.getCurrentMin();
+
+
+    static Integer genderCurrenMin = DateUtils.getCurrentMin();
 //	
     public  Map<String, String>  getSpCategoryValue(String supplierId) throws Exception {
     	
@@ -88,26 +103,23 @@ public class PendingCommonHandler {
         }
     }
 
-    /**
-     * 在指定时间段 重新获取所有数据
-     *
-     * @return
-     */
-    public  boolean isNeedHandle() {
+
+
+
+    public  boolean isNeedHandleSeason() {
         int min = DateUtils.getCurrentMin();
-        if(min-isCurrentMin>=5||min-isCurrentMin<0){
-            isCurrentMin = min;
+        if(min-seasonCurrenMin>=30||min-seasonCurrenMin<0){
+            seasonCurrenMin = min;
             return true;
         } else {
             return false;
         }
     }
 
-
-    public  boolean isNeedHandleSeasno() {
+    public  boolean isNeedHandleSeasonFlag() {
         int min = DateUtils.getCurrentMin();
-        if(min-seasonCurrenMin>=5||min-seasonCurrenMin<0){
-            seasonCurrenMin = min;
+        if(min-seasonFlagCurrenMin>=30||min-seasonFlagCurrenMin<0){
+            seasonFlagCurrenMin = min;
             return true;
         } else {
             return false;
@@ -117,8 +129,70 @@ public class PendingCommonHandler {
 
     public  boolean isNeedHandleCorlor() {
         int min = DateUtils.getCurrentMin();
-        if(min-colorCurrenMin>=5||min-colorCurrenMin<0){
+        if(min-colorCurrenMin>=30||min-colorCurrenMin<0){
             colorCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public  boolean isNeedHandleMaterial() {
+        int min = DateUtils.getCurrentMin();
+        if(min-materialCurrenMin>=30||min-materialCurrenMin<0){
+            materialCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public  boolean isNeedHandleOrigin() {
+        int min = DateUtils.getCurrentMin();
+        if(min-originCurrenMin>=30||min-originCurrenMin<0){
+            originCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public  boolean isNeedHandleBrand() {
+        int min = DateUtils.getCurrentMin();
+        if(min-brandCurrenMin>=30||min-brandCurrenMin<0){
+            brandCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public  boolean isNeedHandleSupplierBrand() {
+        int min = DateUtils.getCurrentMin();
+        if(min-supplierBrandCurrenMin>=30||min-supplierBrandCurrenMin<0){
+            supplierBrandCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public  boolean isNeedHandleCategory() {
+        int min = DateUtils.getCurrentMin();
+        if(min-categoryCurrenMin>=30||min-categoryCurrenMin<0){
+            categoryCurrenMin = min;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public  boolean isNeedHandleGender() {
+        int min = DateUtils.getCurrentMin();
+        if(min-genderCurrenMin>=30||min-genderCurrenMin<0){
+            genderCurrenMin = min;
             return true;
         } else {
             return false;
