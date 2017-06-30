@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class QueryDto {
+public class SlotSpuQueryDto {
     private Integer pageIndex;
     private Integer pageSize;
     private String supplierNo;

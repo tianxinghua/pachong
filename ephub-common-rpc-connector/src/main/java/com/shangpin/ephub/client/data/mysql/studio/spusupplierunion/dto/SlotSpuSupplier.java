@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.mysql.slot.spusupplierunion.po;
+package com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto;
 
 import lombok.*;
 

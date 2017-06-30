@@ -8,28 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
-import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
-import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuColorState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuGenderState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuSeasonState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
@@ -305,6 +289,10 @@ public abstract class PendingSpuService implements IPendingProductService {
         		}
 			}
 		}
+
+		if(pendingQuryDto.isShoot()){
+			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
+		}
 		return criteria;
 	}
 	
@@ -389,6 +377,8 @@ public abstract class PendingSpuService implements IPendingProductService {
         } catch (Exception e) {
             log.error("待处理页面查询pending_spu异常："+e.getMessage(),e);
         }
+
+
         return products;
     }
 	

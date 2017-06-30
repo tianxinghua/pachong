@@ -16,6 +16,8 @@ import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSuppli
 import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuQueryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -236,6 +238,13 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         slotSpuDto.setBrandNo(pendingProductDto.getHubBrandNo());
         slotSpuGateWay.updateByPrimaryKeySelective(slotSpuDto);
         return true;
+    }
+
+    @Override
+    public List<SlotSpuDto> findSlotSpu(SlotSpuQueryDto queryDto) {
+
+
+        return null;
     }
 
 

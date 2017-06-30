@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class QueryDto {
+public class SlotSpuDto {
     private Integer pageIndex;
     private Integer pageSize;
     private String supplierNo;
@@ -51,12 +51,15 @@ public class QueryDto {
      */
     private Long slotSpuId;
 
+    private String updateTime;
 
-
+    private String createTime;
     /**
-     * 商品状态
+     * 0:未寄出 1：加入发货单  2：已寄出 3:不需要处理
      */
-    private String spuState;
+    private Integer spuState;
+
+
 
     /**
      * 操作人
