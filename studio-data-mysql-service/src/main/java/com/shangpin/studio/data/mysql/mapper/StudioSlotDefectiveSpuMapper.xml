@@ -135,6 +135,9 @@
       #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotDefectiveSpu" >
+    <selectKey keyColumn="studio_slot_defective_spu_id" keyProperty="studioSlotDefectiveSpuId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS studio_slot_defective_spu_id
+    </selectKey>
     insert into studio_slot_defective_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="studioSlotDefectiveSpuId != null" >

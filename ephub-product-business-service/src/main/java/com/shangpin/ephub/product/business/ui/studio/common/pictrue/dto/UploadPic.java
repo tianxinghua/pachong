@@ -17,5 +17,6 @@ import lombok.Setter;
 public class UploadPic {
 
 	private String extension;
-	private List<String> files;
+	private String content;
+	private String fromtype;
 }
