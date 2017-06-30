@@ -14,6 +14,10 @@ public class StudioSlotReturnMasterDto implements Serializable {
      */
     private String studioSendNo;
 
+    private String supplierNo;
+
+    private String supplierId;
+
     /**
      * 数量
      */
@@ -30,7 +34,7 @@ public class StudioSlotReturnMasterDto implements Serializable {
     private String trackNo;
 
     /**
-     * 0:创建未发货 1：已发货 2：已签收
+     * 0:创建未发货 1：已发货 2：已签收 3：已验收
      */
     private Byte state;
 
@@ -65,7 +69,7 @@ public class StudioSlotReturnMasterDto implements Serializable {
     private Date arriveTime;
 
     /**
-     * 0: 摄影棚收货  1：摄影棚验收不通过   2:供货商确认
+     * 0: 未收货  1:已收货   2：已验货
      */
     private Byte arriveState;
 
@@ -115,6 +119,22 @@ public class StudioSlotReturnMasterDto implements Serializable {
 
     public void setStudioSendNo(String studioSendNo) {
         this.studioSendNo = studioSendNo == null ? null : studioSendNo.trim();
+    }
+
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
+    }
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
     public Integer getQuantity() {
@@ -261,6 +281,8 @@ public class StudioSlotReturnMasterDto implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", studioSlotReturnMasterId=").append(studioSlotReturnMasterId);
         sb.append(", studioSendNo=").append(studioSendNo);
+        sb.append(", supplierNo=").append(supplierNo);
+        sb.append(", supplierId=").append(supplierId);
         sb.append(", quantity=").append(quantity);
         sb.append(", actualQuantity=").append(actualQuantity);
         sb.append(", trackNo=").append(trackNo);
@@ -297,6 +319,8 @@ public class StudioSlotReturnMasterDto implements Serializable {
         StudioSlotReturnMasterDto other = (StudioSlotReturnMasterDto) that;
         return (this.getStudioSlotReturnMasterId() == null ? other.getStudioSlotReturnMasterId() == null : this.getStudioSlotReturnMasterId().equals(other.getStudioSlotReturnMasterId()))
             && (this.getStudioSendNo() == null ? other.getStudioSendNo() == null : this.getStudioSendNo().equals(other.getStudioSendNo()))
+            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
+            && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getQuantity() == null ? other.getQuantity() == null : this.getQuantity().equals(other.getQuantity()))
             && (this.getActualQuantity() == null ? other.getActualQuantity() == null : this.getActualQuantity().equals(other.getActualQuantity()))
             && (this.getTrackNo() == null ? other.getTrackNo() == null : this.getTrackNo().equals(other.getTrackNo()))
@@ -322,6 +346,8 @@ public class StudioSlotReturnMasterDto implements Serializable {
         int result = 1;
         result = prime * result + ((getStudioSlotReturnMasterId() == null) ? 0 : getStudioSlotReturnMasterId().hashCode());
         result = prime * result + ((getStudioSendNo() == null) ? 0 : getStudioSendNo().hashCode());
+        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
+        result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getQuantity() == null) ? 0 : getQuantity().hashCode());
         result = prime * result + ((getActualQuantity() == null) ? 0 : getActualQuantity().hashCode());
         result = prime * result + ((getTrackNo() == null) ? 0 : getTrackNo().hashCode());

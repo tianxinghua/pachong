@@ -87,31 +87,40 @@ public class HubGenderDicService {
 	}
 
 	public int countSupplierGenderByType(Byte type, String supplierGender, String hubGender) {
-		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
-		criteria.createCriteria().andPushStateEqualTo(type);
+		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
+		HubGenderDicCriteriaDto.Criteria criteria = hubGenderDicCriteriaDto.createCriteria();
+		if(type!=null){
+			criteria.andPushStateEqualTo(type);	
+		}
 		if(StringUtils.isNotBlank(supplierGender)){
-			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+			criteria.andSupplierGenderEqualTo(supplierGender);
 		}
 		if(StringUtils.isNotBlank(hubGender)){
-			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+			criteria.andHubGenderEqualTo(hubGender);
 		}
-		return hubGenderDicGateWay.countByCriteria(criteria);
+		return hubGenderDicGateWay.countByCriteria(hubGenderDicCriteriaDto);
 	}
 
 	public List<HubGenderDicDto> getSupplierGenderByType(int pageNo, int pageSize, Byte type, String supplierGender,
 			String hubGender) {
-		HubGenderDicCriteriaDto criteria = new HubGenderDicCriteriaDto();
-		criteria.createCriteria().andPushStateEqualTo(type);
-		criteria.setPageNo(pageNo);
-		criteria.setPageSize(pageSize);
+		HubGenderDicCriteriaDto hubGenderDicCriteriaDto = new HubGenderDicCriteriaDto();
+		HubGenderDicCriteriaDto.Criteria criteria = hubGenderDicCriteriaDto.createCriteria();
+		if(type!=null){
+			criteria.andPushStateEqualTo(type);	
+		}
+		hubGenderDicCriteriaDto.setPageNo(pageNo);
+		hubGenderDicCriteriaDto.setPageSize(pageSize);
+		if(type!=null){
+			criteria.andPushStateEqualTo(type);	
+		}
 		if(StringUtils.isNotBlank(supplierGender)){
-			criteria.createCriteria().andSupplierGenderEqualTo(supplierGender);
+			criteria.andSupplierGenderEqualTo(supplierGender);
 		}
 		if(StringUtils.isNotBlank(hubGender)){
-			criteria.createCriteria().andHubGenderEqualTo(hubGender);
+			criteria.andHubGenderEqualTo(hubGender);
 		}
-		criteria.setOrderByClause("update_time desc");
-		return hubGenderDicGateWay.selectByCriteria(criteria);
+		hubGenderDicCriteriaDto.setOrderByClause("update_time desc");
+		return hubGenderDicGateWay.selectByCriteria(hubGenderDicCriteriaDto);
 	}
 
 	public void updateHubGenderById(HubGenderDicDto dicDto) {

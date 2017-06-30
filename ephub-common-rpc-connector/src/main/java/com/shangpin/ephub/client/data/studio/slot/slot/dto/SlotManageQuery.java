@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.slot.dto;
+package com.shangpin.ephub.client.data.studio.slot.slot.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +28,5 @@ public class SlotManageQuery {
 	private String planShootTime;
 	private String shootTime;
 	private String userName;
-	 private Integer pageSize;
 	
 }

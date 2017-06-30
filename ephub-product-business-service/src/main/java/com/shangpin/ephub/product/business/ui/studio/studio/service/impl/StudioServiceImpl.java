@@ -519,6 +519,7 @@ public class StudioServiceImpl implements IStudioService {
                         }
                         //endregion
                     }
+                    //TODO: 需要调用重任的添加接口
                     updatedVo.setSuccessCount(successNum);
                     if(updatedVo.getErrorConent()!=null){
                         failNum = updatedVo.getErrorConent().size();
@@ -594,9 +595,12 @@ public class StudioServiceImpl implements IStudioService {
                upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
                upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
                hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+
+               //TODO: 需要调用重任的删除接口
            }else {
                updatedVo = setErrorMsg(response, slotNo, "D0", "delete product to slot failed");
            }
+
             response.setErrorMsg(updatedVo);
         }
         catch (Exception ex){
@@ -642,7 +646,7 @@ public class StudioServiceImpl implements IStudioService {
                     response.setMsg("Slot is full and ready to ship");
                 }
 
-
+                //TODO: 需要调用重任的验证接口
                 StudioSlotDto studioSlotDto = new StudioSlotDto();
                 studioSlotDto.setStudioSlotId(slotInfo.getStudioSlotId());
                 studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
