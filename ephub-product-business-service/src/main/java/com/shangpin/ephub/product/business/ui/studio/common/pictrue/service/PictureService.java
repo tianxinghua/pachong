@@ -35,18 +35,14 @@ public class PictureService {
 	@Autowired
 	private DeletePicGateWay deletePicGateWay;
 	
-	public List<String> uploadPic(UploadPic uploadPic){
+	public String uploadPic(UploadPic uploadPic){
 		try {
-			List<String> list = new ArrayList<String>();
-			if(CollectionUtils.isNotEmpty(uploadPic.getFiles())){
-				for(String base64 : uploadPic.getFiles()){
-					UploadPicDto uploadPicDto = new UploadPicDto();
-					uploadPicDto.setBase64(base64);
-					uploadPicDto.setExtension(uploadPic.getExtension());
-					list.add(uploadPicGateway.upload(uploadPicDto));
-				}
-				return list;
-			}
+			if(StringUtils.isNoneEmpty(uploadPic.getContent())){
+                UploadPicDto uploadPicDto = new UploadPicDto();
+                uploadPicDto.setBase64(uploadPic.getContent());
+                uploadPicDto.setExtension(uploadPic.getExtension());
+                return uploadPicGateway.upload(uploadPicDto);
+            }
 		} catch (Exception e) {
 			log.error("上传图片异常："+e.getMessage(),e); 
 		}

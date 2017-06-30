@@ -37,14 +37,9 @@ public class PicUploadController {
 	@Autowired
 	private PictureService pictureService;
 	
-	@RequestMapping(value="/upload-pic",method = RequestMethod.POST)
-	public HubResponse<?> upload(@RequestBody UploadPic uploadPic){
-		List<String> list = pictureService.uploadPic(uploadPic);
-		if(CollectionUtils.isNotEmpty(list)){
-			return HubResponse.successResp(list);
-		}else{
-			return HubResponse.errorResp("上传失败");
-		}
+	@RequestMapping(value="/uploadpic",method = RequestMethod.POST)
+	public String upload(@RequestBody UploadPic uploadPic){
+		return pictureService.uploadPic(uploadPic);
 	}
 
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
