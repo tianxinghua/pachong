@@ -1,7 +1,11 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuQueryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+
+import java.util.List;
 
 /**
  * Created by loyalty on 17/6/10.
@@ -43,5 +47,13 @@ public interface HubSlotSpuService {
      * @throws Exception
      */
     public  boolean updateSpuModelAndBrandNo(Long slotSpuId,PendingProductDto pendingProductDto) throws Exception;
+
+
+    /**
+     * 查询
+     * @param queryDto
+     * @return
+     */
+    public List<SlotSpuDto>  findSlotSpu(SlotSpuQueryDto queryDto);
 
 }

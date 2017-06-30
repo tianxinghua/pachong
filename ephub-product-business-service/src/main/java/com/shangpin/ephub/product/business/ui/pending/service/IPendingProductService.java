@@ -57,8 +57,8 @@ public interface IPendingProductService {
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag);
 	/**
 	 * 根据spu查找sku
-	 * @param spuPendingId
-	 * @param flag true:代表查询所有sku ， false：代表查询部分sku(skuState不等于2、5、1)
+	 * @param spuPendingIds
+	 * @param allFlag true:代表查询所有sku ， false：代表查询部分sku(skuState不等于2、5、1)
 	 * @return
 	 */
 	public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds,boolean allFlag) throws Exception;

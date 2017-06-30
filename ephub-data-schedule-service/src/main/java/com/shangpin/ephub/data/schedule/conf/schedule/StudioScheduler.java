@@ -1,12 +1,12 @@
 package com.shangpin.ephub.data.schedule.conf.schedule;
 
-import com.shangpin.ephub.client.product.business.studio.gateway.StudioGateWay;
-import com.shangpin.ephub.data.schedule.service.PricePushService;
-import com.shangpin.ephub.data.schedule.service.StockService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.shangpin.ephub.client.product.business.studio.gateway.StudioGateWay;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
 
@@ -17,7 +17,8 @@ public class StudioScheduler {
 	
     @Autowired
     StudioGateWay studioGateWay;
-	@Scheduled(cron = "00 30 00 * * ?")
+//	@Scheduled(cron = "00 30 00 * * ?")
+	@Scheduled(cron = "0 0 */1 * * ?")
 	public void createStudioSlot() {
 		try {
 			log.info("======================createStudioSlot定时任务开始======================");
@@ -29,11 +30,21 @@ public class StudioScheduler {
 	}
 
 
-	@Scheduled(cron = "0 */1 * * *")
+	@Scheduled(cron = "0 0 */1 * * ?")
 	public void checkStudioSlot() {
 		try {
 			log.info("===========任务开始============"); 
 			studioGateWay.checkStudioSlot();
+		} catch (Exception e) {
+			log.error("checkStudioSlot 服务异常："+e.getMessage(),e);
+		}
+	}
+	
+	@Scheduled(cron = "0 0 */1 * * ?")
+	public void downLoadImageByFtp() {
+		try {
+			log.info("===========任务开始============"); 
+			studioGateWay.downLoadImageByFtp();
 		} catch (Exception e) {
 			log.error("checkStudioSlot 服务异常："+e.getMessage(),e);
 		}

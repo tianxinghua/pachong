@@ -178,6 +178,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                         Date date  = new Date();
                         //更新供货商信息
                         HubSlotSpuSupplierDto tmp = new HubSlotSpuSupplierDto();
+                        tmp.setSlotSpuSupplierId(originDto.getSlotSpuSupplierId());
                         tmp.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
                         tmp.setUpdateTime(date);
                         tmp.setUpdateUser(StringUtils.isNotBlank(dto.getUserName())?dto.getUserName():"");
@@ -188,6 +189,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                         slotSpuTmp.setUpdateTime(date);
                         slotSpuTmp.setUpdateUser(StringUtils.isNotBlank(dto.getUserName())?dto.getUserName():"");
                         slotSpuTmp.setSpuState(SlotSpuState.ADD_INVOICE.getIndex().byteValue());
+                        slotSpuTmp.setSlotSpuId(originDto.getSlotSpuId());
                         slotSpuGateWay.updateByPrimaryKeySelective(slotSpuTmp);
 
                         return result;

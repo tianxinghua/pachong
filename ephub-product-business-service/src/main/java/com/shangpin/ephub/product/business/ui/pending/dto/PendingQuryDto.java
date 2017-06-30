@@ -86,6 +86,11 @@ public class PendingQuryDto {
      * 操作人
      */
     private String operator;
+
+    /**
+     * 是否是待拍照展示页面  true:是
+     */
+    private boolean isShoot;
     
     
 }
