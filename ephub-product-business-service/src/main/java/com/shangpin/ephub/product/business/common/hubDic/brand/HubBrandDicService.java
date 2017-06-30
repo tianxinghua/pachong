@@ -14,9 +14,9 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteri
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubBrandDicGateway;
 import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理

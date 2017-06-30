@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.util.DateTimeUtil;
@@ -63,6 +65,8 @@ public class HubSupplierColorDicController {
 	HubSupplierValueMappingService hubSupplierValueMappingService;
 	@Autowired
 	SupplierService supplierService;
+	@Autowired
+	IShangpinRedis shangpinRedis;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierColorList(
 			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
@@ -216,7 +220,7 @@ public class HubSupplierColorDicController {
 					taskImportService.saveTask(taskNo, "颜色映射:"+dto.getSupplierColor()+"=>"+dto.getHubColor(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
 					dto.setRefreshDicType(InfoState.RefreshColor.getIndex());
 					taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
-//					shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
+					shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY);
 					
 				}
 				return	HubResponse.successResp(null);

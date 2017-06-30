@@ -16,8 +16,8 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemCriteriaDto
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.product.business.common.hubDic.color.dto.ColorDTO;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理

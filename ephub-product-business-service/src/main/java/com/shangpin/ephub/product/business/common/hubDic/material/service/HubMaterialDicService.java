@@ -7,11 +7,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
 import com.shangpin.ephub.product.business.common.hubDic.material.dto.MaterialDTO;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理

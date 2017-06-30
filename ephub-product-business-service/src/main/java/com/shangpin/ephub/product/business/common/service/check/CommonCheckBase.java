@@ -3,7 +3,7 @@ package com.shangpin.ephub.product.business.common.service.check;
 import org.apache.commons.lang.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 
 /**
  * Created by lizhongren on 2017/3/3. 抽象类 总控的入口

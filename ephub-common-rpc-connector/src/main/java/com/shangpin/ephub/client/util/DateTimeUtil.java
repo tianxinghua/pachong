@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.util;
 
 import org.apache.commons.lang.time.DateUtils;
 
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,6 +11,14 @@ import java.util.Date;
 
 
 public class DateTimeUtil {
+	
+	
+    public static int  getCurrentMin(){
+        Calendar calendar = Calendar.getInstance();
+        return  calendar.get(Calendar.MINUTE);
+
+    }
+	
   /**
    * Return current datetime string.
    * @return current datetime, pattern: "yyyy-MM-dd HH:mm:ss".

@@ -1,6 +1,5 @@
 package com.shangpin.ephub.product.business.common.hubDic.category;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,11 +12,11 @@ import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理

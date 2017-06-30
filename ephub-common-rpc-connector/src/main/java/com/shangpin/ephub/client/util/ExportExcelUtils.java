@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.util;
+package com.shangpin.ephub.client.util;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -161,7 +161,6 @@ public class ExportExcelUtils {
      * @param columns 表头对应的数据库中的列名 
      * @param result 结果集 
      * @param out 输出流 
-     * @param pattern 时间格式 
      * @throws Exception 
      */  
     public static void exportExcel(String title, String[] headers, String[] columns, List<Map<String, String>> result, OutputStream out) throws Exception{  

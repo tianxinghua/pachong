@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
 import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by zhaogenchun on 2017/03/06.

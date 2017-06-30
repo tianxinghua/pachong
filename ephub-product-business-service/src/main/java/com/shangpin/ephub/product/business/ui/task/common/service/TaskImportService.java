@@ -18,7 +18,7 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskCriteriaDto
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;

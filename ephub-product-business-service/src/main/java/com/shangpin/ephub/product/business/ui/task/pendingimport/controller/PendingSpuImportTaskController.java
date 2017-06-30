@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.message.task.product.body.Task;
-import com.shangpin.ephub.product.business.common.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskListRequestDto;

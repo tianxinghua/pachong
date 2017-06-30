@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpSkuSizeState;
@@ -35,8 +36,6 @@ import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappi
 import com.shangpin.ephub.product.business.common.hubDic.origin.service.HubOriginDicService;
 import com.shangpin.ephub.product.business.common.pending.sku.HubPendingSkuService;
 import com.shangpin.ephub.product.business.common.pending.spu.HubPendingSpuService;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 import com.shangpin.ephub.product.business.rest.hubpending.sku.dto.SupplierSizeMappingDto;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
 import com.shangpin.ephub.product.business.rest.size.service.MatchSizeService;
