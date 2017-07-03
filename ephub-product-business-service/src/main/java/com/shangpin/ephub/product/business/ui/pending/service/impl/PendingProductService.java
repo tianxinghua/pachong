@@ -264,10 +264,15 @@ public class PendingProductService extends PendingSkuService{
             		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
             		pendingProductDto.setAuditDate(new Date());
             		pendingProductDto.setAuditUser("chenxu");
+            		PendingUpdatedVo updatedVo1 = new PendingUpdatedVo();
+            		updatedVo1.setSpuPendingId(pendingProductDto.getSpuPendingId());
+            		updatedVo1.setSpuResult("同品牌同货号颜色不一样");
+            		response.setCode("1");
+                    response.setErrorMsg(updatedVo1);
             	}
             }
             if(pass &&isSkuPass&& null != hubSpuDto){
-//            	HubPendingDto hubPendingDto = new HubPendingDto();
+//            	  HubPendingDto hubPendingDto = new HubPendingDto();
 //                hubPendingDto.setHubSpuId(hubSpuDto.getSpuId());
 //                hubPendingDto.setHubSpuPendingId(pendingProductDto.getSpuPendingId());
 //                pendingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
@@ -277,6 +282,7 @@ public class PendingProductService extends PendingSkuService{
             }
             pendingProductDto.setCreateTime(null); 
             pendingProductDto.setPicState(null);
+            log.info("更新参数："+JsonUtil.serialize(pendingProductDto));
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
@@ -546,7 +552,7 @@ public class PendingProductService extends PendingSkuService{
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getSeason());
+		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
