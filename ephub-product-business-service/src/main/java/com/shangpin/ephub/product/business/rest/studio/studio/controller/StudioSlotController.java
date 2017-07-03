@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.studio.pic.gateway.HubSlotSpuPicGateway;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
@@ -221,6 +219,11 @@ public class StudioSlotController {
 		dto.setShotStatus((byte) 0);
 		try {
 			dto.setSlotDate(sdfomat.parse(DT));
+			dto.setPlanShootTime(sdfomat.parse(DT));
+			Calendar c = Calendar.getInstance();
+			c.setTime(sdfomat.parse(DT)); 
+			c.add(Calendar.DAY_OF_MONTH, -1);
+			dto.setPlanArriveTime(c.getTime());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
