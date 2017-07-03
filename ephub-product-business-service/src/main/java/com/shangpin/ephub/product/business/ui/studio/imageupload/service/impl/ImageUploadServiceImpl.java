@@ -121,6 +121,8 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 					if(hasPics.containsKey(spPicUrl)){ 
 						if(1 == delete(spPicUrl)){
 							return true;
+						}else{
+							return false;
 						}
 					}
 					return true;
@@ -141,7 +143,9 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		hubSlotSpuPic.setDataState(DataState.DELETED.getIndex());
 		hubSlotSpuPic.setUpdateTime(new Date()); 
 		withCritera.setHubSlotSpuPic(hubSlotSpuPic );
-		return hubSlotSpuPicGateway.updateByCriteriaSelective(withCritera );
+		int result = hubSlotSpuPicGateway.updateByCriteriaSelective(withCritera );
+		log.info("删除数据库结果=============="+result);
+		return result;
 	}
 
 	
