@@ -234,11 +234,16 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		if(StringUtils.isNotBlank(spPicUrl)){
 			List<String> urls =  new ArrayList<String>();
 			urls.add(spPicUrl);
+			log.info("第一步：删除fsdfs "+spPicUrl);
 			Map<String,Integer> map = pictureService.deletePics(urls);
 			log.info("返回的结果是："+JsonUtil.serialize(map)); 
 			if(0 == map.get(spPicUrl)){
-				if(hasDefectiveSpuPic(spPicUrl)){
-					if(1 == delete(spPicUrl)){
+				boolean hasThePic = hasDefectiveSpuPic(spPicUrl);
+				log.info("第二步：判断mysql中是否存在该图片====> "+hasThePic+"====>"+spPicUrl);
+				if(hasThePic){
+					int result = delete(spPicUrl);
+					log.info("第三步：删除mysql返回的结果====>"+result+"====>"+spPicUrl);
+					if(1 == result){
 						return true;
 					}else{
 						return false;
@@ -264,7 +269,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
 		withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
 		int result = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
-		log.info("删除数据库结果=============="+result);
+//		log.info("删除数据库结果=============="+result);
 		return result;
 	}
 

@@ -114,12 +114,16 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			if(StringUtils.isNotBlank(spPicUrl)){
 				List<String> urls =  new ArrayList<String>();
 				urls.add(spPicUrl);
+				log.info("第一步：删除fsdfs "+spPicUrl);
 				Map<String,Integer> map = pictureService.deletePics(urls);
 				log.info("返回的结果是："+JsonUtil.serialize(map)); 
 				if(0 == map.get(spPicUrl)){
 					Map<String,String> hasPics = hasSlotSpuPic(urls);
+					log.info("第二步：判断mysql中是否存在该图片====> "+JsonUtil.serialize(hasPics)+"====>"+spPicUrl); 
 					if(hasPics.containsKey(spPicUrl)){ 
-						if(1 == delete(spPicUrl)){
+						int result = delete(spPicUrl);
+						log.info("第三步：删除mysql返回的结果====>"+result+"====>"+spPicUrl);
+						if(1 == result){
 							return true;
 						}else{
 							return false;
@@ -144,7 +148,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		hubSlotSpuPic.setUpdateTime(new Date()); 
 		withCritera.setHubSlotSpuPic(hubSlotSpuPic );
 		int result = hubSlotSpuPicGateway.updateByCriteriaSelective(withCritera );
-		log.info("删除数据库结果=============="+result);
+//		log.info("删除数据库结果=============="+result);
 		return result;
 	}
 

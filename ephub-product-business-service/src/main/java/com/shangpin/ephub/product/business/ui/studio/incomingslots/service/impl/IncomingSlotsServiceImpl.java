@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
@@ -138,7 +137,7 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 				withCriteria.setCriteria(criteria );
 				StudioSlotDto studioSlot =  new StudioSlotDto();
 				studioSlot.setArriveStatus(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
-				studioSlot.setShotStatus(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
+//				studioSlot.setShotStatus(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 				Date date = new Date();
 				studioSlot.setArriveTime(date);
 				studioSlot.setUpdateTime(date); 
