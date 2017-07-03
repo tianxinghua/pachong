@@ -217,7 +217,10 @@ public class StudioSlotService {
 			List<StudioSlotDto> listStudioDto = null;
 			try {
 				StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-				String nowDate = sdfomat.format(new Date());
+				Calendar calendar = Calendar.getInstance();  
+		        calendar.setTime(new Date());  
+		        calendar.add(Calendar.DAY_OF_MONTH, -1);  
+				String nowDate = sdfomat.format(calendar.getTime());
 				String startDate = nowDate + " 00:00:00";
 				String endDate = nowDate + " 23:59:59";
 				Date sDate = sdf.parse(startDate);
