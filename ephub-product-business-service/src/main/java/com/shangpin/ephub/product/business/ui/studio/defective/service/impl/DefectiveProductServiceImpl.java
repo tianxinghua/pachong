@@ -240,6 +240,8 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 				if(hasDefectiveSpuPic(spPicUrl)){
 					if(1 == delete(spPicUrl)){
 						return true;
+					}else{
+						return false;
 					}
 				}
 				return true;
@@ -261,7 +263,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		StudioSlotDefectiveSpuPicDto studioSlotDefectiveSpuPicDto = new StudioSlotDefectiveSpuPicDto();
 		studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
 		withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
-		return defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
+		int result = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
+		log.info("删除数据库结果=============="+result);
+		return result;
 	}
 
 }

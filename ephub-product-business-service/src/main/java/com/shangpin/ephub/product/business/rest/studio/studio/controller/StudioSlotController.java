@@ -154,7 +154,10 @@ public class StudioSlotController {
 	@RequestMapping(value = "/downloadImage")
 	public boolean downLoadImageByFtp() {
 		try {
-			String newDate = sd.format(new Date());
+			Calendar calendar = Calendar.getInstance();  
+	        calendar.setTime(new Date());  
+	        calendar.add(Calendar.DAY_OF_MONTH, -1);  
+	        String newDate = sd.format(calendar.getTime()); 
 			List<StudioSlotDto> studioDtoList = studioSlotService.selectStudioSlotByShootTime();
 			for (StudioSlotDto studioSlotDto : studioDtoList) {
 				String slotNo = studioSlotDto.getSlotNo();
