@@ -5,6 +5,7 @@ import java.util.List;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 /**
@@ -54,5 +55,11 @@ public interface OperationService {
 	 * @return
 	 */
 	public HubSlotSpuSupplierDto findSlotSpuSupplier(String slotNo, String slotSpuNo);
+	/**
+	 * 查找该批次下边所有的产品详情
+	 * @param slotNo 批次号
+	 * @return
+	 */
+	public List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo);
 
 }
