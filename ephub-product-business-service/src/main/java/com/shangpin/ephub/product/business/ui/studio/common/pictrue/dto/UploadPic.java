@@ -1,7 +1,5 @@
 package com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 /**
