@@ -2,8 +2,6 @@ package com.shangpin.ephub.product.business.ui.studio.incomingslots.vo;
 
 import java.util.List;
 
-import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
-
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -21,9 +19,9 @@ public class IncomingSlotsVo {
 	/**
 	 * 优先批次
 	 */
-	private List<StudioSlotDto> prioritySlots;
+	private List<IncomingSlotDto> prioritySlots;
 	/**
 	 * 次要批次
 	 */
-	private List<StudioSlotDto> secondarySlots;
+	private List<IncomingSlotDto> secondarySlots;
 }

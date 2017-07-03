@@ -20,4 +20,7 @@ public interface StudioGateWay {
 	@RequestMapping(value = "/studio-slot/check", method = RequestMethod.POST,consumes = "application/json")
 	public Boolean checkStudioSlot();
 	
+	@RequestMapping(value = "/studio-slot/downloadImage", method = RequestMethod.POST,consumes = "application/json")
+	public Boolean downLoadImageByFtp();
+	
 }

@@ -154,12 +154,13 @@ public class StudioSlotController {
 	@RequestMapping(value = "/downloadImage")
 	public boolean downLoadImageByFtp() {
 		try {
-			String newDate = sd.format(new Date());
-			String pathName = new String("/home/dev/"+newDate);
+			Calendar calendar = Calendar.getInstance();  
+	        calendar.setTime(new Date());  
+	        calendar.add(Calendar.DAY_OF_MONTH, -1);  
+	        String newDate = sd.format(calendar.getTime()); 
 			List<StudioSlotDto> studioDtoList = studioSlotService.selectStudioSlotByShootTime();
 			for (StudioSlotDto studioSlotDto : studioDtoList) {
 				String slotNo = studioSlotDto.getSlotNo();
-				pathName = pathName+"/"+slotNo;
 				List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoLists = hubSlotSpuSupplierService.getSlotSpuSupplierBySlotNo(slotNo);
 				for(HubSlotSpuSupplierDto hubSlotSpuSupplierDto : hubSlotSpuSupplierDtoLists){
 					long slotSpuId = hubSlotSpuSupplierDto.getSlotSpuId();
@@ -168,8 +169,8 @@ public class StudioSlotController {
 					String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
 					String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 					
-//					pathName = new String("/home/dev/"+newDate+"/"+slotNo+"/"+slotSpuNo+"/");
-					pathName = new String("/home/dev/ftpLoad/");
+					String pathName = new String("/home/dev/"+newDate+"/"+slotNo+"/"+slotSpuNo+"/");
+//					String pathName = new String("/home/dev/ftpLoad/");
 					FTPFile[] files = FTPClientUtil.getFiles(pathName);
 					for (FTPFile file : files) {
 						try {

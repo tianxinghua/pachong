@@ -153,7 +153,7 @@ public class OperationServiceImpl implements OperationService {
 	 * @param slotNo
 	 * @return
 	 */
-	private List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo) {
+	public List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
 		criteria.setFields("studio_slot_id,arrive_state");
 		criteria.setOrderByClause("create_time");

@@ -69,7 +69,7 @@ public class SlotManageService {
 				List<StudioDto> studioDtoList = studioGateWay.selectByCriteria(studioCriteriaDto);
 				if (studioDtoList.size() == 0 || studioDtoList == null) {
 					Log.error(slotManageQuery.getStudioNo() + ":此摄影棚不存在!");
-					return null;
+					return HubResponse.errorResp("1", "摄影棚不存在!");
 				}
 				studioId = studioDtoList.get(0).getStudioId();
 				criteria.andStudioIdEqualTo(studioId);
