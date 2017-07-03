@@ -367,8 +367,10 @@ public class EphubProductBusinessServiceApplicationTests {
 	public void testSloSupplierSearch(){
 
 		SpuSupplierQueryDto quryDto = new SpuSupplierQueryDto();
-
+//		quryDto.setSpuModel("ML07");
+		quryDto.setSupplierNo("S0000766");
 		List<SlotSpuDto> slotSpu = slotSpuService.findSlotSpu(quryDto);
+
 
         System.out.println("slot size = " + slotSpu.size());
 
