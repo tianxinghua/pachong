@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.controller;
 
+import com.shangpin.ephub.product.business.ui.studio.studio.dto.DefectiveSpuDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IReturnSlotService;
@@ -107,6 +108,49 @@ public class ReturnSlotController {
         }
 
         return  HubResponse.successResp(iReturnSlotService.confirmSlotInfo(supplierId, id));
+    }
+
+    /**
+     * 添加残品信息
+     * @param queryDto
+     * @return
+     */
+    @RequestMapping(value = "/adddefective")
+    public  HubResponse<?> addDefective(@RequestBody DefectiveSpuDto queryDto){
+        String supplierId = queryDto.getSupplierId();
+        String barcode = queryDto.getBarcode();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(barcode) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        Long i = iReturnSlotService.addDefective(queryDto);
+        if(i != null){
+            return  HubResponse.successResp(iReturnSlotService.addDefective(queryDto));
+        }else {
+            return  HubResponse.errorResp("No corresponding data was found!");
+        }
+    }
+
+    @RequestMapping(value = "/defectivelist")
+    public  HubResponse<?> getDefectiveList(@RequestBody DefectiveSpuDto queryDto){
+        String supplierId = queryDto.getSupplierId();
+        if(StringUtils.isEmpty(supplierId) ){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return  HubResponse.successResp(iReturnSlotService.getDefectiveList(supplierId));
+    }
+
+    @RequestMapping(value = "/deletedefective")
+    public  HubResponse<?> DeleteDefective(@RequestBody DefectiveSpuDto queryDto) {
+        String supplierId = queryDto.getSupplierId();
+        Long id = queryDto.getId();
+        if (StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(id)) {
+            return HubResponse.errorResp("传入参数不正确");
+        }
+        if (iReturnSlotService.DeleteDefective(supplierId, id, queryDto.getUserName())) {
+            return HubResponse.successResp(null);
+        } else {
+            return HubResponse.errorResp("failed!");
+        }
     }
 
 }

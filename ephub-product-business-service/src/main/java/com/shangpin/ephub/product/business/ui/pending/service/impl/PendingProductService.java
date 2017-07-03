@@ -170,16 +170,16 @@ public class PendingProductService extends PendingSkuService{
             	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
             	if(null == updatedVo){
             		updatedVo = new PendingUpdatedVo();
-            		updatedVo.setSpuResult(""); 
-            		updatedVo.setSpuPendingId(pendingProductDto.getSpuPendingId()); 
+            		updatedVo.setSpuResult("");
+            		updatedVo.setSpuPendingId(pendingProductDto.getSpuPendingId());
             	}
             	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
-            
+
             	if(pengdingSkus!=null&&pengdingSkus.size()>0){
             		 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
                      	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
                      	hubSkuSize = StringUtils.isEmpty(hubSkuSize) ? "" : hubSkuSize;
-                     	log.info("从页面接收到的尺码信息===="+hubSkuSize); 
+                     	log.info("从页面接收到的尺码信息===="+hubSkuSize);
                      	if(hubSkuSize.startsWith("排除")){
                      		hubSkuPendingDto.setHubSkuSizeType("排除");
                      		hubSkuPendingDto.setHubSkuSize(null);//目的是不更新尺码值
@@ -187,12 +187,12 @@ public class PendingProductService extends PendingSkuService{
                      		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                      	}else if(hubSkuSize.startsWith("尺寸")){
                      		isSkuPass = true;
-                     		hubSkuPendingDto.setHubSkuSizeType("尺寸"); 
+                     		hubSkuPendingDto.setHubSkuSizeType("尺寸");
                      		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                      		if(null != hubSpuDto){
                              	hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
                      		}else{
-                     			hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());	
+                     			hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                      		}
                      		hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
                      		hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
@@ -210,12 +210,12 @@ public class PendingProductService extends PendingSkuService{
                      		HubPendingSkuCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), sizeType,sizeValue);
          					if(result.isPassing()){
          						if(null != hubSpuDto){
-         							hubSkuPendingDto.setScreenSize(result.getSizeId()); 
+         							hubSkuPendingDto.setScreenSize(result.getSizeId());
                                  	hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
                                  	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
          						}else{
-         							hubSkuPendingDto.setScreenSize(result.getSizeId()); 
+         							hubSkuPendingDto.setScreenSize(result.getSizeId());
                                  	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
@@ -231,7 +231,7 @@ public class PendingProductService extends PendingSkuService{
                              }
          					if(hubSkuSize.contains(":")){
                              	hubSkuPendingDto.setHubSkuSizeType(hubSkuSize.substring(0,hubSkuSize.indexOf(":")));
-                             	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));  
+                             	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                              }
                      	}
                      	hubSkuPendingDto.setSupplyPrice(null);
@@ -239,15 +239,15 @@ public class PendingProductService extends PendingSkuService{
                      	hubSkuPendingDto.setSalesPrice(null);
                         hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
                      }
-            		 
+
             		 if(!isSkuPass){
                       	updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"尺码都被排除");
              		 }
             	}else{
             		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无sku信息");
             	}
-               
-                updatedVo.setSkus(skus); 
+
+                updatedVo.setSkus(skus);
                 response.setErrorMsg(updatedVo);
             }
             if(0==pendingProductDto.getSupplierSpuId()){
@@ -481,7 +481,7 @@ public class PendingProductService extends PendingSkuService{
      * @param spuPengdingId
      * @param errorMsg
      */
-    private PendingUpdatedVo setErrorMsg(HubResponse<PendingUpdatedVo> response,Long spuPengdingId,String errorMsg){
+    protected PendingUpdatedVo setErrorMsg(HubResponse<PendingUpdatedVo> response,Long spuPengdingId,String errorMsg){
     	response.setCode("1");
 		PendingUpdatedVo updatedVo = new PendingUpdatedVo();
 		updatedVo.setSpuPendingId(spuPengdingId);
@@ -495,7 +495,7 @@ public class PendingProductService extends PendingSkuService{
      * @param pendingProductDto 待更新的pending spu
      * @return
      */
-    private HubSpuDto findAndUpdatedFromHubSpu(String spuModel,PendingProductDto pendingProductDto){
+    protected HubSpuDto findAndUpdatedFromHubSpu(String spuModel,PendingProductDto pendingProductDto){
     	pendingProductDto.setSpuModel(spuModel);
 		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 		if(null != hubSpus && hubSpus.size()>0){
@@ -510,7 +510,7 @@ public class PendingProductService extends PendingSkuService{
      * @param pendingProductDto
      * @return
      */
-    private BrandModelResult verifyProductModle(PendingProductDto pendingProductDto) {
+    protected BrandModelResult verifyProductModle(PendingProductDto pendingProductDto) {
 		BrandModelDto BrandModelDto = new BrandModelDto();
 		BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
 		BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());

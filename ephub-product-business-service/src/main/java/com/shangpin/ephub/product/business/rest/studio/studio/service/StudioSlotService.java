@@ -163,7 +163,7 @@ public class StudioSlotService {
 	}
 
 	// 查询当天拍摄的批次进行处理。
-	public void selectAndUpdateStudioSlotBySlotDate() {
+	public void selectAndUpdateStudioSlotByShootTime() {
 		log.info("查询当天拍摄的批次进行处理----start");
 		try {
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
@@ -210,5 +210,26 @@ public class StudioSlotService {
 		}
 		log.info("查询当天拍摄的批次进行处理----end");
 	}
+	
+	// 查询当天拍摄的批次
+		public List<StudioSlotDto> selectStudioSlotByShootTime() {
+			log.info("查询当天拍摄的批次进行处理----start");
+			List<StudioSlotDto> listStudioDto = null;
+			try {
+				StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
+				String nowDate = sdfomat.format(new Date());
+				String startDate = nowDate + " 00:00:00";
+				String endDate = nowDate + " 23:59:59";
+				Date sDate = sdf.parse(startDate);
+				Date eDate = sdf.parse(endDate);
+				dto.createCriteria().andShootTimeBetween(sDate, eDate);
+				listStudioDto = studioSlotGateWay.selectByCriteria(dto);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			log.info("查询当天拍摄的批次进行处理----end");
+			return listStudioDto;
+			
+		}
 
 }

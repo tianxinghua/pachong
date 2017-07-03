@@ -1,10 +1,7 @@
 package com.shangpin.ephub.product.business.rest.studio.studio.controller;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
+import com.shangpin.ephub.client.data.mysql.studio.pic.gateway.HubSlotSpuPicGateway;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCalendarDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
@@ -27,6 +28,7 @@ import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicC
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicSlotService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioSlotService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 
@@ -52,8 +54,13 @@ public class StudioSlotController {
 	StudioDicSlotService studioDicSlotService;
 	@Autowired
 	private PictureService pictureService;
+	@Autowired
+	private HubSlotSpuSupplierService hubSlotSpuSupplierService;
+	@Autowired
+	private HubSlotSpuPicGateway hubSlotSpuPicGateway;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy/MM/dd");
+	SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
 
 	@RequestMapping(value = "/create")
 	public boolean createStudioSlot() {
@@ -135,7 +142,7 @@ public class StudioSlotController {
 			// 3. 查询当天之前的拍摄状态，如果有未设置拍摄状态的批次進行处理
 			studioSlotService.selectAndUpdateStudioSlotBeforeSlotDateByShotStatus();
 			// 查询当天拍摄的批次进行处理。
-			studioSlotService.selectAndUpdateStudioSlotBySlotDate();
+			studioSlotService.selectAndUpdateStudioSlotByShootTime();
 			return true;
 		} catch (Exception e) {
 			log.error("checkStudioSlot处理发生异常：{}", e);
@@ -147,33 +154,53 @@ public class StudioSlotController {
 	@RequestMapping(value = "/downloadImage")
 	public boolean downLoadImageByFtp() {
 		try {
-			String pathName=new String("ftpLoad/");
-			FTPFile[] files = FTPClientUtil.getFiles(pathName);
-			List<String> lists = new ArrayList<String>();
-			for (FTPFile file : files) {
-				try {
-					String fileName = file.getName();
-					//拼接下载地址 studioSlot/05(几号)/图片名称
-					String downLoadAddress = "ftpLoad/"+fileName;
-					InputStream in = FTPClientUtil.downFile(downLoadAddress);
+			Calendar calendar = Calendar.getInstance();  
+	        calendar.setTime(new Date());  
+	        calendar.add(Calendar.DAY_OF_MONTH, -1);  
+	        String newDate = sd.format(calendar.getTime()); 
+			List<StudioSlotDto> studioDtoList = studioSlotService.selectStudioSlotByShootTime();
+			for (StudioSlotDto studioSlotDto : studioDtoList) {
+				String slotNo = studioSlotDto.getSlotNo();
+				List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoLists = hubSlotSpuSupplierService.getSlotSpuSupplierBySlotNo(slotNo);
+				for(HubSlotSpuSupplierDto hubSlotSpuSupplierDto : hubSlotSpuSupplierDtoLists){
+					long slotSpuId = hubSlotSpuSupplierDto.getSlotSpuId();
+					long slotSpuSupplierId = hubSlotSpuSupplierDto.getSlotSpuSupplierId();
+					String slotSpuNo = hubSlotSpuSupplierDto.getSlotSpuNo();
+					String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
+					String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 					
-					ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 
-					byte[] buff = new byte[100]; //buff用于存放循环读取的临时数据 
-					int rc = 0; 
-					while ((rc = in.read(buff, 0, 100)) > 0) { 
-					swapStream.write(buff, 0, rc); 
-					} 
-					byte[] in_b = swapStream.toByteArray(); //in_b为转换之后的结果 
-					String extension = pictureService.getExtension(fileName);
-					String fdfsURL = pictureService.uploadPic(in_b, extension);
-					lists.add(fdfsURL);
-					in.close();
-				} catch (Exception e) {
-					log.error(file.getName()+"图片上传发生异常：{}", e);
-					e.printStackTrace();
+					String pathName = new String("/home/dev/"+newDate+"/"+slotNo+"/"+slotSpuNo+"/");
+//					String pathName = new String("/home/dev/ftpLoad/");
+					FTPFile[] files = FTPClientUtil.getFiles(pathName);
+					for (FTPFile file : files) {
+						try {
+							String fileName = file.getName();
+							String downLoadAddress = "ftpLoad/" + fileName;
+							InputStream in = FTPClientUtil.downFile(downLoadAddress);
+
+							ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+							byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
+							int rc = 0;
+							while ((rc = in.read(buff, 0, 100)) > 0) {
+								swapStream.write(buff, 0, rc);
+							}
+							byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
+							String extension = pictureService.getExtension(fileName);
+							String fdfsURL = pictureService.uploadPic(in_b, extension);
+							
+							HubSlotSpuPicDto dto = createHubSlotSpuPicDto(slotSpuId, slotSpuSupplierId, slotSpuNo, supplierNo, supplierId, fdfsURL, extension);
+							
+							hubSlotSpuPicGateway.insertSelective(dto);
+							
+							in.close();
+						} catch (Exception e) {
+							log.error(file.getName() + "图片上传发生异常：{}", e);
+							e.printStackTrace();
+						}
+					}
 				}
-		}
-			
+				
+			}
 			return true;
 		} catch (Exception e) {
 			log.error("downImgByFtp处理发生异常：{}", e);
@@ -197,6 +224,20 @@ public class StudioSlotController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		return dto;
+	}
+	private HubSlotSpuPicDto createHubSlotSpuPicDto(long slotSpuId, long slotSpuSupplierId, String slotSpuNo, String supplierNo,String supplierId,String picUrl,String extension) {
+		HubSlotSpuPicDto dto = new HubSlotSpuPicDto();
+		dto.setSlotSpuId(slotSpuId);
+		dto.setSlotSpuNo(slotSpuNo);
+		dto.setSlotSpuSupplierId(slotSpuSupplierId);
+		dto.setSupplierNo(supplierNo);
+		dto.setSupplierId(supplierId);
+		dto.setCreateTime(new Date());
+		dto.setUpdateTime(new Date());
+		dto.setSpPicUrl(picUrl);
+		dto.setPicExtension(extension);
+		dto.setCreateUser("admin");
 		return dto;
 	}
 	public static void main(String[] args){

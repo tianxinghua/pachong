@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.studio.slotspu.controller;
+package com.shangpin.ephub.product.business.ui.studio.pending.controller;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -18,29 +18,37 @@ import java.util.List;
 
 /**
 
+  拍照待处理页面
  *
  */
 @RestController
-@RequestMapping("/slot-spu")
+@RequestMapping("/shoot-product")
 @Slf4j
-public class SlotSpuController {
+public class ShootProductController {
 	
 	private static String resultSuccess = "success";
 	private static String resultFail = "fail";
 	
-	@Autowired
-	private IPendingProductService pendingProductService;
+
 	@Autowired
 	private IHubSpuPendingPicService pendingPicService;
 
 	@Autowired
-	StudioPendingService studioPendingService;
+	private StudioPendingService studioPendingService;
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
-        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
+		pendingQuryDto.setShoot(true);
+        PendingProducts pendingProducts = studioPendingService.findPendingProducts(pendingQuryDto,false);
         return HubResponse.successResp(pendingProducts);
     }
-
+    @RequestMapping(value="/update",method=RequestMethod.POST)
+    public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
+    	return studioPendingService.updatePendingProduct(pendingProductDto);
+    }
+    @RequestMapping(value="/batch-update",method=RequestMethod.POST)
+    public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
+        return studioPendingService.batchUpdatePendingProduct(pendingProducts);
+    }
 
 }

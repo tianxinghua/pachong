@@ -2,7 +2,9 @@ package com.shangpin.ephub.product.business.ui.studio.studio.service;
 
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.dto.DefectiveSpuDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryDto;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.DefectiveListVo;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.ReturnSlotInfo;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -22,5 +24,11 @@ public interface IReturnSlotService {
     HubResponse<StudioSlotReturnDetailDto> addProductFromScan(String supplierId, Long id, String barcode, String userName);
 
     ReturnSlotInfo confirmSlotInfo(String supplierId, Long id);
+
+    Long addDefective(DefectiveSpuDto queryDto);
+
+    List<DefectiveListVo> getDefectiveList(String supplierId);
+
+    boolean DeleteDefective(String supplierId, Long id,String userName);
 
 }
