@@ -156,7 +156,7 @@ public class AllProductServiceImpl {
 				}
 			}
 		}
-		exportServiceImpl.saveAndUploadExcel(taskNo, "studio-slot", wb);
+		exportServiceImpl.saveAndUploadStudioExcel(taskNo, "studio-slot", wb);
 	}
 	
 	

@@ -30,5 +30,6 @@ public class FtpProperties implements Serializable {
     private String ftpHubPath;
     private String ftpPendingPath;
     private String exportPath;
+    private String studioPath;
     private String localResultPath;
 }
