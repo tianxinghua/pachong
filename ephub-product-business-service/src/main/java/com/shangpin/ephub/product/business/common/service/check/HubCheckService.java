@@ -81,7 +81,7 @@ public class HubCheckService {
 	@Autowired
 	SizeService sizeService;
 	
-	public boolean getCategoryName(String categoryNo) {
+	public boolean checkCategoryNo(String categoryNo) {
 		if(categoryNo!=null&&categoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
 			FourLevelCategory category = categoryService.getGmsCateGory(categoryNo);
 	        if(null != category){
@@ -90,7 +90,7 @@ public class HubCheckService {
 		}
 		return false;
 	}
-	public boolean getBrand(String brandNo) {
+	public boolean checkBrand(String brandNo) {
 		BrandDom brand = brandService.getGmsBrand(brandNo);
         if(null != brand){
         	return true;
@@ -134,7 +134,7 @@ public class HubCheckService {
 		
 		//校验品牌
 		if(StringUtils.isNotBlank(hubProduct.getHubBrandNo())){
-			if(!getBrand(hubProduct.getHubBrandNo())){
+			if(!checkBrand(hubProduct.getHubBrandNo())){
 				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
 				result.setBrand(false);
 				result.setPassing(false);
@@ -150,7 +150,7 @@ public class HubCheckService {
 		//校验品类
 		if(StringUtils.isNotBlank(hubProduct.getHubCategoryNo())){
 			if(hubProduct.getHubCategoryNo().matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
-				if(getCategoryName(hubProduct.getHubCategoryNo())){
+				if(checkCategoryNo(hubProduct.getHubCategoryNo())){
 					result.setCategory(true);
 				}else{
 					str.append("品类编号"+hubProduct.getHubCategoryNo()+"不存在,") ;
@@ -313,6 +313,7 @@ public class HubCheckService {
 		}else{
 			return false;
 		}
+		
 	}
 	
 	/**
@@ -331,21 +332,6 @@ public class HubCheckService {
 		}
 	}
 	
-	/**
-	 * 校验品类
-	 * @param categoryNo
-	 * @return
-	 */
-	public boolean checkHubCategory(String categoryNo){
-		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
-		criteria.createCriteria().andHubCategoryNoEqualTo(categoryNo);
-		List<HubSupplierCategroyDicDto> list = hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
-		if(list!=null&&list.size()>0){
-			return true;
-		}else{
-			return false;
-		}
-	}
 	
 	/**
 	 * 验证尺码是否在标准库中，如果存在返回空字符串，否则返回校验不通过原因
@@ -371,7 +357,7 @@ public class HubCheckService {
 			if(sizeDom!=null){
 				List<SizeStandardItem> sizeStandardItemList = sizeDom.getSizeStandardItemList();
 	            for(SizeStandardItem sizeItem : sizeStandardItemList){
-	            	if(sizeItem.getSizeStandardValue()!=null){
+	            	if(sizeItem.getSizeStandardValue()!=null&&sizeItem.getIsScreening()==0){
 	            		String [] sizeScmArr = sizeItem.getSizeStandardValue().split("\\|",-1);
 	            		for(String sizeScm:sizeScmArr){
 	            			 if((sizeItem.getSizeStandardName() + ":" +sizeScm).equals(sizeType+":"+size)){
