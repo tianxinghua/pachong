@@ -46,7 +46,7 @@ public class StudioScheduler {
 			log.info("===========任务开始============"); 
 			studioGateWay.downLoadImageByFtp();
 		} catch (Exception e) {
-			log.error("checkStudioSlot 服务异常："+e.getMessage(),e);
+			log.error("downLoadImageByFtp 服务异常："+e.getMessage(),e);
 		}
 	}
 }

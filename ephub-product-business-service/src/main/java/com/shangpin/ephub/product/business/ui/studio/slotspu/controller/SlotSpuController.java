@@ -1,6 +1,11 @@
 package com.shangpin.ephub.product.business.ui.studio.slotspu.controller;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SlotSpuSupplier;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.gateway.SpuSupplierUnionGateWay;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -29,17 +34,16 @@ public class SlotSpuController {
 	private static String resultFail = "fail";
 	
 	@Autowired
-	private IPendingProductService pendingProductService;
-	@Autowired
-	private IHubSpuPendingPicService pendingPicService;
+    HubSlotSpuService slotSpuService;
 
-	@Autowired
-	StudioPendingService studioPendingService;
+
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
-    public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
-        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
-        return HubResponse.successResp(pendingProducts);
+    public HubResponse<?> pendingList(@RequestBody SpuSupplierQueryDto quryDto){
+
+        List<SlotSpuDto> slotSpu = slotSpuService.findSlotSpu(quryDto);
+
+        return HubResponse.successResp(slotSpu);
     }
 
 

@@ -1,8 +1,8 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
-import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuQueryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 
 import java.util.List;
@@ -54,6 +54,6 @@ public interface HubSlotSpuService {
      * @param queryDto
      * @return
      */
-    public List<SlotSpuDto>  findSlotSpu(SlotSpuQueryDto queryDto);
+    public List<SlotSpuDto>  findSlotSpu(SpuSupplierQueryDto queryDto);
 
 }

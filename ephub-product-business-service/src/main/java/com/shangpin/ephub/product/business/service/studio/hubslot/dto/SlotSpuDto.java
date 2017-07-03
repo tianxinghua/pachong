@@ -3,6 +3,8 @@ package com.shangpin.ephub.product.business.service.studio.hubslot.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * Created by loyalty on 17/6/29.
  */
@@ -15,6 +17,9 @@ public class SlotSpuDto {
     private String spuModel;
     private String hubCategoryNo;
     private String hubBrandNo;
+    private String studioName;
+
+    private List<SlotSpuSupplierDto> spuSupplierDtos;
 
 
     /**
@@ -28,14 +33,7 @@ public class SlotSpuDto {
 
 
     private String createUser;
-    /**
-     * 品牌名称
-     */
-    private String brandName;
-    /**
-     * HUB品类
-     */
-    private String categoryName;
+
 
     /**
      * 导出第几页
