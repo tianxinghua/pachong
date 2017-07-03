@@ -71,6 +71,7 @@ public class DataHandleService {
 		return spuDto;
 	}
 
+	@SuppressWarnings("deprecation")
 	public BrandModelResult checkSpuModel(HubSpuPendingDto hubPendingSpuDto) {
 		BrandModelDto dto = new BrandModelDto();
 		dto.setBrandMode(hubPendingSpuDto.getSpuModel());

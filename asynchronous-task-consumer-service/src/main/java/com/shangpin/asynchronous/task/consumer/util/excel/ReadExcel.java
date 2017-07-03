@@ -82,9 +82,36 @@ public class ReadExcel {
 		}
 		
     }
+    
+    /**
+     * read the Excel file
+     * @param clazz 要转换成的实体类
+     * @param input 输入流
+     * @param fileName 文件名称，主要用于判断后缀
+     * @return
+     * @throws Exception
+     */
+    public static <T> List<T> readExcel(Class<T> clazz,InputStream input, String fileName) throws Exception{
+    	if (StringUtils.isEmpty(fileName)) { 
+            return null;
+        } else {
+            String postfix = getPostfix(fileName);
+            if (!Common.EMPTY.equals(postfix)) {
+                if (Common.OFFICE_EXCEL_2003_POSTFIX.equals(postfix)) {
+                    return readXls(clazz,input);
+                } else if (Common.OFFICE_EXCEL_2010_POSTFIX.equals(postfix)) {
+                    return readXlsx(clazz,input);
+                }
+            } else {
+                log.error(fileName + Common.NOT_EXCEL_FILE);
+            }
+        }
+        return null;
+    }
 	
     /**
      * read the Excel file
+     * @param clazz 
      * @param path the path of the Excel file
      * @return
      * @throws IOException
@@ -101,7 +128,7 @@ public class ReadExcel {
                     return readXlsx(clazz,path);
                 }
             } else {
-                System.out.println(path + Common.NOT_EXCEL_FILE);
+            	log.error(path + Common.NOT_EXCEL_FILE);
             }
         }
         return null;
@@ -116,7 +143,21 @@ public class ReadExcel {
     public static <T> List<T> readXlsx(Class<T> clazz,String path) throws Exception {
         System.out.println(Common.PROCESSING + path);
         InputStream is = new FileInputStream(path);
-        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+        return readXlsx(clazz, is);
+    }
+
+    /**
+     * Read the Excel 2010 of stream
+     * @param clazz
+     * @param is
+     * @return
+     * @throws IOException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+	public static <T> List<T> readXlsx(Class<T> clazz, InputStream is)
+			throws IOException, InstantiationException, IllegalAccessException {
+		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
         List<T> list = new ArrayList<T>();
         for (int numSheet = 0; numSheet < xssfWorkbook.getNumberOfSheets(); numSheet++) {
             XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
@@ -141,7 +182,7 @@ public class ReadExcel {
             }
         }
         return list;
-    }
+	}
 
     /**
      * Read the Excel 2003-2007
@@ -152,7 +193,21 @@ public class ReadExcel {
     public static <T> List<T> readXls(Class<T> clazz,String path) throws Exception {
         System.out.println(Common.PROCESSING + path);
         InputStream is = new FileInputStream(path);
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
+        return readXls(clazz, is);
+    }
+
+    /**
+     * Read the Excel 2003-2007 of stream
+     * @param clazz
+     * @param is
+     * @return
+     * @throws IOException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+	public static <T> List<T> readXls(Class<T> clazz, InputStream is)
+			throws IOException, InstantiationException, IllegalAccessException {
+		HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
         List<T> list = new ArrayList<T>();
         for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
             HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
@@ -177,7 +232,7 @@ public class ReadExcel {
             }
         }
         return list;
-    }
+	}
 
     @SuppressWarnings("static-access")
     private static String getValue(XSSFCell xssfRow) {
