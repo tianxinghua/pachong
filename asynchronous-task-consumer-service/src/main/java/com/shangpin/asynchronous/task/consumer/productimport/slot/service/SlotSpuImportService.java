@@ -23,8 +23,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
-
-import lombok.extern.slf4j.Slf4j;
+import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 /**
  * <p>Title: ImportService</p>
  * <p>Description: 导入服务 </p>
@@ -34,13 +33,14 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Service
-@Slf4j
 public class SlotSpuImportService {
 	
 	@Autowired
-	TaskImportService taskService;
+	private TaskImportService taskService;
 	@Autowired
-	HubSpuPendingGateWay hubSpuPendingGateWay;
+	private HubSpuPendingGateWay hubSpuPendingGateWay;
+	@Autowired
+	private HubSlotSpuTaskGateWay hubSlotSpuTaskGateWay;
 
 	public String handMessage(Task task) throws Exception {
 		String taskNo = task.getTaskNo();
@@ -57,7 +57,7 @@ public class SlotSpuImportService {
 				HubSpuPendingDto pendingDto = convertDto(excelDto,createUser);
 				//TODO 校验，返回pendingDto
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingDto);
-				//TODO 调重任接口
+				hubSlotSpuTaskGateWay.add(pendingDto);
 				CheckResultDto resultDto = checkPendingSpu(taskNo,pendingDto);
 				listMap.add(ReflectBeanUtils.objectToMap(resultDto));
 			}
