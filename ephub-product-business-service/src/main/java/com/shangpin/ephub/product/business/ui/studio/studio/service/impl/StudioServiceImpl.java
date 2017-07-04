@@ -261,7 +261,7 @@ public class StudioServiceImpl implements IStudioService {
                     s.setCategoryFirst(firstCategory);
                     s.setCategorySecond(SecondCategory);
                 }
-
+                s.setSlotDate(x.getSlotDate());
                 s.setStudioId(x.getStudioId());
                 s.setSlotStatus(x.getSlotStatus());
                 s.setStudioSlotId(x.getStudioSlotId());
@@ -520,15 +520,15 @@ public class StudioServiceImpl implements IStudioService {
                             upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
                             hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
-                            //TODO: 需要调用重任的添加接口未验证
-                            SlotSpuSendDetailCheckDto checkDto = new SlotSpuSendDetailCheckDto();
-                            checkDto.setSlotNo(product.getSlotNo());
-                            checkDto.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-
-                            CommonResult commonResult = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSelectProduct(checkDto);
-                            if(!commonResult.isSuccess()){
-                                //TODO:失败了怎么处理没想好
-                            }
+                           //TODO: 需要调用重任的添加接口未验证
+//                            SlotSpuSendDetailCheckDto checkDto = new SlotSpuSendDetailCheckDto();
+//                            checkDto.setSlotNo(product.getSlotNo());
+//                            checkDto.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+//
+//                            CommonResult commonResult = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSelectProduct(checkDto);
+//                            if(!commonResult.isSuccess()){
+//                                //TODO:失败了怎么处理没想好
+//                            }
 
                             slotInfo.setCountNum(slotInfo.getCountNum() + 1);
                             successNum  = successNum +1;
