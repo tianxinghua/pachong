@@ -97,12 +97,14 @@ public class StudioSlotService {
 						for (StudioSlotDto slotDto : slotDtoList) {
 							if (slotDto.getApplyStatus() == (byte) 0) {
 								slotDto.setApplyStatus((byte) 3);
+								slotDto.setSlotStatus((byte) 1);
 								slotDto.setOriginSlotNo(studioSlotDto.getOriginSlotNo());
 								studioSlotGateWay.updateByPrimaryKey(slotDto);
 								isflg = false;
 
 								// 迟到批次，进行补交申请后，修改状态为4
 								studioSlotDto.setApplyStatus((byte) 4);
+								studioSlotDto.setSlotStatus((byte) 1);
 								studioSlotDto.setPlanShootTime(slotDto.getPlanShootTime());
 								studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
 								break;
@@ -143,12 +145,14 @@ public class StudioSlotService {
 					for (StudioSlotDto slotDto : slotDtoList) {
 						if (slotDto.getApplyStatus() == (byte) 0) {
 							slotDto.setApplyStatus((byte) 3);
+							slotDto.setSlotStatus((byte) 1);
 							slotDto.setOriginSlotNo(studioSlotDto.getOriginSlotNo());
 							studioSlotGateWay.updateByPrimaryKey(slotDto);
 							isflg = false;
 
 							// 迟到批次，进行补交申请后，修改状态为4
 							studioSlotDto.setApplyStatus((byte) 4);
+							studioSlotDto.setSlotStatus((byte) 1);
 							studioSlotDto.setPlanShootTime(slotDto.getPlanShootTime());
 							studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
 							break;
@@ -192,14 +196,17 @@ public class StudioSlotService {
 					if(listStudiodto!=null&&listStudiodto.size()!=0){
 						String slotNo = listStudiodto.get(0).getOriginSlotNo();
 						listStudiodto.get(0).setApplyStatus((byte) 0);
+						listStudiodto.get(0).setSlotStatus((byte) 0);
 						listStudiodto.get(0).setOriginSlotNo("");
 						studioSlotGateWay.updateByPrimaryKey(listStudiodto.get(0));
 
 						slotDto.setOriginSlotNo(slotNo);
 						slotDto.setApplyStatus((byte) 3);
+						slotDto.setSlotStatus((byte) 1);
 						studioSlotGateWay.insert(slotDto);
 						
 						studioDto.setApplyStatus((byte) 5);
+						studioDto.setSlotStatus((byte) 3);
 						studioSlotGateWay.updateByPrimaryKey(studioDto);
 						
 					}

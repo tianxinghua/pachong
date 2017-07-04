@@ -23,10 +23,13 @@ public class SlotManageController {
 
 	@Autowired
 	SlotManageService slotManageService;
+	
+	
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)
 	public HubResponse<?> slotList(@RequestBody SlotManageQuery slotManageQuery){
 		return slotManageService.findSlotManageList(slotManageQuery);
 	}
+	
 	@RequestMapping(value="/slot-detail",method = RequestMethod.POST)
 	public HubResponse<?> slotDetail(@RequestBody String slotNo){
 		return null;
@@ -34,5 +37,20 @@ public class SlotManageController {
 	@RequestMapping(value="/slot-export",method = RequestMethod.POST)
 	public HubResponse<?> slotDetailCheck(@RequestBody SlotManageQuery slotManageQuery){
 		return null;
+	}
+	
+	@RequestMapping(value="/save-return",method = RequestMethod.POST)
+	public HubResponse<?> saveSlotReturnDetailAndMaster(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.createSlotReturnDetailAndMaster(slotManageQuery);
+	}
+	
+	@RequestMapping(value="/return-master",method = RequestMethod.POST)
+	public HubResponse<?> selectSlotReturnMaster(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.selectSlotReturnMaster(slotManageQuery);
+	}
+	
+	@RequestMapping(value="/return-slot",method = RequestMethod.POST)
+	public HubResponse<?> selectSlotReturnDetail(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.selectSlotReturnDetail(slotManageQuery);
 	}
 }

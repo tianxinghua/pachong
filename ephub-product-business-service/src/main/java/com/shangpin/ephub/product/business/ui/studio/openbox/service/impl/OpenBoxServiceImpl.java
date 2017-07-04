@@ -86,11 +86,11 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	@Override
 	public boolean slotDetailCheck(String slotNoSpuId) {
 		try {
-			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
-			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+//			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
+//			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
 			StudioSlotSpuSendDetailWithCriteriaDto withCriteria = new StudioSlotSpuSendDetailWithCriteriaDto();
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-			criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo);
+			criteria.createCriteria().andBarcodeEqualTo(slotNoSpuId);
 			withCriteria.setCriteria(criteria );
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
@@ -171,7 +171,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		vo.setItemCode(dto.getSupplierSpuModel());
 		vo.setItemName(dto.getSupplierSpuName());
 		vo.setOperator(dto.getUpdateUser());
-		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+//		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+		vo.setStudioCode(dto.getBarcode());
 		vo.setTime(dto.getCreateTime());
 		return vo;
 	}
