@@ -517,6 +517,7 @@ public class StudioServiceImpl implements IStudioService {
                         if (id > 0) {
                             HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
                             upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+                            upSlotSpu.setSlotNo(slotNo);
                             upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
                             hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
