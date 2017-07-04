@@ -35,7 +35,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
 	 */
 	@Override
-	public String regexVerify(String hubBrandNo, String hubCategoryNo, String brandMode) {
+	public String regexVerify1(String hubBrandNo, String hubCategoryNo, String brandMode) {
 		if (StringUtils.isBlank(hubBrandNo)) {
 			log.warn("系统检测到接收到的品牌编号为空，品牌方型号校验不通过");
 			return null;

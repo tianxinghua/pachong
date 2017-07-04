@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.pending.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,6 @@ import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -29,6 +29,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
@@ -46,7 +47,6 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
-import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -102,7 +102,8 @@ public class PendingProductService extends PendingSkuService{
                         SupplierDTO supplierDTO = supplierService.getSupplier(pendingSpu.getSupplierNo());
                         pendingProduct.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : "");
                         FourLevelCategory category = categoryService.getGmsCateGory(pendingProduct.getHubCategoryNo());
-                        pendingProduct.setHubCategoryName(null != category ? category.getFourthName() : pendingProduct.getHubCategoryNo());
+                        String hubCategoryName = categoryService.getHubCategoryNameByHubCategory(pendingProduct.getHubCategoryNo(), category);
+                        pendingProduct.setHubCategoryName(null != hubCategoryName ? hubCategoryName : pendingProduct.getHubCategoryNo());
                         BrandDom brand = brandService.getGmsBrand(pendingProduct.getHubBrandNo());
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSkuPendingDto> skus = pendingSkus.get(pendingSpu.getSpuPendingId());
@@ -190,7 +191,7 @@ public class PendingProductService extends PendingSkuService{
                      		hubSkuPendingDto.setHubSkuSizeType("尺寸");
                      		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
                      		if(null != hubSpuDto){
-                             	hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
+                             	hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                      		}else{
                      			hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                      		}
@@ -210,8 +211,8 @@ public class PendingProductService extends PendingSkuService{
                      		HubPendingSkuCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), sizeType,sizeValue);
          					if(result.isPassing()){
          						if(null != hubSpuDto){
-         							hubSkuPendingDto.setScreenSize(result.getSizeId());
-                                 	hubSkuPendingDto.setSkuState(SpuState.HANDLING.getIndex());
+         							hubSkuPendingDto.setScreenSize(result.getSizeId()); 
+                                 	hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                                  	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
          						}else{
@@ -253,17 +254,35 @@ public class PendingProductService extends PendingSkuService{
             if(0==pendingProductDto.getSupplierSpuId()){
                 pendingProductDto.setSupplierSpuId(null);
             }
+            if(null != hubSpuDto&&pendingProductDto!=null){
+            	if(pendingProductDto.getHubColor()!=null&&pendingProductDto.getHubColor().equals(hubSpuDto.getHubColor())){
+            		
+            	}else{
+            		pass = false;
+            		pendingProductDto.setUpdateTime(new Date());
+            		pendingProductDto.setAuditState((byte)0);
+            		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+            		pendingProductDto.setAuditDate(new Date());
+            		pendingProductDto.setAuditUser("chenxu");
+            		PendingUpdatedVo updatedVo1 = new PendingUpdatedVo();
+            		updatedVo1.setSpuPendingId(pendingProductDto.getSpuPendingId());
+            		updatedVo1.setSpuResult("同品牌同货号颜色不一样");
+            		response.setCode("1");
+                    response.setErrorMsg(updatedVo1);
+            	}
+            }
             if(pass &&isSkuPass&& null != hubSpuDto){
-            	HubPendingDto hubPendingDto = new HubPendingDto();
-                hubPendingDto.setHubSpuId(hubSpuDto.getSpuId());
-                hubPendingDto.setHubSpuPendingId(pendingProductDto.getSpuPendingId());
-                pendingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
-                pendingProductDto.setSpuState(SpuState.HANDLED.getIndex());
+//            	  HubPendingDto hubPendingDto = new HubPendingDto();
+//                hubPendingDto.setHubSpuId(hubSpuDto.getSpuId());
+//                hubPendingDto.setHubSpuPendingId(pendingProductDto.getSpuPendingId());
+//                pendingToHubGateWay.addSkuOrSkuSupplierMapping(hubPendingDto);
+                pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }else if(pass&&isSkuPass){
             	pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
             pendingProductDto.setCreateTime(null); 
             pendingProductDto.setPicState(null);
+            log.info("更新参数："+JsonUtil.serialize(pendingProductDto));
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
@@ -515,8 +534,7 @@ public class PendingProductService extends PendingSkuService{
 		BrandModelDto.setBrandMode(pendingProductDto.getSpuModel());
 		BrandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
 		BrandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
-		@SuppressWarnings("deprecation")
-		BrandModelResult brandModelResult=  hubBrandModelRule.verify(BrandModelDto);
+		BrandModelResult brandModelResult=  hubBrandModelRule.verifyWithCategory(BrandModelDto);
 		return brandModelResult;
 	}
     /**
@@ -527,12 +545,14 @@ public class PendingProductService extends PendingSkuService{
     private void convertHubSpuDtoToPendingSpu(HubSpuDto hubSpuDto,PendingProductDto hubPendingSpuDto){
     	hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
 		hubPendingSpuDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
-		hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
+		if(hubPendingSpuDto.getHubColor()!=null&&hubPendingSpuDto.getHubColor().equals(hubSpuDto.getHubColor())){
+			hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
+		}
 		hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getSeason());
+		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());

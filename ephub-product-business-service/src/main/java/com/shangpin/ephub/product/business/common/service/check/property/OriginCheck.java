@@ -87,8 +87,8 @@ public class OriginCheck extends CommonCheckBase {
 	        Map<String, String> originMap = this.getOriginMap();
 	        if (StringUtils.isNotBlank(hubSpuPending.getHubOrigin())) {
 
-	            if (originMap.containsKey(hubSpuPending.getHubOrigin().trim())) {
-	            	hubSpuPendingIsExist.setHubOrigin(originMap.get(hubSpuPending.getHubOrigin().trim()));
+	            if (originMap.containsKey(hubSpuPending.getHubOrigin().toUpperCase().trim())) {
+	            	hubSpuPendingIsExist.setHubOrigin(originMap.get(hubSpuPending.getHubOrigin().toUpperCase().trim()));
 	                hubSpuPendingIsExist.setOriginState(InfoState.PERFECT.getIndex());
 	                return true;
 	            } else {
@@ -105,7 +105,7 @@ public class OriginCheck extends CommonCheckBase {
 	        List<HubSupplierValueMappingDto> valueMappingDtos = hubOriginDicService
 	                .getHubSupplierValueMappingByType(SupplierValueMappingType.TYPE_ORIGIN.getIndex());
 	        for (HubSupplierValueMappingDto dto : valueMappingDtos) {
-	            originStaticMap.put(dto.getSupplierVal(), dto.getHubVal());
+	            originStaticMap.put(dto.getSupplierVal().toUpperCase().trim(), dto.getHubVal());
 	            hubOriginStaticMap.put(dto.getHubVal(), dto.getSupplierVal());
 	        }
 	    }

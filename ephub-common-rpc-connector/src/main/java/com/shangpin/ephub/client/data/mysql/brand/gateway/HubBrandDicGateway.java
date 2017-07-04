@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.brand.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,8 +28,8 @@ public interface HubBrandDicGateway {
 	@RequestMapping(value = "/hub-brand-dic/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-brand-dic/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long brandDicId);
+	@RequestMapping(value = "/hub-brand-dic/delete-by-primary-key/{brandDicId}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("brandDicId") Long brandDicId);
 	
 	@RequestMapping(value = "/hub-brand-dic/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody HubBrandDicDto HubBrandDicDto);
@@ -42,8 +43,8 @@ public interface HubBrandDicGateway {
 	@RequestMapping(value = "/hub-brand-dic/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubBrandDicDto> selectByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-brand-dic/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubBrandDicDto selectByPrimaryKey(Long brandDicId);
+	@RequestMapping(value = "/hub-brand-dic/select-by-primary-key/{brandDicId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubBrandDicDto selectByPrimaryKey(@PathVariable("brandDicId") Long brandDicId);
 	
 	@RequestMapping(value = "/hub-brand-dic/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubBrandDicWithCriteriaDto HubBrandDicDtoWithCriteria);
@@ -56,4 +57,11 @@ public interface HubBrandDicGateway {
 	
 	@RequestMapping(value = "/hub-brand-dic/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubBrandDicDto HubBrandDicDto);
+	@RequestMapping(value = "/hub-brand-dic/count", method = RequestMethod.POST,consumes = "application/json")
+    public int count();
+	
+	@RequestMapping(value = "/hub-brand-dic/selectHUbBrandNo", method = RequestMethod.POST,consumes = "application/json")
+    public List<HubBrandDicDto> selectHUbBrandNo(@RequestBody HubBrandDicCriteriaDto cruteria);
+	
+	
 }

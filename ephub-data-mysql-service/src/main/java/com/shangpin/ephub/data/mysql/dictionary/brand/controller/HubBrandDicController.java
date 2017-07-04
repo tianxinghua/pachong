@@ -3,8 +3,10 @@ package com.shangpin.ephub.data.mysql.dictionary.brand.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.data.mysql.dictionary.brand.bean.HubBrandDicCriteriaWithRowBounds;
@@ -35,8 +37,8 @@ public class HubBrandDicController {
     public int deleteByCriteria(@RequestBody HubBrandDicCriteria criteria){
     	return hubBrandDicService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long brandDicId){
+	@RequestMapping(value = "/delete-by-primary-key/{brandDicId}")
+    public int deleteByPrimaryKey(@PathVariable("brandDicId") Long brandDicId){
     	return hubBrandDicService.deleteByPrimaryKey(brandDicId);
     }
 	@RequestMapping(value = "/insert")
@@ -57,8 +59,8 @@ public class HubBrandDicController {
     public List<HubBrandDic> selectByCriteria(@RequestBody HubBrandDicCriteria criteria){
     	return hubBrandDicService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubBrandDic selectByPrimaryKey(Long brandDicId){
+	@RequestMapping(value = "/select-by-primary-key/{brandDicId}")
+    public HubBrandDic selectByPrimaryKey(@PathVariable("brandDicId") Long brandDicId){
     	return hubBrandDicService.selectByPrimaryKey(brandDicId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
@@ -77,4 +79,13 @@ public class HubBrandDicController {
     public int updateByPrimaryKey(@RequestBody HubBrandDic hubBrandDic){
     	return hubBrandDicService.updateByPrimaryKey(hubBrandDic);
     }
+	
+	@RequestMapping(value = "/count", method = RequestMethod.POST,consumes = "application/json")
+    public int count(){
+	 	return hubBrandDicService.count();
+	}
+	@RequestMapping(value = "/selectHUbBrandNo", method = RequestMethod.POST,consumes = "application/json")
+    public List<HubBrandDic> selectHUbBrandNo(@RequestBody HubBrandDicCriteria cruteria){
+    	return hubBrandDicService.selectHUbBrandNo(cruteria);
+	}
 }
