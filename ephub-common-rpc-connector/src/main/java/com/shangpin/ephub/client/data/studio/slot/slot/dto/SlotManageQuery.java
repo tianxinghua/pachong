@@ -30,4 +30,8 @@ public class SlotManageQuery {
 	private String operatorName;
 	private Integer pageNo;
 	private Integer pageSize;
+	//扩展
+	private String supplierName;
+	private String barCode;
+	private Integer state;
 }
