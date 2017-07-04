@@ -728,6 +728,7 @@ public class StudioServiceImpl implements IStudioService {
                studioSlotDto.setStudioSlotId(studioSlotId);
                studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
                studioSlotDto.setUpdateTime(new Date());
+               studioSlotDto.setSendUser(createUser);
                return  studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto) >0;
            }
 
