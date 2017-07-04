@@ -21,8 +21,8 @@ public class SpuSupplierQueryDto {
      * 供应商编号
      */
     private String supplierNo;
-	/**
-	 * 货号
+    /**
+     * 货号
 	 */
 	private String spuModel;
 
@@ -30,7 +30,7 @@ public class SpuSupplierQueryDto {
 
 	private String category;
 	/**
-	 * 状态查询
+     * 状态查询
 	 */
 	private String state;
 

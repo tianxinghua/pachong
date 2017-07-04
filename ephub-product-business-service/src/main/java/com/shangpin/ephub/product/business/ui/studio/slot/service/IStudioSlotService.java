@@ -1,7 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.slot.service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
-import com.shangpin.ephub.product.business.ui.studio.slot.dto.SlotManageQuery;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.response.HubResponse;
 
 /**

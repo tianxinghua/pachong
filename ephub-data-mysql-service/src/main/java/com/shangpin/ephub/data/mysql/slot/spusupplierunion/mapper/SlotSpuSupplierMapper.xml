@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.shangpin.ephub.data.mysql.slot.spusupplierunion.mapper.SlotSupplierSearchMapper" >
+<mapper namespace="com.shangpin.ephub.data.mysql.slot.spusupplierunion.mapper.SlotSpuSupplierMapper" >
   <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.spusupplierunion.po.SlotSpuSupplier" >
       <result column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
       <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
@@ -36,10 +36,10 @@
   
   <select id="findObjectByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto" >
     select
-      s.slot_spu_supplier_id,s.slot_spu_id,s.slot_no,slot_spu_no,s.supplier_no,s.supplier_id,
+      s.slot_spu_supplier_id,s.slot_spu_id,s.slot_no,s.slot_spu_no,s.supplier_no,s.supplier_id,
       s.spu_pending_id,s.supplier_spu_id,s.state,s.create_time,s.create_user,
       s.update_time,s.update_user,s.repeat_marker,s.supplier_operate_sign,s.data_state,
-      p.spu_model,p.brand_no,p.category_no,p.market_time,p.season
+      p.spu_model,p.brand_no,p.category_no,p.market_time,p.season,p.spu_state
 
       from hub_slot_spu_supplier s
       inner join hub_slot_spu p on s.slot_spu_id  = p.slot_spu_id

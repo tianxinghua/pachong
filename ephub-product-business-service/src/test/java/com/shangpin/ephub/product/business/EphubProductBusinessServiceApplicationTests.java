@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.response.HubResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -282,7 +285,7 @@ public class EphubProductBusinessServiceApplicationTests {
 
 		PendingProductDto pendingProductDto = new PendingProductDto();
 		HubSpuPendingCriteriaDto criteriaDto = new HubSpuPendingCriteriaDto();
-		criteriaDto.createCriteria().andSpuPendingIdEqualTo(259796L);
+		criteriaDto.createCriteria().andSpuPendingIdEqualTo(258248L);
 		List<HubSpuPendingDto> spuPendingDtos   = gateWay.selectByCriteria(criteriaDto);
 		if(null!=spuPendingDtos&&spuPendingDtos.size()>0){
 			BeanUtils.copyProperties(spuPendingDtos.get(0),pendingProductDto);
@@ -354,6 +357,23 @@ public class EphubProductBusinessServiceApplicationTests {
 		withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
 		int i = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
 		System.out.println(i);
+	}
+
+
+	@Autowired
+	HubSlotSpuService slotSpuService;
+
+	@Test
+	public void testSloSupplierSearch(){
+
+		SpuSupplierQueryDto quryDto = new SpuSupplierQueryDto();
+//		quryDto.setSpuModel("ML07");
+		quryDto.setSupplierNo("S0000766");
+		List<SlotSpuDto> slotSpu = slotSpuService.findSlotSpu(quryDto);
+
+
+        System.out.println("slot size = " + slotSpu.size());
+
 	}
 
 }

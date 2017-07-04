@@ -11,12 +11,12 @@ import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
-import com.shangpin.ephub.product.business.ui.studio.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.product.business.ui.studio.slot.service.IStudioSlotService;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 import com.shangpin.ephub.response.HubResponse;
@@ -46,7 +46,7 @@ public class StudioSlotServiceImpl implements IStudioSlotService{
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public HubResponse<?> exportStudio(SlotManageQuery slotManageQuery,TaskType taskType){
     	try {
-			HubSpuImportTaskDto taskDto = saveTaskIntoMysql(slotManageQuery.getUserName(),taskType.getIndex());
+			HubSpuImportTaskDto taskDto = saveTaskIntoMysql(slotManageQuery.getOperatorName(),taskType.getIndex());
 			sendMessageToTask(taskDto.getTaskNo(),taskType.getIndex(),JsonUtil.serialize(slotManageQuery)); 
         	return HubResponse.successResp(taskDto.getTaskNo()+":studio_" + taskDto.getTaskNo()+".xls");
 		} catch (Exception e) {

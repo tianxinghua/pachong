@@ -125,7 +125,7 @@ public class HubPendingSpuHandleService {
 			return null;
 		}
 		// 校验spu各属性
-		String result =  commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);;
+		String result =  commonCheckBase.handleConvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);;
 		checkHubSpuPendingIsExistHubSpu(hubSpuPendingIsExist);
 		hubPendingSpuService.updateHubSpuPendingByPrimaryKey(hubSpuPendingIsExist);
 		return result;
@@ -135,7 +135,7 @@ public class HubPendingSpuHandleService {
 		// 映射spu各属性
 		HubSpuPendingDto hubSpuPendingIsExist = new HubSpuPendingDto();
 		convertHubPendingSpuDto(hubSpuPendingDto,hubSpuPendingIsExist);
-		commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);
+		commonCheckBase.handleConvertOrCheck(hubSpuPendingIsExist,hubSpuPendingDto);
 		
 		checkHubSpuPendingIsExistHubSpu(hubSpuPendingIsExist);
 		try{

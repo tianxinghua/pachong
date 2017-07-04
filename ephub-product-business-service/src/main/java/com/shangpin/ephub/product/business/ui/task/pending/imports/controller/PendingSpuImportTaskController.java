@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.task.pendingimport.controller;
+package com.shangpin.ephub.product.business.ui.task.pending.imports.controller;
 
 import java.util.Date;
 import java.util.UUID;
