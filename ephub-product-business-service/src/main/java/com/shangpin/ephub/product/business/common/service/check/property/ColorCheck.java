@@ -14,6 +14,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.hubDic.color.dto.ColorDTO;
 import com.shangpin.ephub.product.business.common.hubDic.color.service.HubColorDicService;
 import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 /**
  * Created by lizhongren on 2017/3/3.
  * 单个具体的实现类
@@ -25,7 +26,8 @@ public class ColorCheck extends CommonCheckBase {
     static Map<String, String> hubColorStaticMap = null;
 	@Autowired
 	HubColorDicService hubColorDicService;
-	
+	@Autowired
+	HubCheckService hubCheckService;
 
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
@@ -57,11 +59,7 @@ public class ColorCheck extends CommonCheckBase {
 	 */
 	public boolean checkHubColor(String color){
 		
-		if(hubColorStaticMap==null){
-			getColorMap();
-		}
-		
-		if(hubColorStaticMap!=null&&hubColorStaticMap.containsKey(color)){
+		if(hubCheckService.checkHubColor(color)){
 			return true;
 		}else{
 			return false;
@@ -73,14 +71,14 @@ public class ColorCheck extends CommonCheckBase {
 	            hubColorStaticMap = new HashMap<>();
 	            List<ColorDTO> colorDTOS = hubColorDicService.getColorDTO();
 	            for (ColorDTO dto : colorDTOS) {
-	                colorStaticMap.put(dto.getSupplierColor(), dto.getHubColorName());
+	                colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
 	                hubColorStaticMap.put(dto.getHubColorName(), "");
 	            }
 
 	        } else {
 	            if (isNeedHandle()) {
 	                for (ColorDTO dto : hubColorDicService.getColorDTO()) {
-	                    colorStaticMap.put(dto.getSupplierColor(), dto.getHubColorName());
+	                    colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
 	                    hubColorStaticMap.put(dto.getHubColorName(), "");
 	                }
 
@@ -95,9 +93,9 @@ public class ColorCheck extends CommonCheckBase {
 	 protected boolean setColorMapping(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 	        boolean result = true;
 	        Map<String, String> colorMap = this.getColorMap();
-	        if (colorMap.containsKey(hubSpuPending.getHubColor()) & !StringUtils.isEmpty(colorMap.get(hubSpuPending.getHubColor()))) {
+	        if (colorMap.containsKey(hubSpuPending.getHubColor().toUpperCase()) & !StringUtils.isEmpty(colorMap.get(hubSpuPending.getHubColor().toUpperCase()))) {
 	            // 包含时转化赋值
-	        	hubSpuPendingIsExist.setHubColor(colorMap.get(hubSpuPending.getHubColor()));
+	        	hubSpuPendingIsExist.setHubColor(colorMap.get(hubSpuPending.getHubColor().toUpperCase()));
 	            hubSpuPendingIsExist.setSpuColorState(InfoState.PERFECT.getIndex());
 
 	        } else {

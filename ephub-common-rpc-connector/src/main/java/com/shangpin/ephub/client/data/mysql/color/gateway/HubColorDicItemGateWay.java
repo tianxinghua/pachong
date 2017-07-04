@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.color.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,8 +44,8 @@ public interface HubColorDicItemGateWay {
 	@RequestMapping(value = "/hub-color-dic-item/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubColorDicItemDto> selectByCriteria(@RequestBody HubColorDicItemCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-color-dic-item/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubColorDicItemDto selectByPrimaryKey(Long colorDicItemId);
+	@RequestMapping(value = "/hub-color-dic-item/select-by-primary-key/{colorDicItemId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubColorDicItemDto selectByPrimaryKey(@PathVariable("colorDicItemId") Long colorDicItemId);
 	
 	@RequestMapping(value = "/hub-color-dic-item/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubColorDicItemWithCriteriaDto hubColorDicItemWithCriteria);

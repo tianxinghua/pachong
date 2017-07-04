@@ -69,6 +69,8 @@ public class StudioSlotReturnDetail implements Serializable {
      */
     private String supplierSeasonName;
 
+    private Byte state;
+
     /**
      * 0：待发货  1:摄影棚发货  
      */
@@ -245,6 +247,14 @@ public class StudioSlotReturnDetail implements Serializable {
         this.supplierSeasonName = supplierSeasonName == null ? null : supplierSeasonName.trim();
     }
 
+    public Byte getState() {
+        return state;
+    }
+
+    public void setState(Byte state) {
+        this.state = state;
+    }
+
     public Byte getSendState() {
         return sendState;
     }
@@ -376,6 +386,7 @@ public class StudioSlotReturnDetail implements Serializable {
         sb.append(", supplierBrandName=").append(supplierBrandName);
         sb.append(", supplierCategoryName=").append(supplierCategoryName);
         sb.append(", supplierSeasonName=").append(supplierSeasonName);
+        sb.append(", state=").append(state);
         sb.append(", sendState=").append(sendState);
         sb.append(", arriveState=").append(arriveState);
         sb.append(", barcode=").append(barcode);
@@ -420,6 +431,7 @@ public class StudioSlotReturnDetail implements Serializable {
             && (this.getSupplierBrandName() == null ? other.getSupplierBrandName() == null : this.getSupplierBrandName().equals(other.getSupplierBrandName()))
             && (this.getSupplierCategoryName() == null ? other.getSupplierCategoryName() == null : this.getSupplierCategoryName().equals(other.getSupplierCategoryName()))
             && (this.getSupplierSeasonName() == null ? other.getSupplierSeasonName() == null : this.getSupplierSeasonName().equals(other.getSupplierSeasonName()))
+            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
             && (this.getSendState() == null ? other.getSendState() == null : this.getSendState().equals(other.getSendState()))
             && (this.getArriveState() == null ? other.getArriveState() == null : this.getArriveState().equals(other.getArriveState()))
             && (this.getBarcode() == null ? other.getBarcode() == null : this.getBarcode().equals(other.getBarcode()))
@@ -453,6 +465,7 @@ public class StudioSlotReturnDetail implements Serializable {
         result = prime * result + ((getSupplierBrandName() == null) ? 0 : getSupplierBrandName().hashCode());
         result = prime * result + ((getSupplierCategoryName() == null) ? 0 : getSupplierCategoryName().hashCode());
         result = prime * result + ((getSupplierSeasonName() == null) ? 0 : getSupplierSeasonName().hashCode());
+        result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getSendState() == null) ? 0 : getSendState().hashCode());
         result = prime * result + ((getArriveState() == null) ? 0 : getArriveState().hashCode());
         result = prime * result + ((getBarcode() == null) ? 0 : getBarcode().hashCode());

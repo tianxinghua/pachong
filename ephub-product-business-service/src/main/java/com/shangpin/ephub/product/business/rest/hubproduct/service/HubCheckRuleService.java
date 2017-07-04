@@ -41,7 +41,7 @@ public class HubCheckRuleService {
 		StringBuffer str = new StringBuffer();
 		//校验品牌
 		if(StringUtils.isNoneBlank(hubProduct.getBrandNo())){
-			if(!hubCheckService.getBrand(hubProduct.getBrandNo())){
+			if(!hubCheckService.checkBrand(hubProduct.getBrandNo())){
 				str.append("品牌编号"+hubProduct.getBrandNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
@@ -52,7 +52,7 @@ public class HubCheckRuleService {
 		
 		//校验品类
 		if(StringUtils.isNoneBlank(hubProduct.getCategoryNo())){
-			if(!hubCheckService.getCategoryName(hubProduct.getCategoryNo())){
+			if(!hubCheckService.checkCategoryNo(hubProduct.getCategoryNo())){
 				str.append("品类编号"+hubProduct.getCategoryNo()+"不存在,") ;
 				result.setPassing(false);
 			}	
@@ -138,7 +138,7 @@ public class HubCheckRuleService {
 			brandModelDto.setBrandMode(hubProduct.getSpuModel());
 			brandModelDto.setHubBrandNo(hubProduct.getBrandNo());
 			brandModelDto.setHubCategoryNo(hubProduct.getCategoryNo());
-			brandModelResult=  hubBrandModelRule.verify(brandModelDto);
+			brandModelResult=  hubBrandModelRule.verifyWithCategory(brandModelDto);
 			if(brandModelResult.isPassing()){
 				result.setSpuModel(brandModelResult.getBrandMode());
 			}else{

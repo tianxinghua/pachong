@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.enumeration.SeasonType;
 import com.shangpin.ephub.product.business.common.hubDic.season.HubSeasonDicService;
 import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 
 /**
  * Created by lizhongren on 2017/3/3. 单个具体的实现类
@@ -26,7 +27,8 @@ public class SeasonCheck extends CommonCheckBase {
 	static Map<String, String> hubSeasonStaticMap = null;
 	@Autowired
 	HubSeasonDicService hubSeasonDicService;
-
+	@Autowired
+	HubCheckService hubCheckService;
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) {
 
@@ -61,17 +63,7 @@ public class SeasonCheck extends CommonCheckBase {
 	 * @return
 	 */
 	public boolean checkHubSeason(String supplierId,String season) {
-
-		
-		if (season!=null&&season.split("_").length < 2) {
-			return false;
-		}
-		
-		if(hubSeasonStaticMap==null){
-			getSeasonMap(supplierId);
-		}
-		
-		if(hubSeasonStaticMap!=null&&hubSeasonStaticMap.containsKey(season)){
+		if(hubCheckService.checkHubSeason(season)){
 			return true;
 		} else {
 			return false;

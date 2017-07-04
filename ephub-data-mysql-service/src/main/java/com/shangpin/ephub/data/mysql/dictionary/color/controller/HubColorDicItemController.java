@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.dictionary.color.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class HubColorDicItemController {
     public List<HubColorDicItem> selectByCriteria(@RequestBody HubColorDicItemCriteria criteria){
     	return hubColorDicItemService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubColorDicItem selectByPrimaryKey(Long colorDicItemId){
+	@RequestMapping(value = "/select-by-primary-key/{colorDicItemId}")
+    public HubColorDicItem selectByPrimaryKey(@PathVariable("colorDicItemId") Long colorDicItemId){
     	return hubColorDicItemService.selectByPrimaryKey(colorDicItemId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

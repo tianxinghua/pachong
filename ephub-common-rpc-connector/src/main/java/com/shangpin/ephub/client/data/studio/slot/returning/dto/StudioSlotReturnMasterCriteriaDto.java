@@ -540,6 +540,186 @@ public class StudioSlotReturnMasterCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andActualSendQuantityIsNull() {
+            addCriterion("actual_send_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityIsNotNull() {
+            addCriterion("actual_send_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityEqualTo(Integer value) {
+            addCriterion("actual_send_quantity =", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityNotEqualTo(Integer value) {
+            addCriterion("actual_send_quantity <>", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityGreaterThan(Integer value) {
+            addCriterion("actual_send_quantity >", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("actual_send_quantity >=", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityLessThan(Integer value) {
+            addCriterion("actual_send_quantity <", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("actual_send_quantity <=", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityIn(List<Integer> values) {
+            addCriterion("actual_send_quantity in", values, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityNotIn(List<Integer> values) {
+            addCriterion("actual_send_quantity not in", values, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("actual_send_quantity between", value1, value2, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("actual_send_quantity not between", value1, value2, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityIsNull() {
+            addCriterion("missing_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityIsNotNull() {
+            addCriterion("missing_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityEqualTo(Integer value) {
+            addCriterion("missing_quantity =", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityNotEqualTo(Integer value) {
+            addCriterion("missing_quantity <>", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityGreaterThan(Integer value) {
+            addCriterion("missing_quantity >", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("missing_quantity >=", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityLessThan(Integer value) {
+            addCriterion("missing_quantity <", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("missing_quantity <=", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityIn(List<Integer> values) {
+            addCriterion("missing_quantity in", values, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityNotIn(List<Integer> values) {
+            addCriterion("missing_quantity not in", values, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("missing_quantity between", value1, value2, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("missing_quantity not between", value1, value2, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityIsNull() {
+            addCriterion("damaged_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityIsNotNull() {
+            addCriterion("damaged_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityEqualTo(Integer value) {
+            addCriterion("damaged_quantity =", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityNotEqualTo(Integer value) {
+            addCriterion("damaged_quantity <>", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityGreaterThan(Integer value) {
+            addCriterion("damaged_quantity >", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("damaged_quantity >=", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityLessThan(Integer value) {
+            addCriterion("damaged_quantity <", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("damaged_quantity <=", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityIn(List<Integer> values) {
+            addCriterion("damaged_quantity in", values, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityNotIn(List<Integer> values) {
+            addCriterion("damaged_quantity not in", values, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("damaged_quantity between", value1, value2, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("damaged_quantity not between", value1, value2, "damagedQuantity");
+            return (Criteria) this;
+        }
+
         public Criteria andActualQuantityIsNull() {
             addCriterion("actual_quantity is null");
             return (Criteria) this;

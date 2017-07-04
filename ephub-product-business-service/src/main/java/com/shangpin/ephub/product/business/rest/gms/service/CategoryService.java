@@ -53,7 +53,7 @@ public class CategoryService {
 				return null;
 			}
 	        String supplierMsg = getGmsCateGoryByRedis(categoryNo);
-//	        log.info("从redis获取品类"+supplierMsg);
+	        log.info("从redis获取品类"+supplierMsg);
 	        if(!StringUtils.isEmpty(supplierMsg)){
 	        	return JsonUtil.deserialize(supplierMsg, FourLevelCategory.class);
 	        }else{
@@ -71,6 +71,22 @@ public class CategoryService {
 		}
 		return null;
 	}
+	
+	public String getHubCategoryNameByHubCategory(String hubCategoryNo,FourLevelCategory category){
+		if(category!=null&&hubCategoryNo!=null){
+			if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
+				return category.getFourthName();
+			}else if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}")){
+				return category.getThirdName();
+			}else if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}")){
+				return category.getSecondName();
+			}else if(hubCategoryNo.matches("A[0-9]{2}")){
+				return category.getFirstName();
+			}			
+		}
+		return null;
+	}
+	
 	/**
 	 * 将品类缓存到redis
 	 * @param categoryNo
@@ -111,7 +127,7 @@ public class CategoryService {
 //        log.info("从api获取品类请求参数：{}"+apiAddressProperties.getGmsCategoryUrl(),request);
         String gmsCategoryUrl = apiAddressProperties.getGmsCategoryUrl();
 		ResponseEntity<HubResponseDto<FourLevelCategory>> entity = restTemplate.exchange(gmsCategoryUrl, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<HubResponseDto<FourLevelCategory>>() {});
-//        log.info("从api获取品类返回结果：{}",entity.getBody());
+        log.info("从api获取品类返回结果：{}",entity.getBody());
 //        log.info("--->请求品类名称接口耗时{}",System.currentTimeMillis() - start_categoryService);
         return entity.getBody();
 	}
