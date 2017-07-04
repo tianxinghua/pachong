@@ -45,6 +45,8 @@ public class SlotSpuSupplierQueryDto implements Serializable {
      */
     private String spuModel;
 
+    private String slotSpuNo;
+
     private String brandName;
 
     private String categoryName;

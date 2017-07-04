@@ -34,6 +34,8 @@ public class StudioSlotReturnMaster implements Serializable {
 
     private Integer damagedQuantity;
 
+    private Integer addedQuantiy;
+
     /**
      * 实际收货数量
      */
@@ -188,6 +190,14 @@ public class StudioSlotReturnMaster implements Serializable {
         this.damagedQuantity = damagedQuantity;
     }
 
+    public Integer getAddedQuantiy() {
+        return addedQuantiy;
+    }
+
+    public void setAddedQuantiy(Integer addedQuantiy) {
+        this.addedQuantiy = addedQuantiy;
+    }
+
     public Integer getActualQuantity() {
         return actualQuantity;
     }
@@ -331,6 +341,7 @@ public class StudioSlotReturnMaster implements Serializable {
         sb.append(", actualSendQuantity=").append(actualSendQuantity);
         sb.append(", missingQuantity=").append(missingQuantity);
         sb.append(", damagedQuantity=").append(damagedQuantity);
+        sb.append(", addedQuantiy=").append(addedQuantiy);
         sb.append(", actualQuantity=").append(actualQuantity);
         sb.append(", trackNo=").append(trackNo);
         sb.append(", state=").append(state);
@@ -373,6 +384,7 @@ public class StudioSlotReturnMaster implements Serializable {
             && (this.getActualSendQuantity() == null ? other.getActualSendQuantity() == null : this.getActualSendQuantity().equals(other.getActualSendQuantity()))
             && (this.getMissingQuantity() == null ? other.getMissingQuantity() == null : this.getMissingQuantity().equals(other.getMissingQuantity()))
             && (this.getDamagedQuantity() == null ? other.getDamagedQuantity() == null : this.getDamagedQuantity().equals(other.getDamagedQuantity()))
+            && (this.getAddedQuantiy() == null ? other.getAddedQuantiy() == null : this.getAddedQuantiy().equals(other.getAddedQuantiy()))
             && (this.getActualQuantity() == null ? other.getActualQuantity() == null : this.getActualQuantity().equals(other.getActualQuantity()))
             && (this.getTrackNo() == null ? other.getTrackNo() == null : this.getTrackNo().equals(other.getTrackNo()))
             && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
@@ -404,6 +416,7 @@ public class StudioSlotReturnMaster implements Serializable {
         result = prime * result + ((getActualSendQuantity() == null) ? 0 : getActualSendQuantity().hashCode());
         result = prime * result + ((getMissingQuantity() == null) ? 0 : getMissingQuantity().hashCode());
         result = prime * result + ((getDamagedQuantity() == null) ? 0 : getDamagedQuantity().hashCode());
+        result = prime * result + ((getAddedQuantiy() == null) ? 0 : getAddedQuantiy().hashCode());
         result = prime * result + ((getActualQuantity() == null) ? 0 : getActualQuantity().hashCode());
         result = prime * result + ((getTrackNo() == null) ? 0 : getTrackNo().hashCode());
         result = prime * result + ((getState() == null) ? 0 : getState().hashCode());

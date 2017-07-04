@@ -17,6 +17,10 @@ import lombok.Setter;
 @Setter
 public class UploadQuery {
 	/**
+	 * 批次编号
+	 */
+	private String slotNo;
+	/**
 	 * 扫码的码
 	 */
 	private String slotNoSpuId;
