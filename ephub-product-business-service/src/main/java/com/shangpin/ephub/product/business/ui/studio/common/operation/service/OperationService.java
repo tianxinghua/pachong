@@ -6,6 +6,7 @@ import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
@@ -19,12 +20,26 @@ import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.
  *
  */
 public interface OperationService {
+	
+	/**
+	 * 根据批次号查找批次
+	 * @param slotNo
+	 * @return
+	 */
+	public StudioSlotDto selectStudioSlot(String slotNo);
 	/**
 	 * Studio Operation页面查询列表
 	 * @param operationQuery
 	 * @return
 	 */
 	public List<StudioSlotDto> slotList(OperationQuery operationQuery) throws Exception ;
+	/**
+	 * 根据主键查找摄影棚信息
+	 * @param studioId
+	 * @return
+	 */
+	public StudioDto getStudio(Long studioId);
+	
 	/**
 	 * 根据摄影棚编号获取主键
 	 * @param studioNo
@@ -48,7 +63,7 @@ public interface OperationService {
 	 * @param slotNo
 	 * @return
 	 */
-	public HubSlotSpuDto findSlotSpu(String slotNo);
+	public HubSlotSpuDto findSlotSpu(String slotSpuNo);
 	/**
 	 * 
 	 * @param slotNo

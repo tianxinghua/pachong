@@ -199,10 +199,10 @@ public class OperationServiceImpl implements OperationService {
 	}
 
 	@Override
-	public HubSlotSpuDto findSlotSpu(String slotNo) {
+	public HubSlotSpuDto findSlotSpu(String slotSpuNo) {
 		HubSlotSpuCriteriaDto criteria = new HubSlotSpuCriteriaDto();
 		criteria.setFields("slot_spu_id");
-		criteria.createCriteria().andSlotSpuNoEqualTo(slotNo);
+		criteria.createCriteria().andSlotSpuNoEqualTo(slotSpuNo);
 		List<HubSlotSpuDto> list = hubSlotSpuGateWay.selectByCriteria(criteria );
 		return list.get(0); 
 	}
@@ -226,6 +226,23 @@ public class OperationServiceImpl implements OperationService {
 		}else{
 			return null;
 		}
+	}
+
+	@Override
+	public StudioSlotDto selectStudioSlot(String slotNo) {
+		StudioSlotCriteriaDto creteria = new StudioSlotCriteriaDto();
+		creteria.createCriteria().andSlotNoEqualTo(slotNo);
+		List<StudioSlotDto> list = studioSlotGateWay.selectByCriteria(creteria );
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
+	}
+
+	@Override
+	public StudioDto getStudio(Long studioId) {
+		return studioGateWay.selectByPrimaryKey(studioId);
 	} 
 
 }

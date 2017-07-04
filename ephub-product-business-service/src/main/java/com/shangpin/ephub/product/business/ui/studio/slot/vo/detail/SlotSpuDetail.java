@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.slot.vo.detail;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -12,8 +14,12 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SlotSpuDetail {
+public class SlotSpuDetail implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9170699050931185021L;
 	/**
 	 * 货号
 	 */

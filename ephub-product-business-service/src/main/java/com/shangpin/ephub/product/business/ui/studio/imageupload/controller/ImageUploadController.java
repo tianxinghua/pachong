@@ -81,7 +81,7 @@ public class ImageUploadController {
 				for(String spPicUrl : spPicUrls){
 					if(!picMap.containsKey(spPicUrl)){
 						if(null == map.get("hubSlotSpu")){
-							HubSlotSpuDto spuDto =  operationService.findSlotSpu(uploadQuery.getSlotNo());
+							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
 							map.put("hubSlotSpu", spuDto);
 						}
 						if(null == map.get("hubSlotSpuSupplier")){

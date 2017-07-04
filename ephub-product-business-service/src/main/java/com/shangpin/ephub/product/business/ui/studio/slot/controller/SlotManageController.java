@@ -23,10 +23,13 @@ public class SlotManageController {
 
 	@Autowired
 	SlotManageService slotManageService;
+	
+	
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)
 	public HubResponse<?> slotList(@RequestBody SlotManageQuery slotManageQuery){
 		return slotManageService.findSlotManageList(slotManageQuery);
 	}
+	
 	@RequestMapping(value="/slot-detail",method = RequestMethod.POST)
 	public HubResponse<?> slotDetail(@RequestBody String slotNo){
 		return null;
