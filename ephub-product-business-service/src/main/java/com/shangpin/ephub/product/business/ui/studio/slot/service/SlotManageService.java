@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
+import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterCriteriaDto;
@@ -27,6 +29,7 @@ import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendD
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
+import com.shangpin.ephub.product.business.ui.studio.slot.dto.LogistictTrackQuery;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnMasterVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
@@ -62,6 +65,8 @@ public class SlotManageService {
 	StudioSlotReturnMasterGateWay studioSlotReturnMasterGateWay;
 	@Autowired
 	StudioSlotReturnDetailGateWay StudioSlotReturnDetailGateWay;
+	@Autowired
+	StudioSlotLogistictTrackGateWay studioSlotLogistictTrackGateWay;
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	SimpleDateFormat sd = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -261,7 +266,7 @@ public class SlotManageService {
 				detailCriteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
 			}
 			// 供应商名称
-			if (slotManageQuery.getStudioNo() != null) {
+			if (slotManageQuery.getSupplierName() != null) {
 			}
 			int count = StudioSlotReturnDetailGateWay.countByCriteria(detailDto);
 			if (slotManageQuery.getPageSize() != null) {
@@ -271,7 +276,7 @@ public class SlotManageService {
 				detailDto.setPageNo(slotManageQuery.getPageNo());
 			}
 			detailDto.setDistinct(true);
-			detailDto.setFields(" studio_slot_return_master_id ");
+			detailDto.setFields(" studio_slot_return_master_id,slot_no ");
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
 			List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoLists = new ArrayList<>();
@@ -323,17 +328,64 @@ public class SlotManageService {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
 			com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto.Criteria detailCriteria = detailDto
 					.createCriteria();
-			if (slotManageQuery.getSlotNo() != null) {
-				detailCriteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+//			if (slotManageQuery.getSlotNo() != null) {
+//				detailCriteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+//			}
+			if(slotManageQuery.getBarCode()!=null){
+				detailCriteria.andBarcodeEqualTo(slotManageQuery.getBarCode());
 			}
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
+			if(studioSlotReturnDetailDtoLists!=null&&studioSlotReturnDetailDtoLists.size()>0){
+				studioSlotReturnDetailDtoLists.get(0).setState(slotManageQuery.getState().byteValue());
+				StudioSlotReturnDetailGateWay.updateByPrimaryKey(studioSlotReturnDetailDtoLists.get(0));
+			}
 		} catch (Exception e) {
-			Log.error("查询批次号下所有商品明细失败!");
+			Log.error("更新商品明细!");
 			e.printStackTrace();
-			return HubResponse.errorResp("查询批次号下所有商品明细失败!");
+			return HubResponse.errorResp("更新商品明细!");
 		}
 		return HubResponse.successResp("更新成功！");
 	}
 
+	// 创建批次物流信息
+		public HubResponse<?> createStudioSlotLogistictTrack(LogistictTrackQuery logistictTrackQuery) {
+			try {
+				StudioSlotLogistictTrackDto dto = new StudioSlotLogistictTrackDto();
+				if(logistictTrackQuery.getTrackName()!=null){
+					dto.setTrackName(logistictTrackQuery.getTrackName());
+				}
+				if(logistictTrackQuery.getTrackNo()!=null){
+					dto.setTrackNo(logistictTrackQuery.getTrackNo());
+				}
+				if(logistictTrackQuery.getQuantity()!=null){
+					dto.setQuantity(logistictTrackQuery.getQuantity());
+				}
+				if(logistictTrackQuery.getActualNumber()!=null){
+					dto.setActualNumber(logistictTrackQuery.getActualNumber());
+				}
+				if(logistictTrackQuery.getMasterId()!=null){
+					StudioSlotReturnMasterCriteriaDto criteriaDto = new StudioSlotReturnMasterCriteriaDto();
+					com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterCriteriaDto.Criteria criteria = criteriaDto
+							.createCriteria();
+					criteria.andStudioSlotReturnMasterIdEqualTo(Long.parseLong(logistictTrackQuery.getMasterId().toString()));
+					List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoList = studioSlotReturnMasterGateWay
+							.selectByCriteria(criteriaDto);
+					if(studioSlotReturnMasterDtoList!=null&&studioSlotReturnMasterDtoList.size()>0){
+						dto.setSendMasterId(studioSlotReturnMasterDtoList.get(0).getStudioSlotReturnMasterId());
+					}
+				}
+				dto.setTrackStatus((byte) 0);
+				dto.setType((byte) 1);
+				dto.setCreateTime(new Date());
+				dto.setCreateUser("admin");
+				dto.setUpdateTime(new Date());
+				studioSlotLogistictTrackGateWay.insertSelective(dto);
+			} catch (Exception e) {
+				Log.error("查询批次号下所有商品明细失败!");
+				e.printStackTrace();
+				return HubResponse.errorResp("查询批次号下所有商品明细失败!");
+			}
+			return HubResponse.successResp("更新成功！");
+		}
 }
