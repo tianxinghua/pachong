@@ -71,13 +71,12 @@ public class DataHandleService {
 		return spuDto;
 	}
 
-	@SuppressWarnings("deprecation")
 	public BrandModelResult checkSpuModel(HubSpuPendingDto hubPendingSpuDto) {
 		BrandModelDto dto = new BrandModelDto();
 		dto.setBrandMode(hubPendingSpuDto.getSpuModel());
 		dto.setHubBrandNo(hubPendingSpuDto.getHubBrandNo());
 		dto.setHubCategoryNo(hubPendingSpuDto.getHubCategoryNo());
-		return hubBrandModelRuleGateWay.verify(dto);
+		return hubBrandModelRuleGateWay.verifyWithCategory(dto);
 	}
 
 	public List<HubSpuPendingDto> selectPendingSpu(HubSpuPendingDto hubPendingSpuDto) {

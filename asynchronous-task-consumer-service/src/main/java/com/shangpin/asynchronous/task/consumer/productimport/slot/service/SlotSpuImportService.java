@@ -23,6 +23,8 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
+import com.shangpin.ephub.client.product.business.hubpending.spu.dto.HubSpuPendingCheckProperty;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 /**
  * <p>Title: ImportService</p>
@@ -41,6 +43,8 @@ public class SlotSpuImportService {
 	private HubSpuPendingGateWay hubSpuPendingGateWay;
 	@Autowired
 	private HubSlotSpuTaskGateWay hubSlotSpuTaskGateWay;
+	@Autowired
+	private HubPendingSpuCheckGateWay hubPendingSpuCheckGateWay;
 
 	public String handMessage(Task task) throws Exception {
 		String taskNo = task.getTaskNo();
@@ -54,8 +58,8 @@ public class SlotSpuImportService {
 		List<HubSlotSpuExcelDto> excelDtos = ReadExcel.readExcel(HubSlotSpuExcelDto.class, input, filePath);
 		if(CollectionUtils.isNotEmpty(excelDtos)){
 			for(HubSlotSpuExcelDto excelDto : excelDtos){
-				HubSpuPendingDto pendingDto = convertDto(excelDto,createUser);
-				//TODO 校验，返回pendingDto
+				HubSpuPendingCheckProperty property = myCheckProperty();
+				HubSpuPendingDto pendingDto = hubPendingSpuCheckGateWay.checkSpuProperty(property , convertDto(excelDto,createUser));
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingDto);
 				hubSlotSpuTaskGateWay.add(pendingDto);
 				CheckResultDto resultDto = checkPendingSpu(taskNo,pendingDto);
@@ -63,6 +67,14 @@ public class SlotSpuImportService {
 			}
 		}
 		return taskService.convertExcel(listMap, taskNo);
+	}
+
+	private HubSpuPendingCheckProperty myCheckProperty() {
+		HubSpuPendingCheckProperty property = new HubSpuPendingCheckProperty();
+		property.setHubBrand(true);
+		property.setHubCategory(true);
+		property.setHubSpuModel(true);
+		return property;
 	}
 	
 	/**
