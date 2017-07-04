@@ -127,6 +127,12 @@ public class StudioServiceImpl implements IStudioService {
             if(!StringUtils.isEmpty(queryDto.getCategoryName())){
                 cdto.setCategoryName(queryDto.getCategoryName());
             }
+            if (!StringUtils.isEmpty(queryDto.getSlotSpuNo())){
+                cdto.setSlotSpuNo(queryDto.getSlotSpuNo());
+            }
+            if(!StringUtils.isEmpty(queryDto.getSeasonName())){
+                cdto.setSeasonName(queryDto.getSeasonName());
+            }
             if(!StringUtils.isEmpty(queryDto.getState())){
                 cdto.setState(queryDto.getState());
             }else {
@@ -462,32 +468,25 @@ public class StudioServiceImpl implements IStudioService {
                 List<HubSlotSpuSupplierDto> products = hubSlotSpuSupplierGateway.selectByCriteria(ssdto);
 
                 if(products!=null && products.size()>0){
-
-
-
-
                     for (HubSlotSpuSupplierDto product :products){
                         //region  判断是否处于可添加商品状态
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                             //throw new EphubException("C5", "该商品已经加入发货单了");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(), "C5", "The product has already added to the slot"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(), "C5", "The product has already added to the slot"));
                             continue;
                         }
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                            // throw new EphubException("C6", "该商品已经发货了");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C6", "The product has already been shipped"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(),"C6", "The product has already been shipped"));
                             continue;
                         }
-
-
-
                         if (slotInfo.getCategoryFirst() != null) {
                             HubSpuPendingDto pendingDtoList = hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
                             if (pendingDtoList != null && pendingDtoList.getHubCategoryNo() != null ) {
                                 String categoryNo = this.categoryMap.get(pendingDtoList.getHubCategoryNo().toLowerCase())!=null ?this.categoryMap.get(pendingDtoList.getHubCategoryNo().toLowerCase()).toString(): pendingDtoList.getHubCategoryNo();
                                 if (slotInfo.getCategoryFirst().stream().filter(x-> categoryNo.startsWith(x.trim())).count()<=0) {
                                     //throw new EphubException("C7", "该商品与目标发货单类型不符");
-                                    updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
+                                    updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
                                     continue;
                                 }
                             }
@@ -511,6 +510,7 @@ public class StudioServiceImpl implements IStudioService {
                         data.setSupplierBrandName(supProduct.getSupplierBrandname());
                         data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
                         data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
+                        data.setBarcode(slotNo + product.getSlotSpuNo());
                         data.setCreateTime(new Date());
                         data.setCreateUser(createUser);
                         Long id = studioSlotSpuSendDetailGateWay.insert(data);
@@ -522,21 +522,21 @@ public class StudioServiceImpl implements IStudioService {
                             hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
                            //TODO: 需要调用重任的添加接口未验证
-//                            SlotSpuSendDetailCheckDto checkDto = new SlotSpuSendDetailCheckDto();
-//                            checkDto.setSlotNo(product.getSlotNo());
-//                            checkDto.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-//
-//                            CommonResult commonResult = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSelectProduct(checkDto);
-//                            if(!commonResult.isSuccess()){
-//                                //TODO:失败了怎么处理没想好
-//                            }
+                            SlotSpuSendDetailCheckDto checkDto = new SlotSpuSendDetailCheckDto();
+                            checkDto.setSlotNo(product.getSlotNo());
+                            checkDto.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+
+                            CommonResult commonResult = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSelectProduct(checkDto);
+                            if(!commonResult.isSuccess()){
+                                //TODO:失败了怎么处理没想好
+                            }
 
                             slotInfo.setCountNum(slotInfo.getCountNum() + 1);
                             successNum  = successNum +1;
 
                         } else {
                             //throw new EphubException("W0", "商品加入发货单失败");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
                         }
                         //endregion
                     }
@@ -567,9 +567,9 @@ public class StudioServiceImpl implements IStudioService {
     }
 
 
-    private ErrorConent setCheckErrorMsg(Long spuNo,Long ssid,String errorCode,String errorMsg){
+    private ErrorConent setCheckErrorMsg(String spuNo,Long ssid,String errorCode,String errorMsg){
         ErrorConent conent = new ErrorConent();
-        conent.setSpuNo(spuNo.toString());
+        conent.setSpuNo(spuNo);
         conent.setSsid(ssid);
         conent.setErrorCode(errorCode);
         conent.setErrorMsg(errorMsg);
