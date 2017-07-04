@@ -38,6 +38,8 @@ public class SlotSpuSupplierExtendQueryDto {
 	private String brandName;
 
 	private String categoryName;
+
+	private String slotSpuNo;
 	/**
 	 * 状态查询
 	 */

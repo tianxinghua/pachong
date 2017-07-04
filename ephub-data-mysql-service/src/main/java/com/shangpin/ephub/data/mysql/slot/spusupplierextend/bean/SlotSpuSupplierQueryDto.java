@@ -34,6 +34,9 @@ public class SlotSpuSupplierQueryDto {
 	private String brandName;
 
 	private String categoryName;
+
+	private String slotSpuNo;
+
 	/**
 	 * 状态查询
 	 */
