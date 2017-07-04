@@ -8,6 +8,9 @@
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />
     <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="actual_send_quantity" property="actualSendQuantity" jdbcType="INTEGER" />
+    <result column="missing_quantity" property="missingQuantity" jdbcType="INTEGER" />
+    <result column="damaged_quantity" property="damagedQuantity" jdbcType="INTEGER" />
     <result column="actual_quantity" property="actualQuantity" jdbcType="INTEGER" />
     <result column="track_no" property="trackNo" jdbcType="VARCHAR" />
     <result column="state" property="state" jdbcType="TINYINT" />
@@ -86,9 +89,9 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       studio_slot_return_master_id, studio_send_no, supplier_no, supplier_id, studio_id, 
-      quantity, actual_quantity, track_no, state, memo, send_user, send_time, send_state, 
-      arrive_user, arrive_time, arrive_state, create_time, create_user, update_time, update_user, 
-      data_state, version
+      quantity, actual_send_quantity, missing_quantity, damaged_quantity, actual_quantity, 
+      track_no, state, memo, send_user, send_time, send_state, arrive_user, arrive_time, 
+      arrive_state, create_time, create_user, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -113,7 +116,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_return_master_id,studio_send_no,supplier_no,supplier_id,studio_id,quantity,actual_quantity,track_no,state,memo,send_user,send_time,send_state,arrive_user,arrive_time,arrive_state,create_time,create_user,update_time,update_user,data_state,version
+    studio_slot_return_master_id,studio_send_no,supplier_no,supplier_id,studio_id,quantity,actual_send_quantity,missing_quantity,damaged_quantity,actual_quantity,track_no,state,memo,send_user,send_time,send_state,arrive_user,arrive_time,arrive_state,create_time,create_user,update_time,update_user,data_state,version
     from studio_slot_return_master
     where studio_slot_return_master_id = #{studioSlotReturnMasterId,jdbcType=BIGINT}
   </select>
@@ -130,7 +133,8 @@
   <insert id="insert" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
     insert into studio_slot_return_master (studio_slot_return_master_id, studio_send_no, 
       supplier_no, supplier_id, studio_id, 
-      quantity, actual_quantity, track_no, 
+      quantity, actual_send_quantity, missing_quantity, 
+      damaged_quantity, actual_quantity, track_no, 
       state, memo, send_user, 
       send_time, send_state, arrive_user, 
       arrive_time, arrive_state, create_time, 
@@ -138,7 +142,8 @@
       data_state, version)
     values (#{studioSlotReturnMasterId,jdbcType=BIGINT}, #{studioSendNo,jdbcType=VARCHAR}, 
       #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{studioId,jdbcType=BIGINT}, 
-      #{quantity,jdbcType=INTEGER}, #{actualQuantity,jdbcType=INTEGER}, #{trackNo,jdbcType=VARCHAR}, 
+      #{quantity,jdbcType=INTEGER}, #{actualSendQuantity,jdbcType=INTEGER}, #{missingQuantity,jdbcType=INTEGER}, 
+      #{damagedQuantity,jdbcType=INTEGER}, #{actualQuantity,jdbcType=INTEGER}, #{trackNo,jdbcType=VARCHAR}, 
       #{state,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, #{sendUser,jdbcType=VARCHAR}, 
       #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, #{arriveUser,jdbcType=VARCHAR}, 
       #{arriveTime,jdbcType=TIMESTAMP}, #{arriveState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
@@ -165,6 +170,15 @@
       </if>
       <if test="quantity != null" >
         quantity,
+      </if>
+      <if test="actualSendQuantity != null" >
+        actual_send_quantity,
+      </if>
+      <if test="missingQuantity != null" >
+        missing_quantity,
+      </if>
+      <if test="damagedQuantity != null" >
+        damaged_quantity,
       </if>
       <if test="actualQuantity != null" >
         actual_quantity,
@@ -233,6 +247,15 @@
       </if>
       <if test="quantity != null" >
         #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="actualSendQuantity != null" >
+        #{actualSendQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="missingQuantity != null" >
+        #{missingQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="damagedQuantity != null" >
+        #{damagedQuantity,jdbcType=INTEGER},
       </if>
       <if test="actualQuantity != null" >
         #{actualQuantity,jdbcType=INTEGER},
@@ -311,6 +334,15 @@
       <if test="record.quantity != null" >
         quantity = #{record.quantity,jdbcType=INTEGER},
       </if>
+      <if test="record.actualSendQuantity != null" >
+        actual_send_quantity = #{record.actualSendQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="record.missingQuantity != null" >
+        missing_quantity = #{record.missingQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="record.damagedQuantity != null" >
+        damaged_quantity = #{record.damagedQuantity,jdbcType=INTEGER},
+      </if>
       <if test="record.actualQuantity != null" >
         actual_quantity = #{record.actualQuantity,jdbcType=INTEGER},
       </if>
@@ -372,6 +404,9 @@
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       studio_id = #{record.studioId,jdbcType=BIGINT},
       quantity = #{record.quantity,jdbcType=INTEGER},
+      actual_send_quantity = #{record.actualSendQuantity,jdbcType=INTEGER},
+      missing_quantity = #{record.missingQuantity,jdbcType=INTEGER},
+      damaged_quantity = #{record.damagedQuantity,jdbcType=INTEGER},
       actual_quantity = #{record.actualQuantity,jdbcType=INTEGER},
       track_no = #{record.trackNo,jdbcType=VARCHAR},
       state = #{record.state,jdbcType=TINYINT},
@@ -409,6 +444,15 @@
       </if>
       <if test="quantity != null" >
         quantity = #{quantity,jdbcType=INTEGER},
+      </if>
+      <if test="actualSendQuantity != null" >
+        actual_send_quantity = #{actualSendQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="missingQuantity != null" >
+        missing_quantity = #{missingQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="damagedQuantity != null" >
+        damaged_quantity = #{damagedQuantity,jdbcType=INTEGER},
       </if>
       <if test="actualQuantity != null" >
         actual_quantity = #{actualQuantity,jdbcType=INTEGER},
@@ -468,6 +512,9 @@
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       studio_id = #{studioId,jdbcType=BIGINT},
       quantity = #{quantity,jdbcType=INTEGER},
+      actual_send_quantity = #{actualSendQuantity,jdbcType=INTEGER},
+      missing_quantity = #{missingQuantity,jdbcType=INTEGER},
+      damaged_quantity = #{damagedQuantity,jdbcType=INTEGER},
       actual_quantity = #{actualQuantity,jdbcType=INTEGER},
       track_no = #{trackNo,jdbcType=VARCHAR},
       state = #{state,jdbcType=TINYINT},

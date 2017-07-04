@@ -26,6 +26,15 @@ public class StudioSlotReturnMaster implements Serializable {
     private Integer quantity;
 
     /**
+     * 实际发货数量
+     */
+    private Integer actualSendQuantity;
+
+    private Integer missingQuantity;
+
+    private Integer damagedQuantity;
+
+    /**
      * 实际收货数量
      */
     private Integer actualQuantity;
@@ -153,6 +162,30 @@ public class StudioSlotReturnMaster implements Serializable {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Integer getActualSendQuantity() {
+        return actualSendQuantity;
+    }
+
+    public void setActualSendQuantity(Integer actualSendQuantity) {
+        this.actualSendQuantity = actualSendQuantity;
+    }
+
+    public Integer getMissingQuantity() {
+        return missingQuantity;
+    }
+
+    public void setMissingQuantity(Integer missingQuantity) {
+        this.missingQuantity = missingQuantity;
+    }
+
+    public Integer getDamagedQuantity() {
+        return damagedQuantity;
+    }
+
+    public void setDamagedQuantity(Integer damagedQuantity) {
+        this.damagedQuantity = damagedQuantity;
     }
 
     public Integer getActualQuantity() {
@@ -295,6 +328,9 @@ public class StudioSlotReturnMaster implements Serializable {
         sb.append(", supplierId=").append(supplierId);
         sb.append(", studioId=").append(studioId);
         sb.append(", quantity=").append(quantity);
+        sb.append(", actualSendQuantity=").append(actualSendQuantity);
+        sb.append(", missingQuantity=").append(missingQuantity);
+        sb.append(", damagedQuantity=").append(damagedQuantity);
         sb.append(", actualQuantity=").append(actualQuantity);
         sb.append(", trackNo=").append(trackNo);
         sb.append(", state=").append(state);
@@ -334,6 +370,9 @@ public class StudioSlotReturnMaster implements Serializable {
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
             && (this.getQuantity() == null ? other.getQuantity() == null : this.getQuantity().equals(other.getQuantity()))
+            && (this.getActualSendQuantity() == null ? other.getActualSendQuantity() == null : this.getActualSendQuantity().equals(other.getActualSendQuantity()))
+            && (this.getMissingQuantity() == null ? other.getMissingQuantity() == null : this.getMissingQuantity().equals(other.getMissingQuantity()))
+            && (this.getDamagedQuantity() == null ? other.getDamagedQuantity() == null : this.getDamagedQuantity().equals(other.getDamagedQuantity()))
             && (this.getActualQuantity() == null ? other.getActualQuantity() == null : this.getActualQuantity().equals(other.getActualQuantity()))
             && (this.getTrackNo() == null ? other.getTrackNo() == null : this.getTrackNo().equals(other.getTrackNo()))
             && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
@@ -362,6 +401,9 @@ public class StudioSlotReturnMaster implements Serializable {
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
         result = prime * result + ((getQuantity() == null) ? 0 : getQuantity().hashCode());
+        result = prime * result + ((getActualSendQuantity() == null) ? 0 : getActualSendQuantity().hashCode());
+        result = prime * result + ((getMissingQuantity() == null) ? 0 : getMissingQuantity().hashCode());
+        result = prime * result + ((getDamagedQuantity() == null) ? 0 : getDamagedQuantity().hashCode());
         result = prime * result + ((getActualQuantity() == null) ? 0 : getActualQuantity().hashCode());
         result = prime * result + ((getTrackNo() == null) ? 0 : getTrackNo().hashCode());
         result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
