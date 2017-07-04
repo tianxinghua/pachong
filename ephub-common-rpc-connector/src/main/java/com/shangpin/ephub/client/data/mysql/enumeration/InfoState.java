@@ -16,6 +16,7 @@ public enum InfoState {
 	RefreshGender((byte)7,"刷新性别"),
 	RefreshSpuModel((byte)8,"刷新货号"),
 	RefreshBrand((byte)9,"刷新品牌"),
+	RefreshColor((byte)11,"刷新颜色"),
 	RefreshOrigin((byte)10,"刷新产地");
 	
 	/**

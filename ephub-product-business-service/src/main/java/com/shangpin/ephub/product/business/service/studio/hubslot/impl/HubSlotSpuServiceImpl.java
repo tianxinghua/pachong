@@ -274,6 +274,16 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         return resultList;
     }
 
+    @Override
+    public int countSlotSpu(SpuSupplierQueryDto queryDto) {
+        if(StringUtils.isNotBlank(queryDto.getSupplierNo())){
+           return  spuSupplierUnionGateWay.countByQuery(queryDto);
+        }else{
+            return  this.searchHubSlotSpuDtoNum(queryDto);
+        }
+
+    }
+
     private void setSlotSpuValueFromDataToVoForSlot(HubSlotSpuDto slotSpuDto,SlotSpuDto vo){
         vo.setHubBrandNo(slotSpuDto.getBrandNo());
         vo.setHubCategoryNo(slotSpuDto.getCategoryNo());
@@ -348,7 +358,24 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         return slotSpuGateWay.selectByCriteria(criteriaDto);
     }
 
+    private int  searchHubSlotSpuDtoNum(SpuSupplierQueryDto queryDto) {
+        HubSlotSpuCriteriaDto criteriaDto = new HubSlotSpuCriteriaDto();
 
+        HubSlotSpuCriteriaDto.Criteria criteria = criteriaDto.createCriteria();
+        if(StringUtils.isNotBlank(queryDto.getSpuModel())){
+            criteria.andSpuModelLike("%"+queryDto.getSpuModel()+"%");
+        }
+        if(StringUtils.isNotBlank(queryDto.getBrandNo())){
+            criteria.andBrandNoEqualTo(queryDto.getBrandNo());
+        }
+        if(StringUtils.isNotBlank(queryDto.getCategory())){
+            criteria.andCategoryNoEqualTo(queryDto.getCategory());
+        }
+        if(StringUtils.isNotBlank(queryDto.getState())){
+            criteria.andSpuStateEqualTo(new Byte(queryDto.getState()));
+        }
+        return slotSpuGateWay.countByCriteria(criteriaDto);
+    }
 
 
 

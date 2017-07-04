@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
 import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理
