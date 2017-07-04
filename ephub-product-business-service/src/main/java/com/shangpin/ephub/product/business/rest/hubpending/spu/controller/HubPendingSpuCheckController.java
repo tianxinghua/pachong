@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.hubpending.spu.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
+import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.common.service.check.PropertyCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.BrandCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.CategoryCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.ColorCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.GenderCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.MaterialCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.OriginCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.SeasonCheck;
+import com.shangpin.ephub.product.business.common.service.check.property.SpuModelCheck;
+import com.shangpin.ephub.product.business.rest.hubpending.spu.dto.HubSpuPendingCheckProperty;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -28,12 +40,28 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/pending-spu")
 @Slf4j
 public class HubPendingSpuCheckController {
-	
+	@Autowired
+	BrandCheck brandCheck;
+	@Autowired
+	CategoryCheck categoryCheck;
+	@Autowired
+	ColorCheck colorCheck;
+	@Autowired
+	GenderCheck genderCheck;
+	@Autowired
+	MaterialCheck materialCheck;
+	@Autowired
+	OriginCheck originCheck;
+	@Autowired
+	SeasonCheck seasonCheck;
+	@Autowired
+	SpuModelCheck spuModelCheck;
 	@Autowired
 	private HubPendingSpuCheckService hubCheckRuleService;
 	@Autowired
 	private IPendingProductService pendingProductService;
-	
+	@Autowired
+	PropertyCheck commonCheckBase;
 	@RequestMapping(value = "/check-spu")
 	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto){
 		log.info("pendingSpu校验接受到数据：{}",dto);
@@ -43,6 +71,7 @@ public class HubPendingSpuCheckController {
 	}
 	@RequestMapping(value = "/export")
 	public PendingProducts exportPengdingSpu(@RequestBody PendingQuryDto pendingQuryDto){
+		log.info("pendingSpu导出接受到数据：{}",pendingQuryDto);
 		PendingProducts products = new PendingProducts();
 		products.setCreateUser(pendingQuryDto.getCreateUser());
     	List<PendingProductDto> productList = pendingProductService.findPengdingSpu(pendingQuryDto);
@@ -50,5 +79,32 @@ public class HubPendingSpuCheckController {
     	return products;
 	}
 
+	@RequestMapping(value = "/check-spu-property")
+	public HubSpuPendingDto checkSpuProperty(HubSpuPendingCheckProperty property,HubSpuPendingDto hubSpuPendingIsExist){
+		try {
+			List<CommonCheckBase> list = new ArrayList<CommonCheckBase>();
+			if(property!=null){
+				if(property.isSpuModel()){
+					list.add(spuModelCheck);	
+				}
+				if(property.isHubBrand()){
+					list.add(brandCheck);
+					list.add(categoryCheck);
+					list.add(colorCheck);
+					list.add(genderCheck);
+					list.add(materialCheck);
+					list.add(originCheck);
+					list.add(seasonCheck);
+				}
+				commonCheckBase.setAllPropertyCheck(list);
+				if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getUpdateUser()!=null){
+					commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingIsExist);	
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return hubSpuPendingIsExist;
+	}
 	
 }

@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
 import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 
 /**
  * Created by lizhongren on 2017/3/3. 单个具体的实现类
@@ -28,6 +29,8 @@ public class BrandCheck extends CommonCheckBase {
 	HubBrandDicGateway hubBrandDicGateway;
 	@Autowired
 	HubBrandDicService hubBrandDicService;
+	@Autowired
+	HubCheckService hubCheckService;
 
 	@Override
 	protected String checkValue(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
@@ -61,11 +64,7 @@ public class BrandCheck extends CommonCheckBase {
 	 */
 	public boolean checkHubBrand(String brandNo) throws Exception{
 		
-		if(hubBrandStaticMap == null){
-			getBrandMap();
-		}
-		
-		if(hubBrandStaticMap!=null&&hubBrandStaticMap.containsKey(brandNo)){
+		if(hubCheckService.checkBrand(brandNo)){
 			return true;
 		}else {
 			return false;

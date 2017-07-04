@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.mapping.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,8 +29,8 @@ public interface HubMaterialMappingGateWay {
 	@RequestMapping(value = "/hub-material-mapping/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubMaterialMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-material-mapping/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long materialMappingId);
+	@RequestMapping(value = "/hub-material-mapping/delete-by-primary-key/{materialMappingId}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("materialMappingId") Long materialMappingId);
 	
 	@RequestMapping(value = "/hub-material-mapping/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody HubMaterialMappingDto hubMaterialMappingDto);
@@ -43,8 +44,8 @@ public interface HubMaterialMappingGateWay {
 	@RequestMapping(value = "/hub-material-mapping/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubMaterialMappingDto> selectByCriteria(@RequestBody HubMaterialMappingCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-material-mapping/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubMaterialMappingDto selectByPrimaryKey(Long materialMappingId);
+	@RequestMapping(value = "/hub-material-mapping/select-by-primary-key/{materialMappingId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubMaterialMappingDto selectByPrimaryKey(@PathVariable("materialMappingId") Long materialMappingId);
 	
 	@RequestMapping(value = "/hub-material-mapping/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubMaterialMappingWithCriteriaDto hubMaterialMappingWithCriteriaDto);

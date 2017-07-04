@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
@@ -24,7 +25,6 @@ import com.shangpin.ephub.product.business.common.enumeration.SupplierValueMappi
 import com.shangpin.ephub.product.business.common.hubDic.size.HubSizeDicService;
 import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.size.dto.HubSupplierSizeDicRequestDto;

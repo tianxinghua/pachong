@@ -56,8 +56,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 				List<StudioSlotVo> prioritySlots = new ArrayList<StudioSlotVo>();
 				List<StudioSlotVo> secondarySlots = new ArrayList<StudioSlotVo>();
 				for(StudioSlotDto studioSlotDto : list){
-					String planShootTime = DateTimeUtil.format(studioSlotDto.getPlanShootTime());
-					if(today.equals(planShootTime)){
+					String slotDate = DateTimeUtil.format(studioSlotDto.getSlotDate());
+					if(today.equals(slotDate)){
 						StudioSlotVo slotVo = operationService.formatDto(studioSlotDto);
 						prioritySlots.add(slotVo);
 					}else{
@@ -110,10 +110,20 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			StudioSlotWithCriteriaDto slotWithCriteria = new StudioSlotWithCriteriaDto();
 			StudioSlotCriteriaDto slotCriteria = new StudioSlotCriteriaDto();
 			slotCriteria.createCriteria().andSlotNoEqualTo(slotNo);
+			StudioSlotDto studioSlotDtoSelect = selectStudioSlotDto(slotCriteria);
 			slotWithCriteria.setCriteria(slotCriteria );
 			StudioSlotDto studioSlotDto =  new StudioSlotDto();
-			studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
-			studioSlotDto.setShootTime(new Date()); 
+			Date date = new Date();
+			long today = DateTimeUtil.convertDayDate(date).getTime();
+			long planShootTime = DateTimeUtil.convertDayDate(null != studioSlotDtoSelect ? studioSlotDtoSelect.getPlanShootTime() : date).getTime();
+			if(planShootTime == today){
+				studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
+			}else if(planShootTime > today){
+				studioSlotDto.setShotStatus(StudioSlotShootState.DELAY_SHOOT.getIndex().byteValue());
+			}else{
+				studioSlotDto.setShotStatus(StudioSlotShootState.AHEAD_TIME.getIndex().byteValue());
+			}
+			studioSlotDto.setShootTime(date); 
 			slotWithCriteria.setStudioSlot(studioSlotDto );
 			studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
 			//TODO 暂时没有盘盈
@@ -137,6 +147,16 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			log.info("确认批次时异常："+e.getMessage(),e); 
 		}
 		return null;
+	}
+
+	private StudioSlotDto selectStudioSlotDto(StudioSlotCriteriaDto slotCriteria) {
+		slotCriteria.setFields("plan_shoot_time");
+		List<StudioSlotDto> list = studioSlotGateWay.selectByCriteria(slotCriteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
 	}
 	
 	/**

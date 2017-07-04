@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.ui.task.pendingimport.dto;
+package com.shangpin.ephub.product.business.ui.task.pending.imports.dto;
 
 import java.io.Serializable;
 

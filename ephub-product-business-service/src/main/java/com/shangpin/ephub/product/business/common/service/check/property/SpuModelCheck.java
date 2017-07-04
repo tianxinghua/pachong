@@ -44,8 +44,7 @@ public class SpuModelCheck extends CommonCheckBase {
 	protected boolean checkOrSetBrandModel(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 		String spuModel = null;
 		if (!StringUtils.isEmpty(hubSpuPending.getHubBrandNo()) && !StringUtils.isEmpty(hubSpuPending.getSpuModel())) {
-			spuModel = hubBrandModelRuleService.regexVerify(hubSpuPending.getHubBrandNo(),
-					hubSpuPending.getHubCategoryNo(), hubSpuPending.getSpuModel());
+			spuModel = hubBrandModelRuleService.regexVerifyWithCategory(hubSpuPending.getHubBrandNo(),hubSpuPending.getHubCategoryNo(), hubSpuPending.getSpuModel());
 			if (spuModel != null) {
 				hubSpuPendingIsExist.setSpuModel(spuModel);
 				hubSpuPendingIsExist.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
@@ -60,7 +59,7 @@ public class SpuModelCheck extends CommonCheckBase {
 	protected boolean checkBrandModel(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto hubSpuPending) throws Exception {
 		String spuModel = null;
 		if (!StringUtils.isEmpty(hubSpuPending.getHubBrandNo()) && !StringUtils.isEmpty(hubSpuPending.getSpuModel())) {
-			spuModel = hubBrandModelRuleService.regexVerify(hubSpuPending.getHubBrandNo(),
+			spuModel = hubBrandModelRuleService.regexVerifyWithCategory(hubSpuPending.getHubBrandNo(),
 					hubSpuPending.getHubCategoryNo(), hubSpuPending.getSpuModel());
 			if (spuModel != null) {
 				hubSpuPendingIsExist.setSpuModel(spuModel);

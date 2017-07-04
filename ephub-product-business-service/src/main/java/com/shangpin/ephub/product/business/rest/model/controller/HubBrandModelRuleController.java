@@ -40,7 +40,7 @@ public class HubBrandModelRuleController {
 		long start = System.currentTimeMillis();
 		log.info("品牌校验规则（仅仅校验品牌不校验品类）服务接收到的参数为:{}， 系统即将开始进行品牌型号规则验证!", dto.toString());
 		BrandModelResult result = new BrandModelResult();
-		String brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+		String brandModel = hubBrandModelRuleService.regexVerify1(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
 		if (StringUtils.isNotBlank(brandModel)) {
 			result.setPassing(true);
 			result.setBrandMode(brandModel);

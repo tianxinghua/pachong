@@ -85,7 +85,15 @@ public class DateTimeUtil {
      * @return
      */
     public static Date convertDateFormat(Date date,String format){
-      return   convertFormat(convertFormat(date,format),format);
+      return  convertFormat(convertFormat(date,format),format);
 
+    }
+    /**
+     * 将Date类型转换为yyyy-MM-dd格式
+     * @param date
+     * @return
+     */
+    public static Date convertDayDate(Date date){
+    	return  convertFormat(convertFormat(date,pattern),pattern);
     }
 }

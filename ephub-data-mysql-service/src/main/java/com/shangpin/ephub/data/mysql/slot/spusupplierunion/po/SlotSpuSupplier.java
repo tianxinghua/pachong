@@ -166,6 +166,9 @@ public class SlotSpuSupplier implements Serializable {
      */
     private Byte infoFrom;
 
+
+    private Byte dataState;
+
     /**
      * 备注（修改的货号）
      */
