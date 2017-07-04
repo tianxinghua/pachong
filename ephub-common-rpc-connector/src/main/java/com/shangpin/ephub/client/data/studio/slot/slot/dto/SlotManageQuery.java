@@ -33,4 +33,5 @@ public class SlotManageQuery {
 	//扩展
 	private String supplierName;
 	private String barCode;
+	private Integer state;
 }
