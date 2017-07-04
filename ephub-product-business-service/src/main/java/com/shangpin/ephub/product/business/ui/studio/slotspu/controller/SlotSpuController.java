@@ -47,4 +47,12 @@ public class SlotSpuController {
     }
 
 
+    @RequestMapping(value="/count",method=RequestMethod.POST)
+    public HubResponse<?> count(@RequestBody SpuSupplierQueryDto quryDto){
+
+        Integer  count  = slotSpuService.countSlotSpu(quryDto);
+
+        return HubResponse.successResp(count);
+    }
+
 }

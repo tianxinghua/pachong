@@ -56,4 +56,11 @@ public interface HubSlotSpuService {
      */
     public List<SlotSpuDto>  findSlotSpu(SpuSupplierQueryDto queryDto);
 
+    /**
+     * 查询总数
+     * @param queryDto
+     * @return
+     */
+    public int countSlotSpu(SpuSupplierQueryDto queryDto);
+
 }
