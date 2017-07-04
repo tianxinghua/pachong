@@ -8,6 +8,8 @@ import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
+import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
+
 /**
  * <p>Title: OperationService</p>
  * <p>Description: 通用service </p>
@@ -16,7 +18,6 @@ import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioS
  * @date 2017年6月26日 下午4:27:12
  *
  */
-import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
 public interface OperationService {
 	/**
 	 * Studio Operation页面查询列表
@@ -61,5 +62,11 @@ public interface OperationService {
 	 * @return
 	 */
 	public List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo);
+	/**
+	 * 根据扫码查找该产品
+	 * @param barcode
+	 * @return
+	 */
+	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetail(String barcode);
 
 }

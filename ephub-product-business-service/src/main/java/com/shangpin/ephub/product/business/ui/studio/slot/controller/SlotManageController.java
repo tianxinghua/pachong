@@ -31,6 +31,12 @@ public class SlotManageController {
 	public HubResponse<?> slotDetail(@RequestBody String slotNo){
 		return null;
 	}
+	
+	@RequestMapping(value="/slot-product-detail",method = RequestMethod.POST)
+	public HubResponse<?> slotProductDetail(@RequestBody String slotNo){
+		return null;
+	}
+	
 	@RequestMapping(value="/slot-export",method = RequestMethod.POST)
 	public HubResponse<?> slotDetailCheck(@RequestBody SlotManageQuery slotManageQuery){
 		return null;

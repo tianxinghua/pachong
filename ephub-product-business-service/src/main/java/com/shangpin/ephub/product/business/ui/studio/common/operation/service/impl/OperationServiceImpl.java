@@ -192,8 +192,9 @@ public class OperationServiceImpl implements OperationService {
 		vo.setItemCode(dto.getSupplierSpuModel());
 		vo.setItemName(dto.getSupplierSpuName());
 		vo.setOperator(dto.getUpdateUser());
-		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+//		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
 		vo.setTime(dto.getCreateTime());
+		vo.setStudioCode(dto.getBarcode());
 		return vo;
 	}
 
@@ -212,6 +213,19 @@ public class OperationServiceImpl implements OperationService {
 		criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		List<HubSlotSpuSupplierDto> list = hubSlotSpuSupplierGateway.selectByCriteria(criteria );
 		return list.get(0);
+	}
+
+	@Override
+	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetail(String barcode) {
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setFields("slot_no,slot_spu_no");
+		criteria.createCriteria().andBarcodeEqualTo(barcode);
+		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
 	} 
 
 }

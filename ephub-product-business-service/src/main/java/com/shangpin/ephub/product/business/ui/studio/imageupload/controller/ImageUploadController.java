@@ -73,18 +73,19 @@ public class ImageUploadController {
 			{put("hubSlotSpu",null);put("hubSlotSpuSupplier",null);}};
 			List<String> spPicUrls = uploadQuery.getUrls();
 			if(CollectionUtils.isNotEmpty(spPicUrls)){
-				String slotNoSpuId = uploadQuery.getSlotNoSpuId();
-				String slotNo = slotNoSpuId .substring(0, slotNoSpuId.indexOf("-"));
-				String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+//				String slotNoSpuId = uploadQuery.getSlotNoSpuId();
+//				String slotNo = slotNoSpuId .substring(0, slotNoSpuId.indexOf("-"));
+//				String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+				String slotSpuNo = operationService.selectSlotSpuSendDetail(uploadQuery.getSlotNoSpuId()).getSlotSpuNo();
 				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
 				for(String spPicUrl : spPicUrls){
 					if(!picMap.containsKey(spPicUrl)){
 						if(null == map.get("hubSlotSpu")){
-							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotNo);
+							HubSlotSpuDto spuDto =  operationService.findSlotSpu(uploadQuery.getSlotNo());
 							map.put("hubSlotSpu", spuDto);
 						}
 						if(null == map.get("hubSlotSpuSupplier")){
-							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(slotNo, slotSpuNo);
+							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
 							map.put("hubSlotSpuSupplier", supplierDto);
 						}
 						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
