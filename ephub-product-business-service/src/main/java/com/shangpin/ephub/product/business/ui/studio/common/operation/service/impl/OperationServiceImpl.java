@@ -140,7 +140,7 @@ public class OperationServiceImpl implements OperationService {
 		if(CollectionUtils.isNotEmpty(list)){
 			qty = list.size();
 			for(StudioSlotSpuSendDetailDto dto : list){
-				if(dto.getArriveState() == StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()){
+				if(null != dto.getArriveState() && dto.getArriveState() == StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()){
 					uploadQty ++ ;
 				}
 			}

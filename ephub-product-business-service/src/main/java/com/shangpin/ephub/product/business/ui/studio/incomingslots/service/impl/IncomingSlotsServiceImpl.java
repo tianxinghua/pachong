@@ -22,7 +22,6 @@ import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.ConfirmQu
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.IncomingSlotsQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.service.IncomingSlotsService;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotDto;
-import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotsVo;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -45,16 +44,15 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 	private OperationService operationService;
 
 	@Override
-	public IncomingSlotsVo list(IncomingSlotsQuery query) {
+	public List<IncomingSlotDto> list(IncomingSlotsQuery query) {
 		try {
 			log.info("样品收货页面查询参数："+JsonUtil.serialize(query)); 
-			IncomingSlotsVo incomingSlotsVo = new IncomingSlotsVo();
+			List<IncomingSlotDto> prioritySlots = new ArrayList<IncomingSlotDto>();
 			StudioSlotCriteriaDto criteria = formatStudioSlotCriteria(query);
 			List<StudioSlotDto> list  = studioSlotGateWay.selectByCriteria(criteria );
 			log.info("样品收货页面共查询到："+list.size()+"条数据。");  
 			String today = DateTimeUtil.format(new Date());
 			if(CollectionUtils.isNotEmpty(list)){
-				List<IncomingSlotDto> prioritySlots = new ArrayList<IncomingSlotDto>();
 				List<IncomingSlotDto> secondarySlots = new ArrayList<IncomingSlotDto>();
 				for(StudioSlotDto dto : list){
 					IncomingSlotDto slotDto = convert(dto);
@@ -65,10 +63,9 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 						secondarySlots.add(slotDto);
 					}
 				}
-				incomingSlotsVo.setPrioritySlots(prioritySlots);
-				incomingSlotsVo.setSecondarySlots(secondarySlots);
+				prioritySlots.addAll(secondarySlots);
 			}
-			return incomingSlotsVo;
+			return prioritySlots;
 		} catch (Exception e) {
 			log.error("样品收货页面查询异常："+e.getMessage(),e); 
 		}
