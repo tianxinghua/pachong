@@ -814,7 +814,8 @@ public class StudioServiceImpl implements IStudioService {
            if(studioSlotLogistictTrackGateWay.insertSelective(trackDto)>0){
                StudioSlotDto studioSlotDto = new StudioSlotDto();
                studioSlotDto.setStudioSlotId(studioSlotId);
-               studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
+               studioSlotDto.setSendTime(new Date());
+               studioSlotDto.setSendState(StudioSlotSendState.SEND.getIndex().byteValue());
                studioSlotDto.setUpdateTime(new Date());
                studioSlotDto.setSendUser(createUser);
                return  studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto) >0;
