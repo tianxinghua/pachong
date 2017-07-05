@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -43,6 +44,7 @@ import sun.misc.BASE64Encoder;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -176,9 +178,17 @@ public class EphubProductBusinessTests {
 	StudioPendingService studioPendingService;
 	@Test
 	public void testFindPendingProducts(){
-		PendingQuryDto pendingQuryDto  = new PendingQuryDto();
-		pendingQuryDto.setShoot(true);
-		PendingProducts pendingProducts = studioPendingService.findPendingProducts(pendingQuryDto,false);
+		ObjectMapper mapper  = new ObjectMapper();
+		try {
+			String kk = "{\"pageIndex\":1,\"pageSize\":20,\"supplierNo\":\"\",\"spuModel\":null,\"hubCategoryNo\":\"\",\"hubBrandNo\":\"B03200\",\"hubSeason\":null,\"hubYear\":null,\"inconformities\":null,\"conformities\":null,\"statTime\":null,\"endTime\":null,\"createUser\":null,\"isExportPic\":0,\"picState\":0,\"brandName\":null,\"categoryName\":null,\"auditState\":null,\"spuPendingId\":null,\"spuState\":null,\"operator\":null,\"createTimeStart\":null,\"createTimeEnd\":null}";
+			PendingQuryDto pendingQuryDto  =  mapper.readValue(kk,PendingQuryDto.class);
+
+			pendingQuryDto.setShoot(true);
+			PendingProducts pendingProducts = studioPendingService.findPendingProducts(pendingQuryDto,false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 
