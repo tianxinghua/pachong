@@ -107,7 +107,7 @@ public class StudioSlotController {
 					// 根据当天时间查询批次管理表，当天是否有待拍摄批次
 					ResultObjList resultObjList = data.getResultObjList().get(i);
 					String DT = resultObjList.getDT();
-					List<StudioSlotDto> studioSlotList = studioSlotService.getStudioSlotBySlotDate(sdfomat.parse(DT));
+					List<StudioSlotDto> studioSlotList = studioSlotService.getStudioSlotBySlotDate(sdfomat.parse(DT),studioId);
 					if (studioSlotList == null || studioSlotList.size() == 0) {
 						if (resultObjList.getIsOffDay() == 0) {
 							int slot_efficiency = studioDicSlotList.get(0).getSlotEfficiency();
@@ -217,6 +217,8 @@ public class StudioSlotController {
 		dto.setCreateTime(new Date());
 		dto.setUpdateTime(new Date());
 		dto.setShotStatus((byte) 0);
+		dto.setSendState((byte) 0);
+		dto.setArriveStatus((byte) 0);
 		try {
 			dto.setSlotDate(sdfomat.parse(DT));
 			dto.setPlanShootTime(sdfomat.parse(DT));

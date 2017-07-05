@@ -30,6 +30,11 @@ public class StudioSlotReturnDetailDto implements Serializable {
     private String supplierId;
 
     /**
+     * 供货商名称
+     */
+    private String supplierName;
+
+    /**
      * SPUPENDING表主键
      */
     private Long spuPendingId;
@@ -69,6 +74,9 @@ public class StudioSlotReturnDetailDto implements Serializable {
      */
     private String supplierSeasonName;
 
+    /**
+     * 尚品状态 0 正常 1 损坏 2 丢失
+     */
     private Byte state;
 
     /**
@@ -181,6 +189,14 @@ public class StudioSlotReturnDetailDto implements Serializable {
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId == null ? null : supplierId.trim();
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName == null ? null : supplierName.trim();
     }
 
     public Long getSpuPendingId() {
@@ -378,6 +394,7 @@ public class StudioSlotReturnDetailDto implements Serializable {
         sb.append(", slotNo=").append(slotNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", supplierName=").append(supplierName);
         sb.append(", spuPendingId=").append(spuPendingId);
         sb.append(", supplierSpuId=").append(supplierSpuId);
         sb.append(", slotSpuNo=").append(slotSpuNo);
@@ -423,6 +440,7 @@ public class StudioSlotReturnDetailDto implements Serializable {
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getSupplierName() == null ? other.getSupplierName() == null : this.getSupplierName().equals(other.getSupplierName()))
             && (this.getSpuPendingId() == null ? other.getSpuPendingId() == null : this.getSpuPendingId().equals(other.getSpuPendingId()))
             && (this.getSupplierSpuId() == null ? other.getSupplierSpuId() == null : this.getSupplierSpuId().equals(other.getSupplierSpuId()))
             && (this.getSlotSpuNo() == null ? other.getSlotSpuNo() == null : this.getSlotSpuNo().equals(other.getSlotSpuNo()))
@@ -457,6 +475,7 @@ public class StudioSlotReturnDetailDto implements Serializable {
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getSupplierName() == null) ? 0 : getSupplierName().hashCode());
         result = prime * result + ((getSpuPendingId() == null) ? 0 : getSpuPendingId().hashCode());
         result = prime * result + ((getSupplierSpuId() == null) ? 0 : getSupplierSpuId().hashCode());
         result = prime * result + ((getSlotSpuNo() == null) ? 0 : getSlotSpuNo().hashCode());

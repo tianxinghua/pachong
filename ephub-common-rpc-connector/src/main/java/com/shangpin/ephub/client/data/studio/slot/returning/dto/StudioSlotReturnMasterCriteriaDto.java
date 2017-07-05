@@ -720,6 +720,66 @@ public class StudioSlotReturnMasterCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andAddedQuantiyIsNull() {
+            addCriterion("added_quantiy is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyIsNotNull() {
+            addCriterion("added_quantiy is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyEqualTo(Integer value) {
+            addCriterion("added_quantiy =", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyNotEqualTo(Integer value) {
+            addCriterion("added_quantiy <>", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyGreaterThan(Integer value) {
+            addCriterion("added_quantiy >", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("added_quantiy >=", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyLessThan(Integer value) {
+            addCriterion("added_quantiy <", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyLessThanOrEqualTo(Integer value) {
+            addCriterion("added_quantiy <=", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyIn(List<Integer> values) {
+            addCriterion("added_quantiy in", values, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyNotIn(List<Integer> values) {
+            addCriterion("added_quantiy not in", values, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyBetween(Integer value1, Integer value2) {
+            addCriterion("added_quantiy between", value1, value2, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyNotBetween(Integer value1, Integer value2) {
+            addCriterion("added_quantiy not between", value1, value2, "addedQuantiy");
+            return (Criteria) this;
+        }
+
         public Criteria andActualQuantityIsNull() {
             addCriterion("actual_quantity is null");
             return (Criteria) this;

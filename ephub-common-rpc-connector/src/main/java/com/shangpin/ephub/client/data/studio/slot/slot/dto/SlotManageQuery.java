@@ -30,4 +30,13 @@ public class SlotManageQuery {
 	private String operatorName;
 	private Integer pageNo;
 	private Integer pageSize;
+	//扩展
+	private String supplierName;
+	private String barCode;
+	private Integer state;
+	private String trackName;
+	private String trackNo;
+	private String masterId;
+	private Integer quantity;
+	private Integer actualNumber;
 }

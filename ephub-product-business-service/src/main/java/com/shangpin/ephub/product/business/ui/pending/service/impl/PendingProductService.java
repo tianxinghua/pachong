@@ -15,7 +15,6 @@ import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -72,8 +71,8 @@ public class PendingProductService extends PendingSkuService{
     private HubSpuGateWay hubSpuGateway;
     @Autowired
     private HubSupplierSkuGateWay hubSupplierSkuGateWay;
-    @Autowired
-    private PengdingToHubGateWay pendingToHubGateWay;
+//    @Autowired
+//    private PengdingToHubGateWay pendingToHubGateWay;
     @Autowired
     private IHubSpuPendingPicService  hubSpuPendingPicService;
 

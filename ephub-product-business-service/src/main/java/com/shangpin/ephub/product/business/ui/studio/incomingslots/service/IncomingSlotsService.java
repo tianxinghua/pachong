@@ -1,8 +1,10 @@
 package com.shangpin.ephub.product.business.ui.studio.incomingslots.service;
 
+import java.util.List;
+
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.ConfirmQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.IncomingSlotsQuery;
-import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotsVo;
+import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotDto;
 
 /**
  * <p>Title: IncomingSlotsService</p>
@@ -19,7 +21,7 @@ public interface IncomingSlotsService {
 	 * @param query
 	 * @return
 	 */
-	public IncomingSlotsVo list(IncomingSlotsQuery query);
+	public List<IncomingSlotDto> list(IncomingSlotsQuery query);
 	/**
 	 * 确认到货
 	 * @param ids

@@ -33,8 +33,8 @@ public interface HubPendingSpuCheckGateWay {
 	 * @param dto 数据传输对象
 	 * @return 校验结果：
 	 */
-	@RequestMapping(value = "/pending-spu/check-spu-property", method = RequestMethod.POST,consumes = "application/json")
-	public HubSpuPendingDto checkSpuProperty(@RequestBody HubSpuPendingCheckProperty property,@RequestBody HubSpuPendingDto dto);
+//	@RequestMapping(value = "/pending-spu/check-spu-property", method = RequestMethod.POST,consumes = "application/json")
+//	public HubSpuPendingDto checkSpuProperty(@RequestBody HubSpuPendingCheckProperty property,@RequestBody HubSpuPendingDto dto);
 	/**
 	 * 待处理页面导出spu异步调用
 	 * @param pendingQuryDto 查询条件

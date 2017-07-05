@@ -92,7 +92,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		vo.setBrand(detailDto.getSupplierBrandName());
 		vo.setItemCode(detailDto.getSupplierSpuModel());
 		vo.setItemName(detailDto.getSupplierSpuName());
-		vo.setStudioCode(detailDto.getSlotNo()+"-"+detailDto.getSlotSpuNo());
+		vo.setStudioCode(detailDto.getBarcode());
 		vo.setStudioSlotDefectiveSpuId(dto.getStudioSlotDefectiveSpuId());
 		return vo;
 	}
@@ -132,8 +132,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	@Override
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId) {
 		try {
-			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
-			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetail(slotNoSpuId);
+			String slotNo = detailDto.getSlotNo();
+			String slotSpuNo = detailDto.getSlotSpuNo();
 			StudioSlotDefectiveSpuDto spuDto = selectBySlot(slotNo,slotSpuNo);
 			if(null != spuDto){
 				return spuDto;
