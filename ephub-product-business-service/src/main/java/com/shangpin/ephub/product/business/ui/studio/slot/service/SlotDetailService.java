@@ -48,7 +48,7 @@ public class SlotDetailService {
 	
 	private void convert(SlotInfo slotInfo, StudioSlotDto studioSlotDto){
 		slotInfo.setSlotNo(studioSlotDto.getSlotNo());
-		slotInfo.setSlotStatus(studioSlotDto.getSlotStatus().toString());
+		slotInfo.setSlotStatus(studioSlotDto.getSlotStatus().intValue());
 		slotInfo.setSlotDate(studioSlotDto.getSlotDate());
 		slotInfo.setArriveTime(studioSlotDto.getArriveTime());
 		slotInfo.setPlanShootTime(studioSlotDto.getPlanShootTime());

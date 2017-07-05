@@ -35,8 +35,7 @@ public class SlotManageController {
 	@Autowired
 	SlotDetailService slotDetailService;
 
-	@Autowired
-	SlotSendReturnService slotSendReturnService;
+
 	
 	
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)
@@ -51,7 +50,7 @@ public class SlotManageController {
 		slotInfo.setActualQuantity(50);
 		slotInfo.setArriveQty(50);
 		slotInfo.setArriveTime(new Date());
-		slotInfo.setSlotStatus("发货");
+		slotInfo.setSlotStatus(1);
 		if(null != slotInfo){
 			return HubResponse.successResp(slotInfo);
 		}else{
@@ -68,7 +67,7 @@ public class SlotManageController {
 		detail1.setHubCategoryNo("A03B01C02D05");
 		detail1.setSpuModel("1234");
 		detail1.setReturned(false);
-		detail1.setSupplierSpuModel("");
+		detail1.setSupplierSpuModel("sj");
 		slotSpuDetailList.add(detail1);
 
 		SlotSpuDetail detail2 = new SlotSpuDetail();
@@ -78,7 +77,7 @@ public class SlotManageController {
 		detail2.setSpuModel("1234");
 		detail2.setReturned(false);
 
-		detail2.setSupplierSpuModel("");
+		detail2.setSupplierSpuModel("sjjk");
 		slotSpuDetailList.add(detail2);
 		return HubResponse.successResp(slotSpuDetailList);
 	}
