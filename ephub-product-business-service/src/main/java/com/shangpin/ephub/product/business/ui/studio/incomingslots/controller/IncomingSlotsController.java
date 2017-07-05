@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.studio.incomingslots.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.ConfirmQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.IncomingSlotsQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.service.IncomingSlotsService;
-import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotsVo;
+import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotDto;
 import com.shangpin.ephub.response.HubResponse;
 
 /**
@@ -29,7 +31,7 @@ public class IncomingSlotsController {
 
 	@RequestMapping(value="/list", method= RequestMethod.POST)
 	public HubResponse<?> list(@RequestBody IncomingSlotsQuery query){
-		IncomingSlotsVo vo = incomingSlotsService.list(query);
+		List<IncomingSlotDto> vo = incomingSlotsService.list(query);
 		if(null != vo){
 			return HubResponse.successResp(vo);
 		}else{
