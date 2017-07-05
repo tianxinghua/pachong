@@ -12,6 +12,7 @@ import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.gateway.Hub
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.result.HubSlotSpuSupplierExtend;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import com.shangpin.ephub.client.data.studio.dic.dto.*;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWay;
@@ -166,10 +167,12 @@ public class StudioServiceImpl implements IStudioService {
 
             List<Long> filteredPendingId = results.stream().map(HubSlotSpuSupplierExtend :: getSpuPendingId).distinct().collect(Collectors.toList());
             HubSupplierSpuCriteriaDto dto = new HubSupplierSpuCriteriaDto();
+            dto.setPageSize(100000);
             dto.createCriteria().andSupplierSpuIdIn(filteredSpuId);
             List<HubSupplierSpuDto> spuDtoList =  hubSupplierSpuGateWay.selectByCriteria(dto);
 
             HubSpuPendingCriteriaDto pendDto = new HubSpuPendingCriteriaDto();
+            pendDto.setPageSize(100000);
             pendDto.createCriteria().andSpuPendingIdIn(filteredPendingId);
             List<HubSpuPendingDto>  pendingDtoList =  hubSpuPendingGateWay.selectByCriteria(pendDto);
 
@@ -216,13 +219,16 @@ public class StudioServiceImpl implements IStudioService {
 
 
     /*
-    * 获取供货商已申请的商品列表
+    * 获取供货商已申请的批次列表
     * */
     public SlotsVo getSupplierSlotList(String supplierId){
 
         SlotsVo products = new SlotsVo();
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
-        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSendStateNotEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
+        cdto.setPageSize(1000);
+        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId)
+                .andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue())
+                .andSendStateNotEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
         int total = studioSlotGateWay.countByCriteria(cdto);
         if(total>0) {
             List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
@@ -300,6 +306,7 @@ public class StudioServiceImpl implements IStudioService {
     * */
     private  List<StudioDicCategoryDto> getStudioDicCategoryDtos(List<Long> filteredStudioIds ){
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.setPageSize(100000);
         studioDto.createCriteria().andStudioIdIn(filteredStudioIds);
         return  studioDicCategoryGateWay.selectByCriteria(studioDto);
     }
@@ -309,6 +316,7 @@ public class StudioServiceImpl implements IStudioService {
    * */
     private  List<StudioDicCategoryDto> getStudioDicCategoryDtos(Long StudioIds ){
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.setPageSize(100000);
         studioDto.createCriteria().andStudioIdEqualTo(StudioIds);
         return  studioDicCategoryGateWay.selectByCriteria(studioDto);
     }
@@ -329,6 +337,7 @@ public class StudioServiceImpl implements IStudioService {
     * */
     private  List<StudioDicSlotDto> getStudioDicSlotDtos( Long StudioIds ){
         StudioDicSlotCriteriaDto studioDto = new StudioDicSlotCriteriaDto();
+        studioDto.setPageSize(100000);
         studioDto.createCriteria().andStudioIdEqualTo(StudioIds);
         return  studioDicSlotGateWay.selectByCriteria(studioDto);
     }
@@ -341,6 +350,7 @@ public class StudioServiceImpl implements IStudioService {
     private List<StudioSlotSpuSendDetailDto> getStudioSlotSpuSendDetail(List<String> filteredSlotNos){
 
         StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
+        dto.setPageSize(10000);
         dto.createCriteria().andSlotNoIn(filteredSlotNos);
         return studioSlotSpuSendDetailGateWay.selectByCriteria(dto);
     }
@@ -350,8 +360,82 @@ public class StudioServiceImpl implements IStudioService {
     private List<StudioSlotSpuSendDetailDto> getStudioSlotSpuSendDetail(String SlotNos){
 
         StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
+        dto.setPageSize(10000);
         dto.createCriteria().andSlotNoEqualTo(SlotNos);
         return studioSlotSpuSendDetailGateWay.selectByCriteria(dto);
+    }
+
+    /*释放申请的批次*/
+    public HubResponse<?> releaseStudioSlot(String supplierId ,Long slotId,String createUser){
+        try
+        {
+
+        StudioSlotDto studioSlotDto =  studioSlotGateWay.selectByPrimaryKey(slotId);
+        if(studioSlotDto==null || !studioSlotDto.getApplySupplierId().equals(supplierId)){
+            return HubResponse.errorResp("slot not found");
+        }
+        if(studioSlotDto.getSendState() > 0){
+            return HubResponse.errorResp("This slot can't be deleted!");
+        }
+        StudioSlotSpuSendDetailCriteriaDto detailCriteriaDto = new StudioSlotSpuSendDetailCriteriaDto();
+        detailCriteriaDto.setPageSize(10000);
+        detailCriteriaDto.createCriteria().andStudioSlotIdEqualTo(slotId);
+        List<StudioSlotSpuSendDetailDto> listDetail =  studioSlotSpuSendDetailGateWay.selectByCriteria(detailCriteriaDto);
+
+        if(listDetail !=null && listDetail.size()>0){
+            //更新slot spu 状态
+            List<Long> filterIds = listDetail.stream().map(StudioSlotSpuSendDetailDto::getSlotSpuSupplierId).collect(Collectors.toList());
+            HubSlotSpuSupplierWithCriteriaDto spuSupplierDto = new HubSlotSpuSupplierWithCriteriaDto();
+
+            HubSlotSpuSupplierDto slotDto = new HubSlotSpuSupplierDto();
+            slotDto.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
+            spuSupplierDto.setHubSlotSpuSupplier(slotDto);
+
+            HubSlotSpuSupplierCriteriaDto criteriaDto = new HubSlotSpuSupplierCriteriaDto();
+            criteriaDto.createCriteria().andSlotSpuSupplierIdIn(filterIds);
+            spuSupplierDto.setCriteria(criteriaDto);
+
+            hubSlotSpuSupplierGateway.updateByCriteriaSelective(spuSupplierDto);
+            StudioSlotSpuSendDetailCriteriaDto detailDto = new StudioSlotSpuSendDetailCriteriaDto();
+            //删除发送详情
+            List<Long> ids = listDetail.stream().map(StudioSlotSpuSendDetailDto::getStudioSlotSpuSendDetailId).collect(Collectors.toList());
+            detailDto.createCriteria().andStudioSlotSpuSendDetailIdIn(ids);
+            studioSlotSpuSendDetailGateWay.deleteByCriteria(detailDto);
+        }
+
+        studioSlotDto.setApplyStatus((byte)0);
+        studioSlotDto.setUpdateTime(new Date());
+        studioSlotDto.setApplyUser(createUser);
+        int i=  studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
+        if(i>0){
+            return HubResponse.successResp(null);
+        }else {
+            return HubResponse.errorResp("slot not fail,please try again!");
+        }
+        }
+        catch (Exception ex){
+            log.info("releaseStudioSlot Exception " + ex.getMessage());
+            return HubResponse.errorResp("Server error");
+        }
+    }
+    /**
+     * 删除供货商商品
+     * @param supplierId
+     * @param slotSSId
+     * @param createUser
+     * @return
+     */
+    public  boolean delProductFromSlot(String supplierId ,Long slotSSId,String createUser){
+
+        HubSlotSpuSupplierDto spuSupplierDto = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
+        if(spuSupplierDto.getSupplierId().equals(supplierId)){
+            spuSupplierDto.setUpdateUser(createUser);
+            spuSupplierDto.setUpdateTime(new Date());
+            spuSupplierDto.setDataState((byte)0);
+            return hubSlotSpuSupplierGateway.updateByPrimaryKey(spuSupplierDto)>0;
+        }
+
+        return false;
     }
 
 
@@ -361,6 +445,7 @@ public class StudioServiceImpl implements IStudioService {
     public SlotInfoExtends getSlotInfo(String supplierId ,String slotNo){
         SlotInfoExtends slot  = new SlotInfoExtends();
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
+        cdto.setPageSize(10000);
         cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSlotNoEqualTo(slotNo);
         List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
 
@@ -463,6 +548,7 @@ public class StudioServiceImpl implements IStudioService {
                     throw new EphubException("C3", "Amount of the slot reaches the maximal capacity");
                 }
                 HubSlotSpuSupplierCriteriaDto ssdto = new HubSlotSpuSupplierCriteriaDto();
+                ssdto.setPageSize(100000);
                 ssdto.createCriteria().andSlotSpuSupplierIdIn(slotSSIds);
 
                 List<HubSlotSpuSupplierDto> products = hubSlotSpuSupplierGateway.selectByCriteria(ssdto);
@@ -692,14 +778,7 @@ public class StudioServiceImpl implements IStudioService {
                     response.setMsg("Slot is full and ready to ship");
                 }
 
-                StudioSlotDto studioSlotDto = new StudioSlotDto();
-                studioSlotDto.setStudioSlotId(slotInfo.getStudioSlotId());
-                studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
-                studioSlotDto.setUpdateTime(new Date());
-                int i = studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto);
-                if(i==0){
-                    response.setMsg("print is failed");
-                }
+
 
             }
         }catch (EphubException e){
@@ -712,6 +791,15 @@ public class StudioServiceImpl implements IStudioService {
         }
         return  response;
     }
+
+    public boolean slotPrint(Long slotId){
+        StudioSlotDto studioSlotDto = new StudioSlotDto();
+        studioSlotDto.setStudioSlotId(slotId);
+        studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
+        studioSlotDto.setUpdateTime(new Date());
+        return studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto)>0;
+    }
+
 
 
     public boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser){
@@ -743,6 +831,7 @@ public class StudioServiceImpl implements IStudioService {
     public StudioSlotLogistictTrackDto  getSlotLogisticInfo(Long studioSlotId){
         try {
             StudioSlotLogistictTrackCriteriaDto dto = new StudioSlotLogistictTrackCriteriaDto();
+            dto.setPageSize(100000);
             dto.createCriteria().andSendMasterIdEqualTo(studioSlotId).andTypeEqualTo((byte)0);
             List<StudioSlotLogistictTrackDto> result = studioSlotLogistictTrackGateWay.selectByCriteria(dto);
             if(result!=null && result.size()>0){
@@ -775,6 +864,7 @@ public class StudioServiceImpl implements IStudioService {
     public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize){
         SlotsVo studioSlotsList = new SlotsVo();
         StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
+        dto.setPageSize(100000);
         StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria().andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
         if(StudioId!=null){
             criteria.andStudioIdEqualTo(StudioId);
@@ -837,7 +927,7 @@ public class StudioServiceImpl implements IStudioService {
             }
             if(status != StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue() || i==0){
                 ErrorConent errorConent = new ErrorConent();
-                errorConent.setErrorCode(slotId.toString());
+                errorConent.setErrorCode(studioSlotDto.getSlotNo());
                 errorConent.setErrorMsg(slotId.toString()+"Application failure");
                 result.add(errorConent);
             }
@@ -849,7 +939,7 @@ public class StudioServiceImpl implements IStudioService {
 
     public List<StudioDto> getStudioList(){
         StudioCriteriaDto dto = new  StudioCriteriaDto();
-
+        dto.setPageSize(10000);
         return  studioGateWay.selectByCriteria(dto);
 
     }
@@ -857,6 +947,7 @@ public class StudioServiceImpl implements IStudioService {
     public List<StudioDto> getStudioListByCategory(List<String> categoryNos){
         List<StudioDto> studioDtos = new ArrayList<StudioDto>();
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.setPageSize(10000);
         if(categoryNos!=null && categoryNos.size()>0) {
             studioDto.createCriteria().andCategoryFirstIn(categoryNos);
         }

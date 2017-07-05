@@ -17,13 +17,16 @@ public interface IStudioService {
 
     StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto);
     SlotsVo getSupplierSlotList(String supplierId);
+    HubResponse<?> releaseStudioSlot(String supplierId ,Long slotId,String createUser);
+
+    boolean delProductFromSlot(String supplierId ,Long slotSSId,String createUser);
     SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
     HubResponse<?> addProductIntoSlot(String supplierId , String slotNo, List<Long> slotSSIds, String createUser);
     HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser);
     HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
     boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser);
     StudioSlotLogistictTrackDto getSlotLogisticInfo(Long studioSlotId);
-
+    boolean slotPrint(Long slotId);
     SlotsVo getStudioSlot(Long StudioId, Date startTime, Date endTime ,String categoryNos);
     SlotsVo getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize);
     List<ErrorConent> applyUpdateSlot(StudioSlotQueryDto upDto);
