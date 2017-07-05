@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.studio.slotsendreturn.impl;
 
+import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.returning.gateway.StudioSlotReturnDetailGateWay;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
@@ -32,6 +33,11 @@ public class SlotSendReturnServiceImpl {
     }
 
     private List<StudioSlotReturnDetailDto> getReturnDetailByBarcode(String barcode){
+
+
+        StudioSlotReturnDetailCriteriaDto criteria = new StudioSlotReturnDetailCriteriaDto();
+
+        List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtos = returnDetailGateWay.selectByCriteria(criteria);
         return null;
     }
 }

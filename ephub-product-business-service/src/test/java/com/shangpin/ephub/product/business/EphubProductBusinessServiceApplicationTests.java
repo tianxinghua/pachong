@@ -504,24 +504,37 @@ public class EphubProductBusinessServiceApplicationTests {
 
 	@Test
 	public void testAddSlotSpu(){
+		List<Long> keyList = new ArrayList<>();
+		// criteria 257885 257890 257891 257892 257893 257894 258174  259271 258125
+		keyList.add(257885L);
+		keyList.add(257890L);
+		keyList.add(257891L);
+		keyList.add(257892L);
+		keyList.add(257893L);
+		keyList.add(257894L);
+		keyList.add(258174L);
+		keyList.add(259271L);
+		keyList.add(258125L);
+		for(int i=0;i<keyList.size();i++){
 
-		PendingProductDto pendingProductDto = new PendingProductDto();
-		HubSpuPendingCriteriaDto criteriaDto = new HubSpuPendingCriteriaDto();
-		criteriaDto.createCriteria().andSpuPendingIdEqualTo(258248L);
-		List<HubSpuPendingDto> spuPendingDtos   = gateWay.selectByCriteria(criteriaDto);
-		if(null!=spuPendingDtos&&spuPendingDtos.size()>0){
-			BeanUtils.copyProperties(spuPendingDtos.get(0),pendingProductDto);
 
-//			pendingProductDto.setSpuModel("AC03WR17 404002");
+				PendingProductDto pendingProductDto = new PendingProductDto();
+				HubSpuPendingCriteriaDto criteriaDto = new HubSpuPendingCriteriaDto();
+				criteriaDto.createCriteria().andSpuPendingIdEqualTo(keyList.get(i));
+				List<HubSpuPendingDto> spuPendingDtos   = gateWay.selectByCriteria(criteriaDto);
+				if(null!=spuPendingDtos&&spuPendingDtos.size()>0){
+					BeanUtils.copyProperties(spuPendingDtos.get(0),pendingProductDto);
 
-			try {
-				hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
-//				hubSlotSpuService.updateSlotSpu(pendingProductDto);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		//			pendingProductDto.setSpuModel("AC03WR17 404002");
+
+					try {
+						hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+		//				hubSlotSpuService.updateSlotSpu(pendingProductDto);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 		}
-
 	}
 
 
