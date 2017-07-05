@@ -68,4 +68,14 @@ public class SlotManageController {
 	public HubResponse<?> selectSlotReturnDetail(@RequestBody SlotManageQuery slotManageQuery){
 		return slotManageService.selectSlotReturnDetail(slotManageQuery);
 	}
+	
+	@RequestMapping(value="/update-returnslot",method = RequestMethod.POST)
+	public HubResponse<?> updateSlotReturnDetail(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.updateSlotReturnDetail(slotManageQuery);
+	}
+	
+	@RequestMapping(value="/save-logistictTrack",method = RequestMethod.POST)
+	public HubResponse<?> createStudioSlotLogistictTrack(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.createStudioSlotLogistictTrack(slotManageQuery);
+	}
 }
