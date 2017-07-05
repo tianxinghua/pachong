@@ -801,7 +801,9 @@ public class StudioServiceImpl implements IStudioService {
     }
 
 
-
+    /*
+    * 添加物流单号
+    * */
     public boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser){
        try {
            StudioSlotLogistictTrackDto trackDto = new StudioSlotLogistictTrackDto();
@@ -816,6 +818,7 @@ public class StudioServiceImpl implements IStudioService {
                studioSlotDto.setStudioSlotId(studioSlotId);
                studioSlotDto.setSendTime(new Date());
                studioSlotDto.setSendState(StudioSlotSendState.SEND.getIndex().byteValue());
+               studioSlotDto.setTrackNo(trackingNo);
                studioSlotDto.setUpdateTime(new Date());
                studioSlotDto.setSendUser(createUser);
                return  studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto) >0;
