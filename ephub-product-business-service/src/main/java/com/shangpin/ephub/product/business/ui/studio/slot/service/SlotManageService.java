@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.commons.redis.IShangpinRedis;
@@ -29,11 +31,13 @@ import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendD
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
-import com.shangpin.ephub.product.business.ui.studio.slot.dto.LogistictTrackQuery;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnMasterVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
 import com.shangpin.ephub.response.HubResponse;
+import com.shangpin.ephub.client.util.JsonUtil;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * <p>
@@ -67,9 +71,14 @@ public class SlotManageService {
 	StudioSlotReturnDetailGateWay StudioSlotReturnDetailGateWay;
 	@Autowired
 	StudioSlotLogistictTrackGateWay studioSlotLogistictTrackGateWay;
+	@Autowired
+    private ApiAddressProperties apiAddressProperties;
+	@Autowired
+    private RestTemplate restTemplate;
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	SimpleDateFormat sd = new SimpleDateFormat("yyyyMMddHHmmss");
+	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	public HubResponse<?> findSlotManageList(SlotManageQuery slotManageQuery) {
 		StudioSlotsVo vo = new StudioSlotsVo();
@@ -200,12 +209,12 @@ public class SlotManageService {
 					studioSlotReturnMasterDto.setStudioSendNo(studioSendNo);
 					studioSlotReturnMasterDto.setSupplierId(studioSlotSpuSendDetailDto.getSupplierId());
 					studioSlotReturnMasterDto.setSupplierNo(studioSlotSpuSendDetailDto.getSupplierNo());
-					studioSlotReturnMasterDto.setQuantity(50);
-					studioSlotReturnMasterDto.setStudioId(studioId);
-					studioSlotReturnMasterDto.setActualSendQuantity(studioSlotSpuSendDetailDtoList.size());
 					studioSlotReturnMasterDto.setQuantity(studioSlotSpuSendDetailDtoList.size());
+					studioSlotReturnMasterDto.setStudioId(studioId);
+					studioSlotReturnMasterDto.setActualSendQuantity(0);
 					studioSlotReturnMasterDto.setDamagedQuantity(0);
 					studioSlotReturnMasterDto.setMissingQuantity(0);
+					studioSlotReturnMasterDto.setAddedQuantiy(0);
 					studioSlotReturnMasterDto.setState((byte) 0);
 					studioSlotReturnMasterDto.setCreateTime(new Date());
 					studioSlotReturnMasterDto.setCreateUser("admin");
@@ -225,6 +234,18 @@ public class SlotManageService {
 				studioSlotReturnDetailDto.setStudioSlotReturnMasterId(masterId);
 				studioSlotReturnDetailDto.setSlotNo(studioSlotSpuSendDetailDto.getSlotNo());
 				studioSlotReturnDetailDto.setSupplierNo(studioSlotSpuSendDetailDto.getSupplierId());
+				//根据供应商id 通过api查找到供应商名称
+				String supplierName = shangpinRedis.get("SupplierName_"+studioSlotSpuSendDetailDto.getSupplierNo());
+		        if(StringUtils.isNotBlank(supplierName)){
+		        	studioSlotReturnDetailDto.setSupplierName(supplierName);
+		        }else{
+		        	String supplierUrl =apiAddressProperties.getScmsSupplierInfoUrl()+studioSlotSpuSendDetailDto.getSupplierNo();
+		            String reSupplierMsg = restTemplate.getForObject(supplierUrl, String.class);
+		            JSONObject supplierDto = JsonUtil.deserialize2(reSupplierMsg, JSONObject.class);
+		            shangpinRedis.set("SupplierName_"+studioSlotSpuSendDetailDto.getSupplierNo(), supplierDto.get("SupplierName").toString());
+		            studioSlotReturnDetailDto.setSupplierName(supplierDto.get("SupplierName").toString());
+		        }
+				
 				studioSlotReturnDetailDto.setSupplierId(studioSlotSpuSendDetailDto.getSupplierId());
 				studioSlotReturnDetailDto.setSpuPendingId(studioSlotSpuSendDetailDto.getSupplierSpuId());
 				studioSlotReturnDetailDto.setSupplierSpuId(studioSlotSpuSendDetailDto.getSupplierSpuId());
@@ -246,7 +267,6 @@ public class SlotManageService {
 				StudioSlotReturnDetailGateWay.insertSelective(studioSlotReturnDetailDto);
 				i++;
 			}
-
 		} catch (Exception e) {
 			Log.error("生成studio返回明细失败!");
 			e.printStackTrace();
@@ -267,8 +287,8 @@ public class SlotManageService {
 			}
 			// 供应商名称
 			if (slotManageQuery.getSupplierName() != null) {
+				detailCriteria.andSupplierNameEqualTo(slotManageQuery.getSupplierName());
 			}
-			int count = StudioSlotReturnDetailGateWay.countByCriteria(detailDto);
 			if (slotManageQuery.getPageSize() != null) {
 				detailDto.setPageSize(slotManageQuery.getPageSize());
 			}
@@ -277,8 +297,11 @@ public class SlotManageService {
 			}
 			detailDto.setDistinct(true);
 			detailDto.setFields(" studio_slot_return_master_id,slot_no ");
+			
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
+			
+			int count = studioSlotReturnDetailDtoLists.size();
 			List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoLists = new ArrayList<>();
 			for (StudioSlotReturnDetailDto studioSlotReturnDetailDto : studioSlotReturnDetailDtoLists) {
 				StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
@@ -294,9 +317,9 @@ public class SlotManageService {
 			vo.setStudioSlotReturnMasterDtoList(studioSlotReturnMasterDtoLists);
 			vo.setTotal(count);
 		} catch (Exception e) {
-			Log.error("生成studio返回明细失败!");
+			Log.error("查询返货信息主表失败!");
 			e.printStackTrace();
-			return HubResponse.errorResp("生成studio返回明细失败!");
+			return HubResponse.errorResp("查询返货信息主表失败!");
 		}
 		return HubResponse.successResp(vo);
 	}
@@ -328,64 +351,158 @@ public class SlotManageService {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
 			com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto.Criteria detailCriteria = detailDto
 					.createCriteria();
-//			if (slotManageQuery.getSlotNo() != null) {
-//				detailCriteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
-//			}
-			if(slotManageQuery.getBarCode()!=null){
+			if (slotManageQuery.getBarCode() != null) {
 				detailCriteria.andBarcodeEqualTo(slotManageQuery.getBarCode());
 			}
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
-			if(studioSlotReturnDetailDtoLists!=null&&studioSlotReturnDetailDtoLists.size()>0){
-				studioSlotReturnDetailDtoLists.get(0).setState(slotManageQuery.getState().byteValue());
-				StudioSlotReturnDetailGateWay.updateByPrimaryKey(studioSlotReturnDetailDtoLists.get(0));
+			if (studioSlotReturnDetailDtoLists != null && studioSlotReturnDetailDtoLists.size() > 0) {
+				
+				StudioSlotReturnMasterCriteriaDto studioSlotReturnMasterCriteriaDto = new StudioSlotReturnMasterCriteriaDto();
+				studioSlotReturnMasterCriteriaDto.createCriteria().andStudioSlotReturnMasterIdEqualTo(Long.parseLong(slotManageQuery.getMasterId()));
+				List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoLists = studioSlotReturnMasterGateWay
+						.selectByCriteria(studioSlotReturnMasterCriteriaDto);
+				if (studioSlotReturnMasterDtoLists == null || studioSlotReturnMasterDtoLists.size() <= 0){
+					return HubResponse.errorResp("更新商品明细失败!");
+				}
+				if(studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId().toString().equals(slotManageQuery.getMasterId())  ){
+					if(studioSlotReturnDetailDtoLists.get(0).getState()==slotManageQuery.getState().byteValue()){
+						return HubResponse.successResp("更新成功！");
+					}else{
+						
+						
+						if(studioSlotReturnDetailDtoLists.get(0).getState()==0){
+							if(slotManageQuery.getState().byteValue()==1){
+								studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity()+1);
+							}
+							if(slotManageQuery.getState().byteValue()==2){
+								studioSlotReturnMasterDtoLists.get(0).setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity()+1);
+							}
+							if(slotManageQuery.getState().byteValue()==3){
+								studioSlotReturnMasterDtoLists.get(0).setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity()+1);
+							}
+						}
+						if(studioSlotReturnDetailDtoLists.get(0).getState()==1){
+							if(slotManageQuery.getState().byteValue()==2){
+								studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity()-1);
+								studioSlotReturnMasterDtoLists.get(0).setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity()+1);
+							}
+							if(slotManageQuery.getState().byteValue()==3){
+								studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity()-1);
+								studioSlotReturnMasterDtoLists.get(0).setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity()+1);
+							}
+						}
+						if(studioSlotReturnDetailDtoLists.get(0).getState()==2){
+							if(slotManageQuery.getState().byteValue()==1){
+								studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity()+1);
+								studioSlotReturnMasterDtoLists.get(0).setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity()-1);
+							}
+							if(slotManageQuery.getState().byteValue()==3){
+								studioSlotReturnMasterDtoLists.get(0).setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity()+1);
+								studioSlotReturnMasterDtoLists.get(0).setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity()-1);
+							}
+						}
+						if(studioSlotReturnDetailDtoLists.get(0).getState()==3){
+							if(slotManageQuery.getState().byteValue()==1){
+								studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity()+1);
+								studioSlotReturnMasterDtoLists.get(0).setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity()-1);
+							}
+							if(slotManageQuery.getState().byteValue()==2){
+								studioSlotReturnMasterDtoLists.get(0).setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity()+1);
+								studioSlotReturnMasterDtoLists.get(0).setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity()-1);
+							}
+						}
+					studioSlotReturnDetailDtoLists.get(0).setState(slotManageQuery.getState().byteValue());
+					StudioSlotReturnDetailGateWay.updateByPrimaryKey(studioSlotReturnDetailDtoLists.get(0));
+					studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDtoLists.get(0));
+					
+					}
+				}else{
+					String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
+					String paramSlotNo = slotManageQuery.getSlotNo().substring(0,8);
+					Date date = simpleDateFormat.parse(slotNo);
+					Date newDate = simpleDateFormat.parse(paramSlotNo);
+					if(date.before(newDate)){
+						StudioSlotReturnDetailDto studioSlotReturnDetail = new StudioSlotReturnDetailDto();
+						StudioSlotReturnDetailDto studioSlotReturnDetailDto = studioSlotReturnDetailDtoLists.get(0);
+						
+						studioSlotReturnDetail.setStudioSlotReturnMasterId(Long.parseLong(slotManageQuery.getMasterId()));
+						studioSlotReturnDetail.setSlotNo(studioSlotReturnDetailDto.getSlotNo());
+						studioSlotReturnDetail.setSupplierNo(studioSlotReturnDetailDto.getSupplierId());
+						//根据供应商id 通过api查找到供应商名称
+						//待开发
+						studioSlotReturnDetail.setSupplierName(studioSlotReturnDetailDto.getSupplierName());
+						
+						studioSlotReturnDetail.setSupplierId(studioSlotReturnDetailDto.getSupplierId());
+						studioSlotReturnDetail.setSpuPendingId(studioSlotReturnDetailDto.getSupplierSpuId());
+						studioSlotReturnDetail.setSupplierSpuId(studioSlotReturnDetailDto.getSupplierSpuId());
+						studioSlotReturnDetail.setSlotSpuNo(studioSlotReturnDetailDto.getSlotSpuNo());
+						studioSlotReturnDetail.setSupplierSpuName(studioSlotReturnDetailDto.getSupplierSpuName());
+						studioSlotReturnDetail.setSupplierSpuModel(studioSlotReturnDetailDto.getSupplierSpuModel());
+						studioSlotReturnDetail.setSupplierBrandName(studioSlotReturnDetailDto.getSupplierBrandName());
+						studioSlotReturnDetail.setSupplierCategoryName(studioSlotReturnDetailDto.getSupplierCategoryName());
+						studioSlotReturnDetail.setSupplierSeasonName(studioSlotReturnDetailDto.getSupplierSeasonName());
+						studioSlotReturnDetail.setState(slotManageQuery.getState().byteValue());
+						studioSlotReturnDetail.setSendState((byte) 0);
+						studioSlotReturnDetail.setArriveState((byte) 0);
+						studioSlotReturnDetail.setBarcode(studioSlotReturnDetailDto.getBarcode());
+						studioSlotReturnDetail.setCreateTime(new Date());
+						studioSlotReturnDetail.setCreateUser("admin");
+						studioSlotReturnDetail.setSendUser("admin");
+						studioSlotReturnDetail.setUpdateTime(new Date());
+						studioSlotReturnDetail.setUpdateUser("admin");
+						StudioSlotReturnDetailGateWay.insertSelective(studioSlotReturnDetail);
+						
+						studioSlotReturnMasterDtoLists.get(0).setAddedQuantiy(studioSlotReturnMasterDtoLists.get(0).getAddedQuantiy()+1);
+						studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDtoLists.get(0));
+					}else{
+						return HubResponse.errorResp("更新商品明细失败!");
+					}
+				}
 			}
 		} catch (Exception e) {
-			Log.error("更新商品明细!");
+			Log.error("更新商品明细失败!");
 			e.printStackTrace();
-			return HubResponse.errorResp("更新商品明细!");
+			return HubResponse.errorResp("更新商品明细失败!");
 		}
 		return HubResponse.successResp("更新成功！");
 	}
 
 	// 创建批次物流信息
-		public HubResponse<?> createStudioSlotLogistictTrack(LogistictTrackQuery logistictTrackQuery) {
-			try {
-				StudioSlotLogistictTrackDto dto = new StudioSlotLogistictTrackDto();
-				if(logistictTrackQuery.getTrackName()!=null){
-					dto.setTrackName(logistictTrackQuery.getTrackName());
-				}
-				if(logistictTrackQuery.getTrackNo()!=null){
-					dto.setTrackNo(logistictTrackQuery.getTrackNo());
-				}
-				if(logistictTrackQuery.getQuantity()!=null){
-					dto.setQuantity(logistictTrackQuery.getQuantity());
-				}
-				if(logistictTrackQuery.getActualNumber()!=null){
-					dto.setActualNumber(logistictTrackQuery.getActualNumber());
-				}
-				if(logistictTrackQuery.getMasterId()!=null){
-					StudioSlotReturnMasterCriteriaDto criteriaDto = new StudioSlotReturnMasterCriteriaDto();
-					com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterCriteriaDto.Criteria criteria = criteriaDto
-							.createCriteria();
-					criteria.andStudioSlotReturnMasterIdEqualTo(Long.parseLong(logistictTrackQuery.getMasterId().toString()));
-					List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoList = studioSlotReturnMasterGateWay
-							.selectByCriteria(criteriaDto);
-					if(studioSlotReturnMasterDtoList!=null&&studioSlotReturnMasterDtoList.size()>0){
-						dto.setSendMasterId(studioSlotReturnMasterDtoList.get(0).getStudioSlotReturnMasterId());
-					}
-				}
-				dto.setTrackStatus((byte) 0);
-				dto.setType((byte) 1);
-				dto.setCreateTime(new Date());
-				dto.setCreateUser("admin");
-				dto.setUpdateTime(new Date());
-				studioSlotLogistictTrackGateWay.insertSelective(dto);
-			} catch (Exception e) {
-				Log.error("查询批次号下所有商品明细失败!");
-				e.printStackTrace();
-				return HubResponse.errorResp("查询批次号下所有商品明细失败!");
+	public HubResponse<?> createStudioSlotLogistictTrack(SlotManageQuery slotManageQuery) {
+		try {
+			StudioSlotLogistictTrackDto dto = new StudioSlotLogistictTrackDto();
+			if (slotManageQuery.getTrackName() != null) {
+				dto.setTrackName(slotManageQuery.getTrackName());
 			}
-			return HubResponse.successResp("更新成功！");
+			if (slotManageQuery.getTrackNo() != null) {
+				dto.setTrackNo(slotManageQuery.getTrackNo());
+			}
+			if (slotManageQuery.getMasterId() != null) {
+				StudioSlotReturnMasterCriteriaDto criteriaDto = new StudioSlotReturnMasterCriteriaDto();
+				com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterCriteriaDto.Criteria criteria = criteriaDto
+						.createCriteria();
+				criteria.andStudioSlotReturnMasterIdEqualTo(
+						Long.parseLong(slotManageQuery.getMasterId().toString()));
+				List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoList = studioSlotReturnMasterGateWay
+						.selectByCriteria(criteriaDto);
+				if (studioSlotReturnMasterDtoList != null && studioSlotReturnMasterDtoList.size() > 0) {
+					dto.setSendMasterId(studioSlotReturnMasterDtoList.get(0).getStudioSlotReturnMasterId());
+					dto.setQuantity(studioSlotReturnMasterDtoList.get(0).getActualSendQuantity());
+				}
+			}
+			dto.setActualNumber(0);
+			dto.setTrackStatus((byte) 0);
+			dto.setType((byte) 1);
+			dto.setCreateTime(new Date());
+			dto.setCreateUser("admin");
+			dto.setUpdateTime(new Date());
+			studioSlotLogistictTrackGateWay.insertSelective(dto);
+		} catch (Exception e) {
+			Log.error("创建批次物流信息失败!");
+			e.printStackTrace();
+			return HubResponse.errorResp("创建批次物流信息失败!");
 		}
+		return HubResponse.successResp("更新成功！");
+	}
 }

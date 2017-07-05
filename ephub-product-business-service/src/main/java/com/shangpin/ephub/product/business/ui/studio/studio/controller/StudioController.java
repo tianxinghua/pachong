@@ -53,6 +53,39 @@ public class StudioController {
         return  HubResponse.successResp(iStudioService.getSupplierSlotList(supplierId));
     }
 
+    /*
+ * 删除商品供货商商品
+ * */
+    @RequestMapping(value = "/delslotspu")
+    public HubResponse<?> delSlotProduct(@RequestBody StudioQueryDto queryDto) {
+        String supplierId = queryDto.getSupplierId();
+        Long slotSSId = queryDto.getSlotSSId();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(slotSSId)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        if(iStudioService.delProductFromSlot(supplierId,slotSSId,queryDto.getCreateUser())){
+            return  HubResponse.successResp(null);
+        }else
+        {
+            return  HubResponse.errorResp("delete fail!");
+        }
+    }
+
+    /**
+     * *释放申请的批次
+     * @param queryDto
+     * @return
+     */
+    @RequestMapping(value = "/releaseslot")
+    public HubResponse<?> releaseStudioSlot(@RequestBody StudioQueryDto queryDto){
+        String supplierId = queryDto.getSupplierId();
+        Long slotId = queryDto.getStudioSlotId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotId)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return iStudioService.releaseStudioSlot(supplierId,slotId,queryDto.getCreateUser());
+    }
+
 
     /*
    * 获取批次详情
@@ -110,6 +143,22 @@ public class StudioController {
             return  HubResponse.errorResp("传入参数不正确");
         }
         return  iStudioService.checkProductAndSendSlot(supplierId,slotNo);
+    }
+
+    @RequestMapping(value = "/slotprint")
+    public HubResponse<?> slotPrint(@RequestBody StudioQueryDto queryDto) {
+        String supplierId = queryDto.getSupplierId();
+        Long slotId = queryDto.getStudioSlotId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotId)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        if(iStudioService.slotPrint(slotId)){
+            return  HubResponse.successResp(null);
+        }else
+        {
+            return  HubResponse.errorResp("print fail!");
+        }
+
     }
 
     @RequestMapping(value = "/addslotLogistic")
