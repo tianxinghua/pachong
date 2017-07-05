@@ -155,7 +155,7 @@ public class OperationServiceImpl implements OperationService {
 	 */
 	public List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setFields("studio_slot_id,arrive_state");
+		criteria.setFields("studio_slot_id,arrive_state,send_state");
 		criteria.setOrderByClause("create_time");
 		criteria.setPageNo(1);
 		criteria.setPageSize(1000); 
