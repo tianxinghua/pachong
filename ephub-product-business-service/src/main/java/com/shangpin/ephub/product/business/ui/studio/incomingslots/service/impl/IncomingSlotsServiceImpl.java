@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
@@ -101,7 +102,7 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 		criteria.setPageSize(100);
 		criteria.setOrderByClause("plan_arrive_time");
 		Criteria createCriteria = criteria.createCriteria();
-		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
+		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue()).andSendStateEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
 		Long studioId = operationService.getStudioId(query.getStudioNo());
 		if(null != studioId){
 			createCriteria.andStudioIdEqualTo(studioId);
