@@ -96,6 +96,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			withCriteria.setCriteria(criteria );
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
+			studioSlotSpuSendDetailDto.setArriveTime(new Date());
 			withCriteria.setStudioSlotSpuSendDetail(studioSlotSpuSendDetailDto );
 			studioSlotSpuSendDetailGateWay.updateByCriteriaSelective(withCriteria);
 			return true;
