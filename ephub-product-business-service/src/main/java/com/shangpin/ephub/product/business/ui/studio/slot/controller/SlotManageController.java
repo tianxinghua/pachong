@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
+import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotDetailService;
 import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotManageService;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotInfo;
 import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title: OpenBoxController</p>
@@ -23,6 +25,8 @@ public class SlotManageController {
 
 	@Autowired
 	SlotManageService slotManageService;
+	@Autowired
+	SlotDetailService slotDetailService;
 	
 	
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)
@@ -32,8 +36,19 @@ public class SlotManageController {
 	
 	@RequestMapping(value="/slot-detail",method = RequestMethod.POST)
 	public HubResponse<?> slotDetail(@RequestBody String slotNo){
+		SlotInfo slotInfo = slotDetailService.getSlotInfo(slotNo);
+		if(null != slotInfo){
+			return HubResponse.successResp(slotInfo);
+		}else{
+			return HubResponse.errorResp("查询明细异常");
+		}
+	}
+	
+	@RequestMapping(value="/slot-product-detail",method = RequestMethod.POST)
+	public HubResponse<?> slotProductDetail(@RequestBody String slotNo){
 		return null;
 	}
+	
 	@RequestMapping(value="/slot-export",method = RequestMethod.POST)
 	public HubResponse<?> slotDetailCheck(@RequestBody SlotManageQuery slotManageQuery){
 		return null;

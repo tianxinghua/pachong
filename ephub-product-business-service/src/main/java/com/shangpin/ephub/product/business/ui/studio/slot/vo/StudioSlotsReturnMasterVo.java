@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterDto;
-import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 
 import lombok.Getter;
 import lombok.Setter;

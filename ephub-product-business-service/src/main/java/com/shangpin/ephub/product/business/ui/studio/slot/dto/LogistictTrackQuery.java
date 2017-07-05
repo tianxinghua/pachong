@@ -19,4 +19,7 @@ public class LogistictTrackQuery {
 	private String masterId;
 	private Integer quantity;
 	private Integer actualNumber;
+	private String barCode;
+	private Integer state;
+	private String slotNo;
 }

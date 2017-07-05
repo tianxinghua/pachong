@@ -13,7 +13,7 @@ import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.
 
 /**
  * <p>Title: OperationService</p>
- * <p>Description: 通用service </p>
+ * <p>Description: studio相关通用service </p>
  * <p>Company: </p> 
  * @author lubaijiang
  * @date 2017年6月26日 下午4:27:12
