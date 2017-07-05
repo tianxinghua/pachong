@@ -250,7 +250,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 		if(!StringUtils.isEmpty(pendingQuryDto.getCategoryName())){
 			criteria.andHubCategoryNoLike("%"+pendingQuryDto.getCategoryName()+"%");
 		}
-		if(-1 != pendingQuryDto.getPicState()){
+		if(null!=pendingQuryDto.getPicState()&&-1 != pendingQuryDto.getPicState()){
 			if(0 == pendingQuryDto.getPicState()){
 				criteria.andPicStateEqualTo(PicState.UNHANDLED.getIndex());
 			}else if(1 == pendingQuryDto.getPicState()){

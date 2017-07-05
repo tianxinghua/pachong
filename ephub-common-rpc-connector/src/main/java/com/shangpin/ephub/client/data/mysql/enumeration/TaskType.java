@@ -46,7 +46,9 @@ public enum TaskType {
 	/**
 	 * 待拍照导入
 	 */
-	IMPORT_SLOT_SPU(15,"待拍照导入");
+	IMPORT_SLOT_SPU(15,"待拍照导入"),
+	
+	EXPORT_WAIT_SHOOT(16,"待拍照导出");
 	/**
      * 数字索引标识
      */

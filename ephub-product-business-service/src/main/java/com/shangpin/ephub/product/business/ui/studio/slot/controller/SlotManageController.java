@@ -35,8 +35,8 @@ public class SlotManageController {
 	@Autowired
 	SlotDetailService slotDetailService;
 
-	@Autowired
-	SlotSendReturnService slotSendReturnService;
+//	@Autowired
+//	SlotSendReturnService slotSendReturnService;
 	
 	
 	@RequestMapping(value="/slot-list",method = RequestMethod.POST)
