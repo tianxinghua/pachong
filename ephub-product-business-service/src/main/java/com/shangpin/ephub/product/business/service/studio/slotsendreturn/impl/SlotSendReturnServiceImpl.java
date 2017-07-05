@@ -6,6 +6,7 @@ import com.shangpin.ephub.client.data.studio.slot.returning.gateway.StudioSlotRe
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
+import com.shangpin.ephub.product.business.service.studio.slotsendreturn.SlotSendReturnService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by loyalty on 17/7/4.
  */
 @Service
-public class SlotSendReturnServiceImpl {
+public class SlotSendReturnServiceImpl implements SlotSendReturnService {
 
     @Autowired
     StudioSlotSpuSendDetailGateWay spuSendDetailGateWay;
@@ -36,8 +37,9 @@ public class SlotSendReturnServiceImpl {
 
 
         StudioSlotReturnDetailCriteriaDto criteria = new StudioSlotReturnDetailCriteriaDto();
+        criteria.createCriteria().andBarcodeEqualTo(barcode);
 
         List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtos = returnDetailGateWay.selectByCriteria(criteria);
-        return null;
+        return studioSlotReturnDetailDtos;
     }
 }

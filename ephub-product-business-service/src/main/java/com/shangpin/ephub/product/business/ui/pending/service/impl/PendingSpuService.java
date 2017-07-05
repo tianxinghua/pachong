@@ -174,37 +174,7 @@ public abstract class PendingSpuService implements IPendingProductService {
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
-		if(StringUtils.isEmpty(pendingQuryDto.getSpuState()) || "0".equals(pendingQuryDto.getSpuState())){ 
-			criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
-		}else if("1".equals(pendingQuryDto.getSpuState())){
-			criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
-		}else if("2".equals(pendingQuryDto.getSpuState())){
-			criteria.andSpuStateEqualTo(SpuState.HANDLED.getIndex());
-		}else if("3".equals(pendingQuryDto.getSpuState())){
-			criteria.andSpuStateEqualTo(SpuState.UNABLE_TO_PROCESS.getIndex());
-		}else if("4".equals(pendingQuryDto.getSpuState())){
-			criteria.andSpuStateEqualTo(SpuState.FILTER.getIndex());
-		}else if("5".equals(pendingQuryDto.getSpuState())){
-			criteria.andSpuStateEqualTo(SpuState.HANDLING.getIndex());
-		}else if("6".equals(pendingQuryDto.getSpuState())){
-			criteria.andSpuStateEqualTo(SpuState.EXISTED_IN_HUB.getIndex());
-		}else if("16".equals(pendingQuryDto.getSpuState())){
-//			criteria.andSpuStateEqualTo(SpuState.ALL_EXISTED_IN_HUB.getIndex());
-		}
-		if("0".equals(pendingQuryDto.getAuditState())){
-			//再处理
-			criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
-			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
-				criteria.andAuditUserLike(pendingQuryDto.getOperator()+"%");
-			}
-		}else if("1".equals(pendingQuryDto.getAuditState())){
-			criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
-		}else{
-			//待处理
-			if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
-				criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
-			}
-		}
+
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
@@ -222,76 +192,111 @@ public abstract class PendingSpuService implements IPendingProductService {
 		if(!StringUtils.isEmpty(pendingQuryDto.getHubBrandNo())){
 			criteria.andHubBrandNoEqualTo(pendingQuryDto.getHubBrandNo());
 		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
-			criteria.andHubSeasonLike("%"+pendingQuryDto.getHubSeason()+"%");
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
-			criteria.andHubSeasonLike(pendingQuryDto.getHubYear()+"%");
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
-			Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat);
-			criteria.andUpdateTimeGreaterThanOrEqualTo(startTime);
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
-			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
-			criteria.andUpdateTimeLessThan(endTime);
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeStart())){
-			Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeStart(), dateFormat);
-			criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeEnd())){
-			Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeEnd(),dateFormat);
-			criteria.andCreateTimeLessThan(endTime);
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
-			criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
-		}
-		if(!StringUtils.isEmpty(pendingQuryDto.getCategoryName())){
-			criteria.andHubCategoryNoLike("%"+pendingQuryDto.getCategoryName()+"%");
-		}
-		if(null!=pendingQuryDto.getPicState()&&-1 != pendingQuryDto.getPicState()){
-			if(0 == pendingQuryDto.getPicState()){
-				criteria.andPicStateEqualTo(PicState.UNHANDLED.getIndex());
-			}else if(1 == pendingQuryDto.getPicState()){
-				criteria.andPicStateEqualTo(PicState.HANDLE_ERROR.getIndex());
-			}else if(2 == pendingQuryDto.getPicState()){
-				criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
-			}
-		}
-		List<Integer> conformities = pendingQuryDto.getConformities();
-		if(CollectionUtils.isNotEmpty(conformities)){
-			for(int i = 0;i<conformities.size();i++){
-				if (ProductState.SPU_GENDER_STATE.getIndex() == conformities.get(i)) {
-        			criteria.andSpuGenderStateEqualTo(SpuGenderState.HANDLED.getIndex());
-        		} else if (ProductState.SPU_BRAND_STATE.getIndex() == conformities.get(i)) {
-        			criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
-        		} else if(ProductState.CATGORY_STATE.getIndex() == conformities.get(i)){
-        			criteria.andCatgoryStateEqualTo(CatgoryState.PERFECT_MATCHED.getIndex());
-        		} else if(ProductState.SPU_MODEL_STATE.getIndex() == conformities.get(i)){
-        			criteria.andSpuModelStateEqualTo(SpuModelState.VERIFY_PASSED.getIndex());
-        		} else if(ProductState.MATERIAL_STATE.getIndex() == conformities.get(i)){
-        			criteria.andMaterialStateEqualTo(MaterialState.HANDLED.getIndex());
-        		} else if(ProductState.SPU_COLOR_STATE.getIndex() == conformities.get(i)){
-        			criteria.andSpuColorStateEqualTo(SpuColorState.HANDLED.getIndex());
-        		} else if(ProductState.ORIGIN_STATE.getIndex() == conformities.get(i)){
-        			criteria.andOriginStateEqualTo(OriginState.HANDLED.getIndex());
-        		} else if(ProductState.SPU_SEASON_STATE.getIndex() == conformities.get(i)){
-        			criteria.andSpuSeasonStateEqualTo(SpuSeasonState.HANDLED.getIndex());
-        		} else if(ProductState.SIZE_STATE.getIndex() == conformities.get(i)){
-        			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
-        		}else if(ProductState.INFOCOMPLETE.getIndex() == conformities.get(i)){
-        			criteria.andInfoStateEqualTo(InfoState.PERFECT.getIndex());
-        		}else if(ProductState.HAVESTOCK.getIndex() == conformities.get(i)){
-        			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
-        		}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
-        			criteria.andUpdateUserIsNotNull();
-        		}
-			}
-		}
 
 		if(pendingQuryDto.isShoot()){
 			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
+		}else{
+			if(StringUtils.isEmpty(pendingQuryDto.getSpuState()) || "0".equals(pendingQuryDto.getSpuState())){
+
+				criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
+
+			}else if("1".equals(pendingQuryDto.getSpuState())){
+				criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
+			}else if("2".equals(pendingQuryDto.getSpuState())){
+				criteria.andSpuStateEqualTo(SpuState.HANDLED.getIndex());
+			}else if("3".equals(pendingQuryDto.getSpuState())){
+				criteria.andSpuStateEqualTo(SpuState.UNABLE_TO_PROCESS.getIndex());
+			}else if("4".equals(pendingQuryDto.getSpuState())){
+				criteria.andSpuStateEqualTo(SpuState.FILTER.getIndex());
+			}else if("5".equals(pendingQuryDto.getSpuState())){
+				criteria.andSpuStateEqualTo(SpuState.HANDLING.getIndex());
+			}else if("6".equals(pendingQuryDto.getSpuState())){
+				criteria.andSpuStateEqualTo(SpuState.EXISTED_IN_HUB.getIndex());
+			}else if("16".equals(pendingQuryDto.getSpuState())){
+//			criteria.andSpuStateEqualTo(SpuState.ALL_EXISTED_IN_HUB.getIndex());
+			}
+			if("0".equals(pendingQuryDto.getAuditState())){
+				//再处理
+				criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
+				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+					criteria.andAuditUserLike(pendingQuryDto.getOperator()+"%");
+				}
+			}else if("1".equals(pendingQuryDto.getAuditState())){
+				criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+			}else{
+				//待处理
+				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
+					criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
+				}
+			}
+
+			if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
+				criteria.andHubSeasonLike("%"+pendingQuryDto.getHubSeason()+"%");
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getHubYear())){
+				criteria.andHubSeasonLike(pendingQuryDto.getHubYear()+"%");
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
+				Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat);
+				criteria.andUpdateTimeGreaterThanOrEqualTo(startTime);
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
+				Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
+				criteria.andUpdateTimeLessThan(endTime);
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeStart())){
+				Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeStart(), dateFormat);
+				criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getCreateTimeEnd())){
+				Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getCreateTimeEnd(),dateFormat);
+				criteria.andCreateTimeLessThan(endTime);
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getBrandName())){
+				criteria.andHubBrandNoLike("%"+pendingQuryDto.getBrandName()+"%");
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getCategoryName())){
+				criteria.andHubCategoryNoLike("%"+pendingQuryDto.getCategoryName()+"%");
+			}
+			if(null!=pendingQuryDto.getPicState()&&-1 != pendingQuryDto.getPicState()){
+				if(0 == pendingQuryDto.getPicState()){
+					criteria.andPicStateEqualTo(PicState.UNHANDLED.getIndex());
+				}else if(1 == pendingQuryDto.getPicState()){
+					criteria.andPicStateEqualTo(PicState.HANDLE_ERROR.getIndex());
+				}else if(2 == pendingQuryDto.getPicState()){
+					criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
+				}
+			}
+			List<Integer> conformities = pendingQuryDto.getConformities();
+			if(CollectionUtils.isNotEmpty(conformities)){
+				for(int i = 0;i<conformities.size();i++){
+					if (ProductState.SPU_GENDER_STATE.getIndex() == conformities.get(i)) {
+						criteria.andSpuGenderStateEqualTo(SpuGenderState.HANDLED.getIndex());
+					} else if (ProductState.SPU_BRAND_STATE.getIndex() == conformities.get(i)) {
+						criteria.andSpuBrandStateEqualTo(SpuBrandState.HANDLED.getIndex());
+					} else if(ProductState.CATGORY_STATE.getIndex() == conformities.get(i)){
+						criteria.andCatgoryStateEqualTo(CatgoryState.PERFECT_MATCHED.getIndex());
+					} else if(ProductState.SPU_MODEL_STATE.getIndex() == conformities.get(i)){
+						criteria.andSpuModelStateEqualTo(SpuModelState.VERIFY_PASSED.getIndex());
+					} else if(ProductState.MATERIAL_STATE.getIndex() == conformities.get(i)){
+						criteria.andMaterialStateEqualTo(MaterialState.HANDLED.getIndex());
+					} else if(ProductState.SPU_COLOR_STATE.getIndex() == conformities.get(i)){
+						criteria.andSpuColorStateEqualTo(SpuColorState.HANDLED.getIndex());
+					} else if(ProductState.ORIGIN_STATE.getIndex() == conformities.get(i)){
+						criteria.andOriginStateEqualTo(OriginState.HANDLED.getIndex());
+					} else if(ProductState.SPU_SEASON_STATE.getIndex() == conformities.get(i)){
+						criteria.andSpuSeasonStateEqualTo(SpuSeasonState.HANDLED.getIndex());
+					} else if(ProductState.SIZE_STATE.getIndex() == conformities.get(i)){
+						criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.HANDLED.getIndex());
+					}else if(ProductState.INFOCOMPLETE.getIndex() == conformities.get(i)){
+						criteria.andInfoStateEqualTo(InfoState.PERFECT.getIndex());
+					}else if(ProductState.HAVESTOCK.getIndex() == conformities.get(i)){
+						criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
+					}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
+						criteria.andUpdateUserIsNotNull();
+					}
+				}
+			}
 		}
 		return criteria;
 	}
