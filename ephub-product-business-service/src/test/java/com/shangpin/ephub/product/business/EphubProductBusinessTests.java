@@ -23,8 +23,11 @@ import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
+import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendingService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -167,6 +170,15 @@ public class EphubProductBusinessTests {
 
         System.out.println("slot size = " + slotSpu.size());
 
+	}
+
+	@Autowired
+	StudioPendingService studioPendingService;
+	@Test
+	public void testFindPendingProducts(){
+		PendingQuryDto pendingQuryDto  = new PendingQuryDto();
+		pendingQuryDto.setShoot(true);
+		PendingProducts pendingProducts = studioPendingService.findPendingProducts(pendingQuryDto,false);
 	}
 
 
