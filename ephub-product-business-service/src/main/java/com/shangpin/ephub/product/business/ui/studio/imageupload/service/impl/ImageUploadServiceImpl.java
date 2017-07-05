@@ -54,6 +54,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 					vos.add(operationService.formatDto(dto));
 				}
 			}
+			log.info("图片上传页面返回数据条数===="+vos.size()); 
 			return vos;
 		} catch (Exception e) {
 			log.error("图片上传列表页异常："+e.getMessage(),e); 

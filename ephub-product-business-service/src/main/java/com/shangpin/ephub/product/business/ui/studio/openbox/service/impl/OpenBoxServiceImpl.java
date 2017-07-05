@@ -77,8 +77,10 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	
 	@Override
 	public OpenBoxDetailVo slotDetail(String slotNo) {
+		log.info("查找该批次号下的所以产品详情====="+slotNo);
 		OpenBoxDetailVo openBoxDetailVo = new OpenBoxDetailVo();
 		List<StudioSlotSpuSendDetailVo> list = operationService.slotDetail(slotNo);
+		log.info("返回的产品详情size========"+list.size()); 
 		openBoxDetailVo.setDetails(list); 
 		return openBoxDetailVo; 
 	}

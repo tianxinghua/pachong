@@ -72,7 +72,7 @@ public class OperationServiceImpl implements OperationService {
 		if(operationQuery.getOperationQueryType() == OperationQueryType.OPEN_BOX.getIndex()){
 			createCriteria.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		}else if(operationQuery.getOperationQueryType() == OperationQueryType.IMAGE_UPLOAD.getIndex()){
-			createCriteria.andShotStatusEqualTo(StudioSlotShootState.NORMAL.getIndex().byteValue());
+			createCriteria.andShotStatusIsNotNull().andShotStatusNotEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		}
 		
 		Long studioId = getStudioId(operationQuery.getStudioNo());

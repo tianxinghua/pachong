@@ -51,7 +51,7 @@ public class SlotManageController {
 		slotInfo.setActualQuantity(50);
 		slotInfo.setArriveQty(50);
 		slotInfo.setArriveTime(new Date());
-		slotInfo.setSlotStatus("发货");
+		slotInfo.setSlotStatus(1);
 		if(null != slotInfo){
 			return HubResponse.successResp(slotInfo);
 		}else{
