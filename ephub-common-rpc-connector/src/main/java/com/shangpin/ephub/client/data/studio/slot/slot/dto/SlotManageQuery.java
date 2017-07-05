@@ -34,4 +34,9 @@ public class SlotManageQuery {
 	private String supplierName;
 	private String barCode;
 	private Integer state;
+	private String trackName;
+	private String trackNo;
+	private String masterId;
+	private Integer quantity;
+	private Integer actualNumber;
 }
