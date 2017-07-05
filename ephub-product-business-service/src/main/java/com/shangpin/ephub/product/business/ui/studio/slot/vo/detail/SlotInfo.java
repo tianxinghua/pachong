@@ -36,7 +36,7 @@ public class SlotInfo implements Serializable{
 	/**
 	 * 批次状态
 	 */
-	private String slotStatus;
+	private int slotStatus;
 	/**
 	 * 发货数量
 	 */
