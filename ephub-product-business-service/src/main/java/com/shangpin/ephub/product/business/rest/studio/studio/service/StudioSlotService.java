@@ -28,11 +28,11 @@ public class StudioSlotService {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy/MM/dd");
 
-	public List<StudioSlotDto> getStudioSlotBySlotDate(Date DT) {
+	public List<StudioSlotDto> getStudioSlotBySlotDate(Date DT,long studioId) {
 		List<StudioSlotDto> listStudioDto = null;
 		log.info("查询当天是否生成了批次信息----start");
 		StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-		dto.createCriteria().andSlotDateEqualTo(DT);
+		dto.createCriteria().andSlotDateEqualTo(DT).andStudioIdEqualTo(studioId);
 		listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 		log.info("查询当天是否生成了批次信息----end");
 		return listStudioDto;
@@ -93,7 +93,7 @@ public class StudioSlotService {
 					while (isflg) {
 						Calendar c = Calendar.getInstance();
 						c.add(Calendar.DAY_OF_MONTH, i);
-						List<StudioSlotDto> slotDtoList = getStudioSlotBySlotDate(c.getTime());
+						List<StudioSlotDto> slotDtoList = getStudioSlotBySlotDate(c.getTime(),studioSlotDto.getStudioId());
 						for (StudioSlotDto slotDto : slotDtoList) {
 							if (slotDto.getApplyStatus() == (byte) 0) {
 								slotDto.setApplyStatus((byte) 3);
@@ -141,7 +141,7 @@ public class StudioSlotService {
 				while (isflg) {
 					Calendar c = Calendar.getInstance();
 					c.add(Calendar.DAY_OF_MONTH, i);
-					List<StudioSlotDto> slotDtoList = getStudioSlotBySlotDate(c.getTime());
+					List<StudioSlotDto> slotDtoList = getStudioSlotBySlotDate(c.getTime(),studioSlotDto.getStudioId());
 					for (StudioSlotDto slotDto : slotDtoList) {
 						if (slotDto.getApplyStatus() == (byte) 0) {
 							slotDto.setApplyStatus((byte) 3);
