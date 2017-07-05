@@ -478,12 +478,6 @@ public class SlotManageService {
 			if (slotManageQuery.getTrackNo() != null) {
 				dto.setTrackNo(slotManageQuery.getTrackNo());
 			}
-			if (slotManageQuery.getQuantity() != null) {
-				dto.setQuantity(slotManageQuery.getQuantity());
-			}
-			if (slotManageQuery.getActualNumber() != null) {
-				dto.setActualNumber(slotManageQuery.getActualNumber());
-			}
 			if (slotManageQuery.getMasterId() != null) {
 				StudioSlotReturnMasterCriteriaDto criteriaDto = new StudioSlotReturnMasterCriteriaDto();
 				com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterCriteriaDto.Criteria criteria = criteriaDto
@@ -497,6 +491,7 @@ public class SlotManageService {
 					dto.setQuantity(studioSlotReturnMasterDtoList.get(0).getActualSendQuantity());
 				}
 			}
+			dto.setActualNumber(0);
 			dto.setTrackStatus((byte) 0);
 			dto.setType((byte) 1);
 			dto.setCreateTime(new Date());
