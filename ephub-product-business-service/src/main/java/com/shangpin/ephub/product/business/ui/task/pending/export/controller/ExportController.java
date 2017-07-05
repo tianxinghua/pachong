@@ -36,6 +36,7 @@ public class ExportController {
 			//第一步创建任务
 			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(pendingQuryDto.getCreateUser(), remotePath , TaskType.EXPORT_WAIT_SHOOT);
 			//第二步发送队列
+			pendingQuryDto.setShoot(true);
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_WAIT_SHOOT, pendingQuryDto);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
