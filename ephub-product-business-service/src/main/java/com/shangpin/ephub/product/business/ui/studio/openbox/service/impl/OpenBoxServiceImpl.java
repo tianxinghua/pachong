@@ -119,6 +119,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			Date date = new Date();
 			long today = DateTimeUtil.convertDayDate(date).getTime();
 			long planShootTime = DateTimeUtil.convertDayDate(null != studioSlotDtoSelect ? studioSlotDtoSelect.getPlanShootTime() : date).getTime();
+			log.info("today====="+today+"  &&& planShootTime======"+planShootTime); 
 			if(planShootTime == today){
 				studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
 			}else if(planShootTime > today){
@@ -126,9 +127,11 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			}else{
 				studioSlotDto.setShotStatus(StudioSlotShootState.AHEAD_TIME.getIndex().byteValue());
 			}
+			log.info("拍摄状态是============"+studioSlotDto.getShotStatus()); 
 			studioSlotDto.setShootTime(date); 
 			slotWithCriteria.setStudioSlot(studioSlotDto );
-			studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
+			int update = studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
+			log.info("更新批次状态返回结果=============="+update); 
 			//TODO 暂时没有盘盈
 			//下面是盘亏
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
