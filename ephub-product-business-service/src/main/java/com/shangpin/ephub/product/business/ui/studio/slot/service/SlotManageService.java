@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioReturnDeatilState;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto;
@@ -426,56 +427,56 @@ public class SlotManageService {
 					return HubResponse.successResp("更新成功！");
 				} else {
 
-					if (studioSlotReturnDetailDtoLists.get(0).getState() == 0) {
-						if (slotManageQuery.getState().byteValue() == 1) {
+					if (studioSlotReturnDetailDtoLists.get(0).getState() == StudioReturnDeatilState.WAIT.getIndex().byteValue()) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(
 									studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity() + 1);
 						}
-						if (slotManageQuery.getState().byteValue() == 2) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0)
 									.setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity() + 1);
 						}
-						if (slotManageQuery.getState().byteValue() == 3) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0)
 									.setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity() + 1);
 						}
 					}
-					if (studioSlotReturnDetailDtoLists.get(0).getState() == 1) {
-						if (slotManageQuery.getState().byteValue() == 2) {
+					if (studioSlotReturnDetailDtoLists.get(0).getState() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(
 									studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity() - 1);
 							studioSlotReturnMasterDtoLists.get(0)
 									.setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity() + 1);
 						}
-						if (slotManageQuery.getState().byteValue() == 3) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(
 									studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity() - 1);
 							studioSlotReturnMasterDtoLists.get(0)
 									.setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity() + 1);
 						}
 					}
-					if (studioSlotReturnDetailDtoLists.get(0).getState() == 2) {
-						if (slotManageQuery.getState().byteValue() == 1) {
+					if (studioSlotReturnDetailDtoLists.get(0).getState() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(
 									studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity() + 1);
 							studioSlotReturnMasterDtoLists.get(0)
 									.setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity() - 1);
 						}
-						if (slotManageQuery.getState().byteValue() == 3) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0)
 									.setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity() + 1);
 							studioSlotReturnMasterDtoLists.get(0)
 									.setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity() - 1);
 						}
 					}
-					if (studioSlotReturnDetailDtoLists.get(0).getState() == 3) {
-						if (slotManageQuery.getState().byteValue() == 1) {
+					if (studioSlotReturnDetailDtoLists.get(0).getState() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0).setActualSendQuantity(
 									studioSlotReturnMasterDtoLists.get(0).getActualSendQuantity() + 1);
 							studioSlotReturnMasterDtoLists.get(0)
 									.setMissingQuantity(studioSlotReturnMasterDtoLists.get(0).getMissingQuantity() - 1);
 						}
-						if (slotManageQuery.getState().byteValue() == 2) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
 							studioSlotReturnMasterDtoLists.get(0)
 									.setDamagedQuantity(studioSlotReturnMasterDtoLists.get(0).getDamagedQuantity() + 1);
 							studioSlotReturnMasterDtoLists.get(0)
