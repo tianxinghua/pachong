@@ -221,6 +221,7 @@ public class SlotManageService {
 					studioSlotReturnMasterDto.setMissingQuantity(0);
 					studioSlotReturnMasterDto.setAddedQuantiy(0);
 					studioSlotReturnMasterDto.setState((byte) 0);
+					studioSlotReturnMasterDto.setArriveState((byte) 0);
 					studioSlotReturnMasterDto.setCreateTime(new Date());
 					studioSlotReturnMasterDto.setCreateUser("admin");
 					studioSlotReturnMasterDto.setUpdateTime(new Date());

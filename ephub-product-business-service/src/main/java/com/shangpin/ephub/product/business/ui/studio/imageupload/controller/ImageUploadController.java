@@ -76,7 +76,7 @@ public class ImageUploadController {
 //				String slotNoSpuId = uploadQuery.getSlotNoSpuId();
 //				String slotNo = slotNoSpuId .substring(0, slotNoSpuId.indexOf("-"));
 //				String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
-				String slotSpuNo = operationService.selectSlotSpuSendDetail(uploadQuery.getSlotNoSpuId()).getSlotSpuNo();
+				String slotSpuNo = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId()).getSlotSpuNo();
 				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
 				for(String spPicUrl : spPicUrls){
 					if(!picMap.containsKey(spPicUrl)){
@@ -118,5 +118,7 @@ public class ImageUploadController {
 			return HubResponse.errorResp("删除失败。");
 		}
 	}
+	
+	
 
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
@@ -28,6 +29,7 @@ import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxServ
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
+import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotManageService;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +44,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	private OperationService operationService;
 	@Autowired
 	private StudioSlotGateWay studioSlotGateWay;
+	@Autowired
+	private SlotManageService slotManageService;
 
 	@Override
 	public OpenBoxVo slotList(OperationQuery openBoxQuery) {
@@ -132,6 +136,10 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			slotWithCriteria.setStudioSlot(studioSlotDto );
 			int update = studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
 			log.info("更新批次状态返回结果=============="+update); 
+			//生成返货信息主表和返货批次明细
+			SlotManageQuery slotManageQuery = new SlotManageQuery();
+			slotManageQuery.setSlotNo(slotNo); 
+			slotManageService.createSlotReturnDetailAndMaster(slotManageQuery );
 			//TODO 暂时没有盘盈
 			//下面是盘亏
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
