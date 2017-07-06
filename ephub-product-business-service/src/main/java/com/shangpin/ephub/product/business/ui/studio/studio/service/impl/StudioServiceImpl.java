@@ -904,6 +904,7 @@ public class StudioServiceImpl implements IStudioService {
             dto.setPageNo(pageIndex > 0 ? pageIndex : 1);
             dto.setPageSize(pageSize > 0 ? pageSize : 10);
 
+            dto.setOrderByClause("plan_arrive_time");
             int total = studioSlotGateWay.countByCriteria(dto);
             if (total > 0) {
                 List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(dto);
