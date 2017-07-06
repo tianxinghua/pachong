@@ -29,7 +29,7 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping("/slot-manage")
+@RequestMapping("/api/airstudio/slot-manage")
 public class SlotManageController {
 
 	@Autowired

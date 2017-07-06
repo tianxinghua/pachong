@@ -18,7 +18,9 @@ import com.shangpin.ephub.client.data.studio.dic.dto.*;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWay;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicSlotGateWay;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
@@ -44,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -93,26 +97,32 @@ public class StudioServiceImpl implements IStudioService {
         put("bags", "A03");
         put("accessories", "A05");
     }};
-
+    SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
     /*
         获取待拍照商品列表
     * */
-    public StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto){
-
+    public StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto) {
         StudioPendingProductVo products = new StudioPendingProductVo();
-        SlotSpuSupplierExtendQueryDto cdto =setQueryDto(queryDto);
-        int total = hubSlotSpuSupplierExtendGateWay.countByQuery(cdto);
-        if(total>0) {
-            List<HubSlotSpuSupplierExtend> results = hubSlotSpuSupplierExtendGateWay.selectByQuery(cdto);
+        try {
 
-            List<StudioPendingProduct> hubProducts = productList(results);
-            products.setHubProducts(hubProducts);
+            SlotSpuSupplierExtendQueryDto cdto = setQueryDto(queryDto);
+            int total = hubSlotSpuSupplierExtendGateWay.countByQuery(cdto);
+            if (total > 0) {
+                List<HubSlotSpuSupplierExtend> results = hubSlotSpuSupplierExtendGateWay.selectByQuery(cdto);
+
+                List<StudioPendingProduct> hubProducts = productList(results);
+                products.setHubProducts(hubProducts);
+            }
+            products.setTotal(total);
+
+
+        } catch (Exception ex) {
+            log.error("getPendingProductList err" + ex.getMessage());
+            products.setTotal(0);
         }
-        products.setTotal(total);
-
         return products;
     }
-    private SlotSpuSupplierExtendQueryDto setQueryDto(SlotSpuSupplierQueryDto queryDto){
+    private SlotSpuSupplierExtendQueryDto setQueryDto(SlotSpuSupplierQueryDto queryDto) throws ParseException {
         SlotSpuSupplierExtendQueryDto cdto = new SlotSpuSupplierExtendQueryDto();
         if(null != queryDto){
             if(null != queryDto.getPageIndex() && null != queryDto.getPageSize()){
@@ -142,11 +152,11 @@ public class StudioServiceImpl implements IStudioService {
             if(!StringUtils.isEmpty(queryDto.getSupplierSpuNo())){
                 cdto.setSupplierSpuNo(queryDto.getSupplierSpuNo());
             }
-            if(queryDto.getStartTime()!=null){
-                cdto.setStartTime(queryDto.getStartTime());
+            if(!StringUtils.isEmpty(queryDto.getStartTime())){
+                cdto.setStartTime(sdfomat.parse(queryDto.getStartTime()));
             }
-            if(queryDto.getEndTime()!=null){
-                cdto.setEndTime(queryDto.getEndTime());
+            if(!StringUtils.isEmpty(queryDto.getEndTime())){
+                cdto.setEndTime(sdfomat.parse(queryDto.getEndTime()));
             }
         }
         return cdto;
@@ -597,6 +607,8 @@ public class StudioServiceImpl implements IStudioService {
                         data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
                         data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
                         data.setBarcode(slotNo + product.getSlotSpuNo());
+                        data.setSendState(StudioSlotSendState.WAIT_SEND.getIndex().byteValue());
+                        data.setArriveState(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
                         data.setCreateTime(new Date());
                         data.setCreateUser(createUser);
                         Long id = studioSlotSpuSendDetailGateWay.insert(data);
@@ -817,6 +829,7 @@ public class StudioServiceImpl implements IStudioService {
                StudioSlotDto studioSlotDto = new StudioSlotDto();
                studioSlotDto.setStudioSlotId(studioSlotId);
                studioSlotDto.setSendTime(new Date());
+               studioSlotDto.setSlotStatus(StudioSlotState.SEND.getIndex().byteValue());
                studioSlotDto.setSendState(StudioSlotSendState.SEND.getIndex().byteValue());
                studioSlotDto.setTrackNo(trackingNo);
                studioSlotDto.setUpdateTime(new Date());
@@ -862,48 +875,48 @@ public class StudioServiceImpl implements IStudioService {
      * @param endTime
      * @return
      */
-    public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos){
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos){
         return getStudioSlot(StudioId,startTime,endTime,categoryNos,1,10);
     }
-    public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize){
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,int pageIndex,int pageSize) {
         SlotsVo studioSlotsList = new SlotsVo();
-        StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-        dto.setPageSize(100000);
-        StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria().andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
-        if(StudioId!=null){
-            criteria.andStudioIdEqualTo(StudioId);
-        }
-        //数据结构设计不合理，额外的需要验证分类
-        if(!StringUtils.isEmpty(categoryNos)){
-           List<String> list=  Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
-            StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
-            if(list!=null && list.size()>0) {
-                studioDto.createCriteria().andCategoryFirstIn(list);
+        try {
+            StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
+            StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria().andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+            if (StudioId != null) {
+                criteria.andStudioIdEqualTo(StudioId);
             }
-            List<StudioDicCategoryDto> studioDicCategoryDtoList =  studioDicCategoryGateWay.selectByCriteria(studioDto);
-            List<Long> studioIds = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto::getStudioId).distinct().collect(Collectors.toList());
-            criteria.andStudioIdIn(studioIds);
-        }
+            //数据结构设计不合理，额外的需要验证分类
+            if (!StringUtils.isEmpty(categoryNos)) {
+                List<String> list = Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
+                StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+                if (list != null && list.size() > 0) {
+                    studioDto.createCriteria().andCategoryFirstIn(list);
+                }
+                List<StudioDicCategoryDto> studioDicCategoryDtoList = studioDicCategoryGateWay.selectByCriteria(studioDto);
+                List<Long> studioIds = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto::getStudioId).distinct().collect(Collectors.toList());
+                criteria.andStudioIdIn(studioIds);
+            }
 
-        if(startTime!=null && endTime ==null){
-            criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
-        }
-        if(startTime==null && endTime!=null){
-            criteria.andCreateTimeLessThan(endTime);
-        }
-        if(startTime!=null && endTime!=null){
-            criteria.andCreateTimeBetween(startTime,endTime);
-        }
-        dto.setPageNo(pageIndex > 0 ? pageIndex : 1);
-        dto.setPageSize(pageSize > 0 ? pageSize : 10);
+            if (!StringUtils.isEmpty(startTime)) {
+                criteria.andPlanArriveTimeGreaterThan(sdfomat.parse(startTime));
+            }
+            if ( !StringUtils.isEmpty(endTime)) {
+                criteria.andPlanArriveTimeLessThanOrEqualTo(sdfomat.parse(endTime));
+            }
+            dto.setPageNo(pageIndex > 0 ? pageIndex : 1);
+            dto.setPageSize(pageSize > 0 ? pageSize : 10);
 
+            dto.setOrderByClause("plan_arrive_time");
+            int total = studioSlotGateWay.countByCriteria(dto);
+            if (total > 0) {
+                List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(dto);
+                studioSlotsList.setSlotInfoList(SlotList(results));
+            }
+            studioSlotsList.setTotal(total);
+        } catch (Exception ex) {
 
-        int total = studioSlotGateWay.countByCriteria(dto);
-        if(total>0) {
-            List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(dto);
-            studioSlotsList.setSlotInfoList(SlotList(results));
         }
-        studioSlotsList.setTotal(total);
         return studioSlotsList;
     }
 
@@ -919,6 +932,7 @@ public class StudioServiceImpl implements IStudioService {
         studioSlotDto.setApplySupplierId(upDto.getSupplierId().toString());
         studioSlotDto.setApplyUser(upDto.getSupplierUser());
         studioSlotDto.setApplyTime(new Date());
+        studioSlotDto.setSlotStatus(StudioSlotState.APPLYED.getIndex().byteValue());
         studioSlotDto.setApplyStatus(StudioSlotApplyState.APPLYED.getIndex().byteValue());
         List<ErrorConent> result = new ArrayList<ErrorConent>();
         for (Long slotId : slotIds){

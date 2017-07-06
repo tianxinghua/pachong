@@ -15,7 +15,7 @@ public enum StudioSlotSendState {
      */
     WAIT_SEND(0,"WAIT_SEND"),
     /**
-     * 待发货
+     * 已打印
      */
     ISPRINT(1,"ISPRINT"),
     /**

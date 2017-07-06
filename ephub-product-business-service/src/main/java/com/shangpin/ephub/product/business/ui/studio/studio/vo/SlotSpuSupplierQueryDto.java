@@ -56,8 +56,8 @@ public class SlotSpuSupplierQueryDto implements Serializable {
      */
     private String seasonName;
 
-    private Date startTime;
+    private String startTime;
 
-    private Date endTime;
+    private String endTime;
 
 }

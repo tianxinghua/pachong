@@ -193,14 +193,12 @@ public class StudioController {
 
     }
 
-
-
     @RequestMapping(value = "/studioslotlist")
     public HubResponse<?> getStudioSlotList(@RequestBody StudioSlotQueryDto queryDto) {
-
         return  HubResponse.successResp(iStudioService.getStudioSlot(queryDto.getStudioId(),queryDto.getStartTime(),
                 queryDto.getEndTime(),queryDto.getCategoryNos(),queryDto.getPageIndex(),queryDto.getPageSize()));
     }
+
     @RequestMapping(value = "/applyslot")
     public HubResponse<?> applySlot(@RequestBody StudioSlotQueryDto upDto) {
         try {

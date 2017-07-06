@@ -33,7 +33,7 @@ public class OperationQuery {
 	 */
 	private String slotName;
 	/**
-	 * 拍摄日期
+	 * 预计拍摄日期
 	 */
 	private List<String> operateDate;
 	

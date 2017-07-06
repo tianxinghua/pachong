@@ -24,8 +24,8 @@ public class StudioSlotQueryDto implements Serializable {
 
     private Long supplierId;
     private String supplierUser;
-    private Date startTime;
-    private Date endTime;
+    private String startTime;
+    private String endTime;
     private int pageIndex;
     private int pageSize;
 
