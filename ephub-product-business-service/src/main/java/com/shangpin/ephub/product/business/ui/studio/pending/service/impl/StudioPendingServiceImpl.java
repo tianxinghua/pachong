@@ -163,7 +163,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
 
             }
-            if(0==pendingProductDto.getSupplierSpuId()){
+            if(null!=pendingProductDto.getSupplierSpuId()&&0==pendingProductDto.getSupplierSpuId()){
                 pendingProductDto.setSupplierSpuId(null);
             }
 

@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -50,6 +51,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,6 +196,24 @@ public class EphubProductBusinessTests {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Test
+	public void testUpdate(){
+		ObjectMapper mapper  = new ObjectMapper();
+
+
+		try {
+			String kk = "{\"spuPendingId\":\"259271\",\"supplierId\":null,\"supplierNo\":null,\"supplierName\":null,\"supplierSpuNo\":null,\"spuModel\":\"4042832\",\"spuName\":null,\"hubGender\":\"female\",\"hubCategoryNo\":\"A03B01C02D05\",\"hubCategoryName\":\"女童包袋\",\"hubBrandNo\":\"B0005\",\"hubBrandName\":\"TOPMAN\",\"hubSeason\":\"2017_春夏\",\"spSkuSizeState\":0,\"spuState\":0,\"picState\":0,\"isCurrentSeason\":0,\"isNewData\":0,\"hubMaterial\":\"100% 小牛皮 100% 棉\",\"hubOrigin\":\"意大利\",\"createTime\":\"\",\"updateTime\":\"\",\"updateTimeStr\":null,\"spuDesc\":null,\"hubSpuNo\":null,\"spuModelState\":1,\"catgoryState\":1,\"supplierSpuId\":0,\"memo\":null,\"dataState\":0,\"version\":0,\"spuBrandState\":1,\"spuGenderState\":1,\"spuSeasonState\":1,\"hubColor\":\"红色\",\"spuColorState\":1,\"hubSkus\":[],\"spPicUrl\":null,\"materialState\":0,\"originState\":0,\"picUrls\":null,\"auditOpinion\":null,\"auditUser\":null,\"auditDateStr\":null,\"auditState\":null,\"updateUser\":\"zhangsan\",\"picReason\":null,\"creatTimeStr\":null,\"createUser\":null,\"supplierUrls\":null}";
+			PendingProductDto pendingQuryDto  =  mapper.readValue(kk,PendingProductDto.class);
+
+
+			studioPendingService.updatePendingProduct(pendingQuryDto);
+		} catch (IOException e)
+
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Autowired
