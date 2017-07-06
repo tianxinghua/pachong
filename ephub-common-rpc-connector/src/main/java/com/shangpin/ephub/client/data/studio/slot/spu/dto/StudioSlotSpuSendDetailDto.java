@@ -3,7 +3,7 @@ package com.shangpin.ephub.client.data.studio.slot.spu.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class StudioSlotSpuSendDetail implements Serializable {
+public class StudioSlotSpuSendDetailDto implements Serializable {
     /**
      * 主键
      */
@@ -434,7 +434,7 @@ public class StudioSlotSpuSendDetail implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        StudioSlotSpuSendDetail other = (StudioSlotSpuSendDetail) that;
+        StudioSlotSpuSendDetailDto other = (StudioSlotSpuSendDetailDto) that;
         return (this.getStudioSlotSpuSendDetailId() == null ? other.getStudioSlotSpuSendDetailId() == null : this.getStudioSlotSpuSendDetailId().equals(other.getStudioSlotSpuSendDetailId()))
             && (this.getStudioSlotId() == null ? other.getStudioSlotId() == null : this.getStudioSlotId().equals(other.getStudioSlotId()))
             && (this.getSlotSpuSupplierId() == null ? other.getSlotSpuSupplierId() == null : this.getSlotSpuSupplierId().equals(other.getSlotSpuSupplierId()))
