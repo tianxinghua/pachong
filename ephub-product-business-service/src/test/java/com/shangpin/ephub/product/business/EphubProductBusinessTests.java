@@ -24,11 +24,16 @@ import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
 import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.slotsendreturn.SlotSendReturnService;
+import com.shangpin.ephub.product.business.service.studio.slotsendreturn.dto.SlotSpuSendAndReturn;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendingService;
+import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotDetailService;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotInfo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotSpuDetail;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -188,6 +193,31 @@ public class EphubProductBusinessTests {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	@Autowired
+	SlotDetailService slotDetailService;
+
+	@Autowired
+	SlotSendReturnService slotSendReturnService;
+
+	@Test
+	public void testSlotSpuMaster(){
+		SlotInfo slotInfo = slotDetailService.getSlotInfo("20170706S0001001");
+		System.out.print("slotInfo ="+slotInfo.toString());
+	}
+
+	@Test
+	public void testSlotSpuDetail(){
+        List<SlotSpuDetail> slotSpuDetailList = new ArrayList<>();
+		List<SlotSpuSendAndReturn> sendAndReturns = slotSendReturnService.findSlotSpuSendAndReturnMsgBySlotNo("20170706S0001001");
+		for(SlotSpuSendAndReturn dto :sendAndReturns){
+			SlotSpuDetail vo = new SlotSpuDetail();
+			BeanUtils.copyProperties(dto,vo);
+			slotSpuDetailList.add(vo);
+		}
+		System.out.println(slotSpuDetailList.size());
 
 	}
 

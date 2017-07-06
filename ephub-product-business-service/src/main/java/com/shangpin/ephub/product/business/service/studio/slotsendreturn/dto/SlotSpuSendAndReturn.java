@@ -6,16 +6,14 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * <p>Title: SlotSpuDetail</p>
- * <p>Description: 批次商品信息 </p>
- * <p>Company: </p> 
- * @author lubaijiang
- * @date 2017年7月4日 下午2:18:40
+ *
+ * 批次商品信息 </p>
+
  *
  */
 @Getter
 @Setter
-public class SlotSpuDetail implements Serializable{
+public class SlotSpuSendAndReturn implements Serializable{
 
 	/**
 	 * 
