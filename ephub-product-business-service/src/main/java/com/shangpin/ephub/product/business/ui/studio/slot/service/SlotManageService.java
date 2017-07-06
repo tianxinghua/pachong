@@ -81,6 +81,7 @@ public class SlotManageService {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	public HubResponse<?> findSlotManageList(SlotManageQuery slotManageQuery) {
+		Log.info("start findSlotManageList -------批次查询接口");
 		StudioSlotsVo vo = new StudioSlotsVo();
 		try {
 			StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
@@ -177,12 +178,14 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询批次失败!");
 		}
+		Log.info("end findSlotManageList -------批次查询接口");
 		return HubResponse.successResp(vo);
 	}
 
 	// 生成返货信息主表和返货批次明细
 	public HubResponse<?> createSlotReturnDetailAndMaster(SlotManageQuery slotManageQuery) {
 		try {
+			Log.info("start createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
 			Log.info("params: slotNo:"+slotManageQuery.getSlotNo());
 			if (slotManageQuery.getSlotNo() == null) {
 				return HubResponse.errorResp("slotNo不能为null!");
@@ -276,11 +279,13 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("生成studio返回明细失败!");
 		}
+		Log.info("end createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
 		return HubResponse.successResp(null);
 	}
 
 	// 查询返货信息主表
 	public HubResponse<?> selectSlotReturnMaster(SlotManageQuery slotManageQuery) {
+		Log.info("start selectSlotReturnMaster---查询返货信息主表");
 		Log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo());
 		StudioSlotsReturnMasterVo vo = new StudioSlotsReturnMasterVo();
 		try {
@@ -326,11 +331,13 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询返货信息主表失败!");
 		}
+		Log.info("end selectSlotReturnMaster---查询返货信息主表");
 		return HubResponse.successResp(vo);
 	}
 
 	// 查询批次号下所有商品明细
 	public HubResponse<?> selectSlotReturnDetail(SlotManageQuery slotManageQuery) {
+		Log.info("start selectSlotReturnDetail---查询批次号下所有商品明细");
 		Log.info("params: slotNo:"+slotManageQuery.getSlotNo());
 		StudioSlotsReturnDetailVo vo = new StudioSlotsReturnDetailVo();
 		try {
@@ -349,11 +356,13 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询批次号下所有商品明细失败!");
 		}
+		Log.info("end selectSlotReturnDetail---查询批次号下所有商品明细");
 		return HubResponse.successResp(vo);
 	}
 
 	// 更新商品明细
 	public HubResponse<?> updateSlotReturnDetail(SlotManageQuery slotManageQuery) {
+		Log.info("start updateSlotReturnDetail---更新商品明细");
 		Log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"barCode:"+slotManageQuery.getBarCode()+"masterId:"+slotManageQuery.getMasterId()+"state:"+slotManageQuery.getState());
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
@@ -501,11 +510,13 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("更新商品明细失败!");
 		}
+		Log.info("end updateSlotReturnDetail---更新商品明细");
 		return HubResponse.successResp("更新成功！");
 	}
 
 	// 创建批次物流信息
 	public HubResponse<?> createStudioSlotLogistictTrack(SlotManageQuery slotManageQuery) {
+		Log.info("start createStudioSlotLogistictTrack---创建批次物流信息");
 		Log.info("params: trackName:"+slotManageQuery.getTrackName()+"trackNo:"+slotManageQuery.getTrackNo()+"masterId:"+slotManageQuery.getMasterId());
 		try {
 			StudioSlotLogistictTrackDto dto = new StudioSlotLogistictTrackDto();
@@ -545,6 +556,7 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("创建批次物流信息失败!");
 		}
+		Log.info("end createStudioSlotLogistictTrack---创建批次物流信息");
 		return HubResponse.successResp("更新成功！");
 	}
 }
