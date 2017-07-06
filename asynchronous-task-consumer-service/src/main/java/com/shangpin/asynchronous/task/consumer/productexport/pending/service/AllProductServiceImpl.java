@@ -164,7 +164,19 @@ public class AllProductServiceImpl {
 	private void insertStudioSlotOfRow(HSSFRow row ,StudioSlotDto studioSlotDto
 			) throws Exception {
 	         row.createCell(0).setCellValue(null != studioSlotDto.getSlotDate() ? new SimpleDateFormat("yyyy-MM-dd").format(studioSlotDto.getSlotDate()).toString() : "");  
-	         row.createCell(1).setCellValue(map.get("studio"+studioSlotDto.getStudioId()).toString());  
+	         if(map.containsKey("studio"+studioSlotDto.getStudioId())){
+	        	 row.createCell(1).setCellValue(map.get("studio"+studioSlotDto.getStudioId()).toString());  
+	         }else{
+	        	StudioCriteriaDto dto = new StudioCriteriaDto();
+	        	dto.createCriteria().andStudioIdEqualTo(studioSlotDto.getStudioId());
+	 			List<StudioDto> studioDtoLists = studioGateWay.selectByCriteria(dto);
+	 			if(studioDtoLists==null||studioDtoLists.size()==0){
+	 				log.error("studioId:"+studioSlotDto.getStudioId()+"摄影棚不存在!");
+	 				return;
+	 			}
+	 			row.createCell(1).setCellValue(map.get("studio"+studioDtoLists.get(0).getStudioId()).toString());  
+	         }
+	         
 	         row.createCell(2).setCellValue(null != studioSlotDto.getSlotNo() ? studioSlotDto.getSlotNo() : "");  
 	         row.createCell(3).setCellValue(null != studioSlotDto.getSlotStatus() ? studioSlotDto.getSlotStatus().toString() : "");  
 	         row.createCell(4).setCellValue(null != studioSlotDto.getApplyStatus() ? studioSlotDto.getApplyStatus().toString() : "");  
