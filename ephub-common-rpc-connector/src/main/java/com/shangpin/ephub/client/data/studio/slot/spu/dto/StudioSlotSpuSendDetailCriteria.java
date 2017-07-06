@@ -1,4 +1,4 @@
-package com.shangpin.studio.data.mysql.po;
+package com.shangpin.ephub.client.data.studio.slot.spu.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
