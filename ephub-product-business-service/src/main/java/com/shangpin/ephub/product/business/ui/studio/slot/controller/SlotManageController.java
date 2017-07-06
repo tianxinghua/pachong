@@ -1,7 +1,9 @@
 package com.shangpin.ephub.product.business.ui.studio.slot.controller;
 
 import com.shangpin.ephub.product.business.service.studio.slotsendreturn.SlotSendReturnService;
+import com.shangpin.ephub.product.business.service.studio.slotsendreturn.dto.SlotSpuSendAndReturn;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotSpuDetail;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +29,7 @@ import java.util.List;
  *
  */
 @RestController
-@RequestMapping("/slot-manage")
+@RequestMapping("/api/airstudio/slot-manage")
 public class SlotManageController {
 
 	@Autowired
@@ -46,12 +48,12 @@ public class SlotManageController {
 	
 	@RequestMapping(value="/slot-detail",method = RequestMethod.POST)
 	public HubResponse<?> slotDetail(@RequestBody String slotNo){
-		SlotInfo slotInfo = new SlotInfo();//slotDetailService.getSlotInfo(slotNo);
-		slotInfo.setSlotNo("20170705S001001");
-		slotInfo.setActualQuantity(50);
-		slotInfo.setArriveQty(50);
-		slotInfo.setArriveTime(new Date());
-		slotInfo.setSlotStatus(1);
+		SlotInfo slotInfo = slotDetailService.getSlotInfo(slotNo);
+//		slotInfo.setSlotNo("20170705S001001");
+//		slotInfo.setActualQuantity(50);
+//		slotInfo.setArriveQty(50);
+//		slotInfo.setArriveTime(new Date());
+//		slotInfo.setSlotStatus(1);
 		if(null != slotInfo){
 			return HubResponse.successResp(slotInfo);
 		}else{
@@ -62,24 +64,30 @@ public class SlotManageController {
 	@RequestMapping(value="/slot-product-detail",method = RequestMethod.POST)
 	public HubResponse<?> slotProductDetail(@RequestBody String slotNo){
         List<SlotSpuDetail> slotSpuDetailList = new ArrayList<>();
-		SlotSpuDetail detail1 = new SlotSpuDetail();
-		detail1.setHubBrandNo("B0005");
-		detail1.setReceived(true);
-		detail1.setHubCategoryNo("A03B01C02D05");
-		detail1.setSpuModel("1234");
-		detail1.setReturned(false);
-		detail1.setSupplierSpuModel("");
-		slotSpuDetailList.add(detail1);
-
-		SlotSpuDetail detail2 = new SlotSpuDetail();
-		detail2.setHubBrandNo("B0005");
-		detail2.setReceived(true);
-		detail2.setHubCategoryNo("A03B01C02D05");
-		detail2.setSpuModel("1234");
-		detail2.setReturned(false);
-
-		detail2.setSupplierSpuModel("");
-		slotSpuDetailList.add(detail2);
+//		SlotSpuDetail detail1 = new SlotSpuDetail();
+//		detail1.setHubBrandNo("B0005");
+//		detail1.setReceived(true);
+//		detail1.setHubCategoryNo("A03B01C02D05");
+//		detail1.setSpuModel("1234");
+//		detail1.setReturned(false);
+//		detail1.setSupplierSpuModel("");
+//		slotSpuDetailList.add(detail1);
+//
+//		SlotSpuDetail detail2 = new SlotSpuDetail();
+//		detail2.setHubBrandNo("B0005");
+//		detail2.setReceived(true);
+//		detail2.setHubCategoryNo("A03B01C02D05");
+//		detail2.setSpuModel("1234");
+//		detail2.setReturned(false);
+//
+//		detail2.setSupplierSpuModel("");
+//		slotSpuDetailList.add(detail2);
+        List<SlotSpuSendAndReturn> sendAndReturns = slotSendReturnService.findSlotSpuSendAndReturnMsgBySlotNo(slotNo);
+        for(SlotSpuSendAndReturn dto :sendAndReturns){
+            SlotSpuDetail vo = new SlotSpuDetail();
+            BeanUtils.copyProperties(dto,vo);
+            slotSpuDetailList.add(vo);
+        }
 		return HubResponse.successResp(slotSpuDetailList);
 	}
 	

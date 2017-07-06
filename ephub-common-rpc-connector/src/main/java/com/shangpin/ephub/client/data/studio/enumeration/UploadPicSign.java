@@ -1,39 +1,17 @@
 package com.shangpin.ephub.client.data.studio.enumeration;
-
 /**
-
-
- STUDIO_SLOT_RETURN_DETAIL  收货状态
+ * <p>Title: UploadPicSign</p>
+ * <p>Description: 标记一件产品是否已经上传了图片 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年7月6日 下午2:59:58
  *
  */
-public enum StudioSlotSupplierArriveState {
-
-    /**
-     * 未收货
-     */
-    NOT_RECEIVE(0,"NOT_RECEIVE"),
-
-
-    /**
-     * 收货
-     */
-    RECEIVED(1,"RECEIVED"),
-
-    /**
-     *  不接受
-     */
-    NOT_ACCEPTANCE(2,"NOT_ACCEPTANCE"),
-
-
-
-
-    /**
-     * 摄影棚确认
-     */
-    STUDIO_CONFIRM(3,"STUDIO_CONFIRM");
-
-
-
+public enum UploadPicSign {
+	
+	 NOT_YET_UPLOAD(0,"未上传图片"),
+	 
+	 HAVE_UPLOADED(1,"已上传图片");
 
 	/**
      * 数字索引标识
@@ -44,7 +22,7 @@ public enum StudioSlotSupplierArriveState {
      */
     private String description;
 
-    StudioSlotSupplierArriveState(Integer index, String description){
+    UploadPicSign(Integer index, String description){
 		this.index = index;
 		this.description = description;
 	}

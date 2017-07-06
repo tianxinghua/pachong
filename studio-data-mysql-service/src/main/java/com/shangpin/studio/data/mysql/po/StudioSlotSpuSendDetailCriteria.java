@@ -1270,6 +1270,66 @@ public class StudioSlotSpuSendDetailCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andUploadPicSignIsNull() {
+            addCriterion("upload_pic_sign is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignIsNotNull() {
+            addCriterion("upload_pic_sign is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignEqualTo(Byte value) {
+            addCriterion("upload_pic_sign =", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignNotEqualTo(Byte value) {
+            addCriterion("upload_pic_sign <>", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignGreaterThan(Byte value) {
+            addCriterion("upload_pic_sign >", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignGreaterThanOrEqualTo(Byte value) {
+            addCriterion("upload_pic_sign >=", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignLessThan(Byte value) {
+            addCriterion("upload_pic_sign <", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignLessThanOrEqualTo(Byte value) {
+            addCriterion("upload_pic_sign <=", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignIn(List<Byte> values) {
+            addCriterion("upload_pic_sign in", values, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignNotIn(List<Byte> values) {
+            addCriterion("upload_pic_sign not in", values, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignBetween(Byte value1, Byte value2) {
+            addCriterion("upload_pic_sign between", value1, value2, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignNotBetween(Byte value1, Byte value2) {
+            addCriterion("upload_pic_sign not between", value1, value2, "uploadPicSign");
+            return (Criteria) this;
+        }
+
         public Criteria andMemoIsNull() {
             addCriterion("memo is null");
             return (Criteria) this;

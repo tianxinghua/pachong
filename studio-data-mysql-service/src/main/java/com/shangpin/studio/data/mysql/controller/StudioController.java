@@ -55,9 +55,9 @@ public class StudioController {
     public List<Studio> selectByCriteria(@RequestBody StudioCriteria criteria){
     	return studioService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public Studio selectByPrimaryKey(Long skuPendingId){
-    	return studioService.selectByPrimaryKey(skuPendingId);
+	@RequestMapping(value = "/select-by-primary-key/{studioId}")
+    public Studio selectByPrimaryKey(@PathVariable(name="studioId")Long studioId){
+    	return studioService.selectByPrimaryKey(studioId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")
     public int updateByCriteriaSelective(@RequestBody StudioWithCriteria studioWithCriteria){

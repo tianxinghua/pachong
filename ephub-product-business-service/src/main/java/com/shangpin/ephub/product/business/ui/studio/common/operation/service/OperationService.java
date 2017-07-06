@@ -82,6 +82,9 @@ public interface OperationService {
 	 * @param barcode
 	 * @return
 	 */
-	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetail(String barcode);
+	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetailOfRrrived(String barcode);
+
+
+
 
 }

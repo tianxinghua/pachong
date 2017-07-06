@@ -132,7 +132,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	@Override
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId) {
 		try {
-			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetail(slotNoSpuId);
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(slotNoSpuId);
 			String slotNo = detailDto.getSlotNo();
 			String slotSpuNo = detailDto.getSlotSpuNo();
 			StudioSlotDefectiveSpuDto spuDto = selectBySlot(slotNo,slotSpuNo);
@@ -272,6 +272,13 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		int result = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
 //		log.info("删除数据库结果=============="+result);
 		return result;
+	}
+	@Override
+	public int countDefectiveProduct(String slotNo) {
+		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		defectiveSpuGateWay.countByCriteria(criteria );
+		return 0;
 	}
 
 }

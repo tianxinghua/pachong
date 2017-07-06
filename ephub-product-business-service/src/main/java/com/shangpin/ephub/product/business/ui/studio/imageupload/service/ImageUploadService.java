@@ -54,4 +54,10 @@ public interface ImageUploadService {
 	 * @return
 	 */
 	public boolean deleteSlotSpuPic(String spPicUrl);
+	/**
+	 * 更新上传图片标志
+	 * @param studioSlotSpuSendDetailId
+	 * @return
+	 */
+	public int updateUploadPicSign(Long studioSlotSpuSendDetailId);
 }
