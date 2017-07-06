@@ -101,7 +101,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        result.setTrackNo(studioSlot.getTrackNo());
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
-       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
+       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
        result.setDetailDtoList(detailDtoList);
