@@ -103,4 +103,10 @@ public interface IPendingProductService {
 	 * @return
 	 */
 	public boolean updateProductToInfoPeccable(String updateUser,List<String> ids);
+	/**
+	 * 计算数量
+	 * @param pendingQuryDto
+	 * @return
+	 */
+	public int countByPendingQury(PendingQuryDto pendingQuryDto);
 }
