@@ -18,7 +18,9 @@ import com.shangpin.ephub.client.data.studio.dic.dto.*;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWay;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicSlotGateWay;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
@@ -605,8 +607,8 @@ public class StudioServiceImpl implements IStudioService {
                         data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
                         data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
                         data.setBarcode(slotNo + product.getSlotSpuNo());
-                        data.setSendState((byte)0);
-                        data.setArriveState((byte)0);
+                        data.setSendState(StudioSlotSendState.WAIT_SEND.getIndex().byteValue());
+                        data.setArriveState(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
                         data.setCreateTime(new Date());
                         data.setCreateUser(createUser);
                         Long id = studioSlotSpuSendDetailGateWay.insert(data);
@@ -827,6 +829,7 @@ public class StudioServiceImpl implements IStudioService {
                StudioSlotDto studioSlotDto = new StudioSlotDto();
                studioSlotDto.setStudioSlotId(studioSlotId);
                studioSlotDto.setSendTime(new Date());
+               studioSlotDto.setSlotStatus(StudioSlotState.SEND.getIndex().byteValue());
                studioSlotDto.setSendState(StudioSlotSendState.SEND.getIndex().byteValue());
                studioSlotDto.setTrackNo(trackingNo);
                studioSlotDto.setUpdateTime(new Date());
@@ -929,6 +932,7 @@ public class StudioServiceImpl implements IStudioService {
         studioSlotDto.setApplySupplierId(upDto.getSupplierId().toString());
         studioSlotDto.setApplyUser(upDto.getSupplierUser());
         studioSlotDto.setApplyTime(new Date());
+        studioSlotDto.setSlotStatus(StudioSlotState.APPLYED.getIndex().byteValue());
         studioSlotDto.setApplyStatus(StudioSlotApplyState.APPLYED.getIndex().byteValue());
         List<ErrorConent> result = new ArrayList<ErrorConent>();
         for (Long slotId : slotIds){
