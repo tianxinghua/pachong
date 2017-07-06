@@ -78,6 +78,12 @@ public interface OperationService {
 	 */
 	public List<StudioSlotSpuSendDetailDto> selectDetail(String slotNo);
 	/**
+	 * 查找该批次下边所有的到货的产品详情
+	 * @param slotNo
+	 * @return
+	 */
+	public List<StudioSlotSpuSendDetailDto> selectDetailOfArrived(String slotNo);
+	/**
 	 * 根据扫码查找该产品
 	 * @param barcode
 	 * @return

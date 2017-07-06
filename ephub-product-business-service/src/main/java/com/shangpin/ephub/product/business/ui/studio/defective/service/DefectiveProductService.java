@@ -65,4 +65,10 @@ public interface DefectiveProductService {
 	 * @return
 	 */
 	public int countDefectiveProduct(String slotNo);
+	/**
+	 * 查找该批次下的所以残次品
+	 * @param slotNo
+	 * @return
+	 */
+	public List<StudioSlotDefectiveSpuDto> selectDefectiveProduct(String slotNo);
 }

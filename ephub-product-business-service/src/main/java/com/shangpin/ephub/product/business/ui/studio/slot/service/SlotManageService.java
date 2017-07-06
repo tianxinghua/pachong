@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,6 +36,8 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnMasterVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnDetailInfo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnMasterInfo;
 import com.shangpin.ephub.response.HubResponse;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -313,7 +316,7 @@ public class SlotManageService {
 					.selectByCriteria(detailDto);
 
 			int count = studioSlotReturnDetailDtoLists.size();
-			List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoLists = new ArrayList<>();
+			List<StudioSlotReturnMasterInfo> StudioSlotReturnMasterInfoLists = new ArrayList<>();
 			for (StudioSlotReturnDetailDto studioSlotReturnDetailDto : studioSlotReturnDetailDtoLists) {
 				StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
 				com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterCriteriaDto.Criteria criteria = dto
@@ -321,11 +324,20 @@ public class SlotManageService {
 				criteria.andStudioSlotReturnMasterIdEqualTo(studioSlotReturnDetailDto.getStudioSlotReturnMasterId());
 				List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoList = studioSlotReturnMasterGateWay
 						.selectByCriteria(dto);
+				
 				if (studioSlotReturnMasterDtoList != null && studioSlotReturnMasterDtoList.size() > 0) {
-					studioSlotReturnMasterDtoLists.add(studioSlotReturnMasterDtoList.get(0));
+					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
+					info.setSlotNo(studioSlotReturnDetailDto.getSlotNo());
+					info.setQty(studioSlotReturnMasterDtoList.get(0).getQuantity().toString());
+					info.setActualQty(studioSlotReturnMasterDtoList.get(0).getActualSendQuantity().toString());
+					info.setMissingQty(studioSlotReturnMasterDtoList.get(0).getMissingQuantity().toString());
+					info.setDamagedQty(studioSlotReturnMasterDtoList.get(0).getDamagedQuantity().toString());
+					info.setAddedQty(studioSlotReturnMasterDtoList.get(0).getAddedQuantiy().toString());
+					info.setDestination(studioSlotReturnDetailDto.getSupplierName());
+					StudioSlotReturnMasterInfoLists.add(info);
 				}
 			}
-			vo.setStudioSlotReturnMasterDtoList(studioSlotReturnMasterDtoLists);
+			vo.setStudioSlotReturnMasterDtoList(StudioSlotReturnMasterInfoLists);
 			vo.setTotal(count);
 		} catch (Exception e) {
 			Log.error("查询返货信息主表失败!");
@@ -351,7 +363,19 @@ public class SlotManageService {
 			detailCriteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
-			vo.setStudioSlotReturnDetailDtoList(studioSlotReturnDetailDtoLists);
+			List<StudioSlotReturnDetailInfo> StudioSlotReturnDetailInfoLists = new ArrayList<>();
+			for(StudioSlotReturnDetailDto studioSlotReturnDetailDto : studioSlotReturnDetailDtoLists){
+				StudioSlotReturnDetailInfo info = new StudioSlotReturnDetailInfo();
+				info.setStatus(studioSlotReturnDetailDto.getState().toString());
+				info.setBrand(studioSlotReturnDetailDto.getSupplierBrandName());
+				info.setItemName(studioSlotReturnDetailDto.getSupplierSpuName());
+				info.setItemCode(studioSlotReturnDetailDto.getSupplierSpuModel());
+				info.setBarCode(studioSlotReturnDetailDto.getBarcode());
+				info.setSlotNo(studioSlotReturnDetailDto.getSlotNo());
+				info.setMasterId(studioSlotReturnDetailDto.getStudioSlotReturnMasterId().toString());
+				StudioSlotReturnDetailInfoLists.add(info);
+			}
+			vo.setStudioSlotReturnDetailDtoList(StudioSlotReturnDetailInfoLists);
 		} catch (Exception e) {
 			Log.error("查询批次号下所有商品明细失败!");
 			e.printStackTrace();
