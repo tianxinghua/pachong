@@ -79,7 +79,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        dto.setArriveUser(userName);
        dto.setArriveTime(new Date());
        dto.setArriveState((byte)1);
-       dto.setState((byte)1);
+       dto.setState((byte)2);
        return studioSlotReturnMasterGateWay.updateByPrimaryKeySelective(dto)>0;
    }
 
