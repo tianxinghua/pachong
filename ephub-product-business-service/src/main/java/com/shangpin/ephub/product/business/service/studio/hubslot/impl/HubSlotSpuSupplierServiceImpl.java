@@ -119,6 +119,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                     tmp.setUpdateTime(new Date());
 
                     spuSupplierGateway.updateByPrimaryKeySelective(tmp);
+                    log.info("update other spu supplier " + tmp.getSlotSpuSupplierId() + " state success");
 
 
 
@@ -240,16 +241,20 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
             Date date = new Date();
             for(HubSlotSpuSupplierDto supplierDto :supplierDtos){
                 //更新自己
+
                 HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
                 supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
                 supplierTmp.setState(SlotSpuSupplierState.SEND.getIndex().byteValue());
+
                 supplierTmp.setUpdateTime(date);
                 spuSupplierGateway.updateByPrimaryKeySelective(supplierTmp);
+                log.info(" slotSpuSupplierId :" + supplierDto.getSlotSpuSupplierId() +" update owner success");
                 //更新slotspu
                 HubSlotSpuDto spuTmp = new HubSlotSpuDto();
                 spuTmp.setSpuState(SlotSpuState.SEND.getIndex().byteValue());
-
+                spuTmp.setSlotSpuId(supplierDto.getSlotSpuId());
                 slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
+                log.info(" slotSpuId  :" + supplierDto.getSlotSpuId() +" update spu success");
                 //更新其它slotspusupplier状态
                 List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
                 this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuState.SEND.getIndex());
