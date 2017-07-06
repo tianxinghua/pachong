@@ -18,4 +18,5 @@ public class StudioSlotReturnMasterInfo implements Serializable {
 	private String DamagedQty;
 	private String AddedQty;
 	private String Destination;
+	private String MasterId;
 }

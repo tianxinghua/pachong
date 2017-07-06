@@ -311,7 +311,7 @@ public class SlotManageService {
 				detailDto.setPageNo(slotManageQuery.getPageNo());
 			}
 			detailDto.setDistinct(true);
-			detailDto.setFields(" studio_slot_return_master_id,slot_no ");
+			detailDto.setFields(" studio_slot_return_master_id,slot_no,supplier_name ");
 
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
@@ -335,6 +335,7 @@ public class SlotManageService {
 					info.setDamagedQty(studioSlotReturnMasterDtoList.get(0).getDamagedQuantity().toString());
 					info.setAddedQty(studioSlotReturnMasterDtoList.get(0).getAddedQuantiy().toString());
 					info.setDestination(studioSlotReturnDetailDto.getSupplierName());
+					info.setMasterId(studioSlotReturnDetailDto.getStudioSlotReturnMasterId().toString());
 					StudioSlotReturnMasterInfoLists.add(info);
 				}
 			}
@@ -351,7 +352,7 @@ public class SlotManageService {
 
 	// 查询masterID下所有商品明细
 	public HubResponse<?> selectSlotReturnDetail(SlotManageQuery slotManageQuery) {
-		Log.info("start selectSlotReturnDetail---查询批次号下所有商品明细");
+		Log.info("start selectSlotReturnDetail---查询masterId所有商品明细");
 		Log.info("params: masterId:"+slotManageQuery.getMasterId());
 		StudioSlotsReturnDetailVo vo = new StudioSlotsReturnDetailVo();
 		try {
@@ -378,11 +379,11 @@ public class SlotManageService {
 			}
 			vo.setStudioSlotReturnDetailDtoList(StudioSlotReturnDetailInfoLists);
 		} catch (Exception e) {
-			Log.error("查询批次号下所有商品明细失败!");
+			Log.error("查询masterId所有商品明细失败!");
 			e.printStackTrace();
-			return HubResponse.errorResp("查询批次号下所有商品明细失败!");
+			return HubResponse.errorResp("查询masterId所有商品明细失败!");
 		}
-		Log.info("end selectSlotReturnDetail---查询批次号下所有商品明细");
+		Log.info("end selectSlotReturnDetail---查询masterId所有商品明细");
 		return HubResponse.successResp(vo);
 	}
 
