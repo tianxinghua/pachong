@@ -568,4 +568,10 @@ public class PendingProductService extends PendingSkuService{
 		return  hubSpuGateway.selectByCriteria(criteria);
 	}
 
+	@Override
+	public int countByPendingQury(PendingQuryDto pendingQuryDto) {
+		HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
+        return hubSpuPendingGateWay.countByCriteria(criteriaDto);
+	}
+
 }

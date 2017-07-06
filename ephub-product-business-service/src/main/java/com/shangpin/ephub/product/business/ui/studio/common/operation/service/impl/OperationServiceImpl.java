@@ -90,11 +90,11 @@ public class OperationServiceImpl implements OperationService {
 		List<String> operateDate = operationQuery.getOperateDate();
 		if(CollectionUtils.isNotEmpty(operateDate)){
 			Date startDate = DateTimeUtil.parse(operationQuery.getOperateDate().get(0));
-			createCriteria.andShootTimeGreaterThanOrEqualTo(startDate);
+			createCriteria.andPlanShootTimeGreaterThanOrEqualTo(startDate);
 		}
 		if(CollectionUtils.isNotEmpty(operateDate) && operateDate.size() > 1){
 			Date endDate = DateTimeUtil.parse(operationQuery.getOperateDate().get(1)); 
-			createCriteria.andShootTimeLessThanOrEqualTo(endDate);
+			createCriteria.andPlanShootTimeLessThanOrEqualTo(endDate);
 		}
 		/*
 		if(null != openBoxQuery.getPageIndex() && null != openBoxQuery.getPageSize()){
@@ -123,7 +123,7 @@ public class OperationServiceImpl implements OperationService {
 	public StudioSlotVo formatDto(StudioSlotDto studioSlotDto) {
 		StudioSlotVo slotVo = new StudioSlotVo();
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
-		slotVo.setOperateDate(studioSlotDto.getShootTime());
+		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
 		setDetailQty(studioSlotDto.getSlotNo(), slotVo);
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
 		return slotVo;

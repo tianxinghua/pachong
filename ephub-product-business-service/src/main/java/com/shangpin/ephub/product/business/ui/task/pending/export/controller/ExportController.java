@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.task.pending.export.service.ExportService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -28,6 +29,8 @@ public class ExportController {
 	
 	@Autowired
 	private ExportService exportService;
+	@Autowired
+	private IPendingProductService pendingProductService;
 
 	@RequestMapping(value="/wait-to-shoot",method=RequestMethod.POST)
 	public HubResponse<?> exportWaitToShoot(@RequestBody PendingQuryDto pendingQuryDto){
@@ -37,6 +40,8 @@ public class ExportController {
 			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(pendingQuryDto.getCreateUser(), remotePath , TaskType.EXPORT_WAIT_SHOOT);
 			//第二步发送队列
 			pendingQuryDto.setShoot(true);
+			int total = pendingProductService.countByPendingQury(pendingQuryDto);
+			pendingQuryDto.setPageSize(total); 
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_WAIT_SHOOT, pendingQuryDto);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
