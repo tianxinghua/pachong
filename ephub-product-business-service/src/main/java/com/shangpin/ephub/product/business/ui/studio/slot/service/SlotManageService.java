@@ -349,19 +349,19 @@ public class SlotManageService {
 		return HubResponse.successResp(vo);
 	}
 
-	// 查询批次号下所有商品明细
+	// 查询masterID下所有商品明细
 	public HubResponse<?> selectSlotReturnDetail(SlotManageQuery slotManageQuery) {
 		Log.info("start selectSlotReturnDetail---查询批次号下所有商品明细");
-		Log.info("params: slotNo:"+slotManageQuery.getSlotNo());
+		Log.info("params: masterId:"+slotManageQuery.getMasterId());
 		StudioSlotsReturnDetailVo vo = new StudioSlotsReturnDetailVo();
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
 			com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto.Criteria detailCriteria = detailDto
 					.createCriteria();
-			if (slotManageQuery.getSlotNo() == null) {
-				return HubResponse.errorResp("批次号不能为null!");
+			if (slotManageQuery.getMasterId() == null) {
+				return HubResponse.errorResp("masterId不能为null!");
 			}
-			detailCriteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+			detailCriteria.andStudioSlotReturnMasterIdEqualTo(Long.parseLong(slotManageQuery.getMasterId()));
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
 			List<StudioSlotReturnDetailInfo> StudioSlotReturnDetailInfoLists = new ArrayList<>();
