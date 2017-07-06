@@ -526,8 +526,11 @@ public class SlotManageService {
 					studioSlotReturnMasterDtoLists.get(0)
 							.setAddedQuantiy(studioSlotReturnMasterDtoLists.get(0).getAddedQuantiy() + 1);
 					studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDtoLists.get(0));
+					Log.info("end updateSlotReturnDetail---更新商品明细");
+					return HubResponse.errorResp("2", "不属于当前批次,但批次时间在当前批次之前,可以返货！");
 				} else {
-					return HubResponse.errorResp("更新商品明细失败!");
+					Log.info("end updateSlotReturnDetail---更新商品明细");
+					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
 				}
 			}
 		} catch (Exception e) {
