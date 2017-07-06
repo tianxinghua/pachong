@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSuppli
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
+import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title: ImageUploadService</p>
  * <p>Description: 图片上传页面所有的业务逻辑 </p>
@@ -60,4 +61,10 @@ public interface ImageUploadService {
 	 * @return
 	 */
 	public int updateUploadPicSign(Long studioSlotSpuSendDetailId);
+	/**
+	 * 确认该批次已拍摄完毕
+	 * @param slotNo
+	 * @return
+	 */
+	public HubResponse<?> confirm(String slotNo);
 }

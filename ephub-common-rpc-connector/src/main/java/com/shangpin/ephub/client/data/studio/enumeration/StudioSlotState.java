@@ -27,11 +27,15 @@ public enum StudioSlotState {
      * 摄影棚收货
      */
     RECEIVED(3,"RECEIVED"),
+    /**
+     * 已拍摄
+     */
+    HAVE_SHOOT(4,"HAVE SHOOT"),
 
     /**
      * 摄影棚返货
      */
-    STUDIO_RETURN(4,"STUDIO_RETURN");
+    STUDIO_RETURN(5,"STUDIO_RETURN");
 
 
 

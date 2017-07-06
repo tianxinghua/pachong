@@ -123,6 +123,9 @@ public class ImageUploadController {
 		}
 	}
 	
-	
+	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
+	public HubResponse<?> confirm(String slotNo){
+		return null;
+	}
 
 }

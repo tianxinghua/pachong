@@ -223,6 +223,16 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioDto getStudio(Long studioId) {
 		return studioGateWay.selectByPrimaryKey(studioId);
+	}
+
+	@Override
+	public List<StudioSlotSpuSendDetailDto> selectDetailOfArrived(String slotNo) {
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setOrderByClause("create_time");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()); 
+		return studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 	} 
 
 }
