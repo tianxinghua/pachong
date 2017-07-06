@@ -253,6 +253,11 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
     }
 
     private void  initPendingDto(PendingProductDto resourceDto,PendingProductDto targetDto){
+        if(null!=resourceDto.getSpuPendingId()){
+            HubSpuPendingDto hubSpuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(resourceDto.getSpuPendingId());
+            targetDto.setSupplierSpuId(hubSpuPendingDto.getSupplierSpuId());
+        }
+
 
         targetDto.setSpuPendingId(resourceDto.getSpuPendingId());
         targetDto.setSpuModel(resourceDto.getSpuModel());
