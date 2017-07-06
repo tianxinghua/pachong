@@ -253,6 +253,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 HubSlotSpuDto spuTmp = new HubSlotSpuDto();
                 spuTmp.setSpuState(SlotSpuState.SEND.getIndex().byteValue());
                 spuTmp.setSlotSpuId(supplierDto.getSlotSpuId());
+                spuTmp.setUpdateTime(new Date());
                 slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
                 log.info(" slotSpuId  :" + supplierDto.getSlotSpuId() +" update spu success");
                 //更新其它slotspusupplier状态
