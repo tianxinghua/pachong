@@ -20,8 +20,8 @@ import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
-import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
@@ -124,30 +124,10 @@ public class OperationServiceImpl implements OperationService {
 		StudioSlotVo slotVo = new StudioSlotVo();
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
 		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
-		setDetailQty(studioSlotDto.getSlotNo(), slotVo);
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
 		return slotVo;
 	}
-	/**
-	 * 获取详情数量
-	 * @param slotNo
-	 * @return
-	 */
-	private void setDetailQty(String slotNo, StudioSlotVo slotVo){
-		List<StudioSlotSpuSendDetailDto> list = selectDetail(slotNo);
-		int qty = 0;
-		int uploadQty = 0;
-		if(CollectionUtils.isNotEmpty(list)){
-			qty = list.size();
-			for(StudioSlotSpuSendDetailDto dto : list){
-				if(null != dto.getArriveState() && dto.getArriveState() == StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()){
-					uploadQty ++ ;
-				}
-			}
-		}
-		slotVo.setQty(qty); 
-		slotVo.setUploadQty(uploadQty);
-	}
+	
 	/**
 	 * 
 	 * @param slotNo
@@ -216,10 +196,10 @@ public class OperationServiceImpl implements OperationService {
 	}
 
 	@Override
-	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetail(String barcode) {
+	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetailOfRrrived(String barcode) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
 		criteria.setFields("slot_no,slot_spu_no");
-		criteria.createCriteria().andBarcodeEqualTo(barcode);
+		criteria.createCriteria().andBarcodeEqualTo(barcode).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 		if(CollectionUtils.isNotEmpty(list)){
 			return list.get(0);

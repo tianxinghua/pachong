@@ -132,7 +132,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	@Override
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId) {
 		try {
-			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetail(slotNoSpuId);
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(slotNoSpuId);
 			String slotNo = detailDto.getSlotNo();
 			String slotSpuNo = detailDto.getSlotSpuNo();
 			StudioSlotDefectiveSpuDto spuDto = selectBySlot(slotNo,slotSpuNo);

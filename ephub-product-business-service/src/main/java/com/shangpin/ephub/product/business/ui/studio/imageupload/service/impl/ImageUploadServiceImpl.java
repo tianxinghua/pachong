@@ -18,7 +18,9 @@ import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicWithCrit
 import com.shangpin.ephub.client.data.mysql.studio.pic.gateway.HubSlotSpuPicGateway;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.enumeration.OperationQueryType;
@@ -51,7 +53,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			List<StudioSlotVo> vos = new ArrayList<StudioSlotVo>();			
 			if(CollectionUtils.isNotEmpty(list)){
 				for(StudioSlotDto dto : list){
-					vos.add(operationService.formatDto(dto));
+					vos.add(formatDto(dto));
 				}
 			}
 			log.info("图片上传页面返回数据条数===="+vos.size()); 
@@ -151,6 +153,36 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		int result = hubSlotSpuPicGateway.updateByCriteriaSelective(withCritera );
 //		log.info("删除数据库结果=============="+result);
 		return result;
+	}
+	
+	private StudioSlotVo formatDto(StudioSlotDto studioSlotDto) {
+		StudioSlotVo slotVo = new StudioSlotVo();
+		slotVo.setSlotNo(studioSlotDto.getSlotNo());
+		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
+		setDetailQty(studioSlotDto.getSlotNo(), slotVo);
+		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
+		return slotVo;
+	}
+	/**
+	 * 获取详情数量
+	 * @param slotNo
+	 * @return
+	 */
+	private void setDetailQty(String slotNo, StudioSlotVo slotVo){
+		List<StudioSlotSpuSendDetailDto> list = operationService.selectDetail(slotNo);
+		int qty = 0;
+		int uploadQty = 0;
+		if(CollectionUtils.isNotEmpty(list)){
+			
+			for(StudioSlotSpuSendDetailDto dto : list){
+				if(null != dto.getArriveState() && dto.getArriveState() == StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()){
+					qty ++ ;
+				}
+//				if(null != dto.get){}
+			}
+		}
+		slotVo.setQty(qty); 
+		slotVo.setUploadQty(uploadQty);
 	}
 
 	
