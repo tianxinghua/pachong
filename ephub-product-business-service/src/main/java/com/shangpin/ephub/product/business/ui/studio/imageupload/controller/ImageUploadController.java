@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
@@ -76,7 +77,8 @@ public class ImageUploadController {
 //				String slotNoSpuId = uploadQuery.getSlotNoSpuId();
 //				String slotNo = slotNoSpuId .substring(0, slotNoSpuId.indexOf("-"));
 //				String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
-				String slotSpuNo = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId()).getSlotSpuNo();
+				StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
+				String slotSpuNo = detailDto.getSlotSpuNo();
 				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
 				for(String spPicUrl : spPicUrls){
 					if(!picMap.containsKey(spPicUrl)){
@@ -97,6 +99,8 @@ public class ImageUploadController {
 						}
 					}
 				}
+				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId());
+				log.info("更新uploadPicSign结果==========="+result); 
 			}
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 

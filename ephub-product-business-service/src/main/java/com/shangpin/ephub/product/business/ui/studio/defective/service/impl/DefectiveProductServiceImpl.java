@@ -273,5 +273,12 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 //		log.info("删除数据库结果=============="+result);
 		return result;
 	}
+	@Override
+	public int countDefectiveProduct(String slotNo) {
+		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		defectiveSpuGateWay.countByCriteria(criteria );
+		return 0;
+	}
 
 }
