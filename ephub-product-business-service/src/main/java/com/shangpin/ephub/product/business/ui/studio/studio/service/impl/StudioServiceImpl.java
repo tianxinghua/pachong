@@ -597,6 +597,8 @@ public class StudioServiceImpl implements IStudioService {
                         data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
                         data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
                         data.setBarcode(slotNo + product.getSlotSpuNo());
+                        data.setSendState((byte)0);
+                        data.setArriveState((byte)0);
                         data.setCreateTime(new Date());
                         data.setCreateUser(createUser);
                         Long id = studioSlotSpuSendDetailGateWay.insert(data);
