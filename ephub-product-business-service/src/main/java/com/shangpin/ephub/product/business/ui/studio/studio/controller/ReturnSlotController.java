@@ -106,8 +106,7 @@ public class ReturnSlotController {
         if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(id) ){
             return  HubResponse.errorResp("传入参数不正确");
         }
-
-        return  HubResponse.successResp(iReturnSlotService.confirmSlotInfo(supplierId, id));
+        return iReturnSlotService.confirmSlotInfo(supplierId, id, queryDto.getSupplierUser());
     }
 
     /**
