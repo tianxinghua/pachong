@@ -3,42 +3,32 @@ package com.shangpin.ephub.client.data.studio.enumeration;
 /**
 
 
- STUDIO_SLOT表中 批次状态
+ studio_slot_return_detail返还物品状态
  *
  */
-public enum StudioSlotState {
+public enum StudioReturnDeatilState {
 
 	/**
-	 * 等待申请
+	 * 未扫码
 	 */
-	WAIT_APPLY(0,"WAIT_APPLY"),
+	WAIT(0,"WAIT"),
 
 
 	/**
-	 * 已申请
+	 * 商品扫码正常
 	 */
-	APPLYED(1,"APPLYED"),
+	GOOD(1,"GOOD"),
+
+	/**
+     * 商品损坏
+	 */
+
+	DAMAGED(2,"DAMAGED"),
 
     /**
-     * 供货商发货
+     * 商品丢失
      */
-    SEND(2,"SEND"),
-    /**
-     * 摄影棚收货
-     */
-    RECEIVED(3,"RECEIVED"),
-    /**
-     * 已拍摄
-     */
-    HAVE_SHOOT(4,"HAVE SHOOT"),
-
-    /**
-     * 摄影棚返货
-     */
-    STUDIO_RETURN(5,"STUDIO_RETURN");
-
-
-
+    MISS(3,"MISS");
 
 	/**
      * 数字索引标识
@@ -49,7 +39,7 @@ public enum StudioSlotState {
      */
     private String description;
 
-    StudioSlotState(Integer index, String description){
+    StudioReturnDeatilState(Integer index, String description){
 		this.index = index;
 		this.description = description;
 	}

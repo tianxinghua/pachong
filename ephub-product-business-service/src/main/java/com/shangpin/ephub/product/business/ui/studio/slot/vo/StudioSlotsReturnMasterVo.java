@@ -4,7 +4,7 @@ package com.shangpin.ephub.product.business.ui.studio.slot.vo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnMasterDto;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnMasterInfo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class StudioSlotsReturnMasterVo implements Serializable{
 
     private static final long serialVersionUID = 7005555312014316567L;
 
-    private List<StudioSlotReturnMasterDto> studioSlotReturnMasterDtoList;
+    private List<StudioSlotReturnMasterInfo> studioSlotReturnMasterDtoList;
 
     private int total;
 }

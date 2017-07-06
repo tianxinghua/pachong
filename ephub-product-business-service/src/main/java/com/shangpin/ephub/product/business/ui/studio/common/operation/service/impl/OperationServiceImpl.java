@@ -198,7 +198,7 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetailOfRrrived(String barcode) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setFields("slot_no,slot_spu_no");
+		criteria.setFields("studio_slot_spu_send_detail_id,slot_no,slot_spu_no");
 		criteria.createCriteria().andBarcodeEqualTo(barcode).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 		if(CollectionUtils.isNotEmpty(list)){
@@ -223,6 +223,16 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioDto getStudio(Long studioId) {
 		return studioGateWay.selectByPrimaryKey(studioId);
+	}
+
+	@Override
+	public List<StudioSlotSpuSendDetailDto> selectDetailOfArrived(String slotNo) {
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setOrderByClause("create_time");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()); 
+		return studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 	} 
 
 }
