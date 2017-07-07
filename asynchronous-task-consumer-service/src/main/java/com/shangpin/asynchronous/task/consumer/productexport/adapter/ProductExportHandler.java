@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.asynchronous.task.consumer.productexport.pending.service.AllProductServiceImpl;
-import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
+import com.shangpin.asynchronous.task.consumer.productexport.type.allproduct.AllProductServiceImpl;
+import com.shangpin.asynchronous.task.consumer.productexport.type.pending.ExportServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
@@ -66,6 +66,8 @@ public class ProductExportHandler {
 				}else if(message.getType() == TaskType.EXPORT_SUTDIO_SLOT.getIndex()){
 					SlotManageQuery slotManageQuery = JsonUtil.deserialize(message.getData(), SlotManageQuery.class);
 					allProductServiceImpl.exportStudioSlot(message.getTaskNo(), slotManageQuery);
+				}else if(message.getType() == TaskType.EXPORT_WAIT_SHOOT.getIndex()){
+					
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

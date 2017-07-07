@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
+package com.shangpin.asynchronous.task.consumer.productexport.type.allproduct;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -17,6 +17,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.asynchronous.task.consumer.productexport.type.pending.ExportServiceImpl;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;

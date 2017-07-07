@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
+package com.shangpin.asynchronous.task.consumer.productexport.type.pending;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
