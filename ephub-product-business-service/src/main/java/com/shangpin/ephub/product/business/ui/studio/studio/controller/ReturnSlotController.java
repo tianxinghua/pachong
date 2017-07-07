@@ -99,7 +99,7 @@ public class ReturnSlotController {
      * @param queryDto
      * @return
      */
-    @RequestMapping(value = "/confirmSlot")
+    @RequestMapping(value = "/confirmSlotInfo")
     public HubResponse<?> confirmSlotInfo(@RequestBody ReturnSlotQueryDto queryDto) {
         String supplierId = queryDto.getSupplierId();
         Long id = queryDto.getId();

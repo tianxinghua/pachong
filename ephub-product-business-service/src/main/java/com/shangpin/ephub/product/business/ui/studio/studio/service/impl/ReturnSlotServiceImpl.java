@@ -61,7 +61,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
         if(StringUtils.isEmpty(queryDto.getArriveState())){
             criteria.andArriveStateEqualTo((byte)0);
         }else{
-            criteria.andArriveStateEqualTo((byte)queryDto.getArriveState());
+            criteria.andArriveStateGreaterThan((byte)0);
         }
         return studioSlotReturnMasterGateWay.selectByCriteria(dto);
    }
@@ -183,6 +183,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
 
        StudioSlotReturnMasterDto masterDto = new StudioSlotReturnMasterDto();
        masterDto.setStudioSlotReturnMasterId(id);
+       masterDto.setState((byte)3);
        masterDto.setArriveState((byte)2);
        masterDto.setArriveTime(new Date());
        masterDto.setArriveUser(userName);
