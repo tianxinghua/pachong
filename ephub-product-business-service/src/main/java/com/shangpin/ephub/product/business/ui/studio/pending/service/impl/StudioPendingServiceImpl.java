@@ -161,6 +161,12 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                     updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
                 }
 
+                if(null!=updatedVo){
+                    response.setCode("1");
+                    response.setErrorMsg(updatedVo);
+                    return response;
+                }
+
 
             }
             if(null!=pendingProductDto.getSupplierSpuId()&&0==pendingProductDto.getSupplierSpuId()){
