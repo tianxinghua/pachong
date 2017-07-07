@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
@@ -32,7 +31,6 @@ import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
@@ -84,6 +82,7 @@ import com.shangpin.pending.product.consumer.common.enumeration.DataBusinessStat
 import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectState;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
 

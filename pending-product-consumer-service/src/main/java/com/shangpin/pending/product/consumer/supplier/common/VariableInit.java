@@ -41,6 +41,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by lizhongren on 2017/2/16.
@@ -121,6 +123,22 @@ public class VariableInit {
 
     ObjectMapper mapper =new ObjectMapper();
 
+
+//    private Lock seasonlock = new ReentrantLock();
+
+
+//    private Lock colorlock = new ReentrantLock();
+//
+//    private Lock materialLock = new ReentrantLock();
+//
+//    private Lock brandLock = new ReentrantLock();
+//
+//    private Lock supplierBrandLock = new ReentrantLock();
+//
+//    private Lock originLock = new ReentrantLock();
+//
+//    private Lock categoryLock = new ReentrantLock();
+
     /**
      * key :supplierId+"_"+supplierSeason value:hub_year+"_"+hub_season+"_"+memo
      * meme = 1: current season 0: preview season
@@ -135,8 +153,13 @@ public class VariableInit {
             setSeasonStaticMap();
 
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
-                setSeasonStaticMap();
+//            seasonlock.lock();
+            try {
+                if (pendingCommonHandler.isNeedHandleSeason()) {
+                    setSeasonStaticMap();
+                }
+            }finally {
+//                seasonlock.unlock();
             }
 
         }
@@ -145,46 +168,58 @@ public class VariableInit {
 
     private void setSeasonStaticMap() {
         List<HubSeasonDicDto> hubSeasonDics = dataServiceHandler.getHubSeasonDic();
+        Map<String,String> keyMap = new HashMap<>();
+        Map<String,String> keyMap1 = new HashMap<>();
         for (HubSeasonDicDto dicDto : hubSeasonDics) {
-        	System.out.println(dicDto.getSupplierid());
+//        	System.out.println(dicDto.getSupplierid());
             if (StringUtils.isNotBlank(dicDto.getHubMarketTime()) && StringUtils.isNotBlank(dicDto.getHubSeason())
-                    && StringUtils.isNotBlank(dicDto.getMemo()) &&StringUtils.isNotBlank(dicDto.getSupplierSeason())) {
-
+                    &&StringUtils.isNotBlank(dicDto.getSupplierSeason())) {
+                keyMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),"");
                 seasonStaticMap.put(dicDto.getSupplierid() + "_" + dicDto.getSupplierSeason().trim(),
                         (null==dicDto.getHubMarketTime()?"":dicDto.getHubMarketTime().trim()) + "_" +
                                 (null==dicDto.getHubSeason()?"":dicDto.getHubSeason().trim()) + "|"
-                                + (null==dicDto.getMemo()?"":dicDto.getMemo().trim()));
+                                + (null==dicDto.getFilterFlag()?"":dicDto.getFilterFlag().toString()));
                 hubSeasonStaticMap.put(dicDto.getHubMarketTime() + "_" + dicDto.getHubSeason(), "");
+                keyMap1.put(dicDto.getHubMarketTime() + "_" + dicDto.getHubSeason(), "");
             }
         }
+        this.removeFromMap(seasonStaticMap,keyMap);
+        this.removeFromMap(hubSeasonStaticMap,keyMap1);
     }
 
     protected Map<String, String> getColorMap() {
         if (null == colorStaticMap) {
             colorStaticMap = new HashMap<>();
             hubColorStaticMap = new HashMap<>();
-            List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
-            for (ColorDTO dto : colorDTOS) {
-            	if(dto.getSupplierColor()!=null){
-            		 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
-                     hubColorStaticMap.put(dto.getHubColorName(), "");
-            	}
-            }
+            setColorStaticMap();
 
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
-                for (ColorDTO dto : dataServiceHandler.getColorDTO()) {
-                	if(dto.getSupplierColor()!=null){
-                		 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
-                         hubColorStaticMap.put(dto.getHubColorName(), "");
-                	}
+//            colorlock.lock();
+            try {
+                if (pendingCommonHandler.isNeedHandleCorlor()) {
+                    setColorStaticMap();
                 }
-
-                // 无用的内容 暂时不考虑
-
+            }finally {
+//                colorlock.unlock();
             }
         }
         return colorStaticMap;
+    }
+
+    private void setColorStaticMap() {
+        List<ColorDTO> colorDTOS = dataServiceHandler.getColorDTO();
+        Map<String,String> keyMap = new HashMap<>();
+        Map<String,String> keyMap1 = new HashMap<>();
+        for (ColorDTO dto : colorDTOS) {
+            if(dto.getSupplierColor()!=null){
+                keyMap.put(dto.getSupplierColor().toUpperCase(),"");
+                 colorStaticMap.put(dto.getSupplierColor().toUpperCase(), dto.getHubColorName());
+                 hubColorStaticMap.put(dto.getHubColorName(), "");
+                keyMap1.put(dto.getHubColorName(), "");
+            }
+        }
+        this.removeFromMap(colorStaticMap,keyMap);
+        this.removeFromMap(hubColorStaticMap,keyMap1);
     }
 
 
@@ -197,20 +232,28 @@ public class VariableInit {
     protected Map<String, String> getMaterialMap() {
         if (null == materialStaticMap) {
             materialStaticMap = new LinkedHashMap<>();
-            List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
-            for (MaterialDTO dto : materialDTOS) {
-
-                materialStaticMap.put(dto.getSupplierMaterial(), dto.getHubMaterial());
-            }
+            setMaterailStaticMap();
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
-                List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
-                for (MaterialDTO dto : materialDTOS) {
-                    materialStaticMap.put(dto.getSupplierMaterial(), dto.getHubMaterial());
+//            materialLock.lock();
+            try{
+                if (pendingCommonHandler.isNeedHandleMaterial()) {
+                    setMaterailStaticMap();
                 }
+            }finally {
+//                materialLock.unlock();
             }
         }
         return materialStaticMap;
+    }
+
+    private void setMaterailStaticMap() {
+        List<MaterialDTO> materialDTOS = dataServiceHandler.getMaterialMapping();
+        Map<String,String> keyMap = new HashMap<>();
+        for (MaterialDTO dto : materialDTOS) {
+            keyMap.put(dto.getSupplierMaterial(), "");
+            materialStaticMap.put(dto.getSupplierMaterial(), dto.getHubMaterial());
+        }
+        this.removeFromMap(materialStaticMap,keyMap);
     }
 
     /**
@@ -218,35 +261,43 @@ public class VariableInit {
      *
      * @return
      */
+
+
+
     protected Map<String, String> getBrandMap() throws Exception {
 
         if (null == brandStaticMap) {
             brandStaticMap = new HashMap<>();
             hubBrandStaticMap = new HashMap<>();
-            List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
-            for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
-                brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
-                        hubBrandDicDto.getHubBrandNo());
-                if(hubBrandDicDto.getHubBrandNo()!=null){
-                	hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");	
-                }
-            }
-            ;
-
+            setBrandStaticMap();
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
-                List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
-                for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
-                    brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
-                            hubBrandDicDto.getHubBrandNo());
-                    hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");
+//            brandLock.lock();
+            try{
+                if (pendingCommonHandler.isNeedHandleBrand()) {
+                    setBrandStaticMap();
                 }
-                ;
-                // 无用的内容 暂时不考虑
-
+            }finally {
+//                brandLock.unlock();
             }
         }
         return brandStaticMap;
+    }
+
+    private void setBrandStaticMap() throws Exception {
+        List<HubBrandDicDto> brandDicDtos = dataServiceHandler.getAvailableBrand();
+        Map<String,String> keyMap = new HashMap<>();
+        Map<String,String> keyMap1 = new HashMap<>();
+        for (HubBrandDicDto hubBrandDicDto : brandDicDtos) {
+            brandStaticMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),
+                    hubBrandDicDto.getHubBrandNo());
+            keyMap.put(hubBrandDicDto.getSupplierBrand().trim().toUpperCase(),"");
+            if(hubBrandDicDto.getHubBrandNo()!=null){
+                hubBrandStaticMap.put(hubBrandDicDto.getHubBrandNo().trim(), "");
+                keyMap1.put(hubBrandDicDto.getHubBrandNo().trim(), "");
+            }
+        }
+        this.removeFromMap(brandStaticMap,keyMap);
+        this.removeFromMap(hubBrandStaticMap,keyMap1);
     }
 
     /**
@@ -260,7 +311,7 @@ public class VariableInit {
             hubSupplierBrandFlag = new ConcurrentHashMap<>();
             setHubSupplierBrandFlag();
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
+            if (pendingCommonHandler.isNeedHandleSupplierBrand()) {
                 setHubSupplierBrandFlag();
             }
         }
@@ -272,11 +323,14 @@ public class VariableInit {
      */
     private void setHubSupplierBrandFlag() {
         List<HubSupplierBrandDicDto> brandsDic = dataServiceHandler.getEffectiveHubSupplierBrands();
+        Map<String,String> keyMap = new HashMap<>();
         if (null != brandsDic && brandsDic.size() > 0) {
             for (HubSupplierBrandDicDto brandDic : brandsDic) {
+                keyMap.put(brandDic.getSupplierId() + "_" + brandDic.getSupplierBrand(),"");
                 hubSupplierBrandFlag.put(brandDic.getSupplierId() + "_" + brandDic.getSupplierBrand(),
                         brandDic.getFilterFlag());
             }
+            this.removeFromMap(hubSupplierBrandFlag,keyMap);
         }
     }
 
@@ -291,7 +345,7 @@ public class VariableInit {
             hubSeasonFlag = new ConcurrentHashMap<>();
             setHubSeasonFlag();
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
+            if (pendingCommonHandler.isNeedHandleSeasonFlag()) {
                 setHubSeasonFlag();
             }
         }
@@ -304,10 +358,13 @@ public class VariableInit {
      */
     private void setHubSeasonFlag() {
         List<HubSeasonDicDto> supplierSeasons = dataServiceHandler.getEffectiveHubSeasons();
+        Map<String,String> keyMap = new HashMap<>();
         if (null != supplierSeasons && supplierSeasons.size() > 0) {
             for (HubSeasonDicDto season : supplierSeasons) {
+                keyMap.put(season.getSupplierid() + "_" + season.getSupplierSeason(), "");
                 hubSeasonFlag.put(season.getSupplierid() + "_" + season.getSupplierSeason(), season.getFilterFlag());
             }
+            this.removeFromMap(hubSeasonFlag,keyMap);
         }
     }
 
@@ -349,7 +406,7 @@ public class VariableInit {
             setGenderValueToMap(supplierId);
         } else {
 
-            if (pendingCommonHandler.isNeedHandle()) {
+            if (pendingCommonHandler.isNeedHandleGender()) {
                 setGenderValueToMap(supplierId);
             }
 
@@ -360,14 +417,19 @@ public class VariableInit {
 
     protected void setGenderValueToMap(String supplierId) {
         List<HubGenderDicDto> hubGenderDics = dataServiceHandler.getHubGenderDicBySupplierId(supplierId);
+        Map<String,String> keyMap = new HashMap<>();
+        Map<String,String> keyMap1 = new HashMap<>();
         if (null != hubGenderDics && hubGenderDics.size() > 0) {
 
             Map<String, String> genderMap = new HashMap<>();
             for (HubGenderDicDto dto : hubGenderDics) {
+                keyMap.put(dto.getSupplierGender().trim().toUpperCase(), "");
                 genderStaticMap.put(dto.getSupplierGender().trim().toUpperCase(), dto.getHubGender().trim());
+                keyMap1.put(dto.getHubGender(), "");
                 hubGenderStaticMap.put(dto.getHubGender(), "");
             }
-
+            this.removeFromMap(genderStaticMap,keyMap);
+            this.removeFromMap(hubGenderStaticMap,keyMap1);
             // shangpinRedis.hset
         }
     }
@@ -467,8 +529,13 @@ public class VariableInit {
             if (!supplierCategoryMappingStaticMap.containsKey(supplierId)) {// 未包含
                 this.setSupplierCategoryValueToMap(supplierId);
             } else {
-                if (pendingCommonHandler.isNeedHandle()) {// 包含 需要重新拉取
-                    this.setSupplierCategoryValueToMap(supplierId);
+//                categoryLock.lock();
+                try {
+                    if (pendingCommonHandler.isNeedHandleCategory()) {// 包含 需要重新拉取
+                        this.setSupplierCategoryValueToMap(supplierId);
+                    }
+                }finally {
+//                    categoryLock.unlock();
                 }
             }
         }
@@ -539,8 +606,15 @@ public class VariableInit {
             setOriginStaticMap();
 
         } else {
-            if (pendingCommonHandler.isNeedHandle()) {
-                setOriginStaticMap();
+//            originLock.lock();
+            try{
+                if (pendingCommonHandler.isNeedHandleOrigin()) {
+                    originStaticMap.clear();
+                    setOriginStaticMap();
+                }
+
+            }finally {
+//                originLock.unlock();
             }
         }
         return originStaticMap;
@@ -773,24 +847,24 @@ public class VariableInit {
     }
 
 
-    private Map<String, Map<String, String>> getBrandModelMap(String hubBrandNo) {
-
-        if (null == brandModelStaticMap) {// 初始化
-            brandModelStaticMap = new HashMap<>();
-
-            this.setBrandModelValueToMap(hubBrandNo);
-
-        } else {
-            if (!brandModelStaticMap.containsKey(hubBrandNo)) {// 未包含
-                this.setBrandModelValueToMap(hubBrandNo);
-            } else {
-                if (pendingCommonHandler.isNeedHandle()) {// 包含 需要重新拉取
-                    this.setBrandModelValueToMap(hubBrandNo);
-                }
-            }
-        }
-        return brandModelStaticMap;
-    }
+//    private Map<String, Map<String, String>> getBrandModelMap(String hubBrandNo) {
+//
+//        if (null == brandModelStaticMap) {// 初始化
+//            brandModelStaticMap = new HashMap<>();
+//
+//            this.setBrandModelValueToMap(hubBrandNo);
+//
+//        } else {
+//            if (!brandModelStaticMap.containsKey(hubBrandNo)) {// 未包含
+//                this.setBrandModelValueToMap(hubBrandNo);
+//            } else {
+//                if (pendingCommonHandler.isNeedHandle()) {// 包含 需要重新拉取
+//                    this.setBrandModelValueToMap(hubBrandNo);
+//                }
+//            }
+//        }
+//        return brandModelStaticMap;
+//    }
 
     private void setBrandModelValueToMap(String hubBrandNo) {
         List<HubBrandModelRuleDto> brandModles = dataServiceHandler.getBrandModle(hubBrandNo);
@@ -1016,5 +1090,16 @@ public class VariableInit {
             return false;
         }
 
+    }
+
+    private void removeFromMap(Map<String,?> resourceMap,Map<String,String> keyMap){
+        Iterator<String> iterator = resourceMap.keySet().iterator();
+        String key= "";
+        while(iterator.hasNext()){
+            key =iterator.next();
+            if(!keyMap.containsKey(key)){
+                resourceMap.remove(key);
+            }
+        }
     }
 }
