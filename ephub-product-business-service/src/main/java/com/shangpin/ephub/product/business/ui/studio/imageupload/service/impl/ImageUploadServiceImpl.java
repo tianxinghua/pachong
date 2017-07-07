@@ -21,6 +21,7 @@ import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSuppli
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
@@ -254,6 +255,9 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			StudioSlotDto studioSlot = new StudioSlotDto();
 			studioSlot.setSlotStatus(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
 			withCriteria.setStudioSlot(studioSlot );
+			StudioSlotCriteriaDto criteria = new StudioSlotCriteriaDto();
+			criteria.createCriteria().andSlotNoEqualTo(slotNo);
+			withCriteria.setCriteria(criteria );
 			int result = studioSlotGateWay.updateByCriteriaSelective(withCriteria );
 			if(result == 1){
 				return HubResponse.successResp("成功");
