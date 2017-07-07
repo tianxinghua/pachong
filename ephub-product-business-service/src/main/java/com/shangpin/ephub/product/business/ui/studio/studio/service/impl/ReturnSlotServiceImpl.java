@@ -167,6 +167,12 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
            result.setMsg("Slot is not found");
            return null;
        }
+       if(studioSlot.getState().equals((byte)3)){
+           result.setCode("1");
+           result.setMsg("The slot has been signed");
+           return null;
+
+       }
 
        returnSlotInfo.setStudioSlotReturnMasterId(studioSlot.getStudioSlotReturnMasterId());
        returnSlotInfo.setStudioSendNo(studioSlot.getStudioSendNo());
@@ -179,13 +185,23 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
-       returnSlotInfo.setDetailDtoList(detailDtoList);
+
+        //实际收货数量
+       long count = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.RECEIVED)).count();
+
+        if(count<detailDtoList.size()){
+            List<StudioSlotReturnDetailDto> noArriveList = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.NOT_ARRIVE)).collect(Collectors.toList());
+            returnSlotInfo.setDetailDtoList(noArriveList);
+        }
+
+
 
        StudioSlotReturnMasterDto masterDto = new StudioSlotReturnMasterDto();
        masterDto.setStudioSlotReturnMasterId(id);
        masterDto.setState((byte)3);
        masterDto.setArriveState((byte)2);
        masterDto.setArriveTime(new Date());
+       masterDto.setActualQuantity((int)count);
        masterDto.setArriveUser(userName);
 
        int i = studioSlotReturnMasterGateWay.updateByPrimaryKeySelective(masterDto);
