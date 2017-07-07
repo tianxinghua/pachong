@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -61,6 +62,12 @@ public class ImageUploadController {
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public HubResponse<?> add(@RequestBody UploadQuery uploadQuery){
+		if(StringUtils.isEmpty(uploadQuery.getSlotNoSpuId())){
+			return HubResponse.errorResp("请先扫码");
+		}
+		if(CollectionUtils.isEmpty(uploadQuery.getUrls())){
+			return HubResponse.errorResp("请先上传图片");
+		}
 		/**
 		 * 记录上传失败的链接
 		 */
@@ -73,35 +80,30 @@ public class ImageUploadController {
 
 			{put("hubSlotSpu",null);put("hubSlotSpuSupplier",null);}};
 			List<String> spPicUrls = uploadQuery.getUrls();
-			if(CollectionUtils.isNotEmpty(spPicUrls)){
-//				String slotNoSpuId = uploadQuery.getSlotNoSpuId();
-//				String slotNo = slotNoSpuId .substring(0, slotNoSpuId.indexOf("-"));
-//				String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
-				StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
-				String slotSpuNo = detailDto.getSlotSpuNo();
-				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
-				for(String spPicUrl : spPicUrls){
-					if(!picMap.containsKey(spPicUrl)){
-						if(null == map.get("hubSlotSpu")){
-							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
-							map.put("hubSlotSpu", spuDto);
-						}
-						if(null == map.get("hubSlotSpuSupplier")){
-							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
-							map.put("hubSlotSpuSupplier", supplierDto);
-						}
-						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
-						HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
-						String extension = pictureService.getExtension(spPicUrl);
-						boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
-						if(!bool){
-							list.add(spPicUrl);
-						}
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
+			String slotSpuNo = detailDto.getSlotSpuNo();
+			Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
+			for(String spPicUrl : spPicUrls){
+				if(!picMap.containsKey(spPicUrl)){
+					if(null == map.get("hubSlotSpu")){
+						HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
+						map.put("hubSlotSpu", spuDto);
+					}
+					if(null == map.get("hubSlotSpuSupplier")){
+						HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
+						map.put("hubSlotSpuSupplier", supplierDto);
+					}
+					HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
+					HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
+					String extension = pictureService.getExtension(spPicUrl);
+					boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
+					if(!bool){
+						list.add(spPicUrl);
 					}
 				}
-				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId());
-				log.info("更新uploadPicSign结果==========="+result); 
 			}
+			int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId());
+			log.info("更新uploadPicSign结果==========="+result); 
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 
 		}
@@ -127,6 +129,17 @@ public class ImageUploadController {
 	public HubResponse<?> confirm(@RequestBody String slotNo){
 		log.info("confirm=========="+slotNo);
 		return imageUploadService.confirm(slotNo); 
+	}
+	
+	@RequestMapping(value = "/modification", method = RequestMethod.POST)
+	public HubResponse<?> modification(@RequestBody String barcode){
+		List<String> list = imageUploadService.findPictures(barcode);
+		if(null != list){
+			return HubResponse.successResp(list);
+		}else{
+			return HubResponse.errorResp("modification error");
+		}
+		
 	}
 
 }

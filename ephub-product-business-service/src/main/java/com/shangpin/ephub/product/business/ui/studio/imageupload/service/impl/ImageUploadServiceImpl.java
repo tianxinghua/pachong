@@ -118,6 +118,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 //		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
 		vo.setTime(dto.getCreateTime());
 		vo.setStudioCode(dto.getBarcode());
+		vo.setUploadPicSign(null != dto.getUploadPicSign() ? dto.getUploadPicSign() : 0); 
 		return vo;
 	}
 
@@ -243,6 +244,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	public int updateUploadPicSign(Long studioSlotSpuSendDetailId) {
 		StudioSlotSpuSendDetailDto detailDto = new StudioSlotSpuSendDetailDto();
 		detailDto.setUploadPicSign(UploadPicSign.HAVE_UPLOADED.getIndex().byteValue());
+		detailDto.setStudioSlotSpuSendDetailId(studioSlotSpuSendDetailId); 
 		return studioSlotSpuSendDetailGateWay.updateByPrimaryKeySelective(detailDto );
 	}
 
@@ -267,6 +269,35 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		}else{
 			return HubResponse.errorResp("Qty与Upload Qty数量不相等");
 		}
+	}
+
+	@Override
+	public List<String> findPictures(String barcode) {
+		try {
+			log.info("barcode========="+barcode); 
+			List<String> pics = new ArrayList<String>();
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(barcode);
+			if(null != detailDto){
+				String slotSpuNo = detailDto.getSlotSpuNo();
+				log.info("slotSpuNo=========="+slotSpuNo); 
+				HubSlotSpuPicCriteriaDto criteria = new HubSlotSpuPicCriteriaDto();
+				criteria.setFields("sp_pic_url");
+				criteria.setPageNo(1);
+				criteria.setPageSize(1000); 
+				criteria.createCriteria().andSlotSpuNoEqualTo(slotSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex()); 
+				List<HubSlotSpuPicDto> list = hubSlotSpuPicGateway.selectByCriteria(criteria );
+				log.info("查找到的图片数量==========="+list.size()); 
+				if(CollectionUtils.isNotEmpty(list)){
+					for(HubSlotSpuPicDto dto : list){
+						pics.add(dto.getSpPicUrl());
+					}
+				}
+			}
+			return pics;
+		} catch (Exception e) {
+			log.error("获取图片异常："+e.getMessage(),e);
+		}
+		return null;
 	}
 
 	
