@@ -215,32 +215,26 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
     @Override
     public List<SlotSpuSendDetailCheckDto> updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
-        List<SlotSpuSendDetailCheckDto> returnList = new ArrayList<>();
+        List<SlotSpuSendDetailCheckDto> returnList = null ;
+
         boolean blReturn = true;
         List<HubSlotSpuSupplierDto> supplierDtos = new ArrayList<>();
-        for(SlotSpuSendDetailCheckDto dto:dtos){
-            HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
-            supplierDtos.add(originDto);
-            if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
-                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
-                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
-                errDto.setResultSign(false);
-                errDto.setMemo("no need send");
-                returnList.add(errDto);
-                blReturn = false;
-            }else if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
-                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
-                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
-                errDto.setResultSign(false);
-                errDto.setMemo("had been sent ,no need send");
-                returnList.add(errDto);
-                blReturn = false;
-            }
+       //判断是否可以发货
+        returnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
+
+        if(null==returnList||returnList.size()==0){
+            blReturn = false;
         }
+        //可发货更新库存
         if(blReturn){
+
+            for(SlotSpuSendDetailCheckDto dto:dtos){
+                HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
+                supplierDtos.add(originDto);
+            }
             Date date = new Date();
             for(HubSlotSpuSupplierDto supplierDto :supplierDtos){
-                //更新自己
+                //region 更新自己
 
                 HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
                 supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
@@ -259,12 +253,38 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 //更新其它slotspusupplier状态
                 List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
                 this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuState.SEND.getIndex());
-
+                //endregion
             }
         }
 
         return returnList;
     }
+
+    @Override
+    public List<SlotSpuSendDetailCheckDto> judgeSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
+        List<SlotSpuSendDetailCheckDto> returnList = new ArrayList<>();
+        for(SlotSpuSendDetailCheckDto dto:dtos){
+            HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
+            ;
+            if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                errDto.setResultSign(false);
+                errDto.setMemo("no need send");
+                returnList.add(errDto);
+
+            }else if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                errDto.setResultSign(false);
+                errDto.setMemo("had been sent ,no need send");
+                returnList.add(errDto);
+
+            }
+        }
+        return returnList;
+    }
+
 
     @Override
     public boolean updateSlotSpuSupplierStateWhenModifyHubData(List<HubSlotSpuSupplierDto> slotSpuSupplierDtos,HubSlotSpuDto slotSpuDto) throws Exception {

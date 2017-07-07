@@ -17,10 +17,7 @@ import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSu
 import com.shangpin.ephub.client.data.studio.dic.dto.*;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWay;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicSlotGateWay;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
+import com.shangpin.ephub.client.data.studio.enumeration.*;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
@@ -29,6 +26,7 @@ import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
@@ -37,6 +35,7 @@ import com.shangpin.ephub.product.business.common.dto.CommonResult;
 import com.shangpin.ephub.product.business.common.exception.EphubException;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSendDetailCheckDto;
+import com.shangpin.ephub.product.business.service.studio.slotspusend.SlotSpuSendDetailService;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.*;
@@ -90,6 +89,8 @@ public class StudioServiceImpl implements IStudioService {
 
     @Autowired
     HubSlotSpuSupplierService hubSlotSpuSupplierService;
+    @Autowired
+    SlotSpuSendDetailService slotSpuSendDetailService;
 
     HashMap<String, String > categoryMap = new HashMap<String, String>(){{
         put("cloth", "A01");
@@ -716,7 +717,6 @@ public class StudioServiceImpl implements IStudioService {
                upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
                hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
-               //TODO: 需要调用重任的删除接口
            }else {
                updatedVo = setErrorMsg(response, slotNo, "D0", "delete product to slot failed");
            }
@@ -834,7 +834,21 @@ public class StudioServiceImpl implements IStudioService {
                studioSlotDto.setTrackNo(trackingNo);
                studioSlotDto.setUpdateTime(new Date());
                studioSlotDto.setSendUser(createUser);
-               return  studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto) >0;
+               int i =  studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto);
+               // 更新详情
+               if(i>0){
+                   StudioSlotSpuSendDetailWithCriteriaDto detailWithCriteriaDto = new StudioSlotSpuSendDetailWithCriteriaDto();
+                   StudioSlotSpuSendDetailDto detailDto = new StudioSlotSpuSendDetailDto();
+                   detailDto.setSendState(StudioSlotSupplierSendState.SEND.getIndex().byteValue());
+                   detailDto.setSendUser(createUser);
+                   detailDto.setSendTime(new Date());
+                   detailWithCriteriaDto.setStudioSlotSpuSendDetail(detailDto);
+                   StudioSlotSpuSendDetailCriteriaDto detailCriteriaDto = new StudioSlotSpuSendDetailCriteriaDto();
+                   detailCriteriaDto.createCriteria().andStudioSlotIdEqualTo(studioSlotId);
+                   detailWithCriteriaDto.setCriteria(detailCriteriaDto);
+                   studioSlotSpuSendDetailGateWay.updateByCriteriaSelective(detailWithCriteriaDto);
+               }
+
            }
 
            return false;
