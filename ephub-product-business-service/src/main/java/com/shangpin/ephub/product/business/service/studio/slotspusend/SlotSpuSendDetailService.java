@@ -19,4 +19,10 @@ public interface SlotSpuSendDetailService {
      * @return
      */
     public int getArriveSpuDetailCount(String slotNo);
+
+    /**
+     * 更新发货单明细的发货状态
+     * @param slotNo
+     */
+    public void updateSendDetailState(String slotNo);
 }
