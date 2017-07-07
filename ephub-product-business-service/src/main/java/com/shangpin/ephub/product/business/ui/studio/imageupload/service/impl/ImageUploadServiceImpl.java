@@ -233,7 +233,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			int defective = defectiveProductService.countDefectiveProduct(slotNo);
 			qty = list.size() - defective;
 		}
-		log.info("slotNo=="+slotNo+"【qty========="+qty+">>>>>>>>uploadQty============"+uploadQty+"】");
+		log.info("slotNo=="+slotNo+"【qty="+qty+">>>>>>>>uploadQty="+uploadQty+"】");
 		slotVo.setQty(qty); 
 		slotVo.setUploadQty(uploadQty);
 	}
