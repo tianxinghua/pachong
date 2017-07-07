@@ -355,7 +355,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         if(StringUtils.isNotBlank(queryDto.getState())){
             criteria.andSpuStateEqualTo(new Byte(queryDto.getState()));
         }
-        criteriaDto.setOrderByClause(" updateTime desc  ");
+        criteriaDto.setOrderByClause(" update_time desc  ");
         return slotSpuGateWay.selectByCriteria(criteriaDto);
     }
 
