@@ -125,6 +125,8 @@ public class OperationServiceImpl implements OperationService {
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
 		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
+		List<StudioSlotSpuSendDetailDto> list = selectDetail(studioSlotDto.getSlotNo());
+		slotVo.setQty(CollectionUtils.isNotEmpty(list) ? list.size() : 0); 
 		return slotVo;
 	}
 	
