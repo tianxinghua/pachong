@@ -124,7 +124,7 @@ public class ImageUploadController {
 	}
 	
 	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
-	public HubResponse<?> confirm(String slotNo){
+	public HubResponse<?> confirm(@RequestBody String slotNo){
 		log.info("confirm=========="+slotNo);
 		return imageUploadService.confirm(slotNo); 
 	}
