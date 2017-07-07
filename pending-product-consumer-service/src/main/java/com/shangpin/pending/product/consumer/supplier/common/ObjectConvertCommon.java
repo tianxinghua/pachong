@@ -32,7 +32,18 @@ public class ObjectConvertCommon {
         hubSpuPending.setHubMaterial(hubSpuDto.getMaterial());
         hubSpuPending.setHubOrigin(hubSpuDto.getOrigin());
         hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-        hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+        if(hubSpuDto.getHubColor()!=null&&hubSpuDto.getHubColor().equals(hubSpuPending.getHubColor())){
+        	hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+        }else{
+        	hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+        	hubSpuPending.setAuditDate(new Date());
+        	hubSpuPending.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+        	hubSpuPending.setMemo("再处理：同品牌同货号颜色不一样");
+        	hubSpuPending.setAuditState((byte)0);
+        	hubSpuPending.setAuditUser("chenxu");
+        }
+        
+        
         hubSpuPending.setIsCurrentSeason(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setHubSpuNo(hubSpuDto.getSpuNo());
         hubSpuPending.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());

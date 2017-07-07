@@ -22,6 +22,9 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.ISpinnak
 public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
+	@Qualifier("fratinardi")
+	private ISupplierHandler fratinardiHandler;	
+	@Autowired
 	@Qualifier("forzieri")
 	private ISupplierHandler forzieriHandler;	
 	
@@ -30,11 +33,12 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler stefaniaHandler;	
 	
 	@Autowired
-//	@Qualifier("atelierCommonHandler")
 	private IAtelierHandler atelierCommonHandler;
 	@Autowired
-//	@Qualifier("spinnakerHandler")
 	private ISpinnakerHandler spinnakerCommonHandler;	
+	@Autowired
+	private ISupplierHandler edsCommonHandler;
+	
 	@Autowired
 	@Qualifier("gebHandler")
 	private ISupplierHandler gebHandler;
@@ -93,10 +97,6 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("opticalHandler")
 	private ISupplierHandler opticalHandler;
 
-	@Autowired
-	@Qualifier("basebluHandler")
-	private ISupplierHandler basebluHandler;
-	
 	@Autowired
 	@Qualifier("antonacciHandler")
 	private ISupplierHandler antonacciHandler;
@@ -164,9 +164,17 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void gebStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		gebHandler.handleOriginalProduct(message, headers); 
+		edsCommonHandler.handleOriginalProduct(message, headers); 
 	}
 	
+	/**
+	 * fratinardiHandler供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void fratinardiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		fratinardiHandler.handleOriginalProduct(message,headers);
+	}
 	/**
 	 * forzieriHandler供货商原始数据监听方法
 	 * @param message 消息体
@@ -513,7 +521,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void basebluStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		basebluHandler.handleOriginalProduct(message, headers);
+		edsCommonHandler.handleOriginalProduct(message, headers);
 
 	}
 	/**

@@ -1,5 +1,6 @@
 package com.shangpin.supplier.product.consumer.refreshDic;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,7 @@ public class RefreshDicStreamListenerAdapter {
 	 *            消息头
 	 */
 	public void refreshDicTask(Task message, Map<String, Object> headers) throws Exception {
+		log.info("刷新字典接受到参数：{}",message);
 		String taskNo = message.getTaskNo();
 		supplierProductRetryService.updateHubSpuImportByTaskNo(TaskState.HANDLEING.getIndex(), taskNo, null, null);
 		if (TaskType.REFRESH_DIC.getIndex().equals(message.getType())) {
@@ -63,11 +65,33 @@ public class RefreshDicStreamListenerAdapter {
 				refreshSize(json, InfoState.RefreshSize.getIndex());
 			}else if(dicType==InfoState.RefreshColor.getIndex()){
 				refreshColor(json, InfoState.RefreshColor.getIndex());
+			}else if(dicType==InfoState.RefreshSeason.getIndex()){
+				refreshSeason(json, InfoState.RefreshSeason.getIndex());
 			}
 		}
 		supplierProductRetryService.updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, null);
 	}
 	
+	/**
+	 * 刷新季节
+	 * @param json
+	 * @param state
+	 * @throws Exception
+	 */
+	private void refreshSeason(JSONObject json, byte state)  throws Exception{
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		if(json.get("supplierId")!=null&&json.get("supplierSeason")!=null){
+			String supplierId = json.get("supplierId").toString();
+			String supplierSeason = json.get("supplierSeason").toString();
+			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSeasonnameEqualTo(supplierSeason);
+			int total = hubSupplierSpuGateWay.countByCriteria(criteria);
+			log.info("待刷新季节:"+supplierSeason+"总数total:"+total);
+			if(total>0){
+				supplierProductRetryService.sendSupplierSpu(total, criteria, state,true);
+			}
+		}
+		
+	}
 	/**
 	 * 刷新颜色
 	 * @param json
@@ -81,7 +105,7 @@ public class RefreshDicStreamListenerAdapter {
 		int total = hubSupplierSpuGateWay.countByCriteria(criteria);
 		log.info("待刷新颜色:"+supplierColor+"总数total:"+total);
 		if(total>0){
-			supplierProductRetryService.sendSupplierSpu(total, criteria, state);
+			supplierProductRetryService.sendSupplierSpu(total, criteria, state,false);
 		}
 	}
 
@@ -122,7 +146,9 @@ public class RefreshDicStreamListenerAdapter {
 				for(HubSupplierSkuDto sku:listSku){
 					if(sku.getSupplierSpuId()!=null){
 						HubSupplierSpuDto spu = hubSupplierSpuGateWay.selectByPrimaryKey(sku.getSupplierSpuId());
-						supplierProductRetryService.loopProduct(spu, state, sku);	
+						List<HubSupplierSkuDto> skus = new ArrayList<HubSupplierSkuDto>();
+						skus.add(sku);
+						supplierProductRetryService.loopProduct(spu, state, skus);	
 					}
 				}
 			}
@@ -144,7 +170,7 @@ public class RefreshDicStreamListenerAdapter {
 				.andSupplierGenderEqualTo(supplierGender);
 		int total = hubSupplierSpuGateWay.countByCriteria(criteria);
 		if (total > 0) {
-			supplierProductRetryService.sendSupplierSpu(total, criteria, state);
+			supplierProductRetryService.sendSupplierSpu(total, criteria, state,false);
 		}
 	}
 	

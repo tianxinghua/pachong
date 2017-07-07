@@ -23,6 +23,15 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1  
+                        fratinardiOriginalProduct: 
+                              destination: fratinardi.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        fratinardiPendingProduct: 
+                              destination: fratinardi.pending.product
+                              content-type: application/json
                         forzieriOriginalProduct: 
                               destination: forzieri.original.product
                               group: one
@@ -610,6 +619,15 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                              fratinardiOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              fratinardiPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                    
                               forzieriOriginalProduct: 
                                       consumer: 
                                          prefix: HA.
@@ -1199,6 +1217,9 @@ spring:
        username: yanxiaobin@shangpin.com # Login user of the SMTP server.
        password: 123.com # Login password of the SMTP server.
        test-connection: false # Test that the mail server is available on startup.
+shangpin:
+  hub:
+       mailSendTo: zhaogenchun@shangpin.com
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
