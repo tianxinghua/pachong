@@ -3,43 +3,13 @@ rootProject.name = 'iog'
 
 include 'project-framework'
 include "project-common"
-include 'iog-facade'
-include 'iog-facade-dubbo'
-include 'iog-order-dubbo'
 include 'project-dao'
 include 'iog-service'
 include 'iog-web-container'
 include 'iog-common-product'
 include 'iog-product-framework'
 include 'openapi-ice'
-include 'iog-facade-impl'
-include 'iog-sop'
-include 'iog-generater-util'
-include 'iog-web-apiHandler'
-include 'filippo-order'
-include 'spinnaker-order'
 
+include 'Eds-stock-template'
 
-include 'iog-product-web'
-
-include 'coltorti'
-include 'atelier-ostore-order'
-
-
-
-include 'efashion-order'
-include 'report'
-include 'picturedown'
-include 'optical'
-
-
-include 'brunarosso20-stock'
-include 'attribute-mapping'
-include 'smets-stock'
-include 'project-mq'
-
-include 'dellogliostore'
-include 'efashion'
-include 'project-mq'
-include 'biondini-stock'
 
