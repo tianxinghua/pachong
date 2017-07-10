@@ -17,7 +17,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 @FeignClient("ephub-product-business-service")
 public interface HubSlotSpuTaskGateWay {
 	
-	@RequestMapping(value="/add-slot-spu" ,method=RequestMethod.POST ,consumes = "application/json")
+	@RequestMapping(value="/hub-slot-spu/add-slot-spu" ,method=RequestMethod.POST ,consumes = "application/json")
 	public boolean add(@RequestBody HubSpuPendingDto hubSpuPendingDto);
 
 }
