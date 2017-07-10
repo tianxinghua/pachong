@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
@@ -62,6 +63,7 @@ public class ImageUploadController {
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public HubResponse<?> add(@RequestBody UploadQuery uploadQuery){
+		log.info("添加图片参数："+JsonUtil.serialize(uploadQuery)); 
 		if(StringUtils.isEmpty(uploadQuery.getSlotNoSpuId())){
 			return HubResponse.errorResp("请先扫码");
 		}
@@ -83,6 +85,7 @@ public class ImageUploadController {
 			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
 			String slotSpuNo = detailDto.getSlotSpuNo();
 			Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
+			log.info("已存在的图片："+JsonUtil.serialize(picMap));  
 			for(String spPicUrl : spPicUrls){
 				if(!picMap.containsKey(spPicUrl)){
 					if(null == map.get("hubSlotSpu")){
@@ -107,6 +110,7 @@ public class ImageUploadController {
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 
 		}
+		log.info("上传失败的图片："+JsonUtil.serialize(list)); 
 		if(list.size() == 0){
 			return HubResponse.successResp("全部上传成功。");
 		}else{
