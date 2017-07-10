@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.detail.StudioSlotSpuSendDetailVo;
@@ -60,7 +61,7 @@ public interface ImageUploadService {
 	 * @param studioSlotSpuSendDetailId
 	 * @return
 	 */
-	public int updateUploadPicSign(Long studioSlotSpuSendDetailId);
+	public int updateUploadPicSign(Long studioSlotSpuSendDetailId,UploadPicSign uploadPicSign);
 	/**
 	 * 确认该批次已拍摄完毕
 	 * @param slotNo

@@ -69,10 +69,15 @@ public interface HubSlotSpuSupplierService {
      */
     public void deleteSlotSpuSupplierForLogic(Long id);
 
+
     /**
-     * 当供货商操作数据后 更新slotSpuSupplier和slotSpu
+     * 当释放整个批次  更新slotSpuSupplier和slotSpu为 未处理
+     * 但如果spu状态为不处理 或者已发货 ，则状态不修改
+     * @param slotSpuSupplierId
+     * @return
      */
-    public boolean  updateSlotSpuSupplierWhenSupplierHandle(Long slotSpuSupplierId,Integer supplierHandleState) throws Exception;
+    public boolean updateSlotSpuSupplierWhenRemoveFromSlot(List<Long> slotSpuSupplierId);
+
 
     /**
      * 供货商选择产品 更新状态

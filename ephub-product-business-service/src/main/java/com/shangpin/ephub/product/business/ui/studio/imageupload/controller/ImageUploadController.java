@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
@@ -67,9 +68,6 @@ public class ImageUploadController {
 		if(StringUtils.isEmpty(uploadQuery.getSlotNoSpuId())){
 			return HubResponse.errorResp("请先扫码");
 		}
-		if(CollectionUtils.isEmpty(uploadQuery.getUrls())){
-			return HubResponse.errorResp("请先上传图片");
-		}
 		/**
 		 * 记录上传失败的链接
 		 */
@@ -84,29 +82,34 @@ public class ImageUploadController {
 			List<String> spPicUrls = uploadQuery.getUrls();
 			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
 			String slotSpuNo = detailDto.getSlotSpuNo();
-			Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
-			log.info("已存在的图片："+JsonUtil.serialize(picMap));  
-			for(String spPicUrl : spPicUrls){
-				if(!picMap.containsKey(spPicUrl)){
-					if(null == map.get("hubSlotSpu")){
-						HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
-						map.put("hubSlotSpu", spuDto);
-					}
-					if(null == map.get("hubSlotSpuSupplier")){
-						HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
-						map.put("hubSlotSpuSupplier", supplierDto);
-					}
-					HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
-					HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
-					String extension = pictureService.getExtension(spPicUrl);
-					boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
-					if(!bool){
-						list.add(spPicUrl);
+			if(CollectionUtils.isEmpty(spPicUrls)){
+				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
+				log.info("更新uploadPicSign为0==========="+result); 
+			}else{
+				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
+				log.info("已存在的图片："+JsonUtil.serialize(picMap));  
+				for(String spPicUrl : spPicUrls){
+					if(!picMap.containsKey(spPicUrl)){
+						if(null == map.get("hubSlotSpu")){
+							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
+							map.put("hubSlotSpu", spuDto);
+						}
+						if(null == map.get("hubSlotSpuSupplier")){
+							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
+							map.put("hubSlotSpuSupplier", supplierDto);
+						}
+						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
+						HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
+						String extension = pictureService.getExtension(spPicUrl);
+						boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
+						if(!bool){
+							list.add(spPicUrl);
+						}
 					}
 				}
+				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
+				log.info("更新uploadPicSign结果==========="+result); 
 			}
-			int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId());
-			log.info("更新uploadPicSign结果==========="+result); 
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 
 		}

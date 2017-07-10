@@ -40,7 +40,7 @@ public interface HubSlotSpuService {
 
 
     /**
-     * 跟新slotspu 中的品牌和货号
+     * 更新slotspu 中的品牌和货号
      * @param slotSpuId
      * @param pendingProductDto
      * @return

@@ -320,6 +320,10 @@ public class SlotManageService {
 			for (StudioSlotReturnDetailDto studioSlotReturnDetailDto : studioSlotReturnDetailDtoLists) {
 				StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(studioSlotReturnDetailDto.getStudioSlotReturnMasterId());
 				if (studioSlotReturnMasterDto != null) {
+					if(studioSlotReturnMasterDto.getArriveState()!=0){
+						count = count -1;
+						continue;
+					}
 					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
 					info.setSlotNo(studioSlotReturnDetailDto.getSlotNo());
 					info.setQty(studioSlotReturnMasterDto.getQuantity().toString());
@@ -355,6 +359,9 @@ public class SlotManageService {
 			if (slotManageQuery.getMasterId() == null) {
 				return HubResponse.errorResp("masterId不能为null!");
 			}
+			if (slotManageQuery.getSlotNo() == null) {
+				return HubResponse.errorResp("slotNo不能为null!");
+			}
 			detailCriteria.andStudioSlotReturnMasterIdEqualTo(Long.parseLong(slotManageQuery.getMasterId()));
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
@@ -368,6 +375,11 @@ public class SlotManageService {
 				info.setBarCode(studioSlotReturnDetailDto.getBarcode());
 				info.setSlotNo(studioSlotReturnDetailDto.getSlotNo());
 				info.setMasterId(studioSlotReturnDetailDto.getStudioSlotReturnMasterId().toString());
+				if(studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
+					info.setIsSlot("0");//0代表属于这个批次
+				}else{
+					info.setIsSlot("1");//1代表不属于这个批次，新增的以前未发送的商品
+				}
 				StudioSlotReturnDetailInfoLists.add(info);
 			}
 			vo.setStudioSlotReturnDetailDtoList(StudioSlotReturnDetailInfoLists);

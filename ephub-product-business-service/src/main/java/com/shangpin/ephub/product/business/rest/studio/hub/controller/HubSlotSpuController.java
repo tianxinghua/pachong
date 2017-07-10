@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.studio.hub.controller;
 
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +31,25 @@ public class HubSlotSpuController {
 	public boolean addSlotSpuAndSupplier(@RequestBody HubSpuPendingDto hubSpuPendingDto){
 		try {
 			PendingProductDto pendingProductDto = new PendingProductDto();
-			JavaUtil.fatherToChild(hubSpuPendingDto, pendingProductDto); 
+			JavaUtil.fatherToChild(hubSpuPendingDto, pendingProductDto);
 			return hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto );
 		} catch (Exception e) {
+			log.error("待拍照导入异常："+e.getMessage(),e);
+		}
+		return false;
+	}
+
+	@RequestMapping(value="/judge-spu-exist" , method=RequestMethod.POST)
+	public boolean judgeSlotSpuExist(@RequestBody HubSlotSpuDto slotSpuDto){
+		try {
+
+            HubSlotSpuDto hubSlotSpu = hubSlotSpuService.findHubSlotSpu(slotSpuDto.getBrandNo(), slotSpuDto.getSpuModel());
+            if(null==hubSlotSpu){
+                return false;
+            }else{
+                return true;
+            }
+        } catch (Exception e) {
 			log.error("待拍照导入异常："+e.getMessage(),e);
 		}
 		return false;
