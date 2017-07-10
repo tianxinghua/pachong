@@ -21,6 +21,7 @@ import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSuppli
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
@@ -117,6 +118,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 //		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
 		vo.setTime(dto.getCreateTime());
 		vo.setStudioCode(dto.getBarcode());
+		vo.setUploadPicSign(null != dto.getUploadPicSign() ? dto.getUploadPicSign() : 0); 
 		return vo;
 	}
 
@@ -242,6 +244,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	public int updateUploadPicSign(Long studioSlotSpuSendDetailId) {
 		StudioSlotSpuSendDetailDto detailDto = new StudioSlotSpuSendDetailDto();
 		detailDto.setUploadPicSign(UploadPicSign.HAVE_UPLOADED.getIndex().byteValue());
+		detailDto.setStudioSlotSpuSendDetailId(studioSlotSpuSendDetailId); 
 		return studioSlotSpuSendDetailGateWay.updateByPrimaryKeySelective(detailDto );
 	}
 
@@ -254,6 +257,9 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			StudioSlotDto studioSlot = new StudioSlotDto();
 			studioSlot.setSlotStatus(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
 			withCriteria.setStudioSlot(studioSlot );
+			StudioSlotCriteriaDto criteria = new StudioSlotCriteriaDto();
+			criteria.createCriteria().andSlotNoEqualTo(slotNo);
+			withCriteria.setCriteria(criteria );
 			int result = studioSlotGateWay.updateByCriteriaSelective(withCriteria );
 			if(result == 1){
 				return HubResponse.successResp("成功");
@@ -263,6 +269,35 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		}else{
 			return HubResponse.errorResp("Qty与Upload Qty数量不相等");
 		}
+	}
+
+	@Override
+	public List<String> findPictures(String barcode) {
+		try {
+			log.info("barcode========="+barcode); 
+			List<String> pics = new ArrayList<String>();
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(barcode);
+			if(null != detailDto){
+				String slotSpuNo = detailDto.getSlotSpuNo();
+				log.info("slotSpuNo=========="+slotSpuNo); 
+				HubSlotSpuPicCriteriaDto criteria = new HubSlotSpuPicCriteriaDto();
+				criteria.setFields("sp_pic_url");
+				criteria.setPageNo(1);
+				criteria.setPageSize(1000); 
+				criteria.createCriteria().andSlotSpuNoEqualTo(slotSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex()); 
+				List<HubSlotSpuPicDto> list = hubSlotSpuPicGateway.selectByCriteria(criteria );
+				log.info("查找到的图片数量==========="+list.size()); 
+				if(CollectionUtils.isNotEmpty(list)){
+					for(HubSlotSpuPicDto dto : list){
+						pics.add(dto.getSpPicUrl());
+					}
+				}
+			}
+			return pics;
+		} catch (Exception e) {
+			log.error("获取图片异常："+e.getMessage(),e);
+		}
+		return null;
 	}
 
 	

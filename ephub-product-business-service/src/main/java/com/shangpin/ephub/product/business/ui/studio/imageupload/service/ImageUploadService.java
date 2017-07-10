@@ -67,4 +67,11 @@ public interface ImageUploadService {
 	 * @return
 	 */
 	public HubResponse<?> confirm(String slotNo);
+	/**
+	 * 根据条码查找该产品的所有图片
+	 * @param barcode
+	 * @return
+	 */
+	public List<String> findPictures(String barcode);
+	
 }

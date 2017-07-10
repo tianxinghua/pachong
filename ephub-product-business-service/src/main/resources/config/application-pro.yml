@@ -82,4 +82,4 @@ shangpin:
              gmsCategoryUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetCategory
              scmsSupplierInfoUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
              sopSkuListBySupplierSkuNoUrl: http://sopoutapi.spidc1.com/Product/GetSopSkuListBySupplierSkuNo
-             getStudioOffDayCalendarUrl: http://qa.scm.shangpin.com/scms/DeliveryTimeLimit/GetStudioOffDayCalendar
+             getStudioOffDayCalendarUrl: http://scm.shangpin.com/scms/DeliveryTimeLimit/GetStudioOffDayCalendar

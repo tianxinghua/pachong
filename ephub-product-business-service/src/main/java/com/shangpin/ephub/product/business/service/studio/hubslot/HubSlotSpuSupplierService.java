@@ -89,6 +89,13 @@ public interface HubSlotSpuSupplierService {
     public List<SlotSpuSendDetailCheckDto>  updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos);
 
     /**
+     * 判断供货商是否可发货
+     * @param dtos
+     * @return
+     */
+    public List<SlotSpuSendDetailCheckDto>  judgeSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos);
+
+    /**
      *
      * @param slotSpuSupplierDtos
      * @return
