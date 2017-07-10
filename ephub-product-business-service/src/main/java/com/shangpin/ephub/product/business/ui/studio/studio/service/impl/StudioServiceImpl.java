@@ -555,7 +555,9 @@ public class StudioServiceImpl implements IStudioService {
                         (slotInfo.getSendState() !=null &&  slotInfo.getSendState() != StudioSlotSendState.WAIT_SEND.getIndex().byteValue())) {
                     throw new EphubException("C2", "Status of this slot is incorrect");
                 }
-                if (slotInfo.getMaxNum() <= slotInfo.getSlotProductList().size()) {
+                List<SlotProduct> productList = slotInfo.getSlotProductList();
+
+                if (slotInfo.getMaxNum() <= productList.size()) {
                     throw new EphubException("C3", "Amount of the slot reaches the maximal capacity");
                 }
                 HubSlotSpuSupplierCriteriaDto ssdto = new HubSlotSpuSupplierCriteriaDto();
@@ -566,24 +568,33 @@ public class StudioServiceImpl implements IStudioService {
 
                 if(products!=null && products.size()>0){
                     for (HubSlotSpuSupplierDto product :products){
+                        Optional<SlotProduct> slotProduct = productList.stream().filter(x->x.getSlotSpuSupplierId().equals(product.getSlotSpuSupplierId())).findFirst();
+                        String code= product.getSlotNo();
+                        if(slotProduct.isPresent()){
+                            code = slotProduct.get().getSupplierSpuModel();
+                        }
                         //region  判断是否处于可添加商品状态
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                             //throw new EphubException("C5", "该商品已经加入发货单了");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(), "C5", "The product has already added to the slot"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(), "C5", "The product has already added to the slot"));
                             continue;
                         }
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                            // throw new EphubException("C6", "该商品已经发货了");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(),"C6", "The product has already been shipped"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"C6", "The product has already been shipped"));
                             continue;
                         }
                         if (slotInfo.getCategoryFirst() != null) {
                             HubSpuPendingDto pendingDtoList = hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
+
+
+                            //Optional<HubSpuPendingDto> pendingDto = pendingDtoList.stream().filter(spu -> spu.getSpuPendingId() .equals(x.getSpuPendingId()) ).findFirst();
+
                             if (pendingDtoList != null && pendingDtoList.getHubCategoryNo() != null ) {
                                 String categoryNo = this.categoryMap.get(pendingDtoList.getHubCategoryNo().toLowerCase())!=null ?this.categoryMap.get(pendingDtoList.getHubCategoryNo().toLowerCase()).toString(): pendingDtoList.getHubCategoryNo();
                                 if (slotInfo.getCategoryFirst().stream().filter(x-> categoryNo.startsWith(x.trim())).count()<=0) {
                                     //throw new EphubException("C7", "该商品与目标发货单类型不符");
-                                    updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
+                                    updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
                                     continue;
                                 }
                             }
@@ -635,7 +646,7 @@ public class StudioServiceImpl implements IStudioService {
 
                         } else {
                             //throw new EphubException("W0", "商品加入发货单失败");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSlotSpuNo(),product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
                         }
                         //endregion
                     }

@@ -71,7 +71,7 @@
               and s.create_time >= #{startTime}
           </if>
           <if test="endTime != null">
-              and s.create_time >= #{endTime}
+              and s.create_time &lt;= #{endTime}
           </if>
         ORDER BY s.create_time desc
         <if test="startRow != null" >
@@ -130,7 +130,7 @@
                 and s.create_time >= #{startTime}
             </if>
             <if test="endTime != null">
-                and s.create_time >= #{endTime}
+                and s.create_time &lt;= #{endTime}
             </if>
         </where>
 
