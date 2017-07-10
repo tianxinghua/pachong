@@ -147,8 +147,8 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                     HubPendingSpuCheckResult spuResult = this.checkHubPendingSpu(pendingProductDto);
                     if(spuResult.isPassing()){
                         pendingProductDto.setCatgoryState((byte)1);
-                        pendingProductDto.setSpuBrandState((byte)1);
-                        pendingProductDto.setSpuModelState((byte)1);
+                        pendingProductDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
+                        pendingProductDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
                     }else{
                         checkSpuState(pendingProductDto,spuResult);
                         pass = false ;
@@ -160,6 +160,12 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                     pass = false ;
                     log.info("pending spu校验失败，不更新：货号校验不通过。");
                     updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
+                }
+
+                if(null!=updatedVo){
+                    response.setCode("1");
+                    response.setErrorMsg(updatedVo);
+                    return response;
                 }
 
 
@@ -176,7 +182,8 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
-            setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
+            updatedVo =  setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
+            response.setErrorMsg(updatedVo);
         }
         log.info("返回的校验结果：+"+JsonUtil.serialize(response));
         return response;
@@ -235,9 +242,10 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
         result.setPassing(true);
 
         List<CommonCheckBase> allPropertyCheck = new ArrayList<>();
-        allPropertyCheck.add(categoryCheck);
-        allPropertyCheck.add(spuModelCheck);
         allPropertyCheck.add(brandCheck);
+//        allPropertyCheck.add(categoryCheck);
+//        allPropertyCheck.add(spuModelCheck);
+
         propertyCheck.setAllPropertyCheck(allPropertyCheck);
         HubSpuPendingDto spuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(pendingDto.getSpuPendingId());
         try {
@@ -254,6 +262,11 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
     }
 
     private void  initPendingDto(PendingProductDto resourceDto,PendingProductDto targetDto){
+        if(null!=resourceDto.getSpuPendingId()){
+            HubSpuPendingDto hubSpuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(resourceDto.getSpuPendingId());
+            targetDto.setSupplierSpuId(hubSpuPendingDto.getSupplierSpuId());
+        }
+
 
         targetDto.setSpuPendingId(resourceDto.getSpuPendingId());
         targetDto.setSpuModel(resourceDto.getSpuModel());

@@ -142,6 +142,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 				StudioSlotSpuSendDetailDto hubSpuPendingDto = getStudioSlotSpuSendDetailDto(slotNo,slotSpuNo);
 				if(null != hubSpuPendingDto){
 					StudioSlotDefectiveSpuDto defectiveSpuDto = new StudioSlotDefectiveSpuDto();
+					defectiveSpuDto.setDetailId(hubSpuPendingDto.getStudioSlotSpuSendDetailId()); 
 					defectiveSpuDto.setSlotNo(slotNo);
 					defectiveSpuDto.setSlotSpuNo(slotSpuNo); 
 					defectiveSpuDto.setSupplierNo(hubSpuPendingDto.getSupplierNo());
@@ -272,6 +273,22 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		int result = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
 //		log.info("删除数据库结果=============="+result);
 		return result;
+	}
+	@Override
+	public int countDefectiveProduct(String slotNo) {
+		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		defectiveSpuGateWay.countByCriteria(criteria );
+		return 0;
+	}
+	@Override
+	public List<StudioSlotDefectiveSpuDto> selectDefectiveProduct(String slotNo) {
+		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
+		criteria.setFields("slot_spu_no");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		return defectiveSpuGateWay.selectByCriteria(criteria );
 	}
 
 }

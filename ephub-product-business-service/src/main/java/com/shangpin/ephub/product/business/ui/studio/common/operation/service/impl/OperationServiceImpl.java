@@ -18,6 +18,7 @@ import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSuppli
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
@@ -72,7 +73,7 @@ public class OperationServiceImpl implements OperationService {
 		if(operationQuery.getOperationQueryType() == OperationQueryType.OPEN_BOX.getIndex()){
 			createCriteria.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		}else if(operationQuery.getOperationQueryType() == OperationQueryType.IMAGE_UPLOAD.getIndex()){
-			createCriteria.andShotStatusIsNotNull().andShotStatusNotEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
+			createCriteria.andShotStatusIsNotNull().andShotStatusNotEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue()).andSlotStatusNotEqualTo(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
 		}
 		
 		Long studioId = getStudioId(operationQuery.getStudioNo());
@@ -125,6 +126,8 @@ public class OperationServiceImpl implements OperationService {
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
 		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
+		List<StudioSlotSpuSendDetailDto> list = selectDetail(studioSlotDto.getSlotNo());
+		slotVo.setQty(CollectionUtils.isNotEmpty(list) ? list.size() : 0); 
 		return slotVo;
 	}
 	
@@ -198,7 +201,7 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetailOfRrrived(String barcode) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setFields("slot_no,slot_spu_no");
+		criteria.setFields("studio_slot_spu_send_detail_id,slot_no,slot_spu_no");
 		criteria.createCriteria().andBarcodeEqualTo(barcode).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 		if(CollectionUtils.isNotEmpty(list)){
@@ -223,6 +226,16 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioDto getStudio(Long studioId) {
 		return studioGateWay.selectByPrimaryKey(studioId);
+	}
+
+	@Override
+	public List<StudioSlotSpuSendDetailDto> selectDetailOfArrived(String slotNo) {
+		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
+		criteria.setOrderByClause("create_time");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue()); 
+		return studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 	} 
 
 }

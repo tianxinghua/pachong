@@ -72,3 +72,4 @@ shangpin:
              gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetCategory
              sopSkuListBySupplierSkuNoUrl: http://sopoutapi.spidc1.com/Product/GetSopSkuListBySupplierSkuNo
+             getStudioOffDayCalendarUrl: http://scm.shangpin.com/scms/DeliveryTimeLimit/GetStudioOffDayCalendar

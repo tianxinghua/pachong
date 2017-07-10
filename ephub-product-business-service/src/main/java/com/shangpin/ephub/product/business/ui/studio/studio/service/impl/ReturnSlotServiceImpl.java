@@ -61,7 +61,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
         if(StringUtils.isEmpty(queryDto.getArriveState())){
             criteria.andArriveStateEqualTo((byte)0);
         }else{
-            criteria.andArriveStateEqualTo((byte)queryDto.getArriveState());
+            criteria.andArriveStateGreaterThan((byte)0);
         }
         return studioSlotReturnMasterGateWay.selectByCriteria(dto);
    }
@@ -79,7 +79,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        dto.setArriveUser(userName);
        dto.setArriveTime(new Date());
        dto.setArriveState((byte)1);
-       dto.setState((byte)1);
+       dto.setState((byte)2);
        return studioSlotReturnMasterGateWay.updateByPrimaryKeySelective(dto)>0;
    }
 
@@ -91,9 +91,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      */
    public ReturnSlotInfo getReceivedSlotInfo(String supplierId, Long id){
        ReturnSlotInfo result = new ReturnSlotInfo();
-
        StudioSlotReturnMasterDto studioSlot = studioSlotReturnMasterGateWay.selectByPrimaryKey(id);
-
        result.setStudioSlotReturnMasterId(studioSlot.getStudioSlotReturnMasterId());
        result.setStudioSendNo(studioSlot.getStudioSendNo());
        result.setQuantity(studioSlot.getQuantity());
@@ -101,7 +99,8 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        result.setTrackNo(studioSlot.getTrackNo());
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
-       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
+       dto.setPageSize(10000);
+       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
        result.setDetailDtoList(detailDtoList);
@@ -159,24 +158,60 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param id
      * @return
      */
-   public ReturnSlotInfo confirmSlotInfo(String supplierId, Long id){
-       ReturnSlotInfo result = new ReturnSlotInfo();
-
+   public HubResponse<ReturnSlotInfo> confirmSlotInfo(String supplierId, Long id,String userName){
+       HubResponse<ReturnSlotInfo> result = new HubResponse<ReturnSlotInfo>();
+       ReturnSlotInfo returnSlotInfo = new ReturnSlotInfo();
        StudioSlotReturnMasterDto studioSlot = studioSlotReturnMasterGateWay.selectByPrimaryKey(id);
+       if(studioSlot==null || !studioSlot.getSupplierId().equals(supplierId)) {
+           result.setCode("1");
+           result.setMsg("Slot is not found");
+           return null;
+       }
+       if(studioSlot.getState().equals((byte)3)){
+           result.setCode("1");
+           result.setMsg("The slot has been signed");
+           return null;
 
-       result.setStudioSlotReturnMasterId(studioSlot.getStudioSlotReturnMasterId());
-       result.setStudioSendNo(studioSlot.getStudioSendNo());
-       result.setQuantity(studioSlot.getQuantity());
-       result.setActualQuantity(studioSlot.getActualQuantity());
-       result.setTrackNo(studioSlot.getTrackNo());
+       }
+
+       returnSlotInfo.setStudioSlotReturnMasterId(studioSlot.getStudioSlotReturnMasterId());
+       returnSlotInfo.setStudioSendNo(studioSlot.getStudioSendNo());
+       returnSlotInfo.setQuantity(studioSlot.getQuantity());
+       returnSlotInfo.setActualQuantity(studioSlot.getActualQuantity());
+       returnSlotInfo.setTrackNo(studioSlot.getTrackNo());
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
+       dto.setPageSize(10000);
        dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
-       result.setDetailDtoList(detailDtoList);
 
-       return  result;
+        //实际收货数量
+       long count = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.RECEIVED)).count();
+
+        if(count<detailDtoList.size()){
+            List<StudioSlotReturnDetailDto> noArriveList = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.NOT_ARRIVE)).collect(Collectors.toList());
+            returnSlotInfo.setDetailDtoList(noArriveList);
+        }
+
+
+
+       StudioSlotReturnMasterDto masterDto = new StudioSlotReturnMasterDto();
+       masterDto.setStudioSlotReturnMasterId(id);
+       masterDto.setState((byte)3);
+       masterDto.setArriveState((byte)2);
+       masterDto.setArriveTime(new Date());
+       masterDto.setActualQuantity((int)count);
+       masterDto.setArriveUser(userName);
+
+       int i = studioSlotReturnMasterGateWay.updateByPrimaryKeySelective(masterDto);
+       if(i>0){
+            result.setContent(returnSlotInfo);
+       }else{
+           result.setMsg("1");
+           result.setMsg("confirm failed, please try again! ");
+       }
+       return result;
    }
 
     /**

@@ -1,44 +1,17 @@
 package com.shangpin.ephub.client.data.studio.enumeration;
-
 /**
-
-
- STUDIO_SLOT表中 批次状态
+ * <p>Title: UploadPicSign</p>
+ * <p>Description: 标记一件产品是否已经上传了图片 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年7月6日 下午2:59:58
  *
  */
-public enum StudioSlotState {
-
-	/**
-	 * 等待申请
-	 */
-	WAIT_APPLY(0,"WAIT_APPLY"),
-
-
-	/**
-	 * 已申请
-	 */
-	APPLYED(1,"APPLYED"),
-
-    /**
-     * 供货商发货
-     */
-    SEND(2,"SEND"),
-    /**
-     * 摄影棚收货
-     */
-    RECEIVED(3,"RECEIVED"),
-    /**
-     * 已拍摄
-     */
-    HAVE_SHOOT(4,"HAVE SHOOT"),
-
-    /**
-     * 摄影棚返货
-     */
-    STUDIO_RETURN(5,"STUDIO_RETURN");
-
-
-
+public enum UploadPicSign {
+	
+	 NOT_YET_UPLOAD(0,"未上传图片"),
+	 
+	 HAVE_UPLOADED(1,"已上传图片");
 
 	/**
      * 数字索引标识
@@ -49,7 +22,7 @@ public enum StudioSlotState {
      */
     private String description;
 
-    StudioSlotState(Integer index, String description){
+    UploadPicSign(Integer index, String description){
 		this.index = index;
 		this.description = description;
 	}

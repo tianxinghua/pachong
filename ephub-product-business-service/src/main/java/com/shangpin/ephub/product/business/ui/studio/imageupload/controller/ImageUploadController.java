@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
@@ -60,6 +63,13 @@ public class ImageUploadController {
 	
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public HubResponse<?> add(@RequestBody UploadQuery uploadQuery){
+		log.info("添加图片参数："+JsonUtil.serialize(uploadQuery)); 
+		if(StringUtils.isEmpty(uploadQuery.getSlotNoSpuId())){
+			return HubResponse.errorResp("请先扫码");
+		}
+		if(CollectionUtils.isEmpty(uploadQuery.getUrls())){
+			return HubResponse.errorResp("请先上传图片");
+		}
 		/**
 		 * 记录上传失败的链接
 		 */
@@ -72,35 +82,35 @@ public class ImageUploadController {
 
 			{put("hubSlotSpu",null);put("hubSlotSpuSupplier",null);}};
 			List<String> spPicUrls = uploadQuery.getUrls();
-			if(CollectionUtils.isNotEmpty(spPicUrls)){
-//				String slotNoSpuId = uploadQuery.getSlotNoSpuId();
-//				String slotNo = slotNoSpuId .substring(0, slotNoSpuId.indexOf("-"));
-//				String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
-				String slotSpuNo = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId()).getSlotSpuNo();
-				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
-				for(String spPicUrl : spPicUrls){
-					if(!picMap.containsKey(spPicUrl)){
-						if(null == map.get("hubSlotSpu")){
-							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
-							map.put("hubSlotSpu", spuDto);
-						}
-						if(null == map.get("hubSlotSpuSupplier")){
-							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
-							map.put("hubSlotSpuSupplier", supplierDto);
-						}
-						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
-						HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
-						String extension = pictureService.getExtension(spPicUrl);
-						boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
-						if(!bool){
-							list.add(spPicUrl);
-						}
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
+			String slotSpuNo = detailDto.getSlotSpuNo();
+			Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
+			log.info("已存在的图片："+JsonUtil.serialize(picMap));  
+			for(String spPicUrl : spPicUrls){
+				if(!picMap.containsKey(spPicUrl)){
+					if(null == map.get("hubSlotSpu")){
+						HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
+						map.put("hubSlotSpu", spuDto);
+					}
+					if(null == map.get("hubSlotSpuSupplier")){
+						HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
+						map.put("hubSlotSpuSupplier", supplierDto);
+					}
+					HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
+					HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
+					String extension = pictureService.getExtension(spPicUrl);
+					boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
+					if(!bool){
+						list.add(spPicUrl);
 					}
 				}
 			}
+			int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId());
+			log.info("更新uploadPicSign结果==========="+result); 
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 
 		}
+		log.info("上传失败的图片："+JsonUtil.serialize(list)); 
 		if(list.size() == 0){
 			return HubResponse.successResp("全部上传成功。");
 		}else{
@@ -119,6 +129,21 @@ public class ImageUploadController {
 		}
 	}
 	
+	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
+	public HubResponse<?> confirm(@RequestBody String slotNo){
+		log.info("confirm=========="+slotNo);
+		return imageUploadService.confirm(slotNo); 
+	}
 	
+	@RequestMapping(value = "/modification", method = RequestMethod.POST)
+	public HubResponse<?> modification(@RequestBody String barcode){
+		List<String> list = imageUploadService.findPictures(barcode);
+		if(null != list){
+			return HubResponse.successResp(list);
+		}else{
+			return HubResponse.errorResp("modification error");
+		}
+		
+	}
 
 }
