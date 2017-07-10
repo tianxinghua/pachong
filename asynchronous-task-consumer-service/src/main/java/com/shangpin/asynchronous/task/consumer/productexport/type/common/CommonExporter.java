@@ -2,6 +2,10 @@ package com.shangpin.asynchronous.task.consumer.productexport.type.common;
 
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.asynchronous.task.consumer.productexport.type.IExportService;
@@ -25,7 +29,16 @@ public abstract class CommonExporter implements IExportService {
 
 	@Override
 	public void productExportTask(Task message, Map<String, Object> headers) {
-		//TODO 
-		
+		//TODO 加载表头
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet("产品信息");
+		HSSFRow row = sheet.createRow(0);
+		HSSFCellStyle style = wb.createCellStyle();
+		String[] header = getExcelHeader();
+		if(header != null && header.length > 0){
+			
+		}
 	}
+	
+	
 }
