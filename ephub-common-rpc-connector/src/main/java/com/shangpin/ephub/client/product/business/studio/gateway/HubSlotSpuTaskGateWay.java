@@ -1,5 +1,6 @@
 package com.shangpin.ephub.client.product.business.studio.gateway;
 
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,14 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 @FeignClient("ephub-product-business-service")
 public interface HubSlotSpuTaskGateWay {
 	
-	@RequestMapping(value="/add-slot-spu" ,method=RequestMethod.POST ,consumes = "application/json")
+	@RequestMapping(value="/hub-slot-spu/add-slot-spu" ,method=RequestMethod.POST ,consumes = "application/json")
 	public boolean add(@RequestBody HubSpuPendingDto hubSpuPendingDto);
+
+
+	@RequestMapping(value="/hub-slot-spu/judge-spu-exist" ,method=RequestMethod.POST ,consumes = "application/json")
+	public boolean judgeSlotSpuExist(@RequestBody HubSlotSpuDto slotSpuDto);
+
+
+
 
 }
