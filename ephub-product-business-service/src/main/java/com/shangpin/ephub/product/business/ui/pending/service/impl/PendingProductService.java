@@ -5,15 +5,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -75,6 +73,9 @@ public class PendingProductService extends PendingSkuService{
 //    private PengdingToHubGateWay pendingToHubGateWay;
     @Autowired
     private IHubSpuPendingPicService  hubSpuPendingPicService;
+
+    @Autowired
+	private HubSlotSpuService slotSpuService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -282,15 +283,51 @@ public class PendingProductService extends PendingSkuService{
             pendingProductDto.setCreateTime(null); 
             pendingProductDto.setPicState(null);
             log.info("更新参数："+JsonUtil.serialize(pendingProductDto));
+
+			//摄影棚处理
+			setHubSlotSpu(pendingProductDto);
+
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-        } catch (Exception e) {
+
+
+
+		} catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
             setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
         }
     	log.info("返回的校验结果：+"+JsonUtil.serialize(response)); 
     	return response;
     }
-    private void checkSpuState(PendingProductDto hubPendingSpuDto, HubPendingSpuCheckResult hubPendingSpuCheckResult) {
+
+	private void setHubSlotSpu(PendingProductDto pendingProductDto) throws Exception {
+		HubSpuPendingDto spuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(pendingProductDto.getSpuPendingId());
+		//查询原始数据的状态
+		if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()
+				&&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()
+				){
+
+			//第一次插入  检查修改后的数据状态
+            if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
+                if(pendingProductDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()||
+						pendingProductDto.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+
+					 slotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+				}
+            }
+        }else if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.HANDLED.getIndex().byteValue()
+
+		){
+			 //修改状态
+			if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()) {
+				if (pendingProductDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex() ||
+						pendingProductDto.getCatgoryState() == CatgoryState.MISMATCHING.getIndex()) {
+					slotSpuService.updateSlotSpu(pendingProductDto);
+				}
+			}
+		}
+	}
+
+	private void checkSpuState(PendingProductDto hubPendingSpuDto, HubPendingSpuCheckResult hubPendingSpuCheckResult) {
     	if(hubPendingSpuCheckResult.isSpuModel()){
 			hubPendingSpuDto.setSpuModelState((byte)1);
 		}else{

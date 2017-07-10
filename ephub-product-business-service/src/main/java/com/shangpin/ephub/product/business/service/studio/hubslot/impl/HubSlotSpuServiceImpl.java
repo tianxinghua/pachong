@@ -100,6 +100,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                     //一般情况下是唯一索引冲突，需要获取数据
 
                     e.printStackTrace();
+                    log.error("save slot spu  " + slotSpuDto +"  error . reason: " + e.getMessage(),e);
                     handleInsertSlotSpuException(pendingProductDto,slotSpuDto);
                 }
             }else{
@@ -120,7 +121,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             }
 
             //spupending 处理
-            pendingService.updatePendingSlotStateAndUser(slotSpuSupplierDto.getSpuPendingId(),pendingProductDto.getUpdateUser(), SpuPendingStudioState.HANDLED);
+            pendingService.updatePendingSlotStateAndUser(slotSpuSupplierDto.getSpuPendingId(),
+                    StringUtils.isNotBlank(pendingProductDto.getUpdateUser())?pendingProductDto.getUpdateUser():"ServiceAutoAdd", SpuPendingStudioState.HANDLED);
 
 
 

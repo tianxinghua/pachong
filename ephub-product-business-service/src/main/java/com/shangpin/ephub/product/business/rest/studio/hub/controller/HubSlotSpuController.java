@@ -50,7 +50,7 @@ public class HubSlotSpuController {
                 return true;
             }
         } catch (Exception e) {
-			log.error("待拍照导入异常："+e.getMessage(),e);
+			log.error("查询商品品牌："+ slotSpuDto.getBrandNo()+ " 货号：" + slotSpuDto.getSpuModel() +" 是否存在出现错误："+e.getMessage(),e);
 		}
 		return false;
 	}

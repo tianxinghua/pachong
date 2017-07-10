@@ -69,12 +69,12 @@ public interface IPendingProductService {
 	public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto);
 	/**
 	 * 批量更新pending数据
-	 * @param pendingProductDto
+	 * @param pendingProducts
 	 */
 	public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts);
 	/**
 	 * 将HubSpuPendingDto更新为无法处理
-	 * @param updateUser操作人
+	 * @param updateUser 操作人
 	 * @param spuPendingId
 	 */
 	public boolean updatePendingProductToUnableToProcess(String updateUser,String spuPendingId) throws Exception;
