@@ -224,14 +224,14 @@ public class EphubProductBusinessTests {
 
 	@Test
 	public void testSlotSpuMaster(){
-		SlotInfo slotInfo = slotDetailService.getSlotInfo("20170706S0001001");
+		SlotInfo slotInfo = slotDetailService.getSlotInfo("20170707S0001003");
 		System.out.print("slotInfo ="+slotInfo.toString());
 	}
 
 	@Test
 	public void testSlotSpuDetail(){
         List<SlotSpuDetail> slotSpuDetailList = new ArrayList<>();
-		List<SlotSpuSendAndReturn> sendAndReturns = slotSendReturnService.findSlotSpuSendAndReturnMsgBySlotNo("20170706S0001001");
+		List<SlotSpuSendAndReturn> sendAndReturns = slotSendReturnService.findSlotSpuSendAndReturnMsgBySlotNo("20170707S0001003");
 		for(SlotSpuSendAndReturn dto :sendAndReturns){
 			SlotSpuDetail vo = new SlotSpuDetail();
 			BeanUtils.copyProperties(dto,vo);
