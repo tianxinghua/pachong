@@ -104,24 +104,24 @@ environments{
 
         db {
             driverClassName = 'com.mysql.jdbc.Driver'
-            url ='jdbc:mysql://49.213.13.167:3306/iog?useUnicode=true&amp;characterEncoding=utf-8'
+            url ='jdbc:mysql://iogdb.shangpin.com:3306/iog?useUnicode=true&amp;characterEncoding=utf-8'
             username = 'shangpin'
             password = 'shangpin@123'
 
 
 
             Ice.Default.Locator='SPIceGrid/Locator:default -h 172.20.10.242 -p 12000:default -h 172.20.10.246 -p 12000'
-
-            MongoDB.hostname='49.213.13.167'      
+//            49.213.13.167     47.90.79.139
+            MongoDB.hostname='iogmongodb.shangpin.com'
             MongoDB.port='27017'
             SOP.HOST='http://open.shangpin.com:8080'
 
             zookeeper.address='192.168.20.40:2181,192.168.20.41:2181,192.168.20.42:2181'
 
             wmsUrl='http://spwmsinventory.spidc1.com'
-			
-			
-			
+
+
+
             redis.url='10.11.20.140'
             redis.port='6379'
             redis.password=''

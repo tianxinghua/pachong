@@ -6,6 +6,8 @@ package com.shangpin.iog.mongobase;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -20,6 +22,8 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 @Configurable
@@ -51,7 +55,13 @@ public class MongodbConfiguration extends AbstractMongoConfiguration {
     }
 
     public MongoClient mongoClient() throws Exception{
-        return new MongoClient(mongodbAddress,port);
+        String username="writer",database="iog",password="wt@sp520";
+
+        ServerAddress sa = new ServerAddress(mongodbAddress, port);
+        List<MongoCredential> mongoCredentialList = new ArrayList<MongoCredential>();
+        mongoCredentialList.add(MongoCredential.createMongoCRCredential(username, database, password.toCharArray()));
+        return new MongoClient(sa, mongoCredentialList);
+//        return new MongoClient(mongodbAddress,port);
     }
 
     public @Bean
