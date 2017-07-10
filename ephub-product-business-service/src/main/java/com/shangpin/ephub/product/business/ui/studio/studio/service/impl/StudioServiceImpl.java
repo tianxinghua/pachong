@@ -562,19 +562,15 @@ public class StudioServiceImpl implements IStudioService {
                 if (slotInfo.getMaxNum() <= productList.size()) {
                     throw new EphubException("C3", "Amount of the slot reaches the maximal capacity");
                 }
-                HubSlotSpuSupplierCriteriaDto ssdto = new HubSlotSpuSupplierCriteriaDto();
-                ssdto.setPageSize(100000);
-                ssdto.createCriteria().andSlotSpuSupplierIdIn(slotSSIds);
 
-                List<HubSlotSpuSupplierDto> products = hubSlotSpuSupplierGateway.selectByCriteria(ssdto);
+                SlotSpuSupplierExtendQueryDto queryDto = new SlotSpuSupplierExtendQueryDto();
+                queryDto.setPageSize(1000000);
+                queryDto.setSlotSpuSupplierIds(slotSSIds);
+                List<HubSlotSpuSupplierExtend> products = hubSlotSpuSupplierExtendGateWay.selectByQuery(queryDto);
 
                 if(products!=null && products.size()>0){
-                    for (HubSlotSpuSupplierDto product :products){
-                        Optional<SlotProduct> slotProduct = productList.stream().filter(x->x.getSlotSpuSupplierId().equals(product.getSlotSpuSupplierId())).findFirst();
-                        String code= product.getSlotNo();
-                        if(slotProduct.isPresent()){
-                            code = slotProduct.get().getSupplierSpuModel();
-                        }
+                    for (HubSlotSpuSupplierExtend product :products){
+                        String code= product.getSupplierSpuModel();
                         //region  判断是否处于可添加商品状态
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                             //throw new EphubException("C5", "该商品已经加入发货单了");
