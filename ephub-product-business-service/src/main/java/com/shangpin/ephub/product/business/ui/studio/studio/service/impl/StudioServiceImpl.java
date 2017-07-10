@@ -407,6 +407,8 @@ public class StudioServiceImpl implements IStudioService {
             spuSupplierDto.setCriteria(criteriaDto);
 
             hubSlotSpuSupplierGateway.updateByCriteriaSelective(spuSupplierDto);
+            //TODO 需要调用重任的删除接口
+
             StudioSlotSpuSendDetailCriteriaDto detailDto = new StudioSlotSpuSendDetailCriteriaDto();
             //删除发送详情
             List<Long> ids = listDetail.stream().map(StudioSlotSpuSendDetailDto::getStudioSlotSpuSendDetailId).collect(Collectors.toList());
@@ -625,20 +627,21 @@ public class StudioServiceImpl implements IStudioService {
                         data.setCreateUser(createUser);
                         Long id = studioSlotSpuSendDetailGateWay.insert(data);
                         if (id > 0) {
-                            HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
-                            upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-                            upSlotSpu.setSlotNo(slotNo);
-                            upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
-                            hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+//                            HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
+//                            upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+//                            upSlotSpu.setSlotNo(slotNo);
+//                            upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
+//                            hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
                            //TODO: 需要调用重任的添加接口未验证
                             SlotSpuSendDetailCheckDto checkDto = new SlotSpuSendDetailCheckDto();
                             checkDto.setSlotNo(product.getSlotNo());
                             checkDto.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-
+                            checkDto.setUserName(createUser);
                             CommonResult commonResult = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSelectProduct(checkDto);
                             if(!commonResult.isSuccess()){
-                                //TODO:失败了怎么处理没想好
+                                updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
+                                continue;
                             }
 
                             slotInfo.setCountNum(slotInfo.getCountNum() + 1);
@@ -723,6 +726,7 @@ public class StudioServiceImpl implements IStudioService {
             dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotSpuSendDetailIdEqualTo(slotSSDId);
            int count =  studioSlotSpuSendDetailGateWay.deleteByCriteria(dto);
            if(count>0){
+               //TODO 需要调用删除商品接口
                HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
                upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
                upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
