@@ -3,7 +3,9 @@ package com.shangpin.ephub.client.data.mysql.studio.spu.gateway;
 import java.util.List;
 
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +37,7 @@ public interface HubSlotSpuGateWay {
     public Long insertSelective(@RequestBody HubSlotSpuDto hubSpu);
 	
 	@RequestMapping(value = "/hub-slot-spu/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubSlotSpuDto> selectByCriteriaWithRowbounds(@RequestBody HubSpuCriteriaWithRowBoundsDto criteriaWithRowBounds);
+    public List<HubSlotSpuDto> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/hub-slot-spu/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSlotSpuDto> selectByCriteria(@RequestBody HubSlotSpuCriteriaDto criteria);
@@ -44,10 +46,10 @@ public interface HubSlotSpuGateWay {
     public HubSlotSpuDto selectByPrimaryKey(@PathVariable("id") Long spuId);
 	
 	@RequestMapping(value = "/hub-slot-spu/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteriaSelective(@RequestBody HubSpuWithCriteriaDto hubSpuWithCriteria);
+    public int updateByCriteriaSelective(@RequestBody HubSlotSpuWithCriteriaDto hubSpuWithCriteria);
 	
 	@RequestMapping(value = "/hub-slot-spu/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByCriteria(@RequestBody HubSpuWithCriteriaDto hubSpuWithCriteria);
+    public int updateByCriteria(@RequestBody HubSlotSpuWithCriteriaDto hubSpuWithCriteria);
 	
 	@RequestMapping(value = "/hub-slot-spu/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody HubSlotSpuDto hubSpu);
