@@ -241,9 +241,9 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	}
 
 	@Override
-	public int updateUploadPicSign(Long studioSlotSpuSendDetailId) {
+	public int updateUploadPicSign(Long studioSlotSpuSendDetailId,UploadPicSign uploadPicSign) {
 		StudioSlotSpuSendDetailDto detailDto = new StudioSlotSpuSendDetailDto();
-		detailDto.setUploadPicSign(UploadPicSign.HAVE_UPLOADED.getIndex().byteValue());
+		detailDto.setUploadPicSign(uploadPicSign.getIndex().byteValue());
 		detailDto.setStudioSlotSpuSendDetailId(studioSlotSpuSendDetailId); 
 		return studioSlotSpuSendDetailGateWay.updateByPrimaryKeySelective(detailDto );
 	}
