@@ -3,9 +3,11 @@ package com.shangpin.asynchronous.task.consumer.productexport.adapter;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.asynchronous.task.consumer.productexport.type.IExportService;
 import com.shangpin.asynchronous.task.consumer.productexport.type.allproduct.AllProductServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productexport.type.pending.ExportServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
@@ -35,6 +37,9 @@ public class ProductExportHandler {
 	TaskImportService taskService;
 	@Autowired
 	AllProductServiceImpl allProductServiceImpl;
+	
+	@Qualifier("waitShootExporter")
+	private IExportService waitShootExporter;
 	
 	/**
 	 * 商品导出数据流监听
@@ -67,7 +72,7 @@ public class ProductExportHandler {
 					SlotManageQuery slotManageQuery = JsonUtil.deserialize(message.getData(), SlotManageQuery.class);
 					allProductServiceImpl.exportStudioSlot(message.getTaskNo(), slotManageQuery);
 				}else if(message.getType() == TaskType.EXPORT_WAIT_SHOOT.getIndex()){
-					
+					waitShootExporter.productExportTask(message, headers); 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

@@ -19,5 +19,5 @@ public interface IExportService {
 	 * @param message
 	 * @param headers
 	 */
-	public void productExportTask(Task message, Map<String, Object> headers);
+	public void productExportTask(Task message, Map<String, Object> headers) throws Exception ;
 }
