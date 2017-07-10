@@ -608,7 +608,7 @@ public class SlotManageService {
 			dto.setTrackStatus((byte) 0);
 			dto.setType((byte) 1);
 			dto.setCreateTime(new Date());
-			dto.setCreateUser("admin");
+			dto.setCreateUser(slotManageQuery.getOperatorName());
 			dto.setUpdateTime(new Date());
 			studioSlotLogistictTrackGateWay.insertSelective(dto);
 
