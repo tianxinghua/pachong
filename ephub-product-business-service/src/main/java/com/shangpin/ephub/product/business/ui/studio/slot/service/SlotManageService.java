@@ -507,6 +507,10 @@ public class SlotManageService {
 
 				}
 			} else {
+				StudioSlotReturnMasterDto returnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId());
+				if(returnMasterDto.getState()==0){
+					return HubResponse.errorResp("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
+				}
 				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
 				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
 				Date date = simpleDateFormat.parse(slotNo);
@@ -576,6 +580,9 @@ public class SlotManageService {
 			if (slotManageQuery.getMasterId() == null) {
 				return HubResponse.errorResp("masterId不能为null");
 			}
+			if (slotManageQuery.getOperatorName() == null) {
+				return HubResponse.errorResp("operatorName不能为null");
+			}
 			
 			StudioSlotReturnMasterDto studioSlotReturnMaster= studioSlotReturnMasterGateWay.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
             if(studioSlotReturnMaster==null){
@@ -584,7 +591,7 @@ public class SlotManageService {
             
             studioSlotReturnMaster.setTrackNo(slotManageQuery.getTrackNo());
             studioSlotReturnMaster.setState((byte) 1);
-            studioSlotReturnMaster.setSendUser("admin");
+            studioSlotReturnMaster.setSendUser(slotManageQuery.getOperatorName());
             studioSlotReturnMaster.setSendTime(new Date());
             studioSlotReturnMaster.setSendState((byte) 1);
             studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMaster);
