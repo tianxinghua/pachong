@@ -31,7 +31,12 @@
 
       <where>
         s.data_state = 1
-
+          <if test="slotSpuSupplierIds != null">
+              and s.slot_spu_supplier_id in
+              <foreach item="item" index="index" collection="slotSpuSupplierIds" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
           <if test="supplierId != null">
           and s.supplier_id = #{supplierId}
           </if>
@@ -89,6 +94,12 @@
 
         <where>
             s.data_state = 1
+            <if test="slotSpuSupplierIds != null">
+                and s.slot_spu_supplier_id in
+                <foreach item="item" index="index" collection="slotSpuSupplierIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="supplierId != null">
                 and s.supplier_id = #{supplierId}
             </if>

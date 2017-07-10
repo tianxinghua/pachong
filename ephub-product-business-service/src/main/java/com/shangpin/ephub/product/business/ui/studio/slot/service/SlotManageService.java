@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.ui.studio.slot.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -317,6 +318,20 @@ public class SlotManageService {
 
 			int count = studioSlotReturnDetailDtoLists.size();
 			List<StudioSlotReturnMasterInfo> StudioSlotReturnMasterInfoLists = new ArrayList<>();
+			HashMap<String,Object> map = new  HashMap<>();
+			for (StudioSlotReturnDetailDto studioSlotReturnDetail : studioSlotReturnDetailDtoLists) {
+				if(map.containsKey("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId())){
+					String slotNo = studioSlotReturnDetail.getSlotNo().substring(0, 8);
+					String paramSlotNo = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
+					Date date = simpleDateFormat.parse(slotNo);
+					Date newDate = simpleDateFormat.parse(paramSlotNo);
+					if (newDate.before(date)) {
+						map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), slotNo);
+					}
+				}else{
+					map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), studioSlotReturnDetail.getSlotNo());
+				}
+			}
 			for (StudioSlotReturnDetailDto studioSlotReturnDetailDto : studioSlotReturnDetailDtoLists) {
 				StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(studioSlotReturnDetailDto.getStudioSlotReturnMasterId());
 				if (studioSlotReturnMasterDto != null) {
@@ -325,7 +340,7 @@ public class SlotManageService {
 						continue;
 					}
 					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
-					info.setSlotNo(studioSlotReturnDetailDto.getSlotNo());
+					info.setSlotNo(map.get("master_id_"+studioSlotReturnDetailDto.getStudioSlotReturnMasterId()).toString());
 					info.setQty(studioSlotReturnMasterDto.getQuantity().toString());
 					info.setActualQty(studioSlotReturnMasterDto.getActualSendQuantity().toString());
 					info.setMissingQty(studioSlotReturnMasterDto.getMissingQuantity().toString());
@@ -492,6 +507,10 @@ public class SlotManageService {
 
 				}
 			} else {
+				StudioSlotReturnMasterDto returnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId());
+				if(returnMasterDto.getState()==0){
+					return HubResponse.errorResp("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
+				}
 				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
 				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
 				Date date = simpleDateFormat.parse(slotNo);
@@ -561,6 +580,22 @@ public class SlotManageService {
 			if (slotManageQuery.getMasterId() == null) {
 				return HubResponse.errorResp("masterId不能为null");
 			}
+			if (slotManageQuery.getOperatorName() == null) {
+				return HubResponse.errorResp("operatorName不能为null");
+			}
+			
+			StudioSlotReturnMasterDto studioSlotReturnMaster= studioSlotReturnMasterGateWay.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
+            if(studioSlotReturnMaster==null){
+            	return HubResponse.errorResp("masterId:"+slotManageQuery.getMasterId()+"没有对应的返货主表!");
+            }
+            
+            studioSlotReturnMaster.setTrackNo(slotManageQuery.getTrackNo());
+            studioSlotReturnMaster.setState((byte) 1);
+            studioSlotReturnMaster.setSendUser(slotManageQuery.getOperatorName());
+            studioSlotReturnMaster.setSendTime(new Date());
+            studioSlotReturnMaster.setSendState((byte) 1);
+            studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMaster);
+			
 			dto.setTrackName(slotManageQuery.getTrackName());
 			dto.setTrackNo(slotManageQuery.getTrackNo());
 			StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
@@ -573,9 +608,10 @@ public class SlotManageService {
 			dto.setTrackStatus((byte) 0);
 			dto.setType((byte) 1);
 			dto.setCreateTime(new Date());
-			dto.setCreateUser("admin");
+			dto.setCreateUser(slotManageQuery.getOperatorName());
 			dto.setUpdateTime(new Date());
 			studioSlotLogistictTrackGateWay.insertSelective(dto);
+
 		} catch (Exception e) {
 			Log.error("创建批次物流信息失败!");
 			e.printStackTrace();

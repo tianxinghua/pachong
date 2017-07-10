@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 /**
 
@@ -17,6 +18,11 @@ public class SlotSpuSupplierQueryDto {
     private Integer pageSize = 10;
     
     protected Integer startRow;
+
+    /*
+    * 商品Ids
+    * */
+    private List<Long> slotSpuSupplierIds;
 
 	/**
 	 * 供应商Id
