@@ -19,10 +19,14 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.log4j.Logger;
+
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 public class SoapXmlUtil {
 	
-	
+	private static Logger logger = Logger.getLogger("info");
+	private static LoggerUtil logError = LoggerUtil.getLogger("error");
 	/**
 	 * 获取soap格式的xml信息
 	 * @param serviceUrl 要下载的网址
@@ -73,6 +77,8 @@ public class SoapXmlUtil {
 	public static String downloadSoapXmlAsFile(String serviceUrl ,String sopAction,String contentType,String soapRequestData,String localUrl){
 		
 		HttpClient httpClient = new HttpClient();
+		httpClient.getHttpConnectionManager().getParams().setConnectionTimeout(1000*60*30);
+		httpClient.getHttpConnectionManager().getParams().setSoTimeout(1000*60*30);
 		PostMethod postMethod = new PostMethod(serviceUrl);
         postMethod.setRequestHeader("SOAPAction", sopAction);
         postMethod.setRequestHeader("Content-Type", contentType);
@@ -108,7 +114,8 @@ public class SoapXmlUtil {
             }
             
         } catch (Exception e) {
-        	e.printStackTrace();
+        	logger.info("下载xml失败，原因====================="+e.toString()); 
+        	logError.error("下载xml失败，原因====================="+e.toString()); 
         }finally{
         	try {
 				bufferedOutputStream.close();

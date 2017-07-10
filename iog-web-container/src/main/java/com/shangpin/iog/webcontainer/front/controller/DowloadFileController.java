@@ -97,7 +97,9 @@ public class DowloadFileController {
 //	            	List<String> ruleUrlList = new ArrayList<String>();
 	            	for(PicUrlDTO pic : picUrlDTOList){
 //	            		ruleUrlList.add(pic.getUrl());
-	            		ruleUrlMap.put(pic.getUrl(), "");
+	            		if(!ruleUrlMap.containsKey(pic.getUrl())){
+	            			ruleUrlMap.put(pic.getUrl(), "");
+	            		}	            		
 	            	}
 	            	//查找图片目录下有没有该供应商文件夹
 	            	File filef = new File(pictmpdownloadpath);
@@ -127,11 +129,12 @@ public class DowloadFileController {
 	        					File ffff = new File(pictmpdownloadpath+File.separator+theSupplier+File.separator+dirName);
 	            				File[] picFiles = ffff.listFiles();
 	        					if(null != picFiles && picFiles.length>0){
-	        						for(int i= 0;i<picFiles.length;i++){
-	        							tmpFileName = picFiles[i].getName();
-	        							if(ruleUrlMap.containsKey(tmpFileName.substring(0,tmpFileName.indexOf(" ")).trim())){
+	        						for(int i= 0;i<picFiles.length;i++){	        							
+	        							tmpFileName = picFiles[i].getName();//SPID2015070301312-MTE1OTc1NTA4-QkxBQ0s= (1).jpg
+	        							String spuId = tmpFileName.substring(0,tmpFileName.indexOf(" ")).trim();
+	        							if(ruleUrlMap.containsKey(spuId) && !findMap.containsKey(tmpFileName) ){
 	        								filesToAdd.add(picFiles[i]);
-	        								findMap.put(tmpFileName.substring(0,tmpFileName.indexOf(" ")).trim(), "");
+	        								findMap.put(tmpFileName, spuId);
 	        							}
 	        						}
 //	            					if(null != ruleUrlList && ruleUrlList.size()>0){	            						
@@ -150,7 +153,7 @@ public class DowloadFileController {
 	        					
 	        				}
 	        				for(String fileKey:ruleUrlMap.keySet() ){
-	        					if(findMap.containsKey(fileKey)){
+	        					if(findMap.containsValue(fileKey)){
 	        						
 	        					}else{
 	        						writer.write(fileKey+"  没有找到对应的图片\r\n"); 

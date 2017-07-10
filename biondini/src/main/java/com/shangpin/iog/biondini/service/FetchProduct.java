@@ -29,7 +29,7 @@ import com.shangpin.iog.service.ProductFetchService;
 /**
  * Created by 赵根春 on 2015/12/25.
  */
-@Component("biondini")
+//@Component("biondini")
 public class FetchProduct {
 
 	@Autowired
@@ -91,7 +91,7 @@ public class FetchProduct {
 										.getTableMdle();
 								for (TableMdle tb : tbList) {
 									if (item.getRayon().equals(tb.getCode())) {
-										spu.setCategoryGender(tb.getLibelle());
+										spu.setCategoryGender(item.getRayon());
 										flag = true;
 										break;
 									}

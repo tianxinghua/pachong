@@ -4,50 +4,35 @@ package com.shangpin.iog.efashion.service;
  * Created by wang on 2015/9/21.
  */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Scanner;
-import java.util.TimeZone;
+
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.common.utils.UUIDGenerator;
 import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-import com.shangpin.iog.dto.EventProductDTO;
-import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SpuDTO;
-import com.shangpin.iog.efashion.dao.Image;
+import com.shangpin.iog.dto.StockUpdateLimitDTO;
+import com.shangpin.iog.efashion.dao.Item;
 import com.shangpin.iog.efashion.dao.Material;
 import com.shangpin.iog.efashion.dao.Result;
 import com.shangpin.iog.efashion.dao.ReturnObject;
 import com.shangpin.iog.service.EventProductService;
 import com.shangpin.iog.service.ProductFetchService;
 import com.shangpin.iog.service.ProductSearchService;
-import com.shangpin.iog.efashion.dao.Item;
-
-import net.sf.json.JSONObject;
-
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.shangpin.iog.service.StockUpdateLimitService;
 
 /**
  * Created by 赵根春 on 2015/9/25.
@@ -110,7 +95,23 @@ public class FetchProduct {
 	 * fetch product and save into db
 	 */
 	Map<String,SkuDTO> skuDTOMap = new HashedMap();
+	
+	
+	@Autowired
+	StockUpdateLimitService stockUpdateLimitService;
 	public void fetchProductAndSave() {
+//		StockUpdateLimitDTO d = new StockUpdateLimitDTO();
+//		d.setSupplierId("201610111740");
+//		d.setLimitNum(13);
+//		try {
+//			StockUpdateLimitDTO s = stockUpdateLimitService.findBySupplierId("201610111740");
+//			stockUpdateLimitService.updateLimitNum(d);
+//			stockUpdateLimitService.save(d);
+//		} catch (ServiceException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
 		Date startDate,endDate= new Date();
 		startDate = DateTimeUtil.getAppointDayFromSpecifiedDay(endDate,day*-1,"D");
 		

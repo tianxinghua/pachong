@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -92,7 +93,7 @@ public class FetchProduct {
 			String xml = null;
 			xml = HttpUtil45
 					.get(url,
-							new OutTimeConfig(1000 * 60*5, 1000 * 60*5, 1000 * 60*5),
+							new OutTimeConfig(1000 * 60*5, 1000 * 60*30, 1000 * 60*30),
 							null);
 			System.out.println(url);
 				ByteArrayInputStream is = null;
@@ -111,7 +112,7 @@ public class FetchProduct {
 			}
 			
 			for (Product product : productList) {
-				SpuDTO spu = new SpuDTO();
+
 
 				Items items = product.getItems();
 				if (null == items) {// 无SKU
@@ -122,6 +123,8 @@ public class FetchProduct {
 				if (null == itemList)
 					continue;
 				String skuId = "";
+
+				Map<String,String> spuMap = new HashMap<>();
 				for (Item item : itemList) {
 					SkuDTO sku = new SkuDTO();
 					try {
@@ -132,7 +135,7 @@ public class FetchProduct {
 						sku.setId(UUIDGenerator.getUUID());
 						sku.setSupplierId(supplierId);
 
-						sku.setSpuId(product.getProductId());
+
 						skuId = item.getItem_id();
 						if (skuId.indexOf("½") > 0) {
 							skuId = skuId.replace("½", "+");
@@ -143,6 +146,39 @@ public class FetchProduct {
 						sku.setSalePrice(item.getSell_price());
 						// sku.setSupplierPrice(item.getSupply_price());
 						sku.setColor(item.getColor());
+
+						if(StringUtils.isNotBlank(sku.getColor())) {
+							if(!spuMap.containsKey(product.getProductId()+"#"+sku.getColor())){
+								SpuDTO spu = new SpuDTO();
+								try {
+									spu.setId(UUIDGenerator.getUUID());
+									spu.setSupplierId(supplierId);
+									spu.setSpuId(product.getProductId()+"#"+sku.getColor());
+									spu.setBrandName(product.getProduct_brand());
+									spu.setCategoryName(product.getCategory());
+									spu.setSpuName(product.getProduct_name());
+									spu.setSeasonId(product.getSeason_code());
+									spu.setMaterial(product.getProduct_material());
+									if (StringUtils.isNotBlank(product.getMade_in())) {
+										origin = product.getMade_in();
+									}
+									spu.setProductOrigin(origin);
+									// 商品所属性别字段；
+									spu.setCategoryGender(product.getMain_category());
+									productFetchService.saveSPU(spu);
+								} catch (ServiceException e) {
+									try {
+										productFetchService.updateMaterial(spu);
+									} catch (ServiceException e1) {
+										e1.printStackTrace();
+									}
+								}
+
+								spuMap.put(product.getProductId()+"#"+sku.getColor(),"");
+							}
+
+						}
+						sku.setSpuId(product.getProductId()+"#"+sku.getColor());
 						sku.setProductDescription(item.getDescription());
 						sku.setStock(item.getStock());
 						sku.setProductCode(product.getProductId());
@@ -173,29 +209,7 @@ public class FetchProduct {
 					}
 				}
 
-				try {
-					spu.setId(UUIDGenerator.getUUID());
-					spu.setSupplierId(supplierId);
-					spu.setSpuId(product.getProductId());
-					spu.setBrandName(product.getProduct_brand());
-					spu.setCategoryName(product.getCategory());
-					spu.setSpuName(product.getProduct_name());
-					spu.setSeasonId(product.getSeason_code());
-					spu.setMaterial(product.getProduct_material());
-					if (StringUtils.isNotBlank(product.getMade_in())) {
-						origin = product.getMade_in();
-					}
-					spu.setProductOrigin(origin);
-					// 商品所属性别字段；
-					spu.setCategoryGender(product.getMain_category());
-					productFetchService.saveSPU(spu);
-				} catch (ServiceException e) {
-					try {
-						productFetchService.updateMaterial(spu);
-					} catch (ServiceException e1) {
-						e1.printStackTrace();
-					}
-				}
+
 			}
 
 			//更新网站不再给信息的老数据
@@ -301,5 +315,43 @@ public class FetchProduct {
 
 		return content;
 	}
+	
+	public static void main(String[] args) {
+		String xml = HttpUtil45.get(url,new OutTimeConfig(1000 * 60*60, 1000 * 60*60, 1000 * 60*60),null);
+		saveData("stefo.txt",xml);
+		System.out.println("ok----------");
+	}
+	
+	private static void saveData(String name,String data){
+    	try {
+    		File file = new File("E:\\其他\\下载的内容"+File.separator+name);
+    		if (!file.exists()) {
+    			try {
+    				file.getParentFile().mkdirs();
+    				file.createNewFile();
+    				
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		FileWriter fwriter = null;
+    		try {
+    			fwriter = new FileWriter("E:\\其他\\下载的内容"+File.separator+name);
+    			fwriter.write(data);
+    		} catch (IOException ex) {
+    			ex.printStackTrace();
+    		} finally {
+    			try {
+    				fwriter.flush();
+    				fwriter.close();
+    			} catch (IOException ex) {
+    				ex.printStackTrace();
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();			
+		}
+    	
+    }
 
 }

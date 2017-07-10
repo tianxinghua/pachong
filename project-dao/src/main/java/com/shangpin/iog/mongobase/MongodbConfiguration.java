@@ -4,27 +4,24 @@ package com.shangpin.iog.mongobase;
  * Created by loyalty on 15/4/10.
  */
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
 @Configurable
 
@@ -51,7 +48,7 @@ public class MongodbConfiguration extends AbstractMongoConfiguration {
 
     @Override
     public Mongo mongo() throws Exception {
-        return new Mongo(mongodbAddress,port);   //192.168.20.112     49.213.13.167
+        return mongoClient();   //192.168.20.112     49.213.13.167
     }
 
     public MongoClient mongoClient() throws Exception{
@@ -62,6 +59,15 @@ public class MongodbConfiguration extends AbstractMongoConfiguration {
         mongoCredentialList.add(MongoCredential.createMongoCRCredential(username, database, password.toCharArray()));
         return new MongoClient(sa, mongoCredentialList);
 //        return new MongoClient(mongodbAddress,port);
+
+//        String username="writer",database="iog",password="wt@sp520";
+//
+//        ServerAddress sa = new ServerAddress(mongodbAddress, port);
+//        MongoCredential credential = MongoCredential.createCredential(username, database, password.toCharArray());
+//        return new MongoClient(sa, Arrays.asList(credential));
+
+        // 本地调用
+//         return new MongoClient(mongodbAddress,port);
     }
 
     public @Bean

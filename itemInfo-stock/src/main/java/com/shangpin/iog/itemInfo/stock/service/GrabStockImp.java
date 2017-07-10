@@ -1,10 +1,6 @@
 package com.shangpin.iog.itemInfo.stock.service;
 
-import java.io.File;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,9 +29,8 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	private static Logger logger = Logger.getLogger("info");
 //    private static Logger loggerError = Logger.getLogger("error");
 	private static LoggerUtil logError = LoggerUtil.getLogger("error");
-    private static Logger logMongo = Logger.getLogger("mongodb");
     private static ResourceBundle bdl=null;
-    private static String supplierId = "";
+//    private static String supplierId = "";
 //    private static String soapRequestData = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 //								            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
 //								            "  <soap12:Body>\n" +
@@ -55,13 +50,12 @@ public class GrabStockImp extends AbsUpdateProductStock {
     private static String serviceUrl ="http://service.alducadaosta.com/EcSrv/Services.asmx?op=GetSku4Platform";
     private static String soapAction ="http://service.alducadaosta.com/EcSrv/GetSku4Platform";
     private static String contentType = "text/xml; charset=utf-8";
-    private static String localPath = "";
     private static String localPathDefault = "";
     
     static {
         if(null==bdl)
          bdl=ResourceBundle.getBundle("conf");
-        supplierId = bdl.getString("supplierId");
+//        supplierId = bdl.getString("supplierId");
         localPathDefault = bdl.getString("localPathDefualt");
     }
 
@@ -71,39 +65,22 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		
 		Map<String, String> skustock = new HashMap<>();
 		Map<String,String> stockMap = new HashMap<>();
-		Map<String,String> mongMap = new HashMap<>();
-		mongMap.put("supplierId",supplierId);
-        mongMap.put("supplierName","alduca daosta");
-        mongMap.put("result","") ;
-        try {
-            logMongo.info(mongMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //获取本类class文件所在目录，作为localPath的值
-        try{
-
-        	localPath = URLDecoder.decode((GrabStockImp.class.getClassLoader().getResource("").getFile()), "utf-8");
-        	localPath = localPath+"soapml.xml";
-
-        }catch(Exception e){
-        	e.printStackTrace();
-        	localPath = localPathDefault;
-        }
 		String filePath = null;
 		try{
+			logger.info("开始下载文件，文件保存在============="+localPathDefault); 
 
-			filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPath);
+			filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPathDefault);
 
 		}catch(Exception ex){
-			ex.printStackTrace();
+			logger.info("第一次下载失败，正在尝试第二次================"+ex.toString()); 
 			System.out.println("下载失败，正在重新下载...");
 			try{
 
-				filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPath);
+				filePath = SoapXmlUtil.downloadSoapXmlAsFile(serviceUrl,soapAction,contentType,soapRequestData,localPathDefault);
 
 			}catch(Exception e){
 				e.printStackTrace();
+				logger.info("第二次拉取alduca daosta数据失败---" + e.getMessage());
 				logError.error("拉取alduca daosta数据失败---" + e.getMessage());
 				return skustock;
 			}
@@ -114,7 +91,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 			//获取更新文件信息
 			SOAPMessage soapMessage = SoapXmlUtil.formatSoapStringByFilePath(filePath);
 			if(soapMessage != null){
-				SOAPBody body;
+				SOAPBody body = null;
 				try {
 					body = soapMessage.getSOAPBody();
 					Iterator<SOAPElement> iterator = body.getChildElements();
@@ -122,6 +99,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 					
 				} catch (SOAPException e) {
 					e.printStackTrace();
+					logger.error("解析出错："+e.getMessage(),e);
 				}
 				
 			}
@@ -181,6 +159,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static ApplicationContext factory;
     private static void loadSpringContext()
     {
@@ -189,7 +168,7 @@ public class GrabStockImp extends AbsUpdateProductStock {
     }
 	
 	public static void main(String[] args) throws Exception{
-		
+		new GrabStockImp().grabStock(null);
 		//加载spring
         loadSpringContext();
         

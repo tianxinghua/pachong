@@ -243,6 +243,61 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
     }
 
     public String
+    AddSkuChangeMarketPriceMsg(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSkuChangeMarketPriceMsgEntity[] priceMsgList, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("AddSkuChangeMarketPriceMsg", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                SopSkuChangeMarketPriceMsgEntityListHelper.write(__os, priceMsgList);
+                __os.writePendingObjects();
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                String __ret;
+                __ret = __is.readString();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public String
     CreateDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd deliverOrder, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
                ShangPin.SOP.Api.ApiException
@@ -1165,6 +1220,65 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
                 ShangPin.SOP.Entity.Api.BaseDatas.SopCurrencyIce[] __ret;
                 __ret = SopCurrencyIceListHelper.read(__is);
                 __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public String
+    FindNetworkSpreadOrders(String appKey, String appSerect, String startDate, String endDate, String orderNo, String supplierOrderNo, String skuNo, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("FindNetworkSpreadOrders", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(appKey);
+                __os.writeString(appSerect);
+                __os.writeString(startDate);
+                __os.writeString(endDate);
+                __os.writeString(orderNo);
+                __os.writeString(supplierOrderNo);
+                __os.writeString(skuNo);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                String __ret;
+                __ret = __is.readString();
                 __og.endReadParams();
                 return __ret;
             }
@@ -2394,6 +2508,60 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
         }
     }
 
+    public ShangPin.SOP.Entity.Api.Supplier.SopInfoAPIEntity
+    GetSupplierInfo(String supplierId, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("GetSupplierInfo", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                ShangPin.SOP.Entity.Api.Supplier.SopInfoAPIEntityHolder __ret = new ShangPin.SOP.Entity.Api.Supplier.SopInfoAPIEntityHolder();
+                __is.readObject(__ret);
+                __is.readPendingObjects();
+                __og.endReadParams();
+                return __ret.value;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
     public boolean
     ModifySkuInventoryQuantity(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIce productInventory, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
         throws IceInternal.LocalExceptionWrapper,
@@ -2903,6 +3071,61 @@ public final class _OpenApiServantDelM extends Ice._ObjectDelM implements _OpenA
                 __os.writeString(supplierId);
                 __os.writeString(SkuNo);
                 __os.writeInt(InventoryQuantity);
+                __og.endWriteParams();
+            }
+            catch(Ice.LocalException __ex)
+            {
+                __og.abort(__ex);
+            }
+            boolean __ok = __og.invoke();
+            try
+            {
+                if(!__ok)
+                {
+                    try
+                    {
+                        __og.throwUserException();
+                    }
+                    catch(ShangPin.SOP.Api.ApiException __ex)
+                    {
+                        throw __ex;
+                    }
+                    catch(Ice.UserException __ex)
+                    {
+                        throw new Ice.UnknownUserException(__ex.ice_name(), __ex);
+                    }
+                }
+                IceInternal.BasicStream __is = __og.startReadParams();
+                boolean __ret;
+                __ret = __is.readBool();
+                __og.endReadParams();
+                return __ret;
+            }
+            catch(Ice.LocalException __ex)
+            {
+                throw new IceInternal.LocalExceptionWrapper(__ex, false);
+            }
+        }
+        finally
+        {
+            __handler.reclaimOutgoing(__og);
+        }
+    }
+
+    public boolean
+    UpdateStockList(String supplierId, ShangPin.SOP.Entity.Api.Product.SopInventoryQuantityDto[] updateList, java.util.Map<String, String> __ctx, Ice.Instrumentation.InvocationObserver __observer)
+        throws IceInternal.LocalExceptionWrapper,
+               ShangPin.SOP.Api.ApiException
+    {
+        IceInternal.Outgoing __og = __handler.getOutgoing("UpdateStockList", Ice.OperationMode.Idempotent, __ctx, __observer);
+        try
+        {
+            try
+            {
+                IceInternal.BasicStream __os = __og.startWriteParams(Ice.FormatType.DefaultFormat);
+                __os.writeString(supplierId);
+                SopInventoryQuantityDtoListHelper.write(__os, updateList);
+                __os.writePendingObjects();
                 __og.endWriteParams();
             }
             catch(Ice.LocalException __ex)

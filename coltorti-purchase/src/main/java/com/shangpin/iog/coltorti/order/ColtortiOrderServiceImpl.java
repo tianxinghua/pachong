@@ -46,6 +46,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			List<Product> products = new ArrayList<Product>();
 			Map<String,String> param2=new HashMap<String, String>();
 			String detail = orderDTO.getDetail();
+			logger.info("detail=========="+detail);
 			String skuId = detail.split(",")[0].split(":")[0].split("#")[0];
 			String sizeNum = detail.split(",")[0].split(":")[0].split("#")[1];
 			String num = detail.split(",")[0].split(":")[1];
@@ -66,7 +67,7 @@ public class ColtortiOrderServiceImpl extends AbsOrderService{
 			 orderDTO.setSupplierOrderNo(orderDTO.getSpPurchaseNo());
 			 orderDTO.setStatus(OrderStatus.CONFIRMED);
 		
-		} catch (ServiceException e) {
+		} catch (Exception e) {
 			String message = e.getMessage();
 			logger.info("订单失败"+e.getMessage());
 			if (message.contains("状态码")) {

@@ -115,6 +115,9 @@ public class OrderServiceImpl extends AbsOrderService{
 			ProductDTO product = productSearchService.findProductForOrder(supplierId,skuId);
 			if(null != product && StringUtils.isNotBlank(product.getSize())){
 				String size = product.getSize().replaceAll("\\+", "½");
+				if(size.contains(".5")){
+					size = size.replaceAll(".5", "½");
+				}
 				//查询对方库存接口
 				String stockData = getItemStockBySizeMarketPlace(item_id);
 				if(!HttpUtil45.errorResult.equals(stockData)){
@@ -153,11 +156,11 @@ public class OrderServiceImpl extends AbsOrderService{
 						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
 				}else{
-					orderDTO.setExcState("0");
-					orderDTO.setStatus(OrderStatus.NOHANDLE); 
+					orderDTO.setExcState("1");
+//					orderDTO.setStatus(OrderStatus.NOHANDLE); 
 					orderDTO.setExcDesc("查询对方库存接口失败,对方返回的信息是："+stockData);
 					orderDTO.setExcTime(new Date()); 
-					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。 ");
+					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。 2分钟后会再推一次。");
 				}
 			}else{
 				orderDTO.setStatus(OrderStatus.NOHANDLE); 

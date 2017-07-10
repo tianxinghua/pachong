@@ -261,6 +261,8 @@ public class FetchProduct {
     			priceArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
     			if("A16".equals(spuId_seasonM.get(priceArr[0]))){
     				priceMap.put(priceArr[0], priceArr[4]);
+    			}else if("P17".equals(spuId_seasonM.get(priceArr[0]))){
+    				priceMap.put(priceArr[0], priceArr[4]);
     			}else{
     				priceMap.put(priceArr[0], priceArr[3]);
     			}

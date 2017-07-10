@@ -4,6 +4,7 @@ package com.shangpin.iog.product.dao;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
+import com.shangpin.iog.dto.ProductCodeDTO;
 import com.shangpin.iog.dto.ProductDTO;
 import com.shangpin.iog.dto.ProductOfSpecDTO;
 
@@ -127,6 +128,30 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> findListOfAllSupplier(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             RowBounds rowBounds);
+    
+    /**
+     * 查找所有的产品，包括有库存的和没库存的
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param rowBounds
+     * @return
+     */
+    List<ProductDTO> findAllOfProducts(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            RowBounds rowBounds);
+    
+    /**
+     * 查找所有的产品，包括有库存的和没库存的
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<ProductDTO> findAllOfProducts(@Param("supplier") String supplier,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate);
     /**
      * 按照ep规则查询所有图片名
      */
@@ -207,6 +232,25 @@ public interface ProductsMapper extends IBaseDao<ProductDTO> {
     List<ProductDTO> tempFindListBySupplierAndLastDate(@Param("supplier") String supplier,
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate) throws ServiceException;
+    
+    /**
+     * 查找已经生成过尚品sku，并且库存大于0的数据
+     * @param supplier
+     * @param startDate
+     * @param endDate
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws ServiceException
+     */
+    public List<ProductDTO> findProductOfHasSpSkuId(@Param("supplier") String supplier,@Param("startDate") Date startDate,@Param("endDate") Date endDate) throws ServiceException;
+    
+    /**
+     * 根据尚品品牌名称查找供应商的品牌，货号
+     * @param brandName 尚品品牌名称
+     * @return
+     */
+    public List<ProductCodeDTO> findBySpBrandName(@Param("brandName") String brandName);
     
 }
 

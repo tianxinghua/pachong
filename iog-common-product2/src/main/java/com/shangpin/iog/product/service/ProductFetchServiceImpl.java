@@ -134,6 +134,7 @@ public  class ProductFetchServiceImpl implements ProductFetchService {
             if(StringUtils.isBlank(skuDTO.getNewMarketPrice())) skuDTO.setNewMarketPrice(skuDTO.getMarketPrice());
             if(StringUtils.isBlank(skuDTO.getNewSalePrice())) skuDTO.setNewSalePrice(skuDTO.getSalePrice());
             if(StringUtils.isBlank(skuDTO.getNewSupplierPrice())) skuDTO.setNewSupplierPrice(skuDTO.getSupplierPrice());
+            skuDTO.setLastTime(new Date());
             skuDAO.save(skuDTO);
         } catch ( Exception e) {
         	if(e instanceof DuplicateKeyException)

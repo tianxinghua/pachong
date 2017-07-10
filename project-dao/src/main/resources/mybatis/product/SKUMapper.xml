@@ -137,6 +137,7 @@
 <!--               <if test="salePrice != null"> SALE_PRICE = #{salePrice}, </if> -->
 <!--               <if test="supplierPrice != null"> SUPPLIER_PRICE = #{supplierPrice},</if> -->
               <if test="stock != null"> STOCK = #{stock},</if>
+			  <if test="spuId != null"> SPU_ID = #{spuId},</if>
               <if test="color != null"> COLOR = #{color},</if>
               <if test="productDescription != null"> PRODUCT_DESCRIPTION = #{productDescription},</if>
               <if test="updateTime != null"> UPDATE_TIME = #{updateTime},</if>

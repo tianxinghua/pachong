@@ -25,6 +25,15 @@ public class StartUp {
 		public static void main(String[] args)
 		{
 
+			int i=0;
+			for(int kk = 0;kk<3;kk++){
+				i++;
+				
+				if(i==2){
+					System.out.println("s");
+					break;
+				}
+			}
 	        //加载spring
 	        log.info("----拉取deliberti数据开始----");
 			loadSpringContext();

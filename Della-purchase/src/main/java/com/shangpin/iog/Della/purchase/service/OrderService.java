@@ -1,9 +1,20 @@
 package com.shangpin.iog.Della.purchase.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsOrderService;
 import com.shangpin.iog.Della.purchase.common.MyFtpUtil;
-import com.shangpin.iog.Della.purchase.common.MyFtpUtil2;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.dto.OrderDTO;
 import com.shangpin.iog.dto.OrderDetailDTO;
@@ -12,13 +23,6 @@ import com.shangpin.iog.dto.ReturnOrderDTO;
 import com.shangpin.iog.ice.dto.OrderStatus;
 import com.shangpin.iog.service.OrderDetailService;
 import com.shangpin.iog.service.ProductSearchService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by Administrator on 2015/11/20.
@@ -33,8 +37,6 @@ public class OrderService extends AbsOrderService {
     private static  String supplierId = null;
     private static String supplierNo = null;
     private static String localFile = null;
-    private static String startTime = null;
-    private static String endTime = null;
 
     static {
         if(null==bdl){
@@ -66,40 +68,30 @@ public class OrderService extends AbsOrderService {
      * @throws ServiceException
      */
     public void saveAndUpLoadOrder(Date startTime,Date endTime){
-        saveOrder(startTime,endTime);
-        new MyFtpUtil().upLoad();
+        String orderFile = saveOrder(startTime,endTime);
+        new MyFtpUtil().upload(orderFile);
     }
     /**
      * 
      * @throws ServiceException
      */
-    private void saveOrder(Date startTime,Date endTime){
-    	
+    private String saveOrder(Date startTime,Date endTime){
+    	String fileName = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH");
+		String dateStr = format.format(new Date());
+		fileName = dateStr + ".csv";
     	List<OrderDetailDTO> orderDetails = null;
-//        List<OrderDTO> list = null;
-//        Date startTime = new Date();
-//        Date endTime = new Date();
-//        startTime =DateTimeUtil.convertFormat(
-//        		DateTimeUtil.shortFmt(DateTimeUtil.getAppointDayFromSpecifiedDay(startTime, -1, "D"))+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
-//        endTime =DateTimeUtil.convertFormat(DateTimeUtil.shortFmt(endTime)+" 00:00:00", "yyyy-MM-dd HH:mm:ss");
         logger.info("=========开始时间"+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"到结束时间"+DateTimeUtil.convertFormat(endTime, "yyyy-MM-dd HH:mm:ss")+"的订单开始保存本地========="); 
         try {
-//           list = orderService.getOrderBySupplierIdAndOrderStatusAndTime(supplierId,OrderStatus.CONFIRMED,DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"),
-//        		  DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-           //list = orderService.getOrderBySupplierIdAndOrderStatus(supplierId,"confirmed");
-        	
         	orderDetails = orderDetailService.getOrderBySupplierIdAndOrderStatusAndUpdateTime(supplierId, OrderStatus.CONFIRMED, DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss"), DateTimeUtil.convertFormat(endTime,"yyyy-MM-dd HH:mm:ss"));
-        	
         } catch (ServiceException e) {
         	loggerError.error(e); 
         }
-        
         StringBuffer ftpFile = new StringBuffer();
         ftpFile.append("Purchasing number;PO Line;Item code;Description;Item supplier code;Price;Quantity;Size");
         ftpFile.append("\n");
         for (OrderDetailDTO orderDTO:orderDetails){
         	try {
-        		
 				ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getSupplierSku());
 				ftpFile.append(orderDTO.getSpPurchaseNo());
 				ftpFile.append(";").append("");
@@ -115,15 +107,13 @@ public class OrderService extends AbsOrderService {
 			}
         }
         logger.info("=========开始时间"+DateTimeUtil.convertFormat(startTime, "yyyy-MM-dd HH:mm:ss")+"的订单========\n"+ftpFile.toString());
-//        Map<String, String> mongMap = new HashMap<>();
-//        mongMap.put("supplierId", supplierId);
-//        mongMap.put("supplierName", "LevelGroup");
-//        mongMap.put("result", ftpFile.toString());
-        //logMongo.info(mongMap);
-        //System.out.println(csvFile);
         FileWriter fwriter = null;
         try {
-            fwriter = new FileWriter(localFile);
+        	File file = new File(localFile);
+        	if(!file.exists()){
+        		file.mkdirs();
+        	}
+            fwriter = new FileWriter(localFile+File.separator+fileName);
             fwriter.write(ftpFile.toString());
         } catch (IOException ex) {
         	loggerError.error(ex); 
@@ -135,7 +125,8 @@ public class OrderService extends AbsOrderService {
             	loggerError.error(ex); 
             }
         }
-        logger.info("========="+startTime+"到"+endTime+"的订单保存本地完毕 "+localFile);
+        logger.info("========="+startTime+"到"+endTime+"的订单保存本地完毕 "+localFile+File.separator+fileName);
+        return localFile+File.separator+fileName;
     }
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {

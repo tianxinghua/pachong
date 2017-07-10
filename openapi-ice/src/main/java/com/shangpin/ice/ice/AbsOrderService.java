@@ -543,7 +543,7 @@ public abstract class AbsOrderService {
             start:
             for(OrderDetailDTO detailDTO:orderDetailDTOList) {
 
-                if ( detailDTO.getEpMasterOrderNo().indexOf("-") > 0) {//重新采购 或者 财务确认重新生成的采购单
+                if ( detailDTO.getOrderNo().indexOf("-") > 0) {//重新采购 或者 财务确认重新生成的采购单
                     detailDTO.setStatus(OrderStatus.PAYED);//如果退款了 无所谓 临时保存为支付状态 后续有退款的处理
                     try {
                         orderDetailService.update(detailDTO);
@@ -948,6 +948,7 @@ public abstract class AbsOrderService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if(null==orderMap) orderMap= new HashMap();
         start:
         for(Iterator<Map.Entry<String,List<PurchaseOrderDetailSpecial>>> itor = orderMap.entrySet().iterator();itor.hasNext();){
             Map.Entry<String, List<PurchaseOrderDetailSpecial>> entry = itor.next();
@@ -973,9 +974,18 @@ public abstract class AbsOrderService {
                 supplierSku = purchaseOrderDetail.SupplierSkuNo;
             }
             
-            if(!skuMap.containsKey(spSku)){//如果skuv不在SKU_RELATION表里，则不插入
-            	logger.info(spSku+" 在SKU_RELATION关系表中找不到，不插入ORDER_DETAIL表");
-            	continue;
+            if(!skuMap.containsKey(spSku)){
+                SkuRelationDTO skuRelationDTO= null;
+                try {
+                    //因为是补单 不是从订单信息来的 所以需要重新查询下
+                    skuRelationDTO = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplierId,spSku);
+                    if(null==skuRelationDTO){  //如果不在SKU_RELATION表里，则不插入
+                        logger.info(spSku+" 在SKU_RELATION关系表中找不到，不插入ORDER_DETAIL表");
+                        continue;
+                    }
+                } catch (ServiceException e) {
+                    e.printStackTrace();
+                }
             }
 
             List<OrderDetailDTO> detailDTOList =null;
@@ -1191,7 +1201,7 @@ public abstract class AbsOrderService {
 //            productOrderService.updateOrderMsg(map);
             orderDetailService.updateDetailMsg(map);
         } catch (ServiceException e) {
-            logger.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
+            loggerError.error("订单："+spOrder.getSpOrderId()+" 下单成功。但更新订单状态失败");
             System.out.println("订单：" + spOrder.getSpOrderId() + " 下单成功。但更新订单状态失败");
         }
     }
@@ -1708,7 +1718,10 @@ public abstract class AbsOrderService {
 
 
                 orderDetails = orderDetailPage.PurchaseOrderDetails;
+                if(null==orderDetails){
+                    orderDetails = new ArrayList<>();
 
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();

@@ -412,6 +412,8 @@ public class ProductFetchServiceImpl implements ProductFetchService {
 	public void updateSpuOrSkuMemoAndTime(String supplierId,String id,String memo,String flag) {
 		if (flag.equals("spu")) {
 			spuDAO.updateSpuMemo(supplierId, id, memo, new Date());
+			//同时更新此SKU表中此供货商的下的SPU对应的所有SKU的时间
+			 skuDAO.updateLastTime(supplierId,null,id);
 		}else{
 			skuDAO.updateSkuMemo(supplierId, id, memo, new Date());
 		}

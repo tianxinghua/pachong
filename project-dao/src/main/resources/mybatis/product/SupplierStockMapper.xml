@@ -23,7 +23,7 @@
   <include refid="all_column"></include>
   )
   values( #{id},#{supplierId}, #{supplierSkuId},
-  #{quantity},#{optTime}),#{status}
+  #{quantity},#{optTime},#{status})
 
  </insert>
 

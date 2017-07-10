@@ -57,10 +57,11 @@ public class StockImp extends AbsUpdateProductStock {
   	
   	Map<String,String> stockMap = new HashMap<String,String>();
   	try{
+  		logger.info("================开始拉取供应商库存信息====================="); 
   		 System.out.println("待更新总数："+skuNo.size());
           //定义三方
           for (String skuno : skuNo) {
-        	  System.out.println("待更新de："+skuno);
+        	  //System.out.println("待更新de："+skuno);
         		String tempSku = null;
             	String [] skuArray = skuno.split("-");
             	if(skuArray.length==2){
@@ -71,13 +72,15 @@ public class StockImp extends AbsUpdateProductStock {
           				.get("http://geb-production.edstema.it/api/v3.0/sku/"+tempSku+"/id/"+size+"/size/stock?storeCode=DW3LT",
           						new OutTimeConfig(1000 * 60, 1000 * 60, 1000 * 60),
           						null);
-            	  System.out.println(json);
+//            	  System.out.println(json);
+            	logger.info(tempSku+"---------------"+size);
           		ReturnObject obj = new Gson().fromJson(json, ReturnObject.class);
           		if(obj!=null){
           			Result re = obj.getResults();
           			if(re!=null&&"200".equals(re.getReqCode())&&!"0".equals(re.getCount())){
           				int i = Integer.parseInt(re.getItems().get(0).getQuantity());
-          				System.out.println(skuno+"======"+i);
+          				logger.info("返回的库存======="+i);
+//          				System.out.println(skuno+"======"+i);
           				if(i<0){
                   			loggerError.info("sku库存小于0："+tempSku+":"+i);
                   			System.out.println("sku库存小于0："+tempSku+":"+i);
@@ -96,7 +99,8 @@ public class StockImp extends AbsUpdateProductStock {
           }
   	}catch(Exception e){
   		System.out.println(e.getMessage());
-  		loggerError.info(e);
+  		logger.info("拉取库存信息是发生异常==========="+e.toString()); 
+  		loggerError.info(e.toString());
   	}
       return stockMap;
   }

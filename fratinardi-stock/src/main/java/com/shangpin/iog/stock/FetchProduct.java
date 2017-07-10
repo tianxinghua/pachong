@@ -50,11 +50,11 @@ public class FetchProduct extends AbsUpdateProductStock{
 		OutTimeConfig timeConfig = new OutTimeConfig(1000*5, 1000*60 * 40, 1000*60 * 40);
 		logInfo.info("开始下载文件");
 		String result = HttpUtil45.get(filePath, timeConfig, null);
-		logInfo.info("result = " + result);
+		//logInfo.info("result = " + result);
 		List<Item> items = CsvUtil.readLocalCSV(result, Item.class, "\",\"");
 		logInfo.info("items size =" + items.size());
 		for(Item item:items){
-			logInfo.info("sku  -"+item.getSku_No().replaceAll("\"", "")+"-- quantity =" + item.getQty().replaceAll("\"", "")+"--");
+			logInfo.info("sku  -"+item.getSku_No().replaceAll("\"", "")+"-- quantity =" + item.getQty().replaceAll("\"", ""));
 
 			if(StringUtils.isNotBlank(item.getSku_No())&&StringUtils.isNotBlank(item.getQty())){
 

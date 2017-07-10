@@ -66,6 +66,13 @@
 
 
 	</resultMap>
+	
+	<resultMap type="iog_productCode" id="ProductCode">
+		<result column="SUPPLIER_ID" property="supplierid"/>
+		<result column="BRAND_NAME" property="brandName"/>
+		<result column="SPU_ID" property="spuId"/>
+		<result column="PRODUCT_CODE" property="productCode"/> 
+	</resultMap>
 
     <resultMap id="barcodeResultMap" type="iog_spec_product">
 
@@ -95,6 +102,30 @@
         item_id,barcode,item_size,color,stock,pictures,product_detail
 	</sql>
 	
+	<select id="findBySpBrandName" resultMap="ProductCode">
+			SELECT DISTINCT
+			s.SUPPLIER_ID SUPPLIER_ID,
+			s.BRAND_NAME BRAND_NAME,
+			s.SPU_ID SPU_ID,
+			k.PRODUCT_CODE PRODUCT_CODE
+		FROM
+			SPU s,
+			SKU k
+		WHERE
+			s.SUPPLIER_ID = k.SUPPLIER_ID
+		AND s.SPU_ID = k.SPU_ID
+		AND s.BRAND_NAME IN (
+			SELECT
+				SupplierValue
+			FROM
+				HubSupplierValueMapping
+			WHERE
+				SpValue = #{brandName}
+		)
+		ORDER BY
+			SUPPLIER_ID,
+			BRAND_NAME
+	</select>
 
 	<select id="findListBySupplierAndLastDate"  resultMap="ProductsResultMap">
 		
@@ -144,6 +175,70 @@
 
           <if test="null!=supplier">
             and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and (sku.LAST_TIME >= #{startDate} )
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and (sku.LAST_TIME <= #{endDate})    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by brand_name, category_name
+
+
+	</select>
+	
+	<select id="findAllOfProducts"  resultMap="ProductsResultMap">
+		
+		select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+          sku.STOCK as stock ,
+          
+          sku.EVENT_START_DATE as eventStartTime,
+          sku.EVENT_END_DATE as eventEndTime,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          sku.SP_SKU_ID as spSkuId,
+          
+          spu.CATEGORY_ID as category_id, 
+          spu.CATEGORY_NAME as category_name,
+          spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SUB_CATEGORY_ID  as  sub_category_id,
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName, 
+          sku.LAST_TIME as last_time,         
+<!--           sku.MEMO  as  memo -->
+          CONCAT(sku.MEMO) as memo
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+
+          <if test="null!=supplier">
+              sku.SUPPLIER_ID = #{supplier}
           </if>
             <if test="null!=startDate">
                 and (sku.LAST_TIME >= #{startDate} )
@@ -300,6 +395,7 @@
           sku.ID as id,
           sku.SKU_ID as sku_id,
           sku.SUPPLIER_ID  as supplier_id,
+          sku.SP_SKU_ID as spSkuId,
 
           sku.PRODUCT_NAME as product_name,
           sku.MARKET_PRICE  as market_price,
@@ -526,6 +622,7 @@
 		select
           sku.SKU_ID as sku_id,
           sku.SUPPLIER_ID  as supplier_id,
+          sku.SP_SKU_ID as spSkuId,
           
           sku.MARKET_PRICE  as market_price,
           sku.SALE_PRICE  as  sale_price,
@@ -811,6 +908,72 @@
         <where>
 
             sku.STOCK >0
+
+          <if test="null!=supplier">
+            and   sku.SUPPLIER_ID = #{supplier}
+          </if>
+            <if test="null!=startDate">
+                and (sku.LAST_TIME >= #{startDate} )
+            </if>
+           <if test="endDate!=null">
+
+                <![CDATA[ and (sku.LAST_TIME <= #{endDate})    ]]>
+
+            </if>
+
+
+
+        </where>
+        order by brand_name, category_name
+
+
+	</select>
+	
+	<select id="findProductOfHasSpSkuId"  resultMap="ProductsResultMap">
+		
+		select
+          sku.ID as id,
+          sku.SUPPLIER_ID  as supplier_id,
+          su.SUPPLIER_NAME as supplier_name,
+          sku.SPU_ID  as spu_id,
+          sku.SKU_ID as sku_id,spu.SPU_NAME as spu_name,
+
+          sku.PRODUCT_NAME as product_name,
+          sku.MARKET_PRICE  as market_price,
+          sku.SALE_PRICE  as  sale_price,
+          sku.SUPPLIER_PRICE as supplier_price,sku.BARCODE as barcode,
+          sku.PRODUCT_CODE as product_code,sku.COLOR as color,
+          sku.PRODUCT_DESCRIPTION as product_description,
+          sku.SALE_CURRENCY as sale_currency,sku.PRODUCT_SIZE as product_size,
+          sku.STOCK as stock ,
+          
+          sku.EVENT_START_DATE as eventStartTime,
+          sku.EVENT_END_DATE as eventEndTime,
+          
+          sku.NEW_MARKET_PRICE as newMarketPrice,
+          sku.NEW_SALE_PRICE as newSalePrice,
+          sku.NEW_SUPPLIER_PRICE as newSupplierPrice,
+          sku.SP_SKU_ID as spSkuId,
+          
+          spu.CATEGORY_ID as category_id, 
+          spu.CATEGORY_NAME as category_name,
+          spu.BRAND_ID as brand_id,spu.BRAND_NAME as brand_name,
+          spu.SEASON_ID as season_id,spu.SEASON_NAME as season_name,
+          spu.PIC_URL as pic_url,spu.MATERIAL as material,spu.PRODUCT_ORIGIN as product_origin ,
+          spu.CATEGORY_GENDER as category_gender,
+          spu.SUB_CATEGORY_ID  as  sub_category_id,
+          spu.SUB_CATEGORY_NAME  as  sub_category_name,
+          spu.NEWSEASON_ID as newseasonId,
+          spu.NEWSEASON_NAME as newseasonName, 
+          sku.LAST_TIME as last_time,         
+<!--           sku.MEMO  as  memo -->
+          CONCAT(sku.MEMO) as memo
+		
+		from SKU sku left join SPU spu on sku.SUPPLIER_ID = spu.SUPPLIER_ID and sku.SPU_ID = spu.SPU_ID
+					 left join SUPPLIER su on sku.SUPPLIER_ID = su.SUPPLIER_ID
+        <where>
+
+            sku.STOCK >0 and sku.SP_SKU_ID is not null
 
           <if test="null!=supplier">
             and   sku.SUPPLIER_ID = #{supplier}

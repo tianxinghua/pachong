@@ -129,6 +129,11 @@ public class OrderService extends AbsOrderService{
 				orderDTO.setExcTime(new Date()); 
 				orderDTO.setStatus(OrderStatus.SHOULD_PURCHASE_EXP);
 				orderDTO.setExcDesc(createOrderResponse.getCreateOrderResult().getErrorTxt());
+			}else if(createOrderResponse.getCreateOrderResult().getError() == 310 && createOrderResponse.getCreateOrderResult().getErrorTxt().contains("Duplicate order ID")){
+				orderDTO.setExcState("0");
+				orderDTO.setExcTime(new Date()); 
+				orderDTO.setStatus(OrderStatus.NOHANDLE);
+				orderDTO.setExcDesc("该订单已经推送过去。"+createOrderResponse.getCreateOrderResult().getErrorTxt());
 			}else{
 				orderDTO.setExcState("1");
 				orderDTO.setExcTime(new Date()); 
@@ -197,9 +202,9 @@ public class OrderService extends AbsOrderService{
 		OrderService orderService = new OrderService();
 		OrderDTO orderDTO = new OrderDTO();
 		//CGD2016082400193 
-		orderDTO.setSpPurchaseNo("CGD2016082900003");
-		orderDTO.setDetail("I1W8182#F048700#I765######46:1,");
-		orderDTO.setPurchasePriceDetail("78.49");
+		orderDTO.setSpPurchaseNo("CGDF2017051670427");
+		orderDTO.setDetail("F755AC201#F22#99######OS:1,");
+		orderDTO.setPurchasePriceDetail("57.23");
 		orderService.handleConfirmOrder(orderDTO); 
 	}
 

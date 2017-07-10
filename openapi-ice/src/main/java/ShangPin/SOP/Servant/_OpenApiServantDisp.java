@@ -94,6 +94,12 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return AddSecondReturnOrderAbnormalPic(supplierId, detailId, sbnormalpic, null);
     }
 
+    public final String AddSkuChangeMarketPriceMsg(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSkuChangeMarketPriceMsgEntity[] priceMsgList)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return AddSkuChangeMarketPriceMsg(supplierId, priceMsgList, null);
+    }
+
     public final String CreateDeliveryOrder(String supplierId, ShangPin.SOP.Entity.Api.Purchase.DeliveryOrderAdd deliverOrder)
         throws ShangPin.SOP.Api.ApiException
     {
@@ -194,6 +200,12 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         throws ShangPin.SOP.Api.ApiException
     {
         return FindMoneyInfo(null);
+    }
+
+    public final String FindNetworkSpreadOrders(String appKey, String appSerect, String startDate, String endDate, String orderNo, String supplierOrderNo, String skuNo)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return FindNetworkSpreadOrders(appKey, appSerect, startDate, endDate, orderNo, supplierOrderNo, skuNo, null);
     }
 
     public final ShangPin.SOP.Entity.Api.Product.SopProductPricePage FindProductPrice(String supplierId, ShangPin.SOP.Entity.Where.OpenApi.Product.ProductPriceQueryDto queryDto)
@@ -328,6 +340,12 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         return GetLogisticsCompany(supplierId, logisticsName, null);
     }
 
+    public final ShangPin.SOP.Entity.Api.Supplier.SopInfoAPIEntity GetSupplierInfo(String supplierId)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return GetSupplierInfo(supplierId, null);
+    }
+
     public final boolean ModifySkuInventoryQuantity(String supplierId, ShangPin.SOP.Entity.Api.Product.SopSupplierProductInventoryEditIce productInventory)
         throws ShangPin.SOP.Api.ApiException
     {
@@ -386,6 +404,12 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         throws ShangPin.SOP.Api.ApiException
     {
         return UpdateStock(supplierId, SkuNo, InventoryQuantity, null);
+    }
+
+    public final boolean UpdateStockList(String supplierId, ShangPin.SOP.Entity.Api.Product.SopInventoryQuantityDto[] updateList)
+        throws ShangPin.SOP.Api.ApiException
+    {
+        return UpdateStockList(supplierId, updateList, null);
     }
 
     public final boolean UpdateStockNew(String supplierId, String SkuNo, String SupplierSkuNo, int InventoryQuantity)
@@ -1835,12 +1859,120 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         }
     }
 
+    public static Ice.DispatchStatus ___FindNetworkSpreadOrders(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String appKey;
+        String appSerect;
+        String startDate;
+        String endDate;
+        String orderNo;
+        String supplierOrderNo;
+        String skuNo;
+        appKey = __is.readString();
+        appSerect = __is.readString();
+        startDate = __is.readString();
+        endDate = __is.readString();
+        orderNo = __is.readString();
+        supplierOrderNo = __is.readString();
+        skuNo = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            String __ret = __obj.FindNetworkSpreadOrders(appKey, appSerect, startDate, endDate, orderNo, supplierOrderNo, skuNo, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___UpdateStockList(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Product.SopInventoryQuantityDto[] updateList;
+        supplierId = __is.readString();
+        updateList = SopInventoryQuantityDtoListHelper.read(__is);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            boolean __ret = __obj.UpdateStockList(supplierId, updateList, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeBool(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___AddSkuChangeMarketPriceMsg(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        ShangPin.SOP.Entity.Api.Product.SopSkuChangeMarketPriceMsgEntity[] priceMsgList;
+        supplierId = __is.readString();
+        priceMsgList = SopSkuChangeMarketPriceMsgEntityListHelper.read(__is);
+        __is.readPendingObjects();
+        __inS.endReadParams();
+        try
+        {
+            String __ret = __obj.AddSkuChangeMarketPriceMsg(supplierId, priceMsgList, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeString(__ret);
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
+    public static Ice.DispatchStatus ___GetSupplierInfo(OpenApiServant __obj, IceInternal.Incoming __inS, Ice.Current __current)
+    {
+        __checkMode(Ice.OperationMode.Idempotent, __current.mode);
+        IceInternal.BasicStream __is = __inS.startReadParams();
+        String supplierId;
+        supplierId = __is.readString();
+        __inS.endReadParams();
+        try
+        {
+            ShangPin.SOP.Entity.Api.Supplier.SopInfoAPIEntity __ret = __obj.GetSupplierInfo(supplierId, __current);
+            IceInternal.BasicStream __os = __inS.__startWriteParams(Ice.FormatType.DefaultFormat);
+            __os.writeObject(__ret);
+            __os.writePendingObjects();
+            __inS.__endWriteParams(true);
+            return Ice.DispatchStatus.DispatchOK;
+        }
+        catch(ShangPin.SOP.Api.ApiException ex)
+        {
+            __inS.__writeUserException(ex, Ice.FormatType.DefaultFormat);
+            return Ice.DispatchStatus.DispatchUserException;
+        }
+    }
+
     private final static String[] __all =
     {
         "AddCommodity",
         "AddCommodityPic",
         "AddPurchaseDetailToDeliveryOrder",
         "AddSecondReturnOrderAbnormalPic",
+        "AddSkuChangeMarketPriceMsg",
         "CreateDeliveryOrder",
         "DeleteProduct",
         "DirectUpdateStock",
@@ -1858,6 +1990,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         "FindDirectoryPurchaseOrderDetailPaged",
         "FindDirectoryPurchaseOrderPage",
         "FindMoneyInfo",
+        "FindNetworkSpreadOrders",
         "FindProductPrice",
         "FindPurchaseOrderDetail",
         "FindPurchaseOrderDetailCountPaged",
@@ -1880,6 +2013,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         "FindSupplyInfo",
         "FindSupplyInfoPage",
         "GetLogisticsCompany",
+        "GetSupplierInfo",
         "ModifySkuInventoryQuantity",
         "PurchaseDetailError",
         "PurchaseDetailEx",
@@ -1890,6 +2024,7 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
         "SubmitSecondReturnOrderAbnormal",
         "UpdateProductPrice",
         "UpdateStock",
+        "UpdateStockList",
         "UpdateStockNew",
         "UpdateSupplyPrice",
         "UpdateSupplyPriceSpecial",
@@ -1927,225 +2062,241 @@ public abstract class _OpenApiServantDisp extends Ice.ObjectImpl implements Open
             }
             case 4:
             {
-                return ___CreateDeliveryOrder(this, in, __current);
+                return ___AddSkuChangeMarketPriceMsg(this, in, __current);
             }
             case 5:
             {
-                return ___DeleteProduct(this, in, __current);
+                return ___CreateDeliveryOrder(this, in, __current);
             }
             case 6:
             {
-                return ___DirectUpdateStock(this, in, __current);
+                return ___DeleteProduct(this, in, __current);
             }
             case 7:
             {
-                return ___FindAreaPage(this, in, __current);
+                return ___DirectUpdateStock(this, in, __current);
             }
             case 8:
             {
-                return ___FindCategoryBrandAgreement(this, in, __current);
+                return ___FindAreaPage(this, in, __current);
             }
             case 9:
             {
-                return ___FindCategoryBrandAgreementPage(this, in, __current);
+                return ___FindCategoryBrandAgreement(this, in, __current);
             }
             case 10:
             {
-                return ___FindCommodityInfo(this, in, __current);
+                return ___FindCategoryBrandAgreementPage(this, in, __current);
             }
             case 11:
             {
-                return ___FindCommodityInfoPage(this, in, __current);
+                return ___FindCommodityInfo(this, in, __current);
             }
             case 12:
             {
-                return ___FindDeliveryOrder(this, in, __current);
+                return ___FindCommodityInfoPage(this, in, __current);
             }
             case 13:
             {
-                return ___FindDeliveryOrderPaged(this, in, __current);
+                return ___FindDeliveryOrder(this, in, __current);
             }
             case 14:
             {
-                return ___FindDeliveryOrderSend(this, in, __current);
+                return ___FindDeliveryOrderPaged(this, in, __current);
             }
             case 15:
             {
-                return ___FindDirectStockInfo(this, in, __current);
+                return ___FindDeliveryOrderSend(this, in, __current);
             }
             case 16:
             {
-                return ___FindDirectoryPurchaseOrder(this, in, __current);
+                return ___FindDirectStockInfo(this, in, __current);
             }
             case 17:
             {
-                return ___FindDirectoryPurchaseOrderDetail(this, in, __current);
+                return ___FindDirectoryPurchaseOrder(this, in, __current);
             }
             case 18:
             {
-                return ___FindDirectoryPurchaseOrderDetailPaged(this, in, __current);
+                return ___FindDirectoryPurchaseOrderDetail(this, in, __current);
             }
             case 19:
             {
-                return ___FindDirectoryPurchaseOrderPage(this, in, __current);
+                return ___FindDirectoryPurchaseOrderDetailPaged(this, in, __current);
             }
             case 20:
             {
-                return ___FindMoneyInfo(this, in, __current);
+                return ___FindDirectoryPurchaseOrderPage(this, in, __current);
             }
             case 21:
             {
-                return ___FindProductPrice(this, in, __current);
+                return ___FindMoneyInfo(this, in, __current);
             }
             case 22:
             {
-                return ___FindPurchaseOrderDetail(this, in, __current);
+                return ___FindNetworkSpreadOrders(this, in, __current);
             }
             case 23:
             {
-                return ___FindPurchaseOrderDetailCountPaged(this, in, __current);
+                return ___FindProductPrice(this, in, __current);
             }
             case 24:
             {
-                return ___FindPurchaseOrderDetailPaged(this, in, __current);
+                return ___FindPurchaseOrderDetail(this, in, __current);
             }
             case 25:
             {
-                return ___FindPurchaseOrderDetailSpecial(this, in, __current);
+                return ___FindPurchaseOrderDetailCountPaged(this, in, __current);
             }
             case 26:
             {
-                return ___FindReturnOrder(this, in, __current);
+                return ___FindPurchaseOrderDetailPaged(this, in, __current);
             }
             case 27:
             {
-                return ___FindReturnOrderPaged(this, in, __current);
+                return ___FindPurchaseOrderDetailSpecial(this, in, __current);
             }
             case 28:
             {
-                return ___FindSecondReturnOrderByReturnNo(this, in, __current);
+                return ___FindReturnOrder(this, in, __current);
             }
             case 29:
             {
-                return ___FindSecondReturnOrderList(this, in, __current);
+                return ___FindReturnOrderPaged(this, in, __current);
             }
             case 30:
             {
-                return ___FindSopProductInventoryList(this, in, __current);
+                return ___FindSecondReturnOrderByReturnNo(this, in, __current);
             }
             case 31:
             {
-                return ___FindSpBrandPage(this, in, __current);
+                return ___FindSecondReturnOrderList(this, in, __current);
             }
             case 32:
             {
-                return ___FindSpCategoryPage(this, in, __current);
+                return ___FindSopProductInventoryList(this, in, __current);
             }
             case 33:
             {
-                return ___FindSpCategorySizeStandard(this, in, __current);
+                return ___FindSpBrandPage(this, in, __current);
             }
             case 34:
             {
-                return ___FindSpSizeTmp(this, in, __current);
+                return ___FindSpCategoryPage(this, in, __current);
             }
             case 35:
             {
-                return ___FindSpSpfProductAttributeInfo(this, in, __current);
+                return ___FindSpCategorySizeStandard(this, in, __current);
             }
             case 36:
             {
-                return ___FindSpfProductMainColor(this, in, __current);
+                return ___FindSpSizeTmp(this, in, __current);
             }
             case 37:
             {
-                return ___FindStockInfo(this, in, __current);
+                return ___FindSpSpfProductAttributeInfo(this, in, __current);
             }
             case 38:
             {
-                return ___FindSuppliersById(this, in, __current);
+                return ___FindSpfProductMainColor(this, in, __current);
             }
             case 39:
             {
-                return ___FindSuppliersByName(this, in, __current);
+                return ___FindStockInfo(this, in, __current);
             }
             case 40:
             {
-                return ___FindSupplyInfo(this, in, __current);
+                return ___FindSuppliersById(this, in, __current);
             }
             case 41:
             {
-                return ___FindSupplyInfoPage(this, in, __current);
+                return ___FindSuppliersByName(this, in, __current);
             }
             case 42:
             {
-                return ___GetLogisticsCompany(this, in, __current);
+                return ___FindSupplyInfo(this, in, __current);
             }
             case 43:
             {
-                return ___ModifySkuInventoryQuantity(this, in, __current);
+                return ___FindSupplyInfoPage(this, in, __current);
             }
             case 44:
             {
-                return ___PurchaseDetailError(this, in, __current);
+                return ___GetLogisticsCompany(this, in, __current);
             }
             case 45:
             {
-                return ___PurchaseDetailEx(this, in, __current);
+                return ___GetSupplierInfo(this, in, __current);
             }
             case 46:
             {
-                return ___ReceiveSecondReturnOrder(this, in, __current);
+                return ___ModifySkuInventoryQuantity(this, in, __current);
             }
             case 47:
             {
-                return ___SendArrivalAbnormalProcess(this, in, __current);
+                return ___PurchaseDetailError(this, in, __current);
             }
             case 48:
             {
-                return ___SendDirectoryDeliveryOrder(this, in, __current);
+                return ___PurchaseDetailEx(this, in, __current);
             }
             case 49:
             {
-                return ___SendDirectoryDeliveryOrderError(this, in, __current);
+                return ___ReceiveSecondReturnOrder(this, in, __current);
             }
             case 50:
             {
-                return ___SubmitSecondReturnOrderAbnormal(this, in, __current);
+                return ___SendArrivalAbnormalProcess(this, in, __current);
             }
             case 51:
             {
-                return ___UpdateProductPrice(this, in, __current);
+                return ___SendDirectoryDeliveryOrder(this, in, __current);
             }
             case 52:
             {
-                return ___UpdateStock(this, in, __current);
+                return ___SendDirectoryDeliveryOrderError(this, in, __current);
             }
             case 53:
             {
-                return ___UpdateStockNew(this, in, __current);
+                return ___SubmitSecondReturnOrderAbnormal(this, in, __current);
             }
             case 54:
             {
-                return ___UpdateSupplyPrice(this, in, __current);
+                return ___UpdateProductPrice(this, in, __current);
             }
             case 55:
             {
-                return ___UpdateSupplyPriceSpecial(this, in, __current);
+                return ___UpdateStock(this, in, __current);
             }
             case 56:
             {
-                return ___ice_id(this, in, __current);
+                return ___UpdateStockList(this, in, __current);
             }
             case 57:
             {
-                return ___ice_ids(this, in, __current);
+                return ___UpdateStockNew(this, in, __current);
             }
             case 58:
             {
-                return ___ice_isA(this, in, __current);
+                return ___UpdateSupplyPrice(this, in, __current);
             }
             case 59:
+            {
+                return ___UpdateSupplyPriceSpecial(this, in, __current);
+            }
+            case 60:
+            {
+                return ___ice_id(this, in, __current);
+            }
+            case 61:
+            {
+                return ___ice_ids(this, in, __current);
+            }
+            case 62:
+            {
+                return ___ice_isA(this, in, __current);
+            }
+            case 63:
             {
                 return ___ice_ping(this, in, __current);
             }

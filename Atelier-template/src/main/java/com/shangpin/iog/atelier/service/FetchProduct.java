@@ -184,7 +184,7 @@ public abstract class FetchProduct extends AbsSaveProduct{
 						atelierSpu.setColorCode(spuArr[4]);
 						atelierSpu.setCategoryGender(spuArr[5]);
 						atelierSpu.setCategoryName(spuArr[8]);
-						atelierSpu.setColorName(spuArr[10]);
+						atelierSpu.setColorName(StringUtils.isNotBlank(spuArr[10])? spuArr[10] : spuArr[4]);
 						atelierSpu.setMaterial1(spuArr[11]);
 						atelierSpu.setDescription(spuArr[15]); 
 						atelierSpu.setSupplierPrice(spuArr[16]);

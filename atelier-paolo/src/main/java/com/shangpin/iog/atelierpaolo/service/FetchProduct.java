@@ -434,12 +434,15 @@ public class FetchProduct {
     }
     
     public static void main(String[] args) {
-    	String aaa= "00200 BIANCO OTTICO";
-    	String[] split = aaa.split(" ");
-    	String color = "";
-    	for (int i = 1; i < split.length; i++) {
-			color+=split[i]+" ";
-		}
-    	System.out.println(color);
+//    	String aaa= "00200 BIANCO OTTICO";
+//    	String[] split = aaa.split(" ");
+//    	String color = "";
+//    	for (int i = 1; i < split.length; i++) {
+//			color+=split[i]+" ";
+//		}
+//    	System.out.println(color);
+    	 OutTimeConfig outTimeConfig = new OutTimeConfig(1000*60*10,1000*60*30,1000*60*30);
+    	String spuData = HttpUtil45.postAuth(url+"GetAllItemsMarketplace", null, outTimeConfig, "shangpin", "fiorillo1003");
+    	System.out.println(spuData); 
     }
 }

@@ -171,6 +171,10 @@
     	var search = filter("");
         window.open('orders?supplierId='+$('#supplier').val(), '','');
     }
+    function queryNewOrder(){
+    	var search = filter("");
+        window.open('hubOrders?supplierId='+$('#supplier').val(), '','');
+    }
 	function show(){
 		$("#showExcel").removeAttr("hidden");
 	}
@@ -301,8 +305,14 @@
 	onclick="clearText()" id="btn-cancel" icon="icon-cancel" class='easyui-linkbutton'>清空</a>
 	<a href="javascript:void(0)" onclick="updatePrice()" id="btn-edit" icon="icon-edit" class='easyui-linkbutton'>更新价格</a>
 	<a href="javascript:void(0)" onclick="exportOrder('order')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>导出订单</a>
+	
+	<a href="javascript:void(0)" onclick="queryNewOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>新查看订单</a>
+	
 	<a href="javascript:void(0)" onclick="queryOrder()" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>查看订单</a>
 	<a href="javascript:void(0)" onclick="everydayExport('everyday')" id="btn-edit" icon="icon-search" class='easyui-linkbutton'>每日导出</a>
+	<a
+	href="javascript:void(0)" onclick="exportProduct('all')" id="btn-save"
+	icon="icon-search" class='easyui-linkbutton'>全部导出</a> 
 	<!-- <a
 	href="javascript:void(0)" onclick="tempExport('temp')" id="btn-save"
 	icon="icon-search" class='easyui-linkbutton'>临时导出</a>  -->

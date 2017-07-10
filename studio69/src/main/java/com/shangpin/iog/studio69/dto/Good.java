@@ -26,6 +26,7 @@ public class Good {
 	private String TypeID;
 	private String Code;
 	private String GoodsName;
+	private String ReferencePrice;
 	private String Price;
 	private String Stock;
 	private String MainPicNo;

@@ -2,7 +2,6 @@ package com.shangpin.iog.optical.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -74,7 +73,7 @@ public class Schedule {
 				future.get(Integer.parseInt(time), TimeUnit.MILLISECONDS);
 			} catch (Exception e) {
 				future.cancel(true);
-				e.printStackTrace();
+				logError.error(e.getMessage(),e); 
 				logError.error(Thread.currentThread().getName()+"超时销毁");
 				System.out.println(Thread.currentThread().getName()+"超时销毁");
 			}

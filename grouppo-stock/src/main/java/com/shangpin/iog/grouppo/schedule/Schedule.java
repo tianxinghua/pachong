@@ -2,7 +2,6 @@ package com.shangpin.iog.grouppo.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ice.ice.AbsUpdateProductStock;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.grouppo.stock.StockImp;
 import com.shangpin.iog.grouppo.stock.StockImpNotUseThread;
 
 @Component
@@ -35,7 +33,6 @@ public class Schedule {
 
 	@Autowired	
 	StockImpNotUseThread stockImp;
-	
 	
 	@SuppressWarnings("deprecation")
 	@Scheduled(cron="${jobsSchedule}")
@@ -99,11 +96,10 @@ public class Schedule {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				logger.info("更新数据库开始");
 				try {
-//					stockImp.setUseThread(true);
 					stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 				} catch (Exception e) {
 					e.printStackTrace();
-					logger.info("更新库存数据库出错"+e.toString());
+					logger.info("更新库存数据库出错"+e.getMessage(),e);
 				}
 				logger.info("更新数据库结束");
 				System.out.println("结束");

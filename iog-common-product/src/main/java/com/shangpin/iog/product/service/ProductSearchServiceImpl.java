@@ -3,11 +3,10 @@ package com.shangpin.iog.product.service;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,12 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +48,7 @@ import com.shangpin.iog.dto.ColorContrastDTO;
 import com.shangpin.iog.dto.HubSupplierValueMappingDTO;
 import com.shangpin.iog.dto.MaterialContrastDTO;
 import com.shangpin.iog.dto.ProductDTO;
+import com.shangpin.iog.dto.ProductOriginConstrastDTO;
 import com.shangpin.iog.dto.ProductPictureDTO;
 import com.shangpin.iog.dto.SeasonRelationDTO;
 import com.shangpin.iog.dto.SkuDTO;
@@ -70,13 +65,13 @@ import com.shangpin.iog.product.dao.ColorContrastMapper;
 import com.shangpin.iog.product.dao.EPRuleMapper;
 import com.shangpin.iog.product.dao.HubSupplierValueMappingMapper;
 import com.shangpin.iog.product.dao.MaterialContrastMapper;
+import com.shangpin.iog.product.dao.ProductOriginConstrastMapper;
 import com.shangpin.iog.product.dao.ProductPictureMapper;
 import com.shangpin.iog.product.dao.ProductsMapper;
 import com.shangpin.iog.product.dao.SkuMapper;
 import com.shangpin.iog.product.dao.SpuMapper;
 import com.shangpin.iog.product.dao.SupplierMapper;
 import com.shangpin.iog.product.dto.BuParamDTO;
-import com.shangpin.iog.product.special.Special;
 import com.shangpin.iog.service.ProductSearchService;
 import com.shangpin.iog.service.SeasonRelationService;
 
@@ -129,120 +124,128 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	SeasonRelationService seasonRelationService;
 	@Autowired
 	HubSupplierValueMappingMapper hubSupplierValueMappingService;
+	@Autowired
+	ProductOriginConstrastMapper originConstrastDAO;
 
 	private static Map<String, String> spBrandMap = new HashMap<>();
 	private static Map<String, String> colorContrastMap = new HashMap<>();
 	private static Map<String, String> materialContrastMap = new HashMap<>();
 	private static Map<String, String> middleMaterialContrastMap = new HashMap<>();
+	private static Map<String, String> middleMaterialContrastMap21 = new HashMap<>();
 	private static Map<String, String> smallMaterialContrastMap= new HashMap<>();
+	private static Map<String, String> smallMaterialContrastMap31= new HashMap<>();
 	private static Map<String, String> categoryContrastMap = new HashMap<>();
 	private static List<BuEpSpecialDTO> BuEpSpecialList = new ArrayList<BuEpSpecialDTO>();
 	private static Map<String, String> hubBrandMap = new HashMap<>();
+	
+	private static int materialCount = 0;
+	private static int madeInCount = 0;
 
 
 	String splitSign = ",";
 
 	// key 均为小写 以便匹配
-	private static Map<String, String> cityMap = new HashMap<String, String>() {
-		{
-			put("italia", "意大利");
-			put("stati Uniti d", "美国");
-			put("gran Bretagna", "英国");
-			put("canada", "加拿大");
-			put("brazil", "巴西");
-			put("argentina", "阿根廷");
-			put("mexico", "墨西哥");
-			put("germany", "德国");
-			put("francia", "法国");
-			put("russia", "俄罗斯");
-			put("giappone", "日本");
-			put("australia", "澳大利亚");
-			put("corea", "韩国");
-			put("cina", "中国");
-			put("finland", "芬兰");
-			put("svizzera", "瑞士");
-			put("sweden", "瑞典");
-			put("singapore", "新加坡");
-			put("tailandia", "泰国");
-			put("new zealand", "新西兰");
-			put("ireland", "爱尔兰");
-			put("arabia Saudita", "沙特阿拉伯");
-			put("armenia", "亚美尼亚");
-			put("belgio", "比利时");
-			put("bosnia-Erzegovina", "波斯尼亚-黑塞哥维那");
-			put("bulgaria", "保加利亚");
-			put("cambogia", "柬埔寨");
-			put("croazia", "克罗地亚");
-			put("filippine", "菲律宾");
-			put("georgia", "格鲁吉亚");
-			put("hongkong", "香港");
-			put("india", "印度");
-			put("indonesia", "印度尼西亚");
-			put("kenya", "肯尼亚");
-			put("lituania", "立陶宛");
-			put("madagascar", "马达加斯加");
-			put("marocco", "摩洛哥");
-			put("mauritius", "毛里求斯");
-			put("moldavia", "摩尔多瓦共和国");
-			put("myanmar(Unione)", "缅甸");
-			put("polonia", "波兰");
-			put("portogallo", "葡萄牙");
-			put("romania", "罗马尼亚");
-			put("serbia", "塞尔维亚");
-			put("slovacca", "斯洛伐克");
-			put("spagna", "西班牙");
-			put("sri Lanka", "斯里兰卡");
-			put("tunisia", "突尼斯");
-			put("turchia", "土耳其");
-			put("ucraina", "乌克兰");
-			put("ungheria", "匈牙利");
-			put("vietnam", "越南");
-			put("Made in China".toLowerCase(),"中国");
-			put("Made in Italy".toLowerCase(),"意大利");
-			put("Made in Romania".toLowerCase(),"罗马尼亚");
-			put("Bangladesh".toLowerCase(),"孟加拉国");
-			put("BD".toLowerCase(),"孟加拉国");
-			put("China".toLowerCase(),"中国");
-			put("CN".toLowerCase(),"中国");
-			put("Colombia".toLowerCase(),"哥伦比亚");
-			put("Dominican Republic".toLowerCase(),"多米尼加共和国");
-			put("France".toLowerCase(),"法国");
-			put("Gran Bretagna".toLowerCase(),"法国");
-			put("IN".toLowerCase(),"印度");
-			put("IT".toLowerCase(),"意大利");
-			put("Italy".toLowerCase(),"意大利");
-			put("JAPAN".toLowerCase(),"日本");
-			put("MADE IN BOSNIA E HERZEGOVINA".toLowerCase(),"波黑");
-			put("Made In Brasil".toLowerCase(),"巴西");
-			put("Made In CEE".toLowerCase(),"欧洲经济共同体");
-			put("MADE IN CHINA".toLowerCase(),"中国");
-			put("MADE IN EU".toLowerCase(),"欧盟");
-			put("MADE IN INDIA".toLowerCase(),"印度");
-			put("Made in Indonesia".toLowerCase(),"印度尼西亚");
-			put("made in italy".toLowerCase(),"意大利");
-			put("made in italyLI".toLowerCase(),"意大利");
-			put("made in madagascar".toLowerCase(),"马达加斯加岛");
-			put("Made in Messico".toLowerCase(),"墨西哥");
-			put("MADE IN PORTOGALLO".toLowerCase(),"波托加洛");
-			put("MADE IN PRC".toLowerCase(),"中国");
-			put("Made in Spain".toLowerCase(),"西班牙");
-			put("MADE IN THAILANDIA".toLowerCase(),"泰国");
-			put("MADE IN TURKEY".toLowerCase(),"土耳其");
-			put("MADE IN U.S.A.".toLowerCase(),"美国");
-			put("MADE IN UNITED KINGDOM".toLowerCase(),"英国");
-			put("MADE IN VIETNAM".toLowerCase(),"越南");
-			put("Philippines".toLowerCase(),"菲律宾");
-			put("Portugal".toLowerCase(),"葡萄牙");
-			put("RO".toLowerCase(),"罗马尼亚");
-			put("SPAIN".toLowerCase(),"西班牙");
-			put("Taiwan".toLowerCase(),"台湾");
-			put("TH".toLowerCase(),"泰国");
-			put("Thailand".toLowerCase(),"泰国");
-			put("UNITED KINGDOM".toLowerCase(),"英国");
-			put("US".toLowerCase(),"美国");
-			
-		}
-	};
+	private static Map<String, String> cityMap = new HashMap<String, String>() ;
+//			{
+//		{
+//			put("italia", "意大利");
+//			put("stati Uniti d", "美国");
+//			put("gran Bretagna", "英国");
+//			put("canada", "加拿大");
+//			put("brazil", "巴西");
+//			put("argentina", "阿根廷");
+//			put("mexico", "墨西哥");
+//			put("germany", "德国");
+//			put("francia", "法国");
+//			put("russia", "俄罗斯");
+//			put("giappone", "日本");
+//			put("australia", "澳大利亚");
+//			put("corea", "韩国");
+//			put("cina", "中国");
+//			put("finland", "芬兰");
+//			put("svizzera", "瑞士");
+//			put("sweden", "瑞典");
+//			put("singapore", "新加坡");
+//			put("tailandia", "泰国");
+//			put("new zealand", "新西兰");
+//			put("ireland", "爱尔兰");
+//			put("arabia Saudita", "沙特阿拉伯");
+//			put("armenia", "亚美尼亚");
+//			put("belgio", "比利时");
+//			put("bosnia-Erzegovina", "波斯尼亚-黑塞哥维那");
+//			put("bulgaria", "保加利亚");
+//			put("cambogia", "柬埔寨");
+//			put("croazia", "克罗地亚");
+//			put("filippine", "菲律宾");
+//			put("georgia", "格鲁吉亚");
+//			put("hongkong", "香港");
+//			put("india", "印度");
+//			put("indonesia", "印度尼西亚");
+//			put("kenya", "肯尼亚");
+//			put("lituania", "立陶宛");
+//			put("madagascar", "马达加斯加");
+//			put("marocco", "摩洛哥");
+//			put("mauritius", "毛里求斯");
+//			put("moldavia", "摩尔多瓦共和国");
+//			put("myanmar(Unione)", "缅甸");
+//			put("polonia", "波兰");
+//			put("portogallo", "葡萄牙");
+//			put("romania", "罗马尼亚");
+//			put("serbia", "塞尔维亚");
+//			put("slovacca", "斯洛伐克");
+//			put("spagna", "西班牙");
+//			put("sri Lanka", "斯里兰卡");
+//			put("tunisia", "突尼斯");
+//			put("turchia", "土耳其");
+//			put("ucraina", "乌克兰");
+//			put("ungheria", "匈牙利");
+//			put("vietnam", "越南");
+//			put("Made in China".toLowerCase(),"中国");
+//			put("Made in Italy".toLowerCase(),"意大利");
+//			put("Made in Romania".toLowerCase(),"罗马尼亚");
+//			put("Bangladesh".toLowerCase(),"孟加拉国");
+//			put("BD".toLowerCase(),"孟加拉国");
+//			put("China".toLowerCase(),"中国");
+//			put("CN".toLowerCase(),"中国");
+//			put("Colombia".toLowerCase(),"哥伦比亚");
+//			put("Dominican Republic".toLowerCase(),"多米尼加共和国");
+//			put("France".toLowerCase(),"法国");
+//			put("Gran Bretagna".toLowerCase(),"法国");
+//			put("IN".toLowerCase(),"印度");
+//			put("IT".toLowerCase(),"意大利");
+//			put("Italy".toLowerCase(),"意大利");
+//			put("JAPAN".toLowerCase(),"日本");
+//			put("MADE IN BOSNIA E HERZEGOVINA".toLowerCase(),"波黑");
+//			put("Made In Brasil".toLowerCase(),"巴西");
+//			put("Made In CEE".toLowerCase(),"欧洲经济共同体");
+//			put("MADE IN CHINA".toLowerCase(),"中国");
+//			put("MADE IN EU".toLowerCase(),"欧盟");
+//			put("MADE IN INDIA".toLowerCase(),"印度");
+//			put("Made in Indonesia".toLowerCase(),"印度尼西亚");
+//			put("made in italy".toLowerCase(),"意大利");
+//			put("made in italyLI".toLowerCase(),"意大利");
+//			put("made in madagascar".toLowerCase(),"马达加斯加岛");
+//			put("Made in Messico".toLowerCase(),"墨西哥");
+//			put("MADE IN PORTOGALLO".toLowerCase(),"波托加洛");
+//			put("MADE IN PRC".toLowerCase(),"中国");
+//			put("Made in Spain".toLowerCase(),"西班牙");
+//			put("MADE IN THAILANDIA".toLowerCase(),"泰国");
+//			put("MADE IN TURKEY".toLowerCase(),"土耳其");
+//			put("MADE IN U.S.A.".toLowerCase(),"美国");
+//			put("MADE IN UNITED KINGDOM".toLowerCase(),"英国");
+//			put("MADE IN VIETNAM".toLowerCase(),"越南");
+//			put("Philippines".toLowerCase(),"菲律宾");
+//			put("Portugal".toLowerCase(),"葡萄牙");
+//			put("RO".toLowerCase(),"罗马尼亚");
+//			put("SPAIN".toLowerCase(),"西班牙");
+//			put("Taiwan".toLowerCase(),"台湾");
+//			put("TH".toLowerCase(),"泰国");
+//			put("Thailand".toLowerCase(),"泰国");
+//			put("UNITED KINGDOM".toLowerCase(),"英国");
+//			put("US".toLowerCase(),"美国");
+//			
+//		}
+//	};
 
 	@Override
 	public Page<ProductDTO> findProductPageBySupplierAndTime(String supplier,
@@ -262,9 +265,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						productList = productDAO.findListOfAllSupplier(startDate, endDate, new RowBounds(
 								pageIndex, pageSize));
 					}
-
-
-
+				}else if(flag.equals("all")){
+					productList = productDAO.findAllOfProducts(supplier, startDate, endDate, new RowBounds(pageIndex, pageSize));
+					
 				}else if(flag.equals("ep_regular")){//根据ep规则查找product
 					productList = productDAO.findListByEPRegularAndLastDate(
 							supplier, startDate, endDate, new RowBounds(
@@ -281,11 +284,17 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 					productList = productDAO.findListBySupplierAndLastDate(
 							supplier, startDate, endDate);
 
+				}else if(flag.equals("all")){
+					System.out.println(flag); 
+					productList = productDAO.findAllOfProducts(supplier, startDate, endDate);
+					
 				}else if(flag.equals("ep_regular")){//根据ep规则查找product
 
 					productList = productDAO.findListByEPRegularAndLastDate(
 							supplier, startDate, endDate);
 
+				}else if(flag.equals("hasSpSkuId")){
+					productList = productDAO.findProductOfHasSpSkuId(supplier, startDate, endDate);
 				}
 				else {
 					productList = productDAO.findDiffListBySupplierAndLastDate(
@@ -409,10 +418,15 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				+ "Currency 币种" + splitSign + "新上市季节" + splitSign + "上市季节" + splitSign
 				+ "活动开始时间"+ splitSign + "活动结束时间" + splitSign + "SupplierSpuNo 供应商spu编号" + splitSign + "供应商门户编号"+ splitSign + "SpuId" + splitSign + "备注").append("\r\n");
 		Page<ProductDTO> page = null;
+		System.out.println(flag); 
 		if (flag.equals("same")) {
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "same");
 
+		}else if(flag.equals("all")){
+			page = this.findProductPageBySupplierAndTime(supplier, startDate,
+					endDate, pageIndex, pageSize, "all");
+			
 		}else if(flag.equals("ep_regular")){
 			page = this.findProductPageBySupplierAndTime(supplier, startDate,
 					endDate, pageIndex, pageSize, "ep_regular");
@@ -431,10 +445,12 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setColorContrastMap();
 		// 材质Map 赋值
 		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
 
-		String productSize, season = "", productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
+		String productSize,  productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
 
-		String supplierId="", categoryId = "", categoryName = "", productName = "";
+		String supplierId="", categoryName = "", productName = "";
 		for (ProductDTO dto : page.getItems()) {
 
 			try {
@@ -524,11 +540,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				buffer.append(productName).append(splitSign);
 
 				buffer.append("\"\t" + dto.getBarcode() + "\"").append(
-						splitSign);
+						splitSign+"\t");
 
 				// 获取颜色
 				color = dto.getColor()==null?"":dto.getColor().replace(",", " ").replaceAll("/", " ");
-				buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign);
+				DecimalFormat format = new DecimalFormat("00000");
+				String s = format.format(3);
+				
+				buffer.append(null == color ? "" : color.replace(",", " ")).append(splitSign+"\t");
 				// 翻译中文
 				String colorCh = "";
 				if (StringUtils.isNotBlank(color)) {
@@ -814,10 +833,10 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 	/**
 	 * 设置materialContrastMap
 	 */
-	private void setMaterialContrastMap() {
-		Map<String, String> material = new HashMap<>();
+	private void setMaterialContrastMap() {		
 		int num = materialContrastDAO.findCount();
-		if (material.size() != num) {
+		if (materialCount != num) {
+			materialCount = num;
 			try {
 				//先查找1级
 				List<MaterialContrastDTO> materialContrastDTOList = materialContrastDAO.findByRank(1);
@@ -827,11 +846,27 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 								dto.getMaterialCh());
 					}
 				}
+				//再查找2级中的长词组
+				List<MaterialContrastDTO> materialContrastDTOList21 = materialContrastDAO.findByRank(21);
+				if(materialContrastDTOList21 != null && materialContrastDTOList21.size()>0){
+					for (MaterialContrastDTO dto : materialContrastDTOList21) {					
+						middleMaterialContrastMap21.put(dto.getMaterial().trim().toLowerCase(),
+								dto.getMaterialCh());
+					}
+				}
 				//再查找2级
 				List<MaterialContrastDTO> materialContrastDTOList2 = materialContrastDAO.findByRank(2);
 				if(materialContrastDTOList2 != null && materialContrastDTOList2.size()>0){
 					for (MaterialContrastDTO dto : materialContrastDTOList2) {					
 						middleMaterialContrastMap.put(dto.getMaterial().trim().toLowerCase(),
+								dto.getMaterialCh());
+					}
+				}
+				//再查找3级中的长单词
+				List<MaterialContrastDTO> materialContrastDTOList31 = materialContrastDAO.findByRank(31);
+				if(materialContrastDTOList31 != null && materialContrastDTOList31.size()>0){
+					for (MaterialContrastDTO dto : materialContrastDTOList31) {					
+						smallMaterialContrastMap31.put(dto.getMaterial().trim().toLowerCase(),
 								dto.getMaterialCh());
 					}
 				}
@@ -861,19 +896,42 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			
 			if(StringUtils.isBlank(materialOrg)){
 				return "";
+			}else{
+				materialOrg = materialOrg.trim().replaceAll("\n", "").replaceAll("\r", "");
 			}
 			if(materialContrastMap.containsKey(materialOrg.toLowerCase())){
 				return materialContrastMap.get(materialOrg.toLowerCase());
 				
 			}else{
+				if(middleMaterialContrastMap21.size()>0){
+					//先遍历2级中的长词组
+					Set<Map.Entry<String, String>> materialSet = middleMaterialContrastMap21
+							.entrySet();
+					for (Map.Entry<String, String> entry : materialSet) {
+
+						materialOrg = materialOrg.toLowerCase().replaceAll(
+								entry.getKey(), entry.getValue());
+					}
+				}
 				if(middleMaterialContrastMap.size()>0){
-					//先遍历带有空格的材质
+					//再遍历2级词组
 					Set<Map.Entry<String, String>> materialSet = middleMaterialContrastMap
 							.entrySet();
 					for (Map.Entry<String, String> entry : materialSet) {
 
 						materialOrg = materialOrg.toLowerCase().replaceAll(
 								entry.getKey(), entry.getValue());
+					}
+				}
+				if(smallMaterialContrastMap31.size()>0){
+					//再遍历3级单词中的长单词
+					Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap31
+							.entrySet();
+					for (Map.Entry<String, String> entry : smallMaterialSet) {
+
+						materialOrg = materialOrg.toLowerCase()
+								.replaceAll(entry.getKey(),
+										entry.getValue());
 					}
 				}
 				if(smallMaterialContrastMap.size()>0){
@@ -894,6 +952,24 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			e.printStackTrace();
 		}
 		return materialOrg;
+	}
+	
+	private void setMadeInMap(){
+		try {
+			int num = originConstrastDAO.findCount();
+			if(madeInCount != num){
+				madeInCount = num;
+				List<ProductOriginConstrastDTO> lists = originConstrastDAO.findByRank(1);
+				if(null != lists && lists.size()>0){
+					for(ProductOriginConstrastDTO product : lists){
+						cityMap.put(product.getProductOrigin().trim().toLowerCase(), product.getProductOriginCH().trim());
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private String transforMadeIn(String madeinOrg){
@@ -1153,14 +1229,14 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 //		}
 		System.out.println("supplierList.size===="+supplierList.size());
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign
-				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新上市季节" + splitSign+ "上市季节").append("\r\n");
+				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "尚品skuid"+ splitSign + "新上市季节" + splitSign+ "上市季节").append("\r\n");
+		boolean haveProduct = false;
 		for(SupplierDTO supplier : supplierList){
 			if(StringUtils.isNotBlank(supplier.getSupplierId())){
 				final List<ProductDTO> products = productDAO.findDiffSeasonProducts(supplier.getSupplierId(),startDate,endDate);
 				System.out.println("products.size====="+products.size());
-				if(null == products || products.size()==0){
-//					return null;
-				}else{
+				if(null != products || products.size()> 0){
+					haveProduct = true;
 					for(ProductDTO dto : products){
 						toupdateProducts.add(dto);
 						// 供应商
@@ -1179,6 +1255,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 						buffer.append(
 								null == dto.getSkuId() ? "" : dto.getSkuId())
 								.append(splitSign);
+						//尚品skuid
+						buffer.append(null == dto.getSpSkuId()?"": dto.getSpSkuId()).append(splitSign);
 						//新季节
 						buffer.append(
 								null == dto.getNewseasonName() ? dto.getNewseasonId() : dto
@@ -1218,92 +1296,97 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			}
 		}
 
+		if(!haveProduct){
+			return new StringBuffer(""); 
+		}
 		return buffer;
 	}
 
 	public StringBuffer getDiffProduct(Date startDate,Date endDate,Integer pageIndex,Integer pageSize,String flag) throws ServiceException{
 //		Map<String, String> supMap = new HashMap<String, String>();
 		StringBuffer buffer = new StringBuffer("供应商" + splitSign
-				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "新市场价" + splitSign
+				+ "ProductModel 货号" + splitSign + "供货商skuid" + splitSign+ "尚品skuid" +splitSign + "新市场价" + splitSign
 				+ "新销售价" + splitSign + "新进货价" + splitSign + "市场价"
 				+ splitSign + "销售价" + splitSign + "进货价").append("\r\n");
 
 		List<ProductDTO> toUpdateProducts = new ArrayList<ProductDTO>();
-
+		boolean haveProduct = false;
 		try {
-
 			List<SupplierDTO> supplierList = supplierDAO.findByState("1");
 			for(SupplierDTO supplierDTO : supplierList){
 				try {
-
 					List<ProductDTO> products = productDAO.findDiffPriceProducts(supplierDTO.getSupplierId(), startDate, endDate);
+					if(products != null && products.size() > 0){
+						haveProduct = true;
+						for (ProductDTO dto : products) {
+							try {
+								toUpdateProducts.add(dto);
+								// 供应商
+								buffer.append(supplierDTO.getSupplierName()).append(splitSign);
+								// 货号
+								buffer.append(
+										null == dto.getProductCode() ? "" : dto
+												.getProductCode().replaceAll(",", " "))
+										.append(splitSign);
+								//supplier skuid
+								buffer.append(
+										null == dto.getSkuId() ? "" : dto.getSkuId())
+										.append(splitSign);
+								
+								//尚品skuid
+								buffer.append(null == dto.getSpSkuId()?"": dto.getSpSkuId()).append(splitSign);
 
-					for (ProductDTO dto : products) {
-						try {
-							toUpdateProducts.add(dto);
-							// 供应商
-							buffer.append(supplierDTO.getSupplierName()).append(splitSign);
-							// 货号
-							buffer.append(
-									null == dto.getProductCode() ? "" : dto
-											.getProductCode().replaceAll(",", " "))
-									.append(splitSign);
-							//supplier skuid
-							buffer.append(
-									null == dto.getSkuId() ? "" : dto.getSkuId())
-									.append(splitSign);
+								// 新的价格
+								String newMarketPrice = dto.getNewMarketPrice();
+								String newSalePrice = dto.getNewSalePrice();
+								String newSupplierPrice = dto.getNewSupplierPrice();
+								if (StringUtils.isNotBlank(newMarketPrice)) {
+									newMarketPrice = newMarketPrice.replace(",", ".");
+								} else {
+									newMarketPrice = "";
+								}
+								if (StringUtils.isNotBlank(newSalePrice)) {
+									newSalePrice = newSalePrice.replace(",", ".");
+								} else {
+									newSalePrice = "";
+								}
+								if (StringUtils.isNotBlank(newSupplierPrice)) {
+									newSupplierPrice = newSupplierPrice.replace(",", ".");
+								} else {
+									newSupplierPrice = "";
+								}
+								buffer.append(newMarketPrice).append(splitSign);
+								buffer.append(newSalePrice).append(splitSign);
+								buffer.append(newSupplierPrice).append(splitSign);
+								// 价格
+								String marketPrice = dto.getMarketPrice();
+								String salePrice = dto.getSalePrice();
+								String supplierPrice = dto.getSupplierPrice();
+								if (StringUtils.isNotBlank( marketPrice)) {
+									marketPrice = marketPrice.replace(",", ".");
+								} else {
+									marketPrice = "";
+								}
+								if (StringUtils.isNotBlank(salePrice )) {
+									salePrice = salePrice.replace(",", ".");
+								} else {
+									salePrice = "";
+								}
+								if (StringUtils.isNotBlank(supplierPrice )) {
+									supplierPrice = supplierPrice.replace(",", ".");
+								} else {
+									supplierPrice = "";
+								}
+								buffer.append(marketPrice).append(splitSign);
+								buffer.append(salePrice).append(splitSign);
+								buffer.append(supplierPrice);
 
-							// 新的价格
-							String newMarketPrice = dto.getNewMarketPrice();
-							String newSalePrice = dto.getNewSalePrice();
-							String newSupplierPrice = dto.getNewSupplierPrice();
-							if (StringUtils.isNotBlank(newMarketPrice)) {
-								newMarketPrice = newMarketPrice.replace(",", ".");
-							} else {
-								newMarketPrice = "";
+								buffer.append("\r\n");
+							} catch (Exception e) {
+								logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
 							}
-							if (StringUtils.isNotBlank(newSalePrice)) {
-								newSalePrice = newSalePrice.replace(",", ".");
-							} else {
-								newSalePrice = "";
-							}
-							if (StringUtils.isNotBlank(newSupplierPrice)) {
-								newSupplierPrice = newSupplierPrice.replace(",", ".");
-							} else {
-								newSupplierPrice = "";
-							}
-							buffer.append(newMarketPrice).append(splitSign);
-							buffer.append(newSalePrice).append(splitSign);
-							buffer.append(newSupplierPrice).append(splitSign);
-							// 价格
-							String marketPrice = dto.getMarketPrice();
-							String salePrice = dto.getSalePrice();
-							String supplierPrice = dto.getSupplierPrice();
-							if (StringUtils.isNotBlank( marketPrice)) {
-								marketPrice = marketPrice.replace(",", ".");
-							} else {
-								marketPrice = "";
-							}
-							if (StringUtils.isNotBlank(salePrice )) {
-								salePrice = salePrice.replace(",", ".");
-							} else {
-								salePrice = "";
-							}
-							if (StringUtils.isNotBlank(supplierPrice )) {
-								supplierPrice = supplierPrice.replace(",", ".");
-							} else {
-								supplierPrice = "";
-							}
-							buffer.append(marketPrice).append(splitSign);
-							buffer.append(salePrice).append(splitSign);
-							buffer.append(supplierPrice);
-
-							buffer.append("\r\n");
-						} catch (Exception e) {
-							logger.debug(dto.getSkuId() + "拉取失败" + e.getMessage());
 						}
 					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -1342,6 +1425,9 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 			e.printStackTrace();
 		}
 
+		if(!haveProduct){
+			return new StringBuffer("");
+		}
 		return buffer;
 	}
 
@@ -1832,6 +1918,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setColorContrastMap();
 		// 材质Map 赋值
 		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
 		for (ProductDTO dto : page.getItems()) {
 			try {
 				if(supplierSeasonList.contains(dto.getSupplierId()+"-"+(null==dto.getSeasonId()?"":dto.getSeasonId()))){
@@ -2045,41 +2133,43 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
 					row.createCell(16).setCellValue(material);
 					// 材质 中文
-					if (StringUtils.isNotBlank(material)) {
-
-						//先遍历带有空格的材质
-						Set<Map.Entry<String, String>> materialSet = materialContrastMap
-								.entrySet();
-						for (Map.Entry<String, String> entry : materialSet) {
-
-							material = material.toLowerCase().replaceAll(
-									entry.getKey(), entry.getValue());
-						}
-
-						//再遍历单个材质
-						Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
-								.entrySet();
-						for (Map.Entry<String, String> entry : smallMaterialSet) {
-
-							material = material.toLowerCase()
-									.replaceAll(entry.getKey(),
-											entry.getValue());
-						}
-					}
-
-					row.createCell(17).setCellValue(material);
+					row.createCell(17).setCellValue(transforMaterial(material));
+//					if (StringUtils.isNotBlank(material)) {
+//
+//						//先遍历带有空格的材质
+//						Set<Map.Entry<String, String>> materialSet = materialContrastMap
+//								.entrySet();
+//						for (Map.Entry<String, String> entry : materialSet) {
+//
+//							material = material.toLowerCase().replaceAll(
+//									entry.getKey(), entry.getValue());
+//						}
+//
+//						//再遍历单个材质
+//						Set<Map.Entry<String, String>> smallMaterialSet = smallMaterialContrastMap
+//								.entrySet();
+//						for (Map.Entry<String, String> entry : smallMaterialSet) {
+//
+//							material = material.toLowerCase()
+//									.replaceAll(entry.getKey(),
+//											entry.getValue());
+//						}
+//					}
+//
+//					row.createCell(17).setCellValue(material);
 					// 获取产地
 					productOrigin = dto.getProductOrigin();
-					if (StringUtils.isNotBlank(productOrigin)) {
-						if (cityMap.containsKey(productOrigin.toLowerCase())) {
-							productOrigin = cityMap
-									.get(productOrigin.toLowerCase());
-						}
-					} else {
-						productOrigin = "";
-					}
-
-					row.createCell(18).setCellValue(productOrigin);
+					row.createCell(18).setCellValue(transforMadeIn(productOrigin)); 
+//					if (StringUtils.isNotBlank(productOrigin)) {
+//						if (cityMap.containsKey(productOrigin.toLowerCase())) {
+//							productOrigin = cityMap
+//									.get(productOrigin.toLowerCase());
+//						}
+//					} else {
+//						productOrigin = "";
+//					}
+//
+//					row.createCell(18).setCellValue(productOrigin);
 
 					// 图片
 					row.createCell(19).setCellValue(dto.getPicUrl());
@@ -2515,6 +2605,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 		this.setColorContrastMap();
 		// 材质Map 赋值
 		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
 
 		String productSize, productDetail = "", brandName = "", brandId = "", color = "", material = "", productOrigin = "";
 
@@ -3978,6 +4070,29 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<ProductDTO> findProductOfHasSpSkuId(String supplier,
+			Date startDate, Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		
+		
+		Page<ProductDTO> page = this.findProductPageBySupplierAndTime(supplier, startDate,
+				endDate, pageIndex, pageSize, "hasSpSkuId");
+		
+		//品类map赋值
+		this.setCategoryMap();
+		// 设置尚品网品牌
+		this.setHubBrandMap();
+		// 颜色Map赋值
+		this.setColorContrastMap();
+		// 材质Map 赋值
+		this.setMaterialContrastMap();
+		//产地翻译
+		this.setMadeInMap();
+		
+		return page.getItems();
 	}
 
 }

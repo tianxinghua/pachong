@@ -20,7 +20,8 @@ public interface SpuMapper extends IBaseDao<SpuDTO> {
 	
 	public SpuDTO findPartBySupAndSpuId(@Param("supplierId") String supplierId,@Param("spuId") String spuId);
 	
-	public void updateSpuMemo(@Param("supplierId") String supplierId,@Param("spuId") String spuId,@Param("memo") String memo,@Param("lastTime") Date date);
+	public void
+	updateSpuMemo(@Param("supplierId") String supplierId,@Param("spuId") String spuId,@Param("memo") String memo,@Param("lastTime") Date date);
 
 	public void updateSpuMemoList(@Param("list") List<SpuDTO> spuList);
 	

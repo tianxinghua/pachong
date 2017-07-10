@@ -1,11 +1,12 @@
-package com.shangpin.iog.ostore;
+package com.shangpin.iog.linoricci;
+
 
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.ostore.service.FetchProduct;
+import com.shangpin.iog.linoricci.service.FetchProduct;
 
 public class StartUp {
 	 private static Logger log = Logger.getLogger("info");

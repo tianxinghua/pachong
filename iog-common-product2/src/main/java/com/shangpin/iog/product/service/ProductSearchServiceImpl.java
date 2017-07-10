@@ -12,6 +12,7 @@ import com.shangpin.iog.service.ProductSearchService;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -938,6 +939,44 @@ public  class ProductSearchServiceImpl implements ProductSearchService {
 
 	@Override
 	public StringBuffer exportReportProduct(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ProductDTO> findReportProduct(String supplier, Date startDate,
+			Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ProductDTO> findProductOfHasSpSkuId(String supplier,
+			Date startDate, Date endDate, Integer pageIndex, Integer pageSize)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HSSFWorkbook reportProductToExcel(List<ProductDTO> products,
+			String picPath) throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer reportProductToBuffer(List<ProductDTO> products)
+			throws ServiceException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public StringBuffer tempExport(String supplier, Date startDate,
 			Date endDate, Integer pageIndex, Integer pageSize)
 			throws ServiceException {
 		// TODO Auto-generated method stub
