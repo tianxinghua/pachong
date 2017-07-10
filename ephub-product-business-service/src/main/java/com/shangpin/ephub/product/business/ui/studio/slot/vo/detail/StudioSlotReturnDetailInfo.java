@@ -18,4 +18,5 @@ public class StudioSlotReturnDetailInfo implements Serializable {
 	private String BarCode;
 	private String SlotNo;
 	private String MasterId;
+	private String isSlot;
 }
