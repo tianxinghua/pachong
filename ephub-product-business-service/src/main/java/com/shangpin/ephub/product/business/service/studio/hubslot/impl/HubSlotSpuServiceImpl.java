@@ -15,13 +15,23 @@ import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SlotSpuS
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.gateway.SpuSupplierUnionGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
+import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportDto;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSupplierDto;
+import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +70,12 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
     @Autowired
     SpuSupplierUnionGateWay spuSupplierUnionGateWay;
-
-
+    @Autowired
+	private CategoryService categoryService;
+    @Autowired
+	private BrandService brandService;
+    @Autowired
+	private SupplierService supplierService;
 
 
     @Override
@@ -494,4 +508,25 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             }
         }
     }
+
+	@Override
+	public List<SlotSpuExportDto> exportSlotSpu(SpuSupplierQueryDto queryDto) {
+		List<SlotSpuExportDto> exportDtos = new ArrayList<SlotSpuExportDto>();
+		List<SlotSpuDto> list = findSlotSpu(queryDto);
+		if(CollectionUtils.isNotEmpty(list)){
+			for(SlotSpuDto spuDto : list){
+				SlotSpuExportDto exportDto = new SlotSpuExportDto();
+				JavaUtil.fatherToChild(spuDto, exportDto);
+				FourLevelCategory category = categoryService.getGmsCateGory(spuDto.getHubCategoryNo());
+                String hubCategoryName = categoryService.getHubCategoryNameByHubCategory(spuDto.getHubCategoryNo(), category);
+				exportDto.setHubCategoryName(hubCategoryName);
+				BrandDom brand = brandService.getGmsBrand(spuDto.getHubBrandNo());
+				exportDto.setHubBrandName(null != brand ? brand.getBrandEnName() : spuDto.getHubBrandNo());
+				SupplierDTO supplierDTO = supplierService.getSupplier(spuDto.getSupplierNo());
+				exportDto.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : spuDto.getSupplierNo()); 
+				exportDtos.add(exportDto);
+			}
+		}
+		return exportDtos;
+	}
 }
