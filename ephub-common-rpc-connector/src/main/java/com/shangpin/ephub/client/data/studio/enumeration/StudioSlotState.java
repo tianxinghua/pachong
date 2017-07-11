@@ -28,14 +28,25 @@ public enum StudioSlotState {
      */
     RECEIVED(3,"RECEIVED"),
     /**
+     * 摄影棚收货
+     */
+    IS_CHECK(4,"ISCHECK"),
+    /**
      * 已拍摄
      */
-    HAVE_SHOOT(4,"HAVE SHOOT"),
-
+    HAVE_SHOOT(5,"HAVE SHOOT"),
     /**
-     * 摄影棚返货
+     * 准备寄回
      */
-    STUDIO_RETURN(5,"STUDIO_RETURN");
+    READY_RETURN_SLOT(6,"READY_RETURN_SLOT"),
+    /**
+     * 已寄回
+     */
+    STUDIO_RETURN(7,"STUDIO_RETURN"),
+	/**
+     * 已完成
+     */
+    HAVE_FINISHED(8,"HAVE_FINISHED");
 
 
 
