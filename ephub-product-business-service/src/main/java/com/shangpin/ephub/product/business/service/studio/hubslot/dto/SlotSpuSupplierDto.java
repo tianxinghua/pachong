@@ -11,6 +11,7 @@ import lombok.Setter;
 public class SlotSpuSupplierDto {
     private String supplierId;
     private String supplierNo;
+    private String supplierName;
     /**
      * 状态  0:未寄出 1：已加入发货单  2：已发货  3:不处理
      */
