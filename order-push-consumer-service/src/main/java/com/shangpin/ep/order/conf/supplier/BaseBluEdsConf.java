@@ -23,10 +23,6 @@ public class BaseBluEdsConf extends SupplierCommon implements Serializable {
 	/**
 	 * 
 	 */
-	private String url;
-	/**
-	 * 
-	 */
 	private String cancelUrl;
 	/**
 	 * 

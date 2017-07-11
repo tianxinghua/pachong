@@ -21,6 +21,24 @@ spring:
             register-health-check: false
         stream: 
               bindings: 
+                        coccolebimbiPendingProduct:
+                              destination: coccolebimbi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        portofinoPendingProduct:
+                              destination: portofino.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        fratinardiPendingProduct:
+                              destination: fratinardi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         forzieriPendingProduct:
                               destination: forzieri.pending.product
                               group: one

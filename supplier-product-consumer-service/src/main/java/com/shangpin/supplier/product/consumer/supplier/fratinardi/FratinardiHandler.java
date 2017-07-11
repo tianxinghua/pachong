@@ -24,7 +24,6 @@ import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexis
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.forzieri.dto.CategoryMap;
-import com.shangpin.supplier.product.consumer.supplier.forzieri.dto.CsvDTO;
 import com.shangpin.supplier.product.consumer.supplier.fratinardi.dto.Item;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +46,7 @@ public class FratinardiHandler implements ISupplierHandler{
 	@Autowired
 	private SupplierProductMongoService mongoService;
 	Map<String, String> categoryMap = new CategoryMap(new HashMap<String,String>()).getCategoryMap();
+	
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
@@ -54,7 +54,6 @@ public class FratinardiHandler implements ISupplierHandler{
 			if(!StringUtils.isEmpty(message.getData())){
 				log.info(message.getData());
 				Item jsonObject = gson.fromJson(message.getData(),Item.class);
-				log.info("jsonObject"+JsonUtil.serialize(jsonObject));
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				String supplierSpuNo = splitSupplierSpuNo(jsonObject.getProduct_No());
@@ -85,6 +84,7 @@ public class FratinardiHandler implements ISupplierHandler{
 		}		
 		
 	}
+	
 	private static String splitSupplierSpuNo(String spuNo) {
 		if(spuNo!=null){
 			String [] arr = spuNo.split("-");
@@ -100,6 +100,7 @@ public class FratinardiHandler implements ISupplierHandler{
 		}
 		return spuNo;
 	}
+	
 	/**
 	 * stefania处理图片
 	 * @param stefPicture
@@ -157,6 +158,7 @@ public class FratinardiHandler implements ISupplierHandler{
 	 * @return
 	 */
 	public boolean convertSpu(String supplierId,Item ob,HubSupplierSpuDto hubSpu,String data){
+		
 		if(null != ob && ob != null){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(ob.getProduct_No());

@@ -182,7 +182,7 @@ public class DataSverviceUtil {
         }
         if(null!=commonSizeMap&&commonSizeMap.size()>0){
 
-            Set<String> sizeSet  = getCommonSupplierSizeMapping().keySet();//sizeMap.keySet();
+            Set<String> sizeSet  = commonSizeMap.keySet();//sizeMap.keySet();
             String replaceKey="";
             for(String sizeKey:sizeSet){
                 if("++".equals(sizeKey)){
@@ -193,13 +193,14 @@ public class DataSverviceUtil {
                     replaceKey = sizeKey;
                 }
                 if(size.indexOf(sizeKey)>=0){
-                    size = size.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
+                	 String size1 = size.substring(0,size.indexOf(sizeKey));
+        			 String size2 = size.substring(size.indexOf(sizeKey));
+                    size = size1 + size2.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
                 }
             }
         }
         return size;
     }
-
 
     public  void updatePriceOrStock(SpuPending hubSpuPending,PendingSku supplierSku){
         if(null!=supplierSku){

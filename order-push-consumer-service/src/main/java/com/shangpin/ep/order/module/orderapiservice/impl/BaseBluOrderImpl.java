@@ -75,6 +75,7 @@ public class BaseBluOrderImpl  implements IOrderService {
 	/**
 	 * 锁库存
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
 		orderDTO.setLockStockTime(new Date());
@@ -95,8 +96,8 @@ public class BaseBluOrderImpl  implements IOrderService {
 		try{
 			json = getJsonData(orderDTO,false);
 			String rtnData= null;
-//			rtnData = efashionPushOrder(orderDTO,placeUrl,json);/api/v3.0/products/date.json?storeCode=YYW8M&datetime=2011-01-01
-			rtnData = efashionPushOrder(orderDTO,"http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M",json);
+			rtnData = basebluPushOrder(orderDTO,placeUrl,json);
+//			rtnData = basebluPushOrder(orderDTO,"http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M",json);
 			orderDTO.setLogContent("confirm返回的结果=" + rtnData+",推送的参数="+json);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			
@@ -166,6 +167,7 @@ public class BaseBluOrderImpl  implements IOrderService {
 	/**
 	 * 解除库存锁
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleCancelOrder(OrderDTO deleteOrder) {
 		deleteOrder.setCancelTime(new Date()); 
@@ -177,12 +179,13 @@ public class BaseBluOrderImpl  implements IOrderService {
 	/**
 	 * 退款
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public void handleRefundlOrder(OrderDTO orderDTO) {
 		try{
 			String json = getJsonData(orderDTO,true);
 			String rtnData= null;
-			rtnData = efashionPushOrder(orderDTO,cancelUrl,json);
+			rtnData = basebluPushOrder(orderDTO,cancelUrl,json);
 			orderDTO.setLogContent("refund返回的结果=" + rtnData+",推送的订单参数="+json);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
 			String[] data = rtnData.split("\\|");
@@ -227,56 +230,50 @@ public class BaseBluOrderImpl  implements IOrderService {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	private String getJsonData(OrderDTO orderDTO, boolean flag) throws Exception{
 
 		Object array = null;
-//		try {
-			RequestObject obj = new RequestObject();
-			obj.setOrder_number(orderDTO.getSpOrderId());
-			obj.setItems_count("1");
-			SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd");
-			obj.setDate(time.format(orderDTO.getCreateTime()));
-			Item item = new Item();
+		RequestObject obj = new RequestObject();
+		obj.setOrder_number(orderDTO.getSpOrderId());
+		obj.setItems_count("1");
+		SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd");
+		obj.setDate(time.format(orderDTO.getCreateTime()));
+		Item item = new Item();
 
-			String detail = orderDTO.getDetail();
-			String skuNo = null;
-			String num = null;
-			if (detail != null) {
-				skuNo = detail.split(":")[0];
-				num = detail.split(":")[1];
-			}
-			item.setProduct(skuNo.split("-")[0]);
-			item.setQuantity(num);
-			String size = skuNo.split("-")[1];
-			if ("A".equals(size)) {
-				size = null;
-			}
-			item.setSize(size);
-//			item.setPurchase_price(orderDTO.getPurchasePriceDetail());
-			if(flag){
+		String detail = orderDTO.getDetail();
+		String skuNo = null;
+		String num = null;
+		if (detail != null) {
+			skuNo = detail.split(":")[0];
+			num = detail.split(":")[1];
+		}
+		item.setProduct(skuNo.split("-")[0]);
+		item.setQuantity(num);
+		String size = skuNo.split("-")[1];
+		if ("A".equals(size)) {
+			size = null;
+		}
+		item.setSize(size);
+		if(flag){
+			item.setPurchase_price("1");
+		}else{
+			try{
+				BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+				orderDTO.setLogContent("【geb在推送订单时获取采购价："+priceInt.toString()+"】"); 
+				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+				String price = priceInt.divide(new BigDecimal(1.05), 2)
+						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+				orderDTO.setPurchasePriceDetail(price);
+				item.setPurchase_price(price);
+			}catch(Exception e){
+				logger.info(orderDTO.getPurchaseNo()+"baseblu获取采购价失败");
 				item.setPurchase_price("1");
-			}else{
-//				try{
-//					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
-					BigDecimal priceInt = new BigDecimal("10");
-					orderDTO.setLogContent("【geb在推送订单时获取采购价："+priceInt.toString()+"】"); 
-					logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-					String price = priceInt.divide(new BigDecimal(1.05), 2)
-							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-					orderDTO.setPurchasePriceDetail(price);
-					item.setPurchase_price(price);
-//				}catch(Exception e){
-//					Log.info(orderDTO.getPurchaseNo()+"geb获取采购价失败");
-//					item.setPurchase_price("1");
-//				}
 			}
-			Item[] i = { item };
-			obj.setItems(i);
-			
-			array = JSONObject.toJSON(obj);
-//		} catch (Exception ex) {
-//
-//		}
+		}
+		Item[] i = { item };
+		obj.setItems(i);
+		array = JSONObject.toJSON(obj);
 		if (array != null) {
 			return array.toString();
 		} else {
@@ -290,8 +287,7 @@ public class BaseBluOrderImpl  implements IOrderService {
 	 * @return
 	 * @throws Exception
 	 */
-//    @HystrixCommand(fallbackMethod = "handleException")
-	private String efashionPushOrder(OrderDTO orderDTO, String url, String json)  throws Exception{
+	private String basebluPushOrder(OrderDTO orderDTO, String url, String json)  throws Exception{
 		
 		HttpResponse response = null;
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
@@ -301,7 +297,7 @@ public class BaseBluOrderImpl  implements IOrderService {
 		entity.setContentEncoding("UTF-8");
 		entity.setContentType("application/json");
 		httpPost.setEntity(entity);
-		Map map = new HashMap();
+		Map<String,String> map = new HashMap<String,String>();
 		map.put("order", json);
 		Iterable<? extends NameValuePair> nvs = map2NameValuePair(map);
 		httpPost.setEntity(new UrlEncodedFormEntity(nvs, Charset

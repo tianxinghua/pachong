@@ -21,6 +21,24 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1 
+                        coccolebimbiOriginalProduct: 
+                              destination: coccolebimbi.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        coccolebimbiPendingProduct: 
+                              destination: coccolebimbi.pending.product
+                              content-type: application/json 
+                        portofinoOriginalProduct: 
+                              destination: portofino.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        portofinoPendingProduct: 
+                              destination: portofino.pending.product
+                              content-type: application/json 
                         fratinardiOriginalProduct: 
                               destination: fratinardi.original.product
                               group: one
@@ -599,6 +617,24 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                              coccolebimbiOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              coccolebimbiPendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
+                              portofinoOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              portofinoPendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
                               fratinardiOriginalProduct: 
                                       consumer: 
                                          prefix: HA.

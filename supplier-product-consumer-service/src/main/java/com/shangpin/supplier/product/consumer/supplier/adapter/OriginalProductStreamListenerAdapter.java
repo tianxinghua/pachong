@@ -133,6 +133,14 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler filippoHandler;
 	
 	/**
+	 * coccolebimbi供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void coccolebimbiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		
+	}
+	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
 	 * @param message 消息体
@@ -204,6 +212,14 @@ public class OriginalProductStreamListenerAdapter {
 	/*
 	 * 以下为spinnaker系统统一处理 ，共八家供应商
 	 */
+	/**
+	 * spinnaker供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void portofinoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		spinnakerCommonHandler.handleOriginalProduct(message, headers); 
+	}
 	/**
 	 * spinnaker供货商原始数据监听方法
 	 * @param message 消息体

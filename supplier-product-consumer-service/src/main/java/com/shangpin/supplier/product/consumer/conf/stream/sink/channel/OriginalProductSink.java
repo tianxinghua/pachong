@@ -10,6 +10,8 @@ import org.springframework.messaging.SubscribableChannel;
  * @date 2016年12月6日 下午4:06:53
  */
 public interface OriginalProductSink {
+	public static final String portofino = "portofinoOriginalProduct";
+	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
 	public static final String fratinardi = "fratinardiOriginalProduct";
 	public static final String FORZIERI = "forzieriOriginalProduct";
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
@@ -138,6 +140,18 @@ public interface OriginalProductSink {
 	
 	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
 	//===============================
+	/**
+	 * 供货商portofino通道组件配置
+	 * @return portofino通道组件
+	 */
+	@Input(value = OriginalProductSink.portofino)
+	public SubscribableChannel portofinoOriginalProduct();
+	/**
+	 * 供货商coccolebimbi通道组件配置
+	 * @return coccolebimbi通道组件
+	 */
+	@Input(value = OriginalProductSink.coccolebimbi)
+	public SubscribableChannel coccolebimbiOriginalProduct();
 	/**
 	 * 供货商fratinardi通道组件配置
 	 * @return FORZIERI通道组件
