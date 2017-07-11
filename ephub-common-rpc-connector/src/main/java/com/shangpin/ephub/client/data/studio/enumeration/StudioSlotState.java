@@ -28,7 +28,7 @@ public enum StudioSlotState {
      */
     RECEIVED(3,"RECEIVED"),
     /**
-     * 摄影棚收货
+     * 已质检
      */
     IS_CHECK(4,"ISCHECK"),
     /**

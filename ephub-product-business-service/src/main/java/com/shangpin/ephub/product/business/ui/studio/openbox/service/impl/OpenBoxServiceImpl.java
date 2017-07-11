@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
@@ -133,6 +134,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			}
 			log.info("拍摄状态是============"+studioSlotDto.getShotStatus()); 
 			studioSlotDto.setShootTime(date); 
+			studioSlotDto.setUpdateTime(date); 
+			studioSlotDto.setSlotStatus(StudioSlotState.IS_CHECK.getIndex().byteValue());
 			slotWithCriteria.setStudioSlot(studioSlotDto );
 			int update = studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
 			log.info("更新批次状态返回结果=============="+update); 
