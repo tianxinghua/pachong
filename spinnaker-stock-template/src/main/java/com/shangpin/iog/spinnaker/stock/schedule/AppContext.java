@@ -1,4 +1,4 @@
-package com.shangpin.iog.stock.schedule;
+package com.shangpin.iog.spinnaker.stock.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,3 +26,4 @@ public class AppContext {
     
     
 }
+

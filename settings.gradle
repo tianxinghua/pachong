@@ -9,4 +9,8 @@ include 'iog-common-product'
 include 'iog-product-framework'
 include 'openapi-ice'
 include 'Eds-stock-template'
+include 'Atelier-template'
+include 'spinnaker-stock-template'
+include 'spinnaker-stock'
+include 'fratinardi-stock'
 
