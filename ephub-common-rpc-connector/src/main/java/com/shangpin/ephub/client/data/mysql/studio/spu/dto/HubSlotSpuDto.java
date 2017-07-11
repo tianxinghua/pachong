@@ -100,6 +100,11 @@ public class HubSlotSpuDto implements Serializable {
     private String hubColorNo;
 
     /**
+     * 图片标记  0：未上传图 1：上传图
+     */
+    private Byte picSign;
+
+    /**
      * 主图Url(尚品)
      */
     private String picUrl;
@@ -278,6 +283,14 @@ public class HubSlotSpuDto implements Serializable {
         this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
     }
 
+    public Byte getPicSign() {
+        return picSign;
+    }
+
+    public void setPicSign(Byte picSign) {
+        this.picSign = picSign;
+    }
+
     public String getPicUrl() {
         return picUrl;
     }
@@ -343,6 +356,7 @@ public class HubSlotSpuDto implements Serializable {
         sb.append(", spuState=").append(spuState);
         sb.append(", hubColor=").append(hubColor);
         sb.append(", hubColorNo=").append(hubColorNo);
+        sb.append(", picSign=").append(picSign);
         sb.append(", picUrl=").append(picUrl);
         sb.append(", infoFrom=").append(infoFrom);
         sb.append(", memo=").append(memo);
@@ -384,6 +398,7 @@ public class HubSlotSpuDto implements Serializable {
             && (this.getSpuState() == null ? other.getSpuState() == null : this.getSpuState().equals(other.getSpuState()))
             && (this.getHubColor() == null ? other.getHubColor() == null : this.getHubColor().equals(other.getHubColor()))
             && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
+            && (this.getPicSign() == null ? other.getPicSign() == null : this.getPicSign().equals(other.getPicSign()))
             && (this.getPicUrl() == null ? other.getPicUrl() == null : this.getPicUrl().equals(other.getPicUrl()))
             && (this.getInfoFrom() == null ? other.getInfoFrom() == null : this.getInfoFrom().equals(other.getInfoFrom()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
@@ -414,6 +429,7 @@ public class HubSlotSpuDto implements Serializable {
         result = prime * result + ((getSpuState() == null) ? 0 : getSpuState().hashCode());
         result = prime * result + ((getHubColor() == null) ? 0 : getHubColor().hashCode());
         result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
+        result = prime * result + ((getPicSign() == null) ? 0 : getPicSign().hashCode());
         result = prime * result + ((getPicUrl() == null) ? 0 : getPicUrl().hashCode());
         result = prime * result + ((getInfoFrom() == null) ? 0 : getInfoFrom().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());

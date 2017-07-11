@@ -1,6 +1,5 @@
 package com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.result;
 
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import lombok.Getter;
 import lombok.Setter;
 
