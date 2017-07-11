@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.data.studio.slot.slot.dto;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -39,4 +41,8 @@ public class SlotManageQuery {
 	private String masterId;
 	private Integer quantity;
 	private Integer actualNumber;
+	private String sender;
+	private byte Milestone;
+	private Date startDate;
+	private Date endDate;
 }
