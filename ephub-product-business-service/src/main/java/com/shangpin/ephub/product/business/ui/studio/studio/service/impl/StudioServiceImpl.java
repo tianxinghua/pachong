@@ -862,7 +862,7 @@ public class StudioServiceImpl implements IStudioService {
 
            }
 
-           return false;
+           return true;
 
        }catch (Exception ex){
            log.info("insertSlotLogistic Exception " + ex.getMessage());
