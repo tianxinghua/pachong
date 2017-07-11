@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -32,6 +33,11 @@ public class ExportController {
 	@Autowired
 	private IPendingProductService pendingProductService;
 
+	/**
+	 * 待拍照导出
+	 * @param pendingQuryDto
+	 * @return
+	 */
 	@RequestMapping(value="/wait-to-shoot",method=RequestMethod.POST)
 	public HubResponse<?> exportWaitToShoot(@RequestBody PendingQuryDto pendingQuryDto){
 		try {
@@ -50,5 +56,18 @@ public class ExportController {
 			log.error("待拍照导出异常："+e.getMessage(),e);
 		}
 		return HubResponse.errorResp("待拍照导出异常");
+	}
+	
+	/**
+	 * 已提交导出
+	 * @param quryDto
+	 * @return
+	 */
+	@RequestMapping(value="/commited",method=RequestMethod.POST)
+	public HubResponse<?> exportCommited(@RequestBody SpuSupplierQueryDto quryDto){
+		String remotePath = "pending_export";
+		//第一步创建任务
+		HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(quryDto.getCreateUser(), remotePath , TaskType.EXPORT_COMMITED);
+		return null;
 	}
 }
