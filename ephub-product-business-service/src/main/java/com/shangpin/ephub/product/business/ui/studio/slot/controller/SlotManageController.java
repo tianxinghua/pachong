@@ -1,9 +1,8 @@
 package com.shangpin.ephub.product.business.ui.studio.slot.controller;
 
-import com.shangpin.ephub.product.business.service.studio.slotsendreturn.SlotSendReturnService;
-import com.shangpin.ephub.product.business.service.studio.slotsendreturn.dto.SlotSpuSendAndReturn;
-import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotSpuDetail;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,14 +11,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
+import com.shangpin.ephub.product.business.service.studio.slotsendreturn.SlotSendReturnService;
+import com.shangpin.ephub.product.business.service.studio.slotsendreturn.dto.SlotSpuSendAndReturn;
 import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotDetailService;
 import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotManageService;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotInfo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotSpuDetail;
 import com.shangpin.ephub.response.HubResponse;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title: OpenBoxController</p>

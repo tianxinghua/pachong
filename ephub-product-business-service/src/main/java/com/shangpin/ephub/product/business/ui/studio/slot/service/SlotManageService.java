@@ -661,7 +661,6 @@ public class SlotManageService {
 			}
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
-			int count = studioSlotsHistoriesList.size();
 			for(StudioSlotDto studioSlotDto : studioSlotDtoList){
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
 				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
@@ -693,13 +692,13 @@ public class SlotManageService {
 					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
 							.selectByPrimaryKey(masterId);
 					if (slotManageQuery.getStartDate() != null && slotManageQuery.getEndDate() != null) {
-						if (slotManageQuery.getMilestone() == 3) {
+						if (slotManageQuery.getMilestone() == 3&&studioSlotReturnMasterDto.getSendTime()!=null) {
 							if (!studioSlotReturnMasterDto.getSendTime().before(slotManageQuery.getEndDate())
-									&& !studioSlotReturnMasterDto.getSendTime().after(slotManageQuery.getStartDate())){
+									|| !studioSlotReturnMasterDto.getSendTime().after(slotManageQuery.getStartDate())){
 								continue;
 							}
 						}
-						if (slotManageQuery.getMilestone() == 4) {
+						if (slotManageQuery.getMilestone() == 4&&studioSlotReturnMasterDto.getArriveTime()!=null) {
 							if (!studioSlotReturnMasterDto.getArriveTime().before(slotManageQuery.getEndDate())
 									&& !studioSlotReturnMasterDto.getArriveTime().after(slotManageQuery.getStartDate())){
 								continue;
@@ -718,7 +717,7 @@ public class SlotManageService {
 				studioSlotsHistoriesList.add(studioSlotsHistories);
 			}
 			vo.setStudioSlotsHistoriesList(studioSlotsHistoriesList);
-			vo.setTotal(count);
+			vo.setTotal(studioSlotsHistoriesList.size());
 
 		} catch (Exception e) {
 			Log.error("查询批次当前节点失败!");
