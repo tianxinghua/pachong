@@ -256,6 +256,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			StudioSlotWithCriteriaDto withCriteria = new StudioSlotWithCriteriaDto();
 			StudioSlotDto studioSlot = new StudioSlotDto();
 			studioSlot.setSlotStatus(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
+			studioSlot.setUpdateTime(new Date()); 
 			withCriteria.setStudioSlot(studioSlot );
 			StudioSlotCriteriaDto criteria = new StudioSlotCriteriaDto();
 			criteria.createCriteria().andSlotNoEqualTo(slotNo);
