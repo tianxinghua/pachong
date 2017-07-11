@@ -960,7 +960,94 @@ public class VariableInit {
         }
         return result;
     }
+    /**
+     * 返回false 说明有英文
+     *
+     * @param spu
+     * @param hubSpuPending
+     * @return
+     */
+    public boolean replaceMaterialByRedis(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
+    	//材质替换顺序：firstMaterialMap替换不要的字符 、secondMaterialMap词组替换、threeMaterialMap单词替换
+        Map<String, String> firstMaterialMap = pendingCommonHandler.getFirstMaterialMap();
+        Map<String, String> secondMaterialMap = pendingCommonHandler.getSecondMaterialMap();
+        Map<String, String> threeMaterialMap = pendingCommonHandler.getThreeMaterialMap();
+        Map<String, String> replaceMaterialMap = pendingCommonHandler.getReplaceMaterialMap();
+        
+        String supplierMaterial = replace(spu.getHubMaterial());
+        
+        if (StringUtils.isNotBlank(supplierMaterial)&&firstMaterialMap!=null&&firstMaterialMap.containsKey(supplierMaterial.toLowerCase().trim())) {
+            spu.setHubMaterial(firstMaterialMap.get(supplierMaterial.toLowerCase().trim()).trim());
+            hubSpuPending.setHubMaterial(spu.getHubMaterial());
+            supplierMaterial = spu.getHubMaterial();
+        }
+        
+        Set<String> secondMaterialSet = secondMaterialMap.keySet();
+        for (String material : secondMaterialSet) {
+        	 if (StringUtils.isNotBlank(supplierMaterial)&&supplierMaterial.toLowerCase().trim().contains(material)) {
+        		 spu.setHubMaterial(supplierMaterial.toLowerCase().trim().replaceAll(material, secondMaterialMap.get(material)).trim());
+             	hubSpuPending.setHubMaterial(spu.getHubMaterial());
+             	 supplierMaterial = spu.getHubMaterial();
+             }
+        }
+        
+        Set<String> threeMaterialSet = threeMaterialMap.keySet();
+        for (String material : threeMaterialSet) {
+        	 if (StringUtils.isNotBlank(supplierMaterial)&&supplierMaterial.toLowerCase().trim().contains(material)) {
+        		 spu.setHubMaterial(supplierMaterial.toLowerCase().trim().replaceAll(material, threeMaterialMap.get(material)).trim());
+             	hubSpuPending.setHubMaterial(spu.getHubMaterial());
+             	 supplierMaterial = spu.getHubMaterial();
+             }
+        }
+        
+        Set<String> replaceMaterialSet = replaceMaterialMap.keySet();
+        for (String material : replaceMaterialSet) {
+       	 if (StringUtils.isNotBlank(supplierMaterial)&&supplierMaterial.toLowerCase().trim().contains(material)) {
+       		 	spu.setHubMaterial(supplierMaterial.toLowerCase().trim().replaceAll(material, "").trim());
+            	 hubSpuPending.setHubMaterial(spu.getHubMaterial());
+            	 supplierMaterial = spu.getHubMaterial();
+            }
+       }
+        
+        if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
+            hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+            // 材质含有英文 返回false
+            return false;
+        } else {
+            hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+            return true;
+        }
 
+    }
+    public static String replace(String str) // 识别括号并将括号内容替换的函数
+    {
+    	if(StringUtils.isBlank(str)){
+    		return str;
+    	}
+        int head = str.indexOf('('); // 标记第一个使用左括号的位置
+        if (head == -1)
+            ; // 如果str中不存在括号，什么也不做，直接跑到函数底端返回初值str
+        else {
+            int next = head + 1; // 从head+1起检查每个字符
+            int count = 1; // 记录括号情况
+            do {
+                if (str.charAt(next) == '(')
+                    count++;
+                else if (str.charAt(next) == ')')
+                    count--;
+                next++; // 更新即将读取的下一个字符的位置
+                if (count == 0) // 已经找到匹配的括号
+                {
+                    String temp = str.substring(head, next); // 将两括号之间的内容及括号提取到temp中
+                    str = str.replace(temp, ""); // 用空内容替换，复制给str
+                    head = str.indexOf('('); // 找寻下一个左括号
+                    next = head + 1; // 标记下一个左括号后的字符位置
+                    count = 1; // count的值还原成1
+                }
+            } while (head != -1); // 如果在该段落中找不到左括号了，就终止循环
+        }
+        return str; // 返回更新后的str
+    }
 
     /**
      * 返回false 说明有英文

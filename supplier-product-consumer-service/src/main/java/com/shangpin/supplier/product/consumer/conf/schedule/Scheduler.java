@@ -24,9 +24,9 @@ public class Scheduler {
 	private SupplierProductRetryService supplierProductPictureService;
 
 	@Scheduled(cron = "0/15 * * * * ?")
-	public void pictureTask() {
+	public void refreshColorTask() {
 		try {
-			supplierProductPictureService.processProduct(InfoState.RefreshColor.getIndex());
+			supplierProductPictureService.processProduct(InfoState.RefreshColor.getIndex(),true);
 		} catch (Throwable e) {
 			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
 			e.printStackTrace();
@@ -34,9 +34,9 @@ public class Scheduler {
 	}
 	
 	@Scheduled(cron = "0/30 * * * * ?")
-	public void modelTask() {
+	public void refreshSpuMergeTask() {
 		try {
-			supplierProductPictureService.processProduct((byte)5);
+			supplierProductPictureService.processProduct(InfoState.Union.getIndex(),true);
 		} catch (Throwable e) {
 			log.info("=======系统扫描同款需要重新推送的数据事件发生异常======",e);
 			e.printStackTrace();

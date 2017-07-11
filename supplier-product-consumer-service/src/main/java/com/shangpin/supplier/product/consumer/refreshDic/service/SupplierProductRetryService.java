@@ -59,10 +59,11 @@ public class SupplierProductRetryService {
 	private static final Integer PAGESIZE = 100;
 	
 	/**
-	 * 处理供应商商品
+	 * 字典两种刷新方式，1、页面修改走任务队列刷新redis，2、更新数据库infoState对应的字典状态定时任务刷新
+	 * 此方法是定时任务刷新
 	 * @param picDtos
 	 */
-	public void processProduct(Byte state) throws Exception{
+	public void processProduct(Byte state,boolean flag) throws Exception{
 		long start = System.currentTimeMillis();
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		criteria.createCriteria().andInfoStateEqualTo(state);
@@ -72,31 +73,53 @@ public class SupplierProductRetryService {
 		if(products!=null&&products.size()>0){
 			log.info("========系统扫描到infoState："+state+"需要重新推送的数据:"+products.size()+"===");
 			for(HubSupplierSpuDto spu : products){
-				if(state==5){
-					loopProduct(spu, state, true);
-				}else{
-					loopProduct(spu,state,null);	
+				List<HubSupplierSkuDto> skus = null;
+				if(flag){
+					skus = getHubSupplierSkuList(spu.getSupplierSpuId());
 				}
+				loopProduct(spu,state,skus);	
 				updateSupplierInfoState(spu);
 			}
 			log.info("=====系统扫描到需要重新推送的数据结束,耗时{}毫秒======",System.currentTimeMillis()-start);
 		}
 	}
 	
-	public void sendSupplierSpu(int total,HubSupplierSpuCriteriaDto criteria,byte state) throws Exception{
+	/**
+	 * 字典两种刷新方式，1、页面修改走任务队列刷新redis，2、更新数据库infoState对应的字典状态定时任务刷新
+	 * 此方法是页面修改走任务队列刷新redis
+	 * @param total
+	 * @param criteria
+	 * @param state 要刷新的字典状态
+	 * @param flag true代表需要传递sku信息
+	 * @throws Exception
+	 */
+	public void sendSupplierSpu(int total,HubSupplierSpuCriteriaDto criteria,byte state,boolean flag) throws Exception{
 		int pageCount = getPageCount(total, PAGESIZE);// 页数
-		log.info("刷新总页数：" + pageCount);
+		log.info(state+"刷新总页数：" + pageCount);
 		for (int i = 1; i <= pageCount; i++) {
 			long start = System.currentTimeMillis();
 			criteria.setPageNo(i);
 			criteria.setPageSize(PAGESIZE);
 			List<HubSupplierSpuDto> products = hubSupplierSpuGateWay.selectByCriteria(criteria);
-			log.info("========系统扫描到需要重新推送的数据:" + products.size() + "===");
+			log.info("========系统扫描到"+state+"需要重新推送的数据:" + products.size() + "===");
 			for (HubSupplierSpuDto spu : products) {
-				loopProduct(spu, state, null);
+				List<HubSupplierSkuDto> skus = null;
+				if(flag){
+					skus = getHubSupplierSkuList(spu.getSupplierSpuId());
+				}
+				loopProduct(spu, state, skus);
 			}
-			log.info("=====系统扫描到需要重新推送的数据结束,耗时{}毫秒======", System.currentTimeMillis() - start);
+			log.info("=====系统扫描到"+state+"需要重新推送的数据结束,耗时{}毫秒======", System.currentTimeMillis() - start);
 		}
+	}
+	
+	/**
+	 * 查询supplierSpu下所有的sku信息
+	 * @param supplierSpuId
+	 * @return
+	 */
+	private List<HubSupplierSkuDto> getHubSupplierSkuList(Long supplierSpuId){
+		return supplierProductMysqlService.findSupplierSku(supplierSpuId);	
 	}
 	
 	/**
@@ -115,7 +138,7 @@ public class SupplierProductRetryService {
 			return (totalSize / pageSize) + 1;
 		}
 	}
-	public void loopProduct(HubSupplierSpuDto spu, byte state, HubSupplierSkuDto hubSupplierSku) throws Exception {
+	public void loopProduct(HubSupplierSpuDto spu, byte state, List<HubSupplierSkuDto> hubSkus) throws Exception {
 
 		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId(),spu.getSupplierSeasonname());
 		if (season == null) {
@@ -146,27 +169,32 @@ public class SupplierProductRetryService {
 		pendingSpu.setSupplierNo(supplier.getHubValNo());
 		pendingProduct.setData(pendingSpu);
 
-		if (hubSupplierSku!=null) {
-			// 开始构造sku消息头
-			List<PendingSku> skus = new ArrayList<PendingSku>();
-			List<Sku> headSkus = new ArrayList<Sku>();
-			try {
-				Sku headSku = new Sku();
-				PendingSku pendingSku = new PendingSku();
-				// 开始保存hubSku到数据库
-				convertHubSkuToPendingSku(hubSupplierSku, pendingSku);
-				skus.add(pendingSku);
-				headSku.setSupplierId(spu.getSupplierId());
-				headSku.setSkuNo(hubSupplierSku.getSupplierSkuNo());
-				headSku.setStatus(state);
-				headSkus.add(headSku);
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
+		//开始构造sku消息头
+		List<PendingSku> skus = new ArrayList<PendingSku>();
+		List<Sku> headSkus = new ArrayList<Sku>();		
+		if(hubSkus != null && hubSkus.size()>0){
+			for(HubSupplierSkuDto hubSku : hubSkus){
+				try {					
+					Sku headSku = new Sku();
+					PendingSku pendingSku = new PendingSku();
+					//开始保存hubSku到数据库
+					hubSku.setSupplierSpuId(pendingSpu.getSupplierSpuId()); //在这里回写supplierSpuId
+					convertHubSkuToPendingSku(hubSku,pendingSku);
+					skus.add(pendingSku);
+					headSku.setSupplierId(spu.getSupplierId());
+					headSku.setSkuNo(hubSku.getSupplierSkuNo());
+					headSku.setStatus(state);
+					headSkus.add(headSku);
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
+				}				
 			}
-			pendingSpu.setSkus(skus);
-			spuHead.setSkus(headSkus);
+		}else{
+			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
 		}
-
+		pendingSpu.setSkus(skus);
+		spuHead.setSkus(headSkus);
+		
 		pendingProduct.setData(pendingSpu);
 		Map<String, String> headers = new HashMap<String, String>();
 		headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
@@ -201,70 +229,70 @@ public class SupplierProductRetryService {
     	supplierProductPictureManager.updateSupplierSpu(hubSupplierSpu);		
 	}
 
-	private void loopProduct(HubSupplierSpuDto spu,byte state,boolean flag) throws Exception{
-		
-		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId(),spu.getSupplierSeasonname());
-		if(season==null){
-			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+":"+spu.getSupplierSeasonname()+"非当季");
-			return;
-		}
-	
-		HubSupplierValueMappingDto supplier = supplierProductPictureManager.findHubSupplierValueMapping(spu.getSupplierId());
-		if(supplier==null){
-			log.info("===="+spu.getSupplierId()+"未找到供应商名称");
-			return;
-		}
- 
-    	Spu spuHead = new Spu();
-		spuHead.setSupplierId(spu.getSupplierId());
-		spuHead.setSpuNo(spu.getSupplierSpuNo());
-		spuHead.setStatus(state);
-		
-	   	PendingProduct pendingProduct = new PendingProduct();
-		pendingProduct.setSupplierNo(supplier.getHubValNo()); 
-		pendingProduct.setSupplierId(spu.getSupplierId());
-		pendingProduct.setSupplierName(supplier.getHubVal());
-		
-		PendingSpu pendingSpu = new PendingSpu();
-		supplierProductMysqlService.convertHubSpuToPendingSpu(spu, pendingSpu);
-		pendingSpu.setSupplierNo(supplier.getHubValNo());
-		pendingProduct.setData(pendingSpu);
-		
-		if(flag){
-			//开始构造sku消息头
-			List<PendingSku> skus = new ArrayList<PendingSku>();
-			List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSku(spu.getSupplierSpuId());
-			List<Sku> headSkus = new ArrayList<Sku>();		
-			if(hubSkus != null && hubSkus.size()>0){
-				for(HubSupplierSkuDto hubSku : hubSkus){
-					try {					
-						Sku headSku = new Sku();
-						PendingSku pendingSku = new PendingSku();
-						//开始保存hubSku到数据库
-						hubSku.setSupplierSpuId(pendingSpu.getSupplierSpuId()); //在这里回写supplierSpuId
-						convertHubSkuToPendingSku(hubSku,pendingSku);
-						skus.add(pendingSku);
-						headSku.setSupplierId(spu.getSupplierId());
-						headSku.setSkuNo(hubSku.getSupplierSkuNo());
-						headSku.setStatus(state);
-						headSkus.add(headSku);
-					} catch (Exception e) {
-						log.error(e.getMessage(), e);
-					}				
-				}
-			}else{
-				log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
-			}
-			pendingSpu.setSkus(skus);
-			spuHead.setSkus(headSkus);	
-		}
-		
-		pendingProduct.setData(pendingSpu);	
-		Map<String,String> headers = new HashMap<String,String>();	
-    	headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
-    	supplierProductSendToPending.dispatchSupplierProduct(pendingProduct, headers);
-    	
-	}
+//	private void loopProduct(HubSupplierSpuDto spu,byte state,boolean flag) throws Exception{
+//		
+//		HubSeasonDicDto season = supplierProductPictureManager.findCurrentSeason(spu.getSupplierId(),spu.getSupplierSeasonname());
+//		if(season==null){
+//			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+":"+spu.getSupplierSeasonname()+"非当季");
+//			return;
+//		}
+//	
+//		HubSupplierValueMappingDto supplier = supplierProductPictureManager.findHubSupplierValueMapping(spu.getSupplierId());
+//		if(supplier==null){
+//			log.info("===="+spu.getSupplierId()+"未找到供应商名称");
+//			return;
+//		}
+// 
+//    	Spu spuHead = new Spu();
+//		spuHead.setSupplierId(spu.getSupplierId());
+//		spuHead.setSpuNo(spu.getSupplierSpuNo());
+//		spuHead.setStatus(state);
+//		
+//	   	PendingProduct pendingProduct = new PendingProduct();
+//		pendingProduct.setSupplierNo(supplier.getHubValNo()); 
+//		pendingProduct.setSupplierId(spu.getSupplierId());
+//		pendingProduct.setSupplierName(supplier.getHubVal());
+//		
+//		PendingSpu pendingSpu = new PendingSpu();
+//		supplierProductMysqlService.convertHubSpuToPendingSpu(spu, pendingSpu);
+//		pendingSpu.setSupplierNo(supplier.getHubValNo());
+//		pendingProduct.setData(pendingSpu);
+//		
+//		if(flag){
+//			//开始构造sku消息头
+//			List<PendingSku> skus = new ArrayList<PendingSku>();
+//			List<HubSupplierSkuDto> hubSkus = supplierProductMysqlService.findSupplierSku(spu.getSupplierSpuId());
+//			List<Sku> headSkus = new ArrayList<Sku>();		
+//			if(hubSkus != null && hubSkus.size()>0){
+//				for(HubSupplierSkuDto hubSku : hubSkus){
+//					try {					
+//						Sku headSku = new Sku();
+//						PendingSku pendingSku = new PendingSku();
+//						//开始保存hubSku到数据库
+//						hubSku.setSupplierSpuId(pendingSpu.getSupplierSpuId()); //在这里回写supplierSpuId
+//						convertHubSkuToPendingSku(hubSku,pendingSku);
+//						skus.add(pendingSku);
+//						headSku.setSupplierId(spu.getSupplierId());
+//						headSku.setSkuNo(hubSku.getSupplierSkuNo());
+//						headSku.setStatus(state);
+//						headSkus.add(headSku);
+//					} catch (Exception e) {
+//						log.error(e.getMessage(), e);
+//					}				
+//				}
+//			}else{
+//				log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
+//			}
+//			pendingSpu.setSkus(skus);
+//			spuHead.setSkus(headSkus);	
+//		}
+//		
+//		pendingProduct.setData(pendingSpu);	
+//		Map<String,String> headers = new HashMap<String,String>();	
+//    	headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
+//    	supplierProductSendToPending.dispatchSupplierProduct(pendingProduct, headers);
+//    	
+//	}
 
 	private void convertHubSkuToPendingSku(HubSupplierSkuDto hubSku, PendingSku pendingSku) throws Exception {
 		pendingSku.setSupplierId(hubSku.getSupplierId());

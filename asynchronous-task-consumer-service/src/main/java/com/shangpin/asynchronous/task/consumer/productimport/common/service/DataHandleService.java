@@ -86,7 +86,7 @@ public class DataHandleService {
 		
 	}
 
-	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId(HubSpuPendingDto hubSpuPendingDro) {
+	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId1(HubSpuPendingDto hubSpuPendingDro) {
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		List<Byte> listSkuState = new ArrayList<Byte>();
         listSkuState.add(SpuState.HANDLED.getIndex());
@@ -134,6 +134,7 @@ public class DataHandleService {
 		dto.setUpdateTime(new Date());
 		dto.setAuditState((byte)0);
 		dto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+		dto.setMemo("再处理：同品牌同货号颜色不一样");
 		dto.setAuditDate(new Date());
 		dto.setAuditUser("chenxu");
 		dto.setSpuState((byte)0);

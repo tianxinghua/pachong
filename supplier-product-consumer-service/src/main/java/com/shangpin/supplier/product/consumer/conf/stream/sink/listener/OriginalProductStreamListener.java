@@ -26,6 +26,24 @@ public class OriginalProductStreamListener {
 	@Autowired
 	private OriginalProductStreamListenerAdapter adapter;
 	/**
+	 * 供应商portofino原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.portofino)
+	public void portofinoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.portofinoStreamListen(message,headers);
+	}
+	/**
+	 * 供应商coccolebimbi原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.coccolebimbi)
+	public void coccolebimbiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.coccolebimbiStreamListen(message,headers);
+	}
+	/**
 	 * 供应商BIONDIONI原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
@@ -88,6 +106,15 @@ public class OriginalProductStreamListener {
     public void ostoreStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.ostoreStreamListen(message,headers);
     }
+	/**
+	 * 供应商fratinardi原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.fratinardi)
+	public void fratinardiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.fratinardiStreamListen(message,headers);
+	}
 	/**
 	 * 供应商FORZIERI原始商品数据流通道监听者
 	 * @param message 消息
