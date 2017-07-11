@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title: CommonExporter</p>
- * <p>Description: 导出操作通用业务处理 </p>
+ * <p>Description: 导出操作通用业务处理，T是查询条件，S是写入Excel的实体 </p>
  * <p>Company: </p> 
  * @author lubaijiang
  * @date 2017年7月7日 下午2:02:37

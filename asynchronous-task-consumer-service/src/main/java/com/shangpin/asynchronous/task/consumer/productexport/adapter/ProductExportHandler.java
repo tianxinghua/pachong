@@ -40,6 +40,8 @@ public class ProductExportHandler {
 	
 	@Qualifier("waitShootExporter")
 	private IExportService waitShootExporter;
+	@Qualifier("commitedExporter") 
+	private IExportService commitedExporter;
 	
 	/**
 	 * 商品导出数据流监听
@@ -73,6 +75,8 @@ public class ProductExportHandler {
 					allProductServiceImpl.exportStudioSlot(message.getTaskNo(), slotManageQuery);
 				}else if(message.getType() == TaskType.EXPORT_WAIT_SHOOT.getIndex()){
 					waitShootExporter.productExportTask(message, headers); 
+				}else if(message.getType() == TaskType.EXPORT_COMMITED.getIndex()){
+					commitedExporter.productExportTask(message, headers); 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 
