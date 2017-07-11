@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplier;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 
 /**
  * <p>Title:HubSlotSpuSupplierDtoGateway.java </p>
@@ -33,19 +33,19 @@ public interface HubSlotSpuSupplierGateway {
     public int deleteByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/insert", method = RequestMethod.POST,consumes = "application/json")
-    public Long insert(@RequestBody HubSlotSpuSupplier HubSlotSpuSupplier);
+    public Long insert(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public Long insertSelective(@RequestBody HubSlotSpuSupplier HubSlotSpuSupplier);
+    public Long insertSelective(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubSlotSpuSupplier> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuSupplierCriteriaWithRowBoundsDto criteriaWithRowBounds);
+    public List<HubSlotSpuSupplierDto> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuSupplierCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
-    public List<HubSlotSpuSupplier> selectByCriteria(@RequestBody HubSlotSpuSupplierCriteriaDto criteria);
+    public List<HubSlotSpuSupplierDto> selectByCriteria(@RequestBody HubSlotSpuSupplierCriteriaDto criteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-primary-key/{id}", method = RequestMethod.POST,consumes = "application/json")
-    public HubSlotSpuSupplier selectByPrimaryKey(@PathVariable(value = "id") Long id);
+    public HubSlotSpuSupplierDto selectByPrimaryKey(@PathVariable(value = "id") Long id);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSlotSpuSupplierWithCriteriaDto HubSlotSpuSupplierDtoWithCriteria);
@@ -54,8 +54,8 @@ public interface HubSlotSpuSupplierGateway {
     public int updateByCriteria(@RequestBody HubSlotSpuSupplierWithCriteriaDto HubSlotSpuSupplierDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKeySelective(@RequestBody HubSlotSpuSupplier HubSlotSpuSupplier);
+    public int updateByPrimaryKeySelective(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKey(@RequestBody HubSlotSpuSupplier HubSlotSpuSupplier);
+    public int updateByPrimaryKey(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 }
