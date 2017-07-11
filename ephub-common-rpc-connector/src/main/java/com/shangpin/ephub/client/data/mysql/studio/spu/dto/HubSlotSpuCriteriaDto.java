@@ -1,7 +1,5 @@
 package com.shangpin.ephub.client.data.mysql.studio.spu.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,7 +109,7 @@ public class HubSlotSpuCriteriaDto {
     protected abstract static class GeneratedCriteria {
         protected List<Criterion> criteria;
 
-        public GeneratedCriteria() {
+        protected GeneratedCriteria() {
             super();
             criteria = new ArrayList<Criterion>();
         }
@@ -120,7 +118,6 @@ public class HubSlotSpuCriteriaDto {
             return criteria.size() > 0;
         }
 
-        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -1440,6 +1437,66 @@ public class HubSlotSpuCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andPicSignIsNull() {
+            addCriterion("pic_sign is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignIsNotNull() {
+            addCriterion("pic_sign is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignEqualTo(Byte value) {
+            addCriterion("pic_sign =", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignNotEqualTo(Byte value) {
+            addCriterion("pic_sign <>", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignGreaterThan(Byte value) {
+            addCriterion("pic_sign >", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignGreaterThanOrEqualTo(Byte value) {
+            addCriterion("pic_sign >=", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignLessThan(Byte value) {
+            addCriterion("pic_sign <", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignLessThanOrEqualTo(Byte value) {
+            addCriterion("pic_sign <=", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignIn(List<Byte> values) {
+            addCriterion("pic_sign in", values, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignNotIn(List<Byte> values) {
+            addCriterion("pic_sign not in", values, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignBetween(Byte value1, Byte value2) {
+            addCriterion("pic_sign between", value1, value2, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignNotBetween(Byte value1, Byte value2) {
+            addCriterion("pic_sign not between", value1, value2, "picSign");
+            return (Criteria) this;
+        }
+
         public Criteria andPicUrlIsNull() {
             addCriterion("pic_url is null");
             return (Criteria) this;
@@ -1763,18 +1820,12 @@ public class HubSlotSpuCriteriaDto {
 
     public static class Criteria extends GeneratedCriteria {
 
-        public Criteria() {
+        protected Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-
-
-        public Criterion() {
-            super();
-        }
-
         private String condition;
 
         private Object value;
