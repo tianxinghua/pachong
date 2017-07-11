@@ -208,10 +208,6 @@ public class StudioSlotService {
 						slotDto.setApplyStatus(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 						slotDto.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
 						studioSlotGateWay.insert(slotDto);
-						
-						studioDto.setApplyStatus(StudioSlotApplyState.HAS_APPLYED_AND_CREATE_STUDIO.getIndex().byteValue());
-						studioSlotGateWay.updateByPrimaryKey(studioDto);
-						
 					}
 				}
 			}

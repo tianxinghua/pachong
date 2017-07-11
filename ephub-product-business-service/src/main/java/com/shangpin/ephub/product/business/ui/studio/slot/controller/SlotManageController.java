@@ -102,4 +102,8 @@ public class SlotManageController {
 	public HubResponse<?> createStudioSlotLogistictTrack(@RequestBody SlotManageQuery slotManageQuery){
 		return slotManageService.createStudioSlotLogistictTrack(slotManageQuery);
 	}
+	@RequestMapping(value="/select-historyStudioSlot",method = RequestMethod.POST)
+	public HubResponse<?> selectHistoryStudioSlot(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.selectHisttoryStudioSlot(slotManageQuery);
+	}
 }

@@ -36,11 +36,13 @@ import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsHistoriesVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnMasterVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnDetailInfo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnMasterInfo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotsHistories;
 import com.shangpin.ephub.response.HubResponse;
 
 /**
@@ -621,64 +623,109 @@ public class SlotManageService {
 		return HubResponse.successResp("更新成功！");
 	}
 	// 查询批次当前节点
-//	public HubResponse<?> selectHisttoryStudioSlot(SlotManageQuery slotManageQuery) {
-//		Log.info("start createStudioSlotLogistictTrack---创建批次物流信息");
-//		Log.info("params: SlotNo:" + slotManageQuery.getSlotNo() + "status:" + slotManageQuery.getSlotStatus()
-//				+ "sender:" + slotManageQuery.getSender() + "Milestone:" + slotManageQuery.getMilestone()
-//				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate());
-//		try {
-//			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-//			com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
-//					
-//			if (slotManageQuery.getSlotNo() != null) {
-//				criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
-//			}
-//			if (slotManageQuery.getSlotStatus() != null) {
-//				criteria.andSlotStatusEqualTo(slotManageQuery.getSlotStatus());
-//			}
-//			if (slotManageQuery.getSender() != null) {
-//				criteria.andSendUserEqualTo(slotManageQuery.getSender());
-//			}
-//			if (slotManageQuery.getStartDate() != null&&slotManageQuery.getEndDate() !=null) {
-//				criteria.andUpdateTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
-//			}
-//
-//			StudioSlotReturnMasterDto studioSlotReturnMaster = studioSlotReturnMasterGateWay
-//					.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
-//			if (studioSlotReturnMaster == null) {
-//				return HubResponse.errorResp("masterId:" + slotManageQuery.getMasterId() + "没有对应的返货主表!");
-//			}
-//
-//			studioSlotReturnMaster.setTrackNo(slotManageQuery.getTrackNo());
-//			studioSlotReturnMaster.setState((byte) 1);
-//			studioSlotReturnMaster.setSendUser(slotManageQuery.getOperatorName());
-//			studioSlotReturnMaster.setSendTime(new Date());
-//			studioSlotReturnMaster.setSendState((byte) 1);
-//			studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMaster);
-//
-//			dto.setTrackName(slotManageQuery.getTrackName());
-//			dto.setTrackNo(slotManageQuery.getTrackNo());
-//			StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
-//					.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
-//			if (studioSlotReturnMasterDto == null) {
-//				return HubResponse.errorResp("masterId:" + slotManageQuery.getMasterId().toString() + "返货主表不存在!");
-//			}
-//			dto.setSendMasterId(studioSlotReturnMasterDto.getStudioSlotReturnMasterId());
-//			dto.setQuantity(studioSlotReturnMasterDto.getActualSendQuantity());
-//			dto.setActualNumber(0);
-//			dto.setTrackStatus((byte) 0);
-//			dto.setType((byte) 1);
-//			dto.setCreateTime(new Date());
-//			dto.setCreateUser(slotManageQuery.getOperatorName());
-//			dto.setUpdateTime(new Date());
-//			studioSlotLogistictTrackGateWay.insertSelective(dto);
-//
-//		} catch (Exception e) {
-//			Log.error("创建批次物流信息失败!");
-//			e.printStackTrace();
-//			return HubResponse.errorResp("创建批次物流信息失败!");
-//		}
-//		Log.info("end createStudioSlotLogistictTrack---创建批次物流信息");
-//		return HubResponse.successResp("更新成功！");
-//	}
+	public HubResponse<?> selectHisttoryStudioSlot(SlotManageQuery slotManageQuery) {
+		Log.info("start selectHisttoryStudioSlot---查询批次当前节点");
+		Log.info("params: SlotNo:" + slotManageQuery.getSlotNo() + "status:" + slotManageQuery.getSlotStatus()
+				+ "sender:" + slotManageQuery.getSender() + "Milestone:" + slotManageQuery.getMilestone()
+				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate());
+		StudioSlotsHistoriesVo vo = new StudioSlotsHistoriesVo();
+		try {
+			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
+			com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
+					
+			if (slotManageQuery.getSlotNo() != null) {
+				criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+			}
+			if (slotManageQuery.getSlotStatus() != null) {
+				criteria.andSlotStatusEqualTo(slotManageQuery.getSlotStatus());
+			}
+			if (slotManageQuery.getSender() != null) {
+				criteria.andSendUserEqualTo(slotManageQuery.getSender());
+			}
+			if (slotManageQuery.getStartDate() != null&&slotManageQuery.getEndDate() !=null) {
+				if(slotManageQuery.getMilestone()==0){
+					criteria.andSendTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
+				}
+				if(slotManageQuery.getMilestone()==1){
+					criteria.andPlanArriveTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
+				}
+				if(slotManageQuery.getMilestone()==2){
+					criteria.andArriveTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
+				}
+			}
+			if (slotManageQuery.getPageSize() != null) {
+				dto.setPageSize(slotManageQuery.getPageSize());
+			}
+			if (slotManageQuery.getPageNo() != null) {
+				dto.setPageNo(slotManageQuery.getPageNo());
+			}
+			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(dto);
+			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
+			int count = studioSlotsHistoriesList.size();
+			for(StudioSlotDto studioSlotDto : studioSlotDtoList){
+				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
+				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
+				studioSlotsHistories.setStatus(studioSlotDto.getSlotStatus().toString());
+				studioSlotsHistories.setSender(studioSlotDto.getSendUser());
+				if(studioSlotDto.getSendTime()!=null){
+					studioSlotsHistories.setSendingDate(sdf.format(studioSlotDto.getSendTime()));
+				}
+				if(studioSlotDto.getArriveTime()!=null&&studioSlotDto.getArriveUser()!=null){
+					studioSlotsHistories.setQA(studioSlotDto.getArriveUser()+"|"+sdf.format(studioSlotDto.getArriveTime()));
+				}
+				StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
+				detailDto.createCriteria().andSlotNoEqualTo(studioSlotDto.getSlotNo());
+				detailDto.setDistinct(true);
+				detailDto.setFields(" studio_slot_return_master_id ");
+				List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
+						.selectByCriteria(detailDto);
+				if (studioSlotReturnDetailDtoLists != null && studioSlotReturnDetailDtoLists.size() != 0) {
+					long masterId = 0;
+                    if(studioSlotReturnDetailDtoLists.size()==2){
+                    	if(studioSlotReturnDetailDtoLists.get(0).getCreateTime().after(studioSlotReturnDetailDtoLists.get(1).getCreateTime())){
+                    		masterId = studioSlotReturnDetailDtoLists.get(1).getStudioSlotReturnMasterId();
+                    	}else{
+                    		masterId = studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId();
+                    	}
+                    }else{
+                    	masterId = studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId();
+                    }
+					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
+							.selectByPrimaryKey(masterId);
+					if (slotManageQuery.getStartDate() != null && slotManageQuery.getEndDate() != null) {
+						if (slotManageQuery.getMilestone() == 3) {
+							if (!studioSlotReturnMasterDto.getSendTime().before(slotManageQuery.getEndDate())
+									&& !studioSlotReturnMasterDto.getSendTime().after(slotManageQuery.getStartDate())){
+								continue;
+							}
+						}
+						if (slotManageQuery.getMilestone() == 4) {
+							if (!studioSlotReturnMasterDto.getArriveTime().before(slotManageQuery.getEndDate())
+									&& !studioSlotReturnMasterDto.getArriveTime().after(slotManageQuery.getStartDate())){
+								continue;
+							}
+						}
+					}
+					if (studioSlotReturnMasterDto.getSendTime() != null&&studioSlotReturnMasterDto.getSendUser() != null) {
+						studioSlotsHistories.setReturn(studioSlotReturnMasterDto.getSendUser() + "|" + sdf.format(studioSlotReturnMasterDto.getSendTime()));
+					}
+					
+					if (studioSlotReturnMasterDto.getArriveTime() != null) {
+						studioSlotsHistories
+								.setReturnConFirmDate(sdf.format(studioSlotReturnMasterDto.getArriveTime()));
+					}
+				}
+				studioSlotsHistoriesList.add(studioSlotsHistories);
+			}
+			vo.setStudioSlotsHistoriesList(studioSlotsHistoriesList);
+			vo.setTotal(count);
+
+		} catch (Exception e) {
+			Log.error("查询批次当前节点失败!");
+			e.printStackTrace();
+			return HubResponse.errorResp("查询批次当前节点失败!");
+		}
+		Log.info("end selectHisttoryStudioSlot---查询批次当前节点息");
+		return HubResponse.successResp(vo);
+	}
 }
