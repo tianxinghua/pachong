@@ -48,6 +48,10 @@ public class SpuSupplierQueryDto {
      * 尚品skuid
      */
     private List<String> spSkuIds;
+    /**
+     * 创建人
+     */
+    private String createUser;
     
     public Integer getPageIndex() {
 		return pageIndex;

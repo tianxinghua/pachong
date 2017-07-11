@@ -278,8 +278,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	public int countDefectiveProduct(String slotNo) {
 		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
 		criteria.createCriteria().andSlotNoEqualTo(slotNo);
-		defectiveSpuGateWay.countByCriteria(criteria );
-		return 0;
+		return defectiveSpuGateWay.countByCriteria(criteria );
 	}
 	@Override
 	public List<StudioSlotDefectiveSpuDto> selectDefectiveProduct(String slotNo) {

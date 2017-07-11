@@ -59,6 +59,7 @@ public class ImageUploadController {
 	
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse<?> detail(@RequestBody String slotNo){
+		log.info("批次号："+slotNo);
 		return HubResponse.successResp(imageUploadService.slotDetail(slotNo));
 	}
 	

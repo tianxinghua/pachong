@@ -3,53 +3,38 @@ package com.shangpin.ephub.client.data.studio.enumeration;
 /**
 
 
- STUDIO_SLOT表中 批次状态
+ Milestone
  *
  */
-public enum StudioSlotState {
+public enum StudioSlotMilestone {
 
 	/**
-	 * 等待申请
+	 * 供应商 寄出日期
 	 */
-	WAIT_APPLY(0,"WAIT_APPLY"),
+	SEND_DATE(0,"SEND_DATE"),
 
 
 	/**
-	 * 已申请
+	 * 预计到达日期
 	 */
-	APPLYED(1,"APPLYED"),
+	ETA(1,"ETA"),
 
     /**
-     * 供货商发货
+     * 收货日期
      */
-    SEND(2,"SEND"),
+	RECEIVE_DATE(2,"RECEIVE_DATE"),
     /**
-     * 摄影棚收货
+     * 拍摄日期
      */
-    RECEIVED(3,"RECEIVED"),
+	OPERATE_DATE(3,"OPERATE_DATE"),
     /**
-     * 已质检
+     * 寄回日期
      */
-    IS_CHECK(4,"ISCHECK"),
+	RETURN_DATE(4,"RETURN_DATE"),
     /**
-     * 已拍摄
+     * 供应商收到寄货日期
      */
-    HAVE_SHOOT(5,"HAVE SHOOT"),
-    /**
-     * 准备寄回
-     */
-    READY_RETURN_SLOT(6,"READY_RETURN_SLOT"),
-    /**
-     * 已寄回
-     */
-    STUDIO_RETURN(7,"STUDIO_RETURN"),
-	/**
-     * 已完成
-     */
-    HAVE_FINISHED(8,"HAVE_FINISHED");
-
-
-
+	RETURN_CONFIRM_DATE(5,"RETURN_CONFIRM_DATE");
 
 	/**
      * 数字索引标识
@@ -60,7 +45,7 @@ public enum StudioSlotState {
      */
     private String description;
 
-    StudioSlotState(Integer index, String description){
+    StudioSlotMilestone(Integer index, String description){
 		this.index = index;
 		this.description = description;
 	}
