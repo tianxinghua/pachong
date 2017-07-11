@@ -17,6 +17,7 @@
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
     <result column="repeat_marker" property="repeatMarker" jdbcType="TINYINT" />
     <result column="supplier_operate_sign" property="supplierOperateSign" jdbcType="TINYINT" />
+    <result column="pic_sign" property="picSign" jdbcType="TINYINT" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
   </resultMap>
@@ -82,7 +83,7 @@
     <if test="fields == null" >
       slot_spu_supplier_id, slot_spu_id, slot_no, slot_spu_no, supplier_no, supplier_id, 
       spu_pending_id, supplier_spu_id, state, create_time, create_user, update_time, update_user, 
-      repeat_marker, supplier_operate_sign, data_state, version
+      repeat_marker, supplier_operate_sign, pic_sign, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -107,7 +108,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    slot_spu_supplier_id,slot_spu_id,slot_no,slot_spu_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,state,create_time,create_user,update_time,update_user,repeat_marker,supplier_operate_sign,data_state,version
+    slot_spu_supplier_id,slot_spu_id,slot_no,slot_spu_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,state,create_time,create_user,update_time,update_user,repeat_marker,supplier_operate_sign,pic_sign,data_state,version
     from hub_slot_spu_supplier
     where slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT}
   </select>
@@ -130,13 +131,15 @@
       spu_pending_id, supplier_spu_id, state, 
       create_time, create_user, update_time, 
       update_user, repeat_marker, supplier_operate_sign, 
-      data_state, version)
+      pic_sign, data_state, version
+      )
     values (#{slotSpuSupplierId,jdbcType=BIGINT}, #{slotSpuId,jdbcType=BIGINT}, #{slotNo,jdbcType=VARCHAR}, 
       #{slotSpuNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
       #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, #{state,jdbcType=TINYINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateUser,jdbcType=VARCHAR}, #{repeatMarker,jdbcType=TINYINT}, #{supplierOperateSign,jdbcType=TINYINT}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+      #{picSign,jdbcType=TINYINT}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.supplier.po.HubSlotSpuSupplier" >
     <selectKey keyColumn="slot_spu_supplier_id" keyProperty="slotSpuSupplierId" order="AFTER" resultType="java.lang.Long">
@@ -188,6 +191,9 @@
       </if>
       <if test="supplierOperateSign != null" >
         supplier_operate_sign,
+      </if>
+      <if test="picSign != null" >
+        pic_sign,
       </if>
       <if test="dataState != null" >
         data_state,
@@ -241,6 +247,9 @@
       </if>
       <if test="supplierOperateSign != null" >
         #{supplierOperateSign,jdbcType=TINYINT},
+      </if>
+      <if test="picSign != null" >
+        #{picSign,jdbcType=TINYINT},
       </if>
       <if test="dataState != null" >
         #{dataState,jdbcType=TINYINT},
@@ -304,6 +313,9 @@
       <if test="record.supplierOperateSign != null" >
         supplier_operate_sign = #{record.supplierOperateSign,jdbcType=TINYINT},
       </if>
+      <if test="record.picSign != null" >
+        pic_sign = #{record.picSign,jdbcType=TINYINT},
+      </if>
       <if test="record.dataState != null" >
         data_state = #{record.dataState,jdbcType=TINYINT},
       </if>
@@ -332,6 +344,7 @@
       update_user = #{record.updateUser,jdbcType=VARCHAR},
       repeat_marker = #{record.repeatMarker,jdbcType=TINYINT},
       supplier_operate_sign = #{record.supplierOperateSign,jdbcType=TINYINT},
+      pic_sign = #{record.picSign,jdbcType=TINYINT},
       data_state = #{record.dataState,jdbcType=TINYINT},
       version = #{record.version,jdbcType=BIGINT}
     <if test="_parameter != null" >
@@ -383,6 +396,9 @@
       <if test="supplierOperateSign != null" >
         supplier_operate_sign = #{supplierOperateSign,jdbcType=TINYINT},
       </if>
+      <if test="picSign != null" >
+        pic_sign = #{picSign,jdbcType=TINYINT},
+      </if>
       <if test="dataState != null" >
         data_state = #{dataState,jdbcType=TINYINT},
       </if>
@@ -408,6 +424,7 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       repeat_marker = #{repeatMarker,jdbcType=TINYINT},
       supplier_operate_sign = #{supplierOperateSign,jdbcType=TINYINT},
+      pic_sign = #{picSign,jdbcType=TINYINT},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT}
     where slot_spu_supplier_id = #{slotSpuSupplierId,jdbcType=BIGINT}

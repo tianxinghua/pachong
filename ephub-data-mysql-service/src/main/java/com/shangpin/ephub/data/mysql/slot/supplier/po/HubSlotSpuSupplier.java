@@ -45,7 +45,7 @@ public class HubSlotSpuSupplier implements Serializable {
     private Long supplierSpuId;
 
     /**
-     * 0:未寄出 1：已加入发货单  2：已发货
+     * 0:未寄出 1：已加入发货单  2：已发货  3:不处理
      */
     private Byte state;
 
@@ -75,9 +75,14 @@ public class HubSlotSpuSupplier implements Serializable {
     private Byte repeatMarker;
 
     /**
-     * 供货商操作标记     0：自己寄出    1: 另外的供货商已寄出
+     * 供货商操作标记   0:不需要操作 1:未操作 2：自己寄出    3: 另外的供货商已寄出 4:取消寄出',
      */
     private Byte supplierOperateSign;
+
+    /**
+     * 有无图片的标记 0:未上传图片 1:上传图片
+     */
+    private Byte picSign;
 
     /**
      * 数据状态：1未删除 0已删除
@@ -211,6 +216,14 @@ public class HubSlotSpuSupplier implements Serializable {
         this.supplierOperateSign = supplierOperateSign;
     }
 
+    public Byte getPicSign() {
+        return picSign;
+    }
+
+    public void setPicSign(Byte picSign) {
+        this.picSign = picSign;
+    }
+
     public Byte getDataState() {
         return dataState;
     }
@@ -248,6 +261,7 @@ public class HubSlotSpuSupplier implements Serializable {
         sb.append(", updateUser=").append(updateUser);
         sb.append(", repeatMarker=").append(repeatMarker);
         sb.append(", supplierOperateSign=").append(supplierOperateSign);
+        sb.append(", picSign=").append(picSign);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
         sb.append(", serialVersionUID=").append(serialVersionUID);
@@ -282,6 +296,7 @@ public class HubSlotSpuSupplier implements Serializable {
             && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()))
             && (this.getRepeatMarker() == null ? other.getRepeatMarker() == null : this.getRepeatMarker().equals(other.getRepeatMarker()))
             && (this.getSupplierOperateSign() == null ? other.getSupplierOperateSign() == null : this.getSupplierOperateSign().equals(other.getSupplierOperateSign()))
+            && (this.getPicSign() == null ? other.getPicSign() == null : this.getPicSign().equals(other.getPicSign()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()));
     }
@@ -305,6 +320,7 @@ public class HubSlotSpuSupplier implements Serializable {
         result = prime * result + ((getUpdateUser() == null) ? 0 : getUpdateUser().hashCode());
         result = prime * result + ((getRepeatMarker() == null) ? 0 : getRepeatMarker().hashCode());
         result = prime * result + ((getSupplierOperateSign() == null) ? 0 : getSupplierOperateSign().hashCode());
+        result = prime * result + ((getPicSign() == null) ? 0 : getPicSign().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
         return result;
