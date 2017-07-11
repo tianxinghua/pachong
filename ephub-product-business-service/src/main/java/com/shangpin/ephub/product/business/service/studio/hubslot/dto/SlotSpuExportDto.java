@@ -23,6 +23,5 @@ public class SlotSpuExportDto extends SlotSpuDto implements Serializable {
 	
 	private String hubBrandName;
 	private String hubCategoryName;
-	private String supplierName;
 	
 }

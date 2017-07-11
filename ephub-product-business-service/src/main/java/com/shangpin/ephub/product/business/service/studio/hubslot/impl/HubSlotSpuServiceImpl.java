@@ -522,8 +522,10 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 				exportDto.setHubCategoryName(hubCategoryName);
 				BrandDom brand = brandService.getGmsBrand(spuDto.getHubBrandNo());
 				exportDto.setHubBrandName(null != brand ? brand.getBrandEnName() : spuDto.getHubBrandNo());
-				SupplierDTO supplierDTO = supplierService.getSupplier(spuDto.getSupplierNo());
-				exportDto.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : spuDto.getSupplierNo()); 
+				for(SlotSpuSupplierDto supplierDto : exportDto.getSpuSupplierDtos()){
+					SupplierDTO supplierDTO = supplierService.getSupplier(supplierDto.getSupplierNo());
+					supplierDTO.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : supplierDTO.getSupplierNo()); 
+				}
 				exportDtos.add(exportDto);
 			}
 		}
