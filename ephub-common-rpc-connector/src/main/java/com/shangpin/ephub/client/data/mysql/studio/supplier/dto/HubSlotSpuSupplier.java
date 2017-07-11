@@ -3,7 +3,7 @@ package com.shangpin.ephub.client.data.mysql.studio.supplier.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class HubSlotSpuSupplierDto implements Serializable {
+public class HubSlotSpuSupplier implements Serializable {
     /**
      * 主键
      */
@@ -280,7 +280,7 @@ public class HubSlotSpuSupplierDto implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        HubSlotSpuSupplierDto other = (HubSlotSpuSupplierDto) that;
+        HubSlotSpuSupplier other = (HubSlotSpuSupplier) that;
         return (this.getSlotSpuSupplierId() == null ? other.getSlotSpuSupplierId() == null : this.getSlotSpuSupplierId().equals(other.getSlotSpuSupplierId()))
             && (this.getSlotSpuId() == null ? other.getSlotSpuId() == null : this.getSlotSpuId().equals(other.getSlotSpuId()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))

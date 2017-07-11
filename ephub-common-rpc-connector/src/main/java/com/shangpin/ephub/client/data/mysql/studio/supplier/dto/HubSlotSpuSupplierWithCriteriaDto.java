@@ -20,7 +20,7 @@ public class HubSlotSpuSupplierWithCriteriaDto implements Serializable {
 	 */
 	private static final long serialVersionUID = -4015078084915268295L;
 
-	private HubSlotSpuSupplierDto hubSlotSpuSupplier;
+	private HubSlotSpuSupplier hubSlotSpuSupplier;
 	
 	private HubSlotSpuSupplierCriteriaDto criteria;
 }
