@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.product.business.hubpending.spu.dto.HubSpuPendingCheckProperty;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
 import com.shangpin.ephub.product.business.common.service.check.PropertyCheck;
@@ -20,7 +21,6 @@ import com.shangpin.ephub.product.business.common.service.check.property.Materia
 import com.shangpin.ephub.product.business.common.service.check.property.OriginCheck;
 import com.shangpin.ephub.product.business.common.service.check.property.SeasonCheck;
 import com.shangpin.ephub.product.business.common.service.check.property.SpuModelCheck;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.dto.HubSpuPendingCheckProperty;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
@@ -80,11 +80,12 @@ public class HubPendingSpuCheckController {
 	}
 
 	@RequestMapping(value = "/check-spu-property")
-	public HubSpuPendingDto checkSpuProperty(HubSpuPendingCheckProperty property,HubSpuPendingDto hubSpuPendingIsExist){
+	public HubSpuPendingDto checkSpuProperty(@RequestBody HubSpuPendingCheckProperty property){
+		HubSpuPendingDto hubSpuPendingIsExist = property.getDto();
 		try {
 			List<CommonCheckBase> list = new ArrayList<CommonCheckBase>();
 			if(property!=null){
-				if(property.isSpuModel()){
+				if(property.isHubSpuModel()){
 					list.add(spuModelCheck);	
 				}
 				if(property.isHubBrand()){
