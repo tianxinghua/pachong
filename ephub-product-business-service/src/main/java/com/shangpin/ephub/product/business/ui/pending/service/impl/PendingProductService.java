@@ -308,6 +308,7 @@ public class PendingProductService extends PendingSkuService{
 
 			pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
 			pendingProductDto.setSupplierNo(spuPendingDto.getSupplierNo());
+			pendingProductDto.setSupplierSpuId(spuPendingDto.getSupplierSpuId());
 			//查询原始数据的状态
 			if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()
 					&&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()
