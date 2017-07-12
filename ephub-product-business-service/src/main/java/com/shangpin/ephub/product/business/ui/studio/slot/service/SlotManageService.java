@@ -525,6 +525,15 @@ public class SlotManageService {
 				if(returnMasterDto.getState()==0){
 					return HubResponse.errorResp("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
 				}
+				StudioSlotReturnDetailCriteriaDto detaildto = new StudioSlotReturnDetailCriteriaDto();
+				com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto.Criteria detailcriteria = detailDto
+						.createCriteria();
+				detailcriteria.andSlotNoEqualTo(studioSlotReturnDetailDtoLists.get(0).getSlotNo()).andBarcodeEqualTo(slotManageQuery.getBarCode());
+				List<StudioSlotReturnDetailDto> detaildtolists = StudioSlotReturnDetailGateWay.selectByCriteria(detaildto);
+				if(detaildtolists.size()>0){
+					return HubResponse.errorResp("1", "此商品已经新增到此批次！");
+				}
+				
 				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
 				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
 				Date date = simpleDateFormat.parse(slotNo);
