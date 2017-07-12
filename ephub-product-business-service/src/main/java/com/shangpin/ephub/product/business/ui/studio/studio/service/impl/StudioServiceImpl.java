@@ -724,7 +724,7 @@ public class StudioServiceImpl implements IStudioService {
            int count =  studioSlotSpuSendDetailGateWay.deleteByCriteria(dto);
            if(count>0){
                List<Long> ids = new ArrayList<Long>();
-               ids.add(slotSSDId);
+               ids.add(slotSSId);
                hubSlotSpuSupplierService.updateSlotSpuSupplierWhenRemoveFromSlot(ids);
 //
 //               //TODO 需要调用删除商品接口
@@ -915,7 +915,7 @@ public class StudioServiceImpl implements IStudioService {
             StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
             ///T-ODO：：注意 测试时注销的，需要放开
             if(!StringUtils.isEmpty(history) && history ==1){
-                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.APPLYED.getIndex().byteValue());
             }else{
                 criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
             }
