@@ -304,8 +304,8 @@ public class PendingProductService extends PendingSkuService{
 
 
 		HubSpuPendingDto spuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(pendingProductDto.getSpuPendingId());
-		spuPendingDto.setSupplierId(spuPendingDto.getSupplierId());
-		spuPendingDto.setSupplierNo(spuPendingDto.getSupplierNo());
+        pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
+        pendingProductDto.setSupplierNo(spuPendingDto.getSupplierNo());
 		//查询原始数据的状态
 		if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()
 				&&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()
