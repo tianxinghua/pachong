@@ -913,12 +913,12 @@ public class StudioServiceImpl implements IStudioService {
         try {
             StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
             StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
-            //TODO：：注意 测试时注销的，需要放开
-//            if(!StringUtils.isEmpty(history) && history ==1){
-//                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
-//            }else{
-//                criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
-//            }
+            ///T-ODO：：注意 测试时注销的，需要放开
+            if(!StringUtils.isEmpty(history) && history ==1){
+                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+            }else{
+                criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+            }
 
             if (StudioId != null) {
                 criteria.andStudioIdEqualTo(StudioId);
