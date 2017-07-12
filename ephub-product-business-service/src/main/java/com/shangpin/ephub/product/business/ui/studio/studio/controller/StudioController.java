@@ -196,7 +196,7 @@ public class StudioController {
     @RequestMapping(value = "/studioslotlist")
     public HubResponse<?> getStudioSlotList(@RequestBody StudioSlotQueryDto queryDto) {
         return  HubResponse.successResp(iStudioService.getStudioSlot(queryDto.getStudioId(),queryDto.getStartTime(),
-                queryDto.getEndTime(),queryDto.getCategoryNos(),queryDto.getPageIndex(),queryDto.getPageSize()));
+                queryDto.getEndTime(),queryDto.getCategoryNos(),queryDto.getPageIndex(),queryDto.getPageSize(),queryDto.getHistory()));
     }
 
     @RequestMapping(value = "/applyslot")
@@ -225,6 +225,7 @@ public class StudioController {
             if(!StringUtils.isEmpty(categoryNos)) {
                 list=  Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
             }
+
         return  HubResponse.successResp(iStudioService.getStudioListByCategory(list));
     }
 

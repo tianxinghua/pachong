@@ -396,18 +396,18 @@ public class StudioServiceImpl implements IStudioService {
         if(listDetail !=null && listDetail.size()>0){
             //更新slot spu 状态
             List<Long> filterIds = listDetail.stream().map(StudioSlotSpuSendDetailDto::getSlotSpuSupplierId).collect(Collectors.toList());
-            HubSlotSpuSupplierWithCriteriaDto spuSupplierDto = new HubSlotSpuSupplierWithCriteriaDto();
-
-            HubSlotSpuSupplierDto slotDto = new HubSlotSpuSupplierDto();
-            slotDto.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
-            spuSupplierDto.setHubSlotSpuSupplier(slotDto);
-
-            HubSlotSpuSupplierCriteriaDto criteriaDto = new HubSlotSpuSupplierCriteriaDto();
-            criteriaDto.createCriteria().andSlotSpuSupplierIdIn(filterIds);
-            spuSupplierDto.setCriteria(criteriaDto);
-
-            hubSlotSpuSupplierGateway.updateByCriteriaSelective(spuSupplierDto);
-            //TODO 需要调用重任的删除接口
+//            HubSlotSpuSupplierWithCriteriaDto spuSupplierDto = new HubSlotSpuSupplierWithCriteriaDto();
+//
+//            HubSlotSpuSupplierDto slotDto = new HubSlotSpuSupplierDto();
+//            slotDto.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
+//            spuSupplierDto.setHubSlotSpuSupplier(slotDto);
+//
+//            HubSlotSpuSupplierCriteriaDto criteriaDto = new HubSlotSpuSupplierCriteriaDto();
+//            criteriaDto.createCriteria().andSlotSpuSupplierIdIn(filterIds);
+//            spuSupplierDto.setCriteria(criteriaDto);
+//            hubSlotSpuSupplierGateway.updateByCriteriaSelective(spuSupplierDto);
+            //需要调用重任的删除接口
+            hubSlotSpuSupplierService.updateSlotSpuSupplierWhenRemoveFromSlot(filterIds);
 
             StudioSlotSpuSendDetailCriteriaDto detailDto = new StudioSlotSpuSendDetailCriteriaDto();
             //删除发送详情
@@ -416,7 +416,8 @@ public class StudioServiceImpl implements IStudioService {
             studioSlotSpuSendDetailGateWay.deleteByCriteria(detailDto);
         }
 
-        studioSlotDto.setApplyStatus((byte)0);
+        studioSlotDto.setSlotStatus(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+        studioSlotDto.setApplyStatus(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
         studioSlotDto.setUpdateTime(new Date());
         studioSlotDto.setApplyUser(createUser);
         int i=  studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
@@ -722,11 +723,15 @@ public class StudioServiceImpl implements IStudioService {
             dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotSpuSendDetailIdEqualTo(slotSSDId);
            int count =  studioSlotSpuSendDetailGateWay.deleteByCriteria(dto);
            if(count>0){
-               //TODO 需要调用删除商品接口
-               HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
-               upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-               upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
-               hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+               List<Long> ids = new ArrayList<Long>();
+               ids.add(slotSSDId);
+               hubSlotSpuSupplierService.updateSlotSpuSupplierWhenRemoveFromSlot(ids);
+//
+//               //TODO 需要调用删除商品接口
+//               HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
+//               upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+//               upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
+//               hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
            }else {
                updatedVo = setErrorMsg(response, slotNo, "D0", "delete product to slot failed");
@@ -901,13 +906,20 @@ public class StudioServiceImpl implements IStudioService {
      * @return
      */
     public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos){
-        return getStudioSlot(StudioId,startTime,endTime,categoryNos,1,10);
+        return getStudioSlot(StudioId,startTime,endTime,categoryNos,1,10 ,0);
     }
-    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,int pageIndex,int pageSize) {
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,int pageIndex,int pageSize,int history) {
         SlotsVo studioSlotsList = new SlotsVo();
         try {
             StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-            StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria().andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+            StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
+            //TODO：：注意 测试时注销的，需要放开
+//            if(!StringUtils.isEmpty(history) && history ==1){
+//                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+//            }else{
+//                criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+//            }
+
             if (StudioId != null) {
                 criteria.andStudioIdEqualTo(StudioId);
             }
@@ -980,13 +992,17 @@ public class StudioServiceImpl implements IStudioService {
 
     }
 
+
     public List<StudioDto> getStudioList(){
         StudioCriteriaDto dto = new  StudioCriteriaDto();
         dto.setPageSize(10000);
         return  studioGateWay.selectByCriteria(dto);
 
     }
-
+    /*
+    * 根据摄影分类获取摄影棚
+    *
+    * */
     public List<StudioDto> getStudioListByCategory(List<String> categoryNos){
         List<StudioDto> studioDtos = new ArrayList<StudioDto>();
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
@@ -1003,8 +1019,10 @@ public class StudioServiceImpl implements IStudioService {
 
             List<Long> filteredStudioId = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto :: getStudioId).distinct().collect(Collectors.toList());
             StudioCriteriaDto dto = new  StudioCriteriaDto();
+            StudioCriteriaDto.Criteria criteria = new StudioCriteriaDto.Criteria();
+
             if(filteredStudioId!=null &&filteredStudioId.size()>0) {
-                dto.createCriteria().andStudioIdIn(filteredStudioId);
+                criteria.andStudioIdIn(filteredStudioId);
             }
             studioDtos =  studioGateWay.selectByCriteria(dto);
         }

@@ -28,5 +28,6 @@ public class StudioSlotQueryDto implements Serializable {
     private String endTime;
     private int pageIndex;
     private int pageSize;
+    private int history;
 
 }

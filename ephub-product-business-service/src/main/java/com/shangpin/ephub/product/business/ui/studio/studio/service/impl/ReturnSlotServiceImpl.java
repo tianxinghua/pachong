@@ -55,7 +55,6 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      */
     public List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto){
         StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
-        //TODO:没有supplier
         StudioSlotReturnMasterCriteriaDto.Criteria  criteria = dto.createCriteria()
                 .andSupplierIdEqualTo(queryDto.getSupplierId()).andSendStateEqualTo((byte)1);
         if(StringUtils.isEmpty(queryDto.getArriveState())){
