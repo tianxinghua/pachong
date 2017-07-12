@@ -57,7 +57,10 @@ public class StudioSlotService {
 		List<StudioSlotDto> listStudioDto = null;
 		log.info("查询并更新当天计划拍摄日期之前未被申请的批次信息----start");
 		try {
-			String nowDate = sdfomat.format(new Date()) + " 00:00:00";
+			Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(new Date());
+		    calendar.add(Calendar.DAY_OF_MONTH, +2);//+2今天的时间加2天
+			String nowDate = sdfomat.format(calendar.getTime()) + " 00:00:00";
 			Date nowDateTime = sdf.parse(nowDate);
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
 			dto.createCriteria().andSlotDateLessThan(nowDateTime).andApplyStatusEqualTo((byte) 0);
