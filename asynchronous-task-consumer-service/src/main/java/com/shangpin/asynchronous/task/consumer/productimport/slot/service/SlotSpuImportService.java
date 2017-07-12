@@ -59,7 +59,8 @@ public class SlotSpuImportService {
 		if(CollectionUtils.isNotEmpty(excelDtos)){
 			for(HubSlotSpuExcelDto excelDto : excelDtos){
 				HubSpuPendingCheckProperty property = myCheckProperty();
-				HubSpuPendingDto pendingDto = hubPendingSpuCheckGateWay.checkSpuProperty(property , convertDto(excelDto,createUser));
+				property.setDto(convertDto(excelDto,createUser));
+				HubSpuPendingDto pendingDto = hubPendingSpuCheckGateWay.checkSpuProperty(property);
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingDto);
 				hubSlotSpuTaskGateWay.add(pendingDto);
 				CheckResultDto resultDto = checkPendingSpu(taskNo,pendingDto);
