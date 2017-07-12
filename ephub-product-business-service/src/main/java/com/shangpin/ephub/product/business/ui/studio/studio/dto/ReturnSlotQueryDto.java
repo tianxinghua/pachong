@@ -20,4 +20,6 @@ public class ReturnSlotQueryDto implements Serializable {
     private int arriveState;
     private String spuNo;
     private String barcode;
+    private int pageIndex;
+    private int pageSize;
 }
