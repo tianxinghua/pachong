@@ -716,6 +716,11 @@ public class SlotManageService {
 			}
 			if (slotManageQuery.getSlotStatus() != null) {
 				criteria.andSlotStatusEqualTo(slotManageQuery.getSlotStatus());
+			}else{
+				List<Byte> list = new ArrayList<>();
+				list.add((byte) 0);
+				list.add((byte) 1);
+				criteria.andSlotStatusNotIn(list);
 			}
 			if (slotManageQuery.getSender() != null) {
 				criteria.andSendUserEqualTo(slotManageQuery.getSender());
