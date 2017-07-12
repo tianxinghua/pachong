@@ -90,11 +90,23 @@ public class HubPendingSpuCheckController {
 				}
 				if(property.isHubBrand()){
 					list.add(brandCheck);
-					list.add(categoryCheck);
+				}
+				if(property.isHubCategory()){
+					list.add(categoryCheck);					
+				}
+				if(property.isHubColor()){
 					list.add(colorCheck);
+				}
+				if(property.isHubGender()){
 					list.add(genderCheck);
+				}
+				if(property.isHubMaterial()){
 					list.add(materialCheck);
+				}
+				if(property.isHubOrigin()){
 					list.add(originCheck);
+				}
+				if(property.isHubSeason()){
 					list.add(seasonCheck);
 				}
 				commonCheckBase.setAllPropertyCheck(list);
