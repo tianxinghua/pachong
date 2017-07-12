@@ -715,6 +715,9 @@ public class SlotManageService {
 				if(slotManageQuery.getMilestone()==2){
 					criteria.andArriveTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
 				}
+				if(slotManageQuery.getMilestone()==3){
+					criteria.andShootTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
+				}
 			}
 			if (slotManageQuery.getPageSize() != null) {
 				dto.setPageSize(slotManageQuery.getPageSize());
@@ -760,13 +763,13 @@ public class SlotManageService {
 					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
 							.selectByPrimaryKey(masterId);
 					if (slotManageQuery.getStartDate() != null && slotManageQuery.getEndDate() != null) {
-						if (slotManageQuery.getMilestone() == 3 && studioSlotReturnMasterDto.getSendTime() != null) {
+						if (slotManageQuery.getMilestone() == 4 && studioSlotReturnMasterDto.getSendTime() != null) {
 							if (!studioSlotReturnMasterDto.getSendTime().before(slotManageQuery.getEndDate())
 									|| !studioSlotReturnMasterDto.getSendTime().after(slotManageQuery.getStartDate())) {
 								continue;
 							}
 						}
-						if (slotManageQuery.getMilestone() == 4 && studioSlotReturnMasterDto.getArriveTime() != null) {
+						if (slotManageQuery.getMilestone() == 5 && studioSlotReturnMasterDto.getArriveTime() != null) {
 							if (!studioSlotReturnMasterDto.getArriveTime().before(slotManageQuery.getEndDate())
 									&& !studioSlotReturnMasterDto.getArriveTime()
 											.after(slotManageQuery.getStartDate())) {
