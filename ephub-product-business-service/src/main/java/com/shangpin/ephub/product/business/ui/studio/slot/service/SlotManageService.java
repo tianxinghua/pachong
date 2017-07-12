@@ -724,6 +724,7 @@ public class SlotManageService {
 				dto.setPageNo(slotManageQuery.getPageNo());
 			}
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(dto);
+			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for(StudioSlotDto studioSlotDto : studioSlotDtoList){
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
@@ -792,7 +793,7 @@ public class SlotManageService {
 				studioSlotsHistoriesList.add(studioSlotsHistories);
 			}
 			vo.setStudioSlotsHistoriesList(studioSlotsHistoriesList);
-			vo.setTotal(studioSlotsHistoriesList.size());
+			vo.setTotal(count);
 
 		} catch (Exception e) {
 			Log.error("查询批次当前节点失败!");
