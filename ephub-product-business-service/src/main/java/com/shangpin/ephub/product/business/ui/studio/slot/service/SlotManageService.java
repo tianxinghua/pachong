@@ -125,7 +125,14 @@ public class SlotManageService {
 				criteria.andSlotStatusEqualTo(slotManageQuery.getSlotStatus());
 			}
 			if (slotManageQuery.getApplyStatus() != null) {
-				criteria.andApplyStatusEqualTo(slotManageQuery.getApplyStatus());
+				if(slotManageQuery.getApplyStatus()==1){
+					List<Byte> list = new ArrayList<>();
+					list.add((byte) 1);
+					list.add((byte) 5);
+					criteria.andApplyStatusIn(list);
+				}else{
+					criteria.andApplyStatusEqualTo(slotManageQuery.getApplyStatus());
+				}
 			}
 			if (slotManageQuery.getApplySupplierId() != null && !slotManageQuery.getApplySupplierId().equals("")) {
 				criteria.andApplySupplierIdEqualTo(slotManageQuery.getApplySupplierId());
