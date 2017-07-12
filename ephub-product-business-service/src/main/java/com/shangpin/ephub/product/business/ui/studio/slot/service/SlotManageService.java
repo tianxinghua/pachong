@@ -760,6 +760,9 @@ public class SlotManageService {
 
 					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
 							.selectByPrimaryKey(masterId);
+					if(studioSlotReturnMasterDto==null){
+						continue;
+					}
 					if (slotManageQuery.getStartDate() != null && slotManageQuery.getEndDate() != null) {
 						if (slotManageQuery.getMilestone() == 4 && studioSlotReturnMasterDto.getSendTime() != null) {
 							if (!studioSlotReturnMasterDto.getSendTime().before(slotManageQuery.getEndDate())
