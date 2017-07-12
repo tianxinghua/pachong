@@ -322,7 +322,7 @@ public class SlotManageService {
 				detailDto.setPageNo(slotManageQuery.getPageNo());
 			}
 			detailDto.setDistinct(true);
-			detailDto.setFields(" studio_slot_return_master_id,slot_no,supplier_name ");
+			detailDto.setFields(" studio_slot_return_master_id,slot_no,supplier_name,send_state ");
 
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
@@ -361,6 +361,7 @@ public class SlotManageService {
 					info.setAddedQty(studioSlotReturnMasterDto.getAddedQuantiy().toString());
 					info.setDestination(studioSlotReturnDetailDto.getSupplierName());
 					info.setMasterId(studioSlotReturnDetailDto.getStudioSlotReturnMasterId().toString());
+					info.setSendState(studioSlotReturnMasterDto.getState().toString());
 					StudioSlotReturnMasterInfoLists.add(info);
 				}
 			}
