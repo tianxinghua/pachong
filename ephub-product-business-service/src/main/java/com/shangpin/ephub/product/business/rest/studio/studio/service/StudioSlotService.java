@@ -37,6 +37,7 @@ public class StudioSlotService {
 		log.info("查询当天是否生成了批次信息----start");
 		StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
 		dto.createCriteria().andSlotDateEqualTo(DT).andStudioIdEqualTo(studioId);
+		dto.setPageSize(50);
 		listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 		log.info("查询当天是否生成了批次信息----end");
 		return listStudioDto;
@@ -64,6 +65,7 @@ public class StudioSlotService {
 			Date nowDateTime = sdf.parse(nowDate);
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
 			dto.createCriteria().andSlotDateLessThan(nowDateTime).andApplyStatusEqualTo((byte) 0);
+			dto.setPageSize(500);
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
 				studioSlotDto.setApplyStatus((byte) 2);// 2 已过期
@@ -87,6 +89,7 @@ public class StudioSlotService {
 			Date eDate = sdf.parse(endDate);
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
 			dto.createCriteria().andArriveTimeBetween(sDate, eDate).andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+			dto.setPageSize(500);
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
 				String planArriveDate = sdfomat.format(studioSlotDto.getPlanArriveTime()) + " 23:59:59";
@@ -136,6 +139,7 @@ public class StudioSlotService {
 					.andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue())
 					.andApplyStatusNotEqualTo(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue())
 					.andPlanShootTimeLessThan(new Date());
+			dto.setPageSize(100);
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
 				boolean isflg = true;
@@ -178,6 +182,7 @@ public class StudioSlotService {
 			Date eDate = sdf.parse(endDate);
 			
 			dto.createCriteria().andShootTimeBetween(sDate, eDate).andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+			dto.setPageSize(100);
 			List<StudioSlotDto> listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioDto : listStudioDto) {
 				if (studioDto.getPlanShootTime().after(studioDto.getShootTime())) {
@@ -245,6 +250,7 @@ public class StudioSlotService {
 				Date sDate = sdf.parse(startDate);
 				Date eDate = sdf.parse(endDate);
 				dto.createCriteria().andShootTimeBetween(sDate, eDate);
+				dto.setPageSize(100);
 				listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			} catch (Exception e) {
 				e.printStackTrace();
