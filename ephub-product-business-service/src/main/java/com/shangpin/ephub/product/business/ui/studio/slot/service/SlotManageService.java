@@ -46,6 +46,8 @@ import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotRe
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotsHistories;
 import com.shangpin.ephub.response.HubResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>
  * Title: OpenBoxController
@@ -61,6 +63,7 @@ import com.shangpin.ephub.response.HubResponse;
  * @date 2017年6月12日
  *
  */
+@Slf4j
 @Service
 public class SlotManageService {
 
@@ -88,7 +91,7 @@ public class SlotManageService {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	public HubResponse<?> findSlotManageList(SlotManageQuery slotManageQuery) {
-		Log.info("start findSlotManageList -------批次查询接口");
+		log.info("start findSlotManageList -------批次查询接口");
 		StudioSlotsVo vo = new StudioSlotsVo();
 		try {
 			StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
@@ -192,15 +195,15 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询批次失败!");
 		}
-		Log.info("end findSlotManageList -------批次查询接口");
+		log.info("end findSlotManageList -------批次查询接口");
 		return HubResponse.successResp(vo);
 	}
 
 	// 生成返货信息主表和返货批次明细
 	public HubResponse<?> createSlotReturnDetailAndMaster(SlotManageQuery slotManageQuery) {
 		try {
-			Log.info("start createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
-			Log.info("params: slotNo:"+slotManageQuery.getSlotNo());
+			log.info("start createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
+			log.info("params: slotNo:"+slotManageQuery.getSlotNo());
 			if (slotManageQuery.getSlotNo() == null) {
 				return HubResponse.errorResp("slotNo不能为null!");
 			}
@@ -216,7 +219,7 @@ public class SlotManageService {
 			criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
 			if (studioSlotDtoList == null || studioSlotDtoList.size() == 0) {
-				Log.info(slotManageQuery.getSlotNo() + "编号在studioslot表中不存在!");
+				log.info(slotManageQuery.getSlotNo() + "编号在studioslot表中不存在!");
 				return HubResponse.errorResp("生成studio返回明细失败!");
 			}
 			long studioId = studioSlotDtoList.get(0).getStudioId();
@@ -295,14 +298,14 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("生成studio返回明细失败!");
 		}
-		Log.info("end createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
+		log.info("end createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
 		return HubResponse.successResp(null);
 	}
 
 	// 查询返货信息主表
 	public HubResponse<?> selectSlotReturnMaster(SlotManageQuery slotManageQuery) {
-		Log.info("start selectSlotReturnMaster---查询返货信息主表");
-		Log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo());
+		log.info("start selectSlotReturnMaster---查询返货信息主表");
+		log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo());
 		StudioSlotsReturnMasterVo vo = new StudioSlotsReturnMasterVo();
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
@@ -372,14 +375,14 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询返货信息主表失败!");
 		}
-		Log.info("end selectSlotReturnMaster---查询返货信息主表");
+		log.info("end selectSlotReturnMaster---查询返货信息主表");
 		return HubResponse.successResp(vo);
 	}
 
 	// 查询masterID下所有商品明细
 	public HubResponse<?> selectSlotReturnDetail(SlotManageQuery slotManageQuery) {
-		Log.info("start selectSlotReturnDetail---查询masterId所有商品明细");
-		Log.info("params: masterId:"+slotManageQuery.getMasterId());
+		log.info("start selectSlotReturnDetail---查询masterId所有商品明细");
+		log.info("params: masterId:"+slotManageQuery.getMasterId());
 		StudioSlotsReturnDetailVo vo = new StudioSlotsReturnDetailVo();
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
@@ -419,14 +422,14 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询masterId所有商品明细失败!");
 		}
-		Log.info("end selectSlotReturnDetail---查询masterId所有商品明细");
+		log.info("end selectSlotReturnDetail---查询masterId所有商品明细");
 		return HubResponse.successResp(vo);
 	}
 
 	// 更新商品明细
 	public HubResponse<?> updateSlotReturnDetail(SlotManageQuery slotManageQuery) {
-		Log.info("start updateSlotReturnDetail---更新商品明细");
-		Log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"barCode:"+slotManageQuery.getBarCode()+"masterId:"+slotManageQuery.getMasterId()+"state:"+slotManageQuery.getState());
+		log.info("start updateSlotReturnDetail---更新商品明细");
+		log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"barCode:"+slotManageQuery.getBarCode()+"masterId:"+slotManageQuery.getMasterId()+"state:"+slotManageQuery.getState());
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
 			com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto.Criteria detailCriteria = detailDto
@@ -584,10 +587,10 @@ public class SlotManageService {
 
 					studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
 					studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDto);
-					Log.info("end updateSlotReturnDetail---更新商品明细");
+					log.info("end updateSlotReturnDetail---更新商品明细");
 					return HubResponse.errorResp("2", "不属于当前批次,但批次时间在当前批次之前,可以返货！");
 //				} else {
-//					Log.info("end updateSlotReturnDetail---更新商品明细");
+//					log.info("end updateSlotReturnDetail---更新商品明细");
 //					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
 //				}
 			}
@@ -596,14 +599,14 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("更新商品明细失败!");
 		}
-		Log.info("end updateSlotReturnDetail---更新商品明细");
+		log.info("end updateSlotReturnDetail---更新商品明细");
 		return HubResponse.successResp("更新成功！");
 	}
 
 	// 创建批次物流信息
 	public HubResponse<?> createStudioSlotLogistictTrack(SlotManageQuery slotManageQuery) {
-		Log.info("start createStudioSlotLogistictTrack---创建批次物流信息");
-		Log.info("params: trackName:"+slotManageQuery.getTrackName()+"trackNo:"+slotManageQuery.getTrackNo()+"masterId:"+slotManageQuery.getMasterId());
+		log.info("start createStudioSlotLogistictTrack---创建批次物流信息");
+		log.info("params: trackName:"+slotManageQuery.getTrackName()+"trackNo:"+slotManageQuery.getTrackNo()+"masterId:"+slotManageQuery.getMasterId());
 		try {
 			StudioSlotLogistictTrackDto dto = new StudioSlotLogistictTrackDto();
 
@@ -658,7 +661,7 @@ public class SlotManageService {
 					.selectByCriteria(detailDto);
 			String slotNo = "";
 			if(studioSlotReturnDetailDtoLists==null||studioSlotReturnDetailDtoLists.size()==0){
-				Log.info("没有找到主表对应的批次表!");
+				log.info("没有找到主表对应的批次表!");
 			}
 			if(studioSlotReturnDetailDtoLists.size()==1){
 				slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo();
@@ -684,7 +687,7 @@ public class SlotManageService {
 			StudioSlotcriteriadto.createCriteria().andSlotNoEqualTo(slotNo);
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(StudioSlotcriteriadto);
 			if(studioSlotDtoList==null||studioSlotDtoList.size()==0){
-				Log.info("slotNo:"+slotNo+"不存在对应的批次!");
+				log.info("slotNo:"+slotNo+"不存在对应的批次!");
 			}
 			studioSlotDtoList.get(0).setSlotStatus(StudioSlotState.STUDIO_RETURN.getIndex().byteValue());
 			studioSlotGateWay.updateByPrimaryKey(studioSlotDtoList.get(0));
@@ -694,13 +697,13 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("创建批次物流信息失败!");
 		}
-		Log.info("end createStudioSlotLogistictTrack---创建批次物流信息");
+		log.info("end createStudioSlotLogistictTrack---创建批次物流信息");
 		return HubResponse.successResp("更新成功！");
 	}
 	// 查询批次当前节点
 	public HubResponse<?> selectHisttoryStudioSlot(SlotManageQuery slotManageQuery) {
-		Log.info("start selectHisttoryStudioSlot---查询批次当前节点");
-		Log.info("params: SlotNo:" + slotManageQuery.getSlotNo() + "status:" + slotManageQuery.getSlotStatus()
+		log.info("start selectHisttoryStudioSlot---查询批次当前节点");
+		log.info("params: SlotNo:" + slotManageQuery.getSlotNo() + "status:" + slotManageQuery.getSlotStatus()
 				+ "sender:" + slotManageQuery.getSender() + "Milestone:" + slotManageQuery.getMilestone()
 				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate());
 		StudioSlotsHistoriesVo vo = new StudioSlotsHistoriesVo();
@@ -814,7 +817,7 @@ public class SlotManageService {
 			e.printStackTrace();
 			return HubResponse.errorResp("查询批次当前节点失败!");
 		}
-		Log.info("end selectHisttoryStudioSlot---查询批次当前节点息");
+		log.info("end selectHisttoryStudioSlot---查询批次当前节点息");
 		return HubResponse.successResp(vo);
 	}
 }
