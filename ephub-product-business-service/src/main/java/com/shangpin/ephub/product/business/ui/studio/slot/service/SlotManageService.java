@@ -527,7 +527,7 @@ public class SlotManageService {
 					return HubResponse.errorResp("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
 				}
 				StudioSlotReturnDetailCriteriaDto studioslotreturndetailcriteriadto = new StudioSlotReturnDetailCriteriaDto();
-				studioslotreturndetailcriteriadto.createCriteria().andSlotNoEqualTo(slotManageQuery.getSlotNo()).andBarcodeEqualTo(slotManageQuery.getBarCode());
+				studioslotreturndetailcriteriadto.createCriteria().andSlotNoEqualTo(studioSlotReturnDetailDtoLists.get(0).getSlotNo()).andBarcodeEqualTo(slotManageQuery.getBarCode()).andStudioSlotReturnMasterIdEqualTo(Long.parseLong(slotManageQuery.getMasterId()));
 				List<StudioSlotReturnDetailDto> detaildtolists = StudioSlotReturnDetailGateWay.selectByCriteria(studioslotreturndetailcriteriadto);
 				if(detaildtolists.size()>0){
 					return HubResponse.errorResp("1", "此商品已经新增到此批次！");
