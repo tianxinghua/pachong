@@ -111,6 +111,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                         tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
                     }else if(SlotSpuSupplierState.SEND.getIndex()==slotSpuState){
                         //
+                        tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
                         tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.OTHER_SEND.getIndex().byteValue());
 
                     }else if(SlotSpuSupplierState.WAIT_SEND.getIndex()==slotSpuState){
@@ -256,16 +257,16 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
     public List<SlotSpuSendDetailCheckDto> updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
         List<SlotSpuSendDetailCheckDto> returnList = null ;
 
-        boolean blReturn = true;
+        boolean blReturn = false;
         List<HubSlotSpuSupplierDto> supplierDtos = new ArrayList<>();
        //判断是否可以发货
         returnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
 
         if(null==returnList||returnList.size()==0){
-            blReturn = false;
+            blReturn = true;
         }
         //可发货更新库存
-        if(blReturn){
+        if(!blReturn){
 
             for(SlotSpuSendDetailCheckDto dto:dtos){
                 HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
@@ -312,7 +313,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 errDto.setMemo("no need send");
                 returnList.add(errDto);
 
-            }else if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+            }else if(originDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
                 SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
                 errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
                 errDto.setResultSign(false);
