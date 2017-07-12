@@ -526,20 +526,18 @@ public class SlotManageService {
 				if(returnMasterDto.getState()==0){
 					return HubResponse.errorResp("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
 				}
-				StudioSlotReturnDetailCriteriaDto detaildto = new StudioSlotReturnDetailCriteriaDto();
-				com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto.Criteria detailcriteria = detailDto
-						.createCriteria();
-				detailcriteria.andSlotNoEqualTo(studioSlotReturnDetailDtoLists.get(0).getSlotNo()).andBarcodeEqualTo(slotManageQuery.getBarCode());
-				List<StudioSlotReturnDetailDto> detaildtolists = StudioSlotReturnDetailGateWay.selectByCriteria(detaildto);
+				StudioSlotReturnDetailCriteriaDto studioslotreturndetailcriteriadto = new StudioSlotReturnDetailCriteriaDto();
+				studioslotreturndetailcriteriadto.createCriteria().andSlotNoEqualTo(slotManageQuery.getSlotNo()).andBarcodeEqualTo(slotManageQuery.getBarCode());
+				List<StudioSlotReturnDetailDto> detaildtolists = StudioSlotReturnDetailGateWay.selectByCriteria(studioslotreturndetailcriteriadto);
 				if(detaildtolists.size()>0){
 					return HubResponse.errorResp("1", "此商品已经新增到此批次！");
 				}
 				
-				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
-				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
-				Date date = simpleDateFormat.parse(slotNo);
-				Date newDate = simpleDateFormat.parse(paramSlotNo);
-				if (date.before(newDate)) {
+//				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
+//				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
+//				Date date = simpleDateFormat.parse(slotNo);
+//				Date newDate = simpleDateFormat.parse(paramSlotNo);
+//				if (date.before(newDate)) {
 					StudioSlotReturnDetailDto studioSlotReturnDetail = new StudioSlotReturnDetailDto();
 					StudioSlotReturnDetailDto studioSlotReturnDetailDto = studioSlotReturnDetailDtoLists.get(0);
 
@@ -574,10 +572,10 @@ public class SlotManageService {
 					studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDto);
 					Log.info("end updateSlotReturnDetail---更新商品明细");
 					return HubResponse.errorResp("2", "不属于当前批次,但批次时间在当前批次之前,可以返货！");
-				} else {
-					Log.info("end updateSlotReturnDetail---更新商品明细");
-					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
-				}
+//				} else {
+//					Log.info("end updateSlotReturnDetail---更新商品明细");
+//					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
+//				}
 			}
 		} catch (Exception e) {
 			Log.error("更新商品明细失败!");
