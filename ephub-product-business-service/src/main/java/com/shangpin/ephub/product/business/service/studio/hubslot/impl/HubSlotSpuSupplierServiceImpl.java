@@ -255,18 +255,16 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
     @Override
     public List<SlotSpuSendDetailCheckDto> updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
-        List<SlotSpuSendDetailCheckDto> returnList = null ;
+        List<SlotSpuSendDetailCheckDto> errorReturnList = null ;
 
-        boolean blReturn = false;
+
         List<HubSlotSpuSupplierDto> supplierDtos = new ArrayList<>();
        //判断是否可以发货
-        returnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
+        errorReturnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
 
-        if(null==returnList||returnList.size()==0){
-            blReturn = true;
-        }
+
         //可发货更新库存
-        if(!blReturn){
+        if(null==errorReturnList||errorReturnList.size()==0){
 
             for(SlotSpuSendDetailCheckDto dto:dtos){
                 HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
@@ -297,7 +295,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
             }
         }
 
-        return returnList;
+        return errorReturnList;
     }
 
     @Override
