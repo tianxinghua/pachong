@@ -36,17 +36,13 @@ public enum StudioSlotState {
      */
     HAVE_SHOOT(5,"HAVE SHOOT"),
     /**
-     * 准备寄回
-     */
-    READY_RETURN_SLOT(6,"READY_RETURN_SLOT"),
-    /**
      * 已寄回
      */
-    STUDIO_RETURN(7,"STUDIO_RETURN"),
+    STUDIO_RETURN(6,"STUDIO_RETURN"),
 	/**
      * 已完成
      */
-    HAVE_FINISHED(8,"HAVE_FINISHED");
+    HAVE_FINISHED(7,"HAVE_FINISHED");
 
 
 
