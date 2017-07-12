@@ -57,7 +57,10 @@ public class StudioSlotService {
 		List<StudioSlotDto> listStudioDto = null;
 		log.info("查询并更新当天计划拍摄日期之前未被申请的批次信息----start");
 		try {
-			String nowDate = sdfomat.format(new Date()) + " 00:00:00";
+			Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(new Date());
+		    calendar.add(Calendar.DAY_OF_MONTH, +2);//+2今天的时间加2天
+			String nowDate = sdfomat.format(calendar.getTime()) + " 00:00:00";
 			Date nowDateTime = sdf.parse(nowDate);
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
 			dto.createCriteria().andSlotDateLessThan(nowDateTime).andApplyStatusEqualTo((byte) 0);
@@ -83,10 +86,7 @@ public class StudioSlotService {
 			Date sDate = sdf.parse(startDate);
 			Date eDate = sdf.parse(endDate);
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-			ArrayList<Byte> list = new ArrayList<Byte>();
-			list.add(StudioSlotApplyState.APPLYED.getIndex().byteValue());
-			list.add(StudioSlotApplyState.HAS_APPLYED.getIndex().byteValue());
-			dto.createCriteria().andArriveTimeBetween(sDate, eDate).andApplyStatusNotIn(list);
+			dto.createCriteria().andArriveTimeBetween(sDate, eDate).andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue());
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
 				String planArriveDate = sdfomat.format(studioSlotDto.getPlanArriveTime()) + " 23:59:59";
@@ -106,8 +106,7 @@ public class StudioSlotService {
 								studioSlotGateWay.updateByPrimaryKey(slotDto);
 								isflg = false;
 
-								// 迟到批次，进行补交申请后，修改状态为4
-								studioSlotDto.setApplyStatus(StudioSlotApplyState.HAS_APPLYED.getIndex().byteValue());
+								// 迟到批次修改计划拍摄时间
 								studioSlotDto.setPlanShootTime(slotDto.getPlanShootTime());
 								studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
 								break;
@@ -135,6 +134,7 @@ public class StudioSlotService {
 			dto.createCriteria().andSlotDateLessThan(nowDateTime)
 					.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue())
 					.andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue())
+					.andApplyStatusNotEqualTo(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue())
 					.andPlanShootTimeLessThan(new Date());
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
@@ -152,8 +152,7 @@ public class StudioSlotService {
 							studioSlotGateWay.updateByPrimaryKey(slotDto);
 							isflg = false;
 
-							// 迟到批次，进行补交申请后，修改状态为4
-							studioSlotDto.setApplyStatus(StudioSlotApplyState.HAS_APPLYED.getIndex().byteValue());
+							// 迟到批次修改计划拍摄时间
 							studioSlotDto.setPlanShootTime(slotDto.getPlanShootTime());
 							studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
 							break;
@@ -177,7 +176,8 @@ public class StudioSlotService {
 			String endDate = nowDate + " 23:59:59";
 			Date sDate = sdf.parse(startDate);
 			Date eDate = sdf.parse(endDate);
-			dto.createCriteria().andShootTimeBetween(sDate, eDate).andApplyStatusNotEqualTo((byte) 5);
+			
+			dto.createCriteria().andShootTimeBetween(sDate, eDate).andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue());
 			List<StudioSlotDto> listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioDto : listStudioDto) {
 				if (studioDto.getPlanShootTime().after(studioDto.getShootTime())) {
@@ -194,7 +194,7 @@ public class StudioSlotService {
 					slotDto.setPlanShootTime(studioDto.getPlanShootTime());
 					
 					StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
-					studioSlotCriteriaDto.createCriteria().andSlotDateGreaterThan(studioDto.getPlanShootTime()).andApplyStatusEqualTo((byte) 3);
+					studioSlotCriteriaDto.createCriteria().andSlotDateGreaterThan(studioDto.getPlanShootTime()).andApplyStatusEqualTo(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 					studioSlotCriteriaDto.setOrderByClause("slot_date");
 					List<StudioSlotDto> listStudiodto = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
 					if(listStudiodto!=null&&listStudiodto.size()!=0){
@@ -208,7 +208,20 @@ public class StudioSlotService {
 						slotDto.setApplyStatus(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 						slotDto.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
 						studioSlotGateWay.insert(slotDto);
+						
+						StudioSlotCriteriaDto slotdto = new StudioSlotCriteriaDto();
+						slotdto.createCriteria().andSlotNoEqualTo(slotNo);
+
+						List<StudioSlotDto> listSlot = studioSlotGateWay.selectByCriteria(slotdto);
+						listSlot.get(0).setPlanShootTime(studioDto.getPlanShootTime());
+						studioSlotGateWay.updateByPrimaryKey(listSlot.get(0));
+					}else{
+						slotDto.setApplyStatus(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+						slotDto.setSlotStatus(StudioSlotState.WAIT_APPLY.getIndex().byteValue());
+						studioSlotGateWay.insert(slotDto);
 					}
+					studioDto.setApplyStatus(StudioSlotApplyState.HAS_APPLYED_AND_CREATE_STUDIO.getIndex().byteValue());
+					studioSlotGateWay.updateByPrimaryKey(studioDto);
 				}
 			}
 		} catch (Exception e) {
