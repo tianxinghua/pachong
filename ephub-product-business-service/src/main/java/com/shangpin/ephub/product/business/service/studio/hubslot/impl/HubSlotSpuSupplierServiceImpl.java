@@ -109,6 +109,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
                     if(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()==slotSpuState){
                         tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
+                        tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_NEED_HANDLE.getIndex().byteValue());
                     }else if(SlotSpuSupplierState.SEND.getIndex()==slotSpuState){
                         //
                         tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
@@ -348,7 +349,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 //已发货不需要处理
             }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.ADD_INVOICE.getIndex()){
                 //已加入发货单 不处理
-            }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.ADD_INVOICE.getIndex()){
+            }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.WAIT_SEND.getIndex()){
                 //原来就是等待处理  不做处理
             }else{
                 this.updateSlotSpuState(slotSpuDto.getSlotSpuId(),SlotSpuState.WAIT_SEND.getIndex());

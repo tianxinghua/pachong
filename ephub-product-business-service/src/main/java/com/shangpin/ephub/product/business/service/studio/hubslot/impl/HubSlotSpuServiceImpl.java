@@ -132,6 +132,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto,isShootSupplier);
 
                 hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto,slotSpuDto.getSpuState().intValue());
+
             }
 
             //spupending 处理
@@ -168,6 +169,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 tmpDto.setSlotSpuId(originSlotSpu.getSlotSpuId());
                 tmpDto.setSpuState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
                 slotSpuGateWay.updateByPrimaryKeySelective(tmpDto);
+                originSlotSpu.setSpuState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
             }
         }
     }
