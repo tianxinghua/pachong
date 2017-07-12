@@ -1,11 +1,12 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot;
 
+import java.util.List;
+
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
-
-import java.util.List;
 
 /**
  * Created by loyalty on 17/6/10.
@@ -62,5 +63,11 @@ public interface HubSlotSpuService {
      * @return
      */
     public int countSlotSpu(SpuSupplierQueryDto queryDto);
+    /**
+     * 导出已提交
+     * @param queryDto
+     * @return
+     */
+    public List<SlotSpuExportDto> exportSlotSpu(SpuSupplierQueryDto queryDto);
 
 }

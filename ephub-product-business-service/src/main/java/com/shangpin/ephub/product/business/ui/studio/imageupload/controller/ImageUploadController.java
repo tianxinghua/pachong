@@ -59,6 +59,7 @@ public class ImageUploadController {
 	
 	@RequestMapping(value = "/detail", method = RequestMethod.POST)
 	public HubResponse<?> detail(@RequestBody String slotNo){
+		log.info("批次号："+slotNo);
 		return HubResponse.successResp(imageUploadService.slotDetail(slotNo));
 	}
 	
@@ -82,6 +83,7 @@ public class ImageUploadController {
 			List<String> spPicUrls = uploadQuery.getUrls();
 			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
 			String slotSpuNo = detailDto.getSlotSpuNo();
+			String supplierId = detailDto.getSupplierId();
 			if(CollectionUtils.isEmpty(spPicUrls)){
 				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
 				log.info("更新uploadPicSign为0==========="+result); 
@@ -95,7 +97,7 @@ public class ImageUploadController {
 							map.put("hubSlotSpu", spuDto);
 						}
 						if(null == map.get("hubSlotSpuSupplier")){
-							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(uploadQuery.getSlotNo(), slotSpuNo);
+							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(supplierId, slotSpuNo);
 							map.put("hubSlotSpuSupplier", supplierDto);
 						}
 						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");

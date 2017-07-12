@@ -300,28 +300,36 @@ public class PendingProductService extends PendingSkuService{
     }
 
 	private void setHubSlotSpu(PendingProductDto pendingProductDto) throws Exception {
+
+
+
 		HubSpuPendingDto spuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(pendingProductDto.getSpuPendingId());
-		//查询原始数据的状态
-		if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()
-				&&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()
-				){
+		if(null!=spuPendingDto){
 
-			//第一次插入  检查修改后的数据状态
-            if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
-                if(pendingProductDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()||
-						pendingProductDto.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+			pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
+			pendingProductDto.setSupplierNo(spuPendingDto.getSupplierNo());
+			//查询原始数据的状态
+			if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()
+					&&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()
+					){
 
-					 slotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+				//第一次插入  检查修改后的数据状态
+				if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
+					if(pendingProductDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()||
+							pendingProductDto.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+
+						slotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+					}
 				}
-            }
-        }else if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.HANDLED.getIndex().byteValue()
+			}else if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.HANDLED.getIndex().byteValue()
 
-		){
-			 //修改状态
-			if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()) {
-				if (pendingProductDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex() ||
-						pendingProductDto.getCatgoryState() == CatgoryState.MISMATCHING.getIndex()) {
-					slotSpuService.updateSlotSpu(pendingProductDto);
+					){
+				//修改状态
+				if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()) {
+					if (pendingProductDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex() ||
+							pendingProductDto.getCatgoryState() == CatgoryState.MISMATCHING.getIndex()) {
+						slotSpuService.updateSlotSpu(pendingProductDto);
+					}
 				}
 			}
 		}

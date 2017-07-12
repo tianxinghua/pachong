@@ -42,7 +42,7 @@ public class SlotManageQuery {
 	private Integer quantity;
 	private Integer actualNumber;
 	private String sender;
-	private byte Milestone;
+	private byte milestone;
 	private Date startDate;
 	private Date endDate;
 }

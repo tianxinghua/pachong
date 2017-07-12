@@ -66,11 +66,11 @@ public interface OperationService {
 	public HubSlotSpuDto findSlotSpu(String slotSpuNo);
 	/**
 	 * 
-	 * @param slotNo
+	 * @param supplierId
 	 * @param slotSpuNo
 	 * @return
 	 */
-	public HubSlotSpuSupplierDto findSlotSpuSupplier(String slotNo, String slotSpuNo);
+	public HubSlotSpuSupplierDto findSlotSpuSupplier(String supplierId, String slotSpuNo);
 	/**
 	 * 查找该批次下边所有的产品详情
 	 * @param slotNo 批次号
