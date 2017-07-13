@@ -92,7 +92,11 @@ public class StudioSlotService {
 			dto.setPageSize(500);
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
-				String planArriveDate = sdfomat.format(studioSlotDto.getPlanArriveTime()) + " 23:59:59";
+				
+				Calendar calendar = Calendar.getInstance();
+			    calendar.setTime(studioSlotDto.getPlanShootTime());
+			    calendar.add(Calendar.DAY_OF_MONTH, -1);//+2今天的时间加2天
+				String planArriveDate = sdfomat.format(calendar.getTime()) + " 23:59:59";
 				Date planArriveDateTime = sdf.parse(planArriveDate);
 				if (studioSlotDto.getArriveTime().after(planArriveDateTime)) {
 					boolean isflg = true;
@@ -106,6 +110,8 @@ public class StudioSlotService {
 								slotDto.setApplyStatus(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 								slotDto.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
 								slotDto.setOriginSlotNo(studioSlotDto.getSlotNo());
+								slotDto.setApplyUser(studioSlotDto.getSlotNo());
+								slotDto.setApplyTime(new Date());
 								studioSlotGateWay.updateByPrimaryKey(slotDto);
 								isflg = false;
 
@@ -153,6 +159,8 @@ public class StudioSlotService {
 							slotDto.setApplyStatus(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 							slotDto.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
 							slotDto.setOriginSlotNo(studioSlotDto.getSlotNo());
+							slotDto.setApplyUser(studioSlotDto.getSlotNo());
+							slotDto.setApplyTime(new Date());
 							studioSlotGateWay.updateByPrimaryKey(slotDto);
 							isflg = false;
 
