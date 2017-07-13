@@ -105,7 +105,7 @@ public class StudioSlotService {
 							if (slotDto.getApplyStatus() == (byte) 0) {
 								slotDto.setApplyStatus(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 								slotDto.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
-								slotDto.setOriginSlotNo(studioSlotDto.getOriginSlotNo());
+								slotDto.setOriginSlotNo(studioSlotDto.getSlotNo());
 								studioSlotGateWay.updateByPrimaryKey(slotDto);
 								isflg = false;
 
@@ -152,7 +152,7 @@ public class StudioSlotService {
 						if (slotDto.getApplyStatus() == (byte) 0) {
 							slotDto.setApplyStatus(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 							slotDto.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
-							slotDto.setOriginSlotNo(studioSlotDto.getOriginSlotNo());
+							slotDto.setOriginSlotNo(studioSlotDto.getSlotNo());
 							studioSlotGateWay.updateByPrimaryKey(slotDto);
 							isflg = false;
 
