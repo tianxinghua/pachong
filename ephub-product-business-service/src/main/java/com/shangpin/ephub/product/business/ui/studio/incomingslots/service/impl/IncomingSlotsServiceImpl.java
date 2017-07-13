@@ -104,9 +104,9 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 		criteria.setOrderByClause("plan_arrive_time");
 		Criteria createCriteria = criteria.createCriteria();
 		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue()).andSendStateEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
-		Long studioId = operationService.getStudioId(query.getStudioNo());
-		if(null != studioId){
-			createCriteria.andStudioIdEqualTo(studioId);
+//		Long studioId = operationService.getStudioId(query.getStudioNo());
+		if(StringUtils.isNotBlank(query.getStudioNo())){
+			createCriteria.andStudioIdEqualTo(Long.valueOf(query.getStudioNo())); 
 		}else{
 			throw new Exception("未获得摄影棚编号");
 		}

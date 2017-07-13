@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierOperateSign;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;

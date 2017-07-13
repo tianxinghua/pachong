@@ -31,6 +31,7 @@ public class JavaUtil {
                 	if("serialVersionUID".equals(f.getName())){
                 		continue;
                 	}
+//                	if(f.){}
                     Method m = fatherClass.getMethod("get"+upperHeadChar(f.getName()));//方法getDeleteDate  
                     Object obj=m.invoke(father);//取出属性值         
                     f.setAccessible(true);
