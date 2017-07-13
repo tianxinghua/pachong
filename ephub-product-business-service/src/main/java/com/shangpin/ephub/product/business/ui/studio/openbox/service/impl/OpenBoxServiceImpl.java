@@ -128,9 +128,9 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			if(planShootTime == today){
 				studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
 			}else if(planShootTime > today){
-				studioSlotDto.setShotStatus(StudioSlotShootState.DELAY_SHOOT.getIndex().byteValue());
-			}else{
 				studioSlotDto.setShotStatus(StudioSlotShootState.AHEAD_TIME.getIndex().byteValue());
+			}else{
+				studioSlotDto.setShotStatus(StudioSlotShootState.DELAY_SHOOT.getIndex().byteValue());
 			}
 			log.info("拍摄状态是============"+studioSlotDto.getShotStatus()); 
 			studioSlotDto.setShootTime(date); 

@@ -10,4 +10,11 @@ public interface StudioService {
      * @return
      */
     public boolean isOwnerStudio(String supplierId);
+
+    /**
+     * 根据摄影棚获取时差
+     * @param studioId
+     * @return
+     */
+    public int getTimeLog(Long studioId);
 }

@@ -1160,6 +1160,66 @@ public class StudioCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andTimeLagIsNull() {
+            addCriterion("time_lag is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagIsNotNull() {
+            addCriterion("time_lag is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagEqualTo(Short value) {
+            addCriterion("time_lag =", value, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagNotEqualTo(Short value) {
+            addCriterion("time_lag <>", value, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagGreaterThan(Short value) {
+            addCriterion("time_lag >", value, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagGreaterThanOrEqualTo(Short value) {
+            addCriterion("time_lag >=", value, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagLessThan(Short value) {
+            addCriterion("time_lag <", value, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagLessThanOrEqualTo(Short value) {
+            addCriterion("time_lag <=", value, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagIn(List<Short> values) {
+            addCriterion("time_lag in", values, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagNotIn(List<Short> values) {
+            addCriterion("time_lag not in", values, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagBetween(Short value1, Short value2) {
+            addCriterion("time_lag between", value1, value2, "timeLag");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimeLagNotBetween(Short value1, Short value2) {
+            addCriterion("time_lag not between", value1, value2, "timeLag");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

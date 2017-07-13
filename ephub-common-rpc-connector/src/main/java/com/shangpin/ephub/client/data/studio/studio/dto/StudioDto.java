@@ -69,9 +69,20 @@ public class StudioDto implements Serializable {
      */
     private String memo;
 
+    /**
+     * 供货商编号
+     */
     private String supplierNo;
 
+    /**
+     * 供货商门户ID
+     */
     private String supplierId;
+
+    /**
+     * 时差
+     */
+    private Short timeLag;
 
     /**
      * 创建时间
@@ -225,6 +236,14 @@ public class StudioDto implements Serializable {
         this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
+    public Short getTimeLag() {
+        return timeLag;
+    }
+
+    public void setTimeLag(Short timeLag) {
+        this.timeLag = timeLag;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -294,6 +313,7 @@ public class StudioDto implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", timeLag=").append(timeLag);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateTime=").append(updateTime);
@@ -332,6 +352,7 @@ public class StudioDto implements Serializable {
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getTimeLag() == null ? other.getTimeLag() == null : this.getTimeLag().equals(other.getTimeLag()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -359,6 +380,7 @@ public class StudioDto implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getTimeLag() == null) ? 0 : getTimeLag().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());

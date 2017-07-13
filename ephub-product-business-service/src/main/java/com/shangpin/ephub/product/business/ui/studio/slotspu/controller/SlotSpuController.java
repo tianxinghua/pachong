@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportDto;
 import com.shangpin.ephub.response.HubResponse;
 
 /**
@@ -41,6 +42,12 @@ public class SlotSpuController {
         Integer  count  = slotSpuService.countSlotSpu(quryDto);
 
         return HubResponse.successResp(count);
+    }
+    
+    @RequestMapping(value="/commited-export",method=RequestMethod.POST)
+    public HubResponse<?> commitedExport(@RequestBody SpuSupplierQueryDto quryDto){
+    	List<SlotSpuExportDto> list = slotSpuService.exportSlotSpu(quryDto);
+    	return HubResponse.successResp(list);
     }
 
 

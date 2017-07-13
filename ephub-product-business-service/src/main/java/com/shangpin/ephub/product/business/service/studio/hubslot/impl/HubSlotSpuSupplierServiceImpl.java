@@ -109,8 +109,10 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
                     if(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()==slotSpuState){
                         tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
+                        tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_NEED_HANDLE.getIndex().byteValue());
                     }else if(SlotSpuSupplierState.SEND.getIndex()==slotSpuState){
                         //
+                        tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
                         tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.OTHER_SEND.getIndex().byteValue());
 
                     }else if(SlotSpuSupplierState.WAIT_SEND.getIndex()==slotSpuState){
@@ -254,18 +256,16 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
     @Override
     public List<SlotSpuSendDetailCheckDto> updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
-        List<SlotSpuSendDetailCheckDto> returnList = null ;
+        List<SlotSpuSendDetailCheckDto> errorReturnList = null ;
 
-        boolean blReturn = true;
+
         List<HubSlotSpuSupplierDto> supplierDtos = new ArrayList<>();
        //判断是否可以发货
-        returnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
+        errorReturnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
 
-        if(null==returnList||returnList.size()==0){
-            blReturn = false;
-        }
+
         //可发货更新库存
-        if(blReturn){
+        if(null==errorReturnList||errorReturnList.size()==0){
 
             for(SlotSpuSendDetailCheckDto dto:dtos){
                 HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
@@ -296,7 +296,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
             }
         }
 
-        return returnList;
+        return errorReturnList;
     }
 
     @Override
@@ -312,7 +312,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 errDto.setMemo("no need send");
                 returnList.add(errDto);
 
-            }else if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+            }else if(originDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
                 SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
                 errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
                 errDto.setResultSign(false);
@@ -349,7 +349,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 //已发货不需要处理
             }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.ADD_INVOICE.getIndex()){
                 //已加入发货单 不处理
-            }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.ADD_INVOICE.getIndex()){
+            }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.WAIT_SEND.getIndex()){
                 //原来就是等待处理  不做处理
             }else{
                 this.updateSlotSpuState(slotSpuDto.getSlotSpuId(),SlotSpuState.WAIT_SEND.getIndex());

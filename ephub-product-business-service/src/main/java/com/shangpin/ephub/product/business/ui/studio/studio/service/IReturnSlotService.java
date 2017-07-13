@@ -6,6 +6,7 @@ import com.shangpin.ephub.product.business.ui.studio.studio.dto.DefectiveSpuDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.DefectiveListVo;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.ReturnSlotInfo;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.ReturnSlotListVo;
 import com.shangpin.ephub.response.HubResponse;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface IReturnSlotService {
 
-    List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto);
+    ReturnSlotListVo getReturnSlotList(ReturnSlotQueryDto queryDto);
 
     boolean ReceiveReturnSlot(String supplierId,Long id,String userName);
 

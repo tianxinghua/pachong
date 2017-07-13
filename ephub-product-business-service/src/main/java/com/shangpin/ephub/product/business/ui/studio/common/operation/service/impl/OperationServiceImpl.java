@@ -69,7 +69,7 @@ public class OperationServiceImpl implements OperationService {
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		Criteria createCriteria = criteria.createCriteria();
-		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
+		createCriteria.andArriveStatusNotEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 		if(operationQuery.getOperationQueryType() == OperationQueryType.OPEN_BOX.getIndex()){
 			createCriteria.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		}else if(operationQuery.getOperationQueryType() == OperationQueryType.IMAGE_UPLOAD.getIndex()){
@@ -191,9 +191,9 @@ public class OperationServiceImpl implements OperationService {
 	}
 
 	@Override
-	public HubSlotSpuSupplierDto findSlotSpuSupplier(String slotNo, String slotSpuNo) {
+	public HubSlotSpuSupplierDto findSlotSpuSupplier(String supplierId, String slotSpuNo) {
 		HubSlotSpuSupplierCriteriaDto criteria = new HubSlotSpuSupplierCriteriaDto();
-		criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSlotSpuNoEqualTo(slotSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		List<HubSlotSpuSupplierDto> list = hubSlotSpuSupplierGateway.selectByCriteria(criteria );
 		return list.get(0);
 	}
@@ -201,7 +201,7 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetailOfRrrived(String barcode) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setFields("studio_slot_spu_send_detail_id,slot_no,slot_spu_no");
+		criteria.setFields("studio_slot_spu_send_detail_id,slot_no,slot_spu_no,supplier_id");
 		criteria.createCriteria().andBarcodeEqualTo(barcode).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 		if(CollectionUtils.isNotEmpty(list)){

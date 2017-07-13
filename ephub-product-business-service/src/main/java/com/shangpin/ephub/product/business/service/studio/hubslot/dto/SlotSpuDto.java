@@ -65,4 +65,5 @@ public class SlotSpuDto {
      * 操作人
      */
     private String operator;
+    
 }

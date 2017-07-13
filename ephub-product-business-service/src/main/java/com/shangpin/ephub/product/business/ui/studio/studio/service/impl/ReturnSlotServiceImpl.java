@@ -16,6 +16,7 @@ import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryD
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IReturnSlotService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.DefectiveListVo;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.ReturnSlotInfo;
+import com.shangpin.ephub.product.business.ui.studio.studio.vo.ReturnSlotListVo;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,17 +54,30 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param queryDto
      * @return
      */
-    public List<StudioSlotReturnMasterDto> getReturnSlotList(ReturnSlotQueryDto queryDto){
+    public ReturnSlotListVo getReturnSlotList(ReturnSlotQueryDto queryDto){
+        ReturnSlotListVo vo = new ReturnSlotListVo();
         StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
-        //TODO:没有supplier
         StudioSlotReturnMasterCriteriaDto.Criteria  criteria = dto.createCriteria()
                 .andSupplierIdEqualTo(queryDto.getSupplierId()).andSendStateEqualTo((byte)1);
-        if(StringUtils.isEmpty(queryDto.getArriveState())){
+        if(!StringUtils.isEmpty(queryDto.getArriveState()) && queryDto.getArriveState() == 0 ){
             criteria.andArriveStateEqualTo((byte)0);
         }else{
             criteria.andArriveStateGreaterThan((byte)0);
         }
-        return studioSlotReturnMasterGateWay.selectByCriteria(dto);
+        if(!StringUtils.isEmpty(queryDto.getPageIndex()) && queryDto.getPageIndex()> 0 ){
+            dto.setPageNo(queryDto.getPageIndex());
+        }
+        if(!StringUtils.isEmpty(queryDto.getPageSize())){
+            dto.setPageSize(queryDto.getPageSize());
+        }
+        int total = studioSlotReturnMasterGateWay.countByCriteria(dto);
+        if(total>0){
+            List<StudioSlotReturnMasterDto> masterDtos = studioSlotReturnMasterGateWay.selectByCriteria(dto);
+            vo.setSlotReturnList(masterDtos);
+        }
+        vo.setTotal(total);
+
+        return vo;
    }
 
     /**
