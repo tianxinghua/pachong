@@ -88,7 +88,11 @@ public class StudioSlotService {
 			Date sDate = sdf.parse(startDate);
 			Date eDate = sdf.parse(endDate);
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-			dto.createCriteria().andArriveTimeBetween(sDate, eDate).andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+			List<Byte> list = new ArrayList<>();
+			list.add(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
+			list.add(StudioSlotState.STUDIO_RETURN.getIndex().byteValue());
+			list.add(StudioSlotState.HAVE_FINISHED.getIndex().byteValue());
+			dto.createCriteria().andArriveTimeBetween(sDate, eDate).andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue()).andSlotStatusNotIn(list);
 			dto.setPageSize(500);
 			listStudioDto = studioSlotGateWay.selectByCriteria(dto);
 			for (StudioSlotDto studioSlotDto : listStudioDto) {
