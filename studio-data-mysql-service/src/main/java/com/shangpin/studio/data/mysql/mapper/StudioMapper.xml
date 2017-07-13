@@ -17,6 +17,7 @@
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="time_lag" property="timeLag" jdbcType="SMALLINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -85,8 +86,8 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       studio_id, studio_name, studio_no, studio_type, studio_status, studio_contacts, contact_info, 
-      telephone, email, period, country, address, memo, supplier_no, supplier_id, create_time, 
-      create_user, update_time, update_user, data_state, version
+      telephone, email, period, country, address, memo, supplier_no, supplier_id, time_lag, 
+      create_time, create_user, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -111,7 +112,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_id,studio_name,studio_no,studio_type,studio_status,studio_contacts,contact_info,telephone,email,period,country,address,memo,supplier_no,supplier_id,create_time,create_user,update_time,update_user,data_state,version
+    studio_id,studio_name,studio_no,studio_type,studio_status,studio_contacts,contact_info,telephone,email,period,country,address,memo,supplier_no,supplier_id,time_lag,create_time,create_user,update_time,update_user,data_state,version
     from studio
     where studio_id = #{studioId,jdbcType=BIGINT}
   </select>
@@ -134,17 +135,17 @@
       contact_info, telephone, email, 
       period, country, address, 
       memo, supplier_no, supplier_id, 
-      create_time, create_user, update_time, 
-      update_user, data_state, version
-      )
+      time_lag, create_time, create_user, 
+      update_time, update_user, data_state, 
+      version)
     values (#{studioId,jdbcType=BIGINT}, #{studioName,jdbcType=VARCHAR}, #{studioNo,jdbcType=VARCHAR}, 
       #{studioType,jdbcType=TINYINT}, #{studioStatus,jdbcType=TINYINT}, #{studioContacts,jdbcType=VARCHAR}, 
       #{contactInfo,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{period,jdbcType=INTEGER}, #{country,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
       #{memo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+      #{timeLag,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.Studio" >
     <selectKey keyColumn="studio_id" keyProperty="studioId" order="AFTER" resultType="long">
@@ -196,6 +197,9 @@
       </if>
       <if test="supplierId != null" >
         supplier_id,
+      </if>
+      <if test="timeLag != null" >
+        time_lag,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -261,6 +265,9 @@
       </if>
       <if test="supplierId != null" >
         #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="timeLag != null" >
+        #{timeLag,jdbcType=SMALLINT},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -336,6 +343,9 @@
       <if test="record.supplierId != null" >
         supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       </if>
+      <if test="record.timeLag != null" >
+        time_lag = #{record.timeLag,jdbcType=SMALLINT},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -376,6 +386,7 @@
       memo = #{record.memo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      time_lag = #{record.timeLag,jdbcType=SMALLINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -431,6 +442,9 @@
       <if test="supplierId != null" >
         supplier_id = #{supplierId,jdbcType=VARCHAR},
       </if>
+      <if test="timeLag != null" >
+        time_lag = #{timeLag,jdbcType=SMALLINT},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -468,6 +482,7 @@
       memo = #{memo,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
+      time_lag = #{timeLag,jdbcType=SMALLINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
