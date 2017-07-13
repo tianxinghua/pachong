@@ -32,14 +32,16 @@
       <result column="spu_state" property="spuState" jdbcType="TINYINT" />
       <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
       <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
+      <result column="supplier_pic_sign" property="supplierPicSign" jdbcType="TINYINT" />
+      <result column="spu_pic_sign" property="spuPicSign" jdbcType="TINYINT" />
   </resultMap>
   
   <select id="findObjectByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto" >
     select
       s.slot_spu_supplier_id,s.slot_spu_id,s.slot_no,s.slot_spu_no,s.supplier_no,s.supplier_id,
-      s.spu_pending_id,s.supplier_spu_id,s.state,s.create_time,s.create_user,
+      s.spu_pending_id,s.supplier_spu_id,s.state,s.create_time,s.create_user,s.pic_sign as supplier_pic_sign,
       s.update_time,s.update_user,s.repeat_marker,s.supplier_operate_sign,s.data_state,
-      p.spu_model,p.brand_no,p.category_no,p.market_time,p.season,p.spu_state
+      p.spu_model,p.brand_no,p.category_no,p.market_time,p.season,p.spu_state,p.pic_sign as spu_pic_sign
 
       from hub_slot_spu_supplier s
       inner join hub_slot_spu p on s.slot_spu_id  = p.slot_spu_id
