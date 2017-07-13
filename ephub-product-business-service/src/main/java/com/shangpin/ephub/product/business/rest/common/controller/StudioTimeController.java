@@ -1,11 +1,7 @@
 package com.shangpin.ephub.product.business.rest.common.controller;
 
-import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
-import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
-import com.shangpin.ephub.product.business.rest.size.service.MatchSizeService;
-import com.shangpin.ephub.product.business.service.studio.studio.StudioService;
+import com.shangpin.ephub.product.business.service.studio.studio.StudioCommonService;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +20,7 @@ import java.util.Calendar;
 public class StudioTimeController {
 	
 	@Autowired
-	StudioService studioService;
+    StudioCommonService studioService;
 	
 
 	@RequestMapping(value = "/gettimelag")
