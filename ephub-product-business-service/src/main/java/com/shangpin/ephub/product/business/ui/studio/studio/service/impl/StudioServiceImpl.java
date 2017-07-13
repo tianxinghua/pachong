@@ -764,6 +764,11 @@ public class StudioServiceImpl implements IStudioService {
             if(slotInfo==null){
                 throw new EphubException("C1", "Slot is not found");
             }else {
+                if(slotInfo.getSendState() == StudioSlotSendState.ISPRINT.getIndex().byteValue()){
+                    response.setCode("2");
+                    response.setMsg("This slot has been printed,Do you want to print again?");
+                    return response;
+                }
                 if(slotInfo.getSendState()!=null && slotInfo.getSendState() == StudioSlotSendState.SEND.getIndex().byteValue()){
                     throw new EphubException("C8", "The slot is shipped");
                 }
@@ -905,10 +910,10 @@ public class StudioServiceImpl implements IStudioService {
      * @param endTime
      * @return
      */
-    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos){
-        return getStudioSlot(StudioId,startTime,endTime,categoryNos,1,10 ,0);
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,Long supplierId){
+        return getStudioSlot(StudioId,startTime,endTime,categoryNos,supplierId,1,10 ,0);
     }
-    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,int pageIndex,int pageSize,int history) {
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,Long supplierId,int pageIndex,int pageSize,int history) {
         SlotsVo studioSlotsList = new SlotsVo();
         try {
             StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
@@ -916,6 +921,7 @@ public class StudioServiceImpl implements IStudioService {
             ///T-ODO：：注意 测试时注销的，需要放开
             if(!StringUtils.isEmpty(history) && history ==1){
                 criteria.andApplyStatusGreaterThan(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+                criteria.andApplySupplierIdEqualTo(supplierId.toString());
             }else{
                 criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
             }

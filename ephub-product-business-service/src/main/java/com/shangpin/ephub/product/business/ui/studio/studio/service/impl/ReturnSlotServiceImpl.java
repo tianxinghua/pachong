@@ -62,7 +62,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
         if(!StringUtils.isEmpty(queryDto.getArriveState()) && queryDto.getArriveState() == 0 ){
             criteria.andArriveStateEqualTo((byte)0);
         }else{
-            criteria.andArriveStateGreaterThan((byte)0);
+            criteria.andArriveStateEqualTo((byte)(queryDto.getArriveState()));
         }
         if(!StringUtils.isEmpty(queryDto.getPageIndex()) && queryDto.getPageIndex()> 0 ){
             dto.setPageNo(queryDto.getPageIndex());
