@@ -107,7 +107,6 @@ public class SlotManageService {
 				// 摄影棚基础数据初始化到redis 用于判断
 				shangpinRedis.set("shangpinstudioslot", "studioSlot");
 			}
-
 			Long studioId = null;
 			if (slotManageQuery.getStudioNo() != null && !slotManageQuery.getStudioNo().equals("")) {
 				studioCriteriaDto.createCriteria().andStudioNameEqualTo(slotManageQuery.getStudioNo());
@@ -330,7 +329,7 @@ public class SlotManageService {
 			List<StudioSlotReturnDetailDto> studioSlotReturnDetailDtoLists = StudioSlotReturnDetailGateWay
 					.selectByCriteria(detailDto);
 
-			int count = studioSlotReturnDetailDtoLists.size();
+			int count = StudioSlotReturnDetailGateWay.countByCriteria(detailDto);
 			List<StudioSlotReturnMasterInfo> StudioSlotReturnMasterInfoLists = new ArrayList<>();
 			List<StudioSlotReturnDetailDto> StudioSlotReturnDetailDtoNewLists = new ArrayList<>();
 			HashMap<String,Object> map = new  HashMap<>();
@@ -352,7 +351,10 @@ public class SlotManageService {
 				StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(studioSlotReturnDetailDto.getStudioSlotReturnMasterId());
 				if (studioSlotReturnMasterDto != null) {
 					if(studioSlotReturnMasterDto.getArriveState()!=0){
-						count = count -1;
+//						count = count -1;
+						continue;
+					}
+					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
 						continue;
 					}
 					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
@@ -759,6 +761,9 @@ public class SlotManageService {
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
+				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+					continue;
+				}
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
 				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
 				if (studioSlotDto.getSlotStatus() == 2) {

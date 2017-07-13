@@ -20,6 +20,9 @@ import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCalendarDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
+import com.shangpin.ephub.client.data.studio.user.dto.StudioUserCriteriaDto;
+import com.shangpin.ephub.client.data.studio.user.dto.StudioUserDto;
+import com.shangpin.ephub.client.data.studio.user.gateway.StudioUserGateWay;
 import com.shangpin.ephub.product.business.rest.studio.studio.dto.ResultObjList;
 import com.shangpin.ephub.product.business.rest.studio.studio.dto.ResultResponseDto;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicCalendarService;
@@ -56,6 +59,8 @@ public class StudioSlotController {
 	private HubSlotSpuSupplierService hubSlotSpuSupplierService;
 	@Autowired
 	private HubSlotSpuPicGateway hubSlotSpuPicGateway;
+	@Autowired
+	private StudioUserGateWay studioUserGateWay;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy/MM/dd");
 	SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
@@ -205,6 +210,24 @@ public class StudioSlotController {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	@RequestMapping(value = "/getStudioIdByUserName")
+	public String getStudioIdByUserName(String userName) {
+		try {
+			StudioUserCriteriaDto dto = new StudioUserCriteriaDto();
+			dto.createCriteria().andUserNameEqualTo(userName);
+			List<StudioUserDto> studioUserlist = studioUserGateWay.selectByCriteria(dto);
+			if(studioUserlist==null){
+				return "-1,用户不存在!";
+			}
+			if(studioUserlist.get(0).getUserName().equals("wangchaotest")){
+				return "0,"+studioUserlist.get(0).getStudioId();
+			}
+		} catch (Exception e) {
+			log.error("checkStudioSlot处理发生异常：{}", e);
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private StudioSlotDto createStudioSlotDto(long studioId, String DT, String studioNo, int num) {
