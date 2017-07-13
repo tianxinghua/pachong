@@ -314,6 +314,12 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         if(null!=slotSpuDto.getUpdateTime()){
             vo.setUpdateTime(format.format(slotSpuDto.getUpdateTime()));
         }
+        if(slotSpuDto.getPicSign()==PicState.HANDLED.getIndex()){
+            vo.setHavePic(true);
+        }else{
+            vo.setHavePic(false);
+        }
+
 
 
 
@@ -327,7 +333,11 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             spuSupplierVo.setSupplierId(supplierDto.getSupplierId());
             spuSupplierVo.setState(supplierDto.getState().intValue());
 
-
+            if(supplierDto.getPicSign()==PicState.HANDLED.getIndex()){
+                spuSupplierVo.setHavePic(true);
+            }else{
+                spuSupplierVo.setHavePic(false);
+            }
             spuSupplierVos.add(spuSupplierVo);
         }
         return  spuSupplierVos;

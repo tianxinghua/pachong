@@ -16,7 +16,10 @@ import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicCriteria
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.pic.gateway.HubSlotSpuPicGateway;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
@@ -56,6 +59,8 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	private StudioSlotSpuSendDetailGateWay studioSlotSpuSendDetailGateWay;
 	@Autowired
 	private StudioSlotGateWay studioSlotGateWay;
+	@Autowired
+	private HubSlotSpuGateWay hubSlotSpuGateWay;
 
 	@Override
 	public List<StudioSlotVo> list(OperationQuery operationQuery) {
@@ -299,6 +304,18 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			log.error("获取图片异常："+e.getMessage(),e);
 		}
 		return null;
+	}
+
+	@Override
+	public int updateHubSlotSpuPicSign(String slotSpuNo, UploadPicSign uploadPicSign) {
+		HubSlotSpuWithCriteriaDto withCriteria = new HubSlotSpuWithCriteriaDto();
+		HubSlotSpuCriteriaDto criteria = new HubSlotSpuCriteriaDto();
+		criteria.createCriteria().andSlotSpuNoEqualTo(slotSpuNo);
+		withCriteria.setCriteria(criteria );
+		HubSlotSpuDto hubSlotSpu = new HubSlotSpuDto();
+		hubSlotSpu.setPicSign(uploadPicSign.getIndex().byteValue()); 
+		withCriteria.setHubSlotSpu(hubSlotSpu );
+		return hubSlotSpuGateWay.updateByCriteriaSelective(withCriteria );
 	}
 
 	

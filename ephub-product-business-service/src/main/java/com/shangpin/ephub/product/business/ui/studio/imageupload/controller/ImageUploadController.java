@@ -73,6 +73,8 @@ public class ImageUploadController {
 		 * 记录上传失败的链接
 		 */
 		List<String> list = new ArrayList<String>();
+		int result = 0;
+		int result1 = 0;
 		try {
 			Map<String,Object> map = new HashMap<String,Object>(){/**
 				 * 
@@ -85,8 +87,9 @@ public class ImageUploadController {
 			String slotSpuNo = detailDto.getSlotSpuNo();
 			String supplierId = detailDto.getSupplierId();
 			if(CollectionUtils.isEmpty(spPicUrls)){
-				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
-				log.info("更新uploadPicSign为0==========="+result); 
+				result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
+				result1 = imageUploadService.updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.NOT_YET_UPLOAD);
+				log.info("更新uploadPicSign为0>>"+result+" 更新HubSlotSpuPicSign结果为0>>"+result1); 
 			}else{
 				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
 				log.info("已存在的图片："+JsonUtil.serialize(picMap));  
@@ -109,14 +112,15 @@ public class ImageUploadController {
 						}
 					}
 				}
-				int result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
-				log.info("更新uploadPicSign结果==========="+result); 
+				result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
+				result1 = imageUploadService.updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.HAVE_UPLOADED);
+				log.info("更新uploadPicSign结果=="+result+" 更新HubSlotSpuPicSign结果=="+result1); 
 			}
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 
 		}
 		log.info("上传失败的图片："+JsonUtil.serialize(list)); 
-		if(list.size() == 0){
+		if(list.size() == 0 && result == 1 && result1 == 1){
 			return HubResponse.successResp("全部上传成功。");
 		}else{
 			return HubResponse.errorResp(list);

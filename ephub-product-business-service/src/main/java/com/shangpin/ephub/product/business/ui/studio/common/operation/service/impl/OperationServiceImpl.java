@@ -69,7 +69,7 @@ public class OperationServiceImpl implements OperationService {
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		Criteria createCriteria = criteria.createCriteria();
-		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
+		createCriteria.andArriveStatusNotEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 		if(operationQuery.getOperationQueryType() == OperationQueryType.OPEN_BOX.getIndex()){
 			createCriteria.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
 		}else if(operationQuery.getOperationQueryType() == OperationQueryType.IMAGE_UPLOAD.getIndex()){
