@@ -63,6 +63,13 @@ public interface ImageUploadService {
 	 */
 	public int updateUploadPicSign(Long studioSlotSpuSendDetailId,UploadPicSign uploadPicSign);
 	/**
+	 * 更新上传图标标志
+	 * @param slotSpuNo
+	 * @param uploadPicSign
+	 * @return
+	 */
+	public int updateHubSlotSpuPicSign(String slotSpuNo, UploadPicSign uploadPicSign);
+	/**
 	 * 确认该批次已拍摄完毕
 	 * @param slotNo
 	 * @return
