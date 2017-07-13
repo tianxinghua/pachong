@@ -1,5 +1,5 @@
 ﻿server.port: 8011
 spring:  
   profiles: 
-    active: dev
+    active: qa
   application.name: studio-data-mysql-service
