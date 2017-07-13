@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,37 +49,60 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
     @Autowired
     StudioSlotDefectiveSpuPicGateWay studioSlotDefectiveSpuPicGateWay;
 
-
+    SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * 获取未收回的返回单
      * @param queryDto
      * @return
      */
-    public ReturnSlotListVo getReturnSlotList(ReturnSlotQueryDto queryDto){
+    public ReturnSlotListVo getReturnSlotList(ReturnSlotQueryDto queryDto) {
         ReturnSlotListVo vo = new ReturnSlotListVo();
-        StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
-        StudioSlotReturnMasterCriteriaDto.Criteria  criteria = dto.createCriteria()
-                .andSupplierIdEqualTo(queryDto.getSupplierId()).andSendStateEqualTo((byte)1);
-        if(!StringUtils.isEmpty(queryDto.getArriveState()) && queryDto.getArriveState() == 0 ){
-            criteria.andArriveStateEqualTo((byte)0);
-        }else{
-            criteria.andArriveStateEqualTo((byte)(queryDto.getArriveState()));
-        }
-        if(!StringUtils.isEmpty(queryDto.getPageIndex()) && queryDto.getPageIndex()> 0 ){
-            dto.setPageNo(queryDto.getPageIndex());
-        }
-        if(!StringUtils.isEmpty(queryDto.getPageSize())){
-            dto.setPageSize(queryDto.getPageSize());
-        }
-        int total = studioSlotReturnMasterGateWay.countByCriteria(dto);
-        if(total>0){
-            List<StudioSlotReturnMasterDto> masterDtos = studioSlotReturnMasterGateWay.selectByCriteria(dto);
-            vo.setSlotReturnList(masterDtos);
-        }
-        vo.setTotal(total);
+        try {
 
+            StudioSlotReturnMasterCriteriaDto dto = new StudioSlotReturnMasterCriteriaDto();
+            StudioSlotReturnMasterCriteriaDto.Criteria criteria = dto.createCriteria()
+                    .andSupplierIdEqualTo(queryDto.getSupplierId()).andSendStateEqualTo((byte) 1);
+            if (!StringUtils.isEmpty(queryDto.getArriveState()) && queryDto.getArriveState() == 0) {
+                criteria.andArriveStateEqualTo((byte) 0);
+                if (!StringUtils.isEmpty(queryDto.getStartTime())) {
+                    criteria.andSendTimeGreaterThanOrEqualTo(sdfomat.parse(queryDto.getStartTime()));
+                }
+                if (!StringUtils.isEmpty(queryDto.getEndTime())) {
+                    criteria.andSendTimeLessThan(sdfomat.parse(queryDto.getEndTime()));
+                }
+            } else {
+                criteria.andArriveStateEqualTo((byte) (queryDto.getArriveState()));
+                if (!StringUtils.isEmpty(queryDto.getStartTime())) {
+                    criteria.andArriveTimeGreaterThanOrEqualTo(sdfomat.parse(queryDto.getStartTime()));
+                }
+                if (!StringUtils.isEmpty(queryDto.getEndTime())) {
+                    criteria.andArriveTimeLessThan(sdfomat.parse(queryDto.getEndTime()));
+                }
+
+            }
+            if (!StringUtils.isEmpty(queryDto.getStudioId())) {
+                criteria.andStudioIdEqualTo(queryDto.getStudioId());
+            }
+
+            if (!StringUtils.isEmpty(queryDto.getPageIndex()) && queryDto.getPageIndex() > 0) {
+                dto.setPageNo(queryDto.getPageIndex());
+            }
+            if (!StringUtils.isEmpty(queryDto.getPageSize())) {
+                dto.setPageSize(queryDto.getPageSize());
+            }
+
+            int total = studioSlotReturnMasterGateWay.countByCriteria(dto);
+            if (total > 0) {
+                List<StudioSlotReturnMasterDto> masterDtos = studioSlotReturnMasterGateWay.selectByCriteria(dto);
+                vo.setSlotReturnList(masterDtos);
+            }
+            vo.setTotal(total);
+
+        } catch (Exception ex) {
+            log.info("getStudioSlot Exception " + ex.getMessage());
+        }
         return vo;
-   }
+    }
 
     /**
      * 供货商接收返回单
@@ -278,47 +302,60 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @param supplierId
      * @return
      */
-   public List<DefectiveListVo> getDefectiveList(String supplierId){
-       List<DefectiveListVo> defectiveListVoList = new ArrayList<>();
-       StudioSlotDefectiveSpuCriteriaDto criteriaDto = new StudioSlotDefectiveSpuCriteriaDto();
-       criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andDataStateNotEqualTo((byte)1);
-       criteriaDto.setOrderByClause("create_time desc");
-       List<StudioSlotDefectiveSpuDto> defectiveSpuDtos = studioSlotDefectiveSpuGateWay.selectByCriteria(criteriaDto);
+   public List<DefectiveListVo> getDefectiveList(String supplierId ,String startTime,String endTime) {
+       try {
 
-       if(defectiveSpuDtos!=null && defectiveSpuDtos.size()>0){
 
-           List<Long> filteredId = defectiveSpuDtos.stream().map(StudioSlotDefectiveSpuDto:: getStudioSlotDefectiveSpuId).distinct().collect(Collectors.toList());
-           StudioSlotDefectiveSpuPicCriteriaDto picDto = new StudioSlotDefectiveSpuPicCriteriaDto();
-           picDto.createCriteria().andStudioSlotDefectiveSpuIdIn(filteredId);
-           List<StudioSlotDefectiveSpuPicDto> picDtos = studioSlotDefectiveSpuPicGateWay.selectByCriteria(picDto);
-
-           List<Long> filteredDetailId = defectiveSpuDtos.stream().map(StudioSlotDefectiveSpuDto:: getDetailId).distinct().collect(Collectors.toList());
-           StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
-           detailDto.createCriteria().andStudioSlotReturnDetailIdIn(filteredDetailId);
-           List<StudioSlotReturnDetailDto>  detailDtos =  studioSlotReturnDetailGateWay.selectByCriteria(detailDto);
-
-           for (StudioSlotDefectiveSpuDto spuDto : defectiveSpuDtos){
-               Optional<StudioSlotReturnDetailDto> detailDto1 = detailDtos.stream().filter(x-> spuDto.getDetailId().equals(x.getStudioSlotReturnDetailId())).findFirst();
-               List<StudioSlotDefectiveSpuPicDto> picDtos1 = picDtos.stream().filter(x-> spuDto.getStudioSlotDefectiveSpuId().equals(x.getStudioSlotDefectiveSpuId())).collect(Collectors.toList());
-
-               DefectiveListVo vo = new DefectiveListVo();
-               vo.setId(spuDto.getStudioSlotDefectiveSpuId());
-               detailDto1.ifPresent(d->{
-                   vo.setBarcode(d.getBarcode());
-                   vo.setBrandName(d.getSupplierBrandName());
-                   vo.setSpuName(d.getSupplierSpuName());
-               });
-               if(picDtos1!=null &&picDtos1.size()>0){
-                   vo.setImages(picDtos1.stream().map(StudioSlotDefectiveSpuPicDto::getSpPicUrl).collect(Collectors.toList()));
-               }
-               vo.setCreateTime(spuDto.getCreateTime());
-               vo.setCreateUser(spuDto.getCreateUser());
-               defectiveListVoList.add(vo);
+           List<DefectiveListVo> defectiveListVoList = new ArrayList<>();
+           StudioSlotDefectiveSpuCriteriaDto criteriaDto = new StudioSlotDefectiveSpuCriteriaDto();
+           StudioSlotDefectiveSpuCriteriaDto.Criteria criteria = criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andDataStateNotEqualTo((byte) 1);
+           if (!StringUtils.isEmpty(startTime)) {
+               criteria.andCreateTimeGreaterThanOrEqualTo(sdfomat.parse(startTime));
            }
+           if (!StringUtils.isEmpty(endTime)) {
+               criteria.andCreateTimeLessThan(sdfomat.parse(endTime));
+           }
+
+           criteriaDto.setOrderByClause("create_time desc");
+           List<StudioSlotDefectiveSpuDto> defectiveSpuDtos = studioSlotDefectiveSpuGateWay.selectByCriteria(criteriaDto);
+
+           if (defectiveSpuDtos != null && defectiveSpuDtos.size() > 0) {
+
+               List<Long> filteredId = defectiveSpuDtos.stream().map(StudioSlotDefectiveSpuDto::getStudioSlotDefectiveSpuId).distinct().collect(Collectors.toList());
+               StudioSlotDefectiveSpuPicCriteriaDto picDto = new StudioSlotDefectiveSpuPicCriteriaDto();
+               picDto.createCriteria().andStudioSlotDefectiveSpuIdIn(filteredId);
+               List<StudioSlotDefectiveSpuPicDto> picDtos = studioSlotDefectiveSpuPicGateWay.selectByCriteria(picDto);
+
+               List<Long> filteredDetailId = defectiveSpuDtos.stream().map(StudioSlotDefectiveSpuDto::getDetailId).distinct().collect(Collectors.toList());
+               StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
+               detailDto.createCriteria().andStudioSlotReturnDetailIdIn(filteredDetailId);
+               List<StudioSlotReturnDetailDto> detailDtos = studioSlotReturnDetailGateWay.selectByCriteria(detailDto);
+
+               for (StudioSlotDefectiveSpuDto spuDto : defectiveSpuDtos) {
+                   Optional<StudioSlotReturnDetailDto> detailDto1 = detailDtos.stream().filter(x -> spuDto.getDetailId().equals(x.getStudioSlotReturnDetailId())).findFirst();
+                   List<StudioSlotDefectiveSpuPicDto> picDtos1 = picDtos.stream().filter(x -> spuDto.getStudioSlotDefectiveSpuId().equals(x.getStudioSlotDefectiveSpuId())).collect(Collectors.toList());
+
+                   DefectiveListVo vo = new DefectiveListVo();
+                   vo.setId(spuDto.getStudioSlotDefectiveSpuId());
+                   detailDto1.ifPresent(d -> {
+                       vo.setBarcode(d.getBarcode());
+                       vo.setBrandName(d.getSupplierBrandName());
+                       vo.setSpuName(d.getSupplierSpuName());
+                   });
+                   if (picDtos1 != null && picDtos1.size() > 0) {
+                       vo.setImages(picDtos1.stream().map(StudioSlotDefectiveSpuPicDto::getSpPicUrl).collect(Collectors.toList()));
+                   }
+                   vo.setCreateTime(spuDto.getCreateTime());
+                   vo.setCreateUser(spuDto.getCreateUser());
+                   defectiveListVoList.add(vo);
+               }
+           }
+
+           return defectiveListVoList;
+       } catch (Exception ex) {
+           log.info("getDefectiveList Exception " + ex.getMessage());
        }
-
-
-       return defectiveListVoList;
+        return  null;
    }
 
     /**

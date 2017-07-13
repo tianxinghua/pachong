@@ -135,7 +135,7 @@ public class ReturnSlotController {
         if(StringUtils.isEmpty(supplierId) ){
             return  HubResponse.errorResp("传入参数不正确");
         }
-        return  HubResponse.successResp(iReturnSlotService.getDefectiveList(supplierId));
+        return  HubResponse.successResp(iReturnSlotService.getDefectiveList(supplierId,queryDto.getStartTime(),queryDto.getEndTime()));
     }
 
     @RequestMapping(value = "/deletedefective")

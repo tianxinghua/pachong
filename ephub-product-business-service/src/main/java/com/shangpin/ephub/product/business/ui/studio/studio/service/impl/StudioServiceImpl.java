@@ -958,7 +958,7 @@ public class StudioServiceImpl implements IStudioService {
             }
             studioSlotsList.setTotal(total);
         } catch (Exception ex) {
-
+            log.info("getStudioSlot Exception " + ex.getMessage());
         }
         return studioSlotsList;
     }
