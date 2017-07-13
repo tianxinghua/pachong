@@ -25,40 +25,40 @@ import java.util.List;
 public interface StudioUserGateWay {
 
 	
-	@RequestMapping(value = "/studio/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody StudioUserCriteriaDto criteria);
 	
-	@RequestMapping(value = "/studio/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody StudioUserCriteriaDto criteria);
 	
-	@RequestMapping(value = "/studio/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByPrimaryKey(Long skuId);
 	
-	@RequestMapping(value = "/studio/insert", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody StudioUserDto hubSku);
 	
-	@RequestMapping(value = "/studio/insert-selective", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/insert-selective", method = RequestMethod.POST,consumes = "application/json")
     public Long insertSelective(@RequestBody StudioUserDto hubSku);
 	
-	@RequestMapping(value = "/studio/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<StudioUserDto> selectByCriteriaWithRowbounds(@RequestBody StudioUserCriteriaWithRowBoundsDto criteriaWithRowBounds);
 	
-	@RequestMapping(value = "/studio/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<StudioUserDto> selectByCriteria(@RequestBody StudioUserCriteriaDto criteria);
 	
-	@RequestMapping(value = "/studio/select-by-primary-key/{studioUserId}", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/select-by-primary-key/{studioUserId}", method = RequestMethod.POST,consumes = "application/json")
     public StudioUserDto selectByPrimaryKey(@PathVariable("studioUserId") Long studioUserId);
 	
-	@RequestMapping(value = "/studio/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody StudioUserWithCriteriaDto withCriteriaDto);
 	
-	@RequestMapping(value = "/studio/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/update-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteria(@RequestBody StudioUserWithCriteriaDto withCriteriaDto);
 	
-	@RequestMapping(value = "/studio/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKeySelective(@RequestBody StudioUserDto hubSku);
 	
-	@RequestMapping(value = "/studio/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/studio-user/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody StudioUserDto hubSku);
 
 }

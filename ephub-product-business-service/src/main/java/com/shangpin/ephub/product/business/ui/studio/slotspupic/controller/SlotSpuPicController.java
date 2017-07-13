@@ -29,7 +29,7 @@ public class SlotSpuPicController {
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody SpuSupplierQueryDto quryDto){
 
-        List<SlotSpuDto> slotSpu = slotPicService.findSpuPicByBrandNoAndSpuModel(quryDto);
+        List<SlotSpuDto> slotSpu = null ;// slotPicService.findSpuPicByBrandNoAndSpuModel(quryDto);
 
         return HubResponse.successResp(slotSpu);
     }

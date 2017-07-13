@@ -19,7 +19,7 @@ import java.util.List;
 
  */
 @RestController
-@RequestMapping("/studio-slot")
+@RequestMapping("/studio-user")
 public class StudioUserController {
 
 	@Autowired
