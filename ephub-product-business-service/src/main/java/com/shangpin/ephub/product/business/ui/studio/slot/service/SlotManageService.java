@@ -758,16 +758,34 @@ public class SlotManageService {
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(dto);
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
-			for(StudioSlotDto studioSlotDto : studioSlotDtoList){
+			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
 				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
-				studioSlotsHistories.setStatus(studioSlotDto.getSlotStatus().toString());
+				if (studioSlotDto.getSlotStatus() == 2) {
+					studioSlotsHistories.setStatus("incoming");
+				}
+				if (studioSlotDto.getSlotStatus() == 3) {
+					studioSlotsHistories.setStatus("received");
+				}
+				if (studioSlotDto.getSlotStatus() == 4) {
+					studioSlotsHistories.setStatus("inspected");
+				}
+				if (studioSlotDto.getSlotStatus() == 5) {
+					studioSlotsHistories.setStatus("pre_return");
+				}
+				if (studioSlotDto.getSlotStatus() == 6) {
+					studioSlotsHistories.setStatus("returnd");
+				}
+				if (studioSlotDto.getSlotStatus() == 7) {
+					studioSlotsHistories.setStatus("finished");
+				}
 				studioSlotsHistories.setSender(studioSlotDto.getSendUser());
-				if(studioSlotDto.getSendTime()!=null){
+				if (studioSlotDto.getSendTime() != null) {
 					studioSlotsHistories.setSendingDate(sdf.format(studioSlotDto.getSendTime()));
 				}
-				if(studioSlotDto.getArriveTime()!=null&&studioSlotDto.getArriveUser()!=null){
-					studioSlotsHistories.setQA(studioSlotDto.getArriveUser()+"|"+sdf.format(studioSlotDto.getArriveTime()));
+				if (studioSlotDto.getArriveTime() != null && studioSlotDto.getArriveUser() != null) {
+					studioSlotsHistories
+							.setQA(studioSlotDto.getArriveUser() + "|" + sdf.format(studioSlotDto.getArriveTime()));
 				}
 				StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
 				detailDto.createCriteria().andSlotNoEqualTo(studioSlotDto.getSlotNo());
@@ -793,15 +811,15 @@ public class SlotManageService {
 
 					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
 							.selectByPrimaryKey(masterId);
-					if(studioSlotReturnMasterDto==null){
-						count = count -1;
+					if (studioSlotReturnMasterDto == null) {
+						count = count - 1;
 						continue;
 					}
 					if (slotManageQuery.getStartDate() != null && slotManageQuery.getEndDate() != null) {
 						if (slotManageQuery.getMilestone() == 4 && studioSlotReturnMasterDto.getSendTime() != null) {
 							if (!studioSlotReturnMasterDto.getSendTime().before(slotManageQuery.getEndDate())
 									|| !studioSlotReturnMasterDto.getSendTime().after(slotManageQuery.getStartDate())) {
-								count = count -1;
+								count = count - 1;
 								continue;
 							}
 						}
@@ -809,7 +827,7 @@ public class SlotManageService {
 							if (!studioSlotReturnMasterDto.getArriveTime().before(slotManageQuery.getEndDate())
 									&& !studioSlotReturnMasterDto.getArriveTime()
 											.after(slotManageQuery.getStartDate())) {
-								count = count -1;
+								count = count - 1;
 								continue;
 							}
 						}
