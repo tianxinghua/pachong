@@ -17,4 +17,11 @@ public interface StudioCommonService {
      * @return
      */
     public int getTimeLog(Long studioId);
+
+    /**
+     * 获取摄影棚计算后的时间
+     * @param studioId
+     * @return
+     */
+    public String getTimeLogTime(Long studioId);
 }

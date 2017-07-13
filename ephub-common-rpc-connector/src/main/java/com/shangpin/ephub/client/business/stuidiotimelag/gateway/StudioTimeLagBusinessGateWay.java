@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface StudioTimeLagBusinessGateWay {
 	
 
-	@RequestMapping(value="/slot-spu-pic/judge-spu-exist" ,method=RequestMethod.POST ,consumes = "application/json")
-	public boolean judgeSlotSpuExist(@RequestBody HubSlotSpuDto slotSpuDto);
+	@RequestMapping(value="/studio-time/get-time-lag" ,method=RequestMethod.POST ,consumes = "application/json")
+	public int  getTimeLag(@RequestBody Long studioId);
+
+
+	@RequestMapping(value="/studio-time/get-time-lag-time" ,method=RequestMethod.POST ,consumes = "application/json")
+	public String   getTimeLagTime(@RequestBody Long studioId);
 
 
 
