@@ -38,8 +38,11 @@ public class ProductExportHandler {
 	@Autowired
 	AllProductServiceImpl allProductServiceImpl;
 	
+	@Autowired
 	@Qualifier("waitShootExporter")
 	private IExportService waitShootExporter;
+	
+	@Autowired
 	@Qualifier("commitedExporter") 
 	private IExportService commitedExporter;
 	
