@@ -55,6 +55,7 @@ public class WaitShootExporter extends CommonExporter<PendingQuryDto,HubSlotSpuE
 				HubSlotSpuExcelDto slotSpu = convert(product);
 				slotSpus.add(slotSpu);
 			}
+			return slotSpus;
 		}
 		return null;
 	}

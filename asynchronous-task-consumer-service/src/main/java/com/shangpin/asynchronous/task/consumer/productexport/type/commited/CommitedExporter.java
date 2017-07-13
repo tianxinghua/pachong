@@ -11,11 +11,13 @@ import org.springframework.util.StringUtils;
 import com.shangpin.asynchronous.task.consumer.productexport.template.Template;
 import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.CommitedExcelDto;
 import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.SlotSpuExportDto;
+import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.SlotSpuExportLIst;
 import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.SlotSpuSupplierDto;
 import com.shangpin.asynchronous.task.consumer.productexport.type.commited.enumeration.SpuState;
 import com.shangpin.asynchronous.task.consumer.productexport.type.common.CommonExporter;
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title: CommitedExporter</p>
@@ -50,11 +52,12 @@ public class CommitedExporter extends CommonExporter<SpuSupplierQueryDto, Commit
 	public List<CommitedExcelDto> searchAndConvert(int pageIndex, Integer pageSize, SpuSupplierQueryDto t) {
 		t.setPageIndex(pageIndex);
 		t.setPageSize(pageSize); 
-		HubResponse<?> response = hubSlotSpuTaskGateWay.commitedExport(t);
-		List<SlotSpuExportDto> list = (List<SlotSpuExportDto>) response.getContent();
-		if(CollectionUtils.isNotEmpty(list)){
+		String response = hubSlotSpuTaskGateWay.commitedExport(t);
+		SlotSpuExportLIst slotSpus = JsonUtil.deserialize(response, SlotSpuExportLIst.class); 
+		List<SlotSpuExportDto> slotSpus2 = slotSpus.getSlotSpus();
+		if(CollectionUtils.isNotEmpty(slotSpus2)){
 			List<CommitedExcelDto> excelDtos = new ArrayList<CommitedExcelDto>();
-			for(SlotSpuExportDto exportDto : list){
+			for(SlotSpuExportDto exportDto : slotSpus2){
 				for(SlotSpuSupplierDto supplierDto : exportDto.getSpuSupplierDtos()){
 					CommitedExcelDto excelDto = convert(exportDto,supplierDto);
 					excelDtos.add(excelDto);

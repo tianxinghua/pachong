@@ -1,7 +1,5 @@
 package com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto;
 
-import java.io.Serializable;
-
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -14,13 +12,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class SlotSpuExportDto extends SlotSpuDto implements Serializable {
+public class SlotSpuExportDto extends SlotSpuDto {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2528909338966058899L;
-	
 	private String hubBrandName;
 	private String hubCategoryName;
 	private String supplierName;

@@ -105,7 +105,7 @@ spring:
        ftpPendingPath: pending/
        exportPath: pending_export/
        studioPath: studio_export/
-       localResultPath: E:/testexcel/
+       localResultPath: E:/other/下载的内容/
   mail: 
        default-recipient: yan_xiao_bin@126.com
        default-sender: yanxiaobin@shangpin.com
