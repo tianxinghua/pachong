@@ -475,7 +475,7 @@ public class SlotManageService {
 				if (studioSlotReturnDetailDto.getState() == slotManageQuery.getState().byteValue()) {
 					return HubResponse.successResp("更新成功！");
 				} else {
-
+                    
 					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.WAIT.getIndex().byteValue()) {
 						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
 							studioSlotReturnMasterDto.setActualSendQuantity(
@@ -503,6 +503,10 @@ public class SlotManageService {
 							studioSlotReturnMasterDto
 									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() + 1);
 						}
+						if(!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
+							studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy()-1);
+						}
+
 					}
 					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
 						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
@@ -510,6 +514,9 @@ public class SlotManageService {
 									studioSlotReturnMasterDto.getActualSendQuantity() + 1);
 							studioSlotReturnMasterDto
 									.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() - 1);
+							if(!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
+								studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy()+1);
+							}
 						}
 						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
 							studioSlotReturnMasterDto
@@ -524,6 +531,9 @@ public class SlotManageService {
 									studioSlotReturnMasterDto.getActualSendQuantity() + 1);
 							studioSlotReturnMasterDto
 									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() - 1);
+							if(!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
+								studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy()+1);
+							}
 						}
 						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
 							studioSlotReturnMasterDto
@@ -784,12 +794,14 @@ public class SlotManageService {
 					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
 							.selectByPrimaryKey(masterId);
 					if(studioSlotReturnMasterDto==null){
+						count = count -1;
 						continue;
 					}
 					if (slotManageQuery.getStartDate() != null && slotManageQuery.getEndDate() != null) {
 						if (slotManageQuery.getMilestone() == 4 && studioSlotReturnMasterDto.getSendTime() != null) {
 							if (!studioSlotReturnMasterDto.getSendTime().before(slotManageQuery.getEndDate())
 									|| !studioSlotReturnMasterDto.getSendTime().after(slotManageQuery.getStartDate())) {
+								count = count -1;
 								continue;
 							}
 						}
@@ -797,6 +809,7 @@ public class SlotManageService {
 							if (!studioSlotReturnMasterDto.getArriveTime().before(slotManageQuery.getEndDate())
 									&& !studioSlotReturnMasterDto.getArriveTime()
 											.after(slotManageQuery.getStartDate())) {
+								count = count -1;
 								continue;
 							}
 						}
