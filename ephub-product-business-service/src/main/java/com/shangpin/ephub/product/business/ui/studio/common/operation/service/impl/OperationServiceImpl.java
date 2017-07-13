@@ -76,9 +76,9 @@ public class OperationServiceImpl implements OperationService {
 			createCriteria.andShotStatusIsNotNull().andShotStatusNotEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue()).andSlotStatusNotEqualTo(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
 		}
 		
-		Long studioId = getStudioId(operationQuery.getStudioNo());
-		if(null != studioId){
-			createCriteria.andStudioIdEqualTo(studioId);
+		//Long studioId = getStudioId(operationQuery.getStudioNo());
+		if(StringUtils.isNotEmpty(operationQuery.getStudioNo())){ 
+			createCriteria.andStudioIdEqualTo(Long.valueOf(operationQuery.getStudioNo())); 
 		}else{
 			throw new Exception("未获得摄影棚编号");
 		}
