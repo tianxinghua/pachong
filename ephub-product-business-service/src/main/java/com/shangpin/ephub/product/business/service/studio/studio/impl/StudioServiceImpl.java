@@ -23,4 +23,17 @@ public class StudioServiceImpl implements StudioService {
         if(null!=studioDtos&&studioDtos.size()>0) return true;
         return false;
     }
+
+    @Override
+    public int getTimeLog(Long studioId) {
+        StudioDto studioDto = studioGateWay.selectByPrimaryKey(studioId);
+        if(null!=studioDto){
+            if(null!=studioDto.getTimeLag()){
+                return studioDto.getTimeLag();
+            }
+        }
+        return 0;
+    }
+
+
 }
