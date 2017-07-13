@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.studio.slotspureturn.impl;
 
+import com.shangpin.ephub.client.data.studio.enumeration.StudioReturnDeatilState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSupplierArriveState;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto;
@@ -27,7 +28,7 @@ public class SlotSpuReturnDetailServiceImpl implements SlotSpuReturnDetailServic
     @Override
     public int getReturnDetailCount(String slotNo) {
         StudioSlotReturnDetailCriteriaDto criteria = new StudioSlotReturnDetailCriteriaDto();
-        criteria.createCriteria().andSlotNoEqualTo(slotNo);
+        criteria.createCriteria().andSlotNoEqualTo(slotNo).andSendStateEqualTo(StudioReturnDeatilState.GOOD.getIndex().byteValue());
         return returnDetailGateWay.countByCriteria(criteria);
     }
 

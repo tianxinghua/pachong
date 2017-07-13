@@ -19,5 +19,7 @@ public class DefectiveSpuDto implements Serializable {
     private List<String> images;
     private String userName;
     private String supplierId;
+    private String startTime;
+    private String endTime;
 
 }

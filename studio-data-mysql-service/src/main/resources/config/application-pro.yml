@@ -43,7 +43,7 @@ shangpin:
                - 
                   id: shangpin-ephub-data-mysql-service-db-cluster-one
                   driver: com.mysql.jdbc.Driver
-                  url: "jdbc:mysql://ephub.spidc1.com:3306/ephub?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
+                  url: "jdbc:mysql://epstudio.spidc1.com:3306/studio?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
                   user: writer
                   password: wt@sp520
                   trailnumber: 

@@ -144,9 +144,13 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                 BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
                 if(brandModelResult.isPassing()){
 
+                    //品类单独处理
+
+
+
                     HubPendingSpuCheckResult spuResult = this.checkHubPendingSpu(pendingProductDto);
                     if(spuResult.isPassing()){
-                        pendingProductDto.setCatgoryState((byte)1);
+//                        pendingProductDto.setCatgoryState((byte)1);
                         pendingProductDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
                         pendingProductDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
                     }else{
@@ -155,6 +159,9 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                         log.info("pending spu校验失败，不更新："+spuResult.getResult());
                         updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
                     }
+
+
+
 
                 }else{
                     pass = false ;
@@ -212,25 +219,25 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
     private void checkSpuState(PendingProductDto hubPendingSpuDto, HubPendingSpuCheckResult hubPendingSpuCheckResult) {
         if(hubPendingSpuCheckResult.isSpuModel()){
-            hubPendingSpuDto.setSpuModelState((byte)1);
+            hubPendingSpuDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
         }else{
-            hubPendingSpuDto.setSpuModelState((byte)0);
+            hubPendingSpuDto.setSpuModelState(SpuModelState.VERIFY_FAILED.getIndex());
         }
 
-        if(hubPendingSpuCheckResult.isCategory()){
-            hubPendingSpuDto.setCatgoryState((byte)1);
-        }else{
-            hubPendingSpuDto.setCatgoryState((byte)0);
-        }
+//        if(hubPendingSpuCheckResult.isCategory()){
+//            hubPendingSpuDto.setCatgoryState((byte)1);
+//        }else{
+//            hubPendingSpuDto.setCatgoryState((byte)0);
+//        }
 
 
 
 
 
         if(hubPendingSpuCheckResult.isBrand()){
-            hubPendingSpuDto.setSpuBrandState((byte)1);
+            hubPendingSpuDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
         }else{
-            hubPendingSpuDto.setSpuBrandState((byte)0);
+            hubPendingSpuDto.setSpuBrandState(SpuBrandState.UNHANDLED.getIndex());
         }
 
 

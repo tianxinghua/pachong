@@ -174,6 +174,16 @@ public class SlotSpuSupplier implements Serializable {
      */
     private String memo;
 
+    /**
+     * spu 是否有图片的标记
+     */
+    private Byte spuPicSign;
+
+    /**
+     * 供货商是否有图片的标记
+     */
+    private Byte supplierPicSign;
+
 
 
 

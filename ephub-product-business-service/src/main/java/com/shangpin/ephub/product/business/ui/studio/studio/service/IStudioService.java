@@ -27,8 +27,8 @@ public interface IStudioService {
     boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser);
     StudioSlotLogistictTrackDto getSlotLogisticInfo(Long studioSlotId);
     boolean slotPrint(Long slotId);
-    SlotsVo getStudioSlot(Long StudioId, String startTime, String endTime ,String categoryNos);
-    SlotsVo getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,int pageIndex,int pageSize,int history);
+    SlotsVo getStudioSlot(Long StudioId, String startTime, String endTime ,String categoryNos,Long supplierId);
+    SlotsVo getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,Long supplierId,int pageIndex,int pageSize,int history);
     List<ErrorConent> applyUpdateSlot(StudioSlotQueryDto upDto);
 
 

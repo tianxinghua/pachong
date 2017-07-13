@@ -28,7 +28,7 @@ public interface IReturnSlotService {
 
     Long addDefective(DefectiveSpuDto queryDto);
 
-    List<DefectiveListVo> getDefectiveList(String supplierId);
+    List<DefectiveListVo> getDefectiveList(String supplierId ,String startTime,String endTime);
 
     boolean DeleteDefective(String supplierId, Long id,String userName);
 

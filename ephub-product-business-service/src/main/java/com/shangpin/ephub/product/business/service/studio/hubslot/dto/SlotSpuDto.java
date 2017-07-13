@@ -19,6 +19,8 @@ public class SlotSpuDto {
     private String hubBrandNo;
     private String studioName;
 
+    private boolean isHavePic;
+
     private List<SlotSpuSupplierDto> spuSupplierDtos;
 
 
