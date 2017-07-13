@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
-import com.shangpin.ephub.response.HubResponse;
 /**
  * <p>Title: HubSlotSpuTaskGateWay</p>
  * <p>Description: 导入导出等一些任务接口 </p>
@@ -32,7 +31,7 @@ public interface HubSlotSpuTaskGateWay {
 	 * @return
 	 */
 	@RequestMapping(value="/slot-spu/commited-export" ,method=RequestMethod.POST ,consumes = "application/json")
-	public HubResponse<?> commitedExport(@RequestBody SpuSupplierQueryDto quryDto);
+	public String commitedExport(@RequestBody SpuSupplierQueryDto quryDto);
 
 
 
