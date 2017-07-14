@@ -18,6 +18,7 @@ import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
@@ -174,7 +175,7 @@ public class HubSupplierCategoryDicController {
 				Date date = new Date();
 				String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
 				taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
-				dto.setRefreshDicType((byte)4);
+				dto.setRefreshDicType(InfoState.RefreshCategory.getIndex());
 				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
 				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
 			}

@@ -39,8 +39,12 @@ public class MatchSizeService {
 	 * @return
 	 */
 	public MatchSizeResult matchSize(MatchSizeDto dto) {
-		
+		if(dto.getSize()!=null){
+			String regex = "\\s+";
+			dto.setSize(dto.getSize().replaceAll(regex, ""));
+		}
 		MatchSizeResult matchSizeResult = new MatchSizeResult();
+		matchSizeResult.setSizeValue(dto.getSize());
 		CategoryScreenSizeDom size = sizeService.getGmsSize(dto.getHubBrandNo(), dto.getHubCategoryNo());
 		boolean sizeIsExist = false;
 		String result = null;

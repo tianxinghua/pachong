@@ -289,14 +289,14 @@ public class HubPendingSpuHandleService {
 			if(hubSpuNo!=null){
 				if(isSkuPassing){
 					if(isSendToHub){
-						hubSpuPendingDto.setMemo("自动处理：自动进入待选品");
-						hubSpuPendingDto.setSpuState(SpuState.HANDLED.getIndex());
+						hubSpuPendingDto.setMemo("自动处理：自动进入待复合");
+						hubSpuPendingDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
 						hubSpuPendingDto.setHandleFrom(HandleFromState.AUTOMATIC_HANDLE.getIndex());
-						if(!sendToHub(spuPendingId,hubSpuNo)){
-							log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"sendToHub失败");
-							return "sendToHub失败";
-						}
-						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"自动进入待选品");
+//						if(!sendToHub(spuPendingId,hubSpuNo)){
+//							log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"sendToHub失败");
+//							return "sendToHub失败";
+//						}
+						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"自动进入待复合");
 					}else{
 						log.info("*****"+spuPending.getSupplierId()+":"+spuPending.getSpuModel()+"spu下sku都已处理，不再推送");
 						return null;

@@ -343,6 +343,11 @@ public class HubCheckService {
 	public HubPendingSkuCheckResult hubSizeExist(String hubCategoryNo,String hubBrandNo,String sizeType,String size){
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
 		
+		String regex = "\\s+";
+		if(StringUtils.isNotBlank(size)){
+			size = size.replaceAll(regex, "");	
+		}
+	    
 		if("排除".equals(sizeType)){
 			checkResult.setPassing(false);
 	     	checkResult.setSizeType("排除");
