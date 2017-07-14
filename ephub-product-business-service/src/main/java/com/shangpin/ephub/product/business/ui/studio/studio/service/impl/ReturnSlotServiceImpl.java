@@ -220,6 +220,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
        dto.setPageSize(10000);
+       // 2 损坏 3 丢失的数据不计入
        dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andStateLessThan((byte)2);
        //.andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
