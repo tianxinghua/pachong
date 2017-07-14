@@ -8,6 +8,18 @@ spring:
   cloud: 
         stream: 
               bindings: 
+                        coccolebimbiOriginalProduct:
+                              destination: coccolebimbi.original.product
+                              content-type: application/json
+                        portofinoOriginalProduct:
+                              destination: portofino.original.product
+                              content-type: application/json
+                        fratinardiOriginalProduct:
+                              destination: fratinardi.original.product
+                              content-type: application/json
+                        forzieriOriginalProduct:
+                              destination: forzieri.original.product
+                              content-type: application/json
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               content-type: application/json
@@ -196,6 +208,18 @@ spring:
                               content-type: application/json                                                                                                                                                                                                                                         
               rabbit: 
                       bindings: 
+                            coccolebimbiOriginalProduct:
+                                  producer: 
+                                           prefix: HA.
+                            portofinoOriginalProduct:
+                                  producer: 
+                                           prefix: HA.
+                            fratinardiOriginalProduct:
+                                  producer: 
+                                           prefix: HA.
+                            forzieriOriginalProduct:
+                                  producer: 
+                                           prefix: HA.
                             spinnakerOriginalProduct: 
                                   producer: 
                                            prefix: HA.

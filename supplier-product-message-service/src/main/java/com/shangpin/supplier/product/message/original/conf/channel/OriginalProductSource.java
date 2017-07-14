@@ -10,7 +10,10 @@ import org.springframework.messaging.MessageChannel;
  * @date 2016年12月5日 下午7:34:44
  */
 public interface OriginalProductSource {
-	
+	public static final String portofino = "portofinoOriginalProduct";
+	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
+	public static final String fratinardi = "fratinardiOriginalProduct";
+	public static final String FORZIERI = "forzieriOriginalProduct";
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
 	
 	public static final String OSTORE = "ostoreOriginalProduct";
@@ -131,6 +134,30 @@ public interface OriginalProductSource {
 	public static final String MCLABLES = "mclablesOriginalProduct";
 	
 	public static final String EMONTI = "emontiOriginalProduct";
+	/**
+	 * 供货商portofino通道组件配置
+	 * @return 供货商portofino通道组件
+	 */
+	@Output(value = OriginalProductSource.portofino)
+	public MessageChannel portofino();
+	/**
+	 * 供货商coccolebimbi通道组件配置
+	 * @return 供货商coccolebimbi通道组件
+	 */
+	@Output(value = OriginalProductSource.coccolebimbi)
+	public MessageChannel coccolebimbi();
+	/**
+	 * 供货商fratinardi通道组件配置
+	 * @return 供货商FORZIERI通道组件
+	 */
+	@Output(value = OriginalProductSource.fratinardi)
+	public MessageChannel fratinardi();
+	/**
+	 * 供货商FORZIERI通道组件配置
+	 * @return 供货商FORZIERI通道组件
+	 */
+	@Output(value = OriginalProductSource.FORZIERI)
+	public MessageChannel forzieri();
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件

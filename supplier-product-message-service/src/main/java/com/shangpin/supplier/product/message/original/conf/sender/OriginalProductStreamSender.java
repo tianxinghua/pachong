@@ -19,6 +19,22 @@ public class OriginalProductStreamSender {
 	@Autowired
 	private OriginalProductSource originalProductSource;
 	/**
+	 * 发送供应商coccolebimbi商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean coccolebimbiStream(SupplierProduct supplierProduct) {
+		return originalProductSource.coccolebimbi().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	/**
+	 * 发送供应商portofino商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean portofinoStream(SupplierProduct supplierProduct) {
+		return originalProductSource.portofino().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	/**
 	 * 发送供应商biondioni商品流数据
 	 * @param supplierProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
@@ -49,6 +65,22 @@ public class OriginalProductStreamSender {
 	 */
     public boolean ostoreStream(SupplierProduct supplierProduct) {
     	return originalProductSource.ostore().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商fratinardi商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean fratinardiStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.fratinardi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商forzieri商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean forzieriStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.forzieri().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 	/**
 	 * 发送供应商spinnaker商品流数据
