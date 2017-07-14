@@ -165,7 +165,6 @@ public class SlotManageService {
 				criteria.andPlanShootTimeBetween(sdf.parse(planShootTimeStart), sdf.parse(planShootTimeEnd));
 			}
 			if (slotManageQuery.getShootTime() != null && !slotManageQuery.getShootTime().equals("")) {
-				criteria.andShootTimeEqualTo(sdfomat.parse(slotManageQuery.getShootTime()));
 				String shootTimeStart = slotManageQuery.getShootTime() + " 00:00:00";
 				String shootTimeEnd = slotManageQuery.getShootTime() + " 23:59:59";
 				criteria.andShootTimeBetween(sdf.parse(shootTimeStart), sdf.parse(shootTimeEnd));
