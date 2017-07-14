@@ -220,8 +220,8 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
 
        StudioSlotReturnDetailCriteriaDto  dto = new StudioSlotReturnDetailCriteriaDto();
        dto.setPageSize(10000);
-       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
-
+       dto.createCriteria().andStudioSlotReturnMasterIdEqualTo(id).andStateLessThan((byte)2);
+       //.andArriveStateEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
 
         //实际收货数量
@@ -231,8 +231,6 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
             List<StudioSlotReturnDetailDto> noArriveList = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.NOT_ARRIVE)).collect(Collectors.toList());
             returnSlotInfo.setDetailDtoList(noArriveList);
         }
-
-
 
        StudioSlotReturnMasterDto masterDto = new StudioSlotReturnMasterDto();
        masterDto.setStudioSlotReturnMasterId(id);
