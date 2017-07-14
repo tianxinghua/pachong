@@ -1,19 +1,19 @@
-spring: 
-  cloud: 
-       consul: 
+spring:
+  cloud:
+       consul:
          host: localhost
          port: 8500
-         discovery: 
+         discovery:
            prefer-agent-address: true
            prefer-ip-address: true
            health-check-interval: 10s
            health-check-timeout: 10s
            register: true
            register-health-check: true
-  jackson: 
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
-  #mail: 
+  #mail:
        #default-recipient: yan_xiao_bin@126.com
        #default-sender: yanxiaobin@shangpin.com
        #default-encoding: UTF-8 # Default MimeMessage encoding.
@@ -23,12 +23,12 @@ spring:
        #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
        #password: 123.com # Login password of the SMTP server.
        #test-connection: false # Test that the mail server is available on startup.
-shangpin: 
-  hub:
+shangpin:
+  studio:
     dataSource:
-      clusters: 
-        - 
-            id: ephub-data-mysql-service
+      clusters:
+        -
+            id: studio-data-mysql-service
             clustertype: READWRITE
             strategy: RANDOM
             retrytime: 200
@@ -39,18 +39,19 @@ shangpin:
             houseKeepingTestSql: select 1 from dual
             simultaneousBuildThrottle: 100
             maximumActiveTime: 600000
-            nodes: 
-               - 
-                  id: shangpin-ephub-data-mysql-service-db-cluster-one
+            nodes:
+               -
+                  id: shangpin-studio-data-mysql-service-db-cluster-one
                   driver: com.mysql.jdbc.Driver
                   url: "jdbc:mysql://epstudio.spidc1.com:3306/studio?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
                   user: writer
                   password: wt@sp520
-                  trailnumber: 
-mybatis: 
+                  trailnumber:
+mybatis:
   configLocation: classpath:mybatis/mybatis-configuration.xml
-banner: 
+banner:
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
-       image: 
+       image:
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+
