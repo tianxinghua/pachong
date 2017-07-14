@@ -477,71 +477,89 @@ public class SlotManageService {
 				if (studioSlotReturnDetailDto.getState() == slotManageQuery.getState().byteValue()) {
 					return HubResponse.successResp("更新成功！");
 				} else {
-                    
+
 					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.WAIT.getIndex().byteValue()) {
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
-							studioSlotReturnMasterDto.setActualSendQuantity(
-									studioSlotReturnMasterDto.getActualSendQuantity() + 1);
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex()
+								.byteValue()) {
+							studioSlotReturnMasterDto
+									.setActualSendQuantity(studioSlotReturnMasterDto.getActualSendQuantity() + 1);
 						}
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex()
+								.byteValue()) {
 							studioSlotReturnMasterDto
 									.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() + 1);
 						}
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
+						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex()
+								.byteValue()) {
 							studioSlotReturnMasterDto
 									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() + 1);
 						}
 					}
 					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
-							studioSlotReturnMasterDto.setActualSendQuantity(
-									studioSlotReturnMasterDto.getActualSendQuantity() - 1);
-							studioSlotReturnMasterDto
-									.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() + 1);
-						}
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
-							studioSlotReturnMasterDto.setActualSendQuantity(
-									studioSlotReturnMasterDto.getActualSendQuantity() - 1);
-							studioSlotReturnMasterDto
-									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() + 1);
-						}
-						if(!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
-							studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy()-1);
+
+						if (!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())) {
+							studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() - 1);
+						} else {
+							if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex()
+									.byteValue()) {
+								studioSlotReturnMasterDto
+										.setActualSendQuantity(studioSlotReturnMasterDto.getActualSendQuantity() - 1);
+								studioSlotReturnMasterDto
+										.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() + 1);
+							}
+							if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex()
+									.byteValue()) {
+								studioSlotReturnMasterDto
+										.setActualSendQuantity(studioSlotReturnMasterDto.getActualSendQuantity() - 1);
+								studioSlotReturnMasterDto
+										.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() + 1);
+							}
 						}
 
 					}
-					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
-							studioSlotReturnMasterDto.setActualSendQuantity(
-									studioSlotReturnMasterDto.getActualSendQuantity() + 1);
-							studioSlotReturnMasterDto
-									.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() - 1);
-							if(!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
-								studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy()+1);
+					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.DAMAGED.getIndex()
+							.byteValue()) {
+						if (!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())) {
+							studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
+						} else {
+							if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex()
+									.byteValue()) {
+								studioSlotReturnMasterDto
+										.setActualSendQuantity(studioSlotReturnMasterDto.getActualSendQuantity() + 1);
+								studioSlotReturnMasterDto
+										.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() - 1);
+								studioSlotReturnMasterDto
+										.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
 							}
-						}
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
-							studioSlotReturnMasterDto
-									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() + 1);
-							studioSlotReturnMasterDto
-									.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() - 1);
+							if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.MISS.getIndex()
+									.byteValue()) {
+								studioSlotReturnMasterDto
+										.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() + 1);
+								studioSlotReturnMasterDto
+										.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() - 1);
+							}
 						}
 					}
 					if (studioSlotReturnDetailDto.getState() == StudioReturnDeatilState.MISS.getIndex().byteValue()) {
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex().byteValue()) {
-							studioSlotReturnMasterDto.setActualSendQuantity(
-									studioSlotReturnMasterDto.getActualSendQuantity() + 1);
-							studioSlotReturnMasterDto
-									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() - 1);
-							if(!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())){
-								studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy()+1);
+						if (!studioSlotReturnDetailDto.getSlotNo().equals(slotManageQuery.getSlotNo())) {
+							studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
+						} else {
+							if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.GOOD.getIndex()
+									.byteValue()) {
+								studioSlotReturnMasterDto
+										.setActualSendQuantity(studioSlotReturnMasterDto.getActualSendQuantity() + 1);
+								studioSlotReturnMasterDto
+										.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() - 1);
+								studioSlotReturnMasterDto
+										.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
 							}
-						}
-						if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex().byteValue()) {
-							studioSlotReturnMasterDto
-									.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() + 1);
-							studioSlotReturnMasterDto
-									.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() - 1);
+							if (slotManageQuery.getState().byteValue() == StudioReturnDeatilState.DAMAGED.getIndex()
+									.byteValue()) {
+								studioSlotReturnMasterDto
+										.setDamagedQuantity(studioSlotReturnMasterDto.getDamagedQuantity() + 1);
+								studioSlotReturnMasterDto
+										.setMissingQuantity(studioSlotReturnMasterDto.getMissingQuantity() - 1);
+							}
 						}
 					}
 					studioSlotReturnDetailDto.setState(slotManageQuery.getState().byteValue());
