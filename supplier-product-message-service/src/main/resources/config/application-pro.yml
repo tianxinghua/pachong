@@ -205,7 +205,10 @@ spring:
                               content-type: application/json  
                         emontiOriginalProduct: 
                               destination: emonti.original.product
-                              content-type: application/json                                                                                                                                                                                                                               
+                              content-type: application/json 
+                        dlrboutiqueOriginalProduct: 
+                              destination: dlrboutique.original.product
+                              content-type: application/json                                                                                                                                                                                                                              
               rabbit: 
                       bindings: 
                             coccolebimbiOriginalProduct:
@@ -405,7 +408,10 @@ spring:
                                            prefix: HA.   
                             emontiOriginalProduct: 
                                   producer: 
-                                           prefix: HA.                                                                                                                                                                                                                                                                                                                    
+                                           prefix: HA. 
+                            dlrboutiqueOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.                                                                                                                                                                                                                                                                                                                   
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
