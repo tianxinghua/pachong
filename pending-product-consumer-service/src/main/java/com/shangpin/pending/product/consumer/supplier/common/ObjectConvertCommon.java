@@ -24,7 +24,6 @@ public class ObjectConvertCommon {
         hubSpuPending.setSpuBrandState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setHubCategoryNo(hubSpuDto.getCategoryNo());
         hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-        hubSpuPending.setHubColor(hubSpuDto.getHubColor());
         hubSpuPending.setHubColorNo(hubSpuDto.getHubColorNo());
         hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setHubSeason(hubSpuDto.getMarketTime() + "_" + hubSpuDto.getSeason());
@@ -37,13 +36,11 @@ public class ObjectConvertCommon {
         }else{
         	hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
         	hubSpuPending.setAuditDate(new Date());
-        	hubSpuPending.setAuditOpinion("再处理：同品牌同货号颜色不一样");
-        	hubSpuPending.setMemo("再处理：同品牌同货号颜色不一样");
+        	hubSpuPending.setAuditOpinion("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
+        	hubSpuPending.setMemo("再处理：同品牌同货号颜色不一样，hub颜色："+hubSpuDto.getHubColor());
         	hubSpuPending.setAuditState((byte)0);
         	hubSpuPending.setAuditUser("chenxu");
         }
-        
-        
         hubSpuPending.setIsCurrentSeason(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
         hubSpuPending.setHubSpuNo(hubSpuDto.getSpuNo());
         hubSpuPending.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());

@@ -748,8 +748,9 @@ public class PendingHandler extends VariableInit {
 			dataServiceHandler.savePendingSku(hubSkuPending);
 
 		}
-        //整体处理SPU的状态
-		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()){
+        //整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
+		log.info("hubSpuPending.getSpuState().intValue()"+hubSpuPending.getSpuState().intValue());
+		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
 			spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
 		}
 

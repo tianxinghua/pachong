@@ -131,7 +131,7 @@ public class TaskImportService {
 				hubSkuPendingDto.setHubSkuSize("");
 			}
 		}
-		
+		hubSkuPendingDto.setHubSkuSize(hubPendingSkuCheckResult.getSizeValue());
 		if (hubPendingSkuCheckResult.isPassing()) {
 			hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
 			
@@ -147,7 +147,6 @@ public class TaskImportService {
 //				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 //			}
 			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
-			
 			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
 			hubSkuPendingDto.setFilterFlag((byte)1);
 		} else {

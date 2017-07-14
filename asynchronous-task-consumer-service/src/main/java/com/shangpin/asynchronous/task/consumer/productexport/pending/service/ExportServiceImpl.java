@@ -341,7 +341,7 @@ public class ExportServiceImpl {
 				if ("supplierSkuNo".equals(rowTemplate[i]) || "skuName".equals(rowTemplate[i])
 						|| "supplierBarcode".equals(rowTemplate[i]) || "supplyPrice".equals(rowTemplate[i])
 						|| "supplyPriceCurrency".equals(rowTemplate[i]) || "marketPrice".equals(rowTemplate[i])
-						|| "marketPriceCurrencyorg".equals(rowTemplate[i]) || "hubSkuSize".equals(rowTemplate[i])) {
+						|| "marketPriceCurrencyorg".equals(rowTemplate[i])) {
 					// 所有sku的属性|| "hubSkuSizeType".equals(rowTemplate[i])
 					fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
@@ -361,6 +361,13 @@ public class ExportServiceImpl {
 							}
 						}
 					}
+				} else if ("hubSkuSize".equals(rowTemplate[i])) {
+					fieldSetMet = skuClazz.getMethod(fileName);
+					value = fieldSetMet.invoke(sku);
+					if(matchSizeResult!=null){
+						value = matchSizeResult.getSizeValue();
+					}
+					row.createCell(i).setCellValue(null != value ? value.toString() : "");
 				} else if ("seasonYear".equals(rowTemplate[i])) {
 					setRowOfSeasonYear(row, product, spuClazz, i);
 				} else if ("seasonName".equals(rowTemplate[i])) {

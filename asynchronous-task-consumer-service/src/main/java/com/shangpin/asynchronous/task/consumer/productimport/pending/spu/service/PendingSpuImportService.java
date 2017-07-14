@@ -269,13 +269,12 @@ public class PendingSpuImportService {
 			if (hubSkuPendingDto.getHubSkuSize() != null) {
 				MatchSizeResult matchSizeResult = taskService.matchSize(pendingSpuImportDto.getHubBrandNo(),pendingSpuImportDto.getHubCategoryNo(),hubSkuPendingDto.getHubSkuSize());
 				if(matchSizeResult!=null){
+					hubPendingSkuCheckResult.setSizeValue(matchSizeResult.getSizeValue());
 					if (matchSizeResult.isPassing()) {
 						flag = true;
 						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
-						hubPendingSkuCheckResult.setSizeValue(matchSizeResult.getSizeValue());
 						pendingSkuImportDto.setSizeType(matchSizeResult.getSizeType());
-						
 					} else {
 						isMultiSizeType = matchSizeResult.isMultiSizeType();
 						flag = false;

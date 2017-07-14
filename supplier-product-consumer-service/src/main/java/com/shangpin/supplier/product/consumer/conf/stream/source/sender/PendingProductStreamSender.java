@@ -21,6 +21,30 @@ public class PendingProductStreamSender {
 	@Autowired
 	private PendingProductSource pendingProductSource;
 	/**
+	 * 发送供应商portofino商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean portofinoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+		return pendingProductSource.portofinoPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+	/**
+	 * 发送供应商coccolebimbi商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean coccolebimbiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+		return pendingProductSource.coccolebimbiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+	/**
+	 * 发送供应商fratinardi商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean fratinardiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+		return pendingProductSource.fratinardiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+	/**
 	 * 发送供应商forzieri商品流数据
 	 * @param supplierProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
