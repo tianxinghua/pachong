@@ -304,7 +304,7 @@ public class SlotManageService {
 	// 查询返货信息主表
 	public HubResponse<?> selectSlotReturnMaster(SlotManageQuery slotManageQuery) {
 		log.info("start selectSlotReturnMaster---查询返货信息主表");
-		log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo());
+		log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo()+"studioId:"+slotManageQuery.getStudioId());
 		StudioSlotsReturnMasterVo vo = new StudioSlotsReturnMasterVo();
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
@@ -354,9 +354,9 @@ public class SlotManageService {
 //						count = count -1;
 						continue;
 					}
-//					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
-//						continue;
-//					}
+					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+						continue;
+					}
 					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
 					info.setSlotNo(map.get("master_id_"+studioSlotReturnDetailDto.getStudioSlotReturnMasterId()).toString());
 					info.setQty(studioSlotReturnMasterDto.getQuantity().toString());
@@ -747,7 +747,7 @@ public class SlotManageService {
 		log.info("start selectHisttoryStudioSlot---查询批次当前节点");
 		log.info("params: SlotNo:" + slotManageQuery.getSlotNo() + "status:" + slotManageQuery.getSlotStatus()
 				+ "sender:" + slotManageQuery.getSender() + "Milestone:" + slotManageQuery.getMilestone()
-				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate());
+				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate()+ "studioId:" + slotManageQuery.getStudioId());
 		StudioSlotsHistoriesVo vo = new StudioSlotsHistoriesVo();
 		try {
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
@@ -791,9 +791,9 @@ public class SlotManageService {
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
-//				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
-//					continue;
-//				}
+				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+					continue;
+				}
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
 				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
 				if (studioSlotDto.getSlotStatus() == 2) {
