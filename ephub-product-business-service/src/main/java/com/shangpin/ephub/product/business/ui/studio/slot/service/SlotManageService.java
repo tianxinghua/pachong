@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioReturnDeatilState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
@@ -130,8 +131,8 @@ public class SlotManageService {
 			if (slotManageQuery.getApplyStatus() != null) {
 				if(slotManageQuery.getApplyStatus()==1){
 					List<Byte> list = new ArrayList<>();
-					list.add((byte) 1);
-					list.add((byte) 5);
+					list.add(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+					list.add(StudioSlotApplyState.HAS_APPLYED_AND_CREATE_STUDIO.getIndex().byteValue());
 					criteria.andApplyStatusIn(list);
 				}else{
 					criteria.andApplyStatusEqualTo(slotManageQuery.getApplyStatus());
@@ -552,13 +553,15 @@ public class SlotManageService {
 				
 				StudioSlotReturnMasterDto returnMasterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId());
 				if(returnMasterDto.getState()==0){
-					return HubResponse.errorResp("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
+					log.info("barCode:" + slotManageQuery.getBarCode()+"slotNo:"+slotManageQuery.getBarCode() + "此批次还未返货，请扫码对应返货批次!");
+					return HubResponse.errorResp("update failure！");
 				}
 				StudioSlotReturnDetailCriteriaDto studioslotreturndetailcriteriadto = new StudioSlotReturnDetailCriteriaDto();
 				studioslotreturndetailcriteriadto.createCriteria().andSlotNoEqualTo(studioSlotReturnDetailDtoLists.get(0).getSlotNo()).andBarcodeEqualTo(slotManageQuery.getBarCode()).andStudioSlotReturnMasterIdEqualTo(Long.parseLong(slotManageQuery.getMasterId()));
 				List<StudioSlotReturnDetailDto> detaildtolists = StudioSlotReturnDetailGateWay.selectByCriteria(studioslotreturndetailcriteriadto);
 				if(detaildtolists.size()>0){
-					return HubResponse.errorResp("1", "此商品已经新增到此批次！");
+					log.info("此商品已经新增到此批次");
+					return HubResponse.errorResp("1", "update failure！");
 				}
 				
 //				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
@@ -599,7 +602,8 @@ public class SlotManageService {
 					studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
 					studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDto);
 					log.info("end updateSlotReturnDetail---更新商品明细");
-					return HubResponse.errorResp("2", "不属于当前批次,但批次时间在当前批次之前,可以返货！");
+					log.info("不属于当前批次,但批次时间在当前批次之前,可以返货");
+					return HubResponse.errorResp("2", "update failure！");
 //				} else {
 //					log.info("end updateSlotReturnDetail---更新商品明细");
 //					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
@@ -608,10 +612,10 @@ public class SlotManageService {
 		} catch (Exception e) {
 			Log.error("更新商品明细失败!");
 			e.printStackTrace();
-			return HubResponse.errorResp("更新商品明细失败!");
+			return HubResponse.errorResp("update failure!");
 		}
 		log.info("end updateSlotReturnDetail---更新商品明细");
-		return HubResponse.successResp("更新成功！");
+		return HubResponse.successResp("update success！");
 	}
 
 	// 创建批次物流信息
@@ -630,8 +634,8 @@ public class SlotManageService {
 			if (slotManageQuery.getMasterId() == null) {
 				return HubResponse.errorResp("masterId不能为null");
 			}
-			if (slotManageQuery.getOperatorName() == null) {
-				return HubResponse.errorResp("operatorName不能为null");
+			if (slotManageQuery.getUserName() == null) {
+				return HubResponse.errorResp("userName不能为null");
 			}
 			
 			StudioSlotReturnMasterDto studioSlotReturnMaster= studioSlotReturnMasterGateWay.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
@@ -658,7 +662,7 @@ public class SlotManageService {
 			dto.setTrackStatus((byte) 0);
 			dto.setType((byte) 1);
 			dto.setCreateTime(new Date());
-			dto.setCreateUser(slotManageQuery.getOperatorName());
+			dto.setCreateUser(slotManageQuery.getUserName());
 			dto.setUpdateTime(new Date());
 			studioSlotLogistictTrackGateWay.insertSelective(dto);
 			
@@ -703,6 +707,18 @@ public class SlotManageService {
 			studioSlotDtoList.get(0).setSlotStatus(StudioSlotState.STUDIO_RETURN.getIndex().byteValue());
 			studioSlotGateWay.updateByPrimaryKey(studioSlotDtoList.get(0));
 
+			StudioSlotReturnDetailCriteriaDto studioSlotReturnDetailCriteriaDto = new StudioSlotReturnDetailCriteriaDto();
+			studioSlotReturnDetailCriteriaDto.createCriteria().andStudioSlotReturnMasterIdEqualTo(Long.parseLong(slotManageQuery.getMasterId()));
+			List<StudioSlotReturnDetailDto> list = StudioSlotReturnDetailGateWay
+					.selectByCriteria(studioSlotReturnDetailCriteriaDto);
+			for(StudioSlotReturnDetailDto studioSlotReturnDetailDto : list){
+				if(studioSlotReturnDetailDto.getState()==1){
+					studioSlotReturnDetailDto.setSendState((byte) 1);
+					studioSlotReturnDetailDto.setSendTime(new Date());
+					studioSlotReturnDetailDto.setSendUser(slotManageQuery.getUserName());
+					StudioSlotReturnDetailGateWay.updateByPrimaryKey(studioSlotReturnDetailDto);
+				}
+			}
 		} catch (Exception e) {
 			Log.error("创建批次物流信息失败!");
 			e.printStackTrace();
