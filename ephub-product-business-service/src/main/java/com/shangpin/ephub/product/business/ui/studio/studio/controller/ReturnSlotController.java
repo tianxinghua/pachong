@@ -123,7 +123,7 @@ public class ReturnSlotController {
         }
         Long i = iReturnSlotService.addDefective(queryDto);
         if(i != null){
-            return  HubResponse.successResp(iReturnSlotService.addDefective(queryDto));
+            return  HubResponse.successResp(i);
         }else {
             return  HubResponse.errorResp("No corresponding data was found!");
         }
