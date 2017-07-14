@@ -91,7 +91,7 @@ public class SlotManageService {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	public HubResponse<?> findSlotManageList(SlotManageQuery slotManageQuery) {
-		log.info("start findSlotManageList -------批次查询接口");
+		log.info("批次查询参数："+JsonUtil.serialize(slotManageQuery));  
 		StudioSlotsVo vo = new StudioSlotsVo();
 		try {
 			StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
@@ -171,6 +171,7 @@ public class SlotManageService {
 				criteria.andShootTimeBetween(sdf.parse(shootTimeStart), sdf.parse(shootTimeEnd));
 			}
 			int count = studioSlotGateWay.countByCriteria(studioSlotCriteriaDto);
+			log.info("查到的总数："+count); 
 
 			if (slotManageQuery.getPageSize() != null) {
 				studioSlotCriteriaDto.setPageSize(slotManageQuery.getPageSize());
@@ -190,11 +191,10 @@ public class SlotManageService {
 			vo.setTotal(count);
 
 		} catch (Exception e) {
-			Log.error("查询批次失败!");
+			log.error("查询批次失败! "+e.getMessage(),e); 
 			e.printStackTrace();
 			return HubResponse.errorResp("查询批次失败!");
 		}
-		log.info("end findSlotManageList -------批次查询接口");
 		return HubResponse.successResp(vo);
 	}
 
