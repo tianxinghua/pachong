@@ -354,9 +354,9 @@ public class SlotManageService {
 //						count = count -1;
 						continue;
 					}
-					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
-						continue;
-					}
+//					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+//						continue;
+//					}
 					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
 					info.setSlotNo(map.get("master_id_"+studioSlotReturnDetailDto.getStudioSlotReturnMasterId()).toString());
 					info.setQty(studioSlotReturnMasterDto.getQuantity().toString());
@@ -761,9 +761,9 @@ public class SlotManageService {
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
-				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
-					continue;
-				}
+//				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+//					continue;
+//				}
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
 				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
 				if (studioSlotDto.getSlotStatus() == 2) {
