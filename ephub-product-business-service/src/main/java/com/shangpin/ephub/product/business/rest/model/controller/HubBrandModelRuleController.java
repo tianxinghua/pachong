@@ -40,7 +40,7 @@ public class HubBrandModelRuleController {
 		long start = System.currentTimeMillis();
 		log.info("品牌校验规则（仅仅校验品牌不校验品类）服务接收到的参数为:{}， 系统即将开始进行品牌型号规则验证!", dto.toString());
 		BrandModelResult result = new BrandModelResult();
-		String brandModel = hubBrandModelRuleService.regexVerify1(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+		String brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
 		if (StringUtils.isNotBlank(brandModel)) {
 			result.setPassing(true);
 			result.setBrandMode(brandModel);
@@ -66,6 +66,10 @@ public class HubBrandModelRuleController {
 		long start = System.currentTimeMillis();
 		log.info("品牌校验规则（校验品牌并且校验品类）服务接收到的参数为:{}， 系统即将开始进行品牌型号规则验证!", dto.toString());
 		BrandModelResult result = new BrandModelResult();
+		//临时解决方案，眼镜货号不校验
+		if(checkHubCategoryIsYanJing(dto,result)){
+			return result;
+		}
 		String brandModel = hubBrandModelRuleService.regexVerifyWithCategory(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
 		if (StringUtils.isNotBlank(brandModel)) {
 			result.setPassing(true);
@@ -81,5 +85,17 @@ public class HubBrandModelRuleController {
 		}
 		log.info("品牌校验规则（校验品牌并且校验品类）服务接收到的参数为:{}， 系统品牌型号规则验证结果为{}， 耗时{}milliseconds!", dto.toString(), result.toString(), System.currentTimeMillis() - start);
 		return result;
+	}
+	private boolean checkHubCategoryIsYanJing(BrandModelDto dto,BrandModelResult result) {
+		if(dto!=null&&dto.getHubCategoryNo()!=null&&dto.getHubCategoryNo().startsWith("A13")){
+			if(dto.getBrandMode()!=null){
+				result.setPassing(true);	
+			}else{
+				result.setPassing(false);
+			}
+			result.setBrandMode(dto.getBrandMode());
+			return true;
+		}
+		return false;
 	}
 }

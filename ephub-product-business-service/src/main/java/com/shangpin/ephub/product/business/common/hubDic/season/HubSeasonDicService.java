@@ -141,4 +141,10 @@ public class HubSeasonDicService {
 	public void updateHubSeasonDicById(HubSeasonDicDto dicDto) {
 		hubSeasonDicGateWay.updateByPrimaryKeySelective(dicDto);
 	}
+
+	public List<HubSeasonDicDto> getHubSeasonDicById(Long seasonDicId) {
+		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
+		hubSeasonDicCriteriaDto.createCriteria().andSeasonDicIdEqualTo(seasonDicId);
+		return hubSeasonDicGateWay.selectByCriteria(hubSeasonDicCriteriaDto);
+	}
 }
