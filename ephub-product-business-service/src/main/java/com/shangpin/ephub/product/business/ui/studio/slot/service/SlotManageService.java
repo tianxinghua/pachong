@@ -652,9 +652,6 @@ public class SlotManageService {
 			if (slotManageQuery.getMasterId() == null) {
 				return HubResponse.errorResp("masterId不能为null");
 			}
-			if (slotManageQuery.getUserName() == null) {
-				return HubResponse.errorResp("userName不能为null");
-			}
 			
 			StudioSlotReturnMasterDto studioSlotReturnMaster= studioSlotReturnMasterGateWay.selectByPrimaryKey(Long.parseLong(slotManageQuery.getMasterId()));
             if(studioSlotReturnMaster==null){
