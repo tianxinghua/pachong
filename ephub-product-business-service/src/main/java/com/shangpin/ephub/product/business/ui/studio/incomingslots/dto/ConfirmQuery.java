@@ -8,6 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ConfirmQuery {
+	
+	private String studioNo;
 
 	/**
 	 * 到货签收人

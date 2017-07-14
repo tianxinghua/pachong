@@ -91,7 +91,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	}
 	
 	@Override
-	public boolean slotDetailCheck(String slotNoSpuId) {
+	public boolean slotDetailCheck(String slotNoSpuId ,String arriveUser) {
 		try {
 //			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
 //			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
@@ -100,6 +100,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			criteria.createCriteria().andBarcodeEqualTo(slotNoSpuId);
 			withCriteria.setCriteria(criteria );
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
+			studioSlotSpuSendDetailDto.setArriveUser(arriveUser);
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 			studioSlotSpuSendDetailDto.setArriveTime(new Date());
 			withCriteria.setStudioSlotSpuSendDetail(studioSlotSpuSendDetailDto );
@@ -111,7 +112,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		return false;
 	}
 	@Override
-	public CheckDetailVo checkResult(String slotNo) {
+	public CheckDetailVo checkResult(String slotNo,String arriveUser) {
 		try {
 			CheckDetailVo checkDetailVo = new CheckDetailVo();
 			//先更新批次状态
@@ -136,6 +137,7 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 			studioSlotDto.setShootTime(date); 
 			studioSlotDto.setUpdateTime(date); 
 			studioSlotDto.setSlotStatus(StudioSlotState.IS_CHECK.getIndex().byteValue());
+			studioSlotDto.setArriveUser(arriveUser); 
 			slotWithCriteria.setStudioSlot(studioSlotDto );
 			int update = studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
 			log.info("更新批次状态返回结果=============="+update); 

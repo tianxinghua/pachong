@@ -1,7 +1,23 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.shangpin.ephub.client.data.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierOperateSign;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
@@ -26,21 +42,12 @@ import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuServ
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportLIst;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSupplierDto;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by loyalty on 17/6/10.
@@ -522,10 +529,11 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     }
 
 	@Override
-	public List<SlotSpuExportDto> exportSlotSpu(SpuSupplierQueryDto queryDto) {
-		List<SlotSpuExportDto> exportDtos = new ArrayList<SlotSpuExportDto>();
+	public SlotSpuExportLIst exportSlotSpu(SpuSupplierQueryDto queryDto) {
+		SlotSpuExportLIst slotSpus = new SlotSpuExportLIst();
 		List<SlotSpuDto> list = findSlotSpu(queryDto);
 		if(CollectionUtils.isNotEmpty(list)){
+			List<SlotSpuExportDto> exportDtos = new ArrayList<SlotSpuExportDto>();
 			for(SlotSpuDto spuDto : list){
 				SlotSpuExportDto exportDto = new SlotSpuExportDto();
 				JavaUtil.fatherToChild(spuDto, exportDto);
@@ -540,7 +548,8 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 				}
 				exportDtos.add(exportDto);
 			}
+			slotSpus.setSlotSpus(exportDtos); 
 		}
-		return exportDtos;
+		return slotSpus;
 	}
 }

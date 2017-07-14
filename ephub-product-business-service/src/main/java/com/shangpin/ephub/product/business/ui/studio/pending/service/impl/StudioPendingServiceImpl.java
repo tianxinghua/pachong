@@ -141,16 +141,24 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
         try {
             if(null != pendingProductDto){
                 //开始校验spu
+
+                //先校验品类  单独处理
+
+                if(!isSpCategoryNo(pendingProductDto.getHubCategoryNo())){
+                    log.info("pending spu校验失败，不更新："+ "品类必须是尚品的品类");
+                    updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"品类必须是尚品的品类");
+                    response.setErrorMsg(updatedVo);
+                    return response;
+                }
+
                 BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
                 if(brandModelResult.isPassing()){
-
-                    //品类单独处理
 
 
 
                     HubPendingSpuCheckResult spuResult = this.checkHubPendingSpu(pendingProductDto);
                     if(spuResult.isPassing()){
-//                        pendingProductDto.setCatgoryState((byte)1);
+                        pendingProductDto.setCatgoryState(CatgoryState.PERFECT_MATCHED.getIndex());
                         pendingProductDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
                         pendingProductDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
                     }else{
@@ -194,6 +202,26 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
         }
         log.info("返回的校验结果：+"+JsonUtil.serialize(response));
         return response;
+    }
+
+
+    private  boolean isSpCategoryNo(String hubCategoryNo){
+        boolean result = true;
+        if(StringUtils.isNotBlank(hubCategoryNo)){
+
+            if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
+
+            }else if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}")){
+
+            }else if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}")){
+
+            }else if(hubCategoryNo.matches("A[0-9]{2}")){
+
+            }else{
+                result =  false;
+            }
+        }
+        return result;
     }
 
 
@@ -250,7 +278,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
         List<CommonCheckBase> allPropertyCheck = new ArrayList<>();
         allPropertyCheck.add(brandCheck);
-//        allPropertyCheck.add(categoryCheck);
+        allPropertyCheck.add(categoryCheck);
 //        allPropertyCheck.add(spuModelCheck);
 
         propertyCheck.setAllPropertyCheck(allPropertyCheck);

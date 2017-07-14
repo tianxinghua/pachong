@@ -120,9 +120,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
-		Long studioId = operationService.getStudioId(studioNo);
-		if(null != studioId){
-			criteria.createCriteria().andStudioIdEqualTo(studioId);
+//		Long studioId = operationService.getStudioId(studioNo);
+		if(StringUtils.isNotBlank(studioNo)){
+			criteria.createCriteria().andStudioIdEqualTo(Long.valueOf(studioNo)); 
 		}else{
 			throw new Exception("未获得摄影棚编号");
 		}
