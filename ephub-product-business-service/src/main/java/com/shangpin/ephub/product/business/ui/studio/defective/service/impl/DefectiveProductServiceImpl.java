@@ -133,6 +133,10 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId) {
 		try {
 			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(slotNoSpuId);
+			if(null == detailDto){
+				log.error(slotNoSpuId+"请先确认到货"); 
+				return null;
+			}
 			String slotNo = detailDto.getSlotNo();
 			String slotSpuNo = detailDto.getSlotSpuNo();
 			StudioSlotDefectiveSpuDto spuDto = selectBySlot(slotNo,slotSpuNo);

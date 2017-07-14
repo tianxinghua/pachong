@@ -62,8 +62,8 @@ public class DefectiveProductController {
 						}
 					}
 				}
+				return HubResponse.successResp("添加成功");
 			}
-			return HubResponse.successResp("添加成功");
 		} catch (Exception e) {
 			log.error("残次品页面修改图片发生异常："+e.getMessage(),e); 
 		}
