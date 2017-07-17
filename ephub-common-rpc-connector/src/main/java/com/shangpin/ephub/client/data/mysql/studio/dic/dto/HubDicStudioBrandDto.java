@@ -25,6 +25,11 @@ public class HubDicStudioBrandDto implements Serializable {
     private String brandNameEn;
 
     /**
+     * 尚品品类
+     */
+    private String spCategoryNo;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -88,6 +93,14 @@ public class HubDicStudioBrandDto implements Serializable {
         this.brandNameEn = brandNameEn == null ? null : brandNameEn.trim();
     }
 
+    public String getSpCategoryNo() {
+        return spCategoryNo;
+    }
+
+    public void setSpCategoryNo(String spCategoryNo) {
+        this.spCategoryNo = spCategoryNo == null ? null : spCategoryNo.trim();
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -146,6 +159,7 @@ public class HubDicStudioBrandDto implements Serializable {
         sb.append(", spBrandNo=").append(spBrandNo);
         sb.append(", brandName=").append(brandName);
         sb.append(", brandNameEn=").append(brandNameEn);
+        sb.append(", spCategoryNo=").append(spCategoryNo);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateTime=").append(updateTime);
@@ -173,6 +187,7 @@ public class HubDicStudioBrandDto implements Serializable {
             && (this.getSpBrandNo() == null ? other.getSpBrandNo() == null : this.getSpBrandNo().equals(other.getSpBrandNo()))
             && (this.getBrandName() == null ? other.getBrandName() == null : this.getBrandName().equals(other.getBrandName()))
             && (this.getBrandNameEn() == null ? other.getBrandNameEn() == null : this.getBrandNameEn().equals(other.getBrandNameEn()))
+            && (this.getSpCategoryNo() == null ? other.getSpCategoryNo() == null : this.getSpCategoryNo().equals(other.getSpCategoryNo()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -189,6 +204,7 @@ public class HubDicStudioBrandDto implements Serializable {
         result = prime * result + ((getSpBrandNo() == null) ? 0 : getSpBrandNo().hashCode());
         result = prime * result + ((getBrandName() == null) ? 0 : getBrandName().hashCode());
         result = prime * result + ((getBrandNameEn() == null) ? 0 : getBrandNameEn().hashCode());
+        result = prime * result + ((getSpCategoryNo() == null) ? 0 : getSpCategoryNo().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
