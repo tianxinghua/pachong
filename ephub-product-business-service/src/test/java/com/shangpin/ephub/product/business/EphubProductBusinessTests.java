@@ -1,8 +1,22 @@
 package com.shangpin.ephub.product.business;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.DeserializationConfig;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -15,14 +29,8 @@ import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefect
 import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuPicGateWay;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
-import com.shangpin.ephub.client.product.business.gms.result.HubResponseDto;
-import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
-import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
-import com.shangpin.ephub.product.business.rest.gms.dto.CategoryScreenSizeDom;
-import com.shangpin.ephub.product.business.rest.gms.dto.SizeRequestDto;
-import com.shangpin.ephub.product.business.rest.gms.dto.SizeStandardItem;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
 import com.shangpin.ephub.product.business.service.studio.slotsendreturn.SlotSendReturnService;
@@ -35,27 +43,8 @@ import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendi
 import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotDetailService;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotInfo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotSpuDetail;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import sun.misc.BASE64Encoder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import sun.misc.BASE64Encoder;
 
 
 @RunWith(SpringRunner.class)
@@ -240,7 +229,6 @@ public class EphubProductBusinessTests {
 		System.out.println(slotSpuDetailList.size());
 
 	}
-
-
-
+	
+	
 }
