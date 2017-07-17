@@ -337,8 +337,8 @@ public class SlotManageService {
 				if(map.containsKey("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId())){
 					String slotNo = studioSlotReturnDetail.getSlotNo().substring(0, 8);
 					String paramSlotNo = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
-					Date newDate = simpleDateFormat.parse(slotNo);
-					Date date = simpleDateFormat.parse(paramSlotNo);
+					Date date = simpleDateFormat.parse(slotNo);
+					Date newDate = simpleDateFormat.parse(paramSlotNo);
 					if (newDate.before(date)) {
 						map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), slotNo);
 					}
@@ -702,8 +702,8 @@ public class SlotManageService {
 					if(map.containsKey("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId())){
 						String slotno = studioSlotReturnDetail.getSlotNo().substring(0, 8);
 						String paramSlotno = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
-						Date newDate = simpleDateFormat.parse(slotno);
-						Date date = simpleDateFormat.parse(paramSlotno);
+						Date date = simpleDateFormat.parse(slotno);
+						Date newDate = simpleDateFormat.parse(paramSlotno);
 						if (newDate.before(date)) {
 							map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), slotno);
 						}
@@ -830,25 +830,19 @@ public class SlotManageService {
 						.selectByCriteria(detailDto);
 				if (studioSlotReturnDetailDtoLists != null && studioSlotReturnDetailDtoLists.size() != 0) {
 					long masterId = 0;
-					if(studioSlotReturnDetailDtoLists.size()>1){
-						HashMap<String, Long> map = new HashMap<>();
-						for (StudioSlotReturnDetailDto studioSlotReturnDetail : studioSlotReturnDetailDtoLists) {
-							if(map.containsKey("master_id")){
-								String slotno = studioSlotReturnDetail.getSlotNo().substring(0, 8);
-								String paramSlotno = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
-								Date newDate = simpleDateFormat.parse(slotno);
-								Date date = simpleDateFormat.parse(paramSlotno);
-								if (newDate.before(date)) {
-									map.put("master_id", studioSlotReturnDetail.getStudioSlotReturnMasterId());
-								}
-							}else{
-								map.put("master_id", studioSlotReturnDetail.getStudioSlotReturnMasterId());
-							}
-						}
-						masterId = map.get("master_id");
-					}else{
-						masterId = studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId();
-					}
+                    if (studioSlotReturnDetailDtoLists.size() > 1) {
+                        for (StudioSlotReturnDetailDto studioslotreturndetaildto : studioSlotReturnDetailDtoLists) {
+                            if (masterId == 0) {
+                                masterId = studioslotreturndetaildto.getStudioSlotReturnMasterId();
+                            } else {
+                                if (masterId > studioslotreturndetaildto.getStudioSlotReturnMasterId()) {
+                                    masterId = studioslotreturndetaildto.getStudioSlotReturnMasterId();
+                                }
+                            }
+                        }
+                    } else {
+                        masterId = studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId();
+                    }
 
 					StudioSlotReturnMasterDto studioSlotReturnMasterDto = studioSlotReturnMasterGateWay
 							.selectByPrimaryKey(masterId);
