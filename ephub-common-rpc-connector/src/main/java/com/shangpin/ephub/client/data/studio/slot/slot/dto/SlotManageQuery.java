@@ -45,6 +45,6 @@ public class SlotManageQuery {
 	private byte milestone;
 	private Date startDate;
 	private Date endDate;
-	private String studioId;
+	private String studioID;
 	private String userName;
 }
