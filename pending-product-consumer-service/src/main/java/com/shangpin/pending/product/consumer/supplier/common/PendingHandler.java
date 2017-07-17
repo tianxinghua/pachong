@@ -6,18 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
-import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -55,10 +51,15 @@ public class PendingHandler extends VariableInit {
 	@Autowired
 	HubPendingSkuHandleGateWay hubPendingSkuHandleGateWay;
 
-	@Autowired
-	DataOfPendingServiceHandler dataOfPendingServiceHandler;
+
 	@Autowired
 	MatchSizeGateWay matchSizeGateWay;
+
+	@Autowired
+	HubSlotSpuTaskGateWay slotSpuTaskGateWay;
+
+	@Autowired
+	DataOfPendingServiceHandler dataOfPendingServiceHandler;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -303,6 +304,17 @@ public class PendingHandler extends VariableInit {
 		} 
 		return false;
 	}
+
+	/**
+	 *
+	 * @param headers
+	 * @param messageMap
+	 * @param pendingSpu   传入的对象
+	 * @param hubSpuPending  数据库里的对象
+	 * @param spuStatus
+	 * @param skus
+	 * @throws Exception
+	 */
 	private void handleSkuPending(Map<String, Object> headers, Map<String, Integer> messageMap, PendingSpu pendingSpu, SpuPending hubSpuPending, Integer spuStatus, List<PendingSku> skus) throws Exception {
 		Integer skuStatus=0;
 		if(null!=skus&&skus.size()>0){
@@ -504,10 +516,12 @@ public class PendingHandler extends VariableInit {
 		}
 
 		if (null != hubSpuDto) {
-			// 直接复制HUB-SPU里的信息 ，SPU状态 直接为审核通过
+			// 直接复制HUB-SPU里的信息 ，SPU状态 直接为待审核
 			
 			objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
+			setShootState(hubSpuPending);
 			dataServiceHandler.savePendingSpu(hubSpuPending);
+
 			hubSpuPending.setHubSpuNo(hubSpuDto.getSpuNo());
 
 		} else {
@@ -520,7 +534,7 @@ public class PendingHandler extends VariableInit {
 			byte filterFlag = screenSupplierBrandAndSeasonEffectiveOrNot(hubSpuPending.getSupplierId(),
 					hubSpuPending.getHubBrandNo(), hubSpuPending.getHubSeason());
 			hubSpuPending.setFilterFlag(filterFlag);
-
+            setShootState(hubSpuPending);
 			dataServiceHandler.savePendingSpu(hubSpuPending);
 
 		}
@@ -528,6 +542,32 @@ public class PendingHandler extends VariableInit {
 
 	}
 
+	/**
+	 * 设置拍摄状态
+	 * @param hubSpuPending
+	 */
+	private void setShootState(SpuPending hubSpuPending){
+		if(null==hubSpuPending.getSlotState()){
+			if(hubSpuPending.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
+				if(hubSpuPending.getCatgoryState()== CatgoryState.PERFECT_MATCHED.getIndex()||
+						hubSpuPending.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+					//查询是否是需要拍照的品类品牌
+					String secondCategory = "";
+					if(StringUtils.isNotBlank(hubSpuPending.getHubCategoryNo())){
+						if(hubSpuPending.getHubCategoryNo().length()>=6){
+							secondCategory = hubSpuPending.getHubCategoryNo().substring(0,6);
+							if(dataOfPendingServiceHandler.isNeedShoot(hubSpuPending.getHubBrandNo(),secondCategory)){
+								hubSpuPending.setSlotState(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
+							}
+						}
+					}
+
+				}
+			}
+
+		}
+
+	}
 
 
 	//各个属性赋值
@@ -677,9 +717,15 @@ public class PendingHandler extends VariableInit {
 	}
 
 
-
-
-
+	/**
+	 *
+	 * @param hubSpuPending  数据库里的对象
+	 * @param supplierSpu    传入的参数对象
+	 * @param supplierSku
+	 * @param headers
+	 * @param filterFlag
+	 * @throws Exception
+	 */
 	private void addNewSku(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,
 			Map<String, Object> headers, byte filterFlag) throws Exception {
 
@@ -754,6 +800,21 @@ public class PendingHandler extends VariableInit {
 			spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
 		}
 
+		//整体处理拍照状态
+		handleShoot(hubSpuPending.getSpuPendingId());
+
+
+	}
+
+	private void handleShoot(Long spuPendingId) {
+		HubSpuPendingDto hubSpuPending = spuPendingHandler.getSpuPendingDto(spuPendingId);
+		if(null!=hubSpuPending.getSlotState()&&hubSpuPending.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()){
+             if(hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPending.getStockState()==StockState.HANDLED.getIndex()){
+				 slotSpuTaskGateWay.add(hubSpuPending);
+			 }
+
+
+		}
 	}
 
 	private void setSkuPending(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,

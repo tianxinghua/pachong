@@ -104,4 +104,9 @@ public class SpuPendingHandler {
         spuPendingGateWay.updateByCriteriaSelective(criteriaSpu);
 
     }
+
+    public HubSpuPendingDto getSpuPendingDto(Long spuPendingId){
+        return spuPendingGateWay.selectByPrimaryKey(spuPendingId);
+    }
+
 }
