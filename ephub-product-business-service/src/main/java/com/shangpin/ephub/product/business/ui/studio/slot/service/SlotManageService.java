@@ -304,7 +304,7 @@ public class SlotManageService {
 	// 查询返货信息主表
 	public HubResponse<?> selectSlotReturnMaster(SlotManageQuery slotManageQuery) {
 		log.info("start selectSlotReturnMaster---查询返货信息主表");
-		log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo());
+		log.info("params: slotNo:"+slotManageQuery.getSlotNo()+"supplierName:"+slotManageQuery.getSupplierName()+"pageSize:"+slotManageQuery.getPageSize()+"pageNo:"+slotManageQuery.getPageNo()+"studioId:"+slotManageQuery.getStudioId());
 		StudioSlotsReturnMasterVo vo = new StudioSlotsReturnMasterVo();
 		try {
 			StudioSlotReturnDetailCriteriaDto detailDto = new StudioSlotReturnDetailCriteriaDto();
@@ -337,8 +337,8 @@ public class SlotManageService {
 				if(map.containsKey("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId())){
 					String slotNo = studioSlotReturnDetail.getSlotNo().substring(0, 8);
 					String paramSlotNo = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
-					Date date = simpleDateFormat.parse(slotNo);
-					Date newDate = simpleDateFormat.parse(paramSlotNo);
+					Date newDate = simpleDateFormat.parse(slotNo);
+					Date date = simpleDateFormat.parse(paramSlotNo);
 					if (newDate.before(date)) {
 						map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), slotNo);
 					}
@@ -354,9 +354,9 @@ public class SlotManageService {
 //						count = count -1;
 						continue;
 					}
-//					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
-//						continue;
-//					}
+					if(!studioSlotReturnMasterDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+						continue;
+					}
 					StudioSlotReturnMasterInfo info = new StudioSlotReturnMasterInfo();
 					info.setSlotNo(map.get("master_id_"+studioSlotReturnDetailDto.getStudioSlotReturnMasterId()).toString());
 					info.setQty(studioSlotReturnMasterDto.getQuantity().toString());
@@ -582,11 +582,11 @@ public class SlotManageService {
 					return HubResponse.errorResp("1", "update failure！");
 				}
 				
-//				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
-//				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
-//				Date date = simpleDateFormat.parse(slotNo);
-//				Date newDate = simpleDateFormat.parse(paramSlotNo);
-//				if (date.before(newDate)) {
+				String slotNo = studioSlotReturnDetailDtoLists.get(0).getSlotNo().substring(0, 8);
+				String paramSlotNo = slotManageQuery.getSlotNo().substring(0, 8);
+				Date date = simpleDateFormat.parse(slotNo);
+				Date newDate = simpleDateFormat.parse(paramSlotNo);
+				if (date.before(newDate)) {
 					StudioSlotReturnDetailDto studioSlotReturnDetail = new StudioSlotReturnDetailDto();
 					StudioSlotReturnDetailDto studioSlotReturnDetailDto = studioSlotReturnDetailDtoLists.get(0);
 
@@ -622,10 +622,10 @@ public class SlotManageService {
 					log.info("end updateSlotReturnDetail---更新商品明细");
 					log.info("不属于当前批次,但批次时间在当前批次之前,可以返货");
 					return HubResponse.errorResp("2", "update failure！");
-//				} else {
-//					log.info("end updateSlotReturnDetail---更新商品明细");
-//					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
-//				}
+				} else {
+					log.info("end updateSlotReturnDetail---更新商品明细");
+					return HubResponse.errorResp("3", "不属于当前批次,并且批次时间在当前批次之后,不能返货！");
+				}
 			}
 		} catch (Exception e) {
 			Log.error("更新商品明细失败!");
@@ -702,10 +702,10 @@ public class SlotManageService {
 					if(map.containsKey("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId())){
 						String slotno = studioSlotReturnDetail.getSlotNo().substring(0, 8);
 						String paramSlotno = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
-						Date date = simpleDateFormat.parse(slotno);
-						Date newDate = simpleDateFormat.parse(paramSlotno);
+						Date newDate = simpleDateFormat.parse(slotno);
+						Date date = simpleDateFormat.parse(paramSlotno);
 						if (newDate.before(date)) {
-							map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), slotNo);
+							map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), slotno);
 						}
 					}else{
 						map.put("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId(), studioSlotReturnDetail.getSlotNo());
@@ -747,7 +747,7 @@ public class SlotManageService {
 		log.info("start selectHisttoryStudioSlot---查询批次当前节点");
 		log.info("params: SlotNo:" + slotManageQuery.getSlotNo() + "status:" + slotManageQuery.getSlotStatus()
 				+ "sender:" + slotManageQuery.getSender() + "Milestone:" + slotManageQuery.getMilestone()
-				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate());
+				+ "startDate:" + slotManageQuery.getStartDate() + "endDate:" + slotManageQuery.getEndDate()+ "studioId:" + slotManageQuery.getStudioId());
 		StudioSlotsHistoriesVo vo = new StudioSlotsHistoriesVo();
 		try {
 			StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
@@ -791,9 +791,9 @@ public class SlotManageService {
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
-//				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
-//					continue;
-//				}
+				if(!studioSlotDto.getStudioId().toString().equals(slotManageQuery.getStudioId())){
+					continue;
+				}
 				StudioSlotsHistories studioSlotsHistories = new StudioSlotsHistories();
 				studioSlotsHistories.setSlotNo(studioSlotDto.getSlotNo());
 				if (studioSlotDto.getSlotStatus() == 2) {
@@ -830,17 +830,23 @@ public class SlotManageService {
 						.selectByCriteria(detailDto);
 				if (studioSlotReturnDetailDtoLists != null && studioSlotReturnDetailDtoLists.size() != 0) {
 					long masterId = 0;
-					if (studioSlotReturnDetailDtoLists.size() > 1) {
-						for (StudioSlotReturnDetailDto studioslotreturndetaildto : studioSlotReturnDetailDtoLists) {
-							if (masterId == 0) {
-								masterId = studioslotreturndetaildto.getStudioSlotReturnMasterId();
-							} else {
-								if (masterId > studioslotreturndetaildto.getStudioSlotReturnMasterId()) {
-									masterId = studioslotreturndetaildto.getStudioSlotReturnMasterId();
+					if(studioSlotReturnDetailDtoLists.size()>1){
+						HashMap<String, Long> map = new HashMap<>();
+						for (StudioSlotReturnDetailDto studioSlotReturnDetail : studioSlotReturnDetailDtoLists) {
+							if(map.containsKey("master_id")){
+								String slotno = studioSlotReturnDetail.getSlotNo().substring(0, 8);
+								String paramSlotno = map.get("master_id_"+studioSlotReturnDetail.getStudioSlotReturnMasterId()).toString();
+								Date newDate = simpleDateFormat.parse(slotno);
+								Date date = simpleDateFormat.parse(paramSlotno);
+								if (newDate.before(date)) {
+									map.put("master_id", studioSlotReturnDetail.getStudioSlotReturnMasterId());
 								}
+							}else{
+								map.put("master_id", studioSlotReturnDetail.getStudioSlotReturnMasterId());
 							}
 						}
-					} else {
+						masterId = map.get("master_id");
+					}else{
 						masterId = studioSlotReturnDetailDtoLists.get(0).getStudioSlotReturnMasterId();
 					}
 
