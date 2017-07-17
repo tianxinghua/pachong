@@ -226,7 +226,7 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
        List<StudioSlotReturnDetailDto> detailDtoList = studioSlotReturnDetailGateWay.selectByCriteria(dto);
 
         //实际收货数量
-       long count = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.RECEIVED)).count();
+       long count = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.RECEIVED.getIndex().byteValue())).count();
 
         if(count<detailDtoList.size()){
             List<StudioSlotReturnDetailDto> noArriveList = detailDtoList.stream().filter(x->x.getArriveState().equals(StudioSlotArriveState.NOT_ARRIVE)).collect(Collectors.toList());
