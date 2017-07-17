@@ -23,9 +23,12 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail;
+import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSenderGateWay;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.product.business.price.gateway.PriceGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
@@ -46,6 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 public class SupplierProductSaveAndSendToPending {
 	
 	@Autowired
+	ShangpinMailSenderGateWay shangpinMailSenderGateWay;
+	@Autowired
 	private SupplierProductMysqlService supplierProductMysqlService;
 	@Autowired
 	private PictureProductService pictureProductService;
@@ -57,7 +62,25 @@ public class SupplierProductSaveAndSendToPending {
 	private SupplierProductRetryManager supplierProductRetryManager;
 	@Autowired
 	private PriceGateWay priceGateWay;
-		
+	@Autowired
+	ShangpinMailProperties shangpinMailProperties;
+	/**
+	 * 发送邮件
+	 * @param subject
+	 * @param text
+	 */
+	public void sendMail(String subject,String text){
+		try {
+			ShangpinMail shangpinMail = new ShangpinMail();
+			shangpinMail.setFrom("chengxu@shangpin.com");
+			shangpinMail.setSubject(subject);
+			shangpinMail.setText(text);
+			shangpinMail.setTo(shangpinMailProperties.getMailSendTo());
+			shangpinMailSenderGateWay.send(shangpinMail);
+		} catch (Exception e) {
+			log.error("发送邮件失败："+e.getMessage(),e); 
+		}
+	}
 	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
 		//映射表里维护supplierId、supplierNo、supplierName
@@ -73,6 +96,25 @@ public class SupplierProductSaveAndSendToPending {
 			dto.setCreateUser("SupplierCousumerService");
 			dto.setDataState((byte)1);
 			supplierProductRetryManager.insert(dto);
+		}
+		if(org.apache.commons.lang.StringUtils.isNotBlank(hubSpu.getSupplierSeasonname())){
+			HubSeasonDicDto hubSeason = supplierProductRetryManager.findSupplierSeason(supplierId, hubSpu.getSupplierSeasonname());
+			if(hubSeason==null){
+				hubSeason = new HubSeasonDicDto(); 
+				hubSeason.setCreateTime(new Date());
+				hubSeason.setCreateUser("SupplierConsumerService");
+				hubSeason.setDataState((byte)1);
+				hubSeason.setPushState((byte)0);
+				hubSeason.setFilterFlag((byte)0);
+				hubSeason.setSupplierid(supplierId);
+				hubSeason.setSupplierSeason(hubSpu.getSupplierSeasonname());
+				try{
+					supplierProductRetryManager.insertHubSeasonDic(hubSeason);
+					sendMail("供应商"+supplierName+"新增季节","供应商"+supplierNo+":"+supplierName+"新增季节："+hubSpu.getSupplierSeasonname()+",请在季节字典维护对应尚品季节");
+				}catch(Exception e){
+					log.info("季节新增失败：{}",e);
+				}
+			}
 		}
 		
 		PendingProduct pendingProduct = initPendingProduct(supplierNo,supplierId, supplierName);

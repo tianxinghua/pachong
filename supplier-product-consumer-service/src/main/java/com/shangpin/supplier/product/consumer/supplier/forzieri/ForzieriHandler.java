@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author lubaijang
  * @date 2016年12月8日 上午11:36:22
  */
-@Component("forzieriHandler")
+@Component("forzieri")
 @Slf4j
 public class ForzieriHandler implements ISupplierHandler{
 	
@@ -157,25 +157,32 @@ public class ForzieriHandler implements ISupplierHandler{
 	public boolean convertSpu(String supplierId,CsvDTO ob,HubSupplierSpuDto hubSpu,String data){
 		if(null != ob && ob != null){
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(ob.getSku());
-			hubSpu.setSupplierSpuModel(ob.getSku());
+			hubSpu.setSupplierSpuNo(ob.getProduct_id());
+			hubSpu.setSupplierSpuModel(ob.getManufacturer_id());
 			hubSpu.setSupplierSpuName(ob.getProduct_name());
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getGender());
 			String categoryid = ob.getCategory_ids().split("\\|")[0];
 			hubSpu.setSupplierCategoryname(categoryMap.get(categoryid));
 			hubSpu.setSupplierBrandname(ob.getBrand_name());
-			hubSpu.setSupplierSeasonname("SS17");
+			hubSpu.setSupplierSeasonname(ob.getCollection());
 			hubSpu.setSupplierMaterial(ob.getMaterial());
 			String desc = ob.getDescription();
 			String madeIn = null;
-			if(desc!=null&&desc.contains("Made in")){
-				String [] arr = desc.split("\\.");
-				for(String origin:arr){
-					if(origin.contains("Made in")){
-						madeIn = origin;
-						break;
-					}
+			if(desc!=null&&(desc.contains("Made in")||desc.contains("制造"))){
+				String [] arr = null;
+				if(desc.contains("。")){
+					arr = desc.split("\\。");
+				}else if(desc.contains(".")){
+					arr = desc.split("\\.");			
+				}
+				if(arr!=null){
+					for(String origin:arr){
+						if(origin.contains("Made in")||origin.contains("制造")){
+							madeIn = origin.replace("制造","").replace("Made in","").trim();
+							break;
+						}
+					}	
 				}
 			}
 			hubSpu.setSupplierOrigin(madeIn);
@@ -186,7 +193,6 @@ public class ForzieriHandler implements ISupplierHandler{
 			return false;
 		}
 	}
-	
 	/**
 	 * 将stefania原始数据转换成hub sku
 	 * @param supplierId
@@ -204,7 +210,14 @@ public class ForzieriHandler implements ISupplierHandler{
 			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSelling_price())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getCost_price())));
 			hubSku.setSupplierBarcode(ob.getSku());
-			hubSku.setSupplierSkuSize(ob.getSize());
+			if(!StringUtils.isEmpty(ob.getSize())){
+				String size = ob.getSize();
+				if(size.contains("(")){
+					size = size.substring(0,size.indexOf("(")).trim();
+				}
+				hubSku.setSupplierSkuSize(ob.getSize());
+			}
+			
 			hubSku.setStock(StringUtil.verifyStock(ob.getQuantity()));
 //			String stock = ob.getString("availability");
 //			Pattern pattern = Pattern.compile("[0-9]*"); 

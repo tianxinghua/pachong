@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.google.gson.Gson;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
@@ -12,10 +13,12 @@ import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
  */
 public class MyJsonUtil {
 	
+	private static OAuth oAtuth = null;
 	private static ResourceBundle bdl = null;
-	private static String accessTokenUrl = "https://api.forzieri.com/test/oauth/token";
+	private static String accessToken = "b8abbb17240e6b95ed2552bea4bdcb856d58e615";
+	private static String refreshToken = "d347b88bf9d7fa3ccaf0dfe9df01d23056d16fa4";
 	private static String refreshTokenUrl = "https://api.forzieri.com/test/oauth/token";
-	private static String requestSourceUrl = null;
+	private static String requestSourceUrl = "";
 	private static String client_id = "NTkyZThjNGI2NGY2NTY1";
 	private static String client_secret = "3db7c25746f4a11bd8f877b1132dc4a5e739535e";
 	private static String username = "shangpin";
@@ -24,67 +27,37 @@ public class MyJsonUtil {
 //		if (null == bdl) {
 //			bdl = ResourceBundle.getBundle("conf");
 //		}
-//		accessTokenUrl = bdl.getString("accessTokenUrl");
+//		accessToken = bdl.getString("accessToken");
+//		refreshToken = bdl.getString("refreshToken");
 //		refreshTokenUrl = bdl.getString("refreshTokenUrl");
 //		requestSourceUrl = bdl.getString("requestSourceUrl");
+//		
+//		oAtuth = new OAuth();
+//		oAtuth.setAccess_token(accessToken);
+//		oAtuth.setRefresh_token(refreshToken);
+//		
 //	}
+
 	public static void main(String[] args) {
-		Map<String, String> map = new HashMap<String, String>();
-	
-		map.put("username", username);
-		map.put("password", password);
-		auth(map);
+		String placeOrderUrl = "https://api.forzieri.com/v3/products/az30277-002-00";
+		Map headerMap = new HashMap();
+    	headerMap.put("Authorization","Bearer b8abbb17240e6b95ed2552bea4bdcb856d58e615");
+		String ss = HttpUtil45.get(placeOrderUrl, null,null, headerMap,null,null);
+		System.out.println(ss);
+	}
+	public static OAuth getOAuth(){
+		return oAtuth;
 	}
 	
-	/*
-	 * 厂家授权
-	 */
-	public static String auth(Map<String, String> map) {
-
-		map.put("grant_type", "password");
-		map.put("client_id", client_id);
-		map.put("client_secret", client_secret);
-		String json = null;
-		try {
-			json = HttpUtil45
-					.post(accessTokenUrl,
-							map, new OutTimeConfig(1000 * 60, 1000 * 60,
-									1000 * 60));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println("授权返回的结果：" + json);
-		return json;
-	}
-	
-	/*
-	 * 厂家授权
-	 */
-	public static String getAccessTokenJson(Map<String, String> map) {
-
-		map.put("grant_type", "authorization_code");
-		map.put("client_id", client_id);
-		map.put("client_secret", client_secret);
-		String json = null;
-		try {
-			json = HttpUtil45
-					.post(accessTokenUrl,
-							map, new OutTimeConfig(1000 * 60, 1000 * 60,
-									1000 * 60));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println("授权返回的结果：" + json);
-		return json;
-	}
-
 	/*
 	 * 刷新授权
 	 * */
-	public static String refreshTokenJson(Map<String, String> map) {
+	public static String refreshTokenJson() {
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("grant_type", "refresh_token");
 		map.put("client_id", client_id);
 		map.put("client_secret", client_secret);
+		map.put("refresh_token", refreshToken);
 		String json = null;
 		try {
 			json = HttpUtil45

@@ -68,4 +68,19 @@ public class SupplierProductRetryManager {
 		}
 		return null;
 	}
+	
+	public HubSeasonDicDto findSupplierSeason(String supplierId,String supplierSeason) {
+		if(StringUtils.isNotBlank(supplierSeason)&&supplierId!=null){
+			HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+			criteria.createCriteria().andSupplierSeasonEqualTo(supplierSeason).andSupplieridEqualTo(supplierId);
+			List<HubSeasonDicDto> list = hubSeasonDicGateWay.selectByCriteria(criteria);
+			if(list!=null&&list.size()>0){
+				return list.get(0);
+			}		
+		}
+		return null;
+	}
+	public void insertHubSeasonDic(HubSeasonDicDto hubSeason) {
+		hubSeasonDicGateWay.insertSelective(hubSeason);
+	}
 }

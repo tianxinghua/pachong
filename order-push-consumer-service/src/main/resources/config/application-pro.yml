@@ -206,6 +206,20 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 07ea500a2c344766b6b727c6d1fc5917
                   openApiSecret: 5f5ac541bfaf4d699f58f3919264661e
+          baseBlu:
+                  stockUrl: http://88.37.81.130/WexComServer/StockEc/GetStockByEan13
+                  orderCreateUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAInsertOrderEc
+                  orderQueryUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAGetListOrderDetailEc
+                  sKey: SHA
+                  isPurchaseExp: no
+                  openApiKey:
+                  openApiSecret:
+          baseBluEdsConf:
+                  cancelUrl: http://baseblu.edstema.it/api/v3.0/cancel/order.json?storeCode=YYW8M
+                  placeUrl: http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M
+                  isPurchaseExp: no
+                  openApiKey: 5c90e6a49a6641738f186e866c7b2c77
+                  openApiSecret: 7152fc54632e429c8939a6bd3f5ca2cc
           efashionConf:
                   url: http://api.gebnegozi.com/api/v2/place/order.json?storeCode=DW3LT
                   cancelUrl: http://geb-production.edstema.it/api/v3.0/cancel/order.json?storeCode=DW3LT
@@ -421,14 +435,6 @@ shangpin:
                   openApiKey: 3ad363bca5f945629b31f1ab238ec73e
                   openApiSecret: dd9a3156581d4b9ba87f293f61148361
                   isPurchaseExp: no
-          baseBlu:
-                  stockUrl: http://88.37.81.130/WexComServer/StockEc/GetStockByEan13
-                  orderCreateUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAInsertOrderEc
-                  orderQueryUrl: http://88.37.81.130/WexComServer/DocumentEc/SHAGetListOrderDetailEc
-                  sKey: SHA
-                  isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
           parisi:
                   hostUrl: http://www.rpwebservice.it/wsnat13.asmx
                   stockUrl: http://tempuri.org/GetStockWithSku

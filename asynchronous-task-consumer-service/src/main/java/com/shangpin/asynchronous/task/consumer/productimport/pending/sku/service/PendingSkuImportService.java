@@ -159,6 +159,7 @@ public class PendingSkuImportService {
 			isPendingSpuExist = listSpu.get(0);
 			spuMap.put(isPendingSpuExist.getSpuPendingId(),null);
 		}
+		
 		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
