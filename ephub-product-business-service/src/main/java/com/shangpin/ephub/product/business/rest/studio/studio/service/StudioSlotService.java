@@ -31,6 +31,7 @@ public class StudioSlotService {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 	SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy/MM/dd");
+	SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
 
 	public List<StudioSlotDto> getStudioSlotBySlotDate(Date DT,long studioId) {
 		List<StudioSlotDto> listStudioDto = null;
@@ -200,14 +201,21 @@ public class StudioSlotService {
 				if (studioDto.getPlanShootTime().after(studioDto.getShootTime())) {
 					StudioSlotDto slotDto = new StudioSlotDto();
 					slotDto.setStudioId(studioDto.getStudioId());
-					slotDto.setSlotNo("L" + studioDto.getSlotNo());
+					slotDto.setSlotNo(sd.format(studioDto.getPlanShootTime())+studioDto.getSlotNo().substring(8)+"L");
 					slotDto.setCreateTime(new Date());
 					slotDto.setUpdateTime(new Date());
 					slotDto.setShotStatus((byte) 0);
 					slotDto.setSlotDate(studioDto.getPlanShootTime());
-					slotDto.setSendState(studioDto.getSendState());
+					slotDto.setSendState((byte) 0);
 					slotDto.setArriveStatus(studioDto.getArriveStatus());
-					slotDto.setPlanArriveTime(studioDto.getPlanArriveTime());
+					
+					Calendar calendar = Calendar.getInstance();
+				    calendar.setTime(studioDto.getPlanShootTime());
+				    calendar.add(Calendar.DAY_OF_MONTH, -1);//+2今天的时间加2天
+					String planArriveDate = sdfomat.format(calendar.getTime()) + " 23:59:59";
+					Date planArriveDateTime = sdf.parse(planArriveDate);
+					slotDto.setPlanArriveTime(planArriveDateTime);
+					
 					slotDto.setPlanShootTime(studioDto.getPlanShootTime());
 					
 					StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
