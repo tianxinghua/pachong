@@ -170,7 +170,7 @@ public class StudioController {
         if(StringUtils.isEmpty(supplierId) || studioSlotId ==null|| StringUtils.isEmpty(trackName)|| StringUtils.isEmpty(trackingNo)){
             return  HubResponse.errorResp("传入参数不正确");
         }
-       if(iStudioService.insertSlotLogistic(studioSlotId,trackName,trackingNo,queryDto.getCreateUser())){
+       if(iStudioService.insertSlotLogistic(studioSlotId,trackName,trackingNo,queryDto.getMemo(), queryDto.getCreateUser())){
            return  HubResponse.successResp(null);
        }else {
            return  HubResponse.errorResp("Logistics information added failed!");
