@@ -217,14 +217,14 @@ public class StudioSlotController {
 			StudioUserCriteriaDto dto = new StudioUserCriteriaDto();
 			dto.createCriteria().andUserNameEqualTo(userName);
 			List<StudioUserDto> studioUserlist = studioUserGateWay.selectByCriteria(dto);
-			if(studioUserlist==null){
+			if(studioUserlist==null||studioUserlist.size()==0){
 				return "-1,用户不存在!";
 			}
-			if(studioUserlist.get(0).getUserName().equals("wangchaotest")){
+			if(studioUserlist.get(0).getUserName().equals(userName)){
 				return "0,"+studioUserlist.get(0).getStudioId();
 			}
 		} catch (Exception e) {
-			log.error("checkStudioSlot处理发生异常：{}", e);
+			log.error("getStudioIdByUserName 处理发生异常：{}", e);
 			e.printStackTrace();
 		}
 		return null;
