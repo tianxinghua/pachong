@@ -97,11 +97,12 @@ public class ColtortiProductConvert {
 		List<Image> ppc = new ArrayList<Image>(imgurls.size());
 		Map<Integer, String> map = new HashMap<Integer, String>();
 		int[] a = new int[imgurls.size()];
-		for (String picUrl : imgurls) {
+		for (int i=0; i<imgurls.size();i++) {
+			String picUrl = imgurls.get(i);
 			if (picUrl != null) {
 				String s = picUrl.substring(picUrl.lastIndexOf("-") + 1);
 				int num = Integer.parseInt(s.split("\\.")[0]);
-				a[0] = num;
+				a[i] = num;
 				map.put(num, picUrl);
 				System.out.println(s);
 			}
