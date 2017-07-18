@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.ui.studio.studio.service.impl;
 
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.result.HubSlotSpuSupplierExtend;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicCriteriaDto;
@@ -11,6 +12,10 @@ import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDe
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.*;
 import com.shangpin.ephub.client.data.studio.slot.returning.gateway.StudioSlotReturnDetailGateWay;
 import com.shangpin.ephub.client.data.studio.slot.returning.gateway.StudioSlotReturnMasterGateWay;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.DefectiveSpuDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.ReturnSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IReturnSlotService;
@@ -48,6 +53,9 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
 
     @Autowired
     StudioSlotDefectiveSpuPicGateWay studioSlotDefectiveSpuPicGateWay;
+
+    @Autowired
+    StudioSlotGateWay studioSlotGateWay;
 
     SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
     /**
@@ -112,13 +120,37 @@ public class ReturnSlotServiceImpl implements IReturnSlotService {
      * @return
      */
    public  boolean ReceiveReturnSlot(String supplierId,Long id,String userName){
+
+       StudioSlotReturnMasterDto masterDto = studioSlotReturnMasterGateWay.selectByPrimaryKey(id);
+
+       if(masterDto==null || !masterDto.getSupplierId().equals(supplierId)){
+           return false;
+       }
+
        StudioSlotReturnMasterDto dto = new StudioSlotReturnMasterDto();
        dto.setStudioSlotReturnMasterId(id);
        dto.setArriveUser(userName);
        dto.setArriveTime(new Date());
        dto.setArriveState((byte)1);
        dto.setState((byte)2);
-       return studioSlotReturnMasterGateWay.updateByPrimaryKeySelective(dto)>0;
+       int i = studioSlotReturnMasterGateWay.updateByPrimaryKeySelective(dto);
+       if(i>0){
+
+           StudioSlotWithCriteriaDto slotWithDto = new StudioSlotWithCriteriaDto();
+           StudioSlotCriteriaDto criteriaDto = new StudioSlotCriteriaDto();
+           criteriaDto.createCriteria().andSlotNoEqualTo(masterDto.getMasterSlotNo());
+           slotWithDto.setCriteria(criteriaDto);
+           StudioSlotDto slotDto = new StudioSlotDto();
+           slotDto.setSendState(StudioSlotState.HAVE_FINISHED.getIndex().byteValue());
+           slotDto.setUpdateTime(new Date());
+           slotWithDto.setStudioSlot(slotDto);
+           studioSlotGateWay.updateByCriteriaSelective(slotWithDto);
+           return  true;
+       }
+       else{
+
+           return  false;
+       }
    }
 
     /**
