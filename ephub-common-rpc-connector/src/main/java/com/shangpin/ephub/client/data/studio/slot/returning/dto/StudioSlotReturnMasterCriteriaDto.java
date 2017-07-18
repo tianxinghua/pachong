@@ -480,6 +480,146 @@ public class StudioSlotReturnMasterCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andMasterSlotNoIsNull() {
+            addCriterion("master_slot_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoIsNotNull() {
+            addCriterion("master_slot_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoEqualTo(String value) {
+            addCriterion("master_slot_no =", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotEqualTo(String value) {
+            addCriterion("master_slot_no <>", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoGreaterThan(String value) {
+            addCriterion("master_slot_no >", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoGreaterThanOrEqualTo(String value) {
+            addCriterion("master_slot_no >=", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoLessThan(String value) {
+            addCriterion("master_slot_no <", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoLessThanOrEqualTo(String value) {
+            addCriterion("master_slot_no <=", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoLike(String value) {
+            addCriterion("master_slot_no like", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotLike(String value) {
+            addCriterion("master_slot_no not like", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoIn(List<String> values) {
+            addCriterion("master_slot_no in", values, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotIn(List<String> values) {
+            addCriterion("master_slot_no not in", values, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoBetween(String value1, String value2) {
+            addCriterion("master_slot_no between", value1, value2, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotBetween(String value1, String value2) {
+            addCriterion("master_slot_no not between", value1, value2, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoIsNull() {
+            addCriterion("mult_slot_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoIsNotNull() {
+            addCriterion("mult_slot_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoEqualTo(String value) {
+            addCriterion("mult_slot_no =", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotEqualTo(String value) {
+            addCriterion("mult_slot_no <>", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoGreaterThan(String value) {
+            addCriterion("mult_slot_no >", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoGreaterThanOrEqualTo(String value) {
+            addCriterion("mult_slot_no >=", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoLessThan(String value) {
+            addCriterion("mult_slot_no <", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoLessThanOrEqualTo(String value) {
+            addCriterion("mult_slot_no <=", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoLike(String value) {
+            addCriterion("mult_slot_no like", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotLike(String value) {
+            addCriterion("mult_slot_no not like", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoIn(List<String> values) {
+            addCriterion("mult_slot_no in", values, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotIn(List<String> values) {
+            addCriterion("mult_slot_no not in", values, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoBetween(String value1, String value2) {
+            addCriterion("mult_slot_no between", value1, value2, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotBetween(String value1, String value2) {
+            addCriterion("mult_slot_no not between", value1, value2, "multSlotNo");
+            return (Criteria) this;
+        }
+
         public Criteria andQuantityIsNull() {
             addCriterion("quantity is null");
             return (Criteria) this;

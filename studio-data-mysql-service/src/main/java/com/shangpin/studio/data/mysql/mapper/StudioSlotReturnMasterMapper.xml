@@ -7,6 +7,8 @@
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="studio_id" property="studioId" jdbcType="BIGINT" />
+    <result column="master_slot_no" property="masterSlotNo" jdbcType="VARCHAR" />
+    <result column="mult_slot_no" property="multSlotNo" jdbcType="VARCHAR" />
     <result column="quantity" property="quantity" jdbcType="INTEGER" />
     <result column="actual_send_quantity" property="actualSendQuantity" jdbcType="INTEGER" />
     <result column="missing_quantity" property="missingQuantity" jdbcType="INTEGER" />
@@ -90,10 +92,10 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       studio_slot_return_master_id, studio_send_no, supplier_no, supplier_id, studio_id, 
-      quantity, actual_send_quantity, missing_quantity, damaged_quantity, added_quantiy, 
-      actual_quantity, track_no, state, memo, send_user, send_time, send_state, arrive_user, 
-      arrive_time, arrive_state, create_time, create_user, update_time, update_user, data_state, 
-      version
+      master_slot_no, mult_slot_no, quantity, actual_send_quantity, missing_quantity, damaged_quantity, 
+      added_quantiy, actual_quantity, track_no, state, memo, send_user, send_time, send_state, 
+      arrive_user, arrive_time, arrive_state, create_time, create_user, update_time, update_user, 
+      data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -118,7 +120,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_return_master_id,studio_send_no,supplier_no,supplier_id,studio_id,quantity,actual_send_quantity,missing_quantity,damaged_quantity,added_quantiy,actual_quantity,track_no,state,memo,send_user,send_time,send_state,arrive_user,arrive_time,arrive_state,create_time,create_user,update_time,update_user,data_state,version
+    studio_slot_return_master_id,studio_send_no,supplier_no,supplier_id,studio_id,master_slot_no,mult_slot_no,quantity,actual_send_quantity,missing_quantity,damaged_quantity,added_quantiy,actual_quantity,track_no,state,memo,send_user,send_time,send_state,arrive_user,arrive_time,arrive_state,create_time,create_user,update_time,update_user,data_state,version
     from studio_slot_return_master
     where studio_slot_return_master_id = #{studioSlotReturnMasterId,jdbcType=BIGINT}
   </select>
@@ -138,24 +140,24 @@
     </selectKey>
     insert into studio_slot_return_master (studio_slot_return_master_id, studio_send_no, 
       supplier_no, supplier_id, studio_id, 
-      quantity, actual_send_quantity, missing_quantity, 
-      damaged_quantity, added_quantiy, actual_quantity, 
-      track_no, state, memo, 
-      send_user, send_time, send_state, 
-      arrive_user, arrive_time, arrive_state, 
-      create_time, create_user, update_time, 
-      update_user, data_state, version
-      )
+      master_slot_no, mult_slot_no, quantity, 
+      actual_send_quantity, missing_quantity, damaged_quantity, 
+      added_quantiy, actual_quantity, track_no, 
+      state, memo, send_user, 
+      send_time, send_state, arrive_user, 
+      arrive_time, arrive_state, create_time, 
+      create_user, update_time, update_user, 
+      data_state, version)
     values (#{studioSlotReturnMasterId,jdbcType=BIGINT}, #{studioSendNo,jdbcType=VARCHAR}, 
       #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{studioId,jdbcType=BIGINT}, 
-      #{quantity,jdbcType=INTEGER}, #{actualSendQuantity,jdbcType=INTEGER}, #{missingQuantity,jdbcType=INTEGER}, 
-      #{damagedQuantity,jdbcType=INTEGER}, #{addedQuantiy,jdbcType=INTEGER}, #{actualQuantity,jdbcType=INTEGER}, 
-      #{trackNo,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
-      #{sendUser,jdbcType=VARCHAR}, #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, 
-      #{arriveUser,jdbcType=VARCHAR}, #{arriveTime,jdbcType=TIMESTAMP}, #{arriveState,jdbcType=TINYINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+      #{masterSlotNo,jdbcType=VARCHAR}, #{multSlotNo,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, 
+      #{actualSendQuantity,jdbcType=INTEGER}, #{missingQuantity,jdbcType=INTEGER}, #{damagedQuantity,jdbcType=INTEGER}, 
+      #{addedQuantiy,jdbcType=INTEGER}, #{actualQuantity,jdbcType=INTEGER}, #{trackNo,jdbcType=VARCHAR}, 
+      #{state,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, #{sendUser,jdbcType=VARCHAR}, 
+      #{sendTime,jdbcType=TIMESTAMP}, #{sendState,jdbcType=TINYINT}, #{arriveUser,jdbcType=VARCHAR}, 
+      #{arriveTime,jdbcType=TIMESTAMP}, #{arriveState,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.studio.data.mysql.po.StudioSlotReturnMaster" >
     <selectKey keyColumn="studio_slot_return_master_id" keyProperty="studioSlotReturnMasterId" order="AFTER" resultType="long">
@@ -177,6 +179,12 @@
       </if>
       <if test="studioId != null" >
         studio_id,
+      </if>
+      <if test="masterSlotNo != null" >
+        master_slot_no,
+      </if>
+      <if test="multSlotNo != null" >
+        mult_slot_no,
       </if>
       <if test="quantity != null" >
         quantity,
@@ -257,6 +265,12 @@
       </if>
       <if test="studioId != null" >
         #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="masterSlotNo != null" >
+        #{masterSlotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="multSlotNo != null" >
+        #{multSlotNo,jdbcType=VARCHAR},
       </if>
       <if test="quantity != null" >
         #{quantity,jdbcType=INTEGER},
@@ -347,6 +361,12 @@
       <if test="record.studioId != null" >
         studio_id = #{record.studioId,jdbcType=BIGINT},
       </if>
+      <if test="record.masterSlotNo != null" >
+        master_slot_no = #{record.masterSlotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.multSlotNo != null" >
+        mult_slot_no = #{record.multSlotNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.quantity != null" >
         quantity = #{record.quantity,jdbcType=INTEGER},
       </if>
@@ -422,6 +442,8 @@
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       studio_id = #{record.studioId,jdbcType=BIGINT},
+      master_slot_no = #{record.masterSlotNo,jdbcType=VARCHAR},
+      mult_slot_no = #{record.multSlotNo,jdbcType=VARCHAR},
       quantity = #{record.quantity,jdbcType=INTEGER},
       actual_send_quantity = #{record.actualSendQuantity,jdbcType=INTEGER},
       missing_quantity = #{record.missingQuantity,jdbcType=INTEGER},
@@ -461,6 +483,12 @@
       </if>
       <if test="studioId != null" >
         studio_id = #{studioId,jdbcType=BIGINT},
+      </if>
+      <if test="masterSlotNo != null" >
+        master_slot_no = #{masterSlotNo,jdbcType=VARCHAR},
+      </if>
+      <if test="multSlotNo != null" >
+        mult_slot_no = #{multSlotNo,jdbcType=VARCHAR},
       </if>
       <if test="quantity != null" >
         quantity = #{quantity,jdbcType=INTEGER},
@@ -534,6 +562,8 @@
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       studio_id = #{studioId,jdbcType=BIGINT},
+      master_slot_no = #{masterSlotNo,jdbcType=VARCHAR},
+      mult_slot_no = #{multSlotNo,jdbcType=VARCHAR},
       quantity = #{quantity,jdbcType=INTEGER},
       actual_send_quantity = #{actualSendQuantity,jdbcType=INTEGER},
       missing_quantity = #{missingQuantity,jdbcType=INTEGER},

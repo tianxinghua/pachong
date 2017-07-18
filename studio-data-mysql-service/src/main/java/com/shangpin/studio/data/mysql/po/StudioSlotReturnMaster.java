@@ -20,6 +20,10 @@ public class StudioSlotReturnMaster implements Serializable {
 
     private Long studioId;
 
+    private String masterSlotNo;
+
+    private String multSlotNo;
+
     /**
      * 数量
      */
@@ -67,7 +71,7 @@ public class StudioSlotReturnMaster implements Serializable {
     private Date sendTime;
 
     /**
-     * 0：待发货  1:供货商发货  
+     * 0：待发货  1:已发货(返货给供应商)
      */
     private Byte sendState;
 
@@ -156,6 +160,22 @@ public class StudioSlotReturnMaster implements Serializable {
 
     public void setStudioId(Long studioId) {
         this.studioId = studioId;
+    }
+
+    public String getMasterSlotNo() {
+        return masterSlotNo;
+    }
+
+    public void setMasterSlotNo(String masterSlotNo) {
+        this.masterSlotNo = masterSlotNo == null ? null : masterSlotNo.trim();
+    }
+
+    public String getMultSlotNo() {
+        return multSlotNo;
+    }
+
+    public void setMultSlotNo(String multSlotNo) {
+        this.multSlotNo = multSlotNo == null ? null : multSlotNo.trim();
     }
 
     public Integer getQuantity() {
@@ -337,6 +357,8 @@ public class StudioSlotReturnMaster implements Serializable {
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", studioId=").append(studioId);
+        sb.append(", masterSlotNo=").append(masterSlotNo);
+        sb.append(", multSlotNo=").append(multSlotNo);
         sb.append(", quantity=").append(quantity);
         sb.append(", actualSendQuantity=").append(actualSendQuantity);
         sb.append(", missingQuantity=").append(missingQuantity);
@@ -380,6 +402,8 @@ public class StudioSlotReturnMaster implements Serializable {
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
+            && (this.getMasterSlotNo() == null ? other.getMasterSlotNo() == null : this.getMasterSlotNo().equals(other.getMasterSlotNo()))
+            && (this.getMultSlotNo() == null ? other.getMultSlotNo() == null : this.getMultSlotNo().equals(other.getMultSlotNo()))
             && (this.getQuantity() == null ? other.getQuantity() == null : this.getQuantity().equals(other.getQuantity()))
             && (this.getActualSendQuantity() == null ? other.getActualSendQuantity() == null : this.getActualSendQuantity().equals(other.getActualSendQuantity()))
             && (this.getMissingQuantity() == null ? other.getMissingQuantity() == null : this.getMissingQuantity().equals(other.getMissingQuantity()))
@@ -412,6 +436,8 @@ public class StudioSlotReturnMaster implements Serializable {
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
+        result = prime * result + ((getMasterSlotNo() == null) ? 0 : getMasterSlotNo().hashCode());
+        result = prime * result + ((getMultSlotNo() == null) ? 0 : getMultSlotNo().hashCode());
         result = prime * result + ((getQuantity() == null) ? 0 : getQuantity().hashCode());
         result = prime * result + ((getActualSendQuantity() == null) ? 0 : getActualSendQuantity().hashCode());
         result = prime * result + ((getMissingQuantity() == null) ? 0 : getMissingQuantity().hashCode());
