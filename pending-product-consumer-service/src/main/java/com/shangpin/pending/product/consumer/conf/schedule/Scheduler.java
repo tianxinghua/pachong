@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.pending.product.consumer.service.HubFilterService;
+import com.shangpin.pending.product.consumer.supplier.common.VariableInit;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +27,8 @@ public class Scheduler {
 	
 	@Autowired
 	HubFilterService hubFilterService;
+	@Autowired
+	VariableInit variableInit;
 	@Scheduled(cron = "05 0 07 * * ?")
 	public void modelTask() {
 		try {
@@ -43,4 +48,12 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 	}
+//	@Scheduled(cron = "0/15 * * * * ?")
+//	public void test(){
+//		PendingSpu spu = new PendingSpu();
+//		HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
+//		spu.setHubMaterial("Synthetic-Spandex/Elastane9 % Synthetic-Polyurethane6 % Synthetic-Polyester94 % Synthetic-Polyamide39 % Natural (Vegetable)-Cotton52 %");
+//		
+//		variableInit.replaceMaterialByRedis(spu,hubSpuPending);
+//	}
 }

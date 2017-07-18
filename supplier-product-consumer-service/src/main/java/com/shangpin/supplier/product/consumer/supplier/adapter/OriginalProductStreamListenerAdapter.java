@@ -22,7 +22,10 @@ import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.ISpinnak
 public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
-	@Qualifier("forzieriHandler")
+	@Qualifier("fratinardi")
+	private ISupplierHandler fratinardiHandler;	
+	@Autowired
+	@Qualifier("forzieri")
 	private ISupplierHandler forzieriHandler;	
 	
 	@Autowired
@@ -30,11 +33,12 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler stefaniaHandler;	
 	
 	@Autowired
-//	@Qualifier("atelierCommonHandler")
 	private IAtelierHandler atelierCommonHandler;
 	@Autowired
-//	@Qualifier("spinnakerHandler")
 	private ISpinnakerHandler spinnakerCommonHandler;	
+	@Autowired
+	private ISupplierHandler edsCommonHandler;
+	
 	@Autowired
 	@Qualifier("gebHandler")
 	private ISupplierHandler gebHandler;
@@ -94,10 +98,6 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler opticalHandler;
 
 	@Autowired
-	@Qualifier("basebluHandler")
-	private ISupplierHandler basebluHandler;
-	
-	@Autowired
 	@Qualifier("antonacciHandler")
 	private ISupplierHandler antonacciHandler;
 	
@@ -133,6 +133,14 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler filippoHandler;
 	
 	/**
+	 * coccolebimbi供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void coccolebimbiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		
+	}
+	/**
 	 * 此队列重名，未使用
 	 * biondioni供货商原始数据监听方法
 	 * @param message 消息体
@@ -164,9 +172,17 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void gebStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		gebHandler.handleOriginalProduct(message, headers); 
+		edsCommonHandler.handleOriginalProduct(message, headers); 
 	}
 	
+	/**
+	 * fratinardiHandler供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void fratinardiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		fratinardiHandler.handleOriginalProduct(message,headers);
+	}
 	/**
 	 * forzieriHandler供货商原始数据监听方法
 	 * @param message 消息体
@@ -196,6 +212,14 @@ public class OriginalProductStreamListenerAdapter {
 	/*
 	 * 以下为spinnaker系统统一处理 ，共八家供应商
 	 */
+	/**
+	 * spinnaker供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void portofinoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		spinnakerCommonHandler.handleOriginalProduct(message, headers); 
+	}
 	/**
 	 * spinnaker供货商原始数据监听方法
 	 * @param message 消息体
@@ -513,7 +537,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void basebluStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		basebluHandler.handleOriginalProduct(message, headers);
+		edsCommonHandler.handleOriginalProduct(message, headers);
 
 	}
 	/**

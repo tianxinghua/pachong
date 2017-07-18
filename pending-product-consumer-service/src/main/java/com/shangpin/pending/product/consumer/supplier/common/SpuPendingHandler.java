@@ -62,9 +62,11 @@ public class SpuPendingHandler {
         criteriaDto.createCriteria().andSpuPendingIdEqualTo(spuPendingId)
                 .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue())
                 .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())
+                .andSkuStateNotEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue())
                 .andFilterFlagEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());//借用过滤枚举 为1的不过滤的
 
         int i= hubSkuPendingGateWay.countByCriteria(criteriaDto);
+        log.info("不符合的sku个数："+i);
         if(i>0){
             HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
             hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
@@ -102,4 +104,9 @@ public class SpuPendingHandler {
         spuPendingGateWay.updateByCriteriaSelective(criteriaSpu);
 
     }
+
+    public HubSpuPendingDto getSpuPendingDto(Long spuPendingId){
+        return spuPendingGateWay.selectByPrimaryKey(spuPendingId);
+    }
+
 }

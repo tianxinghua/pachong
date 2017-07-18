@@ -25,6 +25,33 @@ public class PendingProductStreamListener {
 	@Autowired
 	private PendingProductStreamListenerAdapter adapter;
 	/**
+	 * 供应商coccolebimbi待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.coccolebimbi)
+	public void coccolebimbiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.coccolebimbiPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商fratinardi待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.fratinardi)
+	public void fratinardiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.fratinardiPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商portofino待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.portofino)
+	public void portofinoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.portofinoPendingProductStreamListen(message,headers);
+	}
+	/**
 	 * 供应商FORZIERI待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

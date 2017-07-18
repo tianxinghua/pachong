@@ -11,6 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface PendingProductSink {
 	
+	public static final String fratinardi = "fratinardiPendingProduct";
+	public static final String coccolebimbi = "coccolebimbiPendingProduct";
+	public static final String portofino = "portofinoPendingProduct";
 	public static final String FORZIERI = "forzieriPendingProduct";
 	public static final String SPINNAKER = "spinnakerPendingProduct";
 	
@@ -135,6 +138,24 @@ public interface PendingProductSink {
 	public static final String EMONTI = "emontiPendingProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiquePendingProduct";
+	/**
+	 * 供货商coccolebimbi通道组件配置
+	 * @return 供货商SPINNAKER通道组件
+	 */
+	@Input(value = PendingProductSink.coccolebimbi)
+	public SubscribableChannel coccolebimbiPendingProduct();
+	/**
+	 * 供货商fratinardi通道组件配置
+	 * @return 供货商fratinardi通道组件
+	 */
+	@Input(value = PendingProductSink.fratinardi)
+	public SubscribableChannel fratinardiPendingProduct();
+	/**
+	 * 供货商portofino通道组件配置
+	 * @return 供货商portofino通道组件
+	 */
+	@Input(value = PendingProductSink.portofino)
+	public SubscribableChannel portofinoPendingProduct();
 	/**
 	 * 供货商FORZIERI通道组件配置
 	 * @return 供货商SPINNAKER通道组件

@@ -11,6 +11,9 @@ import org.springframework.messaging.MessageChannel;
  */
 public interface PendingProductSource {
 	
+	public static final String fratinardi = "fratinardiPendingProduct";
+	public static final String coccolebimbi = "coccolebimbiPendingProduct";
+	public static final String portofino = "portofinoPendingProduct";
 	public static final String FORZIERI = "forzieriPendingProduct";
 	public static final String SPINNAKER = "spinnakerPendingProduct";
 	
@@ -133,6 +136,24 @@ public interface PendingProductSource {
 	public static final String EMONTI = "emontiPendingProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiquePendingProduct";
+	/**
+	 * 供货商fratinardi通道组件配置
+	 * @return 供货商fratinardi通道组件
+	 */
+	@Output(value = PendingProductSource.fratinardi)
+	public MessageChannel fratinardiPendingProduct();
+	/**
+	 * 供货商coccolebimbi通道组件配置
+	 * @return 供货商coccolebimbi通道组件
+	 */
+	@Output(value = PendingProductSource.coccolebimbi)
+	public MessageChannel coccolebimbiPendingProduct();
+	/**
+	 * 供货商portofino通道组件配置
+	 * @return 供货商portofino通道组件
+	 */
+	@Output(value = PendingProductSource.portofino)
+	public MessageChannel portofinoPendingProduct();
 	/**
 	 * 供货商forzieri通道组件配置
 	 * @return 供货商FORZIERI通道组件

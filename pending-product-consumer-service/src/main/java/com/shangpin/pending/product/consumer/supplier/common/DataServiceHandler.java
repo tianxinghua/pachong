@@ -6,21 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.*;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
-import com.shangpin.pending.product.consumer.common.enumeration.*;
-import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectState;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
@@ -36,6 +25,12 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemCriteriaDto
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
@@ -53,6 +48,9 @@ import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicItemCrite
 import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicItemDto;
 import com.shangpin.ephub.client.data.mysql.material.gateway.HubMaterialDicGateWay;
 import com.shangpin.ephub.client.data.mysql.material.gateway.HubMaterialDicItemGateWay;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.rule.gateway.HubBrandModelRuleGateWay;
@@ -68,14 +66,27 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
-import com.shangpin.pending.product.consumer.common.ConstantProperty;
+import com.shangpin.pending.product.consumer.common.enumeration.DataBusinessStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.DataStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierSelectState;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.supplier.dto.ColorDTO;
 import com.shangpin.pending.product.consumer.supplier.dto.MaterialDTO;
-import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理
@@ -398,16 +409,18 @@ public class DataServiceHandler {
 		List<ColorDTO> colorDTOS = new ArrayList<>();
 
 		for (HubColorDicItemDto itemDto : hubColorDicItemDtos) {
-			ColorDTO colorDTO = new ColorDTO();
-			colorDTO.setColorItemId(itemDto.getColorDicItemId());
-			colorDTO.setSupplierColor(itemDto.getColorItemName().trim());
-			if (colorDicMap.containsKey(itemDto.getColorDicId())) {
-				colorDTO.setColorDicId(itemDto.getColorDicId());
-				colorDTO.setSupplierColor(itemDto.getColorItemName());
-				colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());
-				colorDTO.setHubColorName(colorDicMap.get(itemDto.getColorDicId()).getColorName());
+			if(itemDto.getColorItemName()!=null){
+				ColorDTO colorDTO = new ColorDTO();
+				colorDTO.setColorItemId(itemDto.getColorDicItemId());
+				colorDTO.setSupplierColor(itemDto.getColorItemName().trim());
+				if (colorDicMap.containsKey(itemDto.getColorDicId())) {
+					colorDTO.setColorDicId(itemDto.getColorDicId());
+					colorDTO.setSupplierColor(itemDto.getColorItemName());
+					colorDTO.setHubColorNo(colorDicMap.get(itemDto.getColorDicId()).getColorNo());
+					colorDTO.setHubColorName(colorDicMap.get(itemDto.getColorDicId()).getColorName());
+				}
+				colorDTOS.add(colorDTO);
 			}
-			colorDTOS.add(colorDTO);
 		}
 		return colorDTOS;
 
@@ -539,7 +552,28 @@ public class DataServiceHandler {
 		return materialDTOS;
 
 	}
+	public List<MaterialDTO> getMaterialMappingByMappingLevel(Byte mappingLevel) {
+		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
+		criteria.setPageSize(ConstantProperty.MAX_MATERIAL_QUERY_NUM);
+		criteria.createCriteria().andMappingLevelEqualTo(mappingLevel);
+		criteria.setOrderByClause("memo desc");
+		
+		List<HubMaterialMappingDto> hubMaterialMappingDtos = hubMaterialMappingGateWay.selectByCriteria(criteria);
+		List<MaterialDTO> materialDTOS = new ArrayList<>();
 
+		for (HubMaterialMappingDto itemDto : hubMaterialMappingDtos) {
+			MaterialDTO materialDTO = new MaterialDTO();
+			if(mappingLevel!=4){
+				if (StringUtils.isBlank(itemDto.getSupplierMaterial()) || StringUtils.isBlank(itemDto.getHubMaterial()))
+					continue;		
+			}
+			materialDTO.setSupplierMaterial(itemDto.getSupplierMaterial());
+			materialDTO.setHubMaterial(itemDto.getHubMaterial());
+			materialDTOS.add(materialDTO);
+		}
+		return materialDTOS;
+
+	}
 	public List<MaterialDTO> getMaterialMapping() {
 
 		HubMaterialMappingCriteriaDto criteria = new HubMaterialMappingCriteriaDto();
@@ -568,11 +602,11 @@ public class DataServiceHandler {
 			spuPending.setHubMaterial(spuPending.getHubMaterial().replaceAll("<br />", "\r\n").replaceAll("<html>", "")
 					.replaceAll("</html>", "").replaceAll("<br>","\r\n"));
 		}
-		if (null != spuPending.getIsCurrentSeason()) {
-			if (SeasonType.SEASON_NOT_CURRENT.getIndex() == spuPending.getIsCurrentSeason().intValue()) {
-				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
-			}
-		}
+//		if (null != spuPending.getIsCurrentSeason()) {
+//			if (SeasonType.SEASON_NOT_CURRENT.getIndex() == spuPending.getIsCurrentSeason().intValue()) {
+//				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
+//			}
+//		}
 //		if (null != spuPending.getSpuBrandState()) {
 //			if (PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex() == spuPending.getSpuBrandState().intValue()) {
 //				spuPending.setSpuState(SpuStatus.SPU_FILTER.getIndex().byteValue());
@@ -873,6 +907,12 @@ public class DataServiceHandler {
 		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
 		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierValEqualTo(supplierOrigin).andHubValTypeEqualTo((byte)3);
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+	}
+
+	public List<HubSupplierSkuDto> getHubSupplierSkuBySupplierIdAndSupplierSpuId(Long supplierSpuId) {
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		return supplierSkuGateWay.selectByCriteria(criteria);
 	}
 
 }
