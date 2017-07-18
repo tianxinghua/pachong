@@ -26,6 +26,9 @@ import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.spu.dto.HubSpuPendingCheckProperty;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title: ImportService</p>
  * <p>Description: 导入服务 </p>
@@ -35,6 +38,7 @@ import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskG
  *
  */
 @Service
+@Slf4j
 public class SlotSpuImportService {
 	
 	@Autowired
@@ -61,6 +65,7 @@ public class SlotSpuImportService {
 				HubSpuPendingCheckProperty property = myCheckProperty();
 				property.setDto(convertDto(excelDto,createUser));
 				HubSpuPendingDto pendingDto = hubPendingSpuCheckGateWay.checkSpuProperty(property);
+				log.info("校验结果========="+JsonUtil.serialize(pendingDto)); 
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingDto);
 				hubSlotSpuTaskGateWay.add(pendingDto);
 				CheckResultDto resultDto = checkPendingSpu(taskNo,pendingDto);
@@ -78,6 +83,7 @@ public class SlotSpuImportService {
 		return property;
 	}
 	
+	
 	/**
 	 * 做转化
 	 * @param excelDto
@@ -86,10 +92,9 @@ public class SlotSpuImportService {
 	 */
 	private HubSpuPendingDto convertDto(HubSlotSpuExcelDto excelDto, String createUser){
 		HubSpuPendingDto pendingDto =  new HubSpuPendingDto();
-		pendingDto.setSpuPendingId(excelDto.getSpuPendingId()); 
+		pendingDto.setSpuPendingId(Long.valueOf(excelDto.getSpuPendingId())); 
 		pendingDto.setSupplierId(excelDto.getSupplierId());
 		pendingDto.setSupplierNo(excelDto.getSupplierNo());
-		pendingDto.setSpuName(excelDto.getSupplierName());
 		pendingDto.setHubCategoryNo(excelDto.getHubCategoryNo());
 		pendingDto.setHubBrandNo(excelDto.getHubBrandNo());
 		pendingDto.setSpuModel(excelDto.getSpuModel()); 
@@ -128,4 +133,6 @@ public class SlotSpuImportService {
 		}
 		return resultDto;
 	}
+	
+
 }
