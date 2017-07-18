@@ -201,7 +201,7 @@ public class StudioSlotService {
 				if (studioDto.getPlanShootTime().after(studioDto.getShootTime())) {
 					StudioSlotDto slotDto = new StudioSlotDto();
 					slotDto.setStudioId(studioDto.getStudioId());
-					slotDto.setSlotNo(sd.format(studioDto.getPlanShootTime())+studioDto.getSlotNo().substring(8)+"L");
+					slotDto.setSlotNo("L" + studioDto.getSlotNo());
 					slotDto.setCreateTime(new Date());
 					slotDto.setUpdateTime(new Date());
 					slotDto.setShotStatus((byte) 0);
