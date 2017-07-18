@@ -111,7 +111,7 @@ public class HubPendingSpuCheckController {
 				}
 				commonCheckBase.setAllPropertyCheck(list);
 				if(hubSpuPendingIsExist!=null&&hubSpuPendingIsExist.getUpdateUser()!=null){
-					commonCheckBase.handleconvertOrCheck(hubSpuPendingIsExist,hubSpuPendingIsExist);	
+					commonCheckBase.handleConvertOrCheck(hubSpuPendingIsExist,hubSpuPendingIsExist);	
 				}
 			}
 		} catch (Exception e) {

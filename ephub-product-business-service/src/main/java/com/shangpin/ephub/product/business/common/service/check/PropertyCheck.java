@@ -56,9 +56,4 @@ public class PropertyCheck extends CommonCheckBase {
 		}
 		return stringBuffer.toString();
 	}
-
-	public String handleconvertOrCheck(HubSpuPendingDto hubSpuPendingIsExist, HubSpuPendingDto hubSpuPendingDto) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
