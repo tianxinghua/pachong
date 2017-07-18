@@ -191,7 +191,6 @@ public class SlotManageService {
 
 		} catch (Exception e) {
 			log.error("查询批次失败! "+e.getMessage(),e); 
-			e.printStackTrace();
 			return HubResponse.errorResp("查询批次失败!");
 		}
 		return HubResponse.successResp(vo);
@@ -300,8 +299,7 @@ public class SlotManageService {
 				i++;
 			}
 		} catch (Exception e) {
-			Log.error("生成studio返回明细失败!");
-			e.printStackTrace();
+			log.error("生成studio返回明细失败! "+e.getMessage(),e); 
 			return HubResponse.errorResp("生成studio返回明细失败!");
 		}
 		log.info("end createSlotReturnDetailAndMaster---生成返货信息主表和返货批次明细");
@@ -361,8 +359,7 @@ public class SlotManageService {
 			vo.setStudioSlotReturnMasterDtoList(StudioSlotReturnMasterInfoLists);
 			vo.setTotal(count);
 		} catch (Exception e) {
-			Log.error("查询返货信息主表失败!");
-			e.printStackTrace();
+			log.error("查询返货信息主表失败!"+e.getMessage(),e); 
 			return HubResponse.errorResp("查询返货信息主表失败!");
 		}
 		log.info("end selectSlotReturnMaster---查询返货信息主表");
@@ -408,8 +405,7 @@ public class SlotManageService {
 			vo.setStudioSlotReturnDetailDtoList(StudioSlotReturnDetailInfoLists);
 			vo.setTotal(StudioSlotReturnDetailInfoLists.size());
 		} catch (Exception e) {
-			Log.error("查询masterId所有商品明细失败!");
-			e.printStackTrace();
+			log.error("查询masterId所有商品明细失败!"+e.getMessage(),e); 
 			return HubResponse.errorResp("查询masterId所有商品明细失败!");
 		}
 		log.info("end selectSlotReturnDetail---查询masterId所有商品明细");
@@ -617,6 +613,7 @@ public class SlotManageService {
 				StudioSlotReturnDetailGateWay.insertSelective(studioSlotReturnDetail);
 
 				studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
+				studioSlotReturnMasterDto.setMultSlotNo(","+slotManageQuery.getSlotNo());
 				studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDto);
 				log.info("end updateSlotReturnDetail---更新商品明细");
 				log.info("不属于当前批次,但批次时间在当前批次之前,可以返货");
@@ -628,8 +625,7 @@ public class SlotManageService {
 				// }
 			}
 		} catch (Exception e) {
-			Log.error("更新商品明细失败!");
-			e.printStackTrace();
+			log.error("更新商品明细失败!"+e.getMessage(),e); 
 			return HubResponse.errorResp("update failure!");
 		}
 		log.info("end updateSlotReturnDetail---更新商品明细");
@@ -707,8 +703,7 @@ public class SlotManageService {
 				}
 			}
 		} catch (Exception e) {
-			Log.error("创建批次物流信息失败!");
-			e.printStackTrace();
+			log.error("创建批次物流信息失败!"+e.getMessage(),e); 
 			return HubResponse.errorResp("创建批次物流信息失败!");
 		}
 		log.info("end createStudioSlotLogistictTrack---创建批次物流信息");
@@ -844,8 +839,7 @@ public class SlotManageService {
 			vo.setTotal(count);
 
 		} catch (Exception e) {
-			Log.error("查询批次当前节点失败!");
-			e.printStackTrace();
+			log.error("查询批次当前节点失败!"+e.getMessage(),e);
 			return HubResponse.errorResp("查询批次当前节点失败!");
 		}
 		log.info("end selectHisttoryStudioSlot---查询批次当前节点息");
