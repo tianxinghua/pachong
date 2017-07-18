@@ -31,6 +31,8 @@ public class StudioQueryDto implements Serializable {
 
     private String trackName; //物流公司
     private String trackingNo; //物流单号
+
+    private String memo; //备注，主要是用来记录地址的
 //    private Byte status;
 //    private String type;
 
