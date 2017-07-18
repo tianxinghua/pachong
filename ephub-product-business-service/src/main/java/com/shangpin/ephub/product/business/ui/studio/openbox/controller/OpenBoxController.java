@@ -6,12 +6,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
+import com.shangpin.ephub.product.business.ui.studio.openbox.dto.CheckResultDto;
+import com.shangpin.ephub.product.business.ui.studio.openbox.dto.DetailCheckDto;
 import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxService;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
 import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title: OpenBoxController</p>
  * <p>Description: 开箱质检页面的所有调用接口</p>
@@ -22,6 +27,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @RestController
 @RequestMapping("/api/airstudio/open-box")
+@Slf4j
 public class OpenBoxController {
 	
 	@Autowired
@@ -43,8 +49,10 @@ public class OpenBoxController {
 		return HubResponse.successResp(detailVo); 
 	}
 	@RequestMapping(value="/slot-detail-check",method = RequestMethod.POST)
-	public HubResponse<?> slotDetailCheck(@RequestBody String slotNoSpuId){
-		boolean result = openBoxService.slotDetailCheck(slotNoSpuId);
+	public HubResponse<?> slotDetailCheck(@RequestBody DetailCheckDto detailCheckDto){
+		log.info("质检参数========="+JsonUtil.serialize(detailCheckDto));  
+		boolean result = openBoxService.slotDetailCheck(detailCheckDto.getBarcode(),detailCheckDto.getArriveUser());
+		log.info("质检结果========="+result+" ["+detailCheckDto.getBarcode()+"]");  
 		if(result){
 			return HubResponse.successResp(result);
 		}else{
@@ -52,8 +60,10 @@ public class OpenBoxController {
 		}
 	}
 	@RequestMapping(value="/check-result",method = RequestMethod.POST)
-	public HubResponse<?> checkResult(@RequestBody String slotNo){
-		CheckDetailVo detailVo = openBoxService.checkResult(slotNo);
+	public HubResponse<?> checkResult(@RequestBody CheckResultDto checkResultDto){
+		log.info("盘盈盘亏=========="+JsonUtil.serialize(checkResultDto));  
+		CheckDetailVo detailVo = openBoxService.checkResult(checkResultDto.getSlotNo(),checkResultDto.getArriveUser());
+		log.info("盘盈盘亏结果====="+JsonUtil.serialize(detailVo)); 
 		if(null != detailVo){
 			return HubResponse.successResp(detailVo);
 		}else{

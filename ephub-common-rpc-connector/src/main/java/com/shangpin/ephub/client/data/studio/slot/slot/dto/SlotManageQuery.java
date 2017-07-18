@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.data.studio.slot.slot.dto;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -27,6 +29,22 @@ public class SlotManageQuery {
 	private Byte shotStatus;
 	private String planShootTime;
 	private String shootTime;
+	private String operatorName;
+	private Integer pageNo;
+	private Integer pageSize;
+	//扩展
+	private String supplierName;
+	private String barCode;
+	private Integer state;
+	private String trackName;
+	private String trackNo;
+	private String masterId;
+	private Integer quantity;
+	private Integer actualNumber;
+	private String sender;
+	private byte milestone;
+	private Date startDate;
+	private Date endDate;
+	private String studioID;
 	private String userName;
-	
 }

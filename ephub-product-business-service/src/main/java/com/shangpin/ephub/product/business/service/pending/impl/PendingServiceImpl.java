@@ -1,13 +1,11 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,11 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
+import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -28,6 +31,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
@@ -40,7 +44,6 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
-import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -131,21 +134,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
 //            log.info("sartDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getStartDate() ));
-            try {
 				criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.parse(queryVO.getStartDate()  ));
-			} catch (ParseException e) {
-				log.error(e.getMessage(),e);
-			}
 //            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 08:00:00" ));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
 //            log.info("getEndDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getEndDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getEndDate()));
-            try {
 				criterion.andUpdateTimeLessThan(DateTimeUtil.parse(queryVO.getEndDate() ));
-			} catch (ParseException e) {
-				log.error(e.getMessage(),e);
-			}
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -452,13 +447,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     	hubSpuPending.setAuditDate(new Date());
     	hubSpuPending.setAuditUser(auditUser);
     	hubSpuPending.setAuditOpinion(auditOpinion); 
-    	hubSpuPending.setUpdateUser(auditUser); 
     }
 
     private void setSpuNameToSpuModelDto(SpuModelDto spuModelVO) {
         FourLevelCategory gmsCateGory = categoryService.getGmsCateGory(spuModelVO.getCategoryNo());
         if(null!=gmsCateGory){
-            spuModelVO.setSpuName(gmsCateGory.getFourthName());
+            spuModelVO.setSpuName(categoryService.getHubCategoryNameByHubCategory(spuModelVO.getCategoryNo(), gmsCateGory));
         }
 
 

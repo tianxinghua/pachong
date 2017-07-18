@@ -30,7 +30,7 @@ public abstract class CommonCheckBase {
 	 * @return
 	 * @throws Exception
 	 */
-	public String handleconvertOrCheck(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
+	public String handleConvertOrCheck(HubSpuPendingDto hubSpuPendingIsExist,HubSpuPendingDto spuPendingDto) throws Exception {
 
 		if (isNeedConvert(hubSpuPendingIsExist,spuPendingDto)) {
 			 convertValue(hubSpuPendingIsExist,spuPendingDto);

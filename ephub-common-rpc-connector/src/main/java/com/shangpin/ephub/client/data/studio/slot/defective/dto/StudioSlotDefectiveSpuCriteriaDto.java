@@ -210,6 +210,126 @@ public class StudioSlotDefectiveSpuCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andDetailIdIsNull() {
+            addCriterion("detail_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdIsNotNull() {
+            addCriterion("detail_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdEqualTo(Long value) {
+            addCriterion("detail_id =", value, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdNotEqualTo(Long value) {
+            addCriterion("detail_id <>", value, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdGreaterThan(Long value) {
+            addCriterion("detail_id >", value, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("detail_id >=", value, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdLessThan(Long value) {
+            addCriterion("detail_id <", value, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdLessThanOrEqualTo(Long value) {
+            addCriterion("detail_id <=", value, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdIn(List<Long> values) {
+            addCriterion("detail_id in", values, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdNotIn(List<Long> values) {
+            addCriterion("detail_id not in", values, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdBetween(Long value1, Long value2) {
+            addCriterion("detail_id between", value1, value2, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailIdNotBetween(Long value1, Long value2) {
+            addCriterion("detail_id not between", value1, value2, "detailId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromIsNull() {
+            addCriterion("detail_from is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromIsNotNull() {
+            addCriterion("detail_from is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromEqualTo(Byte value) {
+            addCriterion("detail_from =", value, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromNotEqualTo(Byte value) {
+            addCriterion("detail_from <>", value, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromGreaterThan(Byte value) {
+            addCriterion("detail_from >", value, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromGreaterThanOrEqualTo(Byte value) {
+            addCriterion("detail_from >=", value, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromLessThan(Byte value) {
+            addCriterion("detail_from <", value, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromLessThanOrEqualTo(Byte value) {
+            addCriterion("detail_from <=", value, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromIn(List<Byte> values) {
+            addCriterion("detail_from in", values, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromNotIn(List<Byte> values) {
+            addCriterion("detail_from not in", values, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromBetween(Byte value1, Byte value2) {
+            addCriterion("detail_from between", value1, value2, "detailFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andDetailFromNotBetween(Byte value1, Byte value2) {
+            addCriterion("detail_from not between", value1, value2, "detailFrom");
+            return (Criteria) this;
+        }
+
         public Criteria andSlotNoIsNull() {
             addCriterion("slot_no is null");
             return (Criteria) this;

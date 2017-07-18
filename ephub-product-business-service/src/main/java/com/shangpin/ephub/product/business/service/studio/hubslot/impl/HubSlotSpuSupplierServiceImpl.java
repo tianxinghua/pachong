@@ -107,11 +107,17 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
                 }else {
 
-                    if(SlotSpuState.NO_NEED_HANDLE.getIndex()==slotSpuState){
+                    if(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()==slotSpuState){
                         tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
-                    }else if(SlotSpuState.SEND.getIndex()==slotSpuState){
+                        tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_NEED_HANDLE.getIndex().byteValue());
+                    }else if(SlotSpuSupplierState.SEND.getIndex()==slotSpuState){
                         //
+                        tmp.setState(SlotSpuSupplierState.NO_NEED_HANDLE.getIndex().byteValue());
                         tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.OTHER_SEND.getIndex().byteValue());
+
+                    }else if(SlotSpuSupplierState.WAIT_SEND.getIndex()==slotSpuState){
+                        //取消发送
+                        tmp.setSupplierOperateSign(SlotSpuSupplierOperateSign.NO_HANDLE.getIndex().byteValue());
 
                     }
 
@@ -119,6 +125,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                     tmp.setUpdateTime(new Date());
 
                     spuSupplierGateway.updateByPrimaryKeySelective(tmp);
+                    log.info("update other spu supplier " + tmp.getSlotSpuSupplierId() + " state success");
 
 
 
@@ -154,11 +161,46 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
         spuSupplierGateway.updateByPrimaryKeySelective(dto);
     }
 
+
+
     @Override
-    public boolean updateSlotSpuSupplierWhenSupplierHandle(Long slotSpuSupplierId,Integer supplierHandleState) throws Exception {
+    public boolean updateSlotSpuSupplierWhenRemoveFromSlot(List<Long> slotSpuSupplierIds) {
+        Date  date = new Date();
+        for(Long slotSpuSupplierId :slotSpuSupplierIds){
+            HubSlotSpuSupplierDto supplierDto = spuSupplierGateway.selectByPrimaryKey(slotSpuSupplierId);
+
+            if(supplierDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()||
+                    supplierDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
+                //不处理或者已发货不做修改
+                log.info(" slotSpuSupplierId :" + supplierDto.getSlotSpuSupplierId() +" don't neet to update state when remove from slot");
+            }else{
+
+                HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
+                supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
+                supplierTmp.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
+
+                supplierTmp.setUpdateTime(date);
+                spuSupplierGateway.updateByPrimaryKeySelective(supplierTmp);
+                log.info(" slotSpuSupplierId :" + supplierDto.getSlotSpuSupplierId() +" remove from slot  success");
+                //更新其它slotspusupplier状态
+                List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
+                this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuSupplierState.WAIT_SEND.getIndex());
+
+                //更新slotspu
+                HubSlotSpuDto spuTmp = new HubSlotSpuDto();
+                spuTmp.setSpuState(SlotSpuState.WAIT_SEND.getIndex().byteValue());
+                spuTmp.setSlotSpuId(supplierDto.getSlotSpuId());
+                spuTmp.setUpdateTime(new Date());
+                slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
+                log.info(" slotSpuId  :" + supplierDto.getSlotSpuId() +" update spu success");
+            }
 
 
-        return false;
+
+
+        }
+
+        return true;
     }
 
     @Override
@@ -170,7 +212,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
                 if(null!=originDto){
                     if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()||
-                            originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                            originDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
                         result.setSuccess(false);
                         result.setErrorReason("no need handle");
                         return result;
@@ -178,16 +220,18 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                         Date date  = new Date();
                         //更新供货商信息
                         HubSlotSpuSupplierDto tmp = new HubSlotSpuSupplierDto();
+                        tmp.setSlotSpuSupplierId(originDto.getSlotSpuSupplierId());
                         tmp.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
                         tmp.setUpdateTime(date);
                         tmp.setUpdateUser(StringUtils.isNotBlank(dto.getUserName())?dto.getUserName():"");
                         spuSupplierGateway.updateByPrimaryKeySelective(tmp);
                         //更新slotspu信息
-                        HubSlotSpuDto slotSpuDto = slotSpuGateWay.selectByPrimaryKey(originDto.getSlotSpuId());
+                       // HubSlotSpuDto slotSpuDto = slotSpuGateWay.selectByPrimaryKey(originDto.getSlotSpuId());
                         HubSlotSpuDto slotSpuTmp = new HubSlotSpuDto();
                         slotSpuTmp.setUpdateTime(date);
                         slotSpuTmp.setUpdateUser(StringUtils.isNotBlank(dto.getUserName())?dto.getUserName():"");
                         slotSpuTmp.setSpuState(SlotSpuState.ADD_INVOICE.getIndex().byteValue());
+                        slotSpuTmp.setSlotSpuId(originDto.getSlotSpuId());
                         slotSpuGateWay.updateByPrimaryKeySelective(slotSpuTmp);
 
                         return result;
@@ -212,51 +256,74 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
     @Override
     public List<SlotSpuSendDetailCheckDto> updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
-        List<SlotSpuSendDetailCheckDto> returnList = new ArrayList<>();
-        boolean blReturn = true;
+        List<SlotSpuSendDetailCheckDto> errorReturnList = null ;
+
+
         List<HubSlotSpuSupplierDto> supplierDtos = new ArrayList<>();
+       //判断是否可以发货
+        errorReturnList = this.judgeSlotSpuSupplierWhenSupplierSend(dtos);
+
+
+        //可发货更新库存
+        if(null==errorReturnList||errorReturnList.size()==0){
+
+            for(SlotSpuSendDetailCheckDto dto:dtos){
+                HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
+                supplierDtos.add(originDto);
+            }
+            Date date = new Date();
+            for(HubSlotSpuSupplierDto supplierDto :supplierDtos){
+                //region 更新自己
+
+                HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
+                supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
+                supplierTmp.setState(SlotSpuSupplierState.SEND.getIndex().byteValue());
+
+                supplierTmp.setUpdateTime(date);
+                spuSupplierGateway.updateByPrimaryKeySelective(supplierTmp);
+                log.info(" slotSpuSupplierId :" + supplierDto.getSlotSpuSupplierId() +" update owner success");
+                //更新slotspu
+                HubSlotSpuDto spuTmp = new HubSlotSpuDto();
+                spuTmp.setSpuState(SlotSpuState.SEND.getIndex().byteValue());
+                spuTmp.setSlotSpuId(supplierDto.getSlotSpuId());
+                spuTmp.setUpdateTime(new Date());
+                slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
+                log.info(" slotSpuId  :" + supplierDto.getSlotSpuId() +" update spu success");
+                //更新其它slotspusupplier状态
+                List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
+                this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuState.SEND.getIndex());
+                //endregion
+            }
+        }
+
+        return errorReturnList;
+    }
+
+    @Override
+    public List<SlotSpuSendDetailCheckDto> judgeSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos) {
+        List<SlotSpuSendDetailCheckDto> returnList = new ArrayList<>();
         for(SlotSpuSendDetailCheckDto dto:dtos){
             HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
-            supplierDtos.add(originDto);
+            ;
             if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
                 SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
                 errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
                 errDto.setResultSign(false);
                 errDto.setMemo("no need send");
                 returnList.add(errDto);
-                blReturn = false;
-            }else if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+
+            }else if(originDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
                 SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
                 errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
                 errDto.setResultSign(false);
                 errDto.setMemo("had been sent ,no need send");
                 returnList.add(errDto);
-                blReturn = false;
-            }
-        }
-        if(blReturn){
-            Date date = new Date();
-            for(HubSlotSpuSupplierDto supplierDto :supplierDtos){
-                //更新自己
-                HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
-                supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
-                supplierTmp.setState(SlotSpuSupplierState.SEND.getIndex().byteValue());
-                supplierTmp.setUpdateTime(date);
-                spuSupplierGateway.updateByPrimaryKeySelective(supplierTmp);
-                //更新slotspu
-                HubSlotSpuDto spuTmp = new HubSlotSpuDto();
-                spuTmp.setSpuState(SlotSpuState.SEND.getIndex().byteValue());
-
-                slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
-                //更新其它slotspusupplier状态
-                List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
-                this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuState.SEND.getIndex());
 
             }
         }
-
         return returnList;
     }
+
 
     @Override
     public boolean updateSlotSpuSupplierStateWhenModifyHubData(List<HubSlotSpuSupplierDto> slotSpuSupplierDtos,HubSlotSpuDto slotSpuDto) throws Exception {
@@ -282,7 +349,7 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 //已发货不需要处理
             }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.ADD_INVOICE.getIndex()){
                 //已加入发货单 不处理
-            }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.ADD_INVOICE.getIndex()){
+            }else if(slotSpuDto.getSpuState().intValue()==SlotSpuState.WAIT_SEND.getIndex()){
                 //原来就是等待处理  不做处理
             }else{
                 this.updateSlotSpuState(slotSpuDto.getSlotSpuId(),SlotSpuState.WAIT_SEND.getIndex());
@@ -300,6 +367,15 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
         }
         return true;
 
+    }
+    
+    @Override
+    public List<HubSlotSpuSupplierDto> getSlotSpuSupplierBySlotNo(String slotNo){
+       
+    	HubSlotSpuSupplierCriteriaDto dto = new HubSlotSpuSupplierCriteriaDto();
+    	dto.createCriteria().andSlotNoEqualTo(slotNo);
+    	List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoList = spuSupplierGateway.selectByCriteria(dto);
+        return hubSlotSpuSupplierDtoList;
     }
 
 

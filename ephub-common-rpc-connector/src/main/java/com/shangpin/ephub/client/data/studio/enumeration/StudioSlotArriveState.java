@@ -16,7 +16,7 @@ public enum StudioSlotArriveState {
     RECEIVED(1,"RECEIVED"),
 
     /**
-     *
+     *  迟到
      */
     DELAY(2,"DELAY");
 

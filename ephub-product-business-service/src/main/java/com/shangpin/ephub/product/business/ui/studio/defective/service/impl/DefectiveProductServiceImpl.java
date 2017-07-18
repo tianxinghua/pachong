@@ -92,7 +92,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		vo.setBrand(detailDto.getSupplierBrandName());
 		vo.setItemCode(detailDto.getSupplierSpuModel());
 		vo.setItemName(detailDto.getSupplierSpuName());
-		vo.setStudioCode(detailDto.getSlotNo()+"-"+detailDto.getSlotSpuNo());
+		vo.setStudioCode(detailDto.getBarcode());
 		vo.setStudioSlotDefectiveSpuId(dto.getStudioSlotDefectiveSpuId());
 		return vo;
 	}
@@ -120,9 +120,9 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
-		Long studioId = operationService.getStudioId(studioNo);
-		if(null != studioId){
-			criteria.createCriteria().andStudioIdEqualTo(studioId);
+//		Long studioId = operationService.getStudioId(studioNo);
+		if(StringUtils.isNotBlank(studioNo)){
+			criteria.createCriteria().andStudioIdEqualTo(Long.valueOf(studioNo)); 
 		}else{
 			throw new Exception("未获得摄影棚编号");
 		}
@@ -132,8 +132,13 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	@Override
 	public StudioSlotDefectiveSpuDto add(String slotNoSpuId) {
 		try {
-			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
-			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(slotNoSpuId);
+			if(null == detailDto){
+				log.error(slotNoSpuId+"请先确认到货"); 
+				return null;
+			}
+			String slotNo = detailDto.getSlotNo();
+			String slotSpuNo = detailDto.getSlotSpuNo();
 			StudioSlotDefectiveSpuDto spuDto = selectBySlot(slotNo,slotSpuNo);
 			if(null != spuDto){
 				return spuDto;
@@ -141,6 +146,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 				StudioSlotSpuSendDetailDto hubSpuPendingDto = getStudioSlotSpuSendDetailDto(slotNo,slotSpuNo);
 				if(null != hubSpuPendingDto){
 					StudioSlotDefectiveSpuDto defectiveSpuDto = new StudioSlotDefectiveSpuDto();
+					defectiveSpuDto.setDetailId(hubSpuPendingDto.getStudioSlotSpuSendDetailId()); 
 					defectiveSpuDto.setSlotNo(slotNo);
 					defectiveSpuDto.setSlotSpuNo(slotSpuNo); 
 					defectiveSpuDto.setSupplierNo(hubSpuPendingDto.getSupplierNo());
@@ -201,6 +207,7 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 	public List<StudioSlotDefectiveSpuPicDto> selectDefectivePic(String studioSlotDefectiveSpuId) {
 		StudioSlotDefectiveSpuPicCriteriaDto criteria = new StudioSlotDefectiveSpuPicCriteriaDto();
 		criteria.setOrderByClause("create_time"); 
+		criteria.setFields("sp_pic_url"); 
 		criteria.setPageNo(1);
 		criteria.setPageSize(100); 
 		criteria.createCriteria().andStudioSlotDefectiveSpuIdEqualTo(Long.valueOf(studioSlotDefectiveSpuId)).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
@@ -233,12 +240,19 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		if(StringUtils.isNotBlank(spPicUrl)){
 			List<String> urls =  new ArrayList<String>();
 			urls.add(spPicUrl);
+			log.info("第一步：删除fsdfs "+spPicUrl);
 			Map<String,Integer> map = pictureService.deletePics(urls);
 			log.info("返回的结果是："+JsonUtil.serialize(map)); 
 			if(0 == map.get(spPicUrl)){
-				if(hasDefectiveSpuPic(spPicUrl)){
-					if(1 == delete(spPicUrl)){
+				boolean hasThePic = hasDefectiveSpuPic(spPicUrl);
+				log.info("第二步：判断mysql中是否存在该图片====> "+hasThePic+"====>"+spPicUrl);
+				if(hasThePic){
+					int result = delete(spPicUrl);
+					log.info("第三步：删除mysql返回的结果====>"+result+"====>"+spPicUrl);
+					if(1 == result){
 						return true;
+					}else{
+						return false;
 					}
 				}
 				return true;
@@ -260,7 +274,24 @@ public class DefectiveProductServiceImpl implements DefectiveProductService {
 		StudioSlotDefectiveSpuPicDto studioSlotDefectiveSpuPicDto = new StudioSlotDefectiveSpuPicDto();
 		studioSlotDefectiveSpuPicDto.setDataState(DataState.DELETED.getIndex()); 
 		withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
-		return defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
+		int result = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
+//		log.info("删除数据库结果=============="+result);
+		return result;
+	}
+	@Override
+	public int countDefectiveProduct(String slotNo) {
+		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		return defectiveSpuGateWay.countByCriteria(criteria );
+	}
+	@Override
+	public List<StudioSlotDefectiveSpuDto> selectDefectiveProduct(String slotNo) {
+		StudioSlotDefectiveSpuCriteriaDto criteria = new StudioSlotDefectiveSpuCriteriaDto();
+		criteria.setFields("slot_spu_no");
+		criteria.setPageNo(1);
+		criteria.setPageSize(1000); 
+		criteria.createCriteria().andSlotNoEqualTo(slotNo);
+		return defectiveSpuGateWay.selectByCriteria(criteria );
 	}
 
 }

@@ -69,10 +69,15 @@ public interface HubSlotSpuSupplierService {
      */
     public void deleteSlotSpuSupplierForLogic(Long id);
 
+
     /**
-     * 当供货商操作数据后 更新slotSpuSupplier和slotSpu
+     * 当释放整个批次  更新slotSpuSupplier和slotSpu为 未处理
+     * 但如果spu状态为不处理 或者已发货 ，则状态不修改
+     * @param slotSpuSupplierId
+     * @return
      */
-    public boolean  updateSlotSpuSupplierWhenSupplierHandle(Long slotSpuSupplierId,Integer supplierHandleState) throws Exception;
+    public boolean updateSlotSpuSupplierWhenRemoveFromSlot(List<Long> slotSpuSupplierId);
+
 
     /**
      * 供货商选择产品 更新状态
@@ -89,11 +94,26 @@ public interface HubSlotSpuSupplierService {
     public List<SlotSpuSendDetailCheckDto>  updateSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos);
 
     /**
+     * 判断供货商是否可发货
+     * @param dtos
+     * @return
+     */
+    public List<SlotSpuSendDetailCheckDto>  judgeSlotSpuSupplierWhenSupplierSend(List<SlotSpuSendDetailCheckDto> dtos);
+
+    /**
      *
      * @param slotSpuSupplierDtos
      * @return
      * @throws Exception
      */
     public boolean updateSlotSpuSupplierStateWhenModifyHubData(List<HubSlotSpuSupplierDto> slotSpuSupplierDtos,HubSlotSpuDto slotSpuDto)  throws Exception;
+    
+    /**
+     * 根据 slotNo查询 hub_slot_spu_supplier
+     * @param slotNo
+     * @return
+     */
+    public List<HubSlotSpuSupplierDto> getSlotSpuSupplierBySlotNo(String slotNo);
+
 
 }

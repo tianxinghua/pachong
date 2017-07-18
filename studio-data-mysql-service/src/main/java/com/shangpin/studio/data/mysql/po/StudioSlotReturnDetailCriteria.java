@@ -480,6 +480,76 @@ public class StudioSlotReturnDetailCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andSupplierNameIsNull() {
+            addCriterion("supplier_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameIsNotNull() {
+            addCriterion("supplier_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameEqualTo(String value) {
+            addCriterion("supplier_name =", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotEqualTo(String value) {
+            addCriterion("supplier_name <>", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameGreaterThan(String value) {
+            addCriterion("supplier_name >", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_name >=", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameLessThan(String value) {
+            addCriterion("supplier_name <", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameLessThanOrEqualTo(String value) {
+            addCriterion("supplier_name <=", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameLike(String value) {
+            addCriterion("supplier_name like", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotLike(String value) {
+            addCriterion("supplier_name not like", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameIn(List<String> values) {
+            addCriterion("supplier_name in", values, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotIn(List<String> values) {
+            addCriterion("supplier_name not in", values, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameBetween(String value1, String value2) {
+            addCriterion("supplier_name between", value1, value2, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotBetween(String value1, String value2) {
+            addCriterion("supplier_name not between", value1, value2, "supplierName");
+            return (Criteria) this;
+        }
+
         public Criteria andSpuPendingIdIsNull() {
             addCriterion("spu_pending_id is null");
             return (Criteria) this;
@@ -1020,6 +1090,66 @@ public class StudioSlotReturnDetailCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andStateIsNull() {
+            addCriterion("state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateIsNotNull() {
+            addCriterion("state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateEqualTo(Byte value) {
+            addCriterion("state =", value, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateNotEqualTo(Byte value) {
+            addCriterion("state <>", value, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateGreaterThan(Byte value) {
+            addCriterion("state >", value, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("state >=", value, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateLessThan(Byte value) {
+            addCriterion("state <", value, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateLessThanOrEqualTo(Byte value) {
+            addCriterion("state <=", value, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateIn(List<Byte> values) {
+            addCriterion("state in", values, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateNotIn(List<Byte> values) {
+            addCriterion("state not in", values, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateBetween(Byte value1, Byte value2) {
+            addCriterion("state between", value1, value2, "state");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("state not between", value1, value2, "state");
+            return (Criteria) this;
+        }
+
         public Criteria andSendStateIsNull() {
             addCriterion("send_state is null");
             return (Criteria) this;
@@ -1137,6 +1267,76 @@ public class StudioSlotReturnDetailCriteria {
 
         public Criteria andArriveStateNotBetween(Byte value1, Byte value2) {
             addCriterion("arrive_state not between", value1, value2, "arriveState");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIsNull() {
+            addCriterion("barcode is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIsNotNull() {
+            addCriterion("barcode is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeEqualTo(String value) {
+            addCriterion("barcode =", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotEqualTo(String value) {
+            addCriterion("barcode <>", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeGreaterThan(String value) {
+            addCriterion("barcode >", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeGreaterThanOrEqualTo(String value) {
+            addCriterion("barcode >=", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLessThan(String value) {
+            addCriterion("barcode <", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLessThanOrEqualTo(String value) {
+            addCriterion("barcode <=", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLike(String value) {
+            addCriterion("barcode like", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotLike(String value) {
+            addCriterion("barcode not like", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIn(List<String> values) {
+            addCriterion("barcode in", values, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotIn(List<String> values) {
+            addCriterion("barcode not in", values, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeBetween(String value1, String value2) {
+            addCriterion("barcode between", value1, value2, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotBetween(String value1, String value2) {
+            addCriterion("barcode not between", value1, value2, "barcode");
             return (Criteria) this;
         }
 
@@ -1859,6 +2059,7 @@ public class StudioSlotReturnDetailCriteria {
     }
 
     public static class Criterion {
+
 
         public Criterion() {
             super();

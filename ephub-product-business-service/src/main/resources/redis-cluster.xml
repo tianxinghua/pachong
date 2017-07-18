@@ -6,7 +6,7 @@
 			<clusterid>default</clusterid>
 			<configuration>
 				<!-- 最大的活动连接 -->
-				<maxtotal>3000</maxtotal>
+				<maxtotal>500</maxtotal>
 				<!-- 最大的空闲连接 -->
 				<maxidle>100</maxidle>
 				<!-- 最大的等待时间 -->

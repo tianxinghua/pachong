@@ -22,13 +22,15 @@ public interface OpenBoxService {
 	/**
 	 * 扫码质检
 	 * @param slotNoSpuId 批次号和spuPendingId的组合
+	 * @param arriveUser质检人
 	 * @return
 	 */
-	public boolean slotDetailCheck(String slotNoSpuId);
+	public boolean slotDetailCheck(String slotNoSpuId ,String arriveUser);
 	/**
 	 * 盘盈盘亏
 	 * @param slotNo 批次号
+	 * @param arriveUser 到货签收人
 	 * @return
 	 */
-	public CheckDetailVo checkResult(String slotNo);
+	public CheckDetailVo checkResult(String slotNo,String arriveUser);
 }

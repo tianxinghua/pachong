@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
@@ -24,7 +26,6 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.mapp.category.dto.HubSupplierCategoryDicRequestDto;
@@ -174,7 +175,7 @@ public class HubSupplierCategoryDicController {
 				Date date = new Date();
 				String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
 				taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
-				dto.setRefreshDicType((byte)4);
+				dto.setRefreshDicType(InfoState.RefreshCategory.getIndex());
 				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
 				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
 			}
@@ -194,13 +195,13 @@ public class HubSupplierCategoryDicController {
 				if(list!=null&&list.size()>0){
 					for(HubSupplierCategroyDicDto dic:list){
 						
-						if(dic.getCategoryType()==4){
+						if(dic.getCategoryType()!=null&&dic.getCategoryType()==4){
 							continue;
 						}
 						HubSupplierCategroyDicDto hubSupplierCategroyDicDto = new HubSupplierCategroyDicDto();
 						BeanUtils.copyProperties(dic, hubSupplierCategroyDicDto);
 						log.info("======供应商品类映射hub品类变更：{}",dic);
-						if(dic.getCategoryType()==4){
+						if(dic.getCategoryType()!=null&&dic.getCategoryType()==4){
 							dicDto.setMappingState((byte)1);		
 							dicDto.setPushState((byte)1);
 						}else{

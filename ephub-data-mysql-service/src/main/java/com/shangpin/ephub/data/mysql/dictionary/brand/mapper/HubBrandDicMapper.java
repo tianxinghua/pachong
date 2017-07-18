@@ -18,7 +18,9 @@ import com.shangpin.ephub.data.mysql.dictionary.brand.po.HubBrandDicCriteria;
 @Mapper
 public interface HubBrandDicMapper {
     int countByExample(HubBrandDicCriteria example);
-
+    int count();
+    List<HubBrandDic> selectHUbBrandNo(HubBrandDicCriteria example);
+    
     int deleteByExample(HubBrandDicCriteria example);
 
     int deleteByPrimaryKey(Long brandDicId);

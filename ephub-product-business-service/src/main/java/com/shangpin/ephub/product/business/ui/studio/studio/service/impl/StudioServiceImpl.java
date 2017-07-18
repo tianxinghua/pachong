@@ -12,12 +12,12 @@ import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.gateway.Hub
 import com.shangpin.ephub.client.data.mysql.studio.spusupplierextend.result.HubSlotSpuSupplierExtend;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import com.shangpin.ephub.client.data.studio.dic.dto.*;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicCategoryGateWay;
 import com.shangpin.ephub.client.data.studio.dic.gateway.StudioDicSlotGateWay;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
+import com.shangpin.ephub.client.data.studio.enumeration.*;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.dto.StudioSlotLogistictTrackDto;
 import com.shangpin.ephub.client.data.studio.slot.logistic.gateway.StudioSlotLogistictTrackGateWay;
@@ -26,11 +26,16 @@ import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.spu.gateway.StudioSlotSpuSendDetailGateWay;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
+import com.shangpin.ephub.product.business.common.dto.CommonResult;
 import com.shangpin.ephub.product.business.common.exception.EphubException;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSendDetailCheckDto;
+import com.shangpin.ephub.product.business.service.studio.slotspusend.SlotSpuSendDetailService;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.*;
@@ -40,7 +45,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -78,32 +86,44 @@ public class StudioServiceImpl implements IStudioService {
     @Autowired
     StudioSlotLogistictTrackGateWay studioSlotLogistictTrackGateWay;
 
+
+    @Autowired
+    HubSlotSpuSupplierService hubSlotSpuSupplierService;
+    @Autowired
+    SlotSpuSendDetailService slotSpuSendDetailService;
+
     HashMap<String, String > categoryMap = new HashMap<String, String>(){{
         put("cloth", "A01");
         put("shoes", "A02");
         put("bags", "A03");
         put("accessories", "A05");
     }};
-
+    SimpleDateFormat sdfomat = new SimpleDateFormat("yyyy-MM-dd");
     /*
         获取待拍照商品列表
     * */
-    public StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto){
-
+    public StudioPendingProductVo getPendingProductList(SlotSpuSupplierQueryDto queryDto) {
         StudioPendingProductVo products = new StudioPendingProductVo();
-        SlotSpuSupplierExtendQueryDto cdto =setQueryDto(queryDto);
-        int total = hubSlotSpuSupplierExtendGateWay.countByQuery(cdto);
-        if(total>0) {
-            List<HubSlotSpuSupplierExtend> results = hubSlotSpuSupplierExtendGateWay.selectByQuery(cdto);
+        try {
 
-            List<StudioPendingProduct> hubProducts = productList(results);
-            products.setHubProducts(hubProducts);
+            SlotSpuSupplierExtendQueryDto cdto = setQueryDto(queryDto);
+            int total = hubSlotSpuSupplierExtendGateWay.countByQuery(cdto);
+            if (total > 0) {
+                List<HubSlotSpuSupplierExtend> results = hubSlotSpuSupplierExtendGateWay.selectByQuery(cdto);
+
+                List<StudioPendingProduct> hubProducts = productList(results);
+                products.setHubProducts(hubProducts);
+            }
+            products.setTotal(total);
+
+
+        } catch (Exception ex) {
+            log.error("getPendingProductList err" + ex.getMessage());
+            products.setTotal(0);
         }
-        products.setTotal(total);
-
         return products;
     }
-    private SlotSpuSupplierExtendQueryDto setQueryDto(SlotSpuSupplierQueryDto queryDto){
+    private SlotSpuSupplierExtendQueryDto setQueryDto(SlotSpuSupplierQueryDto queryDto) throws ParseException {
         SlotSpuSupplierExtendQueryDto cdto = new SlotSpuSupplierExtendQueryDto();
         if(null != queryDto){
             if(null != queryDto.getPageIndex() && null != queryDto.getPageSize()){
@@ -119,6 +139,12 @@ public class StudioServiceImpl implements IStudioService {
             if(!StringUtils.isEmpty(queryDto.getCategoryName())){
                 cdto.setCategoryName(queryDto.getCategoryName());
             }
+            if (!StringUtils.isEmpty(queryDto.getSlotSpuNo())){
+                cdto.setSlotSpuNo(queryDto.getSlotSpuNo());
+            }
+            if(!StringUtils.isEmpty(queryDto.getSeasonName())){
+                cdto.setSeasonName(queryDto.getSeasonName());
+            }
             if(!StringUtils.isEmpty(queryDto.getState())){
                 cdto.setState(queryDto.getState());
             }else {
@@ -127,11 +153,11 @@ public class StudioServiceImpl implements IStudioService {
             if(!StringUtils.isEmpty(queryDto.getSupplierSpuNo())){
                 cdto.setSupplierSpuNo(queryDto.getSupplierSpuNo());
             }
-            if(queryDto.getStartTime()!=null){
-                cdto.setStartTime(queryDto.getStartTime());
+            if(!StringUtils.isEmpty(queryDto.getStartTime())){
+                cdto.setStartTime(sdfomat.parse(queryDto.getStartTime()));
             }
-            if(queryDto.getEndTime()!=null){
-                cdto.setEndTime(queryDto.getEndTime());
+            if(!StringUtils.isEmpty(queryDto.getEndTime())){
+                cdto.setEndTime(sdfomat.parse(queryDto.getEndTime()));
             }
         }
         return cdto;
@@ -152,10 +178,12 @@ public class StudioServiceImpl implements IStudioService {
 
             List<Long> filteredPendingId = results.stream().map(HubSlotSpuSupplierExtend :: getSpuPendingId).distinct().collect(Collectors.toList());
             HubSupplierSpuCriteriaDto dto = new HubSupplierSpuCriteriaDto();
+            dto.setPageSize(100000);
             dto.createCriteria().andSupplierSpuIdIn(filteredSpuId);
             List<HubSupplierSpuDto> spuDtoList =  hubSupplierSpuGateWay.selectByCriteria(dto);
 
             HubSpuPendingCriteriaDto pendDto = new HubSpuPendingCriteriaDto();
+            pendDto.setPageSize(100000);
             pendDto.createCriteria().andSpuPendingIdIn(filteredPendingId);
             List<HubSpuPendingDto>  pendingDtoList =  hubSpuPendingGateWay.selectByCriteria(pendDto);
 
@@ -202,13 +230,16 @@ public class StudioServiceImpl implements IStudioService {
 
 
     /*
-    * 获取供货商已申请的商品列表
+    * 获取供货商已申请的批次列表
     * */
     public SlotsVo getSupplierSlotList(String supplierId){
 
         SlotsVo products = new SlotsVo();
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
-        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSendStateNotEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
+        cdto.setPageSize(1000);
+        cdto.createCriteria().andApplySupplierIdEqualTo(supplierId)
+                .andApplyStatusEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue())
+                .andSendStateNotEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
         int total = studioSlotGateWay.countByCriteria(cdto);
         if(total>0) {
             List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
@@ -253,7 +284,7 @@ public class StudioServiceImpl implements IStudioService {
                     s.setCategoryFirst(firstCategory);
                     s.setCategorySecond(SecondCategory);
                 }
-
+                s.setSlotDate(x.getSlotDate());
                 s.setStudioId(x.getStudioId());
                 s.setSlotStatus(x.getSlotStatus());
                 s.setStudioSlotId(x.getStudioSlotId());
@@ -286,6 +317,7 @@ public class StudioServiceImpl implements IStudioService {
     * */
     private  List<StudioDicCategoryDto> getStudioDicCategoryDtos(List<Long> filteredStudioIds ){
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.setPageSize(100000);
         studioDto.createCriteria().andStudioIdIn(filteredStudioIds);
         return  studioDicCategoryGateWay.selectByCriteria(studioDto);
     }
@@ -295,6 +327,7 @@ public class StudioServiceImpl implements IStudioService {
    * */
     private  List<StudioDicCategoryDto> getStudioDicCategoryDtos(Long StudioIds ){
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.setPageSize(100000);
         studioDto.createCriteria().andStudioIdEqualTo(StudioIds);
         return  studioDicCategoryGateWay.selectByCriteria(studioDto);
     }
@@ -315,6 +348,7 @@ public class StudioServiceImpl implements IStudioService {
     * */
     private  List<StudioDicSlotDto> getStudioDicSlotDtos( Long StudioIds ){
         StudioDicSlotCriteriaDto studioDto = new StudioDicSlotCriteriaDto();
+        studioDto.setPageSize(100000);
         studioDto.createCriteria().andStudioIdEqualTo(StudioIds);
         return  studioDicSlotGateWay.selectByCriteria(studioDto);
     }
@@ -327,6 +361,7 @@ public class StudioServiceImpl implements IStudioService {
     private List<StudioSlotSpuSendDetailDto> getStudioSlotSpuSendDetail(List<String> filteredSlotNos){
 
         StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
+        dto.setPageSize(10000);
         dto.createCriteria().andSlotNoIn(filteredSlotNos);
         return studioSlotSpuSendDetailGateWay.selectByCriteria(dto);
     }
@@ -336,8 +371,85 @@ public class StudioServiceImpl implements IStudioService {
     private List<StudioSlotSpuSendDetailDto> getStudioSlotSpuSendDetail(String SlotNos){
 
         StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
+        dto.setPageSize(10000);
         dto.createCriteria().andSlotNoEqualTo(SlotNos);
         return studioSlotSpuSendDetailGateWay.selectByCriteria(dto);
+    }
+
+    /*释放申请的批次*/
+    public HubResponse<?> releaseStudioSlot(String supplierId ,Long slotId,String createUser){
+        try
+        {
+
+        StudioSlotDto studioSlotDto =  studioSlotGateWay.selectByPrimaryKey(slotId);
+        if(studioSlotDto==null || !studioSlotDto.getApplySupplierId().equals(supplierId)){
+            return HubResponse.errorResp("slot not found");
+        }
+        if(studioSlotDto.getSendState() > 0){
+            return HubResponse.errorResp("This slot can't be deleted!");
+        }
+        StudioSlotSpuSendDetailCriteriaDto detailCriteriaDto = new StudioSlotSpuSendDetailCriteriaDto();
+        detailCriteriaDto.setPageSize(10000);
+        detailCriteriaDto.createCriteria().andStudioSlotIdEqualTo(slotId);
+        List<StudioSlotSpuSendDetailDto> listDetail =  studioSlotSpuSendDetailGateWay.selectByCriteria(detailCriteriaDto);
+
+        if(listDetail !=null && listDetail.size()>0){
+            //更新slot spu 状态
+            List<Long> filterIds = listDetail.stream().map(StudioSlotSpuSendDetailDto::getSlotSpuSupplierId).collect(Collectors.toList());
+//            HubSlotSpuSupplierWithCriteriaDto spuSupplierDto = new HubSlotSpuSupplierWithCriteriaDto();
+//
+//            HubSlotSpuSupplierDto slotDto = new HubSlotSpuSupplierDto();
+//            slotDto.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
+//            spuSupplierDto.setHubSlotSpuSupplier(slotDto);
+//
+//            HubSlotSpuSupplierCriteriaDto criteriaDto = new HubSlotSpuSupplierCriteriaDto();
+//            criteriaDto.createCriteria().andSlotSpuSupplierIdIn(filterIds);
+//            spuSupplierDto.setCriteria(criteriaDto);
+//            hubSlotSpuSupplierGateway.updateByCriteriaSelective(spuSupplierDto);
+            //需要调用重任的删除接口
+            hubSlotSpuSupplierService.updateSlotSpuSupplierWhenRemoveFromSlot(filterIds);
+
+            StudioSlotSpuSendDetailCriteriaDto detailDto = new StudioSlotSpuSendDetailCriteriaDto();
+            //删除发送详情
+            List<Long> ids = listDetail.stream().map(StudioSlotSpuSendDetailDto::getStudioSlotSpuSendDetailId).collect(Collectors.toList());
+            detailDto.createCriteria().andStudioSlotSpuSendDetailIdIn(ids);
+            studioSlotSpuSendDetailGateWay.deleteByCriteria(detailDto);
+        }
+
+        studioSlotDto.setSlotStatus(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+        studioSlotDto.setApplyStatus(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
+        studioSlotDto.setUpdateTime(new Date());
+        studioSlotDto.setApplyUser(createUser);
+        int i=  studioSlotGateWay.updateByPrimaryKey(studioSlotDto);
+        if(i>0){
+            return HubResponse.successResp(null);
+        }else {
+            return HubResponse.errorResp("slot not fail,please try again!");
+        }
+        }
+        catch (Exception ex){
+            log.info("releaseStudioSlot Exception " + ex.getMessage());
+            return HubResponse.errorResp("Server error");
+        }
+    }
+    /**
+     * 删除供货商商品
+     * @param supplierId
+     * @param slotSSId
+     * @param createUser
+     * @return
+     */
+    public  boolean delProductFromSlot(String supplierId ,Long slotSSId,String createUser){
+
+        HubSlotSpuSupplierDto spuSupplierDto = hubSlotSpuSupplierGateway.selectByPrimaryKey(slotSSId);
+        if(spuSupplierDto.getSupplierId().equals(supplierId)){
+            spuSupplierDto.setUpdateUser(createUser);
+            spuSupplierDto.setUpdateTime(new Date());
+            spuSupplierDto.setDataState((byte)0);
+            return hubSlotSpuSupplierGateway.updateByPrimaryKey(spuSupplierDto)>0;
+        }
+
+        return false;
     }
 
 
@@ -347,6 +459,7 @@ public class StudioServiceImpl implements IStudioService {
     public SlotInfoExtends getSlotInfo(String supplierId ,String slotNo){
         SlotInfoExtends slot  = new SlotInfoExtends();
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
+        cdto.setPageSize(10000);
         cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSlotNoEqualTo(slotNo);
         List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(cdto);
 
@@ -445,35 +558,42 @@ public class StudioServiceImpl implements IStudioService {
                         (slotInfo.getSendState() !=null &&  slotInfo.getSendState() != StudioSlotSendState.WAIT_SEND.getIndex().byteValue())) {
                     throw new EphubException("C2", "Status of this slot is incorrect");
                 }
-                if (slotInfo.getMaxNum() <= slotInfo.getSlotProductList().size()) {
+                List<SlotProduct> productList = slotInfo.getSlotProductList();
+
+                if (slotInfo.getMaxNum() <= productList.size()) {
                     throw new EphubException("C3", "Amount of the slot reaches the maximal capacity");
                 }
-                HubSlotSpuSupplierCriteriaDto ssdto = new HubSlotSpuSupplierCriteriaDto();
-                ssdto.createCriteria().andSlotSpuSupplierIdIn(slotSSIds);
 
-                List<HubSlotSpuSupplierDto> products = hubSlotSpuSupplierGateway.selectByCriteria(ssdto);
+                SlotSpuSupplierExtendQueryDto queryDto = new SlotSpuSupplierExtendQueryDto();
+                queryDto.setPageSize(1000000);
+                queryDto.setSlotSpuSupplierIds(slotSSIds);
+                List<HubSlotSpuSupplierExtend> products = hubSlotSpuSupplierExtendGateWay.selectByQuery(queryDto);
 
                 if(products!=null && products.size()>0){
-
-                    for (HubSlotSpuSupplierDto product :products){
+                    for (HubSlotSpuSupplierExtend product :products){
+                        String code= product.getSupplierSpuModel();
                         //region  判断是否处于可添加商品状态
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                             //throw new EphubException("C5", "该商品已经加入发货单了");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(), "C5", "The product has already added to the slot"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(), "C5", "The product has already added to the slot"));
                             continue;
                         }
                         if (product.getState() == SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue()) {
                            // throw new EphubException("C6", "该商品已经发货了");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C6", "The product has already been shipped"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"C6", "The product has already been shipped"));
                             continue;
                         }
                         if (slotInfo.getCategoryFirst() != null) {
                             HubSpuPendingDto pendingDtoList = hubSpuPendingGateWay.selectByPrimaryKey(product.getSpuPendingId());
+
+
+                            //Optional<HubSpuPendingDto> pendingDto = pendingDtoList.stream().filter(spu -> spu.getSpuPendingId() .equals(x.getSpuPendingId()) ).findFirst();
+
                             if (pendingDtoList != null && pendingDtoList.getHubCategoryNo() != null ) {
                                 String categoryNo = this.categoryMap.get(pendingDtoList.getHubCategoryNo().toLowerCase())!=null ?this.categoryMap.get(pendingDtoList.getHubCategoryNo().toLowerCase()).toString(): pendingDtoList.getHubCategoryNo();
                                 if (slotInfo.getCategoryFirst().stream().filter(x-> categoryNo.startsWith(x.trim())).count()<=0) {
                                     //throw new EphubException("C7", "该商品与目标发货单类型不符");
-                                    updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
+                                    updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"C7", "The categories of this product and the slot are not match"));
                                     continue;
                                 }
                             }
@@ -497,29 +617,41 @@ public class StudioServiceImpl implements IStudioService {
                         data.setSupplierBrandName(supProduct.getSupplierBrandname());
                         data.setSupplierCategoryName(supProduct.getSupplierCategoryname());
                         data.setSupplierSeasonName(supProduct.getSupplierSeasonname());
+                        data.setBarcode(slotNo + product.getSlotSpuNo());
+                        data.setSendState(StudioSlotSendState.WAIT_SEND.getIndex().byteValue());
+                        data.setArriveState(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
                         data.setCreateTime(new Date());
                         data.setCreateUser(createUser);
                         Long id = studioSlotSpuSendDetailGateWay.insert(data);
                         if (id > 0) {
-                            HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
-                            upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-                            upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
-                            hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+//                            HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
+//                            upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+//                            upSlotSpu.setSlotNo(slotNo);
+//                            upSlotSpu.setState(SlotSpuSupplierState.ADD_INVOICE.getIndex().byteValue());
+//                            hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+
+                           //TODO: 需要调用重任的添加接口未验证
+                            SlotSpuSendDetailCheckDto checkDto = new SlotSpuSendDetailCheckDto();
+                            checkDto.setSlotNo(product.getSlotNo());
+                            checkDto.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+                            checkDto.setUserName(createUser);
+                            CommonResult commonResult = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSelectProduct(checkDto);
+                            if(!commonResult.isSuccess()){
+                                updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
+                                continue;
+                            }
+
                             slotInfo.setCountNum(slotInfo.getCountNum() + 1);
                             successNum  = successNum +1;
-//                            SlotProductEditVo successVo = new SlotProductEditVo();
-//                            successVo.setSupplierId(supplierId);
-//                            successVo.setSlotNo(slotNo);
-//                            successVo.setSlotInfo(slotInfo);
-//                            response.setMsg("商品加入发货单成功");
-//                            response.setContent(successVo);
+
                         } else {
                             //throw new EphubException("W0", "商品加入发货单失败");
-                            updatedVo.addErrorConent(setCheckErrorMsg(product.getSupplierSpuId(),product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
+                            updatedVo.addErrorConent(setCheckErrorMsg(code,product.getSlotSpuSupplierId(),"W0", "Add product to slot failed"));
                         }
                         //endregion
                     }
-                    //TODO: 需要调用重任的添加接口
+
+
                     updatedVo.setSuccessCount(successNum);
                     if(updatedVo.getErrorConent()!=null){
                         failNum = updatedVo.getErrorConent().size();
@@ -545,9 +677,9 @@ public class StudioServiceImpl implements IStudioService {
     }
 
 
-    private ErrorConent setCheckErrorMsg(Long spuNo,Long ssid,String errorCode,String errorMsg){
+    private ErrorConent setCheckErrorMsg(String spuNo,Long ssid,String errorCode,String errorMsg){
         ErrorConent conent = new ErrorConent();
-        conent.setSpuNo(spuNo.toString());
+        conent.setSpuNo(spuNo);
         conent.setSsid(ssid);
         conent.setErrorCode(errorCode);
         conent.setErrorMsg(errorMsg);
@@ -591,12 +723,16 @@ public class StudioServiceImpl implements IStudioService {
             dto.createCriteria().andSupplierIdEqualTo(supplierId).andStudioSlotSpuSendDetailIdEqualTo(slotSSDId);
            int count =  studioSlotSpuSendDetailGateWay.deleteByCriteria(dto);
            if(count>0){
-               HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
-               upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
-               upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
-               hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
+               List<Long> ids = new ArrayList<Long>();
+               ids.add(slotSSId);
+               hubSlotSpuSupplierService.updateSlotSpuSupplierWhenRemoveFromSlot(ids);
+//
+//               //TODO 需要调用删除商品接口
+//               HubSlotSpuSupplierDto upSlotSpu = new HubSlotSpuSupplierDto();
+//               upSlotSpu.setSlotSpuSupplierId(product.getSlotSpuSupplierId());
+//               upSlotSpu.setState(SlotSpuSupplierState.WAIT_SEND.getIndex().byteValue());
+//               hubSlotSpuSupplierGateway.updateByPrimaryKeySelective(upSlotSpu);
 
-               //TODO: 需要调用重任的删除接口
            }else {
                updatedVo = setErrorMsg(response, slotNo, "D0", "delete product to slot failed");
            }
@@ -628,6 +764,11 @@ public class StudioServiceImpl implements IStudioService {
             if(slotInfo==null){
                 throw new EphubException("C1", "Slot is not found");
             }else {
+                if(slotInfo.getSendState() == StudioSlotSendState.ISPRINT.getIndex().byteValue()){
+                    response.setCode("2");
+                    response.setMsg("This slot has been printed,Do you want to print again?");
+                    return response;
+                }
                 if(slotInfo.getSendState()!=null && slotInfo.getSendState() == StudioSlotSendState.SEND.getIndex().byteValue()){
                     throw new EphubException("C8", "The slot is shipped");
                 }
@@ -638,6 +779,30 @@ public class StudioServiceImpl implements IStudioService {
                 if(slotInfo.getMaxNum() < countNm ){
                     throw new EphubException("C10", "Amount of the slot is beyond the maximal limitation");
                 }
+                List<SlotProduct> slotProducts =slotInfo.getSlotProductList();
+
+                // region 发货时调重任的东西，进行发货验证
+                List<SlotSpuSendDetailCheckDto> checkDtos = new ArrayList<SlotSpuSendDetailCheckDto>();
+                checkDtos = slotProducts.stream().collect(ArrayList<SlotSpuSendDetailCheckDto>::new,
+                        (list, item) -> {
+                            SlotSpuSendDetailCheckDto dto = new SlotSpuSendDetailCheckDto();
+                            dto.setStudioSlotSpuSendDetailId(item.getId());
+                            dto.setSlotSpuSupplierId(item.getSlotSpuSupplierId());
+                            dto.setSlotNo(slotNo);
+                            list.add(dto);
+                        },(one, two)->one.addAll(two));
+
+                List<SlotSpuSendDetailCheckDto> resCheckDtos = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSend(checkDtos);
+
+                if(resCheckDtos.stream().filter(x-> !x.isResultSign()).count()>0){
+                    List<Long> ids = resCheckDtos.stream().filter(x-> !x.isResultSign()).map(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId).distinct().collect(Collectors.toList());
+                    List<String> spuIds = slotProducts.stream().filter(x-> ids.contains(x.getId())).map(SlotProduct::getSlotSpuNo).collect(Collectors.toList());
+                    throw new EphubException("C11",  String.join(",",spuIds) +"had been sent ,no need send!");
+                }
+                //endregion
+
+
+
                 if(slotInfo.getMaxNum() > countNm ){
                     response.setCode("2");
                     response.setMsg("Slot is not full yet ready to ship");
@@ -646,15 +811,7 @@ public class StudioServiceImpl implements IStudioService {
                     response.setMsg("Slot is full and ready to ship");
                 }
 
-                //TODO: 需要调用重任的验证接口
-                StudioSlotDto studioSlotDto = new StudioSlotDto();
-                studioSlotDto.setStudioSlotId(slotInfo.getStudioSlotId());
-                studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
-                studioSlotDto.setUpdateTime(new Date());
-                int i = studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto);
-                if(i==0){
-                    response.setMsg("print is failed");
-                }
+
 
             }
         }catch (EphubException e){
@@ -668,8 +825,19 @@ public class StudioServiceImpl implements IStudioService {
         return  response;
     }
 
+    public boolean slotPrint(Long slotId){
+        StudioSlotDto studioSlotDto = new StudioSlotDto();
+        studioSlotDto.setStudioSlotId(slotId);
+        studioSlotDto.setSendState(StudioSlotSendState.ISPRINT.getIndex().byteValue());
+        studioSlotDto.setUpdateTime(new Date());
+        return studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto)>0;
+    }
 
-    public boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String createUser){
+
+    /*
+    * 添加物流单号
+    * */
+    public boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String memo,String createUser){
        try {
            StudioSlotLogistictTrackDto trackDto = new StudioSlotLogistictTrackDto();
            trackDto.setTrackName(logisticName);
@@ -678,8 +846,37 @@ public class StudioServiceImpl implements IStudioService {
            trackDto.setType((byte) 0);
            trackDto.setCreateUser(createUser);
            trackDto.setCreateTime(new Date());
+           if(studioSlotLogistictTrackGateWay.insertSelective(trackDto)>0){
+               StudioSlotDto studioSlotDto = new StudioSlotDto();
+               studioSlotDto.setStudioSlotId(studioSlotId);
+               studioSlotDto.setSendTime(new Date());
+               studioSlotDto.setSlotStatus(StudioSlotState.SEND.getIndex().byteValue());
+               studioSlotDto.setSendState(StudioSlotSendState.SEND.getIndex().byteValue());
+               studioSlotDto.setTrackNo(trackingNo);
+               if(!StringUtils.isEmpty(memo)) {
+                   studioSlotDto.setMemo(memo);
+               }
+               studioSlotDto.setUpdateTime(new Date());
+               studioSlotDto.setSendUser(createUser);
+               int i =  studioSlotGateWay.updateByPrimaryKeySelective(studioSlotDto);
+               // 更新详情
+               if(i>0){
+                   StudioSlotSpuSendDetailWithCriteriaDto detailWithCriteriaDto = new StudioSlotSpuSendDetailWithCriteriaDto();
+                   StudioSlotSpuSendDetailDto detailDto = new StudioSlotSpuSendDetailDto();
+                   detailDto.setSendState(StudioSlotSupplierSendState.SEND.getIndex().byteValue());
+                   detailDto.setSendUser(createUser);
+                   detailDto.setSendTime(new Date());
+                   detailWithCriteriaDto.setStudioSlotSpuSendDetail(detailDto);
+                   StudioSlotSpuSendDetailCriteriaDto detailCriteriaDto = new StudioSlotSpuSendDetailCriteriaDto();
+                   detailCriteriaDto.createCriteria().andStudioSlotIdEqualTo(studioSlotId);
+                   detailWithCriteriaDto.setCriteria(detailCriteriaDto);
+                   studioSlotSpuSendDetailGateWay.updateByCriteriaSelective(detailWithCriteriaDto);
+               }
 
-           return  studioSlotLogistictTrackGateWay.insertSelective(trackDto)>0;
+           }
+
+           return true;
+
        }catch (Exception ex){
            log.info("insertSlotLogistic Exception " + ex.getMessage());
            return false;
@@ -689,6 +886,7 @@ public class StudioServiceImpl implements IStudioService {
     public StudioSlotLogistictTrackDto  getSlotLogisticInfo(Long studioSlotId){
         try {
             StudioSlotLogistictTrackCriteriaDto dto = new StudioSlotLogistictTrackCriteriaDto();
+            dto.setPageSize(100000);
             dto.createCriteria().andSendMasterIdEqualTo(studioSlotId).andTypeEqualTo((byte)0);
             List<StudioSlotLogistictTrackDto> result = studioSlotLogistictTrackGateWay.selectByCriteria(dto);
             if(result!=null && result.size()>0){
@@ -715,47 +913,56 @@ public class StudioServiceImpl implements IStudioService {
      * @param endTime
      * @return
      */
-    public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos){
-        return getStudioSlot(StudioId,startTime,endTime,categoryNos,1,10);
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,Long supplierId){
+        return getStudioSlot(StudioId,startTime,endTime,categoryNos,supplierId,1,10 ,0);
     }
-    public SlotsVo  getStudioSlot(Long StudioId,Date startTime,Date endTime,String categoryNos,int pageIndex,int pageSize){
+    public SlotsVo  getStudioSlot(Long StudioId,String startTime,String endTime,String categoryNos,Long supplierId,int pageIndex,int pageSize,int history) {
         SlotsVo studioSlotsList = new SlotsVo();
-        StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
-        StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria().andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
-        if(StudioId!=null){
-            criteria.andStudioIdEqualTo(StudioId);
-        }
-        //数据结构设计不合理，额外的需要验证分类
-        if(!StringUtils.isEmpty(categoryNos)){
-           List<String> list=  Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
-            StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
-            if(list!=null && list.size()>0) {
-                studioDto.createCriteria().andCategoryFirstIn(list);
+        try {
+            StudioSlotCriteriaDto dto = new StudioSlotCriteriaDto();
+            StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
+            ///T-ODO：：注意 测试时注销的，需要放开
+            if(!StringUtils.isEmpty(history) && history ==1){
+                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+                criteria.andApplySupplierIdEqualTo(supplierId.toString());
+            }else{
+                criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
             }
-            List<StudioDicCategoryDto> studioDicCategoryDtoList =  studioDicCategoryGateWay.selectByCriteria(studioDto);
-            List<Long> studioIds = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto::getStudioId).distinct().collect(Collectors.toList());
-            criteria.andStudioIdIn(studioIds);
-        }
 
-        if(startTime!=null && endTime ==null){
-            criteria.andCreateTimeGreaterThanOrEqualTo(startTime);
-        }
-        if(startTime==null && endTime!=null){
-            criteria.andCreateTimeLessThan(endTime);
-        }
-        if(startTime!=null && endTime!=null){
-            criteria.andCreateTimeBetween(startTime,endTime);
-        }
-        dto.setPageNo(pageIndex > 0 ? pageIndex : 1);
-        dto.setPageSize(pageSize > 0 ? pageSize : 10);
+            if (StudioId != null) {
+                criteria.andStudioIdEqualTo(StudioId);
+            }
+            //数据结构设计不合理，额外的需要验证分类
+            if (!StringUtils.isEmpty(categoryNos)) {
+                List<String> list = Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
+                StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+                if (list != null && list.size() > 0) {
+                    studioDto.createCriteria().andCategoryFirstIn(list);
+                }
+                List<StudioDicCategoryDto> studioDicCategoryDtoList = studioDicCategoryGateWay.selectByCriteria(studioDto);
+                List<Long> studioIds = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto::getStudioId).distinct().collect(Collectors.toList());
+                criteria.andStudioIdIn(studioIds);
+            }
 
+            if (!StringUtils.isEmpty(startTime)) {
+                criteria.andPlanArriveTimeGreaterThan(sdfomat.parse(startTime));
+            }
+            if ( !StringUtils.isEmpty(endTime)) {
+                criteria.andPlanArriveTimeLessThanOrEqualTo(sdfomat.parse(endTime));
+            }
+            dto.setPageNo(pageIndex > 0 ? pageIndex : 1);
+            dto.setPageSize(pageSize > 0 ? pageSize : 10);
 
-        int total = studioSlotGateWay.countByCriteria(dto);
-        if(total>0) {
-            List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(dto);
-            studioSlotsList.setSlotInfoList(SlotList(results));
+            dto.setOrderByClause("plan_arrive_time");
+            int total = studioSlotGateWay.countByCriteria(dto);
+            if (total > 0) {
+                List<StudioSlotDto> results = studioSlotGateWay.selectByCriteria(dto);
+                studioSlotsList.setSlotInfoList(SlotList(results));
+            }
+            studioSlotsList.setTotal(total);
+        } catch (Exception ex) {
+            log.info("getStudioSlot Exception " + ex.getMessage());
         }
-        studioSlotsList.setTotal(total);
         return studioSlotsList;
     }
 
@@ -771,6 +978,7 @@ public class StudioServiceImpl implements IStudioService {
         studioSlotDto.setApplySupplierId(upDto.getSupplierId().toString());
         studioSlotDto.setApplyUser(upDto.getSupplierUser());
         studioSlotDto.setApplyTime(new Date());
+        studioSlotDto.setSlotStatus(StudioSlotState.APPLYED.getIndex().byteValue());
         studioSlotDto.setApplyStatus(StudioSlotApplyState.APPLYED.getIndex().byteValue());
         List<ErrorConent> result = new ArrayList<ErrorConent>();
         for (Long slotId : slotIds){
@@ -783,7 +991,7 @@ public class StudioServiceImpl implements IStudioService {
             }
             if(status != StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue() || i==0){
                 ErrorConent errorConent = new ErrorConent();
-                errorConent.setErrorCode(slotId.toString());
+                errorConent.setErrorCode(studioSlotDto.getSlotNo());
                 errorConent.setErrorMsg(slotId.toString()+"Application failure");
                 result.add(errorConent);
             }
@@ -793,16 +1001,21 @@ public class StudioServiceImpl implements IStudioService {
 
     }
 
+
     public List<StudioDto> getStudioList(){
         StudioCriteriaDto dto = new  StudioCriteriaDto();
-
+        dto.setPageSize(10000);
         return  studioGateWay.selectByCriteria(dto);
 
     }
-
+    /*
+    * 根据摄影分类获取摄影棚
+    *
+    * */
     public List<StudioDto> getStudioListByCategory(List<String> categoryNos){
         List<StudioDto> studioDtos = new ArrayList<StudioDto>();
         StudioDicCategoryCriteriaDto studioDto = new StudioDicCategoryCriteriaDto();
+        studioDto.setPageSize(10000);
         if(categoryNos!=null && categoryNos.size()>0) {
             studioDto.createCriteria().andCategoryFirstIn(categoryNos);
         }
@@ -815,8 +1028,10 @@ public class StudioServiceImpl implements IStudioService {
 
             List<Long> filteredStudioId = studioDicCategoryDtoList.stream().map(StudioDicCategoryDto :: getStudioId).distinct().collect(Collectors.toList());
             StudioCriteriaDto dto = new  StudioCriteriaDto();
+            StudioCriteriaDto.Criteria criteria = new StudioCriteriaDto.Criteria();
+
             if(filteredStudioId!=null &&filteredStudioId.size()>0) {
-                dto.createCriteria().andStudioIdIn(filteredStudioId);
+                criteria.andStudioIdIn(filteredStudioId);
             }
             studioDtos =  studioGateWay.selectByCriteria(dto);
         }

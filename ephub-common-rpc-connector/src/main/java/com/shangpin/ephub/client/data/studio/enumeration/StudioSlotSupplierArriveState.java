@@ -24,11 +24,13 @@ public enum StudioSlotSupplierArriveState {
      */
     NOT_ACCEPTANCE(2,"NOT_ACCEPTANCE"),
 
-    /**
-     * 未收到
-     */
 
-    NOT_ARRIVE(3,"NOT_ARRIVE");
+
+
+    /**
+     * 摄影棚确认
+     */
+    STUDIO_CONFIRM(3,"STUDIO_CONFIRM");
 
 
 

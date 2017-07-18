@@ -30,6 +30,11 @@ public class StudioSlotReturnDetail implements Serializable {
     private String supplierId;
 
     /**
+     * 供货商名称
+     */
+    private String supplierName;
+
+    /**
      * SPUPENDING表主键
      */
     private Long spuPendingId;
@@ -70,14 +75,24 @@ public class StudioSlotReturnDetail implements Serializable {
     private String supplierSeasonName;
 
     /**
-     * 0：待发货  1:供货商发货  
+     * 尚品状态 0 正常 1 损坏 2 丢失
+     */
+    private Byte state;
+
+    /**
+     * 0：待发货  1:摄影棚发货  
      */
     private Byte sendState;
 
     /**
-     * 0: 摄影棚收货  1：摄影棚验收不通过   2:供货商确认
+     * 0:  供货商待验货 1：供货商验货通过  2：供货商验收不通过   3:摄影棚确认
      */
     private Byte arriveState;
+
+    /**
+     * 扫码用的条形码
+     */
+    private String barcode;
 
     /**
      * 备份
@@ -176,6 +191,14 @@ public class StudioSlotReturnDetail implements Serializable {
         this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName == null ? null : supplierName.trim();
+    }
+
     public Long getSpuPendingId() {
         return spuPendingId;
     }
@@ -240,6 +263,14 @@ public class StudioSlotReturnDetail implements Serializable {
         this.supplierSeasonName = supplierSeasonName == null ? null : supplierSeasonName.trim();
     }
 
+    public Byte getState() {
+        return state;
+    }
+
+    public void setState(Byte state) {
+        this.state = state;
+    }
+
     public Byte getSendState() {
         return sendState;
     }
@@ -254,6 +285,14 @@ public class StudioSlotReturnDetail implements Serializable {
 
     public void setArriveState(Byte arriveState) {
         this.arriveState = arriveState;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode == null ? null : barcode.trim();
     }
 
     public String getMemo() {
@@ -355,6 +394,7 @@ public class StudioSlotReturnDetail implements Serializable {
         sb.append(", slotNo=").append(slotNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", supplierName=").append(supplierName);
         sb.append(", spuPendingId=").append(spuPendingId);
         sb.append(", supplierSpuId=").append(supplierSpuId);
         sb.append(", slotSpuNo=").append(slotSpuNo);
@@ -363,8 +403,10 @@ public class StudioSlotReturnDetail implements Serializable {
         sb.append(", supplierBrandName=").append(supplierBrandName);
         sb.append(", supplierCategoryName=").append(supplierCategoryName);
         sb.append(", supplierSeasonName=").append(supplierSeasonName);
+        sb.append(", state=").append(state);
         sb.append(", sendState=").append(sendState);
         sb.append(", arriveState=").append(arriveState);
+        sb.append(", barcode=").append(barcode);
         sb.append(", memo=").append(memo);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -398,6 +440,7 @@ public class StudioSlotReturnDetail implements Serializable {
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getSupplierName() == null ? other.getSupplierName() == null : this.getSupplierName().equals(other.getSupplierName()))
             && (this.getSpuPendingId() == null ? other.getSpuPendingId() == null : this.getSpuPendingId().equals(other.getSpuPendingId()))
             && (this.getSupplierSpuId() == null ? other.getSupplierSpuId() == null : this.getSupplierSpuId().equals(other.getSupplierSpuId()))
             && (this.getSlotSpuNo() == null ? other.getSlotSpuNo() == null : this.getSlotSpuNo().equals(other.getSlotSpuNo()))
@@ -406,8 +449,10 @@ public class StudioSlotReturnDetail implements Serializable {
             && (this.getSupplierBrandName() == null ? other.getSupplierBrandName() == null : this.getSupplierBrandName().equals(other.getSupplierBrandName()))
             && (this.getSupplierCategoryName() == null ? other.getSupplierCategoryName() == null : this.getSupplierCategoryName().equals(other.getSupplierCategoryName()))
             && (this.getSupplierSeasonName() == null ? other.getSupplierSeasonName() == null : this.getSupplierSeasonName().equals(other.getSupplierSeasonName()))
+            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
             && (this.getSendState() == null ? other.getSendState() == null : this.getSendState().equals(other.getSendState()))
             && (this.getArriveState() == null ? other.getArriveState() == null : this.getArriveState().equals(other.getArriveState()))
+            && (this.getBarcode() == null ? other.getBarcode() == null : this.getBarcode().equals(other.getBarcode()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -430,6 +475,7 @@ public class StudioSlotReturnDetail implements Serializable {
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getSupplierName() == null) ? 0 : getSupplierName().hashCode());
         result = prime * result + ((getSpuPendingId() == null) ? 0 : getSpuPendingId().hashCode());
         result = prime * result + ((getSupplierSpuId() == null) ? 0 : getSupplierSpuId().hashCode());
         result = prime * result + ((getSlotSpuNo() == null) ? 0 : getSlotSpuNo().hashCode());
@@ -438,8 +484,10 @@ public class StudioSlotReturnDetail implements Serializable {
         result = prime * result + ((getSupplierBrandName() == null) ? 0 : getSupplierBrandName().hashCode());
         result = prime * result + ((getSupplierCategoryName() == null) ? 0 : getSupplierCategoryName().hashCode());
         result = prime * result + ((getSupplierSeasonName() == null) ? 0 : getSupplierSeasonName().hashCode());
+        result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         result = prime * result + ((getSendState() == null) ? 0 : getSendState().hashCode());
         result = prime * result + ((getArriveState() == null) ? 0 : getArriveState().hashCode());
+        result = prime * result + ((getBarcode() == null) ? 0 : getBarcode().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());

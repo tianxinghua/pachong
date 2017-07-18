@@ -1200,6 +1200,136 @@ public class StudioSlotSpuSendDetailCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andBarcodeIsNull() {
+            addCriterion("barcode is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIsNotNull() {
+            addCriterion("barcode is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeEqualTo(String value) {
+            addCriterion("barcode =", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotEqualTo(String value) {
+            addCriterion("barcode <>", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeGreaterThan(String value) {
+            addCriterion("barcode >", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeGreaterThanOrEqualTo(String value) {
+            addCriterion("barcode >=", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLessThan(String value) {
+            addCriterion("barcode <", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLessThanOrEqualTo(String value) {
+            addCriterion("barcode <=", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeLike(String value) {
+            addCriterion("barcode like", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotLike(String value) {
+            addCriterion("barcode not like", value, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeIn(List<String> values) {
+            addCriterion("barcode in", values, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotIn(List<String> values) {
+            addCriterion("barcode not in", values, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeBetween(String value1, String value2) {
+            addCriterion("barcode between", value1, value2, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andBarcodeNotBetween(String value1, String value2) {
+            addCriterion("barcode not between", value1, value2, "barcode");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignIsNull() {
+            addCriterion("upload_pic_sign is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignIsNotNull() {
+            addCriterion("upload_pic_sign is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignEqualTo(Byte value) {
+            addCriterion("upload_pic_sign =", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignNotEqualTo(Byte value) {
+            addCriterion("upload_pic_sign <>", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignGreaterThan(Byte value) {
+            addCriterion("upload_pic_sign >", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignGreaterThanOrEqualTo(Byte value) {
+            addCriterion("upload_pic_sign >=", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignLessThan(Byte value) {
+            addCriterion("upload_pic_sign <", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignLessThanOrEqualTo(Byte value) {
+            addCriterion("upload_pic_sign <=", value, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignIn(List<Byte> values) {
+            addCriterion("upload_pic_sign in", values, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignNotIn(List<Byte> values) {
+            addCriterion("upload_pic_sign not in", values, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignBetween(Byte value1, Byte value2) {
+            addCriterion("upload_pic_sign between", value1, value2, "uploadPicSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadPicSignNotBetween(Byte value1, Byte value2) {
+            addCriterion("upload_pic_sign not between", value1, value2, "uploadPicSign");
+            return (Criteria) this;
+        }
+
         public Criteria andMemoIsNull() {
             addCriterion("memo is null");
             return (Criteria) this;

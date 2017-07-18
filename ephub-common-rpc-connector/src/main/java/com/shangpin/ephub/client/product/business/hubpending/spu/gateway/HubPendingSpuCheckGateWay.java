@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.product.business.hubpending.spu.dto.HubSpuPendingCheckProperty;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.PendingProducts;
 
@@ -27,6 +28,13 @@ public interface HubPendingSpuCheckGateWay {
 	 */
 	@RequestMapping(value = "/pending-spu/check-spu", method = RequestMethod.POST,consumes = "application/json")
 	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto);
+	/**
+	 * HUB数据入库前校验
+	 * @param dto 数据传输对象
+	 * @return 校验结果：
+	 */
+	@RequestMapping(value = "/pending-spu/check-spu-property", method = RequestMethod.POST,consumes = "application/json")
+	public HubSpuPendingDto checkSpuProperty(@RequestBody HubSpuPendingCheckProperty property);
 	/**
 	 * 待处理页面导出spu异步调用
 	 * @param pendingQuryDto 查询条件

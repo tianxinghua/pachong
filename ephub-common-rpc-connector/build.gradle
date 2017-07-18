@@ -1,6 +1,5 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'maven'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -9,7 +8,7 @@ jar {
 	version = '0.0.1-SNAPSHOT'
 }
 
-version = '1.0.31-dev-studio-SNAPSHOT'
+version = '1.1.22-dev-studio-SNAPSHOT'
 
 jar {
     manifest {
@@ -23,8 +22,9 @@ repositories {
 }
 
 dependencies {
-	compile('com.alibaba:fastjson:1.2.22')
+	compile('com.alibaba:fastjson:1.2.23')
 	compileOnly('org.projectlombok:lombok:1.16.12')
+	compile('org.apache.poi:poi-ooxml:3.8')
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-feign', version: '1.2.3.RELEASE'
 	compile group: 'org.springframework', name: 'spring-web', version: '4.3.4.RELEASE'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'

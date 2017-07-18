@@ -8,14 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
-import com.shangpin.ephub.product.business.common.util.ConstantProperty;
-import com.shangpin.ephub.product.business.ui.mapp.season.dto.HubSupplierSeasonDicRequestDto;
 
 /**
  * Created by loyalty on 16/12/16. 数据层的处理
@@ -142,5 +140,11 @@ public class HubSeasonDicService {
 
 	public void updateHubSeasonDicById(HubSeasonDicDto dicDto) {
 		hubSeasonDicGateWay.updateByPrimaryKeySelective(dicDto);
+	}
+
+	public List<HubSeasonDicDto> getHubSeasonDicById(Long seasonDicId) {
+		HubSeasonDicCriteriaDto hubSeasonDicCriteriaDto = new HubSeasonDicCriteriaDto();
+		hubSeasonDicCriteriaDto.createCriteria().andSeasonDicIdEqualTo(seasonDicId);
+		return hubSeasonDicGateWay.selectByCriteria(hubSeasonDicCriteriaDto);
 	}
 }

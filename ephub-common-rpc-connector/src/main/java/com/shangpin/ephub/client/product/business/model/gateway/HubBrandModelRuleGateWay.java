@@ -26,7 +26,7 @@ public interface HubBrandModelRuleGateWay {
 	 */
 	@Deprecated
 	@RequestMapping(value = "/hub-brand-model-rule/verify", method = RequestMethod.POST,consumes = "application/json")
-	public BrandModelResult verify(BrandModelDto dto);
+	public BrandModelResult verify1(BrandModelDto dto);
 	/**
 	 * 校验供应商品牌型号是否符合品牌方型号规则：校验品牌并且校验品类
 	 * @param dto 数据传输对象

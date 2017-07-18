@@ -31,7 +31,12 @@
 
       <where>
         s.data_state = 1
-
+          <if test="slotSpuSupplierIds != null">
+              and s.slot_spu_supplier_id in
+              <foreach item="item" index="index" collection="slotSpuSupplierIds" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
           <if test="supplierId != null">
           and s.supplier_id = #{supplierId}
           </if>
@@ -44,6 +49,9 @@
           <if test="supplierSpuId != null">
               and  s.supplier_spu_id = #{supplierSpuId}
           </if>
+          <if test="slotSpuNo != null">
+              and  s.slot_spu_no = #{slotSpuNo}
+          </if>
 
           <if test="brandName != null">
               and  p.supplier_brandname like concat('',#{brandName},'%')
@@ -51,6 +59,9 @@
 
           <if test="categoryName != null">
               and p.supplier_categoryname like concat('',#{categoryName},'%')
+          </if>
+          <if test="seasonName != null">
+              and p.supplier_seasonname like concat('',#{seasonName},'%')
           </if>
           <if test="supplierSpuNo != null">
               and p.supplier_spu_no = #{supplierSpuNo}
@@ -65,7 +76,7 @@
               and s.create_time >= #{startTime}
           </if>
           <if test="endTime != null">
-              and s.create_time >= #{endTime}
+              and s.create_time &lt;= #{endTime}
           </if>
         ORDER BY s.create_time desc
         <if test="startRow != null" >
@@ -83,11 +94,20 @@
 
         <where>
             s.data_state = 1
+            <if test="slotSpuSupplierIds != null">
+                and s.slot_spu_supplier_id in
+                <foreach item="item" index="index" collection="slotSpuSupplierIds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="supplierId != null">
                 and s.supplier_id = #{supplierId}
             </if>
             <if test="supplierNo != null">
                 and s.supplier_no = #{supplierNo}
+            </if>
+            <if test="slotSpuNo != null">
+                and  s.slot_spu_no = #{slotSpuNo}
             </if>
             <if test="state != null">
                 and  s.state = #{state}
@@ -103,6 +123,11 @@
             <if test="categoryName != null">
                 and p.supplier_categoryname like concat('',#{categoryName},'%')
             </if>
+
+            <if test="seasonName != null">
+                and p.supplier_seasonname like concat('',#{seasonName},'%')
+            </if>
+
             <if test="supplierSpuNo != null">
                 and p.supplier_spu_no = #{supplierSpuNo}
             </if>
@@ -116,7 +141,7 @@
                 and s.create_time >= #{startTime}
             </if>
             <if test="endTime != null">
-                and s.create_time >= #{endTime}
+                and s.create_time &lt;= #{endTime}
             </if>
         </where>
 

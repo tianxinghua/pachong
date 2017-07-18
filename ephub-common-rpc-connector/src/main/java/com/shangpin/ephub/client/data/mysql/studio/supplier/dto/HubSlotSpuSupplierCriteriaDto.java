@@ -1110,6 +1110,66 @@ public class HubSlotSpuSupplierCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andPicSignIsNull() {
+            addCriterion("pic_sign is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignIsNotNull() {
+            addCriterion("pic_sign is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignEqualTo(Byte value) {
+            addCriterion("pic_sign =", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignNotEqualTo(Byte value) {
+            addCriterion("pic_sign <>", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignGreaterThan(Byte value) {
+            addCriterion("pic_sign >", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignGreaterThanOrEqualTo(Byte value) {
+            addCriterion("pic_sign >=", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignLessThan(Byte value) {
+            addCriterion("pic_sign <", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignLessThanOrEqualTo(Byte value) {
+            addCriterion("pic_sign <=", value, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignIn(List<Byte> values) {
+            addCriterion("pic_sign in", values, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignNotIn(List<Byte> values) {
+            addCriterion("pic_sign not in", values, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignBetween(Byte value1, Byte value2) {
+            addCriterion("pic_sign between", value1, value2, "picSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andPicSignNotBetween(Byte value1, Byte value2) {
+            addCriterion("pic_sign not between", value1, value2, "picSign");
+            return (Criteria) this;
+        }
+
         public Criteria andDataStateIsNull() {
             addCriterion("data_state is null");
             return (Criteria) this;

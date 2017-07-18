@@ -1,30 +1,53 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot.impl;
 
-import com.shangpin.ephub.client.data.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.product.dto.SpuNoTypeDto;
-import com.shangpin.ephub.client.data.mysql.product.gateway.SpuNoGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
-import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay;
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
-import com.shangpin.ephub.product.business.service.pending.PendingService;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
-import lombok.extern.slf4j.Slf4j;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import com.shangpin.ephub.client.data.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierOperateSign;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.product.dto.SpuNoTypeDto;
+import com.shangpin.ephub.client.data.mysql.product.gateway.SpuNoGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SlotSpuSupplier;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.gateway.SpuSupplierUnionGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
+import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
+import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
+import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
+import com.shangpin.ephub.product.business.service.pending.PendingService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportLIst;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSupplierDto;
+import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 17/6/10.
@@ -52,7 +75,14 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
     SpuNoTypeDto spuNoTypeDto = new SpuNoTypeDto();
 
-
+    @Autowired
+    SpuSupplierUnionGateWay spuSupplierUnionGateWay;
+    @Autowired
+	private CategoryService categoryService;
+    @Autowired
+	private BrandService brandService;
+    @Autowired
+	private SupplierService supplierService;
 
 
     @Override
@@ -91,6 +121,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                     //一般情况下是唯一索引冲突，需要获取数据
 
                     e.printStackTrace();
+                    log.error("save slot spu  " + slotSpuDto +"  error . reason: " + e.getMessage(),e);
                     handleInsertSlotSpuException(pendingProductDto,slotSpuDto);
                 }
             }else{
@@ -108,10 +139,12 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 this.transPendingToSlotSupplier(pendingProductDto,slotSpuSupplierDto,slotSpuDto,isShootSupplier);
 
                 hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto,slotSpuDto.getSpuState().intValue());
+
             }
 
             //spupending 处理
-            pendingService.updatePendingSlotStateAndUser(slotSpuSupplierDto.getSpuPendingId(),pendingProductDto.getUpdateUser(), SpuPendingStudioState.HANDLED);
+            pendingService.updatePendingSlotStateAndUser(slotSpuSupplierDto.getSpuPendingId(),
+                    StringUtils.isNotBlank(pendingProductDto.getUpdateUser())?pendingProductDto.getUpdateUser():"ServiceAutoAdd", SpuPendingStudioState.HANDLED);
 
 
 
@@ -143,6 +176,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 tmpDto.setSlotSpuId(originSlotSpu.getSlotSpuId());
                 tmpDto.setSpuState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
                 slotSpuGateWay.updateByPrimaryKeySelective(tmpDto);
+                originSlotSpu.setSpuState(SlotSpuState.NO_NEED_HANDLE.getIndex().byteValue());
             }
         }
     }
@@ -238,6 +272,149 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
         return true;
     }
 
+    @Override
+    public List<SlotSpuDto> findSlotSpu(SpuSupplierQueryDto queryDto) {
+        List<SlotSpuDto> resultList = new ArrayList<>();
+
+        if(StringUtils.isNotBlank(queryDto.getSupplierNo())){
+            //供货商不为空  查询 slotspusupplier
+            List<SlotSpuSupplier> slotSpuSuppliers = spuSupplierUnionGateWay.listByQuery(queryDto);
+            resultList = this.getSlotSpuVoList(slotSpuSuppliers);
+
+        }else{
+            //查询slotspu 后 再查询对应的SLOTSPUSUPPLIER
+            List<HubSlotSpuDto> slotSpuDtos = searchHubSlotSpuDtos(queryDto);
+
+            for(HubSlotSpuDto slotSpuDto:slotSpuDtos){
+                SlotSpuDto vo = new SlotSpuDto();
+                this.setSlotSpuValueFromDataToVoForSlot(slotSpuDto,vo);
+                List<HubSlotSpuSupplierDto> slotSpuSuppliers = hubSlotSpuSupplierService.findSlotSpuSupplierListBySlotSpuId(slotSpuDto.getSlotSpuId());
+                vo.setSpuSupplierDtos(this.getSpuSupplierVoList(slotSpuSuppliers));
+                resultList.add(vo);
+            }
+
+
+        }
+
+        return resultList;
+    }
+
+    @Override
+    public int countSlotSpu(SpuSupplierQueryDto queryDto) {
+        if(StringUtils.isNotBlank(queryDto.getSupplierNo())){
+           return  spuSupplierUnionGateWay.countByQuery(queryDto);
+        }else{
+            return  this.searchHubSlotSpuDtoNum(queryDto);
+        }
+
+    }
+
+    private void setSlotSpuValueFromDataToVoForSlot(HubSlotSpuDto slotSpuDto,SlotSpuDto vo){
+        vo.setHubBrandNo(slotSpuDto.getBrandNo());
+        vo.setHubCategoryNo(slotSpuDto.getCategoryNo());
+        vo.setSpuModel(slotSpuDto.getSpuModel());
+        if(null!=slotSpuDto.getSpuState()){
+
+            vo.setSpuState(new Integer(slotSpuDto.getSpuState()));
+        }
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if(null!=slotSpuDto.getUpdateTime()){
+            vo.setUpdateTime(format.format(slotSpuDto.getUpdateTime()));
+        }
+        if(slotSpuDto.getPicSign()==PicState.HANDLED.getIndex()){
+            vo.setHavePic(true);
+        }else{
+            vo.setHavePic(false);
+        }
+
+
+
+
+    }
+
+    private List<SlotSpuSupplierDto> getSpuSupplierVoList(List<HubSlotSpuSupplierDto> slotSpuSupplierDtos){
+        List<SlotSpuSupplierDto> spuSupplierVos = new ArrayList<>();
+        for(HubSlotSpuSupplierDto supplierDto:slotSpuSupplierDtos){
+            SlotSpuSupplierDto  spuSupplierVo = new SlotSpuSupplierDto();
+            spuSupplierVo.setSupplierNo(supplierDto.getSupplierNo());
+            spuSupplierVo.setSupplierId(supplierDto.getSupplierId());
+            spuSupplierVo.setState(supplierDto.getState().intValue());
+
+            if(supplierDto.getPicSign()==PicState.HANDLED.getIndex()){
+                spuSupplierVo.setHavePic(true);
+            }else{
+                spuSupplierVo.setHavePic(false);
+            }
+            spuSupplierVos.add(spuSupplierVo);
+        }
+        return  spuSupplierVos;
+
+
+    }
+
+
+    private List<SlotSpuDto> getSlotSpuVoList(List<SlotSpuSupplier> spuSuppliers){
+        List<SlotSpuDto> slotSpuVos = new ArrayList<>();
+        for(SlotSpuSupplier dto:spuSuppliers){
+            SlotSpuDto vo = new SlotSpuDto();
+            vo.setSpuModel(dto.getSpuModel());
+            vo.setHubCategoryNo(dto.getCategoryNo());
+            vo.setHubBrandNo(dto.getBrandNo());
+            vo.setSpuState(vo.getSpuState());
+            List<SlotSpuSupplierDto> spuSupplierDtos  = new ArrayList<>();
+            SlotSpuSupplierDto supplierVo = new SlotSpuSupplierDto();
+            supplierVo.setSupplierNo(dto.getSupplierNo());
+            supplierVo.setSupplierId(dto.getSupplierId());
+            supplierVo.setState(dto.getState().intValue());
+            spuSupplierDtos.add(supplierVo);
+            vo.setSpuSupplierDtos(spuSupplierDtos);
+            slotSpuVos.add(vo);
+        }
+        return slotSpuVos;
+    }
+
+    private List<HubSlotSpuDto> searchHubSlotSpuDtos(SpuSupplierQueryDto queryDto) {
+        HubSlotSpuCriteriaDto criteriaDto = new HubSlotSpuCriteriaDto();
+        criteriaDto.setPageNo(queryDto.getPageIndex());
+        criteriaDto.setPageSize(queryDto.getPageSize());
+        HubSlotSpuCriteriaDto.Criteria criteria = criteriaDto.createCriteria();
+        if(StringUtils.isNotBlank(queryDto.getSpuModel())){
+            criteria.andSpuModelLike("%"+queryDto.getSpuModel()+"%");
+        }
+        if(StringUtils.isNotBlank(queryDto.getBrandNo())){
+            criteria.andBrandNoEqualTo(queryDto.getBrandNo());
+        }
+        if(StringUtils.isNotBlank(queryDto.getCategory())){
+            criteria.andCategoryNoEqualTo(queryDto.getCategory());
+        }
+        if(StringUtils.isNotBlank(queryDto.getState())){
+            criteria.andSpuStateEqualTo(new Byte(queryDto.getState()));
+        }
+        criteriaDto.setOrderByClause(" update_time desc  ");
+        return slotSpuGateWay.selectByCriteria(criteriaDto);
+    }
+
+    private int  searchHubSlotSpuDtoNum(SpuSupplierQueryDto queryDto) {
+        HubSlotSpuCriteriaDto criteriaDto = new HubSlotSpuCriteriaDto();
+
+        HubSlotSpuCriteriaDto.Criteria criteria = criteriaDto.createCriteria();
+        if(StringUtils.isNotBlank(queryDto.getSpuModel())){
+            criteria.andSpuModelLike("%"+queryDto.getSpuModel()+"%");
+        }
+        if(StringUtils.isNotBlank(queryDto.getBrandNo())){
+            criteria.andBrandNoEqualTo(queryDto.getBrandNo());
+        }
+        if(StringUtils.isNotBlank(queryDto.getCategory())){
+            criteria.andCategoryNoEqualTo(queryDto.getCategory());
+        }
+        if(StringUtils.isNotBlank(queryDto.getState())){
+            criteria.andSpuStateEqualTo(new Byte(queryDto.getState()));
+        }
+        return slotSpuGateWay.countByCriteria(criteriaDto);
+    }
+
+
+
 
     private void transPendingToSlot(PendingProductDto resource,HubSlotSpuDto target,boolean isShootSupplier){
 
@@ -255,6 +432,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
            }
         }
         target.setCreateTime(new Date());
+        target.setUpdateTime(target.getCreateTime());
         target.setCreateUser(target.getUpdateUser());
 
         if(isShootSupplier){
@@ -275,7 +453,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
 
         HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
         criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
-            .andSupplierValEqualTo(String.valueOf(DataState.NOT_DELETED.getIndex())).andSupplierIdEqualTo(supplierId);
+            .andSupplierValNoEqualTo(String.valueOf(DataState.NOT_DELETED.getIndex())).andSupplierIdEqualTo(supplierId);
         List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
         if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
             return false;
@@ -349,4 +527,29 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             }
         }
     }
+
+	@Override
+	public SlotSpuExportLIst exportSlotSpu(SpuSupplierQueryDto queryDto) {
+		SlotSpuExportLIst slotSpus = new SlotSpuExportLIst();
+		List<SlotSpuDto> list = findSlotSpu(queryDto);
+		if(CollectionUtils.isNotEmpty(list)){
+			List<SlotSpuExportDto> exportDtos = new ArrayList<SlotSpuExportDto>();
+			for(SlotSpuDto spuDto : list){
+				SlotSpuExportDto exportDto = new SlotSpuExportDto();
+				JavaUtil.fatherToChild(spuDto, exportDto);
+				FourLevelCategory category = categoryService.getGmsCateGory(spuDto.getHubCategoryNo());
+                String hubCategoryName = categoryService.getHubCategoryNameByHubCategory(spuDto.getHubCategoryNo(), category);
+				exportDto.setHubCategoryName(hubCategoryName);
+				BrandDom brand = brandService.getGmsBrand(spuDto.getHubBrandNo());
+				exportDto.setHubBrandName(null != brand ? brand.getBrandEnName() : spuDto.getHubBrandNo());
+				for(SlotSpuSupplierDto supplierDto : exportDto.getSpuSupplierDtos()){
+					SupplierDTO supplierDTO = supplierService.getSupplier(supplierDto.getSupplierNo());
+					supplierDTO.setSupplierName(null != supplierDTO ? supplierDTO.getSupplierName() : supplierDTO.getSupplierNo()); 
+				}
+				exportDtos.add(exportDto);
+			}
+			slotSpus.setSlotSpus(exportDtos); 
+		}
+		return slotSpus;
+	}
 }

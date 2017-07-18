@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.slot.spusupplierunion.mapper.SlotSpuSupplierMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.slot.spusupplierunion.po.SlotSpuSupplier" >
+      <result column="slot_spu_supplier_id" property="slotSpuSupplierId" jdbcType="BIGINT" />
+      <result column="slot_spu_id" property="slotSpuId" jdbcType="BIGINT" />
+      <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
+      <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
+      <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+      <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+      <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
+      <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
+      <result column="state" property="state" jdbcType="TINYINT" />
+      <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+      <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+      <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+      <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+      <result column="repeat_marker" property="repeatMarker" jdbcType="TINYINT" />
+      <result column="supplier_operate_sign" property="supplierOperateSign" jdbcType="TINYINT" />
+      <result column="data_state" property="dataState" jdbcType="TINYINT" />
+      <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
+      <result column="spu_model" property="spuModel" jdbcType="VARCHAR" />
+      <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
+      <result column="category_no" property="categoryNo" jdbcType="VARCHAR" />
+      <result column="second_category_no" property="secondCategoryNo" jdbcType="VARCHAR" />
+      <result column="market_time" property="marketTime" jdbcType="VARCHAR" />
+      <result column="season" property="season" jdbcType="VARCHAR" />
+      <result column="season_en" property="seasonEn" jdbcType="VARCHAR" />
+      <result column="spu_name" property="spuName" jdbcType="VARCHAR" />
+      <result column="gender" property="gender" jdbcType="VARCHAR" />
+      <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
+      <result column="spu_state" property="spuState" jdbcType="TINYINT" />
+      <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
+      <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
+      <result column="supplier_pic_sign" property="supplierPicSign" jdbcType="TINYINT" />
+      <result column="spu_pic_sign" property="spuPicSign" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <select id="findObjectByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto" >
+    select
+      s.slot_spu_supplier_id,s.slot_spu_id,s.slot_no,s.slot_spu_no,s.supplier_no,s.supplier_id,
+      s.spu_pending_id,s.supplier_spu_id,s.state,s.create_time,s.create_user,s.pic_sign as supplier_pic_sign,
+      s.update_time,s.update_user,s.repeat_marker,s.supplier_operate_sign,s.data_state,
+      p.spu_model,p.brand_no,p.category_no,p.market_time,p.season,p.spu_state,p.pic_sign as spu_pic_sign
+
+      from hub_slot_spu_supplier s
+      inner join hub_slot_spu p on s.slot_spu_id  = p.slot_spu_id
+
+      <where>
+        s.data_state = 1
+        <if test="supplierNo != null">
+            and s.supplier_no = #{supplierNo}
+        </if>
+
+        <if test="spuModel != null">
+            and p.spu_model = #{spuModel}
+        </if>
+
+        <if test="brandNo != null">
+            and p.brand_no = #{brandNo}
+        </if>
+
+        <if test="category != null">
+            and p.category_no = #{category}
+        </if>
+
+        <if test="state != null">
+            and s.state = #{state}
+        </if>
+
+        <if test="marketSeason != null">
+    	   and p.season = #{marketSeason}
+        </if>
+        <if test="marketYear != null">
+            and p.market_time = #{marketYear}
+        </if>
+        ORDER BY s.update_time desc
+        <if test="startRow != null" >
+          limit #{startRow} , #{pageSize}
+        </if>
+      </where>
+    
+  </select>
+
+
+    <select id="countByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto" >
+        select count(*)
+        from hub_slot_spu_supplier s
+        inner join hub_slot_spu p on s.slot_spu_id  = p.slot_spu_id
+
+        <where>
+            s.data_state = 1
+            <if test="supplierNo != null">
+                and s.supplier_no = #{supplierNo}
+            </if>
+
+            <if test="spuModel != null">
+                and p.spu_model = #{spuModel}
+            </if>
+
+            <if test="brandNo != null">
+                and p.brand_no = #{brandNo}
+            </if>
+
+            <if test="category != null">
+                and p.category_no = #{category}
+            </if>
+
+            <if test="state != null">
+                and s.state = #{state}
+            </if>
+
+            <if test="marketSeason != null">
+                and p.season = #{marketSeason}
+            </if>
+            <if test="marketYear != null">
+                and p.market_time = #{marketYear}
+            </if>
+
+        </where>
+
+    </select>
+
+  
+</mapper>

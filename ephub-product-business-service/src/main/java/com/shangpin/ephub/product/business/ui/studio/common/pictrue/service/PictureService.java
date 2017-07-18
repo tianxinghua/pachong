@@ -11,7 +11,9 @@ import com.shangpin.ephub.client.fdfs.dto.DeletePicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.ephub.client.fdfs.gateway.DeletePicGateWay;
 import com.shangpin.ephub.client.fdfs.gateway.UploadPicGateway;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadPic;
 
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Encoder;
 /**
  * <p>Title: PictureService</p>
@@ -23,12 +25,27 @@ import sun.misc.BASE64Encoder;
  */
 @SuppressWarnings("restriction")
 @Service
+@Slf4j
 public class PictureService {
 	
 	@Autowired
 	private UploadPicGateway uploadPicGateway;
 	@Autowired
 	private DeletePicGateWay deletePicGateWay;
+	
+	public String uploadPic(UploadPic uploadPic){
+		try {
+			if(StringUtils.isNoneEmpty(uploadPic.getContent())){
+                UploadPicDto uploadPicDto = new UploadPicDto();
+                uploadPicDto.setBase64(uploadPic.getContent());
+                uploadPicDto.setExtension(uploadPic.getExtension());
+                return uploadPicGateway.upload(uploadPicDto);
+            }
+		} catch (Exception e) {
+			log.error("上传图片异常："+e.getMessage(),e); 
+		}
+		return null;
+	}
 
 	/**
 	 * 上传图片

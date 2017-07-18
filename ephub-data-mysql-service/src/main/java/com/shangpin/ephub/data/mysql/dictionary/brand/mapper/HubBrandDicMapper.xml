@@ -103,6 +103,11 @@
     from hub_brand_dic
     where brand_dic_id = #{brandDicId,jdbcType=BIGINT}
   </select>
+  
+    <select id="selectHUbBrandNo"  resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.dictionary.brand.po.HubBrandDicCriteria" >
+      select hub_brand_no from hub_brand_dic  WHERE hub_brand_no is not null GROUP BY hub_brand_no  limit #{startRow} , #{pageSize}
+  </select>
+	  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from hub_brand_dic
     where brand_dic_id = #{brandDicId,jdbcType=BIGINT}
@@ -202,6 +207,12 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+  
+  <select id="count" resultType="java.lang.Integer" >
+select count(DISTINCT hub_brand_no) from hub_brand_dic
+  </select>
+  
+  
   <update id="updateByExampleSelective" parameterType="map" >
     update hub_brand_dic
     <set >

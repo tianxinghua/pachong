@@ -196,6 +196,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 			}
 			return result;
 	}
+	
 	/**
 	 * 获取规则
 	 * @param hubBrandNo

@@ -8,12 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadPic;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -33,6 +35,11 @@ public class PicUploadController {
 	
 	@Autowired
 	private PictureService pictureService;
+	
+	@RequestMapping(value="/uploadpic",method = RequestMethod.POST)
+	public String upload(@RequestBody UploadPic uploadPic){
+		return pictureService.uploadPic(uploadPic);
+	}
 
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
 	public HubResponse<?> upload(HttpServletRequest request){

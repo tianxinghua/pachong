@@ -420,6 +420,76 @@ public class HubDicStudioBrandCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andSpCategoryNoIsNull() {
+            addCriterion("sp_category_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoIsNotNull() {
+            addCriterion("sp_category_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoEqualTo(String value) {
+            addCriterion("sp_category_no =", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoNotEqualTo(String value) {
+            addCriterion("sp_category_no <>", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoGreaterThan(String value) {
+            addCriterion("sp_category_no >", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoGreaterThanOrEqualTo(String value) {
+            addCriterion("sp_category_no >=", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoLessThan(String value) {
+            addCriterion("sp_category_no <", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoLessThanOrEqualTo(String value) {
+            addCriterion("sp_category_no <=", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoLike(String value) {
+            addCriterion("sp_category_no like", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoNotLike(String value) {
+            addCriterion("sp_category_no not like", value, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoIn(List<String> values) {
+            addCriterion("sp_category_no in", values, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoNotIn(List<String> values) {
+            addCriterion("sp_category_no not in", values, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoBetween(String value1, String value2) {
+            addCriterion("sp_category_no between", value1, value2, "spCategoryNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpCategoryNoNotBetween(String value1, String value2) {
+            addCriterion("sp_category_no not between", value1, value2, "spCategoryNo");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -809,7 +879,6 @@ public class HubDicStudioBrandCriteriaDto {
     }
 
     public static class Criterion {
-
 
         public Criterion() {
             super();

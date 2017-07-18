@@ -1,20 +1,18 @@
 package com.shangpin.ephub.product.business.ui.studio.slotspu.controller;
 
-import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
-import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
-import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
-import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendingService;
-import com.shangpin.ephub.response.HubResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportLIst;
+import com.shangpin.ephub.response.HubResponse;
 
 /**
 
@@ -22,92 +20,37 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/slot-spu")
-@Slf4j
 public class SlotSpuController {
 	
-	private static String resultSuccess = "success";
-	private static String resultFail = "fail";
-	
 	@Autowired
-	private IPendingProductService pendingProductService;
-	@Autowired
-	private IHubSpuPendingPicService pendingPicService;
+    HubSlotSpuService slotSpuService;
 
-	@Autowired
-	StudioPendingService studioPendingService;
+
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
-    public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
-        PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
-        return HubResponse.successResp(pendingProducts);
-    }
-    @RequestMapping(value="/update",method=RequestMethod.POST)
-    public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
-    	return pendingProductService.updatePendingProduct(pendingProductDto);
-    }
-    @RequestMapping(value="/batch-update",method=RequestMethod.POST)
-    public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
-        return pendingProductService.batchUpdatePendingProduct(pendingProducts);
-    }
-    @RequestMapping(value="/unable-to-process/{updateUser}",method=RequestMethod.POST)
-    public HubResponse<?> updateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody String id){
-    	try {
-    		boolean result = pendingProductService.updatePendingProductToUnableToProcess(updateUser,id);
+    public HubResponse<?> pendingList(@RequestBody SpuSupplierQueryDto quryDto){
 
-	        if(result){
-	            return HubResponse.successResp(resultSuccess);
-	        }else{
-	            return HubResponse.errorResp(resultFail);
-	        }
-		} catch (Exception e) {
-			return HubResponse.errorResp(e.getMessage());
-		}
-       
+        List<SlotSpuDto> slotSpu = slotSpuService.findSlotSpu(quryDto);
+
+        return HubResponse.successResp(slotSpu);
     }
-    @RequestMapping(value="/batch-unable-to-process/{updateUser}",method=RequestMethod.POST)
-    public HubResponse<?> batchUpdateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody List<String> ids){
-        boolean result = pendingProductService.batchUpdatePendingProductToUnableToProcess(updateUser,ids);
-        if(result){
-            return HubResponse.successResp(resultSuccess);
-        }else{
-            return HubResponse.errorResp(resultFail);
-        }
+
+
+    @RequestMapping(value="/count",method=RequestMethod.POST)
+    public HubResponse<?> count(@RequestBody SpuSupplierQueryDto quryDto){
+
+        Integer  count  = slotSpuService.countSlotSpu(quryDto);
+
+        return HubResponse.successResp(count);
     }
-    @RequestMapping(value="/origin",method=RequestMethod.POST)
-    public HubResponse<?> findOrigin(@RequestBody PendingQuryDto pendingQuryDto){
-    	long start = System.currentTimeMillis();
-    	PendingProducts products = pendingProductService.findPendingProducts(pendingQuryDto,true);
-    	PendingProductDto pendingProduct = products.getProduts().get(0);
-    	SupplierProductVo supplierProduct = pendingProductService.findSupplierProduct(pendingProduct.getSupplierSpuId());
-    	HubBrandModelRuleDto brandModelRuleDto = pendingProductService.findHubBrandModelRule(pendingProduct.getHubBrandNo());
-    	PendingOriginVo pendingOriginVo = new PendingOriginVo();
-    	pendingOriginVo.setPendingProduct(pendingProduct);
-    	pendingOriginVo.setSupplierProduct(supplierProduct);
-    	pendingOriginVo.setBrandModelRuleDto(brandModelRuleDto); 
-    	log.info("--->查看原始总耗时{}",System.currentTimeMillis()-start); 
-    	return HubResponse.successResp(pendingOriginVo); 
+    
+    @RequestMapping(value="/commited-export",method=RequestMethod.POST)
+    public SlotSpuExportLIst commitedExport(@RequestBody SpuSupplierQueryDto quryDto){
+    	SlotSpuExportLIst list = slotSpuService.exportSlotSpu(quryDto);
+    	return list;
     }
-    @RequestMapping(value="/retry-pictures",method=RequestMethod.POST)
-    public HubResponse<?> retryPictures(@RequestBody List<String> spPicUrl){
-    	boolean bool = pendingPicService.retryPictures(spPicUrl);
-    	if(bool){
-    		return HubResponse.successResp("success");
-    	}else{
-    		return HubResponse.errorResp("error");
-    	}
-    }
-    @RequestMapping(value="/list-all",method=RequestMethod.POST)
-    public HubResponse<?> pendingListAll(@RequestBody PendingQuryDto pendingQuryDto){
-    	PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,true);
-        return HubResponse.successResp(pendingProducts);
-    } 
-    @RequestMapping(value="/update-to-infopeccable/{updateUser}",method=RequestMethod.POST)
-    public HubResponse<?> updateProductToInfoPeccable(@PathVariable String updateUser, @RequestBody List<String> ids){
-    	boolean bool = pendingProductService.updateProductToInfoPeccable(updateUser, ids);
-    	if(bool){
-    		return HubResponse.successResp("");
-    	}else{
-    		return HubResponse.errorResp("更新失败");
-    	}
-    }
+
+
+
+
 }

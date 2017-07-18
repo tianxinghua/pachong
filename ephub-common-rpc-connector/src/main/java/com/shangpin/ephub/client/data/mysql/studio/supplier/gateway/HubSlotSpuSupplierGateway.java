@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierWithCriteriaDto;
+
 /**
  * <p>Title:HubSlotSpuSupplierDtoGateway.java </p>
  * <p>Description: EPHUB品牌字典接口网关</p>
@@ -33,10 +33,10 @@ public interface HubSlotSpuSupplierGateway {
     public int deleteByPrimaryKey(Long brandDicId);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/insert", method = RequestMethod.POST,consumes = "application/json")
-    public Long insert(@RequestBody HubSlotSpuSupplierDto HubSlotSpuSupplierDto);
+    public Long insert(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/insert-selective", method = RequestMethod.POST,consumes = "application/json")
-    public Long insertSelective(@RequestBody HubSlotSpuSupplierDto HubSlotSpuSupplierDto);
+    public Long insertSelective(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/select-by-criteria-with-rowbounds", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSlotSpuSupplierDto> selectByCriteriaWithRowbounds(@RequestBody HubSlotSpuSupplierCriteriaWithRowBoundsDto criteriaWithRowBounds);
@@ -54,8 +54,8 @@ public interface HubSlotSpuSupplierGateway {
     public int updateByCriteria(@RequestBody HubSlotSpuSupplierWithCriteriaDto HubSlotSpuSupplierDtoWithCriteria);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/update-by-primary-key-selective", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKeySelective(@RequestBody HubSlotSpuSupplierDto HubSlotSpuSupplierDto);
+    public int updateByPrimaryKeySelective(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 	
 	@RequestMapping(value = "/hub-slot-spu-supplier/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int updateByPrimaryKey(@RequestBody HubSlotSpuSupplierDto HubSlotSpuSupplierDto);
+    public int updateByPrimaryKey(@RequestBody HubSlotSpuSupplierDto hubSlotSpuSupplierDto);
 }

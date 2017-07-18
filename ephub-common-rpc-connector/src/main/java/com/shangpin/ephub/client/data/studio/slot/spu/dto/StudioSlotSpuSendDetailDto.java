@@ -80,9 +80,19 @@ public class StudioSlotSpuSendDetailDto implements Serializable {
     private Byte sendState;
 
     /**
-     * 0: 摄影棚收货  1：摄影棚验收不通过   2:供货商确认
+     * 0: 未收到  1：收到货   2:不接受
      */
     private Byte arriveState;
+
+    /**
+     * 扫码用的条形码
+     */
+    private String barcode;
+
+    /**
+     * 0:未上传图片  1：已上传图片
+     */
+    private Byte uploadPicSign;
 
     /**
      * 备份
@@ -269,6 +279,22 @@ public class StudioSlotSpuSendDetailDto implements Serializable {
         this.arriveState = arriveState;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode == null ? null : barcode.trim();
+    }
+
+    public Byte getUploadPicSign() {
+        return uploadPicSign;
+    }
+
+    public void setUploadPicSign(Byte uploadPicSign) {
+        this.uploadPicSign = uploadPicSign;
+    }
+
     public String getMemo() {
         return memo;
     }
@@ -379,6 +405,8 @@ public class StudioSlotSpuSendDetailDto implements Serializable {
         sb.append(", supplierSeasonName=").append(supplierSeasonName);
         sb.append(", sendState=").append(sendState);
         sb.append(", arriveState=").append(arriveState);
+        sb.append(", barcode=").append(barcode);
+        sb.append(", uploadPicSign=").append(uploadPicSign);
         sb.append(", memo=").append(memo);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -423,6 +451,8 @@ public class StudioSlotSpuSendDetailDto implements Serializable {
             && (this.getSupplierSeasonName() == null ? other.getSupplierSeasonName() == null : this.getSupplierSeasonName().equals(other.getSupplierSeasonName()))
             && (this.getSendState() == null ? other.getSendState() == null : this.getSendState().equals(other.getSendState()))
             && (this.getArriveState() == null ? other.getArriveState() == null : this.getArriveState().equals(other.getArriveState()))
+            && (this.getBarcode() == null ? other.getBarcode() == null : this.getBarcode().equals(other.getBarcode()))
+            && (this.getUploadPicSign() == null ? other.getUploadPicSign() == null : this.getUploadPicSign().equals(other.getUploadPicSign()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -456,6 +486,8 @@ public class StudioSlotSpuSendDetailDto implements Serializable {
         result = prime * result + ((getSupplierSeasonName() == null) ? 0 : getSupplierSeasonName().hashCode());
         result = prime * result + ((getSendState() == null) ? 0 : getSendState().hashCode());
         result = prime * result + ((getArriveState() == null) ? 0 : getArriveState().hashCode());
+        result = prime * result + ((getBarcode() == null) ? 0 : getBarcode().hashCode());
+        result = prime * result + ((getUploadPicSign() == null) ? 0 : getUploadPicSign().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());

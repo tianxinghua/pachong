@@ -46,8 +46,8 @@ public interface StudioGateWay {
 	@RequestMapping(value = "/studio/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<StudioDto> selectByCriteria(@RequestBody StudioCriteriaDto criteria);
 	
-	@RequestMapping(value = "/studio/select-by-primary-key/{skuId}", method = RequestMethod.POST,consumes = "application/json")
-    public StudioDto selectByPrimaryKey(@PathVariable("skuId") Long skuId);
+	@RequestMapping(value = "/studio/select-by-primary-key/{studioId}", method = RequestMethod.POST,consumes = "application/json")
+    public StudioDto selectByPrimaryKey(@PathVariable("studioId") Long studioId);
 	
 	@RequestMapping(value = "/studio/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody StudioWithCriteriaDto hubSkuWithCriteria);

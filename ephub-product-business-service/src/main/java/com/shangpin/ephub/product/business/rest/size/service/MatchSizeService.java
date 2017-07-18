@@ -39,8 +39,12 @@ public class MatchSizeService {
 	 * @return
 	 */
 	public MatchSizeResult matchSize(MatchSizeDto dto) {
-		
+		if(dto.getSize()!=null){
+			String regex = "\\s+";
+			dto.setSize(dto.getSize().replaceAll(regex, ""));
+		}
 		MatchSizeResult matchSizeResult = new MatchSizeResult();
+		matchSizeResult.setSizeValue(dto.getSize());
 		CategoryScreenSizeDom size = sizeService.getGmsSize(dto.getHubBrandNo(), dto.getHubCategoryNo());
 		boolean sizeIsExist = false;
 		String result = null;
@@ -54,10 +58,10 @@ public class MatchSizeService {
 				getSizeMap(list,screenSizeMap,standardSizeMap);
 				//第一步：从标准尺码中查找匹配尺码
 				sizeIsExist = matchStandardSize(dto.getSize(),standardSizeMap,matchSizeResult);
-				if(!sizeIsExist){
-					//第二步：从标准尺码中未匹配到尺码。继续从筛选尺码中匹配
-					sizeIsExist = matchScreenSize(dto.getSize(),screenSizeMap,matchSizeResult);
-				}
+//				if(!sizeIsExist){
+//					//第二步：（去掉，不再从筛选尺码里面匹配）从标准尺码中未匹配到尺码。继续从筛选尺码中匹配 
+//					sizeIsExist = matchScreenSize(dto.getSize(),screenSizeMap,matchSizeResult);
+//				}
 			}else{
 				isNotTemplate = true;
 			}
@@ -153,7 +157,7 @@ public class MatchSizeService {
 		for (SizeStandardItem item : list) {
 			String sizeValue = item.getSizeStandardValue();
 			String sizeStandardName = item.getSizeStandardName();
-			// 筛选尺码
+//			// 筛选尺码
 			if (item.getIsScreening() == (byte) 2) {
 				map2.put(sizeStandardName + ":" + sizeValue, sizeValue);
 			}

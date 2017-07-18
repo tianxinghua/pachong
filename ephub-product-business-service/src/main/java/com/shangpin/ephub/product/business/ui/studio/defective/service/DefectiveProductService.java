@@ -59,4 +59,16 @@ public interface DefectiveProductService {
 	 * @return
 	 */
 	public boolean deleteDefectivePic(String spPicUrl);
+	/**
+	 * 查询该批次号下面的所有残品数量
+	 * @param slotNo
+	 * @return
+	 */
+	public int countDefectiveProduct(String slotNo);
+	/**
+	 * 查找该批次下的所以残次品
+	 * @param slotNo
+	 * @return
+	 */
+	public List<StudioSlotDefectiveSpuDto> selectDefectiveProduct(String slotNo);
 }

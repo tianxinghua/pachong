@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotStudioArriveState;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
@@ -28,6 +30,7 @@ import com.shangpin.ephub.product.business.ui.studio.openbox.service.OpenBoxServ
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.CheckDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.openbox.vo.OpenBoxVo;
+import com.shangpin.ephub.product.business.ui.studio.slot.service.SlotManageService;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +45,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	private OperationService operationService;
 	@Autowired
 	private StudioSlotGateWay studioSlotGateWay;
+	@Autowired
+	private SlotManageService slotManageService;
 
 	@Override
 	public OpenBoxVo slotList(OperationQuery openBoxQuery) {
@@ -56,8 +61,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 				List<StudioSlotVo> prioritySlots = new ArrayList<StudioSlotVo>();
 				List<StudioSlotVo> secondarySlots = new ArrayList<StudioSlotVo>();
 				for(StudioSlotDto studioSlotDto : list){
-					String planShootTime = DateTimeUtil.format(studioSlotDto.getPlanShootTime());
-					if(today.equals(planShootTime)){
+					String slotDate = DateTimeUtil.format(studioSlotDto.getSlotDate());
+					if(today.equals(slotDate)){
 						StudioSlotVo slotVo = operationService.formatDto(studioSlotDto);
 						prioritySlots.add(slotVo);
 					}else{
@@ -77,23 +82,27 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 	
 	@Override
 	public OpenBoxDetailVo slotDetail(String slotNo) {
+		log.info("查找该批次号下的所以产品详情====="+slotNo);
 		OpenBoxDetailVo openBoxDetailVo = new OpenBoxDetailVo();
 		List<StudioSlotSpuSendDetailVo> list = operationService.slotDetail(slotNo);
+		log.info("返回的产品详情size========"+list.size()); 
 		openBoxDetailVo.setDetails(list); 
 		return openBoxDetailVo; 
 	}
 	
 	@Override
-	public boolean slotDetailCheck(String slotNoSpuId) {
+	public boolean slotDetailCheck(String slotNoSpuId ,String arriveUser) {
 		try {
-			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
-			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
+//			String slotNo = slotNoSpuId.substring(0, slotNoSpuId.indexOf("-"));
+//			String slotSpuNo = slotNoSpuId.substring(slotNoSpuId.indexOf("-") + 1);
 			StudioSlotSpuSendDetailWithCriteriaDto withCriteria = new StudioSlotSpuSendDetailWithCriteriaDto();
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-			criteria.createCriteria().andSlotNoEqualTo(slotNo).andSlotSpuNoEqualTo(slotSpuNo);
+			criteria.createCriteria().andBarcodeEqualTo(slotNoSpuId);
 			withCriteria.setCriteria(criteria );
 			StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto = new StudioSlotSpuSendDetailDto();
+			studioSlotSpuSendDetailDto.setArriveUser(arriveUser);
 			studioSlotSpuSendDetailDto.setArriveState(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
+			studioSlotSpuSendDetailDto.setArriveTime(new Date());
 			withCriteria.setStudioSlotSpuSendDetail(studioSlotSpuSendDetailDto );
 			studioSlotSpuSendDetailGateWay.updateByCriteriaSelective(withCriteria);
 			return true;
@@ -103,19 +112,39 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		return false;
 	}
 	@Override
-	public CheckDetailVo checkResult(String slotNo) {
+	public CheckDetailVo checkResult(String slotNo,String arriveUser) {
 		try {
 			CheckDetailVo checkDetailVo = new CheckDetailVo();
 			//先更新批次状态
 			StudioSlotWithCriteriaDto slotWithCriteria = new StudioSlotWithCriteriaDto();
 			StudioSlotCriteriaDto slotCriteria = new StudioSlotCriteriaDto();
 			slotCriteria.createCriteria().andSlotNoEqualTo(slotNo);
+			StudioSlotDto studioSlotDtoSelect = selectStudioSlotDto(slotCriteria);
 			slotWithCriteria.setCriteria(slotCriteria );
 			StudioSlotDto studioSlotDto =  new StudioSlotDto();
-			studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
-			studioSlotDto.setShootTime(new Date()); 
+			Date date = new Date();
+			long today = DateTimeUtil.convertDayDate(date).getTime();
+			long planShootTime = DateTimeUtil.convertDayDate(null != studioSlotDtoSelect ? studioSlotDtoSelect.getPlanShootTime() : date).getTime();
+			log.info("today====="+today+"  &&& planShootTime======"+planShootTime); 
+			if(planShootTime == today){
+				studioSlotDto.setShotStatus(StudioSlotShootState.NORMAL.getIndex().byteValue());
+			}else if(planShootTime > today){
+				studioSlotDto.setShotStatus(StudioSlotShootState.AHEAD_TIME.getIndex().byteValue());
+			}else{
+				studioSlotDto.setShotStatus(StudioSlotShootState.DELAY_SHOOT.getIndex().byteValue());
+			}
+			log.info("拍摄状态是============"+studioSlotDto.getShotStatus()); 
+			studioSlotDto.setShootTime(date); 
+			studioSlotDto.setUpdateTime(date); 
+			studioSlotDto.setSlotStatus(StudioSlotState.IS_CHECK.getIndex().byteValue());
+			studioSlotDto.setArriveUser(arriveUser); 
 			slotWithCriteria.setStudioSlot(studioSlotDto );
-			studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
+			int update = studioSlotGateWay.updateByCriteriaSelective(slotWithCriteria);
+			log.info("更新批次状态返回结果=============="+update); 
+			//生成返货信息主表和返货批次明细
+			SlotManageQuery slotManageQuery = new SlotManageQuery();
+			slotManageQuery.setSlotNo(slotNo); 
+			slotManageService.createSlotReturnDetailAndMaster(slotManageQuery );
 			//TODO 暂时没有盘盈
 			//下面是盘亏
 			StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
@@ -138,6 +167,16 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		}
 		return null;
 	}
+
+	private StudioSlotDto selectStudioSlotDto(StudioSlotCriteriaDto slotCriteria) {
+		slotCriteria.setFields("plan_shoot_time");
+		List<StudioSlotDto> list = studioSlotGateWay.selectByCriteria(slotCriteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
+	}
 	
 	/**
 	 * 转换
@@ -151,7 +190,8 @@ public class OpenBoxServiceImpl implements OpenBoxService {
 		vo.setItemCode(dto.getSupplierSpuModel());
 		vo.setItemName(dto.getSupplierSpuName());
 		vo.setOperator(dto.getUpdateUser());
-		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+//		vo.setStudioCode(dto.getSlotNo()+"-"+dto.getSlotSpuNo());
+		vo.setStudioCode(dto.getBarcode());
 		vo.setTime(dto.getCreateTime());
 		return vo;
 	}

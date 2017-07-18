@@ -32,7 +32,7 @@ shangpin:
             clustertype: READWRITE
             strategy: RANDOM
             retrytime: 200
-            minimumConnectionCount: 500
+            minimumConnectionCount: 300
             maximumConnectionCount: 1000
             trace: true
             prototypeCount: 10

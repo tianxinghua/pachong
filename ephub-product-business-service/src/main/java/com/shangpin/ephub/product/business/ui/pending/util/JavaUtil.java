@@ -2,6 +2,8 @@ package com.shangpin.ephub.product.business.ui.pending.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -25,14 +27,25 @@ public class JavaUtil {
         	Class<?> fatherClass= father.getClass();  
             Field ff[]= fatherClass.getDeclaredFields();  
             for(int i=0;i<ff.length;i++){  
-                Field f=ff[i];//取出每一个属性，如deleteDate
-//                Class<?> type=f.getType();
+                Field f=ff[i];
                 try {
-                	if("serialVersionUID".equals(f.getName())){
+                	int modifiers = f.getModifiers();
+                	if((modifiers & Modifier.FINAL) != 0){
                 		continue;
                 	}
-                    Method m = fatherClass.getMethod("get"+upperHeadChar(f.getName()));//方法getDeleteDate  
-                    Object obj=m.invoke(father);//取出属性值         
+                	Type type = f.getGenericType();
+                	Method m = null;
+                	String name = f.getName();
+					if(type.getTypeName().equals("boolean")){
+                		if(name.startsWith("is") && Character.isUpperCase(name.charAt(2))){
+                			m = fatherClass.getMethod(name);
+                		}else{
+                			m = fatherClass.getMethod("is"+upperHeadChar(name));
+                		}
+                	}else{
+                		m = fatherClass.getMethod("get"+upperHeadChar(name));
+                	}
+                    Object obj=m.invoke(father);
                     f.setAccessible(true);
                     f.set(child,obj);                    
                 } catch (Exception e) {

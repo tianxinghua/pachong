@@ -53,6 +53,39 @@ public class StudioController {
         return  HubResponse.successResp(iStudioService.getSupplierSlotList(supplierId));
     }
 
+    /*
+ * 删除商品供货商商品
+ * */
+    @RequestMapping(value = "/delslotspu")
+    public HubResponse<?> delSlotProduct(@RequestBody StudioQueryDto queryDto) {
+        String supplierId = queryDto.getSupplierId();
+        Long slotSSId = queryDto.getSlotSSId();
+        if(StringUtils.isEmpty(supplierId)||StringUtils.isEmpty(slotSSId)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        if(iStudioService.delProductFromSlot(supplierId,slotSSId,queryDto.getCreateUser())){
+            return  HubResponse.successResp(null);
+        }else
+        {
+            return  HubResponse.errorResp("delete fail!");
+        }
+    }
+
+    /**
+     * *释放申请的批次
+     * @param queryDto
+     * @return
+     */
+    @RequestMapping(value = "/releaseslot")
+    public HubResponse<?> releaseStudioSlot(@RequestBody StudioQueryDto queryDto){
+        String supplierId = queryDto.getSupplierId();
+        Long slotId = queryDto.getStudioSlotId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotId)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        return iStudioService.releaseStudioSlot(supplierId,slotId,queryDto.getCreateUser());
+    }
+
 
     /*
    * 获取批次详情
@@ -112,6 +145,22 @@ public class StudioController {
         return  iStudioService.checkProductAndSendSlot(supplierId,slotNo);
     }
 
+    @RequestMapping(value = "/slotprint")
+    public HubResponse<?> slotPrint(@RequestBody StudioQueryDto queryDto) {
+        String supplierId = queryDto.getSupplierId();
+        Long slotId = queryDto.getStudioSlotId();
+        if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotId)){
+            return  HubResponse.errorResp("传入参数不正确");
+        }
+        if(iStudioService.slotPrint(slotId)){
+            return  HubResponse.successResp(null);
+        }else
+        {
+            return  HubResponse.errorResp("print fail!");
+        }
+
+    }
+
     @RequestMapping(value = "/addslotLogistic")
     public HubResponse<?> insertSlotLogistic (@RequestBody StudioQueryDto queryDto){
         String supplierId = queryDto.getSupplierId();
@@ -121,7 +170,7 @@ public class StudioController {
         if(StringUtils.isEmpty(supplierId) || studioSlotId ==null|| StringUtils.isEmpty(trackName)|| StringUtils.isEmpty(trackingNo)){
             return  HubResponse.errorResp("传入参数不正确");
         }
-       if(iStudioService.insertSlotLogistic(studioSlotId,trackName,trackingNo,queryDto.getCreateUser())){
+       if(iStudioService.insertSlotLogistic(studioSlotId,trackName,trackingNo,queryDto.getMemo(), queryDto.getCreateUser())){
            return  HubResponse.successResp(null);
        }else {
            return  HubResponse.errorResp("Logistics information added failed!");
@@ -144,14 +193,12 @@ public class StudioController {
 
     }
 
-
-
     @RequestMapping(value = "/studioslotlist")
     public HubResponse<?> getStudioSlotList(@RequestBody StudioSlotQueryDto queryDto) {
-
         return  HubResponse.successResp(iStudioService.getStudioSlot(queryDto.getStudioId(),queryDto.getStartTime(),
-                queryDto.getEndTime(),queryDto.getCategoryNos(),queryDto.getPageIndex(),queryDto.getPageSize()));
+                queryDto.getEndTime(),queryDto.getCategoryNos(),queryDto.getSupplierId(),queryDto.getPageIndex(),queryDto.getPageSize(),queryDto.getHistory()));
     }
+
     @RequestMapping(value = "/applyslot")
     public HubResponse<?> applySlot(@RequestBody StudioSlotQueryDto upDto) {
         try {
@@ -178,6 +225,7 @@ public class StudioController {
             if(!StringUtils.isEmpty(categoryNos)) {
                 list=  Arrays.asList(categoryNos.split(",")).stream().collect(Collectors.toList());
             }
+
         return  HubResponse.successResp(iStudioService.getStudioListByCategory(list));
     }
 

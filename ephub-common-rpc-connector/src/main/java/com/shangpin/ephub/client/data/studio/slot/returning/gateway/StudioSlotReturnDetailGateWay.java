@@ -2,6 +2,7 @@ package com.shangpin.ephub.client.data.studio.slot.returning.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.returning.dto.StudioSlotReturnDetailWithCriteriaDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
-import com.shangpin.ephub.product.business.ui.studio.slot.dto.SlotManageQuery;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.product.business.ui.studio.slot.service.IStudioSlotService;
 import com.shangpin.ephub.response.HubResponse;
 /**
@@ -23,7 +23,7 @@ public class StudioSlotExportController {
 	private IStudioSlotService studioSlotService;
 
 	@RequestMapping(value="/slot",method=RequestMethod.POST)
-	public HubResponse<?> exportSpu(@RequestBody SlotManageQuery slotManageQuery){
-		return studioSlotService.exportSpu(slotManageQuery,TaskType.EXPORT_SUTDIO_SLOT);
+	public HubResponse<?> exportStudio(@RequestBody SlotManageQuery slotManageQuery){
+		return studioSlotService.exportStudio(slotManageQuery,TaskType.EXPORT_SUTDIO_SLOT);
 	}
 }

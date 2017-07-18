@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.season.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,9 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.hubDic.season.HubSeasonDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
@@ -52,6 +58,8 @@ public class HubSupplierSeasonDicController {
 	SupplierService supplierService;
 	@Autowired
 	TaskImportService taskImportService;
+	@Autowired
+	IShangpinRedis shangpinRedis;
 	@Autowired
 	HubSupplierValueMappingService hubSupplierValueMappingService;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -123,7 +131,24 @@ public class HubSupplierSeasonDicController {
 			dicDto.setUpdateTime(new Date());
 			dicDto.setPushState((byte)1);
 			dicDto.setMemo(String.valueOf(hubSupplierSeasonDicRequestDto.getFilterFlag()));
+			dicDto.setFilterFlag(hubSupplierSeasonDicRequestDto.getFilterFlag());
 			hubSeasonDicService.updateHubSeasonDicById(dicDto);
+			
+			if(hubSupplierSeasonDicRequestDto.getFilterFlag()!=0||hubSupplierSeasonDicRequestDto.getFilterFlag()!=1){
+				
+				List<HubSeasonDicDto> dic = hubSeasonDicService.getHubSeasonDicById(hubSupplierSeasonDicRequestDto.getSeasonDicId());
+				if(dic!=null&&dic.size()>0){
+					hubSupplierSeasonDicRequestDto.setSupplierId(dic.get(0).getSupplierid());
+					hubSupplierSeasonDicRequestDto.setSupplierSeason(dic.get(0).getSupplierSeason());
+				}
+				Date date = new Date();
+				String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
+				taskImportService.saveTask(taskNo, "季节映射:"+hubSupplierSeasonDicRequestDto.getSupplierSeason()+"=>"+hubSupplierSeasonDicRequestDto.getHubMarketTime()+"_"
+				+hubSupplierSeasonDicRequestDto.getHubSeason(), hubSupplierSeasonDicRequestDto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+				hubSupplierSeasonDicRequestDto.setRefreshDicType(InfoState.RefreshSeason.getIndex());
+				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(hubSupplierSeasonDicRequestDto));
+				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_SEASON_MAPPING_MAP_KEY+"_"+hubSupplierSeasonDicRequestDto.getSupplierId());
+			}
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("刷新失败：{}", e);

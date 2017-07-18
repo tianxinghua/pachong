@@ -10,17 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
-import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
-import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.gateway.StudioSlotGateWay;
+import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.service.studio.studio.StudioCommonService;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.ConfirmQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.dto.IncomingSlotsQuery;
 import com.shangpin.ephub.product.business.ui.studio.incomingslots.service.IncomingSlotsService;
-import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotsVo;
+import com.shangpin.ephub.product.business.ui.studio.incomingslots.vo.IncomingSlotDto;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,60 +44,84 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 	private StudioSlotGateWay studioSlotGateWay;
 	@Autowired
 	private OperationService operationService;
+	@Autowired
+	private StudioCommonService studioCommonService;
 
 	@Override
-	public IncomingSlotsVo list(IncomingSlotsQuery query) {
+	public List<IncomingSlotDto> list(IncomingSlotsQuery query) {
 		try {
 			log.info("样品收货页面查询参数："+JsonUtil.serialize(query)); 
-			IncomingSlotsVo incomingSlotsVo = new IncomingSlotsVo();
+			List<IncomingSlotDto> prioritySlots = new ArrayList<IncomingSlotDto>();
 			StudioSlotCriteriaDto criteria = formatStudioSlotCriteria(query);
 			List<StudioSlotDto> list  = studioSlotGateWay.selectByCriteria(criteria );
 			log.info("样品收货页面共查询到："+list.size()+"条数据。");  
 			String today = DateTimeUtil.format(new Date());
 			if(CollectionUtils.isNotEmpty(list)){
-				List<StudioSlotDto> prioritySlots = new ArrayList<StudioSlotDto>();
-				List<StudioSlotDto> secondarySlots = new ArrayList<StudioSlotDto>();
+				List<IncomingSlotDto> secondarySlots = new ArrayList<IncomingSlotDto>();
 				for(StudioSlotDto dto : list){
+					IncomingSlotDto slotDto = convert(dto);
 					String planArriveTime = DateTimeUtil.format(dto.getPlanArriveTime());
 					if(today.equals(planArriveTime)){
-						prioritySlots.add(dto);
+						prioritySlots.add(slotDto);
 					}else{
-						secondarySlots.add(dto);
+						secondarySlots.add(slotDto);
 					}
 				}
-				incomingSlotsVo.setPrioritySlots(prioritySlots);
-				incomingSlotsVo.setSecondarySlots(secondarySlots);
+				prioritySlots.addAll(secondarySlots);
 			}
-			return incomingSlotsVo;
+			return prioritySlots;
 		} catch (Exception e) {
 			log.error("样品收货页面查询异常："+e.getMessage(),e); 
 		}
 		
 		return null;
 	}
-	
+	/**
+	 * 转换
+	 * @param dto
+	 * @return
+	 */
+	private IncomingSlotDto convert(StudioSlotDto dto){
+		IncomingSlotDto slotDto = new IncomingSlotDto();
+		slotDto.setStudioSlotId(dto.getStudioSlotId());
+		slotDto.setSlotNo(dto.getSlotNo());
+		List<StudioSlotSpuSendDetailDto> list = operationService.selectDetail(dto.getSlotNo());
+		slotDto.setQty(list.size());
+		slotDto.setSender(dto.getSendUser());
+		slotDto.setSendingDate(dto.getSendTime());
+		slotDto.setETA(dto.getPlanArriveTime());
+		slotDto.setTrackingNo(dto.getTrackNo());
+		return slotDto;
+	}
+	/**
+	 * 条件转换
+	 * @param query
+	 * @return
+	 * @throws Exception
+	 */
 	private StudioSlotCriteriaDto formatStudioSlotCriteria(IncomingSlotsQuery query) throws Exception {
 		StudioSlotCriteriaDto criteria = new StudioSlotCriteriaDto();
 		criteria.setPageNo(1);
 		criteria.setPageSize(100);
 		criteria.setOrderByClause("plan_arrive_time");
-		criteria.createCriteria().andArriveStatusEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
-		Long studioId = operationService.getStudioId(query.getStudioNo());
-		if(null != studioId){
-			criteria.createCriteria().andStudioIdEqualTo(studioId);
+		Criteria createCriteria = criteria.createCriteria();
+		createCriteria.andArriveStatusEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue()).andSendStateEqualTo(StudioSlotSendState.SEND.getIndex().byteValue());
+//		Long studioId = operationService.getStudioId(query.getStudioNo());
+		if(StringUtils.isNotBlank(query.getStudioNo())){
+			createCriteria.andStudioIdEqualTo(Long.valueOf(query.getStudioNo())); 
 		}else{
 			throw new Exception("未获得摄影棚编号");
 		}
 		if(StringUtils.isNotBlank(query.getTrackingNo())){
-			criteria.createCriteria().andTrackNoEqualTo(query.getTrackingNo());
+			createCriteria.andTrackNoEqualTo(query.getTrackingNo());
 		}
 		if(StringUtils.isNotBlank(query.getPlanArriveStartTime())){
 			Date startDate = DateTimeUtil.parse(query.getPlanArriveStartTime());
-			criteria.createCriteria().andPlanArriveTimeGreaterThanOrEqualTo(startDate);
+			createCriteria.andPlanArriveTimeGreaterThanOrEqualTo(startDate);
 		}
 		if(StringUtils.isNotBlank(query.getPlanArriveEndTime())){
 			Date endDate = DateTimeUtil.parse(query.getPlanArriveEndTime());
-			criteria.createCriteria().andPlanArriveTimeLessThan(endDate);
+			createCriteria.andPlanArriveTimeLessThan(endDate);
 		}
 		return criteria;
 	}
@@ -105,25 +132,36 @@ public class IncomingSlotsServiceImpl implements IncomingSlotsService {
 			log.info("样品收货确认接受到参数："+JsonUtil.serialize(confirmQuery)); 
 			List<Long> ids = confirmQuery.getIds();
 			if(CollectionUtils.isNotEmpty(ids )){
-				StudioSlotWithCriteriaDto withCriteria = new StudioSlotWithCriteriaDto();
-				StudioSlotCriteriaDto criteria = new StudioSlotCriteriaDto();
-				criteria.createCriteria().andStudioSlotIdIn(ids);
-				withCriteria.setCriteria(criteria );
-				StudioSlotDto studioSlot =  new StudioSlotDto();
-				studioSlot.setArriveStatus(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
-				studioSlot.setShotStatus(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
-				Date date = new Date();
-				studioSlot.setArriveTime(date);
-				studioSlot.setUpdateTime(date); 
-				studioSlot.setArriveUser(confirmQuery.getArriveUser());  
-				withCriteria.setStudioSlot(studioSlot );
-				studioSlotGateWay.updateByCriteriaSelective(withCriteria);
+				for(Long studioSlotId : ids){
+					StudioSlotDto studioSlot =  new StudioSlotDto();
+					studioSlot.setStudioSlotId(studioSlotId); 
+					String time = studioCommonService.getTimeLogTime(Long.valueOf(confirmQuery.getStudioNo()));
+					long lTime = DateTimeUtil.parse(time).getTime();
+					long planArriveTime = getPlanArriveTime(studioSlotId).getTime();
+					if(lTime <= planArriveTime){
+						studioSlot.setArriveStatus(StudioSlotArriveState.RECEIVED.getIndex().byteValue());
+					}else{
+						studioSlot.setArriveStatus(StudioSlotArriveState.DELAY.getIndex().byteValue());
+					}
+					studioSlot.setSlotStatus(StudioSlotState.RECEIVED.getIndex().byteValue());
+//					studioSlot.setShotStatus(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
+					Date date = new Date();
+					studioSlot.setArriveTime(date);
+					studioSlot.setUpdateTime(date); 
+					studioSlot.setArriveUser(confirmQuery.getArriveUser());  
+					studioSlotGateWay.updateByPrimaryKeySelective(studioSlot);
+				}
 				return true;
 			}
 		} catch (Exception e) {
 			log.error("样品收货确认异常："+e.getMessage(),e); 
 		}
 		return false;
+	}
+	
+	private Date getPlanArriveTime(Long studioSlotId){
+		StudioSlotDto dto = studioSlotGateWay.selectByPrimaryKey(studioSlotId);
+		return dto.getPlanArriveTime();
 	}
 
 }

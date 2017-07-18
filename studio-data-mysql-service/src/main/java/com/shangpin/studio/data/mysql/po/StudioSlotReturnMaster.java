@@ -18,10 +18,29 @@ public class StudioSlotReturnMaster implements Serializable {
 
     private String supplierId;
 
+    private String supplierName;
+
+    private Long studioId;
+
+    private String masterSlotNo;
+
+    private String multSlotNo;
+
     /**
      * 数量
      */
     private Integer quantity;
+
+    /**
+     * 实际发货数量
+     */
+    private Integer actualSendQuantity;
+
+    private Integer missingQuantity;
+
+    private Integer damagedQuantity;
+
+    private Integer addedQuantiy;
 
     /**
      * 实际收货数量
@@ -54,7 +73,7 @@ public class StudioSlotReturnMaster implements Serializable {
     private Date sendTime;
 
     /**
-     * 0：待发货  1:供货商发货  
+     * 0：待发货  1:已发货(返货给供应商)
      */
     private Byte sendState;
 
@@ -137,12 +156,76 @@ public class StudioSlotReturnMaster implements Serializable {
         this.supplierId = supplierId == null ? null : supplierId.trim();
     }
 
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName == null ? null : supplierName.trim();
+    }
+
+    public Long getStudioId() {
+        return studioId;
+    }
+
+    public void setStudioId(Long studioId) {
+        this.studioId = studioId;
+    }
+
+    public String getMasterSlotNo() {
+        return masterSlotNo;
+    }
+
+    public void setMasterSlotNo(String masterSlotNo) {
+        this.masterSlotNo = masterSlotNo == null ? null : masterSlotNo.trim();
+    }
+
+    public String getMultSlotNo() {
+        return multSlotNo;
+    }
+
+    public void setMultSlotNo(String multSlotNo) {
+        this.multSlotNo = multSlotNo == null ? null : multSlotNo.trim();
+    }
+
     public Integer getQuantity() {
         return quantity;
     }
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Integer getActualSendQuantity() {
+        return actualSendQuantity;
+    }
+
+    public void setActualSendQuantity(Integer actualSendQuantity) {
+        this.actualSendQuantity = actualSendQuantity;
+    }
+
+    public Integer getMissingQuantity() {
+        return missingQuantity;
+    }
+
+    public void setMissingQuantity(Integer missingQuantity) {
+        this.missingQuantity = missingQuantity;
+    }
+
+    public Integer getDamagedQuantity() {
+        return damagedQuantity;
+    }
+
+    public void setDamagedQuantity(Integer damagedQuantity) {
+        this.damagedQuantity = damagedQuantity;
+    }
+
+    public Integer getAddedQuantiy() {
+        return addedQuantiy;
+    }
+
+    public void setAddedQuantiy(Integer addedQuantiy) {
+        this.addedQuantiy = addedQuantiy;
     }
 
     public Integer getActualQuantity() {
@@ -283,7 +366,15 @@ public class StudioSlotReturnMaster implements Serializable {
         sb.append(", studioSendNo=").append(studioSendNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", supplierName=").append(supplierName);
+        sb.append(", studioId=").append(studioId);
+        sb.append(", masterSlotNo=").append(masterSlotNo);
+        sb.append(", multSlotNo=").append(multSlotNo);
         sb.append(", quantity=").append(quantity);
+        sb.append(", actualSendQuantity=").append(actualSendQuantity);
+        sb.append(", missingQuantity=").append(missingQuantity);
+        sb.append(", damagedQuantity=").append(damagedQuantity);
+        sb.append(", addedQuantiy=").append(addedQuantiy);
         sb.append(", actualQuantity=").append(actualQuantity);
         sb.append(", trackNo=").append(trackNo);
         sb.append(", state=").append(state);
@@ -321,7 +412,15 @@ public class StudioSlotReturnMaster implements Serializable {
             && (this.getStudioSendNo() == null ? other.getStudioSendNo() == null : this.getStudioSendNo().equals(other.getStudioSendNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getSupplierName() == null ? other.getSupplierName() == null : this.getSupplierName().equals(other.getSupplierName()))
+            && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
+            && (this.getMasterSlotNo() == null ? other.getMasterSlotNo() == null : this.getMasterSlotNo().equals(other.getMasterSlotNo()))
+            && (this.getMultSlotNo() == null ? other.getMultSlotNo() == null : this.getMultSlotNo().equals(other.getMultSlotNo()))
             && (this.getQuantity() == null ? other.getQuantity() == null : this.getQuantity().equals(other.getQuantity()))
+            && (this.getActualSendQuantity() == null ? other.getActualSendQuantity() == null : this.getActualSendQuantity().equals(other.getActualSendQuantity()))
+            && (this.getMissingQuantity() == null ? other.getMissingQuantity() == null : this.getMissingQuantity().equals(other.getMissingQuantity()))
+            && (this.getDamagedQuantity() == null ? other.getDamagedQuantity() == null : this.getDamagedQuantity().equals(other.getDamagedQuantity()))
+            && (this.getAddedQuantiy() == null ? other.getAddedQuantiy() == null : this.getAddedQuantiy().equals(other.getAddedQuantiy()))
             && (this.getActualQuantity() == null ? other.getActualQuantity() == null : this.getActualQuantity().equals(other.getActualQuantity()))
             && (this.getTrackNo() == null ? other.getTrackNo() == null : this.getTrackNo().equals(other.getTrackNo()))
             && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()))
@@ -348,7 +447,15 @@ public class StudioSlotReturnMaster implements Serializable {
         result = prime * result + ((getStudioSendNo() == null) ? 0 : getStudioSendNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getSupplierName() == null) ? 0 : getSupplierName().hashCode());
+        result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
+        result = prime * result + ((getMasterSlotNo() == null) ? 0 : getMasterSlotNo().hashCode());
+        result = prime * result + ((getMultSlotNo() == null) ? 0 : getMultSlotNo().hashCode());
         result = prime * result + ((getQuantity() == null) ? 0 : getQuantity().hashCode());
+        result = prime * result + ((getActualSendQuantity() == null) ? 0 : getActualSendQuantity().hashCode());
+        result = prime * result + ((getMissingQuantity() == null) ? 0 : getMissingQuantity().hashCode());
+        result = prime * result + ((getDamagedQuantity() == null) ? 0 : getDamagedQuantity().hashCode());
+        result = prime * result + ((getAddedQuantiy() == null) ? 0 : getAddedQuantiy().hashCode());
         result = prime * result + ((getActualQuantity() == null) ? 0 : getActualQuantity().hashCode());
         result = prime * result + ((getTrackNo() == null) ? 0 : getTrackNo().hashCode());
         result = prime * result + ((getState() == null) ? 0 : getState().hashCode());

@@ -420,6 +420,276 @@ public class StudioSlotReturnMasterCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andSupplierNameIsNull() {
+            addCriterion("supplier_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameIsNotNull() {
+            addCriterion("supplier_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameEqualTo(String value) {
+            addCriterion("supplier_name =", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotEqualTo(String value) {
+            addCriterion("supplier_name <>", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameGreaterThan(String value) {
+            addCriterion("supplier_name >", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_name >=", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameLessThan(String value) {
+            addCriterion("supplier_name <", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameLessThanOrEqualTo(String value) {
+            addCriterion("supplier_name <=", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameLike(String value) {
+            addCriterion("supplier_name like", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotLike(String value) {
+            addCriterion("supplier_name not like", value, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameIn(List<String> values) {
+            addCriterion("supplier_name in", values, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotIn(List<String> values) {
+            addCriterion("supplier_name not in", values, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameBetween(String value1, String value2) {
+            addCriterion("supplier_name between", value1, value2, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierNameNotBetween(String value1, String value2) {
+            addCriterion("supplier_name not between", value1, value2, "supplierName");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdIsNull() {
+            addCriterion("studio_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdIsNotNull() {
+            addCriterion("studio_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdEqualTo(Long value) {
+            addCriterion("studio_id =", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdNotEqualTo(Long value) {
+            addCriterion("studio_id <>", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdGreaterThan(Long value) {
+            addCriterion("studio_id >", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("studio_id >=", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdLessThan(Long value) {
+            addCriterion("studio_id <", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdLessThanOrEqualTo(Long value) {
+            addCriterion("studio_id <=", value, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdIn(List<Long> values) {
+            addCriterion("studio_id in", values, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdNotIn(List<Long> values) {
+            addCriterion("studio_id not in", values, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdBetween(Long value1, Long value2) {
+            addCriterion("studio_id between", value1, value2, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andStudioIdNotBetween(Long value1, Long value2) {
+            addCriterion("studio_id not between", value1, value2, "studioId");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoIsNull() {
+            addCriterion("master_slot_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoIsNotNull() {
+            addCriterion("master_slot_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoEqualTo(String value) {
+            addCriterion("master_slot_no =", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotEqualTo(String value) {
+            addCriterion("master_slot_no <>", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoGreaterThan(String value) {
+            addCriterion("master_slot_no >", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoGreaterThanOrEqualTo(String value) {
+            addCriterion("master_slot_no >=", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoLessThan(String value) {
+            addCriterion("master_slot_no <", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoLessThanOrEqualTo(String value) {
+            addCriterion("master_slot_no <=", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoLike(String value) {
+            addCriterion("master_slot_no like", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotLike(String value) {
+            addCriterion("master_slot_no not like", value, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoIn(List<String> values) {
+            addCriterion("master_slot_no in", values, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotIn(List<String> values) {
+            addCriterion("master_slot_no not in", values, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoBetween(String value1, String value2) {
+            addCriterion("master_slot_no between", value1, value2, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMasterSlotNoNotBetween(String value1, String value2) {
+            addCriterion("master_slot_no not between", value1, value2, "masterSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoIsNull() {
+            addCriterion("mult_slot_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoIsNotNull() {
+            addCriterion("mult_slot_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoEqualTo(String value) {
+            addCriterion("mult_slot_no =", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotEqualTo(String value) {
+            addCriterion("mult_slot_no <>", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoGreaterThan(String value) {
+            addCriterion("mult_slot_no >", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoGreaterThanOrEqualTo(String value) {
+            addCriterion("mult_slot_no >=", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoLessThan(String value) {
+            addCriterion("mult_slot_no <", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoLessThanOrEqualTo(String value) {
+            addCriterion("mult_slot_no <=", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoLike(String value) {
+            addCriterion("mult_slot_no like", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotLike(String value) {
+            addCriterion("mult_slot_no not like", value, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoIn(List<String> values) {
+            addCriterion("mult_slot_no in", values, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotIn(List<String> values) {
+            addCriterion("mult_slot_no not in", values, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoBetween(String value1, String value2) {
+            addCriterion("mult_slot_no between", value1, value2, "multSlotNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andMultSlotNoNotBetween(String value1, String value2) {
+            addCriterion("mult_slot_no not between", value1, value2, "multSlotNo");
+            return (Criteria) this;
+        }
+
         public Criteria andQuantityIsNull() {
             addCriterion("quantity is null");
             return (Criteria) this;
@@ -477,6 +747,246 @@ public class StudioSlotReturnMasterCriteriaDto {
 
         public Criteria andQuantityNotBetween(Integer value1, Integer value2) {
             addCriterion("quantity not between", value1, value2, "quantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityIsNull() {
+            addCriterion("actual_send_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityIsNotNull() {
+            addCriterion("actual_send_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityEqualTo(Integer value) {
+            addCriterion("actual_send_quantity =", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityNotEqualTo(Integer value) {
+            addCriterion("actual_send_quantity <>", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityGreaterThan(Integer value) {
+            addCriterion("actual_send_quantity >", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("actual_send_quantity >=", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityLessThan(Integer value) {
+            addCriterion("actual_send_quantity <", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("actual_send_quantity <=", value, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityIn(List<Integer> values) {
+            addCriterion("actual_send_quantity in", values, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityNotIn(List<Integer> values) {
+            addCriterion("actual_send_quantity not in", values, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("actual_send_quantity between", value1, value2, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andActualSendQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("actual_send_quantity not between", value1, value2, "actualSendQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityIsNull() {
+            addCriterion("missing_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityIsNotNull() {
+            addCriterion("missing_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityEqualTo(Integer value) {
+            addCriterion("missing_quantity =", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityNotEqualTo(Integer value) {
+            addCriterion("missing_quantity <>", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityGreaterThan(Integer value) {
+            addCriterion("missing_quantity >", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("missing_quantity >=", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityLessThan(Integer value) {
+            addCriterion("missing_quantity <", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("missing_quantity <=", value, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityIn(List<Integer> values) {
+            addCriterion("missing_quantity in", values, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityNotIn(List<Integer> values) {
+            addCriterion("missing_quantity not in", values, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("missing_quantity between", value1, value2, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andMissingQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("missing_quantity not between", value1, value2, "missingQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityIsNull() {
+            addCriterion("damaged_quantity is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityIsNotNull() {
+            addCriterion("damaged_quantity is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityEqualTo(Integer value) {
+            addCriterion("damaged_quantity =", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityNotEqualTo(Integer value) {
+            addCriterion("damaged_quantity <>", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityGreaterThan(Integer value) {
+            addCriterion("damaged_quantity >", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("damaged_quantity >=", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityLessThan(Integer value) {
+            addCriterion("damaged_quantity <", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityLessThanOrEqualTo(Integer value) {
+            addCriterion("damaged_quantity <=", value, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityIn(List<Integer> values) {
+            addCriterion("damaged_quantity in", values, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityNotIn(List<Integer> values) {
+            addCriterion("damaged_quantity not in", values, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityBetween(Integer value1, Integer value2) {
+            addCriterion("damaged_quantity between", value1, value2, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andDamagedQuantityNotBetween(Integer value1, Integer value2) {
+            addCriterion("damaged_quantity not between", value1, value2, "damagedQuantity");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyIsNull() {
+            addCriterion("added_quantiy is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyIsNotNull() {
+            addCriterion("added_quantiy is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyEqualTo(Integer value) {
+            addCriterion("added_quantiy =", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyNotEqualTo(Integer value) {
+            addCriterion("added_quantiy <>", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyGreaterThan(Integer value) {
+            addCriterion("added_quantiy >", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("added_quantiy >=", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyLessThan(Integer value) {
+            addCriterion("added_quantiy <", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyLessThanOrEqualTo(Integer value) {
+            addCriterion("added_quantiy <=", value, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyIn(List<Integer> values) {
+            addCriterion("added_quantiy in", values, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyNotIn(List<Integer> values) {
+            addCriterion("added_quantiy not in", values, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyBetween(Integer value1, Integer value2) {
+            addCriterion("added_quantiy between", value1, value2, "addedQuantiy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAddedQuantiyNotBetween(Integer value1, Integer value2) {
+            addCriterion("added_quantiy not between", value1, value2, "addedQuantiy");
             return (Criteria) this;
         }
 

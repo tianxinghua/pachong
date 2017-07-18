@@ -22,6 +22,7 @@ public class HubColorDic {
 		colorMap.put(42L,"紫色");
 		colorMap.put(60L,"橙色");
 		colorMap.put(65L,"金属色");
+		colorMap.put(20L,"银色");
 		
 		
 		
@@ -39,6 +40,7 @@ public class HubColorDic {
 		colorNameMap.put("紫色",42L);
 		colorNameMap.put("橙色",60L);
 		colorNameMap.put("金属色",65L);
+		colorNameMap.put("银色",20L);
 	}
 	public static String getHubColor(Long index){
 		return colorMap.get(index);

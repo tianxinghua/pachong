@@ -24,6 +24,11 @@ public class StudioSlotSpuSendDetailVo {
 	private Date time;
 	@JsonIgnore
 	private byte arriveState;
+	/**
+	 * 是否上传过
+	 */
+	@JsonIgnore
+	private byte uploadPicSign;
 	
 	@JsonProperty("Brand")
 	public String getBrand() {
@@ -80,6 +85,14 @@ public class StudioSlotSpuSendDetailVo {
 	@JsonProperty("ArriveState")
 	public void setArriveState(byte arriveState) {
 		this.arriveState = arriveState;
+	}
+	@JsonProperty("UploadPicSign")
+	public byte getUploadPicSign() {
+		return uploadPicSign;
+	}
+	@JsonProperty("UploadPicSign")
+	public void setUploadPicSign(byte uploadPicSign) {
+		this.uploadPicSign = uploadPicSign;
 	}
 	
 }

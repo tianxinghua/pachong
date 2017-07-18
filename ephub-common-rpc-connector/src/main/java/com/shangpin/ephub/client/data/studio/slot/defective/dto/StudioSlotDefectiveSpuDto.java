@@ -10,6 +10,16 @@ public class StudioSlotDefectiveSpuDto implements Serializable {
     private Long studioSlotDefectiveSpuId;
 
     /**
+     * 发货明细主键
+     */
+    private Long detailId;
+
+    /**
+     * 明细来源 0:supplier_send_detail 1:studio_send_detail
+     */
+    private Byte detailFrom;
+
+    /**
      * slot编号
      */
     private String slotNo;
@@ -82,6 +92,22 @@ public class StudioSlotDefectiveSpuDto implements Serializable {
 
     public void setStudioSlotDefectiveSpuId(Long studioSlotDefectiveSpuId) {
         this.studioSlotDefectiveSpuId = studioSlotDefectiveSpuId;
+    }
+
+    public Long getDetailId() {
+        return detailId;
+    }
+
+    public void setDetailId(Long detailId) {
+        this.detailId = detailId;
+    }
+
+    public Byte getDetailFrom() {
+        return detailFrom;
+    }
+
+    public void setDetailFrom(Byte detailFrom) {
+        this.detailFrom = detailFrom;
     }
 
     public String getSlotNo() {
@@ -195,6 +221,8 @@ public class StudioSlotDefectiveSpuDto implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", studioSlotDefectiveSpuId=").append(studioSlotDefectiveSpuId);
+        sb.append(", detailId=").append(detailId);
+        sb.append(", detailFrom=").append(detailFrom);
         sb.append(", slotNo=").append(slotNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
@@ -226,6 +254,8 @@ public class StudioSlotDefectiveSpuDto implements Serializable {
         }
         StudioSlotDefectiveSpuDto other = (StudioSlotDefectiveSpuDto) that;
         return (this.getStudioSlotDefectiveSpuId() == null ? other.getStudioSlotDefectiveSpuId() == null : this.getStudioSlotDefectiveSpuId().equals(other.getStudioSlotDefectiveSpuId()))
+            && (this.getDetailId() == null ? other.getDetailId() == null : this.getDetailId().equals(other.getDetailId()))
+            && (this.getDetailFrom() == null ? other.getDetailFrom() == null : this.getDetailFrom().equals(other.getDetailFrom()))
             && (this.getSlotNo() == null ? other.getSlotNo() == null : this.getSlotNo().equals(other.getSlotNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
@@ -246,6 +276,8 @@ public class StudioSlotDefectiveSpuDto implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getStudioSlotDefectiveSpuId() == null) ? 0 : getStudioSlotDefectiveSpuId().hashCode());
+        result = prime * result + ((getDetailId() == null) ? 0 : getDetailId().hashCode());
+        result = prime * result + ((getDetailFrom() == null) ? 0 : getDetailFrom().hashCode());
         result = prime * result + ((getSlotNo() == null) ? 0 : getSlotNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());

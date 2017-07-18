@@ -6,6 +6,7 @@
     <result column="sp_brand_no" property="spBrandNo" jdbcType="VARCHAR" />
     <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
     <result column="brand_name_en" property="brandNameEn" jdbcType="VARCHAR" />
+    <result column="sp_category_no" property="spCategoryNo" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -73,8 +74,8 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      studio_brand_id, sp_brand_no, brand_name, brand_name_en, create_time, create_user, 
-      update_time, update_user, data_state, version
+      studio_brand_id, sp_brand_no, brand_name, brand_name_en, sp_category_no, create_time, 
+      create_user, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -99,7 +100,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_brand_id,sp_brand_no,brand_name,brand_name_en,create_time,create_user,update_time,update_user,data_state,version
+    studio_brand_id,sp_brand_no,brand_name,brand_name_en,sp_category_no,create_time,create_user,update_time,update_user,data_state,version
     from hub_dic_studio_brand
     where studio_brand_id = #{studioBrandId,jdbcType=BIGINT}
   </select>
@@ -118,13 +119,13 @@
       SELECT LAST_INSERT_ID() AS studio_brand_id
     </selectKey>
     insert into hub_dic_studio_brand (studio_brand_id, sp_brand_no, brand_name, 
-      brand_name_en, create_time, create_user, 
-      update_time, update_user, data_state, 
-      version)
+      brand_name_en, sp_category_no, create_time, 
+      create_user, update_time, update_user, 
+      data_state, version)
     values (#{studioBrandId,jdbcType=BIGINT}, #{spBrandNo,jdbcType=VARCHAR}, #{brandName,jdbcType=VARCHAR}, 
-      #{brandNameEn,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
-      #{version,jdbcType=BIGINT})
+      #{brandNameEn,jdbcType=VARCHAR}, #{spCategoryNo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.slot.dicbrand.po.HubDicStudioBrand" >
     <selectKey keyColumn="studio_brand_id" keyProperty="studioBrandId" order="AFTER" resultType="java.lang.Long">
@@ -143,6 +144,9 @@
       </if>
       <if test="brandNameEn != null" >
         brand_name_en,
+      </if>
+      <if test="spCategoryNo != null" >
+        sp_category_no,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -175,6 +179,9 @@
       </if>
       <if test="brandNameEn != null" >
         #{brandNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="spCategoryNo != null" >
+        #{spCategoryNo,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -217,6 +224,9 @@
       <if test="record.brandNameEn != null" >
         brand_name_en = #{record.brandNameEn,jdbcType=VARCHAR},
       </if>
+      <if test="record.spCategoryNo != null" >
+        sp_category_no = #{record.spCategoryNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -246,6 +256,7 @@
       sp_brand_no = #{record.spBrandNo,jdbcType=VARCHAR},
       brand_name = #{record.brandName,jdbcType=VARCHAR},
       brand_name_en = #{record.brandNameEn,jdbcType=VARCHAR},
+      sp_category_no = #{record.spCategoryNo,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -267,6 +278,9 @@
       </if>
       <if test="brandNameEn != null" >
         brand_name_en = #{brandNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="spCategoryNo != null" >
+        sp_category_no = #{spCategoryNo,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -294,6 +308,7 @@
     set sp_brand_no = #{spBrandNo,jdbcType=VARCHAR},
       brand_name = #{brandName,jdbcType=VARCHAR},
       brand_name_en = #{brandNameEn,jdbcType=VARCHAR},
+      sp_category_no = #{spCategoryNo,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},

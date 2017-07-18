@@ -7,6 +7,7 @@
     <result column="slot_no" property="slotNo" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_name" property="supplierName" jdbcType="VARCHAR" />
     <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
     <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
     <result column="slot_spu_no" property="slotSpuNo" jdbcType="VARCHAR" />
@@ -15,8 +16,10 @@
     <result column="supplier_brand_name" property="supplierBrandName" jdbcType="VARCHAR" />
     <result column="supplier_category_name" property="supplierCategoryName" jdbcType="VARCHAR" />
     <result column="supplier_season_name" property="supplierSeasonName" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
     <result column="send_state" property="sendState" jdbcType="TINYINT" />
     <result column="arrive_state" property="arriveState" jdbcType="TINYINT" />
+    <result column="barcode" property="barcode" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -90,10 +93,10 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       studio_slot_return_detail_id, studio_slot_return_master_id, slot_no, supplier_no, 
-      supplier_id, spu_pending_id, supplier_spu_id, slot_spu_no, supplier_spu_name, supplier_spu_model, 
-      supplier_brand_name, supplier_category_name, supplier_season_name, send_state, arrive_state, 
-      memo, create_time, create_user, send_user, send_time, arrive_user, arrive_time, update_time, 
-      update_user, data_state, version
+      supplier_id, supplier_name, spu_pending_id, supplier_spu_id, slot_spu_no, supplier_spu_name, 
+      supplier_spu_model, supplier_brand_name, supplier_category_name, supplier_season_name, 
+      state, send_state, arrive_state, barcode, memo, create_time, create_user, send_user, 
+      send_time, arrive_user, arrive_time, update_time, update_user, data_state, version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -118,7 +121,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    studio_slot_return_detail_id,studio_slot_return_master_id,slot_no,supplier_no,supplier_id,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,send_state,arrive_state,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
+    studio_slot_return_detail_id,studio_slot_return_master_id,slot_no,supplier_no,supplier_id,supplier_name,spu_pending_id,supplier_spu_id,slot_spu_no,supplier_spu_name,supplier_spu_model,supplier_brand_name,supplier_category_name,supplier_season_name,state,send_state,arrive_state,barcode,memo,create_time,create_user,send_user,send_time,arrive_user,arrive_time,update_time,update_user,data_state,version
     from studio_slot_return_detail
     where studio_slot_return_detail_id = #{studioSlotReturnDetailId,jdbcType=BIGINT}
   </select>
@@ -138,20 +141,22 @@
     </selectKey>
     insert into studio_slot_return_detail (studio_slot_return_detail_id, studio_slot_return_master_id, 
       slot_no, supplier_no, supplier_id, 
-      spu_pending_id, supplier_spu_id, slot_spu_no, 
-      supplier_spu_name, supplier_spu_model, supplier_brand_name, 
-      supplier_category_name, supplier_season_name, 
-      send_state, arrive_state, memo, 
+      supplier_name, spu_pending_id, supplier_spu_id, 
+      slot_spu_no, supplier_spu_name, supplier_spu_model, 
+      supplier_brand_name, supplier_category_name, 
+      supplier_season_name, state, send_state, 
+      arrive_state, barcode, memo, 
       create_time, create_user, send_user, 
       send_time, arrive_user, arrive_time, 
       update_time, update_user, data_state, 
       version)
     values (#{studioSlotReturnDetailId,jdbcType=BIGINT}, #{studioSlotReturnMasterId,jdbcType=BIGINT}, 
       #{slotNo,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
-      #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, #{slotSpuNo,jdbcType=VARCHAR}, 
-      #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierBrandName,jdbcType=VARCHAR}, 
-      #{supplierCategoryName,jdbcType=VARCHAR}, #{supplierSeasonName,jdbcType=VARCHAR}, 
-      #{sendState,jdbcType=TINYINT}, #{arriveState,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
+      #{supplierName,jdbcType=VARCHAR}, #{spuPendingId,jdbcType=BIGINT}, #{supplierSpuId,jdbcType=BIGINT}, 
+      #{slotSpuNo,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, 
+      #{supplierBrandName,jdbcType=VARCHAR}, #{supplierCategoryName,jdbcType=VARCHAR}, 
+      #{supplierSeasonName,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, #{sendState,jdbcType=TINYINT}, 
+      #{arriveState,jdbcType=TINYINT}, #{barcode,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{sendUser,jdbcType=VARCHAR}, 
       #{sendTime,jdbcType=TIMESTAMP}, #{arriveUser,jdbcType=VARCHAR}, #{arriveTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
@@ -178,6 +183,9 @@
       <if test="supplierId != null" >
         supplier_id,
       </if>
+      <if test="supplierName != null" >
+        supplier_name,
+      </if>
       <if test="spuPendingId != null" >
         spu_pending_id,
       </if>
@@ -202,11 +210,17 @@
       <if test="supplierSeasonName != null" >
         supplier_season_name,
       </if>
+      <if test="state != null" >
+        state,
+      </if>
       <if test="sendState != null" >
         send_state,
       </if>
       <if test="arriveState != null" >
         arrive_state,
+      </if>
+      <if test="barcode != null" >
+        barcode,
       </if>
       <if test="memo != null" >
         memo,
@@ -258,6 +272,9 @@
       <if test="supplierId != null" >
         #{supplierId,jdbcType=VARCHAR},
       </if>
+      <if test="supplierName != null" >
+        #{supplierName,jdbcType=VARCHAR},
+      </if>
       <if test="spuPendingId != null" >
         #{spuPendingId,jdbcType=BIGINT},
       </if>
@@ -282,11 +299,17 @@
       <if test="supplierSeasonName != null" >
         #{supplierSeasonName,jdbcType=VARCHAR},
       </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
       <if test="sendState != null" >
         #{sendState,jdbcType=TINYINT},
       </if>
       <if test="arriveState != null" >
         #{arriveState,jdbcType=TINYINT},
+      </if>
+      <if test="barcode != null" >
+        #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="memo != null" >
         #{memo,jdbcType=VARCHAR},
@@ -347,6 +370,9 @@
       <if test="record.supplierId != null" >
         supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       </if>
+      <if test="record.supplierName != null" >
+        supplier_name = #{record.supplierName,jdbcType=VARCHAR},
+      </if>
       <if test="record.spuPendingId != null" >
         spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
       </if>
@@ -371,11 +397,17 @@
       <if test="record.supplierSeasonName != null" >
         supplier_season_name = #{record.supplierSeasonName,jdbcType=VARCHAR},
       </if>
+      <if test="record.state != null" >
+        state = #{record.state,jdbcType=TINYINT},
+      </if>
       <if test="record.sendState != null" >
         send_state = #{record.sendState,jdbcType=TINYINT},
       </if>
       <if test="record.arriveState != null" >
         arrive_state = #{record.arriveState,jdbcType=TINYINT},
+      </if>
+      <if test="record.barcode != null" >
+        barcode = #{record.barcode,jdbcType=VARCHAR},
       </if>
       <if test="record.memo != null" >
         memo = #{record.memo,jdbcType=VARCHAR},
@@ -422,6 +454,7 @@
       slot_no = #{record.slotNo,jdbcType=VARCHAR},
       supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      supplier_name = #{record.supplierName,jdbcType=VARCHAR},
       spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
       supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
       slot_spu_no = #{record.slotSpuNo,jdbcType=VARCHAR},
@@ -430,8 +463,10 @@
       supplier_brand_name = #{record.supplierBrandName,jdbcType=VARCHAR},
       supplier_category_name = #{record.supplierCategoryName,jdbcType=VARCHAR},
       supplier_season_name = #{record.supplierSeasonName,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=TINYINT},
       send_state = #{record.sendState,jdbcType=TINYINT},
       arrive_state = #{record.arriveState,jdbcType=TINYINT},
+      barcode = #{record.barcode,jdbcType=VARCHAR},
       memo = #{record.memo,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -462,6 +497,9 @@
       <if test="supplierId != null" >
         supplier_id = #{supplierId,jdbcType=VARCHAR},
       </if>
+      <if test="supplierName != null" >
+        supplier_name = #{supplierName,jdbcType=VARCHAR},
+      </if>
       <if test="spuPendingId != null" >
         spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
       </if>
@@ -486,11 +524,17 @@
       <if test="supplierSeasonName != null" >
         supplier_season_name = #{supplierSeasonName,jdbcType=VARCHAR},
       </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
       <if test="sendState != null" >
         send_state = #{sendState,jdbcType=TINYINT},
       </if>
       <if test="arriveState != null" >
         arrive_state = #{arriveState,jdbcType=TINYINT},
+      </if>
+      <if test="barcode != null" >
+        barcode = #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="memo != null" >
         memo = #{memo,jdbcType=VARCHAR},
@@ -534,6 +578,7 @@
       slot_no = #{slotNo,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_name = #{supplierName,jdbcType=VARCHAR},
       spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
       supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
       slot_spu_no = #{slotSpuNo,jdbcType=VARCHAR},
@@ -542,8 +587,10 @@
       supplier_brand_name = #{supplierBrandName,jdbcType=VARCHAR},
       supplier_category_name = #{supplierCategoryName,jdbcType=VARCHAR},
       supplier_season_name = #{supplierSeasonName,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
       send_state = #{sendState,jdbcType=TINYINT},
       arrive_state = #{arriveState,jdbcType=TINYINT},
+      barcode = #{barcode,jdbcType=VARCHAR},
       memo = #{memo,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},

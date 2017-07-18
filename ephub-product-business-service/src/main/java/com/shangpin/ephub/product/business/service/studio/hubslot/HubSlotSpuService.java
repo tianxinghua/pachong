@@ -1,6 +1,11 @@
 package com.shangpin.ephub.product.business.service.studio.hubslot;
 
+import java.util.List;
+
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.mysql.studio.spusupplierunion.dto.SpuSupplierQueryDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuDto;
+import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuExportLIst;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 
 /**
@@ -36,12 +41,33 @@ public interface HubSlotSpuService {
 
 
     /**
-     * 跟新slotspu 中的品牌和货号
+     * 更新slotspu 中的品牌和货号
      * @param slotSpuId
      * @param pendingProductDto
      * @return
      * @throws Exception
      */
     public  boolean updateSpuModelAndBrandNo(Long slotSpuId,PendingProductDto pendingProductDto) throws Exception;
+
+
+    /**
+     * 查询
+     * @param queryDto
+     * @return
+     */
+    public List<SlotSpuDto>  findSlotSpu(SpuSupplierQueryDto queryDto);
+
+    /**
+     * 查询总数
+     * @param queryDto
+     * @return
+     */
+    public int countSlotSpu(SpuSupplierQueryDto queryDto);
+    /**
+     * 导出已提交
+     * @param queryDto
+     * @return
+     */
+    public SlotSpuExportLIst exportSlotSpu(SpuSupplierQueryDto queryDto);
 
 }

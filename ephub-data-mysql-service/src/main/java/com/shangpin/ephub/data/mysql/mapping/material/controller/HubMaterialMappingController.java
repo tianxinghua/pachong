@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.mapping.material.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +36,8 @@ public class HubMaterialMappingController {
     public int deleteByCriteria(@RequestBody HubMaterialMappingCriteria criteria){
     	return hubMaterialMappingService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long materialMappingId){
+	@RequestMapping(value = "/delete-by-primary-key/{materialMappingId}")
+    public int deleteByPrimaryKey(@PathVariable("materialMappingId") Long materialMappingId){
     	return hubMaterialMappingService.deleteByPrimaryKey(materialMappingId);
     }
 	@RequestMapping(value = "/insert")
@@ -57,8 +58,8 @@ public class HubMaterialMappingController {
     public List<HubMaterialMapping> selectByCriteria(@RequestBody HubMaterialMappingCriteria criteria){
     	return hubMaterialMappingService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubMaterialMapping selectByPrimaryKey(Long materialMappingId){
+	@RequestMapping(value = "/select-by-primary-key/{materialMappingId}")
+    public HubMaterialMapping selectByPrimaryKey(@PathVariable("materialMappingId") Long materialMappingId){
     	return hubMaterialMappingService.selectByPrimaryKey(materialMappingId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

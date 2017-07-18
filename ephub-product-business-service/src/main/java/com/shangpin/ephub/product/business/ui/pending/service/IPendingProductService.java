@@ -57,8 +57,8 @@ public interface IPendingProductService {
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag);
 	/**
 	 * 根据spu查找sku
-	 * @param spuPendingId
-	 * @param flag true:代表查询所有sku ， false：代表查询部分sku(skuState不等于2、5、1)
+	 * @param spuPendingIds
+	 * @param allFlag true:代表查询所有sku ， false：代表查询部分sku(skuState不等于2、5、1)
 	 * @return
 	 */
 	public Map<Long,List<HubSkuPendingDto>> findPendingSku(List<Long> spuPendingIds,boolean allFlag) throws Exception;
@@ -69,12 +69,12 @@ public interface IPendingProductService {
 	public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto);
 	/**
 	 * 批量更新pending数据
-	 * @param pendingProductDto
+	 * @param pendingProducts
 	 */
 	public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts);
 	/**
 	 * 将HubSpuPendingDto更新为无法处理
-	 * @param updateUser操作人
+	 * @param updateUser 操作人
 	 * @param spuPendingId
 	 */
 	public boolean updatePendingProductToUnableToProcess(String updateUser,String spuPendingId) throws Exception;
@@ -103,4 +103,10 @@ public interface IPendingProductService {
 	 * @return
 	 */
 	public boolean updateProductToInfoPeccable(String updateUser,List<String> ids);
+	/**
+	 * 计算数量
+	 * @param pendingQuryDto
+	 * @return
+	 */
+	public int countByPendingQury(PendingQuryDto pendingQuryDto);
 }

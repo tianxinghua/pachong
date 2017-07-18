@@ -50,8 +50,8 @@ public class StudioService {
 		return studioMapper.selectByExample(criteria);
 	}
 
-	public Studio selectByPrimaryKey(Long skuPendingId) {
-		return studioMapper.selectByPrimaryKey(skuPendingId);
+	public Studio selectByPrimaryKey(Long studioId) {
+		return studioMapper.selectByPrimaryKey(studioId);
 	}
 
 	public int updateByCriteriaSelective(StudioWithCriteria StudioWithCriteria) {

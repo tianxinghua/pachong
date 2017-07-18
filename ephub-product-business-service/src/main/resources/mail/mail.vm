@@ -1,6 +1,6 @@
 <html>
     <body>
-        <h3>Ep-Order-System-Email</h3>
+        <h3>Ep-Hub-System-Email</h3>
 
         <div>
             ${mailModel.text}
