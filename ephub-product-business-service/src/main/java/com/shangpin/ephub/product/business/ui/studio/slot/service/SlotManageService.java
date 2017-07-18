@@ -617,6 +617,7 @@ public class SlotManageService {
 				StudioSlotReturnDetailGateWay.insertSelective(studioSlotReturnDetail);
 
 				studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
+				studioSlotReturnMasterDto.setMultSlotNo(","+slotManageQuery.getSlotNo());
 				studioSlotReturnMasterGateWay.updateByPrimaryKey(studioSlotReturnMasterDto);
 				log.info("end updateSlotReturnDetail---更新商品明细");
 				log.info("不属于当前批次,但批次时间在当前批次之前,可以返货");
