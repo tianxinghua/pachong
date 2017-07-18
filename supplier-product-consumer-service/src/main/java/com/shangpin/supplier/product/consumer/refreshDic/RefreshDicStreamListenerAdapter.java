@@ -79,6 +79,7 @@ public class RefreshDicStreamListenerAdapter {
 	 * @throws Exception
 	 */
 	private void refreshSeason(JSONObject json, byte state)  throws Exception{
+		log.info("刷新季节接受到参数：{}",json);
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		if(json.get("supplierId")!=null&&json.get("supplierSeason")!=null){
 			String supplierId = json.get("supplierId").toString();
@@ -99,6 +100,7 @@ public class RefreshDicStreamListenerAdapter {
 	 * @throws Exception
 	 */
 	private void refreshColor(JSONObject json, byte state)  throws Exception{
+		log.info("刷新颜色接受到参数：{}",json);
 		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
 		String supplierColor = json.get("supplierColor").toString();
 		criteria.createCriteria().andSupplierSpuColorEqualTo(supplierColor);;
@@ -116,6 +118,7 @@ public class RefreshDicStreamListenerAdapter {
 	 * @throws Exception
 	 */
 	private void refreshSize(JSONObject json, byte state) throws Exception{
+		log.info("刷新尺码接受到参数：{}",json);
 		String supplierId = null;
 		if(json.get("supplierId")!=null){
 			supplierId = json.get("supplierId").toString();
@@ -162,6 +165,7 @@ public class RefreshDicStreamListenerAdapter {
 	 * @throws Exception
 	 */
 	private void refreshCategory(JSONObject json, byte state) throws Exception {
+		log.info("刷新品类接受到参数：{}",json);
 		String supplierId = json.get("supplierId").toString();
 		String spplierCategory = json.get("supplierCategory").toString();
 		String supplierGender = json.get("supplierGender").toString();
@@ -169,6 +173,7 @@ public class RefreshDicStreamListenerAdapter {
 		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierCategorynameEqualTo(spplierCategory)
 				.andSupplierGenderEqualTo(supplierGender);
 		int total = hubSupplierSpuGateWay.countByCriteria(criteria);
+		log.info("待刷新品类total:"+total);
 		if (total > 0) {
 			supplierProductRetryService.sendSupplierSpu(total, criteria, state,false);
 		}
