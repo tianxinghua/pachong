@@ -320,6 +320,8 @@ public class SlotManageService {
 			if (slotManageQuery.getSupplierName() != null) {
 				detailCriteria.andSupplierNameEqualTo(slotManageQuery.getSupplierName());
 			}
+			//只显示未被收货的批次
+			detailCriteria.andArriveStateEqualTo((byte) 0);
 			if (slotManageQuery.getPageSize() != null) {
 				detailDto.setPageSize(slotManageQuery.getPageSize());
 			}
