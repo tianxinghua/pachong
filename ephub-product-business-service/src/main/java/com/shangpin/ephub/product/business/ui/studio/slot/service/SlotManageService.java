@@ -240,9 +240,11 @@ public class SlotManageService {
 					studioSlotReturnMasterDto.setState((byte) 0);
 					studioSlotReturnMasterDto.setArriveState((byte) 0);
 					studioSlotReturnMasterDto.setCreateTime(new Date());
-					studioSlotReturnMasterDto.setCreateUser("admin");
+					if(slotManageQuery.getUserName()!=null){
+						studioSlotReturnMasterDto.setCreateUser(slotManageQuery.getUserName());
+						studioSlotReturnMasterDto.setUpdateUser(slotManageQuery.getUserName());
+					}
 					studioSlotReturnMasterDto.setUpdateTime(new Date());
-					studioSlotReturnMasterDto.setUpdateUser("admin");
 					studioSlotReturnMasterGateWay.insertSelective(studioSlotReturnMasterDto);
 
 					StudioSlotReturnMasterCriteriaDto studioSlotReturnMasterCriteriaDto = new StudioSlotReturnMasterCriteriaDto();
@@ -285,10 +287,11 @@ public class SlotManageService {
 				studioSlotReturnDetailDto.setArriveState((byte) 0);
 				studioSlotReturnDetailDto.setBarcode(studioSlotSpuSendDetailDto.getBarcode());
 				studioSlotReturnDetailDto.setCreateTime(new Date());
-				studioSlotReturnDetailDto.setCreateUser("admin");
-				studioSlotReturnDetailDto.setSendUser("admin");
+				if(slotManageQuery.getUserName()!=null){
+					studioSlotReturnDetailDto.setCreateUser(slotManageQuery.getUserName());
+					studioSlotReturnDetailDto.setUpdateUser(slotManageQuery.getUserName());
+				}
 				studioSlotReturnDetailDto.setUpdateTime(new Date());
-				studioSlotReturnDetailDto.setUpdateUser("admin");
 				StudioSlotReturnDetailGateWay.insertSelective(studioSlotReturnDetailDto);
 				i++;
 			}
@@ -611,10 +614,11 @@ public class SlotManageService {
 					studioSlotReturnDetail.setArriveState((byte) 0);
 					studioSlotReturnDetail.setBarcode(studioSlotReturnDetailDto.getBarcode());
 					studioSlotReturnDetail.setCreateTime(new Date());
-					studioSlotReturnDetail.setCreateUser("admin");
-					studioSlotReturnDetail.setSendUser("admin");
+					if(slotManageQuery.getUserName()!=null){
+						studioSlotReturnDetail.setCreateUser(slotManageQuery.getUserName());
+						studioSlotReturnDetail.setUpdateUser(slotManageQuery.getUserName());
+					}
 					studioSlotReturnDetail.setUpdateTime(new Date());
-					studioSlotReturnDetail.setUpdateUser("admin");
 					StudioSlotReturnDetailGateWay.insertSelective(studioSlotReturnDetail);
 
 					studioSlotReturnMasterDto.setAddedQuantiy(studioSlotReturnMasterDto.getAddedQuantiy() + 1);
@@ -677,7 +681,9 @@ public class SlotManageService {
 			dto.setTrackStatus((byte) 0);
 			dto.setType((byte) 1);
 			dto.setCreateTime(new Date());
-			dto.setCreateUser(slotManageQuery.getUserName());
+			if(slotManageQuery.getOperatorName()!=null){
+				dto.setCreateUser(slotManageQuery.getOperatorName());
+			}
 			dto.setUpdateTime(new Date());
 			studioSlotLogistictTrackGateWay.insertSelective(dto);
 			
@@ -730,7 +736,7 @@ public class SlotManageService {
 				if(studioSlotReturnDetailDto.getState()==1){
 					studioSlotReturnDetailDto.setSendState((byte) 1);
 					studioSlotReturnDetailDto.setSendTime(new Date());
-					studioSlotReturnDetailDto.setSendUser(slotManageQuery.getUserName());
+					studioSlotReturnDetailDto.setSendUser(slotManageQuery.getOperatorName());
 					StudioSlotReturnDetailGateWay.updateByPrimaryKey(studioSlotReturnDetailDto);
 				}
 			}
