@@ -99,12 +99,13 @@ public class MonnierHandler implements ISupplierHandler {
 			String supplierSpuNo = null;
 			if(sku.length()==19){
 				supplierSpuNo = sku.substring(0,16);
-				
 			}
 			if(sku.length()==12){
 				supplierSpuNo = sku.substring(0,9);
 			}
-			existPics = pictureHandler.monnerPicExistsOfSpu(supplierId, supplierSpuNo);
+			if(supplierSpuNo!=null){
+				existPics = pictureHandler.monnerPicExistsOfSpu(supplierId, supplierSpuNo);	
+			}
 		}
 		
 		List<Image> images = new ArrayList<Image>();
