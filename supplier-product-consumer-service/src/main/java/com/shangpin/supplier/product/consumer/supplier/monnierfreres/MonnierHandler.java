@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
@@ -56,7 +56,7 @@ public class MonnierHandler implements ISupplierHandler {
 				//处理图片				
 //				SupplierPicture supplierPicture = null;
 //				if(pictureHandler.isCurrentSeason(supplierId, hubSpu.getSupplierSeasonname())){
-				SupplierPicture	supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
+				SupplierPicture	supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(supplierId,item));
 //				}
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
@@ -74,7 +74,7 @@ public class MonnierHandler implements ISupplierHandler {
 	 * @param itemImages
 	 * @return
 	 */
-	private List<Image> converImage(Product itemImages){
+	private List<Image> converImage(String supplierId,Product itemImages){
 		
 		String[] img = new String[5];
 		if (!StringUtils.isEmpty((itemImages.getImage_url_1()))) {
@@ -93,11 +93,32 @@ public class MonnierHandler implements ISupplierHandler {
 			img[4] = itemImages.getImage_url_5();
 		}
 		
+		Map<String,String> existPics = null;
+		String sku = itemImages.getSku();
+		if(StringUtils.isNotBlank(sku)){
+			String supplierSpuNo = null;
+			if(sku.length()==19){
+				supplierSpuNo = sku.substring(0,16);
+				
+			}
+			if(sku.length()==12){
+				supplierSpuNo = sku.substring(0,9);
+			}
+			existPics = pictureHandler.monnerPicExistsOfSpu(supplierId, supplierSpuNo);
+		}
+		
 		List<Image> images = new ArrayList<Image>();
 		if(null != itemImages){			
 			if(img.length>0){
 				for(String url : img){
 					if(!StringUtils.isEmpty(url) && !url.contains("_COLOR")){//将带 _COLOR 的小图屏蔽掉
+						
+						if(existPics!=null&&(sku.length()==19||sku.length()==12)){
+							String picurl = url.substring(0,url.length()-11)+url.substring(url.length()-8);
+							if(existPics.containsKey(picurl)){
+								continue;
+							}
+						}
 						Image image = new Image();
 						image.setUrl(url);
 						images.add(image);
@@ -107,7 +128,6 @@ public class MonnierHandler implements ISupplierHandler {
 		}
 		return images;
 	}
-	
 	/**
 	 * 将monnier原始dto转换成hub spu
 	 * @param supplierId 供应商门户id
@@ -160,6 +180,9 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSku.setSupplierSkuName(item.getName());
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice_before_discount())));
 			hubSku.setMarketPriceCurrencyorg("EUR");
+			if(supplierSkuNo.contains("CONFIG")){
+				supplierSkuNo = supplierSkuNo.substring(7);
+			}
 			if(supplierSkuNo.length()==12){
 				size = supplierSkuNo.substring(9);
 				if(size.endsWith("0")){
@@ -191,17 +214,26 @@ public class MonnierHandler implements ISupplierHandler {
 			return false;
 		}
 	}
+	
 	/**
 	 * 截取前9位
 	 * @param sku
 	 * @return
 	 */
-	private String getPre9OfSku(String sku){
+	private static String getPre9OfSku(String sku){
+		
+		if(StringUtils.isNotBlank(sku) ||sku.contains("CONFIG")){
+			if(sku.length()==19){
+				return sku.substring(0,16);
+			}
+			if(sku.length()==16){
+				return sku.substring(0,16);
+			}
+		}
 		if(StringUtils.isEmpty(sku) || sku.length() < 9){
 			return sku;
 		}else{
 			return sku.substring(0, 9);
 		}
 	}
-
 }

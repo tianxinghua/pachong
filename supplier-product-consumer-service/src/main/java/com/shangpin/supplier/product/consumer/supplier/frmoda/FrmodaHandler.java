@@ -57,7 +57,7 @@ public class FrmodaHandler implements ISupplierHandler {
 				//处理图片				
 				SupplierPicture supplierPicture = null;
 
-				supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item.getSpuPicture()));
+				supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(org.apache.commons.lang.StringUtils.isNotBlank(item.getSkuPicture())?item.getSkuPicture():item.getSpuPicture()));
 
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
