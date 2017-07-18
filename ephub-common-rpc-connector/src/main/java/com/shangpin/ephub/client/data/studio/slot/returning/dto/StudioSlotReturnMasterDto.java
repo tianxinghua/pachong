@@ -18,6 +18,8 @@ public class StudioSlotReturnMasterDto implements Serializable {
 
     private String supplierId;
 
+    private String supplierName;
+
     private Long studioId;
 
     private String masterSlotNo;
@@ -152,6 +154,14 @@ public class StudioSlotReturnMasterDto implements Serializable {
 
     public void setSupplierId(String supplierId) {
         this.supplierId = supplierId == null ? null : supplierId.trim();
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName == null ? null : supplierName.trim();
     }
 
     public Long getStudioId() {
@@ -356,6 +366,7 @@ public class StudioSlotReturnMasterDto implements Serializable {
         sb.append(", studioSendNo=").append(studioSendNo);
         sb.append(", supplierNo=").append(supplierNo);
         sb.append(", supplierId=").append(supplierId);
+        sb.append(", supplierName=").append(supplierName);
         sb.append(", studioId=").append(studioId);
         sb.append(", masterSlotNo=").append(masterSlotNo);
         sb.append(", multSlotNo=").append(multSlotNo);
@@ -401,6 +412,7 @@ public class StudioSlotReturnMasterDto implements Serializable {
             && (this.getStudioSendNo() == null ? other.getStudioSendNo() == null : this.getStudioSendNo().equals(other.getStudioSendNo()))
             && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
+            && (this.getSupplierName() == null ? other.getSupplierName() == null : this.getSupplierName().equals(other.getSupplierName()))
             && (this.getStudioId() == null ? other.getStudioId() == null : this.getStudioId().equals(other.getStudioId()))
             && (this.getMasterSlotNo() == null ? other.getMasterSlotNo() == null : this.getMasterSlotNo().equals(other.getMasterSlotNo()))
             && (this.getMultSlotNo() == null ? other.getMultSlotNo() == null : this.getMultSlotNo().equals(other.getMultSlotNo()))
@@ -435,6 +447,7 @@ public class StudioSlotReturnMasterDto implements Serializable {
         result = prime * result + ((getStudioSendNo() == null) ? 0 : getStudioSendNo().hashCode());
         result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
+        result = prime * result + ((getSupplierName() == null) ? 0 : getSupplierName().hashCode());
         result = prime * result + ((getStudioId() == null) ? 0 : getStudioId().hashCode());
         result = prime * result + ((getMasterSlotNo() == null) ? 0 : getMasterSlotNo().hashCode());
         result = prime * result + ((getMultSlotNo() == null) ? 0 : getMultSlotNo().hashCode());

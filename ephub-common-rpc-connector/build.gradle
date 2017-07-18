@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-	compile('com.alibaba:fastjson:1.2.22')
+	compile('com.alibaba:fastjson:1.2.23')
 	compileOnly('org.projectlombok:lombok:1.16.12')
 	compile('org.apache.poi:poi-ooxml:3.8')
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-feign', version: '1.2.3.RELEASE'
