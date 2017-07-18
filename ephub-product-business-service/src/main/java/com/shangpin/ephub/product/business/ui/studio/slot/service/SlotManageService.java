@@ -240,6 +240,7 @@ public class SlotManageService {
 					studioSlotReturnMasterDto.setState((byte) 0);
 					studioSlotReturnMasterDto.setArriveState((byte) 0);
 					studioSlotReturnMasterDto.setCreateTime(new Date());
+					studioSlotReturnMasterDto.setMemo(studioSlotSpuSendDetailDto.getMemo());
 					if(slotManageQuery.getUserName()!=null){
 						studioSlotReturnMasterDto.setCreateUser(slotManageQuery.getUserName());
 						studioSlotReturnMasterDto.setUpdateUser(slotManageQuery.getUserName());
