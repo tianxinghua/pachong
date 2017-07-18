@@ -76,6 +76,9 @@ public class OrderHandleSearch {
 	@Qualifier("spinnakerOrderService")
 	IOrderService spinnakerOrderService;
 	@Autowired
+	@Qualifier("spinnakerPortofinoOrderService")
+	IOrderService spinnakerPortofinoOrderService;
+	@Autowired
 	@Qualifier("stefaniaService")
 	IOrderService stefaniaService;
 	@Autowired
@@ -177,7 +180,9 @@ public class OrderHandleSearch {
 			return efashionOrderImpl;
 		} else if ("2015081701441".equals(supplierId)) {
 			return leamServiceImpl;
-		} else if ("2015081701439".equals(supplierId)) {
+		} else if("2017060101976".equals(supplierId)){
+			return spinnakerPortofinoOrderService;
+		}else if ("2015081701439".equals(supplierId)) {
 			return spinnakerOrderService;
 		} else if ("2015091801507".equals(supplierId)) {
 			return brunarossoServiceImpl;
@@ -258,8 +263,9 @@ public class OrderHandleSearch {
 	}
 
 	public SupplierCommon getSupplierProperty(String supplierId) {
-
-		if ("2015102201625".equals(supplierId)) {
+		if("2017060101976".equals(supplierId)){
+			return supplierProperties.getSpinnakerPortofinoParam();
+		}else if ("2015102201625".equals(supplierId)) {
 			return supplierProperties.getClutcher();
 		}  else if ("2016102401951".equals(supplierId)) {
 			return supplierProperties.getCarofiglio();

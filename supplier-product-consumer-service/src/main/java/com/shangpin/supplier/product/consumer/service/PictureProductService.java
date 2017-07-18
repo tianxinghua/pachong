@@ -65,7 +65,8 @@ public class PictureProductService {
 			Map<String,String> pics = findHubSpuPendingPics(supplierPicture.getSupplierSpuId());
 			List<Image> images = new ArrayList<Image>();
 			for(Image image : supplierPicture.getProductPicture().getImages()){
-				if(!StringUtils.isEmpty(image.getUrl()) && (image.getUrl().startsWith("http") || image.getUrl().startsWith("HTTP") || image.getUrl().startsWith("ftp")) && !pics.containsKey(image.getUrl())){
+				if(!StringUtils.isEmpty(image.getUrl()) && (image.getUrl().startsWith("http") || image.getUrl().startsWith("HTTP") ||
+						image.getUrl().startsWith("ftp")) && !pics.containsKey(image.getUrl())){
 					images.add(image);
 				}
 			}

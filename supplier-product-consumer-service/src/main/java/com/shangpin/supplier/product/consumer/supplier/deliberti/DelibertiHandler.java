@@ -135,12 +135,13 @@ public class DelibertiHandler implements ISupplierHandler {
 		List<Image> images = new ArrayList<Image>();
 		if(CollectionUtils.isNotEmpty(pictures)){			
 			for(String url : pictures){
-				Image image = new Image();
-				image.setUrl(url);
-				images.add(image);
+				if(url!=null&&url.endsWith("Z.jpg")){
+					Image image = new Image();
+					image.setUrl(url);
+					images.add(image);
+				}
 			}
 		}
 		return images;
 	}
-	
 }
