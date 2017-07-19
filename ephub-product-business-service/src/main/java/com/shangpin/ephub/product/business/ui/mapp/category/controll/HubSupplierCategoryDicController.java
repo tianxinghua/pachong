@@ -155,6 +155,7 @@ public class HubSupplierCategoryDicController {
 			if(dto.getCategoryType()==4){
 				dicDto.setMappingState((byte)1);		
 				dicDto.setPushState((byte)1);
+				sendTask(dto);
 			}else{
 				dicDto.setMappingState((byte)2);
 			}
@@ -167,22 +168,24 @@ public class HubSupplierCategoryDicController {
 		return HubResponse.errorResp("保存异常");
 	}
 
+	private void sendTask(HubSupplierCategoryDicRequestDto dto) throws Exception{
+		if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
+			Date date = new Date();
+			String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
+			taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+			dto.setRefreshDicType(InfoState.RefreshCategory.getIndex());
+			taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
+			shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
+		}
+	}
+	
 	@RequestMapping(value = "/refresh", method = { RequestMethod.POST, RequestMethod.GET })
 	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 		try {
 			save(dto);
-			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
-				Date date = new Date();
-				String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
-				taskImportService.saveTask(taskNo, "品类映射:"+dto.getSupplierCategory()+"=>"+dto.getHubCategoryNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
-				dto.setRefreshDicType(InfoState.RefreshCategory.getIndex());
-				taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
-				shangpinRedis.del(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_SUPPLIER_KEY+"_"+dto.getSupplierId());
-			}
-			
+			sendTask(dto);
 			//刷新同品类和性别的其它供应商
 			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
-				
 				HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
 				BeanUtils.copyProperties(dto, dicDto);
 				dicDto.setUpdateTime(new Date());
