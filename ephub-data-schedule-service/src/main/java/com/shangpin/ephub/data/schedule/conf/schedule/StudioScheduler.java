@@ -40,7 +40,7 @@ public class StudioScheduler {
 		}
 	}
 	
-	@Scheduled(cron = "00 30 00 * * ?")
+//	@Scheduled(cron = "00 30 00 * * ?")
 	public void downLoadImageByFtp() {
 		try {
 			log.info("===========任务开始============"); 

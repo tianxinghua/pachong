@@ -20,7 +20,7 @@ public class StockScheduler {
     @Autowired
 	PricePushService pricePushService;
 
-	@Scheduled(cron = "00 55 20 * * ?")
+//	@Scheduled(cron = "00 55 20 * * ?")
 	public void stockTask() {
 		try {
 			log.info("======================清除库存定时任务开始======================");
