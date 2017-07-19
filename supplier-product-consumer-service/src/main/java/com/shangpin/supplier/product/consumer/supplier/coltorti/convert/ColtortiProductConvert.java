@@ -45,7 +45,14 @@ public class ColtortiProductConvert {
 					.divide(new BigDecimal(122),5).setScale(0,BigDecimal.ROUND_HALF_UP));
 		}
 		dto.setMarketPriceCurrencyorg("EUR");
-		dto.setStock(p.getSizeStockMap()==null ? 0 : p.getSizeStockMap().get(sizeCode));
+		int stock = 0;
+		Map<String, Integer> sizeStockMap = p.getSizeStockMap();
+		if(null != sizeStockMap && sizeStockMap.size() > 0){
+			if(null != sizeStockMap.get(sizeCode)){
+				stock = sizeStockMap.get(sizeCode);
+			}
+		}
+		dto.setStock(stock);
 		dto.setSupplierSkuSize(size);
 		dto.setSupplierSkuNo(p.getSkuId()+"#"+sizeCode);
 		return dto;
