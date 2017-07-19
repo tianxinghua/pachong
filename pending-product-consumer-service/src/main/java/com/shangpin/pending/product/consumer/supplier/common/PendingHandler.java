@@ -64,12 +64,10 @@ public class PendingHandler extends VariableInit {
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
 		if(null!=message){
-
 //			log.info("receive message :" + mapper.writeValueAsString(message) + " message header :" + headers.toString());
 		} else{
 			log.info(" message header :" + headers.toString());
 		}
-
 
 		Map<String, Integer> messageMap = this.getMessageStatus(headers);
 
@@ -85,28 +83,19 @@ public class PendingHandler extends VariableInit {
 			// 防止数据传入错误，需要先查询pending表中是否存在
 			HubSpuPendingDto tmp = dataServiceHandler.getHubSpuPending(message.getSupplierId(),
 					message.getData().getSupplierSpuNo());
-			//自动选品
-			if (spuStatus == MessageType.RESTART_BRAND_MODEL.getIndex()) {
-				hubSpuPendingDto = handSpuPending(message.getData());
-			}else if (spuStatus == InfoState.RefreshCategory.getIndex()) {
-				//刷新品类
-				refreshPendingCategory(message.getData(),tmp);
-			}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
-				//刷新颜色
-				refreshHubColor(message.getData(),tmp);
-			}else if (spuStatus == InfoState.RefreshSeason.getIndex()) {
-				//刷新季节
-				refreshHubSeason(message.getData(),tmp);
-			}else if (spuStatus == InfoState.RefreshSize.getIndex()) {
-				//刷新尺码
-				refreshHubSize(message.getSupplierId(),message.getData(),tmp);
-			}else{
-				//spu pending 处理
-				hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
-				if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
-					//重处理的不做SKU更新
-					return;
-				}
+			
+			//字典刷新
+			if(!refreshDic(spuStatus, message, tmp)){
+				//自动选品	
+				if (spuStatus == MessageType.RESTART_BRAND_MODEL.getIndex()) {
+					hubSpuPendingDto = handSpuPending(message.getData());
+				}else 
+					//spu pending 处理
+					hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
+					if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
+						//重处理的不做SKU更新
+						return;
+					}
 			}
 		}
 		
@@ -124,41 +113,125 @@ public class PendingHandler extends VariableInit {
 			if (null != hubSpuPending) {
 				//sku pending 处理
 				handleSkuPending(headers, messageMap, pendingSpu, hubSpuPending, spuStatus, skus);
-
 			}
 		}
 	}
+	
+	private boolean  refreshDic(Integer spuStatus,PendingProduct message,HubSpuPendingDto tmp) throws Exception{
+		boolean flag = false;
+		if (spuStatus == InfoState.RefreshCategory.getIndex()) {
+			//刷新品类
+			refreshPendingCategory(message.getData(),tmp);
+			flag = true;
+		}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
+			//刷新颜色
+			refreshHubColor(message.getData(),tmp);
+			flag = true;
+		}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
+			//刷新品牌
+			refreshSupplierBrand(message.getData(),tmp);
+			flag = true;
+		}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
+			//刷新产地
+			refreshSupplierOrigin(message.getData(),tmp);
+			flag = true;
+		}else if (spuStatus == InfoState.RefreshSeason.getIndex()) {
+			//刷新季节
+			refreshHubSeason(message.getData(),tmp);
+			flag = true;
+		}else if (spuStatus == InfoState.RefreshSize.getIndex()) {
+			//刷新尺码
+			refreshHubSize(message.getSupplierId(),message.getData(),tmp);
+			flag = true;
+		}
+		 return flag;
+	}
+	
+	
 	//刷新品类
-		private void refreshPendingCategory(PendingSpu spu,HubSpuPendingDto existSpuPendingDto) throws Exception{
+	private void refreshPendingCategory(PendingSpu spu,HubSpuPendingDto existSpuPendingDto) throws Exception{
+		
+		if(null != existSpuPendingDto&&checkSpuPendingIsRefresh(existSpuPendingDto)){
+			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+			// 获取品类
+	        String categoryAndStatus = "";
+	        Integer mapStatus = 0;
+	   	 	Map<String, String> categoryMappingMap = pendingCommonHandler.getSupplierHubCategoryMap(spu.getSupplierId());
+	        if (categoryMappingMap.containsKey(
+	       		 spu.getHubCategoryNo().trim().toUpperCase() + "_" + spu.getHubGender().trim().toUpperCase())) {
+	            // 包含时转化赋值
+	            categoryAndStatus = categoryMappingMap.get(
+	           		 spu.getHubCategoryNo().trim().toUpperCase() + "_" + spu.getHubGender().trim().toUpperCase());
+	            if (categoryAndStatus.contains("_")) {
+	            	updateSpuPending.setHubCategoryNo(categoryAndStatus.substring(0, categoryAndStatus.indexOf("_")));
+	                mapStatus = Integer.valueOf(categoryAndStatus.substring(categoryAndStatus.indexOf("_") + 1));
+	                updateSpuPending.setCatgoryState(mapStatus.byteValue());
+	                if(updateSpuPending.getCatgoryState().intValue()!=PropertyStatus.MESSAGE_HANDLED.getIndex()){
+	                    //未达到4级品类
+	                }
+	            } else {
+	                updateSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+	            }
+	        } 
 			
-			if(null != existSpuPendingDto&&checkSpuPendingIsRefresh(existSpuPendingDto)){
-				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
-				// 获取品类
-				pendingCommonHandler.getCategoryMap(spu, updateSpuPending);
+			dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
+			log.info("===供应商spuPendingId:"+existSpuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+existSpuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
+		}else{
+			saveAndRefreshPending(spu);
+		}
+	}
+	
+	//刷新季节
+	private void refreshHubSeason(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
+		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
+			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+			// 获取季节
+			Map<String, String> supplierColor = pendingCommonHandler.getHubSupplierSeasonMap(spuPendingDto.getSupplierId());
+			if (supplierColor != null && spuPendingDto.getHubColor() != null
+					&& supplierColor.containsKey(spuPendingDto.getHubColor().toUpperCase())) {
+				updateSpuPending.setHubSeason(supplierColor.get(spuPendingDto.getHubColor().toUpperCase()));
+				updateSpuPending.setSpuSeasonState((byte) 1);
 				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
-				log.info("===供应商spuPendingId:"+existSpuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+existSpuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
-			}else{
-				saveAndRefreshPending(spu);
+				log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub季节刷新:"
+						+ existSpuPendingDto.getHubColor() + "==>" + updateSpuPending.getHubColor());
+			}
+		}else{
+			saveAndRefreshPending(spuPendingDto);
+		}
+	}
+		
+	//刷新产地映射
+	private void refreshSupplierOrigin(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
+		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
+			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+			Map<String, String> supplierOrigin = pendingCommonHandler.getSupplierHubOriginMap();
+			if (supplierOrigin != null && spuPendingDto.getHubOrigin() != null
+					&& supplierOrigin.containsKey(spuPendingDto.getHubOrigin().toUpperCase())) {
+				updateSpuPending.setHubOrigin(supplierOrigin.get(spuPendingDto.getHubOrigin().toUpperCase()));
+				updateSpuPending.setOriginState((byte) 1);
+				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
+				log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub产地刷新:"
+						+ existSpuPendingDto.getHubOrigin() + "==>" + updateSpuPending.getHubOrigin());
 			}
 		}
-		private void refreshHubSeason(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
-			if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
-				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
-				// 获取季节
-				Map<String, String> supplierColor = pendingCommonHandler.getHubSupplierSeasonMap(spuPendingDto.getSupplierId());
-				if (supplierColor != null && spuPendingDto.getHubColor() != null
-						&& supplierColor.containsKey(spuPendingDto.getHubColor().toUpperCase())) {
-					updateSpuPending.setHubColor(supplierColor.get(spuPendingDto.getHubColor().toUpperCase()));
-					updateSpuPending.setSpuColorState((byte) 1);
-					dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
-					log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub颜色刷新:"
-							+ existSpuPendingDto.getHubColor() + "==>" + updateSpuPending.getHubColor());
-				}
-			}else{
-				saveAndRefreshPending(spuPendingDto);
+	}
+		
+	//刷新品牌映射
+	private void refreshSupplierBrand(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
+		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
+			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+			// 获取品牌
+			Map<String, String> supplierBrand = pendingCommonHandler.getSupplierHubBrandMap();
+			if (supplierBrand != null && spuPendingDto.getHubBrandNo() != null
+					&& supplierBrand.containsKey(spuPendingDto.getHubBrandNo().toUpperCase())) {
+				updateSpuPending.setHubBrandNo(supplierBrand.get(spuPendingDto.getHubBrandNo().toUpperCase()));
+				updateSpuPending.setSpuBrandState((byte) 1);
+				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
+				log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub品牌刷新:"
+						+ existSpuPendingDto.getHubBrandNo() + "==>" + updateSpuPending.getHubBrandNo());
 			}
 		}
-
+	}
 	private void refreshHubColor(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
 		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
 			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
