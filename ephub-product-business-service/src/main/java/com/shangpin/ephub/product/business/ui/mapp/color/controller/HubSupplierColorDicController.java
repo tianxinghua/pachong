@@ -190,6 +190,14 @@ public class HubSupplierColorDicController {
 					dicDto.setCreateUser(dto.getCreateUser());
 					dicDto.setPushState((byte)1);
 					hubColorDicService.saveColorItem(dicDto);
+					
+					Date date = new Date();
+					String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
+					taskImportService.saveTask(taskNo, "颜色映射:"+dto.getSupplierColor()+"=>"+dto.getHubColor(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+					dto.setRefreshDicType(InfoState.RefreshColor.getIndex());
+					taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
+					shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY);
+					
 				}
 			}
 			return HubResponse.successResp(null);
@@ -221,7 +229,6 @@ public class HubSupplierColorDicController {
 					dto.setRefreshDicType(InfoState.RefreshColor.getIndex());
 					taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
 					shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY);
-					
 				}
 				return	HubResponse.successResp(null);
 			}

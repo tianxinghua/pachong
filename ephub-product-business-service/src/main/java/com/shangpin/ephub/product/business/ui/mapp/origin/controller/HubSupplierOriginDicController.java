@@ -60,7 +60,7 @@ public class HubSupplierOriginDicController {
 		try {
 			log.info("产地list接受到数据:{}",hubSupplierSizeDicRequestDto);
 			if(hubSupplierSizeDicRequestDto!=null){
-				return getCommonSizeMapp(hubSupplierSizeDicRequestDto);
+				return getOriginMapp(hubSupplierSizeDicRequestDto);
 			}
 			return HubResponse.errorResp("传值为空");
 		} catch (Exception e) {
@@ -69,7 +69,7 @@ public class HubSupplierOriginDicController {
 		}
     }
 	
-	private HubResponse getCommonSizeMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
+	private HubResponse getOriginMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
 		
 		int total = 0;
 		total = hubOriginDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal(),hubSupplierSizeDicRequestDto.getType());
@@ -143,7 +143,8 @@ public class HubSupplierOriginDicController {
 			hubSupplierValueMappingDto.setUpdateTime(new Date());
 			hubSupplierValueMappingDto.setMappingType((byte)1);
 			hubOriginDicService.updateHubSupplierValueMappingByPrimaryKey(hubSupplierValueMappingDto);
-			return HubResponse.successResp("success");
+			sendTask(dto);
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("保存失败：{}",e);
 		}
@@ -158,9 +159,7 @@ public class HubSupplierOriginDicController {
 		try {
 			log.info("更新和刷新产地接受到数据:{}",dto);
 			update(dto);
-			sendTask(dto);
-			
-			return HubResponse.successResp("success");
+			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("刷新失败：{}",e);
 		}
@@ -172,17 +171,12 @@ public class HubSupplierOriginDicController {
 		if(StringUtils.isBlank(dto.getHubVal())||StringUtils.isBlank(dto.getSupplierVal())){
 			return;
 		}
-		
 		Date date = new Date();
 		String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
-		taskImportService.saveTask(taskNo, "尺码映射:"+dto.getSupplierVal()+"=>"+dto.getHubVal(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
-		dto.setRefreshDicType(InfoState.RefreshSize.getIndex());
+		taskImportService.saveTask(taskNo, "产地映射:"+dto.getSupplierVal()+"=>"+dto.getHubVal(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+		dto.setRefreshDicType(InfoState.RefreshOrigin.getIndex());
 		taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
-		if(StringUtils.isNotBlank(dto.getSupplierId())){
-			shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY+"_"+dto.getSupplierId());	
-		}else{
-			shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY);	
-		}
+		shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_ORIGIN_MAPPING_MAP_KEY);
 	}
 
 	@RequestMapping(value = "/save",method ={RequestMethod.POST,RequestMethod.GET})
@@ -216,7 +210,7 @@ public class HubSupplierOriginDicController {
 			}
 			hubOriginDicService.insertHubSupplierValueMapping(hubSupplierValueMappingDto);
 			if(flag){
-//				sendTask(dto);
+				sendTask(dto);
 			}
 			return HubResponse.successResp(null);
 		} catch (Exception e) {

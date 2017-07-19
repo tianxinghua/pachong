@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.brand.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,8 +21,12 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.util.DateTimeUtil;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.common.enumeration.HubColorDic;
 import com.shangpin.ephub.product.business.common.hubDic.brand.HubBrandDicService;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
@@ -190,6 +195,8 @@ public class HubSupplierBrandDicController {
 	            return HubResponse.errorResp("获取列表失败");
 	        }
 	    }
+	    
+	    //待处理的更新操作
 	    @RequestMapping(value = "/updateAndRefresh", method = { RequestMethod.POST, RequestMethod.GET })
 	    public HubResponse update(@RequestBody HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
 	        try {
@@ -198,13 +205,23 @@ public class HubSupplierBrandDicController {
 	            BeanUtils.copyProperties(hubSupplierBrandDicRequestDto, dicDto);
 	            dicDto.setUpdateTime(new Date());
 	            dicDto.setPushState((byte)1);
-	            hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
-	            hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),dicDto.getUpdateUser());
+//	            hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
+	            hubBrandDicService.updateHubBrandDicById(dicDto);
+//	            hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),dicDto.getUpdateUser());
+	            refreshBrand(hubSupplierBrandDicRequestDto);
 	            return HubResponse.successResp(null);
 	        } catch (Exception e) {
 	            log.error("刷新失败：{}", e);
 	        }
 	        return HubResponse.errorResp("刷新异常");
+	    }
+	    private void refreshBrand(HubSupplierBrandDicRequestDto dto) throws Exception{
+			Date date = new Date();
+			String taskNo = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(date);
+			taskImportService.saveTask(taskNo, "品牌映射:"+dto.getSupplierBrand()+"=>"+dto.getHubBrandNo(), dto.getUpdateUser(), TaskType.REFRESH_DIC.getIndex());
+			dto.setRefreshDicType(InfoState.RefreshBrand.getIndex());
+			taskImportService.sendTaskMessage(taskNo,TaskType.REFRESH_DIC.getIndex(),JsonUtil.serialize(dto));
+			shangpinRedis.del(ConstantProperty.REDIS_EPHUB_SUPPLIER_BRAND_MAPPING_MAP_KEY);
 	    }
 	    /**
 	     * 导出查询商品
@@ -226,6 +243,7 @@ public class HubSupplierBrandDicController {
 	                //已处理保存
 	                hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getUpdateUser());
 	            }
+	            refreshBrand(hubSupplierBrandDicRequestDto);
 	            return HubResponse.successResp(null);
 	        } catch (Exception e) {
 	            log.error("保存失败：{}", e);
