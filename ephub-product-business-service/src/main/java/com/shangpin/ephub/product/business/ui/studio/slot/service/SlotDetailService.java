@@ -1,10 +1,8 @@
 package com.shangpin.ephub.product.business.ui.studio.slot.service;
 
-import java.util.List;
-
 import com.shangpin.ephub.product.business.service.studio.slotspureturn.SlotSpuReturnDetailService;
 import com.shangpin.ephub.product.business.service.studio.slotspusend.SlotSpuSendDetailService;
-import com.shangpin.ephub.product.business.service.supplier.SupplierService;
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotSendState;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
-import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.SlotInfo;
@@ -35,7 +32,7 @@ public class SlotDetailService {
 
 
 	@Autowired
-	private SupplierService supplierService;
+	private SupplierInHubService supplierService;
 
 
 	@Autowired

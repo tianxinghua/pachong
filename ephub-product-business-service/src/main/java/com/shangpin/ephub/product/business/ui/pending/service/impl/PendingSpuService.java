@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,6 +84,11 @@ public abstract class PendingSpuService implements IPendingProductService {
     private HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
     @Autowired
     private IHubSpuPendingPicService  hubSpuPendingPicService;
+
+    @Autowired
+	private SupplierInHubService supplierInHubService;
+
+
 
     /**
      * 将任务记录保存到数据库
@@ -194,8 +200,13 @@ public abstract class PendingSpuService implements IPendingProductService {
 		}
 
 		if(pendingQuryDto.isShoot()){
+			//获取需要拍照的供货商
+			List<String> needShootSupplierIds = supplierInHubService.getNeedShootSupplierId();
+			if(null!=needShootSupplierIds&&needShootSupplierIds.size()>0){
+				criteria.andSupplierIdIn(needShootSupplierIds);
+			}
 			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
-			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
+			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.HANDLED.getIndex());
 		}else{
 			if(StringUtils.isEmpty(pendingQuryDto.getSpuState()) || "0".equals(pendingQuryDto.getSpuState())){
 

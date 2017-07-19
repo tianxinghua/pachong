@@ -253,7 +253,7 @@ public class EphubProductBusinessServiceApplicationTests {
 	}
 
 //	@Autowired
-//	SupplierService supplierService;
+//	SupplierInHubService supplierService;
 //	@Test
 //	public void testSupplier(){
 //		SupplierDTO dto = supplierService.getSupplier("S0000802");

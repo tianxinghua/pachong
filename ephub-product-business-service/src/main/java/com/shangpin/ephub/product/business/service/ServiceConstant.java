@@ -10,4 +10,14 @@ public interface ServiceConstant {
 
 	public static final String  HUB_SEND_TO_SCM_EXIST_SCM_ERROR="SupplierSkuNo is exist!";
 
+	/**
+	 * 需要拍摄的供货商 SUPPLIERVALPARENTNO 代表 在hub_supplier_value_mapping表 hub_val_type 状态为5  的 supplier_val_parent_no列
+	 */
+	public static final String HUB_SLOT_NEED_SHOOT_SUPPLIERVALPARENTNO="1";
+	/**
+	 * 需要拍摄但不需要发货的供货商 SUPPLIERVALNO 代表 在hub_supplier_value_mapping表 hub_val_type 状态为5  的 supplier_val_no列
+	 */
+	public static final String HUB_SLOT_NOT_NEED_SEND_SUPPLIERVALNO="1";
+
+
 }

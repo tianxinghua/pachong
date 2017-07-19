@@ -16,7 +16,7 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 
 import lombok.extern.slf4j.Slf4j;
 /**
- * <p>Title:SupplierService </p>
+ * <p>Title:SupplierInHubService </p>
  * <p>Description: 通过供应商编号获取供应商信息的service</p>
  * <p>Company: www.shangpin.com</p> 
  * @author lubaijiang

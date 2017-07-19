@@ -1,17 +1,18 @@
 package com.shangpin.ephub.product.business.service.supplier.impl;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
-import com.shangpin.ephub.product.business.service.supplier.SupplierService;
+import com.shangpin.ephub.product.business.service.ServiceConstant;
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class SupplierServiceImpl implements SupplierService {
+public class SupplierInHubServiceImpl implements SupplierInHubService {
 
     @Autowired
     HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
@@ -55,4 +56,41 @@ public class SupplierServiceImpl implements SupplierService {
         }
         return supplierDto;
     }
+
+    @Override
+    public List<HubSupplierValueMappingDto> getNeedShootSupplier() {
+        HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
+        criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
+                .andSupplierValParentNoEqualTo(ServiceConstant.HUB_SLOT_NEED_SHOOT_SUPPLIERVALPARENTNO);
+        return  hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
+
+    }
+
+    @Override
+    public List<String> getNeedShootSupplierId() {
+        List<HubSupplierValueMappingDto> supplierDtos =this.getNeedShootSupplier();
+        List<String> supplierIds = new ArrayList<>();
+        for(HubSupplierValueMappingDto dto :supplierDtos){
+            if(StringUtils.isNotBlank(dto.getSupplierId())){
+                supplierIds.add(dto.getSupplierId());
+            }
+        }
+        return supplierIds;
+    }
+
+    @Override
+    public Boolean isShootSupplier(String supplierId) {
+        HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
+        criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
+                .andSupplierIdEqualTo(supplierId)
+                .andSupplierValParentNoEqualTo(ServiceConstant.HUB_SLOT_NEED_SHOOT_SUPPLIERVALPARENTNO)
+                .andSupplierValNoEqualTo(ServiceConstant.HUB_SLOT_NOT_NEED_SEND_SUPPLIERVALNO);
+        List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
+        if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
+            return true;
+        }
+        return false;
+    }
+
+
 }
