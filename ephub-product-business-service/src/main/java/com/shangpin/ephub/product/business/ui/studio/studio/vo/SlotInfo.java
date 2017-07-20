@@ -41,4 +41,17 @@ public class SlotInfo extends StudioSlotDto implements Serializable {
     * */
     private List<String> categorySecond;
 
+    /**
+     * 联系人
+     */
+    private String contacts;
+
+    private String contactInfo;
+
+    private String telephone;
+    private String email;
+
+    private String country;
+    private String address;
+
 }
