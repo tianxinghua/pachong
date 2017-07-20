@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.supplier;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
 
@@ -29,11 +30,18 @@ public interface SupplierInHubService {
     public List<String>  getNeedShootSupplierId();
 
     /**
-     * 是否需要拍照供货商
+     * 是否需要发货的供货商
      * @param supplierId
      * @return
      */
-    public Boolean isShootSupplier(String supplierId);
+    public Boolean isNeedSendSupplier(String supplierId);
+
+    /**
+     * 获取在ephub中的供货商信息
+     * @param supplierId
+     * @return
+     */
+    public SupplierInHubDto getSupplierInHubBySupplierId(String supplierId);
 
 
 }

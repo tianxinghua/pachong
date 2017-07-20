@@ -331,7 +331,7 @@ public class HubProductServiceImpl implements HubProductService {
             }
         }
         //排除找到的数据
-        log.info("searchSpSkuMap size 1= " + searchSpSkuMap.size());
+
         for(int i=0 ;i<skuOrgDoms.size();i++){
             ApiSkuOrgDom apiSkuOrgDom = skuOrgDoms.get(i);
             if(searchSpSkuMap.containsKey(apiSkuOrgDom.getSupplierSkuNo()+split+apiSkuOrgDom.getBarCode())){
@@ -342,7 +342,8 @@ public class HubProductServiceImpl implements HubProductService {
                 searchSpSkuMap.remove(apiSkuOrgDom.getSupplierSkuNo()+split+apiSkuOrgDom.getBarCode());
             }
         }
-        log.info("searchSpSkuMap size 2= " + searchSpSkuMap.size());
+
+
         //有supplierSKUNO 加 barcode 某个不符
         if(searchSpSkuMap.size()>0){
             Set<Map.Entry<String, SopSkuDto>> entrySet = searchSpSkuMap.entrySet();
@@ -353,8 +354,8 @@ public class HubProductServiceImpl implements HubProductService {
                 key = entry.getKey();
                 supplierSkuNO = key.substring(0,key.indexOf(split));
                 barcode = key.substring(key.indexOf(split)+3);
-                log.info(" supplierSkuNO= " + supplierSkuNO);
-                log.info(" barcode= " + barcode);
+//                log.info(" supplierSkuNO= " + supplierSkuNO);
+//                log.info(" barcode= " + barcode);
                 if(skuNoApiSkuMap.containsKey(supplierSkuNO)){
                     //供货商的SKUNO 存在  但barcode 不一样，但现不做处理 认为是一个
                     ApiSkuOrgDom apiSkuOrgDom =skuNoApiSkuMap.get(supplierSkuNO);
@@ -372,8 +373,8 @@ public class HubProductServiceImpl implements HubProductService {
                 }
            }
            //移除errorSopSkuMap 中在 existApiSkuOrgDoms有的 (同一个商品 skuno 和 barcode 都查询出来一个商品 ，认为这个商品已存在，不需要提送）
-            log.info(" existApiSkuOrgDoms.size= " + existApiSkuOrgDoms.size());
-            log.info(" errorSopSkuMap.szie = " + errorSopSkuMap.size());
+//            log.info(" existApiSkuOrgDoms.size= " + existApiSkuOrgDoms.size());
+//            log.info(" errorSopSkuMap.szie = " + errorSopSkuMap.size());
             for(ApiSkuOrgDom apiSkuOrgDom:existApiSkuOrgDoms){
                 if(errorSopSkuMap.containsKey(apiSkuOrgDom.getSupplierSkuNo())){
                     errorSopSkuMap.remove(apiSkuOrgDom.getSupplierSkuNo());

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.supplier.impl;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
@@ -79,17 +80,57 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     }
 
     @Override
-    public Boolean isShootSupplier(String supplierId) {
+    public Boolean isNeedSendSupplier(String supplierId) {
         HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
         criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
                 .andSupplierIdEqualTo(supplierId)
                 .andSupplierValParentNoEqualTo(ServiceConstant.HUB_SLOT_NEED_SHOOT_SUPPLIERVALPARENTNO)
-                .andSupplierValNoEqualTo(ServiceConstant.HUB_SLOT_NOT_NEED_SEND_SUPPLIERVALNO);
+                .andSupplierValNoNotEqualTo(ServiceConstant.HUB_SLOT_NOT_NEED_SEND_SUPPLIERVALNO);
         List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
         if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
             return true;
         }
         return false;
+    }
+
+    @Override
+    public SupplierInHubDto getSupplierInHubBySupplierId(String supplierId) {
+        SupplierInHubDto supplierDto = null;
+        HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
+        criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
+                .andSupplierIdEqualTo(supplierId);
+        List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
+        if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
+            supplierDto = new SupplierInHubDto();
+            HubSupplierValueMappingDto dto = hubSupplierValueMappingDtos.get(0);
+            supplierDto.setSupplierId(dto.getSupplierId());
+            supplierDto.setSupplierNo(dto.getHubValNo());
+            supplierDto.setSupplierName(dto.getHubVal());
+            if(null!=dto.getMappingState()&&"1".equals(dto.getMappingState().toString())){
+                supplierDto.setSupplyPrice(true);
+            }else{
+                supplierDto.setSupplyPrice(false);
+            }
+            if(null!=dto.getSupplierValNo()&&ServiceConstant.HUB_SLOT_NOT_NEED_SEND_SUPPLIERVALNO.equals(dto.getSupplierValNo())){
+                supplierDto.setStudio(true);
+            }else{
+                supplierDto.setStudio(false);
+            }
+
+            if(null!=dto.getSupplierValParentNo()&&ServiceConstant.HUB_SLOT_NEED_SHOOT_SUPPLIERVALPARENTNO.equals(dto.getSupplierValParentNo())){
+                supplierDto.setNeedShootSupplier(true);
+            }else{
+                supplierDto.setNeedShootSupplier(false);
+            }
+
+
+            if(StringUtils.isNotBlank(dto.getSupplierVal())){
+                supplierDto.setSupplierRate(dto.getSupplierVal());
+            }else{
+                supplierDto.setSupplierRate("1");
+            }
+        }
+        return supplierDto;
     }
 
 
