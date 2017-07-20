@@ -510,7 +510,12 @@ public class TaskImportService {
 			hubPendingSpuDto.setSpuGenderState((byte)1);
 			hubPendingSpuDto.setSpuModelState((byte)1);
 			hubPendingSpuDto.setSpuSeasonState((byte)1);
-			
+			if(allFilter){
+				hubPendingSpuDto.setSpuState((byte)1);	
+			}
+			if(noSku){
+				hubPendingSpuDto.setSpuState((byte)2);
+			}
 		} else {
 			if(hubPendingSpuCheckResult.isSpuModel()){
 				hubPendingSpuDto.setSpuModelState((byte)1);
@@ -569,12 +574,6 @@ public class TaskImportService {
 			pengingSpuId = isPendingSpuExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
-			if(allFilter){
-				hubPendingSpuDto.setSpuState((byte)1);	
-			}
-			if(noSku){
-				hubPendingSpuDto.setSpuState((byte)2);
-			}
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 		} else {
 			log.info("spu:" + hubPendingSpuDto.getSpuModel() + "不存在，插入新值");
