@@ -11,5 +11,9 @@ import lombok.Setter;
 @Setter
 public class SpuPending extends HubSpuPendingDto {
 
-    private  String hubSpuNo;//hub spu 编号
+    private String hubSpuNo;//hub spu 编号
+    /**
+     * 图片临时状态
+     */
+    private boolean  isHavePic;
 }

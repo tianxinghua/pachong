@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
+import com.shangpin.ephub.client.business.supplier.gateway.SupplierInHubGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 import org.apache.commons.lang.StringUtils;
@@ -60,6 +62,9 @@ public class PendingHandler extends VariableInit {
 
 	@Autowired
 	DataOfPendingServiceHandler dataOfPendingServiceHandler;
+
+	@Autowired
+	SupplierInHubGateWay supplierInHubGateWay;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -500,6 +505,14 @@ public class PendingHandler extends VariableInit {
 		HubSpuDto hubSpuDto = null;
 
 		BeanUtils.copyProperties(spu, hubSpuPending);
+		//设置图片状态  保留原来的图片状态
+		if(spu.getPicState()==PicState.NO_PIC.getIndex()){
+			hubSpuPending.setHavePic(false);
+			hubSpuPending.setPicState(PicState.UNHANDLED.getIndex());
+		}else{
+			hubSpuPending.setHavePic(true);
+		}
+
 		boolean brandmapping = false;
 		// 首先映射品牌 ，否则无法查询SPU
 		brandmapping = setBrandMapping(spu, hubSpuPending);
@@ -801,17 +814,40 @@ public class PendingHandler extends VariableInit {
 		}
 
 		//整体处理拍照状态
-		handleShoot(hubSpuPending.getSpuPendingId());
+		boolean isNeedSend = true;
+		if(StringUtils.isNotBlank(hubSpuPending.getHubSpuNo())||hubSpuPending.isHavePic()){
+			isNeedSend = false;
+		}
+		handleShoot(hubSpuPending.getSpuPendingId(),hubSpuPending.getSupplierId(),isNeedSend);
 
 
 	}
 
-	private void handleShoot(Long spuPendingId) {
+	private void handleShoot(Long spuPendingId,String  supplierId,boolean isNeedHandle) {
 		HubSpuPendingDto hubSpuPending = spuPendingHandler.getSpuPendingDto(spuPendingId);
+		//处理需要拍照的商品
 		if(null!=hubSpuPending.getSlotState()&&hubSpuPending.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()){
-             if(hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPending.getStockState()==StockState.HANDLED.getIndex()){
-				 slotSpuTaskGateWay.add(hubSpuPending);
-			 }
+			SupplierInHubDto supplierMsg = supplierInHubGateWay.getSupplierMsg(supplierId);
+			//只处理需要拍照的供货商
+			if(null!=supplierMsg){
+				if(supplierMsg.isNeedShootSupplier()){
+
+
+					if(supplierMsg.isStudio()){//摄影棚的无论有无图片 库存  需要处理数据，可以减少别的家的寄送数量
+						slotSpuTaskGateWay.add(hubSpuPending);
+					}else{
+						if(hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPending.getStockState()==StockState.HANDLED.getIndex()) {
+							if (isNeedHandle) {//无图
+								slotSpuTaskGateWay.add(hubSpuPending);
+							}
+						}
+
+					}
+
+
+				}
+
+			}
 
 
 		}
