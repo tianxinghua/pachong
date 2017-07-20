@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.product.business.service.hub.HubProductService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -84,6 +86,10 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     @Autowired
 	private SupplierService supplierService;
 
+    @Autowired
+    HubProductService hubProductService;
+
+
 
     @Override
     public HubSlotSpuDto findHubSlotSpu(String brandNo, String spuModel) {
@@ -110,7 +116,10 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
             //slotspu 处理
             HubSlotSpuDto originSlotSpu = this.findHubSlotSpu(pendingProductDto.getHubBrandNo(),pendingProductDto.getSpuModel());
 
-
+            //查询是否已经生成了hub_spu 如果生成了 也不需要处理
+            if(hubProductService.isHaveSpu(pendingProductDto.getHubBrandNo(),pendingProductDto.getSpuModel())){
+                isShootSupplier = false;
+            }
 
             if(null==originSlotSpu){
                 this.transPendingToSlot(pendingProductDto,slotSpuDto,isShootSupplier);

@@ -20,7 +20,13 @@ public enum PicState {
 	/**
 	 * 处理完成
 	 */
-	HANDLED(Byte.valueOf("2"));
+	HANDLED(Byte.valueOf("2")),
+
+	/**
+	 * 没有图片
+	 */
+	NO_PIC(Byte.valueOf("3"));
+
 	private Byte index;
 
 	private PicState(Byte index) {

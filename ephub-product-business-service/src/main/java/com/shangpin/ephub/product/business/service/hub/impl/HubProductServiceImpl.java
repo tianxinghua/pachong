@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -159,6 +160,17 @@ public class HubProductServiceImpl implements HubProductService {
         }
 
 
+    }
+
+    @Override
+    public boolean isHaveSpu(String brandNo, String spuModel) {
+        HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
+        criteria.createCriteria().andBrandNoEqualTo(brandNo).andSpuModelEqualTo(spuModel);
+        List<HubSpuDto> hubSpuDtos = hubSpuGateWay.selectByCriteria(criteria);
+        if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
+            return true;
+        }
+        return false;
     }
 
     private void handleSkuOfErrorBarcode(List<ApiSkuOrgDom> errorSkuOrgDoms,Map<String, SopSkuDto> errorSopSkuMap) {

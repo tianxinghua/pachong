@@ -206,7 +206,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 				criteria.andSupplierIdIn(needShootSupplierIds);
 			}
 			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
-			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.HANDLED.getIndex());
+			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.UNHANDLED.getIndex());
 		}else{
 			if(StringUtils.isEmpty(pendingQuryDto.getSpuState()) || "0".equals(pendingQuryDto.getSpuState())){
 

@@ -14,4 +14,12 @@ public interface HubProductService {
      * @throws Exception
      */
     public void sendHubProuctToScm(HubProductIdDto hubProductIdDto) throws Exception;
+
+    /**
+     * 获取是否生成HUBSPU
+     * @param brandNo
+     * @param spuModel
+     * @return
+     */
+    public boolean isHaveSpu(String brandNo,String spuModel);
 }

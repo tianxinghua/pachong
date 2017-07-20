@@ -5,8 +5,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +78,9 @@ public class PendingProductService extends PendingSkuService{
 
     @Autowired
 	private HubSlotSpuService slotSpuService;
+
+    @Autowired
+	private SupplierInHubService supplierInHubService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -305,8 +310,10 @@ public class PendingProductService extends PendingSkuService{
 
 		HubSpuPendingDto spuPendingDto = hubSpuPendingGateWay.selectByPrimaryKey(pendingProductDto.getSpuPendingId());
 		if(null!=spuPendingDto){
+			//获取是否是需要处理的供货商
+            SupplierInHubDto supplier = supplierInHubService.getSupplierInHubBySupplierId(spuPendingDto.getSupplierId());
 
-			pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
+            pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
 			pendingProductDto.setSupplierNo(spuPendingDto.getSupplierNo());
 			pendingProductDto.setSupplierSpuId(spuPendingDto.getSupplierSpuId());
 			//查询原始数据的状态

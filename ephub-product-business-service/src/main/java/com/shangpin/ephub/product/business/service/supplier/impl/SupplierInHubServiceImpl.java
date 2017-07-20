@@ -129,6 +129,7 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
             }else{
                 supplierDto.setSupplierRate("1");
             }
+
         }
         return supplierDto;
     }
