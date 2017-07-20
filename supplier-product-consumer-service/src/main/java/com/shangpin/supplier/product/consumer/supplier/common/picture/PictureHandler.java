@@ -108,6 +108,31 @@ public class PictureHandler {
 		}
 		return existPics;
 	}
+	
+	/**
+	 * 只判断sku编号12位（LIMS08000360）或19位的（CONFIG_LIMS08000360）
+	 * 判断该spu是否存在图片
+	 * @param
+	 * @return
+	 */
+	public Map<String,String> monnerPicExistsOfSpu(String supplierId,String supplierSpuNo){
+		Map<String,String> existPics = new HashMap<String,String>();
+		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
+		dto.setPageNo(1);
+		dto.setPageSize(1000);
+		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
+		if(null != pics && pics.size() >0){
+			String picurl = "";
+			for(HubSpuPendingPicDto picDto : pics){
+				picurl =  picDto.getPicUrl();
+				if(picurl!=null){
+					existPics.put(picurl.substring(0,picurl.length()-11)+picurl.substring(picurl.length()-8), null);	
+				}
+			}
+		}
+		return existPics;
+	}
 	/**
 	 * 判断该spu是否存在图片
 	 * @param

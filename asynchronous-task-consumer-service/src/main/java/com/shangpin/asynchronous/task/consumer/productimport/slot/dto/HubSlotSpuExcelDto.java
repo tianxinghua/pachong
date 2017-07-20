@@ -16,7 +16,7 @@ public class HubSlotSpuExcelDto {
 	/**
 	 * 
 	 */
-	private Long spuPendingId;
+	private String spuPendingId;
 	/**
 	 * 门户
 	 */

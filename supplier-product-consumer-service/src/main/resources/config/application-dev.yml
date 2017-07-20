@@ -21,6 +21,12 @@ spring:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
+                        refreshDicTask: 
+                              destination: refresh.dic.task
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1 
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               group: one
@@ -575,6 +581,12 @@ spring:
                             supplierPictureProduct: 
                                   producer: 
                                        prefix: HA.
+                            refreshDicTask: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                             spinnakerOriginalProduct: 
                                   consumer: 
                                        prefix: HA.

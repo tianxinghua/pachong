@@ -207,7 +207,7 @@ public class DataServiceHandler {
 
 	}
 
-	public List<HubBrandDicDto> getBrand() throws Exception {
+	public List<HubBrandDicDto> getBrand() {
 		HubBrandDicCriteriaDto criteria = new HubBrandDicCriteriaDto();
 		criteria.setPageNo(1);
 		criteria.setPageSize(ConstantProperty.MAX_BRANDK_MAPPING_QUERY_NUM);

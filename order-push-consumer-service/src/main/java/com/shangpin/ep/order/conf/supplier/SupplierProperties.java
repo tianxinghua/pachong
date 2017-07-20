@@ -26,6 +26,7 @@ public class SupplierProperties {
 	
 	public static final String SUPPLIER_PREFIX = "shangpin.hub.Supplier";
 
+	private SpinnakerPortofinoParam spinnakerPortofinoParam;
 	private Aladuca aladuca;
 	
 	private Brunarosso brunarosso;

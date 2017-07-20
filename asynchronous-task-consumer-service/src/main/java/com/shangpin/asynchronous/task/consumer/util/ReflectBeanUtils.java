@@ -87,7 +87,8 @@ public class ReflectBeanUtils {
 					continue;
 				}
 				field.setAccessible(true);
-				map.put(field.getName(), field.get(obj).toString());
+				Object object = field.get(obj);
+				map.put(field.getName(), null != object ? object.toString() : "");
 			}
 		}
 
