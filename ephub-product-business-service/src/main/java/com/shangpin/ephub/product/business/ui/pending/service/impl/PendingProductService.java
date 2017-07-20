@@ -312,38 +312,53 @@ public class PendingProductService extends PendingSkuService{
 		if(null!=spuPendingDto){
 			//获取是否是需要处理的供货商
             SupplierInHubDto supplier = supplierInHubService.getSupplierInHubBySupplierId(spuPendingDto.getSupplierId());
+            if(supplier.isNeedShootSupplier()){
 
-            pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
-			pendingProductDto.setSupplierNo(spuPendingDto.getSupplierNo());
-			pendingProductDto.setSupplierSpuId(spuPendingDto.getSupplierSpuId());
-			//查询原始数据的状态
-			if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()
-					&&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()
-					){
+                pendingProductDto.setSupplierId(spuPendingDto.getSupplierId());
+                pendingProductDto.setSupplierNo(spuPendingDto.getSupplierNo());
+                pendingProductDto.setSupplierSpuId(spuPendingDto.getSupplierSpuId());
+                //查询原始数据的状态
+                if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue()) {
+                    if(supplier.isStudio()){//不需要寄送的 直接处理
+                        //第一次插入  检查修改后的数据状态
+                        handleSlotSpuAndSupplier(pendingProductDto);
+                    }else{
+                        //需要寄送的 需要判断图片及库存状态
+                        if(supplier.isNeedShootSupplier()){
 
-				//第一次插入  检查修改后的数据状态
-				if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
-					if(pendingProductDto.getCatgoryState()==CatgoryState.PERFECT_MATCHED.getIndex()||
-							pendingProductDto.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+                            if(spuPendingDto.getPicState()==PicState.UNHANDLED.getIndex() &&spuPendingDto.getStockState()== StockState.HANDLED.getIndex()){
+                                handleSlotSpuAndSupplier(pendingProductDto);
+                            }
+                        }
+                    }
 
-						slotSpuService.addSlotSpuAndSupplier(pendingProductDto);
-					}
-				}
-			}else if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.HANDLED.getIndex().byteValue()
+                }else if(null!=spuPendingDto.getSlotState()&&spuPendingDto.getSlotState()==SpuPendingStudioState.HANDLED.getIndex().byteValue()
 
-					){
-				//修改状态
-				if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()) {
-					if (pendingProductDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex() ||
-							pendingProductDto.getCatgoryState() == CatgoryState.MISMATCHING.getIndex()) {
-						slotSpuService.updateSlotSpu(pendingProductDto);
-					}
-				}
-			}
+                        ){
+                    //修改状态
+                    if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()) {
+                        if (pendingProductDto.getCatgoryState() == CatgoryState.PERFECT_MATCHED.getIndex() ||
+                                pendingProductDto.getCatgoryState() == CatgoryState.MISMATCHING.getIndex()) {
+                            slotSpuService.updateSlotSpu(pendingProductDto);
+                        }
+                    }
+                }
+            }
+
 		}
 	}
 
-	private void checkSpuState(PendingProductDto hubPendingSpuDto, HubPendingSpuCheckResult hubPendingSpuCheckResult) {
+    private void handleSlotSpuAndSupplier(PendingProductDto pendingProductDto) throws Exception {
+        if(pendingProductDto.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&pendingProductDto.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
+            if(pendingProductDto.getCatgoryState()== CatgoryState.PERFECT_MATCHED.getIndex()||
+                    pendingProductDto.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+
+                slotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+            }
+        }
+    }
+
+    private void checkSpuState(PendingProductDto hubPendingSpuDto, HubPendingSpuCheckResult hubPendingSpuCheckResult) {
     	if(hubPendingSpuCheckResult.isSpuModel()){
 			hubPendingSpuDto.setSpuModelState((byte)1);
 		}else{
