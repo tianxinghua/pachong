@@ -458,6 +458,7 @@ public class StudioServiceImpl implements IStudioService {
     * */
     public SlotInfoExtends getSlotInfo(String supplierId ,String slotNo){
         SlotInfoExtends slot  = new SlotInfoExtends();
+
         StudioSlotCriteriaDto cdto = new StudioSlotCriteriaDto();
         cdto.setPageSize(10000);
         cdto.createCriteria().andApplySupplierIdEqualTo(supplierId).andSlotNoEqualTo(slotNo);
@@ -500,6 +501,20 @@ public class StudioServiceImpl implements IStudioService {
             slot.setCountNum(listProduct.size());
             //endregion
             slot.setSlotProductList(listProduct);
+
+
+            //region 获取摄影棚信息
+
+            StudioDto studioData = studioGateWay.selectByPrimaryKey(slot.getStudioId());
+
+            slot.setContacts(studioData.getStudioContacts());
+            slot.setContactInfo(studioData.getContactInfo());
+            slot.setTelephone(studioData.getTelephone());
+            slot.setEmail(studioData.getEmail());
+            slot.setCountry(studioData.getCountry());
+            slot.setAddress(studioData.getAddress());
+            //endregion
+
         }
         return slot;
     }
@@ -754,10 +769,10 @@ public class StudioServiceImpl implements IStudioService {
      * @param slotNo
      * @return
      */
-    public HubResponse<SlotProductEditVo> checkProductAndSendSlot(String supplierId ,String slotNo){
-        HubResponse<SlotProductEditVo> response = new HubResponse<SlotProductEditVo>();
+    public HubResponse<SlotInfo> checkProductAndSendSlot(String supplierId ,String slotNo){
+        HubResponse<SlotInfo> response = new HubResponse<SlotInfo>();
         response.setCode("0");
-        SlotProductEditVo updatedVo = null;
+        SlotInfo updatedVo = null;
         try{
             SlotInfoExtends slotInfo  = getSlotInfo(supplierId , slotNo);
             //验证slot是否存在
@@ -801,8 +816,6 @@ public class StudioServiceImpl implements IStudioService {
                 }
                 //endregion
 
-
-
                 if(slotInfo.getMaxNum() > countNm ){
                     response.setCode("2");
                     response.setMsg("Slot is not full yet ready to ship");
@@ -810,17 +823,16 @@ public class StudioServiceImpl implements IStudioService {
                 if(slotInfo.getMaxNum() == countNm ){
                     response.setMsg("Slot is full and ready to ship");
                 }
-
-
-
+                response.setContent(slotInfo);
             }
         }catch (EphubException e){
             log.info("checkProductAndSendSlot EphubException " + e.getErrcode() +e.getMessage());
-            updatedVo = setErrorMsg(response, slotNo, e.getErrcode(), e.getMessage());
-            response.setErrorMsg(updatedVo);
+            response.setCode("1");
+            response.setMsg(e.getMessage());
         }catch (Exception ex){
             log.info("checkProductAndSendSlot Exception " +ex.getMessage());
-            setErrorMsg(response,slotNo, "S3","Server error occurs when verifying the permission of shipping");
+            response.setCode("1");
+            response.setMsg("Server error occurs when verifying the permission of shipping");
         }
         return  response;
     }
