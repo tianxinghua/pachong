@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.schedule.service;
+package com.shangpin.ephub.data.schedule.service.price;
 
 import java.util.List;
 
