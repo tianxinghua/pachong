@@ -1,6 +1,5 @@
 package com.shangpin.ephub.data.schedule.service.price;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -101,9 +100,8 @@ public class PricePushService {
     					maps.put(dto.getSupplierSkuNo(), dto);
     				}
     			}
-    			Collection<HubSupplierPriceChangeRecordDto> values = maps.values();
 				buffer.append("供应商"+supplierDto.getHubVal()+"推送失败的sku有：").append(LINE_BREAK);
-				values.forEach((dto) -> buffer.append("SUPPLIERSKU："+dto.getSupplierSkuNo()+"，当前状态："+getStateMessage(dto.getState())+"，类型："+getTypeMessage(dto.getType())).append(LINE_BREAK));
+				maps.values().forEach((dto) -> buffer.append("SUPPLIERSKU："+dto.getSupplierSkuNo()+"，当前状态："+getStateMessage(dto.getState())+"，类型："+getTypeMessage(dto.getType())).append(LINE_BREAK));
     		}
 		} catch (Exception e) {
 			log.error("检测 "+supplierDto.getHubVal()+" 价格推送情况异常："+e.getMessage(),e); 
