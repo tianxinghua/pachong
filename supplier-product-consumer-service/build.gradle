@@ -31,7 +31,7 @@ repositories {
 
 
 dependencies {
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:1.0.29-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:1.1.27-dev-studio-SNAPSHOT')
 	compile('com.alibaba:fastjson:1.2.22')
 	compile('com.google.code.gson:gson:2.2.2')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
