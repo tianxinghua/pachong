@@ -82,7 +82,7 @@ public class ProductPullDataService {
      * 获取所有的供应商门户编号
      * @return
      */
-    private List<HubSupplierValueMappingDto> findAllSupplier(){
+    public List<HubSupplierValueMappingDto> findAllSupplier(){
     	HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
     	criteria.setFields("supplier_id,hub_val");
     	criteria.setPageNo(1);
