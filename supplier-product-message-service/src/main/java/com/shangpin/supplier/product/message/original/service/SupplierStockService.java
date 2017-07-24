@@ -78,7 +78,11 @@ public class SupplierStockService {
 		withCriteria.setHubSupplierSku(hubSupplierSku );
 		return hubSupplierSkuGateWay.updateByCriteriaSelective(withCriteria );
 	}
-	
+	/**
+	 * 更新pending库的库存
+	 * @param supplierStock
+	 * @return
+	 */
 	private int updatePendingStock(SupplierStock supplierStock){
 		HubSkuPendingWithCriteriaDto withCriteria = new HubSkuPendingWithCriteriaDto();
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
@@ -89,7 +93,11 @@ public class SupplierStockService {
 		withCriteria.setHubSkuPending(hubSkuPending);
 		return hubSkuPendingGateWay.updateByCriteriaSelective(withCriteria );
 	}
-	
+	/**
+	 * 更新pendingSpu库存状态
+	 * @param supplierStock
+	 * @return
+	 */
 	private int updatePendingSpuStockState(SupplierStock supplierStock){
 		int result = 0;
 		if(supplierStock.getStock() > 0){
