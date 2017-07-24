@@ -3,12 +3,15 @@ package com.shangpin.supplier.product.message.original.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierStock;
 import com.shangpin.supplier.product.message.common.e.Code;
 import com.shangpin.supplier.product.message.common.response.APIRsponse;
 import com.shangpin.supplier.product.message.original.service.OriginalProductService;
+import com.shangpin.supplier.product.message.original.service.SupplierStockService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +29,9 @@ public class OriginalProductAPI {
 
 	@Autowired
 	private OriginalProductService originalProductService;
+	@Autowired
+	private SupplierStockService supplierStockService;
+	
 	@RequestMapping(value = "/original-product")
 	public APIRsponse stockSync(@RequestBody SupplierProduct supplierProduct){
 		long start = System.currentTimeMillis();
@@ -42,6 +48,18 @@ public class OriginalProductAPI {
 			apiRsponse = new APIRsponse(Code.NO.getCode(), e.getMessage());
 		}
 		log.info("系统成功发送编号为{}的消息耗时{}milliseconds",supplierProduct.getMessageId(),System.currentTimeMillis()-start);
+		return apiRsponse;
+	}
+	
+	@RequestMapping(value = "/original-stock", method = RequestMethod.POST)
+	public APIRsponse updateStock(@RequestBody SupplierStock supplierStock){
+		APIRsponse apiRsponse = null;
+		boolean result = supplierStockService.updateStock(supplierStock);
+		if(result){
+			apiRsponse = new APIRsponse(Code.OK.getCode(), Code.OK.getMessage());
+		}else{
+			apiRsponse = new APIRsponse(Code.NO.getCode(), Code.NO.getMessage());
+		}
 		return apiRsponse;
 	}
 }
