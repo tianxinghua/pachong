@@ -12,8 +12,8 @@ spring:
             prefer-ip-address: true
             health-check-interval: 10s
             health-check-timeout: 10s            
-            register: true
-            register-health-check: true
+            register: false
+            register-health-check: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
