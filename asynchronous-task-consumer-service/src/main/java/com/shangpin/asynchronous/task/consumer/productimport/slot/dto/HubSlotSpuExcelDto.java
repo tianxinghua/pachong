@@ -14,6 +14,10 @@ import lombok.Setter;
 @Setter
 public class HubSlotSpuExcelDto {
 	/**
+	 * 供应商原始表的主键
+	 */
+	private String supplierSpuId;
+	/**
 	 * 
 	 */
 	private String spuPendingId;
