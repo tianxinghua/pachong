@@ -1,4 +1,4 @@
-package com.shangpin.ephub.data.schedule.service;
+package com.shangpin.ephub.data.schedule.service.product;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
