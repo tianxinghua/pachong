@@ -272,7 +272,7 @@ public class PriceService {
 			String text = "供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage()
 			+"<br>"
 			+"【推送失败的消息是："+JsonUtil.serialize(productPriceDto)+"】"; 
-//			sendMail("供价记录推送消息队列失败",text);
+			sendMail("供价记录推送消息队列失败",text);
 			throw new Exception("供价记录推送消息队列失败，supplierPriceChangeRecordId："+supplierPriceChangeRecordId+"，异常信息："+e.getMessage());
 		}
 	}

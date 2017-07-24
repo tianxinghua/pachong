@@ -22,11 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductScheduler {
 	
     @Autowired
-	StockService stockService;
+	private StockService stockService;
     @Autowired
-	PricePushService pricePushService;
+    private PricePushService pricePushService;
     @Autowired
-    ProductPullDataService productPullDataService;
+    private ProductPullDataService productPullDataService;
     
 
 	@Scheduled(cron = "00 55 20 * * ?")
@@ -41,15 +41,15 @@ public class ProductScheduler {
 	}
 
 
-	//@Scheduled(cron = "00 03 11 * * ?")
-	public void pricePush() {
-		try {
-			log.info("===========任务开始============"); 
-			pricePushService.handleErrorPush();
-		} catch (Exception e) {
-			log.error("重推价格服务异常："+e.getMessage(),e);
-		}
-	}
+//	@Scheduled(cron = "00 03 11 * * ?")
+//	public void pricePush() {
+//		try {
+//			log.info("===========任务开始============"); 
+//			pricePushService.handleErrorPush();
+//		} catch (Exception e) {
+//			log.error("重推价格服务异常："+e.getMessage(),e);
+//		}
+//	}
 	
 	/**
 	 * 检测产品拉去
@@ -58,7 +58,7 @@ public class ProductScheduler {
 	public void productCheck(){
 		try {
 			log.info("===========检测产品拉去任务开始============"); 
-			
+			productPullDataService.productCheck();
 			log.info("===========检测产品拉去任务结束============"); 
 		} catch (Exception e) {
 			log.error("检测产品拉去任务异常："+e.getMessage(),e);
@@ -71,7 +71,7 @@ public class ProductScheduler {
 	public void priceCheck(){
 		try {
 			log.info("===========检测价格推送任务开始============"); 
-			productPullDataService.productCheck();
+			pricePushService.priceCheck();
 			log.info("===========检测价格推送任务结束============"); 
 		} catch (Exception e) {
 			log.error("检测价格推送任务异常："+e.getMessage(),e);
