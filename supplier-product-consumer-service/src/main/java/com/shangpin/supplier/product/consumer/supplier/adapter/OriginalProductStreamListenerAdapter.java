@@ -132,13 +132,17 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("filippoHandler")
 	private ISupplierHandler filippoHandler;
 	
+	@Autowired
+	@Qualifier("coccolebimbiCommonHandler")
+	private ISupplierHandler coccolebimbiCommonHandler;
+	
 	/**
 	 * coccolebimbi供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
 	public void coccolebimbiStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		
+		coccolebimbiCommonHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * 此队列重名，未使用
