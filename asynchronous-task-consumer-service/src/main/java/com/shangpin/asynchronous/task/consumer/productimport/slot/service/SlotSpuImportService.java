@@ -92,6 +92,7 @@ public class SlotSpuImportService {
 	 */
 	private HubSpuPendingDto convertDto(HubSlotSpuExcelDto excelDto, String createUser){
 		HubSpuPendingDto pendingDto =  new HubSpuPendingDto();
+		pendingDto.setSupplierSpuId(Long.valueOf(excelDto.getSupplierSpuId()));  
 		pendingDto.setSpuPendingId(Long.valueOf(excelDto.getSpuPendingId())); 
 		pendingDto.setSupplierId(excelDto.getSupplierId());
 		pendingDto.setSupplierNo(excelDto.getSupplierNo());

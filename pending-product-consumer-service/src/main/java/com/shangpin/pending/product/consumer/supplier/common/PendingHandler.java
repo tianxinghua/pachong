@@ -125,6 +125,7 @@ public class PendingHandler extends VariableInit {
 	
 	private boolean  refreshDic(Integer spuStatus,PendingProduct message,HubSpuPendingDto tmp) throws Exception{
 		boolean flag = false;
+		log.info("刷新字典"+spuStatus+"接受参数：{}",message);
 		if (spuStatus == InfoState.RefreshCategory.getIndex()) {
 			//刷新品类
 			refreshPendingCategory(message.getData(),tmp);
@@ -133,11 +134,11 @@ public class PendingHandler extends VariableInit {
 			//刷新颜色
 			refreshHubColor(message.getData(),tmp);
 			flag = true;
-		}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
+		}else if (spuStatus == InfoState.RefreshBrand.getIndex()) {
 			//刷新品牌
 			refreshSupplierBrand(message.getData(),tmp);
 			flag = true;
-		}else if (spuStatus == InfoState.RefreshColor.getIndex()) {
+		}else if (spuStatus == InfoState.RefreshOrigin.getIndex()) {
 			//刷新产地
 			refreshSupplierOrigin(message.getData(),tmp);
 			flag = true;
