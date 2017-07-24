@@ -50,7 +50,7 @@ public class SizeService {
 				return null;
 			}
 			String retMsg = getGmsSizeByRedis(hubBrandNo,hubCategoryNo);
-			log.info("检验尺码从redis获取"+retMsg);
+//			log.info("检验尺码从redis获取"+retMsg);
 			if(!StringUtils.isEmpty(retMsg)){
 				return JsonUtil.deserialize(retMsg,CategoryScreenSizeDom.class);
 			}else{
@@ -79,13 +79,13 @@ public class SizeService {
 		SizeRequestDto requestDto = new SizeRequestDto();
         requestDto.setBrandNo(hubBrandNo);
         requestDto.setCategoryNo(hubCategoryNo);
-        log.info("检验尺码请求api参数：{},"+apiAddressProperties.getGmsSizeUrl(),requestDto);
+//        log.info("检验尺码请求api参数：{},"+apiAddressProperties.getGmsSizeUrl(),requestDto);
         HttpEntity<SizeRequestDto> requestEntity = new HttpEntity<SizeRequestDto>(requestDto);
         String gmsSizeUrl = apiAddressProperties.getGmsSizeUrl();
 		ResponseEntity<HubResponseDto<CategoryScreenSizeDom>> entity = restTemplate.exchange(gmsSizeUrl, HttpMethod.POST,
                 requestEntity, new ParameterizedTypeReference<HubResponseDto<CategoryScreenSizeDom>>() {
                 });
-        log.info("检验尺码api返回结果：{}",entity.getBody());
+//        log.info("检验尺码api返回结果：{}",entity.getBody());
         return entity.getBody();
 	}
 	
