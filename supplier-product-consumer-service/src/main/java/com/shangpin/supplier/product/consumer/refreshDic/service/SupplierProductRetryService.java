@@ -167,8 +167,7 @@ public class SupplierProductRetryService {
 		PendingSpu pendingSpu = new PendingSpu();
 		supplierProductMysqlService.convertHubSpuToPendingSpu(spu, pendingSpu);
 		pendingSpu.setSupplierNo(supplier.getHubValNo());
-		pendingProduct.setData(pendingSpu);
-
+		
 		//开始构造sku消息头
 		List<PendingSku> skus = new ArrayList<PendingSku>();
 		List<Sku> headSkus = new ArrayList<Sku>();		
@@ -189,11 +188,9 @@ public class SupplierProductRetryService {
 					log.error(e.getMessage(), e);
 				}				
 			}
-		}else{
-			log.info("===="+spu.getSupplierId()+":"+spu.getSupplierSpuId()+"无sku信息");
+			pendingSpu.setSkus(skus);
+			spuHead.setSkus(headSkus);
 		}
-		pendingSpu.setSkus(skus);
-		spuHead.setSkus(headSkus);
 		
 		pendingProduct.setData(pendingSpu);
 		Map<String, String> headers = new HashMap<String, String>();
