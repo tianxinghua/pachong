@@ -67,8 +67,12 @@ public class SlotSpuImportService {
 				HubSpuPendingDto pendingDto = hubPendingSpuCheckGateWay.checkSpuProperty(property);
 				log.info("校验结果========="+JsonUtil.serialize(pendingDto)); 
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingDto);
-				hubSlotSpuTaskGateWay.add(pendingDto);
 				CheckResultDto resultDto = checkPendingSpu(taskNo,pendingDto);
+				if(TaskState.SUCCESS.equals(resultDto.getTaskState())){
+					hubSlotSpuTaskGateWay.add(pendingDto);
+				}else{
+					log.info(pendingDto.getSpuModel()+" 校验不通过，不调接口"); 
+				}
 				listMap.add(ReflectBeanUtils.objectToMap(resultDto));
 			}
 		}
