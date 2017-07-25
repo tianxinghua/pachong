@@ -46,9 +46,17 @@ public class ShootProductController {
     public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
     	return studioPendingService.updatePendingProduct(pendingProductDto);
     }
+
+
+
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
         return studioPendingService.batchUpdatePendingProduct(pendingProducts);
+    }
+
+    @RequestMapping(value="/cancel-view",method=RequestMethod.POST)
+    public HubResponse<?>  cancelView(@RequestBody PendingProductDto pendingProductDto){
+        return studioPendingService.updatePendingProduct(pendingProductDto);
     }
 
 }

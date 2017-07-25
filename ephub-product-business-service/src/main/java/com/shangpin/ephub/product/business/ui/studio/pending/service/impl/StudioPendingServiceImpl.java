@@ -158,7 +158,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
                     HubPendingSpuCheckResult spuResult = this.checkHubPendingSpu(pendingProductDto);
                     if(spuResult.isPassing()){
-                        pendingProductDto.setCatgoryState(CatgoryState.PERFECT_MATCHED.getIndex());
+//                        pendingProductDto.setCatgoryState(CatgoryState.PERFECT_MATCHED.getIndex());
                         pendingProductDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
                         pendingProductDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
                     }else{
@@ -278,7 +278,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
         List<CommonCheckBase> allPropertyCheck = new ArrayList<>();
         allPropertyCheck.add(brandCheck);
-        allPropertyCheck.add(categoryCheck);
+//        allPropertyCheck.add(categoryCheck);
 //        allPropertyCheck.add(spuModelCheck);
 
         propertyCheck.setAllPropertyCheck(allPropertyCheck);

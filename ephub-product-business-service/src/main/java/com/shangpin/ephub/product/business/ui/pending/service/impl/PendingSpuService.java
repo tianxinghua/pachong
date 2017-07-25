@@ -205,6 +205,16 @@ public abstract class PendingSpuService implements IPendingProductService {
 			if(null!=needShootSupplierIds&&needShootSupplierIds.size()>0){
 				criteria.andSupplierIdIn(needShootSupplierIds);
 			}
+
+			if(!StringUtils.isEmpty(pendingQuryDto.getStatTime())){
+				Date startTime = DateTimeUtil.convertFormat(pendingQuryDto.getStatTime(), dateFormat);
+				criteria.andSlotHandleDateGreaterThanOrEqualTo(startTime);
+			}
+			if(!StringUtils.isEmpty(pendingQuryDto.getEndTime())){
+				Date endTime = DateTimeUtil.convertFormat(pendingQuryDto.getEndTime(),dateFormat);
+				criteria.andSlotHandleDateLessThan(endTime);
+			}
+
 			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
 			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.UNHANDLED.getIndex());
 		}else{
