@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
 import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
+import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.sku.bean.HubSku;
 import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
@@ -29,8 +30,28 @@ public class WiseServiceImpl{
 	private ShangpinMailSender shangpinMailSender;
 	@Autowired
 	private HubSkuService hubSkuService;
+	
+	/**
+	 * 判断状态，如果推送api成功则给供应商发送邮件，否则给尚品发送邮件
+	 * @param orderDTO
+	 */
+	public void pushConfirmOrder(OrderDTO orderDTO){
+		try {
+			if(PushStatus.ORDER_CONFIRMED.equals(orderDTO.getPushStatus())){
+				handleConfirmOrder(orderDTO);
+			}else{
+				handleConfirmError(orderDTO);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(),e); 
+		}
+	}
 
-	public void handleConfirmOrder(OrderDTO orderDTO) {
+	/**
+	 * 给供应商发送邮件
+	 * @param orderDTO
+	 */
+	private void handleConfirmOrder(OrderDTO orderDTO) {
 		try {
 			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
 			if(null != sku){
@@ -94,6 +115,34 @@ public class WiseServiceImpl{
 //		addTo.add("andrea.venturini@wiseboutique.com");
 //		addTo.add("wangsaying@shangpin.com");
 //		addTo.add("lubaijiang@shangpin.com");
+		addTo.add("steven.ding@shangpin.com");
+		shangpinMail.setAddTo(addTo );
+		shangpinMailSender.sendShangpinMail(shangpinMail);
+	}
+	
+	private void handleConfirmError(OrderDTO orderDTO){
+		try {
+			String message = "采购单号："+orderDTO.getPurchaseNo();
+			String subject = "Wise推送失败的采购单";
+			sendMailToShangpin(subject,message);
+		} catch (Exception e) {
+			log.error("wise发送推送失败采购单邮件时发生异常============"+e.getMessage());
+		}
+	}
+	/**
+	 * 发送邮件
+	 * @param subject 邮件主题
+	 * @param text 邮件内容
+	 * @throws Exception
+	 */
+	private void sendMailToShangpin(String subject,String text) throws Exception {
+		ShangpinMail shangpinMail = new ShangpinMail();
+		shangpinMail.setFrom("chengxu@shangpin.com");
+		shangpinMail.setSubject(subject);
+		shangpinMail.setText(text);
+		shangpinMail.setTo("lizhongren@shangpin.com");
+		List<String> addTo = new ArrayList<>();
+		addTo.add("lubaijiang@shangpin.com");
 		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
