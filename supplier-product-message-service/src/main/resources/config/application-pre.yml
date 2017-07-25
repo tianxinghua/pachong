@@ -190,7 +190,10 @@ spring:
                               content-type: application/json  
                         dlrboutiqueOriginalProduct: 
                               destination: dlrboutique.original.product
-                              content-type: application/json                                                                                                                                                                                                                               
+                              content-type: application/json  
+                        allProductStock: 
+                              destination: supplier.product.stock
+                              content-type: application/json                                                                                                                                                                                                                              
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -374,6 +377,9 @@ spring:
                                   producer: 
                                            prefix: HA. 
                             dlrboutiqueOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            allProductStock: 
                                   producer: 
                                            prefix: HA.                                                                                                                                                                                                                                                                                                                    
   jackson: 

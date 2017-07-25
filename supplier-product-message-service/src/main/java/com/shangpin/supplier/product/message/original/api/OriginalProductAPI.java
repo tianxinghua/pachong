@@ -54,7 +54,7 @@ public class OriginalProductAPI {
 	@RequestMapping(value = "/original-stock", method = RequestMethod.POST)
 	public APIRsponse updateStock(@RequestBody SupplierStock supplierStock){
 		APIRsponse apiRsponse = null;
-		boolean result = supplierStockService.updateStock(supplierStock);
+		boolean result = supplierStockService.sendMessageToChannel(supplierStock);
 		if(result){
 			apiRsponse = new APIRsponse(Code.OK.getCode(), Code.OK.getMessage());
 		}else{

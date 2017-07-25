@@ -136,6 +136,9 @@ public interface OriginalProductSource {
 	public static final String EMONTI = "emontiOriginalProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
+	
+	public static final String ALL_PRODUCT_STOCK = "allProductStock";
+	
 	/**
 	 * 供货商portofino通道组件配置
 	 * @return 供货商portofino通道组件
@@ -538,4 +541,10 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.DLRBOUTIQUE)
 	public MessageChannel dlrboutique();
+	/**
+	 * 所有产品的库存通道
+	 * @return
+	 */
+	@Output(value = OriginalProductSource.ALL_PRODUCT_STOCK)
+	public MessageChannel allProductStock();
 }

@@ -5,6 +5,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierStock;
 import com.shangpin.supplier.product.message.original.conf.channel.OriginalProductSource;
 /**
  * <p>Title:OrderStreamSender.java </p>
@@ -553,5 +554,13 @@ public class OriginalProductStreamSender {
      */
     public boolean dlrboutiqueStream(SupplierProduct supplierProduct){
     	return originalProductSource.dlrboutique().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 所有供应商更新库存队列
+     * @param supplierStock
+     * @return
+     */
+    public boolean allProductStockStream(SupplierStock supplierStock){
+    	return originalProductSource.allProductStock().send(MessageBuilder.withPayload(supplierStock).build());
     }
 }
