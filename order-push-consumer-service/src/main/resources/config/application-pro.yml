@@ -477,7 +477,7 @@ shangpin:
                   openApiKey: 0173a41214d345dd88f78a9d3e82837b
                   openApiSecret: 8468cca27d904e929c5330d7f57d6d30 
           wise: 
-              url: https://at98p.wiseboutique.com/ws_sito_p15/ws_sito_p15.asmx/
+              url: http://at98p.wiseboutique.com/ws_sito_p15/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace
               setStatusInterface: SetStatusOrderMarketplace
               getStatusInterface: GetStatusOrderMarketplace
