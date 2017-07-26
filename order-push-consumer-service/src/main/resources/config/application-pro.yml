@@ -68,6 +68,11 @@ shangpin:
       pricehost: http://sopoutapi.spidc1.com
       findsupplyprice: /Product/FindSupplyInfo
     Supplier: #以下配置为各个供货商的配置
+          coccolebimbiParam:
+                  url:
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
           forzieri:
                   host: https://api.forzieri.com/test/
                   client_id: NTkyZThjNGI2NGY2NTY1

@@ -159,6 +159,9 @@ public class OrderHandleSearch {
 	IOrderService dlrboutiqueServiceImpl;
 
 	@Autowired
+	@Qualifier("coccolebimbiOrderImpl") 
+	IOrderService coccolebimbiOrderImpl;
+	@Autowired
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
 	public IOrderService getHander(String supplierId) {
@@ -166,7 +169,9 @@ public class OrderHandleSearch {
 //		if ("2015092201518".equals(supplierId)) {
 //			return tonySubOrderImpl;
 //		}else
-		if ("2015102201625".equals(supplierId)) {// 预锁库存随机返回值
+		if("2017072601979".equals(supplierId)){
+			return coccolebimbiOrderImpl;
+		}else if ("2015102201625".equals(supplierId)) {// 预锁库存随机返回值
 			return clutcherOrderImpl;
 		} else if ("2016102401951".equals(supplierId)) {
 			return carofiglioOrderImpl;
@@ -263,7 +268,9 @@ public class OrderHandleSearch {
 	}
 
 	public SupplierCommon getSupplierProperty(String supplierId) {
-		if("2017060101976".equals(supplierId)){
+		if("2017072601979".equals(supplierId)){
+			return supplierProperties.getCoccolebimbiParam();
+		}else if("2017060101976".equals(supplierId)){
 			return supplierProperties.getSpinnakerPortofinoParam();
 		}else if ("2015102201625".equals(supplierId)) {
 			return supplierProperties.getClutcher();
