@@ -918,7 +918,7 @@ public class PendingHandler extends VariableInit {
 				if(supplierMsg.isNeedShootSupplier()){
 
 
-					if(supplierMsg.isStudio()){//摄影棚的无论有无图片 库存  需要处理数据，可以减少别的家的寄送数量
+					if(supplierMsg.isStudio()&&hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()){//摄影棚的无论有无图片 库存  需要处理数据，可以减少别的家的寄送数量
 						slotSpuTaskGateWay.add(hubSpuPending);
 					}else{
 						if(hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPending.getStockState()==StockState.HANDLED.getIndex()) {
