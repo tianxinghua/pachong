@@ -1,6 +1,8 @@
 package com.shangpin.supplier.product.consumer.conf.stream.sink.channel;
 
 import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 /**
  * <p>Title:OriginalProductSink.java </p>
@@ -139,6 +141,8 @@ public interface OriginalProductSink {
 	public static final String EMONTI = "emontiOriginalProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
+	
+	public static final String ALL_PRODUCT_STOCK = "allProductStock";
 	//===============================
 	/**
 	 * 供货商portofino通道组件配置
@@ -542,4 +546,10 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.DLRBOUTIQUE)
 	public SubscribableChannel dlrboutiqueOriginalProduct();
+	/**
+	 * 所有产品的库存通道
+	 * @return
+	 */
+	@Output(value = OriginalProductSink.ALL_PRODUCT_STOCK)
+	public MessageChannel allProductStock();
 }

@@ -625,7 +625,13 @@ spring:
                                        maxAttempts: 1  
                         dlrboutiquePendingProduct: 
                               destination: dlrboutique.pending.product
-                              content-type: application/json                                                                                                                                                                                                                                                                                                                              
+                              content-type: application/json 
+                        allProductStock: 
+                              destination: supplier.product.stock
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                               
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -1239,7 +1245,13 @@ spring:
                                          republishToDlq: false 
                               dlrboutiquePendingProduct: 
                                     producer: 
-                                         prefix: HA.                                                                                                                                                                                                                                                                                                                                                  
+                                         prefix: HA.   
+                              allProductStock: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                                                
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
