@@ -94,7 +94,6 @@ public class BiondioniHandler implements ISupplierHandler {
 			hubSpu.setSupplierSeasonname(article.getSaisonArticle());
 			hubSpu.setSupplierMaterial(article.getMatière());
 //			hubSpu.setSupplierOrigin(supplierOrigin);			
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			

@@ -161,7 +161,6 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getOrigin());
 			hubSpu.setSupplierSpuDesc(item.getDescription());
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

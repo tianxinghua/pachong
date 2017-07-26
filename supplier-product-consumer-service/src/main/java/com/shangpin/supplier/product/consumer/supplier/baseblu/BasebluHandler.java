@@ -127,7 +127,6 @@ public class BasebluHandler implements ISupplierHandler {
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getMade_in());
 			hubSpu.setSupplierSpuDesc(standard(item.getLong_description()));
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

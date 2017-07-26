@@ -183,7 +183,6 @@ public class FratinardiHandler implements ISupplierHandler{
 			}
 			hubSpu.setSupplierOrigin(origin);
 			hubSpu.setSupplierSpuDesc(desc);
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;
