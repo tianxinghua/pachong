@@ -1,4 +1,4 @@
-package com.shangpin.iog.stock.schedule;
+package com.shangpin.iog.eds.stock.schedule;
 
 import java.util.Date;
 
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.stock.StockImp;
+import com.shangpin.iog.eds.stock.service.StockImp;
 
 @Component
 @PropertySource("classpath:conf.properties")

@@ -1,4 +1,4 @@
-package com.shangpin.iog.stock.schedule;
+package com.shangpin.iog.eds.stock.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
