@@ -62,6 +62,7 @@ public class WaitShootExporter extends CommonExporter<PendingQuryDto,HubSlotSpuE
 
 	private HubSlotSpuExcelDto convert(PendingProductDto product) {
 		HubSlotSpuExcelDto slotSpu = new HubSlotSpuExcelDto();
+		slotSpu.setSupplierSpuId(String.valueOf(product.getSupplierSpuId()));
 		slotSpu.setSpuPendingId(String.valueOf(product.getSpuPendingId()));
 		slotSpu.setSupplierId(product.getSupplierId());
 		slotSpu.setSupplierNo(product.getSupplierNo());

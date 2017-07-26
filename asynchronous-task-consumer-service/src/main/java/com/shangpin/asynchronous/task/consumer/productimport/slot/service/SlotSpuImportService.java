@@ -67,8 +67,12 @@ public class SlotSpuImportService {
 				HubSpuPendingDto pendingDto = hubPendingSpuCheckGateWay.checkSpuProperty(property);
 				log.info("校验结果========="+JsonUtil.serialize(pendingDto)); 
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingDto);
-				hubSlotSpuTaskGateWay.add(pendingDto);
 				CheckResultDto resultDto = checkPendingSpu(taskNo,pendingDto);
+				if(TaskState.SUCCESS.equals(resultDto.getTaskState())){
+					hubSlotSpuTaskGateWay.add(pendingDto);
+				}else{
+					log.info(pendingDto.getSpuModel()+" 校验不通过，不调接口"); 
+				}
 				listMap.add(ReflectBeanUtils.objectToMap(resultDto));
 			}
 		}
@@ -92,6 +96,7 @@ public class SlotSpuImportService {
 	 */
 	private HubSpuPendingDto convertDto(HubSlotSpuExcelDto excelDto, String createUser){
 		HubSpuPendingDto pendingDto =  new HubSpuPendingDto();
+		pendingDto.setSupplierSpuId(Long.valueOf(excelDto.getSupplierSpuId()));  
 		pendingDto.setSpuPendingId(Long.valueOf(excelDto.getSpuPendingId())); 
 		pendingDto.setSupplierId(excelDto.getSupplierId());
 		pendingDto.setSupplierNo(excelDto.getSupplierNo());

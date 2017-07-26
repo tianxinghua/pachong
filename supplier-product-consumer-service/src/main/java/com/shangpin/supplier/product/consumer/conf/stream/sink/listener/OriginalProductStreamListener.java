@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierStock;
 import com.shangpin.supplier.product.consumer.conf.stream.sink.channel.OriginalProductSink;
 import com.shangpin.supplier.product.consumer.supplier.adapter.OriginalProductStreamListenerAdapter;
 
@@ -634,5 +635,15 @@ public class OriginalProductStreamListener {
 	@StreamListener(OriginalProductSink.DLRBOUTIQUE)
 	public void dlrboutiqueStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.dlrboutiqueStreamListen(message, headers);
+	}
+	/**
+	 * 该队列用来更新所以供应商库存
+	 * @param message 库存消息
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.ALL_PRODUCT_STOCK)
+	public void allProductStockStreamListen(@Payload SupplierStock message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.allProductStockStreamListen(message, headers);
 	}
 }

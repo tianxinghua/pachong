@@ -817,13 +817,15 @@ public class VariableInit {
     protected boolean setBrandModel(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;
         String spuModel = "";
-
+        log.info("校验货号参数： 货号:" + spu.getSpuModel().trim().toUpperCase() + " 品牌:" + hubSpuPending.getHubBrandNo() +" 品类:" + hubSpuPending.getHubCategoryNo()  );
         if (StringUtils.isNotBlank(hubSpuPending.getHubBrandNo())&&StringUtils.isNotBlank(spu.getSpuModel())) {
             BrandModelDto queryDto = new BrandModelDto();
             queryDto.setBrandMode(spu.getSpuModel().trim().toUpperCase());
             queryDto.setHubBrandNo(hubSpuPending.getHubBrandNo());
             queryDto.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
+            log.info("进入调用校验货号参数： 货号:" + spu.getSpuModel().trim().toUpperCase() + " 品牌:" + hubSpuPending.getHubBrandNo() +" 品类:" + hubSpuPending.getHubCategoryNo()  );
             BrandModelResult verify = brandModelRuleGateWay.verifyWithCategory(queryDto);
+            log.info("verfy value " + verify.toString());
             if (null != verify) {
                 if (verify.isPassing()) {
                     hubSpuPending.setSpuModel(verify.getBrandMode());

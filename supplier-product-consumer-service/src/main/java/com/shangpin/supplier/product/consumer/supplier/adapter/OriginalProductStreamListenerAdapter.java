@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierStock;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
+import com.shangpin.supplier.product.consumer.supplier.allstock.StockHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.IAtelierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.ISpinnakerHandler;
 
@@ -135,6 +137,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("coccolebimbiCommonHandler")
 	private ISupplierHandler coccolebimbiCommonHandler;
+	
+	@Autowired
+	private StockHandler stockHandler;
+	
 	
 	/**
 	 * coccolebimbi供货商原始数据监听方法
@@ -695,5 +701,14 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void dlrboutiqueStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);				
+	}
+	
+	/**
+	 * 所以供应商更新库存监听方法
+	 * @param message
+	 * @param headers
+	 */
+	public void allProductStockStreamListen(SupplierStock message, Map<String, Object> headers){
+		stockHandler.handleAllProductStock(message, headers);
 	}
 }
