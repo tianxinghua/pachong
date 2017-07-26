@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import com.shangpin.iog.service.SpecialSkuService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,10 @@ public class TonyStockImp {
     SkuRelationService skuRelationService;
     @Autowired
     UpdateStockService updateStockService;
+
+    @Autowired
+    SpecialSkuService  specialSkuService;
+
     public void  fetchStock() {
 
         Gson gson = new Gson();
@@ -142,13 +147,23 @@ public class TonyStockImp {
         try {
             UpdateProductSock updateProductSock = new UpdateProductSock();
             Map<String,String> skuRelationMap = new HashMap<>();
+            String supplierSkuNO = "";
             for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
+                supplierSkuNO = itor.next();
+
                 try {
-                    SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
-                    if(skuRelationDTO!=null){
-                    	skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());	
+                    if(specialSkuService.checkBySupplierIdAndSkuId(SUPPLIER_ID,supplierSkuNO)) {
+                         //不需要更新库存
+                        stockMap.remove(supplierSkuNO);
+
+                    }else{
+
+                        SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,supplierSkuNO);
+                        if(skuRelationDTO!=null){
+                            skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+                        }
                     }
-                    
+
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }

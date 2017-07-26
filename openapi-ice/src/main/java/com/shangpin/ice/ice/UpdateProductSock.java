@@ -36,8 +36,8 @@ public class UpdateProductSock {
         Map<String, Integer> iceStock=new HashMap<>();
         try {
             int stockResult=0;
-
-            Map<String,Integer> sopPurchaseMap =  this.getSopPuchase(supplierId);
+            //
+            Map<String,Integer> sopPurchaseMap =  new HashMap<>();//this.getSopPuchase(supplierId);
             String  supplierSkuNo="",sopSkuNo="";
 
             for(Iterator<Map.Entry<String,Integer>> itor= supplierStock.entrySet().iterator();itor.hasNext();){
