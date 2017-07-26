@@ -94,13 +94,14 @@ public class PendingHandler extends VariableInit {
 				//自动选品	
 				if (spuStatus == MessageType.RESTART_BRAND_MODEL.getIndex()) {
 					hubSpuPendingDto = handSpuPending(message.getData());
-				}else 
+				}else {
 					//spu pending 处理
 					hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
-					if(spuStatus== MessageType.RESTART_HANDLE.getIndex()){
+					if (spuStatus == MessageType.RESTART_HANDLE.getIndex()) {
 						//重处理的不做SKU更新
 						return;
 					}
+				}
 			}
 		}
 		
@@ -580,6 +581,9 @@ public class PendingHandler extends VariableInit {
 
 		BeanUtils.copyProperties(spu, hubSpuPending);
 		//设置图片状态  保留原来的图片状态
+//		log.info("spu no ="+spu.getSupplierSpuNo() + "  spu pic state  ="+spu.getPicState() );
+
+
 		if(spu.getPicState()==PicState.NO_PIC.getIndex()){
 			hubSpuPending.setHavePic(false);
 			hubSpuPending.setPicState(PicState.UNHANDLED.getIndex());
@@ -590,6 +594,11 @@ public class PendingHandler extends VariableInit {
 		boolean brandmapping = false;
 		// 首先映射品牌 ，否则无法查询SPU
 		brandmapping = setBrandMapping(spu, hubSpuPending);
+
+
+
+		//先替换品类 ，否则货号校验那里无法校验品类
+		setCategoryMapping(spu, hubSpuPending);
 
 		// 验证货号
 		boolean spuModelJudge = false;
@@ -889,6 +898,8 @@ public class PendingHandler extends VariableInit {
 
 		//整体处理拍照状态
 		boolean isNeedSend = true;
+		log.info("spuNo = " + hubSpuPending.getSupplierSpuNo() + "hub spu no = " + hubSpuPending.getHubSpuNo() + " is hava pic " + hubSpuPending.isHavePic() );
+
 		if(StringUtils.isNotBlank(hubSpuPending.getHubSpuNo())||hubSpuPending.isHavePic()){
 			isNeedSend = false;
 		}
@@ -907,7 +918,7 @@ public class PendingHandler extends VariableInit {
 				if(supplierMsg.isNeedShootSupplier()){
 
 
-					if(supplierMsg.isStudio()){//摄影棚的无论有无图片 库存  需要处理数据，可以减少别的家的寄送数量
+					if(supplierMsg.isStudio()&&hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()){//摄影棚的无论有无图片 库存  需要处理数据，可以减少别的家的寄送数量
 						slotSpuTaskGateWay.add(hubSpuPending);
 					}else{
 						if(hubSpuPending.getSpuModelState()== SpuModelState.VERIFY_PASSED.getIndex()&&hubSpuPending.getStockState()==StockState.HANDLED.getIndex()) {

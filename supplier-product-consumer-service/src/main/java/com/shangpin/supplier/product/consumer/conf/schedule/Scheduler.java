@@ -23,7 +23,7 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
-	@Scheduled(cron = "0/15 * * * * ?")
+	//@Scheduled(cron = "0/15 * * * * ?")
 	public void refreshColorTask() {
 		try {
 			supplierProductPictureService.processProduct(InfoState.RefreshColor.getIndex(),true);
@@ -33,7 +33,7 @@ public class Scheduler {
 		}
 	}
 	
-	@Scheduled(cron = "0/30 * * * * ?")
+	//@Scheduled(cron = "0/30 * * * * ?")
 	public void refreshSpuMergeTask() {
 		try {
 			supplierProductPictureService.processProduct(InfoState.Union.getIndex(),true);
