@@ -45,6 +45,7 @@ public class AtelierCommonHandler extends IAtelierHandler {
 			atelierSpu.setSupplierPrice(spuArr[16]);
 			atelierSpu.setMaterial3(spuArr[42]);
 			atelierSpu.setProductOrigin(spuArr[40]); 
+			atelierSpu.setSizeDetail(spuArr[14]); 
 			return atelierSpu;
 		}else{
 			return null;
