@@ -47,7 +47,7 @@ public class SupplierProductMysqlService {
 	 */
 	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
 		try {	
-			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
+//			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
 			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
 				hubSpu.setCreateTime(new Date());
@@ -64,11 +64,6 @@ public class SupplierProductMysqlService {
 					updateHubSpu(hubSpuUpdated);
 					return ProductStatus.UPDATE;
 				}else{
-					HubSupplierSpuDto memo = new HubSupplierSpuDto();
-					memo.setMemo(hubSpu.getMemo());
-					memo.setSupplierId(hubSpuSel.getSupplierId());
-					memo.setSupplierSpuNo(hubSpuSel.getSupplierSpuNo());
-//					updateHubSpuMemo(memo);
 					return ProductStatus.NO_NEED_HANDLE;
 				}
 			}

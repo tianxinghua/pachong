@@ -97,6 +97,7 @@ public class BagheeraHandler implements ISupplierHandler {
 			hubSpu.setSupplierMaterial(bagheeraDto.getMATERIAL());
 			hubSpu.setSupplierOrigin(bagheeraDto.getMADE());
 			hubSpu.setSupplierSpuDesc(bagheeraDto.getDESCRIPTION());
+			hubSpu.setMemo(bagheeraDto.getSIZE_AND_FIT()); 
 			return true;
 		}else{
 			return false;

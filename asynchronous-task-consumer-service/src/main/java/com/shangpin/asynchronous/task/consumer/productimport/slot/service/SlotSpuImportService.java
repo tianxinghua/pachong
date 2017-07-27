@@ -17,7 +17,6 @@ import com.shangpin.asynchronous.task.consumer.productimport.common.service.Task
 import com.shangpin.asynchronous.task.consumer.productimport.slot.dto.HubSlotSpuExcelDto;
 import com.shangpin.asynchronous.task.consumer.util.ReflectBeanUtils;
 import com.shangpin.asynchronous.task.consumer.util.excel.ReadExcel;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -82,7 +81,7 @@ public class SlotSpuImportService {
 	private HubSpuPendingCheckProperty myCheckProperty() {
 		HubSpuPendingCheckProperty property = new HubSpuPendingCheckProperty();
 		property.setHubBrand(true);
-		property.setHubCategory(true);
+//		property.setHubCategory(true);
 		property.setHubSpuModel(true);
 		return property;
 	}
@@ -122,7 +121,7 @@ public class SlotSpuImportService {
 			isPass = false;
 			buffer.append(TaskState.MODEL_FAIL).append(TaskState.SIGN);
 		}
-		if(StringUtils.isEmpty(pendingDdto.getCatgoryState()) || CatgoryState.ENTIRELY_MISMATCHING.getIndex() == pendingDdto.getCatgoryState()){
+		if(!verificationHubCategory(pendingDdto.getHubCategoryNo())){
 			isPass = false;
 			buffer.append(TaskState.CATGORY_FAIL).append(TaskState.SIGN);
 		}
@@ -137,6 +136,19 @@ public class SlotSpuImportService {
 			resultDto.setProcessInfo(buffer.toString()); 
 		}
 		return resultDto;
+	}
+	/**
+	 * 校验品类，只要是尚品品类就通过
+	 * @param hubCategoryNo 品类编号
+	 * @return 验证通过返回true
+	 */
+	private boolean verificationHubCategory(String hubCategoryNo){
+		if(!StringUtils.isEmpty(hubCategoryNo)){
+			if(hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}") || hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}") || hubCategoryNo.matches("A[0-9]{2}B[0-9]{2}") || hubCategoryNo.matches("A[0-9]{2}")){
+				return true;
+			}		
+		}
+		return false;
 	}
 	
 

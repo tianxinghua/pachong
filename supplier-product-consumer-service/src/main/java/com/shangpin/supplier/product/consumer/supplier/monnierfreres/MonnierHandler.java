@@ -160,6 +160,7 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender("female");
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getOrigin());
+			hubSpu.setSupplierSpuDesc(item.getDescription());
 			String desc = item.getDescription();
 			StringBuffer str = new StringBuffer();
 			if(item.getLength()!=null){
@@ -179,7 +180,6 @@ public class MonnierHandler implements ISupplierHandler {
 				str.append(",").append(item.getCharacteristics2());
 			}
 			hubSpu.setSupplierSpuDesc(desc+str.toString());
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

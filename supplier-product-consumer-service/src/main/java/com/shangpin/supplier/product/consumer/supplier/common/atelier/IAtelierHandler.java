@@ -174,7 +174,6 @@ public abstract class IAtelierHandler{
 			hubSpu.setSupplierMaterial(atelierSpu.getMaterial1()+" "+atelierSpu.getMaterial3());
 			hubSpu.setSupplierOrigin(atelierSpu.getProductOrigin());
 			hubSpu.setSupplierSpuDesc(atelierSpu.getDescription()); 
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;
