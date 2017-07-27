@@ -9,6 +9,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendingService;
+import com.shangpin.ephub.product.business.ui.studio.pending.vo.ShootPendingVo;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,8 @@ public class ShootProductController {
     }
 
     @RequestMapping(value="/cancel-view",method=RequestMethod.POST)
-    public HubResponse<?>  cancelView(@RequestBody PendingProductDto pendingProductDto){
-        return studioPendingService.updatePendingProduct(pendingProductDto);
+    public HubResponse<?>  cancelView(@RequestBody ShootPendingVo vo){
+        return null;
     }
 
 }
