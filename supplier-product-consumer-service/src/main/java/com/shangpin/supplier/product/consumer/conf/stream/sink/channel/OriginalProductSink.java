@@ -1,7 +1,6 @@
 package com.shangpin.supplier.product.consumer.conf.stream.sink.channel;
 
 import org.springframework.cloud.stream.annotation.Input;
-import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 /**
@@ -550,6 +549,6 @@ public interface OriginalProductSink {
 	 * 所有产品的库存通道
 	 * @return
 	 */
-	@Output(value = OriginalProductSink.ALL_PRODUCT_STOCK)
+	@Input(value = OriginalProductSink.ALL_PRODUCT_STOCK)
 	public MessageChannel allProductStock();
 }
