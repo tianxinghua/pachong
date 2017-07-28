@@ -10,8 +10,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 
 import com.shangpin.asynchronous.task.consumer.conf.stream.sink.channel.ProductImportTaskSink;
 import com.shangpin.asynchronous.task.consumer.productexport.adapter.ProductExportHandler;
+import com.shangpin.asynchronous.task.consumer.productimport.adapter.ProductImportHandler;
 import com.shangpin.asynchronous.task.consumer.productimport.hub.HubProductImportHandler;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.PendingProductImportHandler;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 
 /**
@@ -25,7 +25,7 @@ import com.shangpin.ephub.client.message.task.product.body.Task;
 public class ProductImportTaskStreamListener {
 	
 	@Autowired
-	private PendingProductImportHandler pendingProductImportHandler;
+	private ProductImportHandler pendingProductImportHandler;
 	@Autowired
 	private HubProductImportHandler hubProductImportHandler;
 	@Autowired

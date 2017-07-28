@@ -3,10 +3,8 @@ package com.shangpin.supplier.product.consumer.conf.schedule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.supplier.product.consumer.refreshDic.service.SupplierProductRetryService;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,6 +21,44 @@ public class Scheduler {
 	@Autowired
 	private SupplierProductRetryService supplierProductPictureService;
 
+	@Scheduled(cron = "0/15 * * * * ?")
+	public void refreshSeasonTask() {
+		try {
+			supplierProductPictureService.processProduct(InfoState.RefreshSeason.getIndex(),true);
+		} catch (Throwable e) {
+			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
+			e.printStackTrace();
+		}
+	}
+	@Scheduled(cron = "0/15 * * * * ?")
+	public void refreshSizeTask() {
+		try {
+			supplierProductPictureService.processProduct(InfoState.RefreshSize.getIndex(),true);
+		} catch (Throwable e) {
+			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
+			e.printStackTrace();
+		}
+	}
+	@Scheduled(cron = "0/15 * * * * ?")
+	public void refreshBrandTask() {
+		try {
+			supplierProductPictureService.processProduct(InfoState.RefreshBrand.getIndex(),false);
+		} catch (Throwable e) {
+			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
+			e.printStackTrace();
+		}
+	}
+	
+	@Scheduled(cron = "0/15 * * * * ?")
+	public void refreshCategoryTask() {
+		try {
+			supplierProductPictureService.processProduct(InfoState.RefreshCategory.getIndex(),false);
+		} catch (Throwable e) {
+			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
+			e.printStackTrace();
+		}
+	}
+	
 	@Scheduled(cron = "0/15 * * * * ?")
 	public void refreshColorTask() {
 		try {

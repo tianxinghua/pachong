@@ -3,15 +3,18 @@ package com.shangpin.asynchronous.task.consumer.productexport.adapter;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.shangpin.asynchronous.task.consumer.productexport.pending.service.AllProductServiceImpl;
-import com.shangpin.asynchronous.task.consumer.productexport.pending.service.ExportServiceImpl;
+import com.shangpin.asynchronous.task.consumer.productexport.type.IExportService;
+import com.shangpin.asynchronous.task.consumer.productexport.type.allproduct.AllProductServiceImpl;
+import com.shangpin.asynchronous.task.consumer.productexport.type.pending.ExportServiceImpl;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.spu.dto.PendingQuryDto;
+import com.shangpin.ephub.client.data.studio.slot.slot.dto.SlotManageQuery;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.JsonUtil;
 
@@ -34,6 +37,14 @@ public class ProductExportHandler {
 	TaskImportService taskService;
 	@Autowired
 	AllProductServiceImpl allProductServiceImpl;
+	
+	@Autowired
+	@Qualifier("waitShootExporter")
+	private IExportService waitShootExporter;
+	
+	@Autowired
+	@Qualifier("commitedExporter") 
+	private IExportService commitedExporter;
 	
 	/**
 	 * 商品导出数据流监听
@@ -62,6 +73,13 @@ public class ProductExportHandler {
 				}else if(message.getType() == TaskType.ALL_PRODUCT.getIndex()){
 					PendingQuryDto pendingQuryDto = JsonUtil.deserialize(message.getData(), PendingQuryDto.class);
 					allProductServiceImpl.exportproductAll(message.getTaskNo(), pendingQuryDto);
+				}else if(message.getType() == TaskType.EXPORT_SUTDIO_SLOT.getIndex()){
+					SlotManageQuery slotManageQuery = JsonUtil.deserialize(message.getData(), SlotManageQuery.class);
+					allProductServiceImpl.exportStudioSlot(message.getTaskNo(), slotManageQuery);
+				}else if(message.getType() == TaskType.EXPORT_WAIT_SHOOT.getIndex()){
+					waitShootExporter.productExportTask(message, headers); 
+				}else if(message.getType() == TaskType.EXPORT_COMMITED.getIndex()){
+					commitedExporter.productExportTask(message, headers); 
 				}
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 

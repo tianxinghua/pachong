@@ -67,11 +67,42 @@ public class RefreshDicStreamListenerAdapter {
 				refreshColor(json, InfoState.RefreshColor.getIndex());
 			}else if(dicType==InfoState.RefreshSeason.getIndex()){
 				refreshSeason(json, InfoState.RefreshSeason.getIndex());
+			}else if(dicType==InfoState.RefreshBrand.getIndex()){
+				refreshBrand(json, InfoState.RefreshBrand.getIndex());
+			}else if(dicType==InfoState.RefreshOrigin.getIndex()){
+				refreshOrigin(json, InfoState.RefreshOrigin.getIndex());
 			}
 		}
 		supplierProductRetryService.updateHubSpuImportByTaskNo(TaskState.ALL_SUCCESS.getIndex(), taskNo, null, null);
 	}
 	
+	private void refreshOrigin(JSONObject json, byte state) throws Exception{
+		log.info("刷新产地接受到参数：{}",json);
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		if(json.get("supplierVal")!=null){
+			String supplierOrigin = json.get("supplierVal").toString();
+			criteria.createCriteria().andSupplierOriginEqualTo(supplierOrigin);
+			int total = hubSupplierSpuGateWay.countByCriteria(criteria);
+			log.info("待刷新产地:"+supplierOrigin+"总数total:"+total);
+			if(total>0){
+				supplierProductRetryService.sendSupplierSpu(total, criteria, state,false);
+			}
+		}
+	}
+	private void refreshBrand(JSONObject json, byte state) throws Exception{
+		log.info("刷新品牌接受到参数：{}",json);
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		if(json.get("supplierBrand")!=null){
+			String supplierBrand = json.get("supplierBrand").toString();
+			criteria.createCriteria().andSupplierBrandnameEqualTo(supplierBrand);
+			int total = hubSupplierSpuGateWay.countByCriteria(criteria);
+			log.info("待刷新品牌:"+supplierBrand+"总数total:"+total);
+			if(total>0){
+				supplierProductRetryService.sendSupplierSpu(total, criteria, state,false);
+			}
+		}
+	}
+
 	/**
 	 * 刷新季节
 	 * @param json
@@ -91,7 +122,6 @@ public class RefreshDicStreamListenerAdapter {
 				supplierProductRetryService.sendSupplierSpu(total, criteria, state,true);
 			}
 		}
-		
 	}
 	/**
 	 * 刷新颜色

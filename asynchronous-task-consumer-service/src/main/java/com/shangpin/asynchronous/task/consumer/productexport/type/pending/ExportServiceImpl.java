@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productexport.pending.service;
+package com.shangpin.asynchronous.task.consumer.productexport.type.pending;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -273,6 +273,45 @@ public class ExportServiceImpl {
 			wb.write(fout);
 			log.info(file.getName() + " 生成文件成功！");
 			FTPClientUtil.uploadToExportPath(file, file.getName());
+			log.info(taskNo+"上传成功！");
+			updateHubSpuImportTask(taskNo);
+			log.info(taskNo+" 更新任务状态成功！");
+			is_upload_success = true;
+		} catch (Exception e) {
+			is_upload_success = false;
+			log.error(taskNo+" 保存并上传ftp时异常：" + e.getMessage(), e);
+			throw e;
+		} finally {
+			try {
+				if (null != fout) {
+					fout.close();
+				}
+				if (is_upload_success && null != file && file.exists()) {
+					file.delete();
+				}
+			} catch (Exception e2) {
+				is_upload_success = false;
+				throw e2;
+			}
+		}
+		return is_upload_success;
+	}
+	
+	/**
+	 * studio上传Excel到ftp
+	 * 
+	 * @param wb
+	 */
+	public boolean saveAndUploadStudioExcel(String taskNo, String createUser, HSSFWorkbook wb) throws Exception{
+		FileOutputStream fout = null;
+		File file = null;
+		boolean is_upload_success = false;//主要作用是判断当上传ftp成功后删除源文件
+		try {
+			file = new File(localPath + createUser + "_" + taskNo + ".xls");
+			fout = new FileOutputStream(file);
+			wb.write(fout);
+			log.info(file.getName() + " 生成文件成功！");
+			FTPClientUtil.uploadToStudioPath(file, file.getName());
 			log.info(taskNo+"上传成功！");
 			updateHubSpuImportTask(taskNo);
 			log.info(taskNo+" 更新任务状态成功！");

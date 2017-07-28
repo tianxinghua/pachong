@@ -99,12 +99,13 @@ public class MonnierHandler implements ISupplierHandler {
 			String supplierSpuNo = null;
 			if(sku.length()==19){
 				supplierSpuNo = sku.substring(0,16);
-				
 			}
 			if(sku.length()==12){
 				supplierSpuNo = sku.substring(0,9);
 			}
-			existPics = pictureHandler.monnerPicExistsOfSpu(supplierId, supplierSpuNo);
+			if(supplierSpuNo!=null){
+				existPics = pictureHandler.monnerPicExistsOfSpu(supplierId, supplierSpuNo);	
+			}
 		}
 		
 		List<Image> images = new ArrayList<Image>();
@@ -143,7 +144,11 @@ public class MonnierHandler implements ISupplierHandler {
 			if(!StringUtils.isEmpty(item.getPvr_model()) && !StringUtils.isEmpty(item.getPvr_color())){
 				spuModel = item.getPvr_model() + " "+item.getPvr_color();
 			}else{
-				spuModel = supplierSpuNo;
+				if(supplierSpuNo.contains("CONFIG")){
+					spuModel = supplierSpuNo.substring(7);	
+				}else{
+					spuModel = supplierSpuNo;
+				}
 			}
 			hubSpu.setSupplierSpuModel(spuModel);
 			hubSpu.setSupplierSpuName(item.getName());
@@ -156,7 +161,25 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getOrigin());
 			hubSpu.setSupplierSpuDesc(item.getDescription());
-			hubSpu.setMemo(data);
+			String desc = item.getDescription();
+			StringBuffer str = new StringBuffer();
+			if(item.getLength()!=null){
+				str.append(",").append(item.getLength());
+			}
+			if(item.getWidth()!=null){
+				str.append("x").append(item.getWidth());
+			}
+			if(item.getHeight()!=null){
+				str.append("x").append(item.getHeight());
+			}
+			
+			if(item.getCharacteristics1()!=null){
+				str.append(",").append(item.getCharacteristics1());
+			}
+			if(item.getCharacteristics2()!=null){
+				str.append(",").append(item.getCharacteristics2());
+			}
+			hubSpu.setSupplierSpuDesc(desc+str.toString());
 			return true;
 		}else{
 			return false;

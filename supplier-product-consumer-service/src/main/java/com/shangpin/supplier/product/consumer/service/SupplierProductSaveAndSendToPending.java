@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
@@ -133,29 +134,32 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierNo 供应商编号
 	 * @param supplierId 供应商门户id
 	 * @param supplierName 供应商名称
-	 * @param hubSpu HubSupplierSpuDto对象
-	 * @param hubSkus HubSupplierSkuDto对象集合
+	 * @param supplierSpuDto HubSupplierSpuDto对象
+	 * @param supplierSkuDtos HubSupplierSkuDto对象集合
 	 * @param pendingProduct 消息体对象
 	 * @param headers 消息头
 	 * @param supplierPicture 图片的消息体
 	 */
-	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
+	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto supplierSpuDto,List<HubSupplierSkuDto> supplierSkuDtos,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
-			savePriceRecordAndSendConsumer(supplierNo,hubSpu,hubSkus);
+			savePriceRecordAndSendConsumer(supplierNo,supplierSpuDto,supplierSkuDtos);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 			//保存hubSpu到数据库
-			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,hubSpu,pendingSpu);
+			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
+				pendingSpu.setPicState(PicState.NO_PIC.getIndex());
+			}
+			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,pendingSpu);
 			//开始构造消息头
-			Spu spuHead = setSpuHead(supplierId,hubSpu.getSupplierSpuNo(),productStatus.getIndex());
+			Spu spuHead = setSpuHead(supplierId,supplierSpuDto.getSupplierSpuNo(),productStatus.getIndex());
 			List<Sku> headSkus = new ArrayList<Sku>();		
-			if(hubSkus != null && hubSkus.size()>0){
-				for(HubSupplierSkuDto hubSku : hubSkus){
+			if(supplierSkuDtos != null && supplierSkuDtos.size()>0){
+				for(HubSupplierSkuDto hubSku : supplierSkuDtos){
 					try {					
 						Sku headSku = new Sku();
 						PendingSku pendingSku = new PendingSku();
 						//开始保存hubSku到数据库
-						hubSku.setSupplierSpuId(hubSpu.getSupplierSpuId()); //在这里回写supplierSpuId
+						hubSku.setSupplierSpuId(supplierSpuDto.getSupplierSpuId()); //在这里回写supplierSpuId
 						ProductStatus skuStatus = supplierProductMysqlService.isHubSkuChanged(hubSku, pendingSku);
 						skus.add(pendingSku);
 						headSku.setSupplierId(supplierId);
@@ -172,16 +176,16 @@ public class SupplierProductSaveAndSendToPending {
 			spuHead.setSkus(headSkus);	
 			headers.put(MessageHeaderKey.PENDING_PRODUCT_MESSAGE_HEADER_KEY, JsonUtil.serialize(spuHead));
 			//发送图片
-			HubSeasonDicDto dicDto = isCurrentSeason(hubSpu.getSupplierId(), hubSpu.getSupplierSeasonname());
+			HubSeasonDicDto dicDto = isCurrentSeason(supplierSpuDto.getSupplierId(), supplierSpuDto.getSupplierSeasonname());
 			if(null != dicDto && dicDto.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex() && "1".equals(dicDto.getMemo())){
 				if(null != supplierPicture){
-					supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+					supplierPicture.setSupplierSpuId(supplierSpuDto.getSupplierSpuId()); 
 					pictureProductService.sendSupplierPicture(supplierPicture, null); 
 				}
 				return true;
 			}else if(null != dicDto && dicDto.getFilterFlag() == FilterFlag.EFFECTIVE.getIndex() && "0".equals(dicDto.getMemo())){
 				if(null != supplierPicture){
-					supplierPicture.setSupplierSpuId(hubSpu.getSupplierSpuId()); 
+					supplierPicture.setSupplierSpuId(supplierSpuDto.getSupplierSpuId()); 
 					pictureProductService.sendSupplierPicture(supplierPicture, null); 
 				}
 			}

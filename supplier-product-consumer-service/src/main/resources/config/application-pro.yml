@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: 172.20.11.49
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -605,7 +605,13 @@ spring:
                                        maxAttempts: 1  
                         dlrboutiquePendingProduct: 
                               destination: dlrboutique.pending.product
-                              content-type: application/json                                                                                                                                                                                                                                                                                                                                
+                              content-type: application/json  
+                        allProductStock: 
+                              destination: supplier.product.stock
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                                
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -1201,7 +1207,13 @@ spring:
                                          republishToDlq: false 
                               dlrboutiquePendingProduct: 
                                     producer: 
-                                         prefix: HA.                                                                                                                                                                                                                                                                                                                                                     
+                                         prefix: HA.  
+                              allProductStock: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                                                    
         consul: 
           host: localhost
           port: 8500

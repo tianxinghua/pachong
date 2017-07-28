@@ -64,7 +64,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author zhaogenchun
  * @date 2016年11月23日 下午4:06:52
  */
-@SuppressWarnings("unused")
 @Service
 @Slf4j
 public class TaskImportService {
@@ -102,7 +101,6 @@ public class TaskImportService {
 		hubProductTemplate = HubProductDto.getHubProductTemplate();
 	}
 
-	@SuppressWarnings("unused")
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
 			 Map<String, String> map,HubPendingProductImportDTO pendingSkuImportDto,boolean isMultiSizeType) throws Exception{
 		
@@ -576,7 +574,6 @@ public class TaskImportService {
 			pengingSpuId = isPendingSpuExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
-			
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 		} else {
 			log.info("spu:" + hubPendingSpuDto.getSpuModel() + "不存在，插入新值");

@@ -60,7 +60,6 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSpu.setSupplierMaterial(spu.getProduct_detail());
 			hubSpu.setSupplierOrigin(spu.getProduct_MadeIn());
 			hubSpu.setSupplierSpuDesc(spu.getProduct_detail()); 
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

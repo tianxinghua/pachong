@@ -141,7 +141,7 @@ public class EleonoraHandler implements ISupplierHandler {
             hubSpu.setSupplierMaterial(item.getProduct_material());
 
             hubSpu.setSupplierOrigin(item.getProduct_MADEin());
-            hubSpu.setSupplierSpuDesc(item.getDescription());
+            hubSpu.setSupplierSpuDesc(item.getProduct_detail()+";"+item.getDescription());
             return true;
         }else{
             return false;

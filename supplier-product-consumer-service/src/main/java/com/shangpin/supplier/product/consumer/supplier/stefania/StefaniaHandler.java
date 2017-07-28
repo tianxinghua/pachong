@@ -137,7 +137,6 @@ public class StefaniaHandler implements ISupplierHandler{
 				hubSpu.setSupplierMaterial(stefProduct.getProduct_material());
 				hubSpu.setSupplierOrigin(stefProduct.getMade_in());
 				hubSpu.setSupplierSpuDesc(stefItem.getDescription());
-				hubSpu.setMemo(data);
 				return true;
 			}else{
 				return false;

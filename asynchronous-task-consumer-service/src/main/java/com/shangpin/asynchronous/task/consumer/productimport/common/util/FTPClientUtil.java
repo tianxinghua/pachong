@@ -28,6 +28,7 @@ public class FTPClientUtil {
 	private static String password;
 	private static String ftpHubPatht;
 	private static String exportPath;
+	private static String studioPath;
 	
 	@PostConstruct
 	public void init(){
@@ -38,6 +39,7 @@ public class FTPClientUtil {
 			password = ftpProperties.getPassword();
 			ftpHubPatht = ftpProperties.getFtpHubPath();
 			exportPath = ftpProperties.getExportPath();
+			studioPath = ftpProperties.getStudioPath();
 		}
 	
 	}
@@ -68,6 +70,36 @@ public class FTPClientUtil {
 		InputStream sbs = new FileInputStream(file);
 		
 		boolean flag = ftp.changeWorkingDirectory(exportPath);
+		if(!flag){
+			ftp.makeDirectory(exportPath);
+			ftp.changeWorkingDirectory(exportPath);
+		}
+		ftp.storeFile(fileName, sbs);
+		sbs.close();
+		Log.info("=====上传ftp结束=====");
+		return exportPath;
+	}
+	
+	/**
+	 * 上传文件到导出目录（pending_export）
+	 * @param file
+	 * @param fileName
+	 * @return
+	 * @throws Exception
+	 */
+	public static String uploadToStudioPath(File file,String fileName) throws Exception {
+		Log.info("=====开始上传ftp=====");
+		int reply;
+		ftp.connect(host, Integer.parseInt(port));
+		ftp.login(userName, password);
+		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+		reply = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftp.disconnect();
+		}
+		InputStream sbs = new FileInputStream(file);
+		
+		boolean flag = ftp.changeWorkingDirectory(studioPath);
 		if(!flag){
 			ftp.makeDirectory(exportPath);
 			ftp.changeWorkingDirectory(exportPath);

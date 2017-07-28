@@ -105,13 +105,14 @@ public class MassHandler implements ISupplierHandler {
 			String colorNo="";
 			if(org.apache.commons.lang.StringUtils.isNotBlank(item.getColor())){
 				if(item.getColor().indexOf("-")>0){
-				   colorNo = " " + item.getColor().substring(0, item.getColor().indexOf("-")).trim();
-			    }else {
+					colorNo = " " + item.getColor().substring(0, item.getColor().indexOf("-")).trim();
+				}else {
 					colorNo = " " +  item.getColor();
 				}
 
 			}
 			hubSpu.setSupplierSpuModel(item.getProductCode()+colorNo);
+
 			hubSpu.setSupplierSpuName(item.getProductName());
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getCategoryGender());

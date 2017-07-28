@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,6 +54,24 @@ public class ColtortiProduct implements Serializable{
 	
 	private Integer stock;
 	private Map<String,Integer> sizeStockMap;
+	
+	/**
+	 * 获取尺寸详情信息
+	 * @return
+	 */
+	public String getSizeDetail(){
+		if(attributes!=null && attributes.size()>0){
+			if(StringUtils.isNotBlank(getAttributeValues("000020"))){
+				return "鞋跟高度："+getAttributeValues("000020");
+			}else if(StringUtils.isNotBlank(getAttributeValues("000008")) && StringUtils.isNotBlank(getAttributeValues("000009"))){
+				String length = getAttributeValues("000008");
+				String width = getAttributeValues("000009");
+				return "长度："+length+"宽度："+width;
+			}
+			
+		}
+		return "";
+	}
 	
 	/**
 	 * 获取类别分别是大、小类，以','号分隔，没有的用括号中的代替：<br/>

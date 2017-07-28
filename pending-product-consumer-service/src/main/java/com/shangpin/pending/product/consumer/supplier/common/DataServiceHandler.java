@@ -207,7 +207,7 @@ public class DataServiceHandler {
 
 	}
 
-	public List<HubBrandDicDto> getBrand() throws Exception {
+	public List<HubBrandDicDto> getBrand() {
 		HubBrandDicCriteriaDto criteria = new HubBrandDicCriteriaDto();
 		criteria.setPageNo(1);
 		criteria.setPageSize(ConstantProperty.MAX_BRANDK_MAPPING_QUERY_NUM);
@@ -375,12 +375,9 @@ public class DataServiceHandler {
 		try {
 			hubSupplierCategroyDicGateWay.insert(dto);
 		} catch (Exception e) {
-			if (e instanceof DuplicateKeyException) {
 
-			} else {
-				e.printStackTrace();
-				throw e;
-			}
+			e.printStackTrace();
+
 		}
 
 	}

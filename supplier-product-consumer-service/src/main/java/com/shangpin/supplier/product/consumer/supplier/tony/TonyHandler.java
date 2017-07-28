@@ -119,7 +119,6 @@ public class TonyHandler implements ISupplierHandler {
 			hubSpu.setSupplierMaterial((!StringUtils.isEmpty(tonyItems.getDesc())) ? getMaterial(tonyItems.getDesc()) : getMaterial(tonyItems.getDesc_en()));
 			hubSpu.setSupplierOrigin(getOrigin(tonyItems.getDesc()));
 			hubSpu.setSupplierSpuDesc(tonyItems.getDesc());
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;

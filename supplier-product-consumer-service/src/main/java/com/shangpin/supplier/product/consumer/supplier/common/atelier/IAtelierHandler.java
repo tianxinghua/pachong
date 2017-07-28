@@ -173,8 +173,7 @@ public abstract class IAtelierHandler{
 			hubSpu.setSupplierSeasonname(atelierSpu.getSeasonName());
 			hubSpu.setSupplierMaterial(atelierSpu.getMaterial1()+" "+atelierSpu.getMaterial3());
 			hubSpu.setSupplierOrigin(atelierSpu.getProductOrigin());
-			hubSpu.setSupplierSpuDesc(atelierSpu.getDescription()); 
-			hubSpu.setMemo(data);
+			hubSpu.setSupplierSpuDesc(!StringUtils.isEmpty(atelierSpu.getSizeDetail()) ? atelierSpu.getSizeDetail()+";"+atelierSpu.getDescription() : atelierSpu.getDescription()); 
 			return true;
 		}else{
 			return false;
