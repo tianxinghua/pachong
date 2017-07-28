@@ -1247,11 +1247,11 @@ spring:
                                     producer: 
                                          prefix: HA.   
                               allProductStock: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                                                
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false                                                                                                                                                                                                                                                                                                                                                
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8

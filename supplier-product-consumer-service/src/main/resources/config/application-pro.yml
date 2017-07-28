@@ -610,7 +610,7 @@ spring:
                               destination: supplier.product.stock
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1                                                                                                                                                                                                                                                                                                                                
               rabbit: 
                         bindings: 
@@ -1209,11 +1209,11 @@ spring:
                                     producer: 
                                          prefix: HA.  
                               allProductStock: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                                                    
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false                                                                                                                                                                                                                                                                                                                                                    
         consul: 
           host: localhost
           port: 8500
