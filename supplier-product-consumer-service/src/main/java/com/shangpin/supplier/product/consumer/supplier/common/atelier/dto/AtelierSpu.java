@@ -21,4 +21,5 @@ public class AtelierSpu {
 	private String supplierPrice;//一般16列
 	private String material3;//一般42列
 	private String productOrigin;//一般40列
+	private String sizeDetail;//目前就Vietti发现在14列(从0开始)
 }

@@ -41,10 +41,11 @@ public class AtelierCommonHandler extends IAtelierHandler {
 			atelierSpu.setCategoryName(spuArr[8]);
 			atelierSpu.setColorName(StringUtils.isEmpty(spuArr[10])? spuArr[4] : spuArr[10]);
 			atelierSpu.setMaterial1(spuArr[11]);
-			atelierSpu.setDescription(spuArr[15]); 
+			atelierSpu.setDescription(spuArr[15]+spuArr[34]); 
 			atelierSpu.setSupplierPrice(spuArr[16]);
 			atelierSpu.setMaterial3(spuArr[42]);
 			atelierSpu.setProductOrigin(spuArr[40]); 
+			atelierSpu.setSizeDetail(spuArr[14]); 
 			return atelierSpu;
 		}else{
 			return null;

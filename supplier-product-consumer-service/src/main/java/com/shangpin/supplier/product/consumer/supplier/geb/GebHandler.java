@@ -24,6 +24,7 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Item_images;
 import com.shangpin.supplier.product.consumer.supplier.geb.dto.Material;
+import com.shangpin.supplier.product.consumer.supplier.geb.dto.Measure;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -122,7 +123,17 @@ public class GebHandler implements ISupplierHandler {
 				hubSpu.setSupplierMaterial(str.substring(1));
 			}
 			hubSpu.setSupplierOrigin(item.getMade_in());
-			hubSpu.setSupplierSpuDesc(item.getItem_description());
+			StringBuffer str= new StringBuffer();
+			if(item.getSuitable()!=null){
+				List<Measure> lists = item.getSuitable();
+				
+				if(lists!=null&&lists.size()>0){
+					for(Measure measure:lists){
+						str.append(measure.getName()).append(":").append(measure.getValue()).append(",");	
+					}
+				}
+			}
+			hubSpu.setSupplierSpuDesc(item.getItem_description()+";"+str.toString());
 			return true;
 		}else{
 			return false;

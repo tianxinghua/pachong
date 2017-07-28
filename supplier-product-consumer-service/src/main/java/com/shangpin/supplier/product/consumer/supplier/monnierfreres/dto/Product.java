@@ -23,6 +23,13 @@ public class Product {
 	private String image_url_4;
 	private String image_url_5;
 	
+	
+	private String width;
+	private String length;
+	private String height;
+	private String characteristics1;
+	private String characteristics2;
+	
 	private String sku;//sku->skuid
 	private String size;//size->sku:size
 	private String qty;//qty->stock

@@ -187,7 +187,6 @@ public class ForzieriHandler implements ISupplierHandler{
 			}
 			hubSpu.setSupplierOrigin(madeIn);
 			hubSpu.setSupplierSpuDesc(desc);
-			hubSpu.setMemo(data);
 			return true;
 		}else{
 			return false;
