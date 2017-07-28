@@ -169,12 +169,11 @@ public class StudioSlotController {
 					String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 					
 					String pathName = new String("/"+slotNo+"/");
-//					String pathName = new String("/home/dev/ftpLoad/");
 					FTPFile[] files = FTPClientUtil.getFiles(pathName);
 					for (FTPFile file : files) {
 						try {
 							String fileName = file.getName();
-							String downLoadAddress = "ftpLoad/" + fileName;
+							String downLoadAddress = "/"+slotNo+"/" + fileName;
 							InputStream in = FTPClientUtil.downFile(downLoadAddress);
 
 							ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
