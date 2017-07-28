@@ -21,13 +21,12 @@ public class HubProductDetail extends HubSkuSupplierMappingDto {
 	 * 
 	 */
 	private static final long serialVersionUID = -6060605233668373417L;
-	
 	private Long skuId;//sku编号
 	private String skuSize;//尺码
 	private String supplierName;
-	private String color;
-	private String material;
-	private String productOrigin;
+//	private String color;
+//	private String material;
+//	private String productOrigin;
 	private String spuState;//商品状态
 
 }
