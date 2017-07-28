@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Administrator on 2017/6/13.
@@ -31,4 +32,5 @@ public class SlotProduct implements Serializable {
     private Byte sendState;
     private Byte arriveState;
     private Long version;
+    private Date createTime;
 }
