@@ -158,6 +158,7 @@ public class HubSupplierCategoryDicController {
 				sendTask(dto);
 			}else{
 				dicDto.setMappingState((byte)2);
+				dicDto.setPushState((byte)1);
 			}
 			dicDto.setUpdateTime(new Date());
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
@@ -208,6 +209,7 @@ public class HubSupplierCategoryDicController {
 							dicDto.setPushState((byte)1);
 						}else{
 							dicDto.setMappingState((byte)2);
+							dicDto.setPushState((byte)1);
 						}
 						dicDto.setUpdateTime(new Date());
 						hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
