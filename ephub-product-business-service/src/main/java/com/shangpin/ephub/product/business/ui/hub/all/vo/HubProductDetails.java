@@ -29,7 +29,6 @@ public class HubProductDetails {
 	
 	private String color;
 	private String material;
-	private String productOrigin;
 	private String updateUser;
 	
 	private List<HubSpuPicDto> spPicUrls;

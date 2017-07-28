@@ -127,9 +127,12 @@ public class HubProductServiceImpl implements IHubProductService {
 				hubSpuDto.setSpuName(hubProductDetails.getProductName()); 
 				hubSpuDto.setHubColor(hubProductDetails.getColor());
 				hubSpuDto.setMaterial(hubProductDetails.getMaterial());
-				hubSpuDto.setOrigin(hubProductDetails.getProductOrigin());
 				hubSpuDto.setUpdateTime(new Date());
 				hubSpuDto.setUpdateUser(hubProductDetails.getUpdateUser());
+				try{
+					hubSpuDto.setOrigin(hubProductDetails.getHubDetails().get(0).getProductOrigin());	
+				}catch(Exception e){
+				}
 				updateHubSpu(hubSpuDto);
 			}			
 			hubProductDetails.getProductName();
@@ -143,6 +146,7 @@ public class HubProductServiceImpl implements IHubProductService {
 //						if(!StringUtils.isEmpty(hubSku.getSupplierSkuNo())){
 //							hubSkuSupplierMappingDto.setSupplierSkuNo(hubSku.getSupplierSkuNo());
 //						}
+						hubSkuSupplierMappingDto.setOrigin(hubSku.getProductOrigin());
 						if(!StringUtils.isEmpty(hubSku.getBarcode())){
 							hubSkuSupplierMappingDto.setBarcode(hubSku.getBarcode());
 						}
@@ -207,7 +211,6 @@ public class HubProductServiceImpl implements IHubProductService {
 		hubProductDetails.setProductUnit("");//TODO
 		hubProductDetails.setColor(hubSpu.getHubColor()); 
 		hubProductDetails.setMaterial(hubSpu.getMaterial());
-		hubProductDetails.setProductOrigin(hubSpu.getOrigin());
 		return hubProductDetails;
 	}
 	
@@ -236,6 +239,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				}
 				
 				hubProuctDetail.setSkuSize(hubSku.getSkuSize());
+				hubProuctDetail.setProductOrigin(hubSpu.getOrigin());
 				if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
 					hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
 				}	

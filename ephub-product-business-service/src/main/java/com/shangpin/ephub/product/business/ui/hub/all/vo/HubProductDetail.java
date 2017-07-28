@@ -26,7 +26,7 @@ public class HubProductDetail extends HubSkuSupplierMappingDto {
 	private String supplierName;
 //	private String color;
 //	private String material;
-//	private String productOrigin;
+	private String productOrigin;
 	private String spuState;//商品状态
 
 }
