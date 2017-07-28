@@ -53,6 +53,7 @@ public class OriginalProductAPI {
 	
 	@RequestMapping(value = "/original-stock", method = RequestMethod.POST)
 	public APIRsponse updateStock(@RequestBody SupplierStock supplierStock){
+		long start = System.currentTimeMillis();
 		APIRsponse apiRsponse = null;
 		boolean result = supplierStockService.sendMessageToChannel(supplierStock);
 		if(result){
@@ -60,6 +61,7 @@ public class OriginalProductAPI {
 		}else{
 			apiRsponse = new APIRsponse(Code.NO.getCode(), Code.NO.getMessage());
 		}
+		log.info("系统成功发送编号为{}的消息耗时{}milliseconds",supplierStock.getMessageId(),System.currentTimeMillis()-start);
 		return apiRsponse;
 	}
 }
