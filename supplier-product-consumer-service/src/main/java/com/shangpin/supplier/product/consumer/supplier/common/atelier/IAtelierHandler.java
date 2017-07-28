@@ -142,7 +142,7 @@ public abstract class IAtelierHandler{
 		if(null != atelierSku){
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuSize(atelierSku.getSize());
+			hubSku.setSupplierSkuSize(!StringUtils.isEmpty(atelierSpu.getSizeType()) ? atelierSpu.getSizeType()+" "+atelierSku.getSize() : atelierSku.getSize());
 			hubSku.setSupplierBarcode(atelierSku.getBarcode());
 			hubSku.setSupplierSkuNo(atelierSku.getSpuId()+"-"+atelierSku.getBarcode());
 			setProductPrice(hubSku,atelierSpu,atelierPrice);
