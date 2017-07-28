@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
@@ -254,10 +255,18 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                 spuPending.setSpuPendingId(spuPendingIds.get(0));
                 spuPending.setSlotHandleUser(operator);
                 spuPending.setSlotHandleDate(new Date());
-                spuPending.setSlotState(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
+                spuPending.setSlotState(SpuPendingStudioState.NO_NEED_HANDLED.getIndex().byteValue());
 
                 int i = hubSpuPendingGateWay.updateByPrimaryKeySelective(spuPending);
             }else{
+                HubSpuPendingDto spuPending = new HubSpuPendingDto();
+                spuPending.setSlotHandleUser(operator);
+                spuPending.setSlotHandleDate(new Date());
+                spuPending.setSlotState(SpuPendingStudioState.NO_NEED_HANDLED.getIndex().byteValue());
+                HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+                criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+                HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( spuPending,  criteria);
+                hubSpuPendingGateWay.updateByCriteriaSelective(criteriaDto) ;
 
             }
         }

@@ -42,6 +42,11 @@ public class StudioManageQuery {
     private Long studioDicCategoryId;
     private String categoryFirst;
     private String categorySecond;
+    //扩展供应商摄影棚关系
+    private Long studioDicSupplierId;
+    private String studioNameFirst;
+    private String studioNameSecond;
+    private String studioNameThree;
     
     private Integer pageNo;
     private Integer pageSize;

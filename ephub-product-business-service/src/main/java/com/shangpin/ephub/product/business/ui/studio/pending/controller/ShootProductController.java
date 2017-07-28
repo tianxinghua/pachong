@@ -50,6 +50,7 @@ public class ShootProductController {
 
 
 
+
     @RequestMapping(value="/batch-update",method=RequestMethod.POST)
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
         return studioPendingService.batchUpdatePendingProduct(pendingProducts);
@@ -57,7 +58,18 @@ public class ShootProductController {
 
     @RequestMapping(value="/cancel-view",method=RequestMethod.POST)
     public HubResponse<?>  cancelView(@RequestBody ShootPendingVo vo){
-        return null;
+        try {
+            if(null!=vo) {
+                studioPendingService.updateSlotStateToNoNeedHandle(vo.getSpuPendingIds(), vo.getOperator());
+                return HubResponse.successResp(true);
+            }else{
+                return HubResponse.errorResp("参数为空，更新失败");
+            }
+
+        } catch (Exception e) {
+            return HubResponse.errorResp("发生异常，更新失败");
+        }
+
     }
 
 }

@@ -105,11 +105,8 @@ public class StudioManageService {
 		log.info("updateStudio--------------start");
 		log.info("编辑摄影棚信息参数:"+JsonUtil.serialize(studioManageQuery)); 
 		
-		if(studioManageQuery.getStudioName()!=null){
-			HubResponse.errorResp("studioName不能修改!");
-		}
-		if(studioManageQuery.getStudioNo()!=null){
-			HubResponse.errorResp("studioNo不能修改!");
+		if(studioManageQuery.getStudioId()!=null){
+			HubResponse.errorResp("studioId不能为null!");
 		}
 		try {
 			StudioDto dto = studioGateWay.selectByPrimaryKey(studioManageQuery.getStudioId());
