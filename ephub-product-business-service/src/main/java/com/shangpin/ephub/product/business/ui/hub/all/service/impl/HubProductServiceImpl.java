@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.ui.hub.all.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -120,30 +121,33 @@ public class HubProductServiceImpl implements IHubProductService {
 	@Override
 	public boolean updateHubProductDetails(HubProductDetails hubProductDetails){
 		try {			
-			if(!StringUtils.isEmpty(hubProductDetails.getProductName())){
+			if(hubProductDetails.getSpuId()!=null){
 				HubSpuDto hubSpuDto = new HubSpuDto();
 				hubSpuDto.setSpuId(hubProductDetails.getSpuId());
 				hubSpuDto.setSpuName(hubProductDetails.getProductName()); 
+				hubSpuDto.setHubColor(hubProductDetails.getColor());
+				hubSpuDto.setMaterial(hubProductDetails.getMaterial());
+				hubSpuDto.setOrigin(hubProductDetails.getProductOrigin());
+				hubSpuDto.setUpdateTime(new Date());
+				hubSpuDto.setUpdateUser(hubProductDetails.getUpdateUser());
 				updateHubSpu(hubSpuDto);
 			}			
 			hubProductDetails.getProductName();
 			List<HubProductDetail> hubProducts = hubProductDetails.getHubDetails();
 			if(null != hubProducts && hubProducts.size()>0){
 				for(HubProductDetail hubSku : hubProducts){
-					
 					if(hubSku.getSkuId()!=null){
 						HubSkuSupplierMappingDto hubSkuSupplierMappingDto = new HubSkuSupplierMappingDto();
 						hubSkuSupplierMappingDto.setSkuNo(hubSku.getSkuNo());
 						hubSkuSupplierMappingDto.setSupplierId(hubSku.getSupplierId());
-						if(!StringUtils.isEmpty(hubSku.getSupplierSkuNo())){
-							hubSkuSupplierMappingDto.setSupplierSkuNo(hubSku.getSupplierSkuNo());
-						}
+//						if(!StringUtils.isEmpty(hubSku.getSupplierSkuNo())){
+//							hubSkuSupplierMappingDto.setSupplierSkuNo(hubSku.getSupplierSkuNo());
+//						}
 						if(!StringUtils.isEmpty(hubSku.getBarcode())){
 							hubSkuSupplierMappingDto.setBarcode(hubSku.getBarcode());
 						}
 						updateHubSkuSupplierMapping(hubSkuSupplierMappingDto);
 					}
-					
 				}
 			}
 			return true;
@@ -201,6 +205,9 @@ public class HubProductServiceImpl implements IHubProductService {
 		hubProductDetails.setOriginalProductModle(hubSpu.getSpuModel());
 		hubProductDetails.setProductName(hubSpu.getSpuName());
 		hubProductDetails.setProductUnit("");//TODO
+		hubProductDetails.setColor(hubSpu.getHubColor()); 
+		hubProductDetails.setMaterial(hubSpu.getMaterial());
+		hubProductDetails.setProductOrigin(hubSpu.getOrigin());
 		return hubProductDetails;
 	}
 	
@@ -229,9 +236,6 @@ public class HubProductServiceImpl implements IHubProductService {
 				}
 				
 				hubProuctDetail.setSkuSize(hubSku.getSkuSize());
-				hubProuctDetail.setColor(hubSpu.getHubColor()); 
-				hubProuctDetail.setMaterial(hubSpu.getMaterial());
-				hubProuctDetail.setProductOrigin(hubSpu.getOrigin()); 
 				if(HubSpuState.ON_SALE.getIndex() == hubSpu.getSpuState()){
 					hubProuctDetail.setSpuState(HubSpuState.ON_SALE.getDescription());
 				}	

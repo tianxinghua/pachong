@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
@@ -78,6 +79,7 @@ public class HubBrandDicService {
 	public void saveHubBrand(String hubBrand, String supplierBrandName,String createUser) throws Exception {
 		List<HubBrandDicDto> hubBrandList = getHubBrandDic(supplierBrandName);
 		if(hubBrandList!=null&&hubBrandList.size()>0){
+			Log.info("品牌"+supplierBrandName+"已存在");
 			return;
 		}
 		HubBrandDicDto dic = new HubBrandDicDto();
