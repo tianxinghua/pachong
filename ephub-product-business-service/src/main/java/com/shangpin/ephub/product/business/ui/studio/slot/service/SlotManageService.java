@@ -105,7 +105,7 @@ public class SlotManageService {
 					shangpinRedis.set("studio_no" + studiotDto.getStudioId(), studiotDto.getStudioNo());
 				}
 				// 摄影棚基础数据初始化到redis 用于判断
-				shangpinRedis.set("shangpinstudioslot", "studioSlot");
+				shangpinRedis.setex("shangpinstudioslot", 60*10, "studioSlot");
 			}
 			Long studioId = null;
 			if (slotManageQuery.getStudioNo() != null && !slotManageQuery.getStudioNo().equals("")) {

@@ -205,9 +205,9 @@ public class HubSupplierBrandDicController {
 	            BeanUtils.copyProperties(hubSupplierBrandDicRequestDto, dicDto);
 	            dicDto.setUpdateTime(new Date());
 	            dicDto.setPushState((byte)1);
-//	            hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
-	            hubBrandDicService.updateHubBrandDicById(dicDto);
-//	            hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),dicDto.getUpdateUser());
+	            hubBrandDicService.updateHubSupplierBrandDicById(dicDto);
+//	            hubBrandDicService.updateHubBrandDicById(dicDto);
+	            hubBrandDicService.saveHubBrand(hubSupplierBrandDicRequestDto.getHubBrandNo(), hubSupplierBrandDicRequestDto.getSupplierBrand(),dicDto.getUpdateUser());
 	            refreshBrand(hubSupplierBrandDicRequestDto);
 	            return HubResponse.successResp(null);
 	        } catch (Exception e) {

@@ -158,6 +158,7 @@ public class HubSupplierCategoryDicController {
 				sendTask(dto);
 			}else{
 				dicDto.setMappingState((byte)2);
+				dicDto.setPushState((byte)1);
 			}
 			dicDto.setUpdateTime(new Date());
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
@@ -183,7 +184,6 @@ public class HubSupplierCategoryDicController {
 	public HubResponse refresh(@RequestBody HubSupplierCategoryDicRequestDto dto) {
 		try {
 			save(dto);
-			sendTask(dto);
 			//刷新同品类和性别的其它供应商
 			if(dto.getCategoryType()!=0||dto.getCategoryType()!=1){
 				HubSupplierCategroyDicDto dicDto = new HubSupplierCategroyDicDto();
@@ -209,6 +209,7 @@ public class HubSupplierCategoryDicController {
 							dicDto.setPushState((byte)1);
 						}else{
 							dicDto.setMappingState((byte)2);
+							dicDto.setPushState((byte)1);
 						}
 						dicDto.setUpdateTime(new Date());
 						hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);

@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
@@ -158,7 +159,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
                     HubPendingSpuCheckResult spuResult = this.checkHubPendingSpu(pendingProductDto);
                     if(spuResult.isPassing()){
-                        pendingProductDto.setCatgoryState(CatgoryState.PERFECT_MATCHED.getIndex());
+//                        pendingProductDto.setCatgoryState(CatgoryState.PERFECT_MATCHED.getIndex());
                         pendingProductDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
                         pendingProductDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
                     }else{
@@ -168,32 +169,32 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                         updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
                     }
 
-
-
-
                 }else{
                     pass = false ;
                     log.info("pending spu校验失败，不更新：货号校验不通过。");
                     updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
                 }
 
+                if(null!=pendingProductDto.getSupplierSpuId()&&0==pendingProductDto.getSupplierSpuId()){
+                    pendingProductDto.setSupplierSpuId(null);
+                }
+                pendingProductDto.setCreateTime(null);
+
                 if(null!=updatedVo){
                     response.setCode("1");
                     response.setErrorMsg(updatedVo);
+                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+
                     return response;
                 }
 
+                hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+
+                hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
+
 
             }
-            if(null!=pendingProductDto.getSupplierSpuId()&&0==pendingProductDto.getSupplierSpuId()){
-                pendingProductDto.setSupplierSpuId(null);
-            }
 
-            pendingProductDto.setCreateTime(null);
-
-            hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-
-            hubSlotSpuService.addSlotSpuAndSupplier(pendingProductDto);
 
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
@@ -245,6 +246,35 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
         return response;
     }
 
+    @Override
+    public boolean updateSlotStateToNoNeedHandle(List<Long> spuPendingIds, String operator) throws Exception {
+        if(null!=spuPendingIds&&spuPendingIds.size()>0){
+            if(1==spuPendingIds.size()) {
+
+                HubSpuPendingDto spuPending = new HubSpuPendingDto();
+                spuPending.setSpuPendingId(spuPendingIds.get(0));
+                spuPending.setSlotHandleUser(operator);
+                spuPending.setSlotHandleDate(new Date());
+                spuPending.setSlotState(SpuPendingStudioState.NO_NEED_HANDLED.getIndex().byteValue());
+
+                int i = hubSpuPendingGateWay.updateByPrimaryKeySelective(spuPending);
+            }else{
+                HubSpuPendingDto spuPending = new HubSpuPendingDto();
+                spuPending.setSlotHandleUser(operator);
+                spuPending.setSlotHandleDate(new Date());
+                spuPending.setSlotState(SpuPendingStudioState.NO_NEED_HANDLED.getIndex().byteValue());
+                HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+                criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+                HubSpuPendingWithCriteriaDto criteriaDto = new HubSpuPendingWithCriteriaDto( spuPending,  criteria);
+                hubSpuPendingGateWay.updateByCriteriaSelective(criteriaDto) ;
+
+            }
+        }
+        return true;
+    }
+
+
+
     private void checkSpuState(PendingProductDto hubPendingSpuDto, HubPendingSpuCheckResult hubPendingSpuCheckResult) {
         if(hubPendingSpuCheckResult.isSpuModel()){
             hubPendingSpuDto.setSpuModelState(SpuModelState.VERIFY_PASSED.getIndex());
@@ -278,7 +308,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
         List<CommonCheckBase> allPropertyCheck = new ArrayList<>();
         allPropertyCheck.add(brandCheck);
-        allPropertyCheck.add(categoryCheck);
+//        allPropertyCheck.add(categoryCheck);
 //        allPropertyCheck.add(spuModelCheck);
 
         propertyCheck.setAllPropertyCheck(allPropertyCheck);
@@ -310,8 +340,12 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
         targetDto.setSupplierNo(resourceDto.getSupplierNo());
         targetDto.setSupplierId(resourceDto.getSupplierId());
         targetDto.setUpdateUser(resourceDto.getUpdateUser());
+        targetDto.setSlotHandleDate(new Date());
+        targetDto.setSlotHandleUser(resourceDto.getUpdateUser());
 
     }
+
+
 
 
 }

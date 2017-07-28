@@ -157,10 +157,6 @@ public class StudioSlotController {
 	@RequestMapping(value = "/downloadImage")
 	public boolean downLoadImageByFtp() {
 		try {
-			Calendar calendar = Calendar.getInstance();  
-	        calendar.setTime(new Date());  
-	        calendar.add(Calendar.DAY_OF_MONTH, -1);  
-	        String newDate = sd.format(calendar.getTime()); 
 			List<StudioSlotDto> studioDtoList = studioSlotService.selectStudioSlotByShootTime();
 			for (StudioSlotDto studioSlotDto : studioDtoList) {
 				String slotNo = studioSlotDto.getSlotNo();
@@ -172,13 +168,12 @@ public class StudioSlotController {
 					String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
 					String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 					
-					String pathName = new String("/home/dev/"+newDate+"/"+slotNo+"/"+slotSpuNo+"/");
-//					String pathName = new String("/home/dev/ftpLoad/");
+					String pathName = new String("/"+slotNo+"/");
 					FTPFile[] files = FTPClientUtil.getFiles(pathName);
 					for (FTPFile file : files) {
 						try {
 							String fileName = file.getName();
-							String downLoadAddress = "ftpLoad/" + fileName;
+							String downLoadAddress = "/"+slotNo+"/" + fileName;
 							InputStream in = FTPClientUtil.downFile(downLoadAddress);
 
 							ByteArrayOutputStream swapStream = new ByteArrayOutputStream();

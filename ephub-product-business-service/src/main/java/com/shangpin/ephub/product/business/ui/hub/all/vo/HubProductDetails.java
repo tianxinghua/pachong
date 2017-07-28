@@ -26,5 +26,10 @@ public class HubProductDetails {
 	private String productName;//商品名称 spu_name
 	private String productUnit;//商品单位
 	private String homeMarketPrice;//国内市场价
+	
+	private String color;
+	private String material;
+	private String updateUser;
+	
 	private List<HubSpuPicDto> spPicUrls;
 }
