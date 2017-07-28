@@ -89,6 +89,7 @@ public class HubBrandDicService {
 		dic.setUpdateTime(new Date());
 		dic.setDataState((byte)1);
 		dic.setCreateUser(createUser);
+		dic.setUpdateUser(createUser);
 		brandDicGateway.insertSelective(dic);
 	}
 	
