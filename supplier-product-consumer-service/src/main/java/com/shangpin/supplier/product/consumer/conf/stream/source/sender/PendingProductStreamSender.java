@@ -425,6 +425,14 @@ public class PendingProductStreamSender {
      * @param supplierProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
+    public boolean parisiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+    	return pendingProductSource.parisiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
+    /**
+     * 发送供应商商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
     public boolean smetsPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
     	return pendingProductSource.smetsPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }

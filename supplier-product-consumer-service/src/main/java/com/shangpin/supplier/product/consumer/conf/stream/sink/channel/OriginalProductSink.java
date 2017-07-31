@@ -111,6 +111,8 @@ public interface OriginalProductSink {
 	
 	public static final String DELIBERTI = "delibertiOriginalProduct"; 
 	
+	public static final String PARISI = "parisiOriginalProduct"; 
+	
 	public static final String SMETS = "smetsOriginalProduct";
 	
 	public static final String SARENZA = "sarenzaOriginalProduct";
@@ -455,6 +457,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.DELIBERTI)
     public SubscribableChannel delibertiOriginalProduct();
+	/**
+	 * 供货商 PARISI通道组件配置
+	 * @return  PARISI通道组件
+	 */
+	@Input(value = OriginalProductSink.PARISI)
+    public SubscribableChannel parisiOriginalProduct();
 	/**
 	 * 供货商SMETS 通道组件配置
 	 * @return  SMETS通道组件
