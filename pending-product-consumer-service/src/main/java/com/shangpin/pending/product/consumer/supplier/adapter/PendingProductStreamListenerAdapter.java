@@ -484,6 +484,15 @@ public class PendingProductStreamListenerAdapter {
 		
 	}
 	/**
+	 * 供应商parisi待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void parisiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
 	 * 供应商smets待处理商品数据流监听
 	 * @param message 消息体
 	 * @param headers 消息头

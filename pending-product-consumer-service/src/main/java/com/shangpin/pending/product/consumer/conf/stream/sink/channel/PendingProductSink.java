@@ -109,6 +109,8 @@ public interface PendingProductSink {
 	
 	public static final String DELIBERTI = "delibertiPendingProduct"; 
 	
+	public static final String PARISI = "parisiPendingProduct";
+	
 	public static final String SMETS = "smetsPendingProduct";
 	
 	public static final String SARENZA = "sarenzaPendingProduct";
@@ -450,6 +452,12 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.DELIBERTI)
     public SubscribableChannel delibertiPendingProduct();
+	/**
+	 * 供货商PARISI通道组件配置
+	 * @return 供货商PARISI通道组件
+	 */
+	@Input(value = PendingProductSink.PARISI)
+    public SubscribableChannel parisiPendingProduct();
 	/**
 	 * 供货商SMETS通道组件配置
 	 * @return 供货商SMETS通道组件
