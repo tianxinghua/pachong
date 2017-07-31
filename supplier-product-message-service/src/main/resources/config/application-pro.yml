@@ -164,6 +164,9 @@ spring:
                         delibertiOriginalProduct: 
                               destination: deliberti.original.product
                               content-type: application/json
+                        parisiOriginalProduct: 
+                              destination: parisi.original.product
+                              content-type: application/json
                         smetsOriginalProduct: 
                               destination: smets.original.product
                               content-type: application/json
@@ -368,6 +371,9 @@ spring:
                                   producer: 
                                            prefix: HA. 
                             delibertiOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
+                            parisiOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
                             smetsOriginalProduct: 

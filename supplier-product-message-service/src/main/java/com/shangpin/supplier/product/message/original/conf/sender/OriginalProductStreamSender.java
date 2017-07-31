@@ -436,6 +436,14 @@ public class OriginalProductStreamSender {
     	return originalProductSource.deliberti().send(MessageBuilder.withPayload(supplierProduct).build());
     }
     /**
+     * 发送供应商parisi商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean parisiStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.parisi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
      * 发送供应商smets商品流数据
      * @param supplierProduct 消息体
      * @return 如果发送成功返回true,否则返回false

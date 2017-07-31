@@ -107,6 +107,8 @@ public interface OriginalProductSource {
 	public static final String STUDIO69 = "studio69OriginalProduct"; 
 	
 	public static final String DELIBERTI = "delibertiOriginalProduct"; 
+
+	public static final String PARISI = "parisiOriginalProduct"; 
 	
 	public static final String SMETS = "smetsOriginalProduct";
 	
@@ -451,6 +453,12 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.DELIBERTI)
     public MessageChannel deliberti();
+	/**
+	 * 供货商PARISI通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.PARISI)
+    public MessageChannel parisi();
 	/**
 	 * 供货商SMETS通道组件配置
 	 * @return 供货商通道组件
