@@ -76,11 +76,13 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(sku.getPrice().getMarket_price())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(sku.getPrice().getSuply_price()))); 
 			hubSku.setSupplierBarcode(sku.getBarcode());
+			String size = "";
 			if(sku.getItem_size().length()>4) {
-				hubSku.setSupplierSkuSize(sku.getItem_size().substring(0,sku.getItem_size().length()-4));
+				size = sku.getItem_size().substring(0,sku.getItem_size().length()-4);
             }else{
-            	hubSku.setSupplierSkuSize(sku.getItem_size());
+            	size = sku.getItem_size();
             }
+			hubSku.setSupplierSkuSize(!StringUtils.isEmpty(sku.getCountry_size()) ? sku.getCountry_size()+" "+size : size);
 			String stock = sku.getStock();
 			if (StringUtils.isEmpty(stock)) {
 				stock = "0";
