@@ -54,8 +54,6 @@ public class ProductFetchUtil {
             result = HttpUtil45.operateData("post","soap",hostUrl,
                     new OutTimeConfig(1000*60,1000*60*30,1000*60*30),null,request,headerMap,"","");
 
-
-
         } catch (ServiceException e) {
             e.printStackTrace();
         }
@@ -73,7 +71,7 @@ public class ProductFetchUtil {
         try {
             in_withcode = new ByteArrayInputStream(str.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
+        	loggerError.error(e.getMessage(),e);
             e.printStackTrace();
         }
         Document document =reader.read(in_withcode);
@@ -92,7 +90,6 @@ public class ProductFetchUtil {
 
     public static void main(String[] args){
         ProductFetchUtil util = new ProductFetchUtil();
-
 
 
         String result ="<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><GetStockWithSkuResponse xmlns=\"http://tempuri.org/\"><GetStockWithSkuResult><xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\"><xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"ns_product\" msdata:UseCurrentLocale=\"true\"><xs:complexType><xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\"><xs:element name=\"ns_product\"><xs:complexType><xs:sequence><xs:element name=\"Stock\" type=\"xs:int\" minOccurs=\"0\" /></xs:sequence></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\"><DocumentElement xmlns=\"\"><ns_product diffgr:id=\"ns_product1\" msdata:rowOrder=\"0\"><Stock>1</Stock></ns_product></DocumentElement></diffgr:diffgram></GetStockWithSkuResult></GetStockWithSkuResponse></soap:Body></soap:Envelope>";
