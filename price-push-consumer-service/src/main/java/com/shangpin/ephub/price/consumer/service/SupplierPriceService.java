@@ -60,6 +60,7 @@ public class SupplierPriceService {
         try {
             SupplierMessageDTO supplierMessageDTO = this.getSupplierMsg(productPriceDTO.getSupplierNo());
             if(null!=supplierMessageDTO){
+                if (!inspectPropertyValue(productPriceDTO)) return true;
 
 
                 String supplierType = supplierMessageDTO.getQuoteMode();;
@@ -72,10 +73,16 @@ public class SupplierPriceService {
                         	if(StringUtils.isNotBlank(productPriceDTO.getMarketPrice())&&StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
                         		//重新计算价格
                                 String originSupplyPrice = productPriceDTO.getPurchasePrice();
+                                String originMarketPrice = productPriceDTO.getMarketPrice();
+                                //市场价税率
+                                String rateForMarket = supplierMap.get(productPriceDTO.getSopUserNo());
+                                if(StringUtils.isBlank(rateForMarket)){
+                                    rateForMarket = "1";
+                                }
+                                reSetPrice(supplierMessageDTO,productPriceDTO,rateForMarket);
 
-                                reSetPrice(supplierMessageDTO,productPriceDTO);
                                 productPriceDTO.setCurrency(supplierMessageDTO.getCurrency());
-                                handSupplyPrice(productPriceDTO,originSupplyPrice);
+                                handSupplyPrice(productPriceDTO,originSupplyPrice,originMarketPrice);
                         	}else{
                         		priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
                                         productPriceDTO.getSkuNo(), PriceHandleState.HANDLED_SUCCESS.getIndex(),"市场价为空或供价为空不能推送");
@@ -126,8 +133,17 @@ public class SupplierPriceService {
 
     }
 
-    private void handSupplyPrice(ProductPriceDTO productPriceDTO,String originPurchasePrice) throws Exception {
-        if(priceSendService.sendSupplyPriceMsgToScm(productPriceDTO,originPurchasePrice)){
+    private boolean inspectPropertyValue(ProductPriceDTO productPriceDTO) throws Exception {
+        if(StringUtils.isBlank(productPriceDTO.getMarketPrice())&&StringUtils.isBlank(productPriceDTO.getPurchasePrice())){
+            priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
+                    productPriceDTO.getSkuNo(), PriceHandleState.HANDLE_ERROR.getIndex(),"供价和市场价不能同时为空");
+            return false;
+        }
+        return true;
+    }
+
+    private void handSupplyPrice(ProductPriceDTO productPriceDTO,String originPurchasePrice,String originMarketPrice) throws Exception {
+        if(priceSendService.sendSupplyPriceMsgToScm(productPriceDTO,originPurchasePrice,originMarketPrice)){
             priceChangeRecordDataService.updatePriceSendState(productPriceDTO.getSupplierPriceChangeRecordId(),productPriceDTO.getSopUserNo(),
                     productPriceDTO.getSkuNo(), PriceHandleState.PUSHED_OPENAPI_SUCCESS.getIndex(),""  );
         }else{
@@ -183,7 +199,7 @@ public class SupplierPriceService {
 
     }
 
-    private void reSetPrice( SupplierMessageDTO supplierMessageDTO,ProductPriceDTO productPriceDTO) throws  Exception{
+    private void reSetPrice( SupplierMessageDTO supplierMessageDTO,ProductPriceDTO productPriceDTO,String rateForMarket) throws  Exception{
         BigDecimal supplyPrice = null;
         if(StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
             BigDecimal serviceRate = new BigDecimal(1);
@@ -194,6 +210,14 @@ public class SupplierPriceService {
 
             productPriceDTO.setPurchasePrice(new BigDecimal(productPriceDTO.getPurchasePrice())
                     .multiply(serviceRate).add(feight).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+        }
+        if(StringUtils.isNotBlank(rateForMarket)){
+            if(!"1".equals(rateForMarket)){
+                BigDecimal marketRate = new BigDecimal(rateForMarket);
+                productPriceDTO.setMarketPrice(new BigDecimal(productPriceDTO.getMarketPrice())
+                        .multiply(marketRate).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+            }
+
         }
 
     }
@@ -206,7 +230,7 @@ public class SupplierPriceService {
         List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
         if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
             for(HubSupplierValueMappingDto supplier:hubSupplierValueMappingDtos){
-                supplierMap.put(supplier.getSupplierId(),"");
+                supplierMap.put(supplier.getSupplierId(),supplier.getSupplierVal());
             }
         }
         return supplierMap;
