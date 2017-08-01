@@ -266,12 +266,13 @@ public class PendingProductService extends PendingSkuService{
             		pass = false;
             		pendingProductDto.setUpdateTime(new Date());
             		pendingProductDto.setAuditState((byte)0);
-            		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+            		pendingProductDto.setMemo("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
+            		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
             		pendingProductDto.setAuditDate(new Date());
             		pendingProductDto.setAuditUser("chenxu");
             		PendingUpdatedVo updatedVo1 = new PendingUpdatedVo();
             		updatedVo1.setSpuPendingId(pendingProductDto.getSpuPendingId());
-            		updatedVo1.setSpuResult("同品牌同货号颜色不一样");
+            		updatedVo1.setSpuResult("同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
             		response.setCode("1");
                     response.setErrorMsg(updatedVo1);
             	}
@@ -619,7 +620,7 @@ public class PendingProductService extends PendingSkuService{
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+//		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());

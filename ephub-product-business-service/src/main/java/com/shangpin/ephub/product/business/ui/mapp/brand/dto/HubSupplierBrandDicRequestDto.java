@@ -17,6 +17,7 @@ import lombok.ToString;
 public class HubSupplierBrandDicRequestDto {
 	
 	private Long supplierBrandDicId;
+	private Long brandDicId;
 	private String supplierNo;
 	private String supplierId;
 	private int pageNo;
