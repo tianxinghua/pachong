@@ -42,8 +42,7 @@ public class Worker implements Runnable{
 			logger.info("更新数据库结束");
 			System.out.println("结束");
 		} catch (Exception e) {
-			logger.info("aaaaaaaaaaaaaaa被取消了");
-			System.out.println("aaaaaaaaaaaaaaa被取消了");
+			logger.info("parisi被取消了");
 		}
 	}
 	
