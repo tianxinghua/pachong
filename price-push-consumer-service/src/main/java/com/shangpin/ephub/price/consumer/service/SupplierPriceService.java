@@ -236,6 +236,7 @@ public class SupplierPriceService {
         return supplierMap;
     }
 
+
     private boolean isNeedPushForMarketPrice(ProductPriceDTO productPriceDTO){
         if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.MARKET_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
