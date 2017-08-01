@@ -56,10 +56,14 @@ public class ShootProductController {
         return studioPendingService.batchUpdatePendingProduct(pendingProducts);
     }
 
-    @RequestMapping(value="/cancel-view",method=RequestMethod.POST)
-    public HubResponse<?>  cancelView(@RequestBody ShootPendingVo vo){
+    @RequestMapping(value="/cancel-view/{operator}",method=RequestMethod.POST)
+    public HubResponse<?>  cancelView(@PathVariable("operator") String operator  ,@RequestBody List<Long> ids){
         try {
-            if(null!=vo) {
+
+            if(null!=ids&&ids.size()>0) {
+                ShootPendingVo vo  = new ShootPendingVo();
+                vo.setOperator(operator);
+                vo.setSpuPendingIds(ids);
                 studioPendingService.updateSlotStateToNoNeedHandle(vo.getSpuPendingIds(), vo.getOperator());
                 return HubResponse.successResp(true);
             }else{
