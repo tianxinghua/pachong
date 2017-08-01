@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.service.impl;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.SlotSpuSupplierState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
@@ -36,6 +37,7 @@ import com.shangpin.ephub.product.business.common.exception.EphubException;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSendDetailCheckDto;
 import com.shangpin.ephub.product.business.service.studio.slotspusend.SlotSpuSendDetailService;
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.ui.studio.studio.dto.StudioSlotQueryDto;
 import com.shangpin.ephub.product.business.ui.studio.studio.service.IStudioService;
 import com.shangpin.ephub.product.business.ui.studio.studio.vo.*;
@@ -91,6 +93,10 @@ public class StudioServiceImpl implements IStudioService {
     HubSlotSpuSupplierService hubSlotSpuSupplierService;
     @Autowired
     SlotSpuSendDetailService slotSpuSendDetailService;
+
+
+    @Autowired
+    SupplierInHubService supplierInHubService;
 
     HashMap<String, String > categoryMap = new HashMap<String, String>(){{
         put("cloth", "A01");
@@ -496,6 +502,7 @@ public class StudioServiceImpl implements IStudioService {
             slot.setArriveStatus(studioSlot.getArriveStatus());
             slot.setArriveTime(studioSlot.getArriveTime());
             slot.setArriveUser(studioSlot.getArriveUser());
+            slot.setCreateTime(studioSlot.getCreateTime());
             slot.setPlanArriveTime(studioSlot.getPlanArriveTime());
             List<SlotProduct> listProduct = SlotProductList(studioSlot.getSlotNo());
             slot.setCountNum(listProduct.size());
@@ -542,6 +549,7 @@ public class StudioServiceImpl implements IStudioService {
                 p.setSendState(item.getSendState());
                 p.setArriveState(item.getArriveState());
                 p.setVersion(item.getVersion());
+                p.setCreateTime(item.getCreateTime());
                 list.add(p);
             }
         }
@@ -779,8 +787,16 @@ public class StudioServiceImpl implements IStudioService {
             if(slotInfo==null){
                 throw new EphubException("C1", "Slot is not found");
             }else {
+
+                SupplierInHubDto supplierInHubDto = supplierInHubService.getSupplierInHubBySupplierId(supplierId);
+
+                if(supplierInHubDto!=null){
+                    slotInfo.setSupplierInHubDto(supplierInHubDto);
+                }
+
                 if(slotInfo.getSendState() == StudioSlotSendState.ISPRINT.getIndex().byteValue()){
                     response.setCode("2");
+                    response.setContent(slotInfo);
                     response.setMsg("This slot has been printed,Do you want to print again?");
                     return response;
                 }
@@ -811,8 +827,8 @@ public class StudioServiceImpl implements IStudioService {
 
                 if(resCheckDtos.stream().filter(x-> !x.isResultSign()).count()>0){
                     List<Long> ids = resCheckDtos.stream().filter(x-> !x.isResultSign()).map(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId).distinct().collect(Collectors.toList());
-                    List<String> spuIds = slotProducts.stream().filter(x-> ids.contains(x.getId())).map(SlotProduct::getSlotSpuNo).collect(Collectors.toList());
-                    throw new EphubException("C11",  String.join(",",spuIds) +"had been sent ,no need send!");
+                    List<String> spuModels = slotProducts.stream().filter(x-> ids.contains(x.getId())).map(SlotProduct::getSupplierSpuModel).collect(Collectors.toList());
+                    throw new EphubException("C11",  String.join("<br>",spuModels) +"had been sent ,no need send!");
                 }
                 //endregion
 

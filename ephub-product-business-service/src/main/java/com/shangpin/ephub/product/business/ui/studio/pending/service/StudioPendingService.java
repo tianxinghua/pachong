@@ -33,8 +33,14 @@ public interface StudioPendingService {
      */
     public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts);
 
-
-
+    /**
+     * 更新状态为不处理
+     * @param spuPendingIds
+     * @param operator 操作人
+     * @return
+     * @throws Exception
+     */
+    public boolean updateSlotStateToNoNeedHandle(List<Long> spuPendingIds,String operator) throws Exception;
 
 
 
