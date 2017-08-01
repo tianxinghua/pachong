@@ -155,13 +155,13 @@ public class HubSupplierCategoryDicController {
 			if(dto.getCategoryType()==4){
 				dicDto.setMappingState((byte)1);		
 				dicDto.setPushState((byte)1);
-				sendTask(dto);
 			}else{
 				dicDto.setMappingState((byte)2);
 				dicDto.setPushState((byte)1);
 			}
 			dicDto.setUpdateTime(new Date());
 			hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
+			sendTask(dto);
 			return HubResponse.successResp(null);
 		} catch (Exception e) {
 			log.error("保存失败：{}", e);
@@ -213,6 +213,7 @@ public class HubSupplierCategoryDicController {
 						}
 						dicDto.setUpdateTime(new Date());
 						hubCategoryDicService.updateHubCategoryDicByPrimaryKey(dicDto);
+						sendTask(dto);
 						return HubResponse.successResp(null);
 					}
 				}

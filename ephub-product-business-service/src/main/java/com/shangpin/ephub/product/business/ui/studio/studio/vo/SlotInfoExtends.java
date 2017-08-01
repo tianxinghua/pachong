@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.studio.studio.vo;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,4 +18,5 @@ public class SlotInfoExtends extends SlotInfo implements Serializable {
     private static final long serialVersionUID = 3024320465200195979L;
 
     private List<SlotProduct> slotProductList;
+    private SupplierInHubDto supplierInHubDto;
 }

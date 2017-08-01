@@ -62,7 +62,6 @@ public class HubSupplierMaterialDicController {
 				List<HubSupplierMaterialDicResponseDto> responseList = new ArrayList<HubSupplierMaterialDicResponseDto>();
 				if (list != null && list.size() > 0) {
 					for (HubMaterialMappingDto dicDto : list) {
-//						if(type==0){
 							HubSupplierMaterialDicResponseDto dic = new HubSupplierMaterialDicResponseDto();
 							BeanUtils.copyProperties(dicDto, dic);
 							dic.setMaterialMappingId(dicDto.getMaterialMappingId());
@@ -70,42 +69,13 @@ public class HubSupplierMaterialDicController {
 							if(dicDto.getCreateTime()!=null){
 								dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
 							}
-//							
 							if(dicDto.getUpdateTime()!=null){
 								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 							}
 							dic.setSupplierMaterial(dicDto.getSupplierMaterial());
 							responseList.add(dic);
-//						}
-//						if(type==1){
-//							if(map.containsKey(dicDto.getHubMaterial())){
-//								HubMaterialMappingDto temp = map.get(dicDto.getHubMaterial());
-//								temp.setSupplierMaterial(temp.getSupplierMaterial()+","+dicDto.getSupplierMaterial());
-//							}else{
-//								map.put(dicDto.getHubMaterial(), dicDto);
-//							}
-//						}
 					}
 				}
-//				if(type==1){
-//					if(map!=null&&map.size()>0){
-//						for(Map.Entry<String,HubMaterialMappingDto> entry:map.entrySet()){
-//							HubMaterialMappingDto dicDto = entry.getValue();
-//							HubSupplierMaterialDicResponseDto dic = new HubSupplierMaterialDicResponseDto();
-//							if(dicDto.getCreateTime()!=null){
-//								dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));	
-//							}
-//							
-//							if(dicDto.getUpdateTime()!=null){
-//								dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
-//							}
-//							BeanUtils.copyProperties(dicDto, dic);
-//							dic.setUpdateUser(dicDto.getUpdateUser());
-//							responseList.add(dic);
-//						}
-//					}
-//				}
-				
 				HubSupplierMaterialDicResponseWithPageDto response = new HubSupplierMaterialDicResponseWithPageDto();
 				response.setTotal(total);
 				response.setList(responseList);
@@ -165,7 +135,7 @@ public class HubSupplierMaterialDicController {
 					dicDto.setUpdateTime(new Date());
 					dicDto.setCreateUser(dto.getUpdateUser());
 					dicDto.setUpdateUser(dto.getUpdateUser());
-					dicDto.setMappingLevel((byte)1);
+					dicDto.setMappingLevel(dto.getMappingLevel());
 					dicDto.setHubMaterial(dto.getHubMaterial());
 					dicDto.setSupplierMaterial(supplierMaterial);
 					hubMaterialDicService.saveHubSupplierMaterial(dicDto);
@@ -193,7 +163,7 @@ public class HubSupplierMaterialDicController {
 					if(StringUtils.isNotBlank(dto.getHubMaterial())){
 						dicDto.setHubMaterial(dto.getHubMaterial());	
 					}
-					dicDto.setMappingLevel((byte)1);
+					dicDto.setMappingLevel(dto.getMappingLevel());
 					hubMaterialDicService.updateSupplierMaterialById(dicDto);
 				}
 				return	HubResponse.successResp(null);

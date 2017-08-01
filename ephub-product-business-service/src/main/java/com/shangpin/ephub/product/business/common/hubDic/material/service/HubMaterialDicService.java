@@ -46,7 +46,9 @@ public class HubMaterialDicService {
 	public int countSupplierMaterialByType(Byte type, String supplierMaterial, String hubMaterial) {
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
-		criteria.andMappingLevelEqualTo(type);
+		if(type!=null){
+			criteria.andMappingLevelEqualTo(type);	
+		}
 		
 		if(StringUtils.isNotBlank(hubMaterial)){
 			criteria.andHubMaterialLike("%"+hubMaterial+"%");
@@ -55,38 +57,20 @@ public class HubMaterialDicService {
 			criteria.andSupplierMaterialLike("%"+supplierMaterial+"%");
 		}
 		
-		if(type==0){
-			HubMaterialMappingCriteriaDto.Criteria criteriaOr = hubMaterialMappingCriteriaDto.createCriteria();
-			if(StringUtils.isNotBlank(hubMaterial)){
-				criteriaOr.andHubMaterialLike("%"+hubMaterial+"%");
-			}
-			if(StringUtils.isNotBlank(supplierMaterial)){
-				criteriaOr.andSupplierMaterialLike("%"+supplierMaterial+"%");
-			}
-			hubMaterialMappingCriteriaDto.or(criteriaOr.andMappingLevelIsNull());
-		}
 		return hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto);
 	}
 	public List<HubMaterialMappingDto> getSupplierMaterialByType(int pageNo, int pageSize, Byte type,
 			String supplierMaterial, String hubMaterial) {
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
-		criteria.andMappingLevelEqualTo(type);
+		if(type!=null){
+			criteria.andMappingLevelEqualTo(type);	
+		}
 		if(StringUtils.isNotBlank(hubMaterial)){
 			criteria.andHubMaterialLike("%"+hubMaterial+"%");
 		}
 		if(StringUtils.isNotBlank(supplierMaterial)){
 			criteria.andSupplierMaterialLike("%"+supplierMaterial+"%");
-		}
-		if(type==0){
-			HubMaterialMappingCriteriaDto.Criteria criteriaOr = hubMaterialMappingCriteriaDto.createCriteria();
-			if(StringUtils.isNotBlank(hubMaterial)){
-				criteriaOr.andHubMaterialLike("%"+hubMaterial+"%");
-			}
-			if(StringUtils.isNotBlank(supplierMaterial)){
-				criteriaOr.andSupplierMaterialLike("%"+supplierMaterial+"%");
-			}
-			hubMaterialMappingCriteriaDto.or(criteriaOr.andMappingLevelIsNull());
 		}
 		hubMaterialMappingCriteriaDto.setPageNo(pageNo);
 		hubMaterialMappingCriteriaDto.setPageSize(pageSize);

@@ -18,6 +18,7 @@ public class HubSupplierMaterialDicResponseDto {
 	
 	private Long materialMappingId;
 	private String supplierMaterial;
+	private Byte mappingLevel;
 	private String hubMaterial;
 	private String updateTime;
 	private String createTime;

@@ -235,4 +235,8 @@ public class HubBrandDicService {
 	public HubBrandDicDto getHubBrandById(Long id) {
 		return brandDicGateway.selectByPrimaryKey(id);
 	}
+	
+	public void updateHubBrandById(HubBrandDicDto dic){
+		brandDicGateway.updateByPrimaryKeySelective(dic);
+	}
 }
