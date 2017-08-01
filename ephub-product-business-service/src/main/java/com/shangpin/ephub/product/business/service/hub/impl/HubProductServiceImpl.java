@@ -446,6 +446,11 @@ public class HubProductServiceImpl implements HubProductService {
                 supplierMappingId  = supplierIdDto.getId();
                 HubSkuSupplierMappingDto hubSkuSupplierMappingDto = skuSupplierMappingGateWay.selectByPrimaryKey(supplierMappingId);
                 if(null!=hubSkuSupplierMappingDto){
+                    //如果已处理 不做处理
+                    if(hubSkuSupplierMappingDto.getSupplierSelectState().toString().equals(String.valueOf(SupplierSelectState.SELECTED.getIndex()))){
+                        continue;
+                    }
+
                     //组装sku并返回
                     ApiSkuOrgDom apiSkuOrgDom = setScmSku(hubSpuDto,hubSkuDto,spSpuInfo, hubSkuSupplierMappingDto);
 

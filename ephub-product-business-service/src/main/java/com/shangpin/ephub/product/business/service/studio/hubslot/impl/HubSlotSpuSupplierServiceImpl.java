@@ -266,34 +266,34 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
         //可发货更新库存
         if(null==errorReturnList||errorReturnList.size()==0){
-
+            Date date = new Date();
             for(SlotSpuSendDetailCheckDto dto:dtos){
                 HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
-                supplierDtos.add(originDto);
-            }
-            Date date = new Date();
-            for(HubSlotSpuSupplierDto supplierDto :supplierDtos){
+
                 //region 更新自己
 
                 HubSlotSpuSupplierDto supplierTmp = new HubSlotSpuSupplierDto();
-                supplierTmp.setSlotSpuSupplierId(supplierDto.getSlotSpuSupplierId());
+                supplierTmp.setSlotSpuSupplierId(originDto.getSlotSpuSupplierId());
                 supplierTmp.setState(SlotSpuSupplierState.SEND.getIndex().byteValue());
-
+                supplierTmp.setSlotNo(dto.getSlotNo());
                 supplierTmp.setUpdateTime(date);
                 spuSupplierGateway.updateByPrimaryKeySelective(supplierTmp);
-                log.info(" slotSpuSupplierId :" + supplierDto.getSlotSpuSupplierId() +" update owner success");
+                log.info(" slotSpuSupplierId :" + originDto.getSlotSpuSupplierId() +" update owner success");
                 //更新slotspu
                 HubSlotSpuDto spuTmp = new HubSlotSpuDto();
                 spuTmp.setSpuState(SlotSpuState.SEND.getIndex().byteValue());
-                spuTmp.setSlotSpuId(supplierDto.getSlotSpuId());
+                spuTmp.setSlotSpuId(originDto.getSlotSpuId());
                 spuTmp.setUpdateTime(new Date());
                 slotSpuGateWay.updateByPrimaryKeySelective(spuTmp);
-                log.info(" slotSpuId  :" + supplierDto.getSlotSpuId() +" update spu success");
+                log.info(" slotSpuId  :" + originDto.getSlotSpuId() +" update spu success");
                 //更新其它slotspusupplier状态
-                List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(supplierDto.getSlotSpuNo(),supplierDto.getSupplierId());
+                List<HubSlotSpuSupplierDto> slotSpuSupplierDtos = this.findSlotSpuSupplierListOfOtherSupplierValidBySpuNoAndSupplierId(originDto.getSlotSpuNo(),originDto.getSupplierId());
                 this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,SlotSpuState.SEND.getIndex());
                 //endregion
+
             }
+
+
         }
 
         return errorReturnList;
