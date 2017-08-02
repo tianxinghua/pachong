@@ -157,47 +157,59 @@ public class StudioSlotController {
 	@RequestMapping(value = "/downloadImage")
 	public boolean downLoadImageByFtp() {
 		try {
-			List<StudioSlotDto> studioDtoList = studioSlotService.selectStudioSlotByShootTime();
-			for (StudioSlotDto studioSlotDto : studioDtoList) {
-				String slotNo = studioSlotDto.getSlotNo();
-				List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoLists = hubSlotSpuSupplierService.getSlotSpuSupplierBySlotNo(slotNo);
-				for(HubSlotSpuSupplierDto hubSlotSpuSupplierDto : hubSlotSpuSupplierDtoLists){
-					long slotSpuId = hubSlotSpuSupplierDto.getSlotSpuId();
-					long slotSpuSupplierId = hubSlotSpuSupplierDto.getSlotSpuSupplierId();
-					String slotSpuNo = hubSlotSpuSupplierDto.getSlotSpuNo();
-					String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
-					String supplierId = hubSlotSpuSupplierDto.getSupplierId();
-					
-					String pathName = new String("/"+slotNo+"/");
-					FTPFile[] files = FTPClientUtil.getFiles(pathName);
-					for (FTPFile file : files) {
-						try {
-							String fileName = file.getName();
-							String downLoadAddress = "/"+slotNo+"/" + fileName;
-							InputStream in = FTPClientUtil.downFile(downLoadAddress);
+			String newPathName = new String("/home/dev/studio_slot/");
+			FTPFile[] newFiles = FTPClientUtil.getFiles(newPathName);
+			for (FTPFile newfile : newFiles) {
+				String slotNo = newfile.getName();
+				FTPClientUtil.createDir("/studio_backup/" + slotNo);
 
-							ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
-							byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
-							int rc = 0;
-							while ((rc = in.read(buff, 0, 100)) > 0) {
-								swapStream.write(buff, 0, rc);
-							}
-							byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
-							String extension = pictureService.getExtension(fileName);
-							String fdfsURL = pictureService.uploadPic(in_b, extension);
-							
-							HubSlotSpuPicDto dto = createHubSlotSpuPicDto(slotSpuId, slotSpuSupplierId, slotSpuNo, supplierNo, supplierId, fdfsURL, extension);
-							
-							hubSlotSpuPicGateway.insertSelective(dto);
-							
-							in.close();
-						} catch (Exception e) {
-							log.error(file.getName() + "图片上传发生异常：{}", e);
-							e.printStackTrace();
+				List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoLists = hubSlotSpuSupplierService
+						.getSlotSpuSupplierBySlotNo(slotNo);
+				if (hubSlotSpuSupplierDtoLists == null || hubSlotSpuSupplierDtoLists.size() == 0) {
+					continue;
+				}
+				HubSlotSpuSupplierDto hubSlotSpuSupplierDto = hubSlotSpuSupplierDtoLists.get(0);
+				long slotSpuId = hubSlotSpuSupplierDto.getSlotSpuId();
+				long slotSpuSupplierId = hubSlotSpuSupplierDto.getSlotSpuSupplierId();
+				String slotSpuNo = hubSlotSpuSupplierDto.getSlotSpuNo();
+				String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
+				String supplierId = hubSlotSpuSupplierDto.getSupplierId();
+
+				String pathName = new String("/studio_slot/" + slotNo + "/");
+				FTPFile[] files = FTPClientUtil.getFiles(pathName);
+				for (FTPFile file : files) {
+					try {
+						String fileName = file.getName();
+						String downLoadAddress = "/studio_slot/" + slotNo + "/" + fileName;
+						InputStream in = FTPClientUtil.downFile(downLoadAddress);
+
+						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
+						int rc = 0;
+						while ((rc = in.read(buff, 0, 100)) > 0) {
+							swapStream.write(buff, 0, rc);
 						}
+						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
+						String extension = pictureService.getExtension(fileName);
+						String fdfsURL = pictureService.uploadPic(in_b, extension);
+						// String fdfsURL = "http://www.test.jpg";
+
+						HubSlotSpuPicDto dto = createHubSlotSpuPicDto(slotSpuId, slotSpuSupplierId, slotSpuNo,
+								supplierNo, supplierId, fdfsURL, extension);
+						hubSlotSpuPicGateway.insertSelective(dto);
+
+						InputStream newIn = FTPClientUtil.downFile(downLoadAddress);
+						FTPClientUtil.uploadNewFile("/studio_backup/" + slotNo, fileName, newIn);
+
+						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + fileName);
+						in.close();
+						newIn.close();
+					} catch (Exception e) {
+						log.error(file.getName() + "图片上传发生异常：{}", e);
+						e.printStackTrace();
 					}
 				}
-				
+				FTPClientUtil.deleteDir(newPathName + slotNo);
 			}
 			return true;
 		} catch (Exception e) {
