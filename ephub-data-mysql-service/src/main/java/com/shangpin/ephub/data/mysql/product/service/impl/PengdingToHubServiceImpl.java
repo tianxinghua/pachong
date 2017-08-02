@@ -539,6 +539,7 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
                 HubSpuPendingPic spuPendingPic = new HubSpuPendingPic();
                 spuPendingPic.setSpuPendingPicId(dto.getPicId());
                 spuPendingPic.setSpPicUrl(dto.getSpPicUrl());
+                spuPendingPic.setMemo(dto.getMemo());
                 hubSpuPendingPics.add(spuPendingPic);
             }
         }else{

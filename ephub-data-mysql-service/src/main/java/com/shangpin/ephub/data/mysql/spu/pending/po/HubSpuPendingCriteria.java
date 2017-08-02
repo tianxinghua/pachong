@@ -3299,6 +3299,66 @@ public class HubSpuPendingCriteria {
             addCriterion("slot_handle_user not between", value1, value2, "slotHandleUser");
             return (Criteria) this;
         }
+
+        public Criteria andMsgMissHandleStateIsNull() {
+            addCriterion("msg_miss_handle_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateIsNotNull() {
+            addCriterion("msg_miss_handle_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateEqualTo(Byte value) {
+            addCriterion("msg_miss_handle_state =", value, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateNotEqualTo(Byte value) {
+            addCriterion("msg_miss_handle_state <>", value, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateGreaterThan(Byte value) {
+            addCriterion("msg_miss_handle_state >", value, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("msg_miss_handle_state >=", value, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateLessThan(Byte value) {
+            addCriterion("msg_miss_handle_state <", value, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateLessThanOrEqualTo(Byte value) {
+            addCriterion("msg_miss_handle_state <=", value, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateIn(List<Byte> values) {
+            addCriterion("msg_miss_handle_state in", values, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateNotIn(List<Byte> values) {
+            addCriterion("msg_miss_handle_state not in", values, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateBetween(Byte value1, Byte value2) {
+            addCriterion("msg_miss_handle_state between", value1, value2, "msgMissHandleState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMsgMissHandleStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("msg_miss_handle_state not between", value1, value2, "msgMissHandleState");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

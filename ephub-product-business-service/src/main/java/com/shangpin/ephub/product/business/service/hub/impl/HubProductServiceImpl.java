@@ -446,7 +446,7 @@ public class HubProductServiceImpl implements HubProductService {
                 supplierMappingId  = supplierIdDto.getId();
                 HubSkuSupplierMappingDto hubSkuSupplierMappingDto = skuSupplierMappingGateWay.selectByPrimaryKey(supplierMappingId);
                 if(null!=hubSkuSupplierMappingDto){
-                    //如果已处理 不做处理
+                    //如果已处理 不做处理  多个
                     if(hubSkuSupplierMappingDto.getSupplierSelectState().toString().equals(String.valueOf(SupplierSelectState.SELECTED.getIndex()))){
                         continue;
                     }

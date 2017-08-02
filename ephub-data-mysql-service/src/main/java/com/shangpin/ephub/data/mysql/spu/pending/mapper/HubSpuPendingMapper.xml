@@ -51,6 +51,7 @@
     <result column="slot_state" property="slotState" jdbcType="TINYINT" />
     <result column="slot_handle_date" property="slotHandleDate" jdbcType="TIMESTAMP" />
     <result column="slot_handle_user" property="slotHandleUser" jdbcType="VARCHAR" />
+    <result column="msg_miss_handle_state" property="msgMissHandleState" jdbcType="TINYINT" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -119,7 +120,7 @@
       spu_gender_state, spu_season_state, hub_color, hub_color_no, spu_color_state, sp_sku_size_state,
       material_state, origin_state, filter_flag, info_state, stock_state, create_user,
       update_user, audit_state, audit_date, audit_user, audit_opinion, handle_from, handle_state,
-      slot_state, slot_handle_date, slot_handle_user
+      slot_state, slot_handle_date, slot_handle_user, msg_miss_handle_state
     </if>
     <if test="fields != null" >
       ${fields}
@@ -144,7 +145,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
-    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag,info_state,stock_state,create_user,update_user,audit_state,audit_date,audit_user,audit_opinion,handle_from,handle_state,slot_state,slot_handle_date,slot_handle_user
+    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag,info_state,stock_state,create_user,update_user,audit_state,audit_date,audit_user,audit_opinion,handle_from,handle_state,slot_state,slot_handle_date,slot_handle_user,msg_miss_handle_state
     from hub_spu_pending
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </select>
@@ -159,9 +160,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
-    <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID() AS spu_pending_id
-    </selectKey>
     insert into hub_spu_pending (spu_pending_id, supplier_id, supplier_no,
     supplier_spu_no, spu_model, spu_name,
     hub_gender, hub_category_no, hub_brand_no,
@@ -178,7 +176,7 @@
     update_user, audit_state, audit_date,
     audit_user, audit_opinion, handle_from,
     handle_state, slot_state, slot_handle_date,
-    slot_handle_user)
+    slot_handle_user, msg_miss_handle_state)
     values (#{spuPendingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR},
     #{supplierSpuNo,jdbcType=VARCHAR}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR},
     #{hubGender,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, #{hubBrandNo,jdbcType=VARCHAR},
@@ -195,12 +193,9 @@
     #{updateUser,jdbcType=VARCHAR}, #{auditState,jdbcType=TINYINT}, #{auditDate,jdbcType=TIMESTAMP},
     #{auditUser,jdbcType=VARCHAR}, #{auditOpinion,jdbcType=VARCHAR}, #{handleFrom,jdbcType=TINYINT},
     #{handleState,jdbcType=TINYINT}, #{slotState,jdbcType=TINYINT}, #{slotHandleDate,jdbcType=TIMESTAMP},
-    #{slotHandleUser,jdbcType=VARCHAR})
+    #{slotHandleUser,jdbcType=VARCHAR}, #{msgMissHandleState,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
-    <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID() AS spu_pending_id
-    </selectKey>
     insert into hub_spu_pending
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
@@ -350,6 +345,9 @@
       <if test="slotHandleUser != null" >
         slot_handle_user,
       </if>
+      <if test="msgMissHandleState != null" >
+        msg_miss_handle_state,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
@@ -498,6 +496,9 @@
       </if>
       <if test="slotHandleUser != null" >
         #{slotHandleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="msgMissHandleState != null" >
+        #{msgMissHandleState,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -657,6 +658,9 @@
       <if test="record.slotHandleUser != null" >
         slot_handle_user = #{record.slotHandleUser,jdbcType=VARCHAR},
       </if>
+      <if test="record.msgMissHandleState != null" >
+        msg_miss_handle_state = #{record.msgMissHandleState,jdbcType=TINYINT},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -712,7 +716,8 @@
     handle_state = #{record.handleState,jdbcType=TINYINT},
     slot_state = #{record.slotState,jdbcType=TINYINT},
     slot_handle_date = #{record.slotHandleDate,jdbcType=TIMESTAMP},
-    slot_handle_user = #{record.slotHandleUser,jdbcType=VARCHAR}
+    slot_handle_user = #{record.slotHandleUser,jdbcType=VARCHAR},
+    msg_miss_handle_state = #{record.msgMissHandleState,jdbcType=TINYINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -864,6 +869,9 @@
       <if test="slotHandleUser != null" >
         slot_handle_user = #{slotHandleUser,jdbcType=VARCHAR},
       </if>
+      <if test="msgMissHandleState != null" >
+        msg_miss_handle_state = #{msgMissHandleState,jdbcType=TINYINT},
+      </if>
     </set>
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
@@ -916,7 +924,8 @@
     handle_state = #{handleState,jdbcType=TINYINT},
     slot_state = #{slotState,jdbcType=TINYINT},
     slot_handle_date = #{slotHandleDate,jdbcType=TIMESTAMP},
-    slot_handle_user = #{slotHandleUser,jdbcType=VARCHAR}
+    slot_handle_user = #{slotHandleUser,jdbcType=VARCHAR},
+    msg_miss_handle_state = #{msgMissHandleState,jdbcType=TINYINT}
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria" id="selectByExampleWithRowbounds" >
