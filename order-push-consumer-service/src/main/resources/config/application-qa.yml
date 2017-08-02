@@ -382,7 +382,7 @@ shangpin:
               confirmOrderUrl: http://tempuri.org/ConfirmOrderWithSku
               cancelOrderUrl: http://tempuri.org/CancelOrderWithSku
               deleteOrderUrl: http://tempuri.org/DeleteOrder
-              strKey: YX123HF
+              strKey: 9317
               isPurchaseExp: no
               openApiKey:
               openApiSecret:

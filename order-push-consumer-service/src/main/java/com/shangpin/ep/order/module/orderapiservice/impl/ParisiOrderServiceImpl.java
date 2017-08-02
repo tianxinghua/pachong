@@ -1,27 +1,26 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
+import com.mongodb.util.JSON;
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
-import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogLeve;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.parisi.OrderOfSupplier;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.spinnaker.ResponseObject;
-import com.shangpin.ep.order.util.httpclient.HttpUtil45;
-import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Component("parisiOrderService")
@@ -45,11 +44,12 @@ public class ParisiOrderServiceImpl implements IOrderService {
 	 */
     @Override
    	public void handleSupplierOrder(OrderDTO orderDTO) {
+    	
+    	createOrder(orderDTO);
+    	
    		orderDTO.setLockStockTime(new Date());
-   		orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
+   		orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
    		orderDTO.setLogContent("");
-
-
    		logCommon.loggerOrder(orderDTO, LogLeve.INFO);
    	}
 
@@ -63,9 +63,12 @@ public class ParisiOrderServiceImpl implements IOrderService {
 
    	@Override
    	public void handleCancelOrder(OrderDTO deleteOrder) {
+   		cancelOrder(deleteOrder);
+   		
    		deleteOrder.setPushStatus(PushStatus.LOCK_CANCELLED);
    		deleteOrder.setCancelTime(new Date());
    		deleteOrder.setLogContent("------取消锁库结束-------");
+   		
    		logCommon.loggerOrder(deleteOrder, LogTypeStatus.LOCK_CANCELLED_LOG);
    	}
 
@@ -88,34 +91,20 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		String[] details = detail.split(":");
 		String skuId = details[0];
 		String qty = details[1];
-		String rtnData = null;
         try {
 
-//            parisiOrderUtil.pushOrder(orderDTO,skuId,qty);
+        	OrderOfSupplier order = parisiOrderUtil.pushOrder(orderDTO,skuId,qty);
+        	orderDTO.setLogContent("退单返回结果==" + order.toString() +",推送参数："+orderDTO.toString());
+            logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 
-            logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-
-            Gson gson = new Gson();
-            ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-            if(null==responseObject.getStatus()){
+            if(order.getOrderDetail().getError()!=null){
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
                 orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
                 orderDTO.setDescription(orderDTO.getLogContent());
-            }else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-                if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-                    orderDTO.setPushStatus(PushStatus.NO_STOCK);
-                    orderDTO.setDescription(orderDTO.getLogContent());
-                }else{
-                    orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                    orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
-                    orderDTO.setDescription(orderDTO.getLogContent());
-                    orderDTO.setLogContent(orderDTO.getLogContent());
-                }
-
-            } else {
+            }else {
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
                 orderDTO.setConfirmTime(new Date());
-                orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
+                orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
             }
         } catch (Exception e) {
             orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -134,34 +123,20 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		String[] details = detail.split(":");
 		String skuId = details[0];
 		String qty = details[1];
-		String rtnData = null;
 		try {
-
-			 rtnData ="";//pozzileiPushOrder(setOrderUrl,orderDTO, map);
+			OrderOfSupplier order = parisiOrderUtil.confirmOrder(orderDTO, skuId, qty);
 
 			 logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+			 orderDTO.setLogContent("退单返回结果==" + order.toString() +",推送参数："+orderDTO.toString());
 			
-			Gson gson = new Gson();
-			ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-			if(null==responseObject.getStatus()){
+			if(order.getOrderDetail().getError()!=null){
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
 				orderDTO.setDescription(orderDTO.getLogContent());
-			}else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-				if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-					orderDTO.setPushStatus(PushStatus.NO_STOCK);
-					orderDTO.setDescription(orderDTO.getLogContent());
-				}else{
-					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-					orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
-					orderDTO.setDescription(orderDTO.getLogContent());
-					orderDTO.setLogContent(orderDTO.getLogContent());
-				}
-
-			} else {
+			}else {
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
 				orderDTO.setConfirmTime(new Date());
-				orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
+				orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
 			}
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -174,39 +149,19 @@ public class ParisiOrderServiceImpl implements IOrderService {
     private void cancelOrder( OrderDTO orderDTO) {
 
         // 获取订单信息
-        String detail = orderDTO.getDetail();
-        String[] details = detail.split(":");
-        String skuId = details[0];
-        String qty = details[1];
-        String rtnData = null;
         try {
-            Map<String, String> map =new HashMap<String, String>();
-
-            rtnData ="";//pozzileiPushOrder(setOrderUrl,orderDTO, map);
-            orderDTO.setLogContent("推送订单返回结果="+rtnData+"推送的订单="+map.toString());
+            OrderOfSupplier order = parisiOrderUtil.cancelOrder(orderDTO);
+            orderDTO.setLogContent("退单返回结果==" + order.toString() +",推送参数："+orderDTO.toString());
             logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 
-            Gson gson = new Gson();
-            ResponseObject responseObject = gson.fromJson(rtnData, ResponseObject.class);
-            if(null==responseObject.getStatus()){
+            if(order.getOrderDetail().getError()!=null){
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
                 orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
                 orderDTO.setDescription(orderDTO.getLogContent());
-            }else if ("ko".equals(responseObject.getStatus().toLowerCase())) {
-                if("0".equals(String.valueOf(responseObject.getId_b2b_order()))||"-1".equals(String.valueOf(responseObject.getId_b2b_order()))){   //无库存
-                    orderDTO.setPushStatus(PushStatus.NO_STOCK);
-                    orderDTO.setDescription(orderDTO.getLogContent());
-                }else{
-                    orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                    orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
-                    orderDTO.setDescription(orderDTO.getLogContent());
-                    orderDTO.setLogContent(orderDTO.getLogContent());
-                }
-
-            } else {
+            }else {
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
                 orderDTO.setConfirmTime(new Date());
-                orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
+                orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
             }
         } catch (Exception e) {
             orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -216,25 +171,18 @@ public class ParisiOrderServiceImpl implements IOrderService {
         }
     }
 
-  	public static void main(String[] args) {
-
-	
-   }
-
 	private void refundlOrder(OrderDTO deleteOrder) {
-		
+		String detail = deleteOrder.getDetail();
+		String[] details = detail.split(":");
+		String skuId = details[0];
 		try{
-			Map<String, String> map =new HashMap<String, String>();
-
 			// 获取退单信息
 			Gson gson = new Gson();
 			try {
-				 String rtnData1 ="";//pozzileiPushOrder(cancelUrl,deleteOrder, map);
-				 deleteOrder.setLogContent("退单返回结果==" + rtnData1+",推送参数："+map.toString());
+				OrderOfSupplier order = parisiOrderUtil.refund(deleteOrder, skuId);
+				deleteOrder.setLogContent("退单返回结果==" + order.toString() +",推送参数："+deleteOrder.toString());
 				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-
-				ResponseObject responseObject = gson.fromJson(rtnData1, ResponseObject.class);
-				if ("OK".equals(responseObject.getStatus())) {
+				if (order.getOrderDetail().getError()==null) {
 					deleteOrder.setRefundTime(new Date());
 					deleteOrder.setPushStatus(PushStatus.REFUNDED);
 				} else {
