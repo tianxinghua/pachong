@@ -80,7 +80,7 @@ public class ProductFetchUtil {
 
         Element  productElement = root.element("Body").element("GetStockWithSkuResponse")
                 .element("GetStockWithSkuResult").element("diffgram")
-                .element("DocumentElement").element("ns_product").element("Stock");
+                .element("DocumentElement").element("Dati").element("Stock");
 
        return  productElement.getStringValue();
 
@@ -92,8 +92,8 @@ public class ProductFetchUtil {
         ProductFetchUtil util = new ProductFetchUtil();
 
 
-        String result ="<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><GetStockWithSkuResponse xmlns=\"http://tempuri.org/\"><GetStockWithSkuResult><xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\"><xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"ns_product\" msdata:UseCurrentLocale=\"true\"><xs:complexType><xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\"><xs:element name=\"ns_product\"><xs:complexType><xs:sequence><xs:element name=\"Stock\" type=\"xs:int\" minOccurs=\"0\" /></xs:sequence></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\"><DocumentElement xmlns=\"\"><ns_product diffgr:id=\"ns_product1\" msdata:rowOrder=\"0\"><Stock>1</Stock></ns_product></DocumentElement></diffgr:diffgram></GetStockWithSkuResult></GetStockWithSkuResponse></soap:Body></soap:Envelope>";
-                //util.getStock("18753-4-OS");
+//        String result ="<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body><GetStockWithSkuResponse xmlns=\"http://tempuri.org/\"><GetStockWithSkuResult><xs:schema id=\"NewDataSet\" xmlns=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\"><xs:element name=\"NewDataSet\" msdata:IsDataSet=\"true\" msdata:MainDataTable=\"ns_product\" msdata:UseCurrentLocale=\"true\"><xs:complexType><xs:choice minOccurs=\"0\" maxOccurs=\"unbounded\"><xs:element name=\"ns_product\"><xs:complexType><xs:sequence><xs:element name=\"Stock\" type=\"xs:int\" minOccurs=\"0\" /></xs:sequence></xs:complexType></xs:element></xs:choice></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata=\"urn:schemas-microsoft-com:xml-msdata\" xmlns:diffgr=\"urn:schemas-microsoft-com:xml-diffgram-v1\"><DocumentElement xmlns=\"\"><ns_product diffgr:id=\"ns_product1\" msdata:rowOrder=\"0\"><Stock>1</Stock></ns_product></DocumentElement></diffgr:diffgram></GetStockWithSkuResult></GetStockWithSkuResponse></soap:Body></soap:Envelope>";
+          String result = util.getProductStock("37372-18-6-9 mth");
         try {
             System.out.println(util.convertStock(result));
         } catch (Exception e) {
