@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.dto.Reasons;
+import com.shangpin.ephub.product.business.ui.pending.service.HubSpuPendingNohandleReasonService;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
@@ -40,6 +42,8 @@ public class PendingProductController {
 	private IPendingProductService pendingProductService;
 	@Autowired
 	private IHubSpuPendingPicService pendingPicService;
+	@Autowired
+	private HubSpuPendingNohandleReasonService reasonService;
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
@@ -113,5 +117,10 @@ public class PendingProductController {
     	}else{
     		return HubResponse.errorResp("更新失败");
     	}
+    }
+    @RequestMapping(value="/unable-reason",method=RequestMethod.POST)
+    public HubResponse<?> unableReason(@RequestBody Reasons reasons){
+    	reasonService.addUnableReason(reasons);
+    	return HubResponse.successResp("ok");
     }
 }
