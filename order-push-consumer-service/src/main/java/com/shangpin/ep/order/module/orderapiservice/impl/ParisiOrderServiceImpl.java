@@ -90,7 +90,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		try {
 
 			OrderOfSupplier order = parisiOrderUtil.pushOrder(orderDTO, skuId, qty);
-			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + orderDTO.toString());
+			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"skuId:"+skuId+"qty:"+qty);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 
 			if (order.getOrderDetail().getError() != null) {
@@ -123,7 +123,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 			OrderOfSupplier order = parisiOrderUtil.confirmOrder(orderDTO, skuId, qty);
 
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + orderDTO.toString());
+			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"PurchaseNo:"+orderDTO.getPurchaseNo()+"skuId:"+skuId+"qty:"+qty);
 
 			if (order.getOrderDetail().getError() != null) {
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -147,20 +147,20 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		// 获取订单信息
 		try {
 			OrderOfSupplier order = parisiOrderUtil.cancelOrder(orderDTO);
-			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + orderDTO.toString());
+			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 
 			if (order.getOrderDetail().getError() != null) {
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+				orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
 				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
 				orderDTO.setDescription(orderDTO.getLogContent());
 			} else {
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+				orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED);
 				orderDTO.setConfirmTime(new Date());
 				orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
 			}
 		} catch (Exception e) {
-			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			orderDTO.setPushStatus(PushStatus.LOCK_CANCELLED_ERROR);
 			orderDTO.setDescription(orderDTO.getLogContent());
 			orderDTO.setLogContent(e.getMessage());
 			handleException.handleException(orderDTO, e);
@@ -175,7 +175,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 			// 获取退单信息
 			try {
 				OrderOfSupplier order = parisiOrderUtil.refund(deleteOrder, skuId);
-				deleteOrder.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + deleteOrder.toString());
+				deleteOrder.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+deleteOrder.getSpOrderId()+"PurchaseNo:"+deleteOrder.getPurchaseNo()+"skuId:"+skuId);
 				logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
 				if (order.getOrderDetail().getError() == null) {
 					deleteOrder.setRefundTime(new Date());
@@ -199,5 +199,15 @@ public class ParisiOrderServiceImpl implements IOrderService {
 			deleteOrder.setLogContent(e.getMessage());
 		}
 	}
+	
+	public static void main(String[] args){
+		ParisiOrderServiceImpl serviceImpl = new ParisiOrderServiceImpl();
+    	OrderDTO orderDTO = new OrderDTO();
+    	orderDTO.setDetail("37372-18-6-9 mth:1");
+    	orderDTO.setSpOrderId("0123456789");
+    	orderDTO.setPurchaseNo("9876543210");
+    	serviceImpl.handleSupplierOrder(orderDTO);
+    	serviceImpl.handleCancelOrder(orderDTO);
+    }
 	
 }
