@@ -247,18 +247,28 @@ public abstract class AbsUpdateProductStock {
 
 
 					if (null!=skuRelationService&&!map.containsKey(ice.SkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
-						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
-						skuRelationDTO.setSupplierId(supplier);
-						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
-						skuRelationDTO.setSopSkuId(ice.SkuNo);
-						skuRelationDTO.setCreateTime(date);
 						try {
-							long startDateSave = System.currentTimeMillis();
-							skuRelationService.saveSkuRelateion(skuRelationDTO);
-							logger.warn("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
-							loggerInfo.info("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
-						} catch (ServiceException e) {
-							logger.error(skuRelationDTO.toString() + "保存失败");
+							SkuRelationDTO skuRelationDto = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplier, ice.SupplierSkuNo);
+							if(skuRelationDto!=null){
+								skuRelationDto.setSopSkuId(ice.SkuNo);
+								skuRelationService.updateSkuRelateion(skuRelationDto);
+							}else{
+								SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+								skuRelationDTO.setSupplierId(supplier);
+								skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
+								skuRelationDTO.setSopSkuId(ice.SkuNo);
+								skuRelationDTO.setCreateTime(date);
+								try {
+									long startDateSave = System.currentTimeMillis();
+									skuRelationService.saveSkuRelateion(skuRelationDTO);
+									logger.warn("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
+									loggerInfo.info("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
+								} catch (ServiceException e) {
+									logger.error(skuRelationDTO.toString() + "保存失败");
+								}
+							}
+						} catch (Exception e2) {
+							logger.error(ice.toString() + "更新失败");
 						}
 					}
 

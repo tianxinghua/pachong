@@ -1,12 +1,7 @@
 package com.shangpin.iog.product.service;
 
-import com.shangpin.framework.ServiceException;
-import com.shangpin.framework.ServiceMessageException;
-import com.shangpin.framework.page.Page;
-import com.shangpin.iog.dto.ProductDTO;
-import com.shangpin.iog.dto.SkuRelationDTO;
-import com.shangpin.iog.product.dao.SkuRelationMapper;
-import com.shangpin.iog.service.SkuRelationService;
+import java.util.List;
+
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.util.List;
+import com.shangpin.framework.ServiceException;
+import com.shangpin.framework.ServiceMessageException;
+import com.shangpin.framework.page.Page;
+import com.shangpin.iog.dto.SkuRelationDTO;
+import com.shangpin.iog.product.dao.SkuRelationMapper;
+import com.shangpin.iog.service.SkuRelationService;
 
 /**
  * Created by loyalty on 15/10/2.
@@ -84,5 +83,10 @@ public class SkuRelationServiceImpl implements SkuRelationService {
             throw new ServiceMessageException("数据插入失败"+e.getMessage());
 
         }
+    }
+    
+    @Override
+    public void updateSkuRelateion(SkuRelationDTO skuRelationDTO) throws Exception {
+        skuRelationDAO.update(skuRelationDTO);
     }
 }
