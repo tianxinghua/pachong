@@ -34,6 +34,13 @@ public class SpuPendingPicVO implements Serializable {
     @JsonProperty("spPicUrl")
     private String spPicUrl;
 
+    /**
+     * 备注
+     *
+     */
+    @JsonProperty("memo")
+    private String memo;
+
 
     @JsonProperty("spuPendingId")
     public Long getSpuPendingId() {
@@ -58,5 +65,14 @@ public class SpuPendingPicVO implements Serializable {
     @JsonProperty("spPicUrl")
     public void setSpPicUrl(String spPicUrl) {
         this.spPicUrl = spPicUrl;
+    }
+
+    @JsonProperty("memo")
+    public String getMemo() {
+        return memo;
+    }
+    @JsonProperty("memo")
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }
