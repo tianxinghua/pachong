@@ -2,15 +2,12 @@ package com.shangpin.ep.order.module.orderapiservice.impl;
 
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.Gson;
-import com.mongodb.util.JSON;
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
@@ -20,7 +17,6 @@ import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.parisi.OrderOfSupplier;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.spinnaker.ResponseObject;
 
 
 @Component("parisiOrderService")
@@ -84,39 +80,39 @@ public class ParisiOrderServiceImpl implements IOrderService {
    		return null;
    	}
 
-    private void createOrder( OrderDTO orderDTO) {
+	private void createOrder(OrderDTO orderDTO) {
 
 		// 获取订单信息
 		String detail = orderDTO.getDetail();
 		String[] details = detail.split(":");
 		String skuId = details[0];
 		String qty = details[1];
-        try {
+		try {
 
-        	OrderOfSupplier order = parisiOrderUtil.pushOrder(orderDTO,skuId,qty);
-        	orderDTO.setLogContent("退单返回结果==" + order.toString() +",推送参数："+orderDTO.toString());
-            logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
+			OrderOfSupplier order = parisiOrderUtil.pushOrder(orderDTO, skuId, qty);
+			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + orderDTO.toString());
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 
-            if(order.getOrderDetail().getError()!=null){
-                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
-                orderDTO.setDescription(orderDTO.getLogContent());
-            }else {
-                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
-                orderDTO.setConfirmTime(new Date());
-                orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
-            }
-        } catch (Exception e) {
-            orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-            orderDTO.setDescription(orderDTO.getLogContent());
-            orderDTO.setLogContent(e.getMessage());
-            handleException.handleException(orderDTO,e);
-        }
-    }
+			if (order.getOrderDetail().getError() != null) {
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+				orderDTO.setDescription(orderDTO.getLogContent());
+			} else {
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+				orderDTO.setConfirmTime(new Date());
+				orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
+			}
+		} catch (Exception e) {
+			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			orderDTO.setDescription(orderDTO.getLogContent());
+			orderDTO.setLogContent(e.getMessage());
+			handleException.handleException(orderDTO, e);
+		}
+	}
 
 
 
-   	private void confirmOrder( OrderDTO orderDTO) {
+	private void confirmOrder(OrderDTO orderDTO) {
 
 		// 获取订单信息
 		String detail = orderDTO.getDetail();
@@ -126,63 +122,62 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		try {
 			OrderOfSupplier order = parisiOrderUtil.confirmOrder(orderDTO, skuId, qty);
 
-			 logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			 orderDTO.setLogContent("退单返回结果==" + order.toString() +",推送参数："+orderDTO.toString());
-			
-			if(order.getOrderDetail().getError()!=null){
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + orderDTO.toString());
+
+			if (order.getOrderDetail().getError() != null) {
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
 				orderDTO.setDescription(orderDTO.getLogContent());
-			}else {
+			} else {
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
 				orderDTO.setConfirmTime(new Date());
 				orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
 			}
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-			orderDTO.setDescription(orderDTO.getLogContent());	
+			orderDTO.setDescription(orderDTO.getLogContent());
 			orderDTO.setLogContent(e.getMessage());
-			handleException.handleException(orderDTO,e);
+			handleException.handleException(orderDTO, e);
 		}
 	}
 
-    private void cancelOrder( OrderDTO orderDTO) {
+	private void cancelOrder(OrderDTO orderDTO) {
 
-        // 获取订单信息
-        try {
-            OrderOfSupplier order = parisiOrderUtil.cancelOrder(orderDTO);
-            orderDTO.setLogContent("退单返回结果==" + order.toString() +",推送参数："+orderDTO.toString());
-            logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+		// 获取订单信息
+		try {
+			OrderOfSupplier order = parisiOrderUtil.cancelOrder(orderDTO);
+			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + orderDTO.toString());
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 
-            if(order.getOrderDetail().getError()!=null){
-                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
-                orderDTO.setDescription(orderDTO.getLogContent());
-            }else {
-                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
-                orderDTO.setConfirmTime(new Date());
-                orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
-            }
-        } catch (Exception e) {
-            orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-            orderDTO.setDescription(orderDTO.getLogContent());
-            orderDTO.setLogContent(e.getMessage());
-            handleException.handleException(orderDTO,e);
-        }
-    }
+			if (order.getOrderDetail().getError() != null) {
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+				orderDTO.setDescription(orderDTO.getLogContent());
+			} else {
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+				orderDTO.setConfirmTime(new Date());
+				orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
+			}
+		} catch (Exception e) {
+			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			orderDTO.setDescription(orderDTO.getLogContent());
+			orderDTO.setLogContent(e.getMessage());
+			handleException.handleException(orderDTO, e);
+		}
+	}
 
 	private void refundlOrder(OrderDTO deleteOrder) {
 		String detail = deleteOrder.getDetail();
 		String[] details = detail.split(":");
 		String skuId = details[0];
-		try{
+		try {
 			// 获取退单信息
-			Gson gson = new Gson();
 			try {
 				OrderOfSupplier order = parisiOrderUtil.refund(deleteOrder, skuId);
-				deleteOrder.setLogContent("退单返回结果==" + order.toString() +",推送参数："+deleteOrder.toString());
-				 logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
-				if (order.getOrderDetail().getError()==null) {
+				deleteOrder.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + deleteOrder.toString());
+				logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
+				if (order.getOrderDetail().getError() == null) {
 					deleteOrder.setRefundTime(new Date());
 					deleteOrder.setPushStatus(PushStatus.REFUNDED);
 				} else {
@@ -197,7 +192,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 				deleteOrder.setDescription(deleteOrder.getLogContent());
 				deleteOrder.setLogContent(e.getMessage());
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 			deleteOrder.setErrorType(ErrorStatus.NETWORK_ERROR);
 			deleteOrder.setDescription(e.getMessage());

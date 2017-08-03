@@ -51,14 +51,14 @@ public class ParisiOrderUtil  {
     }
 
     public OrderOfSupplier pushOrder(OrderDTO orderDTO ,String sku, String  quantity){
-
+    	String order_no = orderDTO.getSpOrderId();
         String request="<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
                 "  <soap12:Body>\n" +
                 "    <PutOrderWithSku xmlns=\"http://tempuri.org/\">\n" +
-                "      <order_no>201703010001</order_no>\n" +
-                "      <sku>18753-4-OS</sku>\n" +
-                "      <quantity>1</quantity>\n" +
+                "      <order_no>"+order_no+"</order_no>\n" +
+                "      <sku>"+sku+"</sku>\n" +
+                "      <quantity>"+quantity+"</quantity>\n" +
                 "      <strKey>"+strKey+"</strKey>\n" +
                 "    </PutOrderWithSku>\n" +
                 "  </soap12:Body>\n" +
