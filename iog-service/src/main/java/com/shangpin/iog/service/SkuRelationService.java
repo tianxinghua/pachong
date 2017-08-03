@@ -1,11 +1,10 @@
 package com.shangpin.iog.service;
 
+import java.util.List;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.SkuRelationDTO;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by loyalty on 15/10/2.
@@ -64,6 +63,12 @@ public interface SkuRelationService {
      * @throws ServiceException
      */
     public void saveSkuRelateion(SkuRelationDTO skuRelationDTO) throws ServiceException;
+    /**
+     * 更新SKU关系对照对象
+     * @param skuRelationDTO
+     * @throws ServiceException
+     */
+    public void updateSkuRelateion(SkuRelationDTO skuRelationDTO) throws Exception;
 
 
 
