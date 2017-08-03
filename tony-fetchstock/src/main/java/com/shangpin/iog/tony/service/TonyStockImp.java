@@ -1,11 +1,6 @@
 package com.shangpin.iog.tony.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import com.shangpin.iog.service.SpecialSkuService;
 import org.apache.log4j.Logger;
@@ -148,8 +143,10 @@ public class TonyStockImp {
             UpdateProductSock updateProductSock = new UpdateProductSock();
             Map<String,String> skuRelationMap = new HashMap<>();
             String supplierSkuNO = "";
-            for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
-                supplierSkuNO = itor.next();
+            Set<String> itorKey = stockMap.keySet();
+            List<String> listKey = new ArrayList<String>(itorKey);
+            for(int i=0;i<listKey.size();i++){
+                supplierSkuNO = listKey.get(i);
 
                 try {
                     if(specialSkuService.checkBySupplierIdAndSkuId(SUPPLIER_ID,supplierSkuNO)) {
@@ -168,6 +165,8 @@ public class TonyStockImp {
                     e.printStackTrace();
                 }
             }
+
+
 
             updateProductSock.updateStock(stockMap,skuRelationMap,SUPPLIER_ID);
         } catch (Exception e) {
