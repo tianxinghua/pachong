@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.schedule.service.price;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,9 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRe
 @Component
 public class PricePushDataService {
 	
-	private static String pattern = "yyyy-MM-dd HH:mm:ss";
+	private static String pattern = "yyyy-MM-dd";
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	private SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
     @Autowired
     HubSupplierPriceChangeRecordGateWay priceChangeRecordGateWay;
@@ -31,11 +34,17 @@ public class PricePushDataService {
      * @return
      */
     public List<HubSupplierPriceChangeRecordDto>  findPushMqErrorRecordList() throws Exception{
-		String source = "2017-05-20 00:00:00";
-		Date start = new SimpleDateFormat(pattern).parse(source);
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date()); 
+		c.add(Calendar.DAY_OF_MONTH, -1);
+		Date start = sdformat.parse(sdf.format(c.getTime())+" 00:00:00");
+		Date end = sdformat.parse(sdf.format(c.getTime())+" 23:59:59");
+		List<Byte> list = new ArrayList<>();
+		list.add((byte) 2);
+		list.add((byte) 6);
         HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
         criteriaDto.setOrderByClause(" create_time desc ");
-        criteriaDto.createCriteria().andStateEqualTo(PriceHandleState.PUSHED_ERROR.getIndex()).andMarketSeasonIsNotNull().andCreateTimeGreaterThanOrEqualTo(start); 
+        criteriaDto.createCriteria().andStateIn(list).andMarketSeasonIsNotNull().andCreateTimeGreaterThanOrEqualTo(start).andCreateTimeLessThanOrEqualTo(end); 
         List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteriaDto);
         Map<String,String> priceChangeMap = new HashMap<>();
         for(int i= 0 ;i<hubSupplierPriceChangeRecordDtos.size();i++){
