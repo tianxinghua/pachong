@@ -11,7 +11,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
@@ -22,10 +21,6 @@ import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRe
 @Component
 public class PricePushDataService {
 	
-	private static String pattern = "yyyy-MM-dd";
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	private SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
     @Autowired
     HubSupplierPriceChangeRecordGateWay priceChangeRecordGateWay;
 
@@ -34,6 +29,8 @@ public class PricePushDataService {
      * @return
      */
     public List<HubSupplierPriceChangeRecordDto>  findPushMqErrorRecordList() throws Exception{
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.setTime(new Date()); 
 		c.add(Calendar.DAY_OF_MONTH, -1);
