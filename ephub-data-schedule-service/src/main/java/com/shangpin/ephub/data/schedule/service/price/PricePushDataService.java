@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
@@ -37,8 +38,8 @@ public class PricePushDataService {
 		Date start = sdformat.parse(sdf.format(c.getTime())+" 00:00:00");
 		Date end = sdformat.parse(sdf.format(c.getTime())+" 23:59:59");
 		List<Byte> list = new ArrayList<>();
-		list.add((byte) 2);
-		list.add((byte) 6);
+		list.add(PriceHandleState.PUSHED_ERROR.getIndex());
+		list.add(PriceHandleState.PUSHED_OPENAPI_ERROR.getIndex());
         HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
         criteriaDto.setOrderByClause(" create_time desc ");
         criteriaDto.createCriteria().andStateIn(list).andMarketSeasonIsNotNull().andCreateTimeGreaterThanOrEqualTo(start).andCreateTimeLessThanOrEqualTo(end); 
