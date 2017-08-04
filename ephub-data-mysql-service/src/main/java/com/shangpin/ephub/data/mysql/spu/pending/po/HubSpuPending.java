@@ -55,7 +55,7 @@ public class HubSpuPending implements Serializable {
     private String hubSeason;
 
     /**
-     * =0 信息待完善 =1 信息已完善 待处理 2 已处理
+     * =0 信息待完善 =1 信息已完善 待处理 2 已处理 3:无法处理 4:过滤不处理 5: 审核中  16:SPU下所有的SKU都在尚品已生成
      */
     private Byte spuState;
 
@@ -207,6 +207,11 @@ public class HubSpuPending implements Serializable {
     private Date slotHandleDate;
 
     private String slotHandleUser;
+
+    /**
+     * 信息确实处理标记  1：已通知
+     */
+    private Byte msgMissHandleState;
 
     private static final long serialVersionUID = 1L;
 
@@ -602,6 +607,14 @@ public class HubSpuPending implements Serializable {
         this.slotHandleUser = slotHandleUser == null ? null : slotHandleUser.trim();
     }
 
+    public Byte getMsgMissHandleState() {
+        return msgMissHandleState;
+    }
+
+    public void setMsgMissHandleState(Byte msgMissHandleState) {
+        this.msgMissHandleState = msgMissHandleState;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -657,6 +670,7 @@ public class HubSpuPending implements Serializable {
         sb.append(", slotState=").append(slotState);
         sb.append(", slotHandleDate=").append(slotHandleDate);
         sb.append(", slotHandleUser=").append(slotHandleUser);
+        sb.append(", msgMissHandleState=").append(msgMissHandleState);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -722,7 +736,8 @@ public class HubSpuPending implements Serializable {
             && (this.getHandleState() == null ? other.getHandleState() == null : this.getHandleState().equals(other.getHandleState()))
             && (this.getSlotState() == null ? other.getSlotState() == null : this.getSlotState().equals(other.getSlotState()))
             && (this.getSlotHandleDate() == null ? other.getSlotHandleDate() == null : this.getSlotHandleDate().equals(other.getSlotHandleDate()))
-            && (this.getSlotHandleUser() == null ? other.getSlotHandleUser() == null : this.getSlotHandleUser().equals(other.getSlotHandleUser()));
+            && (this.getSlotHandleUser() == null ? other.getSlotHandleUser() == null : this.getSlotHandleUser().equals(other.getSlotHandleUser()))
+            && (this.getMsgMissHandleState() == null ? other.getMsgMissHandleState() == null : this.getMsgMissHandleState().equals(other.getMsgMissHandleState()));
     }
 
     @Override
@@ -778,6 +793,7 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getSlotState() == null) ? 0 : getSlotState().hashCode());
         result = prime * result + ((getSlotHandleDate() == null) ? 0 : getSlotHandleDate().hashCode());
         result = prime * result + ((getSlotHandleUser() == null) ? 0 : getSlotHandleUser().hashCode());
+        result = prime * result + ((getMsgMissHandleState() == null) ? 0 : getMsgMissHandleState().hashCode());
         return result;
     }
 }

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.spu.pendingnohand.mapper.HubSpuPendingNohandleReasonMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReason" >
+    <id column="spu_pending_nohandle_reason_id" property="spuPendingNohandleReasonId" jdbcType="BIGINT" />
+    <result column="spu_pending_id" property="spuPendingId" jdbcType="BIGINT" />
+    <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="error_type" property="errorType" jdbcType="TINYINT" />
+    <result column="error_reason" property="errorReason" jdbcType="TINYINT" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      spu_pending_nohandle_reason_id, spu_pending_id, supplier_spu_id, supplier_no, supplier_id, 
+      error_type, error_reason, create_user, create_time, data_state
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReasonCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_spu_pending_nohandle_reason
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    spu_pending_nohandle_reason_id,spu_pending_id,supplier_spu_id,supplier_no,supplier_id,error_type,error_reason,create_user,create_time,data_state
+    from hub_spu_pending_nohandle_reason
+    where spu_pending_nohandle_reason_id = #{spuPendingNohandleReasonId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from hub_spu_pending_nohandle_reason
+    where spu_pending_nohandle_reason_id = #{spuPendingNohandleReasonId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReasonCriteria" >
+    delete from hub_spu_pending_nohandle_reason
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReason" >
+    <selectKey keyColumn="spu_pending_nohandle_reason_id" keyProperty="spuPendingNohandleReasonId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS spu_pending_nohandle_reason_id
+    </selectKey>
+    insert into hub_spu_pending_nohandle_reason (spu_pending_nohandle_reason_id, spu_pending_id, 
+      supplier_spu_id, supplier_no, supplier_id, 
+      error_type, error_reason, create_user, 
+      create_time, data_state)
+    values (#{spuPendingNohandleReasonId,jdbcType=BIGINT}, #{spuPendingId,jdbcType=BIGINT}, 
+      #{supplierSpuId,jdbcType=BIGINT}, #{supplierNo,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, 
+      #{errorType,jdbcType=TINYINT}, #{errorReason,jdbcType=TINYINT}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{dataState,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReason" >
+    <selectKey keyColumn="spu_pending_nohandle_reason_id" keyProperty="spuPendingNohandleReasonId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS spu_pending_nohandle_reason_id
+    </selectKey>
+    insert into hub_spu_pending_nohandle_reason
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="spuPendingNohandleReasonId != null" >
+        spu_pending_nohandle_reason_id,
+      </if>
+      <if test="spuPendingId != null" >
+        spu_pending_id,
+      </if>
+      <if test="supplierSpuId != null" >
+        supplier_spu_id,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="errorType != null" >
+        error_type,
+      </if>
+      <if test="errorReason != null" >
+        error_reason,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="dataState != null" >
+        data_state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="spuPendingNohandleReasonId != null" >
+        #{spuPendingNohandleReasonId,jdbcType=BIGINT},
+      </if>
+      <if test="spuPendingId != null" >
+        #{spuPendingId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierSpuId != null" >
+        #{supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="errorType != null" >
+        #{errorType,jdbcType=TINYINT},
+      </if>
+      <if test="errorReason != null" >
+        #{errorReason,jdbcType=TINYINT},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataState != null" >
+        #{dataState,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReasonCriteria" resultType="java.lang.Integer" >
+    select count(*) from hub_spu_pending_nohandle_reason
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update hub_spu_pending_nohandle_reason
+    <set >
+      <if test="record.spuPendingNohandleReasonId != null" >
+        spu_pending_nohandle_reason_id = #{record.spuPendingNohandleReasonId,jdbcType=BIGINT},
+      </if>
+      <if test="record.spuPendingId != null" >
+        spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierSpuId != null" >
+        supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierId != null" >
+        supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.errorType != null" >
+        error_type = #{record.errorType,jdbcType=TINYINT},
+      </if>
+      <if test="record.errorReason != null" >
+        error_reason = #{record.errorReason,jdbcType=TINYINT},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.dataState != null" >
+        data_state = #{record.dataState,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update hub_spu_pending_nohandle_reason
+    set spu_pending_nohandle_reason_id = #{record.spuPendingNohandleReasonId,jdbcType=BIGINT},
+      spu_pending_id = #{record.spuPendingId,jdbcType=BIGINT},
+      supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+      error_type = #{record.errorType,jdbcType=TINYINT},
+      error_reason = #{record.errorReason,jdbcType=TINYINT},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      data_state = #{record.dataState,jdbcType=TINYINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReason" >
+    update hub_spu_pending_nohandle_reason
+    <set >
+      <if test="spuPendingId != null" >
+        spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierSpuId != null" >
+        supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="errorType != null" >
+        error_type = #{errorType,jdbcType=TINYINT},
+      </if>
+      <if test="errorReason != null" >
+        error_reason = #{errorReason,jdbcType=TINYINT},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataState != null" >
+        data_state = #{dataState,jdbcType=TINYINT},
+      </if>
+    </set>
+    where spu_pending_nohandle_reason_id = #{spuPendingNohandleReasonId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReason" >
+    update hub_spu_pending_nohandle_reason
+    set spu_pending_id = #{spuPendingId,jdbcType=BIGINT},
+      supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      error_type = #{errorType,jdbcType=TINYINT},
+      error_reason = #{errorReason,jdbcType=TINYINT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      data_state = #{dataState,jdbcType=TINYINT}
+    where spu_pending_nohandle_reason_id = #{spuPendingNohandleReasonId,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.pendingnohand.po.HubSpuPendingNohandleReasonCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from hub_spu_pending_nohandle_reason
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

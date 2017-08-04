@@ -30,5 +30,9 @@ public class SpuPendingPicDto implements Serializable {
      * 尚品的图片链接
      */
     private String spPicUrl;
+    /**
+     * 备注
+     */
+    private String memo;
 
 }

@@ -41,15 +41,15 @@ public class ProductScheduler {
 	}
 
 
-//	@Scheduled(cron = "00 03 11 * * ?")
-//	public void pricePush() {
-//		try {
-//			log.info("===========任务开始============"); 
-//			pricePushService.handleErrorPush();
-//		} catch (Exception e) {
-//			log.error("重推价格服务异常："+e.getMessage(),e);
-//		}
-//	}
+	@Scheduled(cron = "00 03 11 * * ?")
+	public void pricePush() {
+		try {
+			log.info("===========任务开始============"); 
+			pricePushService.handleErrorPush();
+		} catch (Exception e) {
+			log.error("重推价格服务异常："+e.getMessage(),e);
+		}
+	}
 	
 	/**
 	 * 检测产品拉去

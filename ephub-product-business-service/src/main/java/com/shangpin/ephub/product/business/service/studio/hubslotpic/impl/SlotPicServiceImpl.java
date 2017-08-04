@@ -77,4 +77,25 @@ public class SlotPicServiceImpl implements SlotPicService {
 
         return null;
     }
+
+    @Override
+    public Map<String, List<HubSlotSpuPicDto>> findShootPic(Long slotSpuId) {
+        HubSlotSpuPicCriteriaDto picCriteria = new HubSlotSpuPicCriteriaDto();
+        picCriteria.createCriteria().andSlotSpuIdEqualTo(slotSpuId);
+        List<HubSlotSpuPicDto> hubSlotSpuPicDtos = picGateway.selectByCriteria(picCriteria);
+        Map<String,List<HubSlotSpuPicDto>>  suppliericMap = new HashMap<>();
+        for(HubSlotSpuPicDto slotSpuPicDto:hubSlotSpuPicDtos){
+            if(suppliericMap.containsKey(slotSpuPicDto.getSupplierId())){
+                suppliericMap.get(slotSpuPicDto.getSupplierId()).add(slotSpuPicDto);
+            }else{
+                List<HubSlotSpuPicDto> slotSpuPics = new ArrayList<>();
+                slotSpuPics.add(slotSpuPicDto);
+                suppliericMap.put(slotSpuPicDto.getSupplierId(),slotSpuPics);
+            }
+
+        }
+        return  suppliericMap;
+    }
+
+
 }

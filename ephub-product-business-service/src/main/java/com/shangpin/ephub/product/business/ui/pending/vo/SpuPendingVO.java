@@ -27,6 +27,13 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
     @JsonProperty("isDefaultSupplier")
     private Boolean isDefaultSupplier;
 
+    private Boolean isHaveHubSpu;
+
+    private  Boolean isHaveShootPic;
+
+
+
+
     /**
      * 供货商图片信息
      */
@@ -49,5 +56,24 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
     @JsonProperty("picVOs")
     public void setPicVOs(List<SpuPendingPicVO> picVOs) {
         this.picVOs = picVOs;
+    }
+
+
+    @JsonProperty("isHaveHubSpu")
+    public Boolean getHaveHubSpu() {
+        return isHaveHubSpu;
+    }
+    @JsonProperty("isHaveHubSpu")
+    public void setHaveHubSpu(Boolean haveHubSpu) {
+        isHaveHubSpu = haveHubSpu;
+    }
+
+    @JsonProperty("isHaveShootPic")
+    public Boolean getHaveShootPic() {
+        return isHaveShootPic;
+    }
+    @JsonProperty("isHaveShootPic")
+    public void setHaveShootPic(Boolean haveShootPic) {
+        isHaveShootPic = haveShootPic;
     }
 }

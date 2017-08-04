@@ -14,7 +14,8 @@ public enum SupplierSelectState {
 	SELECTED(2,"已选品"),
 	WAIT_SCM_AUDIT(3,"待SCM审核"),
 	SELECTE_FAIL(4,"选品失败"),
-    EXIST(5,"商品已存在");
+    EXIST(5,"商品已存在"),
+    DATA_ERROR(6,"同一供货商不同尺码HUB_SKU_NO相同");
 	/**
      * 数字索引标识
      */
