@@ -119,6 +119,13 @@ public class PendingSpuImportService {
 		return taskService.convertExcel(listMap, taskNo);
 	}
 	private boolean filterSpu(HubPendingSpuImportDTO product,String createUser,Map<String, String> map) {
+		/**
+		 * 首先添加无法处理原因
+		 */
+		insertNohandleReason(product,createUser);
+		/**
+		 * 再设置数据状态
+		 */
 		if(StringUtils.isNotBlank(product.getFilter())&&product.getFilter().trim().equals("排除")){
 			HubSpuPendingWithCriteriaDto croteria = new HubSpuPendingWithCriteriaDto();
 			HubSpuPendingDto hubPendingSpuDto = new HubSpuPendingDto();
@@ -137,6 +144,13 @@ public class PendingSpuImportService {
 		}
 		return false;
 	}
+	
+	private void insertNohandleReason(HubPendingSpuImportDTO product,String createUser){
+		if(StringUtils.isNotBlank(product.getReason1()) || StringUtils.isNotBlank(product.getReason2()) || StringUtils.isNotBlank(product.getReason3()) || StringUtils.isNotBlank(product.getReason4())){
+			
+		}
+	}
+	
 	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO product,String createUser) throws Exception{
 		
 		//excel数据转换为数据库对象
