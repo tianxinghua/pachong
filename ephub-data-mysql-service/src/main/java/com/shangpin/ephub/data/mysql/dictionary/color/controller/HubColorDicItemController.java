@@ -35,8 +35,8 @@ public class HubColorDicItemController {
     public int deleteByCriteria(@RequestBody HubColorDicItemCriteria criteria){
     	return hubColorDicItemService.deleteByCriteria(criteria);
     }
-	@RequestMapping(value = "/delete-by-primary-key")
-    public int deleteByPrimaryKey(Long colorDicItemId){
+	@RequestMapping(value = "/delete-by-primary-key/{colorDicItemId}")
+    public int deleteByPrimaryKey(@PathVariable("colorDicItemId") Long colorDicItemId){
     	return hubColorDicItemService.deleteByPrimaryKey(colorDicItemId);
     }
 	@RequestMapping(value = "/insert")
