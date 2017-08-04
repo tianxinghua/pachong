@@ -48,7 +48,7 @@ public enum ErrorReason {
     ErrorReason(byte index,String desEn,String desCh,ErrorType errorType){
 		this.index = index;
 		this.desEn = desEn;
-		this.desEn = desCh;
+		this.desCh = desCh;
 		this.errorType = errorType;
 	}
     public byte getIndex() {
