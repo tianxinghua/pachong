@@ -24,26 +24,6 @@ public class ExcelDropdown {
 			ErrorReason.CHILD_ADULT_INVERSION.getDesCh(),ErrorReason.MAN_WOMAN_INVERSION.getDesCh(),ErrorReason.WRONG_MAPPING_OF_CODE.getDesCh(),
 			ErrorReason.DIFFERENT_SPU_TO_SAME_ITEM_CODE.getDesCh(),ErrorReason.WRONG_SIZE.getDesCh()};
 
-//	public static void main(String[] args) {
-//		Workbook wb = new HSSFWorkbook();
-//		Sheet sheet = wb.createSheet("测试");
-//		sheet.setColumnWidth(0, 20*300);
-//		Row row = sheet.createRow(0);
-//		Cell cell = row.createCell(0);
-//		cell.setCellValue("无法处理原因");
-//		creatExcelHidePage(wb);
-//		
-//		setDataValidation(sheet.createRow(1),0);
-//		FileOutputStream fileOut;
-//		try {
-//			fileOut = new FileOutputStream("d://excel_danborusu1_1.xls");
-//			wb.write(fileOut);
-//			fileOut.close();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
 	public static void creatExcelHidePage(Workbook workbook) {
 		Sheet hideInfoSheet = workbook.createSheet(EXCEL_HIDE_SHEET_NAME);// 隐藏一些信息
 		// 在隐藏页设置选择信息
