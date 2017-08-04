@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
@@ -33,7 +31,6 @@ import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDic
 import com.shangpin.ephub.product.business.ui.mapp.color.dto.HubSupplierColorDicResponseWithPageDto;
 import com.shangpin.ephub.product.business.ui.task.common.service.TaskImportService;
 import com.shangpin.ephub.response.HubResponse;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -55,6 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/hub-supplier-color-dic")
 @Slf4j
 public class HubSupplierColorDicController {
+	
 	@Autowired
 	TaskImportService taskImportService;
 	@Autowired
@@ -77,9 +75,8 @@ public class HubSupplierColorDicController {
 			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
 				hubSupplierColorDicRequestDto.setColorDicId(HubColorDic.getHubColorId(hubSupplierColorDicRequestDto.getHubColor()));
 			}
-			byte type = hubSupplierColorDicRequestDto.getType();
 //			if(type==0){
-				total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
+			total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
 //			}else if(type==1){
 //				total = HubColorDic.getHubColorMap().size();
 //			}
@@ -167,7 +164,6 @@ public class HubSupplierColorDicController {
 
 	/**
 	 * 导出查询商品
-	 * 
 	 * @param dto
 	 * @return
 	 */
@@ -238,7 +234,6 @@ public class HubSupplierColorDicController {
 		return HubResponse.errorResp("刷新异常");
 	}
 	
-	
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
 	public HubResponse deleteHubSupplierCateoryDetail(@PathVariable("id") Long id) {
 		try {
@@ -253,5 +248,4 @@ public class HubSupplierColorDicController {
 			return HubResponse.errorResp("获取列表失败");
 		}
 	}
-
 }
