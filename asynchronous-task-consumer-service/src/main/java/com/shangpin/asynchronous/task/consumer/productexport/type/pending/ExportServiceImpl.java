@@ -102,7 +102,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class ExportServiceImpl {
-
+	
 	private static String comma = ",";
 	@Autowired
 	private FtpProperties ftpProperties;
@@ -521,6 +521,9 @@ public class ExportServiceImpl {
 					}
 				} else if("productInfoUrl".equals(rowTemplate[i])){
 					row.createCell(i).setCellValue(apiAddressProperties.getPendingProductInfoUrl()+product.getSpuPendingId());
+				} else if(rowTemplate[i].startsWith("reason")){
+					
+					
 				} else {
 					if ("specificationType".equals(rowTemplate[i])) {
 						continue;

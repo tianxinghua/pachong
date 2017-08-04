@@ -163,9 +163,11 @@ public class AntonacciOrderImpl implements IOrderService {
 			if (HttpUtil45.errorResult.equals(rtnData)) {
 				orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
 				setType(orderDTO, type, uuid, "ERROR");
+			}else{
+				ResponseObject respon = gson.fromJson(rtnData, ResponseObject.class);
+				setType(orderDTO, type, uuid, respon.getStatus());
 			}
-			ResponseObject respon = gson.fromJson(rtnData, ResponseObject.class);
-			setType(orderDTO, type, uuid, respon.getStatus());
+			
 		} catch (Exception e) {
 			orderDTO.setLogContent(uri + "," + type + "推送订单返回结果==" + e.getMessage());
 			setType(orderDTO, type, uuid, "ERROR");
