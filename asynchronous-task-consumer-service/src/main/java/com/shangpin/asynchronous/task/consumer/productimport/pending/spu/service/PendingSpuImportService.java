@@ -14,6 +14,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.shangpin.asynchronous.task.consumer.productimport.common.service.Data
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
@@ -32,6 +34,8 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
+import com.shangpin.ephub.client.product.business.hubpending.spu.dto.NohandleReason;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubNohandleReasonGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
 
@@ -60,6 +64,8 @@ public class PendingSpuImportService {
 	DataHandleService dataHandleService;
 	@Autowired
 	TaskImportService taskService;
+	@Autowired
+	HubNohandleReasonGateWay nohandleGateWay;
 
 	private static String[] pendingSpuValueTemplate = null;
 	static {
@@ -122,13 +128,16 @@ public class PendingSpuImportService {
 		/**
 		 * 首先添加无法处理原因
 		 */
-		insertNohandleReason(product,createUser);
+		boolean insertReason = insertNohandleReason(product,createUser);
 		/**
 		 * 再设置数据状态
 		 */
 		if(StringUtils.isNotBlank(product.getFilter())&&product.getFilter().trim().equals("排除")){
 			HubSpuPendingWithCriteriaDto croteria = new HubSpuPendingWithCriteriaDto();
 			HubSpuPendingDto hubPendingSpuDto = new HubSpuPendingDto();
+			if(insertReason){
+				hubPendingSpuDto.setMsgMissHandleState(MsgMissHandleState.HAVE_HANDLED.getIndex());
+			}
 			hubPendingSpuDto.setSpuState((byte)4);
 			hubPendingSpuDto.setMemo("spu导入人工排除");
 			hubPendingSpuDto.setUpdateUser(createUser);
@@ -141,13 +150,44 @@ public class PendingSpuImportService {
 			map.put("processInfo", "人工排除");
 			hubSpuPendingGateWay.updateByCriteriaSelective(croteria);
 			return true;
+		}else{
+			if(insertReason){
+				HubSpuPendingWithCriteriaDto croteria = new HubSpuPendingWithCriteriaDto();
+				HubSpuPendingDto hubPendingSpuDto = new HubSpuPendingDto();
+				hubPendingSpuDto.setMsgMissHandleState(MsgMissHandleState.HAVE_HANDLED.getIndex());
+				hubPendingSpuDto.setUpdateUser(createUser);
+				hubPendingSpuDto.setUpdateTime(new Date());
+				HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+				criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuNoEqualTo(product.getSupplierSpuNo());
+				croteria.setCriteria(criteria);
+				croteria.setHubSpuPending(hubPendingSpuDto);
+				hubSpuPendingGateWay.updateByCriteriaSelective(croteria);
+			}
 		}
 		return false;
 	}
 	
-	private void insertNohandleReason(HubPendingSpuImportDTO product,String createUser){
+	private boolean insertNohandleReason(HubPendingSpuImportDTO product,String createUser){
 		if(StringUtils.isNotBlank(product.getReason1()) || StringUtils.isNotBlank(product.getReason2()) || StringUtils.isNotBlank(product.getReason3()) || StringUtils.isNotBlank(product.getReason4())){
-			
+			NohandleReason nohandleReason = new NohandleReason();
+			nohandleReason.setSupplierId(product.getSupplierId());
+			nohandleReason.setSupplierSpuNo(product.getSupplierSpuNo());
+			nohandleReason.setCreateUser(createUser); 
+			List<String> reasons = Lists.newArrayList();
+			add(reasons,product.getReason1());
+			add(reasons,product.getReason2());
+			add(reasons,product.getReason3());
+			add(reasons,product.getReason4());
+			nohandleReason.setReasons(reasons);
+			return nohandleGateWay.insertNohandleReason(nohandleReason);
+		}else{
+			return false;
+		}
+	}
+	
+	private void add(List<String> reasons, String e){
+		if(StringUtils.isNotBlank(e)){
+			reasons.add(e);
 		}
 	}
 	
