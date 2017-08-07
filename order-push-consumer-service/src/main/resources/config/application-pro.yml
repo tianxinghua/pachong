@@ -458,6 +458,7 @@ shangpin:
                   cancelOrderUrl: http://tempuri.org/CancelOrderWithSku
                   deleteOrderUrl: http://tempuri.org/DeleteOrder
                   strKey: 9317
+                  strPassword: FYI
                   isPurchaseExp: no
                   openApiKey:
                   openApiSecret:

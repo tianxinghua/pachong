@@ -379,7 +379,7 @@ public class PendingHandler extends VariableInit {
 	private boolean checkSpuPendingIsRefresh(HubSpuPendingDto spuPendingDto){
 		
 		if (null != spuPendingDto&&(spuPendingDto.getSpuState() != null
-				&& (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_HANDLE.getIndex()))) {
+				&& (spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_WAIT_HANDLE.getIndex()||spuPendingDto.getSpuState().intValue() == SpuStatus.SPU_FILTER.getIndex()))) {
 			return true;
 		} 
 		return false;

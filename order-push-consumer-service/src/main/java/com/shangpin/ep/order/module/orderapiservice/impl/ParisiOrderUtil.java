@@ -37,23 +37,26 @@ public class ParisiOrderUtil  {
     private String confirmOrderUrl = null;
     private String deleteOrderUrl = null;
     private String strKey = null;
+    private String strPassword = null;
     @Autowired
     SupplierProperties supplierProperties;
 
     @PostConstruct
     public void init(){
-        hostUrl = supplierProperties.getParisi().getHostUrl();
-        createOrderUrl = supplierProperties.getParisi().getSetOrderUrl();
-        cancelOrderUrl = supplierProperties.getParisi().getCancelOrderUrl();
-        confirmOrderUrl = supplierProperties.getParisi().getConfirmOrderUrl();
-        deleteOrderUrl = supplierProperties.getParisi().getDeleteOrderUrl();
-        strKey = supplierProperties.getParisi().getStrKey();
-//        hostUrl = "http://www.rpwebservice.it/wsnat13.asmx";
-//        createOrderUrl = "http://tempuri.org/PutOrderWithSku";
-//        cancelOrderUrl = "http://tempuri.org/CancelOrderWithSku";
-//        confirmOrderUrl = "http://tempuri.org/ConfirmOrderWithSku";
-//        deleteOrderUrl = "http://tempuri.org/DeleteOrder";
-//        strKey = "9317";
+//        hostUrl = supplierProperties.getParisi().getHostUrl();
+//        createOrderUrl = supplierProperties.getParisi().getSetOrderUrl();
+//        cancelOrderUrl = supplierProperties.getParisi().getCancelOrderUrl();
+//        confirmOrderUrl = supplierProperties.getParisi().getConfirmOrderUrl();
+//        deleteOrderUrl = supplierProperties.getParisi().getDeleteOrderUrl();
+//        strKey = supplierProperties.getParisi().getStrKey();
+//        strPassword = supplierProperties.getParisi().getStrPassword();
+        hostUrl = "http://www.rpwebservice.it/wsnat13.asmx";
+        createOrderUrl = "http://tempuri.org/PutOrderWithSku";
+        cancelOrderUrl = "http://tempuri.org/CancelOrderWithSku";
+        confirmOrderUrl = "http://tempuri.org/ConfirmOrderWithSku";
+        deleteOrderUrl = "http://tempuri.org/DeleteOrder";
+        strKey = "9317";
+        strPassword = "FYI";
     }
 
     public OrderOfSupplier pushOrder(OrderDTO orderDTO ,String sku, String  quantity){
@@ -66,6 +69,7 @@ public class ParisiOrderUtil  {
                 "      <sku>"+sku+"</sku>\n" +
                 "      <quantity>"+quantity+"</quantity>\n" +
                 "      <strKey>"+strKey+"</strKey>\n" +
+                "      <strPassword>"+strPassword+"</strPassword>\n" +
                 "    </PutOrderWithSku>\n" +
                 "  </soap12:Body>\n" +
                 "</soap12:Envelope>";
@@ -97,6 +101,7 @@ public class ParisiOrderUtil  {
                 "    <DeleteOrder xmlns=\"http://tempuri.org/\">\n" +
                 "      <order_no>"+order_no+"</order_no>\n" +
                 "      <strKey>"+strKey+"</strKey>\n" +
+                "      <strPassword>"+strPassword+"</strPassword>\n" +
                 "    </DeleteOrder>\n" +
                 "  </soap12:Body>\n" +
                 "</soap12:Envelope>";
@@ -120,7 +125,7 @@ public class ParisiOrderUtil  {
     public static void main(String[] args){
     	ParisiOrderUtil util = new ParisiOrderUtil();
     	util.init();
-    	String sku = "37372-18-6-9 mth";
+    	String sku = "62680-47-S";
         String quantity = "1";
     	OrderDTO orderDTO = new OrderDTO();
     	orderDTO.setSpOrderId("0123456789");
@@ -143,6 +148,7 @@ public class ParisiOrderUtil  {
                 "      <sku>"+sku+"</sku>\n" +
                 "      <quantity>"+quantity+"</quantity>\n" +
                 "      <strKey>"+strKey+"</strKey>\n" +
+                "      <strPassword>"+strPassword+"</strPassword>\n" +
                 "    </ConfirmOrderWithSku>\n" +
                 "  </soap12:Body>\n" +
                 "</soap12:Envelope>";
@@ -176,6 +182,7 @@ public class ParisiOrderUtil  {
                 "      <purchase_no>"+purchase_no+"</purchase_no>\n" +
                 "      <sku>"+sku+"</sku>\n" +
                 "      <strKey>"+strKey+"</strKey>\n" +
+                "      <strPassword>"+strPassword+"</strPassword>\n" +
                 "    </CancelOrderWithSku>\n" +
                 "  </soap12:Body>\n" +
                 "</soap12:Envelope>";
