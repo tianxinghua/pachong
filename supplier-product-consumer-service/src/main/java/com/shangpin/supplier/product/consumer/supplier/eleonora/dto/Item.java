@@ -17,6 +17,7 @@ public class Item {
     private String item_detail;
     private String stock;
     private String picture;
+    private String item_size_info;
 
 
     public String getItem_id() {
@@ -118,4 +119,12 @@ public class Item {
                 ", picture='" + picture + '\'' +
                 '}';
     }
+
+	public String getItem_size_info() {
+		return item_size_info;
+	}
+
+	public void setItem_size_info(String item_size_info) {
+		this.item_size_info = item_size_info;
+	}
 }

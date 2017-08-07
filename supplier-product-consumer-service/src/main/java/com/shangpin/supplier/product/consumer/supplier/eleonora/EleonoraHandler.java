@@ -100,7 +100,7 @@ public class EleonoraHandler implements ISupplierHandler {
 
             hubSku.setSupplierSpuId(supplierSpuId);
             hubSku.setSupplierId(supplierId);
-            String size =  item.getItem_size();
+            String size =  item.getItem_size_info();
 
             String supplierSkuNo = item.getItem_id();
             if (supplierSkuNo.indexOf("½") > 0) {
@@ -141,7 +141,7 @@ public class EleonoraHandler implements ISupplierHandler {
             hubSpu.setSupplierMaterial(item.getProduct_material());
 
             hubSpu.setSupplierOrigin(item.getProduct_MADEin());
-            hubSpu.setSupplierSpuDesc(item.getDescription());
+            hubSpu.setSupplierSpuDesc(item.getProduct_detail()+";"+item.getDescription());
             return true;
         }else{
             return false;

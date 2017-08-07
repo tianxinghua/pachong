@@ -88,7 +88,7 @@ public class ColtortiProductConvert {
 		dto.setSupplierMaterial(p.getMaterial());
 		dto.setSupplierSpuModel(p.getProductCode()+" "+p.getColorCode());
 		dto.setSupplierSpuColor(p.getColor()); 
-		dto.setSupplierSpuDesc(p.getDescription());
+		dto.setSupplierSpuDesc(p.getSizeDetail()+";"+p.getDescription());
 		return dto;
 	}
 	/**

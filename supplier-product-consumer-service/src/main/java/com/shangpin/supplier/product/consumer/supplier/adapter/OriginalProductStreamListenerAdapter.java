@@ -71,6 +71,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("delibertiHandler") 
 	private ISupplierHandler delibertiHandler;
+    @Autowired
+    @Qualifier("parisiHandler") 
+    private ISupplierHandler parisiHandler;
 	@Autowired
 	@Qualifier("theclutcherHandler") 
 	private ISupplierHandler theclutcherHandler;
@@ -576,6 +579,15 @@ public class OriginalProductStreamListenerAdapter {
 		delibertiHandler.handleOriginalProduct(message, headers); 
 		
 	}
+	/**
+     * parisi供货商原始数据监听方法
+     * @param message 消息体
+     * @param headers 消息头
+     */
+    public void parisiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+        parisiHandler.handleOriginalProduct(message, headers); 
+        
+    }
 	/**
 	 * smets供货商原始数据监听方法
 	 * @param message 消息体

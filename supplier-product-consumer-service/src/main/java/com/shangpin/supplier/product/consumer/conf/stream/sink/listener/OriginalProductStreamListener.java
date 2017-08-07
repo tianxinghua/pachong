@@ -495,6 +495,15 @@ public class OriginalProductStreamListener {
 		adapter.delibertiStreamListen(message,headers);
     }
 	/**
+    * 供应商DELIBERTI原始商品数据流通道监听者
+    * @param message 消息
+    * @param headers 消息头
+    */
+   @StreamListener(OriginalProductSink.PARISI)
+   public void parisiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
+       adapter.parisiStreamListen(message,headers);
+   }
+	/**
 	 * 供应商SMETS原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

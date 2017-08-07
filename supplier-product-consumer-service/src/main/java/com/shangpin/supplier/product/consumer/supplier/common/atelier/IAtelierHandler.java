@@ -142,7 +142,7 @@ public abstract class IAtelierHandler{
 		if(null != atelierSku){
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuSize(atelierSku.getSize());
+			hubSku.setSupplierSkuSize(!StringUtils.isEmpty(atelierSpu.getSizeType()) ? atelierSpu.getSizeType()+" "+atelierSku.getSize() : atelierSku.getSize());
 			hubSku.setSupplierBarcode(atelierSku.getBarcode());
 			hubSku.setSupplierSkuNo(atelierSku.getSpuId()+"-"+atelierSku.getBarcode());
 			setProductPrice(hubSku,atelierSpu,atelierPrice);
@@ -173,7 +173,7 @@ public abstract class IAtelierHandler{
 			hubSpu.setSupplierSeasonname(atelierSpu.getSeasonName());
 			hubSpu.setSupplierMaterial(atelierSpu.getMaterial1()+" "+atelierSpu.getMaterial3());
 			hubSpu.setSupplierOrigin(atelierSpu.getProductOrigin());
-			hubSpu.setSupplierSpuDesc(atelierSpu.getDescription()); 
+			hubSpu.setSupplierSpuDesc(!StringUtils.isEmpty(atelierSpu.getSizeDetail()) ? atelierSpu.getSizeDetail()+";"+atelierSpu.getDescription() : atelierSpu.getDescription()); 
 			return true;
 		}else{
 			return false;

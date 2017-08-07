@@ -25,5 +25,6 @@ public class Sku {
     private String last_modified;
     private List<String> pictures;
     private Price price;
+    private String country_size;
 
 }

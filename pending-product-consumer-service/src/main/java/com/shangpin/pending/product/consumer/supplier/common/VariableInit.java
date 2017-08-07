@@ -562,7 +562,7 @@ public class VariableInit {
         if (null != hubSupplierCategroyDicDtos && hubSupplierCategroyDicDtos.size() > 0) {
             Map<String, String> categoryMap = new HashMap<>();
             String spCategory = "";
-
+            Map<String,String> keyMap = new HashMap<>();
             for (HubSupplierCategroyDicDto dto : hubSupplierCategroyDicDtos) {
                 // map 的key 供货商的品类 + "_"+供货商的性别 ，value ： 尚品的品类 + "_"+ 匹配状态 (1
                 // :匹配到4级 2：可以匹配但未匹配到4级）
@@ -576,6 +576,7 @@ public class VariableInit {
                         dto.getSupplierCategory().trim().toUpperCase() + "_"
                                 + dto.getSupplierGender().trim().toUpperCase(),
                         spCategory + "_" + dto.getMappingState());
+
                 // }
             }
             supplierCategoryMappingStaticMap.put(supplierId, categoryMap);

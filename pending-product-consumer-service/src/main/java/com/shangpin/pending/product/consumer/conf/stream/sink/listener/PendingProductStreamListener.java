@@ -493,6 +493,15 @@ public class PendingProductStreamListener {
 		adapter.delibertiPendingProductStreamListen(message,headers);
     }
 	/**
+	 * 供应商PARISI待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.PARISI)
+    public void parisiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.parisiPendingProductStreamListen(message,headers);
+    }
+	/**
 	 * 供应商SMETS待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
