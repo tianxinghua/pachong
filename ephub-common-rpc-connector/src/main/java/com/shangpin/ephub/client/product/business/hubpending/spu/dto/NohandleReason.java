@@ -17,6 +17,9 @@ public class NohandleReason {
 	 * 供应商spu no.
 	 */
 	private String supplierSpuNo;
+	
+	private String createUser;
+	
 	/**
 	 * 无法处理原因
 	 */

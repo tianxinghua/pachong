@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.pending.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -44,7 +45,7 @@ public class HubSpuPendingNohandleReasonService {
 		try {
 			List<HubSpuPendingDto> list = findPendingSpus(nohandleReason.getSupplierId(),nohandleReason.getSupplierSpuNo());
 			if(CollectionUtils.isNotEmpty(list)){
-				nohandleReason.getReasons().forEach(reason -> insert(reason , list.get(0)));
+				nohandleReason.getReasons().forEach(reason -> insert(nohandleReason.getCreateUser(), reason , list.get(0)));
 				return true;
 			}
 		} catch (Exception e) {
@@ -63,7 +64,7 @@ public class HubSpuPendingNohandleReasonService {
 			if(CollectionUtils.isNotEmpty(reasons.getSpuPeningIds())){
 				List<HubSpuPendingDto> list = findPendingSpus(reasons.getSpuPeningIds());
 				if(CollectionUtils.isNotEmpty(list) && CollectionUtils.isNotEmpty(reasons.getReasons())){
-					reasons.getReasons().forEach(reason -> list.forEach(dto -> insert(reason,dto))); 
+					reasons.getReasons().forEach(reason -> list.forEach(dto -> insert(reasons.getCreateUser(), reason,dto))); 
 				}
 			}
 		} catch (Exception e) {
@@ -89,15 +90,19 @@ public class HubSpuPendingNohandleReasonService {
 		return hubSpuPendingGateWay.selectByCriteria(criteria);
 	}
 	
-	private void insert(Reason reason, HubSpuPendingDto dto){
+	private void insert(String createUser, Reason reason, HubSpuPendingDto dto){
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
+		reasonDto.setCreateUser(createUser);
+		reasonDto.setCreateTime(new Date());
 		reasonDto.setErrorType(Byte.valueOf(reason.getErrorType()));
 		reasonDto.setErrorReason(Byte.valueOf(reason.getErrorReason())); 
 		reasonGateWay.insert(reasonDto);
 	}
 	
-	private void insert(String reason, HubSpuPendingDto dto){
+	private void insert(String createUser, String reason, HubSpuPendingDto dto){
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
+		reasonDto.setCreateUser(createUser); 
+		reasonDto.setCreateTime(new Date());
 		ErrorReason errorReason = getErrorReason(reason);
 		if(null != errorReason){
 			reasonDto.setErrorType(errorReason.getErrorType().getIndex());
