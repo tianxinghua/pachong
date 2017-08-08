@@ -49,16 +49,27 @@ public class StudioManageService {
 		if(studioManageQuery.getStudioName()==null){
 			return HubResponse.errorResp("studioName不能为null!");
 		}
-		if(studioManageQuery.getStudioNo()==null){
-			return HubResponse.errorResp("studioNo不能为null!");
-		}
+//		if(studioManageQuery.getStudioNo()==null){
+//			return HubResponse.errorResp("studioNo不能为null!");
+//		}
 		if(studioManageQuery.getPeriod()==null){
 			return HubResponse.errorResp("Period不能为null!");
+		}
+		
+		StudioCriteriaDto criteriadto = new StudioCriteriaDto();
+		criteriadto.setOrderByClause(" studio_id desc ");
+		List<StudioDto> lists = studioGateWay.selectByCriteria(criteriadto);
+		String studioNo = "";
+		if(lists==null||lists.size()==0){
+			studioNo = "S001";
+		}else{
+			int num = Integer.parseInt(lists.get(0).getStudioNo().substring(3));
+			studioNo = "S00"+ (num+1);
 		}
 		try {
 			StudioDto dto = new StudioDto();
 			dto.setStudioName(studioManageQuery.getStudioName());
-			dto.setStudioNo(studioManageQuery.getStudioNo());
+			dto.setStudioNo(studioNo);
 			dto.setPeriod(studioManageQuery.getPeriod());
 			dto.setStudioType(studioManageQuery.getStudioType());
 			dto.setStudioStatus(studioManageQuery.getStudioStatus());
@@ -80,7 +91,7 @@ public class StudioManageService {
 			studioGateWay.insertSelective(dto);
 			
 			StudioCriteriaDto criteriaDto = new StudioCriteriaDto();
-			criteriaDto.createCriteria().andStudioNoEqualTo(studioManageQuery.getStudioNo());
+			criteriaDto.createCriteria().andStudioNoEqualTo(studioNo);
 			List<StudioDto> studioDtoLists = studioGateWay.selectByCriteria(criteriaDto);
 			
 			StudioDicSlotDto studioDicSlotDto = new StudioDicSlotDto();
