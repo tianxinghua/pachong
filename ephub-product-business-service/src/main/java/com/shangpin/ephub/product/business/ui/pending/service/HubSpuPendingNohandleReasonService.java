@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.pending.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -8,11 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingNohandleReasonGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.ui.pending.dto.Page;
 import com.shangpin.ephub.product.business.ui.pending.dto.Reason;
+import com.shangpin.ephub.product.business.ui.pending.dto.ReasonRequestDto;
+import com.shangpin.ephub.product.business.ui.pending.dto.ReasonResponseDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.Reasons;
 
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class HubSpuPendingNohandleReasonService {
+	@Autowired
+	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
 	
 	@Autowired
 	private HubSpuPendingGateWay hubSpuPendingGateWay;
@@ -69,5 +78,49 @@ public class HubSpuPendingNohandleReasonService {
 		reasonDto.setErrorType(Byte.valueOf(reason.getErrorType()));
 		reasonDto.setErrorReason(Byte.valueOf(reason.getErrorReason())); 
 		reasonGateWay.insert(reasonDto);
+	}
+
+	public Page findOnShelfList(ReasonRequestDto reasons) {
+		
+		List<ReasonResponseDto> listReturn = new ArrayList<ReasonResponseDto>();
+		HubSpuPendingNohandleReasonCriteriaDto hubSpuPendingNohandleReasonCriteriaDto = new HubSpuPendingNohandleReasonCriteriaDto();
+		HubSpuPendingNohandleReasonCriteriaDto.Criteria criteria= hubSpuPendingNohandleReasonCriteriaDto.createCriteria();
+		if(reasons.getErrorReason()!=null){
+			criteria.andErrorReasonEqualTo(reasons.getErrorReason());
+		}
+		if(reasons.getErrorType()!=null){
+			criteria.andErrorTypeEqualTo(reasons.getErrorType());
+		}
+		Page page = null;
+		int count = reasonGateWay.countByCriteria(hubSpuPendingNohandleReasonCriteriaDto);
+		log.info("count:"+count);
+		if(count>0){
+			page = new Page();
+			hubSpuPendingNohandleReasonCriteriaDto.setPageNo(reasons.getPageIndex());
+			hubSpuPendingNohandleReasonCriteriaDto.setPageSize(reasons.getPageSize());
+			List<HubSpuPendingNohandleReasonDto> list = reasonGateWay.selectByCriteria(hubSpuPendingNohandleReasonCriteriaDto);
+			if(list!=null){
+				for(HubSpuPendingNohandleReasonDto dto:list){
+					Long spuPendingId = dto.getSupplierSpuId();
+					if(spuPendingId!=null){
+						HubSupplierSpuDto spuPendingDto = hubSupplierSpuGateWay.selectByPrimaryKey(spuPendingId);
+						if(spuPendingDto!=null){
+							ReasonResponseDto response = new ReasonResponseDto();
+							response.setBrandName(spuPendingDto.getSupplierBrandname());
+							response.setErrorReason(dto.getErrorReason());
+							response.setErrorType(dto.getErrorType());
+							response.setSpuModel(spuPendingDto.getSupplierSpuModel());
+							response.setSpuName(spuPendingDto.getSupplierSpuName());
+							response.setSupplierSpuNo(spuPendingDto.getSupplierSpuNo());	
+							listReturn.add(response);
+						}
+					}
+				}
+			}
+			page.setTotal(count);
+			page.setList(listReturn);
+		}
+		
+		return page;
 	}
 }
