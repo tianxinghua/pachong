@@ -103,10 +103,6 @@ public class WiseOrderService implements IOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try {
-			/**
-			 * 先发份邮件
-			 */
-			wiseService.handleConfirmOrder(orderDTO); 
 			
 			String spOrderId = orderDTO.getSpOrderId();
 			if(spOrderId.contains("-")){
@@ -179,6 +175,10 @@ public class WiseOrderService implements IOrderService {
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
+		/**
+		 * 发份邮件
+		 */
+		wiseService.pushConfirmOrder(orderDTO);
 		
 	}
 
@@ -192,10 +192,6 @@ public class WiseOrderService implements IOrderService {
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
-			/**
-			 * 先发份邮件
-			 */
-			wiseService.handleRefundlOrder(deleteOrder);
 			String spOrderId = deleteOrder.getSpOrderId();
 			if(spOrderId.contains("-")){
 				spOrderId = spOrderId.substring(0, spOrderId.indexOf("-")); 
@@ -204,6 +200,10 @@ public class WiseOrderService implements IOrderService {
 			if(returnData.contains("OK")){
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
+				/**
+				 * 发邮件
+				 */
+				wiseService.handleRefundlOrder(deleteOrder);
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);

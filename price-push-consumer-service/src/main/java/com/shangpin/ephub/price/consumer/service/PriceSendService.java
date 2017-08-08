@@ -82,7 +82,7 @@ public class PriceSendService {
      * @param productPriceDTO
      * @return
      */
-    public boolean sendSupplyPriceMsgToScm(ProductPriceDTO productPriceDTO,String originPurchasePrice) throws  Exception{
+    public boolean sendSupplyPriceMsgToScm(ProductPriceDTO productPriceDTO,String originPurchasePrice,String originMarketPrice) throws  Exception{
 
         String  content ="";
         om.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
@@ -100,6 +100,7 @@ public class PriceSendService {
             //失败的推送到消息队列
             if(StringUtils.isNotBlank(result)){
                 productPriceDTO.setPurchasePrice(originPurchasePrice);
+                productPriceDTO.setMarketPrice(originMarketPrice);
                 retryPriceStreamSender.supplierPictureProductStream(productPriceDTO,null);
                 return false;
             }
