@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
+import com.shangpin.ephub.product.business.ui.pending.dto.Page;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.dto.ReasonRequestDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.Reasons;
 import com.shangpin.ephub.product.business.ui.pending.service.HubSpuPendingNohandleReasonService;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
@@ -123,4 +125,16 @@ public class PendingProductController {
     	reasonService.addUnableReason(reasons);
     	return HubResponse.successResp("ok");
     }
+    @RequestMapping(value="/notOnShelfList",method=RequestMethod.POST)
+    public HubResponse<?> notOnShelfList(@RequestBody ReasonRequestDto reasons){
+    	log.info("未上架商品请求参数：{}",reasons);
+    	Page listResponse = reasonService.findOnShelfList(reasons);
+    	if(listResponse!=null){
+    		return HubResponse.successResp(listResponse);
+    	}else{
+    		return HubResponse.errorResp("No data");
+    	}
+    	
+    }
+    
 }

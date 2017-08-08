@@ -55,13 +55,13 @@ public class StudioDicCategoryManageService {
 		log.info("addStudioCategory--------------start");
 		log.info("添加品类摄影棚参数:"+JsonUtil.serialize(studioManageQuery)); 
 		
-		if(studioManageQuery.getCategoryFirst()==null){
+		if(studioManageQuery.getCategoryFirst()==null||studioManageQuery.getCategoryFirst().equals("")){
 			return HubResponse.errorResp("categoryFirst不能为null!");
 		}
-		if(studioManageQuery.getCategorySecond()==null){
+		if(studioManageQuery.getCategorySecond()==null||studioManageQuery.getCategorySecond().equals("")){
 			return HubResponse.errorResp("CategorySecond不能为null!");
 		}
-		if(studioManageQuery.getStudioName()==null){
+		if(studioManageQuery.getStudioName()==null||studioManageQuery.getStudioName().equals("")){
 			return HubResponse.errorResp("StudioName不能为null!");
 		}
 		try {
@@ -121,7 +121,7 @@ public class StudioDicCategoryManageService {
 //				dto.setCategorySecond(studioManageQuery.getCategorySecond());
 //			}
 			
-			if(studioManageQuery.getStudioName()!=null){
+			if(studioManageQuery.getStudioName()!=null&&!studioManageQuery.getStudioName().equals("")){
 				StudioCriteriaDto criteriaDto = new StudioCriteriaDto();
 				criteriaDto.createCriteria().andStudioNameEqualTo(studioManageQuery.getStudioName());
 				List<StudioDto> studioDtoLists = studioGateWay.selectByCriteria(criteriaDto);
@@ -150,13 +150,13 @@ public class StudioDicCategoryManageService {
 			StudioDicCategoryCriteriaDto criteriaDto = new StudioDicCategoryCriteriaDto();
 			Criteria criteria = criteriaDto.createCriteria();
 			
-			if(studioManageQuery.getCategoryFirst()!=null){
+			if(studioManageQuery.getCategoryFirst()!=null&&!studioManageQuery.getCategoryFirst().equals("")){
 				criteria.andCategoryFirstEqualTo(studioManageQuery.getCategoryFirst());
 			}
-			if(studioManageQuery.getCategorySecond()!=null){
+			if(studioManageQuery.getCategorySecond()!=null&&!studioManageQuery.getCategorySecond().equals("")){
 				criteria.andCategorySecondEqualTo(studioManageQuery.getCategorySecond());
 			}
-			if(studioManageQuery.getStudioName()!=null){
+			if(studioManageQuery.getStudioName()!=null&&!studioManageQuery.getStudioName().equals("")){
 				StudioCriteriaDto studioCriteriaDto = new StudioCriteriaDto();
 				studioCriteriaDto.createCriteria().andStudioNameEqualTo(studioManageQuery.getStudioName());
 				List<StudioDto> studioDtoLists = studioGateWay.selectByCriteria(studioCriteriaDto);
