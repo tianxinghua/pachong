@@ -46,7 +46,7 @@ public class StudioManageService {
 		log.info("addStudio--------------start");
 		log.info("添加摄影棚基础信息参数:"+JsonUtil.serialize(studioManageQuery)); 
 		
-		if(studioManageQuery.getStudioName()==null){
+		if(studioManageQuery.getStudioName()==null||studioManageQuery.getStudioName().equals("")){
 			return HubResponse.errorResp("studioName不能为null!");
 		}
 //		if(studioManageQuery.getStudioNo()==null){
@@ -134,37 +134,37 @@ public class StudioManageService {
 			if(studioManageQuery.getStudioStatus()!=null){
 				dto.setStudioStatus(studioManageQuery.getStudioStatus());
 			}
-			if(studioManageQuery.getStudioContacts()!=null){
+			if(studioManageQuery.getStudioContacts()!=null&&!studioManageQuery.getStudioContacts().equals("")){
 				dto.setStudioContacts(studioManageQuery.getStudioContacts());
 			}
-			if(studioManageQuery.getContactInfo()!=null){
+			if(studioManageQuery.getContactInfo()!=null&&!studioManageQuery.getContactInfo().equals("")){
 				dto.setContactInfo(studioManageQuery.getContactInfo());
 			}
-			if(studioManageQuery.getTelephone()!=null){
+			if(studioManageQuery.getTelephone()!=null&&!studioManageQuery.getTelephone().equals("")){
 				dto.setTelephone(studioManageQuery.getTelephone());
 			}
-			if(studioManageQuery.getEmail()!=null){
+			if(studioManageQuery.getEmail()!=null&&!studioManageQuery.getEmail().equals("")){
 				dto.setEmail(studioManageQuery.getEmail());
 			}
-			if(studioManageQuery.getCountry()!=null){
+			if(studioManageQuery.getCountry()!=null&&!studioManageQuery.getCountry().equals("")){
 				dto.setCountry(studioManageQuery.getCountry());
 			}
-			if(studioManageQuery.getAddress()!=null){
+			if(studioManageQuery.getAddress()!=null&&!studioManageQuery.getAddress().equals("")){
 				dto.setAddress(studioManageQuery.getAddress());
 			}
-			if(studioManageQuery.getMemo()!=null){
+			if(studioManageQuery.getMemo()!=null&&!studioManageQuery.getMemo().equals("")){
 				dto.setMemo(studioManageQuery.getMemo());
 			}
-			if(studioManageQuery.getSupplierId()!=null){
+			if(studioManageQuery.getSupplierId()!=null&&!studioManageQuery.getSupplierId().equals("")){
 				dto.setSupplierId(studioManageQuery.getSupplierId());
 			}
-			if(studioManageQuery.getSupplierNo()!=null){
+			if(studioManageQuery.getSupplierNo()!=null&&!studioManageQuery.getSupplierNo().equals("")){
 				dto.setSupplierNo(studioManageQuery.getSupplierNo());
 			}
 			if(studioManageQuery.getTimeLag()!=null){
 				dto.setTimeLag(studioManageQuery.getTimeLag());
 			}
-			if(studioManageQuery.getUpdateUser()!=null){
+			if(studioManageQuery.getUpdateUser()!=null&&!studioManageQuery.getUpdateUser().equals("")){
 				dto.setUpdateUser(studioManageQuery.getUpdateUser());
 			}
 			dto.setUpdateTime(new Date());
@@ -185,10 +185,10 @@ public class StudioManageService {
 			StudioCriteriaDto criteriaDto = new StudioCriteriaDto();
 			Criteria criteria = criteriaDto.createCriteria();
 			
-			if(studioManageQuery.getStudioName()!=null){
+			if(studioManageQuery.getStudioName()!=null&&!studioManageQuery.getStudioName().equals("")){
 				criteria.andStudioNameEqualTo(studioManageQuery.getStudioName());
 			}
-			if(studioManageQuery.getStudioNo()!=null){
+			if(studioManageQuery.getStudioNo()!=null&&!studioManageQuery.getStudioNo().equals("")){
 				criteria.andStudioNameEqualTo(studioManageQuery.getStudioNo());
 			}
 			criteriaDto.setPageSize(20);

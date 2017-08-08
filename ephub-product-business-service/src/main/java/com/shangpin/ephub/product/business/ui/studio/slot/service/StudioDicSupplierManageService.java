@@ -51,7 +51,7 @@ public class StudioDicSupplierManageService {
 	public HubResponse<?> addStudioDicSupplier(StudioManageQuery studioManageQuery) {
 		log.info("addStudioDicSupplier--------------start");
 		log.info("添加摄影棚供应商关系参数:"+JsonUtil.serialize(studioManageQuery)); 
-		if(studioManageQuery.getSupplierId()==null||studioManageQuery.getSupplierNo()==null){
+		if((studioManageQuery.getSupplierId()==null||studioManageQuery.getSupplierId().equals(""))||(studioManageQuery.getSupplierNo()==null||studioManageQuery.getSupplierNo().equals(""))){
 			return HubResponse.errorResp("供应商supplierId和supplierNo不能为null!");
 		}
 		try {
@@ -141,7 +141,7 @@ public class StudioDicSupplierManageService {
 		log.info("编辑摄影棚信息参数:"+JsonUtil.serialize(studioManageQuery)); 
 		
 		try {
-			if(studioManageQuery.getSupplierId()==null||studioManageQuery.getSupplierNo()==null){
+			if((studioManageQuery.getSupplierId()==null||studioManageQuery.getSupplierId().equals(""))||(studioManageQuery.getSupplierNo()==null||studioManageQuery.getSupplierNo().equals(""))){
 				return HubResponse.errorResp("供应商supplierId和supplierNo不能为null!");
 			}
 			StudioDicSupplierCriteriaDto studioDicSupplierCriteriaDto = new StudioDicSupplierCriteriaDto();
@@ -244,10 +244,10 @@ public class StudioDicSupplierManageService {
 			StudioDicSupplierCriteriaDto criteriaDto = new StudioDicSupplierCriteriaDto();
 			Criteria criteria = criteriaDto.createCriteria();
 			
-			if(studioManageQuery.getSupplierId()!=null){
+			if(studioManageQuery.getSupplierId()!=null&&!studioManageQuery.getSupplierId().equals("")){
 				criteria.andSupplierIdEqualTo(studioManageQuery.getSupplierId());
 			}
-			if(studioManageQuery.getSupplierNo()!=null){
+			if(studioManageQuery.getSupplierNo()!=null&&!studioManageQuery.getSupplierNo().equals("")){
 				criteria.andSupplierNoEqualTo(studioManageQuery.getSupplierNo());
 			}
 			if(studioManageQuery.getPageNo()!=null){
