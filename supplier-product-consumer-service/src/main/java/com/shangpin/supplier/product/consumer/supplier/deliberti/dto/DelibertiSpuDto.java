@@ -47,5 +47,7 @@ public class DelibertiSpuDto implements Serializable{
 	private String color;
 	
 	private String productModel;
+	
+	private String description;
 
 }

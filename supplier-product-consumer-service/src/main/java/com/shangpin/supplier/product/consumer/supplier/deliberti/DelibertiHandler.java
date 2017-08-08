@@ -110,6 +110,7 @@ public class DelibertiHandler implements ISupplierHandler {
 			hubSpu.setSupplierSeasonname(delibertiSpuDto.getSeasonName());
 			hubSpu.setSupplierMaterial(delibertiSpuDto.getMaterial());
 			hubSpu.setSupplierOrigin(delibertiSpuDto.getProductOrigin());
+			hubSpu.setSupplierSpuDesc(delibertiSpuDto.getDescription()); 
 			return true;
 		}
 	}

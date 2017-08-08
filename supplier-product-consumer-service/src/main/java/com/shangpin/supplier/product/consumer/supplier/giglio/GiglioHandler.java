@@ -85,7 +85,7 @@ public class GiglioHandler implements ISupplierHandler {
 			hubSpu.setSupplierSeasonname(value(colunms,"Collezione / Anno"));
 			hubSpu.setSupplierMaterial(value(colunms,"Materiale ENG"));
 			hubSpu.setSupplierOrigin("");//TODO 无产地
-			hubSpu.setSupplierSpuDesc(value(colunms,"Descrizione ENG"));
+			hubSpu.setSupplierSpuDesc(value(colunms,"Sizes")+" "+value(colunms,"Descrizione ENG"));
 			return true;
 		}else{
 			return false;
