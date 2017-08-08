@@ -96,7 +96,7 @@ public class HubSkuPending implements Serializable {
     private String spSkuNo;
 
     /**
-     * 尺寸
+     * 测量信息 尺寸
      */
     private String measurement;
 

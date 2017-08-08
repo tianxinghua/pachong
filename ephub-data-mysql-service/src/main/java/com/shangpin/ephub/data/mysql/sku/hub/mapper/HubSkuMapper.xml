@@ -6,7 +6,6 @@
     <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
     <result column="color" property="color" jdbcType="VARCHAR" />
     <result column="sku_size" property="skuSize" jdbcType="VARCHAR" />
-    <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
     <result column="sku_size_id" property="skuSizeId" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -15,9 +14,11 @@
     <result column="spu_no_org" property="spuNoOrg" jdbcType="VARCHAR" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
-    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="sku_no" property="skuNo" jdbcType="VARCHAR" />
+    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
     <result column="sku_size_type" property="skuSizeType" jdbcType="VARCHAR" />
+    <result column="measurement" property="measurement" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -79,8 +80,9 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      sku_id, spu_no, color, sku_size, sku_no, sku_size_id, create_time, create_user, update_time, 
-      update_user, spu_no_org, memo, data_state, sp_sku_no, version, sku_size_type
+      sku_id, spu_no, color, sku_size, sku_size_id, create_time, create_user, update_time,
+      update_user, spu_no_org, memo, data_state, version, sku_no, sp_sku_no, sku_size_type,
+      measurement
     </if>
     <if test="fields != null" >
       ${fields}
@@ -104,8 +106,8 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    sku_id,spu_no,color,sku_size,sku_no,sku_size_id,create_time,create_user,update_time,update_user,spu_no_org,memo,data_state,sp_sku_no,version,sku_size_type
+    select
+    sku_id,spu_no,color,sku_size,sku_size_id,create_time,create_user,update_time,update_user,spu_no_org,memo,data_state,version,sku_no,sp_sku_no,sku_size_type,measurement
     from hub_sku
     where sku_id = #{skuId,jdbcType=BIGINT}
   </select>
@@ -121,25 +123,25 @@
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sku.hub.po.HubSku" >
     <selectKey keyColumn="sku_id" keyProperty="skuId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS sku_id
-  	</selectKey>
-    insert into hub_sku (sku_id, spu_no, color, 
-      sku_size, sku_no, sku_size_id, 
-      create_time, create_user, update_time, 
-      update_user, spu_no_org, memo, 
-      data_state, sp_sku_no, version, 
-      sku_size_type)
-    values (#{skuId,jdbcType=BIGINT}, #{spuNo,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, 
-      #{skuSize,jdbcType=VARCHAR}, #{skuNo,jdbcType=VARCHAR}, #{skuSizeId,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{spuNoOrg,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{spSkuNo,jdbcType=VARCHAR}, #{version,jdbcType=BIGINT}, 
-      #{skuSizeType,jdbcType=VARCHAR})
+      SELECT LAST_INSERT_ID() AS sku_id
+    </selectKey>
+    insert into hub_sku (sku_id, spu_no, color,
+    sku_size, sku_size_id, create_time,
+    create_user, update_time, update_user,
+    spu_no_org, memo, data_state,
+    version, sku_no, sp_sku_no,
+    sku_size_type, measurement)
+    values (#{skuId,jdbcType=BIGINT}, #{spuNo,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR},
+    #{skuSize,jdbcType=VARCHAR}, #{skuSizeId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+    #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR},
+    #{spuNoOrg,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT},
+    #{version,jdbcType=BIGINT}, #{skuNo,jdbcType=VARCHAR}, #{spSkuNo,jdbcType=VARCHAR},
+    #{skuSizeType,jdbcType=VARCHAR}, #{measurement,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sku.hub.po.HubSku" >
     <selectKey keyColumn="sku_id" keyProperty="skuId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS sku_id
-  	</selectKey>
+      SELECT LAST_INSERT_ID() AS sku_id
+    </selectKey>
     insert into hub_sku
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="skuId != null" >
@@ -153,9 +155,6 @@
       </if>
       <if test="skuSize != null" >
         sku_size,
-      </if>
-      <if test="skuNo != null" >
-        sku_no,
       </if>
       <if test="skuSizeId != null" >
         sku_size_id,
@@ -181,14 +180,20 @@
       <if test="dataState != null" >
         data_state,
       </if>
-      <if test="spSkuNo != null" >
-        sp_sku_no,
-      </if>
       <if test="version != null" >
         version,
       </if>
+      <if test="skuNo != null" >
+        sku_no,
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no,
+      </if>
       <if test="skuSizeType != null" >
         sku_size_type,
+      </if>
+      <if test="measurement != null" >
+        measurement,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -203,9 +208,6 @@
       </if>
       <if test="skuSize != null" >
         #{skuSize,jdbcType=VARCHAR},
-      </if>
-      <if test="skuNo != null" >
-        #{skuNo,jdbcType=VARCHAR},
       </if>
       <if test="skuSizeId != null" >
         #{skuSizeId,jdbcType=VARCHAR},
@@ -231,14 +233,20 @@
       <if test="dataState != null" >
         #{dataState,jdbcType=TINYINT},
       </if>
-      <if test="spSkuNo != null" >
-        #{spSkuNo,jdbcType=VARCHAR},
-      </if>
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
       </if>
+      <if test="skuNo != null" >
+        #{skuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null" >
+        #{spSkuNo,jdbcType=VARCHAR},
+      </if>
       <if test="skuSizeType != null" >
         #{skuSizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="measurement != null" >
+        #{measurement,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -262,9 +270,6 @@
       </if>
       <if test="record.skuSize != null" >
         sku_size = #{record.skuSize,jdbcType=VARCHAR},
-      </if>
-      <if test="record.skuNo != null" >
-        sku_no = #{record.skuNo,jdbcType=VARCHAR},
       </if>
       <if test="record.skuSizeId != null" >
         sku_size_id = #{record.skuSizeId,jdbcType=VARCHAR},
@@ -290,14 +295,20 @@
       <if test="record.dataState != null" >
         data_state = #{record.dataState,jdbcType=TINYINT},
       </if>
-      <if test="record.spSkuNo != null" >
-        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
-      </if>
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.skuNo != null" >
+        sku_no = #{record.skuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spSkuNo != null" >
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.skuSizeType != null" >
         sku_size_type = #{record.skuSizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.measurement != null" >
+        measurement = #{record.measurement,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -307,21 +318,22 @@
   <update id="updateByExample" parameterType="map" >
     update hub_sku
     set sku_id = #{record.skuId,jdbcType=BIGINT},
-      spu_no = #{record.spuNo,jdbcType=VARCHAR},
-      color = #{record.color,jdbcType=VARCHAR},
-      sku_size = #{record.skuSize,jdbcType=VARCHAR},
-      sku_no = #{record.skuNo,jdbcType=VARCHAR},
-      sku_size_id = #{record.skuSizeId,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      update_user = #{record.updateUser,jdbcType=VARCHAR},
-      spu_no_org = #{record.spuNoOrg,jdbcType=VARCHAR},
-      memo = #{record.memo,jdbcType=VARCHAR},
-      data_state = #{record.dataState,jdbcType=TINYINT},
-      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
-      version = #{record.version,jdbcType=BIGINT},
-      sku_size_type = #{record.skuSizeType,jdbcType=VARCHAR}
+    spu_no = #{record.spuNo,jdbcType=VARCHAR},
+    color = #{record.color,jdbcType=VARCHAR},
+    sku_size = #{record.skuSize,jdbcType=VARCHAR},
+    sku_size_id = #{record.skuSizeId,jdbcType=VARCHAR},
+    create_time = #{record.createTime,jdbcType=TIMESTAMP},
+    create_user = #{record.createUser,jdbcType=VARCHAR},
+    update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+    update_user = #{record.updateUser,jdbcType=VARCHAR},
+    spu_no_org = #{record.spuNoOrg,jdbcType=VARCHAR},
+    memo = #{record.memo,jdbcType=VARCHAR},
+    data_state = #{record.dataState,jdbcType=TINYINT},
+    version = #{record.version,jdbcType=BIGINT},
+    sku_no = #{record.skuNo,jdbcType=VARCHAR},
+    sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+    sku_size_type = #{record.skuSizeType,jdbcType=VARCHAR},
+    measurement = #{record.measurement,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -337,9 +349,6 @@
       </if>
       <if test="skuSize != null" >
         sku_size = #{skuSize,jdbcType=VARCHAR},
-      </if>
-      <if test="skuNo != null" >
-        sku_no = #{skuNo,jdbcType=VARCHAR},
       </if>
       <if test="skuSizeId != null" >
         sku_size_id = #{skuSizeId,jdbcType=VARCHAR},
@@ -365,14 +374,20 @@
       <if test="dataState != null" >
         data_state = #{dataState,jdbcType=TINYINT},
       </if>
-      <if test="spSkuNo != null" >
-        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
-      </if>
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="skuNo != null" >
+        sku_no = #{skuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
       <if test="skuSizeType != null" >
         sku_size_type = #{skuSizeType,jdbcType=VARCHAR},
+      </if>
+      <if test="measurement != null" >
+        measurement = #{measurement,jdbcType=VARCHAR},
       </if>
     </set>
     where sku_id = #{skuId,jdbcType=BIGINT}
@@ -380,20 +395,21 @@
   <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.sku.hub.po.HubSku" >
     update hub_sku
     set spu_no = #{spuNo,jdbcType=VARCHAR},
-      color = #{color,jdbcType=VARCHAR},
-      sku_size = #{skuSize,jdbcType=VARCHAR},
-      sku_no = #{skuNo,jdbcType=VARCHAR},
-      sku_size_id = #{skuSizeId,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_user = #{updateUser,jdbcType=VARCHAR},
-      spu_no_org = #{spuNoOrg,jdbcType=VARCHAR},
-      memo = #{memo,jdbcType=VARCHAR},
-      data_state = #{dataState,jdbcType=TINYINT},
-      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
-      version = #{version,jdbcType=BIGINT},
-      sku_size_type = #{skuSizeType,jdbcType=VARCHAR}
+    color = #{color,jdbcType=VARCHAR},
+    sku_size = #{skuSize,jdbcType=VARCHAR},
+    sku_size_id = #{skuSizeId,jdbcType=VARCHAR},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    create_user = #{createUser,jdbcType=VARCHAR},
+    update_time = #{updateTime,jdbcType=TIMESTAMP},
+    update_user = #{updateUser,jdbcType=VARCHAR},
+    spu_no_org = #{spuNoOrg,jdbcType=VARCHAR},
+    memo = #{memo,jdbcType=VARCHAR},
+    data_state = #{dataState,jdbcType=TINYINT},
+    version = #{version,jdbcType=BIGINT},
+    sku_no = #{skuNo,jdbcType=VARCHAR},
+    sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+    sku_size_type = #{skuSizeType,jdbcType=VARCHAR},
+    measurement = #{measurement,jdbcType=VARCHAR}
     where sku_id = #{skuId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sku.hub.po.HubSkuCriteria" id="selectByExampleWithRowbounds" >
