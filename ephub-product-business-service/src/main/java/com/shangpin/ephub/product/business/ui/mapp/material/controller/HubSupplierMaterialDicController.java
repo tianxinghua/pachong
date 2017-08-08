@@ -52,7 +52,7 @@ public class HubSupplierMaterialDicController {
 		try {
 			log.info("===材质映射list请求参数：{}",hubSupplierMaterialDicRequestDto);
 			int total =0;
-			byte type = hubSupplierMaterialDicRequestDto.getMappingLevel();
+			Byte type = hubSupplierMaterialDicRequestDto.getMappingLevel();
 			total = hubMaterialDicService.countSupplierMaterialByType(type,hubSupplierMaterialDicRequestDto.getSupplierMaterial(),hubSupplierMaterialDicRequestDto.getHubMaterial());
 			log.info("返回个数："+total);
 			if(total>0){

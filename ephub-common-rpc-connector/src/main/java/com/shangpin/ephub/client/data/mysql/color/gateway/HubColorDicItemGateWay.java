@@ -29,8 +29,8 @@ public interface HubColorDicItemGateWay {
 	@RequestMapping(value = "/hub-color-dic-item/delete-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int deleteByCriteria(@RequestBody HubColorDicItemCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-color-dic-item/delete-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public int deleteByPrimaryKey(Long colorDicItemId);
+	@RequestMapping(value = "/hub-color-dic-item/delete-by-primary-key/{colorDicItemId}", method = RequestMethod.POST,consumes = "application/json")
+    public int deleteByPrimaryKey(@PathVariable("colorDicItemId") Long colorDicItemId);
 	
 	@RequestMapping(value = "/hub-color-dic-item/insert", method = RequestMethod.POST,consumes = "application/json")
     public Long insert(@RequestBody HubColorDicItemDto hubColorDicItem);
