@@ -120,11 +120,13 @@ public class StudioManageService {
 			HubResponse.errorResp("studioId不能为null!");
 		}
 		try {
-			StudioDto dto = studioGateWay.selectByPrimaryKey(studioManageQuery.getStudioId());
-			if(dto==null){
+			StudioCriteriaDto criteriadto = new StudioCriteriaDto();
+			criteriadto.createCriteria().andStudioIdEqualTo(studioManageQuery.getStudioId());
+			List<StudioDto> lists = studioGateWay.selectByCriteria(criteriadto);
+			if(lists==null||lists.size()==0){
 				return HubResponse.errorResp("studioId:"+studioManageQuery.getStudioId()+"不存在对应此编号的摄影棚!");
 			}
-			
+			StudioDto dto = lists.get(0);
 			if(studioManageQuery.getPeriod()!=null){
 				dto.setPeriod(studioManageQuery.getPeriod());
 			}
