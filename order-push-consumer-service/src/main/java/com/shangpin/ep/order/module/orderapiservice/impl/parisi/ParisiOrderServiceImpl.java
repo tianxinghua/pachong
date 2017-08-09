@@ -1,4 +1,4 @@
-package com.shangpin.ep.order.module.orderapiservice.impl;
+package com.shangpin.ep.order.module.orderapiservice.impl.parisi;
 
 
 import com.google.gson.Gson;

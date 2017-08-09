@@ -1,4 +1,4 @@
-package com.shangpin.ep.order.module.orderapiservice.impl;
+package com.shangpin.ep.order.module.orderapiservice.impl.parisi;
 
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;

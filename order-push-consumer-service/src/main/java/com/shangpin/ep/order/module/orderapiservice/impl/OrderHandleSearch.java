@@ -164,6 +164,15 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
+	
+	@Autowired
+	@Qualifier("ylatiServiceImpl") 
+	IOrderService ylatiServiceImpl;
+	
+	@Autowired
+	@Qualifier("parisiMailServiceImpl") 
+	IOrderService parisiMailServiceImpl;
+	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -262,6 +271,10 @@ public class OrderHandleSearch {
 			return dlrboutiqueServiceImpl;
 		}else if("2016032101816".equals(supplierId)){
 			return zitafabianiServiceImpl;
+		}else if("2017071701978".equals(supplierId)){
+			return ylatiServiceImpl;
+		}else if("2015101201596".equals(supplierId)){
+			return parisiMailServiceImpl;
 		}else {
 			return null;
 		}
