@@ -85,7 +85,8 @@ public class ProductPullDataService {
     public List<HubSupplierValueMappingDto> findAllSupplier(){
     	HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
     	criteria.setFields("supplier_id,hub_val");
-    	criteria.setPageNo(1);
+    	criteria.setOrderByClause("hub_val");
+    	criteria.setPageNo(1); 
     	criteria.setPageSize(1000); 
     	criteria.createCriteria().andHubValTypeEqualTo((byte)5);
 		return supplierValueMappingGateWay.selectByCriteria(criteria);
