@@ -184,11 +184,13 @@ public class StudioDicCategoryManageService {
 				if(studioManageQuery.getStudioName()!=null){
 					info.setStudioName(studioManageQuery.getStudioName());
 				}else{
-					StudioDto studiodto = studioGateWay.selectByPrimaryKey(studioDicCategoryDto.getStudioId());
-					if(studiodto==null){
+					StudioCriteriaDto criteriadto = new StudioCriteriaDto();
+					criteriadto.createCriteria().andStudioIdEqualTo(studioManageQuery.getStudioId());
+					List<StudioDto> lists = studioGateWay.selectByCriteria(criteriadto);
+					if(lists==null||lists.size()==0){
 						continue;
 					}
-					info.setStudioName(studiodto.getStudioName());
+					info.setStudioName(lists.get(0).getStudioName());
 				}
 				studioDicCategoryInfoLists.add(info);
 			}
