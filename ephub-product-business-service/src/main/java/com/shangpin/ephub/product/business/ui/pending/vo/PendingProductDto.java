@@ -7,8 +7,11 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 @Getter
 @Setter
+@ToString
 public class PendingProductDto extends HubSpuPendingDto {
 
 	/**

@@ -25,11 +25,6 @@ public class HubSkuDto implements Serializable {
     private String skuSize;
 
     /**
-     * hubskuno
-     */
-    private String skuNo;
-
-    /**
      * 尺码Id
      */
     private String skuSizeId;
@@ -69,14 +64,27 @@ public class HubSkuDto implements Serializable {
      */
     private Byte dataState;
 
-    private String spSkuNo;
-
     /**
      * 版本字段
      */
     private Long version;
 
+    private String skuNo;
+
+    /**
+     * 尚品spu编号
+     */
+    private String spSkuNo;
+
+    /**
+     * 尺码类型
+     */
     private String skuSizeType;
+
+    /**
+     * 测量信息
+     */
+    private String measurement;
 
     private static final long serialVersionUID = 1L;
 
@@ -110,14 +118,6 @@ public class HubSkuDto implements Serializable {
 
     public void setSkuSize(String skuSize) {
         this.skuSize = skuSize == null ? null : skuSize.trim();
-    }
-
-    public String getSkuNo() {
-        return skuNo;
-    }
-
-    public void setSkuNo(String skuNo) {
-        this.skuNo = skuNo == null ? null : skuNo.trim();
     }
 
     public String getSkuSizeId() {
@@ -184,14 +184,6 @@ public class HubSkuDto implements Serializable {
         this.dataState = dataState;
     }
 
-    public String getSpSkuNo() {
-        return spSkuNo;
-    }
-
-    public void setSpSkuNo(String spSkuNo) {
-        this.spSkuNo = spSkuNo == null ? null : spSkuNo.trim();
-    }
-
     public Long getVersion() {
         return version;
     }
@@ -200,12 +192,36 @@ public class HubSkuDto implements Serializable {
         this.version = version;
     }
 
+    public String getSkuNo() {
+        return skuNo;
+    }
+
+    public void setSkuNo(String skuNo) {
+        this.skuNo = skuNo == null ? null : skuNo.trim();
+    }
+
+    public String getSpSkuNo() {
+        return spSkuNo;
+    }
+
+    public void setSpSkuNo(String spSkuNo) {
+        this.spSkuNo = spSkuNo == null ? null : spSkuNo.trim();
+    }
+
     public String getSkuSizeType() {
         return skuSizeType;
     }
 
     public void setSkuSizeType(String skuSizeType) {
         this.skuSizeType = skuSizeType == null ? null : skuSizeType.trim();
+    }
+
+    public String getMeasurement() {
+        return measurement;
+    }
+
+    public void setMeasurement(String measurement) {
+        this.measurement = measurement == null ? null : measurement.trim();
     }
 
     @Override
@@ -218,7 +234,6 @@ public class HubSkuDto implements Serializable {
         sb.append(", spuNo=").append(spuNo);
         sb.append(", color=").append(color);
         sb.append(", skuSize=").append(skuSize);
-        sb.append(", skuNo=").append(skuNo);
         sb.append(", skuSizeId=").append(skuSizeId);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -227,9 +242,11 @@ public class HubSkuDto implements Serializable {
         sb.append(", spuNoOrg=").append(spuNoOrg);
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
-        sb.append(", spSkuNo=").append(spSkuNo);
         sb.append(", version=").append(version);
+        sb.append(", skuNo=").append(skuNo);
+        sb.append(", spSkuNo=").append(spSkuNo);
         sb.append(", skuSizeType=").append(skuSizeType);
+        sb.append(", measurement=").append(measurement);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -251,7 +268,6 @@ public class HubSkuDto implements Serializable {
             && (this.getSpuNo() == null ? other.getSpuNo() == null : this.getSpuNo().equals(other.getSpuNo()))
             && (this.getColor() == null ? other.getColor() == null : this.getColor().equals(other.getColor()))
             && (this.getSkuSize() == null ? other.getSkuSize() == null : this.getSkuSize().equals(other.getSkuSize()))
-            && (this.getSkuNo() == null ? other.getSkuNo() == null : this.getSkuNo().equals(other.getSkuNo()))
             && (this.getSkuSizeId() == null ? other.getSkuSizeId() == null : this.getSkuSizeId().equals(other.getSkuSizeId()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -260,9 +276,11 @@ public class HubSkuDto implements Serializable {
             && (this.getSpuNoOrg() == null ? other.getSpuNoOrg() == null : this.getSpuNoOrg().equals(other.getSpuNoOrg()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
-            && (this.getSpSkuNo() == null ? other.getSpSkuNo() == null : this.getSpSkuNo().equals(other.getSpSkuNo()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
-            && (this.getSkuSizeType() == null ? other.getSkuSizeType() == null : this.getSkuSizeType().equals(other.getSkuSizeType()));
+            && (this.getSkuNo() == null ? other.getSkuNo() == null : this.getSkuNo().equals(other.getSkuNo()))
+            && (this.getSpSkuNo() == null ? other.getSpSkuNo() == null : this.getSpSkuNo().equals(other.getSpSkuNo()))
+            && (this.getSkuSizeType() == null ? other.getSkuSizeType() == null : this.getSkuSizeType().equals(other.getSkuSizeType()))
+            && (this.getMeasurement() == null ? other.getMeasurement() == null : this.getMeasurement().equals(other.getMeasurement()));
     }
 
     @Override
@@ -273,7 +291,6 @@ public class HubSkuDto implements Serializable {
         result = prime * result + ((getSpuNo() == null) ? 0 : getSpuNo().hashCode());
         result = prime * result + ((getColor() == null) ? 0 : getColor().hashCode());
         result = prime * result + ((getSkuSize() == null) ? 0 : getSkuSize().hashCode());
-        result = prime * result + ((getSkuNo() == null) ? 0 : getSkuNo().hashCode());
         result = prime * result + ((getSkuSizeId() == null) ? 0 : getSkuSizeId().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
@@ -282,9 +299,11 @@ public class HubSkuDto implements Serializable {
         result = prime * result + ((getSpuNoOrg() == null) ? 0 : getSpuNoOrg().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
-        result = prime * result + ((getSpSkuNo() == null) ? 0 : getSpSkuNo().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getSkuNo() == null) ? 0 : getSkuNo().hashCode());
+        result = prime * result + ((getSpSkuNo() == null) ? 0 : getSpSkuNo().hashCode());
         result = prime * result + ((getSkuSizeType() == null) ? 0 : getSkuSizeType().hashCode());
+        result = prime * result + ((getMeasurement() == null) ? 0 : getMeasurement().hashCode());
         return result;
     }
 }

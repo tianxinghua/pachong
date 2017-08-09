@@ -71,6 +71,16 @@ public class HubSupplierSku implements Serializable {
     private String supplierSkuSize;
 
     /**
+     * 尺码类型
+     */
+    private String supplierSkuSizeType;
+
+    /**
+     * 测量信息
+     */
+    private String measurement;
+
+    /**
      * 库存
      */
     private Integer stock;
@@ -121,7 +131,7 @@ public class HubSupplierSku implements Serializable {
     private Long version;
 
     /**
-     * 尚品skuno
+     * 尚品SKU
      */
     private String spSkuNo;
 
@@ -231,6 +241,22 @@ public class HubSupplierSku implements Serializable {
         this.supplierSkuSize = supplierSkuSize == null ? null : supplierSkuSize.trim();
     }
 
+    public String getSupplierSkuSizeType() {
+        return supplierSkuSizeType;
+    }
+
+    public void setSupplierSkuSizeType(String supplierSkuSizeType) {
+        this.supplierSkuSizeType = supplierSkuSizeType == null ? null : supplierSkuSizeType.trim();
+    }
+
+    public String getMeasurement() {
+        return measurement;
+    }
+
+    public void setMeasurement(String measurement) {
+        this.measurement = measurement == null ? null : measurement.trim();
+    }
+
     public Integer getStock() {
         return stock;
     }
@@ -338,6 +364,8 @@ public class HubSupplierSku implements Serializable {
         sb.append(", supplyPriceCurrency=").append(supplyPriceCurrency);
         sb.append(", supplierBarcode=").append(supplierBarcode);
         sb.append(", supplierSkuSize=").append(supplierSkuSize);
+        sb.append(", supplierSkuSizeType=").append(supplierSkuSizeType);
+        sb.append(", measurement=").append(measurement);
         sb.append(", stock=").append(stock);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
@@ -379,6 +407,8 @@ public class HubSupplierSku implements Serializable {
             && (this.getSupplyPriceCurrency() == null ? other.getSupplyPriceCurrency() == null : this.getSupplyPriceCurrency().equals(other.getSupplyPriceCurrency()))
             && (this.getSupplierBarcode() == null ? other.getSupplierBarcode() == null : this.getSupplierBarcode().equals(other.getSupplierBarcode()))
             && (this.getSupplierSkuSize() == null ? other.getSupplierSkuSize() == null : this.getSupplierSkuSize().equals(other.getSupplierSkuSize()))
+            && (this.getSupplierSkuSizeType() == null ? other.getSupplierSkuSizeType() == null : this.getSupplierSkuSizeType().equals(other.getSupplierSkuSizeType()))
+            && (this.getMeasurement() == null ? other.getMeasurement() == null : this.getMeasurement().equals(other.getMeasurement()))
             && (this.getStock() == null ? other.getStock() == null : this.getStock().equals(other.getStock()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -409,6 +439,8 @@ public class HubSupplierSku implements Serializable {
         result = prime * result + ((getSupplyPriceCurrency() == null) ? 0 : getSupplyPriceCurrency().hashCode());
         result = prime * result + ((getSupplierBarcode() == null) ? 0 : getSupplierBarcode().hashCode());
         result = prime * result + ((getSupplierSkuSize() == null) ? 0 : getSupplierSkuSize().hashCode());
+        result = prime * result + ((getSupplierSkuSizeType() == null) ? 0 : getSupplierSkuSizeType().hashCode());
+        result = prime * result + ((getMeasurement() == null) ? 0 : getMeasurement().hashCode());
         result = prime * result + ((getStock() == null) ? 0 : getStock().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
