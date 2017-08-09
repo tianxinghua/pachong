@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2017年7月19日 上午11:49:43
  *
  */
-@Service
+@Service("productPullDataServiceImpl")
 @Slf4j
 public class ProductPullDataService {
 	
