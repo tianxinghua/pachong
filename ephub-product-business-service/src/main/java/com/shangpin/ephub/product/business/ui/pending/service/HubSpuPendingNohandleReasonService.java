@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonCriteriaDto;
@@ -100,12 +101,24 @@ public class HubSpuPendingNohandleReasonService {
 	}
 	
 	private void insert(String createUser, Reason reason, HubSpuPendingDto dto){
+		/**
+		 * 先插入数据
+		 */
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
 		reasonDto.setCreateUser(createUser);
 		reasonDto.setCreateTime(new Date());
 		reasonDto.setErrorType(Byte.valueOf(reason.getErrorType()));
 		reasonDto.setErrorReason(Byte.valueOf(reason.getErrorReason())); 
 		reasonGateWay.insert(reasonDto);
+		/**
+		 * pending数据打个标
+		 */
+		HubSpuPendingDto hubPendingSpuDto = new HubSpuPendingDto();
+		hubPendingSpuDto.setSpuPendingId(dto.getSpuPendingId());
+		hubPendingSpuDto.setMsgMissHandleState(MsgMissHandleState.HAVE_HANDLED.getIndex());
+		hubPendingSpuDto.setUpdateUser(createUser);
+		hubPendingSpuDto.setUpdateTime(new Date());
+		hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 	}
 	
 	private void insert(String createUser, String reason, HubSpuPendingDto dto){
