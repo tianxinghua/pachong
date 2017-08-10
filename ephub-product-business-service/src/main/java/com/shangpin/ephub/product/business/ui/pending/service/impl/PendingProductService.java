@@ -5,15 +5,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
-import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -38,7 +45,10 @@ import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendin
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
+import com.shangpin.ephub.product.business.ui.pending.service.HubSpuPendingNohandleReasonService;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
@@ -81,6 +91,8 @@ public class PendingProductService extends PendingSkuService{
 
     @Autowired
 	private SupplierInHubService supplierInHubService;
+    @Autowired
+    private HubSpuPendingNohandleReasonService reasonService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -100,7 +112,15 @@ public class PendingProductService extends PendingSkuService{
                     	spuPendingIds.add(pendingSpu.getSpuPendingId());
                     }
                     long start_sku = System.currentTimeMillis();
+                    /**
+                     * 查找sku信息
+                     */
                     Map<Long,List<HubSkuPendingDto>> pendingSkus = findPendingSku(spuPendingIds,flag);
+                    /**
+                     * 查找错误信息
+                     */
+                    Map<Long,String> errorReasons = reasonService.findAllErrorReason(spuPendingIds);
+                    
                     log.info("--->待处理查询sku耗时{}",System.currentTimeMillis()-start_sku); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                         PendingProductDto pendingProduct = JavaUtil.convertHubSpuPendingDto2PendingProductDto(pendingSpu);
@@ -121,6 +141,7 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
+                        pendingProduct.setErrorReason(errorReasons.get(pendingSpu.getSpuPendingId()));  
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
