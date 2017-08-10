@@ -44,5 +44,9 @@ public class PendingProductDto extends HubSpuPendingDto {
 	
 	private String supplierCategoryname;
 	private String auditDateStr;
+	/**
+	 * 错误原因
+	 */
+	private String errorReason;
 	
 }
