@@ -110,6 +110,7 @@ public class DelibertiHandler implements ISupplierHandler {
 			hubSpu.setSupplierSeasonname(delibertiSpuDto.getSeasonName());
 			hubSpu.setSupplierMaterial(delibertiSpuDto.getMaterial());
 			hubSpu.setSupplierOrigin(delibertiSpuDto.getProductOrigin());
+			hubSpu.setSupplierSpuDesc(delibertiSpuDto.getDescription()); 
 			return true;
 		}
 	}
@@ -126,7 +127,11 @@ public class DelibertiHandler implements ISupplierHandler {
 		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(delibertiSkuDto.getMarketPrice())));
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(delibertiSkuDto.getSupplierPrice())));
 		hubSku.setMarketPriceCurrencyorg(delibertiSkuDto.getSaleCurrency());
-		hubSku.setSupplierSkuSize(delibertiSkuDto.getProductSize());
+		String sizeType = "";
+		if(StringUtils.isEmpty(delibertiSkuDto.getProductDescription())){
+			sizeType = delibertiSkuDto.getProductDescription();
+		}
+		hubSku.setSupplierSkuSize(sizeType + " " + delibertiSkuDto.getProductSize());
 		hubSku.setStock(StringUtil.verifyStock((delibertiSkuDto.getStock())));
 		return true;
 	}
