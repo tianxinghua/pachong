@@ -35,7 +35,10 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendi
 import com.shangpin.ephub.client.product.business.hubpending.spu.dto.NohandleReason;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubNohandleReasonGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>
@@ -53,6 +56,7 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
  */
 @SuppressWarnings("rawtypes")
 @Service
+@Slf4j
 public class PendingSpuImportService {
 	
 
@@ -177,6 +181,7 @@ public class PendingSpuImportService {
 			add(reasons,product.getReason3());
 			add(reasons,product.getReason4());
 			nohandleReason.setReasons(reasons);
+			log.info("插入无法处理实体===="+JsonUtil.serialize(nohandleReason)); 
 			return nohandleGateWay.insertNohandleReason(nohandleReason);
 		}else{
 			return false;
