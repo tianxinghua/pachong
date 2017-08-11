@@ -45,6 +45,17 @@
 
 
     </insert>
+    
+    <update id="update" parameterType="iog_sku_relation" >
+          update SKU_RELATION
+          <set>
+			 <if test="sopSkuId != null"> SOP_SKU_ID = #{sopSkuId}</if> 
+          </set>
+
+
+          where  SUPPLIER_ID = #{supplierId}   and   SUPPLIER_SKU_ID = #{supplierSkuId}
+
+    </update>
 
     <select id="getSkuRelationListBySupplierId"  resultMap="skuMap">
         select
