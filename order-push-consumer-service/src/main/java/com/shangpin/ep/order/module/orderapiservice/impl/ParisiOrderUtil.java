@@ -110,7 +110,7 @@ public class ParisiOrderUtil  {
             Map<String,String> headerMap = new HashMap<>();
             headerMap.put("SOAPAction",deleteOrderUrl);
             headerMap.put("SOAPAction","http://tempuri.org/DeleteOrder");
-            result = HttpUtil45.operateData("post","soap","http://www.rpwebservice.it/wsnat13.asmx",
+            result = HttpUtil45.operateData("post","soap",hostUrl,
                     new OutTimeConfig(1000*60,1000*60*30,1000*60*30),null,request,headerMap,"","");
             return analyzeCancelData(result);
 
