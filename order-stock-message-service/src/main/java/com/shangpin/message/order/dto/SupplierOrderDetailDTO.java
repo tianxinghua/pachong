@@ -59,4 +59,7 @@ public class SupplierOrderDetailDTO implements Serializable {
 	 * 原商户订单号
  	 */
 	private String  originalSupplierOrderNo;
+
+	//1:跨境  2：一般贸易  0：无
+	private String importType;
 }

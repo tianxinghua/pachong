@@ -53,4 +53,7 @@ public class SupplierOrderDetailSync implements Serializable {
 	 * 推送给供货商的订单编号
 	 */
 	private String orderNo;
+
+	//1:跨境  2：一般贸易  0：无
+	private String importType;
 }

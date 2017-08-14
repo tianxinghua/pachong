@@ -116,7 +116,12 @@ public interface OriginalProductSource {
 	public static final String TIZIANAFAUSTI = "tizianafaustiOriginalProduct"; 	 
 	
 	public static final String THECLUTCHER = "theclutcherOriginalProduct"; 
-	public static final String ANTONACCI = "antonacciOriginalProduct"; 
+	public static final String ANTONACCI = "antonacciOriginalProduct";
+
+
+	public static final String REEBONZ = "reebonzOriginalProduct";
+
+
 	/**
 	 * 供货商SPINNAKER通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -441,4 +446,12 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.ANTONACCI)
 	public MessageChannel antonacci();
+
+
+	/**
+	 * 供货商reebonz通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.REEBONZ)
+	public MessageChannel reebonz();
 }

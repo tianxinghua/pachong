@@ -102,7 +102,8 @@ public class SupplierOrderService {
 								}
 							}
 							List<SupplierOrderDetailSync> detailSyncs= new ArrayList<>();
-							SupplierOrderDetailSync supplierOrderDetailSync = new SupplierOrderDetailSync(detailDTO.getSupplierNo(), detailDTO.getSkuNo(), 1, detailDTO.getSupplierOrderNo(), detailDTO.getPurchaseOrderNo(), detailDTO.getOriginalSupplierOrderNo(), orderNo);
+							SupplierOrderDetailSync supplierOrderDetailSync = new SupplierOrderDetailSync(detailDTO.getSupplierNo(), detailDTO.getSkuNo(), 1,
+									detailDTO.getSupplierOrderNo(), detailDTO.getPurchaseOrderNo(), detailDTO.getOriginalSupplierOrderNo(), orderNo,detailDTO.getImportType());
 									detailSyncs.add(supplierOrderDetailSync);
 							SupplierOrderSync supplierOrderSync = new SupplierOrderSync(UUID.randomUUID().toString(), dto.getMessageId(), sdf.format(new Date()), dto.getOrderNo(), dto.getSyncType(), detailSyncs);
 							supplierOrderSyncs.add(supplierOrderSync);
