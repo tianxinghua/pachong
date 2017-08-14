@@ -32,6 +32,8 @@ public class SupplierProperties {
 	
 	private Brunarosso brunarosso;
 	
+	private Vietti vietti;
+	
 	private Zitafabiani zitafabiani;
 	
 	private Coltorti coltorti;
