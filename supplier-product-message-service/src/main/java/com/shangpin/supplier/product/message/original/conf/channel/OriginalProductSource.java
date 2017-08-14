@@ -10,7 +10,10 @@ import org.springframework.messaging.MessageChannel;
  * @date 2016年12月5日 下午7:34:44
  */
 public interface OriginalProductSource {
-	
+	public static final String portofino = "portofinoOriginalProduct";
+	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
+	public static final String fratinardi = "fratinardiOriginalProduct";
+	public static final String FORZIERI = "forzieriOriginalProduct";
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
 	
 	public static final String OSTORE = "ostoreOriginalProduct";
@@ -20,7 +23,9 @@ public interface OriginalProductSource {
 	public static final String STEFANIA = "stefaniaOriginalProduct";
 	
 	public static final String GEB = "gebOriginalProduct";
-	
+	public static final String PALOMA = "palomaOriginalProduct";
+	public static final String LAMBORGHINI = "lamborghiniOriginalProduct";
+
 	public static final String COLTORTI = "coltortiOriginalProduct";
 	
 	public static final String TONY = "tonyOriginalProduct";
@@ -102,7 +107,9 @@ public interface OriginalProductSource {
 	public static final String STUDIO69 = "studio69OriginalProduct"; 
 	
 	public static final String DELIBERTI = "delibertiOriginalProduct"; 
-	
+
+	public static final String PARISI = "parisiOriginalProduct";
+
 	public static final String SMETS = "smetsOriginalProduct";
 	
 	public static final String SARENZA = "sarenzaOriginalProduct";
@@ -118,8 +125,49 @@ public interface OriginalProductSource {
 	public static final String THECLUTCHER = "theclutcherOriginalProduct"; 
 	public static final String ANTONACCI = "antonacciOriginalProduct";
 
+	public static final String LUNGOLIVIGNO = "lungolivignoOriginalProduct";
 
-	public static final String REEBONZ = "reebonzOriginalProduct";
+	public static final String FILIPPO = "filippoOriginalProduct";
+
+	public static final String DELLAMARTIRA = "dellaMartiraOriginalProduct";
+
+	public static final String ROSISERLI = "rosiSerliOriginalProduct";
+
+	public static final String MCLABLES = "mclablesOriginalProduct";
+
+	public static final String EMONTI = "emontiOriginalProduct";
+
+	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
+
+	public static final String ALL_PRODUCT_STOCK = "allProductStock";
+
+
+    public static final String REEBONZ = "reebonzOriginalProduct";
+
+    /**
+	 * 供货商portofino通道组件配置
+	 * @return 供货商portofino通道组件
+	 */
+	@Output(value = OriginalProductSource.portofino)
+	public MessageChannel portofino();
+	/**
+	 * 供货商coccolebimbi通道组件配置
+	 * @return 供货商coccolebimbi通道组件
+	 */
+	@Output(value = OriginalProductSource.coccolebimbi)
+	public MessageChannel coccolebimbi();
+	/**
+	 * 供货商fratinardi通道组件配置
+	 * @return 供货商FORZIERI通道组件
+	 */
+	@Output(value = OriginalProductSource.fratinardi)
+	public MessageChannel fratinardi();
+	/**
+	 * 供货商FORZIERI通道组件配置
+	 * @return 供货商FORZIERI通道组件
+	 */
+	@Output(value = OriginalProductSource.FORZIERI)
+	public MessageChannel forzieri();
 
 
 	/**
@@ -147,11 +195,23 @@ public interface OriginalProductSource {
 	@Output(value = OriginalProductSource.STEFANIA)
     public MessageChannel stefania();
 	/**
+	 * 供货商LAMBORGHINI通道组件配置
+	 * @return 供货商LAMBORGHINI通道组件
+	 */
+	@Output(value = OriginalProductSource.LAMBORGHINI)
+    public MessageChannel lamborghini();
+	/**
+	 * 供货商PALOMA通道组件配置
+	 * @return 供货商PALOMA通道组件
+	 */
+	@Output(value = OriginalProductSource.PALOMA)
+	public MessageChannel paloma();
+	/**
 	 * 供货商GEB通道组件配置
 	 * @return 供货商GEB通道组件
 	 */
 	@Output(value = OriginalProductSource.GEB)
-    public MessageChannel geb();
+	public MessageChannel geb();
 	/**
 	 * 供货商COLTORTI通道组件配置
 	 * @return 供货商COLTORTI通道组件
@@ -399,6 +459,12 @@ public interface OriginalProductSource {
 	@Output(value = OriginalProductSource.DELIBERTI)
     public MessageChannel deliberti();
 	/**
+	 * 供货商PARISI通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.PARISI)
+    public MessageChannel parisi();
+	/**
 	 * 供货商SMETS通道组件配置
 	 * @return 供货商通道组件
 	 */
@@ -446,6 +512,54 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.ANTONACCI)
 	public MessageChannel antonacci();
+	/**
+	 * 供货商LUNGOLIVIGNO通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.LUNGOLIVIGNO)
+	public MessageChannel lungolivigno();
+	/**
+	 * 供应商FILIPPO通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.FILIPPO)
+	public MessageChannel filippo();
+	/**
+	 * 供应商DELLAMARTIRA通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.DELLAMARTIRA)
+	public MessageChannel dellaMartira();
+	/**
+	 * 供应商ROSISERLI通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.ROSISERLI)
+	public MessageChannel rosiSerli();
+	/**
+	 * 供应商MCLABLES通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.MCLABLES)
+	public MessageChannel mclables();
+	/**
+	 * 供应商EMONTI通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.EMONTI)
+	public MessageChannel emonti();
+	/**
+	 * 供应商DLRBOUTIQUE通道组件配置
+	 * @return
+	 */
+	@Output(value = OriginalProductSource.DLRBOUTIQUE)
+	public MessageChannel dlrboutique();
+	/**
+	 * 所有产品的库存通道
+	 * @return
+	 */
+	@Output(value = OriginalProductSource.ALL_PRODUCT_STOCK)
+	public MessageChannel allProductStock();
 
 
 	/**

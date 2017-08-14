@@ -8,7 +8,19 @@ spring:
   cloud: 
         stream: 
               bindings: 
-                        spinnakerOriginalProduct: 
+                        coccolebimbiOriginalProduct:
+                              destination: coccolebimbi.original.product
+                              content-type: application/json
+                        portofinoOriginalProduct:
+                              destination: portofino.original.product
+                              content-type: application/json
+                        fratinardiOriginalProduct:
+                              destination: fratinardi.original.product
+                              content-type: application/json
+                        forzieriOriginalProduct:
+                              destination: forzieri.original.product
+                              content-type: application/json
+                        spinnakerOriginalProduct:
                               destination: spinnaker.original.product
                               content-type: application/json
                         ostoreOriginalProduct: 
@@ -23,7 +35,13 @@ spring:
                         gebOriginalProduct: 
                               destination: geb.original.product
                               content-type: application/json
-                        coltortiOriginalProduct: 
+                        palomaOriginalProduct:
+                              destination: paloma.original.product
+                              content-type: application/json
+                        lamborghiniOriginalProduct:
+                              destination: lamborghini.original.product
+                              content-type: application/json
+                        coltortiOriginalProduct:
                               destination: coltorti.original.product
                               content-type: application/json
                         tonyOriginalProduct: 
@@ -146,7 +164,10 @@ spring:
                         delibertiOriginalProduct: 
                               destination: deliberti.original.product
                               content-type: application/json
-                        smetsOriginalProduct: 
+                        parisiOriginalProduct:
+                              destination: parisi.original.product
+                              content-type: application/json
+                        smetsOriginalProduct:
                               destination: smets.original.product
                               content-type: application/json
                         sarenzaOriginalProduct: 
@@ -170,13 +191,49 @@ spring:
                         antonacciOriginalProduct: 
                               destination: antonacci.original.product
                               content-type: application/json
+                        lungolivignoOriginalProduct:
+                              destination: lungolivigno.original.product
+                              content-type: application/json
+                        filippoOriginalProduct:
+                              destination: filippo.original.product
+                              content-type: application/json
+                        dellaMartiraOriginalProduct:
+                              destination: dellaMartira.original.product
+                              content-type: application/json
+                        rosiSerliOriginalProduct:
+                              destination: rosiSerli.original.product
+                              content-type: application/json
+                        mclablesOriginalProduct:
+                              destination: mclables.original.product
+                              content-type: application/json
+                        emontiOriginalProduct:
+                              destination: emonti.original.product
+                              content-type: application/json
+                        dlrboutiqueOriginalProduct:
+                              destination: dlrboutique.original.product
+                              content-type: application/json
+                        allProductStock:
+                              destination: supplier.product.stock
+                              content-type: application/json
                         reebonzOriginalProduct:
                               destination: reebonz.original.product
                               content-type: application/json
 
-              rabbit: 
+              rabbit:
                       bindings: 
-                            spinnakerOriginalProduct: 
+                            coccolebimbiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            portofinoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            fratinardiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            forzieriOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            spinnakerOriginalProduct:
                                   producer: 
                                            prefix: HA.
                             ostoreOriginalProduct: 
@@ -191,7 +248,13 @@ spring:
                             gebOriginalProduct: 
                                   producer: 
                                            prefix: HA.
-                            coltortiOriginalProduct: 
+                            palomaOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            lamborghiniOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            coltortiOriginalProduct:
                                   producer: 
                                            prefix: HA.
                             tonyOriginalProduct: 
@@ -314,7 +377,10 @@ spring:
                             delibertiOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
-                            smetsOriginalProduct: 
+                            parisiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            smetsOriginalProduct:
                                   producer: 
                                            prefix: HA. 
                             sarenzaOriginalProduct: 
@@ -336,7 +402,31 @@ spring:
                                   producer: 
                                            prefix: HA.                                                                                                                                                                                                                                                                                                                           
                             antonacciOriginalProduct: 
-                                  producer: 
+                                  producer:
+                                           prefix: HA.
+                            lungolivignoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            filippoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            dellaMartiraOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            rosiSerliOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            mclablesOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            emontiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            dlrboutiqueOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            allProductStock:
+                                  producer:
                                            prefix: HA.
                             reebonzOriginalProduct:
                                   producer:

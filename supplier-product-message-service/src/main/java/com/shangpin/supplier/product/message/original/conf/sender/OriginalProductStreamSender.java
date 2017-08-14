@@ -5,6 +5,7 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
+import com.shangpin.ephub.client.message.original.body.SupplierStock;
 import com.shangpin.supplier.product.message.original.conf.channel.OriginalProductSource;
 /**
  * <p>Title:OrderStreamSender.java </p>
@@ -18,6 +19,22 @@ public class OriginalProductStreamSender {
 	
 	@Autowired
 	private OriginalProductSource originalProductSource;
+	/**
+	 * 发送供应商coccolebimbi商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean coccolebimbiStream(SupplierProduct supplierProduct) {
+		return originalProductSource.coccolebimbi().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	/**
+	 * 发送供应商portofino商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean portofinoStream(SupplierProduct supplierProduct) {
+		return originalProductSource.portofino().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
 	/**
 	 * 发送供应商biondioni商品流数据
 	 * @param supplierProduct 消息体
@@ -50,6 +67,22 @@ public class OriginalProductStreamSender {
     public boolean ostoreStream(SupplierProduct supplierProduct) {
     	return originalProductSource.ostore().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    /**
+     * 发送供应商fratinardi商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean fratinardiStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.fratinardi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商forzieri商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean forzieriStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.forzieri().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 	/**
 	 * 发送供应商spinnaker商品流数据
 	 * @param supplierProduct 消息体
@@ -81,6 +114,22 @@ public class OriginalProductStreamSender {
      */
     public boolean gebStream(SupplierProduct supplierProduct) {
     	return originalProductSource.geb().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商paloma商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean palomaStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.paloma().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商lamborghini商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean lamborghiniStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.lamborghini().send(MessageBuilder.withPayload(supplierProduct).build());
     }
     /**
      * 发送供应商pozzilei商品流数据
@@ -387,6 +436,14 @@ public class OriginalProductStreamSender {
     	return originalProductSource.deliberti().send(MessageBuilder.withPayload(supplierProduct).build());
     }
     /**
+     * 发送供应商parisi商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean parisiStream(SupplierProduct supplierProduct) {
+    	return originalProductSource.parisi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
      * 发送供应商smets商品流数据
      * @param supplierProduct 消息体
      * @return 如果发送成功返回true,否则返回false
@@ -449,6 +506,70 @@ public class OriginalProductStreamSender {
      */
     public boolean antonacciStream(SupplierProduct supplierProduct) {
     	return originalProductSource.antonacci().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商lungolivigno商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean lungolivignoStream(SupplierProduct supplierProduct){
+    	return originalProductSource.lungolivigno().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商filippo商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean filippoStream(SupplierProduct supplierProduct){
+    	return originalProductSource.filippo().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商dellaMartira商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean dellaMartiraStream(SupplierProduct supplierProduct){
+    	return originalProductSource.dellaMartira().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商rosiSerli商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean rosiSerliStream(SupplierProduct supplierProduct){
+    	return originalProductSource.rosiSerli().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商mclables商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean mclablesStream(SupplierProduct supplierProduct){
+    	return originalProductSource.mclables().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商emonti商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean emontiStream(SupplierProduct supplierProduct){
+    	return originalProductSource.emonti().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 发送供应商dlrboutique商品流数据
+     * @param supplierProduct
+     * @return
+     */
+    public boolean dlrboutiqueStream(SupplierProduct supplierProduct){
+    	return originalProductSource.dlrboutique().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+    /**
+     * 所有供应商更新库存队列
+     * @param supplierStock
+     * @return
+     */
+    public boolean allProductStockStream(SupplierStock supplierStock){
+    	return originalProductSource.allProductStock().send(MessageBuilder.withPayload(supplierStock).build());
     }
 
 

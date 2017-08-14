@@ -4,7 +4,7 @@ spring:
       mongodb: 
              uri: mongodb://172.20.11.85:27017,172.20.11.86:27017/order-stock-message-service
   rabbitmq: 
-           host: 172.20.10.61
+           host: mq.ephub.spidc1.com
            port: 5672
            username: scm-message-service
            password: scm-message-service
