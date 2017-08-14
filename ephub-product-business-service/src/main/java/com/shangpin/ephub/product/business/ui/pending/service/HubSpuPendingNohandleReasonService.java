@@ -55,6 +55,7 @@ public class HubSpuPendingNohandleReasonService {
 	 */
 	public boolean insertNohandleReason(NohandleReason nohandleReason){
 		try {
+			log.info("接收到的无法处理实体===="+JsonUtil.serialize(nohandleReason)); 
 			List<HubSpuPendingDto> list = findPendingSpus(nohandleReason.getSupplierId(),nohandleReason.getSupplierSpuNo());
 			if(CollectionUtils.isNotEmpty(list)){
 				nohandleReason.getReasons().forEach(reason -> insert(nohandleReason.getCreateUser(), reason , list.get(0)));
