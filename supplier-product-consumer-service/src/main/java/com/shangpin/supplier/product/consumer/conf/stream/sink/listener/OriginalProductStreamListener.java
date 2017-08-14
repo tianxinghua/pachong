@@ -655,4 +655,15 @@ public class OriginalProductStreamListener {
 	public void allProductStockStreamListen(@Payload SupplierStock message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.allProductStockStreamListen(message, headers);
 	}
+
+	/**
+	 * 供应商REEBONZ原始数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(OriginalProductSink.REEBONZ)
+	public void reebonzStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
+		adapter.reebonzStreamListen(message, headers);
+	}
 }
