@@ -227,22 +227,27 @@ public class DataSverviceUtil {
 
                 dataServiceHandler.updateSkuPengding(hubSkuPending);
                 //处理spu的stock_state
+                boolean isHaveMarketPrice = true,isHaveSupplyPrice = true;
+                if(null==hubSkuPending.getMarketPrice()||0==hubSkuPending.getMarketPrice().intValue()){
+                    isHaveMarketPrice = false;
+                }
+
+                if(null==hubSkuPending.getSupplyPrice()||0==hubSkuPending.getSupplyPrice().intValue()){
+                   isHaveSupplyPrice = false;
+                }
+
                 if(null!=supplierSku.getStock()){
                     if(supplierSku.getStock()<=0){
-                        //判断此SPU下是否有库存
-                        int totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
-                        if(totalStock>0){
-//                            if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
-                                spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),totalStock);
-//                            }
-                        }else{
-                            spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),0);
-                        }
+                        updateStockAndPriceStateWhenStockZero(hubSpuPending, isHaveMarketPrice, isHaveSupplyPrice);
+
                     }else{
 //                        if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
-                            spuPendingHandler.updateStotckState(hubSpuPending.getSpuPendingId(),supplierSku.getStock());
+                            spuPendingHandler.updateStotckStateAndPriceState(hubSpuPending.getSpuPendingId(),supplierSku.getStock(),isHaveMarketPrice,isHaveSupplyPrice);
 //                        }
                     }
+                }else{
+                     //判断此SPU下是否有库存
+                    updateStockAndPriceStateWhenStockZero(hubSpuPending, isHaveMarketPrice, isHaveSupplyPrice);
                 }
 
 
@@ -250,6 +255,18 @@ public class DataSverviceUtil {
 
         }
 
+    }
+
+    private void updateStockAndPriceStateWhenStockZero(SpuPending hubSpuPending, boolean isHaveMarketPrice, boolean isHaveSupplyPrice) {
+        //判断此SPU下是否有库存
+        int totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
+        if(totalStock>0){
+//                            if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
+                spuPendingHandler.updateStotckStateAndPriceState(hubSpuPending.getSpuPendingId(),totalStock,isHaveMarketPrice,isHaveSupplyPrice);
+//                            }
+        }else{
+            spuPendingHandler.updateStotckStateAndPriceState(hubSpuPending.getSpuPendingId(),0,isHaveMarketPrice,isHaveSupplyPrice);
+        }
     }
 
 

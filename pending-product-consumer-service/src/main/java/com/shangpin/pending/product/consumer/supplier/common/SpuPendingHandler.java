@@ -3,6 +3,7 @@ package com.shangpin.pending.product.consumer.supplier.common;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierPriceState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -98,6 +99,28 @@ public class SpuPendingHandler {
             hubSpuPending.setStockState(StockState.NOSTOCK.getIndex());
         }
         hubSpuPending.setUpdateTime(new Date());
+        HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+        criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+        HubSpuPendingWithCriteriaDto criteriaSpu = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteria);
+        spuPendingGateWay.updateByCriteriaSelective(criteriaSpu);
+
+    }
+
+    public void updateStotckStateAndPriceState(Long spuPendingId,Integer stockState,Boolean noMarketPrice,Boolean noSupplyPrice){
+        HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
+        if(stockState>0){
+            hubSpuPending.setStockState(StockState.HANDLED.getIndex());
+        }else if(stockState<=0){
+            hubSpuPending.setStockState(StockState.NOSTOCK.getIndex());
+        }
+        hubSpuPending.setUpdateTime(new Date());
+        if(!noMarketPrice){
+            hubSpuPending.setMarketPriceState(SupplierPriceState.NO_PRICE.getIndex());
+        }
+        if(!noSupplyPrice){
+            hubSpuPending.setSupplyPriceState(SupplierPriceState.NO_PRICE.getIndex());
+        }
+
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
         HubSpuPendingWithCriteriaDto criteriaSpu = new HubSpuPendingWithCriteriaDto(hubSpuPending,criteria);
