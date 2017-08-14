@@ -107,6 +107,8 @@ public interface PendingProductSource {
 	
 	public static final String DELIBERTI = "delibertiPendingProduct"; 
 	
+	public static final String PARISI = "parisiPendingProduct"; 
+	
 	public static final String SMETS = "smetsPendingProduct";
 	
 	public static final String SARENZA = "sarenzaPendingProduct";
@@ -436,6 +438,12 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.DELIBERTI)
     public MessageChannel delibertiPendingProduct();
+	/**
+	 * 供货商PARISI 通道组件配置
+	 * @return 供货商PARISI 通道组件
+	 */
+	@Output(value = PendingProductSource.PARISI)
+    public MessageChannel parisiPendingProduct();
 	/**
 	 * 供货商SMETS 通道组件配置
 	 * @return 供货商SMETS 通道组件

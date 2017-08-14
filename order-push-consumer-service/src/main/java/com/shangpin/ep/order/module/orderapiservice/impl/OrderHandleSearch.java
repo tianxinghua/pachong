@@ -46,6 +46,12 @@ public class OrderHandleSearch {
 	@Qualifier("creative99ServiceImpl")
 	IOrderService creative99ServiceImpl;
 	@Autowired
+	@Qualifier("viettiServiceImpl")
+	IOrderService viettiServiceImpl;
+	@Autowired
+	@Qualifier("parisiServiceImpl")
+	IOrderService parisiServiceImpl;
+	@Autowired
 	@Qualifier("danielloServiceImpl")
 	IOrderService danielloServiceImpl;
 	@Autowired
@@ -164,6 +170,7 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
+	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -185,6 +192,10 @@ public class OrderHandleSearch {
 			return efashionOrderImpl;
 		} else if ("2015081701441".equals(supplierId)) {
 			return leamServiceImpl;
+		} else if ("2016072601910".equals(supplierId)) {
+			return viettiServiceImpl;
+		} else if ("2015101301604".equals(supplierId)) {
+			return parisiServiceImpl;
 		} else if("2017060101976".equals(supplierId)){
 			return spinnakerPortofinoOrderService;
 		}else if ("2015081701439".equals(supplierId)) {

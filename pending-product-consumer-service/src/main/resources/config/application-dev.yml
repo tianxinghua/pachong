@@ -294,6 +294,12 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        parisiPendingProduct: 
+                              destination: parisi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         smetsPendingProduct: 
                               destination: smets.pending.product
                               group: one
@@ -657,6 +663,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             delibertiPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            parisiPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false

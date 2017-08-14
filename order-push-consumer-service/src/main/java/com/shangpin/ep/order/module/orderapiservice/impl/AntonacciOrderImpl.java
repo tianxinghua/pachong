@@ -163,9 +163,10 @@ public class AntonacciOrderImpl implements IOrderService {
 			if (HttpUtil45.errorResult.equals(rtnData)) {
 				orderDTO.setErrorType(ErrorStatus.NETWORK_ERROR);
 				setType(orderDTO, type, uuid, "ERROR");
+			}else{
+				ResponseObject respon = gson.fromJson(rtnData, ResponseObject.class);
+				setType(orderDTO, type, uuid, respon.getStatus());
 			}
-			ResponseObject respon = gson.fromJson(rtnData, ResponseObject.class);
-			setType(orderDTO, type, uuid, respon.getStatus());
 		} catch (Exception e) {
 			orderDTO.setLogContent(uri + "," + type + "推送订单返回结果==" + e.getMessage());
 			setType(orderDTO, type, uuid, "ERROR");
@@ -210,14 +211,14 @@ public class AntonacciOrderImpl implements IOrderService {
 	private String clutherPushOrder(OrderDTO orderDTO, String url, String uuid, String json)
 			throws Exception {
 
-		return HttpUtil45.operateData("put", "json", "http://www.luxury888.it/" + url + "/" + uuid,
+		return HttpUtil45.operateData("put", "json", "https://www.luxury888.it/" + url + "/" + uuid,
 				new OutTimeConfig(1000 * 60 * 2, 1000 * 60 * 2, 1000 * 60 * 2), null, json, null, null, null);
 	}
 
 	private static final int TIMEOUT = 5 * 1000;
 
 	private static String getResponse(String json,String uri,String uuid) throws Exception {
-		URL url = new URL("http://www.luxury888.it/"+uri+"/"+uuid);
+		URL url = new URL("https://www.luxury888.it/"+uri+"/"+uuid);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("DELETE");
 		connection.setDoInput(true);

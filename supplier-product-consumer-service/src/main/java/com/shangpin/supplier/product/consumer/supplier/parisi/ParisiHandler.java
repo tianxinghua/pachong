@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 暂停对接
  */
-@Component("parisHandler")
+@Component("parisiHandler")
 @Slf4j
 public class ParisiHandler implements ISupplierHandler {
 	

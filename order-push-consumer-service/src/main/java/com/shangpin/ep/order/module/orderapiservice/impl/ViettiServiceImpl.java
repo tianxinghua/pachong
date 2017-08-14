@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +21,10 @@ import com.shangpin.ep.order.module.sku.bean.HubSkuCriteria;
 import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-/**
- * <p>Title: WiseOrderService</p>
- * <p>Description: wise供应商订单api对接 </p>
- * <p>Company: </p> 
- * @author lubaijiang
- * @date 2017年6月22日 上午10:17:10
- *
- */
-@Component("wiseServiceImpl")
-public class WiseOrderService implements IOrderService {
 
+@Component("viettiServiceImpl")
+public class ViettiServiceImpl implements IOrderService {
+	
 	@Autowired
     LogCommon logCommon;    
     @Autowired
@@ -39,8 +33,6 @@ public class WiseOrderService implements IOrderService {
     HandleException handleException;
     @Autowired
     HubSkuMapper skuDAO;
-    @Autowired
-    private WiseServiceImpl wiseService;
     
     /**
      * 给对方推送数据
@@ -52,7 +44,7 @@ public class WiseOrderService implements IOrderService {
      * @return
      * @throws Exception
      */
-    public String wisePost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
+    public String viettiPost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
     	return HttpUtil45.postAuth(url, param, outTimeConf, userName, password);
     }
     /**
@@ -103,7 +95,6 @@ public class WiseOrderService implements IOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try {
-			
 			String spOrderId = orderDTO.getSpOrderId();
 			if(spOrderId.contains("-")){
 				spOrderId = spOrderId.substring(0, spOrderId.indexOf("-")); 
@@ -155,11 +146,13 @@ public class WiseOrderService implements IOrderService {
 					}else{
 						orderDTO.setConfirmTime(new Date()); 
 						orderDTO.setPushStatus(PushStatus.NO_STOCK);
+//						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
 				}else{
 					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 					orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);	
 					orderDTO.setDescription("查询对方库存接口失败,对方返回的信息是："+stockData);
+//					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。2分钟后会再推一次。 ");
 				}
 			}else{
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -167,6 +160,7 @@ public class WiseOrderService implements IOrderService {
 				orderDTO.setDescription("查询数据库失败,未找到该商品 "+skuId);
 				orderDTO.setLogContent("查询数据库失败,未找到该商品=========== "+skuId);
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+//				sendMail("订单 "+orderDTO.getSpPurchaseNo()+" 查询数据库失败,未找到该商品=========== "+skuId);
 			}
 			
 		} catch (Exception e) {
@@ -175,10 +169,6 @@ public class WiseOrderService implements IOrderService {
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
-		/**
-		 * 发份邮件
-		 */
-		wiseService.pushConfirmOrder(orderDTO);
 		
 	}
 
@@ -200,10 +190,6 @@ public class WiseOrderService implements IOrderService {
 			if(returnData.contains("OK")){
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
-				/**
-				 * 发邮件
-				 */
-				wiseService.handleRefundlOrder(deleteOrder);
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
@@ -226,7 +212,7 @@ public class WiseOrderService implements IOrderService {
 	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);		
-		String returnData = wisePost(supplierProperties.getWise().getUrl()+supplierProperties.getWise().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getWise().getUser(),supplierProperties.getWise().getPassword(),orderDTO);
+		String returnData = viettiPost(supplierProperties.getVietti().getUrl()+supplierProperties.getVietti().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getVietti().getUser(),supplierProperties.getVietti().getPassword(),orderDTO);
 		return returnData;
 	}
 	
@@ -245,7 +231,7 @@ public class WiseOrderService implements IOrderService {
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = wisePost(supplierProperties.getWise().getUrl()+supplierProperties.getWise().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getWise().getUser(),supplierProperties.getWise().getPassword(),orderDTO);
+		String returnData = viettiPost(supplierProperties.getVietti().getUrl()+supplierProperties.getVietti().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getVietti().getUser(),supplierProperties.getVietti().getPassword(),orderDTO);
 		orderDTO.setLogContent("下订单返回结果======="+returnData+" 下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
@@ -263,7 +249,7 @@ public class WiseOrderService implements IOrderService {
 		param.put("STATUS", status);//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
 		orderDTO.setLogContent("设置订单参数======="+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
-		String returnData = wisePost(supplierProperties.getWise().getUrl()+supplierProperties.getWise().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getWise().getUser(),supplierProperties.getWise().getPassword(),orderDTO);
+		String returnData = viettiPost(supplierProperties.getVietti().getUrl()+supplierProperties.getVietti().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getVietti().getUser(),supplierProperties.getVietti().getPassword(),orderDTO);
 		orderDTO.setLogContent("设置订单状态返回结果======="+returnData);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
 		return returnData;
@@ -274,13 +260,22 @@ public class WiseOrderService implements IOrderService {
 	 * @param code 订单编号
 	 * @return
 	 */
-//	private String getStatusOrderMarketplace(String code) throws Exception {
-//		Map<String,String> param = new HashMap<String,String>();
-//		param.put("CODE", code);
-//		logger.info("查询的订单号为======"+code);
-//		String returnData = HttpUtil45.postAuth(url+getStatus_interface, param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),user,password);
-//		logger.info("查询返回结果======="+returnData);
-//		return returnData;
-//	}
-
+//	@Test
+	public void getStatusOrderMarketplace() throws Exception {
+		Map<String,String> param = new HashMap<String,String>();
+		param.put("ID_ORDER_MRKP", "1234567890");
+		param.put("BARCODE", "2111923881671");
+		param.put("QTY", "1");
+		String returnData = HttpUtil45.postAuth("http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/NewOrderMarketPlace", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"shangpin","shang1307");
+	    System.out.println(returnData);
+	}
+	@Test
+	public void cancel() throws Exception {
+		Map<String,String> param = new HashMap<String,String>();
+		param.put("CODE", "1234567890");
+		param.put("STATUS", "CANCELED");//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
+		String returnData = HttpUtil45.postAuth("http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/SetStatusOrderMarketplace", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"shangpin","shang1307");
+		System.out.println(returnData);
+	}
+	
 }

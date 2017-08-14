@@ -40,6 +40,7 @@ import com.shangpin.asynchronous.task.consumer.util.DownloadPicTool;
 import com.shangpin.asynchronous.task.consumer.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.util.HubWaitSelectStateDto;
 import com.shangpin.asynchronous.task.consumer.util.ImageUtils;
+import com.shangpin.asynchronous.task.consumer.util.excel.ExcelDropdown;
 import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuPictureState;
 import com.shangpin.ephub.client.data.mysql.enumeration.IsExportPic;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
@@ -102,7 +103,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class ExportServiceImpl {
-
+	
 	private static String comma = ",";
 	@Autowired
 	private FtpProperties ftpProperties;
@@ -214,6 +215,9 @@ public class ExportServiceImpl {
 	 */
 	public void exportSpu(String taskNo, PendingQuryDto pendingQuryDto) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook();
+		/**
+		 * 第一个sheet：产品信息
+		 */
 		HSSFSheet sheet = wb.createSheet("产品信息");
 		HSSFRow row = sheet.createRow(0);
 		HSSFCellStyle style = wb.createCellStyle();
@@ -222,7 +226,15 @@ public class ExportServiceImpl {
 			HSSFCell cell = row.createCell(i);
 			cell.setCellValue(row0[i]);
 			cell.setCellStyle(style);
+			if(row0[i].startsWith("无法处理原因")){
+				sheet.setColumnWidth(i, 6000); 
+			}
 		}
+		/**
+		 * 第二个sheet：隐藏
+		 */
+		ExcelDropdown.creatExcelHidePage(wb);
+		
 		String[] rowTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
 		int totalSize = pendingQuryDto.getPageSize();// 总记录数
 		log.info("spu导出总记录数：" + totalSize);
@@ -521,6 +533,8 @@ public class ExportServiceImpl {
 					}
 				} else if("productInfoUrl".equals(rowTemplate[i])){
 					row.createCell(i).setCellValue(apiAddressProperties.getPendingProductInfoUrl()+product.getSpuPendingId());
+				} else if(rowTemplate[i].startsWith("reason")){
+					ExcelDropdown.setDataValidation(row, i); 
 				} else {
 					if ("specificationType".equals(rowTemplate[i])) {
 						continue;

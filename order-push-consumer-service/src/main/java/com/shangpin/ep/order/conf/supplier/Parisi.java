@@ -51,6 +51,8 @@ public class Parisi extends SupplierCommon implements Serializable {
 	 * 
 	 */
 	private String strKey;
+	
+	private String strPassword;
 
 
 
