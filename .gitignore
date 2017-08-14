@@ -3,4 +3,5 @@
 /.settings/
 /.classpath
 /.project
+/.idea
 supplier-product-message-service/gradle/
