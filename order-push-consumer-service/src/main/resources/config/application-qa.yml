@@ -25,16 +25,15 @@ spring:
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
-       default-recipient: zhaogenchun@shangpin.com
-       default-sender: yanxiaobin@shangpin.com
+       default-recipient: lizhongren@shangpin.com
+       default-sender: chengxu@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
        host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
        port: 25 # SMTP server port.
        protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
-       test-connection: false # Test that the mail server is available on startup.
-shangpin: 
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
+       test-connection: true # Test that the mail server is available on startup.shangpin:
   hub: 
     dataSource: 
       clusters: 
