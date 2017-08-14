@@ -471,6 +471,15 @@ spring:
                         delibertiPendingProduct: 
                               destination: deliberti.pending.product
                               content-type: application/json
+                        parisiOriginalProduct: 
+                              destination: parisi.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        parisiPendingProduct: 
+                              destination: parisi.pending.product
+                              content-type: application/json
                         smetsOriginalProduct: 
                               destination: smets.original.product
                               group: one
@@ -610,7 +619,7 @@ spring:
                               destination: supplier.product.stock
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1                                                                                                                                                                                                                                                                                                                                
               rabbit: 
                         bindings: 
@@ -1073,6 +1082,15 @@ spring:
                               delibertiPendingProduct: 
                                     producer: 
                                          prefix: HA.
+                              parisiOriginalProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                              parisiPendingProduct: 
+                                  producer: 
+                                       prefix: HA.
                               smetsOriginalProduct: 
                                     consumer: 
                                          prefix: HA.
@@ -1209,11 +1227,11 @@ spring:
                                     producer: 
                                          prefix: HA.  
                               allProductStock: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                                                                    
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false                                                                                                                                                                                                                                                                                                                                                    
         consul: 
           host: localhost
           port: 8500

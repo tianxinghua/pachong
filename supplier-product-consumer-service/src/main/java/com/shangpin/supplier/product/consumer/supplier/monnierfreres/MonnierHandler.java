@@ -145,7 +145,7 @@ public class MonnierHandler implements ISupplierHandler {
 				spuModel = item.getPvr_model() + " "+item.getPvr_color();
 			}else{
 				if(supplierSpuNo.contains("CONFIG")){
-					spuModel = supplierSpuNo.substring(7);	
+					return false;
 				}else{
 					spuModel = supplierSpuNo;
 				}
@@ -204,7 +204,7 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPrice_before_discount())));
 			hubSku.setMarketPriceCurrencyorg("EUR");
 			if(supplierSkuNo.contains("CONFIG")){
-				supplierSkuNo = supplierSkuNo.substring(7);
+				return false;
 			}
 			if(supplierSkuNo.length()==12){
 				size = supplierSkuNo.substring(9);

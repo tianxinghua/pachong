@@ -1,6 +1,7 @@
 package com.shangpin.supplier.product.consumer.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.message.picture.ProductPicture;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
@@ -62,12 +67,27 @@ public class PictureProductService {
 		if(null == supplierPicture || null == supplierPicture.getProductPicture() || null == supplierPicture.getProductPicture().getImages() || supplierPicture.getProductPicture().getImages().size() == 0){
 			return false;
 		}else{
+			Map<String,String> supplierUrls = Maps.newHashMap();
 			Map<String,String> pics = findHubSpuPendingPics(supplierPicture.getSupplierSpuId());
+			/**
+			 * 首先吧原始数据中的链接，已经在库里存在的排除掉，返回一个未处理的集合
+			 */
 			List<Image> images = new ArrayList<Image>();
 			for(Image image : supplierPicture.getProductPicture().getImages()){
 				if(!StringUtils.isEmpty(image.getUrl()) && (image.getUrl().startsWith("http") || image.getUrl().startsWith("HTTP") ||
 						image.getUrl().startsWith("ftp")) && !pics.containsKey(image.getUrl())){
 					images.add(image);
+				}
+				supplierUrls.put(image.getUrl(), null);
+			}
+			/**
+			 * 其次吧库里的链接，在原始数据中不存在的进行逻辑删除（dataState更新为0）
+			 */
+			if(pics.size() > 0){
+				List<String> deletedUrls = Lists.newArrayList();
+				pics.keySet().forEach(url -> add(url, supplierUrls, deletedUrls));
+				if(deletedUrls.size() > 0){
+					update(supplierPicture.getSupplierSpuId(), deletedUrls);
 				}
 			}
 			if(images.size() > 0){
@@ -100,5 +120,23 @@ public class PictureProductService {
 		}else{
 			return new HashMap<String,String>();
 		}
+	}
+	
+	private void add(String url, Map<String,String> supplierUrls, List<String> deletedUrls){
+		if(!supplierUrls.containsKey(url)){
+			deletedUrls.add(url);
+		}
+	}
+	
+	private void update(Long supplierSpuId, List<String> deletedUrls){
+		HubSpuPendingPicWithCriteriaDto withCriteria = new HubSpuPendingPicWithCriteriaDto();
+		HubSpuPendingPicCriteriaDto criteria =  new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicUrlIn(deletedUrls);
+		withCriteria.setCriteria(criteria );
+		HubSpuPendingPicDto hubSpuPendingPic =  new HubSpuPendingPicDto();
+		hubSpuPendingPic.setDataState(DataState.DELETED.getIndex());
+		hubSpuPendingPic.setUpdateTime(new Date());
+		withCriteria.setHubSpuPendingPic(hubSpuPendingPic );
+		picClient.updateByCriteriaSelective(withCriteria );
 	}
 }

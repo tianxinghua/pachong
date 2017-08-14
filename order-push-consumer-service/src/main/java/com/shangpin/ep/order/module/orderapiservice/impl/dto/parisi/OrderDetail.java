@@ -19,4 +19,6 @@ public class OrderDetail {
     private String order_no;
     private String message;
     private String status;
+    private String purchase_no;
+    private String Error;
 }

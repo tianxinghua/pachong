@@ -135,6 +135,18 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
+          vietti: 
+              url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang1307
+              messageType: text/html;charset=utf-8
+              isPurchaseExp:
+              openApiKey: 7bded5d1a0b44c5998a3ac319ff2fbaa
+              openApiSecret: 89bcf533c81e41d5a7a688ed13bc2d4b
           zitafabiani:
                   url: http://87.25.100.1:8080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -457,10 +469,11 @@ shangpin:
                   confirmOrderUrl: http://tempuri.org/ConfirmOrderWithSku
                   cancelOrderUrl: http://tempuri.org/CancelOrderWithSku
                   deleteOrderUrl: http://tempuri.org/DeleteOrder
-                  strKey: YX123HF
+                  strKey: 9317
+                  strPassword: FYI
                   isPurchaseExp: no
-                  openApiKey:
-                  openApiSecret:
+                  openApiKey: 23ec05ddf2854191a57f9b45051177c5
+                  openApiSecret: 477f0ead6d104ee586f15f73fbd5ddeb
           antonacci:
                   isPurchaseExp: no
                   openApiKey:

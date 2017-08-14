@@ -100,7 +100,7 @@ public class EleonoraHandler implements ISupplierHandler {
 
             hubSku.setSupplierSpuId(supplierSpuId);
             hubSku.setSupplierId(supplierId);
-            String size =  item.getItem_size();
+            String size =  item.getItem_size_info();
 
             String supplierSkuNo = item.getItem_id();
             if (supplierSkuNo.indexOf("½") > 0) {

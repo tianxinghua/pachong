@@ -1,5 +1,6 @@
 package com.shangpin.pending.product.consumer.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,10 @@ public class HubFilterService {
         }
 	    if(categoryMap.size()>0){
 	    	HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
-			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).andSpuStateEqualTo((byte)0);
+	    	List<Byte> liByte = new ArrayList<Byte>();
+	    	liByte.add((byte)0);
+	    	liByte.add((byte)4);
+			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).andSpuStateIn(liByte);
 			int totalSize = hubSpuPendingGateway.countByCriteria(criteria);
 			int pageCount = getPageCount(totalSize, 100);// 页数
 			for (int i = 1; i <= pageCount; i++) {
@@ -50,8 +54,12 @@ public class HubFilterService {
 				List<HubSpuPendingDto> list = hubSpuPendingGateway.selectByCriteria(criteria);
 				if(list!=null&&list.size()>0){
 					for(HubSpuPendingDto spu:list){
-						if(!categoryMap.containsKey(spu.getHubBrandNo())){
-							updateSpuStateFilter(spu.getSpuPendingId());
+						if(categoryMap.containsKey(spu.getHubBrandNo())){
+							if(spu.getSpuState()==4){
+								updateSpuStateFilter(spu.getSpuPendingId(),(byte)0);
+							}
+						}else{
+							updateSpuStateFilter(spu.getSpuPendingId(),(byte)4);
 						}
 					}
 				}
@@ -93,10 +101,10 @@ public class HubFilterService {
 		}
 	}
 
-	private void updateSpuStateFilter(Long spuPendingId) {
+	private void updateSpuStateFilter(Long spuPendingId,Byte spuState) {
 		HubSpuPendingDto spu = new HubSpuPendingDto();
 		spu.setSpuPendingId(spuPendingId);
-		spu.setSpuState((byte)4);
+		spu.setSpuState(spuState);
 		spu.setMemo("程序自动过滤不要的品牌");
 		spu.setUpdateTime(new Date());
 		hubSpuPendingGateway.updateByPrimaryKeySelective(spu);

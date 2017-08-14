@@ -49,7 +49,6 @@ public class SupplierProductSendToPending {
 		try {
 			Class<PendingProductStreamSender> clazz = PendingProductStreamSender.class;
 			Method method = clazz.getMethod(new StringBuilder(name).append(METHOD_SUFFIX).toString(), PendingProduct.class,Map.class);
-			log.info(name+"调度执行方法推送参数：{}",pendingProduct);
 			return method.invoke(pendingProductStreamSender, pendingProduct,headers);
 		} catch (Throwable e) {
 			log.error("调度执行方法时因为供应商名称不存在而发生异常:"+e.getMessage(), e);
