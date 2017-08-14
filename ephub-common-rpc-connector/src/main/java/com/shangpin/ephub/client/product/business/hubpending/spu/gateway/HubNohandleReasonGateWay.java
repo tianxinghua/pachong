@@ -1,6 +1,7 @@
 package com.shangpin.ephub.client.product.business.hubpending.spu.gateway;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -17,5 +18,5 @@ import com.shangpin.ephub.client.product.business.hubpending.spu.dto.NohandleRea
 public interface HubNohandleReasonGateWay {
 
 	@RequestMapping(value = "/pending-nohandle-reason/insert", method = RequestMethod.POST,consumes = "application/json")
-	public boolean insertNohandleReason(NohandleReason nohandleReason);
+	public boolean insertNohandleReason(@RequestBody NohandleReason nohandleReason);
 }

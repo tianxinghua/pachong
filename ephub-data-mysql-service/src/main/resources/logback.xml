@@ -37,7 +37,7 @@
             <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger name="com.shangpin" level="DEGUG" ></logger>
+    <logger name="com.shangpin" level="DEBUG" ></logger>
 
     <logger name="org.apache.ibatis" level="DEBUG">
         <appender-ref ref="STDOUT"/>

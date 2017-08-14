@@ -120,6 +120,7 @@ public class HubSupplierSkuCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
+
         @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
@@ -1007,6 +1008,146 @@ public class HubSupplierSkuCriteria {
 
         public Criteria andSupplierSkuSizeNotBetween(String value1, String value2) {
             addCriterion("supplier_sku_size not between", value1, value2, "supplierSkuSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeIsNull() {
+            addCriterion("supplier_sku_size_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeIsNotNull() {
+            addCriterion("supplier_sku_size_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeEqualTo(String value) {
+            addCriterion("supplier_sku_size_type =", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeNotEqualTo(String value) {
+            addCriterion("supplier_sku_size_type <>", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeGreaterThan(String value) {
+            addCriterion("supplier_sku_size_type >", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_sku_size_type >=", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeLessThan(String value) {
+            addCriterion("supplier_sku_size_type <", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeLessThanOrEqualTo(String value) {
+            addCriterion("supplier_sku_size_type <=", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeLike(String value) {
+            addCriterion("supplier_sku_size_type like", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeNotLike(String value) {
+            addCriterion("supplier_sku_size_type not like", value, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeIn(List<String> values) {
+            addCriterion("supplier_sku_size_type in", values, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeNotIn(List<String> values) {
+            addCriterion("supplier_sku_size_type not in", values, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeBetween(String value1, String value2) {
+            addCriterion("supplier_sku_size_type between", value1, value2, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierSkuSizeTypeNotBetween(String value1, String value2) {
+            addCriterion("supplier_sku_size_type not between", value1, value2, "supplierSkuSizeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIsNull() {
+            addCriterion("measurement is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIsNotNull() {
+            addCriterion("measurement is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementEqualTo(String value) {
+            addCriterion("measurement =", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotEqualTo(String value) {
+            addCriterion("measurement <>", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementGreaterThan(String value) {
+            addCriterion("measurement >", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementGreaterThanOrEqualTo(String value) {
+            addCriterion("measurement >=", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLessThan(String value) {
+            addCriterion("measurement <", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLessThanOrEqualTo(String value) {
+            addCriterion("measurement <=", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLike(String value) {
+            addCriterion("measurement like", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotLike(String value) {
+            addCriterion("measurement not like", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIn(List<String> values) {
+            addCriterion("measurement in", values, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotIn(List<String> values) {
+            addCriterion("measurement not in", values, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementBetween(String value1, String value2) {
+            addCriterion("measurement between", value1, value2, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotBetween(String value1, String value2) {
+            addCriterion("measurement not between", value1, value2, "measurement");
             return (Criteria) this;
         }
 

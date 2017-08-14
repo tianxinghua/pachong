@@ -76,7 +76,7 @@ public class StudioDicSlotManageService {
 			if(studioManageQuery.getSlotEfficiency()!=null){
 				dto.setSlotEfficiency(studioManageQuery.getSlotEfficiency());
 			}
-			if(studioManageQuery.getUpdateUser()!=null){
+			if(studioManageQuery.getUpdateUser()!=null&&!studioManageQuery.getUpdateUser().equals("")){
 				dto.setUpdateUser(studioManageQuery.getUpdateUser());
 			}
 			dto.setUpdateTime(new Date());
@@ -98,7 +98,7 @@ public class StudioDicSlotManageService {
 			StudioCriteriaDto criteriaDto = new StudioCriteriaDto();
 			Criteria criteria = criteriaDto.createCriteria();
 			
-			if(studioManageQuery.getStudioName()!=null){
+			if(studioManageQuery.getStudioName()!=null&&!studioManageQuery.getStudioName().equals("")){
 				criteria.andStudioNameEqualTo(studioManageQuery.getStudioName());
 			}
 			criteriaDto.setPageSize(20);

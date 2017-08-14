@@ -3359,6 +3359,126 @@ public class HubSpuPendingCriteria {
             addCriterion("msg_miss_handle_state not between", value1, value2, "msgMissHandleState");
             return (Criteria) this;
         }
+
+        public Criteria andMarketPriceStateIsNull() {
+            addCriterion("market_price_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateIsNotNull() {
+            addCriterion("market_price_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateEqualTo(Byte value) {
+            addCriterion("market_price_state =", value, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateNotEqualTo(Byte value) {
+            addCriterion("market_price_state <>", value, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateGreaterThan(Byte value) {
+            addCriterion("market_price_state >", value, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("market_price_state >=", value, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateLessThan(Byte value) {
+            addCriterion("market_price_state <", value, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateLessThanOrEqualTo(Byte value) {
+            addCriterion("market_price_state <=", value, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateIn(List<Byte> values) {
+            addCriterion("market_price_state in", values, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateNotIn(List<Byte> values) {
+            addCriterion("market_price_state not in", values, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateBetween(Byte value1, Byte value2) {
+            addCriterion("market_price_state between", value1, value2, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("market_price_state not between", value1, value2, "marketPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateIsNull() {
+            addCriterion("supply_price_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateIsNotNull() {
+            addCriterion("supply_price_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateEqualTo(Byte value) {
+            addCriterion("supply_price_state =", value, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateNotEqualTo(Byte value) {
+            addCriterion("supply_price_state <>", value, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateGreaterThan(Byte value) {
+            addCriterion("supply_price_state >", value, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateGreaterThanOrEqualTo(Byte value) {
+            addCriterion("supply_price_state >=", value, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateLessThan(Byte value) {
+            addCriterion("supply_price_state <", value, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateLessThanOrEqualTo(Byte value) {
+            addCriterion("supply_price_state <=", value, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateIn(List<Byte> values) {
+            addCriterion("supply_price_state in", values, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateNotIn(List<Byte> values) {
+            addCriterion("supply_price_state not in", values, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateBetween(Byte value1, Byte value2) {
+            addCriterion("supply_price_state between", value1, value2, "supplyPriceState");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplyPriceStateNotBetween(Byte value1, Byte value2) {
+            addCriterion("supply_price_state not between", value1, value2, "supplyPriceState");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

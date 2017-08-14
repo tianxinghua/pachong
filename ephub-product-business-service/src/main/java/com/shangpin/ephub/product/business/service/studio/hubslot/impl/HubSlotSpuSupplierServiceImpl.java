@@ -58,8 +58,6 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
                 dto.setRepeatMarker(SlotSpuSupplierRepeatMarker.SINGLE.getIndex().byteValue());
 
-                this.updateOtherSupplierSignWhenHaveSomeSupplier(slotSpuSupplierDtos,slotSpuState);
-
             }
             spuSupplierGateway.insert(dto);
 

@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.rest.hubpending.spu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +16,7 @@ public class PendingNohandleReasonController {
 	private HubSpuPendingNohandleReasonService service;
 
 	@RequestMapping(value = "/insert")
-	public boolean insertNohandleReason(NohandleReason nohandleReason){
+	public boolean insertNohandleReason(@RequestBody NohandleReason nohandleReason){
 		return service.insertNohandleReason(nohandleReason);
 	}
 }
