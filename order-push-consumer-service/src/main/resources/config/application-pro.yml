@@ -482,6 +482,10 @@ shangpin:
                   isPurchaseExp: false
                   openApiKey:
                   openApiSecret:
+          ylati:
+                  isPurchaseExp: false
+                  openApiKey:
+                  openApiSecret:
           dlrboutique: 
                   url: http://79.60.189.204/WS_SITO_P15/WS_SITO_P15.ASMX/
                   createOrderInterface: NewOrderMarketPlace

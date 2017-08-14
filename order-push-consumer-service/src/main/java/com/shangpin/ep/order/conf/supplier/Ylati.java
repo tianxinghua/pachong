@@ -12,5 +12,5 @@ import java.io.Serializable;
 @Setter
 @Getter
 @ToString
-public class Giglio extends SupplierCommon implements Serializable {
+public class Ylati extends SupplierCommon implements Serializable {
 }

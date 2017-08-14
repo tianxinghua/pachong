@@ -33,7 +33,7 @@ import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 import com.shangpin.ep.order.util.xml.ObjectXMLUtil;
 
-@Component("coccolebimbiOrderImpl")
+//@Component("coccolebimbiOrderImpl")
 public class CoccolebimbiOrderImpl implements IOrderService {
 
 	@Autowired

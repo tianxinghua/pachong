@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Test;
+//import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -269,7 +269,7 @@ public class ViettiServiceImpl implements IOrderService {
 		String returnData = HttpUtil45.postAuth("http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/NewOrderMarketPlace", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"shangpin","shang1307");
 	    System.out.println(returnData);
 	}
-	@Test
+	//@Test
 	public void cancel() throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("CODE", "1234567890");
