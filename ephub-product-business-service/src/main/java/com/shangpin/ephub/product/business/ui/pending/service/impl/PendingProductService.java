@@ -45,6 +45,7 @@ import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendin
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
+import com.shangpin.ephub.product.business.service.pending.CheckService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -93,6 +94,8 @@ public class PendingProductService extends PendingSkuService{
 	private SupplierInHubService supplierInHubService;
     @Autowired
     private HubSpuPendingNohandleReasonService reasonService;
+    @Autowired
+    private CheckService checkService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -166,9 +169,15 @@ public class PendingProductService extends PendingSkuService{
     	HubSpuDto hubSpuDto = null;
     	try {
             if(null != pendingProductDto){
-            	//开始校验spu
+            	/**
+            	 * 校验货号
+            	 */
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
-            	if(brandModelResult.isPassing()){
+            	/**
+            	 * 校验品类和性别是否一致
+            	 */
+            	boolean checkCategoryAndGender = checkService.checkCategoryAndGender(pendingProductDto.getHubGender(), pendingProductDto.getHubCategoryNo());
+            	if(brandModelResult.isPassing() && checkCategoryAndGender){
             		hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
             		if(null == hubSpuDto){
             			HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
@@ -190,8 +199,8 @@ public class PendingProductService extends PendingSkuService{
             		}
             	}else{
             		pass = false ;
-            		log.info("pending spu校验失败，不更新：货号校验不通过。");
-            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
+            		log.info("pending spu校验失败，不更新：货号校验不通过或者性别不符。");
+            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过或性别不符");
             	}
             	//开始校验sku
             	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();

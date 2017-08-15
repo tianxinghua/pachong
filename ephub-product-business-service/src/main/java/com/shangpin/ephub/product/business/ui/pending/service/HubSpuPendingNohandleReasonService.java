@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
 import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -135,7 +136,6 @@ public class HubSpuPendingNohandleReasonService {
 		 */
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
 		reasonDto.setCreateUser(createUser);
-		reasonDto.setCreateTime(new Date());
 		reasonDto.setErrorType(Byte.valueOf(reason.getErrorType()));
 		reasonDto.setErrorReason(Byte.valueOf(reason.getErrorReason())); 
 		reasonGateWay.insert(reasonDto);
@@ -153,7 +153,6 @@ public class HubSpuPendingNohandleReasonService {
 	private void insert(String createUser, String reason, HubSpuPendingDto dto){
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
 		reasonDto.setCreateUser(createUser); 
-		reasonDto.setCreateTime(new Date());
 		ErrorReason errorReason = getErrorReason(reason);
 		if(null != errorReason){
 			reasonDto.setErrorType(errorReason.getErrorType().getIndex());
@@ -165,12 +164,19 @@ public class HubSpuPendingNohandleReasonService {
 		
 	}
 
+	/**
+	 * 2个insert方法公共的部分
+	 * @param dto
+	 * @return
+	 */
 	private HubSpuPendingNohandleReasonDto convertFromSpuPendingDto(HubSpuPendingDto dto) {
 		HubSpuPendingNohandleReasonDto reasonDto = new HubSpuPendingNohandleReasonDto();
 		reasonDto.setSpuPendingId(dto.getSpuPendingId());
 		reasonDto.setSupplierSpuId(dto.getSupplierSpuId());
 		reasonDto.setSupplierId(dto.getSupplierId());
 		reasonDto.setSupplierNo(dto.getSupplierNo());
+		reasonDto.setDataState(DataState.NOT_DELETED.getIndex());
+		reasonDto.setCreateTime(new Date());
 		return reasonDto;
 	}
 
