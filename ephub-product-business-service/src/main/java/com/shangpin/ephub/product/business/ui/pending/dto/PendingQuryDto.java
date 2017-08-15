@@ -91,6 +91,9 @@ public class PendingQuryDto {
      * 是否是待拍照展示页面  true:是
      */
     private boolean isShoot;
-    
+    /**
+     * 错误原因处理状态
+     */
+    private String msgMissHandleState;
     
 }
