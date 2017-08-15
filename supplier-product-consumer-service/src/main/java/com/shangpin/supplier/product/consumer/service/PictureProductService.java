@@ -136,6 +136,7 @@ public class PictureProductService {
 		withCriteria.setCriteria(criteria );
 		HubSpuPendingPicDto hubSpuPendingPic =  new HubSpuPendingPicDto();
 		hubSpuPendingPic.setDataState(DataState.DELETED.getIndex());
+		hubSpuPendingPic.setMemo("供应商不维护已删除"); 
 		hubSpuPendingPic.setUpdateTime(new Date());
 		withCriteria.setHubSpuPendingPic(hubSpuPendingPic );
 		picClient.updateByCriteriaSelective(withCriteria );
