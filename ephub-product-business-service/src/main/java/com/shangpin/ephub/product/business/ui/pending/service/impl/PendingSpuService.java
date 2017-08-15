@@ -295,6 +295,9 @@ public abstract class PendingSpuService implements IPendingProductService {
 					criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
 				}
 			}
+			
+			//TODO 错误处理流程
+			
 			List<Integer> conformities = pendingQuryDto.getConformities();
 			if(CollectionUtils.isNotEmpty(conformities)){
 				for(int i = 0;i<conformities.size();i++){
