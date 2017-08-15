@@ -4,7 +4,9 @@ public enum MsgMissHandleState {
 	
 	NOT_HANDLE((byte)0, "未处理"),
 	
-	HAVE_HANDLED((byte)1, "已处理");
+	HAVE_HANDLED((byte)1, "流程已处理"),
+	
+	SUPPLIER_HAVE_HANDLED((byte)2,"供应商已处理");
 
 	/**
      * 数字索引标识
