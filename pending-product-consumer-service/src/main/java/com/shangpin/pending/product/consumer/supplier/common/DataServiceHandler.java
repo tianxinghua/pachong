@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -25,12 +26,6 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemCriteriaDto
 import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.gender.gateway.HubGenderDicGateWay;
@@ -623,6 +618,10 @@ public class DataServiceHandler {
 		if(spuPending.getSpuModel()!=null){
 			spuPending.setSpuModel(spuPending.getSpuModel().toUpperCase());			
 		}
+
+		spuPending.setSupplyPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
+		spuPending.setMarketPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
+
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);
 

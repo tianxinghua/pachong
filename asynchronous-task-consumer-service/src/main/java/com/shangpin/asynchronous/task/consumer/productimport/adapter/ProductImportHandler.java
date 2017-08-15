@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.asynchronous.task.consumer.productimport.airshop.service.AirshopImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service.PendingSkuImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingSpuImportService;
@@ -34,6 +35,8 @@ public class ProductImportHandler {
 	SlotSpuImportService slotSpuImportService;
 	@Autowired 
 	TaskImportService taskService;
+	@Autowired
+	AirshopImportService airshopImportService;
 	/**
 	 * 待处理商品导入数据流监听
 	 * @param message 消息体
@@ -56,6 +59,8 @@ public class ProductImportHandler {
 				resultFile = PendingSpuImportService.handMessage(message);
 			}else if(TaskType.IMPORT_SLOT_SPU.getIndex().equals(message.getType())){
 				resultFile = slotSpuImportService.handMessage(message);
+			}else if("18".equals(message.getType())){
+				resultFile = airshopImportService.handMessage(message);
 			}
 			
 			// 更新结果文件路径到表中

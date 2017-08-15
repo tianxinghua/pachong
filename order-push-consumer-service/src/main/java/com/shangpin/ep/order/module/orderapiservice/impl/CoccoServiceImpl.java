@@ -14,8 +14,6 @@ import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.sku.bean.HubSku;
-import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -26,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2017年6月22日 上午10:15:54
  *
  */
-@Component("coccoMailService")
+@Component("coccolebimbiOrderImpl")
 @Slf4j
 public class CoccoServiceImpl implements IOrderService{
 
@@ -34,67 +32,54 @@ public class CoccoServiceImpl implements IOrderService{
     LogCommon logCommon;  
 	@Autowired
 	private ShangpinMailSender shangpinMailSender;
-	@Autowired
-	private HubSkuService hubSkuService;
 
 	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
-		String messageText ="Shangpin OrderNo: "+orderDTO.getPurchaseNo()+"<br>"+
-				"KEY: "+orderDTO.getSupplierSkuNo()+"<br>"+
-				"QUANTITY: 1 <br>"+
-				"CUSTOMER NAME: "+"<br>"+
-				"CUSTOMER SHIPPING ADDRESS: "+"<br>"+
-				"CUSTOMER BILLING ADDRESS: "+"<br>"+
-				"TOTAL PAYED FOR THE ORDER: "+"<br>";
-				log.info("wise推送订单参数："+messageText); 
 				try {
-					sendMail("coccolebimbi-order-shangpin",messageText);
+					sendMail(orderDTO.getPurchaseNo(),orderDTO.getSupplierSkuNo(),orderDTO.getPurchasePriceDetail());
+					orderDTO.setConfirmTime(new Date());
+					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+					orderDTO.setLogContent("------推送结束-------");
+					logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				log.info("wise推送成功。"); 
 	}
-	
-	
 
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
-		try {
-			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
-			if(null != sku){
-				String messageText ="Shangpin OrderNo: "+deleteOrder.getPurchaseNo()+"<br>"+
-						"KEY: "+deleteOrder.getSupplierSkuNo()+"<br>"+
-						"QUANTITY: 1 <br>"+
-						"CUSTOMER NAME: "+"<br>"+
-						"CUSTOMER SHIPPING ADDRESS: "+"<br>"+
-						"CUSTOMER BILLING ADDRESS: "+"<br>"+
-						"Status: cancelled";
-				log.info("wise退款单参数："+messageText); 
-				sendMail("wise-cancelled order-shangpin",messageText);
-				log.info("wise退款成功。"); 
-			}else{
-				log.error("wise根据供应商门户编号和供应商skuid查找SKU失败");
-			}
-		} catch (Exception e) {
-			log.error("wise发送退款邮件发生异常============"+e.getMessage());
-		}
+		deleteOrder.setRefundTime(new Date());
+		deleteOrder.setPushStatus(PushStatus.REFUNDED);
+		deleteOrder.setLogContent("------退款结束-------");
+		logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);
 	}
-	
 	/**
 	 * 发送邮件
 	 * @param subject 邮件主题
 	 * @param text 邮件内容
 	 * @throws Exception
 	 */
-	private void sendMail(String subject,String text) throws Exception {
+	private void sendMail(String cgd,String sku,String price) throws Exception {
+		
+		 String messageText =
+ 				"KEY: "+sku+"<br>"+
+ 				"QUANTITY: 1 <br>"+
+ 				"CUSTOMER NAME: "+"<br>"+
+ 				"CUSTOMER SHIPPING ADDRESS: "+"<br>"+
+ 				"CUSTOMER BILLING ADDRESS: "+"<br>"+
+ 				"TOTAL PAYED FOR THE ORDER: "+price+"<br>"+
+ 				"Shangpin OrderNo: "+cgd+"<br>";
+   	
 		ShangpinMail shangpinMail = new ShangpinMail();
 		shangpinMail.setFrom("chengxu@shangpin.com");
-		shangpinMail.setSubject(subject);
-		shangpinMail.setText(text);
+		shangpinMail.setSubject("shangpin-order-"+cgd);
+		shangpinMail.setText(messageText);
 		shangpinMail.setTo("zhaogenchun@shangpin.com");
 		List<String> addTo = new ArrayList<>();
-//		addTo.add("lubaijiang@shangpin.com");
-		addTo.add("zhaogenchun@shangpin.com");
+		addTo.add("cesare.m@coccolebimbi.com");
+		addTo.add("sabino.m@coccolebimbi.com");
+		addTo.add("gio.p@coccolebimbi.com");
+		addTo.add("winnie.liu@shangpin.com");
 		shangpinMail.setAddTo(addTo);
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}

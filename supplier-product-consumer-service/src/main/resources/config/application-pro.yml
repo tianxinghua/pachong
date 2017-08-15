@@ -620,7 +620,17 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 1
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                                                
+                                       maxAttempts: 1
+                        reebonzOriginalProduct:
+                              destination: reebonz.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        reebonzPendingProduct:
+                              destination: reebonz.pending.product
+                              content-type: application/json
+
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -1231,7 +1241,16 @@ spring:
                                          prefix: HA.
                                          autoBindDlq: false
                                          requeueRejected: true
-                                         republishToDlq: false                                                                                                                                                                                                                                                                                                                                                    
+                                         republishToDlq: false
+                              reebonzOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              reebonzPendingProduct:
+                                    producer:
+                                         prefix: HA.
         consul: 
           host: localhost
           port: 8500
