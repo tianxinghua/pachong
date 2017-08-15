@@ -167,7 +167,11 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		} else if(ProductState.HAVEOPERATOR.getIndex() == inconformities.get(i)){
         			criteria.andUpdateUserIsNull();
-        		}
+        		}else if(ProductState.HAVE_MARKETPRICE.getIndex() == inconformities.get(i)){
+					criteria.andMarketPriceStateEqualTo(MarketPriceState.NO_MARKETPRICE.getIndex());
+				}else if(ProductState.HAVE_SUPPLYPRICE.getIndex() == inconformities.get(i)){
+					criteria.andSupplyPriceStateEqualTo(SupplyPriceState.NO_SUPPLYPRICE.getIndex());
+				}
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
@@ -318,6 +322,10 @@ public abstract class PendingSpuService implements IPendingProductService {
 						criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
 					}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
 						criteria.andUpdateUserIsNotNull();
+					}else if(ProductState.HAVE_MARKETPRICE.getIndex() == conformities.get(i)){
+						criteria.andMarketPriceStateEqualTo(MarketPriceState.HAVE_MARKETPRICE.getIndex());
+					}else if(ProductState.HAVE_SUPPLYPRICE.getIndex() == conformities.get(i)){
+						criteria.andSupplyPriceStateEqualTo(SupplyPriceState.HAVE_SUPPLYPRICE.getIndex());
 					}
 				}
 			}
