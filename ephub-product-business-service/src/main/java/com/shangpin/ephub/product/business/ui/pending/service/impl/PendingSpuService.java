@@ -423,7 +423,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 			dto.setModelRule(lists.get(0).getModelRule());
 			StringBuffer buffer = new StringBuffer();
 			for(HubBrandModelRuleDto ruleDto : lists){
-				buffer.append(ruleDto.getModelRex()).append(" ");
+				buffer.append(ruleDto.getModelRex()).append("或者");
 			}
 			dto.setModelRex(buffer.toString()); 
 			return dto;
