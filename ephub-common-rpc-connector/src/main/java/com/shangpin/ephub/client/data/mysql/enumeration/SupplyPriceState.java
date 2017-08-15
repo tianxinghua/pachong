@@ -1,12 +1,17 @@
 package com.shangpin.ephub.client.data.mysql.enumeration;
+/**
+ * <p>Title: SupplyPriceState</p>
+ * <p>Description: 供价状态 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年8月15日 下午2:58:51
+ *
+ */
+public enum SupplyPriceState {
 
-public enum MsgMissHandleState {
+	NO_SUPPLYPRICE((byte)0,"无供价"),
 	
-	NOT_HANDLE((byte)0, "未处理"),
-	
-	HAVE_HANDLED((byte)1, "流程已处理"),
-	
-	SUPPLIER_HAVE_HANDLED((byte)2,"供应商已处理");
+	HAVE_SUPPLYPRICE((byte)1,"有供价");
 
 	/**
      * 数字索引标识
@@ -17,7 +22,7 @@ public enum MsgMissHandleState {
      */
     private String description;
     
-    MsgMissHandleState(byte index,String description){
+    SupplyPriceState(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}

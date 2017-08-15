@@ -167,7 +167,11 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		} else if(ProductState.HAVEOPERATOR.getIndex() == inconformities.get(i)){
         			criteria.andUpdateUserIsNull();
-        		}
+        		}else if(ProductState.HAVE_MARKETPRICE.getIndex() == inconformities.get(i)){
+					criteria.andMarketPriceStateEqualTo(MarketPriceState.NO_MARKETPRICE.getIndex());
+				}else if(ProductState.HAVE_SUPPLYPRICE.getIndex() == inconformities.get(i)){
+					criteria.andSupplyPriceStateEqualTo(SupplyPriceState.NO_SUPPLYPRICE.getIndex());
+				}
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
@@ -291,6 +295,9 @@ public abstract class PendingSpuService implements IPendingProductService {
 					criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
 				}
 			}
+			
+			//TODO 错误处理流程
+			
 			List<Integer> conformities = pendingQuryDto.getConformities();
 			if(CollectionUtils.isNotEmpty(conformities)){
 				for(int i = 0;i<conformities.size();i++){
@@ -318,6 +325,10 @@ public abstract class PendingSpuService implements IPendingProductService {
 						criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
 					}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
 						criteria.andUpdateUserIsNotNull();
+					}else if(ProductState.HAVE_MARKETPRICE.getIndex() == conformities.get(i)){
+						criteria.andMarketPriceStateEqualTo(MarketPriceState.HAVE_MARKETPRICE.getIndex());
+					}else if(ProductState.HAVE_SUPPLYPRICE.getIndex() == conformities.get(i)){
+						criteria.andSupplyPriceStateEqualTo(SupplyPriceState.HAVE_SUPPLYPRICE.getIndex());
 					}
 				}
 			}
@@ -425,7 +436,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 			dto.setModelRule(lists.get(0).getModelRule());
 			StringBuffer buffer = new StringBuffer();
 			for(HubBrandModelRuleDto ruleDto : lists){
-				buffer.append(ruleDto.getModelRex()).append(" ");
+				buffer.append(ruleDto.getModelRex()).append("或者");
 			}
 			dto.setModelRex(buffer.toString()); 
 			return dto;

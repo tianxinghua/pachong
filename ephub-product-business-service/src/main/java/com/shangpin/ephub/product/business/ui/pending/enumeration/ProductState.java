@@ -54,7 +54,15 @@ public enum ProductState {
 	/**
 	 * 有操作人
 	 */
-	HAVEOPERATOR(12,"haveOperator");
+	HAVEOPERATOR(12,"haveOperator"),
+	/**
+	 * 有市场价
+	 */
+	HAVE_MARKETPRICE(13,"有市场价"),
+	/**
+	 * 有供价
+	 */
+	HAVE_SUPPLYPRICE(14,"有供价");
 	
 	/**
      * 数字索引标识
