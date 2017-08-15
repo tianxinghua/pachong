@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.product.supplier.mapper.HubSupplierProductMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.product.supplier.po.HubSupplierProduct" >
+    <result column="supplier_sku_id" property="supplierSkuId" jdbcType="BIGINT" />
+    <result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
+    <result column="supplier_sku_name" property="supplierSkuName" jdbcType="VARCHAR" />
+    <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
+    <result column="market_price_currencyOrg" property="marketPriceCurrencyorg" jdbcType="VARCHAR" />
+    <result column="sales_price" property="salesPrice" jdbcType="DECIMAL" />
+    <result column="sales_price_currency" property="salesPriceCurrency" jdbcType="VARCHAR" />
+    <result column="supply_price" property="supplyPrice" jdbcType="DECIMAL" />
+    <result column="supply_price_currency" property="supplyPriceCurrency" jdbcType="VARCHAR" />
+    <result column="supplier_barcode" property="supplierBarcode" jdbcType="VARCHAR" />
+    <result column="supplier_sku_size" property="supplierSkuSize" jdbcType="VARCHAR" />
+    <result column="stock" property="stock" jdbcType="INTEGER" />
+    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
+ 	<result column="supplier_spu_id" property="supplierSpuId" jdbcType="BIGINT" />    
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_spu_no" property="supplierSpuNo" jdbcType="VARCHAR" />
+    <result column="supplier_spu_model" property="supplierSpuModel" jdbcType="VARCHAR" />
+    <result column="supplier_spu_name" property="supplierSpuName" jdbcType="VARCHAR" />
+    <result column="supplier_spu_color" property="supplierSpuColor" jdbcType="VARCHAR" />
+    <result column="supplier_gender" property="supplierGender" jdbcType="VARCHAR" />
+    <result column="supplier_categoryno" property="supplierCategoryno" jdbcType="VARCHAR" />
+    <result column="supplier_categoryname" property="supplierCategoryname" jdbcType="VARCHAR" />
+    <result column="supplier_brandno" property="supplierBrandno" jdbcType="VARCHAR" />
+    <result column="supplier_brandname" property="supplierBrandname" jdbcType="VARCHAR" />
+    <result column="supplier_seasonno" property="supplierSeasonno" jdbcType="VARCHAR" />
+    <result column="supplier_seasonname" property="supplierSeasonname" jdbcType="VARCHAR" />
+    <result column="isexistpic" property="isexistpic" jdbcType="TINYINT" />
+    <result column="supplier_material" property="supplierMaterial" jdbcType="VARCHAR" />
+    <result column="supplier_origin" property="supplierOrigin" jdbcType="VARCHAR" />
+    <result column="supplier_spu_desc" property="supplierSpuDesc" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="memo" property="memo" jdbcType="VARCHAR" />
+    <result column="data_state" property="dataState" jdbcType="TINYINT" />
+  </resultMap>
+  
+  <select id="selectHubSupplierProductByPage" resultMap="BaseResultMap" >
+    select
+   	spu.*,
+   	sku.*
+    from hub_supplier_spu spu  INNER JOIN hub_supplier_sku sku on sku.supplier_spu_id = spu.supplier_spu_id
+    where 
+    
+    1=1
+    <if test="null!= supplierSpuId and  supplierSpuId!=''">
+	       and   sku.supplier_spu_id = #{supplierSpuId}
+	</if>
+	<if test="null!= supplierSkuId and  supplierSkuId!=''">
+	       and   sku.supplier_sku_id = #{supplierSkuId}
+	</if>
+    <if test="null!= barcode and  barcode!=''">
+	       and   sku.supplier_barcode = #{barcode}
+	 </if>
+	 <if test="null!= skuId and skuId!=''">
+	       and   sku.supplier_sku_no = #{skuId}
+	 </if>
+      <if test="null!= spSkuId and spSkuId!=''">
+	       and   sku.sp_sku_no = #{spSkuId}
+	 </if>
+     <if test="null!= supplierId and supplierId!=''">
+	        and        spu.supplier_id = #{supplierId}
+	 </if>
+	   <if test="null!= brandName and brandName!=''">
+	          and        spu.supplier_brandname = #{brandName}
+	 </if>
+	   <if test="null!= categoryName and categoryName!=''">
+	           and  spu.supplier_categoryname like concat('',#{categoryName},'%') 
+	 </if>
+	   <if test="null!= productCode and productCode!=''">
+	           and  spu.supplier_spu_model like concat('',#{productCode},'%')
+	 </if>
+	
+	   
+      ORDER BY spu.update_time desc
+      limit #{pageIndex} , #{pageSize}
+  </select>
+   <select id="count" resultType="java.lang.Integer">
+    select
+   	count(*)
+    from hub_supplier_spu spu  INNER JOIN hub_supplier_sku sku on sku.supplier_spu_id = spu.supplier_spu_id
+    where 
+    
+    	1=1
+    	
+	<if test="null!= supplierSpuId and  supplierSpuId!=''">
+	       and   sku.supplier_spu_id = #{supplierSpuId}
+	</if>
+	<if test="null!= supplierSkuId and  supplierSkuId!=''">
+	       and   sku.supplier_sku_id = #{supplierSkuId}
+	</if>   
+    <if test="null!= barcode and  barcode!=''">
+	       and   sku.supplier_barcode = #{barcode}
+	 </if>
+	 <if test="null!= skuId and skuId!=''">
+	       and   sku.supplier_sku_no = #{skuId}
+	 </if>
+      <if test="null!= spSkuId and spSkuId!=''">
+	       and   sku.sp_sku_no = #{spSkuId}
+	 </if>
+     <if test="null!= supplierId and supplierId!=''">
+	        and        spu.supplier_id = #{supplierId}
+	 </if>
+	   <if test="null!= brandName and brandName!=''">
+	          and        spu.supplier_brandname = #{brandName}
+	 </if>
+	   <if test="null!= categoryName and categoryName!=''">
+	           and  spu.supplier_categoryname like concat('',#{categoryName},'%') 
+	 </if>
+	   <if test="null!= productCode and productCode!=''">
+	           and  spu.supplier_spu_model like concat('',#{productCode},'%')
+	 </if>
+	
+  </select>
+  
+</mapper>

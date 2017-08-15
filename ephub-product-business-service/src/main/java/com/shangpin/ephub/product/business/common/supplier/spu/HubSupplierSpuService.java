@@ -44,4 +44,10 @@ public class HubSupplierSpuService{
 		hubSpuPendingWithCriteriaDto.setCriteria(criteria);
 		hubSupplierSpuGateWay.updateByCriteriaSelective(hubSpuPendingWithCriteriaDto);
 	}
+	public HubSupplierSpuDto selectHubSupplierSpuById(Long supplierSpuId) {
+		return hubSupplierSpuGateWay.selectByPrimaryKey(supplierSpuId);
+	}
+	public Long insert(HubSupplierSpuDto supplierSpu) {
+		return hubSupplierSpuGateWay.insertSelective(supplierSpu);
+	}
 }
