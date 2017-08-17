@@ -124,6 +124,9 @@ public class OpenapiService {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
+					if(1==ice.IsDeleted){
+						continue;
+					}
 					/**
 					 * 如果对应关系不存在则新增
 					 */
