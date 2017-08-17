@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.ErrorType;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
@@ -12,6 +14,7 @@ import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
@@ -82,6 +85,9 @@ public class VariableInit {
 
     @Autowired
     ObjectConvertCommon objectConvertCommon;
+
+    @Autowired
+    SpuPendingMsgHandleService spuPendingMsgHandleService;
 
     static Map<String, String> genderStaticMap = null;
 
@@ -678,13 +684,7 @@ public class VariableInit {
             }
 
         }
-        //验证货号必须要有品牌
-        if(StringUtils.isNotBlank(spu.getSpuModel())){
-            if(StringUtils.isBlank(spu.getHubBrandNo())){
-                spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
-            }
-            if(!setBrandModel(spu, updateSpuPending)) allStatus =false;
-        }
+
 
         // 设置性别
         if (StringUtils.isNotBlank(spu.getHubGender())) {
@@ -697,6 +697,15 @@ public class VariableInit {
             if (!setCategoryMapping(spu, updateSpuPending))
                 allStatus = false;
         }
+
+        //验证货号必须要有品牌
+        if(StringUtils.isNotBlank(spu.getSpuModel())){
+            if(StringUtils.isBlank(spu.getHubBrandNo())){
+                spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
+            }
+            if(!setBrandModel(spu, updateSpuPending)) allStatus =false;
+        }
+
 
         // 获取颜色
         if (StringUtils.isNotBlank(spu.getHubColor())) {
@@ -721,6 +730,58 @@ public class VariableInit {
                 allStatus = false;
         }
     }
+
+    protected void setSpuPendingValueForSupplierUpdate(PendingSpu spu, HubSpuPendingDto spuPendingDto, HubSpuPendingDto updateSpuPending,Map<Byte, List<HubSpuPendingNohandleReasonDto>> map) throws Exception {
+        boolean allStatus = true;
+
+
+
+        // 设置性别
+        if (StringUtils.isNotBlank(spu.getHubGender())) {
+            if(map.containsKey(ErrorType.GENDER_INFO_ERROR.getIndex())) {
+                spuPendingMsgHandleService.updateSpuErrorMsgDateState(map.get(ErrorType.GENDER_INFO_ERROR.getIndex()));
+                updateSpuPending.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
+                if (!setGenderMapping(spu, updateSpuPending)) allStatus = false;
+            }
+        }
+
+
+
+        //验证货号必须要有品牌
+        if(StringUtils.isNotBlank(spu.getSpuModel())){
+            if(map.containsKey(ErrorType.ITEM_CODE_ERROR.getIndex())) {
+                spuPendingMsgHandleService.updateSpuErrorMsgDateState(map.get(ErrorType.ITEM_CODE_ERROR.getIndex()));
+                updateSpuPending.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
+                if (StringUtils.isBlank(spu.getHubBrandNo())) {
+                    spu.setHubBrandNo(spuPendingDto.getHubBrandNo());
+                }
+                if (!setBrandModel(spu, updateSpuPending)) allStatus = false;
+            }
+        }
+
+
+
+        // 获取材质
+        if (StringUtils.isNotBlank(spu.getHubMaterial())) {
+            if(map.containsKey(ErrorType.MATERIAL_INFO_ERROR.getIndex())){
+                spuPendingMsgHandleService.updateSpuErrorMsgDateState(map.get(ErrorType.MATERIAL_INFO_ERROR.getIndex()));
+                updateSpuPending.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
+                if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
+            }
+
+        }
+        // 产地映射
+        if (StringUtils.isNotBlank(spu.getHubOrigin())) {
+            if(map.containsKey(ErrorType.ORIGIN_INFO_ERROR.getIndex())) {
+                spuPendingMsgHandleService.updateSpuErrorMsgDateState(map.get(ErrorType.ORIGIN_INFO_ERROR.getIndex()));
+                updateSpuPending.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
+                if (!setOriginMapping(spu, updateSpuPending)) allStatus = false;
+            }
+        }
+    }
+
+
+
 
     protected boolean setBrandMapping(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
         boolean result = true;

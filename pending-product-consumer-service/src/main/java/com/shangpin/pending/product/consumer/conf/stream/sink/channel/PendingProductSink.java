@@ -140,6 +140,9 @@ public interface PendingProductSink {
 	public static final String EMONTI = "emontiPendingProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiquePendingProduct";
+
+
+	public static final String REEBONZ = "reebonzPendingProduct";
 	/**
 	 * 供货商coccolebimbi通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -548,4 +551,11 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.DLRBOUTIQUE)
 	public SubscribableChannel dlrboutiquePendingProduct();
+
+	/**
+	 * 供应商REEBONZ通道组件配置
+	 * @return 供货商REEBONZ通道组件
+	 */
+	@Input(value = PendingProductSink.REEBONZ)
+	public SubscribableChannel reebonzPendingProduct();
 }
