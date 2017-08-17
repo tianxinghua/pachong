@@ -194,7 +194,7 @@ public class OrderHandleSearch {
 			return leamServiceImpl;
 		} else if ("2016072601910".equals(supplierId)) {
 			return viettiServiceImpl;
-		} else if ("2015101301604".equals(supplierId)) {
+		} else if ("2015101201596".equals(supplierId)) {
 			return parisiServiceImpl;
 		} else if("2017060101976".equals(supplierId)){
 			return spinnakerPortofinoOrderService;
@@ -361,6 +361,10 @@ public class OrderHandleSearch {
 			return supplierProperties.getDlrboutique();
 		}else if("2016032101816".equals(supplierId)){
 			return supplierProperties.getZitafabiani();
+		}else if("2016072601910".equals(supplierId)){
+			return supplierProperties.getVietti();
+		}else if("2015101201596".equals(supplierId)){
+			return supplierProperties.getParisi();
 		}
 		else {
 			return null;
