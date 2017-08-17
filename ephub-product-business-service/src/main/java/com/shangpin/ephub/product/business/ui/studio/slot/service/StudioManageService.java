@@ -46,19 +46,30 @@ public class StudioManageService {
 		log.info("addStudio--------------start");
 		log.info("添加摄影棚基础信息参数:"+JsonUtil.serialize(studioManageQuery)); 
 		
-		if(studioManageQuery.getStudioName()==null){
+		if(studioManageQuery.getStudioName()==null||studioManageQuery.getStudioName().equals("")){
 			return HubResponse.errorResp("studioName不能为null!");
 		}
-		if(studioManageQuery.getStudioNo()==null){
-			return HubResponse.errorResp("studioNo不能为null!");
-		}
+//		if(studioManageQuery.getStudioNo()==null){
+//			return HubResponse.errorResp("studioNo不能为null!");
+//		}
 		if(studioManageQuery.getPeriod()==null){
 			return HubResponse.errorResp("Period不能为null!");
+		}
+		
+		StudioCriteriaDto criteriadto = new StudioCriteriaDto();
+		criteriadto.setOrderByClause(" studio_id desc ");
+		List<StudioDto> lists = studioGateWay.selectByCriteria(criteriadto);
+		String studioNo = "";
+		if(lists==null||lists.size()==0){
+			studioNo = "S001";
+		}else{
+			int num = Integer.parseInt(lists.get(0).getStudioNo().substring(3));
+			studioNo = "S00"+ (num+1);
 		}
 		try {
 			StudioDto dto = new StudioDto();
 			dto.setStudioName(studioManageQuery.getStudioName());
-			dto.setStudioNo(studioManageQuery.getStudioNo());
+			dto.setStudioNo(studioNo);
 			dto.setPeriod(studioManageQuery.getPeriod());
 			dto.setStudioType(studioManageQuery.getStudioType());
 			dto.setStudioStatus(studioManageQuery.getStudioStatus());
@@ -80,7 +91,7 @@ public class StudioManageService {
 			studioGateWay.insertSelective(dto);
 			
 			StudioCriteriaDto criteriaDto = new StudioCriteriaDto();
-			criteriaDto.createCriteria().andStudioNoEqualTo(studioManageQuery.getStudioNo());
+			criteriaDto.createCriteria().andStudioNoEqualTo(studioNo);
 			List<StudioDto> studioDtoLists = studioGateWay.selectByCriteria(criteriaDto);
 			
 			StudioDicSlotDto studioDicSlotDto = new StudioDicSlotDto();
@@ -109,11 +120,13 @@ public class StudioManageService {
 			HubResponse.errorResp("studioId不能为null!");
 		}
 		try {
-			StudioDto dto = studioGateWay.selectByPrimaryKey(studioManageQuery.getStudioId());
-			if(dto==null){
+			StudioCriteriaDto criteriadto = new StudioCriteriaDto();
+			criteriadto.createCriteria().andStudioIdEqualTo(studioManageQuery.getStudioId());
+			List<StudioDto> lists = studioGateWay.selectByCriteria(criteriadto);
+			if(lists==null||lists.size()==0){
 				return HubResponse.errorResp("studioId:"+studioManageQuery.getStudioId()+"不存在对应此编号的摄影棚!");
 			}
-			
+			StudioDto dto = lists.get(0);
 			if(studioManageQuery.getPeriod()!=null){
 				dto.setPeriod(studioManageQuery.getPeriod());
 			}
@@ -123,37 +136,37 @@ public class StudioManageService {
 			if(studioManageQuery.getStudioStatus()!=null){
 				dto.setStudioStatus(studioManageQuery.getStudioStatus());
 			}
-			if(studioManageQuery.getStudioContacts()!=null){
+			if(studioManageQuery.getStudioContacts()!=null&&!studioManageQuery.getStudioContacts().equals("")){
 				dto.setStudioContacts(studioManageQuery.getStudioContacts());
 			}
-			if(studioManageQuery.getContactInfo()!=null){
+			if(studioManageQuery.getContactInfo()!=null&&!studioManageQuery.getContactInfo().equals("")){
 				dto.setContactInfo(studioManageQuery.getContactInfo());
 			}
-			if(studioManageQuery.getTelephone()!=null){
+			if(studioManageQuery.getTelephone()!=null&&!studioManageQuery.getTelephone().equals("")){
 				dto.setTelephone(studioManageQuery.getTelephone());
 			}
-			if(studioManageQuery.getEmail()!=null){
+			if(studioManageQuery.getEmail()!=null&&!studioManageQuery.getEmail().equals("")){
 				dto.setEmail(studioManageQuery.getEmail());
 			}
-			if(studioManageQuery.getCountry()!=null){
+			if(studioManageQuery.getCountry()!=null&&!studioManageQuery.getCountry().equals("")){
 				dto.setCountry(studioManageQuery.getCountry());
 			}
-			if(studioManageQuery.getAddress()!=null){
+			if(studioManageQuery.getAddress()!=null&&!studioManageQuery.getAddress().equals("")){
 				dto.setAddress(studioManageQuery.getAddress());
 			}
-			if(studioManageQuery.getMemo()!=null){
+			if(studioManageQuery.getMemo()!=null&&!studioManageQuery.getMemo().equals("")){
 				dto.setMemo(studioManageQuery.getMemo());
 			}
-			if(studioManageQuery.getSupplierId()!=null){
+			if(studioManageQuery.getSupplierId()!=null&&!studioManageQuery.getSupplierId().equals("")){
 				dto.setSupplierId(studioManageQuery.getSupplierId());
 			}
-			if(studioManageQuery.getSupplierNo()!=null){
+			if(studioManageQuery.getSupplierNo()!=null&&!studioManageQuery.getSupplierNo().equals("")){
 				dto.setSupplierNo(studioManageQuery.getSupplierNo());
 			}
 			if(studioManageQuery.getTimeLag()!=null){
 				dto.setTimeLag(studioManageQuery.getTimeLag());
 			}
-			if(studioManageQuery.getUpdateUser()!=null){
+			if(studioManageQuery.getUpdateUser()!=null&&!studioManageQuery.getUpdateUser().equals("")){
 				dto.setUpdateUser(studioManageQuery.getUpdateUser());
 			}
 			dto.setUpdateTime(new Date());
@@ -174,10 +187,10 @@ public class StudioManageService {
 			StudioCriteriaDto criteriaDto = new StudioCriteriaDto();
 			Criteria criteria = criteriaDto.createCriteria();
 			
-			if(studioManageQuery.getStudioName()!=null){
+			if(studioManageQuery.getStudioName()!=null&&!studioManageQuery.getStudioName().equals("")){
 				criteria.andStudioNameEqualTo(studioManageQuery.getStudioName());
 			}
-			if(studioManageQuery.getStudioNo()!=null){
+			if(studioManageQuery.getStudioNo()!=null&&!studioManageQuery.getStudioNo().equals("")){
 				criteria.andStudioNameEqualTo(studioManageQuery.getStudioNo());
 			}
 			criteriaDto.setPageSize(20);

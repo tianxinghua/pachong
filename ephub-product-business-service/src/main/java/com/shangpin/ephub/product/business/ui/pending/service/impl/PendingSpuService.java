@@ -167,7 +167,11 @@ public abstract class PendingSpuService implements IPendingProductService {
         			criteria.andSpSkuSizeStateEqualTo(SpSkuSizeState.UNHANDLED.getIndex());
         		} else if(ProductState.HAVEOPERATOR.getIndex() == inconformities.get(i)){
         			criteria.andUpdateUserIsNull();
-        		}
+        		}else if(ProductState.HAVE_MARKETPRICE.getIndex() == inconformities.get(i)){
+					criteria.andMarketPriceStateEqualTo(MarketPriceState.NO_MARKETPRICE.getIndex());
+				}else if(ProductState.HAVE_SUPPLYPRICE.getIndex() == inconformities.get(i)){
+					criteria.andSupplyPriceStateEqualTo(SupplyPriceState.NO_SUPPLYPRICE.getIndex());
+				}
         		if(i != 0){
         			hubSpuPendingCriteriaDto.or(criteria);
         		}
@@ -250,6 +254,8 @@ public abstract class PendingSpuService implements IPendingProductService {
 				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
 					criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
 				}
+				criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+				hubSpuPendingCriteriaDto.or(criteria.andAuditStateIsNull());
 			}
 
 			if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
@@ -289,6 +295,10 @@ public abstract class PendingSpuService implements IPendingProductService {
 					criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
 				}
 			}
+			//错误处理状态
+			if(!StringUtils.isEmpty(pendingQuryDto.getMsgMissHandleState())){
+				criteria.andMsgMissHandleStateEqualTo(Byte.valueOf(pendingQuryDto.getMsgMissHandleState()));
+			}
 			List<Integer> conformities = pendingQuryDto.getConformities();
 			if(CollectionUtils.isNotEmpty(conformities)){
 				for(int i = 0;i<conformities.size();i++){
@@ -316,6 +326,10 @@ public abstract class PendingSpuService implements IPendingProductService {
 						criteria.andStockStateEqualTo(StockState.HANDLED.getIndex());
 					}else if(ProductState.HAVEOPERATOR.getIndex() == conformities.get(i)){
 						criteria.andUpdateUserIsNotNull();
+					}else if(ProductState.HAVE_MARKETPRICE.getIndex() == conformities.get(i)){
+						criteria.andMarketPriceStateEqualTo(MarketPriceState.HAVE_MARKETPRICE.getIndex());
+					}else if(ProductState.HAVE_SUPPLYPRICE.getIndex() == conformities.get(i)){
+						criteria.andSupplyPriceStateEqualTo(SupplyPriceState.HAVE_SUPPLYPRICE.getIndex());
 					}
 				}
 			}
@@ -419,7 +433,14 @@ public abstract class PendingSpuService implements IPendingProductService {
 		List<HubBrandModelRuleDto> lists = hubBrandModelRuleGateWay.selectByCriteria(criterraDto);
 		log.info("--->货号示例查询总耗时{}",System.currentTimeMillis()-start); 
 		if(CollectionUtils.isNotEmpty(lists)){
-			return lists.get(0);
+			HubBrandModelRuleDto dto =  new HubBrandModelRuleDto();
+			dto.setModelRule(lists.get(0).getModelRule());
+			StringBuffer buffer = new StringBuffer();
+			for(HubBrandModelRuleDto ruleDto : lists){
+				buffer.append(ruleDto.getModelRex()).append("或者");
+			}
+			dto.setModelRex(buffer.toString()); 
+			return dto;
 		}else{
 			return null;
 		}

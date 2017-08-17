@@ -33,4 +33,15 @@ public class HubSupplierSkuService{
 	public List<HubSupplierSkuDto> selectListBySupplierIdAndSize(HubSupplierSkuCriteriaDto criteria){
 		return hubSupplierSkuGateWay.selectByCriteria(criteria);
 	}
+
+	public List<HubSupplierSkuDto> selectListSkuBySpuId(
+			Long supplierSpuId) {
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		return hubSupplierSkuGateWay.selectByCriteria(criteria);
+	}
+
+	public void insertSku(HubSupplierSkuDto supplierSku) {
+		hubSupplierSkuGateWay.insertSelective(supplierSku);		
+	}
 }

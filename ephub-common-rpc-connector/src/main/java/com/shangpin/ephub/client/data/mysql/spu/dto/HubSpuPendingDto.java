@@ -181,10 +181,19 @@ public class HubSpuPendingDto implements Serializable {
 
     private String updateUser;
 
+    /**
+     * 审核状态  1：同意 0：不同意
+     */
     private Byte auditState;
 
+    /**
+     * 审核时间
+     */
     private Date auditDate;
 
+    /**
+     * 审核人
+     */
     private String auditUser;
 
     private String auditOpinion;
@@ -206,12 +215,25 @@ public class HubSpuPendingDto implements Serializable {
 
     private Date slotHandleDate;
 
+    /**
+     * 摄影商品操作人
+     */
     private String slotHandleUser;
 
     /**
      * 信息确实处理标记  1：已通知
      */
     private Byte msgMissHandleState;
+
+    /**
+     * 市场价标记  0：无市场价  1:有市场价 
+     */
+    private Byte marketPriceState;
+
+    /**
+     * 供价标记： 0::无供货价 1: 有供货价
+     */
+    private Byte supplyPriceState;
 
     private static final long serialVersionUID = 1L;
 
@@ -615,6 +637,22 @@ public class HubSpuPendingDto implements Serializable {
         this.msgMissHandleState = msgMissHandleState;
     }
 
+    public Byte getMarketPriceState() {
+        return marketPriceState;
+    }
+
+    public void setMarketPriceState(Byte marketPriceState) {
+        this.marketPriceState = marketPriceState;
+    }
+
+    public Byte getSupplyPriceState() {
+        return supplyPriceState;
+    }
+
+    public void setSupplyPriceState(Byte supplyPriceState) {
+        this.supplyPriceState = supplyPriceState;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -671,6 +709,8 @@ public class HubSpuPendingDto implements Serializable {
         sb.append(", slotHandleDate=").append(slotHandleDate);
         sb.append(", slotHandleUser=").append(slotHandleUser);
         sb.append(", msgMissHandleState=").append(msgMissHandleState);
+        sb.append(", marketPriceState=").append(marketPriceState);
+        sb.append(", supplyPriceState=").append(supplyPriceState);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -737,7 +777,9 @@ public class HubSpuPendingDto implements Serializable {
             && (this.getSlotState() == null ? other.getSlotState() == null : this.getSlotState().equals(other.getSlotState()))
             && (this.getSlotHandleDate() == null ? other.getSlotHandleDate() == null : this.getSlotHandleDate().equals(other.getSlotHandleDate()))
             && (this.getSlotHandleUser() == null ? other.getSlotHandleUser() == null : this.getSlotHandleUser().equals(other.getSlotHandleUser()))
-            && (this.getMsgMissHandleState() == null ? other.getMsgMissHandleState() == null : this.getMsgMissHandleState().equals(other.getMsgMissHandleState()));
+            && (this.getMsgMissHandleState() == null ? other.getMsgMissHandleState() == null : this.getMsgMissHandleState().equals(other.getMsgMissHandleState()))
+            && (this.getMarketPriceState() == null ? other.getMarketPriceState() == null : this.getMarketPriceState().equals(other.getMarketPriceState()))
+            && (this.getSupplyPriceState() == null ? other.getSupplyPriceState() == null : this.getSupplyPriceState().equals(other.getSupplyPriceState()));
     }
 
     @Override
@@ -794,6 +836,8 @@ public class HubSpuPendingDto implements Serializable {
         result = prime * result + ((getSlotHandleDate() == null) ? 0 : getSlotHandleDate().hashCode());
         result = prime * result + ((getSlotHandleUser() == null) ? 0 : getSlotHandleUser().hashCode());
         result = prime * result + ((getMsgMissHandleState() == null) ? 0 : getMsgMissHandleState().hashCode());
+        result = prime * result + ((getMarketPriceState() == null) ? 0 : getMarketPriceState().hashCode());
+        result = prime * result + ((getSupplyPriceState() == null) ? 0 : getSupplyPriceState().hashCode());
         return result;
     }
 }

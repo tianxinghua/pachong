@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2017年7月19日 上午11:49:43
  *
  */
-@Service
+@Service("productPullDataServiceImpl")
 @Slf4j
 public class ProductPullDataService {
 	
@@ -85,7 +85,8 @@ public class ProductPullDataService {
     public List<HubSupplierValueMappingDto> findAllSupplier(){
     	HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
     	criteria.setFields("supplier_id,hub_val");
-    	criteria.setPageNo(1);
+    	criteria.setOrderByClause("hub_val");
+    	criteria.setPageNo(1); 
     	criteria.setPageSize(1000); 
     	criteria.createCriteria().andHubValTypeEqualTo((byte)5);
 		return supplierValueMappingGateWay.selectByCriteria(criteria);

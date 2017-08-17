@@ -1,5 +1,7 @@
 package com.shangpin.ephub.client.data.mysql.sku.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,7 +119,8 @@ public class HubSkuCriteriaDto {
         public boolean isValid() {
             return criteria.size() > 0;
         }
-        
+
+        @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
         }
@@ -414,76 +417,6 @@ public class HubSkuCriteriaDto {
 
         public Criteria andSkuSizeNotBetween(String value1, String value2) {
             addCriterion("sku_size not between", value1, value2, "skuSize");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoIsNull() {
-            addCriterion("sku_no is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoIsNotNull() {
-            addCriterion("sku_no is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoEqualTo(String value) {
-            addCriterion("sku_no =", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoNotEqualTo(String value) {
-            addCriterion("sku_no <>", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoGreaterThan(String value) {
-            addCriterion("sku_no >", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoGreaterThanOrEqualTo(String value) {
-            addCriterion("sku_no >=", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoLessThan(String value) {
-            addCriterion("sku_no <", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoLessThanOrEqualTo(String value) {
-            addCriterion("sku_no <=", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoLike(String value) {
-            addCriterion("sku_no like", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoNotLike(String value) {
-            addCriterion("sku_no not like", value, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoIn(List<String> values) {
-            addCriterion("sku_no in", values, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoNotIn(List<String> values) {
-            addCriterion("sku_no not in", values, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoBetween(String value1, String value2) {
-            addCriterion("sku_no between", value1, value2, "skuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andSkuNoNotBetween(String value1, String value2) {
-            addCriterion("sku_no not between", value1, value2, "skuNo");
             return (Criteria) this;
         }
 
@@ -1017,6 +950,136 @@ public class HubSkuCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andVersionIsNull() {
+            addCriterion("version is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionIsNotNull() {
+            addCriterion("version is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionEqualTo(Long value) {
+            addCriterion("version =", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionNotEqualTo(Long value) {
+            addCriterion("version <>", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionGreaterThan(Long value) {
+            addCriterion("version >", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionGreaterThanOrEqualTo(Long value) {
+            addCriterion("version >=", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionLessThan(Long value) {
+            addCriterion("version <", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionLessThanOrEqualTo(Long value) {
+            addCriterion("version <=", value, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionIn(List<Long> values) {
+            addCriterion("version in", values, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionNotIn(List<Long> values) {
+            addCriterion("version not in", values, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionBetween(Long value1, Long value2) {
+            addCriterion("version between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andVersionNotBetween(Long value1, Long value2) {
+            addCriterion("version not between", value1, value2, "version");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoIsNull() {
+            addCriterion("sku_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoIsNotNull() {
+            addCriterion("sku_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoEqualTo(String value) {
+            addCriterion("sku_no =", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotEqualTo(String value) {
+            addCriterion("sku_no <>", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoGreaterThan(String value) {
+            addCriterion("sku_no >", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoGreaterThanOrEqualTo(String value) {
+            addCriterion("sku_no >=", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoLessThan(String value) {
+            addCriterion("sku_no <", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoLessThanOrEqualTo(String value) {
+            addCriterion("sku_no <=", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoLike(String value) {
+            addCriterion("sku_no like", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotLike(String value) {
+            addCriterion("sku_no not like", value, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoIn(List<String> values) {
+            addCriterion("sku_no in", values, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotIn(List<String> values) {
+            addCriterion("sku_no not in", values, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoBetween(String value1, String value2) {
+            addCriterion("sku_no between", value1, value2, "skuNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andSkuNoNotBetween(String value1, String value2) {
+            addCriterion("sku_no not between", value1, value2, "skuNo");
+            return (Criteria) this;
+        }
+
         public Criteria andSpSkuNoIsNull() {
             addCriterion("sp_sku_no is null");
             return (Criteria) this;
@@ -1084,66 +1147,6 @@ public class HubSkuCriteriaDto {
 
         public Criteria andSpSkuNoNotBetween(String value1, String value2) {
             addCriterion("sp_sku_no not between", value1, value2, "spSkuNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionIsNull() {
-            addCriterion("version is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionIsNotNull() {
-            addCriterion("version is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionEqualTo(Long value) {
-            addCriterion("version =", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionNotEqualTo(Long value) {
-            addCriterion("version <>", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionGreaterThan(Long value) {
-            addCriterion("version >", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionGreaterThanOrEqualTo(Long value) {
-            addCriterion("version >=", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionLessThan(Long value) {
-            addCriterion("version <", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionLessThanOrEqualTo(Long value) {
-            addCriterion("version <=", value, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionIn(List<Long> values) {
-            addCriterion("version in", values, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionNotIn(List<Long> values) {
-            addCriterion("version not in", values, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionBetween(Long value1, Long value2) {
-            addCriterion("version between", value1, value2, "version");
-            return (Criteria) this;
-        }
-
-        public Criteria andVersionNotBetween(Long value1, Long value2) {
-            addCriterion("version not between", value1, value2, "version");
             return (Criteria) this;
         }
 
@@ -1216,22 +1219,92 @@ public class HubSkuCriteriaDto {
             addCriterion("sku_size_type not between", value1, value2, "skuSizeType");
             return (Criteria) this;
         }
+
+        public Criteria andMeasurementIsNull() {
+            addCriterion("measurement is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIsNotNull() {
+            addCriterion("measurement is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementEqualTo(String value) {
+            addCriterion("measurement =", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotEqualTo(String value) {
+            addCriterion("measurement <>", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementGreaterThan(String value) {
+            addCriterion("measurement >", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementGreaterThanOrEqualTo(String value) {
+            addCriterion("measurement >=", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLessThan(String value) {
+            addCriterion("measurement <", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLessThanOrEqualTo(String value) {
+            addCriterion("measurement <=", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLike(String value) {
+            addCriterion("measurement like", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotLike(String value) {
+            addCriterion("measurement not like", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIn(List<String> values) {
+            addCriterion("measurement in", values, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotIn(List<String> values) {
+            addCriterion("measurement not in", values, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementBetween(String value1, String value2) {
+            addCriterion("measurement between", value1, value2, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotBetween(String value1, String value2) {
+            addCriterion("measurement not between", value1, value2, "measurement");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
 
-    	public Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-    	
-        public Criterion() {
-			super();
-		}
 
-		private String condition;
+        public Criterion() {
+            super();
+        }
+
+        private String condition;
 
         private Object value;
 
