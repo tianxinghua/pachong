@@ -50,6 +50,8 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
 import lombok.extern.slf4j.Slf4j;
 
+import static com.shangpin.ephub.product.business.service.ServiceConstant.HUB_SPU_PIC_USE_SHOOT;
+
 /**
  * Created by loyalty on 16/12/24.
  * @param
@@ -275,6 +277,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             picVO.setSpuPendingId(spuPendingDto.getSpuPendingId());
             picVO.setPicId(picDto.getSlotSpuPicId());
             picVO.setSpPicUrl(picDto.getSpPicUrl());
+            picVO.setMemo(HUB_SPU_PIC_USE_SHOOT);
             picVOs.add(picVO);
         }
 
