@@ -87,12 +87,16 @@ public class HubSpuPendingNohandleReasonService {
 	}
 	
 	public Map<Long,String> findAllErrorReason(List<Long> spuPendingIds){
-		Map<Long,String> map = Maps.newHashMap();
-		List<HubSpuPendingNohandleReasonDto> list = selectErrorReason(spuPendingIds);
-		if(CollectionUtils.isNotEmpty(list)){
-			list.forEach(dto -> push(dto,map));
+		if(CollectionUtils.isNotEmpty(spuPendingIds)){
+			Map<Long,String> map = Maps.newHashMap();
+			List<HubSpuPendingNohandleReasonDto> list = selectErrorReason(spuPendingIds);
+			if(CollectionUtils.isNotEmpty(list)){
+				list.forEach(dto -> push(dto,map));
+			}
+			return map;
+		}else{
+			return null;
 		}
-		return map;
 	}
 	
 	//==========================================================================================================================
@@ -100,7 +104,7 @@ public class HubSpuPendingNohandleReasonService {
 	private List<HubSpuPendingNohandleReasonDto> selectErrorReason(List<Long> spuPendingIds){
 		HubSpuPendingNohandleReasonCriteriaDto criteria = new HubSpuPendingNohandleReasonCriteriaDto();
 		criteria.setPageNo(1);criteria.setPageSize(100); 
-		criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+		criteria.createCriteria().andSpuPendingIdIn(spuPendingIds).andDataStateEqualTo(DataState.NOT_DELETED.getIndex()); 
 		return reasonGateWay.selectByCriteria(criteria);
 	}
 	
