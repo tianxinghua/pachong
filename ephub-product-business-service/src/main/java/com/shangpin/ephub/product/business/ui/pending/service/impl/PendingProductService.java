@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
@@ -111,8 +112,12 @@ public class PendingProductService extends PendingSkuService{
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     List<Long> spuPendingIds = new ArrayList<Long>();
+                    List<Long> spuPendingIds2 = new ArrayList<Long>();
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                     	spuPendingIds.add(pendingSpu.getSpuPendingId());
+                    	if(null != pendingSpu.getMsgMissHandleState() && MsgMissHandleState.HAVE_HANDLED.getIndex() == pendingSpu.getMsgMissHandleState()){
+                    		spuPendingIds2.add(pendingSpu.getSpuPendingId());
+                    	}
                     }
                     long start_sku = System.currentTimeMillis();
                     /**
@@ -122,7 +127,7 @@ public class PendingProductService extends PendingSkuService{
                     /**
                      * 查找错误信息
                      */
-                    Map<Long,String> errorReasons = reasonService.findAllErrorReason(spuPendingIds);
+                    Map<Long,String> errorReasons = reasonService.findAllErrorReason(spuPendingIds2);
                     
                     log.info("--->待处理查询sku耗时{}",System.currentTimeMillis()-start_sku); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
@@ -144,7 +149,7 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
-                        pendingProduct.setErrorReason(errorReasons.get(pendingSpu.getSpuPendingId()));  
+                        pendingProduct.setErrorReason(null != errorReasons ? errorReasons.get(pendingSpu.getSpuPendingId()) : "");  
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
