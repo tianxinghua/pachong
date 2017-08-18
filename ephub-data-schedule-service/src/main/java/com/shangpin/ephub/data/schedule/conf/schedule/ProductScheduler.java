@@ -41,7 +41,7 @@ public class ProductScheduler {
 	}
 
 
-	@Scheduled(cron = "00 03 11 * * ?")
+	@Scheduled(cron = "00 03 06 * * ?")
 	public void pricePush() {
 		try {
 			log.info("===========任务开始============"); 

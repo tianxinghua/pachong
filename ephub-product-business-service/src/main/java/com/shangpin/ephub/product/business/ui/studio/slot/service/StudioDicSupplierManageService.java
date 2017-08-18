@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSupplierCriteriaDto.Criteria;
@@ -16,6 +18,7 @@ import com.shangpin.ephub.client.data.studio.studio.dto.StudioCriteriaDto;
 import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.studio.gateway.StudioGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.ui.studio.slot.dto.StudioManageQuery;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioDicSupplierVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioDicSupplierInfo;
@@ -47,19 +50,29 @@ public class StudioDicSupplierManageService {
 	StudioDicSupplierGateWay studioDicSupplierGateWay;
 	@Autowired
 	private IShangpinRedis shangpinRedis;
+	@Autowired
+	private ApiAddressProperties apiAddressProperties;
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public HubResponse<?> addStudioDicSupplier(StudioManageQuery studioManageQuery) {
 		log.info("addStudioDicSupplier--------------start");
 		log.info("添加摄影棚供应商关系参数:"+JsonUtil.serialize(studioManageQuery)); 
-		if((studioManageQuery.getSupplierId()==null||studioManageQuery.getSupplierId().equals(""))||(studioManageQuery.getSupplierNo()==null||studioManageQuery.getSupplierNo().equals(""))){
+		if(studioManageQuery.getSupplierNo()==null||studioManageQuery.getSupplierNo().equals("")){
 			return HubResponse.errorResp("供应商supplierId和supplierNo不能为null!");
 		}
 		try {
+			String supplierUrl = apiAddressProperties.getScmsSupplierInfoUrl()
+					+ studioManageQuery.getSupplierNo();
+			String reSupplierMsg = restTemplate.getForObject(supplierUrl, String.class);
+			JSONObject supplierDto = JsonUtil.deserialize2(reSupplierMsg, JSONObject.class);
+			String supplierId = supplierDto.get("SupplierId").toString();
+			log.info("supplierId:"+supplierId);
 			StudioDicSupplierCriteriaDto studioDicSupplierCriteriaDto = new StudioDicSupplierCriteriaDto();
-			studioDicSupplierCriteriaDto.createCriteria().andSupplierIdEqualTo(studioManageQuery.getSupplierId()).andSupplierNoEqualTo(studioManageQuery.getSupplierNo());
+			studioDicSupplierCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierNoEqualTo(studioManageQuery.getSupplierNo());
 			List<StudioDicSupplierDto> studioDicSupplierDtoLists = studioDicSupplierGateWay.selectByCriteria(studioDicSupplierCriteriaDto);
 			if(studioDicSupplierDtoLists!=null&&studioDicSupplierDtoLists.size()>0){
-				return HubResponse.errorResp("supplierNo"+studioManageQuery.getSupplierNo()+"supplierId"+studioManageQuery.getSupplierId()+"此供应商已经维护摄影棚和供应商关系!"); 
+				return HubResponse.errorResp("supplierNo:"+studioManageQuery.getSupplierNo()+"supplierId:"+supplierId+"此供应商已经维护摄影棚和供应商关系!"); 
 			}
 			String studioIds = "";
 			if(studioManageQuery.getStudioNameFirst()==null){
@@ -118,7 +131,7 @@ public class StudioDicSupplierManageService {
 		    String[] studioIdArray = studioIds.split(",");
 		    for(int i=0;i<studioIdArray.length;i++){
 				StudioDicSupplierDto dto = new StudioDicSupplierDto();
-				dto.setSupplierId(studioManageQuery.getSupplierId());
+				dto.setSupplierId(supplierId);
 				dto.setSupplierNo(studioManageQuery.getSupplierNo());
 				dto.setStudioId(Long.parseLong(studioIdArray[i]));
 				dto.setStudioIndex((byte) i);
@@ -141,11 +154,19 @@ public class StudioDicSupplierManageService {
 		log.info("编辑摄影棚信息参数:"+JsonUtil.serialize(studioManageQuery)); 
 		
 		try {
-			if((studioManageQuery.getSupplierId()==null||studioManageQuery.getSupplierId().equals(""))||(studioManageQuery.getSupplierNo()==null||studioManageQuery.getSupplierNo().equals(""))){
-				return HubResponse.errorResp("供应商supplierId和supplierNo不能为null!");
+			if(studioManageQuery.getSupplierNo()==null||studioManageQuery.getSupplierNo().equals("")){
+				return HubResponse.errorResp("supplierNo不能为null!");
 			}
+			
+			String supplierUrl = apiAddressProperties.getScmsSupplierInfoUrl()
+					+ studioManageQuery.getSupplierNo();
+			String reSupplierMsg = restTemplate.getForObject(supplierUrl, String.class);
+			JSONObject supplierDto = JsonUtil.deserialize2(reSupplierMsg, JSONObject.class);
+			String supplierId = supplierDto.get("SupplierId").toString();
+			log.info("supplierId:"+supplierId);
+			
 			StudioDicSupplierCriteriaDto studioDicSupplierCriteriaDto = new StudioDicSupplierCriteriaDto();
-			studioDicSupplierCriteriaDto.createCriteria().andSupplierIdEqualTo(studioManageQuery.getSupplierId()).andSupplierNoEqualTo(studioManageQuery.getSupplierNo());
+			studioDicSupplierCriteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierNoEqualTo(studioManageQuery.getSupplierNo());
 			List<StudioDicSupplierDto> studioDicSupplierDtoLists = studioDicSupplierGateWay.selectByCriteria(studioDicSupplierCriteriaDto);
 
 			if(studioDicSupplierDtoLists==null||studioDicSupplierDtoLists.size()==0){
@@ -244,9 +265,9 @@ public class StudioDicSupplierManageService {
 			StudioDicSupplierCriteriaDto criteriaDto = new StudioDicSupplierCriteriaDto();
 			Criteria criteria = criteriaDto.createCriteria();
 			
-			if(studioManageQuery.getSupplierId()!=null&&!studioManageQuery.getSupplierId().equals("")){
-				criteria.andSupplierIdEqualTo(studioManageQuery.getSupplierId());
-			}
+//			if(studioManageQuery.getSupplierId()!=null&&!studioManageQuery.getSupplierId().equals("")){
+//				criteria.andSupplierIdEqualTo(studioManageQuery.getSupplierId());
+//			}
 			if(studioManageQuery.getSupplierNo()!=null&&!studioManageQuery.getSupplierNo().equals("")){
 				criteria.andSupplierNoEqualTo(studioManageQuery.getSupplierNo());
 			}
@@ -272,6 +293,7 @@ public class StudioDicSupplierManageService {
 						info.setSupplierId(dto.getSupplierId());
 						info.setUpdateTime(dto.getUpdateTime());
 						info.setUpdateUser(dto.getUpdateUser());
+						info.setSupplierNo(dto.getSupplierNo());
 						info.setStudioNameFirst(shangpinRedis.get("studioName"+dto.getStudioId()));
 					}
 					if(dto.getStudioIndex()==1){
