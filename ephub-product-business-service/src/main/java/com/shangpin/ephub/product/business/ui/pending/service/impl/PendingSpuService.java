@@ -242,20 +242,27 @@ public abstract class PendingSpuService implements IPendingProductService {
 //			criteria.andSpuStateEqualTo(SpuState.ALL_EXISTED_IN_HUB.getIndex());
 			}
 			if("0".equals(pendingQuryDto.getAuditState())){
-				//再处理
+				/**
+				 * 再处理
+				 */
 				criteria.andAuditStateEqualTo(AuditState.DISAGREE.getIndex());
 				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
 					criteria.andAuditUserLike(pendingQuryDto.getOperator()+"%");
 				}
 			}else if("1".equals(pendingQuryDto.getAuditState())){
+				/**
+				 * 审核通过
+				 */
 				criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
 			}else{
-				//待处理
+				/**
+				 * 待处理
+				 */
 				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
 					criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
 				}
-				criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
-				hubSpuPendingCriteriaDto.or(criteria.andAuditStateIsNull());
+				//criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
+				//hubSpuPendingCriteriaDto.or(criteria.andAuditStateIsNull());
 			}
 
 			if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
