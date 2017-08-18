@@ -338,6 +338,16 @@ spring:
               dBContext: Default
               openApiKey: 
               openApiSecret: 
+      spinnakerPortofinoParam:
+              setOrderUrl: http://net13server.net/spinnakerapi/Myapi/Productslist/setOrder
+              queryOrderUrl: hhttp://net13server.net/spinnakerapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13server.net/spinnakerapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13server.net/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 8IZk2x5tVN
+              dBContext: portofino
+              isPurchaseExp: 
+              openApiKey: 
+              openApiSecret: 
       stefania: 
               authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
               channel: SHANGPIN
@@ -386,6 +396,12 @@ spring:
               isPurchaseExp: no
               openApiKey:
               openApiSecret:
+      baseBluEdsConf:
+              cancelUrl: http://baseblu.edstema.it/api/v3.0/cancel/order.json?storeCode=YYW8M
+              placeUrl: http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M
+              isPurchaseExp: no
+              openApiKey: 5c90e6a49a6641738f186e866c7b2c77
+              openApiSecret: 7152fc54632e429c8939a6bd3f5ca2cc
       parisi:
               hostUrl: http://www.rpwebservice.it/wsnat13.asmx
               stockUrl: http://tempuri.org/GetStockWithSku
