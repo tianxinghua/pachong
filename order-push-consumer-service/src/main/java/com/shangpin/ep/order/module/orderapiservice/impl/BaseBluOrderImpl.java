@@ -43,7 +43,7 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObj
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
 
-@Component
+@Component("baseBluOrderImpl")
 public class BaseBluOrderImpl  implements IOrderService {
 	private static Logger loggerError = Logger.getLogger("error");
 	private static Logger logger = Logger.getLogger("info");

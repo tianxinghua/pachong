@@ -144,6 +144,10 @@ public interface OriginalProductSink {
 	public static final String DLRBOUTIQUE = "dlrboutiqueOriginalProduct";
 	
 	public static final String ALL_PRODUCT_STOCK = "allProductStock";
+
+	public static final String REEBONZ = "reebonzOriginalProduct";
+
+
 	//===============================
 	/**
 	 * 供货商portofino通道组件配置
@@ -559,4 +563,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.ALL_PRODUCT_STOCK)
 	public MessageChannel allProductStock();
+
+	/**
+	 * 供应商reebonz通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.REEBONZ)
+	public MessageChannel reebonzOriginalProduct();
+
 }

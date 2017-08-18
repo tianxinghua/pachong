@@ -143,6 +143,10 @@ public class OriginalProductStreamListenerAdapter {
 	
 	@Autowired
 	private StockHandler stockHandler;
+
+	@Autowired
+	@Qualifier("reebonzHandler")
+	private ISupplierHandler reebonzHandler;
 	
 	
 	/**
@@ -712,7 +716,16 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void dlrboutiqueStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);				
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+
+	/**
+	 * reebonz供应商原始数据监听方法
+	 * @param message
+	 * @param headers
+	 */
+	public void reebonzStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		reebonzHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**

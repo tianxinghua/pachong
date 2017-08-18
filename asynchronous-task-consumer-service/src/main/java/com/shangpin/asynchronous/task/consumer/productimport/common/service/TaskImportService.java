@@ -397,11 +397,11 @@ public class TaskImportService {
 					spuIsPassing = false;
 					hubIsExist = false;
 					map.put("taskState", "校验失败");
-					map.put("processInfo", "同品牌同货号，颜色不一样");
+					map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
 					checkResult =  "同品牌同货号，颜色不一样";
 					hubPendingSpuCheckResult.setPassing(false);
 					hubPendingSpuDto.setAuditState((byte)0);
-					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样");
+					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
 					hubPendingSpuDto.setAuditDate(new Date());
 					hubPendingSpuDto.setAuditUser("chenxu");
 					hubPendingSpuDto.setSpuState((byte)0);

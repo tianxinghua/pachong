@@ -4,17 +4,26 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingNohandleReasonGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
@@ -38,6 +47,10 @@ public class SupplierProductMysqlService {
 	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
 	@Autowired 
 	private HubSupplierSkuGateWay hubSupplierSkuGateWay;
+	@Autowired
+	private HubSpuPendingGateWay hubSpuPendingGateWay;
+	@Autowired
+	private HubSpuPendingNohandleReasonGateWay nohandleReasonGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param supplierNo
@@ -59,6 +72,11 @@ public class SupplierProductMysqlService {
 				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
 				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
 				boolean isChanged = comparisonHubSpu(supplierNo,hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
+				/**
+				 * 处理错误原因
+				 */
+				setMsgmissHandleState(hubSpuSel.getSupplierSpuId(), pendingSpu);
+				
 				if(isChanged){
 					hubSpuUpdated.setUpdateTime(new Date()); 
 					updateHubSpu(hubSpuUpdated);
@@ -78,7 +96,48 @@ public class SupplierProductMysqlService {
 			
 			return ProductStatus.NO_NEED_HANDLE;
 		}			
-	}	
+	}
+	
+	private void setMsgmissHandleState(Long supplierSpuId, PendingSpu pendingSpu){
+		try {
+			if(null == pendingSpu.getPicState()){
+				HubSpuPendingNohandleReasonDto reasonDto = selectNohandleReason(supplierSpuId);
+				if(null != reasonDto){
+					updateMsgmissHandleState(reasonDto);
+				}
+			}
+		} catch (Exception e) {
+			log.error("发生错误："+e.getMessage(),e); 
+		}
+	}
+	
+	private void updateMsgmissHandleState(HubSpuPendingNohandleReasonDto reasonDto){
+		/**
+		 * 先更新pending表
+		 */
+		HubSpuPendingDto dto = new HubSpuPendingDto();
+		dto.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
+		dto.setSpuPendingId(reasonDto.getSpuPendingId());
+		hubSpuPendingGateWay.updateByPrimaryKeySelective(dto );
+		/**
+		 * 再更新错误原因表
+		 */
+		HubSpuPendingNohandleReasonDto nohandleReasonDto = new HubSpuPendingNohandleReasonDto();
+		nohandleReasonDto.setDataState(DataState.DELETED.getIndex());
+		nohandleReasonDto.setSpuPendingNohandleReasonId(reasonDto.getSpuPendingNohandleReasonId()); 
+		nohandleReasonGateWay.updateByPrimaryKeySelective(reasonDto );
+	}
+
+	private HubSpuPendingNohandleReasonDto selectNohandleReason(Long supplierSpuId) {
+		HubSpuPendingNohandleReasonCriteriaDto criteria = new HubSpuPendingNohandleReasonCriteriaDto();
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andErrorReasonEqualTo(ErrorReason.WRONG_MAPPING_OF_CODE.getIndex());
+		List<HubSpuPendingNohandleReasonDto> list = nohandleReasonGateWay.selectByCriteria(criteria );
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0);
+		}else{
+			return null;
+		}
+	}
 	
 //	private void updateHubSpuMemo(HubSupplierSpuDto hubSpuUpdated) {
 //		HubSupplierSpuWithCriteriaDto criteriaDto = new HubSupplierSpuWithCriteriaDto();

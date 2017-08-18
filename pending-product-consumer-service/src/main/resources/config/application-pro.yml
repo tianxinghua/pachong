@@ -428,7 +428,13 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 1
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                           
+                                       maxAttempts: 1
+                        reebonzPendingProduct:
+                              destination: reebonz.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
               rabbit: 
                       bindings: 
                             coccolebimbiPendingProduct: 
@@ -838,7 +844,13 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                                                                                                                                                                                                                                                                                          
+                                       republishToDlq: false
+                            reebonzPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
