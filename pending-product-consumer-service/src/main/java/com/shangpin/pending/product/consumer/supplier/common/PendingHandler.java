@@ -9,6 +9,7 @@ import java.util.Map;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.business.supplier.gateway.SupplierInHubGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -65,6 +66,9 @@ public class PendingHandler extends VariableInit {
 
 	@Autowired
 	SupplierInHubGateWay supplierInHubGateWay;
+
+	@Autowired
+	SpuPendingMsgHandleService spuPendingMsgHandleService;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -759,6 +763,14 @@ public class PendingHandler extends VariableInit {
 				//只有未被人工修改过的才做处理
 				if(StringUtils.isBlank(spuPendingDto.getUpdateUser())) {
 					setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
+				}else{
+					if(spuPendingDto.getMsgMissHandleState()==MsgMissHandleState.HAVE_HANDLED.getIndex()){
+						//供货商有需要修改的数据
+						Map<Byte, List<HubSpuPendingNohandleReasonDto>> map = spuPendingMsgHandleService.findSpuErrorMsgBySupplierIdAndSpuPendingId(spuPendingDto.getSupplierId(), spuPendingDto.getSpuPendingId());
+						if(null!=map&&map.size()>0){
+							setSpuPendingValueForSupplierUpdate(spu, spuPendingDto, updateSpuPending,map);
+						}
+					}
 				}
 
 				dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);

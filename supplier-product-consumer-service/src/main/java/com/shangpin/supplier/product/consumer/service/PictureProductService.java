@@ -124,6 +124,7 @@ public class PictureProductService {
 	
 	private void add(String url, Map<String,String> supplierUrls, List<String> deletedUrls){
 		if(!supplierUrls.containsKey(url)){
+			log.info("【供应商链接"+url+"供应商不再维护，即将逻辑删除】"); 
 			deletedUrls.add(url);
 		}
 	}
@@ -135,6 +136,7 @@ public class PictureProductService {
 		withCriteria.setCriteria(criteria );
 		HubSpuPendingPicDto hubSpuPendingPic =  new HubSpuPendingPicDto();
 		hubSpuPendingPic.setDataState(DataState.DELETED.getIndex());
+		hubSpuPendingPic.setMemo("供应商不维护已删除"); 
 		hubSpuPendingPic.setUpdateTime(new Date());
 		withCriteria.setHubSpuPendingPic(hubSpuPendingPic );
 		picClient.updateByCriteriaSelective(withCriteria );
