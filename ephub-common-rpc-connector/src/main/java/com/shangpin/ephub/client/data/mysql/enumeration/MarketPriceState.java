@@ -1,12 +1,17 @@
 package com.shangpin.ephub.client.data.mysql.enumeration;
-
-public enum MsgMissHandleState {
+/**
+ * <p>Title: MarketPriceState</p>
+ * <p>Description: 市场价状态 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年8月15日 下午2:53:35
+ *
+ */
+public enum MarketPriceState {
 	
-	NOT_HANDLE((byte)0, "未处理"),
+	NO_MARKETPRICE((byte)0,"无市场价"),
 	
-	HAVE_HANDLED((byte)1, "流程已处理"),
-	
-	SUPPLIER_HAVE_HANDLED((byte)2,"供应商已处理");
+	HAVE_MARKETPRICE((byte)1,"有市场价");
 
 	/**
      * 数字索引标识
@@ -17,7 +22,7 @@ public enum MsgMissHandleState {
      */
     private String description;
     
-    MsgMissHandleState(byte index,String description){
+    MarketPriceState(byte index,String description){
 		this.index = index;
 		this.description = description;
 	}

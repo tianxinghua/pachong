@@ -10,7 +10,16 @@ public enum SpuStatus {
     SPU_HANDLED(2,"已处理"),
     SPU_NO_WAY_HANDLE(3,"无法处理"),
     SPU_FILTER(4,"过滤不处理"),
-    SPU_HANDLING(5,"审核中");
+    SPU_HANDLING(5,"审核中"),
+    /**
+     * HUB已存在
+     */
+    EXISTED_IN_HUB(6,"SPU部分SKU已生成"),
+
+    /**
+     * SPU下所有的SKU都在尚品已生成
+     */
+    ALL_EXISTED_IN_HUB(7,"SPU所有SKU均已生成");
     /**
      * 数字索引标识
      */

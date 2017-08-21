@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
 import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -86,12 +87,16 @@ public class HubSpuPendingNohandleReasonService {
 	}
 	
 	public Map<Long,String> findAllErrorReason(List<Long> spuPendingIds){
-		Map<Long,String> map = Maps.newHashMap();
-		List<HubSpuPendingNohandleReasonDto> list = selectErrorReason(spuPendingIds);
-		if(CollectionUtils.isNotEmpty(list)){
-			list.forEach(dto -> push(dto,map));
+		if(CollectionUtils.isNotEmpty(spuPendingIds)){
+			Map<Long,String> map = Maps.newHashMap();
+			List<HubSpuPendingNohandleReasonDto> list = selectErrorReason(spuPendingIds);
+			if(CollectionUtils.isNotEmpty(list)){
+				list.forEach(dto -> push(dto,map));
+			}
+			return map;
+		}else{
+			return null;
 		}
-		return map;
 	}
 	
 	//==========================================================================================================================
@@ -99,7 +104,7 @@ public class HubSpuPendingNohandleReasonService {
 	private List<HubSpuPendingNohandleReasonDto> selectErrorReason(List<Long> spuPendingIds){
 		HubSpuPendingNohandleReasonCriteriaDto criteria = new HubSpuPendingNohandleReasonCriteriaDto();
 		criteria.setPageNo(1);criteria.setPageSize(100); 
-		criteria.createCriteria().andSpuPendingIdIn(spuPendingIds);
+		criteria.createCriteria().andSpuPendingIdIn(spuPendingIds).andDataStateEqualTo(DataState.NOT_DELETED.getIndex()); 
 		return reasonGateWay.selectByCriteria(criteria);
 	}
 	
@@ -135,7 +140,6 @@ public class HubSpuPendingNohandleReasonService {
 		 */
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
 		reasonDto.setCreateUser(createUser);
-		reasonDto.setCreateTime(new Date());
 		reasonDto.setErrorType(Byte.valueOf(reason.getErrorType()));
 		reasonDto.setErrorReason(Byte.valueOf(reason.getErrorReason())); 
 		reasonGateWay.insert(reasonDto);
@@ -153,7 +157,6 @@ public class HubSpuPendingNohandleReasonService {
 	private void insert(String createUser, String reason, HubSpuPendingDto dto){
 		HubSpuPendingNohandleReasonDto reasonDto = convertFromSpuPendingDto(dto);
 		reasonDto.setCreateUser(createUser); 
-		reasonDto.setCreateTime(new Date());
 		ErrorReason errorReason = getErrorReason(reason);
 		if(null != errorReason){
 			reasonDto.setErrorType(errorReason.getErrorType().getIndex());
@@ -165,12 +168,19 @@ public class HubSpuPendingNohandleReasonService {
 		
 	}
 
+	/**
+	 * 2个insert方法公共的部分
+	 * @param dto
+	 * @return
+	 */
 	private HubSpuPendingNohandleReasonDto convertFromSpuPendingDto(HubSpuPendingDto dto) {
 		HubSpuPendingNohandleReasonDto reasonDto = new HubSpuPendingNohandleReasonDto();
 		reasonDto.setSpuPendingId(dto.getSpuPendingId());
 		reasonDto.setSupplierSpuId(dto.getSupplierSpuId());
 		reasonDto.setSupplierId(dto.getSupplierId());
 		reasonDto.setSupplierNo(dto.getSupplierNo());
+		reasonDto.setDataState(DataState.NOT_DELETED.getIndex());
+		reasonDto.setCreateTime(new Date());
 		return reasonDto;
 	}
 

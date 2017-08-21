@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.data.mysql.spu.dto.*;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
@@ -20,11 +21,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
-import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -50,6 +46,8 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static com.shangpin.ephub.product.business.service.ServiceConstant.HUB_SPU_PIC_USE_SHOOT;
 
 /**
  * Created by loyalty on 16/12/24.
@@ -222,7 +220,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                     criteriaPic.setPageNo(1);
                     criteriaPic.setPageSize(100);
                     criteriaPic.createCriteria().andSupplierSpuIdEqualTo(spuPendingDto.getSupplierSpuId())
-                            .andPicHandleStateEqualTo(PicState.HANDLED.getIndex());
+                            .andPicHandleStateEqualTo(PicState.HANDLED.getIndex()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
                     List<HubSpuPendingPicDto> hubSpuPendingPicDtos = spuPendingPicGateWay.selectByCriteria(criteriaPic);
                     if(null!=hubSpuPendingDtos){
                         if(hubSpuPendingDtos.size()>maxPic){
@@ -275,6 +273,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             picVO.setSpuPendingId(spuPendingDto.getSpuPendingId());
             picVO.setPicId(picDto.getSlotSpuPicId());
             picVO.setSpPicUrl(picDto.getSpPicUrl());
+            picVO.setMemo(HUB_SPU_PIC_USE_SHOOT);
             picVOs.add(picVO);
         }
 
@@ -287,7 +286,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         HubSlotSpuDto hubSlotSpu = slotSpuService.findHubSlotSpu(brandNo, spuModel);
         if(null!=hubSlotSpu&&hubSlotSpu.getPicSign()!=null){
             if(UploadPicSign.HAVE_UPLOADED.getIndex().byteValue() ==hubSlotSpu.getPicSign()){//有图片
-
                  shootPic = slotPicService.findShootPic(hubSlotSpu.getSlotSpuId());
             }
         }

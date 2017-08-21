@@ -19,5 +19,10 @@ public interface ServiceConstant {
 	 */
 	public static final String HUB_SLOT_NOT_NEED_SEND_SUPPLIERVALNO="1";
 
+	/**
+	 * 使用摄影棚的图片备注
+	 */
+	public static final String  HUB_SPU_PIC_USE_SHOOT="USE SHOOT PIC";
+
 
 }

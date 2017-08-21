@@ -38,12 +38,12 @@ public enum SpuState {
 	/**
 	 * HUB已存在
 	 */
-	EXISTED_IN_HUB((byte)6,"SOP已存在"),
+	EXISTED_IN_HUB((byte)6,"SPU部分SKU已生成"),
 	
 	/**
 	 * SPU下所有的SKU都在尚品已生成
 	 */
-	ALL_EXISTED_IN_HUB((byte)16,"SPU下所有的SKU都在尚品已生成");
+	ALL_EXISTED_IN_HUB((byte)7,"SPU所有SKU均已生成");
 	
 	
 	

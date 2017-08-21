@@ -36,14 +36,14 @@ public enum SpuState {
 	 */
 	HANDLING((byte)5,"审核中"),
 	/**
-	 * HUB已存在
+	 * SPU部分SKU已生成
 	 */
-	EXISTED_IN_HUB((byte)6,"HUB已存在"),
+	EXISTED_IN_HUB((byte)6,"SPU部分SKU已生成"),
 	
 	/**
-	 * SPU下所有的SKU都在尚品已生成
+	 * SPU所有SKU均已生成
 	 */
-	ALL_EXISTED_IN_HUB((byte)16,"SPU下所有的SKU都在尚品已生成");
+	ALL_EXISTED_IN_HUB((byte)7,"SPU所有SKU均已生成");
 	
 	
 	

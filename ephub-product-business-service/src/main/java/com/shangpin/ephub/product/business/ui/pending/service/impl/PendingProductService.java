@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
@@ -45,6 +46,7 @@ import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendin
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
+import com.shangpin.ephub.product.business.service.pending.CheckService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -93,6 +95,8 @@ public class PendingProductService extends PendingSkuService{
 	private SupplierInHubService supplierInHubService;
     @Autowired
     private HubSpuPendingNohandleReasonService reasonService;
+    @Autowired
+    private CheckService checkService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -108,8 +112,12 @@ public class PendingProductService extends PendingSkuService{
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     List<Long> spuPendingIds = new ArrayList<Long>();
+                    List<Long> spuPendingIds2 = new ArrayList<Long>();
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                     	spuPendingIds.add(pendingSpu.getSpuPendingId());
+                    	if(null != pendingSpu.getMsgMissHandleState() && MsgMissHandleState.HAVE_HANDLED.getIndex() == pendingSpu.getMsgMissHandleState()){
+                    		spuPendingIds2.add(pendingSpu.getSpuPendingId());
+                    	}
                     }
                     long start_sku = System.currentTimeMillis();
                     /**
@@ -119,7 +127,7 @@ public class PendingProductService extends PendingSkuService{
                     /**
                      * 查找错误信息
                      */
-                    Map<Long,String> errorReasons = reasonService.findAllErrorReason(spuPendingIds);
+                    Map<Long,String> errorReasons = reasonService.findAllErrorReason(spuPendingIds2);
                     
                     log.info("--->待处理查询sku耗时{}",System.currentTimeMillis()-start_sku); 
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
@@ -141,7 +149,7 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
-                        pendingProduct.setErrorReason(errorReasons.get(pendingSpu.getSpuPendingId()));  
+                        pendingProduct.setErrorReason(null != errorReasons ? errorReasons.get(pendingSpu.getSpuPendingId()) : "");  
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
@@ -166,9 +174,15 @@ public class PendingProductService extends PendingSkuService{
     	HubSpuDto hubSpuDto = null;
     	try {
             if(null != pendingProductDto){
-            	//开始校验spu
+            	/**
+            	 * 校验货号
+            	 */
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
-            	if(brandModelResult.isPassing()){
+            	/**
+            	 * 校验品类和性别是否一致
+            	 */
+            	boolean checkCategoryAndGender = checkService.checkCategoryAndGender(pendingProductDto.getHubGender(), pendingProductDto.getHubCategoryNo());
+            	if(brandModelResult.isPassing() && checkCategoryAndGender){
             		hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
             		if(null == hubSpuDto){
             			HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
@@ -190,8 +204,8 @@ public class PendingProductService extends PendingSkuService{
             		}
             	}else{
             		pass = false ;
-            		log.info("pending spu校验失败，不更新：货号校验不通过。");
-            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
+            		log.info("pending spu校验失败，不更新：货号校验不通过或者性别不符。");
+            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过或性别不符");
             	}
             	//开始校验sku
             	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();

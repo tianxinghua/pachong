@@ -181,11 +181,11 @@ public class StudioDicCategoryManageService {
 				info.setStudioDicCategoryId(studioDicCategoryDto.getStudioDicCategoryId());
 				info.setUpdateUser(studioDicCategoryDto.getUpdateUser());
 				info.setUpdateTime(sdfomat.parse(sdfomat.format(studioDicCategoryDto.getUpdateTime())));
-				if(studioManageQuery.getStudioName()!=null){
+				if(studioManageQuery.getStudioName()!=null&&!studioManageQuery.getStudioName().equals("")){
 					info.setStudioName(studioManageQuery.getStudioName());
 				}else{
 					StudioCriteriaDto criteriadto = new StudioCriteriaDto();
-					criteriadto.createCriteria().andStudioIdEqualTo(studioManageQuery.getStudioId());
+					criteriadto.createCriteria().andStudioIdEqualTo(studioDicCategoryDto.getStudioId());
 					List<StudioDto> lists = studioGateWay.selectByCriteria(criteriadto);
 					if(lists==null||lists.size()==0){
 						continue;
