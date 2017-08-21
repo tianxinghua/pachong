@@ -14,6 +14,7 @@ public class StudioDicSupplierInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
     private Long studioDicSupplierId;
     private String supplierId;
+    private String supplierNo;
     private String studioNameFirst;
     private String studioNameSecond;
     private String studioNameThree;
