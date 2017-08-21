@@ -65,6 +65,12 @@
 			#{item}       
      	  </foreach>
 	 </if>
+	 
+    <if test="null!= spSkuNo">
+ 		<foreach collection="spSkuNo" item="item" open="AND sku.sp_sku_no IN (" close=")" separator=",">
+			#{item}       
+     	  </foreach>   
+ 	</if>
     	
     <if test="null!= operateUser">
 	       and   map.update_user = #{operateUser}
@@ -101,13 +107,18 @@
     from hub_spu spu INNER JOIN hub_sku sku on sku.spu_no = spu.spu_no  INNER JOIN  hub_sku_supplier_mapping map on map.sku_no = sku.sku_no  
     where 
     
-    		1=1
-    	 	 <if test="null!= supplierSelectState">
-    	 
+ 	 1=1
+     <if test="null!= supplierSelectState">
     	 <foreach collection="supplierSelectState" item="item" open="AND map.supplier_select_state IN (" close=")" separator=",">
 			#{item}       
      	  </foreach>
 	 </if>
+	 
+	 <if test="null!= spSkuNo">
+ 		  <foreach collection="spSkuNo" item="item" open="AND sku.sp_sku_no IN (" close=")" separator=",">
+			#{item}       
+     	  </foreach>   
+ 	 </if>
 	 
 	  <if test="null!= operateUser">
 	       and   map.update_user = #{operateUser}

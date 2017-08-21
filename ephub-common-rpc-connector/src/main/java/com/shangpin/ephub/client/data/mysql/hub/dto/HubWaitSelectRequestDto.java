@@ -22,6 +22,7 @@ public class HubWaitSelectRequestDto {
     private String spuModel;
     private String brandNo;
     private String categoryNo;
+    private String spSkuNo;
     private String startDate;
     private String endDate;
     private String createUser;

@@ -250,8 +250,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
 					criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
 				}
-				criteria.andAuditStateEqualTo(AuditState.AGREE.getIndex());
-				hubSpuPendingCriteriaDto.or(criteria.andAuditStateIsNull());
+				criteria.andAuditStateIsNull();
 			}
 
 			if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){

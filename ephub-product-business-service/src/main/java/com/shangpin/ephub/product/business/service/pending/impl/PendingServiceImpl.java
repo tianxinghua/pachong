@@ -285,7 +285,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     private Map<String, List<HubSlotSpuPicDto>>  getShootPic(String brandNo, String spuModel) {
         Map<String, List<HubSlotSpuPicDto>> shootPic =null;
         HubSlotSpuDto hubSlotSpu = slotSpuService.findHubSlotSpu(brandNo, spuModel);
-        if(null!=hubSlotSpu){
+        if(null!=hubSlotSpu&&hubSlotSpu.getPicSign()!=null){
             if(UploadPicSign.HAVE_UPLOADED.getIndex().byteValue() ==hubSlotSpu.getPicSign()){//有图片
 
                  shootPic = slotPicService.findShootPic(hubSlotSpu.getSlotSpuId());

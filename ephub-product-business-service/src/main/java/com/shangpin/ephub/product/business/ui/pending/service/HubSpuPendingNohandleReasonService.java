@@ -179,6 +179,10 @@ public class HubSpuPendingNohandleReasonService {
 		List<ReasonResponseDto> listReturn = new ArrayList<ReasonResponseDto>();
 		HubSpuPendingNohandleReasonCriteriaDto hubSpuPendingNohandleReasonCriteriaDto = new HubSpuPendingNohandleReasonCriteriaDto();
 		HubSpuPendingNohandleReasonCriteriaDto.Criteria criteria= hubSpuPendingNohandleReasonCriteriaDto.createCriteria();
+		if(reasons.getSupplierId()==null){
+			return null;
+		}
+		criteria.andSupplierIdEqualTo(reasons.getSupplierId());
 		if(reasons.getErrorReason()!=null){
 			criteria.andErrorReasonEqualTo(reasons.getErrorReason());
 		}
@@ -192,6 +196,7 @@ public class HubSpuPendingNohandleReasonService {
 			page = new Page();
 			hubSpuPendingNohandleReasonCriteriaDto.setPageNo(reasons.getPageIndex());
 			hubSpuPendingNohandleReasonCriteriaDto.setPageSize(reasons.getPageSize());
+			
 			List<HubSpuPendingNohandleReasonDto> list = reasonGateWay.selectByCriteria(hubSpuPendingNohandleReasonCriteriaDto);
 			if(list!=null){
 				for(HubSpuPendingNohandleReasonDto dto:list){
