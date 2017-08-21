@@ -46,7 +46,8 @@ public class PricePushService {
     private SendMailService sendMailService;
 
     public void handleErrorPush() throws Exception{
-        List<HubSupplierPriceChangeRecordDto> pushMqErrorRecordList = pricePushDataService.findPushMqErrorRecordList();
+    	int startRow = 1;
+        List<HubSupplierPriceChangeRecordDto> pushMqErrorRecordList = pricePushDataService.findPushMqErrorRecordList(startRow);
         List<HubSupplierPriceChangeRecordDto> needHandleRecords = pricePushDataService.findNeedHandleRecord(pushMqErrorRecordList);
         for(HubSupplierPriceChangeRecordDto tryDao:needHandleRecords){
             ProductPriceDTO productPriceDTO = new ProductPriceDTO();

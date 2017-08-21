@@ -41,10 +41,10 @@ public class ProductScheduler {
 	}
 
 
-	@Scheduled(cron = "00 03 06 * * ?")
+	@Scheduled(cron = "00 00 07 * * ?")
 	public void pricePush() {
 		try {
-			log.info("===========任务开始============"); 
+			log.info("===========pricePush任务开始============"); 
 			pricePushService.handleErrorPush();
 		} catch (Exception e) {
 			log.error("重推价格服务异常："+e.getMessage(),e);
