@@ -299,6 +299,8 @@ public abstract class PendingSpuService implements IPendingProductService {
 					criteria.andPicStateEqualTo(PicState.HANDLE_ERROR.getIndex());
 				}else if(2 == pendingQuryDto.getPicState()){
 					criteria.andPicStateEqualTo(PicState.HANDLED.getIndex());
+				}else if(3 == pendingQuryDto.getPicState()){
+					criteria.andPicStateEqualTo(PicState.NO_PIC.getIndex());
 				}
 			}
 			//错误处理状态
