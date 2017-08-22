@@ -124,7 +124,7 @@ public class TheclutcherHandler implements ISupplierHandler{
 		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getMarketPrice())));
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getSupplierPrice())));
 		hubSku.setSupplierSkuSize(studioSkuDto.getSize());
-		hubSku.setSupplierBarcode(studioSkuDto.getBarCode());
+		hubSku.setSupplierBarcode(studioSkuDto.getSkuID());
 		hubSku.setStock(StringUtil.verifyStock((studioSkuDto.getStock())));
 		return true;
 	}
