@@ -25,12 +25,11 @@ public class PricePushDataService {
     @Autowired
     HubSupplierPriceChangeRecordGateWay priceChangeRecordGateWay;
 
-    private List<HubSupplierPriceChangeRecordDto> recordDtos = new ArrayList<>();
     /**
      * 如果多个相同的供货商下的同一个商品 取最新的 老的不再处理
      * @return
      */
-    public List<HubSupplierPriceChangeRecordDto>  findPushMqErrorRecordList(int startRow) throws Exception{
+    public void  findPushMqErrorRecordList(int startRow,List<HubSupplierPriceChangeRecordDto> recordDtos) throws Exception{
     	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     	SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
@@ -48,6 +47,7 @@ public class PricePushDataService {
         criteriaDto.setPageSize(100);
         List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteriaDto);
         Map<String,String> priceChangeMap = new HashMap<>();
+        int count = hubSupplierPriceChangeRecordDtos.size();
         for(int i= 0 ;i<hubSupplierPriceChangeRecordDtos.size();i++){
             HubSupplierPriceChangeRecordDto dto = hubSupplierPriceChangeRecordDtos.get(i);
             if(priceChangeMap.containsKey(dto.getSupplierId()+"-"+dto.getSupplierSkuNo())){
@@ -58,12 +58,10 @@ public class PricePushDataService {
             }
         }
         recordDtos.addAll(hubSupplierPriceChangeRecordDtos);
-        if(hubSupplierPriceChangeRecordDtos.size()==100){
+        if(count==100){
         	startRow++;
-        	findPushMqErrorRecordList(startRow);
+        	findPushMqErrorRecordList(startRow,recordDtos);
         }
-        return recordDtos;
-
     }
 
 
