@@ -184,7 +184,6 @@ public abstract class PendingSpuService implements IPendingProductService {
     }
 	private Criteria getCriteria(PendingQuryDto pendingQuryDto, HubSpuPendingCriteriaDto hubSpuPendingCriteriaDto) {
 		Criteria criteria = hubSpuPendingCriteriaDto.createCriteria();
-
 		if(!StringUtils.isEmpty(pendingQuryDto.getSupplierNo())){
 			criteria.andSupplierNoEqualTo(pendingQuryDto.getSupplierNo());
 		}
@@ -261,7 +260,10 @@ public abstract class PendingSpuService implements IPendingProductService {
 				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
 					criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
 				}
-				criteria.andAuditStateIsNull();
+				List<Byte> list = new ArrayList<Byte>();
+				list.add((byte)1);
+				list.add((byte)2);
+				criteria.andAuditStateIn(list);
 			}
 
 			if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
