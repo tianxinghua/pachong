@@ -103,6 +103,7 @@ public class SupplierProductMysqlService {
 			if(null == pendingSpu.getPicState()){
 				HubSpuPendingNohandleReasonDto reasonDto = selectNohandleReason(supplierSpuId);
 				if(null != reasonDto){
+					log.info(supplierSpuId+ " 开始图片问题供应商已解决。");
 					updateMsgmissHandleState(reasonDto);
 				}
 			}
@@ -118,14 +119,16 @@ public class SupplierProductMysqlService {
 		HubSpuPendingDto dto = new HubSpuPendingDto();
 		dto.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
 		dto.setSpuPendingId(reasonDto.getSpuPendingId());
-		hubSpuPendingGateWay.updateByPrimaryKeySelective(dto );
+		int update = hubSpuPendingGateWay.updateByPrimaryKeySelective(dto );
+		log.info(reasonDto.getSpuPendingId()+ " 更新msg_miss_handle_state结果=="+update);
 		/**
 		 * 再更新错误原因表
 		 */
 		HubSpuPendingNohandleReasonDto nohandleReasonDto = new HubSpuPendingNohandleReasonDto();
 		nohandleReasonDto.setDataState(DataState.DELETED.getIndex());
 		nohandleReasonDto.setSpuPendingNohandleReasonId(reasonDto.getSpuPendingNohandleReasonId()); 
-		nohandleReasonGateWay.updateByPrimaryKeySelective(reasonDto );
+		int update2 = nohandleReasonGateWay.updateByPrimaryKeySelective(nohandleReasonDto );
+		log.info(nohandleReasonDto.getSpuPendingNohandleReasonId()+" 更新data_state结果=="+update2);
 	}
 
 	private HubSpuPendingNohandleReasonDto selectNohandleReason(Long supplierSpuId) {
