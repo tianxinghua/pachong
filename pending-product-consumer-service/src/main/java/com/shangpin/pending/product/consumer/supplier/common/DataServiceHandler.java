@@ -621,6 +621,9 @@ public class DataServiceHandler {
 
 		spuPending.setSupplyPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
 		spuPending.setMarketPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
+		spuPending.setAuditState(AuditState.INIT.getIndex());
+		if(null==spuPending.getPicState()) spuPending.setPicState(PicState.UNHANDLED.getIndex());
+		//
 
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);
