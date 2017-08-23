@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
@@ -88,7 +89,7 @@ public class ProductPullDataService {
     	criteria.setOrderByClause("hub_val");
     	criteria.setPageNo(1); 
     	criteria.setPageSize(1000); 
-    	criteria.createCriteria().andHubValTypeEqualTo((byte)5);
+    	criteria.createCriteria().andHubValTypeEqualTo((byte)5).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 		return supplierValueMappingGateWay.selectByCriteria(criteria);
     }
 }

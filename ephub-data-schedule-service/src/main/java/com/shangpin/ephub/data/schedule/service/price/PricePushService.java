@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.schedule.service.price;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,8 @@ public class PricePushService {
 
     public void handleErrorPush() throws Exception{
     	int startRow = 1;
-        List<HubSupplierPriceChangeRecordDto> pushMqErrorRecordList = pricePushDataService.findPushMqErrorRecordList(startRow);
+    	List<HubSupplierPriceChangeRecordDto> pushMqErrorRecordList = new ArrayList<>();
+    	pricePushDataService.findPushMqErrorRecordList(startRow,pushMqErrorRecordList);
         List<HubSupplierPriceChangeRecordDto> needHandleRecords = pricePushDataService.findNeedHandleRecord(pushMqErrorRecordList);
         for(HubSupplierPriceChangeRecordDto tryDao:needHandleRecords){
             ProductPriceDTO productPriceDTO = new ProductPriceDTO();
