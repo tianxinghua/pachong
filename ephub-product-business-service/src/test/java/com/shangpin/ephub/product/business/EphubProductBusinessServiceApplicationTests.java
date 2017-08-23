@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicCriteriaDto;
+import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicCriteriaDto.Criteria;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.dto.StudioSlotDefectiveSpuPicWithCriteriaDto;
 import com.shangpin.ephub.client.data.studio.slot.defective.gateway.StudioSlotDefectiveSpuPicGateWay;
@@ -592,6 +594,14 @@ public class EphubProductBusinessServiceApplicationTests {
 		withCriteria.setStudioSlotDefectiveSpuPic(studioSlotDefectiveSpuPicDto );
 		int i = defectiveSpuPicGateWay.updateByCriteriaSelective(withCriteria );
 		System.out.println(i);
+		
+		
+		StudioSlotDefectiveSpuPicCriteriaDto arg0 = new StudioSlotDefectiveSpuPicCriteriaDto();
+		arg0.createCriteria().andStudioSlotDefectiveSpuIdEqualTo(1L);
+		Criteria criteria1 = new Criteria();
+		criteria1.andCreateTimeEqualTo(new Date());
+		arg0.or(criteria1 );
+		defectiveSpuPicGateWay.selectByCriteria(arg0 );
 	}
 
 
