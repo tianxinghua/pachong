@@ -83,6 +83,9 @@ public class ConstantProperty {
 	   public static String REDIS_EPHUB_HUB_BRAND_CATEGORY_MODEL_MAPPING_MAP_KEY = "REDIS_EPHUB_HUB_BRAND_CATEGORY_MODEL_MAPPING_MAP_KEY";
 	   // --------------货号映射end-------
 	   
+	   //儿童品类品牌映射
+	   public static String REDIS_EPHUB_KID_BRAND_MAPPING_MAP_KEY = "REDIS_EPHUB_KID_BRAND_MAPPING_MAP_KEY";
+	   
 	   //品类下保留的所有的品牌
 	   public static String REDIS_EPHUB_CATEGORY_BRNAD_MAPPING_MAP_KEY="REDIS_EPHUB_CATEGORY_BRAND_MAPPING_MAP_KEY";
 	}
