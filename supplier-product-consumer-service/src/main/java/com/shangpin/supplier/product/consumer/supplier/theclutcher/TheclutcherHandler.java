@@ -119,16 +119,18 @@ public class TheclutcherHandler implements ISupplierHandler{
 	 * @return
 	 */
 	public boolean convertSku(String supplierId,Product studioSkuDto,HubSupplierSkuDto hubSku){
+		String skuId = studioSkuDto.getSkuID();
 		hubSku.setSupplierId(supplierId);
-		hubSku.setSupplierSkuNo(studioSkuDto.getSkuID());
+		hubSku.setSupplierSkuNo(skuId);
 		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getMarketPrice())));
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getSupplierPrice())));
 		hubSku.setSupplierSkuSize(studioSkuDto.getSize());
-		hubSku.setSupplierBarcode(studioSkuDto.getSkuID());
+		if(skuId!=null&&skuId.split("-").length>1){
+			hubSku.setSupplierBarcode(studioSkuDto.getBarCode()+" "+skuId.split("-")[1]);	
+		}
 		hubSku.setStock(StringUtil.verifyStock((studioSkuDto.getStock())));
 		return true;
 	}
-	
 	private List<Image> converImage(String picture){
 		
 		String [] arr = picture.split("\\|\\|");

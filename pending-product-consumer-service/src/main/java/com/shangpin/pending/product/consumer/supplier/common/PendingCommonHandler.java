@@ -399,6 +399,10 @@ public class PendingCommonHandler {
 		return firstStaticMap;
 	}
 
+	/**
+	 * 获取儿童品类对应的品牌
+	 * @return
+	 */
 	public Map<String, String> getKidBrandMap() {
 		Map<String, String> kidBrandStaticMap = shangpinRedis
 				.hgetAll(ConstantProperty.REDIS_EPHUB_KID_BRAND_MAPPING_MAP_KEY);

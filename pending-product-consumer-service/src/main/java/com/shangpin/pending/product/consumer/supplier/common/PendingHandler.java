@@ -239,7 +239,10 @@ public class PendingHandler extends VariableInit {
 				updateSpuPending.setSpuBrandState((byte) 1);
 				
 				if(existSpuPendingDto.getHubCategoryNo()!=null&&existSpuPendingDto.getHubCategoryNo().startsWith("A11")){
-					checkKidBrand(updateSpuPending.getHubBrandNo());	
+					String newHubBrandNo = checkKidBrand(updateSpuPending.getHubBrandNo());	
+					if(newHubBrandNo!=null){
+						updateSpuPending.setHubBrandNo(newHubBrandNo);
+					}
 				}
 				
 				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
@@ -249,8 +252,12 @@ public class PendingHandler extends VariableInit {
 		}
 	}
 	
-	private void checkKidBrand(String hubBrandNo) {
+	private String checkKidBrand(String hubBrandNo) {
 		Map<String, String> supplierBrand = pendingCommonHandler.getKidBrandMap();
+		if(hubBrandNo!=null&&supplierBrand!=null&&supplierBrand.containsKey(hubBrandNo)){
+			return supplierBrand.get(hubBrandNo);
+		}
+		return null;
 	}
 
 	private void refreshHubColor(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
