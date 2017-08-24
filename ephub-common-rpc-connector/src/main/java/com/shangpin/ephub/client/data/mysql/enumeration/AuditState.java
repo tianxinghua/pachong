@@ -12,7 +12,11 @@ public enum AuditState {
 	
 	AGREE((byte)1,"同意"),
 	
-	DISAGREE((byte)0,"不同意");
+	DISAGREE((byte)0,"不同意"),
+
+    INIT((byte)2,"初始化");
+
+
 	/**
      * 数字索引标识
      */

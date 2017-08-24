@@ -61,7 +61,7 @@ public class HubSupplierSizeDicController {
     public HubResponse selectHubSupplierCateoryList(@RequestBody HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto){
 		try {
 			log.info("尺码list接受到数据:{}",hubSupplierSizeDicRequestDto);
-			if(hubSupplierSizeDicRequestDto!=null&&hubSupplierSizeDicRequestDto.getType()!=null){
+			if(hubSupplierSizeDicRequestDto!=null){
 				return getCommonSizeMapp(hubSupplierSizeDicRequestDto);
 			}
 			return HubResponse.errorResp("传值为空");
@@ -152,10 +152,14 @@ public class HubSupplierSizeDicController {
     public HubResponse update(@RequestBody HubSupplierSizeDicRequestDto dto){
 	        	
 		try {
+			log.info("保存尺码接受到数据:{}",dto);
 			HubSupplierValueMappingDto hubSupplierValueMappingDto = new HubSupplierValueMappingDto();
 			hubSupplierValueMappingDto.setHubSupplierValMappingId(dto.getHubSupplierValMappingId());
 			hubSupplierValueMappingDto.setHubVal(dto.getHubVal());
+			hubSupplierValueMappingDto.setUpdateTime(new Date());
+			hubSupplierValueMappingDto.setUpdateUser(dto.getUpdateUser());
 			hubSizeDicService.updateHubSupplierValueMappingByPrimaryKey(hubSupplierValueMappingDto);
+			sendTask(dto);
 			return HubResponse.successResp("success");
 		} catch (Exception e) {
 			log.error("保存失败：{}",e);
@@ -182,7 +186,7 @@ public class HubSupplierSizeDicController {
 	
 	private void sendTask(HubSupplierSizeDicRequestDto dto) throws Exception{
 		
-		if(StringUtils.isBlank(dto.getHubVal())||StringUtils.isBlank(dto.getSupplierVal())){
+		if(StringUtils.isBlank(dto.getSupplierVal())){
 			return;
 		}
 		
