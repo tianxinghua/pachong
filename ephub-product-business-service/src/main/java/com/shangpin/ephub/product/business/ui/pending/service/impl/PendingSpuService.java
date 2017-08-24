@@ -438,7 +438,13 @@ public abstract class PendingSpuService implements IPendingProductService {
                         pendingProduct.setHubBrandName(null != brand ? brand.getBrandEnName() : pendingProduct.getHubBrandNo());
                         List<HubSpuPendingPicDto> picurls = hubSpuPendingPicService.findSpPicUrl(pendingSpu.getSupplierId(),pendingSpu.getSupplierSpuNo());
                         pendingProduct.setSpPicUrl(findMainUrl(picurls)); 
-						pendingProduct.setSupplierCategoryname(null !=supplierSpuDto ? supplierSpuDto.getSupplierCategoryname() : "");
+                        if(null != supplierSpuDto){
+                        	pendingProduct.setSupplierCategoryname(supplierSpuDto.getSupplierCategoryname());
+                        	pendingProduct.setSupplierBrandName(supplierSpuDto.getSupplierBrandname());
+                        	pendingProduct.setSupplierMaterial(supplierSpuDto.getSupplierMaterial());
+                        	pendingProduct.setSupplierSpuColor(supplierSpuDto.getSupplierSpuColor());
+                        	pendingProduct.setSupplierSpuModel(supplierSpuDto.getSupplierSpuModel()); 
+                        }
                         products.add(pendingProduct);
                     }
                 }
