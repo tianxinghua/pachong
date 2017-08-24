@@ -237,12 +237,29 @@ public class PendingHandler extends VariableInit {
 					&& supplierBrand.containsKey(spuPendingDto.getHubBrandNo().toUpperCase())) {
 				updateSpuPending.setHubBrandNo(supplierBrand.get(spuPendingDto.getHubBrandNo().toUpperCase()));
 				updateSpuPending.setSpuBrandState((byte) 1);
+				
+				if(existSpuPendingDto.getHubCategoryNo()!=null&&existSpuPendingDto.getHubCategoryNo().startsWith("A11")){
+					String newHubBrandNo = checkKidBrand(updateSpuPending.getHubBrandNo());	
+					if(newHubBrandNo!=null){
+						updateSpuPending.setHubBrandNo(newHubBrandNo);
+					}
+				}
+				
 				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
 				log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub品牌刷新:"
 						+ existSpuPendingDto.getHubBrandNo() + "==>" + updateSpuPending.getHubBrandNo());
 			}
 		}
 	}
+	
+	private String checkKidBrand(String hubBrandNo) {
+		Map<String, String> supplierBrand = pendingCommonHandler.getKidBrandMap();
+		if(hubBrandNo!=null&&supplierBrand!=null&&supplierBrand.containsKey(hubBrandNo)){
+			return supplierBrand.get(hubBrandNo);
+		}
+		return null;
+	}
+
 	private void refreshHubColor(PendingSpu spuPendingDto, HubSpuPendingDto existSpuPendingDto) throws Exception {
 		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
 			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();

@@ -159,11 +159,14 @@ public class PendingSpuImportService {
 				hubPendingSpuDto.setMsgMissHandleState(MsgMissHandleState.HAVE_HANDLED.getIndex());
 				hubPendingSpuDto.setUpdateUser(createUser);
 				hubPendingSpuDto.setUpdateTime(new Date());
+				hubPendingSpuDto.setSpuState((byte)0);
+				hubPendingSpuDto.setAuditState((byte)0);
 				HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
 				criteria.createCriteria().andSupplierIdEqualTo(product.getSupplierId()).andSupplierSpuNoEqualTo(product.getSupplierSpuNo());
 				croteria.setCriteria(criteria);
 				croteria.setHubSpuPending(hubPendingSpuDto);
 				hubSpuPendingGateWay.updateByCriteriaSelective(croteria);
+				return true;
 			}
 		}
 		return false;

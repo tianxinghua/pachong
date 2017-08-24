@@ -171,12 +171,18 @@ public class OrderHandleSearch {
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
 	
+	@Autowired
+	@Qualifier("baseBluOrderImpl") 
+	IOrderService baseBluOrderImpl;
+	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
 //			return tonySubOrderImpl;
 //		}else
-		if("2017072601979".equals(supplierId)){
+		if ("2017070501977".equals(supplierId)) {
+			return baseBluOrderImpl;
+		}else if("2017072601979".equals(supplierId)){
 			return coccolebimbiOrderImpl;
 		}else if ("2015102201625".equals(supplierId)) {// 预锁库存随机返回值
 			return clutcherOrderImpl;
@@ -279,7 +285,10 @@ public class OrderHandleSearch {
 	}
 
 	public SupplierCommon getSupplierProperty(String supplierId) {
-		if("2017072601979".equals(supplierId)){
+		
+		if("2017070501977".equals(supplierId)){
+			return supplierProperties.getBaseBluEdsConf();
+		}else if("2017072601979".equals(supplierId)){
 			return supplierProperties.getCoccolebimbiParam();
 		}else if("2017060101976".equals(supplierId)){
 			return supplierProperties.getSpinnakerPortofinoParam();
