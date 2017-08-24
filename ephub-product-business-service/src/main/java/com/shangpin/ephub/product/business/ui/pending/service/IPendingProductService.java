@@ -6,6 +6,7 @@ import java.util.Map;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
@@ -22,6 +23,13 @@ import com.shangpin.ephub.response.HubResponse;
  *
  */
 public interface IPendingProductService {
+	
+	/**
+	 * 根据supplierSpuId获取原始数据spu
+	 * @param supplierSpuIds
+	 * @return  key=supplier_spu_id,value=供应商原始数据实体
+	 */
+	public Map<Long,HubSupplierSpuDto> findSupplierSpuDtos(List<Long> supplierSpuIds);
 	
 	/**
      * 根据supplierSpuId获取原始数据spu表中供应商品类名称
