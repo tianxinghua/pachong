@@ -38,6 +38,7 @@ public class HubPendingProductImportDTO {
 	private String supplierBarcode;
 	private String hubColor;
 	private String specificationType;
+	private String supplierSkuSize;
 	private String sizeType;
 	private String hubSkuSize;
 	private String hubMaterial;
@@ -50,7 +51,7 @@ public class HubPendingProductImportDTO {
 	private String spuDesc;
 	public String[] getHubProductTemplate() {
 		String [] temp = {"supplierId","supplierNo","supplierName","supplierSpuNo","categoryName","hubCategoryNo","hubBrandNo","brandName","spuModel","seasonYear","seasonName","hubGender","supplierSkuNo","skuName","supplierBarcode",
-				"hubColor","specificationType","sizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency","marketPrice","marketPriceCurrencyorg","measurement","spuDesc"};
+				"hubColor","specificationType", "supplierSkuSize", "sizeType","hubSkuSize","hubMaterial","hubOrigin","supplyPrice","supplyPriceCurrency","marketPrice","marketPriceCurrencyorg","measurement","spuDesc"};
 		return temp;
 	}
 

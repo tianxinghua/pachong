@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -374,6 +375,10 @@ public class ExportServiceImpl {
 	 */
 	private void insertProductSkuOfRow(HSSFRow row, PendingProductDto product, HubSkuPendingDto sku,
 			String[] rowTemplate) throws Exception {
+		/**
+		 * 查出供应商原始尺码 supplierSkuSize
+		 */
+		HubSupplierSkuDto supplierSkuNo = selectSupplierSku(sku.getSupplierId(), sku.getSupplierSkuNo());
 		Class<?> spuClazz = product.getClass();
 		Class<?> skuClazz = sku.getClass();
 		Method fieldSetMet = null;
@@ -412,6 +417,8 @@ public class ExportServiceImpl {
 							}
 						}
 					}
+				}else if("supplierSkuSize".equals(rowTemplate[i])){
+					row.createCell(i).setCellValue(null != supplierSkuNo ? supplierSkuNo.getSupplierSkuSize() : "");
 				} else if ("hubSkuSize".equals(rowTemplate[i])) {
 					fieldSetMet = skuClazz.getMethod(fileName);
 					value = fieldSetMet.invoke(sku);
@@ -453,6 +460,18 @@ public class ExportServiceImpl {
 				log.error("待处理页导出sku时异常：" + e.getMessage());
 				throw e;
 			}
+		}
+	}
+	
+	private HubSupplierSkuDto selectSupplierSku(String supplierId, String supplierSkuNo){
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.setFields("supplier_sku_size");
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+		List<HubSupplierSkuDto>  skus = hubSupplierSkuGateWay.selectByCriteria(criteria );
+		if(CollectionUtils.isNotEmpty(skus)){
+			return skus.get(0);
+		}else{
+			return null;
 		}
 	}
 
