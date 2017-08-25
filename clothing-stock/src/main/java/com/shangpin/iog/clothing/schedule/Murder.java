@@ -1,4 +1,4 @@
-package com.shangpin.iog.cloth.schedule;
+package com.shangpin.iog.clothing.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.cloth.service.FetchStockImpl;
+import com.shangpin.iog.clothing.service.FetchStockImpl;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
 
 @Component

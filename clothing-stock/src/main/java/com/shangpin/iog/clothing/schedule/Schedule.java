@@ -1,4 +1,4 @@
-package com.shangpin.iog.cloth.schedule;
+package com.shangpin.iog.clothing.schedule;
 
 import java.util.Date;
 
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.cloth.service.FetchStockImpl;
+import com.shangpin.iog.clothing.service.FetchStockImpl;
 
 
 @Component

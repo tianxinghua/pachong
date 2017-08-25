@@ -1,4 +1,4 @@
-package com.shangpin.iog.cloth.schedule;
+package com.shangpin.iog.clothing.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

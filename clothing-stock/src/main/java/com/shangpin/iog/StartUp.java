@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.shangpin.iog.app.AppContext;
-import com.shangpin.iog.cloth.service.FetchStockImpl;
+import com.shangpin.iog.clothing.service.FetchStockImpl;
 
 public class StartUp {
 	private static Logger log = Logger.getLogger("info");

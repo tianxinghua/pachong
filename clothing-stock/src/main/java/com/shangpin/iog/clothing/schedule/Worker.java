@@ -1,4 +1,4 @@
-package com.shangpin.iog.cloth.schedule;
+package com.shangpin.iog.clothing.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.shangpin.iog.cloth.service.FetchStockImpl;
+import com.shangpin.iog.clothing.service.FetchStockImpl;
 
 
 

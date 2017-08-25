@@ -1,4 +1,4 @@
-package com.shangpin.iog.cloth.service;
+package com.shangpin.iog.clothing.service;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.framework.ServiceException;
@@ -23,8 +22,7 @@ import Magento.PortTypeProxy;
 public class FetchStockImpl extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
-    @Autowired
-    PortType portType;
+    private PortType portType = new PortTypeProxy();
     private static ResourceBundle bdl = null;
     private static String username="",    Key="";
     static {
@@ -63,12 +61,12 @@ public class FetchStockImpl extends AbsUpdateProductStock {
     }
     
     public static void main(String[] args){
-        PortTypeProxy tt = new PortTypeProxy();
+    	PortType portType = new PortTypeProxy();
         try {
- 		String ss = tt.login(username, Key);
+ 		String ss = portType.login(username, Key);
  		System.out.println(ss);
  		String[] array = {"2"};
- 		Magento.CatalogInventoryStockItemEntity[] entitys = tt.catalogInventoryStockItemList(ss,array);
+ 		Magento.CatalogInventoryStockItemEntity[] entitys = portType.catalogInventoryStockItemList(ss,array);
  		System.out.println(entitys);
         } catch (RemoteException e) {
  		e.printStackTrace();
