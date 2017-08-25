@@ -42,7 +42,7 @@ public class FetchStockImpl extends AbsUpdateProductStock {
         for (String skuno : skuNo) {
             stock_map.put(skuno, "0");
             try {
-            	String token = portType.login("Shangpin", "05TBbJHa^vgL4b!");
+            	String token = portType.login(username, Key);
             	skuArray[0] = skuno;
                 Magento.CatalogInventoryStockItemEntity[] entity = portType.catalogInventoryStockItemList(token, skuArray);
                 logger.debug("get skuNo:"+ skuno + " result :" + stockXml);
