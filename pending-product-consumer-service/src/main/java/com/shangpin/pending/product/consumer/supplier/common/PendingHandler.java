@@ -781,7 +781,11 @@ public class PendingHandler extends VariableInit {
 				if(StringUtils.isBlank(spuPendingDto.getUpdateUser())) {
 					setSpuPendingValueForUpdate(spu, spuPendingDto, updateSpuPending);
 				}else{
-					if(spuPendingDto.getMsgMissHandleState()==MsgMissHandleState.HAVE_HANDLED.getIndex()){
+					//季节处理
+					setSpuPendingSeasonValueForUpdate(spu,updateSpuPending);
+
+					//供货商商品错误信息处理
+					if(null!=spuPendingDto.getMsgMissHandleState()&&spuPendingDto.getMsgMissHandleState()==MsgMissHandleState.HAVE_HANDLED.getIndex()){
 						//供货商有需要修改的数据
 						Map<Byte, List<HubSpuPendingNohandleReasonDto>> map = spuPendingMsgHandleService.findSpuErrorMsgBySupplierIdAndSpuPendingId(spuPendingDto.getSupplierId(), spuPendingDto.getSpuPendingId());
 						if(null!=map&&map.size()>0){
