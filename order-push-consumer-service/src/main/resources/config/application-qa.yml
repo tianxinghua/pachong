@@ -399,6 +399,11 @@ shangpin:
               isPurchaseExp: no
               openApiKey:
               openApiSecret:
+      clothing:
+              strKey: Shangpin
+              strPassword: 05TBbJHa^vgL4b!
+              openApiKey:
+              openApiSecret:
       giglio:
               isPurchaseExp: false
               openApiKey:

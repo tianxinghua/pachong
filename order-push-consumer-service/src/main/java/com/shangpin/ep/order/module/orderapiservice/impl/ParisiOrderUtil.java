@@ -43,6 +43,7 @@ public class ParisiOrderUtil  {
 
     @PostConstruct
     public void init(){
+    	//线上
 //        hostUrl = supplierProperties.getParisi().getHostUrl();
 //        createOrderUrl = supplierProperties.getParisi().getSetOrderUrl();
 //        cancelOrderUrl = supplierProperties.getParisi().getCancelOrderUrl();
