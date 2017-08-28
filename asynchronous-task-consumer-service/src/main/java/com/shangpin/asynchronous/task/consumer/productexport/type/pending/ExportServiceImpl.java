@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
@@ -48,9 +50,16 @@ import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestWithPageDto;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectResponseDto;
 import com.shangpin.ephub.client.data.mysql.hub.gateway.HubWaitSelectGateWay;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -124,9 +133,13 @@ public class ExportServiceImpl {
 	@Autowired
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
+	HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
+	@Autowired
 	HubSkuGateWay hubSkuGateWay;
 	@Autowired
 	HubSpuGateWay hubSpuGateWay;
+	@Autowired
+	HubSkuSupplierMappingGateWay hubSkuSupplierMappingGateWay;
 	@Autowired
 	private ApiAddressProperties apiAddressProperties;
 
@@ -881,6 +894,20 @@ public class ExportServiceImpl {
 		return null;
 	}
 
+	public void exportSupplierPic(Task message) throws Exception  {
+		
+		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
+				HubWaitSelectRequestWithPageDto.class);
+		
+		pendingQuryDto.setPageNo(0);
+		pendingQuryDto.setPageSize(100000);
+		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
+		Map<Long,String> mapTemp = new HashMap<Long,String>();
+		
+		HSSFWorkbook workbook = exportSupplierPicExcel(pendingQuryDto,mapTemp);
+		
+		saveAndUploadExcel(message.getTaskNo(),pendingQuryDto.getCreateUser(), workbook);
+	}
 	public void exportHubPicSelected(Task message) throws Exception  {
 
 		HubWaitSelectRequestWithPageDto pendingQuryDto = JsonUtil.deserialize(message.getData(),
@@ -1010,6 +1037,7 @@ public class ExportServiceImpl {
 					break;
 				}
 				map.put("url" + i, pic.getSpPicUrl());
+				
 				i++;
 			}
 			map.put("spSkuNo", spSkuNo);
@@ -1024,6 +1052,74 @@ public class ExportServiceImpl {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		ExportExcelUtils.createSheet(workbook,title, headers, columns, result);
 		log.info("导出时间："+(System.currentTimeMillis()-start));
+		return workbook;
+	}
+	public static void main(String[] args) {
+		String spSkuNo = "30790817005";
+		String spSpuNo = spSkuNo.substring(0,spSkuNo.length()-3);
+		System.out.println(spSpuNo);
+	}
+	public HSSFWorkbook exportSupplierPicExcel(HubWaitSelectRequestWithPageDto pendingQuryDto,Map<Long,String> mapTemp)  throws Exception  {
+		
+		String[] headers = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+				"url9", "url10","操作人","导出时间" };
+		String[] columns = { "spSkuNo", "hubSpuNo", "url1", "url2", "url3", "url4", "url5", "url6", "url7", "url8",
+				"url9", "url10" ,"pictureExportUser","pictureExportTime"};
+		String title = "图片导出";
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		String spSkuNos = pendingQuryDto.getSpSkuNo();
+		List<String> list = new ArrayList<String>();
+		Map<String,String> mapSpSkuNo = null;
+		Map<String, String> map = null;
+		if(spSkuNos!=null){
+			mapSpSkuNo = new HashMap<String,String>();
+			String [] arr = spSkuNos.split(",");
+			for(String spSkuNo:arr){
+				String spSpuNo = spSkuNo.substring(0,spSkuNo.length()-3);//
+				if(!mapSpSkuNo.containsKey(spSpuNo)){
+					HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
+					criteria.createCriteria().andSpSkuNoEqualTo(spSkuNo);
+					List<HubSkuDto> listHubSku = hubSkuGateWay.selectByCriteria(criteria);
+					if(listHubSku!=null){
+						mapSpSkuNo.put(spSpuNo,spSkuNo);
+						list.add(listHubSku.get(0).getSpSkuNo());
+					}
+				}
+			}
+			
+			HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+			for(String spSkuNo:list){
+				criteria.createCriteria().andSpSkuNoEqualTo(spSkuNo);
+				List<HubSupplierSkuDto> listMapp = hubSupplierSkuGateWay.selectByCriteria(criteria);
+				if(listMapp!=null){
+					for(HubSupplierSkuDto mapp:listMapp){
+						Long supplierSpuId = mapp.getSupplierSpuId();
+						HubSpuPendingPicCriteriaDto spuPiccriteria = new HubSpuPendingPicCriteriaDto();
+						spuPiccriteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+						List<HubSpuPendingPicDto> listPic = hubSpuPendingPicGateWay.selectByCriteria(spuPiccriteria);
+						if(listPic!=null&&listPic.size()>0){
+							map = new HashMap<String, String>();
+							int i = 1;
+							for(HubSpuPendingPicDto spuPic:listPic){
+								String picUrl = spuPic.getPicUrl();
+								if (i == 11) {
+									break;
+								}
+								map.put("url" + i, picUrl);
+								i++;
+							}
+							map.put("spSkuNo", spSkuNo);
+							map.put("hubSpuNo", "HUB-");
+							map.put("pictureExportUser",null);
+							map.put("pictureExportTime",null);	
+							result.add(map);
+						}
+					}
+				}
+			}
+		}
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		ExportExcelUtils.createSheet(workbook,title, headers, columns, result);
 		return workbook;
 	}
 

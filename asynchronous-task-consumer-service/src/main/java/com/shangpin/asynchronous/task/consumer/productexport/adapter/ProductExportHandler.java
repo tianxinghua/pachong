@@ -64,6 +64,8 @@ public class ProductExportHandler {
 					exportServiceImpl.exportSpu(message.getTaskNo(),pendingQuryDto); 
 				}else if(message.getType() == TaskType.EXPORT_HUB_SELECTED.getIndex()){
 					exportServiceImpl.exportHubSelected(message); 
+				}else if(message.getType() == 19){
+					exportServiceImpl.exportSupplierPic(message); 
 				}else if(message.getType() == TaskType.EXPORT_HUB_PIC.getIndex()){
 					exportServiceImpl.exportHubPicSelected(message); 
 				}else if(message.getType() == TaskType.EXPORT_HUB_NOT_HANDLE_PIC.getIndex()){
