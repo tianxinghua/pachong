@@ -90,7 +90,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		try {
 
 			OrderOfSupplier order = parisiOrderUtil.pushOrder(orderDTO, skuId, qty);
-			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"skuId:"+skuId+"qty:"+qty);
+			orderDTO.setLogContent("下单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"skuId:"+skuId+"qty:"+qty);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 
 			if (order.getOrderDetail().getError() != null) {
@@ -123,7 +123,7 @@ public class ParisiOrderServiceImpl implements IOrderService {
 			OrderOfSupplier order = parisiOrderUtil.confirmOrder(orderDTO, skuId, qty);
 
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			orderDTO.setLogContent("退单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"PurchaseNo:"+orderDTO.getPurchaseNo()+"skuId:"+skuId+"qty:"+qty);
+			orderDTO.setLogContent("下单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"PurchaseNo:"+orderDTO.getPurchaseNo()+"skuId:"+skuId+"qty:"+qty);
 
 			if (order.getOrderDetail().getError() != null) {
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);

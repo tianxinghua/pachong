@@ -731,6 +731,15 @@ public class VariableInit {
         }
     }
 
+    protected void setSpuPendingSeasonValueForUpdate(PendingSpu spu, HubSpuPendingDto updateSpuPending) throws Exception {
+        // 获取季节
+        if(StringUtils.isNotBlank(spu.getHubSeason())){
+
+            setSeasonMapping(spu, updateSpuPending);
+
+        }
+    }
+
     protected void setSpuPendingValueForSupplierUpdate(PendingSpu spu, HubSpuPendingDto spuPendingDto, HubSpuPendingDto updateSpuPending,Map<Byte, List<HubSpuPendingNohandleReasonDto>> map) throws Exception {
         boolean allStatus = true;
 

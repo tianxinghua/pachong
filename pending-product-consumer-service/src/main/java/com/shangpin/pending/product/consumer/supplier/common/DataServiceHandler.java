@@ -150,6 +150,9 @@ public class DataServiceHandler {
 	@Autowired
 	private HubSupplierSpuGateWay supplierSpuGateWay;
 
+	@Autowired
+	private PendingCommonHandler pendingCommonHandler;
+
 	/**
 	 * 查询所有有效的供应商品牌
 	 * 
@@ -621,9 +624,31 @@ public class DataServiceHandler {
 
 		spuPending.setSupplyPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
 		spuPending.setMarketPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
+		spuPending.setAuditState(AuditState.INIT.getIndex());
+		if(null==spuPending.getPicState()) spuPending.setPicState(PicState.UNHANDLED.getIndex());
+		//如果是儿童的可能需要重新设置品牌
+		changeChildBrandNo(spuPending);
 
 		Long spuPendingId = hubSpuPendingGateWay.insert(spuPending);
 		spuPending.setSpuPendingId(spuPendingId);
+
+	}
+
+	private void changeChildBrandNo(HubSpuPendingDto spuPending) {
+
+		if(StringUtils.isNotBlank(spuPending.getHubCategoryNo())){
+			if(spuPending.getHubCategoryNo().startsWith("A11")){//儿童
+				if(SpuBrandState.HANDLED.getIndex()==spuPending.getSpuBrandState()){
+
+					Map<String,String> brandMap = pendingCommonHandler.getKidBrandMap();
+					if(null!=brandMap&&brandMap.containsKey(spuPending.getHubBrandNo())){
+						spuPending.setHubBrandNo(brandMap.get(spuPending.getHubBrandNo()));
+					}
+
+				}
+			}
+
+		}
 
 	}
 
