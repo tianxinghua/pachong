@@ -41,6 +41,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
 import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
+import com.shangpin.ephub.product.business.ui.pending.service.HubSpuPendingNohandleReasonService;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
@@ -87,6 +88,8 @@ public abstract class PendingSpuService implements IPendingProductService {
 
     @Autowired
 	private SupplierInHubService supplierInHubService;
+    @Autowired
+    private HubSpuPendingNohandleReasonService reasonService;
 
 
 
@@ -422,10 +425,20 @@ public abstract class PendingSpuService implements IPendingProductService {
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     List<Long> supplierSpuIds = new ArrayList<>();
+                    List<Long> spuPendingIds = new ArrayList<Long>();
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                     	supplierSpuIds.add(pendingSpu.getSupplierSpuId());
+                    	spuPendingIds.add(pendingSpu.getSpuPendingId());
                     }
+                    /**
+                     * 查供应商原始信息
+                     */
                     Map<Long,HubSupplierSpuDto> supplierSpus = findSupplierSpuDtos(supplierSpuIds);
+                    /**
+                     * 查找错误信息
+                     */
+                    Map<Long,String> errorReasons = reasonService.findAllErrorReason(spuPendingIds);
+                    
                     for(HubSpuPendingDto pendingSpu : pendingSpus){
                     	HubSupplierSpuDto supplierSpuDto = supplierSpus.get(pendingSpu.getSupplierSpuId());
                 		PendingProductDto pendingProduct = JavaUtil.convertHubSpuPendingDto2PendingProductDto(pendingSpu);                        
@@ -445,6 +458,7 @@ public abstract class PendingSpuService implements IPendingProductService {
                         	pendingProduct.setSupplierSpuColor(supplierSpuDto.getSupplierSpuColor());
                         	pendingProduct.setSupplierSpuModel(supplierSpuDto.getSupplierSpuModel()); 
                         }
+                        pendingProduct.setErrorReason(null != errorReasons ? errorReasons.get(pendingSpu.getSpuPendingId()) : ""); 
                         products.add(pendingProduct);
                     }
                 }
