@@ -637,7 +637,7 @@ public class PendingHandler extends VariableInit {
 
 		if (null != hubSpuDto) {
 			// 直接复制HUB-SPU里的信息 ，SPU状态 直接为待审核
-			
+			setColorMapping(spu, hubSpuPending);
 			objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
 			setShootState(hubSpuPending);
 			dataServiceHandler.savePendingSpu(hubSpuPending);

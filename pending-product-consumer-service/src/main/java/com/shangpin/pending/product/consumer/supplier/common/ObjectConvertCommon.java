@@ -31,6 +31,7 @@ public class ObjectConvertCommon {
         hubSpuPending.setHubMaterial(hubSpuDto.getMaterial());
         hubSpuPending.setHubOrigin(hubSpuDto.getOrigin());
         hubSpuPending.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+        
         if(hubSpuDto.getHubColor()!=null&&hubSpuDto.getHubColor().equals(hubSpuPending.getHubColor())){
         	hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
         }else{
