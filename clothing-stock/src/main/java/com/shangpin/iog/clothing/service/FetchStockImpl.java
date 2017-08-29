@@ -45,7 +45,8 @@ public class FetchStockImpl extends AbsUpdateProductStock {
                 Magento.CatalogInventoryStockItemEntity[] entity = portType.catalogInventoryStockItemList(token, skuArray);
                 logger.debug("get skuNo:"+ skuno + " result :" + stockXml);
                 if(entity!=null&&entity.length!=0){
-                	stock = entity[0].getQty();
+                	String qty = entity[0].getQty();
+                	stock = qty.substring(0,qty.indexOf("."));
                 	logger.info("get skuNo:"+ skuno + " stock :" + stock);
                     stock_map.put(skuno,stock);
                 }
@@ -65,9 +66,10 @@ public class FetchStockImpl extends AbsUpdateProductStock {
         try {
  		String ss = portType.login(username, Key);
  		System.out.println(ss);
- 		String[] array = {"2"};
+ 		String[] array = {"7272CP"};
  		Magento.CatalogInventoryStockItemEntity[] entitys = portType.catalogInventoryStockItemList(ss,array);
- 		System.out.println(entitys);
+ 		String qty = entitys[0].getQty();
+ 		System.out.println(qty.substring(0,qty.indexOf(".")));
         } catch (RemoteException e) {
  		e.printStackTrace();
  	}
