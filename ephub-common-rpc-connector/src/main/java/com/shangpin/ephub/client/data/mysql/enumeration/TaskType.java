@@ -51,7 +51,8 @@ public enum TaskType {
 	EXPORT_WAIT_SHOOT(16,"待拍照导出"),
 	
 	EXPORT_COMMITED(17,"已提交导出"),
-	AIRSHOP_IMPORT(18,"airshop导入");
+	AIRSHOP_IMPORT(18,"airshop导入"),
+	SUPPLIER_PIC_EXPORT(19,"供应商图片导出");
 	/**
      * 数字索引标识
      */

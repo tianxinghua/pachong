@@ -66,8 +66,8 @@
      	  </foreach>
 	 </if>
 	 
-    <if test="null!= spSkuNo">
- 		<foreach collection="spSkuNo" item="item" open="AND sku.sp_sku_no IN (" close=")" separator=",">
+    <if test="null!= spSkuNoList">
+ 		<foreach collection="spSkuNoList" item="item" open="AND sku.sp_sku_no IN (" close=")" separator=",">
 			#{item}       
      	  </foreach>   
  	</if>
@@ -114,8 +114,8 @@
      	  </foreach>
 	 </if>
 	 
-	 <if test="null!= spSkuNo">
- 		  <foreach collection="spSkuNo" item="item" open="AND sku.sp_sku_no IN (" close=")" separator=",">
+	 <if test="null!= spSkuNoList">
+ 		<foreach collection="spSkuNoList" item="item" open="AND sku.sp_sku_no IN (" close=")" separator=",">
 			#{item}       
      	  </foreach>   
  	 </if>

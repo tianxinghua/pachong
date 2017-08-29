@@ -205,6 +205,25 @@ public class HubSelectedController {
 			log.error("导出勾选图片失败：{}",e);
 		}
     }
+	
+	/**
+	 * 导出供应商图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-supplier-pic",method = RequestMethod.POST)
+    public HubResponse exportSupplierPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+		
+		try {
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),19);
+			sendMessageToTask(task.getTaskNo(),19,JsonUtil.serialize(dto));
+			return HubResponse.successResp(task.getTaskNo());
+		} catch (Exception e) {
+			log.error("导出供应商图片失败：{}",e);
+		}
+		return HubResponse.errorResp("导出异常");
+    }
+	
 	 private void sendMessageToTask(String taskNo,int type,String data){
 	    	Task productImportTask = new Task();
 	    	productImportTask.setMessageId(UUID.randomUUID().toString());
