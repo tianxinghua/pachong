@@ -2,12 +2,11 @@ package com.shangpin.iog.parisi;
 
 import java.util.ResourceBundle;
 
-import com.shangpin.iog.parisi.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.parisi.schedule.AppContext;
 
 public class StartUp {
 	private static Logger log = Logger.getLogger("info");
