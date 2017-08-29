@@ -486,8 +486,10 @@ public class ExportServiceImpl {
 	 */
 	private void insertProductSpuOfRow(int isExportPic, HSSFRow row, PendingProductDto product, String[] rowTemplate)
 			throws Exception {
-		
-		String[] errorReasons = product.getErrorReason().split(",");
+		String[] errorReasons = null;
+		if(StringUtils.isNotBlank(product.getErrorReason())){
+			errorReasons = product.getErrorReason().split(",");
+		}
 		
 		Class<?> cls = product.getClass();
 		StringBuffer buffer = new StringBuffer();
@@ -556,16 +558,16 @@ public class ExportServiceImpl {
 				} else if("productInfoUrl".equals(rowTemplate[i])){
 					row.createCell(i).setCellValue(apiAddressProperties.getPendingProductInfoUrl()+product.getSpuPendingId());
 				} else if(rowTemplate[i].startsWith("reason1")){
-					row.createCell(i).setCellValue(errorReasons.length>0 ? errorReasons[0] : "");
+					row.createCell(i).setCellValue(null != errorReasons && errorReasons.length>0 ? errorReasons[0] : "");
 					ExcelDropdown.setDataValidation(row, i); 
 				} else if(rowTemplate[i].startsWith("reason2")){
-					row.createCell(i).setCellValue(errorReasons.length>1 ? errorReasons[1] : "");
+					row.createCell(i).setCellValue(null != errorReasons && errorReasons.length>1 ? errorReasons[1] : "");
 					ExcelDropdown.setDataValidation(row, i); 
 				} else if(rowTemplate[i].startsWith("reason3")){
-					row.createCell(i).setCellValue(errorReasons.length>2 ? errorReasons[2] : "");
+					row.createCell(i).setCellValue(null != errorReasons && errorReasons.length>2 ? errorReasons[2] : "");
 					ExcelDropdown.setDataValidation(row, i); 
 				}  else if(rowTemplate[i].startsWith("reason4")){
-					row.createCell(i).setCellValue(errorReasons.length>3 ? errorReasons[3] : "");
+					row.createCell(i).setCellValue(null != errorReasons && errorReasons.length>3 ? errorReasons[3] : "");
 					ExcelDropdown.setDataValidation(row, i); 
 				} else {
 					if ("specificationType".equals(rowTemplate[i])) {
