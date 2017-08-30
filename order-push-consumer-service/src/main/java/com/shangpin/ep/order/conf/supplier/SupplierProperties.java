@@ -110,6 +110,8 @@ public class SupplierProperties {
 
 	private Parisi parisi;
 	
+	private Clothing clothing;
+	
 	private Tessabit tessabit;
 	
 	private Antonacci antonacci;

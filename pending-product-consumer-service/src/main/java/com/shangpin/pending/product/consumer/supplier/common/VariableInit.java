@@ -606,6 +606,24 @@ public class VariableInit {
         }
     }
 
+
+    protected boolean  handlePicState(PendingSpu spu, SpuPending hubSpuPending) {
+        Long supplierSpuId = spu.getSupplierSpuId();
+        String picUrl = dataServiceHandler.getPicUrlBySupplierSpuId(supplierSpuId);
+        if (StringUtils.isNotBlank(picUrl)) {
+            hubSpuPending.setPicState(PicState.HANDLED.getIndex());
+            return true;
+
+        }else{
+            if(hubSpuPending.isHavePic()){
+                hubSpuPending.setPicState(PicState.UNHANDLED.getIndex());
+            }else{
+                hubSpuPending.setPicState(PicState.NO_PIC.getIndex());
+            }
+            return false;
+        }
+    }
+
     protected Map<String, String> getOriginMap() {
         if (null == originStaticMap) {
             originStaticMap = new HashMap<>();
@@ -728,6 +746,15 @@ public class VariableInit {
         if (StringUtils.isNotBlank(spu.getHubOrigin())) {
             if (!setOriginMapping(spu, updateSpuPending))
                 allStatus = false;
+        }
+    }
+
+    protected void setSpuPendingSeasonValueForUpdate(PendingSpu spu, HubSpuPendingDto updateSpuPending) throws Exception {
+        // 获取季节
+        if(StringUtils.isNotBlank(spu.getHubSeason())){
+
+            setSeasonMapping(spu, updateSpuPending);
+
         }
     }
 
