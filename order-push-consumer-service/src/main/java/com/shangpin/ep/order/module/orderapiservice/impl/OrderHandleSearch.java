@@ -401,8 +401,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getZitafabiani();
 		}else if ("2016072601910".equals(supplierId)) {
 			return supplierProperties.getVietti();
-//		}else if("2015101201596".equals(supplierId)){
-//			return supplierProperties.getParisi();
+		}else if("2015101201596".equals(supplierId)){
+			return supplierProperties.getParisi();
 		}else if("2017071701978".equals(supplierId)){
 			return supplierProperties.getYlati();
 		}
