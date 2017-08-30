@@ -141,4 +141,15 @@ public class PictureProductService {
 		withCriteria.setHubSpuPendingPic(hubSpuPendingPic );
 		picClient.updateByCriteriaSelective(withCriteria );
 	}
+	/**
+	 * 根据供应商门户编号和供应商spu编号查找图片数量
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @return
+	 */
+	public int count(String supplierId, String supplierSpuNo){
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		return picClient.countByCriteria(criteria );
+	}
 }
