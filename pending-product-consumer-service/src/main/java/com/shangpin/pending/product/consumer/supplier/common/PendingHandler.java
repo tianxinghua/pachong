@@ -73,7 +73,7 @@ public class PendingHandler extends VariableInit {
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
 		if(null!=message){
-//			log.info("receive message :" + mapper.writeValueAsString(message) + " message header :" + headers.toString());
+			log.info("receive message :" + mapper.writeValueAsString(message) + " message header :" + headers.toString());
 		} else{
 			log.info(" message header :" + headers.toString());
 		}
@@ -84,7 +84,7 @@ public class PendingHandler extends VariableInit {
 		SpuPending hubSpuPending = null;
 		Integer spuStatus = null;
 		List<PendingSku> skus = pendingSpu.getSkus();
-		log.info("接受到的数据spu："+pendingSpu.getSupplierSpuNo()+"sku个数："+ (skus == null?0:skus.size()));
+		log.info("接受到的数据spu："+pendingSpu.getSupplierSpuNo()+" sku个数："+ (skus == null?0:skus.size()));
 		HubSpuPendingDto hubSpuPendingDto = null;
 		if (messageMap.containsKey(pendingSpu.getSupplierId())) {
 
@@ -601,7 +601,7 @@ public class PendingHandler extends VariableInit {
 		HubSpuDto hubSpuDto = null;
 
 		BeanUtils.copyProperties(spu, hubSpuPending);
-		//设置图片状态  保留原来的图片状态
+		//设置图片状态  保留原来的图片状态 ? 现在想不起来为何要维护了 (20170830)
 //		log.info("spu no ="+spu.getSupplierSpuNo() + "  spu pic state  ="+spu.getPicState() );
 
 
@@ -638,6 +638,9 @@ public class PendingHandler extends VariableInit {
 		if (null != hubSpuDto) {
 			// 直接复制HUB-SPU里的信息 ，SPU状态 直接为待审核
 			setColorMapping(spu, hubSpuPending);
+			if(spu.getPicState()==PicState.NO_PIC.getIndex()){
+				hubSpuPending.setPicState(PicState.NO_PIC.getIndex());
+			}
 			objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
 			setShootState(hubSpuPending);
 			dataServiceHandler.savePendingSpu(hubSpuPending);
@@ -668,9 +671,9 @@ public class PendingHandler extends VariableInit {
 	 */
 	private void setShootState(SpuPending hubSpuPending){
 		if(null==hubSpuPending.getSlotState()){
-			if(hubSpuPending.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
-				if(hubSpuPending.getCatgoryState()== CatgoryState.PERFECT_MATCHED.getIndex()||
-						hubSpuPending.getCatgoryState()==CatgoryState.MISMATCHING.getIndex()) {
+			if(null!= hubSpuPending.getSpuBrandState()&&hubSpuPending.getSpuBrandState()== SpuBrandState.HANDLED.getIndex()){
+				if(null!=hubSpuPending.getCatgoryState()&&(hubSpuPending.getCatgoryState()== CatgoryState.PERFECT_MATCHED.getIndex()||
+						hubSpuPending.getCatgoryState()==CatgoryState.MISMATCHING.getIndex())) {
 					//查询是否是需要拍照的品类品牌
 					String secondCategory = "";
 					if(StringUtils.isNotBlank(hubSpuPending.getHubCategoryNo())){
@@ -726,7 +729,7 @@ public class PendingHandler extends VariableInit {
             allStatus = false;
 
 		// 查询是否有图片
-		if(!handlePicLink(spu, hubSpuPending)){
+		if(!handlePicState(spu, hubSpuPending)){
             allStatus = false;
         }
 
@@ -935,7 +938,7 @@ public class PendingHandler extends VariableInit {
 
 		//整体处理拍照状态
 		boolean isNeedSend = true;
-		log.info("spuNo = " + hubSpuPending.getSupplierSpuNo() + "hub spu no = " + hubSpuPending.getHubSpuNo() + " is hava pic " + hubSpuPending.isHavePic() );
+		log.info("spuNo = " + hubSpuPending.getSupplierSpuNo() + "  hubspuno = " + hubSpuPending.getHubSpuNo() + " is hava pic " + hubSpuPending.isHavePic() );
 
 		if(StringUtils.isNotBlank(hubSpuPending.getHubSpuNo())||hubSpuPending.isHavePic()){
 			isNeedSend = false;

@@ -626,6 +626,7 @@ public class DataServiceHandler {
 		spuPending.setMarketPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
 		spuPending.setAuditState(AuditState.INIT.getIndex());
 		if(null==spuPending.getPicState()) spuPending.setPicState(PicState.UNHANDLED.getIndex());
+
 		//如果是儿童的可能需要重新设置品牌
 		changeChildBrandNo(spuPending);
 

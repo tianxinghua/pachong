@@ -127,8 +127,10 @@ public class MonnierfreresServiceImpl {
 	        	ftp.setDefaultTimeout(1000 * 60 * 5);
 				ftp.setConnectTimeout(1000 * 60 * 5);
 				ftp.enterLocalActiveMode();
-				ftp.connect("194.213.125.81", 21);
-				ftp.login("ftp_mnf_shangpin", "jobkakbonJais");
+//				ftp.connect("194.213.125.81", 21);
+//				ftp.login("ftp_mnf_shangpin", "jobkakbonJais");
+				ftp.connect("194.213.124.42", 21);
+				ftp.login("ftp_shangpin", "feOn1Slivdo");
 				ftp.setControlEncoding("UTF-8");
 				ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 				boolean bool = ftp.changeWorkingDirectory("/SoeBusiness/Marketplaces/Shangpin/");
