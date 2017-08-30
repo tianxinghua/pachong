@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
 import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuWithCriteriaDto;
@@ -100,6 +101,9 @@ public class SupplierProductMysqlService {
 	
 	private void setMsgmissHandleState(Long supplierSpuId, PendingSpu pendingSpu){
 		try {
+			/**
+			 * 状态没设置成NO_PIC说明有图片
+			 */
 			if(null == pendingSpu.getPicState()){
 				HubSpuPendingNohandleReasonDto reasonDto = selectNohandleReason(supplierSpuId);
 				if(null != reasonDto){
