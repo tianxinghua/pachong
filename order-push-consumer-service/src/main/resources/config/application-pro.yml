@@ -474,6 +474,11 @@ shangpin:
                   isPurchaseExp: no
                   openApiKey: 23ec05ddf2854191a57f9b45051177c5
                   openApiSecret: 477f0ead6d104ee586f15f73fbd5ddeb
+          clothing:
+              strKey: Shangpin
+              strPassword: 05TBbJHa^vgL4b!
+              openApiKey:
+              openApiSecret:
           antonacci:
                   isPurchaseExp: no
                   openApiKey:

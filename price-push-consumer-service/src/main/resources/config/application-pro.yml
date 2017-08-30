@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: 172.20.11.49
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -65,13 +65,13 @@ spring:
        time-zone: GMT+8       
   mail: 
        default-recipient: lizhongren@shangpin.com
-       default-sender: yanxiaobin@shangpin.com
+       default-sender: chengxu@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
-       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       host: smtp.shangpin.com # SMTP server host. For instance `smtp.example.com`
        port: 25 # SMTP server port.
        protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
        test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.

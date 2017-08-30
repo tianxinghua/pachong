@@ -63,9 +63,7 @@ public class HubFilterService {
 						}
 					}
 				}
-				
 			}
-			
 	    }
 	
 //		Map<String, String> supplierMap = shangpinRedis.hgetAll(ConstantProperty.REDIS_EPHUB_CATEGORY_BRNAD_MAPPING_MAP_KEY+hubCategoryNo);

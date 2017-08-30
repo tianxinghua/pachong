@@ -399,4 +399,26 @@ public class PendingCommonHandler {
 		return firstStaticMap;
 	}
 
+	/**
+	 * 获取儿童品类对应的品牌
+	 * @return
+	 */
+	public Map<String, String> getKidBrandMap() {
+		Map<String, String> kidBrandStaticMap = shangpinRedis
+				.hgetAll(ConstantProperty.REDIS_EPHUB_KID_BRAND_MAPPING_MAP_KEY);
+		if (kidBrandStaticMap == null || kidBrandStaticMap.size() < 1) {
+			kidBrandStaticMap = new HashMap<>();
+			List<HubSupplierValueMappingDto> supplierValueMappList = dataServiceHandler.getHubSupplierValueMappingByType(6);
+			for (HubSupplierValueMappingDto supplierValueMapp : supplierValueMappList) {
+				kidBrandStaticMap.put(supplierValueMapp.getSupplierVal(),supplierValueMapp.getHubVal());
+			}
+			if (kidBrandStaticMap.size() > 0) {
+				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_REPLACE_MATERIAL_MAPPING_MAP_KEY, kidBrandStaticMap);
+				shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_REPLACE_MATERIAL_MAPPING_MAP_KEY,
+						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME * 1000);
+			}
+		}
+		return kidBrandStaticMap;
+	}
+
 }
