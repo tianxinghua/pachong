@@ -224,26 +224,12 @@ public abstract class PendingSpuService implements IPendingProductService {
 			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
 			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.UNHANDLED.getIndex());
 		}else{
-			if(StringUtils.isEmpty(pendingQuryDto.getSpuState()) || "0".equals(pendingQuryDto.getSpuState())){
-
-				criteria.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
-
-			}else if("1".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.INFO_IMPECCABLE.getIndex());
-			}else if("2".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.HANDLED.getIndex());
-			}else if("3".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.UNABLE_TO_PROCESS.getIndex());
-			}else if("4".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.FILTER.getIndex());
-			}else if("5".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.HANDLING.getIndex());
-			}else if("6".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.EXISTED_IN_HUB.getIndex());
-			}else if("7".equals(pendingQuryDto.getSpuState())){
-				criteria.andSpuStateEqualTo(SpuState.ALL_EXISTED_IN_HUB.getIndex());
-			}else if("16".equals(pendingQuryDto.getSpuState())){
-//			criteria.andSpuStateEqualTo(SpuState.ALL_EXISTED_IN_HUB.getIndex());
+			SpuState spuState = getSpuState(pendingQuryDto.getSpuState());
+			/**
+			 * 状态不为全部商品
+			 */
+			if(!SpuState.ALL_PENDING_SPU.equals(spuState)){
+				criteria.andSpuStateEqualTo(spuState.getIndex());
 			}
 			if("0".equals(pendingQuryDto.getAuditState())){
 				/**
@@ -265,10 +251,15 @@ public abstract class PendingSpuService implements IPendingProductService {
 				if(!StringUtils.isEmpty(pendingQuryDto.getOperator())){
 					criteria.andUpdateUserLike(pendingQuryDto.getOperator()+"%");
 				}
-				List<Byte> list = new ArrayList<Byte>();
-				list.add((byte)1);
-				list.add((byte)2);
-				criteria.andAuditStateIn(list);
+				/**
+				 * 状态不为全部商品
+				 */
+				if(!SpuState.ALL_PENDING_SPU.equals(spuState)){
+					List<Byte> list = new ArrayList<Byte>();
+					list.add((byte)1);
+					list.add((byte)2);
+					criteria.andAuditStateIn(list);
+				}
 			}
 
 			if(!StringUtils.isEmpty(pendingQuryDto.getHubSeason())){
@@ -492,6 +483,23 @@ public abstract class PendingSpuService implements IPendingProductService {
 			return dto;
 		}else{
 			return null;
+		}
+	}
+	/**
+	 * 根据页面传入的spu状态获取枚举值
+	 * @param spuState
+	 * @return
+	 */
+	private SpuState getSpuState(String spuState){
+		if(StringUtils.isEmpty(spuState)){
+			return SpuState.INFO_PECCABLE;
+		}else{
+			for(SpuState state : SpuState.values()){
+				if(String.valueOf(state.getIndex()).equals(spuState) ){
+					return state;
+				}
+			}
+			return SpuState.ALL_PENDING_SPU;
 		}
 	}
 }

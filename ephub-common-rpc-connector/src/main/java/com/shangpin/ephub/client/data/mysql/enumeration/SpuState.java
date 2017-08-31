@@ -43,7 +43,11 @@ public enum SpuState {
 	/**
 	 * SPU所有SKU均已生成
 	 */
-	ALL_EXISTED_IN_HUB((byte)7,"SPU所有SKU均已生成");
+	ALL_EXISTED_IN_HUB((byte)7,"SPU所有SKU均已生成"),
+	/**
+	 * 全部商品，指hub_spu_pending表
+	 */
+	ALL_PENDING_SPU((byte)1213, "全部商品");
 	
 	
 	
