@@ -555,4 +555,13 @@ public class PendingProductStreamSender {
     public boolean dlrboutiquePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
     	return pendingProductSource.dlrboutiquePendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean reebonzPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.reebonzPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
 }
