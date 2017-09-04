@@ -42,69 +42,90 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("coltortiOrderServiceImpl")
 	IOrderService coltortiOrderServiceImpl;
+
 	@Autowired
 	@Qualifier("creative99ServiceImpl")
 	IOrderService creative99ServiceImpl;
+
 	@Autowired
 	@Qualifier("viettiServiceImpl")
 	IOrderService viettiServiceImpl;
-	@Autowired
-	@Qualifier("parisiServiceImpl")
-	IOrderService parisiServiceImpl;
+
+//	@Autowired
+//	@Qualifier("parisiServiceImpl")
+//	IOrderService parisiServiceImpl;
+
 	@Autowired
 	@Qualifier("danielloServiceImpl")
 	IOrderService danielloServiceImpl;
+
 	@Autowired
 	@Qualifier("genteromaServiceImpl")
 	IOrderService genteromaServiceImpl;
+
 	@Autowired
 	@Qualifier("leamServiceImpl")
 	IOrderService leamServiceImpl;
+
 	@Autowired
 	@Qualifier("lindeServiceImpl")
 	IOrderService lindeServiceImpl;
+
 	@Autowired
 	@Qualifier("ostoreServiceImpl")
 	IOrderService ostoreServiceImpl;
+
 	@Autowired
 	@Qualifier("pozzileiArteOrderService")
 	IOrderService pozzileiArteOrderService;
+
 	@Autowired
 	@Qualifier("pozzileiOrderService")
 	IOrderService pozzileiOrderService;
+
 	@Autowired
 	@Qualifier("pozzileiForteOrderService")
 	IOrderService pozzileiForteOrderService;
+
 	@Autowired
 	@Qualifier("sanremoOrderService")
 	IOrderService sanremoOrderService;
+
 	@Autowired
 	@Qualifier("spinnakerOrderService")
 	IOrderService spinnakerOrderService;
+
 	@Autowired
 	@Qualifier("spinnakerPortofinoOrderService")
 	IOrderService spinnakerPortofinoOrderService;
+
 	@Autowired
 	@Qualifier("stefaniaService")
 	IOrderService stefaniaService;
+
 	@Autowired
 	@Qualifier("tonyOrderImpl")
 	IOrderService tonyOrderImpl;
+
 	@Autowired
 	@Qualifier("studio69Serviceimpl")
 	IOrderService studio69Serviceimpl;
 	@Autowired
 	@Qualifier("wiseServiceImpl")
 	IOrderService wiseServiceImpl;
+
 	@Autowired
 	@Qualifier("velaOrderService")
 	IOrderService velaOrderService;
+
 	@Autowired
 	@Qualifier("tonySubOrderImpl")
 	IOrderService tonySubOrderImpl;
+
 	@Autowired
 	@Qualifier("delibertiServiceImpl")
 	IOrderService delibertiServiceImpl;
+
 	@Autowired
 	@Qualifier("divoServiceImpl")
 	IOrderService divoServiceImpl;
@@ -113,9 +134,7 @@ public class OrderHandleSearch {
 	@Qualifier("testBrunarossoServiceImpl")
 	IOrderService testBrunarossoServiceImpl;
 
-	@Autowired
-	@Qualifier("testLeamServiceImpl")
-	IOrderService testLeamServiceImpl;
+
 	@Autowired
 	@Qualifier("clutcherOrderImpl")
 	IOrderService clutcherOrderImpl;
@@ -170,7 +189,15 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
-	
+
+	@Autowired
+	@Qualifier("ylatiServiceImpl")
+	IOrderService ylatiServiceImpl;
+
+	@Autowired
+	@Qualifier("parisiMailServiceImpl")
+	IOrderService parisiMailServiceImpl;
+
 	@Autowired
 	@Qualifier("baseBluOrderImpl") 
 	IOrderService baseBluOrderImpl;
@@ -200,8 +227,6 @@ public class OrderHandleSearch {
 			return leamServiceImpl;
 		} else if ("2016072601910".equals(supplierId)) {
 			return viettiServiceImpl;
-		} else if ("2015101201596".equals(supplierId)) {
-			return parisiServiceImpl;
 		} else if("2017060101976".equals(supplierId)){
 			return spinnakerPortofinoOrderService;
 		}else if ("2015081701439".equals(supplierId)) {
@@ -279,6 +304,10 @@ public class OrderHandleSearch {
 			return dlrboutiqueServiceImpl;
 		}else if("2016032101816".equals(supplierId)){
 			return zitafabianiServiceImpl;
+		}else if("2017071701978".equals(supplierId)){
+			return ylatiServiceImpl;
+		}else if("2015101201596".equals(supplierId)){
+			return parisiMailServiceImpl;
 		}else {
 			return null;
 		}
@@ -370,10 +399,12 @@ public class OrderHandleSearch {
 			return supplierProperties.getDlrboutique();
 		}else if("2016032101816".equals(supplierId)){
 			return supplierProperties.getZitafabiani();
-		}else if("2016072601910".equals(supplierId)){
+		}else if ("2016072601910".equals(supplierId)) {
 			return supplierProperties.getVietti();
 		}else if("2015101201596".equals(supplierId)){
 			return supplierProperties.getParisi();
+		}else if("2017071701978".equals(supplierId)){
+			return supplierProperties.getYlati();
 		}
 		else {
 			return null;

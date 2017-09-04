@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.message.picture.image.Image;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
+import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierDate;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
@@ -37,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 @Slf4j
-public abstract class IAtelierHandler{
+public abstract class IAtelierHandler implements ISupplierHandler{
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
