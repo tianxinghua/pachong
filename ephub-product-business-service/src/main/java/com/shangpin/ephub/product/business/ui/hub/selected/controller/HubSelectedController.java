@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
@@ -35,7 +32,6 @@ import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelect
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
 import com.shangpin.ephub.response.HubResponse;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -136,8 +132,6 @@ public class HubSelectedController {
 	 */
 	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
     public HubResponse exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
-	        	
-		
 		try {
 			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskType.EXPORT_HUB_PIC.getIndex());
 			sendMessageToTask(task.getTaskNo(),TaskType.EXPORT_HUB_PIC.getIndex(),JsonUtil.serialize(dto));
