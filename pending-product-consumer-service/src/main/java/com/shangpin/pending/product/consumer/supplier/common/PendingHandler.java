@@ -716,9 +716,6 @@ public class PendingHandler extends VariableInit {
 		if (!setSeasonMapping(spu, hubSpuPending))
             allStatus = false;
 
-		// 获取材质
-		if (!replaceMaterial(spu, hubSpuPending))
-            allStatus = false;
 		
 		// 获取材质
 		if (!replaceMaterialByRedis(spu, hubSpuPending))
