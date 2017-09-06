@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
@@ -471,6 +472,7 @@ public class PendingProductService extends PendingSkuService{
                 hubSpuPendingDto.setSpuPendingId(Long.parseLong(spuPendingId));
                 hubSpuPendingDto.setSpuState(SpuState.UNABLE_TO_PROCESS.getIndex());
                 hubSpuPendingDto.setUpdateUser(updateUser); 
+                hubSpuPendingDto.setAuditState((AuditState.DISAGREE.getIndex()));
                 hubSpuPendingGateWay.updateByPrimaryKeySelective(hubSpuPendingDto);
             }
             return true;
