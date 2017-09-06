@@ -59,11 +59,7 @@ public class VariableInit {
     @Autowired
     DataSverviceUtil dataSverviceUtil;
 
-    @Autowired
-    ValidationRuleUtil validationRuleUtil;
 
-    @Autowired
-    BurberryModelRule burberryModelRule;
 
     @Autowired
     HubBrandModelRuleGateWay brandModelRuleGateWay;
@@ -466,6 +462,7 @@ public class VariableInit {
                         if (!find) {
                             result = sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName()
                                     + ":" + sizeItem.getSizeStandardValue();
+
 
                         } else {
                             log.error("品牌：" + hubBrandNo + " 品类: " + hubCategoryNo + " 的尺码对照有错误。");
