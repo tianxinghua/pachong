@@ -142,7 +142,7 @@ public class StudioController {
         if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(slotNo)){
             return  HubResponse.errorResp("传入参数不正确");
         }
-        return  iStudioService.checkProductAndSendSlot(supplierId,slotNo);
+        return  iStudioService.checkProductAndSendSlot(supplierId,slotNo,queryDto.getCreateUser());
     }
 
     @RequestMapping(value = "/slotprint")
