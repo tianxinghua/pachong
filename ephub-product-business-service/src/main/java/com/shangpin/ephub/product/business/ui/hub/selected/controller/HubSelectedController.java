@@ -209,6 +209,7 @@ public class HubSelectedController {
     public HubResponse exportSupplierPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
 		
 		try {
+			log.info("供应商导出图片：{}",dto);
 			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),19);
 			sendMessageToTask(task.getTaskNo(),19,JsonUtil.serialize(dto));
 			return HubResponse.successResp(task.getTaskNo());
