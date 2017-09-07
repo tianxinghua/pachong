@@ -178,7 +178,7 @@ public class SlotManageService {
 			if (slotManageQuery.getPageNo() != null) {
 				studioSlotCriteriaDto.setPageNo(slotManageQuery.getPageNo());
 			}
-			studioSlotCriteriaDto.setOrderByClause("slot_date");
+			studioSlotCriteriaDto.setOrderByClause(" slot_date desc ");
 
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
 			// 如果查询批次摄影棚名称参数为null，循环查询

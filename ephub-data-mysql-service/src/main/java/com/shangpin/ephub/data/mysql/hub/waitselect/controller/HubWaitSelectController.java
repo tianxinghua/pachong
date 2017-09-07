@@ -1,5 +1,7 @@
 package com.shangpin.ephub.data.mysql.hub.waitselect.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +33,21 @@ public class HubWaitSelectController {
 	
 	@RequestMapping(value = "/count")
     public Long countByCriteria(@RequestBody HubWaitSelectRequest criteria){
+		List<String> spSkuNoList = new ArrayList<String>();
+		if(criteria.getSpSkuNo()!=null){
+			spSkuNoList = Arrays.asList(criteria.getSpSkuNo().split(","));	
+			criteria.setSpSkuNoList(spSkuNoList);
+		}
     	return hubSkuService.count(criteria);
     }
 	
 	@RequestMapping(value = "/select-with-page")
     public List<HubWaitSelectResponse> selectByCriteriaWithRowbounds(@RequestBody HubWaitSelectRequestWithPage criteriaWithRowBounds){
+		List<String> spSkuNoList = new ArrayList<String>();
+		if(criteriaWithRowBounds.getSpSkuNo()!=null){
+			spSkuNoList = Arrays.asList(criteriaWithRowBounds.getSpSkuNo().split(","));	
+			criteriaWithRowBounds.setSpSkuNoList(spSkuNoList);
+		}
     	return hubSkuService.selectList(criteriaWithRowBounds);
     }
 	@RequestMapping(value = "/select-detail")
