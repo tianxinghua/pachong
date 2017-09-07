@@ -828,13 +828,28 @@ public class StudioServiceImpl implements IStudioService {
 
                 List<SlotSpuSendDetailCheckDto> resCheckDtos = hubSlotSpuSupplierService.updateSlotSpuSupplierWhenSupplierSend(checkDtos);
 
+                Map<Long, Long>  errSlotSendDetailMap   = new HashMap<>();
+                if(null!=resCheckDtos){
+
+                    for(SlotSpuSendDetailCheckDto dto:resCheckDtos){
+                        errSlotSendDetailMap.put(dto.getStudioSlotSpuSendDetailId(),dto.getSlotSpuSupplierId());
+                    }
+                }
+
                 if(resCheckDtos.stream().filter(x-> !x.isResultSign()).count()>0){
                     List<Long> ids = resCheckDtos.stream().filter(x-> !x.isResultSign()).map(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId).distinct().collect(Collectors.toList());
                     List<String> spuModels = slotProducts.stream().filter(x-> ids.contains(x.getId())).map(SlotProduct::getSupplierSpuModel).collect(Collectors.toList());
                     //程序删除 不用手工去删除
-                    Map<Long, Long>  errSlotSendDetailMap   = resCheckDtos.stream().collect(Collectors.toMap(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId, SlotSpuSendDetailCheckDto::getSlotSpuSupplierId));
+//                    log.info("errSlotSendDetailMap start");
+//                    Map<Long, Long>  errSlotSendDetailMap   = resCheckDtos.stream().filter(x-> !x.isResultSign()).collect(Collectors.toMap(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId, SlotSpuSendDetailCheckDto::getSlotSpuSupplierId));
+
+//                    log.info("errSlotSendDetailMap end ");
+                    log.info("errSlotSendDetailMap errSlotSendDetailMap size = " + errSlotSendDetailMap.size());
                     for(Long sendDetailId:ids){
-                        iStudioService.delProductFromSlot(supplierId,slotNo, errSlotSendDetailMap.get(sendDetailId), sendDetailId ,StringUtils.isEmpty(handleUser)?"service-auto":handleUser);
+                        if(null!=errSlotSendDetailMap&&errSlotSendDetailMap.size()>0) {
+                            log.info("supplierId: " + supplierId + " ,slotNo:" + slotNo + ",SlotSpuSupplierId:" + errSlotSendDetailMap.get(sendDetailId) + ",sendDetailId:" + sendDetailId + "," + (StringUtils.isEmpty(handleUser) ? "service-auto" : handleUser));
+                            iStudioService.delProductFromSlot(supplierId, slotNo, errSlotSendDetailMap.get(sendDetailId), sendDetailId, StringUtils.isEmpty(handleUser) ? "service-auto" : handleUser);
+                        }
                     }
 
                     throw new EphubException("C11",  String.join("<br>",spuModels) +"had been sent or no need send!Please retry print");
@@ -855,6 +870,8 @@ public class StudioServiceImpl implements IStudioService {
             response.setCode("1");
             response.setMsg(e.getMessage());
         }catch (Exception ex){
+            ex.printStackTrace();
+            log.error("checkProductAndSendSlot  :" + ex.getMessage(),ex);
             log.info("checkProductAndSendSlot Exception " +ex.getMessage());
             response.setCode("1");
             response.setMsg("Server error occurs when verifying the permission of shipping");
