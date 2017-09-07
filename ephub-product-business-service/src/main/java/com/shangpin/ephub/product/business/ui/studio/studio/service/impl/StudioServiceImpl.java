@@ -960,7 +960,7 @@ public class StudioServiceImpl implements IStudioService {
             StudioSlotCriteriaDto.Criteria criteria = dto.createCriteria();
             ///T-ODO：：注意 测试时注销的，需要放开
             if(!StringUtils.isEmpty(history) && history ==1){
-                criteria.andApplyStatusGreaterThan(StudioSlotApplyState.APPLYED.getIndex().byteValue());
+                criteria.andApplyStatusGreaterThanOrEqualTo(StudioSlotApplyState.APPLYED.getIndex().byteValue());
                 criteria.andApplySupplierIdEqualTo(supplierId.toString());
             }else{
                 criteria.andApplyStatusEqualTo(StudioSlotApplyState.WAIT_APPLY.getIndex().byteValue());
