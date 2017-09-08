@@ -832,6 +832,8 @@ public class StudioServiceImpl implements IStudioService {
                 if(null!=resCheckDtos){
 
                     for(SlotSpuSendDetailCheckDto dto:resCheckDtos){
+
+
                         errSlotSendDetailMap.put(dto.getStudioSlotSpuSendDetailId(),dto.getSlotSpuSupplierId());
                     }
                 }
@@ -841,7 +843,7 @@ public class StudioServiceImpl implements IStudioService {
                     List<String> spuModels = slotProducts.stream().filter(x-> ids.contains(x.getId())).map(SlotProduct::getSupplierSpuModel).collect(Collectors.toList());
                     //程序删除 不用手工去删除
 //                    log.info("errSlotSendDetailMap start");
-//                    Map<Long, Long>  errSlotSendDetailMap   = resCheckDtos.stream().filter(x-> !x.isResultSign()).collect(Collectors.toMap(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId, SlotSpuSendDetailCheckDto::getSlotSpuSupplierId));
+                   //Map<Long, Long> errSlotSendDetailMap   = resCheckDtos.stream().filter(x-> !x.isResultSign()).collect(Collectors.toMap(SlotSpuSendDetailCheckDto::getStudioSlotSpuSendDetailId, SlotSpuSendDetailCheckDto::getSlotSpuSupplierId));
 
 //                    log.info("errSlotSendDetailMap end ");
                     log.info("errSlotSendDetailMap errSlotSendDetailMap size = " + errSlotSendDetailMap.size());
