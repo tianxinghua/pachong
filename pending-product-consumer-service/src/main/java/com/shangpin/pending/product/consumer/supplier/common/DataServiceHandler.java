@@ -876,7 +876,8 @@ public class DataServiceHandler {
 	public String getPicUrlBySupplierSpuId(Long supplierSpuId) {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
 		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId)
-				.andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex());
+				.andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex())
+		.andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 
 		List<HubSpuPendingPicDto> hubSpuPendingPicDtos = pendingPicGateWay.selectByCriteria(criteria);
 		if (null != hubSpuPendingPicDtos && hubSpuPendingPicDtos.size() > 0) {
