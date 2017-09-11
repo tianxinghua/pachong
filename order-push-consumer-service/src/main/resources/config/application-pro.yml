@@ -136,17 +136,17 @@ shangpin:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
           vietti: 
-                  url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
-                  createOrderInterface: NewOrderMarketPlace
-                  setStatusInterface: SetStatusOrderMarketplace
-                  getStatusInterface: GetStatusOrderMarketplace
-                  getItemStockInterface: GetItemStockBySizeMarketPlace
-                  user: shangpin
-                  password: shang1307
-                  messageType: text/html;charset=utf-8
-                  isPurchaseExp: 
-                  openApiKey: 7bded5d1a0b44c5998a3ac319ff2fbaa
-                  openApiSecret: 89bcf533c81e41d5a7a688ed13bc2d4b
+              url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang1307
+              messageType: text/html;charset=utf-8
+              isPurchaseExp:
+              openApiKey: 7bded5d1a0b44c5998a3ac319ff2fbaa
+              openApiSecret: 89bcf533c81e41d5a7a688ed13bc2d4b
           zitafabiani:
                   url: http://87.25.100.1:8080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -475,10 +475,10 @@ shangpin:
                   openApiKey: 23ec05ddf2854191a57f9b45051177c5
                   openApiSecret: 477f0ead6d104ee586f15f73fbd5ddeb
           clothing:
-                  strKey: Shangpin
-                  strPassword: 05TBbJHa^vgL4b!
-                  openApiKey:
-                  openApiSecret:
+              strKey: Shangpin
+              strPassword: 05TBbJHa^vgL4b!
+              openApiKey:
+              openApiSecret:
           antonacci:
                   isPurchaseExp: no
                   openApiKey:
@@ -489,8 +489,8 @@ shangpin:
                   openApiSecret:
           ylati:
                   isPurchaseExp: false
-                  openApiKey: 
-                  openApiSecret: 
+                  openApiKey:
+                  openApiSecret:
           dlrboutique: 
                   url: http://79.60.189.204/WS_SITO_P15/WS_SITO_P15.ASMX/
                   createOrderInterface: NewOrderMarketPlace
@@ -514,17 +514,6 @@ shangpin:
                   messageType: text/html;charset=utf-8
                   openApiKey: 71b18f9d51b0425fb81aa0f6f9c27ce8
                   openApiSecret: 066c25a42ee14a03b42b206df0068e9b
-          bagheera: 
-                  url: http://bagheera.gotdns.com/ws_sito_p15/ws_sito_p15.asmx/
-                  createOrderInterface: NewOrderMarketPlace
-                  setStatusInterface: SetStatusOrderMarketplace
-                  getStatusInterface: GetStatusOrderMarketplace
-                  getItemStockInterface: GetItemStockBySizeMarketPlace
-                  user: Shangpin
-                  password: Shang2108
-                  isPurchaseExp: 
-                  openApiKey: 2ec8cd7d96cc4e9191b534481d727bfa
-                  openApiSecret: 72c413d6440049e48d4c5d7f2fae5ebe
           supplier:
                   delayTime: 1000
                   retry: 120

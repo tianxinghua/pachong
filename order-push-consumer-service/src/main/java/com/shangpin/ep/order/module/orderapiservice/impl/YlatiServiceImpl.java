@@ -136,7 +136,7 @@ public class YlatiServiceImpl implements IOrderService{
 		addTo.add("press@ylatifootwear.com");
 		addTo.add("vportogallo@genertecitalia.it");
 //		addTo.add("lubaijiang@shangpin.com");
-//		addTo.add("steven.ding@shangpin.com");
+		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}

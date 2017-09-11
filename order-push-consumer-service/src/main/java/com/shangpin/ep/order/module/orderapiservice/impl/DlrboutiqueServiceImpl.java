@@ -32,8 +32,6 @@ public class DlrboutiqueServiceImpl implements IOrderService {
     HandleException handleException;
     @Autowired
     HubSkuMapper skuDAO;
-    @Autowired
-    DlrboutiqueMailService mailService;
     
     /**
      * 给对方推送数据
@@ -167,10 +165,6 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
-		/**
-		 * 发份邮件
-		 */
-		mailService.pushConfirmOrder(orderDTO);
 		
 	}
 
@@ -192,10 +186,6 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 			if(returnData.contains("OK")){
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
-				/**
-				 * 发邮件
-				 */
-				mailService.handleRefundlOrder(deleteOrder);
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);

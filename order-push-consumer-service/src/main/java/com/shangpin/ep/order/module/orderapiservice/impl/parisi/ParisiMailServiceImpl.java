@@ -134,7 +134,7 @@ public class ParisiMailServiceImpl implements IOrderService{
 		shangpinMail.setTo("vportogallo@genertecitalia.it");
 		List<String> addTo = new ArrayList<>();
 		addTo.add("pancrazio.parisi5@gmail.com");
-//		addTo.add("steven.ding@shangpin.com");
+		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
