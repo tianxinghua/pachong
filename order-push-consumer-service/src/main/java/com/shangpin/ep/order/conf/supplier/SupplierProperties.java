@@ -120,4 +120,6 @@ public class SupplierProperties {
 
 	private Ylati ylati;
 	
+	private Bagheera bagheera;
+	
 }

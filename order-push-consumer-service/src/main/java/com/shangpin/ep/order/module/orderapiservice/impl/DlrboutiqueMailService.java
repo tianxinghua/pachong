@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
 import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
@@ -15,16 +15,16 @@ import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
 /**
- * <p>Title: WiseServiceImpl</p>
- * <p>Description: wise供应商订单以发送邮件的方式发送给对方</p>
+ * <p>Title: DlrboutiqueMailService</p>
+ * <p>Description: Dlrboutique供应商订单以发送邮件的方式发送给对方</p>
  * <p>Company: </p> 
  * @author lubaijiang
  * @date 2017年6月22日 上午10:15:54
  *
  */
-@Component("wiseMailService")
 @Slf4j
-public class WiseServiceImpl{
+@Service
+public class DlrboutiqueMailService{
 	
 	@Autowired
 	private ShangpinMailSender shangpinMailSender;
@@ -63,14 +63,14 @@ public class WiseServiceImpl{
 									"Barcode: "+sku.getBarcode()+"<br>"+
 									"Qty: "+orderDTO.getQuantity()+"<br>"+
 									"Status: confirmed";
-				log.info("wise推送订单参数："+messageText); 
-				sendMail("wise-order-shangpin",messageText);
-				log.info("wise推送成功。"); 
+				log.info("Dlrboutique推送订单参数："+messageText); 
+				sendMail("dlrboutique-order-shangpin",messageText);
+				log.info("Dlrboutique推送成功。"); 
 			}else{
-				log.info("wise根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku"+ orderDTO.getSupplierSkuNo());
+				log.info("Dlrboutique根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku"+ orderDTO.getSupplierSkuNo());
 			}
 		} catch (Exception e) {
-			log.error("wise推送订单异常========= "+e.getMessage());
+			log.error("Dlrboutique推送订单异常========= "+e.getMessage());
 		}
 		
 	}
@@ -86,14 +86,14 @@ public class WiseServiceImpl{
 						"Barcode: "+sku.getBarcode()+"<br>"+
 						"Qty: "+deleteOrder.getQuantity()+"<br>"+
 						"Status: cancelled";
-				log.info("wise退款单参数："+messageText); 
-				sendMail("wise-cancelled order-shangpin",messageText);
-				log.info("wise退款成功。"); 
+				log.info("Dlrboutique退款单参数："+messageText); 
+				sendMail("dlrboutique-cancelled order-shangpin",messageText);
+				log.info("Dlrboutique退款成功。"); 
 			}else{
-				log.error("wise根据供应商门户编号和供应商skuid查找SKU失败");
+				log.error("Dlrboutique根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
-			log.error("wise发送退款邮件发生异常============"+e.getMessage());
+			log.error("Dlrboutique发送退款邮件发生异常============"+e.getMessage());
 		}
 	}
 	
@@ -108,10 +108,9 @@ public class WiseServiceImpl{
 		shangpinMail.setFrom("chengxu@shangpin.com");
 		shangpinMail.setSubject(subject);
 		shangpinMail.setText(text);
-		shangpinMail.setTo("martina@wiseboutique.com");
+		shangpinMail.setTo("vportogallo@genertecitalia.it");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("francesca.fiorani@wiseboutique.com");
-		addTo.add("marketplace@wiseboutique.com");
+		addTo.add("info@dlrboutique.com");
 //		addTo.add("andrea.venturini@wiseboutique.com");
 //		addTo.add("wangsaying@shangpin.com");
 //		addTo.add("lubaijiang@shangpin.com");
@@ -123,10 +122,10 @@ public class WiseServiceImpl{
 	private void handleConfirmError(OrderDTO orderDTO){
 		try {
 			String message = "采购单号："+orderDTO.getPurchaseNo();
-			String subject = "Wise推送失败的采购单";
+			String subject = "Dlrboutique推送失败的采购单";
 			sendMailToShangpin(subject,message);
 		} catch (Exception e) {
-			log.error("wise发送推送失败采购单邮件时发生异常============"+e.getMessage());
+			log.error("Dlrboutique发送推送失败采购单邮件时发生异常============"+e.getMessage());
 		}
 	}
 	/**
