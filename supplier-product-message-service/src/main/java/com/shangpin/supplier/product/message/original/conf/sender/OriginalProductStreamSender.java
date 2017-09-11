@@ -581,4 +581,13 @@ public class OriginalProductStreamSender {
     public boolean reebonzStream(SupplierProduct supplierProduct) {
         return originalProductSource.reebonz().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    
+    /**
+     * 发送供应商gaudenzi商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean gaudenziStream(SupplierProduct supplierProduct) {
+        return originalProductSource.gaudenzi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }

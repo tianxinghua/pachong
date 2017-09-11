@@ -143,6 +143,8 @@ public interface OriginalProductSource {
 
 
     public static final String REEBONZ = "reebonzOriginalProduct";
+    
+    public static final String GAUDENZI = "gaudenziOriginalProduct";
 
     /**
 	 * 供货商portofino通道组件配置
@@ -568,4 +570,11 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.REEBONZ)
 	public MessageChannel reebonz();
+	
+	/**
+	 * 供货商gaudenzi通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.GAUDENZI)
+	public MessageChannel gaudenzi();
 }

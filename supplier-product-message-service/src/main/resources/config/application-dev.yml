@@ -18,6 +18,9 @@ spring:
                         brunarossoOriginalProduct: 
                               destination: brunarosso.original.product
                               content-type: application/json
+                        gaudenziOriginalProduct: 
+                              destination: gaudenzi.original.product
+                              content-type: application/json
                         stefaniaOriginalProduct: 
                               destination: stefania.original.product
                               content-type: application/json
@@ -207,6 +210,9 @@ spring:
                                   producer: 
                                            prefix: HA.
                             brunarossoOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.
+                            gaudenziOriginalProduct: 
                                   producer: 
                                            prefix: HA.
                             stefaniaOriginalProduct: 
