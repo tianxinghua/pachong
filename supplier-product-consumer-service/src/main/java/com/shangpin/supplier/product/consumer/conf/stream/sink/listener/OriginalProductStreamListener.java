@@ -666,4 +666,14 @@ public class OriginalProductStreamListener {
 	public void reebonzStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.reebonzStreamListen(message, headers);
 	}
+	
+	/**
+	 * 供应商GAUDENZI原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.GAUDENZI)
+    public void gaudenziStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.gaudenziStreamListen(message,headers);
+    }
 }

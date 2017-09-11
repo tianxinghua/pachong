@@ -729,6 +729,15 @@ public class OriginalProductStreamListenerAdapter {
 	}
 	
 	/**
+	 * gaudenzi供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void gaudenziStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+	
+	/**
 	 * 所以供应商更新库存监听方法
 	 * @param message
 	 * @param headers

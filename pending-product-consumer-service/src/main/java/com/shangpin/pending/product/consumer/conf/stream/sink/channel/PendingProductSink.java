@@ -143,6 +143,8 @@ public interface PendingProductSink {
 
 
 	public static final String REEBONZ = "reebonzPendingProduct";
+	
+	public static final String GAUDENZI = "gaudenziPendingProduct";
 	/**
 	 * 供货商coccolebimbi通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -558,4 +560,11 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.REEBONZ)
 	public SubscribableChannel reebonzPendingProduct();
+	
+	/**
+	 * 供应商GAUDENZI通道组件配置
+	 * @return 供货商GAUDENZI通道组件
+	 */
+	@Input(value = PendingProductSink.GAUDENZI)
+	public SubscribableChannel gaudenziPendingProduct();
 }
