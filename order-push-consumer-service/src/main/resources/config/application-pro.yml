@@ -135,6 +135,18 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
+          gaudenzi:
+                  url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: shang3108
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: 34ba9613f2544c279a7523d015184b1e
+                  openApiSecret: 43e578550e9047b5936f7bc44876061d
           vietti: 
               url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace
