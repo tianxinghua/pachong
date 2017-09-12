@@ -8,7 +8,7 @@ spring:
            virtual-host: /scm-message-service
   cloud: 
         consul: 
-          host: 192.168.20.105
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -53,7 +53,16 @@ spring:
                                        maxAttempts: 1
                         brunarossoPendingProduct: 
                               destination: brunarosso.pending.product
-                              content-type: application/json                        
+                              content-type: application/json    
+                        gaudenziOriginalProduct: 
+                              destination: gaudenzi.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        gaudenziPendingProduct: 
+                              destination: gaudenzi.pending.product
+                              content-type: application/json                      
                         stefaniaOriginalProduct: 
                               destination: stefania.original.product
                               group: one
@@ -637,7 +646,16 @@ spring:
                                        republishToDlq: false
                             brunarossoPendingProduct: 
                                   producer: 
-                                       prefix: HA.                                        
+                                       prefix: HA.   
+                            gaudenziOriginalProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            gaudenziPendingProduct: 
+                                  producer: 
+                                       prefix: HA.                                     
                             stefaniaOriginalProduct: 
                                   consumer: 
                                        prefix: HA.

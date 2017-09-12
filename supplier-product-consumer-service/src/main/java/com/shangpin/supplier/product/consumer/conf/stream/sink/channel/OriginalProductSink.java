@@ -146,6 +146,8 @@ public interface OriginalProductSink {
 	public static final String ALL_PRODUCT_STOCK = "allProductStock";
 
 	public static final String REEBONZ = "reebonzOriginalProduct";
+	
+	public static final String GAUDENZI = "gaudenziOriginalProduct";
 
 
 	//===============================
@@ -570,5 +572,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.REEBONZ)
 	public MessageChannel reebonzOriginalProduct();
+	
+	/**
+	 * 供应商gaudenzi通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.GAUDENZI)
+	public MessageChannel gaudenziOriginalProduct();
 
 }

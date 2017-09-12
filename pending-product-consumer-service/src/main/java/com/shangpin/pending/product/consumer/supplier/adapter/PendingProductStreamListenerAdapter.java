@@ -630,5 +630,15 @@ public class PendingProductStreamListenerAdapter {
 	public void reebonzPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
 	}
+	
+	/**
+	 * 供应商gaudenzi待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void gaudenziPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
 
 }
