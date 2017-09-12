@@ -4,12 +4,14 @@ import com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQuery
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.mapper.SlotSpuSupplierMapper;
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.po.SlotSpuSupplier;
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.service.SlotSupplierSearchService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class SlotSupplierSearchServiceImpl implements SlotSupplierSearchService {
 
 	@Autowired
@@ -20,6 +22,7 @@ public class SlotSupplierSearchServiceImpl implements SlotSupplierSearchService 
 	}
 	@Override
 	public int countByQuery(SpuSupplierQueryDto queryDto){
+		log.info("search obj = " + queryDto.toString());
 		return slotSpuSupplierMapper.countByQuery(queryDto);
 	}
 }
