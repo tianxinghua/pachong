@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ephub.client.data.mysql.modifyDataStatus.HubModifyDataStatusGateWay;
 import com.shangpin.ephub.data.schedule.service.price.PricePushService;
 import com.shangpin.ephub.data.schedule.service.product.ProductPullDataService;
 import com.shangpin.ephub.data.schedule.service.stock.StockService;
@@ -27,7 +28,8 @@ public class ProductScheduler {
     private PricePushService pricePushService;
     @Autowired
     private ProductPullDataService productPullDataService;
-    
+    @Autowired
+    private HubModifyDataStatusGateWay hubModifyDataStatusGateWay;
 
 	@Scheduled(cron = "00 55 20 * * ?")
 	public void stockTask() {
@@ -75,6 +77,22 @@ public class ProductScheduler {
 			log.info("===========检测价格推送任务结束============"); 
 		} catch (Exception e) {
 			log.error("检测价格推送任务异常："+e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * 修改数据和图片状态
+	 */
+	@Scheduled(cron = "00 50 08 * * ?")
+	public void modifyUpdateStatus(){
+		try {
+			log.info("===========更新数据和图片状态============"); 
+			hubModifyDataStatusGateWay.updateStatus();
+			hubModifyDataStatusGateWay.updatePicStatus();
+			hubModifyDataStatusGateWay.updateNewPicStatus();
+			log.info("===========更新数据和图片状态============"); 
+		} catch (Exception e) {
+			log.error("修改数据和图片状态任务异常："+e.getMessage(),e);
 		}
 	}
 }
