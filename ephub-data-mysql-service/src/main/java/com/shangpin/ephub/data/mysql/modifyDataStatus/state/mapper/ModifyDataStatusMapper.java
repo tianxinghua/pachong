@@ -5,8 +5,10 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface ModifyDataStatusMapper {
 
-    int updateStatus();
+    void updateStatus();
     
-    int updatePicStatus();
+    void updatePicStatus();
+    
+    void updateNewPicStatus();
     
 }

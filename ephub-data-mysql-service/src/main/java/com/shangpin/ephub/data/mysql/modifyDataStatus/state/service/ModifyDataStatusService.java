@@ -11,11 +11,15 @@ public class ModifyDataStatusService{
 	@Autowired
     private ModifyDataStatusMapper modifyDataStatusMapper;
 
-    public int updateStatus(){
-        return modifyDataStatusMapper.updateStatus();
+    public void updateStatus(){
+        modifyDataStatusMapper.updateStatus();
     }
     
-    public int updatePicStatus(){
-        return modifyDataStatusMapper.updatePicStatus();
+    public void updatePicStatus(){
+        modifyDataStatusMapper.updatePicStatus();
+    }
+    
+    public void updateNewPicStatus(){
+        modifyDataStatusMapper.updateNewPicStatus();
     }
 }

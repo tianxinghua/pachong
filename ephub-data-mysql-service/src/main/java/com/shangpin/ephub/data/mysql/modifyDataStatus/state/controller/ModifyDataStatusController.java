@@ -39,4 +39,15 @@ public class ModifyDataStatusController {
 		}
     	log.info("-------end updatePicStatus---------");
     }
+    
+    @RequestMapping(value = "/updateNewPicStatus")
+    public void updateNewPicStatus(){
+    	log.info("-------start updateNewPicStatus---------");
+    	try {
+    		modifyDataStatusService.updateNewPicStatus();
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	log.info("-------end updateNewPicStatus---------");
+    }
 }

@@ -7,7 +7,11 @@
   </update>
   
   <update id="updatePicStatus">
-    update  hub_spu_pending s left join hub_spu_pending_pic p  on s.supplier_id = p.supplier_id and s.supplier_spu_no = p.supplier_spu_no set s.pic_state = 2 where s.pic_state = 3 and p.spu_pending_pic_id is not null and p.data_state = 1
+    update  hub_spu_pending p inner join (select distinct supplier_id,supplier_spu_no  from hub_spu_pending_pic where data_state=1 ) tmp on p.supplier_id = tmp.supplier_id and p.supplier_spu_no = tmp.supplier_spu_no set p.pic_state = 2 where p.pic_state = 3
+  </update>
+  
+  <update id="updateNewPicStatus">
+    update   hub_spu_pending p left  join (select distinct supplier_id,supplier_spu_no  from hub_spu_pending_pic where data_state=1 ) tmp on p.supplier_id = tmp.supplier_id and p.supplier_spu_no = tmp.supplier_spu_no set p.pic_state = 3 where p.pic_state = 2 and tmp.supplier_id is null
   </update>
   
 </mapper>
