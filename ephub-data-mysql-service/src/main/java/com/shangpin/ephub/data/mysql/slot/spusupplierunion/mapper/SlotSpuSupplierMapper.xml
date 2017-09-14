@@ -83,7 +83,7 @@
   </select>
 
 
-    <select id="countByQuery" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto" >
+    <select id="countByQuery" resultType="java.lang.Integer" parameterType="com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto" >
         select count(*)
         from hub_slot_spu_supplier s
         inner join hub_slot_spu p on s.slot_spu_id  = p.slot_spu_id

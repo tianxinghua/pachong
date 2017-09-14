@@ -7,8 +7,11 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+
 @Getter
 @Setter
+@ToString
 public class PendingProductDto extends HubSpuPendingDto {
 
 	/**
@@ -41,5 +44,26 @@ public class PendingProductDto extends HubSpuPendingDto {
 	
 	private String supplierCategoryname;
 	private String auditDateStr;
+	/**
+	 * 错误原因
+	 */
+	private String errorReason;
+	
+	/**
+	 * 供应商品牌
+	 */
+	private String supplierBrandName;
+	/**
+	 * 供应商货号
+	 */
+	private String supplierSpuModel;
+	/**
+	 * 供应商颜色
+	 */
+	private String supplierSpuColor;
+	/**
+	 * 供应商材质
+	 */
+	private String supplierMaterial;
 	
 }

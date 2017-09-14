@@ -59,6 +59,13 @@ public class HubSpuPendingNohandleReasonService {
 			log.info("接收到的无法处理实体===="+JsonUtil.serialize(nohandleReason)); 
 			List<HubSpuPendingDto> list = findPendingSpus(nohandleReason.getSupplierId(),nohandleReason.getSupplierSpuNo());
 			if(CollectionUtils.isNotEmpty(list)){
+				/**
+				 * 先删除原有的原因
+				 */
+				delete(list.get(0).getSpuPendingId());
+				/**
+				 * 再插入导入的
+				 */
 				nohandleReason.getReasons().forEach(reason -> insert(nohandleReason.getCreateUser(), reason , list.get(0)));
 				return true;
 			}
@@ -100,6 +107,22 @@ public class HubSpuPendingNohandleReasonService {
 	}
 	
 	//==========================================================================================================================
+	
+	private boolean delete(Long spuPendingId){
+		int count = selectCount(spuPendingId);
+		if(count > 0){
+			HubSpuPendingNohandleReasonCriteriaDto criteria = new HubSpuPendingNohandleReasonCriteriaDto();
+			criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId);
+			reasonGateWay.deleteByCriteria(criteria );
+		}
+		return true;
+	}
+	
+	private int selectCount(Long spuPendingId){
+		HubSpuPendingNohandleReasonCriteriaDto criteria = new HubSpuPendingNohandleReasonCriteriaDto();
+		criteria.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andDataStateEqualTo(DataState.NOT_DELETED.getIndex()); 
+		return reasonGateWay.countByCriteria(criteria);
+	}
 	
 	private List<HubSpuPendingNohandleReasonDto> selectErrorReason(List<Long> spuPendingIds){
 		HubSpuPendingNohandleReasonCriteriaDto criteria = new HubSpuPendingNohandleReasonCriteriaDto();

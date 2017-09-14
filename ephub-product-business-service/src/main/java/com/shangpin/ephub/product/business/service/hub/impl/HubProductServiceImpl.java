@@ -729,6 +729,7 @@ class SendToScmTask implements Runnable{
         ObjectMapper mapper = new ObjectMapper();
 //        log.info("send scm parameter: " + mapper.writeValueAsString(productDto));
 
+
         ResponseEntity<HubResponseDto<String>> entity = restTemplate.exchange(apiAddressProperties.getGmsAddProductUrl(), HttpMethod.POST,
                 requestEntity, new ParameterizedTypeReference<HubResponseDto<String>>() {
                 });
