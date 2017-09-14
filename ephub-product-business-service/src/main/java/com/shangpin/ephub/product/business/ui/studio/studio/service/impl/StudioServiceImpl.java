@@ -582,8 +582,8 @@ public class StudioServiceImpl implements IStudioService {
                     throw new EphubException("C2", "Status of this slot is incorrect");
                 }
                 List<SlotProduct> productList = slotInfo.getSlotProductList();
-
-                if (slotInfo.getMaxNum() <= productList.size()) {
+                log.info("max:"+slotInfo.getMaxNum() +",productList:"+productList.size()+",count:"+updatedVo.getCount());
+                if (slotInfo.getMaxNum() <(productList.size()+updatedVo.getCount())) {
                     throw new EphubException("C3", "Amount of the slot reaches the maximal capacity");
                 }
 
