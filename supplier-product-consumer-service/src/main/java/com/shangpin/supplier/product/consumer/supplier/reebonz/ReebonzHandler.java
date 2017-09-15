@@ -100,16 +100,8 @@ public class ReebonzHandler implements ISupplierHandler {
 		if(null != item){			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getSpuId());
-			String colorNo="";
-			if(org.apache.commons.lang.StringUtils.isNotBlank(item.getColor())){
-				if(item.getColor().indexOf("-")>0){
-					colorNo = " " + item.getColor().substring(0, item.getColor().indexOf("-")).trim();
-				}else {
-					colorNo = " " +  item.getColor();
-				}
-
-			}
-			hubSpu.setSupplierSpuModel(item.getProductCode()+colorNo);
+            //无货号
+			hubSpu.setSupplierSpuModel(item.getProductCode());
 
 			hubSpu.setSupplierSpuName(item.getProductName());
 			hubSpu.setSupplierSpuColor(item.getColor());
