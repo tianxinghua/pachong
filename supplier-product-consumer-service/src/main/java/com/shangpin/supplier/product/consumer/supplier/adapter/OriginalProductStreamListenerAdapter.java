@@ -138,6 +138,10 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler filippoHandler;
 	
 	@Autowired
+	@Qualifier("monnalisaHandler")
+	private ISupplierHandler monnalisaHandler;
+	
+	@Autowired
 	@Qualifier("coccolebimbiCommonHandler")
 	private ISupplierHandler coccolebimbiCommonHandler;
 	
@@ -735,6 +739,15 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void gaudenziStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+	
+	/**
+	 * monnalisa供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void monnalisaStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		monnalisaHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**
