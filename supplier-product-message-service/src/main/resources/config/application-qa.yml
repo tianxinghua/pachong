@@ -214,6 +214,9 @@ spring:
                               content-type: application/json  
                         dlrboutiqueOriginalProduct: 
                               destination: dlrboutique.original.product
+                              content-type: application/json  
+                        monnalisaOriginalProduct: 
+                              destination: monnalisa.original.product
                               content-type: application/json   
                         allProductStock: 
                               destination: supplier.product.stock
@@ -426,7 +429,10 @@ spring:
                                            prefix: HA. 
                             dlrboutiqueOriginalProduct: 
                                   producer: 
-                                           prefix: HA.  
+                                           prefix: HA. 
+                            monnalisaOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
                             allProductStock: 
                                   producer: 
                                            prefix: HA.                                                                                                                                                                                                                                                                                                               

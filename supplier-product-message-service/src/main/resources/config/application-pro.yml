@@ -221,6 +221,9 @@ spring:
                         reebonzOriginalProduct:
                               destination: reebonz.original.product
                               content-type: application/json
+                        monnalisaOriginalProduct: 
+                              destination: monnalisa.original.product
+                              content-type: application/json  
 
               rabbit:
                       bindings: 
@@ -435,6 +438,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             reebonzOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            monnalisaOriginalProduct:
                                   producer:
                                            prefix: HA.
 
