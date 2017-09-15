@@ -19,6 +19,7 @@ import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.exception.ServiceException;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.ApiURL;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.ColtortiTokenService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.ColtortiUtil;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.coltorti.Customer;
@@ -92,6 +93,10 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			param2.put(sizeNum, num);
 			products.add(new Product(skuId,"",param2));
 			oj.setProducts(products );
+			/**
+			 * 如果是测试订单则将此项设置为true
+			 */
+			oj.setTest(false); 
 			json = gson.toJson(oj);
 			orderDTO.setLogContent("【oltorti推送订单数据为："+json+"】");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -104,11 +109,11 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 			String jsonValue = json;
 			orderDTO.setLogContent("开始推送订单");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			operateData = coltortiPushOrder("post", "json", "https://api.orderlink.it/v1/orders",new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2), null, jsonValue,param1,"SHANGPIN", "12345678",orderDTO);
+			operateData = coltortiPushOrder("post", "json",ApiURL.ORDERS ,new OutTimeConfig(1000*60*2,1000*60*2,1000*60*2), null, jsonValue,param1,"SHANGPIN", "12345678",orderDTO);
 			orderDTO.setLogContent("【coltorti下单返回结果>>>>>>>>>>>"+operateData+"】");
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			ResponseMessage responseMessage = gson.fromJson(operateData, ResponseMessage.class);
-			if("order has been processed successfully".equals(responseMessage.getMessage())){
+			if(("order #"+oj.getOrder_id()+" has been processed successfully").equals(responseMessage.getMessage())){
 				orderDTO.setSupplierOrderNo(orderDTO.getPurchaseNo());
 				orderDTO.setConfirmTime(new Date());
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
@@ -160,35 +165,11 @@ public class ColtortiOrderServiceImpl implements IOrderService {
 		deleteOrder.setRefundTime(new Date());
 	}
 
-	//	@Override
-//	public void handleEmail(OrderDTO orderDTO) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	@Override
-//	public void getSupplierSkuId(Map<String, String> skuMap)
-//			throws ServiceException {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//	//采购异常处理
-//	private void handlePurchaseOrderExc(OrderDTO orderDTO) {
-//		String result = setPurchaseOrderExc(orderDTO);
-//		if("-1".equals(result)){
-//			orderDTO.setStatus(OrderStatus.NOHANDLE);
-//		}else if("1".equals(result)){
-//			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_SUCCESS);
-//		}else if("0".equals(result)){
-//			orderDTO.setStatus(OrderStatus.PURCHASE_EXP_ERROR);
-//		}
-//		orderDTO.setExcState("0");
-//	}
 //	public static void main(String[] args) {
 //		try {
 //			OrderDTO o = new OrderDTO();
-//			o.setPurchaseNo("CGDF201705171901");
-//			o.setDetail("171001LCX000021-848#19:1");
+//			o.setPurchaseNo("CGDF2017091575006");
+//			o.setDetail("171197UCW000013-F0011#9:1");
 //			new ColtortiOrderServiceImpl().handleConfirmOrder(o);
 //		} catch (Exception e) {
 //			e.printStackTrace();

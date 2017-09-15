@@ -14,4 +14,5 @@ public class OrderJson {
 	private String order_id;
 	private Customer customer;
 	private List<Product> products;
+	private boolean test;
 }
