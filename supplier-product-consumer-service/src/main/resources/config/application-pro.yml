@@ -639,6 +639,15 @@ spring:
                         reebonzPendingProduct:
                               destination: reebonz.pending.product
                               content-type: application/json
+                        monnalisaOriginalProduct:
+                              destination: monnalisa.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        monnalisaPendingProduct:
+                              destination: monnalisa.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1267,6 +1276,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               reebonzPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              monnalisaOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              monnalisaPendingProduct:
                                     producer:
                                          prefix: HA.
         consul: 

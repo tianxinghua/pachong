@@ -143,6 +143,8 @@ public interface PendingProductSource {
 	
 	public static final String GAUDENZI = "gaudenziPendingProduct";
 	
+	public static final String MONNALISA = "monnalisaPendingProduct";
+	
 	/**
 	 * 供货商fratinardi通道组件配置
 	 * @return 供货商fratinardi通道组件
@@ -551,4 +553,10 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.REEBONZ)
 	public MessageChannel gaudenziPendingProduct();
+	/**
+	 * 供货商MONNALISA 通道组件配置
+	 * @return 供货商MONNALISA 通道组件
+	 */
+	@Output(value = PendingProductSource.MONNALISA)
+	public MessageChannel monnalisaPendingProduct();
 }

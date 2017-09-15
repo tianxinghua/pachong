@@ -402,6 +402,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        monnalisaPendingProduct:
+                              destination: monnalisa.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit: 
                       bindings: 
                             spinnakerPendingProduct: 
@@ -783,6 +789,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             reebonzPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            monnalisaPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false
