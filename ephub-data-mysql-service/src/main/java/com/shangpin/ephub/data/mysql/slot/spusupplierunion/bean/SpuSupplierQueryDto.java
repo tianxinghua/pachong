@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 public class SpuSupplierQueryDto {
 	
 	private Integer pageIndex = 1;

@@ -4,6 +4,8 @@ import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
 import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
@@ -38,6 +40,9 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
 
     @Autowired
     HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
+
+    @Autowired
+    HubSpuPendingGateWay spuPendingGateWay;
 
 
 
@@ -302,22 +307,40 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
         List<SlotSpuSendDetailCheckDto> returnList = new ArrayList<>();
         for(SlotSpuSendDetailCheckDto dto:dtos){
             HubSlotSpuSupplierDto originDto = spuSupplierGateway.selectByPrimaryKey(dto.getSlotSpuSupplierId());
-            ;
-            if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
-                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
-                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
-                errDto.setResultSign(false);
-                errDto.setMemo("no need send");
-                returnList.add(errDto);
+            if(null!=originDto){
 
-            }else if(originDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
-                SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
-                errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
-                errDto.setResultSign(false);
-                errDto.setMemo("had been sent ,no need send");
-                returnList.add(errDto);
+
+                if(originDto.getState().intValue()==SlotSpuSupplierState.NO_NEED_HANDLE.getIndex()){
+                    SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                    errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                    errDto.setResultSign(false);
+                    errDto.setMemo("no need send");
+                    returnList.add(errDto);
+
+                }else if(originDto.getState().intValue()==SlotSpuSupplierState.SEND.getIndex()){
+                    SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                    errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                    errDto.setResultSign(false);
+                    errDto.setMemo("had been sent ,no need send");
+                    returnList.add(errDto);
+
+                }else{
+
+                    HubSpuPendingDto hubSpuPendingDto = spuPendingGateWay.selectByPrimaryKey(originDto.getSpuPendingId());
+                    if(null!=hubSpuPendingDto){
+                        if(PicState.HANDLED.getIndex()==hubSpuPendingDto.getPicState()){
+                            SlotSpuSendDetailCheckDto errDto = new SlotSpuSendDetailCheckDto();
+                            errDto.setStudioSlotSpuSendDetailId(dto.getStudioSlotSpuSendDetailId());
+                            errDto.setResultSign(false);
+                            errDto.setMemo("have pic ,no need send");
+                            returnList.add(errDto);
+                        }
+                    }
+                }
 
             }
+
+
         }
         return returnList;
     }

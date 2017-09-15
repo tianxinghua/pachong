@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.data.mysql.hub.dto.HubWaitSelectRequestDto;
@@ -35,7 +32,6 @@ import com.shangpin.ephub.product.business.ui.hub.waitselected.dto.HubWaitSelect
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponse;
 import com.shangpin.ephub.product.business.ui.hub.waitselected.vo.HubWaitSelectedResponseWithPage;
 import com.shangpin.ephub.response.HubResponse;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -136,8 +132,6 @@ public class HubSelectedController {
 	 */
 	@RequestMapping(value = "/export-select-pic",method = RequestMethod.POST)
     public HubResponse exportSelectPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
-	        	
-		
 		try {
 			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),TaskType.EXPORT_HUB_PIC.getIndex());
 			sendMessageToTask(task.getTaskNo(),TaskType.EXPORT_HUB_PIC.getIndex(),JsonUtil.serialize(dto));
@@ -205,6 +199,26 @@ public class HubSelectedController {
 			log.error("导出勾选图片失败：{}",e);
 		}
     }
+	
+	/**
+	 * 导出供应商图片
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/export-supplier-pic",method = RequestMethod.POST)
+    public HubResponse exportSupplierPic(@RequestBody HubWaitSelectRequestWithPageDto dto,HttpServletResponse response){
+		
+		try {
+			log.info("供应商导出图片：{}",dto);
+			HubSpuImportTaskDto task=saveTaskIntoMysql(dto.getCreateUser(),19);
+			sendMessageToTask(task.getTaskNo(),19,JsonUtil.serialize(dto));
+			return HubResponse.successResp(task.getTaskNo());
+		} catch (Exception e) {
+			log.error("导出供应商图片失败：{}",e);
+		}
+		return HubResponse.errorResp("导出异常");
+    }
+	
 	 private void sendMessageToTask(String taskNo,int type,String data){
 	    	Task productImportTask = new Task();
 	    	productImportTask.setMessageId(UUID.randomUUID().toString());

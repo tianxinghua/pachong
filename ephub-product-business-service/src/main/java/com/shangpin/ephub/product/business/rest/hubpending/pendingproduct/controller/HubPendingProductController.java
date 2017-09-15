@@ -87,21 +87,30 @@ public class HubPendingProductController {
 
 	private void updatePendingSku(SpSkuNoDto dto) throws Exception{
 		//如果是因为SOP已存在的错误 需要调用接口获取到信息
+//		log.info("getExistSpSkuNo start");
 		if(dto.getSign()==0){
 			getExistSpSkuNo(dto);
 		}
-
+//		log.info("getExistSpSkuNo end");
 		//写入尚品的SKUno
 		HubSkuPendingDto searchSkuPending =null;
+//		log.info("searchSkuPending start");
 		searchSkuPending = updateSkuPendingSpSkuNo(dto);
+//		log.info("searchSkuPending end ");
 		//更新SKUSUPPLIERMAPPING 的状态
+//		log.info("updateSkuSupplierMapping start");
 		updateSkuSupplierMapping(dto);
+//		log.info("updateSkuSupplierMapping end");
 		//修改hub_sku中的商品sku编号
+//		log.info("updateHubSkuSpSkuNo start");
 		if(null!=searchSkuPending){
 			updateHubSkuSpSkuNo(dto, searchSkuPending);
 		}
+//		log.info("updateHubSkuSpSkuNo end");
 		//更新尚品SKU到供货商原始SKU中
+//		log.info("updateSkuSupplierSpSkuNo start");
 		updateSkuSupplierSpSkuNo(dto);
+//		log.info("updateSkuSupplierSpSkuNo end");
 
 	}
 

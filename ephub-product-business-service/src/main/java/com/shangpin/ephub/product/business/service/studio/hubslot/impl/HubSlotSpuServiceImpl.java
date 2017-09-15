@@ -141,7 +141,7 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 updateSlotSpuState(slotSpuDto,isShootSupplier);
 
             }
-            log.info("addSlotSpuAndSupplier add slotspu success" );
+            log.debug("addSlotSpuAndSupplier add slotspu success" );
             //slotspusupplier 处理
 
             if(null==hubSlotSpuSupplierService.getSlotSpuSupplierOfValidBySpuNoAndSupplierId(slotSpuDto.getSlotSpuNo(),pendingProductDto.getSupplierId())){
@@ -151,13 +151,13 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
                 hubSlotSpuSupplierService.addHubSlotSpuSupplier(slotSpuSupplierDto,slotSpuDto.getSpuState().intValue());
 
             }
-            log.info("addSlotSpuAndSupplier add slotspusupplier success" );
+            log.debug("addSlotSpuAndSupplier add slotspusupplier success" );
             //spupending 处理
             pendingService.updatePendingSlotStateAndUser(slotSpuSupplierDto.getSpuPendingId(),
                     StringUtils.isNotBlank(pendingProductDto.getUpdateUser())?pendingProductDto.getUpdateUser():"ServiceAutoAdd", SpuPendingStudioState.HANDLED);
 
 
-            log.info("addSlotSpuAndSupplier update  spupending success" );
+            log.debug("addSlotSpuAndSupplier update  spupending success" );
 
 
             return true;

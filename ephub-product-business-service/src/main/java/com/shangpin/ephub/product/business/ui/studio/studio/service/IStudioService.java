@@ -23,7 +23,7 @@ public interface IStudioService {
     SlotInfoExtends getSlotInfo( String supplierId ,String slotNo);
     HubResponse<?> addProductIntoSlot(String supplierId , String slotNo, List<Long> slotSSIds, String createUser);
     HubResponse<?> delProductFromSlot(String supplierId ,String slotNo,Long slotSSId,Long slotSSDId,String createUser);
-    HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo);
+    HubResponse<?> checkProductAndSendSlot(String supplierId ,String slotNo,String handleUser);
     boolean insertSlotLogistic(Long studioSlotId,String logisticName,String trackingNo,String memo,String createUser);
     StudioSlotLogistictTrackDto getSlotLogisticInfo(Long studioSlotId);
     boolean slotPrint(Long slotId);

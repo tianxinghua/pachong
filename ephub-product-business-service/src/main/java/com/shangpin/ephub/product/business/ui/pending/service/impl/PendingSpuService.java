@@ -222,7 +222,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 			}
 
 			criteria.andSlotStateEqualTo(SpuPendingStudioState.WAIT_HANDLED.getIndex().byteValue());
-			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.UNHANDLED.getIndex());
+			criteria.andStockStateEqualTo(StockState.HANDLED.getIndex()).andPicStateEqualTo(PicState.NO_PIC.getIndex());
 		}else{
 			SpuState spuState = getSpuState(pendingQuryDto.getSpuState());
 			/**
