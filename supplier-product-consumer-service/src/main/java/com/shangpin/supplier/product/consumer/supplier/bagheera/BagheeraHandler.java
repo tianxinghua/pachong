@@ -35,7 +35,19 @@ public class BagheeraHandler extends AtelierCommonHandler {
 			atelierSpu.setMaterial3(spuArr[42]);
 			atelierSpu.setProductOrigin(spuArr[14]); 
 			atelierSpu.setSizeDetail(spuArr[14]); 
-			atelierSpu.setSizeType(spuArr[20]); 
+			atelierSpu.setSizeType(spuArr[20]);
+
+
+
+			atelierSpu.setMaterial1(spuArr[11]);
+
+
+			atelierSpu.setProductOrigin(spuArr[40]);
+
+
+
+
+
 			return atelierSpu;
 		}else{
 			return null;
