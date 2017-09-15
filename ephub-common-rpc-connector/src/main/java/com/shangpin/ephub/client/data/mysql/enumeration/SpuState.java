@@ -47,7 +47,7 @@ public enum SpuState {
 	/**
 	 * 全部商品，指hub_spu_pending表
 	 */
-	ALL_PENDING_SPU((byte)1213, "全部商品");
+	ALL_PENDING_SPU((byte)99, "全部商品");
 	
 	
 	
