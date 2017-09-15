@@ -3,9 +3,11 @@ package com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.mapper;
 import com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail;
 import com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetailCriteria;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-
+@Mapper
 public interface SpShippingPolicyDetailMapper {
     int countByExample(SpShippingPolicyDetailCriteria example);
 
