@@ -25,6 +25,7 @@ public class PendingProductStreamListenerAdapter {
 
 	private void messageHandle(PendingProduct message, Map<String, Object> headers){
 		try {
+			log.info("----------------------------");
 			pendingHandler.receiveMsg(message,headers);
 		} catch (Exception e) {
 			log.error(" exception message = message boday : "  + message.toString()
@@ -629,6 +630,26 @@ public class PendingProductStreamListenerAdapter {
 	 */
 	public void reebonzPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
+	}
+	
+	/**
+	 * 供应商gaudenzi待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void gaudenziPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	
+	/**
+	 * 供应商monnalisa待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void monnalisaPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
 	}
 
 }

@@ -87,7 +87,7 @@ public class PictureProductService {
 				List<String> deletedUrls = Lists.newArrayList();
 				pics.keySet().forEach(url -> add(url, supplierUrls, deletedUrls));
 				if(deletedUrls.size() > 0){
-					update(supplierPicture.getSupplierSpuId(), deletedUrls);
+					updateDataStateToDelete(supplierPicture.getSupplierSpuId(), deletedUrls);
 				}
 			}
 			if(images.size() > 0){
@@ -129,7 +129,7 @@ public class PictureProductService {
 		}
 	}
 	
-	private void update(Long supplierSpuId, List<String> deletedUrls){
+	private void updateDataStateToDelete(Long supplierSpuId, List<String> deletedUrls){
 		HubSpuPendingPicWithCriteriaDto withCriteria = new HubSpuPendingPicWithCriteriaDto();
 		HubSpuPendingPicCriteriaDto criteria =  new HubSpuPendingPicCriteriaDto();
 		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicUrlIn(deletedUrls);
@@ -140,5 +140,36 @@ public class PictureProductService {
 		hubSpuPendingPic.setUpdateTime(new Date());
 		withCriteria.setHubSpuPendingPic(hubSpuPendingPic );
 		picClient.updateByCriteriaSelective(withCriteria );
+	}
+	/**
+	 * 将供应商不在维护图片的spu，逻辑删除原有的图片链接
+	 * @param supplierId 供应商门户编号
+	 * @param supplierSpuNo 供应商spu编号
+	 */
+	public void updateDataStateToDelete(String supplierId, String supplierSpuNo){
+		if(count(supplierId,supplierSpuNo) > 0){
+			HubSpuPendingPicWithCriteriaDto withCriteria = new HubSpuPendingPicWithCriteriaDto();
+			HubSpuPendingPicCriteriaDto criteria =  new HubSpuPendingPicCriteriaDto();
+			criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo); 
+			withCriteria.setCriteria(criteria );
+			HubSpuPendingPicDto hubSpuPendingPic =  new HubSpuPendingPicDto();
+			hubSpuPendingPic.setDataState(DataState.DELETED.getIndex());
+			hubSpuPendingPic.setMemo("供应商不维护已删除"); 
+			hubSpuPendingPic.setUpdateTime(new Date());
+			withCriteria.setHubSpuPendingPic(hubSpuPendingPic );
+			picClient.updateByCriteriaSelective(withCriteria );
+		}
+	}
+	
+	/**
+	 * 根据供应商门户编号和供应商spu编号查找图片数量
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @return
+	 */
+	private int count(String supplierId, String supplierSpuNo){
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		return picClient.countByCriteria(criteria );
 	}
 }

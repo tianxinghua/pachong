@@ -117,5 +117,9 @@ public class SupplierProperties {
 	private Antonacci antonacci;
 
 	private Giglio giglio;
+
+	private Ylati ylati;
+	
+	private Gaudenzi gaudenzi;
 	
 }

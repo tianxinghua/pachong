@@ -59,11 +59,7 @@ public class VariableInit {
     @Autowired
     DataSverviceUtil dataSverviceUtil;
 
-    @Autowired
-    ValidationRuleUtil validationRuleUtil;
 
-    @Autowired
-    BurberryModelRule burberryModelRule;
 
     @Autowired
     HubBrandModelRuleGateWay brandModelRuleGateWay;
@@ -467,6 +463,7 @@ public class VariableInit {
                             result = sizeItem.getScreenSizeStandardValueId() + "," + sizeItem.getSizeStandardName()
                                     + ":" + sizeItem.getSizeStandardValue();
 
+
                         } else {
                             log.error("品牌：" + hubBrandNo + " 品类: " + hubCategoryNo + " 的尺码对照有错误。");
                             return "";
@@ -606,6 +603,24 @@ public class VariableInit {
         }
     }
 
+
+    protected boolean  handlePicState(PendingSpu spu, SpuPending hubSpuPending) {
+        Long supplierSpuId = spu.getSupplierSpuId();
+        String picUrl = dataServiceHandler.getPicUrlBySupplierSpuId(supplierSpuId);
+        if (StringUtils.isNotBlank(picUrl)) {
+            hubSpuPending.setPicState(PicState.HANDLED.getIndex());
+            return true;
+
+        }else{
+            if(hubSpuPending.isHavePic()){
+                hubSpuPending.setPicState(PicState.UNHANDLED.getIndex());
+            }else{
+                hubSpuPending.setPicState(PicState.NO_PIC.getIndex());
+            }
+            return false;
+        }
+    }
+
     protected Map<String, String> getOriginMap() {
         if (null == originStaticMap) {
             originStaticMap = new HashMap<>();
@@ -722,7 +737,7 @@ public class VariableInit {
 
         // 获取材质
         if (StringUtils.isNotBlank(spu.getHubMaterial())) {
-            if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
+            if(!replaceMaterialByRedis(spu, updateSpuPending)) allStatus = false;
         }
         // 产地映射
         if (StringUtils.isNotBlank(spu.getHubOrigin())) {
@@ -775,7 +790,7 @@ public class VariableInit {
             if(map.containsKey(ErrorType.MATERIAL_INFO_ERROR.getIndex())){
                 spuPendingMsgHandleService.updateSpuErrorMsgDateState(map.get(ErrorType.MATERIAL_INFO_ERROR.getIndex()));
                 updateSpuPending.setMsgMissHandleState(MsgMissHandleState.SUPPLIER_HAVE_HANDLED.getIndex());
-                if(!replaceMaterial(spu, updateSpuPending)) allStatus = false;
+                if(!replaceMaterialByRedis(spu, updateSpuPending)) allStatus = false;
             }
 
         }
@@ -1125,45 +1140,45 @@ public class VariableInit {
     /**
      * 返回false 说明有英文
      *
-     * @param spu
-     * @param hubSpuPending
+//     * @param spu
+//     * @param hubSpuPending
      * @return
      */
-    protected boolean replaceMaterial(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
-        Map<String, String> materialMap = this.getMaterialMap();
-        Set<String> materialSet = materialMap.keySet();
-        String supplierMaterial = "";
-        if (StringUtils.isNotBlank(spu.getHubMaterial())) {
-
-            for (String material : materialSet) {
-                if (StringUtils.isBlank(material))
-                    continue;
-
-                supplierMaterial = spu.getHubMaterial().toLowerCase();
-                if (supplierMaterial.indexOf(material.toLowerCase()) >= 0) {
-
-                    spu.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(), materialMap.get(material)));
-                }
-
-            }
-            hubSpuPending.setHubMaterial(spu.getHubMaterial());
-
-            if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
-                hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-                // 材质含有英文 返回false
-                return false;
-            } else {
-                hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-                return true;
-            }
-
-        } else {
-            hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            // 无材质 返回false
-            return false;
-        }
-
-    }
+//    protected boolean replaceMaterial(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
+//        Map<String, String> materialMap = this.getMaterialMap();
+//        Set<String> materialSet = materialMap.keySet();
+//        String supplierMaterial = "";
+//        if (StringUtils.isNotBlank(spu.getHubMaterial())) {
+//
+//            for (String material : materialSet) {
+//                if (StringUtils.isBlank(material))
+//                    continue;
+//
+//                supplierMaterial = spu.getHubMaterial().toLowerCase();
+//                if (supplierMaterial.indexOf(material.toLowerCase()) >= 0) {
+//
+//                    spu.setHubMaterial(supplierMaterial.replaceAll(material.toLowerCase(), materialMap.get(material)));
+//                }
+//
+//            }
+//            hubSpuPending.setHubMaterial(spu.getHubMaterial());
+//
+//            if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
+//                hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//                // 材质含有英文 返回false
+//                return false;
+//            } else {
+//                hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+//                return true;
+//            }
+//
+//        } else {
+//            hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//            // 无材质 返回false
+//            return false;
+//        }
+//
+//    }
 
     private void removeFromMap(Map<String,?> resourceMap,Map<String,String> keyMap){
         Iterator<String> iterator = resourceMap.keySet().iterator();

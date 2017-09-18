@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-//import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +21,8 @@ import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
-@Component("viettiServiceImpl")
-public class ViettiServiceImpl implements IOrderService {
+@Component("gaudenziServiceImpl")
+public class GaudenziServiceImpl implements IOrderService {
 	
 	@Autowired
     LogCommon logCommon;    
@@ -44,7 +43,7 @@ public class ViettiServiceImpl implements IOrderService {
      * @return
      * @throws Exception
      */
-    public String viettiPost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
+    public String gaudenziPost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
     	return HttpUtil45.postAuth(url, param, outTimeConf, userName, password);
     }
     /**
@@ -212,7 +211,7 @@ public class ViettiServiceImpl implements IOrderService {
 	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);		
-		String returnData = viettiPost(supplierProperties.getVietti().getUrl()+supplierProperties.getVietti().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getVietti().getUser(),supplierProperties.getVietti().getPassword(),orderDTO);
+		String returnData = gaudenziPost(supplierProperties.getGaudenzi().getUrl()+supplierProperties.getGaudenzi().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getGaudenzi().getUser(),supplierProperties.getGaudenzi().getPassword(),orderDTO);
 		return returnData;
 	}
 	
@@ -231,7 +230,7 @@ public class ViettiServiceImpl implements IOrderService {
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = viettiPost(supplierProperties.getVietti().getUrl()+supplierProperties.getVietti().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getVietti().getUser(),supplierProperties.getVietti().getPassword(),orderDTO);
+		String returnData = gaudenziPost(supplierProperties.getGaudenzi().getUrl()+supplierProperties.getGaudenzi().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getGaudenzi().getUser(),supplierProperties.getGaudenzi().getPassword(),orderDTO);
 		orderDTO.setLogContent("下订单返回结果======="+returnData+" 下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
@@ -249,7 +248,7 @@ public class ViettiServiceImpl implements IOrderService {
 		param.put("STATUS", status);//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
 		orderDTO.setLogContent("设置订单参数======="+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
-		String returnData = viettiPost(supplierProperties.getVietti().getUrl()+supplierProperties.getVietti().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getVietti().getUser(),supplierProperties.getVietti().getPassword(),orderDTO);
+		String returnData = gaudenziPost(supplierProperties.getGaudenzi().getUrl()+supplierProperties.getGaudenzi().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getGaudenzi().getUser(),supplierProperties.getGaudenzi().getPassword(),orderDTO);
 		orderDTO.setLogContent("设置订单状态返回结果======="+returnData);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
 		return returnData;
@@ -260,22 +259,14 @@ public class ViettiServiceImpl implements IOrderService {
 	 * @param code 订单编号
 	 * @return
 	 */
-//	@Test
-	public void getStatusOrderMarketplace() throws Exception {
-		Map<String,String> param = new HashMap<String,String>();
-		param.put("ID_ORDER_MRKP", "1234567890");
-		param.put("BARCODE", "2111923881671");
-		param.put("QTY", "1");
-		String returnData = HttpUtil45.postAuth("http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/NewOrderMarketPlace", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"shangpin","shang1307");
-	    System.out.println(returnData);
-	}
-	//@Test
-	public void cancel() throws Exception {
-		Map<String,String> param = new HashMap<String,String>();
-		param.put("CODE", "1234567890");
-		param.put("STATUS", "CANCELED");//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
-		String returnData = HttpUtil45.postAuth("http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/SetStatusOrderMarketplace", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"shangpin","shang1307");
-		System.out.println(returnData);
-	}
+//	private String getStatusOrderMarketplace(String code) throws Exception {
+//		Map<String,String> param = new HashMap<String,String>();
+//		param.put("CODE", code);
+//		logger.info("查询的订单号为======"+code);
+//		String returnData = HttpUtil45.postAuth(url+getStatus_interface, param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),user,password);
+//		logger.info("查询返回结果======="+returnData);
+//		return returnData;
+//	}
+
 	
 }

@@ -147,6 +147,7 @@ public class SupplierProductSaveAndSendToPending {
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 			//保存hubSpu到数据库
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
+				pictureProductService.updateDataStateToDelete(supplierId, supplierSpuDto.getSupplierSpuNo());
 				pendingSpu.setPicState(PicState.NO_PIC.getIndex());
 			}
 			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,pendingSpu);

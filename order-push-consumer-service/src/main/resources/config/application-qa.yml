@@ -25,16 +25,15 @@ spring:
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
   mail: 
-       default-recipient: zhaogenchun@shangpin.com
-       default-sender: yanxiaobin@shangpin.com
+       default-recipient: lizhongren@shangpin.com
+       default-sender: chengxu@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
        host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
        port: 25 # SMTP server port.
        protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
-       test-connection: false # Test that the mail server is available on startup.
-shangpin: 
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
+       test-connection: true # Test that the mail server is available on startup.shangpin:
   hub: 
     dataSource: 
       clusters: 
@@ -119,6 +118,17 @@ shangpin:
               getItemStockInterface: GetItemStockBySizeMarketPlace
               user: Shangpin
               password: shang2609
+              messageType: text/html;charset=utf-8
+              openApiKey: 
+              openApiSecret: 
+      gaudenzi: 
+              url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang3108
               messageType: text/html;charset=utf-8
               openApiKey: 
               openApiSecret: 
@@ -339,6 +349,16 @@ shangpin:
               dBContext: Default
               openApiKey: 
               openApiSecret: 
+      spinnakerPortofinoParam:
+              setOrderUrl: http://net13server.net/spinnakerapi/Myapi/Productslist/setOrder
+              queryOrderUrl: hhttp://net13server.net/spinnakerapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13server.net/spinnakerapi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13server.net/spinnakerapi/Myapi/Productslist/GetQuantityByBarcode
+              key: 8IZk2x5tVN
+              dBContext: portofino
+              isPurchaseExp: 
+              openApiKey: 
+              openApiSecret: 
       stefania: 
               authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
               channel: SHANGPIN
@@ -387,6 +407,12 @@ shangpin:
               isPurchaseExp: no
               openApiKey:
               openApiSecret:
+      baseBluEdsConf:
+              cancelUrl: http://baseblu.edstema.it/api/v3.0/cancel/order.json?storeCode=YYW8M
+              placeUrl: http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M
+              isPurchaseExp: no
+              openApiKey: 5c90e6a49a6641738f186e866c7b2c77
+              openApiSecret: 7152fc54632e429c8939a6bd3f5ca2cc
       parisi:
               hostUrl: http://www.rpwebservice.it/wsnat13.asmx
               stockUrl: http://tempuri.org/GetStockWithSku

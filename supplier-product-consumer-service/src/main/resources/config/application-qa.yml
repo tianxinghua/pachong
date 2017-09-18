@@ -85,6 +85,15 @@ spring:
                                        maxAttempts: 1
                         brunarossoPendingProduct: 
                               destination: brunarosso.pending.product
+                              content-type: application/json  
+                        gaudenziOriginalProduct: 
+                              destination: gaudenzi.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        gaudenziPendingProduct: 
+                              destination: gaudenzi.pending.product
                               content-type: application/json                        
                         stefaniaOriginalProduct: 
                               destination: stefania.original.product
@@ -650,6 +659,15 @@ spring:
                         reebonzPendingProduct:
                               destination: reebonz.pending.product
                               content-type: application/json
+                        monnalisaOriginalProduct:
+                              destination: monnalisa.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        monnalisaPendingProduct:
+                              destination: monnalisa.pending.product
+                              content-type: application/json
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -723,7 +741,16 @@ spring:
                                          republishToDlq: false
                               brunarossoPendingProduct: 
                                     producer: 
-                                         prefix: HA.                                        
+                                         prefix: HA.   
+                              gaudenziOriginalProduct: 
+                                    consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              gaudenziPendingProduct: 
+                                    producer: 
+                                         prefix: HA.                                      
                               stefaniaOriginalProduct: 
                                     consumer: 
                                          prefix: HA.
@@ -1286,6 +1313,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               reebonzPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              monnalisaOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              monnalisaPendingProduct:
                                     producer:
                                          prefix: HA.
   jackson: 

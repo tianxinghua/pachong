@@ -138,6 +138,13 @@ public interface PendingProductSource {
 	public static final String EMONTI = "emontiPendingProduct";
 	
 	public static final String DLRBOUTIQUE = "dlrboutiquePendingProduct";
+	
+	public static final String REEBONZ = "reebonzPendingProduct";
+	
+	public static final String GAUDENZI = "gaudenziPendingProduct";
+	
+	public static final String MONNALISA = "monnalisaPendingProduct";
+	
 	/**
 	 * 供货商fratinardi通道组件配置
 	 * @return 供货商fratinardi通道组件
@@ -534,4 +541,22 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.DLRBOUTIQUE)
 	public MessageChannel dlrboutiquePendingProduct();
+	/**
+	 * 供货商REEBONZ 通道组件配置
+	 * @return 供货商REEBONZ 通道组件
+	 */
+	@Output(value = PendingProductSource.REEBONZ)
+	public MessageChannel reebonzPendingProduct();
+	/**
+	 * 供货商GAUDENZI 通道组件配置
+	 * @return 供货商GAUDENZI 通道组件
+	 */
+	@Output(value = PendingProductSource.REEBONZ)
+	public MessageChannel gaudenziPendingProduct();
+	/**
+	 * 供货商MONNALISA 通道组件配置
+	 * @return 供货商MONNALISA 通道组件
+	 */
+	@Output(value = PendingProductSource.MONNALISA)
+	public MessageChannel monnalisaPendingProduct();
 }

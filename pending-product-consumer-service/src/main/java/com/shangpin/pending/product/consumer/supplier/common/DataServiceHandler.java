@@ -626,6 +626,7 @@ public class DataServiceHandler {
 		spuPending.setMarketPriceState(SupplierPriceState.HAVE_PRICE.getIndex());
 		spuPending.setAuditState(AuditState.INIT.getIndex());
 		if(null==spuPending.getPicState()) spuPending.setPicState(PicState.UNHANDLED.getIndex());
+
 		//如果是儿童的可能需要重新设置品牌
 		changeChildBrandNo(spuPending);
 
@@ -875,7 +876,8 @@ public class DataServiceHandler {
 	public String getPicUrlBySupplierSpuId(Long supplierSpuId) {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
 		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId)
-				.andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex());
+				.andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex())
+		.andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 
 		List<HubSpuPendingPicDto> hubSpuPendingPicDtos = pendingPicGateWay.selectByCriteria(criteria);
 		if (null != hubSpuPendingPicDtos && hubSpuPendingPicDtos.size() > 0) {

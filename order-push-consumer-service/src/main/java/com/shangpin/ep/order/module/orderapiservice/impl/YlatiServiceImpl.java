@@ -21,9 +21,17 @@ import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("giglioServiceImpl")
+/**
+ * <p>Title: YlatiServiceImpl</p>
+ * <p>Description: ylati供应商邮件对接 </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年8月9日 下午5:11:30
+ *
+ */
+@Component("ylatiServiceImpl")
 @Slf4j
-public class GiglioServiceImpl implements IOrderService{
+public class YlatiServiceImpl implements IOrderService{
 	
 	private static String split = ";";
 	
@@ -56,21 +64,21 @@ public class GiglioServiceImpl implements IOrderService{
 				.append(sku.getProductSize()).append(split).append(orderDTO.getSupplierSkuNo()).append(split)
 				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
 				.append(orderDTO.getQuantity());
-				log.info("giglio推送订单参数："+buffer.toString()); 
+				log.info("ylati推送订单参数："+buffer.toString()); 
 				sendMail("order-shangpin",buffer.toString());
 				orderDTO.setConfirmTime(new Date()); 
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
-				log.info("giglio推送成功。"); 
+				log.info("ylati推送成功。"); 
 			}else{
-				log.info("giglio根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku："+ orderDTO.getSupplierSkuNo());
+				log.info("ylati根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku："+ orderDTO.getSupplierSkuNo());
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
-				orderDTO.setDescription("giglio根据供应商门户编号和供应商skuid查找SKU失败");
+				orderDTO.setDescription("ylati根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			handleException.handleException(orderDTO,e);
-			orderDTO.setLogContent("giglio推送订单异常========= "+e.getMessage());
+			orderDTO.setLogContent("ylati推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
 		
@@ -94,20 +102,20 @@ public class GiglioServiceImpl implements IOrderService{
 				.append(sku.getProductSize()).append(split).append(deleteOrder.getSupplierSkuNo()).append(split)
 				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
 				.append(deleteOrder.getQuantity());
-				log.info("giglio退款单参数："+buffer.toString()); 
+				log.info("ylati退款单参数："+buffer.toString()); 
 				sendMail("cancelled order-shangpin",buffer.toString());
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
-				log.info("giglio退款成功。"); 
+				log.info("ylati退款成功。"); 
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
-				deleteOrder.setDescription("giglio根据供应商门户编号和供应商skuid查找SKU失败");
+				deleteOrder.setDescription("ylati根据供应商门户编号和供应商skuid查找SKU失败");
 			}
 		} catch (Exception e) {
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 			handleException.handleException(deleteOrder, e); 
-			deleteOrder.setLogContent("giglio退款发生异常============"+e.getMessage());
+			deleteOrder.setLogContent("ylati退款发生异常============"+e.getMessage());
 			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);		
 		}
 	}
@@ -123,10 +131,10 @@ public class GiglioServiceImpl implements IOrderService{
 		shangpinMail.setFrom("chengxu@shangpin.com");
 		shangpinMail.setSubject(subject);
 		shangpinMail.setText(text);
-		shangpinMail.setTo("giuseppe@giglio.com");
+		shangpinMail.setTo("sales@ylatifootwear.com");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("fabio@giglio.com");
-//		addTo.add("wangsaying@shangpin.com");
+		addTo.add("press@ylatifootwear.com");
+		addTo.add("vportogallo@genertecitalia.it");
 //		addTo.add("lubaijiang@shangpin.com");
 //		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );

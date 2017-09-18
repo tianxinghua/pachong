@@ -60,6 +60,12 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        gaudenziPendingProduct: 
+                              destination: gaudenzi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         stefaniaPendingProduct: 
                               destination: stefania.pending.product
                               group: one
@@ -432,6 +438,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        monnalisaPendingProduct:
+                              destination: monnalisa.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit: 
                       bindings:
                             forzieriPendingProduct: 
@@ -453,6 +465,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             brunarossoPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            gaudenziPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -825,6 +843,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             reebonzPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            monnalisaPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

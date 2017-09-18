@@ -17,8 +17,8 @@ import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 
 import lombok.extern.slf4j.Slf4j;
 /**
- * <p>Title: WiseServiceImpl</p>
- * <p>Description: wise供应商订单以发送邮件的方式发送给对方</p>
+ * <p>Title: CoccoServiceImpl</p>
+ * <p>Description: 供应商订单以发送邮件的方式发送给对方</p>
  * <p>Company: </p> 
  * @author lubaijiang
  * @date 2017年6月22日 上午10:15:54

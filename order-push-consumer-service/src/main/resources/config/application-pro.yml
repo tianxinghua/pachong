@@ -27,13 +27,13 @@ spring:
        time-zone: GMT+8
   mail: 
        default-recipient: lizhongren@shangpin.com
-       default-sender: yanxiaobin@shangpin.com
+       default-sender: chengxu@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
        host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
        port: 25 # SMTP server port.
        protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
        test-connection: true # Test that the mail server is available on startup.
 shangpin: 
   hub: 
@@ -131,6 +131,18 @@ shangpin:
                   getItemStockInterface: GetItemStockBySizeMarketPlace
                   user: Shangpin
                   password: shang2609
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: 34ba9613f2544c279a7523d015184b1e
+                  openApiSecret: 43e578550e9047b5936f7bc44876061d
+          gaudenzi:
+                  url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: shang3108
                   messageType: text/html;charset=utf-8
                   isPurchaseExp:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
@@ -487,6 +499,10 @@ shangpin:
                   isPurchaseExp: false
                   openApiKey:
                   openApiSecret:
+          ylati:
+                  isPurchaseExp: false
+                  openApiKey:
+                  openApiSecret:
           dlrboutique: 
                   url: http://79.60.189.204/WS_SITO_P15/WS_SITO_P15.ASMX/
                   createOrderInterface: NewOrderMarketPlace
@@ -500,16 +516,16 @@ shangpin:
                   openApiKey: 0173a41214d345dd88f78a9d3e82837b
                   openApiSecret: 8468cca27d904e929c5330d7f57d6d30 
           wise: 
-              url: http://at98p.wiseboutique.com/ws_sito_p15/ws_sito_p15.asmx/
-              createOrderInterface: NewOrderMarketPlace
-              setStatusInterface: SetStatusOrderMarketplace
-              getStatusInterface: GetStatusOrderMarketplace
-              getItemStockInterface: GetItemStockBySizeMarketPlace
-              user: shangpin
-              password: Shang1808
-              messageType: text/html;charset=utf-8
-              openApiKey: 71b18f9d51b0425fb81aa0f6f9c27ce8
-              openApiSecret: 066c25a42ee14a03b42b206df0068e9b
+                  url: http://at98p.wiseboutique.com/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang1808
+                  messageType: text/html;charset=utf-8
+                  openApiKey: 71b18f9d51b0425fb81aa0f6f9c27ce8
+                  openApiSecret: 066c25a42ee14a03b42b206df0068e9b
           supplier:
                   delayTime: 1000
                   retry: 120
