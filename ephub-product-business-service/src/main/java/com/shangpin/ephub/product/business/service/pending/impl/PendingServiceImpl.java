@@ -211,9 +211,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 spuPendingVO.setHaveHubSpu(isHaveHubSpu);
                 if(isHaveHubSpu){
                     //赋值hubspu属性
-                    spuPendingVO.setHubCategory(spuDto.getCategoryNo());
-                    spuPendingVO.setHubColor(spuDto.getHubColor());
-                    spuPendingVO.setHubMaterial(spuDto.getMaterial());
+                    spuPendingVO.setHub_Category(spuDto.getCategoryNo());
+                    spuPendingVO.setHub_Color(spuDto.getHubColor());
+                    spuPendingVO.setHub_Material(spuDto.getMaterial());
 
                 }
                 if(null!=spuPendingDto.getUpdateTime()){

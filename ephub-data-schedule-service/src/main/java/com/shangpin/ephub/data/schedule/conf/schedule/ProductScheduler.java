@@ -31,7 +31,7 @@ public class ProductScheduler {
     @Autowired
     private HubModifyDataStatusGateWay hubModifyDataStatusGateWay;
 
-	@Scheduled(cron = "00 55 20 * * ?")
+//	@Scheduled(cron = "00 55 20 * * ?")
 	public void stockTask() {
 		try {
 			log.info("======================清除库存定时任务开始======================");
@@ -43,7 +43,7 @@ public class ProductScheduler {
 	}
 
 
-	@Scheduled(cron = "00 00 07 * * ?")
+	@Scheduled(cron = "00 25 20 * * ?")
 	public void pricePush() {
 		try {
 			log.info("===========pricePush任务开始============"); 
@@ -56,7 +56,7 @@ public class ProductScheduler {
 	/**
 	 * 检测产品拉去
 	 */
-	@Scheduled(cron = "00 00 09 * * ?")
+//	@Scheduled(cron = "00 00 09 * * ?")
 	public void productCheck(){
 		try {
 			log.info("===========检测产品拉去任务开始============"); 
@@ -69,7 +69,7 @@ public class ProductScheduler {
 	/**
 	 * 检测价格推送
 	 */
-	@Scheduled(cron = "00 00 09 * * ?")
+//	@Scheduled(cron = "00 00 09 * * ?")
 	public void priceCheck(){
 		try {
 			log.info("===========检测价格推送任务开始============"); 
@@ -83,7 +83,7 @@ public class ProductScheduler {
 	/**
 	 * 修改数据和图片状态
 	 */
-	@Scheduled(cron = "00 50 08 * * ?")
+//	@Scheduled(cron = "00 50 08 * * ?")
 	public void modifyUpdateStatus(){
 		try {
 			log.info("===========更新数据和图片状态============"); 

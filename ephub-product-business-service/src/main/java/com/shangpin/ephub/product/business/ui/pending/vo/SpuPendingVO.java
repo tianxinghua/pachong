@@ -33,11 +33,11 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
 
     //hub的品类
     @JsonProperty("hubCategory")
-    private String hubCategory;
+    private String hub_Category;
     @JsonProperty("hubColor")
-    private String hubColor;
+    private String hub_Color;
     @JsonProperty("hubMaterial")
-    private String hubMaterial;
+    private String hub_Material;
 
 
 
@@ -86,27 +86,27 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
     }
 
     @JsonProperty("hubCategory")
-    public String getHubCategory() {
-        return hubCategory;
+    public String getHub_Category() {
+        return hub_Category;
     }
     @JsonProperty("hubCategory")
-    public void setHubCategory(String hubCategory) {
-        this.hubCategory = hubCategory;
+    public void setHub_Category(String hub_Category) {
+        this.hub_Category = hub_Category;
     }
     @JsonProperty("hubColor")
-    public String getHubColor() {
-        return hubColor;
+    public String getHub_Color() {
+        return hub_Color;
     }
     @JsonProperty("hubColor")
-    public void setHubColor(String hubColor) {
-        this.hubColor = hubColor;
+    public void setHub_Color(String hub_Color) {
+        this.hub_Color = hub_Color;
     }
     @JsonProperty("hubMaterial")
-    public String getHubMaterial() {
-        return hubMaterial;
+    public String getHub_Material() {
+        return hub_Material;
     }
     @JsonProperty("hubMaterial")
-    public void setHubMaterial(String hubMaterial) {
-        this.hubMaterial = hubMaterial;
+    public void setHub_Material(String hub_Material) {
+        this.hub_Material = hub_Material;
     }
 }
