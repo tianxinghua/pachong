@@ -196,12 +196,15 @@ public class DataSverviceUtil {
                 	 String size1 = size.substring(0,size.indexOf(sizeKey));
         			 String size2 = size.substring(size.indexOf(sizeKey));
                     size = size1 + size2.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
+                    if(size.contains("(")&&size.contains(")")){
+          			  size = size.substring(0,size.indexOf("(")) + size.substring(size.indexOf(")")+1);
+                    }
                 }
             }
         }
         return size;
     }
-
+    
     public  void updatePriceOrStock(SpuPending hubSpuPending,PendingSku supplierSku){
         if(null!=supplierSku){
             HubSkuPendingDto originSkuPending =  dataServiceHandler.getHubSkuPending(supplierSku.getSupplierId(),supplierSku.getSupplierSkuNo());
