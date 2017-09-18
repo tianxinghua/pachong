@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.mapper.SpShippingPolicyDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="shipping_policy_id" property="shippingPolicyId" jdbcType="BIGINT" />
+    <result column="sp_category_from" property="spCategoryFrom" jdbcType="TINYINT" />
+    <result column="sp_category_no" property="spCategoryNo" jdbcType="VARCHAR" />
+    <result column="sp_brand_no" property="spBrandNo" jdbcType="VARCHAR" />
+    <result column="promotion_sign" property="promotionSign" jdbcType="TINYINT" />
+    <result column="delivery_area_sign" property="deliveryAreaSign" jdbcType="TINYINT" />
+    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
+    <result column="sp_activity_no" property="spActivityNo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      id, shipping_policy_id, sp_category_from, sp_category_no, sp_brand_no, promotion_sign, 
+      delivery_area_sign, sp_sku_no, sp_activity_no, create_time, update_time
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetailCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sp_shipping_policy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    id,shipping_policy_id,sp_category_from,sp_category_no,sp_brand_no,promotion_sign,delivery_area_sign,sp_sku_no,sp_activity_no,create_time,update_time
+    from sp_shipping_policy_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sp_shipping_policy_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetailCriteria" >
+    delete from sp_shipping_policy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
+    insert into sp_shipping_policy_detail (id, shipping_policy_id, sp_category_from, 
+      sp_category_no, sp_brand_no, promotion_sign, 
+      delivery_area_sign, sp_sku_no, sp_activity_no, 
+      create_time, update_time)
+    values (#{id,jdbcType=BIGINT}, #{shippingPolicyId,jdbcType=BIGINT}, #{spCategoryFrom,jdbcType=TINYINT}, 
+      #{spCategoryNo,jdbcType=VARCHAR}, #{spBrandNo,jdbcType=VARCHAR}, #{promotionSign,jdbcType=TINYINT}, 
+      #{deliveryAreaSign,jdbcType=TINYINT}, #{spSkuNo,jdbcType=VARCHAR}, #{spActivityNo,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
+    insert into sp_shipping_policy_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="shippingPolicyId != null" >
+        shipping_policy_id,
+      </if>
+      <if test="spCategoryFrom != null" >
+        sp_category_from,
+      </if>
+      <if test="spCategoryNo != null" >
+        sp_category_no,
+      </if>
+      <if test="spBrandNo != null" >
+        sp_brand_no,
+      </if>
+      <if test="promotionSign != null" >
+        promotion_sign,
+      </if>
+      <if test="deliveryAreaSign != null" >
+        delivery_area_sign,
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no,
+      </if>
+      <if test="spActivityNo != null" >
+        sp_activity_no,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="shippingPolicyId != null" >
+        #{shippingPolicyId,jdbcType=BIGINT},
+      </if>
+      <if test="spCategoryFrom != null" >
+        #{spCategoryFrom,jdbcType=TINYINT},
+      </if>
+      <if test="spCategoryNo != null" >
+        #{spCategoryNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spBrandNo != null" >
+        #{spBrandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionSign != null" >
+        #{promotionSign,jdbcType=TINYINT},
+      </if>
+      <if test="deliveryAreaSign != null" >
+        #{deliveryAreaSign,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuNo != null" >
+        #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spActivityNo != null" >
+        #{spActivityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetailCriteria" resultType="java.lang.Integer" >
+    select count(*) from sp_shipping_policy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sp_shipping_policy_detail
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.shippingPolicyId != null" >
+        shipping_policy_id = #{record.shippingPolicyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.spCategoryFrom != null" >
+        sp_category_from = #{record.spCategoryFrom,jdbcType=TINYINT},
+      </if>
+      <if test="record.spCategoryNo != null" >
+        sp_category_no = #{record.spCategoryNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spBrandNo != null" >
+        sp_brand_no = #{record.spBrandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.promotionSign != null" >
+        promotion_sign = #{record.promotionSign,jdbcType=TINYINT},
+      </if>
+      <if test="record.deliveryAreaSign != null" >
+        delivery_area_sign = #{record.deliveryAreaSign,jdbcType=TINYINT},
+      </if>
+      <if test="record.spSkuNo != null" >
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spActivityNo != null" >
+        sp_activity_no = #{record.spActivityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sp_shipping_policy_detail
+    set id = #{record.id,jdbcType=BIGINT},
+      shipping_policy_id = #{record.shippingPolicyId,jdbcType=BIGINT},
+      sp_category_from = #{record.spCategoryFrom,jdbcType=TINYINT},
+      sp_category_no = #{record.spCategoryNo,jdbcType=VARCHAR},
+      sp_brand_no = #{record.spBrandNo,jdbcType=VARCHAR},
+      promotion_sign = #{record.promotionSign,jdbcType=TINYINT},
+      delivery_area_sign = #{record.deliveryAreaSign,jdbcType=TINYINT},
+      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      sp_activity_no = #{record.spActivityNo,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
+    update sp_shipping_policy_detail
+    <set >
+      <if test="shippingPolicyId != null" >
+        shipping_policy_id = #{shippingPolicyId,jdbcType=BIGINT},
+      </if>
+      <if test="spCategoryFrom != null" >
+        sp_category_from = #{spCategoryFrom,jdbcType=TINYINT},
+      </if>
+      <if test="spCategoryNo != null" >
+        sp_category_no = #{spCategoryNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spBrandNo != null" >
+        sp_brand_no = #{spBrandNo,jdbcType=VARCHAR},
+      </if>
+      <if test="promotionSign != null" >
+        promotion_sign = #{promotionSign,jdbcType=TINYINT},
+      </if>
+      <if test="deliveryAreaSign != null" >
+        delivery_area_sign = #{deliveryAreaSign,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spActivityNo != null" >
+        sp_activity_no = #{spActivityNo,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
+    update sp_shipping_policy_detail
+    set shipping_policy_id = #{shippingPolicyId,jdbcType=BIGINT},
+      sp_category_from = #{spCategoryFrom,jdbcType=TINYINT},
+      sp_category_no = #{spCategoryNo,jdbcType=VARCHAR},
+      sp_brand_no = #{spBrandNo,jdbcType=VARCHAR},
+      promotion_sign = #{promotionSign,jdbcType=TINYINT},
+      delivery_area_sign = #{deliveryAreaSign,jdbcType=TINYINT},
+      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      sp_activity_no = #{spActivityNo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetailCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sp_shipping_policy_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

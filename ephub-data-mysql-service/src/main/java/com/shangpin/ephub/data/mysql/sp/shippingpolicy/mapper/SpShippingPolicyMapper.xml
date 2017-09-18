@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.ephub.data.mysql.sp.shippingpolicy.mapper.SpShippingPolicyMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="policy_name" property="policyName" jdbcType="VARCHAR" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="day_num" property="dayNum" jdbcType="SMALLINT" />
+    <result column="date_type" property="dateType" jdbcType="TINYINT" />
+    <result column="policy_type" property="policyType" jdbcType="TINYINT" />
+    <result column="regular_members" property="regularMembers" jdbcType="TINYINT" />
+    <result column="gold_members" property="goldMembers" jdbcType="TINYINT" />
+    <result column="supreme_members" property="supremeMembers" jdbcType="TINYINT" />
+    <result column="gold_plus_members" property="goldPlusMembers" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_user" property="createUser" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <if test="fields == null" >
+      id, policy_name, start_time, end_time, day_num, date_type, policy_type, regular_members, 
+      gold_members, supreme_members, gold_plus_members, create_time, create_user, update_time, 
+      update_user, state
+    </if>
+    <if test="fields != null" >
+      ${fields}
+    </if>
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicyCriteria" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sp_shipping_policy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    id,policy_name,start_time,end_time,day_num,date_type,policy_type,regular_members,gold_members,supreme_members,gold_plus_members,create_time,create_user,update_time,update_user,state
+    from sp_shipping_policy
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from sp_shipping_policy
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicyCriteria" >
+    delete from sp_shipping_policy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    insert into sp_shipping_policy (id, policy_name, start_time, 
+      end_time, day_num, date_type, 
+      policy_type, regular_members, gold_members, 
+      supreme_members, gold_plus_members, create_time, 
+      create_user, update_time, update_user, 
+      state)
+    values (#{id,jdbcType=BIGINT}, #{policyName,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{dayNum,jdbcType=SMALLINT}, #{dateType,jdbcType=TINYINT}, 
+      #{policyType,jdbcType=TINYINT}, #{regularMembers,jdbcType=TINYINT}, #{goldMembers,jdbcType=TINYINT}, 
+      #{supremeMembers,jdbcType=TINYINT}, #{goldPlusMembers,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
+      #{state,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    insert into sp_shipping_policy
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="policyName != null" >
+        policy_name,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="dayNum != null" >
+        day_num,
+      </if>
+      <if test="dateType != null" >
+        date_type,
+      </if>
+      <if test="policyType != null" >
+        policy_type,
+      </if>
+      <if test="regularMembers != null" >
+        regular_members,
+      </if>
+      <if test="goldMembers != null" >
+        gold_members,
+      </if>
+      <if test="supremeMembers != null" >
+        supreme_members,
+      </if>
+      <if test="goldPlusMembers != null" >
+        gold_plus_members,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="createUser != null" >
+        create_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="policyName != null" >
+        #{policyName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dayNum != null" >
+        #{dayNum,jdbcType=SMALLINT},
+      </if>
+      <if test="dateType != null" >
+        #{dateType,jdbcType=TINYINT},
+      </if>
+      <if test="policyType != null" >
+        #{policyType,jdbcType=TINYINT},
+      </if>
+      <if test="regularMembers != null" >
+        #{regularMembers,jdbcType=TINYINT},
+      </if>
+      <if test="goldMembers != null" >
+        #{goldMembers,jdbcType=TINYINT},
+      </if>
+      <if test="supremeMembers != null" >
+        #{supremeMembers,jdbcType=TINYINT},
+      </if>
+      <if test="goldPlusMembers != null" >
+        #{goldPlusMembers,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicyCriteria" resultType="java.lang.Integer" >
+    select count(*) from sp_shipping_policy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update sp_shipping_policy
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.policyName != null" >
+        policy_name = #{record.policyName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null" >
+        start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endTime != null" >
+        end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.dayNum != null" >
+        day_num = #{record.dayNum,jdbcType=SMALLINT},
+      </if>
+      <if test="record.dateType != null" >
+        date_type = #{record.dateType,jdbcType=TINYINT},
+      </if>
+      <if test="record.policyType != null" >
+        policy_type = #{record.policyType,jdbcType=TINYINT},
+      </if>
+      <if test="record.regularMembers != null" >
+        regular_members = #{record.regularMembers,jdbcType=TINYINT},
+      </if>
+      <if test="record.goldMembers != null" >
+        gold_members = #{record.goldMembers,jdbcType=TINYINT},
+      </if>
+      <if test="record.supremeMembers != null" >
+        supreme_members = #{record.supremeMembers,jdbcType=TINYINT},
+      </if>
+      <if test="record.goldPlusMembers != null" >
+        gold_plus_members = #{record.goldPlusMembers,jdbcType=TINYINT},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createUser != null" >
+        create_user = #{record.createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateUser != null" >
+        update_user = #{record.updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.state != null" >
+        state = #{record.state,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update sp_shipping_policy
+    set id = #{record.id,jdbcType=BIGINT},
+      policy_name = #{record.policyName,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=TIMESTAMP},
+      end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      day_num = #{record.dayNum,jdbcType=SMALLINT},
+      date_type = #{record.dateType,jdbcType=TINYINT},
+      policy_type = #{record.policyType,jdbcType=TINYINT},
+      regular_members = #{record.regularMembers,jdbcType=TINYINT},
+      gold_members = #{record.goldMembers,jdbcType=TINYINT},
+      supreme_members = #{record.supremeMembers,jdbcType=TINYINT},
+      gold_plus_members = #{record.goldPlusMembers,jdbcType=TINYINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_user = #{record.createUser,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_user = #{record.updateUser,jdbcType=VARCHAR},
+      state = #{record.state,jdbcType=TINYINT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    update sp_shipping_policy
+    <set >
+      <if test="policyName != null" >
+        policy_name = #{policyName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dayNum != null" >
+        day_num = #{dayNum,jdbcType=SMALLINT},
+      </if>
+      <if test="dateType != null" >
+        date_type = #{dateType,jdbcType=TINYINT},
+      </if>
+      <if test="policyType != null" >
+        policy_type = #{policyType,jdbcType=TINYINT},
+      </if>
+      <if test="regularMembers != null" >
+        regular_members = #{regularMembers,jdbcType=TINYINT},
+      </if>
+      <if test="goldMembers != null" >
+        gold_members = #{goldMembers,jdbcType=TINYINT},
+      </if>
+      <if test="supremeMembers != null" >
+        supreme_members = #{supremeMembers,jdbcType=TINYINT},
+      </if>
+      <if test="goldPlusMembers != null" >
+        gold_plus_members = #{goldPlusMembers,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createUser != null" >
+        create_user = #{createUser,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    update sp_shipping_policy
+    set policy_name = #{policyName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      day_num = #{dayNum,jdbcType=SMALLINT},
+      date_type = #{dateType,jdbcType=TINYINT},
+      policy_type = #{policyType,jdbcType=TINYINT},
+      regular_members = #{regularMembers,jdbcType=TINYINT},
+      gold_members = #{goldMembers,jdbcType=TINYINT},
+      supreme_members = #{supremeMembers,jdbcType=TINYINT},
+      gold_plus_members = #{goldPlusMembers,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicyCriteria" id="selectByExampleWithRowbounds" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sp_shipping_policy
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="startRow != null" >
+      limit #{startRow} , #{pageSize}
+    </if>
+  </select>
+</mapper>

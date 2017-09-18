@@ -188,7 +188,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             int maxPic = 0;
 
             //获取是否有hub_spu
-            boolean isHaveHubSpu = isHaveHubSpu(brandNo, spuModel);
+            Boolean isHaveHubSpu = false;
+            HubSpuDto spuDto = getHubSpu(brandNo, spuModel);
+            if(null!=spuDto){
+                isHaveHubSpu = true;
+            }
+
 
             //获取hubslotspupic
             Map<String, List<HubSlotSpuPicDto>> shootPicMap =     getShootPic(brandNo, spuModel);
@@ -204,6 +209,13 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 spuPendingVO.setOrigin(spuPendingDto.getHubOrigin());
                 spuPendingVO.setIsDefaultSupplier(false);
                 spuPendingVO.setHaveHubSpu(isHaveHubSpu);
+                if(isHaveHubSpu){
+                    //赋值hubspu属性
+                    spuPendingVO.setHubCategory(spuDto.getCategoryNo());
+                    spuPendingVO.setHubColor(spuDto.getHubColor());
+                    spuPendingVO.setHubMaterial(spuDto.getMaterial());
+
+                }
                 if(null!=spuPendingDto.getUpdateTime()){
                     spuPendingVO.setUpdateTime(DateTimeUtil.convertFormat(spuPendingDto.getUpdateTime(),"yyyy-MM-dd HH:mm:ss"));
                 }
@@ -292,14 +304,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         return shootPic;
     }
 
-    private boolean isHaveHubSpu(String brandNo, String spuModel) {
+    private HubSpuDto getHubSpu(String brandNo, String spuModel) {
         HubSpuCriteriaDto spuCriteriaDto = new HubSpuCriteriaDto();
         spuCriteriaDto.createCriteria().andSpuModelEqualTo(spuModel).andBrandNoEqualTo(brandNo);
         List<HubSpuDto> hubSpuDtos = hubSpuGateWay.selectByCriteria(spuCriteriaDto);
         if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
-              return true;
+              return hubSpuDtos.get(0);
         }
-        return false;
+        return null;
     }
 
     @Override
