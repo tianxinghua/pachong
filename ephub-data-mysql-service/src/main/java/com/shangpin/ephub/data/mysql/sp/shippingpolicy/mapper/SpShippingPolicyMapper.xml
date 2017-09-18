@@ -135,6 +135,9 @@
       #{state,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS id
+    </selectKey>
     insert into sp_shipping_policy
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
