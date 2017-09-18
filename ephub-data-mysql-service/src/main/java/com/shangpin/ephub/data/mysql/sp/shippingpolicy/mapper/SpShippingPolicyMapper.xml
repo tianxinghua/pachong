@@ -121,6 +121,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sp.shippingpolicy.po.SpShippingPolicy" >
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS id
+    </selectKey>
     insert into sp_shipping_policy (id, policy_name, start_time, 
       end_time, day_num, date_type, 
       policy_type, regular_members, gold_members, 

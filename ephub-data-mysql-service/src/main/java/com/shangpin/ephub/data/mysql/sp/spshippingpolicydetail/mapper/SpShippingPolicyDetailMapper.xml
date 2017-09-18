@@ -115,7 +115,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
-    insert into sp_shipping_policy_detail (id, shipping_policy_id, sp_category_from, 
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS id
+    </selectKey>
+    insert into sp_shipping_policy_detail (id, shipping_policy_id, sp_category_from,
       sp_category_no, sp_brand_no, promotion_sign, 
       delivery_area_sign, sp_sku_no, sp_activity_no, 
       create_time, update_time)
@@ -125,6 +128,9 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.sp.spshippingpolicydetail.po.SpShippingPolicyDetail" >
+    <selectKey keyColumn="id" keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID() AS id
+    </selectKey>
     insert into sp_shipping_policy_detail
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
