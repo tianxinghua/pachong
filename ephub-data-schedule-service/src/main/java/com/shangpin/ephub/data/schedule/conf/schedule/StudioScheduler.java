@@ -18,7 +18,7 @@ public class StudioScheduler {
     @Autowired
     StudioGateWay studioGateWay;
 //	@Scheduled(cron = "00 30 00 * * ?")
-	@Scheduled(cron = "0 0 */1 * * ?")
+//	@Scheduled(cron = "0 0 */1 * * ?")
 	public void createStudioSlot() {
 		try {
 			log.info("======================createStudioSlot定时任务开始======================");
@@ -30,7 +30,7 @@ public class StudioScheduler {
 	}
 
 
-	@Scheduled(cron = "0 0 */1 * * ?")
+//	@Scheduled(cron = "0 0 */1 * * ?")
 	public void checkStudioSlot() {
 		try {
 			log.info("===========任务开始============"); 
