@@ -51,9 +51,16 @@ public class TonyStockImp {
 
 		int i = 0;
 		Gson gson = new Gson();
+		String json = null;
 		Map<String, Integer> stockMap = new HashMap<>();
-		String json = HttpUtil45.get(url+"/tabella?nome=inventory_day", new OutTimeConfig(1000 * 60 * 2,
-				1000 * 60 * 20, 1000 * 60 * 20), null);
+		try{
+			json= HttpUtil45.get(url+"/tabella?nome=inventory_day", new OutTimeConfig(1000 * 60 * 2,
+					1000 * 60 * 20, 1000 * 60 * 20), null);
+		}catch(Exception e){
+			logger.info("更新库存拉取异常："+e.getMessage());
+			return;
+		}
+	
 		List<Item> list = gson.fromJson(json, new TypeToken<List<Item>>() {
 		}.getType());
 		for (Item item : list) {
