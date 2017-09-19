@@ -197,8 +197,13 @@ public class StudioSlotController {
 						String extension = pictureService.getExtension(fileName);
 						String fdfsURL = pictureService.uploadPic(in_b, extension);
 //						 String fdfsURL = "http://www.test.jpg";
-
-						String slotSpuNo = fileName.substring(slotNo.length(),fileName.indexOf("_"));
+						String slotSpuNo = "";
+                        if(fileName.contains("_")){
+                        	slotSpuNo = fileName.substring(slotNo.length(),fileName.indexOf("_"));
+                        }else{
+                        	slotSpuNo = fileName.substring(slotNo.length(),fileName.indexOf("."));
+                        }
+						
 						String data = map.get(slotSpuNo);
 						String[] array = data.split(";");
 						
