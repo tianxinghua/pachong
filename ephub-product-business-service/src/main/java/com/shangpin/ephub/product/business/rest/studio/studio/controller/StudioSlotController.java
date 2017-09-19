@@ -6,7 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,26 +163,28 @@ public class StudioSlotController {
 			FTPFile[] newFiles = FTPClientUtil.getFiles(newPathName);
 			for (FTPFile newfile : newFiles) {
 				String slotNo = newfile.getName();
-				FTPClientUtil.createDir("/studio_backup/" + slotNo);
+				FTPClientUtil.createDir("/home/dev/studio_backup/" + slotNo);
 
 				List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoLists = hubSlotSpuSupplierService
 						.getSlotSpuSupplierBySlotNo(slotNo);
 				if (hubSlotSpuSupplierDtoLists == null || hubSlotSpuSupplierDtoLists.size() == 0) {
 					continue;
 				}
+				Map<String,String> map = new HashMap<String,String>();
+				for(HubSlotSpuSupplierDto dto : hubSlotSpuSupplierDtoLists){
+					map.put(dto.getSlotSpuNo(), dto.getSlotSpuId()+";"+dto.getSlotSpuSupplierId());
+				}
+				
 				HubSlotSpuSupplierDto hubSlotSpuSupplierDto = hubSlotSpuSupplierDtoLists.get(0);
-				long slotSpuId = hubSlotSpuSupplierDto.getSlotSpuId();
-				long slotSpuSupplierId = hubSlotSpuSupplierDto.getSlotSpuSupplierId();
-				String slotSpuNo = hubSlotSpuSupplierDto.getSlotSpuNo();
 				String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
 				String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 
-				String pathName = new String("/studio_slot/" + slotNo + "/");
+				String pathName = new String("/home/dev/studio_slot/" + slotNo + "/");
 				FTPFile[] files = FTPClientUtil.getFiles(pathName);
 				for (FTPFile file : files) {
 					try {
 						String fileName = file.getName();
-						String downLoadAddress = "/studio_slot/" + slotNo + "/" + fileName;
+						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + fileName;
 						InputStream in = FTPClientUtil.downFile(downLoadAddress);
 
 						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
@@ -192,14 +196,18 @@ public class StudioSlotController {
 						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
 						String extension = pictureService.getExtension(fileName);
 						String fdfsURL = pictureService.uploadPic(in_b, extension);
-						// String fdfsURL = "http://www.test.jpg";
+//						 String fdfsURL = "http://www.test.jpg";
 
-						HubSlotSpuPicDto dto = createHubSlotSpuPicDto(slotSpuId, slotSpuSupplierId, slotSpuNo,
+						String slotSpuNo = fileName.substring(slotNo.length(),fileName.indexOf("_"));
+						String data = map.get(slotSpuNo);
+						String[] array = data.split(";");
+						
+						HubSlotSpuPicDto dto = createHubSlotSpuPicDto(Long.parseLong(array[0]), Long.parseLong(array[1]), slotSpuNo,
 								supplierNo, supplierId, fdfsURL, extension);
 						hubSlotSpuPicGateway.insertSelective(dto);
 
 						InputStream newIn = FTPClientUtil.downFile(downLoadAddress);
-						FTPClientUtil.uploadNewFile("/studio_backup/" + slotNo, fileName, newIn);
+						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, fileName, newIn);
 
 						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + fileName);
 						in.close();
