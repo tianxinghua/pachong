@@ -40,9 +40,11 @@ import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsHistoriesVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsReturnMasterVo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsSendDetailVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.StudioSlotsVo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnDetailInfo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotReturnMasterInfo;
+import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotSendDetailInfo;
 import com.shangpin.ephub.product.business.ui.studio.slot.vo.detail.StudioSlotsHistories;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -838,4 +840,52 @@ public class SlotManageService {
 		log.info("end selectHisttoryStudioSlot---查询批次当前节点息");
 		return HubResponse.successResp(vo);
 	}
+	
+	// 查询studio发货明细
+		public HubResponse<?> sendSlotDetail(SlotManageQuery slotManageQuery) {
+			log.info("start sendSlotDetail---查询studio发货明细");
+			log.info("params:"+JsonUtil.serialize(slotManageQuery));
+			StudioSlotsSendDetailVo vo = new StudioSlotsSendDetailVo();
+			try {
+				if (slotManageQuery.getApplySupplierId() == null||slotManageQuery.getApplySupplierId().equals("")) {
+					return HubResponse.errorResp("supplierId不能为null!");
+				}
+				StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
+				com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto.Criteria criteria = dto.createCriteria();
+				
+				criteria.andSupplierIdEqualTo(slotManageQuery.getApplySupplierId());
+				if (slotManageQuery.getSlotNo() != null&&!slotManageQuery.getSlotNo().equals("")) {
+					criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+				}
+				if (slotManageQuery.getPageSize() != null) {
+					dto.setPageSize(slotManageQuery.getPageSize());
+				}
+				if (slotManageQuery.getPageNo() != null) {
+					dto.setPageNo(slotManageQuery.getPageNo());
+				}
+				List<StudioSlotSpuSendDetailDto> studioSlotSpuSendDetailDtoList = studioSlotSpuSendDetailGateWay
+						.selectByCriteria(dto);
+				int count = studioSlotSpuSendDetailGateWay.countByCriteria(dto);
+				if(studioSlotSpuSendDetailDtoList==null||studioSlotSpuSendDetailDtoList.size()==0){
+					return HubResponse.successResp("没有此供应商对应批次!");
+				}
+				List<StudioSlotSendDetailInfo> lists = new ArrayList<>();
+				for(StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto : studioSlotSpuSendDetailDtoList){
+					StudioSlotSendDetailInfo info = new StudioSlotSendDetailInfo();
+					info.setBarcode(studioSlotSpuSendDetailDto.getBarcode());
+					info.setSlotSpuNo(studioSlotSpuSendDetailDto.getSlotSpuNo());
+					info.setSupplierBrandName(studioSlotSpuSendDetailDto.getSupplierBrandName());
+					info.setSupplierSpuModel(studioSlotSpuSendDetailDto.getSupplierSpuModel());
+					info.setSupplierSpuName(studioSlotSpuSendDetailDto.getSupplierSpuName());
+					lists.add(info);
+				}
+				vo.setStudioSlotSendDetailDtoList(lists);
+				vo.setTotal(count);
+			} catch (Exception e) {
+				log.error("查询studio发货明细失败!"+e.getMessage(),e); 
+				return HubResponse.errorResp("查询studio发货明细失败!");
+			}
+			log.info("end sendSlotDetail---查询studio发货明细");
+			return HubResponse.successResp(vo);
+		}
 }
