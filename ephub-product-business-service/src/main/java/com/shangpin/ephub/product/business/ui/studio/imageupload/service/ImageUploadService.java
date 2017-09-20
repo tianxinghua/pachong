@@ -72,7 +72,7 @@ public interface ImageUploadService {
 
 
 
-	public int updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long slotSpuSupplierId,Long supplierSpuId,UploadPicSign uploadPicSign);
+	public int updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long spuPendingId, Long slotSpuSupplierId,Long supplierSpuId,UploadPicSign uploadPicSign);
 
 
 

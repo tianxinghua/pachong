@@ -6,7 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import org.apache.commons.collections.CollectionUtils;
@@ -15,6 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
 import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicWithCriteriaDto;
@@ -70,6 +78,12 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 
 	@Autowired
 	private HubSlotSpuSupplierGateway slotSpuSupplierGateway;
+	@Autowired
+	private HubSpuPendingPicGateWay spuPendingPicGateway;
+	@Autowired
+	private HubSupplierSpuGateWay supplierSpuGateway;
+	@Autowired
+	private HubSpuPendingGateWay spuPendingGateway;
 
 	@Override
 	public List<StudioSlotVo> list(OperationQuery operationQuery) {
@@ -170,11 +184,42 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 			hubSlotSpuPicDto.setPicExtension(extension);
 			hubSlotSpuPicDto.setDataState(DataState.NOT_DELETED.getIndex());
 			hubSlotSpuPicGateway.insert(hubSlotSpuPicDto);
+			/**
+			 * 再插入hub_spu_pending_pic表一份
+			 */
+			insertSpuPendingPic(spPicUrl,supplierDto);
 			return true;
 		} catch (Exception e) {
 			log.error("插入hub_slot_spu_pic异常："+e.getMessage(),e);
 		}
 		return false;
+	}
+	
+	private void insertSpuPendingPic(String spPicUrl, HubSlotSpuSupplierDto supplierDto){
+		HubSpuPendingPicDto picDto = new HubSpuPendingPicDto();
+		picDto.setCreateTime(new Date());
+		picDto.setUpdateTime(new Date()); 
+		picDto.setSpPicUrl(spPicUrl);
+		picDto.setMemo("AirStudio图片上传");
+		picDto.setDataState(DataState.NOT_DELETED.getIndex());
+		picDto.setPicUrl(spPicUrl);
+		picDto.setPicHandleState(PicHandleState.HANDLED.getIndex());
+		picDto.setSupplierId(supplierDto.getSupplierId());
+		picDto.setSupplierSpuId(supplierDto.getSupplierSpuId());
+		picDto.setSupplierSpuNo(getSupplierSpuNo(supplierDto.getSupplierSpuId()));
+		spuPendingPicGateway.insert(picDto);
+	}
+	
+	private String getSupplierSpuNo(Long supplierSpuId){
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		criteria.setFields("supplier_spu_no");
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		List<HubSupplierSpuDto> list = supplierSpuGateway.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0).getSupplierSpuNo();
+		}else{
+			return "";
+		}
 	}
 
 	@Override
@@ -328,7 +373,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	}
 
 	@Override
-	public int updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long slotSpuSupplierId, Long supplierSpuId, UploadPicSign uploadPicSign) {
+	public int updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long spuPendingId, Long slotSpuSupplierId, Long supplierSpuId, UploadPicSign uploadPicSign) {
         HubSupplierSpuDto hubSupplierSpuDto = new HubSupplierSpuDto();
         hubSupplierSpuDto.setSupplierSpuId(supplierSpuId);
         hubSupplierSpuDto.setIsexistpic(uploadPicSign.getIndex().byteValue());
@@ -337,8 +382,11 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
         slotSpuSupplierDto.setSlotSpuSupplierId(slotSpuSupplierId);
         slotSpuSupplierDto.setPicSign(uploadPicSign.getIndex().byteValue());
 		slotSpuSupplierGateway.updateByPrimaryKey(slotSpuSupplierDto);
-
-
+		HubSpuPendingDto pendingDto = new HubSpuPendingDto();
+		pendingDto.setSpuPendingId(spuPendingId);
+		pendingDto.setPicState(PicState.HANDLED.getIndex());
+		spuPendingGateway.updateByPrimaryKeySelective(pendingDto );
+		
 		return 0;
 	}
 
