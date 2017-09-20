@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +64,12 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	private StudioSlotGateWay studioSlotGateWay;
 	@Autowired
 	private HubSlotSpuGateWay hubSlotSpuGateWay;
+
+	@Autowired
+	private HubSupplierSpuGateWay hubSupplierSpuGateWay;
+
+	@Autowired
+	private HubSlotSpuSupplierGateway slotSpuSupplierGateway;
 
 	@Override
 	public List<StudioSlotVo> list(OperationQuery operationQuery) {
@@ -318,5 +327,20 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		return hubSlotSpuGateWay.updateByCriteriaSelective(withCriteria );
 	}
 
-	
+	@Override
+	public int updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long slotSpuSupplierId, Long supplierSpuId, UploadPicSign uploadPicSign) {
+        HubSupplierSpuDto hubSupplierSpuDto = new HubSupplierSpuDto();
+        hubSupplierSpuDto.setSupplierSpuId(supplierSpuId);
+        hubSupplierSpuDto.setIsexistpic(uploadPicSign.getIndex().byteValue());
+		hubSupplierSpuGateWay.updateByPrimaryKeySelective(hubSupplierSpuDto);
+        HubSlotSpuSupplierDto slotSpuSupplierDto = new HubSlotSpuSupplierDto();
+        slotSpuSupplierDto.setSlotSpuSupplierId(slotSpuSupplierId);
+        slotSpuSupplierDto.setPicSign(uploadPicSign.getIndex().byteValue());
+		slotSpuSupplierGateway.updateByPrimaryKey(slotSpuSupplierDto);
+
+
+		return 0;
+	}
+
+
 }
