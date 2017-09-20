@@ -85,7 +85,7 @@ public class OpenapiService {
 		if(null!=skuRelationService){
 			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
 			for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-				map.put(skuRelationDTO.getSopSkuId(),null);
+				map.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
 			}
 		}
 		Map<String,String> skuSpSkuMap = new HashMap<String,String>();
@@ -124,7 +124,13 @@ public class OpenapiService {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-					if (null!=skuRelationService&&!map.containsKey(ice.SkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
+					if(1==ice.IsDeleted){
+						continue;
+					}
+					/**
+					 * 如果对应关系不存在则新增
+					 */
+					if (!map.containsKey(ice.SupplierSkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
 						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
 						skuRelationDTO.setSupplierId(supplier);
 						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
@@ -132,9 +138,22 @@ public class OpenapiService {
 						skuRelationDTO.setCreateTime(date);
 						try {							
 							skuRelationService.saveSkuRelateion(skuRelationDTO);							
-							loggerInfo.info("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
+							loggerInfo.info(ice.SupplierSkuNo + "----"+ice.SkuNo+" 保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
 						} catch (ServiceException e) {
 							loggerError.error(skuRelationDTO.toString() + "保存失败");
+						}
+					}else{
+						/**
+						 * 如果对应关系存在，但发生变化，则更新
+						 */
+						if(null != map.get(ice.SupplierSkuNo) && !map.get(ice.SupplierSkuNo).equals(ice.SkuNo)){
+							SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+							skuRelationDTO.setSupplierId(supplier);
+							skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
+							skuRelationDTO.setSopSkuId(ice.SkuNo);
+							skuRelationDTO.setCreateTime(date); 
+							skuRelationService.updateSkuRelateion(skuRelationDTO); 
+							loggerInfo.info(ice.SupplierSkuNo + "----"+ice.SkuNo+" 已更新对应关系");
 						}
 					}
 					if(StringUtils.isNotBlank(ice.SkuNo) && StringUtils.isNotBlank(ice.SupplierSkuNo)){ 
@@ -142,11 +161,11 @@ public class OpenapiService {
 							try {
 								if(!skuSpSkuMap.containsKey(ice.SupplierSkuNo) || !ice.SkuNo.equals(skuSpSkuMap.get(ice.SupplierSkuNo))){ 
 									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,String.valueOf(ice.SkuStatus),null);
-									loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
+//									loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
 								}
 								if(!skuSpProductCodeMap.containsKey(ice.SupplierSkuNo)){
 									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, null,String.valueOf(ice.SkuStatus),sku.ProductModel);
-									loggerInfo.info(ice.SupplierSkuNo+"------------------"+sku.ProductModel);
+//									loggerInfo.info(ice.SupplierSkuNo+"------------------"+sku.ProductModel);
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
