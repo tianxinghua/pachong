@@ -14,6 +14,7 @@ import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
+import com.shangpin.ep.order.exception.ServiceException;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.sku.bean.HubSkuCriteria;
@@ -214,6 +215,23 @@ public class GaudenziServiceImpl implements IOrderService {
 		String returnData = gaudenziPost(supplierProperties.getGaudenzi().getUrl()+supplierProperties.getGaudenzi().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getGaudenzi().getUser(),supplierProperties.getGaudenzi().getPassword(),orderDTO);
 		return returnData;
 	}
+//	//ceshi 
+//	public static void main(String[] args){
+//		Map<String,String> param = new HashMap<String,String>();
+////		param.put("ITEM_ID", "9332308");//	
+//		
+////		param.put("ID_ORDER_MRKP", String.valueOf("123456789"));
+////		param.put("BARCODE", "2109196740283");
+////		param.put("QTY", String.valueOf(1));
+//		param.put("CODE", "123456789");
+//		param.put("STATUS", "CANCELED");//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
+//		try {
+//			String returnData = HttpUtil45.postAuth("http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/SetStatusOrderMarketplace", param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),"shangpin","shang3108");
+//		    System.out.println(returnData);
+//		} catch (ServiceException e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	/**
 	 * 下订单新接口
