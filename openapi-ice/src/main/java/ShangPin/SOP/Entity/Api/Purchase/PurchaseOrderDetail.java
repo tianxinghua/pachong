@@ -26,7 +26,7 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
     {
     }
 
-    public PurchaseOrderDetail(String SopPurchaseOrderNo, String SopPurchaseOrderDetailNo, String SkuNo, String SupplierSkuNo, int DetailStatus, int GiveupType, String WarehouseNo, String WarehouseName, String DateStart, String DateEnd, String SkuPrice, String SkuPriceCurrency, String WarehouseAddress, String WarehousePost, String WarehouseContactPerson, String WarehouseContactMobile, String PId)
+    public PurchaseOrderDetail(String SopPurchaseOrderNo, String SopPurchaseOrderDetailNo, String SkuNo, String SupplierSkuNo, int DetailStatus, int GiveupType, String WarehouseNo, String WarehouseName, String DateStart, String DateEnd, String SkuPrice, String SkuPriceCurrency, String WarehouseAddress, String WarehousePost, String WarehouseContactPerson, String WarehouseContactMobile, String PId, int ImportType)
     {
         this.SopPurchaseOrderNo = SopPurchaseOrderNo;
         this.SopPurchaseOrderDetailNo = SopPurchaseOrderDetailNo;
@@ -45,6 +45,7 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
         this.WarehouseContactPerson = WarehouseContactPerson;
         this.WarehouseContactMobile = WarehouseContactMobile;
         this.PId = PId;
+        this.ImportType = ImportType;
     }
 
     private static class __F implements Ice.ObjectFactory
@@ -128,6 +129,7 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
         __os.writeString(WarehouseContactPerson);
         __os.writeString(WarehouseContactMobile);
         __os.writeString(PId);
+        __os.writeInt(ImportType);
         __os.endWriteSlice();
     }
 
@@ -151,6 +153,7 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
         WarehouseContactPerson = __is.readString();
         WarehouseContactMobile = __is.readString();
         PId = __is.readString();
+        ImportType = __is.readInt();
         __is.endReadSlice();
     }
 
@@ -188,5 +191,7 @@ public class PurchaseOrderDetail extends Ice.ObjectImpl
 
     public String PId;
 
-    public static final long serialVersionUID = 830655370L;
+    public int ImportType;
+
+    public static final long serialVersionUID = -655162136L;
 }
