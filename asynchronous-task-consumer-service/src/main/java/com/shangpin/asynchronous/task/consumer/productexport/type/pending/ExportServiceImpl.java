@@ -935,7 +935,7 @@ public class ExportServiceImpl {
 		
 		pendingQuryDto.setPageNo(0);
 		pendingQuryDto.setPageSize(100000);
-		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
+//		List<HubWaitSelectResponseDto> list = hubWaitSelectGateWay.selectByPage(pendingQuryDto);
 		Map<Long,String> mapTemp = new HashMap<Long,String>();
 		
 		HSSFWorkbook workbook = exportSupplierPicExcel(pendingQuryDto,mapTemp);
@@ -1107,7 +1107,7 @@ public class ExportServiceImpl {
 		Map<String, String> map = null;
 		if(spSkuNos!=null){
 			mapSpSkuNo = new HashMap<String,String>();
-			String [] arr = spSkuNos.split(",");
+			String [] arr = spSkuNos.split("\n");
 			for(String spSkuNo:arr){
 				String spSpuNo = spSkuNo.substring(0,spSkuNo.length()-3);//
 				if(!mapSpSkuNo.containsKey(spSpuNo)){
