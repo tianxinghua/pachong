@@ -35,7 +35,7 @@ public class HubWaitSelectController {
     public Long countByCriteria(@RequestBody HubWaitSelectRequest criteria){
 		List<String> spSkuNoList = new ArrayList<String>();
 		if(criteria.getSpSkuNo()!=null){
-			spSkuNoList = Arrays.asList(criteria.getSpSkuNo().split(","));	
+			spSkuNoList = Arrays.asList(criteria.getSpSkuNo().split("\n"));	
 			criteria.setSpSkuNoList(spSkuNoList);
 		}
     	return hubSkuService.count(criteria);
@@ -45,7 +45,7 @@ public class HubWaitSelectController {
     public List<HubWaitSelectResponse> selectByCriteriaWithRowbounds(@RequestBody HubWaitSelectRequestWithPage criteriaWithRowBounds){
 		List<String> spSkuNoList = new ArrayList<String>();
 		if(criteriaWithRowBounds.getSpSkuNo()!=null){
-			spSkuNoList = Arrays.asList(criteriaWithRowBounds.getSpSkuNo().split(","));	
+			spSkuNoList = Arrays.asList(criteriaWithRowBounds.getSpSkuNo().split("\n"));	
 			criteriaWithRowBounds.setSpSkuNoList(spSkuNoList);
 		}
     	return hubSkuService.selectList(criteriaWithRowBounds);
