@@ -374,18 +374,22 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 
 	@Override
 	public void updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long spuPendingId, Long slotSpuSupplierId, Long supplierSpuId, UploadPicSign uploadPicSign) {
-        HubSupplierSpuDto hubSupplierSpuDto = new HubSupplierSpuDto();
+        log.info("参数：spuPendingId==="+spuPendingId+"，slotSpuSupplierId==="+slotSpuSupplierId+"，supplierSpuId==="+supplierSpuId); 
+		HubSupplierSpuDto hubSupplierSpuDto = new HubSupplierSpuDto();
         hubSupplierSpuDto.setSupplierSpuId(supplierSpuId);
         hubSupplierSpuDto.setIsexistpic(uploadPicSign.getIndex().byteValue());
-		hubSupplierSpuGateWay.updateByPrimaryKeySelective(hubSupplierSpuDto);
+		int pic = hubSupplierSpuGateWay.updateByPrimaryKeySelective(hubSupplierSpuDto);
+		log.info("更新HubSupplierSpu结果====="+pic); 
         HubSlotSpuSupplierDto slotSpuSupplierDto = new HubSlotSpuSupplierDto();
         slotSpuSupplierDto.setSlotSpuSupplierId(slotSpuSupplierId);
         slotSpuSupplierDto.setPicSign(uploadPicSign.getIndex().byteValue());
-		slotSpuSupplierGateway.updateByPrimaryKey(slotSpuSupplierDto);
+		int picSigh = slotSpuSupplierGateway.updateByPrimaryKeySelective(slotSpuSupplierDto);
+		log.info("更新HubSlotSpuSupplier结果====="+picSigh); 
 		HubSpuPendingDto pendingDto = new HubSpuPendingDto();
 		pendingDto.setSpuPendingId(spuPendingId);
 		pendingDto.setPicState(PicState.HANDLED.getIndex());
-		spuPendingGateway.updateByPrimaryKeySelective(pendingDto );
+		int pendingPic = spuPendingGateway.updateByPrimaryKeySelective(pendingDto);
+		log.info("更新HubSpuPending结果====="+pendingPic); 
 	}
 
 
