@@ -847,27 +847,31 @@ public class SlotManageService {
 			log.info("params:"+JsonUtil.serialize(slotManageQuery));
 			StudioSlotsSendDetailVo vo = new StudioSlotsSendDetailVo();
 			try {
-				if (slotManageQuery.getApplySupplierId() == null||slotManageQuery.getApplySupplierId().equals("")) {
-					return HubResponse.errorResp("supplierId不能为null!");
+				if (slotManageQuery.getStudioID() == null||slotManageQuery.getStudioID().equals("")) {
+					return HubResponse.errorResp("studioID不能为null!");
 				}
+				StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
+				Criteria studioCriteria = studioSlotCriteriaDto.createCriteria();
+				
 				StudioSlotSpuSendDetailCriteriaDto dto = new StudioSlotSpuSendDetailCriteriaDto();
 				com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto.Criteria criteria = dto.createCriteria();
 				
-				criteria.andSupplierIdEqualTo(slotManageQuery.getApplySupplierId());
 				if (slotManageQuery.getSlotNo() != null&&!slotManageQuery.getSlotNo().equals("")) {
 					criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+					studioCriteria.andStudioIdEqualTo(Long.parseLong(slotManageQuery.getStudioID())).andSlotNoEqualTo(slotManageQuery.getSlotNo());
+				}else{
+					return HubResponse.errorResp("slotNo不能为null!");
 				}
-				if (slotManageQuery.getPageSize() != null) {
-					dto.setPageSize(slotManageQuery.getPageSize());
-				}
-				if (slotManageQuery.getPageNo() != null) {
-					dto.setPageNo(slotManageQuery.getPageNo());
+				dto.setPageSize(100);
+				List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
+				if(studioSlotDtoList==null||studioSlotDtoList.size()==0){
+					return HubResponse.errorResp("此供应商不存在此批次!");
 				}
 				List<StudioSlotSpuSendDetailDto> studioSlotSpuSendDetailDtoList = studioSlotSpuSendDetailGateWay
 						.selectByCriteria(dto);
 				int count = studioSlotSpuSendDetailGateWay.countByCriteria(dto);
 				if(studioSlotSpuSendDetailDtoList==null||studioSlotSpuSendDetailDtoList.size()==0){
-					return HubResponse.successResp("没有此供应商对应批次!");
+					return HubResponse.successResp("此批次不存在!");
 				}
 				List<StudioSlotSendDetailInfo> lists = new ArrayList<>();
 				for(StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto : studioSlotSpuSendDetailDtoList){
