@@ -21,7 +21,6 @@ import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.Atelie
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierPrice;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSku;
 import com.shangpin.supplier.product.consumer.supplier.common.atelier.dto.AtelierSpu;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 
@@ -98,11 +97,11 @@ public abstract class IAtelierHandler implements ISupplierHandler{
 				
 				HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
 				List<Image> images = converImage(atelierDate.getImage());
-				if(null == images){
-					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
-				}else{
-					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
-				}
+//				if(null == images){
+//					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+//				}else{
+//					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
+//				}
 				boolean success = convertSpu(supplierId,atelierSpu,hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				if(null != atelierDate.getSku()){				

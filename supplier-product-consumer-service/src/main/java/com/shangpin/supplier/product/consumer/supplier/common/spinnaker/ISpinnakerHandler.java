@@ -17,7 +17,6 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Sku;
 import com.shangpin.supplier.product.consumer.supplier.common.spinnaker.dto.Spu;
@@ -86,11 +85,11 @@ public abstract class ISpinnakerHandler implements ISupplierHandler {
 					for(Sku sku : spu.getItems().getItem()){
 						HubSupplierSpuDto hubSpu =  new HubSupplierSpuDto();
 						List<Image> images =  converImage(sku);
-						if(null == images){
-							hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
-						}else{
-							hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
-						}
+//						if(null == images){
+//							hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+//						}else{
+//							hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
+//						}
 						boolean success = convertSpu(supplierId,spu,sku,hubSpu,message.getData());
 						HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 						boolean skuSucc = convertSku(supplierId,hubSpu.getSupplierSpuId(),sku,hubSku);

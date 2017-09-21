@@ -18,7 +18,6 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.monnalisa.dto.CsvDTO;
@@ -50,11 +49,11 @@ public class MonnalisaHandler implements ISupplierHandler{
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				List<Image> images = converImage(supplierId,jsonObject);
-				if(null == images){
-					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
-				}else{
-					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
-				}
+//				if(null == images){
+//					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+//				}else{
+//					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
+//				}
 				boolean success = convertSpu(supplierId, jsonObject, hubSpu,message.getData());
 				
 				mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), jsonObject);
