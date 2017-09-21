@@ -173,7 +173,11 @@ public abstract class IAtelierHandler implements ISupplierHandler{
 			hubSpu.setSupplierBrandname(atelierSpu.getBrandName());
 			hubSpu.setSupplierSeasonname(atelierSpu.getSeasonName());
 			hubSpu.setSupplierMaterial(atelierSpu.getMaterial1()+" "+atelierSpu.getMaterial3());
-			hubSpu.setSupplierOrigin(atelierSpu.getProductOrigin());
+			if(supplierId.equals("2016032101819"))
+				hubSpu.setSupplierOrigin("");
+			else
+				hubSpu.setSupplierOrigin(atelierSpu.getProductOrigin());
+			
 			hubSpu.setSupplierSpuDesc(!StringUtils.isEmpty(atelierSpu.getSizeDetail()) ? atelierSpu.getSizeDetail()+";"+atelierSpu.getDescription() : atelierSpu.getDescription()); 
 			return true;
 		}else{
