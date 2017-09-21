@@ -55,7 +55,7 @@ spring:
        host: 210.77.132.165
        port: 60021
        userName: ephub_begheera
-       password: !&A@dE*S
+       password: "!&A@dE*S"
        ftpHubPath: /hub/
        ftpPendingPath: /pending/
   mail: 
