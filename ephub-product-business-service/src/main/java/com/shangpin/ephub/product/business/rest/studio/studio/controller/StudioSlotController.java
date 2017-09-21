@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import com.shangpin.ephub.client.data.studio.studio.dto.StudioDto;
 import com.shangpin.ephub.client.data.studio.user.dto.StudioUserCriteriaDto;
 import com.shangpin.ephub.client.data.studio.user.dto.StudioUserDto;
 import com.shangpin.ephub.client.data.studio.user.gateway.StudioUserGateWay;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.rest.studio.studio.dto.ResultObjList;
 import com.shangpin.ephub.product.business.rest.studio.studio.dto.ResultResponseDto;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicCalendarService;
@@ -32,7 +34,9 @@ import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicS
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioSlotService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
+import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
+import com.shangpin.ephub.product.business.ui.studio.imageupload.controller.ImageUploadController;
 import com.shangpin.ephub.product.business.ui.task.common.util.FTPClientUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +65,8 @@ public class StudioSlotController {
 	private HubSlotSpuSupplierService hubSlotSpuSupplierService;
 	@Autowired
 	private HubSlotSpuPicGateway hubSlotSpuPicGateway;
+	@Autowired
+	private ImageUploadController imageUploadController;
 	@Autowired
 	private StudioUserGateWay studioUserGateWay;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -170,19 +176,19 @@ public class StudioSlotController {
 				if (hubSlotSpuSupplierDtoLists == null || hubSlotSpuSupplierDtoLists.size() == 0) {
 					continue;
 				}
-				Map<String,String> map = new HashMap<String,String>();
-				for(HubSlotSpuSupplierDto dto : hubSlotSpuSupplierDtoLists){
-					map.put(dto.getSlotSpuNo(), dto.getSlotSpuId()+";"+dto.getSlotSpuSupplierId());
-				}
-				
-				HubSlotSpuSupplierDto hubSlotSpuSupplierDto = hubSlotSpuSupplierDtoLists.get(0);
-				String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
-				String supplierId = hubSlotSpuSupplierDto.getSupplierId();
+//				Map<String,String> map = new HashMap<String,String>();
+//				for(HubSlotSpuSupplierDto dto : hubSlotSpuSupplierDtoLists){
+//					map.put(dto.getSlotSpuNo(), dto.getSlotSpuId()+";"+dto.getSlotSpuSupplierId());
+//				}
+//				HubSlotSpuSupplierDto hubSlotSpuSupplierDto = hubSlotSpuSupplierDtoLists.get(0);
+//				String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
+//				String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 
 				String pathName = new String("/home/dev/studio_slot/" + slotNo + "/");
 				FTPFile[] files = FTPClientUtil.getFiles(pathName);
 				for (FTPFile file : files) {
 					try {
+						log.info("fileName:"+file.getName());
 						String fileName = file.getName();
 						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + fileName;
 						InputStream in = FTPClientUtil.downFile(downLoadAddress);
@@ -197,20 +203,27 @@ public class StudioSlotController {
 						String extension = pictureService.getExtension(fileName);
 						String fdfsURL = pictureService.uploadPic(in_b, extension);
 //						 String fdfsURL = "http://www.test.jpg";
-						String slotSpuNo = "";
+						String barcode = "";
                         if(fileName.contains("_")){
-                        	slotSpuNo = fileName.substring(slotNo.length(),fileName.indexOf("_"));
+                        	barcode = fileName.substring(0,fileName.indexOf("_"));
                         }else{
-                        	slotSpuNo = fileName.substring(slotNo.length(),fileName.indexOf("."));
+                        	barcode = fileName.substring(0,fileName.indexOf("."));
                         }
 						
-						String data = map.get(slotSpuNo);
-						String[] array = data.split(";");
-						
-						HubSlotSpuPicDto dto = createHubSlotSpuPicDto(Long.parseLong(array[0]), Long.parseLong(array[1]), slotSpuNo,
-								supplierNo, supplierId, fdfsURL, extension);
-						hubSlotSpuPicGateway.insertSelective(dto);
-
+//						String data = map.get(slotSpuNo);
+//						String[] array = data.split(";");
+//						
+//						HubSlotSpuPicDto dto = createHubSlotSpuPicDto(Long.parseLong(array[0]), Long.parseLong(array[1]), slotSpuNo,
+//								supplierNo, supplierId, fdfsURL, extension);
+                        List<String> list = new ArrayList<String>();
+                        list.add(fdfsURL);
+						UploadQuery uploadQuery = new UploadQuery();
+						uploadQuery.setSlotNo(slotNo);
+						uploadQuery.setUrls(list);
+						uploadQuery.setSlotNoSpuId(barcode);
+						log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
+						imageUploadController.add(uploadQuery);
+                        log.info("imageUploadController end");
 						InputStream newIn = FTPClientUtil.downFile(downLoadAddress);
 						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, fileName, newIn);
 
