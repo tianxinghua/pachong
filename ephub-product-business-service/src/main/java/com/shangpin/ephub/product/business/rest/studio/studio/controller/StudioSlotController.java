@@ -16,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
-import com.shangpin.ephub.client.data.mysql.studio.pic.gateway.HubSlotSpuPicGateway;
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCalendarDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
@@ -33,7 +30,6 @@ import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicC
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicSlotService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioSlotService;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.imageupload.controller.ImageUploadController;
@@ -61,10 +57,6 @@ public class StudioSlotController {
 	StudioDicSlotService studioDicSlotService;
 	@Autowired
 	private PictureService pictureService;
-	@Autowired
-	private HubSlotSpuSupplierService hubSlotSpuSupplierService;
-	@Autowired
-	private HubSlotSpuPicGateway hubSlotSpuPicGateway;
 	@Autowired
 	private ImageUploadController imageUploadController;
 	@Autowired
@@ -217,7 +209,7 @@ public class StudioSlotController {
 						String data = dataList.get(i);
 						String[] dataArray = data.split(";");
 						if(dataArray[0].contains("_")){
-                        	array[Integer.parseInt(dataArray[0].substring(dataArray[0].indexOf("_")+1,dataArray[0].indexOf(".")))] = array[1];
+                        	array[Integer.parseInt(dataArray[0].substring(dataArray[0].indexOf("_")+1,dataArray[0].indexOf(".")))] = dataArray[1];
                         }else{
                         	array[0] = dataArray[1];
                         }
@@ -291,20 +283,6 @@ public class StudioSlotController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		return dto;
-	}
-	private HubSlotSpuPicDto createHubSlotSpuPicDto(long slotSpuId, long slotSpuSupplierId, String slotSpuNo, String supplierNo,String supplierId,String picUrl,String extension) {
-		HubSlotSpuPicDto dto = new HubSlotSpuPicDto();
-		dto.setSlotSpuId(slotSpuId);
-		dto.setSlotSpuNo(slotSpuNo);
-		dto.setSlotSpuSupplierId(slotSpuSupplierId);
-		dto.setSupplierNo(supplierNo);
-		dto.setSupplierId(supplierId);
-		dto.setCreateTime(new Date());
-		dto.setUpdateTime(new Date());
-		dto.setSpPicUrl(picUrl);
-		dto.setPicExtension(extension);
-		dto.setCreateUser("admin");
 		return dto;
 	}
 	public static void main(String[] args){
