@@ -126,7 +126,11 @@ public class OperationServiceImpl implements OperationService {
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
 		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
-		List<StudioSlotSpuSendDetailDto> list = selectDetail(studioSlotDto.getSlotNo());
+		String slotNo = "";
+		if(studioSlotDto.getSlotNo().contains("L")){
+			slotNo = studioSlotDto.getSlotNo().substring(studioSlotDto.getSlotNo().lastIndexOf("L")+1);
+		}
+		List<StudioSlotSpuSendDetailDto> list = selectDetail(slotNo);
 		slotVo.setQty(CollectionUtils.isNotEmpty(list) ? list.size() : 0); 
 		return slotVo;
 	}
@@ -201,7 +205,7 @@ public class OperationServiceImpl implements OperationService {
 	@Override
 	public StudioSlotSpuSendDetailDto selectSlotSpuSendDetailOfRrrived(String barcode) {
 		StudioSlotSpuSendDetailCriteriaDto criteria = new StudioSlotSpuSendDetailCriteriaDto();
-		criteria.setFields("studio_slot_spu_send_detail_id,slot_no,slot_spu_no,supplier_id");
+//		criteria.setFields("studio_slot_spu_send_detail_id,slot_no,slot_spu_no,supplier_id");
 		criteria.createCriteria().andBarcodeEqualTo(barcode).andArriveStateEqualTo(StudioSlotStudioArriveState.RECEIVED.getIndex().byteValue());
 		List<StudioSlotSpuSendDetailDto> list = studioSlotSpuSendDetailGateWay.selectByCriteria(criteria);
 		if(CollectionUtils.isNotEmpty(list)){

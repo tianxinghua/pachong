@@ -493,6 +493,8 @@ public abstract class PendingSpuService implements IPendingProductService {
 	private SpuState getSpuState(String spuState){
 		if(StringUtils.isEmpty(spuState)){
 			return SpuState.INFO_PECCABLE;
+		}else if("1213".equals(spuState)){
+			return SpuState.ALL_PENDING_SPU;
 		}else{
 			for(SpuState state : SpuState.values()){
 				if(String.valueOf(state.getIndex()).equals(spuState) ){

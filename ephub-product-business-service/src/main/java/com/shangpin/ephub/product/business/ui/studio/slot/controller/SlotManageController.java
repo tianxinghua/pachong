@@ -106,4 +106,9 @@ public class SlotManageController {
 	public HubResponse<?> selectHistoryStudioSlot(@RequestBody SlotManageQuery slotManageQuery){
 		return slotManageService.selectHisttoryStudioSlot(slotManageQuery);
 	}
+	//发货信息明细
+	@RequestMapping(value="/sendSlot-detail",method = RequestMethod.POST)
+	public HubResponse<?> sendSlotDetail(@RequestBody SlotManageQuery slotManageQuery){
+		return slotManageService.sendSlotDetail(slotManageQuery);
+	}
 }

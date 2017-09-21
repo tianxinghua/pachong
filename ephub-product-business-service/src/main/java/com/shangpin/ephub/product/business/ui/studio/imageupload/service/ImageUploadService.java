@@ -69,6 +69,15 @@ public interface ImageUploadService {
 	 * @return
 	 */
 	public int updateHubSlotSpuPicSign(String slotSpuNo, UploadPicSign uploadPicSign);
+
+
+
+	public void updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long spuPendingId, Long slotSpuSupplierId,Long supplierSpuId,UploadPicSign uploadPicSign);
+
+
+
+
+
 	/**
 	 * 确认该批次已拍摄完毕
 	 * @param slotNo
