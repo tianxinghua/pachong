@@ -373,7 +373,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	}
 
 	@Override
-	public int updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long spuPendingId, Long slotSpuSupplierId, Long supplierSpuId, UploadPicSign uploadPicSign) {
+	public void updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(Long spuPendingId, Long slotSpuSupplierId, Long supplierSpuId, UploadPicSign uploadPicSign) {
         HubSupplierSpuDto hubSupplierSpuDto = new HubSupplierSpuDto();
         hubSupplierSpuDto.setSupplierSpuId(supplierSpuId);
         hubSupplierSpuDto.setIsexistpic(uploadPicSign.getIndex().byteValue());
@@ -386,8 +386,6 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 		pendingDto.setSpuPendingId(spuPendingId);
 		pendingDto.setPicState(PicState.HANDLED.getIndex());
 		spuPendingGateway.updateByPrimaryKeySelective(pendingDto );
-		
-		return 0;
 	}
 
 

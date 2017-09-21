@@ -114,6 +114,7 @@ public class ImageUploadController {
 				}
 				result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
 				result1 = imageUploadService.updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.HAVE_UPLOADED);
+				imageUploadService.updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(detailDto.getSpuPendingId(), detailDto.getSlotSpuSupplierId(), detailDto.getSupplierSpuId(), UploadPicSign.HAVE_UPLOADED);
 				log.info("更新uploadPicSign结果=="+result+" 更新HubSlotSpuPicSign结果=="+result1); 
 			}
 		} catch (Exception e) {
