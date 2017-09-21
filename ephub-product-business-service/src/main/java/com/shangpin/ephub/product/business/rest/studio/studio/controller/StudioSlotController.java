@@ -179,18 +179,17 @@ public class StudioSlotController {
 						log.info("fileName:"+file.getName());
 						String fileName = file.getName();
 						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + fileName;
-//						InputStream in = FTPClientUtil.downFile(downLoadAddress);
-//
-//						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
-//						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
-//						int rc = 0;
-//						while ((rc = in.read(buff, 0, 100)) > 0) {
-//							swapStream.write(buff, 0, rc);
-//						}
-//						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
-//						String extension = pictureService.getExtension(fileName);
-//						String fdfsURL = pictureService.uploadPic(in_b, extension);
-						String fdfsURL = "httptest";
+						InputStream in = FTPClientUtil.downFile(downLoadAddress);
+
+						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
+						int rc = 0;
+						while ((rc = in.read(buff, 0, 100)) > 0) {
+							swapStream.write(buff, 0, rc);
+						}
+						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
+						String extension = pictureService.getExtension(fileName);
+						String fdfsURL = pictureService.uploadPic(in_b, extension);
 						String barcode = "";
                         if(fileName.contains("_")){
                         	barcode = fileName.substring(0,fileName.indexOf("_"));
@@ -205,7 +204,7 @@ public class StudioSlotController {
                         	list.add(fileName+";"+fdfsURL);
                         	map.put(barcode, list);
                         }
-//						in.close();
+						in.close();
 					} catch (Exception e) {
 						log.error(file.getName() + "图片上传发生异常：{}", e);
 						e.printStackTrace();
