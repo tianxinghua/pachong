@@ -52,7 +52,7 @@ spring:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
   ftp:
-       host: 210.77.132.165
+       host: 172.20.10.142
        port: 60021
        userName: ephub_begheera
        password: "!&A@dE*S"
