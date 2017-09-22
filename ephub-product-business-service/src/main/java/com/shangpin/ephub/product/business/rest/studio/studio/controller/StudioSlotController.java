@@ -16,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
-import com.shangpin.ephub.client.data.mysql.studio.pic.gateway.HubSlotSpuPicGateway;
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicCalendarDto;
 import com.shangpin.ephub.client.data.studio.dic.dto.StudioDicSlotDto;
 import com.shangpin.ephub.client.data.studio.slot.slot.dto.StudioSlotDto;
@@ -33,7 +30,6 @@ import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicC
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioDicSlotService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioService;
 import com.shangpin.ephub.product.business.rest.studio.studio.service.StudioSlotService;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuSupplierService;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.imageupload.controller.ImageUploadController;
@@ -61,10 +57,6 @@ public class StudioSlotController {
 	StudioDicSlotService studioDicSlotService;
 	@Autowired
 	private PictureService pictureService;
-	@Autowired
-	private HubSlotSpuSupplierService hubSlotSpuSupplierService;
-	@Autowired
-	private HubSlotSpuPicGateway hubSlotSpuPicGateway;
 	@Autowired
 	private ImageUploadController imageUploadController;
 	@Autowired
@@ -169,20 +161,8 @@ public class StudioSlotController {
 			FTPFile[] newFiles = FTPClientUtil.getFiles(newPathName);
 			for (FTPFile newfile : newFiles) {
 				String slotNo = newfile.getName();
+				Map<String,List<String>> map = new HashMap<String,List<String>>();
 				FTPClientUtil.createDir("/home/dev/studio_backup/" + slotNo);
-
-				List<HubSlotSpuSupplierDto> hubSlotSpuSupplierDtoLists = hubSlotSpuSupplierService
-						.getSlotSpuSupplierBySlotNo(slotNo);
-				if (hubSlotSpuSupplierDtoLists == null || hubSlotSpuSupplierDtoLists.size() == 0) {
-					continue;
-				}
-//				Map<String,String> map = new HashMap<String,String>();
-//				for(HubSlotSpuSupplierDto dto : hubSlotSpuSupplierDtoLists){
-//					map.put(dto.getSlotSpuNo(), dto.getSlotSpuId()+";"+dto.getSlotSpuSupplierId());
-//				}
-//				HubSlotSpuSupplierDto hubSlotSpuSupplierDto = hubSlotSpuSupplierDtoLists.get(0);
-//				String supplierNo = hubSlotSpuSupplierDto.getSupplierNo();
-//				String supplierId = hubSlotSpuSupplierDto.getSupplierId();
 
 				String pathName = new String("/home/dev/studio_slot/" + slotNo + "/");
 				FTPFile[] files = FTPClientUtil.getFiles(pathName);
@@ -202,39 +182,57 @@ public class StudioSlotController {
 						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
 						String extension = pictureService.getExtension(fileName);
 						String fdfsURL = pictureService.uploadPic(in_b, extension);
-//						 String fdfsURL = "http://www.test.jpg";
 						String barcode = "";
                         if(fileName.contains("_")){
                         	barcode = fileName.substring(0,fileName.indexOf("_"));
                         }else{
                         	barcode = fileName.substring(0,fileName.indexOf("."));
                         }
-						
-//						String data = map.get(slotSpuNo);
-//						String[] array = data.split(";");
-//						
-//						HubSlotSpuPicDto dto = createHubSlotSpuPicDto(Long.parseLong(array[0]), Long.parseLong(array[1]), slotSpuNo,
-//								supplierNo, supplierId, fdfsURL, extension);
-                        List<String> list = new ArrayList<String>();
-                        list.add(fdfsURL);
-						UploadQuery uploadQuery = new UploadQuery();
-						uploadQuery.setSlotNo(slotNo);
-						uploadQuery.setUrls(list);
-						uploadQuery.setSlotNoSpuId(barcode);
-						log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
-						imageUploadController.add(uploadQuery);
-                        log.info("imageUploadController end");
-						InputStream newIn = FTPClientUtil.downFile(downLoadAddress);
-						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, fileName, newIn);
-
-						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + fileName);
+                        if(map.containsKey(barcode)){
+                        	List<String> listSon =map.get(barcode);
+                        	listSon.add(fileName+";"+fdfsURL);
+                        }else{
+                        	List<String> list = new ArrayList<String>();
+                        	list.add(fileName+";"+fdfsURL);
+                        	map.put(barcode, list);
+                        }
 						in.close();
-						newIn.close();
 					} catch (Exception e) {
 						log.error(file.getName() + "图片上传发生异常：{}", e);
 						e.printStackTrace();
 					}
 				}
+				for(Map.Entry<String, List<String>> entry : map.entrySet()) {  
+					String[] array = new String[entry.getValue().size()];
+					List<String> dataList = entry.getValue();
+					for(int i=0;i<dataList.size();i++){
+						String data = dataList.get(i);
+						String[] dataArray = data.split(";");
+						if(dataArray[0].contains("_")){
+                        	array[Integer.parseInt(dataArray[0].substring(dataArray[0].indexOf("_")+1,dataArray[0].indexOf(".")))] = dataArray[1];
+                        }else{
+                        	array[0] = dataArray[1];
+                        }
+						InputStream newIn = FTPClientUtil.downFile(newPathName + slotNo + "/" + dataArray[0]);
+						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, dataArray[0], newIn);
+
+						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + dataArray[0]);
+						newIn.close();
+					}
+					List<String> list = new ArrayList<String>();
+					for(int j=0;j<array.length;j++){
+						list.add(array[j]);
+					}
+					UploadQuery uploadQuery = new UploadQuery();
+					uploadQuery.setSlotNo(slotNo);
+					uploadQuery.setUrls(list);
+					uploadQuery.setSlotNoSpuId(entry.getKey());
+					log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
+					imageUploadController.add(uploadQuery);
+                    log.info("imageUploadController end");
+					
+				}  
+				
 				FTPClientUtil.deleteDir(newPathName + slotNo);
 			}
 			return true;
@@ -285,20 +283,6 @@ public class StudioSlotController {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		return dto;
-	}
-	private HubSlotSpuPicDto createHubSlotSpuPicDto(long slotSpuId, long slotSpuSupplierId, String slotSpuNo, String supplierNo,String supplierId,String picUrl,String extension) {
-		HubSlotSpuPicDto dto = new HubSlotSpuPicDto();
-		dto.setSlotSpuId(slotSpuId);
-		dto.setSlotSpuNo(slotSpuNo);
-		dto.setSlotSpuSupplierId(slotSpuSupplierId);
-		dto.setSupplierNo(supplierNo);
-		dto.setSupplierId(supplierId);
-		dto.setCreateTime(new Date());
-		dto.setUpdateTime(new Date());
-		dto.setSpPicUrl(picUrl);
-		dto.setPicExtension(extension);
-		dto.setCreateUser("admin");
 		return dto;
 	}
 	public static void main(String[] args){
