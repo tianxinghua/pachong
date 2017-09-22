@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.rest.order.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class OrderController {
 	 * @return
 	 */
 	@RequestMapping(value= "/product-size", method= RequestMethod.POST)
-	public HubResponse<?> findProductSize(SizeDto sizeDto){
+	public HubResponse<?> findProductSize(@RequestBody SizeDto sizeDto){
 		String size = orderService.findProductSize(sizeDto.getSupplierId(), sizeDto.getSupplierSkuNo());
 		if(StringUtils.isEmpty(size)){
 			return HubResponse.errorResp("查询失败");
