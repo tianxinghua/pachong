@@ -170,18 +170,6 @@ public class StudioSlotController {
 					try {
 						log.info("fileName:"+file.getName());
 						String fileName = file.getName();
-						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + fileName;
-						InputStream in = FTPClientUtil.downFile(downLoadAddress);
-
-						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
-						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
-						int rc = 0;
-						while ((rc = in.read(buff, 0, 100)) > 0) {
-							swapStream.write(buff, 0, rc);
-						}
-						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
-						String extension = pictureService.getExtension(fileName);
-						String fdfsURL = pictureService.uploadPic(in_b, extension);
 						String barcode = "";
                         if(fileName.contains("_")){
                         	barcode = fileName.substring(0,fileName.indexOf("_"));
@@ -190,49 +178,68 @@ public class StudioSlotController {
                         }
                         if(map.containsKey(barcode)){
                         	List<String> listSon =map.get(barcode);
-                        	listSon.add(fileName+";"+fdfsURL);
+                        	listSon.add(fileName);
                         }else{
                         	List<String> list = new ArrayList<String>();
-                        	list.add(fileName+";"+fdfsURL);
+                        	list.add(fileName);
                         	map.put(barcode, list);
                         }
-						in.close();
 					} catch (Exception e) {
 						log.error(file.getName() + "图片上传发生异常：{}", e);
 						e.printStackTrace();
 					}
 				}
+				log.info("studio download pic map:"+JsonUtil.serialize(map));
+				log.info("map size:"+map.size());
 				for(Map.Entry<String, List<String>> entry : map.entrySet()) {  
-					String[] array = new String[entry.getValue().size()];
 					List<String> dataList = entry.getValue();
+					String[] array = new String[dataList.size()];
 					for(int i=0;i<dataList.size();i++){
 						String data = dataList.get(i);
-						String[] dataArray = data.split(";");
-						if(dataArray[0].contains("_")){
-                        	array[Integer.parseInt(dataArray[0].substring(dataArray[0].indexOf("_")+1,dataArray[0].indexOf(".")))] = dataArray[1];
+						if(data.contains("_")){
+                        	array[Integer.parseInt(data.substring(data.indexOf("_")+1,data.indexOf(".")))] = data;
                         }else{
-                        	array[0] = dataArray[1];
+                        	array[0] = data;
                         }
-						InputStream newIn = FTPClientUtil.downFile(newPathName + slotNo + "/" + dataArray[0]);
-						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, dataArray[0], newIn);
-
-						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + dataArray[0]);
-						newIn.close();
 					}
 					List<String> list = new ArrayList<String>();
 					for(int j=0;j<array.length;j++){
-						list.add(array[j]);
+						log.info("start 下载ftp图片，图片名称:"+array[j]);
+//						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + array[j];
+//						InputStream in = FTPClientUtil.downFile(downLoadAddress);
+						String downLoadAddress = "/home/dev/studio_slot/" + slotNo;
+						InputStream in = FTPClientUtil.downFileNew(downLoadAddress,array[j]);
+						log.info("end 下载ftp图片，图片名称:"+array[j]);
+						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
+						int rc = 0;
+						while ((rc = in.read(buff, 0, 100)) > 0) {
+							swapStream.write(buff, 0, rc);
+						}
+						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
+						String extension = pictureService.getExtension(array[j]);
+						String fdfsURL = pictureService.uploadPic(in_b, extension);
+						log.info("图片名称:"+array[j]+"图片上传返回url:"+fdfsURL);
+						list.add(fdfsURL);
+						UploadQuery uploadQuery = new UploadQuery();
+						uploadQuery.setSlotNo(slotNo);
+						uploadQuery.setUrls(list);
+						uploadQuery.setSlotNoSpuId(entry.getKey());
+						log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
+						imageUploadController.add(uploadQuery);
+	                    log.info("imageUploadController end");
+	                    
+	                    log.info("start 下载并上传图片!");
+//	                    InputStream newIn = FTPClientUtil.downFile(newPathName + slotNo + "/" + array[j]);
+	                    InputStream newIn = FTPClientUtil.downFileNew(newPathName + slotNo , array[j]);
+						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, array[j], newIn);
+						log.info("end 下载并上传图片!");
+
+						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + array[j]);
+						in.close();
+						newIn.close();
 					}
-					UploadQuery uploadQuery = new UploadQuery();
-					uploadQuery.setSlotNo(slotNo);
-					uploadQuery.setUrls(list);
-					uploadQuery.setSlotNoSpuId(entry.getKey());
-					log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
-					imageUploadController.add(uploadQuery);
-                    log.info("imageUploadController end");
-					
 				}  
-				
 				FTPClientUtil.deleteDir(newPathName + slotNo);
 			}
 			return true;

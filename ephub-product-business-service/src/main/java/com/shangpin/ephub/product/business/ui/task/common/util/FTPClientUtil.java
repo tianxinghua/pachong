@@ -110,6 +110,28 @@ public class FTPClientUtil {
 		return in;
 	}
 	
+	public static InputStream downFileNew(String remotePath, String remoteFileName) throws Exception {
+		try {
+			FTPClient ftp = new FTPClient();
+			ftp.connect(host, Integer.parseInt(port));
+			ftp.login(userName, password);
+			ftp.setControlEncoding("UTF-8");
+			ftp.setFileType(2);
+			ftp.enterLocalPassiveMode();
+			ftp.setConnectTimeout(36000000);
+			ftp.setDataTimeout(36000000);
+			ftp.setControlKeepAliveReplyTimeout(36000000);
+			ftp.setControlKeepAliveTimeout(36000000L);
+		    if (StringUtils.isNotBlank(remotePath)) {
+		    	ftp.changeWorkingDirectory(remotePath);
+		    }
+	        return ftp.retrieveFileStream(remoteFileName);
+			
+		} catch (Throwable e) {
+			throw e;
+		}
+	}
+	
 	public static void deleteFile(String remotePath) throws Exception {
 
 		FTPClient ftp = new FTPClient();
