@@ -158,14 +158,14 @@ public class StudioSlotController {
 	public boolean downLoadImageByFtp() {
 		try {
 			String newPathName = new String("/home/dev/studio_slot/");
-			FTPFile[] newFiles = FTPClientUtil.getFiles(newPathName);
+			FTPFile[] newFiles = FTPClientUtil.getStudioFiles(newPathName);
 			for (FTPFile newfile : newFiles) {
 				String slotNo = newfile.getName();
 				Map<String,List<String>> map = new HashMap<String,List<String>>();
-				FTPClientUtil.createDir("/home/dev/studio_backup/" + slotNo);
+				FTPClientUtil.createStudioDir("/home/dev/studio_backup/" + slotNo);
 
 				String pathName = new String("/home/dev/studio_slot/" + slotNo + "/");
-				FTPFile[] files = FTPClientUtil.getFiles(pathName);
+				FTPFile[] files = FTPClientUtil.getStudioFiles(pathName);
 				for (FTPFile file : files) {
 					try {
 						log.info("fileName:"+file.getName());
@@ -208,7 +208,7 @@ public class StudioSlotController {
 //						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + array[j];
 //						InputStream in = FTPClientUtil.downFile(downLoadAddress);
 						String downLoadAddress = "/home/dev/studio_slot/" + slotNo;
-						InputStream in = FTPClientUtil.downFileNew(downLoadAddress,array[j]);
+						InputStream in = FTPClientUtil.downStudioFile(downLoadAddress,array[j]);
 						log.info("end 下载ftp图片，图片名称:"+array[j]);
 						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
 						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
@@ -231,16 +231,16 @@ public class StudioSlotController {
 	                    
 	                    log.info("start 下载并上传图片!");
 //	                    InputStream newIn = FTPClientUtil.downFile(newPathName + slotNo + "/" + array[j]);
-	                    InputStream newIn = FTPClientUtil.downFileNew(newPathName + slotNo , array[j]);
-						FTPClientUtil.uploadNewFile("/home/dev/studio_backup/" + slotNo, array[j], newIn);
+	                    InputStream newIn = FTPClientUtil.downStudioFile(newPathName + slotNo , array[j]);
+						FTPClientUtil.uploadStudioNewFile("/home/dev/studio_backup/" + slotNo, array[j], newIn);
 						log.info("end 下载并上传图片!");
 
-						FTPClientUtil.deleteFile(newPathName + slotNo + "/" + array[j]);
+						FTPClientUtil.deleteStudioFile(newPathName + slotNo + "/" + array[j]);
 						in.close();
 						newIn.close();
 					}
 				}  
-				FTPClientUtil.deleteDir(newPathName + slotNo);
+				FTPClientUtil.deleteStudioDir(newPathName + slotNo);
 			}
 			return true;
 		} catch (Exception e) {
