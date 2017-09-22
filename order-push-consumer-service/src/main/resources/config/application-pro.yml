@@ -135,6 +135,18 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
+          gaudenzi:
+                  url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: shang3108
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: 34ba9613f2544c279a7523d015184b1e
+                  openApiSecret: 43e578550e9047b5936f7bc44876061d
           vietti: 
                   url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -529,6 +541,7 @@ shangpin:
                   delayTime: 1000
                   retry: 120
                   serviceUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
+                  getSizeFromEphubUrl: http://api.ephub.spidc1.com/order/product-size
                   stockSupplierMapping: 
                   orderSupplierMapping: S0000558:2015102201625,S0000631:2016030701799,S0000593:2015111001657,S0000372:2015081701441,S0000370:2015081701439
 

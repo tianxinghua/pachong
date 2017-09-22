@@ -73,6 +73,8 @@ public class SpuPendingHandler {
             hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
             hubSpuPending.setSpuPendingId(spuPendingId);
             hubSpuPending.setUpdateTime(new Date());
+            hubSpuPending.setAuditState((byte)0);
+            hubSpuPending.setMemo("spu校验通过，sku尺码有未校验通过");
             spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
 
         }

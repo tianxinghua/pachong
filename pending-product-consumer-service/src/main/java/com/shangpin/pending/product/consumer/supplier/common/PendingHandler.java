@@ -46,7 +46,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 @Slf4j
-
 public class PendingHandler extends VariableInit {
 
 	@Autowired
@@ -295,7 +294,7 @@ public class PendingHandler extends VariableInit {
 	}
 	
 	// 刷新尺码
-	private void refreshHubSize(String supplierId,PendingSpu spu, HubSpuPendingDto spuPendingDto) throws Exception {
+	public void refreshHubSize(String supplierId,PendingSpu spu, HubSpuPendingDto spuPendingDto) throws Exception {
 
 		if (null != spuPendingDto) {
 			List<PendingSku> skuList = spu.getSkus();
@@ -716,6 +715,9 @@ public class PendingHandler extends VariableInit {
 		if (!setSeasonMapping(spu, hubSpuPending))
             allStatus = false;
 
+		// 获取材质
+//		if (!replaceMaterial(spu, hubSpuPending))
+//            allStatus = false;
 		
 		// 获取材质
 		if (!replaceMaterialByRedis(spu, hubSpuPending))

@@ -6,32 +6,29 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Order {
-	private String id;
-	private String id_address_delivery;
-	private String id_address_invoice;
-	private String id_cart;
-	private String id_currency;
-	private String id_lang;
-	private String id_customer;
-	private String id_carrier;
-	private String module;
-	private String payment;
-	private String secure_key;
-	private String total_paid;
-	private String total_paid_real;
-	private String total_products;
-	private String total_products_wt;
-	private String conversion_rate;
-	private String valid;
-	private String current_state;
-	private String total_discounts;
-	private String total_discounts_tax_incl;
-	private String total_discounts_tax_excl;
-	private String total_paid_tax_incl;
-	private String total_paid_tax_excl;
-	private String total_shipping;
-	private String total_shipping_tax_incl;
-	private String total_shipping_tax_excl;
-	private Associations associations;
+	private String NORDINE;//Shangpin-XXXXX
+	private String NWEB;//order number.
+	private String DATA;//2017/07/30 13:33:14
+	private String CODCLIWEB;
+	private String T_CLIENTE;//Customer's name & surname
+	private String T_INDIRIZZO;//Customer's address
+	private String T_CITTA;//Customer's city
+	private String T_CAP;//Customer's zip code
+	private String T_PROV;//Customer's state
+	private String T_MODPAG;//Payment method
+	private String T_EMAIL;// Customer's name
+	private String SPED_NOME ;
+	private String SPED_COGNOME ;
+	private String SPED_IND;
+	private String SPED_CAP ;
+	private String SPED_CITTA ;
+	private String SPED_PROV;
+	private String SPED_TEL;
+	private String SPED_TIPO ;
+	private String SPED_NAZIONE ;
+	private String CORRIERE;
+	private String STATO ;//an "A" character should be passed if you need to CANCEL an order, otherwise "STATO" should not be passed in the JSON.
+	private String CODICE_ART;
+	private String PREZZO;
 
 }

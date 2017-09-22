@@ -1,11 +1,8 @@
 package com.shangpin.ep.order;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
@@ -16,19 +13,16 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.baseblu.OrderResult
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.shangpin.ep.order.common.LogCommon;
 import com.shangpin.ep.order.conf.mail.attach.AttachBean;
 import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
 import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
-import com.shangpin.ep.order.enumeration.LogLeve;
-import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.util.httpclient.HttpUtil45;
-import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
+import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
+import com.shangpin.ep.order.module.orderapiservice.impl.WiseOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -168,6 +162,19 @@ public class EpOrderServiceApplicationTests {
 		deleteOrder.setSupplierId("2015100701573");
 		deleteOrder.setSpOrderId("201709066014679");
 		bagheeraOrderService.handleRefundlOrder(deleteOrder );
+	}
+	
+	@Autowired
+	CommonService service;
+
+	@Test
+	public void testSize(){
+		try {
+			String size = service.getSizeFromEphub("2016030701799", "7294507-2010629426790");
+			System.out.println(size);
+		} catch (Exception e) {
+			e.printStackTrace(); 
+		}
 	}
 
 }

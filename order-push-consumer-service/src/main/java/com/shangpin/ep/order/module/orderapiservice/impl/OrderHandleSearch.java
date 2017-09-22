@@ -38,6 +38,10 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("brunarossoServiceImpl")
 	IOrderService brunarossoServiceImpl;
+	
+	@Autowired
+	@Qualifier("gaudenziServiceImpl")
+	IOrderService gaudenziServiceImpl;
 
 	@Autowired
 	@Qualifier("coltortiOrderServiceImpl")
@@ -314,6 +318,8 @@ public class OrderHandleSearch {
 			return parisiMailServiceImpl;
 		}else if("2015100701573".equals(supplierId)){
 			return bagheeraOrderService;
+		}else if ("2015091801501".equals(supplierId)) {
+			return gaudenziServiceImpl;
 		}else {
 			return null;
 		}
@@ -413,6 +419,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getYlati();
 		}else if("2015100701573".equals(supplierId)){
 			return supplierProperties.getBagheera();
+		}else if ("2015091801501".equals(supplierId)) {
+			return supplierProperties.getGaudenzi();
 		}
 		else {
 			return null;

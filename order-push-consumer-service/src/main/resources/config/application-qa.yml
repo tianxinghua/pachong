@@ -121,6 +121,17 @@ spring:
               messageType: text/html;charset=utf-8
               openApiKey: 
               openApiSecret: 
+      gaudenzi: 
+              url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang3108
+              messageType: text/html;charset=utf-8
+              openApiKey: 
+              openApiSecret: 
       vietti: 
               url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace
@@ -461,7 +472,8 @@ spring:
               delayTime: 1000
               retry: 120
               serviceUrl: http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
-              stockSupplierMapping:
+              getSizeFromEphubUrl: http://192.168.20.176:8003/order/product-size
+              stockSupplierMapping: 
               orderSupplierMapping: S0000779:2016102701834
 
 mybatis: 

@@ -654,4 +654,24 @@ public class PendingProductStreamListener {
 	public void reebonzPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception {
 		adapter.reebonzPendingProductStreamListen(message,headers);
 	}
+	
+	/**
+	 * 供应商GAUDENZI待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.GAUDENZI)
+    public void gaudenziPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.gaudenziPendingProductStreamListen(message,headers);
+    }
+	
+	/**
+	 * 供应商GAUDENZI待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.MONNALISA)
+    public void monnalisaPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.monnalisaPendingProductStreamListen(message,headers);
+    }
 }

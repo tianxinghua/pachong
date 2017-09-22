@@ -2,6 +2,7 @@ package com.shangpin.ephub.price.consumer.service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,11 @@ public class SupplierPriceService {
                 if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
 
                     Map<String,String> supplierMap = this.getValidSupplier();
+                    Iterator<String> iterator = supplierMap.keySet().iterator();
+                    while(iterator.hasNext()){
+                        log.info("supplier_id =" + iterator.next() + "|");
+                    }
+                    log.info("productPriceDTO supplier_id  =" + productPriceDTO.getSopUserNo()+"|");
                     if(supplierMap.containsKey(productPriceDTO.getSopUserNo())){
                         if(this.isNeedPushForSupplyPrice(productPriceDTO)){
                         	if(StringUtils.isNotBlank(productPriceDTO.getMarketPrice())&&StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
@@ -225,11 +231,14 @@ public class SupplierPriceService {
     private Map<String,String> getValidSupplier(){
         Map<String,String> supplierMap = new HashMap<>();
         HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
+        criteriaDto.setPageSize(100);
         criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
                 .andMappingStateEqualTo(DataState.NOT_DELETED.getIndex());
         List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
         if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
+//            log.info("ubSupplierValueMappingDtos.size =" + hubSupplierValueMappingDtos.size());
             for(HubSupplierValueMappingDto supplier:hubSupplierValueMappingDtos){
+//                log.info("getSupplierId=" + supplier.getSupplierId()  + "| getSupplierVal=" +  supplier.getSupplierVal() + "|");
                 supplierMap.put(supplier.getSupplierId(),supplier.getSupplierVal());
             }
         }

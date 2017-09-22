@@ -122,4 +122,6 @@ public class SupplierProperties {
 	
 	private Bagheera bagheera;
 	
+	private Gaudenzi gaudenzi;
+	
 }
