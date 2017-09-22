@@ -479,7 +479,8 @@ shangpin:
               delayTime: 1000
               retry: 120
               serviceUrl: http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
-              stockSupplierMapping:
+              getSizeFromEphubUrl: http://192.168.20.176:8003/order/product-size
+              stockSupplierMapping: 
               orderSupplierMapping: S0000779:2016102701834,S0000775:2016102701830,S0000776:2016102701831,S0000780:2016102701835
 
 mybatis: 
