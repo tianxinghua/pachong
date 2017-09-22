@@ -126,11 +126,11 @@ public class OperationServiceImpl implements OperationService {
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
 		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
-		String slotNo = "";
-		if(studioSlotDto.getSlotNo().contains("L")){
-			slotNo = studioSlotDto.getSlotNo().substring(studioSlotDto.getSlotNo().lastIndexOf("L")+1);
-		}
-		List<StudioSlotSpuSendDetailDto> list = selectDetail(slotNo);
+//		String slotNo = "";
+//		if(studioSlotDto.getSlotNo().contains("L")){
+//			slotNo = studioSlotDto.getSlotNo().substring(studioSlotDto.getSlotNo().lastIndexOf("L")+1);
+//		}
+		List<StudioSlotSpuSendDetailDto> list = selectDetail(studioSlotDto.getSlotNo());
 		slotVo.setQty(CollectionUtils.isNotEmpty(list) ? list.size() : 0); 
 		return slotVo;
 	}
