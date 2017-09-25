@@ -16,6 +16,7 @@ import com.shangpin.ephub.client.data.mysql.studio.spu.gateway.HubSlotSpuGateWay
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
 import com.shangpin.ephub.client.data.mysql.studio.supplier.gateway.HubSlotSpuSupplierGateway;
+import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotApplyState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotArriveState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotShootState;
 import com.shangpin.ephub.client.data.studio.enumeration.StudioSlotState;
@@ -71,7 +72,7 @@ public class OperationServiceImpl implements OperationService {
 		Criteria createCriteria = criteria.createCriteria();
 		createCriteria.andArriveStatusNotEqualTo(StudioSlotArriveState.NOT_ARRIVE.getIndex().byteValue());
 		if(operationQuery.getOperationQueryType() == OperationQueryType.OPEN_BOX.getIndex()){
-			createCriteria.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue());
+			createCriteria.andShotStatusEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue()).andApplyStatusNotEqualTo(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 		}else if(operationQuery.getOperationQueryType() == OperationQueryType.IMAGE_UPLOAD.getIndex()){
 			createCriteria.andShotStatusIsNotNull().andShotStatusNotEqualTo(StudioSlotShootState.WAIT_SHOOT.getIndex().byteValue()).andSlotStatusNotEqualTo(StudioSlotState.HAVE_SHOOT.getIndex().byteValue());
 		}
@@ -126,11 +127,11 @@ public class OperationServiceImpl implements OperationService {
 		slotVo.setSlotNo(studioSlotDto.getSlotNo());
 		slotVo.setOperateDate(studioSlotDto.getPlanShootTime());
 		slotVo.setTrackingNo(studioSlotDto.getTrackNo()); 
-		String slotNo = "";
-		if(studioSlotDto.getSlotNo().contains("L")){
-			slotNo = studioSlotDto.getSlotNo().substring(studioSlotDto.getSlotNo().lastIndexOf("L")+1);
-		}
-		List<StudioSlotSpuSendDetailDto> list = selectDetail(slotNo);
+//		String slotNo = "";
+//		if(studioSlotDto.getSlotNo().contains("L")){
+//			slotNo = studioSlotDto.getSlotNo().substring(studioSlotDto.getSlotNo().lastIndexOf("L")+1);
+//		}
+		List<StudioSlotSpuSendDetailDto> list = selectDetail(studioSlotDto.getSlotNo());
 		slotVo.setQty(CollectionUtils.isNotEmpty(list) ? list.size() : 0); 
 		return slotVo;
 	}

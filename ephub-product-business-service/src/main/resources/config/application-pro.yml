@@ -52,12 +52,16 @@ spring:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
   ftp:
-       host: 210.77.132.165
-       port: 60021
-       userName: ephub_begheera
-       password: "!&A@dE*S"
+       host: 172.20.10.88
+       port: 21
+       userName: ftpuser2
+       password: shangpin@123
        ftpHubPath: /hub/
        ftpPendingPath: /pending/
+       studioHost: 172.20.10.142
+       studioPort: 60021
+       studioUserName: ephub_begheera
+       studioPassword: "!&A@dE*S"
   mail: 
        default-recipient: chengxu@shangpin.com
        default-sender: chengxu@shangpin.com
