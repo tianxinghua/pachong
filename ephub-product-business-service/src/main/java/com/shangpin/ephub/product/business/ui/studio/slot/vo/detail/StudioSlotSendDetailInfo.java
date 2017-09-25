@@ -16,4 +16,6 @@ public class StudioSlotSendDetailInfo implements Serializable {
 	private String supplierSpuModel;
 	private String supplierBrandName;
 	private String barcode;
+	private String slotNo;
+	private String supplierCategory;
 }

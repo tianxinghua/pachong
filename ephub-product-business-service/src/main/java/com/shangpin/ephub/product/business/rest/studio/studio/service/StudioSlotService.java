@@ -207,7 +207,7 @@ public class StudioSlotService {
 					slotDto.setShotStatus((byte) 0);
 					slotDto.setSlotDate(studioDto.getPlanShootTime());
 					slotDto.setSendState((byte) 0);
-					slotDto.setArriveStatus(studioDto.getArriveStatus());
+					slotDto.setArriveStatus((byte) 0);
 					
 					Calendar calendar = Calendar.getInstance();
 				    calendar.setTime(studioDto.getPlanShootTime());

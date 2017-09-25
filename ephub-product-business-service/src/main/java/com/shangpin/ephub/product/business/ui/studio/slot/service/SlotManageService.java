@@ -756,6 +756,7 @@ public class SlotManageService {
 					criteria.andShootTimeBetween(slotManageQuery.getStartDate(), slotManageQuery.getEndDate());
 				}
 			}
+			criteria.andApplyStatusNotEqualTo(StudioSlotApplyState.INTERNAL_OCCUPANCY.getIndex().byteValue());
 			if (slotManageQuery.getPageSize() != null) {
 				dto.setPageSize(slotManageQuery.getPageSize());
 			}
@@ -763,6 +764,7 @@ public class SlotManageService {
 				dto.setPageNo(slotManageQuery.getPageNo());
 			}
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(dto);
+			dto.setOrderByClause(" slot_date desc ");
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
@@ -881,6 +883,8 @@ public class SlotManageService {
 					info.setSupplierBrandName(studioSlotSpuSendDetailDto.getSupplierBrandName());
 					info.setSupplierSpuModel(studioSlotSpuSendDetailDto.getSupplierSpuModel());
 					info.setSupplierSpuName(studioSlotSpuSendDetailDto.getSupplierSpuName());
+					info.setSlotNo(studioSlotSpuSendDetailDto.getSlotNo());
+					info.setSupplierCategory(studioSlotSpuSendDetailDto.getSupplierCategoryName());
 					lists.add(info);
 				}
 				vo.setStudioSlotSendDetailDtoList(lists);
