@@ -17,8 +17,7 @@ import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.sku.bean.HubSkuCriteria;
-import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
@@ -32,7 +31,7 @@ public class ViettiServiceImpl implements IOrderService {
     @Autowired
     HandleException handleException;
     @Autowired
-    HubSkuMapper skuDAO;
+    private CommonService commonService;
     
     /**
      * 给对方推送数据
@@ -63,24 +62,6 @@ public class ViettiServiceImpl implements IOrderService {
 		return null;
     }
 	
-    /**
-     * 根据供应商门户编号和供应商skuid查找尺码
-     * @param supplierId
-     * @param supplierSkuId
-     * @return
-     */
-    public String getProductSize(String supplierId,String supplierSkuId){
-    	try {
-    		HubSkuCriteria skuCriteria  = new HubSkuCriteria();
-        	skuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSkuIdEqualTo(supplierSkuId);
-        	skuCriteria.setFields("PRODUCT_SIZE");
-        	return skuDAO.selectByExample(skuCriteria).get(0).getProductSize();
-		} catch (Exception e) {			
-			return "";
-		}
-    	
-    }
-    
 	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
@@ -105,7 +86,7 @@ public class ViettiServiceImpl implements IOrderService {
 			String barcode = skuId.split("-")[1];
 			int qty = Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]);
 			//先通过查询库存接口查询库存,如果库存大于0则下单,否则采购异常
-			String productSize = getProductSize(orderDTO.getSupplierId(),skuId);
+			String productSize = commonService.getProductSize(orderDTO.getSupplierId(),skuId);
 			if(StringUtils.isNotBlank(productSize)){
 				String size = productSize.replaceAll("\\+", "½");				
 				//查询对方库存接口

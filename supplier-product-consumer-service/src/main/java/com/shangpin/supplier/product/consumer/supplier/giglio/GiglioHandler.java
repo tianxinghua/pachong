@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -21,7 +20,6 @@ import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 
@@ -50,11 +48,11 @@ public class GiglioHandler implements ISupplierHandler {
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(supplierId,hubSpu,colunms);
 				List<Image> images = converImage(colunms);
-				if(CollectionUtils.isNotEmpty(images)){
-					hubSpu.setIsexistpic(Isexistpic.YES.getIndex());
-				}else{
-					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
-				}
+//				if(CollectionUtils.isNotEmpty(images)){
+//					hubSpu.setIsexistpic(Isexistpic.YES.getIndex());
+//				}else{
+//					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+//				}
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean sucSku = convertSku(supplierId,hubSku,colunms);

@@ -17,7 +17,6 @@ import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.studio69.Response;
-import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub;
 import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub.CancelOrder;
 import com.shangpin.ep.order.util.axis.studio69.API_STUDIO69Stub.CancelOrderResponse;
@@ -38,9 +37,6 @@ public class Studio69Serviceimpl implements IOrderService{
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
-    @Autowired
-    HubSkuMapper skuDAO;
-    
     /**
      * 推送订单
      * @param createNewOrder

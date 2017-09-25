@@ -19,7 +19,6 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
 import com.shangpin.supplier.product.consumer.service.SupplierProductMongoService;
 import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSendToPending;
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.tony.dto.TonyItems;
@@ -56,11 +55,11 @@ public class TonyHandler implements ISupplierHandler {
 				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				List<Image> images =  converImage(tonyItems.getImages());
-				if(null == images){
-					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
-				}else{
-					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
-				}
+//				if(null == images){
+//					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+//				}else{
+//					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
+//				}
 				boolean success = convertSpu(supplierId, tonyItems, hubSpu,message.getData());
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
