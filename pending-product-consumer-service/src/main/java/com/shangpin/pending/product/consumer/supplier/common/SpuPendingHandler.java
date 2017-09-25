@@ -1,9 +1,6 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
-import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierPriceState;
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -73,8 +70,11 @@ public class SpuPendingHandler {
             hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
             hubSpuPending.setSpuPendingId(spuPendingId);
             hubSpuPending.setUpdateTime(new Date());
-            hubSpuPending.setAuditState((byte)0);
+            hubSpuPending.setAuditState(AuditState.DISAGREE.getIndex());
             hubSpuPending.setMemo("spu校验通过，sku尺码有未校验通过");
+            hubSpuPending.setAuditOpinion("spu校验通过，sku尺码有未校验通过");
+            hubSpuPending.setAuditDate(new Date());
+            hubSpuPending.setAuditUser("pendingService");
             spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
 
         }
