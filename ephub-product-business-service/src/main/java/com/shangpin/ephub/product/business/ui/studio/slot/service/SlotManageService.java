@@ -763,8 +763,8 @@ public class SlotManageService {
 			if (slotManageQuery.getPageNo() != null) {
 				dto.setPageNo(slotManageQuery.getPageNo());
 			}
+			dto.setOrderByClause(" create_time desc ");
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(dto);
-			dto.setOrderByClause(" slot_date desc ");
 			int count = studioSlotGateWay.countByCriteria(dto);
 			List<StudioSlotsHistories> studioSlotsHistoriesList = new ArrayList<>();
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
