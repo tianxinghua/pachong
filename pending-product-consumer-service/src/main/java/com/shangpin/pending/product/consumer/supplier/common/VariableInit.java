@@ -755,6 +755,19 @@ public class VariableInit {
         }
     }
 
+    protected void setOriginSpuPendingValueWhenUpdate(HubSpuPendingDto originSpuPending, PendingSpu spu, HubSpuPendingDto updateSpuPending) throws Exception {
+        //映射材质
+        if(StringUtils.isBlank(originSpuPending.getHubMaterial())&&StringUtils.isNotBlank(spu.getHubMaterial())){
+            replaceMaterialByRedis(spu, updateSpuPending);
+        }
+        //映射产地
+        if(StringUtils.isBlank(originSpuPending.getHubOrigin())&&StringUtils.isNotBlank(spu.getHubOrigin())){
+            setOriginMapping(spu, updateSpuPending);
+        }
+    }
+
+
+
     protected void setSpuPendingValueForSupplierUpdate(PendingSpu spu, HubSpuPendingDto spuPendingDto, HubSpuPendingDto updateSpuPending,Map<Byte, List<HubSpuPendingNohandleReasonDto>> map) throws Exception {
         boolean allStatus = true;
 

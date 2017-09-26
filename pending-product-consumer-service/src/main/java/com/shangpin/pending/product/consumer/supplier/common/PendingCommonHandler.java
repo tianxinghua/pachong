@@ -336,7 +336,7 @@ public class PendingCommonHandler {
 			if (firstStaticMap.size() > 0) {
 				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_FIRST_MATERIAL_MAPPING_MAP_KEY, firstStaticMap);
 				shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_FIRST_MATERIAL_MAPPING_MAP_KEY,
-						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME * 1000);
+						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME * 6 *12 );
 			}
 		}
 		return firstStaticMap;
@@ -355,7 +355,7 @@ public class PendingCommonHandler {
 			if (firstStaticMap.size() > 0) {
 				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_SECOND_MATERIAL_MAPPING_MAP_KEY, firstStaticMap);
 				shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_SECOND_MATERIAL_MAPPING_MAP_KEY,
-						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME * 1000);
+						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME *  6 *12);
 			}
 		}
 		return firstStaticMap;
@@ -374,7 +374,7 @@ public class PendingCommonHandler {
 			if (firstStaticMap.size() > 0) {
 				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY, firstStaticMap);
 				shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY,
-						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME * 1000);
+						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME *  6 *12);
 			}
 		}
 		return firstStaticMap;
@@ -393,7 +393,7 @@ public class PendingCommonHandler {
 			if (firstStaticMap.size() > 0) {
 				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_REPLACE_MATERIAL_MAPPING_MAP_KEY, firstStaticMap);
 				shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_REPLACE_MATERIAL_MAPPING_MAP_KEY,
-						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME * 1000);
+						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME *  6 *12);
 			}
 		}
 		return firstStaticMap;
