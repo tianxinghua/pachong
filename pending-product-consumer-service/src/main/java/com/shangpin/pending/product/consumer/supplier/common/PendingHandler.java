@@ -906,7 +906,7 @@ public class PendingHandler extends VariableInit {
 				) {
 			// 查询HUBSKU
 			log.info("hubSpu 存在："+(null==hubSpuPending.getHubSpuNo()?"":hubSpuPending.getHubSpuNo()) + ""+
-					" hubSize = " +hubSize + " query parameter: category=" + hubSpuPending.getHubCategoryNo() + "  brandno="+hubSpuPending.getHubBrandNo()
+					" spSize = " +hubSize + " query parameter: category=" + hubSpuPending.getHubCategoryNo() + "  brandno="+hubSpuPending.getHubBrandNo()
 					+ " supplierId=" + supplierSku.getSupplierId() + " hubSize="+hubSkuPending.getHubSkuSize());
 
 			//屏蔽，不在直接进入待选品，直接进入待复合
