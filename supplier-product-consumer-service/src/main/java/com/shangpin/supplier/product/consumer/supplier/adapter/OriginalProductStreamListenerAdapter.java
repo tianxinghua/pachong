@@ -764,7 +764,6 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void julianFashionStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		// TODO Auto-generated method stub
-		
+		atelierCommonHandler.handleOriginalProduct(message, headers);
 	}
 }
