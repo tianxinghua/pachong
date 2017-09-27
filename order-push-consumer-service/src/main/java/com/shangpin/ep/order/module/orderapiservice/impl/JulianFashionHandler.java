@@ -6,40 +6,40 @@ import org.springframework.stereotype.Component;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.module.orderapiservice.impl.atelier.AtelierOrderHandler;
 
-@Component("zitafabianiServiceImpl")
-public class ZitafabianiServiceImpl extends AtelierOrderHandler {
+@Component("julianFashionHandler")
+public class JulianFashionHandler extends AtelierOrderHandler {
 	
 	@Autowired
 	private SupplierProperties properties;
 
 	@Override
 	public String getApiUrl() {
-		return properties.getZitafabiani().getUrl();
+		return properties.getJulianFashion().getUrl();
 	}
 
 	@Override
 	public String getUserName() {
-		return properties.getZitafabiani().getUser();
+		return properties.getJulianFashion().getUser();
 	}
 
 	@Override
 	public String getPassword() {
-		return properties.getZitafabiani().getPassword();
+		return properties.getJulianFashion().getPassword();
 	}
 
 	@Override
 	public String getGetItemStockInterface() {
-		return properties.getZitafabiani().getGetItemStockInterface();
+		return properties.getJulianFashion().getGetItemStockInterface();
 	}
 
 	@Override
 	public String getCreateOrderInterface() {
-		return properties.getZitafabiani().getCreateOrderInterface();
+		return properties.getJulianFashion().getCreateOrderInterface();
 	}
 
 	@Override
 	public String getSetStatusInterface() {
-		return properties.getZitafabiani().getSetStatusInterface();
+		return properties.getJulianFashion().getSetStatusInterface();
 	}
-	
+
 }
