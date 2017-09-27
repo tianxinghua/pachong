@@ -147,6 +147,16 @@ public interface PendingProductSink {
 	public static final String GAUDENZI = "gaudenziPendingProduct";
 	
 	public static final String MONNALISA = "monnalisaPendingProduct";
+	
+	public static final String JULIANFASHION = "julianFashionPendingProduct";
+	
+	/**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return 供货商JULIANFASHION通道组件
+	 */
+	@Input(value = PendingProductSink.JULIANFASHION)
+	public SubscribableChannel julianFashionPendingProduct();
+	
 	/**
 	 * 供货商coccolebimbi通道组件配置
 	 * @return 供货商SPINNAKER通道组件

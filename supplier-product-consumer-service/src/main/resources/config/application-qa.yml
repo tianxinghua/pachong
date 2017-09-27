@@ -668,6 +668,15 @@ spring:
                         monnalisaPendingProduct:
                               destination: monnalisa.pending.product
                               content-type: application/json
+                        julianFashionOriginalProduct:
+                              destination: julianFashion.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        julianFashionPendingProduct:
+                              destination: julianFashion.pending.product
+                              content-type: application/json
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -1322,6 +1331,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               monnalisaPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              julianFashionOriginalProduct: 
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              julianFashionPendingProduct: 
                                     producer:
                                          prefix: HA.
   jackson: 

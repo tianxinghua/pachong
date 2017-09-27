@@ -150,9 +150,19 @@ public interface OriginalProductSink {
 	public static final String GAUDENZI = "gaudenziOriginalProduct";
 	
 	public static final String MONNALISA = "monnalisaOriginalProduct";
+	
+	public static final String JULIANFASHION = "julianFashionOriginalProduct";
 
 
 	//===============================
+	
+	/**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return JULIANFASHION通道组件
+	 */
+	@Input(value = OriginalProductSink.JULIANFASHION)
+	public SubscribableChannel julianFashionOriginalProduct();
+	
 	/**
 	 * 供货商portofino通道组件配置
 	 * @return portofino通道组件

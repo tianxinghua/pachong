@@ -758,4 +758,13 @@ public class OriginalProductStreamListenerAdapter {
 	public void allProductStockStreamListen(SupplierStock message, Map<String, Object> headers){
 		stockHandler.handleAllProductStock(message, headers);
 	}
+	/**
+	 * 供应商julianFashion处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void julianFashionStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		// TODO Auto-generated method stub
+		
+	}
 }
