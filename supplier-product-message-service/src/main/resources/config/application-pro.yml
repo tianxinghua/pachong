@@ -223,6 +223,9 @@ spring:
                               content-type: application/json
                         monnalisaOriginalProduct: 
                               destination: monnalisa.original.product
+                              content-type: application/json 
+                        julianFashionOriginalProduct: 
+                              destination: julianFashion.original.product
                               content-type: application/json  
 
               rabbit:
@@ -443,6 +446,9 @@ spring:
                             monnalisaOriginalProduct:
                                   producer:
                                            prefix: HA.
+                            julianFashionOriginalProduct: 
+                                  producer: 
+                                           prefix: HA. 
 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss

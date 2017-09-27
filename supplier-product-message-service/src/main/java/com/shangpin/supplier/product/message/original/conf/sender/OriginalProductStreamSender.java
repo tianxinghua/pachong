@@ -19,6 +19,17 @@ public class OriginalProductStreamSender {
 	
 	@Autowired
 	private OriginalProductSource originalProductSource;
+	
+
+	/**
+	 * 发送供应商julianFashion商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean julianFashionStream(SupplierProduct supplierProduct) {
+		return originalProductSource.julianFashion().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	
 	/**
 	 * 发送供应商coccolebimbi商品流数据
 	 * @param supplierProduct 消息体

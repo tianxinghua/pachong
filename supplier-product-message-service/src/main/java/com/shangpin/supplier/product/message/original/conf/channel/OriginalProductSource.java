@@ -147,6 +147,15 @@ public interface OriginalProductSource {
     public static final String GAUDENZI = "gaudenziOriginalProduct";
     
     public static final String MONNALISA = "monnalisaOriginalProduct";
+    
+    public static final String JULIANFASHION = "julianFashionOriginalProduct";
+    
+    /**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return 供货商JULIANFASHION通道组件
+	 */
+	@Output(value = OriginalProductSource.JULIANFASHION)
+	public MessageChannel julianFashion();
 
     /**
 	 * 供货商portofino通道组件配置
