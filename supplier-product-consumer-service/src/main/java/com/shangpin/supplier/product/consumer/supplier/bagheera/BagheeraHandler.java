@@ -29,24 +29,23 @@ public class BagheeraHandler extends AtelierCommonHandler {
 			atelierSpu.setCategoryGender(spuArr[5]);
 			atelierSpu.setCategoryName(spuArr[8]);
 			atelierSpu.setColorName(StringUtils.isEmpty(spuArr[10])? spuArr[4] : spuArr[10]);
-			atelierSpu.setMaterial1(spuArr[14]);
-			atelierSpu.setDescription(spuArr[15]+spuArr[34]); 
-			atelierSpu.setSupplierPrice(spuArr[16]);
-			atelierSpu.setMaterial3(spuArr[42]);
-			atelierSpu.setProductOrigin(spuArr[14]); 
-			atelierSpu.setSizeDetail(spuArr[14]); 
-			atelierSpu.setSizeType(spuArr[20]);
-
-
+////			atelierSpu.setMaterial1(spuArr[14]);
+//			atelierSpu.setMaterial1(spuArr[11]);
+//			atelierSpu.setDescription(spuArr[15]+spuArr[34]);
+//			atelierSpu.setSupplierPrice(spuArr[16]);
+//			atelierSpu.setMaterial3(spuArr[42]);
+////			atelierSpu.setProductOrigin(spuArr[14]);
+//			atelierSpu.setProductOrigin(spuArr[40]);
+//			atelierSpu.setSizeDetail(spuArr[14]);
+//			atelierSpu.setSizeType(spuArr[20]);
 
 			atelierSpu.setMaterial1(spuArr[11]);
-
-
+			atelierSpu.setDescription(spuArr[15]+spuArr[34]);
+			atelierSpu.setSupplierPrice(spuArr[16]);
+			atelierSpu.setMaterial3(spuArr[42]);
 			atelierSpu.setProductOrigin(spuArr[40]);
-
-
-
-
+			atelierSpu.setSizeDetail(spuArr[14]);
+			atelierSpu.setSizeType(spuArr[20]);
 
 			return atelierSpu;
 		}else{
