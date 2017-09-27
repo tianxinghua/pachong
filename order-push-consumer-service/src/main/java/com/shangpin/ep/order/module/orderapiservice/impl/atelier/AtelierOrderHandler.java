@@ -17,7 +17,15 @@ import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-
+/**
+ * atelier系统处理订单通用类
+ * <p>Title: AtelierOrderHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年9月27日 下午5:27:36
+ *
+ */
 @Service
 public abstract class AtelierOrderHandler implements IOrderService {
 	
