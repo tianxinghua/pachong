@@ -118,7 +118,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 			hubSpu.setSupplierBrandname(ob.getBrand());
 			hubSpu.setSupplierSeasonname(ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());
-			hubSpu.setSupplierOrigin(null);
+			hubSpu.setSupplierOrigin(ob.getCountry());
 			hubSpu.setSupplierSpuDesc(ob.getDescription());
 			return true;
 		}else{
