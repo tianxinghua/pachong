@@ -224,6 +224,9 @@ spring:
                         monnalisaOriginalProduct: 
                               destination: monnalisa.original.product
                               content-type: application/json 
+                        srlOriginalProduct: 
+                              destination: srl.original.product
+                              content-type: application/json 
                         julianFashionOriginalProduct: 
                               destination: julianFashion.original.product
                               content-type: application/json  
@@ -444,6 +447,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             monnalisaOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            srlOriginalProduct:
                                   producer:
                                            prefix: HA.
                             julianFashionOriginalProduct: 

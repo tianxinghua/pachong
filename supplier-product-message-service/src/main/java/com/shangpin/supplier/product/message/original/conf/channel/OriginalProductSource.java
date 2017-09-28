@@ -148,6 +148,8 @@ public interface OriginalProductSource {
     
     public static final String MONNALISA = "monnalisaOriginalProduct";
     
+    public static final String SRL = "srlOriginalProduct";
+    
     public static final String JULIANFASHION = "julianFashionOriginalProduct";
     
     /**
@@ -595,4 +597,11 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.MONNALISA)
 	public MessageChannel monnalisa();
+	
+	/**
+	 * 供货商srl通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.SRL)
+	public MessageChannel srl();
 }
