@@ -686,4 +686,14 @@ public class OriginalProductStreamListener {
     public void monnalisaStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.monnalisaStreamListen(message,headers);
     }
+	
+	/**
+	 * 供应商MONNALISA原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.SRL)
+    public void srlStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.srlStreamListen(message,headers);
+    }
 }

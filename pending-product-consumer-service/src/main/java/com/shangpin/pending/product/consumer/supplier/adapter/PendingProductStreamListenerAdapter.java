@@ -651,5 +651,15 @@ public class PendingProductStreamListenerAdapter {
 		this.messageHandle(message, headers);
 		
 	}
+	
+	/**
+	 * 供应商monnalisa待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void srlPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
 
 }
