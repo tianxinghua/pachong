@@ -24,8 +24,7 @@ targetCompatibility = 1.8
 repositories {
 
 	mavenLocal()
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
+	maven { url "http://192.168.1.212:8081/nexus/content/groups/public/" }
 	mavenCentral()
 }
 
