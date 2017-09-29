@@ -587,7 +587,11 @@ public class HubProductServiceImpl implements HubProductService {
             spSpuInfo.setProductOriginalSex(ScmGenderType.MAN.getIndex());
         }else  if("女士".equals(hubSpuDto.getGender())){
             spSpuInfo.setProductOriginalSex(ScmGenderType.WOMAN.getIndex());
-        }else  if("中性".equals(hubSpuDto.getGender())||"男童".equals(hubSpuDto.getGender())||"女童".equals(hubSpuDto.getGender())){
+        }else  if("中性".equals(hubSpuDto.getGender())||"儿童".equals(hubSpuDto.getGender())){
+            spSpuInfo.setProductOriginalSex(ScmGenderType.LADY_BOY.getIndex());
+        }else  if("男童".equals(hubSpuDto.getGender())){
+            spSpuInfo.setProductOriginalSex(ScmGenderType.MAN.getIndex());
+        }else  if("女童".equals(hubSpuDto.getGender())){
             spSpuInfo.setProductOriginalSex(ScmGenderType.WOMAN.getIndex());
         }else{
             spSpuInfo.setProductOriginalSex(ScmGenderType.UNKNOWN.getIndex());
