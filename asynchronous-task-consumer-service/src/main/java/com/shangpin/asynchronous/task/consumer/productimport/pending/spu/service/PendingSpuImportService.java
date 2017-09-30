@@ -281,7 +281,7 @@ public class PendingSpuImportService {
 	
 		// 如果规格为尺码，则校验spu下所有的尺码
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
-		boolean flag = true;
+		boolean flag = false;
 		StringBuffer str = new StringBuffer();
 		if (isSpuPendingExist != null) {
 			boolean allFliter = true;
@@ -294,8 +294,8 @@ public class PendingSpuImportService {
 					if(hubSkuPendingDto.getFilterFlag()==1){
 						allFliter = false;
 					}
-					if(!hubPendingSkuCheckResult.isPassing()){
-						flag = false;	
+					if(hubPendingSkuCheckResult.isPassing()){
+						flag = true;	
 					}
 					str.append(hubPendingSkuCheckResult.getMessage()).append(",");
 				}
@@ -305,9 +305,6 @@ public class PendingSpuImportService {
 				map.put("noSku",noSku+"");
 				str.append("无sku信息或者sku都已处理");
 			}
-			
-		} else {
-			flag = false;
 		}
 		checkResult.setPassing(flag);
 		checkResult.setMessage(str.toString());
