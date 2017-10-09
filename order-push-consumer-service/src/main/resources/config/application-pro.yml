@@ -197,7 +197,7 @@ shangpin:
                   openApiKey: dc44a1702a8a4f0ca290fab9b90c910e
                   openApiSecret: cd4b5cc7e5a842f8b32ffd88dcb24bdb
           daniello:
-                  url: http://95.110.163.154:8580/ws_sito_shangpin/ws_sito_p15.asmx/
+                  url: http://212.83.175.83:63130/ws_sito_shangpin/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
