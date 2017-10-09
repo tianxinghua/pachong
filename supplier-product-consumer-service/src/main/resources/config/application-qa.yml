@@ -668,6 +668,15 @@ spring:
                         monnalisaPendingProduct:
                               destination: monnalisa.pending.product
                               content-type: application/json
+                        julianFashionOriginalProduct:
+                              destination: julianFashion.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        julianFashionPendingProduct:
+                              destination: julianFashion.pending.product
+                              content-type: application/json
                         srlOriginalProduct:
                               destination: srl.original.product
                               group: one
@@ -677,7 +686,7 @@ spring:
                         srlPendingProduct:
                               destination: srl.pending.product
                               content-type: application/json
-              rabbit: 
+              rabbit:
                         bindings: 
                               supplierPictureProduct: 
                                     producer: 
@@ -1331,6 +1340,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               monnalisaPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              julianFashionOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              julianFashionPendingProduct:
                                     producer:
                                          prefix: HA.
                               srlOriginalProduct:

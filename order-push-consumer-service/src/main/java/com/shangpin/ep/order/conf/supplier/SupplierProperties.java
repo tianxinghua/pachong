@@ -120,6 +120,10 @@ public class SupplierProperties {
 
 	private Ylati ylati;
 	
+	private Bagheera bagheera;
+	
 	private Gaudenzi gaudenzi;
+	
+	private JulianFashion julianFashion;
 	
 }

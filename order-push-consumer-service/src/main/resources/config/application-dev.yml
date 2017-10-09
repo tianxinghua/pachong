@@ -475,6 +475,28 @@ shangpin:
               messageType: text/html;charset=utf-8
               openApiKey: 71b18f9d51b0425fb81aa0f6f9c27ce8
               openApiSecret: 066c25a42ee14a03b42b206df0068e9b
+      bagheera: 
+              url: http://bagheera.gotdns.com/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: Shangpin
+              password: Shang2108
+              isPurchaseExp: 
+              openApiKey: 2ec8cd7d96cc4e9191b534481d727bfa
+              openApiSecret: 72c413d6440049e48d4c5d7f2fae5ebe
+      julianFashion: 
+              url: http://213.209.202.38:8080/ws_shangpin/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang1409
+              isPurchaseExp: 
+              openApiKey: 
+              openApiSecret: 
       supplier:
               delayTime: 1000
               retry: 120

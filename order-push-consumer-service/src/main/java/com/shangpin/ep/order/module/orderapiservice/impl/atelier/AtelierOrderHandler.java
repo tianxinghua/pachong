@@ -1,4 +1,4 @@
-package com.shangpin.ep.order.module.orderapiservice.impl;
+package com.shangpin.ep.order.module.orderapiservice.impl.atelier;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -6,32 +6,70 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
-import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-
-@Component("dlrboutiqueServiceImpl")
-public class DlrboutiqueServiceImpl implements IOrderService {
+/**
+ * atelier系统处理订单通用类
+ * <p>Title: AtelierOrderHandler</p>
+ * <p>Description: </p>
+ * <p>Company: </p> 
+ * @author lubaijiang
+ * @date 2017年9月27日 下午5:27:36
+ *
+ */
+@Service
+public abstract class AtelierOrderHandler implements IOrderService {
+	
+	private static OutTimeConfig getStockOutTimeConf = new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10);
+	private static OutTimeConfig createOrderOutTimeConf = new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1);	
 
 	@Autowired
-    LogCommon logCommon;    
+    private LogCommon logCommon;    
     @Autowired
-    SupplierProperties supplierProperties;
+    private HandleException handleException;
     @Autowired
-    HandleException handleException;
-    @Autowired
-    DlrboutiqueMailService mailService;
     private CommonService commonService;
+    /**
+     * 获取api url
+     * @return
+     */
+    public abstract String getApiUrl();
+    /**
+     * 获取用户名
+     * @return
+     */
+    public abstract String getUserName();
+    /**
+     * 获取密码
+     * @return
+     */
+    public abstract String getPassword();
+    /**
+     * 获取查看库存接口
+     * @return
+     */
+    public abstract String getGetItemStockInterface();
+    /**
+     * 获取创建订单接口
+     * @return
+     */
+    public abstract String getCreateOrderInterface();
+    /**
+     * 获取退单接口
+     * @return
+     */
+    public abstract String getSetStatusInterface();
+    
+    
     
     /**
      * 给对方推送数据
@@ -43,7 +81,7 @@ public class DlrboutiqueServiceImpl implements IOrderService {
      * @return
      * @throws Exception
      */
-    public String dlrboutiquePost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order) throws Exception{
+    public String atelierPost(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password) throws Exception{
     	return HttpUtil45.postAuth(url, param, outTimeConf, userName, password);
     }
     /**
@@ -92,7 +130,7 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 				//查询对方库存接口
 				orderDTO.setLogContent("查询库存参数============" + item_id); 
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-				String stockData = getItemStockBySizeMarketPlace(item_id,orderDTO);
+				String stockData = getItemStockBySizeMarketPlace(item_id);
 				orderDTO.setLogContent("查询库存返回结果======="+stockData);
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 				if(!HttpUtil45.errorResult.equals(stockData)){
@@ -127,11 +165,13 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 					}else{
 						orderDTO.setConfirmTime(new Date()); 
 						orderDTO.setPushStatus(PushStatus.NO_STOCK);
+//						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
 				}else{
 					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 					orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);	
 					orderDTO.setDescription("查询对方库存接口失败,对方返回的信息是："+stockData);
+//					sendMail("订单 "+orderDTO.getSpPurchaseNo()+" spuid等于 "+item_id+" 查询对方库存接口 GetItemStockBySizeMarketPlace 失败,对方返回的信息是："+stockData+",请与供应商联系。2分钟后会再推一次。 ");
 				}
 			}else{
 				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -139,6 +179,7 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 				orderDTO.setDescription("查询数据库失败,未找到该商品 "+skuId);
 				orderDTO.setLogContent("查询数据库失败,未找到该商品=========== "+skuId);
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+//				sendMail("订单 "+orderDTO.getSpPurchaseNo()+" 查询数据库失败,未找到该商品=========== "+skuId);
 			}
 			
 		} catch (Exception e) {
@@ -147,10 +188,6 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 			orderDTO.setLogContent("推送订单异常========= "+e.getMessage());
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		}
-		/**
-		 * 发份邮件
-		 */
-		mailService.pushConfirmOrder(orderDTO);
 		
 	}
 
@@ -172,10 +209,6 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 			if(returnData.contains("OK")){
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
-				/**
-				 * 发邮件
-				 */
-				mailService.handleRefundlOrder(deleteOrder);
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
@@ -195,10 +228,10 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 	 * @param item_id
 	 * @return
 	 */
-	private String getItemStockBySizeMarketPlace(String item_id,OrderDTO orderDTO) throws Exception {
+	private String getItemStockBySizeMarketPlace(String item_id) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
 		param.put("ITEM_ID", item_id);		
-		String returnData = dlrboutiquePost(supplierProperties.getDlrboutique().getUrl()+supplierProperties.getDlrboutique().getGetItemStockInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getDlrboutique().getUser(),supplierProperties.getDlrboutique().getPassword(),orderDTO);
+		String returnData = atelierPost(getApiUrl()+getGetItemStockInterface(), param, getStockOutTimeConf, getUserName(), getPassword());
 		return returnData;
 	}
 	
@@ -217,7 +250,7 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String returnData = dlrboutiquePost(supplierProperties.getDlrboutique().getUrl()+supplierProperties.getDlrboutique().getCreateOrderInterface(), param, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1),supplierProperties.getDlrboutique().getUser(),supplierProperties.getDlrboutique().getPassword(),orderDTO);
+		String returnData = atelierPost(getApiUrl()+getCreateOrderInterface(), param, createOrderOutTimeConf, getUserName(), getPassword());
 		orderDTO.setLogContent("下订单返回结果======="+returnData+" 下单参数============"+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 		return returnData;
@@ -235,25 +268,9 @@ public class DlrboutiqueServiceImpl implements IOrderService {
 		param.put("STATUS", status);//NEW PROCESSING SHIPPED CANCELED (for delete ORDER)
 		orderDTO.setLogContent("设置订单参数======="+param.toString());
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
-		String returnData = dlrboutiquePost(supplierProperties.getDlrboutique().getUrl()+supplierProperties.getDlrboutique().getSetStatusInterface(), param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),supplierProperties.getDlrboutique().getUser(),supplierProperties.getDlrboutique().getPassword(),orderDTO);
+		String returnData = atelierPost(getApiUrl()+getSetStatusInterface(), param, getStockOutTimeConf, getUserName(), getPassword());
 		orderDTO.setLogContent("设置订单状态返回结果======="+returnData);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.REFUNDED_LOG);
 		return returnData;
 	}
-	
-	/**
-	 * 获取订单状态
-	 * @param code 订单编号
-	 * @return
-	 */
-//	private String getStatusOrderMarketplace(String code) throws Exception {
-//		Map<String,String> param = new HashMap<String,String>();
-//		param.put("CODE", code);
-//		logger.info("查询的订单号为======"+code);
-//		String returnData = HttpUtil45.postAuth(url+getStatus_interface, param, new OutTimeConfig(1000*60*10,1000*60*10,1000*60*10),user,password);
-//		logger.info("查询返回结果======="+returnData);
-//		return returnData;
-//	}
-
-	
 }

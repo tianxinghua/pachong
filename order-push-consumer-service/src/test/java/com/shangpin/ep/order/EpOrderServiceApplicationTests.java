@@ -4,6 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.BagheeraOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
+import com.shangpin.ep.order.module.orderapiservice.impl.WiseOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.baseblu.OrderResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,8 +144,29 @@ public class EpOrderServiceApplicationTests {
 		deleteOrder.setDetail("1163000-2013076855557:1,");
 		wise.handleRefundlOrder(deleteOrder );
 	}
+	
+	@Autowired
+	BagheeraOrderService bagheeraOrderService;
+	
+	@Test
+	public void bagheeraPushOrder(){
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setSupplierId("2015100701573");
+		orderDTO.setSpOrderId("201709066014679");
+    	orderDTO.setDetail("8293047-2103049616411:1,");
+    	bagheeraOrderService.handleConfirmOrder(orderDTO );
+	}
+	@Test
+	public void bagheeraRefund(){
+		OrderDTO deleteOrder = new OrderDTO();
+		deleteOrder.setSupplierId("2015100701573");
+		deleteOrder.setSpOrderId("201709066014679");
+		bagheeraOrderService.handleRefundlOrder(deleteOrder );
+	}
+	
 	@Autowired
 	CommonService service;
+
 	@Test
 	public void testSize(){
 		try {

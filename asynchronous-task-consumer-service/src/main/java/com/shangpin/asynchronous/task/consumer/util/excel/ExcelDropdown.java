@@ -18,7 +18,7 @@ public class ExcelDropdown {
 	private static String HIDE_SHEET_NAME_YN = "errorList";
 	// 设置下拉列表的内容
 	private static String[] errorList = {ErrorReason.UNPROFITABLE_BRAND.getDesCh(),ErrorReason.NO_MATERIAL_INFO.getDesCh(),
-			ErrorReason.NO_ORIGIN_INFO.getDesCh(),ErrorReason.WRONG_MATERIAL_COMPOSITION.getDesCh(),
+			ErrorReason.NO_ORIGIN_INFO.getDesCh(),ErrorReason.No_Photo.getDesCh(),ErrorReason.WRONG_MATERIAL_COMPOSITION.getDesCh(),
 			ErrorReason.WRONG_MATERIAL_PERCENTAGE.getDesCh(),ErrorReason.NO_COLOR_CODE.getDesCh(),
 			ErrorReason.NO_MATERIAL_CODE.getDesCh(),ErrorReason.WRONG_CODE_RULE.getDesCh(),
 			ErrorReason.CHILD_ADULT_INVERSION.getDesCh(),ErrorReason.MAN_WOMAN_INVERSION.getDesCh(),ErrorReason.WRONG_MAPPING_OF_CODE.getDesCh(),

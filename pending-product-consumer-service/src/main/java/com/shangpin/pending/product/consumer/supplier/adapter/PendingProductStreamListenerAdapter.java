@@ -662,4 +662,14 @@ public class PendingProductStreamListenerAdapter {
 		
 	}
 
+	/**
+	 * 供应商julianFashion待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void julianFashionPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+
 }

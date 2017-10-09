@@ -26,6 +26,17 @@ public class OriginalProductStreamListener {
 	
 	@Autowired
 	private OriginalProductStreamListenerAdapter adapter;
+	
+	/**
+	 * 供应商julianFashion原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.JULIANFASHION)
+	public void julianFashionStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.julianFashionStreamListen(message,headers);
+	}
+	
 	/**
 	 * 供应商fratinardi原始商品数据流通道监听者
 	 * @param message 消息

@@ -447,13 +447,19 @@ spring:
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
+                        julianFashionPendingProduct:
+                              destination: julianFashion.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
                         srlPendingProduct:
                               destination: srl.pending.product
                               group: one
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
-              rabbit: 
+              rabbit:
                       bindings: 
                             coccolebimbiPendingProduct: 
                                   consumer: 
@@ -876,6 +882,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             monnalisaPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            julianFashionPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false
