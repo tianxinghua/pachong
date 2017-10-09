@@ -618,6 +618,15 @@ spring:
                         monnalisaPendingProduct:
                               destination: monnalisa.pending.product
                               content-type: application/json
+                        srlOriginalProduct:
+                              destination: srl.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        srlPendingProduct:
+                              destination: srl.pending.product
+                              content-type: application/json
               rabbit: 
                       bindings: 
                             supplierPictureProduct: 
@@ -1218,6 +1227,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                             monnalisaPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            srlOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            srlPendingProduct:
                                     producer:
                                          prefix: HA.
 

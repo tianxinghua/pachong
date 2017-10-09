@@ -150,6 +150,8 @@ public interface OriginalProductSink {
 	public static final String GAUDENZI = "gaudenziOriginalProduct";
 	
 	public static final String MONNALISA = "monnalisaOriginalProduct";
+	
+	public static final String SRL = "srlOriginalProduct";
 
 
 	//===============================
@@ -588,5 +590,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.MONNALISA)
 	public MessageChannel monnalisaOriginalProduct();
+	
+	/**
+	 * 供应商srl通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.SRL)
+	public MessageChannel srlOriginalProduct();
 
 }
