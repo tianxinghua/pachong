@@ -8,8 +8,9 @@ include 'iog-service'
 include 'iog-common-product'
 include 'iog-product-framework'
 include 'openapi-ice'
-
+include 'iog-sop'
 
 include 'tony-fetchstock'
 include 'synchSupplierIdAndSpId'
+include 'syn-spsku-hub'
 
