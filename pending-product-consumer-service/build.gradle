@@ -22,14 +22,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+	mavenLocal()
+	maven { url "http://192.168.20.223:8081/nexus/content/groups/public/" }
 	mavenCentral()
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
 }
 
 
 dependencies {
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:1.2.16-dev-studio-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.2.0-lzr-SNAPSHOT')
 	compile('org.springframework.cloud:spring-cloud-starter-feign')
     compile('org.apache.commons:commons-lang3:3.4')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
