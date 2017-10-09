@@ -99,9 +99,9 @@ public class SupplierProductSaveAndSendToPending {
 			supplierProductRetryManager.insert(dto);
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(hubSpu.getSupplierSeasonname())){
-			log.info("supplierId:"+supplierId+",季节:"+hubSpu.getSupplierSeasonname());
+			log.debug("supplierId:"+supplierId+",季节:"+hubSpu.getSupplierSeasonname());
 			HubSeasonDicDto hubSeason = supplierProductRetryManager.findSupplierSeason(supplierId.trim(), hubSpu.getSupplierSeasonname().trim());
-			log.info("返回参数：{}",hubSeason);
+			log.debug("返回参数：{}",hubSeason);
 			if(hubSeason==null){
 				hubSeason = new HubSeasonDicDto(); 
 				hubSeason.setCreateTime(new Date());
