@@ -142,6 +142,10 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler monnalisaHandler;
 	
 	@Autowired
+	@Qualifier("srlHandler")
+	private ISupplierHandler srlHandler;
+	
+	@Autowired
 	@Qualifier("coccolebimbiCommonHandler")
 	private ISupplierHandler coccolebimbiCommonHandler;
 	
@@ -748,6 +752,15 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void monnalisaStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		monnalisaHandler.handleOriginalProduct(message, headers);
+	}
+	
+	/**
+	 * srl供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void srlStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		srlHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**
