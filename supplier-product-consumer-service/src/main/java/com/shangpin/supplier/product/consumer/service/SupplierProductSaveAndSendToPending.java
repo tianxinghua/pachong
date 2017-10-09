@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -147,12 +148,21 @@ public class SupplierProductSaveAndSendToPending {
 			savePriceRecordAndSendConsumer(supplierNo,supplierSpuDto,supplierSkuDtos);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
+
+			HubSupplierSpuDto hubSupplierSpuInDataBase = supplierProductMysqlService.hasHadTheHubSpu(supplierSpuDto);
+
 			//保存hubSpu到数据库
+
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
-				pictureProductService.updateDataStateToDelete(supplierId, supplierSpuDto.getSupplierSpuNo());
-				pendingSpu.setPicState(PicState.NO_PIC.getIndex());
+				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.YES.getIndex()){
+					pendingSpu.setPicState(PicState.HANDLED.getIndex());
+				}else{
+
+					pictureProductService.updateDataStateToDelete(supplierId, supplierSpuDto.getSupplierSpuNo());
+					pendingSpu.setPicState(PicState.NO_PIC.getIndex());
+				}
 			}
-			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,pendingSpu);
+			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,hubSupplierSpuInDataBase,pendingSpu);
 			//开始构造消息头
 			Spu spuHead = setSpuHead(supplierId,supplierSpuDto.getSupplierSpuNo(),productStatus.getIndex());
 			List<Sku> headSkus = new ArrayList<Sku>();		

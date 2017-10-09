@@ -56,24 +56,25 @@ public class SupplierProductMysqlService {
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param supplierNo
-	 * @param hubSpu
+	 * @param supplierSpu      供货商的原始SPU
+	 * @param hubSpuSel  从数据库查出的hubsupplierspu
 	 * @param pendingSpu 把hubSpu发生变化了的信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
+	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto supplierSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu){
 		try {	
 //			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
-			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
+//			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
-				hubSpu.setCreateTime(new Date());
-				Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
-				hubSpu.setSupplierSpuId(spuId); 
-				convertHubSpuToPendingSpu(hubSpu,pendingSpu);
+				supplierSpu.setCreateTime(new Date());
+				Long spuId = hubSupplierSpuGateWay.insert(supplierSpu);
+				supplierSpu.setSupplierSpuId(spuId);
+				convertHubSpuToPendingSpu(supplierSpu,pendingSpu);
 				return ProductStatus.NEW;
 			}else{
-				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
+				supplierSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId());
 				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
-				boolean isChanged = comparisonHubSpu(supplierNo,hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
+				boolean isChanged = comparisonHubSpu(supplierNo,supplierSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
 				/**
 				 * 处理错误原因
 				 */
@@ -90,8 +91,8 @@ public class SupplierProductMysqlService {
 		} catch (Exception e) {
 			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage());
 			try {
-				HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
-				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
+//				HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
+				if(null!=hubSpuSel)	supplierSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId());
 			} catch (Exception e1) {
 				log.error(">>>>>>>>>>>>>>>>>异常为"+e1.getMessage(),e1);
 			}
@@ -294,7 +295,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @return
 	 */
-	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) throws Exception {
+	public HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) throws Exception {
 		if(StringUtils.isEmpty(hubSpu.getSupplierId()) || StringUtils.isEmpty(hubSpu.getSupplierSpuNo())){
 			throw new Exception("产品信息异常。"); 
 		}
