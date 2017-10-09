@@ -59,6 +59,10 @@ spring:
        password: shangpin@123
        ftpHubPath: hub/
        ftpPendingPath: pending/
+       studioHost: 192.168.20.110
+       studioPort: 21
+       studioUserName: dev
+       studioPassword: shangpin@123
   mail: 
        default-recipient: chengxu@shangpin.com
        default-sender: chengxu@shangpin.com

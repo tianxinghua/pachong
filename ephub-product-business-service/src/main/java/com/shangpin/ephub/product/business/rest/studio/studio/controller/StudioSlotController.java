@@ -185,59 +185,51 @@ public class StudioSlotController {
                         	map.put(barcode, list);
                         }
 					} catch (Exception e) {
-						log.error(file.getName() + "图片上传发生异常：{}", e);
 						e.printStackTrace();
 					}
 				}
 				log.info("studio download pic map:"+JsonUtil.serialize(map));
 				log.info("map size:"+map.size());
 				for(Map.Entry<String, List<String>> entry : map.entrySet()) {  
-					List<String> dataList = entry.getValue();
-					String[] array = new String[dataList.size()];
-					for(int i=0;i<dataList.size();i++){
-						String data = dataList.get(i);
-						if(data.contains("_")){
-                        	array[Integer.parseInt(data.substring(data.indexOf("_")+1,data.indexOf(".")))] = data;
-                        }else{
-                        	array[0] = data;
-                        }
-					}
-					List<String> list = new ArrayList<String>();
-					for(int j=0;j<array.length;j++){
-						log.info("start 下载ftp图片，图片名称:"+array[j]);
-//						String downLoadAddress = "/home/dev/studio_slot/" + slotNo + "/" + array[j];
-//						InputStream in = FTPClientUtil.downFile(downLoadAddress);
-						String downLoadAddress = "/home/dev/studio_slot/" + slotNo;
-						InputStream in = FTPClientUtil.downStudioFile(downLoadAddress,array[j]);
-						log.info("end 下载ftp图片，图片名称:"+array[j]);
-						ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
-						byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
-						int rc = 0;
-						while ((rc = in.read(buff, 0, 100)) > 0) {
-							swapStream.write(buff, 0, rc);
+					List<String> resultData = sort(entry.getKey(), entry.getValue());
+					for(int j=0;j<resultData.size();j++){
+						try {
+							log.info("start 下载ftp图片，图片名称:"+resultData.get(j));
+							String downLoadAddress = "/home/dev/studio_slot/" + slotNo;
+							InputStream in = FTPClientUtil.downStudioFile(downLoadAddress,resultData.get(j));
+							log.info("end 下载ftp图片，图片名称:"+resultData.get(j));
+							ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+							byte[] buff = new byte[100]; // buff用于存放循环读取的临时数据
+							int rc = 0;
+							while ((rc = in.read(buff, 0, 100)) > 0) {
+								swapStream.write(buff, 0, rc);
+							}
+							byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
+							String extension = pictureService.getExtension(resultData.get(j));
+							String fdfsURL = pictureService.uploadPic(in_b, extension);
+							log.info("图片名称:"+resultData.get(j)+"图片上传返回url:"+fdfsURL);
+							List<String> list = new ArrayList<String>();
+							list.add(fdfsURL);
+							UploadQuery uploadQuery = new UploadQuery();
+							uploadQuery.setSlotNo(slotNo);
+							uploadQuery.setUrls(list);
+							uploadQuery.setSlotNoSpuId(entry.getKey());
+							log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
+							imageUploadController.add(uploadQuery);
+		                    log.info("imageUploadController end");
+		                    
+		                    log.info("start 下载并上传图片!");
+		                    InputStream newIn = FTPClientUtil.downStudioFile(newPathName + slotNo , resultData.get(j));
+							FTPClientUtil.uploadStudioNewFile("/home/dev/studio_backup/" + slotNo, resultData.get(j), newIn);
+							log.info("end 下载并上传图片!");
+	
+							FTPClientUtil.deleteStudioFile(newPathName + slotNo + "/" + resultData.get(j));
+							in.close();
+							newIn.close();
+						} catch (Exception e) {
+							log.error(resultData.get(j) + "图片上传发生异常：{}", e);
+							e.printStackTrace();
 						}
-						byte[] in_b = swapStream.toByteArray(); // in_b为转换之后的结果
-						String extension = pictureService.getExtension(array[j]);
-						String fdfsURL = pictureService.uploadPic(in_b, extension);
-						log.info("图片名称:"+array[j]+"图片上传返回url:"+fdfsURL);
-						list.add(fdfsURL);
-						UploadQuery uploadQuery = new UploadQuery();
-						uploadQuery.setSlotNo(slotNo);
-						uploadQuery.setUrls(list);
-						uploadQuery.setSlotNoSpuId(entry.getKey());
-						log.info("uploadQuery:"+JsonUtil.serialize(uploadQuery));
-						imageUploadController.add(uploadQuery);
-	                    log.info("imageUploadController end");
-	                    
-	                    log.info("start 下载并上传图片!");
-//	                    InputStream newIn = FTPClientUtil.downFile(newPathName + slotNo + "/" + array[j]);
-	                    InputStream newIn = FTPClientUtil.downStudioFile(newPathName + slotNo , array[j]);
-						FTPClientUtil.uploadStudioNewFile("/home/dev/studio_backup/" + slotNo, array[j], newIn);
-						log.info("end 下载并上传图片!");
-
-						FTPClientUtil.deleteStudioFile(newPathName + slotNo + "/" + array[j]);
-						in.close();
-						newIn.close();
 					}
 				}  
 				FTPClientUtil.deleteStudioDir(newPathName + slotNo);
@@ -292,8 +284,50 @@ public class StudioSlotController {
 		}
 		return dto;
 	}
+	private List<String> sort(String barcode,List<String> dataList){
+		int[] array = new int[dataList.size()];
+		for(int g=0;g<dataList.size();g++){
+			String data = dataList.get(g);
+			if(data.contains("_")){
+            	array[g] = Integer.parseInt(data.substring(data.indexOf("_")+1,data.indexOf(".")));
+            }else{
+            	array[g] = 0;
+            	barcode = data.substring(0,data.indexOf("."));
+            }
+		}
+		for(int i = 0; i < array.length - 1; i++) {
+            int minIndex = i;
+            for(int j = i + 1; j < array.length; j++) {
+                if(array[j] < array[minIndex]) {
+                    minIndex = j;
+                }
+            }
+            if(minIndex != i) {
+                int temp = array[i];
+                array[i] = array[minIndex];
+                array[minIndex] = temp;
+            }
+        }
+		List<String> newDataList = new ArrayList<>();
+		for(int h=0;h<array.length;h++) {
+			if(h==0&&array[h]==0) {
+				newDataList.add(barcode+".jpg");
+			}else {
+				newDataList.add(barcode+"_"+array[h]+".jpg");
+			}
+		}
+		return newDataList;
+	}
 	public static void main(String[] args){
-		System.out.println("2017/06/19".replaceAll("/", ""));
-		
+//		System.out.println("2017/06/19".replaceAll("/", ""));
+		String barcode = "123456789";
+		List<String> list = new ArrayList<>();
+//		list.add("123456789_2.jpg");
+		list.add("123456789_4.jpg");
+//		list.add("123456789_3.jpg");
+		list.add("123456789.jpg");
+		list.add("123456789_1.jpg");
+		StudioSlotController tt = new StudioSlotController();
+		tt.sort(barcode,list);
 	}
 }
