@@ -6,6 +6,7 @@ subprojects {
         mavenLocal()
         maven { url "http://192.168.20.223:8081/nexus/content/groups/public/" }
         mavenCentral()
+
     }
 
     dependencies {
