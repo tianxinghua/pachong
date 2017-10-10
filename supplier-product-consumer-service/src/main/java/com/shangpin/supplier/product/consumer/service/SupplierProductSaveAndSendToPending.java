@@ -6,13 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.Isexistpic;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
@@ -154,7 +154,7 @@ public class SupplierProductSaveAndSendToPending {
 			//保存hubSpu到数据库
 
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
-				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.YES.getIndex()){
+				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.AIR_STUDIO_UPLOAD.getIndex()){
 					pendingSpu.setPicState(PicState.HANDLED.getIndex());
 				}else{
 

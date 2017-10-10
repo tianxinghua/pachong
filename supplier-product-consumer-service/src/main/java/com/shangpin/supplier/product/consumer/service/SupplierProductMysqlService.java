@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
+import com.shangpin.ephub.client.data.mysql.enumeration.Isexistpic;
 import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -30,7 +31,6 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 
 import lombok.extern.slf4j.Slf4j;
 /**
