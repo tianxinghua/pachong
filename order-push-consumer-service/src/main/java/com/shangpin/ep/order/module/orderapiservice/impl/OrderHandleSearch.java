@@ -210,6 +210,10 @@ public class OrderHandleSearch {
 	@Qualifier("bagheeraOrderService") 
 	IOrderService bagheeraOrderService;
 	
+	@Autowired
+	@Qualifier("julianFashionHandler") 
+	IOrderService julianFashionHandler;
+	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -320,6 +324,8 @@ public class OrderHandleSearch {
 			return bagheeraOrderService;
 		}else if ("2015091801501".equals(supplierId)) {
 			return gaudenziServiceImpl;
+		}else if("2015100501570".equals(supplierId)){
+			return julianFashionHandler;
 		}else {
 			return null;
 		}
@@ -421,6 +427,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getBagheera();
 		}else if ("2015091801501".equals(supplierId)) {
 			return supplierProperties.getGaudenzi();
+		}else if("2015100501570".equals(supplierId)){
+			return supplierProperties.getJulianFashion();
 		}
 		else {
 			return null;
