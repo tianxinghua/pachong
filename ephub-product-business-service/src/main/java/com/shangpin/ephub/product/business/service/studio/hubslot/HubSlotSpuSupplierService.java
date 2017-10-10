@@ -62,6 +62,8 @@ public interface HubSlotSpuSupplierService {
      * @return
      */
     public List<HubSlotSpuSupplierDto> findSlotSpuSupplierListBySlotSpuId(Long slotSpuId);
+    
+    public List<HubSlotSpuSupplierDto> newFindSlotSpuSupplierListBySlotSpuId(Long slotSpuId,String supplierNo);
 
     /**
      * 逻辑删除slotspusupplier

@@ -155,6 +155,14 @@ public class HubSlotSpuSupplierServiceImpl implements HubSlotSpuSupplierService 
                 .andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
         return  spuSupplierGateway.selectByCriteria(criteria);
     }
+    
+    @Override
+    public List<HubSlotSpuSupplierDto> newFindSlotSpuSupplierListBySlotSpuId(Long slotSpuId,String supplierNo) {
+        HubSlotSpuSupplierCriteriaDto criteria = new HubSlotSpuSupplierCriteriaDto();
+        criteria.createCriteria().andSlotSpuIdEqualTo(slotSpuId).andSupplierNoEqualTo(supplierNo)
+                .andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+        return  spuSupplierGateway.selectByCriteria(criteria);
+    }
 
     @Override
     public void deleteSlotSpuSupplierForLogic(Long id) {
