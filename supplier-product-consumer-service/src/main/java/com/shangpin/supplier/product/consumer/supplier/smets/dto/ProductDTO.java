@@ -1,5 +1,10 @@
 package com.shangpin.supplier.product.consumer.supplier.smets.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class ProductDTO {
     private String id;
     private String supplierId;
@@ -20,7 +25,8 @@ public class ProductDTO {
     /**小类*/
     private String subCategoryId;
     private String subCategoryName;
-
+    private String  spuPicture;//商品的公共图片
+    private String skuPicture;//SKU的个性图片
     private String memo;
     private String spSkuId;
     private String spStatus;
@@ -39,7 +45,13 @@ public class ProductDTO {
 	public void setMemo(String memo) {
 		this.memo = memo;
 	}
+	public String getSizeClass() {
+		return sizeClass;
+	}
 
+	public void setSizeClass(String sizeClass) {
+		this.sizeClass = sizeClass;
+	}
 	private String brandId;
     private String seasonId;//上市季节ID
     private String brandName;
@@ -74,6 +86,7 @@ public class ProductDTO {
     private String color;
     //尺码
     private String  size;
+    private String  sizeClass;
     //条形码
     private String  barcode;
 
