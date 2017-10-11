@@ -41,6 +41,11 @@ public class PicUploadController {
 		return pictureService.uploadPic(uploadPic);
 	}
 
+	/**
+	 * 残次品页面的图片上传
+	 * @param request
+	 * @return fsdfs的url
+	 */
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
 	public HubResponse<?> upload(HttpServletRequest request){
 		try {

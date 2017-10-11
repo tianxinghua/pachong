@@ -1,25 +1,25 @@
 package com.shangpin.ephub.product.business.ui.studio.imageupload.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.collections.CollectionUtils;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
-import com.shangpin.ephub.client.data.mysql.studio.supplier.dto.HubSlotSpuSupplierDto;
-import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
-import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailDto;
+import com.google.common.collect.Maps;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
-import com.shangpin.ephub.product.business.ui.studio.common.operation.service.OperationService;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
@@ -43,9 +43,62 @@ public class ImageUploadController {
 	@Autowired
 	private ImageUploadService imageUploadService;
 	@Autowired
-	private OperationService operationService;
-	@Autowired
 	private PictureService pictureService;
+	
+	/**
+	 * 图片上传页面
+	 * @param request
+	 * @return 返回失败的图片名称
+	 */
+	@RequestMapping(value="/upload",method = RequestMethod.POST)
+	public HubResponse<?> upload(HttpServletRequest request){
+		try {
+			log.info("========开始上传图片==========="); 
+			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+			if(isMultipart){
+				MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
+				Map<String, MultipartFile> maps = mreq.getFileMap();
+				if(null != maps && maps.size()>0){
+					/**
+					 * 记录上传失败的url，并返回
+					 */
+					List<String> failList = Lists.newArrayList();
+					Map<String,List<String>> urlMaps = Maps.newHashMap();
+					String fileName, extension, fdfsURL, barcode = "";
+					for(MultipartFile file : maps.values()){
+						fileName = file.getOriginalFilename();
+						log.info("上传图片："+fileName);
+						extension = pictureService.getExtension(fileName);
+						fdfsURL = pictureService.uploadPic(file.getBytes(), extension);
+						barcode = pictureService.getBarCode(fileName);
+						if(urlMaps.containsKey(barcode)){
+							urlMaps.get(barcode).add(fdfsURL);
+						}else{
+							List<String> urls = Lists.newArrayList();
+							urls.add(fdfsURL);
+							urlMaps.put(barcode, urls);
+						}
+					}
+					for(Entry<String,List<String>> entry : urlMaps.entrySet()){
+						List<String> list = imageUploadService.add(entry.getKey(), entry.getValue());
+						if(list.size() > 0){
+							failList.addAll(list);
+						}
+					}
+					if(failList.size() > 0){
+						return HubResponse.errorResp(failList);
+					}
+				}
+			}else{
+				log.error("This request is not Multipart!"); 
+				return HubResponse.errorResp("This request is not Multipart!");
+			}
+			return HubResponse.successResp("");
+		} catch (Exception e) {
+			log.error("上传图片时异常："+e.getMessage(),e);
+		}
+		return HubResponse.errorResp("调用接口异常");
+	}
 	
 	@RequestMapping(value = "/list" ,method = RequestMethod.POST)
 	public HubResponse<?> slotList(@RequestBody OperationQuery operationQuery){
@@ -69,59 +122,9 @@ public class ImageUploadController {
 		if(StringUtils.isEmpty(uploadQuery.getSlotNoSpuId())){
 			return HubResponse.errorResp("请先扫码");
 		}
-		/**
-		 * 记录上传失败的链接
-		 */
-		List<String> list = new ArrayList<String>();
-		int result = 0;
-		int result1 = 0;
-		try {
-			Map<String,Object> map = new HashMap<String,Object>(){/**
-				 * 
-				 */
-				private static final long serialVersionUID = -3100796099597147465L;
-
-			{put("hubSlotSpu",null);put("hubSlotSpuSupplier",null);}};
-			List<String> spPicUrls = uploadQuery.getUrls();
-			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(uploadQuery.getSlotNoSpuId());
-			String slotSpuNo = detailDto.getSlotSpuNo();
-			String supplierId = detailDto.getSupplierId();
-			if(CollectionUtils.isEmpty(spPicUrls)){
-				result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
-				result1 = imageUploadService.updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.NOT_YET_UPLOAD);
-				log.info("更新uploadPicSign为0>>"+result+" 更新HubSlotSpuPicSign结果为0>>"+result1); 
-			}else{
-				Map<String, String> picMap = imageUploadService.hasSlotSpuPic(spPicUrls);
-				log.info("已存在的图片："+JsonUtil.serialize(picMap));  
-				for(String spPicUrl : spPicUrls){
-					if(!picMap.containsKey(spPicUrl)){
-						if(null == map.get("hubSlotSpu")){
-							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
-							map.put("hubSlotSpu", spuDto);
-						}
-						if(null == map.get("hubSlotSpuSupplier")){
-							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(supplierId, slotSpuNo);
-							map.put("hubSlotSpuSupplier", supplierDto);
-						}
-						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
-						HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
-						String extension = pictureService.getExtension(spPicUrl);
-						boolean bool = imageUploadService.insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
-						if(!bool){
-							list.add(spPicUrl);
-						}
-					}
-				}
-				result = imageUploadService.updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
-				result1 = imageUploadService.updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.HAVE_UPLOADED);
-				imageUploadService.updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(detailDto.getSpuPendingId(), detailDto.getSlotSpuSupplierId(), detailDto.getSupplierSpuId(), UploadPicSign.HAVE_UPLOADED);
-				log.info("更新uploadPicSign结果=="+result+" 更新HubSlotSpuPicSign结果=="+result1); 
-			}
-		} catch (Exception e) {
-			log.error("上传图片页面异常："+e.getMessage(),e); 
-		}
+		List<String> list = imageUploadService.add(uploadQuery.getSlotNoSpuId(), uploadQuery.getUrls());
 		log.info("上传失败的图片："+JsonUtil.serialize(list)); 
-		if(list.size() == 0 && result == 1 && result1 == 1){
+		if(list.size() == 0){
 			return HubResponse.successResp("全部上传成功。");
 		}else{
 			return HubResponse.errorResp(list);
