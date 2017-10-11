@@ -125,16 +125,16 @@ public class ParisiOrderUtil  {
     public static void main(String[] args){
     	ParisiOrderUtil util = new ParisiOrderUtil();
     	util.init();
-//    	String sku = "62680-47-S";
-//        String quantity = "1";
-//    	OrderDTO orderDTO = new OrderDTO();
-//    	orderDTO.setSpOrderId("0123456789");
-//    	orderDTO.setPurchaseNo("9876543210");
-//    	util.pushOrder(orderDTO,sku,quantity);
-//    	util.cancelOrder(orderDTO);
-//    	util.confirmOrder(orderDTO, sku, quantity);
-//    	util.refund(orderDTO, sku);
-    	util.getSearchStock("37372-48-3 yrs");
+    	String sku = "62680-47-S";
+        String quantity = "1";
+    	OrderDTO orderDTO = new OrderDTO();
+    	orderDTO.setSpOrderId("0123456789");
+    	orderDTO.setPurchaseNo("9876543210");
+    	util.pushOrder(orderDTO,sku,quantity);
+    	util.cancelOrder(orderDTO);
+    	util.confirmOrder(orderDTO, sku, quantity);
+    	util.refund(orderDTO, sku);
+//    	util.getSearchStock("37372-48-3 yrs");
     }
 
     public OrderOfSupplier confirmOrder(OrderDTO orderDTO ,String sku, String  quantity){
