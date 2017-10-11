@@ -286,24 +286,28 @@ public class HubSlotSpuServiceImpl implements HubSlotSpuService {
     public List<SlotSpuDto> findSlotSpu(SpuSupplierQueryDto queryDto) {
         List<SlotSpuDto> resultList = new ArrayList<>();
 
-        if(StringUtils.isNotBlank(queryDto.getSupplierNo())){
-            //供货商不为空  查询 slotspusupplier
-            List<SlotSpuSupplier> slotSpuSuppliers = spuSupplierUnionGateWay.listByQuery(queryDto);
-            resultList = this.getSlotSpuVoList(slotSpuSuppliers);
-
-        }else{
+//        if(StringUtils.isNotBlank(queryDto.getSupplierNo())){
+//            //供货商不为空  查询 slotspusupplier
+//            List<SlotSpuSupplier> slotSpuSuppliers = spuSupplierUnionGateWay.listByQuery(queryDto);
+//            resultList = this.getSlotSpuVoList(slotSpuSuppliers);
+//
+//        }else{
             //查询slotspu 后 再查询对应的SLOTSPUSUPPLIER
             List<HubSlotSpuDto> slotSpuDtos = searchHubSlotSpuDtos(queryDto);
-
             for(HubSlotSpuDto slotSpuDto:slotSpuDtos){
-                SlotSpuDto vo = new SlotSpuDto();
-                this.setSlotSpuValueFromDataToVoForSlot(slotSpuDto,vo);
-                List<HubSlotSpuSupplierDto> slotSpuSuppliers = hubSlotSpuSupplierService.findSlotSpuSupplierListBySlotSpuId(slotSpuDto.getSlotSpuId());
-                vo.setSpuSupplierDtos(this.getSpuSupplierVoList(slotSpuSuppliers));
-                resultList.add(vo);
-            }
-
-
+            	List<HubSlotSpuSupplierDto> slotSpuSuppliers = null;
+            	if(StringUtils.isNotBlank(queryDto.getSupplierNo())) {
+            		slotSpuSuppliers = hubSlotSpuSupplierService.newFindSlotSpuSupplierListBySlotSpuId(slotSpuDto.getSlotSpuId(),queryDto.getSupplierNo());
+            	}else {
+            		slotSpuSuppliers = hubSlotSpuSupplierService.findSlotSpuSupplierListBySlotSpuId(slotSpuDto.getSlotSpuId());
+            	}
+                if(slotSpuSuppliers!=null&&slotSpuSuppliers.size()!=0) {
+	                SlotSpuDto vo = new SlotSpuDto();
+	                this.setSlotSpuValueFromDataToVoForSlot(slotSpuDto,vo);
+	                vo.setSpuSupplierDtos(this.getSpuSupplierVoList(slotSpuSuppliers));
+	                resultList.add(vo);
+                }
+//            }
         }
 
         return resultList;
