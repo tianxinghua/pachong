@@ -546,8 +546,8 @@ shangpin:
                   user: shangpin
                   password: Shang1409
                   isPurchaseExp: 
-                  openApiKey: 
-                  openApiSecret: 
+                  openApiKey: e53c1bba4adf4f02841e4f815dc35960
+                  openApiSecret: bbc5a77507d64e59ae24ce976c68c538
           supplier:
                   delayTime: 1000
                   retry: 120
