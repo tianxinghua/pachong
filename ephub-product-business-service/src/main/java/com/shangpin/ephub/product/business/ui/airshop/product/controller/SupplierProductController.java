@@ -14,25 +14,34 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.shangpin.ephub.client.data.airshop.supplier.product.dto.HubSupplierProductRequestWithPage;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.task.product.body.Task;
+import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.product.HubSupplierProductService;
 import com.shangpin.ephub.product.business.common.supplier.sku.HubSupplierSkuService;
 import com.shangpin.ephub.product.business.common.supplier.spu.HubSupplierSpuService;
 import com.shangpin.ephub.product.business.conf.stream.source.task.sender.TaskStreamSender;
+import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
+import com.shangpin.ephub.product.business.rest.supplier.controller.SupplierController;
 import com.shangpin.ephub.product.business.ui.airshop.product.dto.PageResponseDTO;
 import com.shangpin.ephub.product.business.ui.airshop.product.dto.ProductDTO;
 import com.shangpin.ephub.product.business.ui.airshop.product.dto.ProductDetailResponseDTO;
 import com.shangpin.ephub.product.business.ui.airshop.product.dto.ProductDetailSkuResponseDTO;
+import com.shangpin.ephub.product.business.ui.airshop.product.dto.ResponseDTO;
 import com.shangpin.ephub.product.business.ui.airshop.product.dto.SkuProductDTO;
 import com.shangpin.ephub.product.business.ui.airshop.product.dto.SpuProductDTO;
+import com.shangpin.ephub.product.business.ui.airshop.product.dto.SupplierProduct;
+import com.shangpin.ephub.product.business.ui.airshop.product.dto.UUIDGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -47,8 +56,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/supplier-product")
 @Slf4j
 public class SupplierProductController {
-	 @Autowired
-	    TaskStreamSender productImportTaskStreamSender;
+	
+	@Autowired
+	RestTemplate rest;
+	@Autowired
+	HubSupplierValueMappingService hubSupplierValueMappingService;
+	@Autowired
+	TaskStreamSender productImportTaskStreamSender;
 	@Autowired
 	private HubSupplierProductService hubSupplierProductService;
 	@Autowired
@@ -60,7 +74,7 @@ public class SupplierProductController {
 
     @RequestMapping(value="/selectSupplierProduct",method=RequestMethod.POST)
     public PageResponseDTO pendingList(@RequestBody HubSupplierProductRequestWithPage pendingQuryDto){
-    	log.info("请求参数：{}",pendingQuryDto);
+    	log.info("airshop查询请求参数：{}",pendingQuryDto);
     	PageResponseDTO pendingProducts = new PageResponseDTO();
     	int total = hubSupplierProductService.count(pendingQuryDto);
     	if(total>0){
@@ -74,10 +88,8 @@ public class SupplierProductController {
     
     @RequestMapping(value="/detail/{supplierSpuId}",method=RequestMethod.GET)
     public ProductDetailResponseDTO detail(@PathVariable("supplierSpuId") Long supplierSpuId){
-    	
+    	log.info("airshop查询详情接受到参数：{}",supplierSpuId);
     	HubSupplierSpuDto spu = hubSupplierSpuService.selectHubSupplierSpuById(supplierSpuId);
-    	
-    	
     	ProductDetailResponseDTO productDetail = new ProductDetailResponseDTO();
     	if(spu!=null){
     		productDetail.setBrand(spu.getSupplierBrandname());
@@ -87,11 +99,17 @@ public class SupplierProductController {
     		productDetail.setGender(spu.getSupplierGender());
     		productDetail.setMadeIn(spu.getSupplierOrigin());
     		productDetail.setMaterial(spu.getSupplierMaterial());
-    		productDetail.setSeason(spu.getSupplierSeasonname());
+    		if(spu.getSupplierSeasonname()!=null){
+    			String yearSeason = spu.getSupplierSeasonname();
+    			if(yearSeason.split("-").length>1){
+    				productDetail.setSeason(yearSeason.split("-")[1]);
+    				productDetail.setYear(yearSeason.split("-")[0]);
+    			}
+    		}
+    		
     		productDetail.setSpuName(spu.getSupplierSpuName());
     		productDetail.setSupplierSpuId(spu.getSupplierSpuId());
     		productDetail.setProductCode(spu.getSupplierSpuModel());
-    		
     		HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
     		criteriaPic.createCriteria().andSupplierIdEqualTo(spu.getSupplierId()).andSupplierSpuIdEqualTo(supplierSpuId);
     		List<HubSpuPendingPicDto> picList = hubSpuPendingPicGateWay.selectByCriteria(criteriaPic);
@@ -115,6 +133,7 @@ public class SupplierProductController {
         			response.setSkuId(sku.getSupplierSkuNo());
         			response.setShangpinSKU(sku.getSpSkuNo());
         			response.setSize(sku.getSupplierSkuSize());
+        			response.setSizeClass(sku.getSupplierSkuSizeType());
         			response.setSupplyPrice(sku.getSupplyPrice()+"");
         			response.setSupplierSkuId(sku.getSupplierSkuId());
         			productDetail.setMarketPrice(sku.getMarketPrice()+"");
@@ -130,8 +149,8 @@ public class SupplierProductController {
     
 
     @RequestMapping(value="/add/{supplierId}",method=RequestMethod.POST)
-    public void add(@PathVariable("supplierId") String supplierId,@RequestBody SpuProductDTO product){
-    	
+    public ResponseDTO add(@PathVariable("supplierId") String supplierId,@RequestBody SpuProductDTO product){
+    	log.info(supplierId+"airshop新增接受到参数：{}",product);
     	HubSupplierSpuDto supplierSpu = convertProduct2HubSupplierSpu(supplierId,product);
     	supplierSpu.setCreateTime(new Date());
     	Long supplierSpuId = hubSupplierSpuService.insert(supplierSpu);
@@ -143,11 +162,14 @@ public class SupplierProductController {
     			hubSupplierSkuService.insertSku(supplierSku);
     		}
     	}
+    	ResponseDTO response = new ResponseDTO();
+    	response.setResponseCode(1);
+    	return response;
     }
 
     @RequestMapping(value="/update/{supplierId}",method=RequestMethod.POST)
-    public void update(@PathVariable("supplierId") String supplierId,@RequestBody SpuProductDTO product){
-    	
+    public ResponseDTO update(@PathVariable("supplierId") String supplierId,@RequestBody SpuProductDTO product){
+    	log.info(supplierId+"airshop更新接受到参数：{}",product);
     	HubSupplierSpuDto supplierSpu = convertProduct2HubSupplierSpu(supplierId,product);
     	Long supplierSpuId = hubSupplierSpuService.insert(supplierSpu);
     	List<SkuProductDTO> skus = product.getList();
@@ -158,28 +180,35 @@ public class SupplierProductController {
     			hubSupplierSkuService.insertSku(supplierSku);
     		}
     	}
+    	ResponseDTO response = new ResponseDTO();
+    	response.setResponseCode(1);
+    	return response;
     }
     
-    private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
     @RequestMapping(value="/batchSave/{supplierId}",method=RequestMethod.POST)
-    public void batchAdd(@PathVariable("supplierId") String supplierId,@RequestBody List<ProductDTO> products){
-    	
-    	Gson gson = new Gson();
+    public ResponseDTO batchAdd(@PathVariable("supplierId") String supplierId,@RequestBody List<ProductDTO> products){
+    	log.info(supplierId+"airshop批量新增接受到参数：{}",products.size());
+    	SimpleDateFormat simTemp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	if(products!=null){
+    		SupplierProduct supp = new SupplierProduct();
+			supp.setMessageType("json");
+			supp.setSupplierName("smets");
+			supp.setSupplierId(supplierId);
+			List<HubSupplierValueMappingDto> valueMap = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5, supplierId);
+			if(valueMap!=null&&valueMap.size()>0){
+				supp.setSupplierNo(valueMap.get(0).getHubValNo());	
+			}
     		for(ProductDTO product:products){
-		       SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-               Date date = new Date();
-               String taskNo = sim.format(date);
-               Task productImportTask = new Task();
-               productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
-               productImportTask.setMessageId(UUID.randomUUID().toString());
-               productImportTask.setTaskNo(taskNo);
-               productImportTask.setType(18);
-               productImportTask.setData(gson.toJson(product));
-               log.info("推送任务的参数：{}",productImportTask);
-             	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
+    			supp.setMessageId(UUIDGenerator.getUUID());
+    			supp.setMessageDate(simTemp.format(new Date()));
+    			supp.setData(JSONObject.toJSONString(product));
+    			JSONObject supplierDto = rest.postForEntity("http://192.168.20.110:8000/message/api/original-product",supp, JSONObject.class).getBody();
+    			log.info(supp.getSupplierName()+"=="+supplierDto.toString());
     		}
     	}
+    	ResponseDTO response = new ResponseDTO();
+    	response.setResponseCode(1);
+    	return response;
     }
     
 	private HubSupplierSkuDto convertProduct2HubSupplierSku(String supplierId,SkuProductDTO sku,SpuProductDTO product) {
@@ -194,9 +223,17 @@ public class SupplierProductController {
 			}
 			stock = Integer.parseInt(sku.getStock().trim());
 		}
-		
+		hubSupplierSkuDto.setSupplierId(supplierId);
 		hubSupplierSkuDto.setStock(stock);
-		hubSupplierSkuDto.setSupplierSkuSize(sku.getSize());
+		String sizeAndType = sku.getSize();
+		String size = null;
+		String sizeType = null;
+		if(sizeAndType!=null&&sizeAndType.split(",").length>1){
+			size = sizeAndType.split(",")[1];
+			sizeType = sizeAndType.split(",")[0];
+		}
+		hubSupplierSkuDto.setSupplierSkuSize(size);
+		hubSupplierSkuDto.setSupplierSkuSizeType(sizeType);
 		hubSupplierSkuDto.setSupplierSkuNo(sku.getSkuId());
 		hubSupplierSkuDto.setSupplierBarcode(sku.getBarcode());
 		if(StringUtils.isNotBlank(product.getMarketPrice())){
@@ -217,6 +254,7 @@ public class SupplierProductController {
 		supplierSpu.setSupplierBrandname(product.getBrandName());
 		supplierSpu.setSupplierCategoryname(product.getCategoryName());
 		supplierSpu.setSupplierGender(product.getCategoryGender());
+		supplierSpu.setSupplierSpuNo(product.getProductCode()+product.getColor());
 		supplierSpu.setSupplierId(supplierId);
 		supplierSpu.setSupplierMaterial(product.getMaterial());
 		supplierSpu.setSupplierOrigin(product.getProductOrigin());
