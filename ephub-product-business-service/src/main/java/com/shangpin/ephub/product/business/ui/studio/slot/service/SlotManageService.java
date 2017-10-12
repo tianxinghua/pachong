@@ -3,7 +3,9 @@ package com.shangpin.ephub.product.business.ui.studio.slot.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,15 +101,12 @@ public class SlotManageService {
 			StudioSlotCriteriaDto studioSlotCriteriaDto = new StudioSlotCriteriaDto();
 			Criteria criteria = studioSlotCriteriaDto.createCriteria();
 			StudioCriteriaDto studioCriteriaDto = new StudioCriteriaDto();
-			if (!shangpinRedis.exists("shangpinstudioslot")) {
-				List<StudioDto> studioDtoList = studioGateWay.selectByCriteria(studioCriteriaDto);
-				for (StudioDto studiotDto : studioDtoList) {
-					shangpinRedis.set("studioName" + studiotDto.getStudioId(), studiotDto.getStudioName());
-					shangpinRedis.set("period" + studiotDto.getStudioId(), studiotDto.getPeriod().toString());
-					shangpinRedis.set("studio_no" + studiotDto.getStudioId(), studiotDto.getStudioNo());
-				}
-				// 摄影棚基础数据初始化到redis 用于判断
-				shangpinRedis.setex("shangpinstudioslot", 60*10, "studioSlot");
+			List<StudioDto> resultDataList = studioGateWay.selectByCriteria(studioCriteriaDto);
+			Map<String,String> map = new HashMap<String,String>();
+			for (StudioDto studiotDto : resultDataList) {
+				map.put("studioName" + studiotDto.getStudioId(), studiotDto.getStudioName());
+				map.put("period" + studiotDto.getStudioId(), studiotDto.getPeriod().toString());
+				map.put("studio_no" + studiotDto.getStudioId(), studiotDto.getStudioNo());
 			}
 			Long studioId = null;
 			if (slotManageQuery.getStudioNo() != null && !slotManageQuery.getStudioNo().equals("")) {
@@ -123,8 +122,34 @@ public class SlotManageService {
 			if (slotManageQuery.getDate() != null && !slotManageQuery.getDate().equals("")) {
 				criteria.andSlotDateEqualTo(sdfomat.parse(slotManageQuery.getDate()));
 			}
+			List<String> slotNoList = new ArrayList<>();
+			if(slotManageQuery.getSupplierSpuModel() != null && !slotManageQuery.getSupplierSpuModel().equals("")) {
+				String spuModel = slotManageQuery.getSupplierSpuModel();
+				StudioSlotSpuSendDetailCriteriaDto studioSlotSpuSendDetailCriteriaDto = new StudioSlotSpuSendDetailCriteriaDto();
+				com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto.Criteria studioSlotSpuSendDetailCriteriaCriteria = studioSlotSpuSendDetailCriteriaDto
+						.createCriteria();
+				studioSlotSpuSendDetailCriteriaCriteria.andSupplierSpuModelEqualTo(spuModel);
+				List<StudioSlotSpuSendDetailDto> studioSlotSpuSendDetailDtoList = studioSlotSpuSendDetailGateWay.selectByCriteria(studioSlotSpuSendDetailCriteriaDto);
+				for(StudioSlotSpuSendDetailDto studioSlotSpuSendDetailDto : studioSlotSpuSendDetailDtoList) {
+					slotNoList.add(studioSlotSpuSendDetailDto.getSlotNo());
+				}
+			}
 			if (slotManageQuery.getSlotNo() != null && !slotManageQuery.getSlotNo().equals("")) {
-				criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+				if(slotManageQuery.getSupplierSpuModel() != null && !slotManageQuery.getSupplierSpuModel().equals("")) {
+					if(slotNoList.contains(slotManageQuery.getSlotNo())) {
+						criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+					}else {
+						vo.setStudioSlotList(null);
+						vo.setTotal(0);
+						return HubResponse.successResp(vo);
+					}
+				}else {
+					criteria.andSlotNoEqualTo(slotManageQuery.getSlotNo());
+				}
+			}else {
+				if(slotManageQuery.getSupplierSpuModel() != null && !slotManageQuery.getSupplierSpuModel().equals("")) {
+					criteria.andSlotNoIn(slotNoList);
+				}
 			}
 			if (slotManageQuery.getSlotStatus() != null) {
 				criteria.andSlotStatusEqualTo(slotManageQuery.getSlotStatus());
@@ -185,8 +210,8 @@ public class SlotManageService {
 			List<StudioSlotDto> studioSlotDtoList = studioSlotGateWay.selectByCriteria(studioSlotCriteriaDto);
 			// 如果查询批次摄影棚名称参数为null，循环查询
 			for (StudioSlotDto studioSlotDto : studioSlotDtoList) {
-				// memo字段临时存取摄影棚名称字段 不更新数据库
-				studioSlotDto.setStudioName(shangpinRedis.get("studioName" + studioSlotDto.getStudioId()));
+                log.info("studioId studioName:"+ studioSlotDto.getStudioId() +map.get("studioName" + studioSlotDto.getStudioId()));				
+				studioSlotDto.setStudioName(map.get("studioName" + studioSlotDto.getStudioId()));
 			}
 			vo.setStudioSlotList(studioSlotDtoList);
 			vo.setTotal(count);

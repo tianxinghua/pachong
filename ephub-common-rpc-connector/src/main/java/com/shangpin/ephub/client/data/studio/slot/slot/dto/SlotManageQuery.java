@@ -47,4 +47,5 @@ public class SlotManageQuery {
 	private Date endDate;
 	private String studioID;
 	private String userName;
+	private String supplierSpuModel;
 }
