@@ -1,5 +1,10 @@
 package com.shangpin.ephub.data.schedule.service.product;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleFromState;
 import com.shangpin.ephub.client.data.mysql.enumeration.HandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
@@ -12,10 +17,6 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 @Component
 @Slf4j
@@ -90,7 +91,7 @@ public class SpuPendingHandler {
         HubSpuPendingDto hubSpuPending = new HubSpuPendingDto();
         if(stockState>0){
             hubSpuPending.setStockState(StockState.HANDLED.getIndex());
-        }else if(stockState<=0){
+        }else{
             hubSpuPending.setStockState(StockState.NOSTOCK.getIndex());
         }
         hubSpuPending.setUpdateTime(new Date());

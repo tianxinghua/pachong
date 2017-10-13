@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import com.shangpin.ephub.client.data.mysql.modifyDataStatus.HubModifyDataStatusGateWay;
 import com.shangpin.ephub.data.schedule.service.price.PricePushService;
 import com.shangpin.ephub.data.schedule.service.product.ProductPullDataService;
-import com.shangpin.ephub.data.schedule.service.stock.StockService;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -23,24 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductScheduler {
 	
     @Autowired
-	private StockService stockService;
-    @Autowired
     private PricePushService pricePushService;
     @Autowired
     private ProductPullDataService productPullDataService;
     @Autowired
     private HubModifyDataStatusGateWay hubModifyDataStatusGateWay;
-
-//	@Scheduled(cron = "00 55 20 * * ?")
-	public void stockTask() {
-		try {
-			log.info("======================清除库存定时任务开始======================");
-			stockService.updateStockToZero();
-			log.info("======================清除库存定时任务结束======================");
-		} catch (Exception e) {
-			log.error("清除库存定时任务执行失败："+e.getMessage(),e);
-		}
-	}
 
 
 	@Scheduled(cron = "00 25 20 * * ?")

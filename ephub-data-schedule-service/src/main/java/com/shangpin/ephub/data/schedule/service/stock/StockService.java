@@ -67,11 +67,7 @@ public class StockService {
 
     private void updateSpuPendingStockState(HubSkuPendingDto skuPendingDto) {
         int totalStock = spuPendingHandler.getStockTotalBySpuPendingId(skuPendingDto.getSpuPendingId());
-        if(totalStock>0){
-            spuPendingHandler.updateStotckState(skuPendingDto.getSpuPendingId(),totalStock);
-        }else{
-            spuPendingHandler.updateStotckState(skuPendingDto.getSpuPendingId(),0);
-        }
+        spuPendingHandler.updateStotckState(skuPendingDto.getSpuPendingId(),totalStock);
     }
 
     private List<HubSupplierSkuDto> findSupplierSkuNoUpdateOutSevenDay(){
