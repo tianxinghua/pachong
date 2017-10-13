@@ -118,8 +118,11 @@ public class MonnalisaHandler implements ISupplierHandler{
 				if(ob.getGoogle_product_category().length()<50) {
 					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
 				}else {
-					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 49));
+					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 48));
+					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
 				}
+			}else {
+				hubSpu.setSupplierCategoryname("");
 			}
 			hubSpu.setSupplierBrandname(ob.getBrand());
 			hubSpu.setSupplierSeasonname(ob.getSeason());
