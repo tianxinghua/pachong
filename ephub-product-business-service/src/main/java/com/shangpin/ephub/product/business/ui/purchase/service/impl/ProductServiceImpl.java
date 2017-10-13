@@ -27,6 +27,7 @@ public class ProductServiceImpl implements IProductService {
     public List<Product> getProductList(QueryDto queryDto){
 
         try {
+        	log.info("airshop查询产品信息参数：{}",queryDto);
             PurchaseProductDto dto = new PurchaseProductDto();
             dto.setSupplierId(queryDto.getSupplierId());
             dto.setSpSkuIds(queryDto.getSkuId());

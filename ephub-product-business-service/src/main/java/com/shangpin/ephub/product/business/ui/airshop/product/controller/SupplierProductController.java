@@ -202,7 +202,7 @@ public class SupplierProductController {
     			supp.setMessageId(UUIDGenerator.getUUID());
     			supp.setMessageDate(simTemp.format(new Date()));
     			supp.setData(JSONObject.toJSONString(product));
-    			JSONObject supplierDto = rest.postForEntity("http://192.168.20.110:8000/message/api/original-product",supp, JSONObject.class).getBody();
+    			JSONObject supplierDto = rest.postForEntity("http://api-queue.ephub.spidc1.com/message/api/original-product",supp, JSONObject.class).getBody();
     			log.info(supp.getSupplierName()+"=="+supplierDto.toString());
     		}
     	}
@@ -228,9 +228,9 @@ public class SupplierProductController {
 		String sizeAndType = sku.getSize();
 		String size = null;
 		String sizeType = null;
-		if(sizeAndType!=null&&sizeAndType.split(",").length>1){
-			size = sizeAndType.split(",")[1];
-			sizeType = sizeAndType.split(",")[0];
+		if(sizeAndType!=null&&sizeAndType.split("-").length>1){
+			size = sizeAndType.split("-")[1];
+			sizeType = sizeAndType.split("-")[0];
 		}
 		hubSupplierSkuDto.setSupplierSkuSize(size);
 		hubSupplierSkuDto.setSupplierSkuSizeType(sizeType);
@@ -263,7 +263,6 @@ public class SupplierProductController {
 		supplierSpu.setSupplierSpuDesc(product.getProductDescription());
 		supplierSpu.setSupplierSpuModel(product.getProductCode());
 		supplierSpu.setSupplierSpuName(product.getProductName());
-		supplierSpu.setSupplierSpuNo(product.getSpuId());
 		supplierSpu.setUpdateTime(new Date());
 		return supplierSpu;
 	}
