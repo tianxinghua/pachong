@@ -120,19 +120,24 @@ public class ParisiOrderServiceImpl implements IOrderService {
 		String skuId = details[0];
 		String qty = details[1];
 		try {
-			OrderOfSupplier order = parisiOrderUtil.confirmOrder(orderDTO, skuId, qty);
-
-			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			orderDTO.setLogContent("下单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"PurchaseNo:"+orderDTO.getPurchaseNo()+"skuId:"+skuId+"qty:"+qty);
-
-			if (order.getOrderDetail().getError() != null) {
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
-				orderDTO.setDescription(orderDTO.getLogContent());
-			} else {
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
-				orderDTO.setConfirmTime(new Date());
-				orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
+			int stock = parisiOrderUtil.getSearchStock(skuId);
+			if(stock>0) {
+				OrderOfSupplier order = parisiOrderUtil.confirmOrder(orderDTO, skuId, qty);
+				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+				orderDTO.setLogContent("下单返回结果==" + order.toString() + ",推送参数：" + "SpOrderId:"+orderDTO.getSpOrderId()+"PurchaseNo:"+orderDTO.getPurchaseNo()+"skuId:"+skuId+"qty:"+qty);
+	
+				if (order.getOrderDetail().getError() != null) {
+					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+					orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+					orderDTO.setDescription(orderDTO.getLogContent());
+				} else {
+					orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+					orderDTO.setConfirmTime(new Date());
+					orderDTO.setSupplierOrderNo(order.getOrderDetail().getOrder_no());
+				}
+			}else {
+				orderDTO.setConfirmTime(new Date()); 
+				orderDTO.setPushStatus(PushStatus.NO_STOCK);
 			}
 		} catch (Exception e) {
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
