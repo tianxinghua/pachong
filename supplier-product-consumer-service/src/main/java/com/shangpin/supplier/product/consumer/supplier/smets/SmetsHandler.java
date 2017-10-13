@@ -86,9 +86,9 @@ public class SmetsHandler implements ISupplierHandler {
 		if(null != product){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(product.getSkuId());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(product.getNewMarketPrice())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(product.getNewSupplierPrice())));
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(product.getNewSalePrice()))); 
+			hubSku.setMarketPrice(product.getMarketPrice());
+			hubSku.setSupplyPrice(product.getSupplierPrice());
+			hubSku.setSalesPrice(product.getSalePrice());	
 			hubSku.setMarketPriceCurrencyorg(product.getSaleCurrency()); 
 			hubSku.setSupplierBarcode(product.getBarcode());
 			hubSku.setSupplierSkuSize(product.getSize());
