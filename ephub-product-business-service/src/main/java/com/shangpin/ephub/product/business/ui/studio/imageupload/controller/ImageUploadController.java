@@ -4,25 +4,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
 import com.shangpin.ephub.product.business.ui.studio.common.pictrue.dto.UploadQuery;
-import com.shangpin.ephub.product.business.ui.studio.common.pictrue.service.PictureService;
 import com.shangpin.ephub.product.business.ui.studio.imageupload.service.ImageUploadService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -42,8 +35,6 @@ public class ImageUploadController {
 	
 	@Autowired
 	private ImageUploadService imageUploadService;
-	@Autowired
-	private PictureService pictureService;
 	
 	/**
 	 * 图片上传页面
@@ -51,47 +42,21 @@ public class ImageUploadController {
 	 * @return 返回失败的图片名称
 	 */
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
-	public HubResponse<?> upload(HttpServletRequest request){
+	public HubResponse<?> upload(@RequestBody Map<String, List<String>> urlMaps){
 		try {
 			log.info("========开始上传图片==========="); 
-			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-			if(isMultipart){
-				MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
-				Map<String, MultipartFile> maps = mreq.getFileMap();
-				if(null != maps && maps.size()>0){
-					/**
-					 * 记录上传失败的url，并返回
-					 */
-					List<String> failList = Lists.newArrayList();
-					Map<String,List<String>> urlMaps = Maps.newHashMap();
-					String fileName, extension, fdfsURL, barcode = "";
-					for(MultipartFile file : maps.values()){
-						fileName = file.getOriginalFilename();
-						log.info("上传图片："+fileName);
-						extension = pictureService.getExtension(fileName);
-						fdfsURL = pictureService.uploadPic(file.getBytes(), extension);
-						barcode = pictureService.getBarCode(fileName);
-						if(urlMaps.containsKey(barcode)){
-							urlMaps.get(barcode).add(fdfsURL);
-						}else{
-							List<String> urls = Lists.newArrayList();
-							urls.add(fdfsURL);
-							urlMaps.put(barcode, urls);
-						}
-					}
-					for(Entry<String,List<String>> entry : urlMaps.entrySet()){
-						List<String> list = imageUploadService.add(entry.getKey(), entry.getValue());
-						if(list.size() > 0){
-							failList.addAll(list);
-						}
-					}
-					if(failList.size() > 0){
-						return HubResponse.errorResp(failList);
-					}
+			/**
+			 * 记录上传失败的url，并返回
+			 */
+			List<String> failList = Lists.newArrayList();
+			for(Entry<String,List<String>> entry : urlMaps.entrySet()){
+				List<String> list = imageUploadService.add(entry.getKey(), entry.getValue());
+				if(list.size() > 0){
+					failList.addAll(list);
 				}
-			}else{
-				log.error("This request is not Multipart!"); 
-				return HubResponse.errorResp("This request is not Multipart!");
+			}
+			if(failList.size() > 0){
+				return HubResponse.errorResp(failList);
 			}
 			return HubResponse.successResp("");
 		} catch (Exception e) {
