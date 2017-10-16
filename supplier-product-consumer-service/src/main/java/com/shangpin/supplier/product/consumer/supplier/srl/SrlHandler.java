@@ -82,11 +82,11 @@ public class SrlHandler implements ISupplierHandler{
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
-		String supplierSpuNo =jsonObject.getSpu();
-		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
+//		String supplierSpuNo =jsonObject.getSpu();
+//		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture0 = jsonObject.getUrlImage();
 		List<Image> images = new ArrayList<Image>();
-		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)&&!existPics.containsKey(picture0)){
+		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
 			log.info("srl "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
