@@ -138,10 +138,10 @@ public class SrlHandler implements ISupplierHandler{
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(ob.getSku());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getMarketPrice())));
 			hubSku.setMarketPriceCurrencyorg("EUR");
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getMarketPrice())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSupplyPrice())));
 			hubSku.setSupplierBarcode(ob.getBarcode());
 			if(!StringUtils.isEmpty(ob.getSize())){
 				hubSku.setSupplierSkuSize(ob.getSize());
