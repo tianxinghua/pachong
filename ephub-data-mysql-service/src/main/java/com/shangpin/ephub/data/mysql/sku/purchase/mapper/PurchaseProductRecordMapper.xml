@@ -7,11 +7,12 @@
         <result column="supplier_sku_no" property="skuId"/>
         <result column="supplier_spu_name" property="productName"/>
         <result column="supplier_sku_size" property="size"/>
+        <result column="supplier_sku_size" property="productCode"/>
         <result column="supplier_spu_color" property="color"/>
     </resultMap>
 
     <select id="getProductWithPurchase" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.sku.purchase.po.PurchaseProductCriteria">
-       select sku.supplier_id, sku.supplier_sku_no,spu.supplier_spu_no , spu.supplier_spu_name ,sku.supplier_sku_size,spu.supplier_spu_color
+       select sku.supplier_id, sku.supplier_sku_no,spu.supplier_spu_no , spu.supplier_spu_name ,sku.supplier_sku_size,spu.supplier_spu_color,spu.supplier_spu_model
         from hub_supplier_sku sku  inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
         <where>
           sku.sp_sku_no is not null and sku.sp_sku_no != ''
