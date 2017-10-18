@@ -73,12 +73,14 @@ public class PictureProductService {
 			 * 首先吧原始数据中的链接，已经在库里存在的排除掉，返回一个未处理的集合
 			 */
 			List<Image> images = new ArrayList<Image>();
+			String imageUrl = "";
 			for(Image image : supplierPicture.getProductPicture().getImages()){
-				if(!StringUtils.isEmpty(image.getUrl()) && (image.getUrl().startsWith("http") || image.getUrl().startsWith("HTTP") ||
-						image.getUrl().startsWith("ftp")) && !pics.containsKey(image.getUrl())){
+				imageUrl = image.getUrl();
+				if(!StringUtils.isEmpty(imageUrl) && (imageUrl.startsWith("http") || imageUrl.startsWith("HTTP") ||
+						imageUrl.startsWith("ftp")) && !pics.containsKey(imageUrl)){
 					images.add(image);
 				}
-				supplierUrls.put(image.getUrl(), null);
+				supplierUrls.put(imageUrl, null);
 			}
 			/**
 			 * 其次吧库里的链接，在原始数据中不存在的进行逻辑删除（dataState更新为0）
