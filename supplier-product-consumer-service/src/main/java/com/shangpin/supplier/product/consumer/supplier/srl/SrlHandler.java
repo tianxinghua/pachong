@@ -82,11 +82,11 @@ public class SrlHandler implements ISupplierHandler{
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
-		String supplierSpuNo =jsonObject.getSpu();
-		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
+//		String supplierSpuNo =jsonObject.getSpu();
+//		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture0 = jsonObject.getUrlImage();
 		List<Image> images = new ArrayList<Image>();
-		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)&&!existPics.containsKey(picture0)){
+		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
 			log.info("srl "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
@@ -138,10 +138,10 @@ public class SrlHandler implements ISupplierHandler{
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(ob.getSku());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getMarketPrice())));
 			hubSku.setMarketPriceCurrencyorg("EUR");
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getMarketPrice())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSupplyPrice())));
 			hubSku.setSupplierBarcode(ob.getBarcode());
 			if(!StringUtils.isEmpty(ob.getSize())){
 				hubSku.setSupplierSkuSize(ob.getSize());
