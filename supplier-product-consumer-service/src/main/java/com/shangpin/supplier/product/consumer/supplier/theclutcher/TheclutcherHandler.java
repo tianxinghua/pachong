@@ -126,7 +126,11 @@ public class TheclutcherHandler implements ISupplierHandler{
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getSupplierPrice())));
 		hubSku.setSupplierSkuSize(studioSkuDto.getSize());
 		if(skuId!=null&&skuId.split("-").length>1){
-			hubSku.setSupplierBarcode(studioSkuDto.getBarCode()+" "+skuId.split("-")[1]);	
+			if(StringUtils.isNotBlank(studioSkuDto.getBarCode())){
+				hubSku.setSupplierBarcode(studioSkuDto.getBarCode()+" "+skuId.split("-")[1]);	
+			}else{
+				hubSku.setSupplierBarcode(skuId);
+			}
 		}
 		hubSku.setStock(StringUtil.verifyStock((studioSkuDto.getStock())));
 		return true;
