@@ -18,7 +18,8 @@ public class CsvDTO {
 	private String type;
 	private String barcode;
 	private String size;
-	private String price;
+	private String supplyPrice;
+	private String marketPrice;
 	private String category;
 	private String urlImage;
 	private String qty;
