@@ -126,4 +126,6 @@ public class SupplierProperties {
 	
 	private JulianFashion julianFashion;
 	
+	private Srl srl;
+	
 }
