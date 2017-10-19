@@ -151,7 +151,7 @@ public class OpenapiService {
 					 if(this.isEqualSkuPendingCount(hostUrl,skuPending.getSpuPendingId())){
 						 HubSpuPending tmp = new HubSpuPending();
 						 tmp.setSpuPendingId(skuPending.getSpuPendingId());
-						 tmp.setSpuState(SpuState.NOHAND.getIndex());
+						 tmp.setSpuState(SpuState.ALL_EXISTED_IN_HUB.getIndex());
 						 tmp.setUpdateTime(new Date());
 						 updateSpuJson =  mapper.writeValueAsString(tmp) ;
 						 loggerInfo.info(" updateSpuJson =" + updateSpuJson);
