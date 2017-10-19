@@ -92,7 +92,19 @@ public class SkuRelationServiceImpl implements SkuRelationService {
 
 	@Override
 	public void updateSupplierSkuNo(SkuRelationDTO skuRelationDTO) throws Exception {
-		skuRelationDAO.update(skuRelationDTO);
+		skuRelationDAO.updateSupplierSkuNo(skuRelationDTO);
+		
+	}
+
+	@Override
+	public int countSkuRelation(String supplierId,
+			String supplierSkuNo, String spSkuId) {
+		return skuRelationDAO.countSkuRelation(supplierId, supplierSkuNo, spSkuId);
+	}
+
+	@Override
+	public void deleteSkuRelation(String supplierId, String spSkuId) {
+		skuRelationDAO.deleteSkuRelation(supplierId, spSkuId);
 		
 	}
 }

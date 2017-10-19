@@ -75,6 +75,20 @@ public interface SkuRelationService {
      * @throws Exception
      */
     public void updateSupplierSkuNo(SkuRelationDTO skuRelationDTO) throws Exception;
+    /**
+     * 根据门户账号，供应商sku编号，尚品sku编号查找
+     * @param supplierId 门户编号
+     * @param supplierSkuNo 供应商sku编号
+     * @param spSkuId 尚品sku编号
+     * @return
+     */
+    public int countSkuRelation(String supplierId, String supplierSkuNo, String spSkuId);
+    /**
+     * 根据门户和尚品sku编号删除
+     * @param supplierId
+     * @param spSkuId
+     */
+    public void deleteSkuRelation(String supplierId, String spSkuId);
 
 
 

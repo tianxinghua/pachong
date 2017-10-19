@@ -248,10 +248,11 @@ public abstract class AbsUpdateProductStock {
 						if(1!=ice.IsDeleted){
 							if (null!=skuRelationService&&!map.containsKey(ice.SkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
 								try {
-									SkuRelationDTO skuRelationDto = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplier, ice.SupplierSkuNo);
+									SkuRelationDTO skuRelationDto = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplier, ice.SkuNo);
 									if(skuRelationDto!=null){
 										skuRelationDto.setSopSkuId(ice.SkuNo);
-										skuRelationService.updateSkuRelateion(skuRelationDto);
+										skuRelationDto.setSupplierSkuId(ice.SupplierSkuNo); 
+										skuRelationService.updateSupplierSkuNo(skuRelationDto);
 									}else{
 										SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
 										skuRelationDTO.setSupplierId(supplier);

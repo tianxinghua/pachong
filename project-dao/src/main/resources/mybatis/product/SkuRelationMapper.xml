@@ -131,14 +131,20 @@
             </if>
 
         </where>
-
-
-
+    </select>
+    
+    <select id="countSkuRelation" resultMap="java.lang.Integer">
+    	select count(*) from SKU_RELATION
+    	<where>
+    		SUPPLIER_ID = #{supplierId} and SUPPLIER_SKU_ID = #{supplierSkuNo} and SOP_SKU_ID = #{spSkuId}
+    	</where>
     </select>
 	
-
-	
-
-
+	<delete id = "deleteSkuRelation">
+		delete from SKU_RELATION
+		<where>
+			SUPPLIER_ID = #{supplierId} and SOP_SKU_ID = #{spSkuId}
+		</where>
+	</delete>
 	
 </mapper>
