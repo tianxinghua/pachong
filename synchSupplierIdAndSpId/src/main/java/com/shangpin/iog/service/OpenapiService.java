@@ -131,16 +131,25 @@ public class OpenapiService {
 					 * 如果对应关系不存在则新增
 					 */
 					if (!map.containsKey(ice.SupplierSkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
+						
 						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
 						skuRelationDTO.setSupplierId(supplier);
 						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
 						skuRelationDTO.setSopSkuId(ice.SkuNo);
 						skuRelationDTO.setCreateTime(date);
-						try {							
-							skuRelationService.saveSkuRelateion(skuRelationDTO);							
-							loggerInfo.info(ice.SupplierSkuNo + "----"+ice.SkuNo+" 保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
-						} catch (ServiceException e) {
-							loggerError.error(skuRelationDTO.toString() + "保存失败");
+						/**
+						 * 以尚品sku编号去查询，如果存在记录，则将供应商sku编号更新，如果不存在则插入新纪录
+						 */
+						SkuRelationDTO ralationSel = skuRelationService.getSkuRelationBySupplierIdAndSkuId(supplier, ice.SkuNo);
+						if(null != ralationSel){
+							skuRelationService.updateSupplierSkuNo(skuRelationDTO);
+						}else{
+							try {							
+								skuRelationService.saveSkuRelateion(skuRelationDTO);							
+								loggerInfo.info(ice.SupplierSkuNo + "----"+ice.SkuNo+" 保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
+							} catch (ServiceException e) {
+								loggerError.error(skuRelationDTO.toString() + "保存失败");
+							}
 						}
 					}else{
 						/**

@@ -89,4 +89,10 @@ public class SkuRelationServiceImpl implements SkuRelationService {
     public void updateSkuRelateion(SkuRelationDTO skuRelationDTO) throws Exception {
         skuRelationDAO.update(skuRelationDTO);
     }
+
+	@Override
+	public void updateSupplierSkuNo(SkuRelationDTO skuRelationDTO) throws Exception {
+		skuRelationDAO.update(skuRelationDTO);
+		
+	}
 }

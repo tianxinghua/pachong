@@ -8,8 +8,9 @@ include 'iog-service'
 include 'iog-common-product'
 include 'iog-product-framework'
 include 'openapi-ice'
+include 'E-Monti-stock'
+include 'stockMonti'
 
 
-include 'tony-fetchstock'
+include 'coltorti'
 include 'synchSupplierIdAndSpId'
-

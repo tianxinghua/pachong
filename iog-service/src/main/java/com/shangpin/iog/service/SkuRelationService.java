@@ -69,6 +69,12 @@ public interface SkuRelationService {
      * @throws ServiceException
      */
     public void updateSkuRelateion(SkuRelationDTO skuRelationDTO) throws Exception;
+    /**
+     * 根据尚品sku编号和供应商门户编号去更新供应商sku编号
+     * @param skuRelationDTO
+     * @throws Exception
+     */
+    public void updateSupplierSkuNo(SkuRelationDTO skuRelationDTO) throws Exception;
 
 
 
