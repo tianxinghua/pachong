@@ -11,6 +11,9 @@ include 'openapi-ice'
 include 'E-Monti-stock'
 include 'stockMonti'
 
+include 'iog-sop'
 
 include 'coltorti'
 include 'synchSupplierIdAndSpId'
+include 'syn-spsku-hub'
+
