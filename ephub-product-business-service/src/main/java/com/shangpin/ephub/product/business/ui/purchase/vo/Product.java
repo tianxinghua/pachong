@@ -20,6 +20,7 @@ public class Product implements Serializable{
 
     private String productName="";//产品展示名称 必须
 
+    private String productCode;
     private String size="";//尺码 必须
 
     private String color="";//颜色 必须
