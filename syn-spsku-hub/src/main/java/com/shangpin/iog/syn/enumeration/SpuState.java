@@ -36,7 +36,19 @@ public enum SpuState {
 	 */
 	HANDLING((byte)5,"审核中"),
 
-	NOHAND((byte)6,"NOHAND");
+	/**
+	 * SPU部分SKU已生成
+	 */
+	EXISTED_IN_HUB((byte)6,"SPU部分SKU已生成"),
+
+	/**
+	 * SPU所有SKU均已生成
+	 */
+	ALL_EXISTED_IN_HUB((byte)7,"SPU所有SKU均已生成"),
+	/**
+	 * 全部商品，指hub_spu_pending表
+	 */
+	ALL_PENDING_SPU((byte)99, "全部商品");
 	
 	
 	/***
