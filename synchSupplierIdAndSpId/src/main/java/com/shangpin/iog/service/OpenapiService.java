@@ -42,14 +42,14 @@ public class OpenapiService {
 	@Autowired
 	SkuMapper skuDAO;
 	
-	public void dotheJob(String suppliers,String startDate,String endDate){
+	public void dotheJob(String suppliers,String startDate,String endDate,String full){
 		try {
 			
 			if(StringUtils.isNotBlank(suppliers)){
 				for(String supplier : suppliers.split(",")){
 					try {
 						loggerInfo.info("=================供应商"+supplier+"开始同步========================");
-						synchAndSaveRalation(supplier,startDate, endDate);
+						synchAndSaveRalation(supplier,startDate, endDate,full);
 						loggerInfo.info("=================供应商"+supplier+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -61,7 +61,7 @@ public class OpenapiService {
 				for(SupplierDTO supplier : sus){
 					try {
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"开始同步========================");
-						synchAndSaveRalation(supplier.getSupplierId(), startDate, endDate);
+						synchAndSaveRalation(supplier.getSupplierId(), startDate, endDate,full);
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -76,7 +76,7 @@ public class OpenapiService {
 		}
 	}
 	
-	private void synchAndSaveRalation(String supplier,String start,String end) throws Exception{
+	private void synchAndSaveRalation(String supplier,String start,String end,String full) throws Exception{
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);;		
 		boolean hasNext=true;		
@@ -172,9 +172,9 @@ public class OpenapiService {
 
 		}
 		/**
-		 * 将作废的尚品sku编号从库里删除掉
+		 * 全量更新时将作废的尚品sku编号从库里删除掉
 		 */
-		if (map.size() > 0) {
+		if ("1".equals(full) && map.size() > 0) {
 			for (String spSkuId : map.keySet()) {
 				try {
 					skuRelationService.deleteSkuRelation(supplier, spSkuId);

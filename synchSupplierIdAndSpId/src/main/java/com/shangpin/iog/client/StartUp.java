@@ -29,12 +29,14 @@ public class StartUp {
 	private static String suppliers = null;
 	private static String  startDate=null,endDate=null;
 	private static String  theStartDate=null,theEndDate=null;
+	private static String full = "";
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		suppliers = bdl.getString("suppliers");	
 		theStartDate = bdl.getString("theStartDate");
 		theEndDate = bdl.getString("theEndDate");
+		full = bdl.getString("full");
 	}
 	private static ApplicationContext factory;
 	private static void loadSpringContext()
@@ -51,7 +53,7 @@ public class StartUp {
 			loggerInfo.info("========开始时间========="+startDate+"=========结束时间=========="+endDate);
 			System.out.println("========开始时间========="+startDate+"=========结束时间=========="+endDate); 
 			OpenapiService openapiService = (OpenapiService)factory.getBean("openapiService");
-			openapiService.dotheJob(suppliers,startDate,endDate);
+			openapiService.dotheJob(suppliers,startDate,endDate,full);
 			loggerInfo.info("===========同步完成========"); 
 		} catch (Exception e) {
 			e.printStackTrace();
