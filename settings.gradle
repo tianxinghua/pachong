@@ -16,4 +16,5 @@ include 'iog-sop'
 include 'coltorti'
 include 'synchSupplierIdAndSpId'
 include 'syn-spsku-hub'
+include 'coltorti-v2'
 
