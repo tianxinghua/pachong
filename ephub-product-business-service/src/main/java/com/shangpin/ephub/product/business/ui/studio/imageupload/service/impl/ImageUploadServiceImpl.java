@@ -398,11 +398,7 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 	 * @param spPicUrls
 	 * @return 返回上传失败的url链接集合
 	 */
-	public List<String> add(String barcode, List<String> spPicUrls){
-		/**
-		 * 记录上传失败的链接
-		 */
-		List<String> list = new ArrayList<String>();
+	public boolean add(String barcode, List<String> spPicUrls){
 		int result = 0;
 		int result1 = 0;
 		try {
@@ -413,43 +409,50 @@ public class ImageUploadServiceImpl implements  ImageUploadService{
 
 			{put("hubSlotSpu",null);put("hubSlotSpuSupplier",null);}};
 			StudioSlotSpuSendDetailDto detailDto = operationService.selectSlotSpuSendDetailOfRrrived(barcode);
-			String slotSpuNo = detailDto.getSlotSpuNo();
-			String supplierId = detailDto.getSupplierId();
-			if(CollectionUtils.isEmpty(spPicUrls)){
-				result = updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
-				result1 = updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.NOT_YET_UPLOAD);
-				log.info("更新uploadPicSign为0>>"+result+" 更新HubSlotSpuPicSign结果为0>>"+result1); 
-			}else{
-				Map<String, String> picMap = hasSlotSpuPic(spPicUrls);
-				log.info("已存在的图片："+JsonUtil.serialize(picMap));  
-				for(String spPicUrl : spPicUrls){
-					if(!picMap.containsKey(spPicUrl)){
-						if(null == map.get("hubSlotSpu")){
-							HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
-							map.put("hubSlotSpu", spuDto);
-						}
-						if(null == map.get("hubSlotSpuSupplier")){
-							HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(supplierId, slotSpuNo);
-							map.put("hubSlotSpuSupplier", supplierDto);
-						}
-						HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
-						HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
-						String extension = pictureService.getExtension(spPicUrl);
-						boolean bool = insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension); 
-						if(!bool){
-							list.add(spPicUrl);
+			if(null != detailDto){
+				boolean bool = true;
+				String slotSpuNo = detailDto.getSlotSpuNo();
+				String supplierId = detailDto.getSupplierId();
+				if(CollectionUtils.isEmpty(spPicUrls)){
+					result = updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.NOT_YET_UPLOAD);
+					result1 = updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.NOT_YET_UPLOAD);
+					log.info("更新uploadPicSign为0>>"+result+" 更新HubSlotSpuPicSign结果为0>>"+result1); 
+				}else{
+					Map<String, String> picMap = hasSlotSpuPic(spPicUrls);
+					log.info("已存在的图片："+JsonUtil.serialize(picMap));  
+					for(String spPicUrl : spPicUrls){
+						if(!picMap.containsKey(spPicUrl)){
+							if(null == map.get("hubSlotSpu")){
+								HubSlotSpuDto spuDto =  operationService.findSlotSpu(slotSpuNo);
+								map.put("hubSlotSpu", spuDto);
+							}
+							if(null == map.get("hubSlotSpuSupplier")){
+								HubSlotSpuSupplierDto supplierDto = operationService.findSlotSpuSupplier(supplierId, slotSpuNo);
+								map.put("hubSlotSpuSupplier", supplierDto);
+							}
+							HubSlotSpuDto spuDto = (HubSlotSpuDto) map.get("hubSlotSpu");
+							HubSlotSpuSupplierDto supplierDto = (HubSlotSpuSupplierDto) map.get("hubSlotSpuSupplier");
+							String extension = pictureService.getExtension(spPicUrl);
+							if(!insertSlotSpuPic(slotSpuNo, spPicUrl, spuDto, supplierDto, extension)){
+								log.error(spPicUrl+"插入数据库失败"); 
+								bool = false;
+							}
 						}
 					}
+					result = updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
+					result1 = updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.HAVE_UPLOADED);
+					updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(detailDto.getSpuPendingId(), detailDto.getSlotSpuSupplierId(), detailDto.getSupplierSpuId(), UploadPicSign.HAVE_UPLOADED);
+					log.info("更新uploadPicSign结果=="+result+" 更新HubSlotSpuPicSign结果=="+result1); 
 				}
-				result = updateUploadPicSign(detailDto.getStudioSlotSpuSendDetailId(),UploadPicSign.HAVE_UPLOADED);
-				result1 = updateHubSlotSpuPicSign(slotSpuNo, UploadPicSign.HAVE_UPLOADED);
-				updateHubSupplierSpuPicStateAndHubSlotSpuSupplierPicState(detailDto.getSpuPendingId(), detailDto.getSlotSpuSupplierId(), detailDto.getSupplierSpuId(), UploadPicSign.HAVE_UPLOADED);
-				log.info("更新uploadPicSign结果=="+result+" 更新HubSlotSpuPicSign结果=="+result1); 
+				return bool;
+			}else{
+				log.error("图片名称为非barcode，而是："+barcode); 
+				return false;
 			}
 		} catch (Exception e) {
 			log.error("上传图片页面异常："+e.getMessage(),e); 
 		}
-		return list;
+		return false;
 	}
 
 }

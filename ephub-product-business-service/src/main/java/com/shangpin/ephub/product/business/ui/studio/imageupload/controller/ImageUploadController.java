@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.Lists;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.dto.OperationQuery;
 import com.shangpin.ephub.product.business.ui.studio.common.operation.vo.StudioSlotVo;
@@ -45,20 +44,17 @@ public class ImageUploadController {
 	public HubResponse<?> upload(@RequestBody Map<String, List<String>> urlMaps){
 		try {
 			log.info("========开始上传图片==========="); 
-			/**
-			 * 记录上传失败的url，并返回
-			 */
-			List<String> failList = Lists.newArrayList();
+			boolean result = true;
 			for(Entry<String,List<String>> entry : urlMaps.entrySet()){
-				List<String> list = imageUploadService.add(entry.getKey(), entry.getValue());
-				if(list.size() > 0){
-					failList.addAll(list);
+				if(!imageUploadService.add(entry.getKey(), entry.getValue())){
+					result = false;
 				}
 			}
-			if(failList.size() > 0){
-				return HubResponse.errorResp(failList);
+			if(result){
+				return HubResponse.successResp("");
+			}else{
+				return HubResponse.errorResp("上传图片失败，请检查图片名称是否为barcode");
 			}
-			return HubResponse.successResp("");
 		} catch (Exception e) {
 			log.error("上传图片时异常："+e.getMessage(),e);
 		}
@@ -87,12 +83,10 @@ public class ImageUploadController {
 		if(StringUtils.isEmpty(uploadQuery.getSlotNoSpuId())){
 			return HubResponse.errorResp("请先扫码");
 		}
-		List<String> list = imageUploadService.add(uploadQuery.getSlotNoSpuId(), uploadQuery.getUrls());
-		log.info("上传失败的图片："+JsonUtil.serialize(list)); 
-		if(list.size() == 0){
+		if(imageUploadService.add(uploadQuery.getSlotNoSpuId(), uploadQuery.getUrls())){
 			return HubResponse.successResp("全部上传成功。");
 		}else{
-			return HubResponse.errorResp(list);
+			return HubResponse.errorResp("上传失败。");
 		}
 	}
 	

@@ -95,8 +95,8 @@ public interface ImageUploadService {
 	 * 上传图片
 	 * @param barcode
 	 * @param spPicUrls
-	 * @return 返回上传失败的url链接集合
+	 * @return 成功或失败
 	 */
-	public List<String> add(String barcode, List<String> spPicUrls);
+	public boolean add(String barcode, List<String> spPicUrls);
 	
 }
