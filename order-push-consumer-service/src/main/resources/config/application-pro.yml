@@ -321,7 +321,7 @@ shangpin:
                   openApiKey: 8abb28decd6645008a810d8da47a10f8
                   openApiSecret: bb3c35b4c06a4de19a8e9652cba61fee
           ostore:
-                  url: http://188.11.248.175/WS_SITO_p15/WS_SITO_P15.ASMX/
+                  url: http://atelier.officinastore.net/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
