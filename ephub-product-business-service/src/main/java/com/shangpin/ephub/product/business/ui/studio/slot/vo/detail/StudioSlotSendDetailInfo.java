@@ -18,4 +18,6 @@ public class StudioSlotSendDetailInfo implements Serializable {
 	private String barcode;
 	private String slotNo;
 	private String supplierCategory;
+	private String season;
+	private String gender;
 }
