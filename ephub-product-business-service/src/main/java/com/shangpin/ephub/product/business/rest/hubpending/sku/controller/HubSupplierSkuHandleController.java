@@ -31,20 +31,20 @@ public class HubSupplierSkuHandleController {
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	
 	@RequestMapping(value="/supplier-sku",method = RequestMethod.POST)
-	public String handleHubPendingSku(@RequestBody SupplierSkuRequestDto request){
+	public HubSupplierSkuDto handleHubPendingSku(@RequestBody SupplierSkuRequestDto request){
 		List<HubSupplierSkuDto> hubSupplierSkuDtolists = new ArrayList<>();
 		try {
 			HubSupplierSkuCriteriaDto dto = new HubSupplierSkuCriteriaDto();
 			dto.createCriteria().andSupplierIdEqualTo(request.getSupplierId()).andSupplierSkuIdEqualTo(Long.parseLong(request.getSkuId()));
 			hubSupplierSkuDtolists = hubSupplierSkuGateWay.selectByCriteria(dto);
 			if(hubSupplierSkuDtolists==null||hubSupplierSkuDtolists.size()==0) {
-				return "";
+				return null;
 			}
 		} catch (Exception e) {
 			log.error("====supplierSku处理时发生异常：{}",e);
 			e.printStackTrace();
 		}
-		return hubSupplierSkuDtolists.get(0).getSupplyPrice().toString();
+		return hubSupplierSkuDtolists.get(0);
 	}
 	
 }
