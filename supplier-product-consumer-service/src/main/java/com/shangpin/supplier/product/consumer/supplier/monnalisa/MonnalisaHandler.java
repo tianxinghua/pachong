@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -82,11 +83,11 @@ public class MonnalisaHandler implements ISupplierHandler{
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
-		String supplierSpuNo =jsonObject.getId().substring(0,jsonObject.getId().lastIndexOf("-"));
-		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
+//		String supplierSpuNo =jsonObject.getId().substring(0,jsonObject.getId().lastIndexOf("-"));
+//		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture0 = jsonObject.getImage_link();
 		List<Image> images = new ArrayList<Image>();
-		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)&&!existPics.containsKey(picture0)){
+		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
 			log.info("monnalisa "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
@@ -114,7 +115,16 @@ public class MonnalisaHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuName(ob.getTitle());
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getGender());
-			hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
+			if(ob.getGoogle_product_category()!=null) {
+				if(ob.getGoogle_product_category().length()<50) {
+					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
+				}else {
+					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 48));
+					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
+				}
+			}else {
+				hubSpu.setSupplierCategoryname("");
+			}
 			hubSpu.setSupplierBrandname(ob.getBrand());
 			hubSpu.setSupplierSeasonname(ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());

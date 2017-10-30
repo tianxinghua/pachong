@@ -115,7 +115,7 @@ public class ParisiHandler implements ISupplierHandler {
 			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getProduct());
-			hubSpu.setSupplierSpuModel(item.getProductCode());
+			hubSpu.setSupplierSpuModel(item.getProductCode()+" "+item.getIdColor());
 			hubSpu.setSupplierSpuName(item.getName());
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());

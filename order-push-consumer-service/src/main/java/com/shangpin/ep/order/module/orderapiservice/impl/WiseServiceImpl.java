@@ -39,9 +39,10 @@ public class WiseServiceImpl{
 		try {
 			if(PushStatus.ORDER_CONFIRMED.equals(orderDTO.getPushStatus())){
 				handleConfirmOrder(orderDTO);
-			}else{
-				handleConfirmError(orderDTO);
 			}
+//			else{
+//				handleConfirmError(orderDTO);
+//			}
 		} catch (Exception e) {
 			log.error(e.getMessage(),e); 
 		}
