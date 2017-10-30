@@ -496,7 +496,12 @@ shangpin:
               password: Shang1409
               isPurchaseExp: 
               openApiKey: 
-              openApiSecret: 
+              openApiSecret:
+      cocorose:
+              isPurchaseExp:
+              openApiKey:
+              openApiSecret:
+              purchaseOrderUrl:
       supplier:
               delayTime: 1000
               retry: 120
