@@ -164,7 +164,6 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
-  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
       SELECT LAST_INSERT_ID() AS spu_pending_id
     </selectKey>
@@ -206,7 +205,6 @@
     #{supplyPriceState,jdbcType=TINYINT}, #{oldHubSeason,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
-  <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
       SELECT LAST_INSERT_ID() AS spu_pending_id
     </selectKey>

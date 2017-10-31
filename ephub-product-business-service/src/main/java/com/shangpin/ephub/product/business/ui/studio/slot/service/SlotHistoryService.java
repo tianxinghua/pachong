@@ -48,9 +48,9 @@ public class SlotHistoryService {
 			List<SlotDetailDto> lists = new ArrayList<>();
 			for(StudioSlotSpuSendDetailDto detailDto : list){
 				SlotDetailDto info = new SlotDetailDto();
-				info.setSlotSpuSupplierId(detailDto.getSlotSpuSupplierId());
-				info.setSupplierSpuId(detailDto.getSupplierSpuId());
-				info.setSpuPendingId(detailDto.getSpuPendingId());
+				info.setSlotSpuSupplierId(String.valueOf(detailDto.getSlotSpuSupplierId()));
+				info.setSupplierSpuId(String.valueOf(detailDto.getSupplierSpuId()));
+				info.setSpuPendingId(String.valueOf(detailDto.getSpuPendingId()));
 				info.setSlotSpuNo(detailDto.getSlotSpuNo());
 				info.setBarcode(detailDto.getBarcode());
 				info.setSupplierBrandName(detailDto.getSupplierBrandName());
@@ -87,9 +87,9 @@ public class SlotHistoryService {
 
 	private void insertFixedProperty(SlotDetailDto detail) {
 		HubSlotSpuFixedPropertyDto dto = new HubSlotSpuFixedPropertyDto();
-		dto.setSlotSpuSupplierId(detail.getSlotSpuSupplierId());
-		dto.setSupplierSpuId(detail.getSupplierSpuId());
-		dto.setSpuPendingId(detail.getSpuPendingId());
+		dto.setSlotSpuSupplierId(Long.valueOf(detail.getSlotSpuSupplierId()));
+		dto.setSupplierSpuId(Long.valueOf(detail.getSupplierSpuId()));
+		dto.setSpuPendingId(Long.valueOf(detail.getSpuPendingId()));
 		dto.setSlotNo(detail.getSlotNo());
 		dto.setSlotSpuNo(detail.getSlotSpuNo());
 		dto.setBarcode(detail.getBarcode());
@@ -97,6 +97,7 @@ public class SlotHistoryService {
 		dto.setMaterial(detail.getComposition());
 		dto.setOrigin(detail.getMadeIn());
 		dto.setCreateTime(new Date());
+//		log.info("插入的数据========="+JsonUtil.serialize(dto)); 
 		propertyGateway.insert(dto );
 	}
 }

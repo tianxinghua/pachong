@@ -22,8 +22,12 @@ public class SlotHistoryController {
 	}
 	
 	@RequestMapping(value="/import",method = RequestMethod.POST)
-	public Boolean importExcel(@RequestBody SlotsSendDetailVo detailVo){
-		return slotHistoryService.importExcel(detailVo); 
+	public String importExcel(@RequestBody SlotsSendDetailVo detailVo){
+		if(slotHistoryService.importExcel(detailVo)){
+			return "{\"code\":0}";
+		}else{
+			return "{\"code\":1}";
+		}
 	}
 	
 	

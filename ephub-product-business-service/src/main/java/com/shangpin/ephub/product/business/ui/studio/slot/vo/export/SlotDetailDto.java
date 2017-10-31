@@ -17,9 +17,9 @@ import lombok.Setter;
 @Getter
 public class SlotDetailDto {
 	
-	private Long slotSpuSupplierId;
-	private Long supplierSpuId;
-	private Long spuPendingId;
+	private String slotSpuSupplierId;
+	private String supplierSpuId;
+	private String spuPendingId;
 	private String slotSpuNo;
 	private String slotNo;
 	private String supplierSpuModel;
