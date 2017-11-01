@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.fixedproperty.dto.HubSlotSpuFixedPropertyCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.fixedproperty.dto.HubSlotSpuFixedPropertyDto;
 import com.shangpin.ephub.client.data.mysql.studio.fixedproperty.gateway.HubSlotSpuFixedPropertyGateway;
 import com.shangpin.ephub.client.data.studio.slot.spu.dto.StudioSlotSpuSendDetailCriteriaDto;
@@ -87,17 +88,43 @@ public class SlotHistoryService {
 
 	private void insertFixedProperty(SlotDetailDto detail) {
 		HubSlotSpuFixedPropertyDto dto = new HubSlotSpuFixedPropertyDto();
-		dto.setSlotSpuSupplierId(Long.valueOf(detail.getSlotSpuSupplierId()));
-		dto.setSupplierSpuId(Long.valueOf(detail.getSupplierSpuId()));
-		dto.setSpuPendingId(Long.valueOf(detail.getSpuPendingId()));
-		dto.setSlotNo(detail.getSlotNo());
-		dto.setSlotSpuNo(detail.getSlotSpuNo());
-		dto.setBarcode(detail.getBarcode());
-		dto.setColor(detail.getColour());
-		dto.setMaterial(detail.getComposition());
-		dto.setOrigin(detail.getMadeIn());
-		dto.setCreateTime(new Date());
+		/**
+		 * 先查询
+		 */
+		HubSlotSpuFixedPropertyCriteriaDto criteria = new HubSlotSpuFixedPropertyCriteriaDto();
+		criteria.createCriteria().andBarcodeEqualTo(detail.getBarcode()).andSlotNoEqualTo(detail.getSlotNo());
+		List<HubSlotSpuFixedPropertyDto> lists = propertyGateway.selectByCriteria(criteria );
+		if(CollectionUtils.isNotEmpty(lists)){
+			HubSlotSpuFixedPropertyDto dtoSel = lists.get(0);
+			dto.setId(dtoSel.getId());
+			if(StringUtils.isNotBlank(detail.getColour()) && !detail.getColour().equals(dtoSel.getColor())){
+				dto.setColor(detail.getColour());
+			}
+			if(StringUtils.isNotBlank(detail.getComposition()) &&  !detail.getComposition().equals(dtoSel.getMaterial())){
+				dto.setMaterial(detail.getComposition());
+			}
+			if(StringUtils.isNotBlank(detail.getMadeIn()) && !detail.getMadeIn().equals(dtoSel.getOrigin())){
+				dto.setOrigin(detail.getMadeIn());
+			}
+			dto.setUpdateTime(new Date());
+			propertyGateway.updateByPrimaryKeySelective(dto);
+		}else{
+			/**
+			 * 查询没有插入
+			 */
+			dto.setSlotSpuSupplierId(Long.valueOf(detail.getSlotSpuSupplierId()));
+			dto.setSupplierSpuId(Long.valueOf(detail.getSupplierSpuId()));
+			dto.setSpuPendingId(Long.valueOf(detail.getSpuPendingId()));
+			dto.setSlotNo(detail.getSlotNo());
+			dto.setSlotSpuNo(detail.getSlotSpuNo());
+			dto.setBarcode(detail.getBarcode());
+			dto.setColor(detail.getColour());
+			dto.setMaterial(detail.getComposition());
+			dto.setOrigin(detail.getMadeIn());
+			dto.setCreateTime(new Date());
 //		log.info("插入的数据========="+JsonUtil.serialize(dto)); 
-		propertyGateway.insert(dto );
+			propertyGateway.insert(dto );
+		}
+		
 	}
 }
