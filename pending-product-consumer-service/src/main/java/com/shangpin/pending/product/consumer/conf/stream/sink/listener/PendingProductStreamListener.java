@@ -690,4 +690,9 @@ public class PendingProductStreamListener {
     public void srlPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.srlPendingProductStreamListen(message,headers);
     }
+	
+	@StreamListener(PendingProductSink.THESTYLESIDE)
+    public void theStyleSidePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.theStyleSidePendingProductStreamListen(message,headers);
+    }
 }

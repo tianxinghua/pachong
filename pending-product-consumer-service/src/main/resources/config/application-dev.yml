@@ -420,6 +420,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings: 
                             spinnakerPendingProduct: 
@@ -819,6 +825,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             srlPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            theStyleSidePendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

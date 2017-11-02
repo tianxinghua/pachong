@@ -146,6 +146,8 @@ public interface PendingProductSource {
 	public static final String MONNALISA = "monnalisaPendingProduct";
 	
 	public static final String SRL = "srlPendingProduct";
+	
+	public static final String THESTYLESIDE = "theStyleSidePendingProduct";
 
 	public static final String JULIANFASHION = "julianFashionPendingProduct";
 
@@ -577,4 +579,11 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.SRL)
 	public MessageChannel srlPendingProduct();
+	
+	/**
+	 * 供货商THESTYLESIDE 通道组件配置
+	 * @return 供货商THESTYLESIDE 通道组件
+	 */
+	@Output(value = PendingProductSource.THESTYLESIDE)
+	public MessageChannel theStyleSidePendingProduct();
 }
