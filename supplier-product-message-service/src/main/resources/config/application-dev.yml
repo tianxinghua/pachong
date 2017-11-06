@@ -204,6 +204,9 @@ spring:
                         srlOriginalProduct: 
                               destination: srl.original.product
                               content-type: application/json  
+                        theStyleSideOriginalProduct: 
+                              destination: theStyleSide.original.product
+                              content-type: application/json 
                         allProductStock: 
                               destination: supplier.product.stock
                               content-type: application/json  
@@ -403,7 +406,10 @@ spring:
                                            prefix: HA.  
                             srlOriginalProduct: 
                                   producer: 
-                                           prefix: HA.     
+                                           prefix: HA.   
+                            theStyleSideOriginalProduct: 
+                                  producer: 
+                                           prefix: HA.   
                             allProductStock: 
                                   producer: 
                                            prefix: HA. 

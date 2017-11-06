@@ -227,6 +227,9 @@ spring:
                         srlOriginalProduct: 
                               destination: srl.original.product
                               content-type: application/json 
+                        theStyleSideOriginalProduct: 
+                              destination: theStyleSide.original.product
+                              content-type: application/json 
                         julianFashionOriginalProduct: 
                               destination: julianFashion.original.product
                               content-type: application/json  
@@ -450,6 +453,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             srlOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            theStyleSideOriginalProduct:
                                   producer:
                                            prefix: HA.
                             julianFashionOriginalProduct: 
