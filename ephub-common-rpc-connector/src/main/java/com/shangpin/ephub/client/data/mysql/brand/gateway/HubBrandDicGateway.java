@@ -20,7 +20,10 @@ import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicWithCriteriaDto
  * @date 2016年12月14日 下午1:46:35
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubBrandDicGateway {
+public interface
+
+
+HubBrandDicGateway {
 
 	@RequestMapping(value = "/hub-brand-dic/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public int countByCriteria(@RequestBody HubBrandDicCriteriaDto criteria);

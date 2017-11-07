@@ -91,4 +91,12 @@ public interface ImageUploadService {
 	 */
 	public List<String> findPictures(String barcode);
 	
+	/**
+	 * 上传图片
+	 * @param barcode
+	 * @param spPicUrls
+	 * @return 成功或失败
+	 */
+	public boolean add(String barcode, List<String> spPicUrls);
+	
 }

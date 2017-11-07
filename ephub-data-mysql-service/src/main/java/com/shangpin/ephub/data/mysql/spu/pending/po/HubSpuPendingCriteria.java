@@ -3479,6 +3479,76 @@ public class HubSpuPendingCriteria {
             addCriterion("supply_price_state not between", value1, value2, "supplyPriceState");
             return (Criteria) this;
         }
+
+        public Criteria andOldHubSeasonIsNull() {
+            addCriterion("old_hub_season is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonIsNotNull() {
+            addCriterion("old_hub_season is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonEqualTo(String value) {
+            addCriterion("old_hub_season =", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonNotEqualTo(String value) {
+            addCriterion("old_hub_season <>", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonGreaterThan(String value) {
+            addCriterion("old_hub_season >", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonGreaterThanOrEqualTo(String value) {
+            addCriterion("old_hub_season >=", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonLessThan(String value) {
+            addCriterion("old_hub_season <", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonLessThanOrEqualTo(String value) {
+            addCriterion("old_hub_season <=", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonLike(String value) {
+            addCriterion("old_hub_season like", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonNotLike(String value) {
+            addCriterion("old_hub_season not like", value, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonIn(List<String> values) {
+            addCriterion("old_hub_season in", values, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonNotIn(List<String> values) {
+            addCriterion("old_hub_season not in", values, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonBetween(String value1, String value2) {
+            addCriterion("old_hub_season between", value1, value2, "oldHubSeason");
+            return (Criteria) this;
+        }
+
+        public Criteria andOldHubSeasonNotBetween(String value1, String value2) {
+            addCriterion("old_hub_season not between", value1, value2, "oldHubSeason");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
