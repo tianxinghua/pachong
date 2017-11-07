@@ -21,6 +21,33 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1 
+                        dolciTrameOriginalProduct: 
+                              destination: dolciTrame.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        dolciTramePendingProduct: 
+                              destination: dolciTrame.pending.product
+                              content-type: application/json 
+                        cocoroseLondonOriginalProduct: 
+                              destination: cocoroseLondon.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        cocoroseLondonPendingProduct: 
+                              destination: cocoroseLondon.pending.product
+                              content-type: application/json 
+                        angeloMinettiOriginalProduct: 
+                              destination: angeloMinetti.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        angeloMinettiPendingProduct: 
+                              destination: angeloMinetti.pending.product
+                              content-type: application/json 
                         coccolebimbiOriginalProduct: 
                               destination: coccolebimbi.original.product
                               group: one
@@ -678,6 +705,33 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                              dolciTrameOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              dolciTramePendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
+                              cocoroseLondonOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              cocoroseLondonPendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
+                              angeloMinettiOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              angeloMinettiPendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
                               coccolebimbiOriginalProduct: 
                                       consumer: 
                                          prefix: HA.

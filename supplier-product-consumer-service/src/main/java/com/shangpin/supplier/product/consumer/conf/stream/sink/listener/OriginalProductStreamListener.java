@@ -28,6 +28,33 @@ public class OriginalProductStreamListener {
 	private OriginalProductStreamListenerAdapter adapter;
 	
 	/**
+	 * 供应商angeloMinetti原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.angeloMinetti)
+	public void angeloMinettiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.angeloMinettiStreamListen(message,headers);
+	}
+	/**
+	 * 供应商cocoroseLondon原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.cocoroseLondon)
+	public void cocoroseLondonStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.cocoroseLondonStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.dolciTrame)
+	public void dolciTrameStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.dolciTrameStreamListen(message,headers);
+	}
+	/**
 	 * 供应商julianFashion原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

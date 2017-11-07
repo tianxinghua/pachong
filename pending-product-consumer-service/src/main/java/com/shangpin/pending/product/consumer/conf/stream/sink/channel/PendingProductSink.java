@@ -11,6 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface PendingProductSink {
 	
+	public static final String dolciTrame = "dolciTramePendingProduct";
+	public static final String cocoroseLondon = "cocoroseLondonPendingProduct";
+	public static final String angeloMinetti = "angeloMinettiPendingProduct";
 	public static final String fratinardi = "fratinardiPendingProduct";
 	public static final String coccolebimbi = "coccolebimbiPendingProduct";
 	public static final String portofino = "portofinoPendingProduct";

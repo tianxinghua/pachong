@@ -21,6 +21,24 @@ spring:
             register-health-check: false
         stream: 
               bindings: 
+                        dolciTramePendingProduct:
+                              destination: dolciTrame.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        cocoroseLondonPendingProduct:
+                              destination: cocoroseLondon.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        angeloMinettiPendingProduct:
+                              destination: angeloMinetti.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         coccolebimbiPendingProduct:
                               destination: coccolebimbi.pending.product
                               group: one
@@ -461,6 +479,24 @@ spring:
                                        maxAttempts: 1
               rabbit:
                       bindings: 
+                            angeloMinettiPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            cocoroseLondonPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            dolciTramePendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                             coccolebimbiPendingProduct: 
                                   consumer: 
                                        prefix: HA.
