@@ -47,6 +47,7 @@ public class AntonacciHandler implements ISupplierHandler {
 				
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean success = convertSpu(supplierId,item,hubSpu);
+				log.info("AntonacciHandler hubSpu:"+JsonUtil.serialize(hubSpu));
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
 				boolean skuSuc = convertSku(supplierId,hubSpu.getSupplierSpuId(),item,hubSku);
@@ -96,7 +97,19 @@ public class AntonacciHandler implements ISupplierHandler {
 		if(null != item){			
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getSpuID());
-			hubSpu.setSupplierSpuModel(item.getProductCode());
+			if(item.getProductCode()==null||item.getProductCode().equals("")) {
+				hubSpu.setSupplierSpuModel(item.getProductCode());
+			}else {
+	    		String[] result = item.getProductCode().substring(0, item.getProductCode().lastIndexOf("_")).split("-");
+	    		String data = "";
+	    		for(int i=1;i<result.length;i++) {
+	    			if(i==1)
+	    				data = result[i];
+	    			else
+	    				data = data + "-" + result[i];
+	    		}
+				hubSpu.setSupplierSpuModel(data);
+			}
 			hubSpu.setSupplierSpuName(item.getProductName());
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());
