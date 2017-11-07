@@ -183,13 +183,13 @@ spring:
               openApiKey: 
               openApiSecret: 
       divo: 
-              url: http://185.5.180.90/ws_sito/ws_sito_p15.asmx/
+              url: http://78.134.74.112:8080/ws_sito_P15/ws_sito_P15.asmx/
               createOrderInterface: NewOrderMarketPlace
               setStatusInterface: SetStatusOrderMarketplace
               getStatusInterface: GetStatusOrderMarketplace
               getItemStockInterface: GetItemStockBySizeMarketPlace
               user: shangpin
-              password: shang1210
+              password: Shang0711
               openApiKey: 
               openApiSecret: 
       russoCapri: 
