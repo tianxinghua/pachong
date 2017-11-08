@@ -153,6 +153,8 @@ public interface OriginalProductSource {
     
     public static final String SRL = "srlOriginalProduct";
     
+    public static final String THESTYLESIDE = "theStyleSideOriginalProduct";
+    
     public static final String JULIANFASHION = "julianFashionOriginalProduct";
     
     /**
@@ -625,4 +627,11 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.SRL)
 	public MessageChannel srl();
+	
+	/**
+	 * 供货商theStyleSide通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.THESTYLESIDE)
+	public MessageChannel theStyleSide();
 }
