@@ -8,6 +8,15 @@ spring:
   cloud: 
         stream: 
               bindings: 
+                        cocoroseLondonOriginalProduct:
+                              destination: cocoroseLondon.original.product
+                              content-type: application/json
+                        angeloMinettiOriginalProduct:
+                              destination: angeloMinetti.original.product
+                              content-type: application/json
+                        dolciTrameOriginalProduct:
+                              destination: dolciTrame.original.product
+                              content-type: application/json
                         coccolebimbiOriginalProduct:
                               destination: coccolebimbi.original.product
                               content-type: application/json
@@ -233,6 +242,15 @@ spring:
 
               rabbit:
                       bindings: 
+                            cocoroseLondonOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            angeloMinettiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            dolciTrameOriginalProduct:
+                                  producer:
+                                           prefix: HA.
                             coccolebimbiOriginalProduct:
                                   producer:
                                            prefix: HA.

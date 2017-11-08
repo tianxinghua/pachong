@@ -10,6 +10,9 @@ import org.springframework.messaging.MessageChannel;
  * @date 2016年12月5日 下午7:34:44
  */
 public interface OriginalProductSource {
+	public static final String dolciTrame = "dolciTrameOriginalProduct";
+	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
+	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
 	public static final String portofino = "portofinoOriginalProduct";
 	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
 	public static final String fratinardi = "fratinardiOriginalProduct";
@@ -152,6 +155,24 @@ public interface OriginalProductSource {
     
     public static final String JULIANFASHION = "julianFashionOriginalProduct";
     
+    /**
+     * 供货商angeloMinetti通道组件配置
+     * @return 供货商angeloMinetti通道组件
+     */
+    @Output(value = OriginalProductSource.angeloMinetti)
+    public MessageChannel angeloMinetti();
+    /**
+     * 供货商cocoroseLondon通道组件配置
+     * @return 供货商cocoroseLondon通道组件
+     */
+    @Output(value = OriginalProductSource.cocoroseLondon)
+    public MessageChannel cocoroseLondon();
+    /**
+     * 供货商dolciTrame通道组件配置
+     * @return 供货商dolciTrame通道组件
+     */
+    @Output(value = OriginalProductSource.dolciTrame)
+    public MessageChannel dolciTrame();
     /**
 	 * 供货商JULIANFASHION通道组件配置
 	 * @return 供货商JULIANFASHION通道组件

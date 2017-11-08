@@ -22,6 +22,30 @@ public class OriginalProductStreamSender {
 	
 
 	/**
+	 * 发送供应商angeloMinetti商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean angeloMinettiStream(SupplierProduct supplierProduct) {
+		return originalProductSource.angeloMinetti().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	/**
+	 * 发送供应商cocoroseLondon商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean cocoroseLondonStream(SupplierProduct supplierProduct) {
+		return originalProductSource.cocoroseLondon().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	/**
+	 * 发送供应商dolciTrame商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean dolciTrameStream(SupplierProduct supplierProduct) {
+		return originalProductSource.dolciTrame().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
+	/**
 	 * 发送供应商julianFashion商品流数据
 	 * @param supplierProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
