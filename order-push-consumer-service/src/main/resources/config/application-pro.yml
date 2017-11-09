@@ -68,6 +68,27 @@ shangpin:
       pricehost: http://sopoutapi.spidc1.com
       findsupplyprice: /Product/FindSupplyInfo
     Supplier: #以下配置为各个供货商的配置
+          dolciTrameParam:
+                  setOrderUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/setOrder
+                  queryOrderUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+                  cancelUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/CancelOrder
+                  qtyUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/GetQuantityByBarcode
+                  key: AXz6YgV044
+                  dBContext: default
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
+          angeloMinetti:
+                  url: http://93.64.5.154/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang3110
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
           coccolebimbiParam:
                   url:
                   isPurchaseExp:
