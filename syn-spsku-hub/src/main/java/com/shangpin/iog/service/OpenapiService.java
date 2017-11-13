@@ -151,7 +151,7 @@ public class OpenapiService {
 					 if(this.isEqualSkuPendingCount(hostUrl,skuPending.getSpuPendingId())){
 						 HubSpuPending tmp = new HubSpuPending();
 						 tmp.setSpuPendingId(skuPending.getSpuPendingId());
-						 tmp.setSpuState(SpuState.NOHAND.getIndex());
+						 tmp.setSpuState(SpuState.ALL_EXISTED_IN_HUB.getIndex());
 						 tmp.setUpdateTime(new Date());
 						 updateSpuJson =  mapper.writeValueAsString(tmp) ;
 						 loggerInfo.info(" updateSpuJson =" + updateSpuJson);
@@ -175,7 +175,7 @@ public class OpenapiService {
 		HubSkuPendingCriteria criteria =new HubSkuPendingCriteria();
 		criteria.setPageNo(1);
 		criteria.setPageSize(5000);
-		criteria.setFields(" spu_pending_id,sku_pending_id,supplier_sku_no");
+		criteria.setFields(" spu_pending_id,sku_pending_id,supplier_sku_no,supplier_id");
 		criteria.createCriteria().andSpuPendingIdIn(spuPendingIdList);
 		String jsonQuery =  mapper.writeValueAsString(criteria) ;
 		String skuPendingResult = HttpUtil45.operateData("post","json",skuPendingUrl,outTimeConfig,null,jsonQuery,"","");

@@ -1,12 +1,8 @@
 package com.shangpin.iog.tony.service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import com.shangpin.iog.service.SpecialSkuService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +42,10 @@ public class TonyStockImp {
     SkuRelationService skuRelationService;
     @Autowired
     UpdateStockService updateStockService;
+
+    @Autowired
+    SpecialSkuService  specialSkuService;
+
     public void  fetchStock() {
 
         Gson gson = new Gson();
@@ -142,17 +142,31 @@ public class TonyStockImp {
         try {
             UpdateProductSock updateProductSock = new UpdateProductSock();
             Map<String,String> skuRelationMap = new HashMap<>();
-            for(Iterator<String> itor = stockMap.keySet().iterator();itor.hasNext();){
+            String supplierSkuNO = "";
+            Set<String> itorKey = stockMap.keySet();
+            List<String> listKey = new ArrayList<String>(itorKey);
+            for(int i=0;i<listKey.size();i++){
+                supplierSkuNO = listKey.get(i);
+
                 try {
-                    SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,itor.next());
-                    if(skuRelationDTO!=null){
-                    	skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());	
+                    if(specialSkuService.checkBySupplierIdAndSkuId(SUPPLIER_ID,supplierSkuNO)) {
+                         //不需要更新库存
+                        stockMap.remove(supplierSkuNO);
+
+                    }else{
+
+                        SkuRelationDTO skuRelationDTO =  skuRelationService.getSkuRelationBySupplierIdAndSupplierSkuNo(SUPPLIER_ID,supplierSkuNO);
+                        if(skuRelationDTO!=null){
+                            skuRelationMap.put(skuRelationDTO.getSupplierSkuId(),skuRelationDTO.getSopSkuId());
+                        }
                     }
-                    
+
                 } catch (ServiceException e) {
                     e.printStackTrace();
                 }
             }
+
+
 
             updateProductSock.updateStock(stockMap,skuRelationMap,SUPPLIER_ID);
         } catch (Exception e) {

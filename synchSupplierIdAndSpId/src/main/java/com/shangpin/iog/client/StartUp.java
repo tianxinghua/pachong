@@ -18,7 +18,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.common.utils.DateTimeUtil;
 import com.shangpin.iog.service.OpenapiService;
-import com.shangpin.iog.service.SopService;
 
 public class StartUp {
 
@@ -28,16 +27,16 @@ public class StartUp {
 	private static final String YYYY_MMDD_HH = "yyyy-MM-dd HH:mm";
 	private static ResourceBundle bdl = null;
 	private static String suppliers = null;
-	private static String isHK = null;
 	private static String  startDate=null,endDate=null;
 	private static String  theStartDate=null,theEndDate=null;
+	private static String full = "";
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		suppliers = bdl.getString("suppliers");	
-		isHK = bdl.getString("isHK");
 		theStartDate = bdl.getString("theStartDate");
 		theEndDate = bdl.getString("theEndDate");
+		full = bdl.getString("full");
 	}
 	private static ApplicationContext factory;
 	private static void loadSpringContext()
@@ -53,13 +52,8 @@ public class StartUp {
 			initDate("dateAPI.ini");			
 			loggerInfo.info("========开始时间========="+startDate+"=========结束时间=========="+endDate);
 			System.out.println("========开始时间========="+startDate+"=========结束时间=========="+endDate); 
-			if("1".equals(isHK)){
-				SopService sopService = (SopService)factory.getBean("sopService");
-				sopService.dotheJob(suppliers,startDate,endDate); 
-			}else{
-				OpenapiService openapiService = (OpenapiService)factory.getBean("openapiService");
-				openapiService.dotheJob(suppliers,startDate,endDate);
-			}
+			OpenapiService openapiService = (OpenapiService)factory.getBean("openapiService");
+			openapiService.dotheJob(suppliers,startDate,endDate,full);
 			loggerInfo.info("===========同步完成========"); 
 		} catch (Exception e) {
 			e.printStackTrace();

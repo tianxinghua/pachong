@@ -1,11 +1,10 @@
 package com.shangpin.iog.service;
 
+import java.util.List;
+
 import com.shangpin.framework.ServiceException;
 import com.shangpin.framework.page.Page;
 import com.shangpin.iog.dto.SkuRelationDTO;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by loyalty on 15/10/2.
@@ -64,6 +63,32 @@ public interface SkuRelationService {
      * @throws ServiceException
      */
     public void saveSkuRelateion(SkuRelationDTO skuRelationDTO) throws ServiceException;
+    /**
+     * 更新SKU关系对照对象
+     * @param skuRelationDTO
+     * @throws ServiceException
+     */
+    public void updateSkuRelateion(SkuRelationDTO skuRelationDTO) throws Exception;
+    /**
+     * 根据尚品sku编号和供应商门户编号去更新供应商sku编号
+     * @param skuRelationDTO
+     * @throws Exception
+     */
+    public void updateSupplierSkuNo(SkuRelationDTO skuRelationDTO) throws Exception;
+    /**
+     * 根据门户账号，供应商sku编号，尚品sku编号查找
+     * @param supplierId 门户编号
+     * @param supplierSkuNo 供应商sku编号
+     * @param spSkuId 尚品sku编号
+     * @return
+     */
+    public int countSkuRelation(String supplierId, String supplierSkuNo, String spSkuId);
+    /**
+     * 根据门户和尚品sku编号删除
+     * @param supplierId
+     * @param spSkuId
+     */
+    public void deleteSkuRelation(String supplierId, String spSkuId);
 
 
 

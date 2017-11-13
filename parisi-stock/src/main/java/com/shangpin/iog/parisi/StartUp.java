@@ -2,12 +2,11 @@ package com.shangpin.iog.parisi;
 
 import java.util.ResourceBundle;
 
-import com.shangpin.iog.parisi.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.shangpin.iog.app.AppContext;
+import com.shangpin.iog.parisi.schedule.AppContext;
 
 public class StartUp {
 	private static Logger log = Logger.getLogger("info");
@@ -21,7 +20,6 @@ public class StartUp {
          bdl=ResourceBundle.getBundle("conf");
         supplierId = bdl.getString("supplierId");
         day = Integer.valueOf(bdl.getString("day"));
-        picpath = bdl.getString("picpath");
         
     }
     private static ApplicationContext factory;
@@ -36,11 +34,11 @@ public class StartUp {
 	{
 
         //加载spring
-        log.info("----拉取optical数据开始----");
+        log.info("----拉取parisi数据开始----");
 		loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-        FetchStockImpl fetchProduct =(FetchStockImpl)factory.getBean("parisi");
+//        FetchStockImpl fetchProduct =(FetchStockImpl)factory.getBean("parisi");
 //        fetchProduct.handleData("spu", supplierId, day, picpath);;
 
 

@@ -42,14 +42,14 @@ public class OpenapiService {
 	@Autowired
 	SkuMapper skuDAO;
 	
-	public void dotheJob(String suppliers,String startDate,String endDate){
+	public void dotheJob(String suppliers,String startDate,String endDate,String full){
 		try {
 			
 			if(StringUtils.isNotBlank(suppliers)){
 				for(String supplier : suppliers.split(",")){
 					try {
 						loggerInfo.info("=================供应商"+supplier+"开始同步========================");
-						synchAndSaveRalation(supplier,startDate, endDate);
+						synchAndSaveRalation(supplier,startDate, endDate,full);
 						loggerInfo.info("=================供应商"+supplier+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -61,7 +61,7 @@ public class OpenapiService {
 				for(SupplierDTO supplier : sus){
 					try {
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"开始同步========================");
-						synchAndSaveRalation(supplier.getSupplierId(), startDate, endDate);
+						synchAndSaveRalation(supplier.getSupplierId(), startDate, endDate,full);
 						loggerInfo.info("=================供应商"+supplier.getSupplierId()+"同步结束========================");
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -76,7 +76,7 @@ public class OpenapiService {
 		}
 	}
 	
-	private void synchAndSaveRalation(String supplier,String start,String end) throws Exception{
+	private void synchAndSaveRalation(String supplier,String start,String end,String full) throws Exception{
 		int pageIndex=1,pageSize=100;
 		OpenApiServantPrx servant = IcePrxHelper.getPrx(OpenApiServantPrx.class);;		
 		boolean hasNext=true;		
@@ -85,7 +85,7 @@ public class OpenapiService {
 		if(null!=skuRelationService){
 			List<SkuRelationDTO> skuRelationDTOList = skuRelationService.findListBySupplierId(supplier);
 			for(SkuRelationDTO skuRelationDTO:skuRelationDTOList){
-				map.put(skuRelationDTO.getSopSkuId(),null);
+				map.put(skuRelationDTO.getSopSkuId(),skuRelationDTO.getSupplierSkuId());
 			}
 		}
 		Map<String,String> skuSpSkuMap = new HashMap<String,String>();
@@ -124,7 +124,14 @@ public class OpenapiService {
 			for (SopProductSkuIce sku : skus) {
 				List<SopSkuIce> skuIces = sku.SopSkuIces;
 				for (SopSkuIce ice : skuIces) {
-					if (null!=skuRelationService&&!map.containsKey(ice.SkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
+					if(1==ice.IsDeleted){
+						continue;
+					}
+					/**
+					 * 如果对应关系不存在则新增
+					 */
+					if (!map.containsKey(ice.SkuNo)){ //海外库保留尚品SKU和供货商SKU对照关系
+						
 						SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
 						skuRelationDTO.setSupplierId(supplier);
 						skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
@@ -132,27 +139,30 @@ public class OpenapiService {
 						skuRelationDTO.setCreateTime(date);
 						try {							
 							skuRelationService.saveSkuRelateion(skuRelationDTO);							
-							loggerInfo.info("保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
+							loggerInfo.info(ice.SupplierSkuNo + "----"+ice.SkuNo+" 保存SKU对应关系耗时 " + (System.currentTimeMillis() - startDate));
 						} catch (ServiceException e) {
 							loggerError.error(skuRelationDTO.toString() + "保存失败");
 						}
-					}
-					if(StringUtils.isNotBlank(ice.SkuNo) && StringUtils.isNotBlank(ice.SupplierSkuNo)){ 
-						if(1!=ice.IsDeleted){
+					}else{
+						/**
+						 * 如果对应关系存在，则用供应商门户编号、供应商sku编号、尚品sku编号去查询记录
+						 * 如果记录不存在，则说明供应商sku编号在sop中发生了变化，需要更新EP库的供应商sku编号
+						 * 最后将map中的key移除，以便在最后判断无效的尚品sku编号
+						 */
+						int count = skuRelationService.countSkuRelation(supplier, ice.SupplierSkuNo, ice.SkuNo);
+						if(count <= 0){
 							try {
-								if(!skuSpSkuMap.containsKey(ice.SupplierSkuNo) || !ice.SkuNo.equals(skuSpSkuMap.get(ice.SupplierSkuNo))){ 
-									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, ice.SkuNo,String.valueOf(ice.SkuStatus),null);
-									loggerInfo.info(ice.SupplierSkuNo+"------------------"+ice.SkuNo);
-								}
-								if(!skuSpProductCodeMap.containsKey(ice.SupplierSkuNo)){
-									productFetchService.updateSpSkuIdBySupplier(supplier, ice.SupplierSkuNo, null,String.valueOf(ice.SkuStatus),sku.ProductModel);
-									loggerInfo.info(ice.SupplierSkuNo+"------------------"+sku.ProductModel);
-								}
+								SkuRelationDTO skuRelationDTO = new SkuRelationDTO();
+								skuRelationDTO.setSupplierId(supplier);
+								skuRelationDTO.setSupplierSkuId(ice.SupplierSkuNo);
+								skuRelationDTO.setSopSkuId(ice.SkuNo);
+								skuRelationService.updateSupplierSkuNo(skuRelationDTO);
+								loggerInfo.info(ice.SupplierSkuNo + "|"+ice.SkuNo+" 更新SKU对应关系 "); 
 							} catch (Exception e) {
-								e.printStackTrace();
-								loggerError.error(e.getMessage()); 
+								loggerError.error("更新供应商sku编号异常："+e.getMessage(),e); 
 							}
 						}
+						map.remove(ice.SkuNo);
 					}
 
 				}
@@ -161,5 +171,20 @@ public class OpenapiService {
 			hasNext=(pageSize==skus.size());
 
 		}
+		/**
+		 * 全量更新时将作废的尚品sku编号从库里删除掉
+		 */
+		if ("1".equals(full) && map.size() > 0) {
+			for (String spSkuId : map.keySet()) {
+				try {
+					skuRelationService.deleteSkuRelation(supplier, spSkuId);
+					loggerInfo.info(supplier+"--"+ spSkuId+"已被删除"); 
+				} catch (Exception e) {
+					loggerError.error("删除作废的尚品sku编号异常：" + e.getMessage(), e);
+				}
+			}
+		}
+		
+		
 	}
 }

@@ -6,6 +6,7 @@ import com.shangpin.iog.dao.base.IBaseDao;
 import com.shangpin.iog.dao.base.Mapper;
 import com.shangpin.iog.dto.SkuDTO;
 import com.shangpin.iog.dto.SkuRelationDTO;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -52,5 +53,25 @@ public interface SkuRelationMapper extends IBaseDao<SkuRelationDTO> {
      * @return  对照关系对象
      */
     public SkuRelationDTO getSkuRelationBySupplierSkuId(@Param("supplierId") String supplierId,@Param("skuNo") String supplierSkuNo);
+    /**
+     * 根据尚品sku编号和供应商门户编号去更新供应商sku编号
+     * @param skuRelationDTO
+     * @return
+     */
+    public int updateSupplierSkuNo(SkuRelationDTO skuRelationDTO);
+    /**
+     * 
+     * @param supplierId
+     * @param supplierSkuNo
+     * @param spSkuId
+     * @return
+     */
+    public int countSkuRelation(@Param("supplierId") String supplierId, @Param("supplierSkuNo") String supplierSkuNo, @Param("spSkuId") String spSkuId);
 
+    /**
+     * 删除记录
+     * @param supplierId
+     * @param spSkuId
+     */
+    public void deleteSkuRelation(@Param("supplierId") String supplierId, @Param("spSkuId") String spSkuId);
 }
