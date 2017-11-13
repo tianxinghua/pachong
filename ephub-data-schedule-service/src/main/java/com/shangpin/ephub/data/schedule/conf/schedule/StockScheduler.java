@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.ephub.data.schedule.conf.schedule.properties.ScheduleConfig;
 import com.shangpin.ephub.data.schedule.service.stock.StockService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,14 @@ public class StockScheduler {
 	
     @Autowired
 	private StockService stockService;
+    @Autowired
+    private ScheduleConfig scheduleConfig;
     
 	@Scheduled(cron = "00 55 20 * * ?")
 	public void stockTask() {
+		if(!scheduleConfig.isStartStock()){
+			return;
+		}
 		try {
 			log.info("======================清除库存定时任务开始======================");
 			stockService.updateStockToZero();
