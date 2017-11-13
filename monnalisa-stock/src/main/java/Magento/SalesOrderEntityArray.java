@@ -7,7 +7,7 @@
 
 package Magento;
 
-public class SalesOrderEntityArray  extends java.lang.Object  implements java.io.Serializable {
+public class SalesOrderEntityArray  extends java.lang.Object implements java.io.Serializable {
     public SalesOrderEntityArray() {
     }
 

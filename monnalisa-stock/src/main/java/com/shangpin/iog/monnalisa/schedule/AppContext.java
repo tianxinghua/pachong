@@ -1,4 +1,4 @@
-package com.shangpin.iog.parisi.schedule;
+package com.shangpin.iog.monnalisa.schedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

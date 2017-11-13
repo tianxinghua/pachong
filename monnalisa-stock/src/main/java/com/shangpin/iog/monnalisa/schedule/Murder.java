@@ -1,4 +1,4 @@
-package com.shangpin.iog.parisi.schedule;
+package com.shangpin.iog.monnalisa.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
@@ -8,10 +8,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.shangpin.iog.parisi.service.FetchStockImpl;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.monnalisa.service.FetchStockImpl;
 
 @Component
 public class Murder extends TimerTask{
