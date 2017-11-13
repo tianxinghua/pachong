@@ -5,9 +5,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.data.mysql.modifyDataStatus.HubModifyDataStatusGateWay;
+import com.shangpin.ephub.data.schedule.conf.schedule.properties.ScheduleConfig;
 import com.shangpin.ephub.data.schedule.service.price.PricePushService;
 import com.shangpin.ephub.data.schedule.service.product.ProductPullDataService;
-import com.shangpin.ephub.data.schedule.service.stock.StockService;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -23,26 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductScheduler {
 	
     @Autowired
-	private StockService stockService;
-    @Autowired
     private PricePushService pricePushService;
     @Autowired
     private ProductPullDataService productPullDataService;
     @Autowired
     private HubModifyDataStatusGateWay hubModifyDataStatusGateWay;
-
-//	@Scheduled(cron = "00 55 20 * * ?")
-	public void stockTask() {
-		try {
-			log.info("======================清除库存定时任务开始======================");
-			stockService.updateStockToZero();
-			log.info("======================清除库存定时任务结束======================");
-		} catch (Exception e) {
-			log.error("清除库存定时任务执行失败："+e.getMessage(),e);
-		}
-	}
-
-
+    @Autowired
+    private ScheduleConfig scheduleConfig;
+    
 	@Scheduled(cron = "00 25 20 * * ?")
 	public void pricePush() {
 		try {
@@ -56,8 +44,11 @@ public class ProductScheduler {
 	/**
 	 * 检测产品拉去
 	 */
-//	@Scheduled(cron = "00 00 09 * * ?")
+	@Scheduled(cron = "00 00 09 * * ?")
 	public void productCheck(){
+		if(!scheduleConfig.isStartPro()){
+			return;
+		}
 		try {
 			log.info("===========检测产品拉去任务开始============"); 
 			productPullDataService.productCheck();
@@ -69,7 +60,7 @@ public class ProductScheduler {
 	/**
 	 * 检测价格推送
 	 */
-//	@Scheduled(cron = "00 00 09 * * ?")
+	@Scheduled(cron = "00 00 09 * * ?")
 	public void priceCheck(){
 		try {
 			log.info("===========检测价格推送任务开始============"); 
@@ -83,7 +74,7 @@ public class ProductScheduler {
 	/**
 	 * 修改数据和图片状态
 	 */
-//	@Scheduled(cron = "00 50 08 * * ?")
+	@Scheduled(cron = "00 50 08 * * ?")
 	public void modifyUpdateStatus(){
 		try {
 			log.info("===========更新数据和图片状态============"); 

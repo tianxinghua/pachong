@@ -55,7 +55,7 @@ public class HubSpuPendingDto implements Serializable {
     private String hubSeason;
 
     /**
-     * =0 信息待完善 =1 信息已完善 待处理 2 已处理 3:无法处理 4:过滤不处理 5: 审核中  16:SPU下所有的SKU都在尚品已生成
+     * =0 信息待完善 =1 信息已完善 待处理 2 已处理 3:无法处理 4:过滤不处理 5: 审核中  6:SPU部分SKU已生成 7:SPU所有SKU均已生成
      */
     private Byte spuState;
 
@@ -234,6 +234,11 @@ public class HubSpuPendingDto implements Serializable {
      * 供价标记： 0::无供货价 1: 有供货价
      */
     private Byte supplyPriceState;
+
+    /**
+     * 原映射的季节
+     */
+    private String oldHubSeason;
 
     private static final long serialVersionUID = 1L;
 
@@ -653,6 +658,14 @@ public class HubSpuPendingDto implements Serializable {
         this.supplyPriceState = supplyPriceState;
     }
 
+    public String getOldHubSeason() {
+        return oldHubSeason;
+    }
+
+    public void setOldHubSeason(String oldHubSeason) {
+        this.oldHubSeason = oldHubSeason == null ? null : oldHubSeason.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -711,6 +724,7 @@ public class HubSpuPendingDto implements Serializable {
         sb.append(", msgMissHandleState=").append(msgMissHandleState);
         sb.append(", marketPriceState=").append(marketPriceState);
         sb.append(", supplyPriceState=").append(supplyPriceState);
+        sb.append(", oldHubSeason=").append(oldHubSeason);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -779,7 +793,8 @@ public class HubSpuPendingDto implements Serializable {
             && (this.getSlotHandleUser() == null ? other.getSlotHandleUser() == null : this.getSlotHandleUser().equals(other.getSlotHandleUser()))
             && (this.getMsgMissHandleState() == null ? other.getMsgMissHandleState() == null : this.getMsgMissHandleState().equals(other.getMsgMissHandleState()))
             && (this.getMarketPriceState() == null ? other.getMarketPriceState() == null : this.getMarketPriceState().equals(other.getMarketPriceState()))
-            && (this.getSupplyPriceState() == null ? other.getSupplyPriceState() == null : this.getSupplyPriceState().equals(other.getSupplyPriceState()));
+            && (this.getSupplyPriceState() == null ? other.getSupplyPriceState() == null : this.getSupplyPriceState().equals(other.getSupplyPriceState()))
+            && (this.getOldHubSeason() == null ? other.getOldHubSeason() == null : this.getOldHubSeason().equals(other.getOldHubSeason()));
     }
 
     @Override
@@ -838,6 +853,7 @@ public class HubSpuPendingDto implements Serializable {
         result = prime * result + ((getMsgMissHandleState() == null) ? 0 : getMsgMissHandleState().hashCode());
         result = prime * result + ((getMarketPriceState() == null) ? 0 : getMarketPriceState().hashCode());
         result = prime * result + ((getSupplyPriceState() == null) ? 0 : getSupplyPriceState().hashCode());
+        result = prime * result + ((getOldHubSeason() == null) ? 0 : getOldHubSeason().hashCode());
         return result;
     }
 }

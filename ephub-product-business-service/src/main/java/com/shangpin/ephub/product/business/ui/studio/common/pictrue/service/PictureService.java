@@ -90,4 +90,18 @@ public class PictureService {
 			return null;
 		}
 	}
+	
+	public String getBarCode(String url){
+		if (StringUtils.isNotBlank(url)) {
+			String barcode = "";
+			if(url.contains("_")){
+				barcode = url.substring(0,url.lastIndexOf("_"));
+			}else{
+				barcode = url.substring(0,url.lastIndexOf("."));
+			}
+			return barcode;
+		} else {
+			return null;
+		}
+	}
 }

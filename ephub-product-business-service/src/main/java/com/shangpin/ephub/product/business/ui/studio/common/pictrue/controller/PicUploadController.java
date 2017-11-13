@@ -41,6 +41,11 @@ public class PicUploadController {
 		return pictureService.uploadPic(uploadPic);
 	}
 
+	/**
+	 * 残次品页面的图片上传
+	 * @param request
+	 * @return fsdfs的url
+	 */
 	@RequestMapping(value="/upload",method = RequestMethod.POST)
 	public HubResponse<?> upload(HttpServletRequest request){
 		try {
@@ -51,11 +56,12 @@ public class PicUploadController {
 				MultipartHttpServletRequest mreq = (MultipartHttpServletRequest)request;
 				Map<String, MultipartFile> maps = mreq.getFileMap();
 				if(null != maps && maps.size()>0){
+					String fileName, extension, fdfsURL = "";
 					for(MultipartFile file : maps.values()){
-						String fileName = file.getOriginalFilename();
+						fileName = file.getOriginalFilename();
 						log.info("上传图片："+fileName);
-						String extension = pictureService.getExtension(fileName);
-						String fdfsURL = pictureService.uploadPic(file.getBytes(), extension);
+						extension = pictureService.getExtension(fileName);
+						fdfsURL = pictureService.uploadPic(file.getBytes(), extension);
 						log.info("上传成功："+fdfsURL);
 						urls.add(fdfsURL);
 					}

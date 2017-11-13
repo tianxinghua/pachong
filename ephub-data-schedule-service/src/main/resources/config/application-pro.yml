@@ -27,6 +27,9 @@ spring:
        username: chengxu@shangpin.com # Login user of the SMTP server.
        password: shangpin001 # Login password of the SMTP server.
        test-connection: false # Test that the mail server is available on startup.
+  schedule: 
+       startPro: ${schedule.startPro:true}
+       startStock: ${schedule.startStock:true}
 
 
 
