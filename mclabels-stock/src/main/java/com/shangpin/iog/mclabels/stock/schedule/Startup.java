@@ -1,9 +1,18 @@
 package com.shangpin.iog.mclabels.stock.schedule;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.mclabels.dao.Item;
+import com.shangpin.iog.mclabels.dao.Items;
 
 
 /**

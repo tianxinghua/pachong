@@ -23,11 +23,6 @@ public class Item {
 	private String Height;
 	private String Length;
 	private String Width;
-	private String Classification;
-	private AttributeList AttributeList;
 	private DistributionCenterList DistributionCenterList;
-	private PriceInfo PriceInfo;
 	private VariationInfo VariationInfo;
-	private StoreInfo StoreInfo;
-	private ImageList ImageList;
 }
