@@ -339,8 +339,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
         //加强判断  如果不是同一品类  不让通过
         if(auditVO.getAuditStatus()==SpuStatus.SPU_HANDLED.getIndex()) {
-            //不通过 直接修改SPU的状态为待处理
-            if (judgeCategory(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
+            //不通过 直接修改SPU的状态为待处理 (20171116 去掉此功能)
+//            if (judgeCategory(auditVO, hubSpuPending, hubSpuPendingDtos)) return false;
         }
         log.info(auditVO.getSpuModel()+" >>>待复核校验品类OK");
 
