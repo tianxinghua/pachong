@@ -61,8 +61,7 @@ public class HubSupplierProductService{
 			product.setProductOrigin(dto.getSupplierOrigin());
 			product.setSeasonName(dto.getSupplierSeasonname());
 			product.setSize(dto.getSupplierSkuSize());
-			
-//			product.setSizeClass(dto.get);
+			product.setSizeClass(dto.getSupplierSkuSizeType());
 			product.setSkuId(dto.getSupplierSkuNo());
 			product.setSpSkuId(dto.getSpSkuNo());
 			product.setSupplierSpuId(dto.getSupplierSpuId());

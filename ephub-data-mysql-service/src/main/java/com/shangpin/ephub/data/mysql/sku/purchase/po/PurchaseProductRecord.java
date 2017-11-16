@@ -25,7 +25,7 @@ public class PurchaseProductRecord implements Serializable {
     private String skuId; //必须
 
     private String productName="";//产品展示名称 必须
-
+    private String productCode;
     private String size="";//尺码 必须
 
     private String color="";//颜色 必须
