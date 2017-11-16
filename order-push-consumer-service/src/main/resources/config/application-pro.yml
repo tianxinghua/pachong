@@ -136,8 +136,8 @@ shangpin:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
           srl: 
-              salesUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/dev/sales-update
-              returnsUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/dev/returns-update
+              salesUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/prod/sales-update
+              returnsUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/prod/returns-update
               businessApi: http://api.ephub.spidc1.com/
               isPurchaseExp: 
               openApiKey: 2ec8cd7d96cc4e9191b534481d727bfa
