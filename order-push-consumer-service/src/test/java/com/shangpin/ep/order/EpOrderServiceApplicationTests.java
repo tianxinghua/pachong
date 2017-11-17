@@ -100,7 +100,7 @@ public class EpOrderServiceApplicationTests {
 			shangpinMail.setFrom("lizhongren@shangpin.com");
 			shangpinMail.setSubject("这是一个测试邮件");
 			shangpinMail.setText("这是测试邮件的内容");
-			shangpinMail.setTo("lubaijiang@shangpin.com");
+			//shangpinMail.setTo("lubaijiang@shangpin.com");
 			List<String> addTo = new ArrayList<>();
 			addTo.add("yanxiaobin@shangpin.com");
 			shangpinMail.setAddTo(addTo );
