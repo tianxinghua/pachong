@@ -3,7 +3,7 @@
 <mapper namespace="com.shangpin.ephub.data.mysql.modifyDataStatus.state.mapper.ModifyDataStatusMapper" >
   
   <update id="updateStatus">
-    update  hub_spu_pending p inner join (select supplier_spu_id from hub_supplier_sku   group by supplier_spu_id having sum(stock)>1) tmp on p.supplier_spu_id = tmp.supplier_spu_id set p.stock_state = 1 where p.stock_state = 0
+    update  hub_spu_pending p inner join (select supplier_spu_id from hub_supplier_sku   group by supplier_spu_id having sum(stock)>1) tmp on p.supplier_spu_id = tmp.supplier_spu_id set p.stock_state = 1 where p.stock_state = 0 or p.stock_state = 2;
   </update>
   
   <update id="updatePicStatus">
