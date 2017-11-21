@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.Isexistpic;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
@@ -99,7 +100,9 @@ public class SupplierProductSaveAndSendToPending {
 			supplierProductRetryManager.insert(dto);
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(hubSpu.getSupplierSeasonname())){
-			HubSeasonDicDto hubSeason = supplierProductRetryManager.findSupplierSeason(supplierId, hubSpu.getSupplierSeasonname());
+			log.debug("supplierId:"+supplierId+",季节:"+hubSpu.getSupplierSeasonname());
+			HubSeasonDicDto hubSeason = supplierProductRetryManager.findSupplierSeason(supplierId.trim(), hubSpu.getSupplierSeasonname().trim());
+			log.debug("返回参数：{}",hubSeason);
 			if(hubSeason==null){
 				hubSeason = new HubSeasonDicDto(); 
 				hubSeason.setCreateTime(new Date());
@@ -145,12 +148,21 @@ public class SupplierProductSaveAndSendToPending {
 			savePriceRecordAndSendConsumer(supplierNo,supplierSpuDto,supplierSkuDtos);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
+
+			HubSupplierSpuDto hubSupplierSpuInDataBase = supplierProductMysqlService.hasHadTheHubSpu(supplierSpuDto);
+
 			//保存hubSpu到数据库
+
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
-				pictureProductService.updateDataStateToDelete(supplierId, supplierSpuDto.getSupplierSpuNo());
-				pendingSpu.setPicState(PicState.NO_PIC.getIndex());
+				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.AIR_STUDIO_UPLOAD.getIndex()){
+					pendingSpu.setPicState(PicState.HANDLED.getIndex());
+				}else{
+
+					pictureProductService.updateDataStateToDelete(supplierId, supplierSpuDto.getSupplierSpuNo());
+					pendingSpu.setPicState(PicState.NO_PIC.getIndex());
+				}
 			}
-			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,pendingSpu);
+			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,hubSupplierSpuInDataBase,pendingSpu);
 			//开始构造消息头
 			Spu spuHead = setSpuHead(supplierId,supplierSpuDto.getSupplierSpuNo(),productStatus.getIndex());
 			List<Sku> headSkus = new ArrayList<Sku>();		

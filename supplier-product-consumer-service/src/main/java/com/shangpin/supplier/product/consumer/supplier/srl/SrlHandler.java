@@ -1,11 +1,10 @@
-package com.shangpin.supplier.product.consumer.supplier.monnalisa;
+package com.shangpin.supplier.product.consumer.supplier.srl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -21,7 +20,7 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.monnalisa.dto.CsvDTO;
+import com.shangpin.supplier.product.consumer.supplier.srl.dto.CsvDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,9 +31,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author lubaijang
  * @date 2016年12月8日 上午11:36:22
  */
-@Component("monnalisaHandler")
+@Component("srlHandler")
 @Slf4j
-public class MonnalisaHandler implements ISupplierHandler{
+public class SrlHandler implements ISupplierHandler{
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -83,17 +82,17 @@ public class MonnalisaHandler implements ISupplierHandler{
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
-//		String supplierSpuNo =jsonObject.getId().substring(0,jsonObject.getId().lastIndexOf("-"));
+//		String supplierSpuNo =jsonObject.getSpu();
 //		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
-		String picture0 = jsonObject.getImage_link();
+		String picture0 = jsonObject.getUrlImage();
 		List<Image> images = new ArrayList<Image>();
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
-			log.info("monnalisa "+picture0+" 将推送");
+			log.info("srl "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX monnalisa "+picture0+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX srl "+picture0+" 已存在XXXXXXXXXXXX");
 		}
 		
 		return images;
@@ -110,26 +109,17 @@ public class MonnalisaHandler implements ISupplierHandler{
 	public boolean convertSpu(String supplierId,CsvDTO ob,HubSupplierSpuDto hubSpu,String data){
 		if(null != ob && ob != null){
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(ob.getId().substring(0,ob.getId().lastIndexOf("-")));
-			hubSpu.setSupplierSpuModel(ob.getId().substring(0,ob.getId().lastIndexOf("-")));
-			hubSpu.setSupplierSpuName(ob.getTitle());
-			hubSpu.setSupplierSpuColor(ob.getColor());
+			hubSpu.setSupplierSpuNo(ob.getSpu());
+			hubSpu.setSupplierSpuModel(ob.getSpu());
+			hubSpu.setSupplierSpuName(ob.getName());
+			hubSpu.setSupplierSpuColor(ob.getColour());
 			hubSpu.setSupplierGender(ob.getGender());
-			if(ob.getGoogle_product_category()!=null) {
-				if(ob.getGoogle_product_category().length()<50) {
-					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
-				}else {
-					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 48));
-					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
-				}
-			}else {
-				hubSpu.setSupplierCategoryname("");
-			}
+			hubSpu.setSupplierCategoryname(ob.getCategory());
 			hubSpu.setSupplierBrandname(ob.getBrand());
 			hubSpu.setSupplierSeasonname(ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());
-			hubSpu.setSupplierOrigin(ob.getCountry());
-			hubSpu.setSupplierSpuDesc(ob.getDescription());
+			hubSpu.setSupplierOrigin("");
+			hubSpu.setSupplierSpuDesc("");
 			return true;
 		}else{
 			return false;
@@ -147,16 +137,16 @@ public class MonnalisaHandler implements ISupplierHandler{
 		if(null != ob){
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuNo(ob.getId());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSale_price())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
+			hubSku.setSupplierSkuNo(ob.getSku());
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getMarketPrice())));
+			hubSku.setMarketPriceCurrencyorg("EUR");
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getMarketPrice())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSupplyPrice())));
 			hubSku.setSupplierBarcode(ob.getBarcode());
 			if(!StringUtils.isEmpty(ob.getSize())){
 				hubSku.setSupplierSkuSize(ob.getSize());
 			}
-			
-			hubSku.setStock(StringUtil.verifyStock("10"));
+			hubSku.setStock(Integer.parseInt(ob.getQty()));
 //			String stock = ob.getString("availability");
 //			Pattern pattern = Pattern.compile("[0-9]*"); 
 //		    Matcher isNum = pattern.matcher(stock);

@@ -29,8 +29,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+	mavenLocal()
+	maven { url "http://192.168.20.223:8081/nexus/content/groups/public/" }
 	mavenCentral()
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
 }
 
 group="com.shangpin.ep.order"

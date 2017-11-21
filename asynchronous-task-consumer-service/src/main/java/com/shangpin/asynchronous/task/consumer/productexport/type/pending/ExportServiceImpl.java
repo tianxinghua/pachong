@@ -549,7 +549,10 @@ public class ExportServiceImpl {
 					}
 					String memo = product.getMemo();
 					if (!StringUtils.isEmpty(memo)) {
-						buffer = buffer.append(memo);
+						buffer = buffer.append(memo).append(comma);
+					}
+					if (!StringUtils.isEmpty(product.getAuditOpinion())) {
+						buffer = buffer.append(product.getAuditOpinion());
 					}
 					row.createCell(i).setCellValue(buffer.toString());
 				} else if ("spuState".equals(rowTemplate[i])) {

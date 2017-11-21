@@ -86,12 +86,13 @@ public class SmetsHandler implements ISupplierHandler {
 		if(null != product){
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(product.getSkuId());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(product.getNewMarketPrice())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(product.getNewSupplierPrice())));
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(product.getNewSalePrice()))); 
+			hubSku.setMarketPrice(product.getMarketPrice());
+			hubSku.setSupplyPrice(product.getSupplierPrice());
+			hubSku.setSalesPrice(product.getSalePrice());	
 			hubSku.setMarketPriceCurrencyorg(product.getSaleCurrency()); 
 			hubSku.setSupplierBarcode(product.getBarcode());
 			hubSku.setSupplierSkuSize(product.getSize());
+			hubSku.setSupplierSkuSizeType(product.getSizeClass());
 			hubSku.setStock(StringUtil.verifyStock(product.getStock()));
 			return true;
 		}else{
@@ -104,6 +105,8 @@ public class SmetsHandler implements ISupplierHandler {
 			return null;
 		}else{
 			List<Image> images = new ArrayList<Image>();
+			setSpuPicture(product.getSkuPicture(),images);
+			setSpuPicture(product.getSpuPicture(),images);
 			setImage(product.getItemPictureUrl1(),images);
 			setImage(product.getItemPictureUrl2(),images);
 			setImage(product.getItemPictureUrl3(),images);
@@ -116,6 +119,18 @@ public class SmetsHandler implements ISupplierHandler {
 		}
 	}
 	
+	private void setSpuPicture(String skuPicture, List<Image> images) {
+		if(skuPicture!=null){
+			String [] picArr = skuPicture.split("\\|");
+			for(String pic:picArr){
+				Image image = new Image();
+				image.setUrl(pic);
+				images.add(image);
+			}
+		}
+		
+	}
+
 	private void setImage(String url,List<Image> images){
 		if(StringUtils.isEmpty(url)){
 			Image image = new Image();
@@ -123,5 +138,4 @@ public class SmetsHandler implements ISupplierHandler {
 			images.add(image);
 		}
 	}
-
 }

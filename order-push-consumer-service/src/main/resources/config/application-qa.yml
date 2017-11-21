@@ -168,13 +168,13 @@ spring:
               openApiKey: 
               openApiSecret: 
       daniello: 
-              url: http://79.62.242.6:8088/ws_sito/ws_sito_p15.asmx/
+              url: http://212.83.175.83:63130/ws_sito_shangpin/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace
               setStatusInterface: SetStatusOrderMarketplace
               getStatusInterface: GetStatusOrderMarketplace
               getItemStockInterface: GetItemStockBySizeMarketPlace
               user: shangpin
-              password: Daniello0203
+              password: Atelier2015
               messageType: text/html;charset=utf-8
               openApiKey: 
               openApiSecret: 
@@ -183,13 +183,13 @@ spring:
               openApiKey: 
               openApiSecret: 
       divo: 
-              url: http://185.5.180.90/ws_sito/ws_sito_p15.asmx/
+              url: http://78.134.74.112:8080/ws_sito_P15/ws_sito_P15.asmx/
               createOrderInterface: NewOrderMarketPlace
               setStatusInterface: SetStatusOrderMarketplace
               getStatusInterface: GetStatusOrderMarketplace
               getItemStockInterface: GetItemStockBySizeMarketPlace
               user: shangpin
-              password: shang1210
+              password: Shang0711
               openApiKey: 
               openApiSecret: 
       russoCapri: 
@@ -468,6 +468,22 @@ spring:
               isPurchaseExp: 
               openApiKey: 
               openApiSecret: 
+      julianFashion: 
+              url: http://213.209.202.38:8080/ws_shangpin/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: Shang1409
+              isPurchaseExp: 
+              openApiKey: 
+              openApiSecret:
+      cocorose:
+              isPurchaseExp:
+              openApiKey:
+              openApiSecret:
+              purchaseOrderUrl:
       supplier:
               delayTime: 1000
               retry: 120

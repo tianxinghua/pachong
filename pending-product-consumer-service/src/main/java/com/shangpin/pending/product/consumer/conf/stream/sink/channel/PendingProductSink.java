@@ -11,6 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface PendingProductSink {
 	
+	public static final String dolciTrame = "dolciTramePendingProduct";
+	public static final String cocoroseLondon = "cocoroseLondonPendingProduct";
+	public static final String angeloMinetti = "angeloMinettiPendingProduct";
 	public static final String fratinardi = "fratinardiPendingProduct";
 	public static final String coccolebimbi = "coccolebimbiPendingProduct";
 	public static final String portofino = "portofinoPendingProduct";
@@ -147,6 +150,36 @@ public interface PendingProductSink {
 	public static final String GAUDENZI = "gaudenziPendingProduct";
 	
 	public static final String MONNALISA = "monnalisaPendingProduct";
+
+	public static final String SRL = "srlPendingProduct";
+
+	public static final String JULIANFASHION = "julianFashionPendingProduct";
+
+	/**
+	 * 供货商angeloMinetti通道组件配置
+	 * @return 供货商angeloMinetti通道组件
+	 */
+	@Input(value = PendingProductSink.angeloMinetti)
+	public SubscribableChannel angeloMinettiPendingProduct();
+	/**
+	 * 供货商cocoroseLondon通道组件配置
+	 * @return 供货商cocoroseLondon通道组件
+	 */
+	@Input(value = PendingProductSink.cocoroseLondon)
+	public SubscribableChannel cocoroseLondonPendingProduct();
+	/**
+	 * 供货商dolciTrame通道组件配置
+	 * @return 供货商dolciTrame通道组件
+	 */
+	@Input(value = PendingProductSink.dolciTrame)
+	public SubscribableChannel dolciTramePendingProduct();
+	/**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return 供货商JULIANFASHION通道组件
+	 */
+	@Input(value = PendingProductSink.JULIANFASHION)
+	public SubscribableChannel julianFashionPendingProduct();
+
 	/**
 	 * 供货商coccolebimbi通道组件配置
 	 * @return 供货商SPINNAKER通道组件
@@ -576,4 +609,11 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.MONNALISA)
 	public SubscribableChannel monnalisaPendingProduct();
+
+	/**
+	 * 供应商SRL通道组件配置
+	 * @return 供货商MONNALISA通道组件
+	 */
+	@Input(value = PendingProductSink.SRL)
+	public SubscribableChannel srlPendingProduct();
 }

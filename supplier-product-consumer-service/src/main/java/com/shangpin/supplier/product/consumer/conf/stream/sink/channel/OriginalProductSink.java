@@ -11,6 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  * @date 2016年12月6日 下午4:06:53
  */
 public interface OriginalProductSink {
+	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
+	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
+	public static final String dolciTrame = "dolciTrameOriginalProduct";
 	public static final String portofino = "portofinoOriginalProduct";
 	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
 	public static final String fratinardi = "fratinardiOriginalProduct";
@@ -151,8 +154,38 @@ public interface OriginalProductSink {
 	
 	public static final String MONNALISA = "monnalisaOriginalProduct";
 
+	public static final String JULIANFASHION = "julianFashionOriginalProduct";
+
+	public static final String SRL = "srlOriginalProduct";
+
 
 	//===============================
+
+	/**
+	 * 供货商dolciTrame通道组件配置
+	 * @return dolciTrame通道组件
+	 */
+	@Input(value = OriginalProductSink.dolciTrame)
+	public SubscribableChannel dolciTrameOriginalProduct();
+	/**
+	 * 供货商cocoroseLondon通道组件配置
+	 * @return cocoroseLondon通道组件
+	 */
+	@Input(value = OriginalProductSink.cocoroseLondon)
+	public SubscribableChannel cocoroseLondonOriginalProduct();
+	/**
+	 * 供货商angeloMinetti通道组件配置
+	 * @return angeloMinetti通道组件
+	 */
+	@Input(value = OriginalProductSink.angeloMinetti)
+	public SubscribableChannel angeloMinettiOriginalProduct();
+	/**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return JULIANFASHION通道组件
+	 */
+	@Input(value = OriginalProductSink.JULIANFASHION)
+	public SubscribableChannel julianFashionOriginalProduct();
+
 	/**
 	 * 供货商portofino通道组件配置
 	 * @return portofino通道组件
@@ -588,5 +621,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.MONNALISA)
 	public MessageChannel monnalisaOriginalProduct();
+
+	/**
+	 * 供应商srl通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.SRL)
+	public MessageChannel srlOriginalProduct();
 
 }

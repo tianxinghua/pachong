@@ -26,6 +26,44 @@ public class OriginalProductStreamListener {
 	
 	@Autowired
 	private OriginalProductStreamListenerAdapter adapter;
+	
+	/**
+	 * 供应商angeloMinetti原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.angeloMinetti)
+	public void angeloMinettiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.angeloMinettiStreamListen(message,headers);
+	}
+	/**
+	 * 供应商cocoroseLondon原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.cocoroseLondon)
+	public void cocoroseLondonStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.cocoroseLondonStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.dolciTrame)
+	public void dolciTrameStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.dolciTrameStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.JULIANFASHION)
+	public void julianFashionStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.julianFashionStreamListen(message,headers);
+	}
+	
 	/**
 	 * 供应商fratinardi原始商品数据流通道监听者
 	 * @param message 消息
@@ -685,5 +723,15 @@ public class OriginalProductStreamListener {
 	@StreamListener(OriginalProductSink.MONNALISA)
     public void monnalisaStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.monnalisaStreamListen(message,headers);
+    }
+	
+	/**
+	 * 供应商MONNALISA原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.SRL)
+    public void srlStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.srlStreamListen(message,headers);
     }
 }

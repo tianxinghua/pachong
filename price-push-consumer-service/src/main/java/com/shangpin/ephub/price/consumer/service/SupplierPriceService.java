@@ -221,7 +221,7 @@ public class SupplierPriceService {
             if(!"1".equals(rateForMarket)){
                 BigDecimal marketRate = new BigDecimal(rateForMarket);
                 productPriceDTO.setMarketPrice(new BigDecimal(productPriceDTO.getMarketPrice())
-                        .multiply(marketRate).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+                        .multiply(marketRate).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
             }
 
         }

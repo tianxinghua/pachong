@@ -777,6 +777,18 @@ public class PendingHandler extends VariableInit {
 							spuPendingDto.getSpuModel());
 				}
 
+				//季节发生变化时 需要修改pending 表中的季节映射 即使已经处理过了
+				if(StringUtils.isNotBlank(spu.getHubSeason())) {
+
+					HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
+					updateSpuPending.setOldHubSeason(spuPendingDto.getHubSeason());
+					setSpuPendingSeasonValueForUpdate(spu, updateSpuPending);
+					dataServiceHandler.updatePendingSpu(spuPendingDto.getSpuPendingId(), updateSpuPending);
+					//更新后重新赋值
+					spuPendingDto = dataServiceHandler.getSpuPendingById(spuPendingDto.getSpuPendingId());
+				}
+
+
 			} else {
 				HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 
