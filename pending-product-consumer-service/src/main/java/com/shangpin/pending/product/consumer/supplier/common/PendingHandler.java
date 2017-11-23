@@ -701,11 +701,11 @@ public class PendingHandler extends VariableInit {
             allStatus = false;
 		if (!spuModelJudge)
             allStatus = false;
-		// 设置性别
+		// 设置性别(本地静态)
 		if (!setGenderMapping(spu, hubSpuPending))
             allStatus = false;
 
-		// 获取品类
+		// 获取品类（redis）
 		if (!setCategoryMapping(spu, hubSpuPending))
             allStatus = false;
 
