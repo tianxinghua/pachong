@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,8 @@ public class PendingProductService extends PendingSkuService{
     private HubSpuPendingNohandleReasonService reasonService;
     @Autowired
     private CheckService checkService;
+    @Autowired
+	private SkuPendingService skuPendingService;
 
     @Override
     public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -178,140 +181,163 @@ public class PendingProductService extends PendingSkuService{
             	 * 校验货号
             	 */
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
-            	/**
-            	 * 校验品类和性别是否一致
-            	 */
-            	boolean checkCategoryAndGender = checkService.checkCategoryAndGender(pendingProductDto.getHubGender(), pendingProductDto.getHubCategoryNo());
-            	if(brandModelResult.isPassing() && checkCategoryAndGender){
-            		hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
-            		if(null == hubSpuDto){
-            			HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
-            			if(spuResult.isPassing()){
-            				pendingProductDto.setCatgoryState((byte)1);
-            				pendingProductDto.setMaterialState((byte)1);
-            				pendingProductDto.setOriginState((byte)1);
-            				pendingProductDto.setSpuBrandState((byte)1);
-            				pendingProductDto.setSpuColorState((byte)1);
-            				pendingProductDto.setSpuGenderState((byte)1);
-            				pendingProductDto.setSpuModelState((byte)1);
-            				pendingProductDto.setSpuSeasonState((byte)1);
-            			}else{
-            				checkSpuState(pendingProductDto,spuResult);
-            				pass = false ;
-            				log.info("pending spu校验失败，不更新："+spuResult.getResult());
-            				updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
-            			}
-            		}
-            	}else{
-            		pass = false ;
-            		log.info("pending spu校验失败，不更新：货号校验不通过或者性别不符。");
-            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过或性别不符");
-            	}
-            	//开始校验sku
-            	List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
-            	if(null == updatedVo){
-            		updatedVo = new PendingUpdatedVo();
-            		updatedVo.setSpuResult("");
-            		updatedVo.setSpuPendingId(pendingProductDto.getSpuPendingId());
-            	}
-            	List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
 
-            	if(pengdingSkus!=null&&pengdingSkus.size()>0){
-            		 for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
-                     	String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
-                     	hubSkuSize = StringUtils.isEmpty(hubSkuSize) ? "" : hubSkuSize;
-                     	log.info("从页面接收到的尺码信息===="+hubSkuSize);
-                     	if(hubSkuSize.startsWith("排除")){
-                     		hubSkuPendingDto.setHubSkuSizeType("排除");
-                     		hubSkuPendingDto.setHubSkuSize(null);//目的是不更新尺码值
-                     		hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
-                     		hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-                     	}else if(hubSkuSize.startsWith("尺寸")){
-                     		isSkuPass = true;
-                     		hubSkuPendingDto.setHubSkuSizeType("尺寸");
-                     		hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
-                     		if(null != hubSpuDto){
-                             	hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
-                     		}else{
-                     			hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
-                     		}
-                     		hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-                     		hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
-                     	}else{
-                     		isSkuPass = true;
-                     		String [] arr = hubSkuSize.split(":",-1);
-                     		String sizeType = null;
-                     		String sizeValue = null;
-                     		if(arr.length==2){
-                     			sizeType = arr[0];
-                     			sizeValue = arr[1];
-                     		}else{
-                     			sizeValue = hubSkuSize;
-                     		}
-                     		HubPendingSkuCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), sizeType,sizeValue);
-         					if(result.isPassing()){
-         						if(null != hubSpuDto){
-         							hubSkuPendingDto.setScreenSize(result.getSizeId()); 
-                                 	hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
-                                 	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
-                                 	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-         						}else{
-         							hubSkuPendingDto.setScreenSize(result.getSizeId());
-                                 	hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-                                 	hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
-                                 	hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-         						}
-                             }else{
-                             	pass = false ;
-                                 log.info("pending sku校验失败，不更新："+result.getMessage()+"|原始数据："+hubSkuSize);
-                                 response.setCode("1");
-                                 PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
-                                 skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
-                                 skuUpdatedVo.setSkuResult(result.getMessage());
-                                 skus.add(skuUpdatedVo);
-                             }
-         					if(hubSkuSize.contains(":")){
-                             	hubSkuPendingDto.setHubSkuSizeType(hubSkuSize.substring(0,hubSkuSize.indexOf(":")));
-                             	hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
-                             }
-                     	}
-                     	hubSkuPendingDto.setSupplyPrice(null);
-                     	hubSkuPendingDto.setMarketPrice(null);
-                     	hubSkuPendingDto.setSalesPrice(null);
-                        hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
-                     }
+            	boolean isHaveHubSpu = false;
 
-            		 if(!isSkuPass){
-                      	updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"尺码都被排除");
-             		 }
-            	}else{
-            		updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无sku信息");
-            	}
+            	//如果货号校验通过  则先查询是否与HUB_SPU 如果有 直接赋值 并自动过滤尺码
+				if(null!=brandModelResult&&brandModelResult.isPassing()){
+					hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
+					if(null!=hubSpuDto){
+						setSpuStateNotIncludeSeason(pendingProductDto);
+						//尺码处理
+						boolean  skuHandleReuslt = skuPendingService.setWaitHandleSkuPendingSize(pendingProductDto.getSpuPendingId(),pendingProductDto.getHubBrandNo(),pendingProductDto.getHubCategoryNo());
+						if(!skuHandleReuslt){
+							pass = false ;
+							updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无可处理的sku信息");
+						}
+						isHaveHubSpu = true;
+					}
+					//
+				}
+				if(!isHaveHubSpu){//无HubSkuPending的处理逻辑
+					/**
+					 * 校验品类和性别是否一致
+					 */
+					boolean checkCategoryAndGender = checkService.checkCategoryAndGender(pendingProductDto.getHubGender(), pendingProductDto.getHubCategoryNo());
+					if(brandModelResult.isPassing() && checkCategoryAndGender){
+						hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
+						if(null == hubSpuDto){
+							HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
+							if(spuResult.isPassing()){
+								setSpuStateNotIncludeSeason(pendingProductDto);
+								pendingProductDto.setSpuSeasonState((byte)1);
+							}else{
+								checkSpuState(pendingProductDto,spuResult);
+								pass = false ;
+								log.info("pending spu校验失败，不更新："+spuResult.getResult());
+								updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
+							}
+						}
+					}else{
+						pass = false ;
+						log.info("pending spu校验失败，不更新：货号校验不通过或者性别与品类不符。");
+						updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过或性别与品类不符");
+					}
+					//开始校验sku
+					List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
+					if(null == updatedVo){
+						updatedVo = new PendingUpdatedVo();
+						updatedVo.setSpuResult("");
+						updatedVo.setSpuPendingId(pendingProductDto.getSpuPendingId());
+					}
+					List<PendingSkuUpdatedVo> skus = new ArrayList<PendingSkuUpdatedVo>();
 
-                updatedVo.setSkus(skus);
-                response.setErrorMsg(updatedVo);
+					if(pengdingSkus!=null&&pengdingSkus.size()>0){
+						for(HubSkuPendingDto hubSkuPendingDto : pengdingSkus){
+							String hubSkuSize = hubSkuPendingDto.getHubSkuSize();
+							hubSkuSize = StringUtils.isEmpty(hubSkuSize) ? "" : hubSkuSize;
+							log.info("从页面接收到的尺码信息===="+hubSkuSize);
+							if(hubSkuSize.startsWith("排除")){
+								hubSkuPendingDto.setHubSkuSizeType("排除");
+								hubSkuPendingDto.setHubSkuSize(null);//目的是不更新尺码值
+								hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
+								hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+							}else if(hubSkuSize.startsWith("尺寸")){
+								isSkuPass = true;
+								hubSkuPendingDto.setHubSkuSizeType("尺寸");
+								hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
+								if(null != hubSpuDto){
+									hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
+								}else{
+									hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
+								}
+								hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
+								hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+							}else{
+								isSkuPass = true;
+								String [] arr = hubSkuSize.split(":",-1);
+								String sizeType = null;
+								String sizeValue = null;
+								if(arr.length==2){
+									sizeType = arr[0];
+									sizeValue = arr[1];
+								}else{
+									sizeValue = hubSkuSize;
+								}
+								HubPendingSkuCheckResult result = hubCheckService.hubSizeExist(pendingProductDto.getHubCategoryNo(), pendingProductDto.getHubBrandNo(), sizeType,sizeValue);
+								if(result.isPassing()){
+									if(null != hubSpuDto){
+										hubSkuPendingDto.setScreenSize(result.getSizeId());
+										hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
+										hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+										hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
+									}else{
+										hubSkuPendingDto.setScreenSize(result.getSizeId());
+										hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+										hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+										hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
+									}
+								}else{
+									pass = false ;
+									log.info("pending sku校验失败，不更新："+result.getMessage()+"|原始数据："+hubSkuSize);
+									response.setCode("1");
+									PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
+									skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
+									skuUpdatedVo.setSkuResult(result.getMessage());
+									skus.add(skuUpdatedVo);
+								}
+								if(hubSkuSize.contains(":")){
+									hubSkuPendingDto.setHubSkuSizeType(hubSkuSize.substring(0,hubSkuSize.indexOf(":")));
+									hubSkuPendingDto.setHubSkuSize(hubSkuSize.substring(hubSkuSize.indexOf(":")+1));
+								}
+							}
+							hubSkuPendingDto.setSupplyPrice(null);
+							hubSkuPendingDto.setMarketPrice(null);
+							hubSkuPendingDto.setSalesPrice(null);
+							hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+						}
+
+						if(!isSkuPass){
+							updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"尺码都被排除");
+						}
+					}else{
+						updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无sku信息");
+					}
+
+					updatedVo.setSkus(skus);
+					response.setErrorMsg(updatedVo);
+				}
+
+
+
+
+
+
+
             }
             if(0==pendingProductDto.getSupplierSpuId()){
                 pendingProductDto.setSupplierSpuId(null);
             }
-            if(null != hubSpuDto&&pendingProductDto!=null){
-            	if(pendingProductDto.getHubColor()!=null&&pendingProductDto.getHubColor().equals(hubSpuDto.getHubColor())){
-            		
-            	}else{
-            		pass = false;
-            		pendingProductDto.setUpdateTime(new Date());
-            		pendingProductDto.setAuditState((byte)0);
-            		pendingProductDto.setMemo("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
-            		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
-            		pendingProductDto.setAuditDate(new Date());
-            		pendingProductDto.setAuditUser("chenxu");
-            		PendingUpdatedVo updatedVo1 = new PendingUpdatedVo();
-            		updatedVo1.setSpuPendingId(pendingProductDto.getSpuPendingId());
-            		updatedVo1.setSpuResult("同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
-            		response.setCode("1");
-                    response.setErrorMsg(updatedVo1);
-            	}
-            }
+            //颜色暂不处理 让审核人员 自己判断（20171127）
+//            if(null != hubSpuDto&&pendingProductDto!=null){
+//            	if(pendingProductDto.getHubColor()!=null&&pendingProductDto.getHubColor().equals(hubSpuDto.getHubColor())){
+//
+//            	}else{
+//            		pass = false;
+//            		pendingProductDto.setUpdateTime(new Date());
+//            		pendingProductDto.setAuditState((byte)0);
+//            		pendingProductDto.setMemo("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
+//            		pendingProductDto.setAuditOpinion("再处理：同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
+//            		pendingProductDto.setAuditDate(new Date());
+//            		pendingProductDto.setAuditUser("chenxu");
+//            		PendingUpdatedVo updatedVo1 = new PendingUpdatedVo();
+//            		updatedVo1.setSpuPendingId(pendingProductDto.getSpuPendingId());
+//            		updatedVo1.setSpuResult("同品牌同货号颜色不一样,hub颜色："+hubSpuDto.getHubColor());
+//            		response.setCode("1");
+//                    response.setErrorMsg(updatedVo1);
+//            	}
+//            }
+
             if(pass &&isSkuPass&& null != hubSpuDto){
 //            	  HubPendingDto hubPendingDto = new HubPendingDto();
 //                hubPendingDto.setHubSpuId(hubSpuDto.getSpuId());
@@ -339,6 +365,17 @@ public class PendingProductService extends PendingSkuService{
     	log.info("返回的校验结果：+"+JsonUtil.serialize(response)); 
     	return response;
     }
+
+	private void setSpuStateNotIncludeSeason(PendingProductDto pendingProductDto) {
+		pendingProductDto.setCatgoryState((byte)1);
+		pendingProductDto.setMaterialState((byte)1);
+		pendingProductDto.setOriginState((byte)1);
+		pendingProductDto.setSpuBrandState((byte)1);
+		pendingProductDto.setSpuColorState((byte)1);
+		pendingProductDto.setSpuGenderState((byte)1);
+		pendingProductDto.setSpuModelState((byte)1);
+
+	}
 
 	private void setHubSlotSpu(PendingProductDto pendingProductDto) throws Exception {
 
@@ -656,7 +693,7 @@ public class PendingProductService extends PendingSkuService{
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-//		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+//		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason()); 季节可以修改 ，所以不赋值
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());

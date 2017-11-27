@@ -23,7 +23,7 @@ import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
  * <p>
  * Company: www.shangpin.com
  * </p>
- * 
+ *
  * @author yanxiaobin
  * @date 2016年12月21日 下午4:15:16
  */
@@ -32,7 +32,7 @@ public class MatchSizeService {
 
 	@Autowired
 	SizeService sizeService;
-	
+
 	/**
 	 * 根据品牌、品类编号和尺码匹配出尺码类型
 	 * @param dto
@@ -47,79 +47,43 @@ public class MatchSizeService {
 		matchSizeResult.setSizeValue(dto.getSize());
 		CategoryScreenSizeDom size = sizeService.getGmsSize(dto.getHubBrandNo(), dto.getHubCategoryNo());
 		boolean sizeIsExist = false;
-		String result = null;
-		boolean isNotTemplate = false;
 		Map<String,String> screenSizeMap = new HashMap<String,String>();
 		Map<String,String> standardSizeMap = new HashMap<String,String>();
-		if(size!=null){
-			List<SizeStandardItem> list = size.getSizeStandardItemList();	
-			if(list!=null&&list.size()>0){
-				//获取筛选尺码和标准尺码map集合
-				getSizeMap(list,screenSizeMap,standardSizeMap);
-				//第一步：从标准尺码中查找匹配尺码
-				sizeIsExist = matchStandardSize(dto.getSize(),standardSizeMap,matchSizeResult);
-//				if(!sizeIsExist){
-//					//第二步：（去掉，不再从筛选尺码里面匹配）从标准尺码中未匹配到尺码。继续从筛选尺码中匹配 
-//					sizeIsExist = matchScreenSize(dto.getSize(),screenSizeMap,matchSizeResult);
-//				}
-			}else{
-				isNotTemplate = true;
+		if(size!=null&&size.getSizeStandardItemList()!=null&&size.getSizeStandardItemList().size()>0){
+			List<SizeStandardItem> list = size.getSizeStandardItemList();
+			//获取筛选尺码和标准尺码map集合
+			getSizeMap(list,screenSizeMap,standardSizeMap);
+			//第一步：从标准尺码中查找匹配尺码
+			sizeIsExist = matchStandardSize(dto.getSize(),standardSizeMap,matchSizeResult);
+			if(!sizeIsExist){
+				//第二步：从标准尺码中未匹配到尺码。继续从筛选尺码中匹配，如果匹配到则排除，
+				sizeIsExist = matchScreenSize(dto.getSize(),screenSizeMap,matchSizeResult);
 			}
-		}else{
-			isNotTemplate = true;
-		}
-		
-		if(matchSizeResult.isPassing()){
-			result = "尺码："+dto.getSize()+"匹配成功";	
-			matchSizeResult.setPassing(true);
 		}else{
 			matchSizeResult.setPassing(false);
-			if(isNotTemplate){
-				matchSizeResult.setNotTemplate(isNotTemplate);
-				result = "scm没有尺码模板";	
-			}else{
-				//sizeIsExist为true，说明匹配到尺码并且匹配到多个
-				if(sizeIsExist){
-					matchSizeResult.setMultiSizeType(true);
-					result = "含有多个尺码模板";		
-				}else{
-					if(standardSizeMap.size()>0){
-						result = "尺码："+dto.getSize()+"未匹配成功";		
-						matchSizeResult.setFilter(true);	
-					}else{
-						result = "scm没有尺码模板";	
-						matchSizeResult.setNotTemplate(true);		
-					}
-				}
-			}
+			matchSizeResult.setNotTemplate(false);
 		}
-		matchSizeResult.setResult(result);
 		return matchSizeResult;
 	}
 	private boolean matchScreenSize(String size, Map<String, String> map2, MatchSizeResult matchSizeResult) {
 		boolean sizeIsExist = false;
+		matchSizeResult.setPassing(false);
 		if (map2.size() > 0) {
-			int i = 0;
 			for (Map.Entry<String, String> entry : map2.entrySet()) {
 				String value = entry.getValue();
-				String key = entry.getKey();
 				if(value!=null){
 					String [] arrAcm = value.split("\\|",-1);
 					for(String scmSize:arrAcm){
 						if (size.equals(scmSize)) {
 							sizeIsExist = true;
-							i++;
-							String[] arr = key.split(":", -1);
-							if (arr.length == 2) {
-								matchSizeResult.setSizeType(arr[0]);
-								matchSizeResult.setSizeValue(arr[1]);
-								matchSizeResult.setPassing(true);
-								if (i >= 2) {
-									matchSizeResult.setPassing(false);
-									break;
-								}
-							}
+							matchSizeResult.setFilter(true);
+							matchSizeResult.setResult("尺码："+size+"排除");
+							break;
 						}
+					}
+					if(!sizeIsExist){
+						matchSizeResult.setResult("scm没有尺码模板");
+						matchSizeResult.setNotTemplate(true);
 					}
 				}
 			}
@@ -139,11 +103,14 @@ public class MatchSizeService {
 					isExist = true;
 					i++;
 					if (arr.length == 2) {
+						matchSizeResult.setResult("尺码："+size+"匹配成功");
 						matchSizeResult.setSizeType(arr[0]);
 						matchSizeResult.setSizeValue(arr[1]);
 						matchSizeResult.setPassing(true);
 						if (i >= 2) {
+							matchSizeResult.setResult("含有多个尺码模板");
 							matchSizeResult.setPassing(false);
+							matchSizeResult.setMultiSizeType(true);
 							break;
 						}
 					}
