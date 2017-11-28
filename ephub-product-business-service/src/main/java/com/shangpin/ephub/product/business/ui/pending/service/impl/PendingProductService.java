@@ -180,13 +180,20 @@ public class PendingProductService extends PendingSkuService{
             	/**
             	 * 校验货号
             	 */
+
+				List<HubSpuDto>  hubSpuDtos = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
+				if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
+					hubSpuDto = hubSpuDtos.get(0);
+					pendingProductDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
+				}
+
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
 
             	boolean isHaveHubSpu = false;
 
             	//如果货号校验通过  则先查询是否与HUB_SPU 如果有 直接赋值 并自动过滤尺码
 				if(null!=brandModelResult&&brandModelResult.isPassing()){
-					hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
+					if(null==hubSpuDto) hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
 					if(null!=hubSpuDto){
 						setSpuStateNotIncludeSeason(pendingProductDto);
 						//尺码处理
@@ -704,7 +711,7 @@ public class PendingProductService extends PendingSkuService{
      * @param hubBrandNo
      * @return
      */
-    private List<HubSpuDto> selectHubSpu(String spuModle,String hubBrandNo) {
+    protected List<HubSpuDto> selectHubSpu(String spuModle,String hubBrandNo) {
 		HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
 		criteria.createCriteria().andSpuModelEqualTo(spuModle).andBrandNoEqualTo(hubBrandNo);
 		return  hubSpuGateway.selectByCriteria(criteria);
