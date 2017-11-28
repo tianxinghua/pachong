@@ -231,7 +231,7 @@ public class SupplierPriceService {
     private Map<String,String> getValidSupplier(){
         Map<String,String> supplierMap = new HashMap<>();
         HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
-        criteriaDto.setPageSize(100);
+        criteriaDto.setPageSize(500);
         criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
                 .andMappingStateEqualTo(DataState.NOT_DELETED.getIndex());
         List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
