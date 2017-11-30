@@ -1085,7 +1085,7 @@ public abstract class AbsUpdateProductStock {
 				if(orderDetails==null){
 					orderDetails = new ArrayList<PurchaseOrderDetail>();
 				}
-				loggerError.error("获取采购异常错误："+ e.getMessage());
+				loggerError.error("获取采购异常错误："+ e.getMessage(),e);
 				e.printStackTrace();
 			}
 			pageIndex++;
