@@ -8,4 +8,5 @@ import lombok.Setter;
 public class PriceInfo {
 
 	private String RetailPrice;
+	private String ChannelPrice;
 }
