@@ -11,6 +11,7 @@ import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
 import com.shangpin.ephub.product.business.rest.size.service.MatchSizeService;
 import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.List;
  * Created by lizhongren on 2017/11/23.
  */
 @Service
+@Slf4j
 public class SkuPendingServiceImpl implements SkuPendingService {
 
     @Autowired
@@ -51,17 +53,17 @@ public class SkuPendingServiceImpl implements SkuPendingService {
                         updateDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
                         updateDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
                         updateDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-                        skuPendingGateWay.updateByPrimaryKey(updateDto);
+                        skuPendingGateWay.updateByPrimaryKeySelective(updateDto);
                     }else  if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
                         updateDto.setMemo(matchSizeResult.getResult());
-                        skuPendingGateWay.updateByPrimaryKey(updateDto);
+                        skuPendingGateWay.updateByPrimaryKeySelective(updateDto);
                     }else  if(matchSizeResult.isFilter()){//有模板没匹配上
                         isHandle = true;
                         updateDto.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
                         updateDto.setHubSkuSizeType("排除");
                         updateDto.setFilterFlag(FilterFlag.INVALID.getIndex());
                         updateDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-                        skuPendingGateWay.updateByPrimaryKey(updateDto);
+                        skuPendingGateWay.updateByPrimaryKeySelective(updateDto);
                     }else {//不做处理
 
 

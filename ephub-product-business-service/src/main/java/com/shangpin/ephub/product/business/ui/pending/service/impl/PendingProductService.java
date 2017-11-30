@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
 import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,16 +178,19 @@ public class PendingProductService extends PendingSkuService{
     	HubSpuDto hubSpuDto = null;
     	try {
             if(null != pendingProductDto){
-            	/**
-            	 * 校验货号
-            	 */
 
 				List<HubSpuDto>  hubSpuDtos = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 				if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
 					hubSpuDto = hubSpuDtos.get(0);
-					pendingProductDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
+					convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
+					if(!hubCheckService.checkHubSeason(pendingProductDto.getHubSeason())){
+						pendingProductDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+					}
+					setSpuState(pendingProductDto);
 				}
-
+				/**
+				 * 校验货号
+				 */
             	BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
 
             	boolean isHaveHubSpu = false;
@@ -195,14 +199,17 @@ public class PendingProductService extends PendingSkuService{
 				if(null!=brandModelResult&&brandModelResult.isPassing()){
 					if(null==hubSpuDto) hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
 					if(null!=hubSpuDto){
-						setSpuStateNotIncludeSeason(pendingProductDto);
+						setSpuState(pendingProductDto);
 						//尺码处理
 						boolean  skuHandleReuslt = skuPendingService.setWaitHandleSkuPendingSize(pendingProductDto.getSpuPendingId(),pendingProductDto.getHubBrandNo(),pendingProductDto.getHubCategoryNo());
 						if(!skuHandleReuslt){
 							pass = false ;
 							updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无可处理的sku信息");
+						}else{
+							isSkuPass = true;
 						}
 						isHaveHubSpu = true;
+
 					}
 					//
 				}
@@ -216,8 +223,8 @@ public class PendingProductService extends PendingSkuService{
 						if(null == hubSpuDto){
 							HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
 							if(spuResult.isPassing()){
-								setSpuStateNotIncludeSeason(pendingProductDto);
-								pendingProductDto.setSpuSeasonState((byte)1);
+								setSpuState(pendingProductDto);
+
 							}else{
 								checkSpuState(pendingProductDto,spuResult);
 								pass = false ;
@@ -373,7 +380,7 @@ public class PendingProductService extends PendingSkuService{
     	return response;
     }
 
-	private void setSpuStateNotIncludeSeason(PendingProductDto pendingProductDto) {
+	private void setSpuState(PendingProductDto pendingProductDto) {
 		pendingProductDto.setCatgoryState((byte)1);
 		pendingProductDto.setMaterialState((byte)1);
 		pendingProductDto.setOriginState((byte)1);
@@ -381,6 +388,7 @@ public class PendingProductService extends PendingSkuService{
 		pendingProductDto.setSpuColorState((byte)1);
 		pendingProductDto.setSpuGenderState((byte)1);
 		pendingProductDto.setSpuModelState((byte)1);
+		pendingProductDto.setSpuSeasonState((byte)1);
 
 	}
 
@@ -667,6 +675,9 @@ public class PendingProductService extends PendingSkuService{
 		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 		if(null != hubSpus && hubSpus.size()>0){
 			convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
+			if(!hubCheckService.checkHubSeason(pendingProductDto.getHubSeason())){
+				pendingProductDto.setHubSeason(hubSpus.get(0).getMarketTime()+"_"+hubSpus.get(0).getSeason());
+			}
             return hubSpus.get(0);
 		}else{
 			return null;
