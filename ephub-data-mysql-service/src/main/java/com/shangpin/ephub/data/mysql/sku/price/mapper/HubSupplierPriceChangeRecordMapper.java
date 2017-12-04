@@ -2,6 +2,7 @@ package com.shangpin.ephub.data.mysql.sku.price.mapper;
 
 import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
 import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -32,4 +33,6 @@ public interface HubSupplierPriceChangeRecordMapper {
     int updateByPrimaryKeySelective(HubSupplierPriceChangeRecord record);
 
     int updateByPrimaryKey(HubSupplierPriceChangeRecord record);
+
+	List<HubSupplierPriceChangeRecord> findSeasonChange(@Param("startDate") String startDate,@Param("endDate") String endDate);
 }

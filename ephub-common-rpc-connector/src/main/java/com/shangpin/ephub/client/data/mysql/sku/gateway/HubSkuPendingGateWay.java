@@ -61,4 +61,8 @@ public interface HubSkuPendingGateWay {
 
     @RequestMapping(value = "/hub-sku-pending/sum-stock-by-spuPendingId/{spuPendingId}", method = RequestMethod.POST,consumes = "application/json")
     public int sumStockBySpuPendingId(@PathVariable(value = "spuPendingId") Long spuPendingId);
+    
+    
+    @RequestMapping(value = "/hub-sku-pending/updateSupplierStockToPendindStock", method = RequestMethod.POST,consumes = "application/json")
+    public int updateStock();
 }

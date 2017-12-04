@@ -1,9 +1,16 @@
 package com.shangpin.ephub.data.schedule.service.price;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,11 +27,11 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingD
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
+import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
+import com.shangpin.ephub.client.product.business.gms.gateway.GmsGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.data.schedule.service.mail.SendMailService;
 import com.shangpin.ephub.data.schedule.service.product.ProductPullDataService;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/5/23.
@@ -35,6 +42,8 @@ public class PricePushService {
 	
 	private static final String LINE_BREAK = "<br>";
 	
+	@Autowired
+	GmsGateWay gmsGateWay;
     @Autowired
     PricePushDataService pricePushDataService;
     @Autowired
@@ -132,4 +141,66 @@ public class PricePushService {
     	}
     	return "";
     }
+
+
+	public void checkSeason() throws Exception {
+		
+		List<HubSupplierPriceChangeRecordDto> list = pricePushDataService.findSeasonChange();
+		if(list!=null&&list.size()>0){
+			log.info("list:"+list.size());
+			exportExcel(list);
+		}else{
+			log.info("no data");
+		}
+	}
+
+	
+	private void exportExcel(List<HubSupplierPriceChangeRecordDto> list) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			String filename = sdf.format(new Date())+".csv";
+			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream("/usr/local/"+filename, true),"gb2312");
+			
+			String splitSign = ",";
+			StringBuffer buffer11 = new StringBuffer("供应商名称" + splitSign + "供应商编号" + splitSign
+					+ "供应商SkuNO" + splitSign + "尚品SkuNo" + splitSign
+					+  "当前季节").append("\r\n");
+			out.write(buffer11.toString());
+			
+			SupplierDTO  supplier = null;
+			for(HubSupplierPriceChangeRecordDto dto : list){
+				//继续追加
+				StringBuffer buffer  = new StringBuffer();
+				try {
+					//supplierId 供货商
+					supplier = gmsGateWay.getSupplierDto(dto.getSupplierNo());
+					if(supplier!=null){
+						buffer.append(supplier.getSupplierName()).append(splitSign);
+					}else{
+						buffer.append(dto.getSupplierNo()).append(
+								splitSign);
+					}
+					buffer.append(dto.getSupplierNo()).append(
+							splitSign);
+					// 供应商SKUID
+					buffer.append(dto.getSupplierSkuNo()).append(splitSign);
+
+					buffer.append(dto.getSpSkuNo()).append(
+							splitSign);
+					buffer.append(dto.getSupplierSeason()).append(
+							splitSign);
+					buffer.append("\r\n");
+					out.write(buffer.toString());
+					out.flush();
+				} catch (Exception e) {
+				}
+			}
+			out.close();
+			File file =new File("/usr/local/"+filename);
+			sendMailService.sendMailWithFile("EPHUB推送季节发生变化数据", "",file , filename);
+			file.delete();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

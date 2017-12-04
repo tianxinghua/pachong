@@ -120,4 +120,8 @@ public class StockService {
         hubSkuPendingGateWay.updateByPrimaryKeySelective(skuDto);
     }
 
+	public void updateSupplierStockToPendindStock() {
+		hubSkuPendingGateWay.updateStock();
+	}
+
 }

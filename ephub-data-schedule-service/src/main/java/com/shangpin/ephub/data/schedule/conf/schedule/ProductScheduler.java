@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.modifyDataStatus.HubModifyDataStatus
 import com.shangpin.ephub.data.schedule.conf.schedule.properties.ScheduleConfig;
 import com.shangpin.ephub.data.schedule.service.price.PricePushService;
 import com.shangpin.ephub.data.schedule.service.product.ProductPullDataService;
+import com.shangpin.ephub.data.schedule.service.stock.StockService;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -22,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProductScheduler {
 	
+	@Autowired
+	StockService stockService;
     @Autowired
     private PricePushService pricePushService;
     @Autowired
@@ -74,9 +77,12 @@ public class ProductScheduler {
 	/**
 	 * 修改数据和图片状态
 	 */
-	@Scheduled(cron = "00 50 08 * * ?")
+	@Scheduled(cron = "00 55 08 * * ?")
 	public void modifyUpdateStatus(){
 		try {
+			log.info("======================更新库存定时任务开始======================");
+			stockService.updateSupplierStockToPendindStock();
+			
 			log.info("===========更新数据和图片状态============"); 
 			hubModifyDataStatusGateWay.updateStatus();
 			hubModifyDataStatusGateWay.updatePicStatus();
@@ -86,4 +92,19 @@ public class ProductScheduler {
 			log.error("修改数据和图片状态任务异常："+e.getMessage(),e);
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	@Scheduled(cron = "00 50 08 * * ?")
+	public void sendSeason(){
+		try {
+			log.info("===========检测季节变化推送任务开始============"); 
+			pricePushService.checkSeason();
+			log.info("===========检测季节变化推送任务结束============"); 
+		} catch (Exception e) {
+			log.error("检测季节任务异常："+e.getMessage(),e);
+		}
+	}
+	
 }

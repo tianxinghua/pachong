@@ -672,4 +672,11 @@
     select sum(stock) from hub_sku_pending
     where  spu_pending_id = #{spuPendingId}
   </select>
+  
+   <update id="updateSupplierStockToPendindStock">
+   	update hub_sku_pending k inner join hub_supplier_sku sk on k.supplier_id = sk.supplier_id and k.supplier_sku_no = sk.supplier_sku_no 
+	set k.stock = sk.stock
+	where k.stock!=sk.stock
+  </update>
+  
 </mapper>

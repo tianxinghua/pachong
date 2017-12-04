@@ -446,4 +446,8 @@
       limit #{startRow} , #{pageSize}
     </if>
   </select>
+  
+  <select resultMap="BaseResultMap"  id="findSeasonChange">
+  	select distinct supplier_sku_no,supplier_id,supplier_no,supplier_season,sp_sku_no from hub_supplier_price_change_record where create_time <![CDATA[ >= ]]> #{startDate,jdbcType=TIMESTAMP} and create_time <![CDATA[ <= ]]> #{endDate,jdbcType=TIMESTAMP} and type like '%3'
+  </select>
 </mapper>

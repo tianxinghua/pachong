@@ -1,20 +1,19 @@
 package com.shangpin.ephub.data.mysql.sku.price.controller;
 
-import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithCriteria;
-import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithRowBounds;
-import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
-import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
-import com.shangpin.ephub.data.mysql.sku.price.service.HubSupplierPriceChangeRecordService;
+import java.util.List;
 
-
-
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithCriteria;
+import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithRowBounds;
+import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
+import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
+import com.shangpin.ephub.data.mysql.sku.price.service.HubSupplierPriceChangeRecordService;
 
 /**
  * <p>Title:HubSupplierPriceChangeRecordController.java </p>
@@ -80,4 +79,10 @@ public class HubSupplierPriceChangeRecordController {
     public int updateByPrimaryKey(@RequestBody HubSupplierPriceChangeRecord hubSupplierPriceChangeRecord){
     	return hubSupplierPriceChangeRecordService.updateByPrimaryKey(hubSupplierPriceChangeRecord);
     }
+	
+	@RequestMapping(value = "/findSeasonChange")
+    public List<HubSupplierPriceChangeRecord> findSeasonChange(@RequestBody String start){
+    	return hubSupplierPriceChangeRecordService.findSeasonChange(start);
+    }
+	
 }

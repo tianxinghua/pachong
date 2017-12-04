@@ -2,17 +2,20 @@ package com.shangpin.ephub.client.data.mysql.sku.gateway;
 
 
 
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithRowBoundsDto;
+import java.util.List;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordWithRowBoundsDto;
+
+import feign.Param;
 
 /**
 
@@ -58,5 +61,8 @@ public interface HubSupplierPriceChangeRecordGateWay {
 	
 	@RequestMapping(value = "/hub-supplier-price/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSupplierPriceChangeRecordDto hubSku);
+	
+	@RequestMapping(value = "/hub-supplier-price/findSeasonChange", method = RequestMethod.POST,consumes = "application/json")
+	public List<HubSupplierPriceChangeRecordDto> findSeasonChange(@RequestBody String start);
 
 }

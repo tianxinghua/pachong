@@ -83,4 +83,9 @@ public class HubSkuPendingController {
 	public int sumStockBySpuPendingId(@PathVariable(value = "spuPendingId") Long spuPendingId){
 		return hubSkuPendingService.sumStockBySpuPendingId(spuPendingId);
 	}
+	@RequestMapping(value = "/updateSupplierStockToPendindStock")
+	public int updateSupplierStockToPendindStock(){
+		return hubSkuPendingService.updateSupplierStockToPendindStock();
+	}
+	
 }

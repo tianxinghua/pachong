@@ -1,5 +1,6 @@
 package com.shangpin.ephub.data.schedule.service.price;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,6 +82,18 @@ public class PricePushDataService {
 
 
     }
+
+	public List<HubSupplierPriceChangeRecordDto> findSeasonChange() throws Exception {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date()); 
+		c.add(Calendar.DAY_OF_MONTH, -1);
+		String start = sdf.format(c.getTime())+" 00:00:00," +sdf.format(c.getTime())+ " 23:59:59";
+		return priceChangeRecordGateWay.findSeasonChange(start);
+		
+	}
 
 
 }

@@ -87,4 +87,9 @@ public class HubSkuPendingService {
 		return sumTotal;
 	}
 
+	public int updateSupplierStockToPendindStock() {
+		hubSkuPendingMapper.updateSupplierStockToPendindStock();
+		return 0;
+	}
+
 }

@@ -1,21 +1,24 @@
 package com.shangpin.ephub.data.mysql.sku.price.service;
 
-import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithCriteria;
-import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithRowBounds;
+import java.util.List;
 
-import com.shangpin.ephub.data.mysql.sku.price.mapper.HubSupplierPriceChangeRecordMapper;
-import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
-import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithCriteria;
+import com.shangpin.ephub.data.mysql.sku.price.bean.HubSupplierPriceChangeRecordWithRowBounds;
+import com.shangpin.ephub.data.mysql.sku.price.mapper.HubSupplierPriceChangeRecordMapper;
+import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecord;
+import com.shangpin.ephub.data.mysql.sku.price.po.HubSupplierPriceChangeRecordCriteria;
 
 /**
 
  * <p>Description: 价格简单业务服务 </p>
  *
  */
+@Slf4j
 @Service
 public class HubSupplierPriceChangeRecordService {
 
@@ -69,5 +72,16 @@ public class HubSupplierPriceChangeRecordService {
 
 	public int updateByPrimaryKey(HubSupplierPriceChangeRecord hubSupplierPriceChangeRecord) {
 		return hubSupplierPriceChangeRecordMapper.updateByPrimaryKey(hubSupplierPriceChangeRecord);
+	}
+
+	public List<HubSupplierPriceChangeRecord> findSeasonChange(String start) {
+		log.info("start:"+start);
+		String startDate = null;
+		String endDate = null;
+		if(start!=null&&start.split(",").length>1){
+			startDate = start.split(",")[0];
+			endDate = start.split(",")[1];
+		}
+		return hubSupplierPriceChangeRecordMapper.findSeasonChange(startDate,endDate);
 	}
 }
