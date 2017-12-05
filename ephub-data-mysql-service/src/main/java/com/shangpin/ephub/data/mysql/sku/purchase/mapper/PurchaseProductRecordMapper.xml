@@ -7,7 +7,7 @@
         <result column="supplier_sku_no" property="skuId"/>
         <result column="supplier_spu_name" property="productName"/>
         <result column="supplier_sku_size" property="size"/>
-        <result column="supplier_sku_size" property="productCode"/>
+        <result column="supplier_spu_model" property="productCode"/>
         <result column="supplier_spu_color" property="color"/>
     </resultMap>
 
