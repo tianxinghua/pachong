@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
 import com.shangpin.ephub.client.data.mysql.enumeration.Isexistpic;
@@ -241,7 +242,8 @@ public class SupplierProductMysqlService {
 			}
 		}
 		if(hubSku.getStock()!=null){
-			if(!hubSku.getStock().equals(hubSkuSel.getStock())){
+			if(hubSku.getStock()!=hubSkuSel.getStock()){
+				Log.info("供应商supplierSkuNo:"+hubSku.getSupplierSkuNo()+"库存发生变化："+hubSkuSel.getStock()+"=>"+hubSku.getStock());
 				pendingSku.setStock(hubSku.getStock());
 				hubSkuUpdated.setStock(hubSku.getStock()); 
 				isChanged = true;
