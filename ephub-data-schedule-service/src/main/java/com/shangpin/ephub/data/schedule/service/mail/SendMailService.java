@@ -57,6 +57,8 @@ public class SendMailService {
 			addTo.add("bu3.list@shangpin.com");
 			addTo.add("bu2.list@shangpin.com");
 			addTo.add("bu1.list@shangpin.com");
+			addTo.add("bu4.list@shangpin.com");
+			addTo.add("bu5.list@shangpin.com");
 			shangpinMail.setAddTo(addTo);
 			
 			List<AttachBean> attachList = new ArrayList<AttachBean>();
