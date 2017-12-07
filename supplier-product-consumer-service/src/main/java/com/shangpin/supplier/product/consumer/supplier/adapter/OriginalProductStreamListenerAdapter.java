@@ -238,6 +238,14 @@ public class OriginalProductStreamListenerAdapter {
 	 * 以下为spinnaker系统统一处理 ，共八家供应商
 	 */
 	/**
+	 * dolciTrame供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void dolciTrameStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		spinnakerCommonHandler.handleOriginalProduct(message, headers); 
+	}
+	/**
 	 * spinnaker供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
@@ -313,6 +321,14 @@ public class OriginalProductStreamListenerAdapter {
 	/*
 	 * 以下为atelier系统统一处理 ，共17家
 	 */
+	/**
+	 * angeloMinetti供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void angeloMinettiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);		
+	}
 	/**
 	 * ostore供货商原始数据监听方法
 	 * @param message 消息体
@@ -600,6 +616,14 @@ public class OriginalProductStreamListenerAdapter {
         parisiHandler.handleOriginalProduct(message, headers); 
         
     }
+	/**
+	 * cocoroseLondon供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void cocoroseLondonStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		smetsHandler.handleOriginalProduct(message, headers); 
+	}
 	/**
 	 * smets供货商原始数据监听方法
 	 * @param message 消息体

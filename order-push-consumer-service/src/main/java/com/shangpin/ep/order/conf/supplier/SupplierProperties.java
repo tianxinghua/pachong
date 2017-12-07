@@ -26,6 +26,8 @@ public class SupplierProperties {
 	
 	public static final String SUPPLIER_PREFIX = "shangpin.hub.Supplier";
 
+	private AngeloMinetti angeloMinetti;
+	private DolciTrameParam dolciTrameParam;
 	private CoccolebimbiParam coccolebimbiParam;
 	private SpinnakerPortofinoParam spinnakerPortofinoParam;
 	private Aladuca aladuca;
@@ -125,5 +127,7 @@ public class SupplierProperties {
 	private Gaudenzi gaudenzi;
 	
 	private JulianFashion julianFashion;
+
+	private Cocorose cocorose;
 	
 }

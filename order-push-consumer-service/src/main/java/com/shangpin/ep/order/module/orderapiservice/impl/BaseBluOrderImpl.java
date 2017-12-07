@@ -96,8 +96,8 @@ public class BaseBluOrderImpl  implements IOrderService {
 		try{
 			json = getJsonData(orderDTO,false);
 			String rtnData= null;
-			rtnData = basebluPushOrder(orderDTO,placeUrl,json);
-//			rtnData = basebluPushOrder(orderDTO,"http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M",json);
+//			rtnData = basebluPushOrder(orderDTO,placeUrl,json);
+			rtnData = basebluPushOrder(orderDTO,"http://baseblu.edstema.it/api/v3.0/place/order.json?storeCode=YYW8M",json);
 			orderDTO.setLogContent("confirm返回的结果=" + rtnData+",推送的参数="+json);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			
@@ -327,16 +327,16 @@ public class BaseBluOrderImpl  implements IOrderService {
 	public static void main(String[] args) {
 		BaseBluOrderImpl ompl = new BaseBluOrderImpl();
 //		ReturnOrderDTO orderDTO = new ReturnOrderDTO();
-		String d = "5908a9bafd7955c0bff4afdd-XXL:1";
+		String d = "595ba06ffd7955c0bff4e89d-48:1";
 //		orderDTO.setDetail(d);
 //		orderDTO.setSpOrderId("201609134249189");
 //		orderDTO.setCreateTime(new Date());
 		
 		OrderDTO orderDTO1 = new OrderDTO();
 		orderDTO1.setDetail(d);
-		orderDTO1.setSpOrderId("201705175613397");
+		orderDTO1.setSpOrderId("201711240507474");
 		orderDTO1.setCreateTime(new Date());
-		orderDTO1.setPurchasePriceDetail("110.45");
+		orderDTO1.setPurchasePriceDetail("10");
 		
 //		ompl.handleRefundlOrder(orderDTO);//(orderDTO);
 		ompl.handleConfirmOrder(orderDTO1);//(orderDTO);

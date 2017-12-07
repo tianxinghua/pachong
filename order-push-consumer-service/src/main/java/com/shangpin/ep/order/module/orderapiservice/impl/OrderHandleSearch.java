@@ -213,13 +213,30 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("julianFashionHandler") 
 	IOrderService julianFashionHandler;
+
+
+	@Autowired
+	@Qualifier("cocoroseMailService")
+	IOrderService cocoroseServiceImpl;
+	
+	@Autowired
+	@Qualifier("dolciTrameOrderService")
+	IOrderService dolciTrameOrderService;
+	
+	@Autowired
+	@Qualifier("angeloMinettiServiceImpl")
+	IOrderService angeloMinettiServiceImpl;
 	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
 //			return tonySubOrderImpl;
 //		}else
-		if ("2017070501977".equals(supplierId)) {
+		if("2017110901992".equals(supplierId)){
+			return angeloMinettiServiceImpl;
+		}else if("2017110801991".equals(supplierId)){
+			return dolciTrameOrderService;
+		}else if ("2017070501977".equals(supplierId)) {
 			return baseBluOrderImpl;
 		}else if("2017072601979".equals(supplierId)){
 			return coccolebimbiOrderImpl;
@@ -326,6 +343,8 @@ public class OrderHandleSearch {
 			return gaudenziServiceImpl;
 		}else if("2015100501570".equals(supplierId)){
 			return julianFashionHandler;
+		}else if("2017101101983".equals(supplierId)){
+			return cocoroseServiceImpl;
 		}else {
 			return null;
 		}
@@ -335,6 +354,10 @@ public class OrderHandleSearch {
 		
 		if("2017070501977".equals(supplierId)){
 			return supplierProperties.getBaseBluEdsConf();
+		}else if("2017110901992".equals(supplierId)){
+			return supplierProperties.getAngeloMinetti();
+		}else if("2017110801991".equals(supplierId)){
+			return supplierProperties.getDolciTrameParam();
 		}else if("2017072601979".equals(supplierId)){
 			return supplierProperties.getCoccolebimbiParam();
 		}else if("2017060101976".equals(supplierId)){
@@ -429,6 +452,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getGaudenzi();
 		}else if("2015100501570".equals(supplierId)){
 			return supplierProperties.getJulianFashion();
+		}else if("2017101101983".equals(supplierId)){
+			return supplierProperties.getCocorose();
 		}
 		else {
 			return null;

@@ -11,6 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  * @date 2016年12月6日 下午4:06:53
  */
 public interface OriginalProductSink {
+	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
+	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
+	public static final String dolciTrame = "dolciTrameOriginalProduct";
 	public static final String portofino = "portofinoOriginalProduct";
 	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
 	public static final String fratinardi = "fratinardiOriginalProduct";
@@ -158,6 +161,24 @@ public interface OriginalProductSink {
 
 	//===============================
 
+	/**
+	 * 供货商dolciTrame通道组件配置
+	 * @return dolciTrame通道组件
+	 */
+	@Input(value = OriginalProductSink.dolciTrame)
+	public SubscribableChannel dolciTrameOriginalProduct();
+	/**
+	 * 供货商cocoroseLondon通道组件配置
+	 * @return cocoroseLondon通道组件
+	 */
+	@Input(value = OriginalProductSink.cocoroseLondon)
+	public SubscribableChannel cocoroseLondonOriginalProduct();
+	/**
+	 * 供货商angeloMinetti通道组件配置
+	 * @return angeloMinetti通道组件
+	 */
+	@Input(value = OriginalProductSink.angeloMinetti)
+	public SubscribableChannel angeloMinettiOriginalProduct();
 	/**
 	 * 供货商JULIANFASHION通道组件配置
 	 * @return JULIANFASHION通道组件

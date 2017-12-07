@@ -20,7 +20,7 @@ public class Coltorti extends SupplierCommon implements Serializable {
 	/**
 	 * 版本ID
 	 */
-	private static final long serialVersionUID = 2392088572016874649L;
+	private static final long serialVersionUID = 2392088572016874640L;
 	/**
 	 * 用户名
 	 */

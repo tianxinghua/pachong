@@ -35,6 +35,33 @@ public class PendingProductStreamListenerAdapter {
 	}
 
 	/**
+	 * 供应商dolciTrame待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void dolciTramePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
+	 * 供应商cocoroseLondon待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void cocoroseLondonPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
+	 * 供应商angeloMinetti待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void angeloMinettiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
 	 * 供应商portofino待处理商品数据流监听
 	 * @param message 消息体
 	 * @param headers 消息头

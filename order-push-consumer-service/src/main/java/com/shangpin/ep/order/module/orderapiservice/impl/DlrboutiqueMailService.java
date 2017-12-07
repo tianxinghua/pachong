@@ -141,7 +141,7 @@ public class DlrboutiqueMailService{
 		shangpinMail.setText(text);
 		shangpinMail.setTo("lizhongren@shangpin.com");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("lubaijiang@shangpin.com");
+	//	addTo.add("lubaijiang@shangpin.com");
 //		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);

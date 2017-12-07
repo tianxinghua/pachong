@@ -39,9 +39,10 @@ public class WiseServiceImpl{
 		try {
 			if(PushStatus.ORDER_CONFIRMED.equals(orderDTO.getPushStatus())){
 				handleConfirmOrder(orderDTO);
-			}else{
-				handleConfirmError(orderDTO);
 			}
+//			else{
+//				handleConfirmError(orderDTO);
+//			}
 		} catch (Exception e) {
 			log.error(e.getMessage(),e); 
 		}
@@ -142,7 +143,7 @@ public class WiseServiceImpl{
 		shangpinMail.setText(text);
 		shangpinMail.setTo("lizhongren@shangpin.com");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("lubaijiang@shangpin.com");
+//		addTo.add("lubaijiang@shangpin.com");
 //		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);

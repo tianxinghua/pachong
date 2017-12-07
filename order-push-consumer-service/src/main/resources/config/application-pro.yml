@@ -68,6 +68,27 @@ shangpin:
       pricehost: http://sopoutapi.spidc1.com
       findsupplyprice: /Product/FindSupplyInfo
     Supplier: #以下配置为各个供货商的配置
+          dolciTrameParam:
+                  setOrderUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/setOrder
+                  queryOrderUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+                  cancelUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/CancelOrder
+                  qtyUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/GetQuantityByBarcode
+                  key: AXz6YgV044
+                  dBContext: default
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
+          angeloMinetti:
+                  url: http://93.64.5.154/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang3110
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
           coccolebimbiParam:
                   url:
                   isPurchaseExp:
@@ -214,13 +235,13 @@ shangpin:
                   openApiKey: 23f2549070394d47a6f82aa3f5c0922f
                   openApiSecret: 174c5788112c4b1984e1dc06adc73f37
           divo:
-                  url: http://185.5.180.90/ws_sito/ws_sito_p15.asmx/
+                  url: http://78.134.74.112:8080/ws_sito_P15/ws_sito_P15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
                   getItemStockInterface: GetItemStockBySizeMarketPlace
                   user: shangpin
-                  password: shang1606
+                  password: Shang0711
                   isPurchaseExp:
                   openApiKey: 31c1ae971a484ceab29d13b1e98b1e39
                   openApiSecret: d79d948d65cf43398486cb1882bc2b94
@@ -321,7 +342,7 @@ shangpin:
                   openApiKey: 8abb28decd6645008a810d8da47a10f8
                   openApiSecret: bb3c35b4c06a4de19a8e9652cba61fee
           ostore:
-                  url: http://188.11.248.175/WS_SITO_p15/WS_SITO_P15.ASMX/
+                  url: http://atelier.officinastore.net/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -548,6 +569,11 @@ shangpin:
                   isPurchaseExp: 
                   openApiKey: e53c1bba4adf4f02841e4f815dc35960
                   openApiSecret: bbc5a77507d64e59ae24ce976c68c538
+          cocorose:
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
           supplier:
                   delayTime: 1000
                   retry: 120

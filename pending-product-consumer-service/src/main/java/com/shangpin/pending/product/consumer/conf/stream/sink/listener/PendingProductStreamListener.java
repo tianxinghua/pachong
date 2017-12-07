@@ -26,6 +26,33 @@ public class PendingProductStreamListener {
 	private PendingProductStreamListenerAdapter adapter;
 	
 	/**
+	 * 供应商angeloMinetti待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.angeloMinetti)
+	public void angeloMinettiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.angeloMinettiPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.cocoroseLondon)
+	public void cocoroseLondonPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.cocoroseLondonPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.dolciTrame)
+	public void dolciTramePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.dolciTramePendingProductStreamListen(message,headers);
+	}
+	/**
 	 * 供应商julianFashion待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
