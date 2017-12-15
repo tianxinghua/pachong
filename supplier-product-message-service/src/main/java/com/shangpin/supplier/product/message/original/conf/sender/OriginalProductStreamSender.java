@@ -652,4 +652,14 @@ public class OriginalProductStreamSender {
     public boolean theStyleSideStream(SupplierProduct supplierProduct) {
         return originalProductSource.theStyleSide().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+
+    /**
+     * 供货商marino消息发送
+     * @param supplierProduct
+     * @return
+     */
+    public boolean marinoStream(SupplierProduct supplierProduct) {
+        return originalProductSource.marino().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
 }

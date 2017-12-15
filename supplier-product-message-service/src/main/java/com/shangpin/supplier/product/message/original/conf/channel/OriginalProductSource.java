@@ -156,6 +156,8 @@ public interface OriginalProductSource {
     public static final String THESTYLESIDE = "theStyleSideOriginalProduct";
     
     public static final String JULIANFASHION = "julianFashionOriginalProduct";
+
+    public static final String MARINO ="marinoOriginalProduct";
     
     /**
      * 供货商angeloMinetti通道组件配置
@@ -634,4 +636,8 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.THESTYLESIDE)
 	public MessageChannel theStyleSide();
+
+	/* OUTPUT channel */
+	@Output(value = OriginalProductSource.MARINO)
+	public MessageChannel marino();
 }

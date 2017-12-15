@@ -241,7 +241,10 @@ spring:
                               content-type: application/json 
                         julianFashionOriginalProduct: 
                               destination: julianFashion.original.product
-                              content-type: application/json  
+                              content-type: application/json
+                        marinoOriginalProduct:
+                             destination: marino.original.product
+                             content-type: application/json
 
               rabbit:
                       bindings: 
@@ -479,7 +482,9 @@ spring:
                             julianFashionOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
-
+                            marinoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
