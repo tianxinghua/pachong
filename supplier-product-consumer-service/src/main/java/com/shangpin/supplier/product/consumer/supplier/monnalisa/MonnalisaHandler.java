@@ -156,7 +156,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 				hubSku.setSupplierSkuSize(ob.getSize());
 			}
 			
-			hubSku.setStock(StringUtil.verifyStock("10"));
+			hubSku.setStock(ob.getStock());
 //			String stock = ob.getString("availability");
 //			Pattern pattern = Pattern.compile("[0-9]*"); 
 //		    Matcher isNum = pattern.matcher(stock);

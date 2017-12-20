@@ -111,6 +111,7 @@ public class TheclutcherHandler implements ISupplierHandler{
 			return true;
 		}
 	}
+
 	/**
 	 * 
 	 * @param supplierId
@@ -126,7 +127,7 @@ public class TheclutcherHandler implements ISupplierHandler{
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getSupplierPrice())));
 		hubSku.setSupplierSkuSize(studioSkuDto.getSize());
 		if(skuId!=null&&skuId.split("-").length>1){
-			if(StringUtils.isNotBlank(studioSkuDto.getBarCode())){
+			if(StringUtils.isNotBlank(studioSkuDto.getBarCode())&&!"NULL".equals(studioSkuDto.getBarCode().toUpperCase())){
 				hubSku.setSupplierBarcode(studioSkuDto.getBarCode()+" "+skuId.split("-")[1]);	
 			}else{
 				hubSku.setSupplierBarcode(skuId);
