@@ -159,6 +159,9 @@ public interface OriginalProductSink {
 	public static final String SRL = "srlOriginalProduct";
 
 
+	public static final String MARINO = "marinoOriginalProduct";
+
+
 	//===============================
 
 	/**
@@ -628,5 +631,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.SRL)
 	public MessageChannel srlOriginalProduct();
+
+	/**
+	 * 供应商srl通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.MARINO)
+	public MessageChannel marinoOriginalProduct();
 
 }

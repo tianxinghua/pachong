@@ -155,6 +155,8 @@ public interface PendingProductSink {
 
 	public static final String JULIANFASHION = "julianFashionPendingProduct";
 
+	public static final String MARINO = "marinoPendingProduct";
+
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件
@@ -616,4 +618,12 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.SRL)
 	public SubscribableChannel srlPendingProduct();
+
+
+	/**
+	 * 供应商MARINO通道组件配置
+	 * @return 供货商MARINO通道组件
+	 */
+	@Input(value = PendingProductSink.MARINO)
+	public SubscribableChannel marinoPendingProduct();
 }

@@ -152,6 +152,8 @@ public interface PendingProductSource {
 
 	public static final String JULIANFASHION = "julianFashionPendingProduct";
 
+	public static final String MARINO = "marinoPendingProduct";
+
 	/**
 	 * 供货商dolciTrame通道组件配置
 	 * @return 供货商dolciTrame通道组件
@@ -598,4 +600,11 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.SRL)
 	public MessageChannel srlPendingProduct();
+
+	/**
+	 * 供货商SRL 通道组件配置
+	 * @return 供货商SRL 通道组件
+	 */
+	@Output(value = PendingProductSource.MARINO)
+	public MessageChannel marinoPendingProduct();
 }

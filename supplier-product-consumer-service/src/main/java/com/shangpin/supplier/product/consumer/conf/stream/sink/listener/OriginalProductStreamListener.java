@@ -734,4 +734,11 @@ public class OriginalProductStreamListener {
     public void srlStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.srlStreamListen(message,headers);
     }
+
+
+	@StreamListener(OriginalProductSink.MARINO)
+	public void marinoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.marinoStreamListen(message,headers);
+	}
+
 }
