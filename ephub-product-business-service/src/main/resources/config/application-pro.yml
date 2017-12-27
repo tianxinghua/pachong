@@ -87,3 +87,4 @@ shangpin:
              scmsSupplierInfoUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
              sopSkuListBySupplierSkuNoUrl: http://sopoutapi.spidc1.com/Product/GetSopSkuListBySupplierSkuNo
              getStudioOffDayCalendarUrl: http://scm.shangpin.com/scms/DeliveryTimeLimit/GetStudioOffDayCalendar
+             sopDescUrl: http://sopoutapi.spidc1.com/Product/ModifyProductDesc

@@ -33,5 +33,7 @@ public class ApiAddressProperties {
 	private String sopSkuListBySupplierSkuNoUrl;
 	
 	private String getStudioOffDayCalendarUrl;
+
+	private String sopDescUrl;
 	
 }
