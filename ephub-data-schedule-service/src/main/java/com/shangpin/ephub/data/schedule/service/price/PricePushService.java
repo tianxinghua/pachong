@@ -183,7 +183,7 @@ public class PricePushService {
 					buffer.append(dto.getSupplierNo()).append(
 							splitSign);
 					// 供应商SKUID
-					buffer.append(dto.getSupplierSkuNo()).append(splitSign);
+					buffer.append(dto.getSupplierSkuNo().replace(",", ".")).append(splitSign);
 
 					buffer.append(dto.getSpSkuNo()).append(
 							splitSign);
