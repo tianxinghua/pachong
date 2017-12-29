@@ -52,7 +52,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 					String size = skuSizeAndStock.substring(0, skuSizeAndStock.indexOf("("));
 					String stock = skuSizeAndStock.substring(skuSizeAndStock.indexOf("(")+1,skuSizeAndStock.indexOf(")"));
 				    Product product = new Product();
-				    product.setBarcode(jsonObject.getProduct_code());
+				    product.setProductCode(jsonObject.getProduct_code());
 				    product.setBrand(jsonObject.getBrand());
 				    product.setCategory(jsonObject.getCategory());
 				    product.setDescription(jsonObject.getDescription());
@@ -133,7 +133,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 		if(null != ob && ob != null){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(ob.getSpu());
-			hubSpu.setSupplierSpuModel(ob.getSpu()+ob.getSize());
+			hubSpu.setSupplierSpuModel(ob.getProductCode());
 			hubSpu.setSupplierSpuName(ob.getName());
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getSesso());
@@ -165,7 +165,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 			hubSku.setMarketPriceCurrencyorg("EUR");
 			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getItalian_retail_price())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getItalian_retail_price())));
-			hubSku.setSupplierBarcode(ob.getBarcode());
+			hubSku.setSupplierBarcode(ob.getSpu()+ob.getSize()+ob.getSize());//sku+size
 			if(!StringUtils.isEmpty(ob.getSize())){
 				hubSku.setSupplierSkuSize(ob.getSize());
 			}

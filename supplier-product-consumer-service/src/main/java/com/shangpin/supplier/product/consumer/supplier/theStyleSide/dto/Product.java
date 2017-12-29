@@ -10,7 +10,7 @@ public class Product {
 	// barcode 用sku+size 组装
 
 		private String spu;//spu,  sku用spu+size
-		private String barcode;
+		private String productCode;
 		private String brand;
 		private String name;
 		private String color;
