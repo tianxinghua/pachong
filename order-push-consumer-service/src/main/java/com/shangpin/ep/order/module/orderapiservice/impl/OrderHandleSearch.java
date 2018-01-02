@@ -237,7 +237,8 @@ public class OrderHandleSearch {
 //		if ("2015092201518".equals(supplierId)) {
 //			return tonySubOrderImpl;
 //		}else
-		if("2017110901992".equals(supplierId)){
+		if("2017111401992".equals(supplierId)){
+
 			return angeloMinettiServiceImpl;
 		}else if("2017110801991".equals(supplierId)){
 			return dolciTrameOrderService;
@@ -350,7 +351,7 @@ public class OrderHandleSearch {
 			return julianFashionHandler;
 		}else if("2017101101983".equals(supplierId)){
 			return cocoroseServiceImpl;
-		}else if("2017101101983".equals(supplierId)){
+		}else if("2017122101995".equals(supplierId)){
 			return marinoOrderService;
 		}else {
 			return null;
@@ -361,7 +362,7 @@ public class OrderHandleSearch {
 		
 		if("2017070501977".equals(supplierId)){
 			return supplierProperties.getBaseBluEdsConf();
-		}else if("2017110901992".equals(supplierId)){
+		}else if("2017111401992".equals(supplierId)){
 			return supplierProperties.getAngeloMinetti();
 		}else if("2017110801991".equals(supplierId)){
 			return supplierProperties.getDolciTrameParam();
@@ -461,7 +462,7 @@ public class OrderHandleSearch {
 			return supplierProperties.getJulianFashion();
 		}else if("2017101101983".equals(supplierId)){
 			return supplierProperties.getCocorose();
-		}else if("2017101101983".equals(supplierId)){
+		}else if("2017122101995".equals(supplierId)){
 			return supplierProperties.getMarino();
 		}
 		else {
