@@ -193,12 +193,13 @@ public class DataSverviceUtil {
                     replaceKey = sizeKey;
                 }
                 if(size.indexOf(sizeKey)>=0){
-                	 String size1 = size.substring(0,size.indexOf(sizeKey));
-        			 String size2 = size.substring(size.indexOf(sizeKey));
-                    size = size1 + size2.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
-                    if(size.contains("(")&&size.contains(")")){
-          			  size = size.substring(0,size.indexOf("(")) + size.substring(size.indexOf(")")+1);
-                    }
+                	size = size.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
+//                	 String size1 = size.substring(0,size.indexOf(sizeKey));
+//        			 String size2 = size.substring(size.indexOf(sizeKey));
+//                    size = size1 + size2.replaceAll(replaceKey,commonSizeMap.get(sizeKey));
+//                    if(size.contains("(")&&size.contains(")")){
+//          			  size = size.substring(0,size.indexOf("(")) + size.substring(size.indexOf(")")+1);
+//                    }
                 }
             }
         }
