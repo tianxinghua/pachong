@@ -717,4 +717,15 @@ public class PendingProductStreamListener {
     public void srlPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.srlPendingProductStreamListen(message,headers);
     }
+
+	/**
+	 * 供应商marino待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.MARINO)
+	public void marinoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.marinoPendingProductStreamListen(message,headers);
+	}
 }

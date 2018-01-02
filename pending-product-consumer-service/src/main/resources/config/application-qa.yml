@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: localhost
+          host: 192.168.20.176
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -456,6 +456,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        marinoPendingProduct:
+                              destination: marino.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -873,6 +879,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             srlPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            marinoPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.49
+           host: 172.20.11.50
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -693,6 +693,15 @@ spring:
                         srlPendingProduct:
                               destination: srl.pending.product
                               content-type: application/json
+                        marinoOriginalProduct:
+                              destination: marino.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        marinoPendingProduct:
+                              destination: marino.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1375,6 +1384,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               srlPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              marinoOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              marinoPendingProduct:
                                     producer:
                                          prefix: HA.
         consul: 

@@ -135,7 +135,7 @@ public class PendingSkuImportService {
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(spu);
 			}
 		
-	  }
+		}
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}

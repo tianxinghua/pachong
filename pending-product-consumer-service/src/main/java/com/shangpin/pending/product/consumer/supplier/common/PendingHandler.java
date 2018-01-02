@@ -9,8 +9,10 @@ import java.util.Map;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.business.supplier.gateway.SupplierInHubGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
+import com.shangpin.pending.product.consumer.common.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -699,11 +701,11 @@ public class PendingHandler extends VariableInit {
             allStatus = false;
 		if (!spuModelJudge)
             allStatus = false;
-		// 设置性别
+		// 设置性别(本地静态)
 		if (!setGenderMapping(spu, hubSpuPending))
             allStatus = false;
 
-		// 获取品类
+		// 获取品类（redis）
 		if (!setCategoryMapping(spu, hubSpuPending))
             allStatus = false;
 
@@ -930,13 +932,20 @@ public class PendingHandler extends VariableInit {
 			// hubspu 不存在
 			if ("".equals(hubSize)) {
 
-				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-				hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
-				// 如果是待审核的 因为尺码问题 不能通过(现可部分审核，不修改状态）
-//					if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()) {
-//						spuPendingHandler.updateSpuStateFromWaitAuditToWaitHandle(hubSpuPending.getSpuPendingId());
-//					}
+//				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//				hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+//				// 如果是待审核的 因为尺码问题 不能通过(现可部分审核，不修改状态）
+////					if (hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()) {
+////						spuPendingHandler.updateSpuStateFromWaitAuditToWaitHandle(hubSpuPending.getSpuPendingId());
+////					}
+//
 
+				//现 只要没有匹配的 直接认为可过滤
+				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+				hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+
+				hubSkuPending.setHubSkuSizeType(com.shangpin.pending.product.consumer.common.ConstantProperty.SIZE_EXCLUDE);
+				hubSkuPending.setFilterFlag(FilterFlag.INVALID.getIndex());
 			} else {
 				if(hubSize.indexOf(",")>=0){
 
@@ -952,7 +961,7 @@ public class PendingHandler extends VariableInit {
 
 		}
         //整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
-		log.info("hubSpuPending.getSpuState().intValue()"+hubSpuPending.getSpuState().intValue());
+		log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
 		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
 			spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
 		}
@@ -1015,8 +1024,14 @@ public class PendingHandler extends VariableInit {
             hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 
 		}else {// 无尺码映射
-            hubSkuPending.setSkuState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-            hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//            hubSkuPending.setSkuState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+//            hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+
+			hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+			hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+
+			hubSkuPending.setHubSkuSizeType(com.shangpin.pending.product.consumer.common.ConstantProperty.SIZE_EXCLUDE);
+			hubSkuPending.setFilterFlag(FilterFlag.INVALID.getIndex());
         }
 		  dataServiceHandler.savePendingSku(hubSkuPending);		
 	}

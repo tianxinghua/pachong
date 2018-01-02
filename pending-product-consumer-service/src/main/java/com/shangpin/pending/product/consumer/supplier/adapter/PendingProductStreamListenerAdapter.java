@@ -699,4 +699,14 @@ public class PendingProductStreamListenerAdapter {
 		
 	}
 
+	/**
+	 * 供应商 marino 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void marinoPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+
 }

@@ -129,5 +129,7 @@ public class SupplierProperties {
 	private JulianFashion julianFashion;
 
 	private Cocorose cocorose;
+
+	private Marino marino;
 	
 }
