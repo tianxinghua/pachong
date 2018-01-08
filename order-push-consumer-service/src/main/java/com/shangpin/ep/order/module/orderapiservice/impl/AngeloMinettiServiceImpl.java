@@ -8,23 +8,30 @@ import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.dto.SizeDto;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.response.HubResponse;
+import com.shangpin.ep.order.module.sku.bean.HubSku;
 import com.shangpin.ep.order.module.sku.bean.HubSkuCriteria;
 import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component("angeloMinettiServiceImpl")
 public class AngeloMinettiServiceImpl implements IOrderService {
 	
-
+	@Autowired
+	private RestTemplate restTemplate;
 	@Autowired
     LogCommon logCommon;    
     @Autowired
@@ -53,6 +60,23 @@ public class AngeloMinettiServiceImpl implements IOrderService {
 		return null;
     }
 	
+//    /**
+//     * 根据供应商门户编号和供应商skuid查找尺码
+//     * @param supplierId
+//     * @param supplierSkuId
+//     * @return
+//     */
+//    public String getProductSize(String supplierId,String supplierSkuId){
+//    	try {
+//    		HubSkuCriteria skuCriteria  = new HubSkuCriteria();
+//        	skuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSkuIdEqualTo(supplierSkuId);
+//        	skuCriteria.setFields("PRODUCT_SIZE");
+//        	return skuDAO.selectByExample(skuCriteria).get(0).getProductSize();
+//		} catch (Exception e) {			
+//			return "";
+//		}
+//    	
+//    }
     /**
      * 根据供应商门户编号和供应商skuid查找尺码
      * @param supplierId
@@ -64,13 +88,29 @@ public class AngeloMinettiServiceImpl implements IOrderService {
     		HubSkuCriteria skuCriteria  = new HubSkuCriteria();
         	skuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSkuIdEqualTo(supplierSkuId);
         	skuCriteria.setFields("PRODUCT_SIZE");
-        	return skuDAO.selectByExample(skuCriteria).get(0).getProductSize();
-		} catch (Exception e) {			
+        	List<HubSku> list = skuDAO.selectByExample(skuCriteria);
+        	if(CollectionUtils.isNotEmpty(list)){
+        		return list.get(0).getProductSize();
+        	}else{
+        		return getSizeFromEphub(supplierId, supplierSkuId);
+        	}
+		} catch (Exception e) {	
 			return "";
 		}
-    	
     }
     
+    public String getSizeFromEphub(String supplierId, String supplierSkuNo){
+    	SizeDto sizeDto = new SizeDto();
+    	sizeDto.setSupplierId(supplierId);
+    	sizeDto.setSupplierSkuNo(supplierSkuNo);
+    	String getSizeFromEphubUrl = supplierProperties.getSupplier().getGetSizeFromEphubUrl();
+		HubResponse<String> response = restTemplate.postForObject(getSizeFromEphubUrl, sizeDto, HubResponse.class);
+    	if("0".equals(response.getCode())){
+    		return response.getContent();
+    	}else{
+    		return "";
+    	}
+    }
 	@SuppressWarnings("static-access")
 	@Override
 	public void handleSupplierOrder(OrderDTO orderDTO) {
@@ -79,7 +119,7 @@ public class AngeloMinettiServiceImpl implements IOrderService {
 		orderDTO.setLogContent("------锁库结束-------");
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
 	}
-
+	
 	@SuppressWarnings("static-access")
 	@Override
 	public void handleConfirmOrder(OrderDTO orderDTO) {
@@ -91,8 +131,14 @@ public class AngeloMinettiServiceImpl implements IOrderService {
 			}
 			long id_order_mrkp = Long.valueOf(spOrderId);
 			String skuId = orderDTO.getDetail().split(",")[0].split(":")[0];
-			String item_id = skuId.split("-")[0];
-			String barcode = skuId.split("-")[1];
+			int index = skuId.lastIndexOf("-");
+			String item_id = null;
+			String barcode = null;
+			if(index>0){
+				item_id = skuId.substring(0,index);
+				barcode = skuId.substring(index+1);
+			}
+			
 			int qty = Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]);
 			//先通过查询库存接口查询库存,如果库存大于0则下单,否则采购异常
 			String productSize = getProductSize(orderDTO.getSupplierId(),skuId);
