@@ -15,9 +15,9 @@ import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 public class Test
 {
 	
-//	public static void main(String[] args) {
-//		readLine(getJson());
-//	}
+	public static void main(String[] args) {
+		readLine(getJson());
+	}
 
   public static String getJson() {
     String app_secret = "hM&L1dqGA5YGjGK%fU8*715D$g&z$B";
@@ -83,7 +83,7 @@ public class Test
 
   private static void readLine(String content)
   {
-    File file = new File("C://clutcher222.json");
+    File file = new File("D://clutcher0000.json");
     FileWriter fwriter = null;
     try {
       fwriter = new FileWriter(file);

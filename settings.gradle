@@ -18,3 +18,5 @@ include 'spinnaker-stock-template'
 
 
 
+include 'atelier-ostore-stock'
+ include 'theclutcher-stock'
