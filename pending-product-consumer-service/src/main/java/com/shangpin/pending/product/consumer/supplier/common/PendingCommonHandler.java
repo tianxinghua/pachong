@@ -186,14 +186,18 @@ public class PendingCommonHandler {
 	}
 
 	public String  getSupplierHubCategoryFromRedis(String supplierId ,String supplierCategory,String gender){
-		if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY + "_" + supplierId)){
 
-			setSupplierCategoryToRedis(supplierId);
-		}
 		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY + "_" + supplierId,supplierCategory.trim().toUpperCase()+"_"+gender.trim().toUpperCase()) ;
 		if(null!=mapValue&&mapValue.size()>0){
 			return mapValue.get(0);
 		}else{
+			if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY + "_" + supplierId)){
+				setSupplierCategoryToRedis(supplierId);
+				List<String> mapValue1 = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY + "_" + supplierId,supplierCategory.trim().toUpperCase()+"_"+gender.trim().toUpperCase()) ;
+				if(null!=mapValue1&&mapValue1.size()>0){
+					return mapValue1.get(0);
+				}
+			}
 			return "";
 		}
 	}
@@ -231,7 +235,7 @@ public class PendingCommonHandler {
 		if (supplierSeasonMap == null || supplierSeasonMap.size() < 1) {
 			log.info("supplierSeason的redis为空");
 			supplierSeasonMap = new HashMap<>();
-			List<HubSeasonDicDto> hubSeasonDicDto = dataServiceHandler.getHubSeasonDic();
+			List<HubSeasonDicDto> hubSeasonDicDto = dataServiceHandler.getHubSeasonDicBySupplierId(supplierId);
 			for (HubSeasonDicDto dto : hubSeasonDicDto) {
 				if(StringUtils.isNotBlank(dto.getSupplierSeason())&&StringUtils.isNotBlank(dto.getHubSeason())&&StringUtils.isNotBlank(dto.getHubMarketTime()))
 					supplierSeasonMap.put(dto.getSupplierSeason().trim().toLowerCase(), dto.getHubMarketTime()+"_"+dto.getHubSeason());
@@ -245,14 +249,28 @@ public class PendingCommonHandler {
 		return supplierSeasonMap;
 	}
 
+	/**
+	 * 先获取值 如果没有再去判断是否存在 不存在再次拉取 存在说明确实无值
+	 * 如果先去判断存在 但下一步正好过期 就无法得值了
+	 * @param supplierId
+	 * @param supplierSeason
+	 * @return
+	 */
 	public String  getHubSeasonFromRedis(String supplierId ,String supplierSeason){
-		if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_SEASON_MAPPING_MAP_KEY + "_" + supplierId)){
-			getHubSupplierSeasonMap(supplierId);
-		}
+
 		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_SUPPLIER_SEASON_MAPPING_MAP_KEY + "_" + supplierId,supplierSeason.trim().toLowerCase()) ;
 		if(null!=mapValue&&mapValue.size()>0){
 			return mapValue.get(0);
 		}else{
+			if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_SEASON_MAPPING_MAP_KEY + "_" + supplierId)){
+				Map<String,String> seasonMap = getHubSupplierSeasonMap(supplierId);
+				if(null!=seasonMap&&seasonMap.size()>0){
+					if(seasonMap.containsKey(supplierSeason.toLowerCase())){
+						return  seasonMap.get(supplierSeason.toLowerCase());
+					}
+				}
+			}
+
 			return "";
 		}
 	}
@@ -281,14 +299,18 @@ public class PendingCommonHandler {
 	}
 
 	public String  getHubColorFromRedis(String supplierColor){
-		if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY )){
-			//只赋值
-			getSupplierColorMap();
-		}
+
 		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY ,supplierColor.toUpperCase()) ;
 		if(null!=mapValue&&mapValue.size()>0){
 			return mapValue.get(0);
 		}else{
+			if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_COLOR_MAPPING_MAP_KEY )){
+				//只赋值
+				Map<String, String> colorStaticMap = getSupplierColorMap();
+				if(colorStaticMap.containsKey(supplierColor.toUpperCase())){
+					return colorStaticMap.get(supplierColor.toUpperCase());
+				}
+			}
 			return "";
 		}
 	}
@@ -334,14 +356,19 @@ public class PendingCommonHandler {
 	}
 
 	public String  getHubOriginFromRedis(String supplierOrigin){
-		if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_ORIGIN_MAPPING_MAP_KEY )){
-			//只赋值
-			getSupplierHubOriginMap();
-		}
+
 		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_SUPPLIER_ORIGIN_MAPPING_MAP_KEY ,supplierOrigin.toUpperCase()) ;
 		if(null!=mapValue&&mapValue.size()>0){
 			return mapValue.get(0);
 		}else{
+			if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_ORIGIN_MAPPING_MAP_KEY )){
+				//只赋值
+				Map<String, String> supplierOriginStaticMap = getSupplierHubOriginMap();
+				if(supplierOriginStaticMap.containsKey(supplierOrigin.toUpperCase())){
+					return supplierOriginStaticMap.get(supplierOrigin.toUpperCase());
+				}
+
+			}
 			return "";
 		}
 	}
