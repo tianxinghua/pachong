@@ -9,6 +9,12 @@ include 'openapi-ice'
 include 'iog-common-product'
 
 include 'iog-sop'
+include 'atelier-ostore-stock'
+include 'synchSupplierIdAndSpId'
+include 'syn-spsku-hub'
+include 'coltorti-v2'
+include 'mclabels-stock'
+
 
 
 include 'atelier-ostore-stock'

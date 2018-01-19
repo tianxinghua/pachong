@@ -57,21 +57,26 @@ public class OstoreStockImp  extends AbsUpdateProductStock {
         logger.info("ii============="+ii); 
 		String[] skuStrings = skuData.split("\\r\\n");
 		for (int i = 1; i < skuStrings.length; i++) {
-			if (StringUtils.isNotBlank(skuStrings[i])) {
-			
-				if (i==1) {
-					  data =  skuStrings[i].split("\\n")[1];
-					}else {
-					  data = skuStrings[i];
-					}
-					String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
-        			String stock = skuArr[2];
-        			String barCode = skuArr[5];
-        			skuMap.put(skuArr[0]+"-"+barCode, stock);
-        			if(!stock.equals("0")){
-        				num++;
-        			}
-			}
+		    try{
+                if (StringUtils.isNotBlank(skuStrings[i])) {
+
+                    if (i==1) {
+                        data =  skuStrings[i].split("\\n")[1];
+                    }else {
+                        data = skuStrings[i];
+                    }
+                    String[] skuArr = data.replaceAll("&lt;", "").replaceAll("&gt;", "").replaceAll("&amp;","").split(";");
+                    String stock = skuArr[2];
+                    String barCode = skuArr[5];
+                    skuMap.put(skuArr[0]+"-"+barCode, stock);
+                    if(!stock.equals("0")){
+                        num++;
+                    }
+                }
+            }catch(Exception ex){
+                logger.error("exception:"+ex.getMessage(),ex);
+            }
+
 		}
 		logger.info("新数据库存不为0的有：：："+num);
         Map<String,String> returnMap = new HashMap<String,String>();
