@@ -7,14 +7,9 @@ include 'project-dao'
 include 'iog-service'
 include 'openapi-ice'
 include 'iog-common-product'
-include 'tony-fetchstock'
-include 'coccole-stock'
-include 'E-Monti-stock'
-include 'stockMonti'
+
 include 'iog-sop'
-include 'coltorti'
-include 'synchSupplierIdAndSpId'
-include 'syn-spsku-hub'
-include 'coltorti-v2'
 
 
+include 'atelier-ostore-stock'
+ include 'theclutcher-stock'

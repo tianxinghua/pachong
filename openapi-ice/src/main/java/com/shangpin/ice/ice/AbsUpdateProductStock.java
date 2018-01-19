@@ -216,6 +216,7 @@ public abstract class AbsUpdateProductStock {
 		loggerInfo.info("从关系表中获取已有的spSku结束"); 
 
 		Date date  = new Date();
+		boolean sendMail = true;
 		while(hasNext){
 			long startDate = System.currentTimeMillis();
 			SopProductSkuPageQuery query = new SopProductSkuPageQuery(start,end,pageIndex,pageSize);
@@ -226,8 +227,20 @@ public abstract class AbsUpdateProductStock {
 				startDate = System.currentTimeMillis();
 				try {
 					SopProductSkuPage products = servant.FindCommodityInfoPage(supplier, query);
-					logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
-					loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + (System.currentTimeMillis() - startDate));
+					long fetchTime = System.currentTimeMillis() - startDate;
+					logger.warn("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + fetchTime);
+					loggerInfo.info("通过openAPI 获取第 "+ pageIndex +"页产品信息，信息耗时" + fetchTime);
+					if(fetchTime>10000&&sendMail){
+						try {
+							SendMail.sendGroupMail("smtp.shangpin.com", "chengxu@shangpin.com",
+									"shangpin001", email, "库存更新OPENICE超时",
+									"通过openAPI获取供应商"+supplier+"一页产品信息耗时" + fetchTime,
+									"text/html;charset=utf-8");
+							sendMail = false;
+						} catch (Exception e) {
+							
+						}
+					}
 					skus = products.SopProductSkuIces;
 					if(skus!=null){
 						i=5;
