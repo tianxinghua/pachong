@@ -81,8 +81,14 @@ public class GaudenziServiceImpl implements IOrderService {
 			}
 			long id_order_mrkp = Long.valueOf(spOrderId);
 			String skuId = orderDTO.getDetail().split(",")[0].split(":")[0];
-			String item_id = skuId.split("-")[0];
-			String barcode = skuId.split("-")[1];
+			int index = skuId.lastIndexOf("-");
+			String item_id = null;
+			String barcode = null;
+			if(index>0){
+				item_id = skuId.substring(0,index);
+				barcode = skuId.substring(index+1);
+			}
+			
 			int qty = Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]);
 			//先通过查询库存接口查询库存,如果库存大于0则下单,否则采购异常
 			String productSize = commonService.getProductSize(orderDTO.getSupplierId(),skuId);
