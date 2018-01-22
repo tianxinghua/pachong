@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +38,11 @@ public class SkuPendingServiceImpl implements SkuPendingService {
         if(null!=skuPendingDtos&&skuPendingDtos.size()>0){
             boolean isHandle = false;
             for(HubSkuPendingDto skuPendingDto:skuPendingDtos){
+                if(null!=skuPendingDto.getSkuState()&&skuPendingDto.getSkuState().intValue()==SpuStatus.SPU_WAIT_AUDIT.getIndex()){
+                    //如果存在已处理的 就认为可以处理
+                    isHandle = true;
+                    continue;
+                }
                 HubSkuPendingDto updateDto = new HubSkuPendingDto();
                 updateDto.setSkuPendingId(skuPendingDto.getSkuPendingId());
                 MatchSizeDto sizeDto = new MatchSizeDto();
@@ -88,7 +94,12 @@ public class SkuPendingServiceImpl implements SkuPendingService {
     @Override
     public List<HubSkuPendingDto> getWaitHandleSkuPending(Long spuPendingId) {
         HubSkuPendingCriteriaDto dto = new   HubSkuPendingCriteriaDto();
-        dto.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andSkuStateEqualTo(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());//SKU与SPU的状态保持一致
+        List<Byte> stateList = new ArrayList<>();
+        //SKU与SPU的状态保持一致
+        stateList.add(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+        stateList.add(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+        dto.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andSkuStateIn(stateList)
+              ;
         return  skuPendingGateWay.selectByCriteria(dto);
     }
 

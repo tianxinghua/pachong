@@ -1,10 +1,23 @@
-package com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.controller;
+package com.shangpin.ephub.product.business.rest.hub.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
+import com.shangpin.ephub.product.business.conf.rpc.ApiAddressProperties;
+import com.shangpin.ephub.product.business.rest.hub.dto.SpuDescVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +53,7 @@ import com.shangpin.ephub.product.business.service.hub.dto.SopSkuQueryDto;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *
@@ -59,6 +73,9 @@ public class HubPendingProductController {
     HubSupplierSpuGateWay supplierSpuGateWay;
 
     @Autowired
+	HubSpuGateWay spuGateWay;
+
+    @Autowired
 	HubSpuPendingGateWay spuPendingGateWay;
 
 	@Autowired
@@ -71,6 +88,17 @@ public class HubPendingProductController {
 	SopSkuService sopSkuService;
 	@Autowired
 	PriceService priceService;
+
+	@Autowired
+	private TaskExecutor executor;
+
+	@Autowired
+	RestTemplate restTemplate;
+
+	@Autowired
+	ApiAddressProperties apiAddressProperties;
+
+	ObjectMapper mapper = new ObjectMapper();
 	
 	@RequestMapping(value = "/setspskuno")
 	public HubResponse<?> checkSku(@RequestBody SpSkuNoDto dto){
@@ -111,6 +139,14 @@ public class HubPendingProductController {
 //		log.info("updateSkuSupplierSpSkuNo start");
 		updateSkuSupplierSpSkuNo(dto);
 //		log.info("updateSkuSupplierSpSkuNo end");
+		// 获取hubspu 信息里的描述信息  ，若为空 取对应供货商里的信息
+		if(null!=searchSkuPending) {
+			log.info("push desc to sop ");
+			PushProductDesc pushProductDesc = new PushProductDesc(spuPendingGateWay,spuGateWay,searchSkuPending,restTemplate,apiAddressProperties,mapper);
+			executor.execute(pushProductDesc);
+		}else{
+			log.info("searchSkuPending is null, don't  need to   push desc to sop ");
+		}
 
 	}
 
@@ -260,5 +296,106 @@ public class HubPendingProductController {
 		skuSupplierMappingGateWay.updateByCriteriaSelective(skumappingCritria);
 	}
 
+	class PushProductDesc implements Runnable {
+
+		HubSpuGateWay spuGateWay;
+		HubSpuPendingGateWay spuPendingGateWay;
+		HubSkuPendingDto skuPending;
+
+		RestTemplate restTemplate;
+		ApiAddressProperties apiAddressProperties;
+		ObjectMapper  mapper;
+
+		public PushProductDesc(HubSpuPendingGateWay spuPendingGateWay,HubSpuGateWay spuGateWay,HubSkuPendingDto skuPending,
+							   RestTemplate restTemplate,ApiAddressProperties apiAddressProperties,ObjectMapper  mapper){
+			this.spuPendingGateWay = spuPendingGateWay;
+			this.spuGateWay = spuGateWay;
+			this.skuPending= skuPending;
+			this.restTemplate = restTemplate;
+			this.apiAddressProperties = apiAddressProperties;
+			this.mapper = mapper;
+
+		}
+		@Override
+		public void run() {
+			//获取spu属性
+			String spuNo = null;
+			if(StringUtils.isEmpty(skuPending.getHubSkuNo())){
+				log.error("推送商品描述到SOP时失败。error:skuno无值");
+				return;
+			}
+			try {
+
+				spuNo = skuPending.getHubSkuNo().substring(0,skuPending.getHubSkuNo().length()-3);
+			} catch (Exception e) {
+				log.error("推送商品描述到SOP时失败,无法获取spuNo。error:"+e.getMessage(),e);
+
+				e.printStackTrace();
+				return;
+			}
+			HubSpuCriteriaDto criteria = new HubSpuCriteriaDto();
+			criteria.createCriteria().andSpuNoEqualTo(spuNo);
+			List<HubSpuDto> hubSpuDtos = spuGateWay.selectByCriteria(criteria);
+			SpuDescVo productDto =null;
+			if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
+				HubSpuDto spuDto = hubSpuDtos.get(0);
+				if(!StringUtils.isEmpty(spuDto.getSpuDesc())){
+					try {
+						productDto = getSpuDescVo(skuPending.getSupplierNo(),spuDto.getSpuDesc(),skuPending.getSpSkuNo());
+						sendToSop(productDto);
+					} catch (Exception e) {
+						try {
+							//失败多调用一次
+							sendToSop(productDto);
+						} catch (Exception e1) {
+							log.error("推送产品描述到SOP失败.reason:" + e.getMessage(),e1);
+						}
+					}
+					return ;
+				}
+			}
+            //获取hubspupending 中的描述
+			HubSpuPendingDto hubSpuPendingDto = spuPendingGateWay.selectByPrimaryKey(skuPending.getSpuPendingId());
+			if(null!=hubSpuPendingDto&&!StringUtils.isEmpty(hubSpuPendingDto.getSpuDesc())){
+				try {
+					productDto = getSpuDescVo(skuPending.getSupplierNo(),hubSpuPendingDto.getSpuDesc(),skuPending.getSpSkuNo());
+					log.info("推送SOP信息:"+ productDto.toString());
+					sendToSop(productDto);
+				} catch (Exception e) {
+					try {
+						//失败多调用一次
+						sendToSop(productDto);
+					} catch (Exception e1) {
+						log.error("推送产品描述到SOP失败.reason:" + e.getMessage(),e1);
+					}
+
+				}
+			}else{
+				log.info("spuNo:"+spuNo + "，无法获取描述信息");
+			}
+
+		}
+
+
+
+
+		private String sendToSop(SpuDescVo productDto) throws Exception {
+			HttpEntity<SpuDescVo> requestEntity = new HttpEntity<SpuDescVo>(productDto);
+
+			ResponseEntity<String> entity = restTemplate.exchange(apiAddressProperties.getSopDescUrl(), HttpMethod.POST,
+					requestEntity, new ParameterizedTypeReference<String>() {
+					});
+			return entity.getBody();
+		}
+
+		private  SpuDescVo getSpuDescVo(String supplierNo,String desc,String spSkuNo){
+			SpuDescVo productDto = new SpuDescVo();
+			productDto.setDescHtml(desc);
+			productDto.setSupplierNo(supplierNo);
+			productDto.setSpskuNo(spSkuNo);
+			productDto.setUpdateUser("Product-Business");
+			return productDto;
+		}
+	}
 
 }

@@ -202,13 +202,13 @@ public class PendingProductService extends PendingSkuService{
 						setSpuState(pendingProductDto);
 						//尺码处理
 						boolean  skuHandleReuslt = skuPendingService.setWaitHandleSkuPendingSize(pendingProductDto.getSpuPendingId(),pendingProductDto.getHubBrandNo(),pendingProductDto.getHubCategoryNo());
-						if(!skuHandleReuslt){
-							pass = false ;
-							updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无可处理的sku信息");
-						}else{
-							isSkuPass = true;
-						}
-						isHaveHubSpu = true;
+//						if(!skuHandleReuslt){
+//							pass = false ;
+//							updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"无可处理的sku信息");
+//						}else{
+//							isSkuPass = true;
+//						}
+//						isHaveHubSpu = true;
 
 					}
 					//
@@ -219,7 +219,7 @@ public class PendingProductService extends PendingSkuService{
 					 */
 					boolean checkCategoryAndGender = checkService.checkCategoryAndGender(pendingProductDto.getHubGender(), pendingProductDto.getHubCategoryNo());
 					if(brandModelResult.isPassing() && checkCategoryAndGender){
-						hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
+//						hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
 						if(null == hubSpuDto){
 							HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
 							if(spuResult.isPassing()){
