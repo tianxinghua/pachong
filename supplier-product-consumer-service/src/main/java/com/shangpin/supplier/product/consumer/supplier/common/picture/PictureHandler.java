@@ -120,7 +120,7 @@ public class PictureHandler {
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
 		dto.setPageNo(1);
 		dto.setPageSize(1000);
-		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo((byte)1);
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
 			String picurl = "";
