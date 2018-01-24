@@ -482,6 +482,17 @@ public class DataServiceHandler {
 
 	}
 
+
+
+	public List<HubSeasonDicDto> getHubSeasonDicBySupplierId(String supplierId) {
+		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		HubSeasonDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+		criterion.andSupplieridEqualTo(supplierId);
+		return hubSeasonDicGateWay.selectByCriteria(criteria);
+
+	}
+
 	public HubSeasonDicDto getHubSeasonDicBySupplierIdAndsupplierSeason(String supplierId, String supplierSeason) {
 		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
 		criteria.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason);
