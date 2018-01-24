@@ -80,7 +80,7 @@ public class GiglioHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender(value(colunms,"Sesso(unisex, uomo, donna)"));
 			hubSpu.setSupplierCategoryname(value(colunms,"Categoria"));
 			hubSpu.setSupplierBrandname(value(colunms,"Marca"));
-			hubSpu.setSupplierSeasonname(value(colunms,"Collezione / Anno"));
+			hubSpu.setSupplierSeasonname(org.apache.commons.lang.StringUtils.isNotBlank(value(colunms,"Collezione / Anno"))?value(colunms,"Collezione / Anno"):"Primavera/Estate 2018");
 			hubSpu.setSupplierMaterial(value(colunms,"Materiale ENG"));
 			hubSpu.setSupplierOrigin("");//TODO 无产地
 			hubSpu.setSupplierSpuDesc(value(colunms,"Sizes")+" "+value(colunms,"Descrizione ENG"));
