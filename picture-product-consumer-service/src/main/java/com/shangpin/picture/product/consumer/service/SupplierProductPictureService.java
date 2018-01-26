@@ -52,6 +52,8 @@ public class SupplierProductPictureService {
 	private static final String USERNAME = "username";
 
 	private static final int TIMEOUT = 45*60*1000;
+
+	private static final int CONNECT_TIMEOUT = 10*1000;
 	
 	@Autowired
 	private SupplierProductPictureManager supplierProductPictureManager;
@@ -140,7 +142,7 @@ public class SupplierProductPictureService {
 			URLConnection openConnection = url.openConnection();
 			httpUrlConnection  =  (HttpURLConnection) openConnection;
 			httpUrlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
-			httpUrlConnection.setConnectTimeout(TIMEOUT);
+			httpUrlConnection.setConnectTimeout(CONNECT_TIMEOUT);
 			httpUrlConnection.setReadTimeout(TIMEOUT);
 			httpUrlConnection.connect();
 			flag = httpUrlConnection.getResponseCode();
