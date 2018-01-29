@@ -1011,6 +1011,7 @@ public class VariableInit {
         boolean result = true;
         if (StringUtils.isNotBlank(spu.getHubSeason())) {
             String hubSeason = pendingCommonHandler.getHubSeasonFromRedis(spu.getSupplierId(),spu.getHubSeason());
+
             if (StringUtils.isBlank(hubSeason)) {
                 // 包含时转化赋值
                 hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_CURRENT.getIndex().byteValue());

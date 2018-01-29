@@ -259,7 +259,9 @@ public class PendingCommonHandler {
 	public String  getHubSeasonFromRedis(String supplierId ,String supplierSeason){
 
 		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_SUPPLIER_SEASON_MAPPING_MAP_KEY + "_" + supplierId,supplierSeason.trim().toLowerCase()) ;
+
 		if(null!=mapValue&&mapValue.size()>0){
+			log.info("供货商id:"+supplierId+ " 供货商季节："+ supplierSeason + " 尚品季节 :" + mapValue.get(0) );
 			return mapValue.get(0);
 		}else{
 			if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_SUPPLIER_SEASON_MAPPING_MAP_KEY + "_" + supplierId)){
