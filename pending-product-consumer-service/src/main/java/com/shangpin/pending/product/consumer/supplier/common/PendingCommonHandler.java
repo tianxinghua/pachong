@@ -189,6 +189,7 @@ public class PendingCommonHandler {
 
 		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY + "_" + supplierId,supplierCategory.trim().toUpperCase()+"_"+gender.trim().toUpperCase()) ;
 		if(null!=mapValue&&mapValue.size()>0){
+			log.info("品类映射：  supplierId:" + supplierId  +" supplierCategory:" + supplierCategory +" gender:" + gender + " hubcategory:" + mapValue.get(0));
 			return mapValue.get(0);
 		}else{
 			if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_KEY + "_" + supplierId)){
