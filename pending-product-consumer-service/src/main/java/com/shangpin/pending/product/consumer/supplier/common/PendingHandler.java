@@ -189,7 +189,9 @@ public class PendingHandler extends VariableInit {
 			dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
 			log.info("===供应商spuPendingId:"+existSpuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+existSpuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
 		}else{
-			saveAndRefreshPending(spu);
+			if(null==existSpuPendingDto) {
+				saveAndRefreshPending(spu);
+			}
 		}
 	}
 	
@@ -208,7 +210,10 @@ public class PendingHandler extends VariableInit {
 						+ existSpuPendingDto.getHubColor() + "==>" + updateSpuPending.getHubColor());
 			}
 		}else{
-			saveAndRefreshPending(spuPendingDto);
+			if(null==existSpuPendingDto){
+				saveAndRefreshPending(spuPendingDto);
+			}
+
 		}
 	}
 		
