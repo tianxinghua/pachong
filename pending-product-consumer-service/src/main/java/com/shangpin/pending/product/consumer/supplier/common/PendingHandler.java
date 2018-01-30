@@ -393,6 +393,9 @@ public class PendingHandler extends VariableInit {
 			if(null!=skus&&skus.size()>0){
 	            byte filterFlag = FilterFlag.EFFECTIVE.getIndex();
 	            for (PendingSku sku : skus) {
+					HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(sku.getSupplierId(),
+							sku.getSupplierSkuNo());
+					if(null!=hubSkuPending) continue;
 	            	 this.addNewSku(newSpuPending, pendingSpu,sku , null,filterFlag);
 	            }
 			 
