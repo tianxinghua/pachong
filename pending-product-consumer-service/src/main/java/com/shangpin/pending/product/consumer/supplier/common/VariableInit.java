@@ -882,8 +882,8 @@ public class VariableInit {
             return false;
         }
 
-        String  rt  = pendingCommonHandler.getSupplierHubCategoryFromRedis(spu.getSupplierId(),spu.getHubCategoryNo(),spu.getHubGender());
-        if(StringUtils.isBlank(rt)){
+        categoryAndStatus  = pendingCommonHandler.getSupplierHubCategoryFromRedis(spu.getSupplierId(),spu.getHubCategoryNo(),spu.getHubGender());
+        if(StringUtils.isBlank(categoryAndStatus)){
             //控制时插入新的记录
             result = false;
             hubSpuPending.setCatgoryState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
@@ -990,7 +990,7 @@ public class VariableInit {
 
         String hubColor = pendingCommonHandler.getHubColorFromRedis(spu.getHubColor());
 
-        if (StringUtils.isBlank(hubColor)) {
+        if (StringUtils.isNotBlank(hubColor)) {
             // 包含时转化赋值
             hubSpuPending.setHubColor(hubColor);
             hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
@@ -1012,8 +1012,9 @@ public class VariableInit {
         if (StringUtils.isNotBlank(spu.getHubSeason())) {
             String hubSeason = pendingCommonHandler.getHubSeasonFromRedis(spu.getSupplierId(),spu.getHubSeason());
 
-            if (StringUtils.isBlank(hubSeason)) {
+            if (StringUtils.isNotBlank(hubSeason)) {
                 // 包含时转化赋值
+                hubSpuPending.setHubSeason(hubSeason);
                 hubSpuPending.setIsCurrentSeason(SeasonType.SEASON_CURRENT.getIndex().byteValue());
                 hubSpuPending.setSpuSeasonState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 
