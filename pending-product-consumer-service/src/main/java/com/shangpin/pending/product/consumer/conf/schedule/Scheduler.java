@@ -34,7 +34,7 @@ public class Scheduler {
 	HubFilterService hubFilterService;
 	@Autowired
 	VariableInit variableInit;
-	@Scheduled(cron = "05 0 07 * * ?")
+	@Scheduled(cron = "0 10 8 * * ?")
 	public void modelTask() {
 		
 		try {
