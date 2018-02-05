@@ -20,7 +20,7 @@ import lombok.ToString;
  */
 @Setter
 @Getter
-@ToString
+
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
