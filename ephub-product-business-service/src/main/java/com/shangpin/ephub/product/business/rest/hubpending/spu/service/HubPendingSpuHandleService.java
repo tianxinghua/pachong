@@ -164,6 +164,7 @@ public class HubPendingSpuHandleService {
 		hubSpuPendingIsExist.setUpdateTime(new Date());
 		hubSpuPendingIsExist.setUpdateTime(new Date());
 		hubSpuPendingIsExist.setCreateTime(new Date());
+		hubSpuPendingIsExist.setAuditState(AuditState.INIT.getIndex());
 		hubSpuPendingIsExist.setSpuState(SpuState.INFO_PECCABLE.getIndex());
 	}
 
