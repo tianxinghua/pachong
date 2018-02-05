@@ -64,6 +64,10 @@ public class PictureProductService {
 	 * @return
 	 */
 	private boolean toPush(SupplierPicture supplierPicture){
+		if(null!=supplierPicture){
+			log.info("pic = " + supplierPicture.toString());
+		}
+
 		if(null == supplierPicture || null == supplierPicture.getProductPicture() || null == supplierPicture.getProductPicture().getImages() || supplierPicture.getProductPicture().getImages().size() == 0){
 			return false;
 		}else{
