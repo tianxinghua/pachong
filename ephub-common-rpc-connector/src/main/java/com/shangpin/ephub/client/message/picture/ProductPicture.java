@@ -36,4 +36,12 @@ public class ProductPicture implements Serializable {
 	private String supplierSpuNo;
 	
 	private List<Image> images;
+
+	public String toString() {
+		StringBuffer buffer =new StringBuffer();
+		for(Image image:images){
+			buffer.append(image.getUrl()+";");
+		}
+		return "ProductPicture(supplierSpuNo=" + this.getSupplierSpuNo() + ", images=" + buffer.toString()+ ")";
+	}
 }

@@ -587,8 +587,10 @@ public class HubProductServiceImpl implements HubProductService {
             spSpuInfo.setProductOriginalSex(ScmGenderType.MAN.getIndex());
         }else  if("女士".equals(hubSpuDto.getGender())){
             spSpuInfo.setProductOriginalSex(ScmGenderType.WOMAN.getIndex());
-        }else  if("中性".equals(hubSpuDto.getGender())||"儿童".equals(hubSpuDto.getGender())){
-            spSpuInfo.setProductOriginalSex(ScmGenderType.LADY_BOY.getIndex());
+        }else  if("中性".equals(hubSpuDto.getGender())){
+            spSpuInfo.setProductOriginalSex(ScmGenderType.WOMAN.getIndex());//ScmGenderType.LADY_BOY.getIndex()
+        }else  if("儿童".equals(hubSpuDto.getGender())){
+            spSpuInfo.setProductOriginalSex(ChildrenGender.getGender(hubSpuDto.getCategoryNo()).getIndex());
         }else  if("男童".equals(hubSpuDto.getGender())){
             spSpuInfo.setProductOriginalSex(ScmGenderType.MAN.getIndex());
         }else  if("女童".equals(hubSpuDto.getGender())){
@@ -614,7 +616,10 @@ public class HubProductServiceImpl implements HubProductService {
         spSpuInfo.setSecurityCategory("");
         //TODO 币种
         spSpuInfo.setSaleType(0);
+        spSpuInfo.setUserGroupNo(BuGroup.getUserGroup(hubSpuDto.getCategoryNo()));
     }
+
+
 
 
     public HubSkuPendingDto getHubSkuPendingBySupplierIdAndSuppierSkuNo(String supplierId,String supplierSkuNo){
