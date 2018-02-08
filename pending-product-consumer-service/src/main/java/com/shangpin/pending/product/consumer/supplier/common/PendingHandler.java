@@ -189,7 +189,9 @@ public class PendingHandler extends VariableInit {
 			dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
 			log.info("===供应商spuPendingId:"+existSpuPendingDto.getSpuPendingId()+"映射hub品类刷新:"+existSpuPendingDto.getHubCategoryNo()+"==>"+updateSpuPending.getHubCategoryNo());
 		}else{
-			saveAndRefreshPending(spu);
+			if(null==existSpuPendingDto) {
+				saveAndRefreshPending(spu);
+			}
 		}
 	}
 	
@@ -198,17 +200,20 @@ public class PendingHandler extends VariableInit {
 		if (null != existSpuPendingDto && checkSpuPendingIsRefresh(existSpuPendingDto)) {
 			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 			// 获取季节
-			Map<String, String> supplierColor = pendingCommonHandler.getHubSupplierSeasonMap(spuPendingDto.getSupplierId());
-			if (supplierColor != null && spuPendingDto.getHubColor() != null
-					&& supplierColor.containsKey(spuPendingDto.getHubColor().toUpperCase())) {
-				updateSpuPending.setHubSeason(supplierColor.get(spuPendingDto.getHubColor().toUpperCase()));
+			Map<String, String> supplierSeasonMap = pendingCommonHandler.getHubSupplierSeasonMap(spuPendingDto.getSupplierId());
+			if (supplierSeasonMap != null && spuPendingDto.getHubSeason() != null
+					&& supplierSeasonMap.containsKey(spuPendingDto.getHubSeason().trim().toLowerCase())) {
+				updateSpuPending.setHubSeason(supplierSeasonMap.get(spuPendingDto.getHubSeason().trim().toLowerCase()));
 				updateSpuPending.setSpuSeasonState((byte) 1);
 				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
 				log.info("===供应商spuPendingId:" + existSpuPendingDto.getSpuPendingId() + "映射hub季节刷新:"
-						+ existSpuPendingDto.getHubColor() + "==>" + updateSpuPending.getHubColor());
+						+ existSpuPendingDto.getHubSeason() + "==>" + updateSpuPending.getHubSeason());
 			}
 		}else{
-			saveAndRefreshPending(spuPendingDto);
+			if(null==existSpuPendingDto){
+				saveAndRefreshPending(spuPendingDto);
+			}
+
 		}
 	}
 		
