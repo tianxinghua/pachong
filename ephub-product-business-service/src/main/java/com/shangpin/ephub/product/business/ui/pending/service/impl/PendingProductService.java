@@ -218,24 +218,31 @@ public class PendingProductService extends PendingSkuService{
 					 * 校验品类和性别是否一致
 					 */
 					boolean checkCategoryAndGender = checkService.checkCategoryAndGender(pendingProductDto.getHubGender(), pendingProductDto.getHubCategoryNo());
-					if(brandModelResult.isPassing() && checkCategoryAndGender){
-//						hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
-						if(null == hubSpuDto){
-							HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
-							if(spuResult.isPassing()){
-								setSpuState(pendingProductDto);
+					if(brandModelResult.isPassing()){
+						if(checkCategoryAndGender) {
 
-							}else{
-								checkSpuState(pendingProductDto,spuResult);
-								pass = false ;
-								log.info("pending spu校验失败，不更新："+spuResult.getResult());
-								updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),spuResult.getResult());
+							//	hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
+							if (null == hubSpuDto) {
+								HubPendingSpuCheckResult spuResult = hubPendingSpuCheckService.checkHubPendingSpu(pendingProductDto);
+								if (spuResult.isPassing()) {
+									setSpuState(pendingProductDto);
+
+								} else {
+									checkSpuState(pendingProductDto, spuResult);
+									pass = false;
+									log.info("pending spu校验失败，不更新：" + spuResult.getResult());
+									updatedVo = setErrorMsg(response, pendingProductDto.getSpuPendingId(), spuResult.getResult());
+								}
 							}
+						}else{
+							pass = false ;
+							log.info("pending spu校验失败，不更新：性别与品类不符。");
+							updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"性别与品类不符");
 						}
 					}else{
 						pass = false ;
-						log.info("pending spu校验失败，不更新：货号校验不通过或者性别与品类不符。");
-						updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过或性别与品类不符");
+						log.info("pending spu校验失败，不更新：货号校验不通过。");
+						updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
 					}
 					//开始校验sku
 					List<HubSkuPendingDto> pengdingSkus = pendingProductDto.getHubSkus();
