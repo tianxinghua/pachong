@@ -141,14 +141,13 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(supplierSpuNo);
 			String spuModel = "";
+			if(supplierSpuNo.contains("CONFIG")){
+				return false;
+			}
 			if(!StringUtils.isEmpty(item.getPvr_model()) && !StringUtils.isEmpty(item.getPvr_color())){
 				spuModel = item.getPvr_model() + " "+item.getPvr_color();
 			}else{
-				if(supplierSpuNo.contains("CONFIG")){
-					return false;
-				}else{
-					spuModel = supplierSpuNo;
-				}
+				spuModel = supplierSpuNo;
 			}
 			hubSpu.setSupplierSpuModel(spuModel);
 			hubSpu.setSupplierSpuName(item.getName());
