@@ -182,6 +182,25 @@ public class MonnierHandler implements ISupplierHandler {
 			if(item.getCharacteristics2()!=null){
 				str.append(",").append(item.getCharacteristics2());
 			}
+			if(StringUtils.isNotBlank(item.getCharacteristics3())){
+				str.append(",").append(item.getCharacteristics3());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics4())){
+				str.append(",").append(item.getCharacteristics4());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics5())){
+				str.append(",").append(item.getCharacteristics5());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics6())){
+				str.append(",").append(item.getCharacteristics6());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics7())){
+				str.append(",").append(item.getCharacteristics7());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics8())){
+				str.append(",").append(item.getCharacteristics8());
+			}
+
 			hubSpu.setSupplierSpuDesc(desc+str.toString());
 			return true;
 		}else{
