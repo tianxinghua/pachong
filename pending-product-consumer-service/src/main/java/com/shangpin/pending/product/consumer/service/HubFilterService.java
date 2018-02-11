@@ -24,6 +24,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HubFilterService {
 	
+	private static List<String> supplierIds = new ArrayList<String>();
+	static{
+		//stefaniamode
+		supplierIds.add("2015092401528");
+		//atelierO
+		supplierIds.add("2015082701461");
+		//tony
+		supplierIds.add("2015101501608");
+		//monnierfreres
+		supplierIds.add("2015101001587");
+		//brunarosso
+		supplierIds.add("2015091801507");
+		//Tessabit
+		supplierIds.add("2015091701503");
+		//Clutcher
+		supplierIds.add("2015102201625");
+		//Giglio
+		supplierIds.add("2015091801508");
+		//coltorti
+		supplierIds.add("2015081701440");
+	}
 	@Autowired
 	IShangpinRedis shangpinRedis;
 	@Autowired
@@ -45,7 +66,7 @@ public class HubFilterService {
 	    	List<Byte> liByte = new ArrayList<Byte>();
 	    	liByte.add((byte)0);
 	    	liByte.add((byte)4);
-			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).andSpuStateIn(liByte);
+			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).andSpuStateIn(liByte).andSupplierIdNotIn(supplierIds);
 			int totalSize = hubSpuPendingGateway.countByCriteria(criteria);
 			int pageCount = getPageCount(totalSize, 100);// 页数
 			for (int i = 1; i <= pageCount; i++) {
