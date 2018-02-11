@@ -161,7 +161,7 @@ public class CoccoServiceImpl implements IOrderService{
 		addTo.add("cesare.m@coccolebimbi.com");
 		addTo.add("sabino.m@coccolebimbi.com");
 		addTo.add("gio.p@coccolebimbi.com");
-		addTo.add("winnie.liu@shangpin.com");
+//		addTo.add("winnie.liu@shangpin.com");
 		shangpinMail.setAddTo(addTo);
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}

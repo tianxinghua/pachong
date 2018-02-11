@@ -1095,6 +1095,15 @@ public class PendingHandler extends VariableInit {
 			}
 
 		}
+		//如果是儿童 如果是数字 需要需要加上岁
+		if(StringUtils.isNotBlank(hubSpuPending.getHubCategoryNo())&&hubSpuPending.getHubCategoryNo().startsWith("A11")){
+              try{
+				  boolean result=hubSkuPending.getHubSkuSize().matches("[0-9]+$");
+				  if(result) hubSkuPending.setHubSkuSize(hubSkuPending.getHubSkuSize()+"岁");
+			  }catch (Exception ex){
+
+			  }
+		}
 	}
 
 	private void replaceSize(PendingSku supplierSku, HubSkuPendingDto hubSkuPending, Map<String, String> sizeMap) {
