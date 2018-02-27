@@ -8,5 +8,5 @@ include 'iog-service'
 include 'openapi-ice'
 include 'iog-common-product'
 include 'iog-sop'
-include 'spinnaker-stock-template'
+include 'coccole-day-stock'
 
