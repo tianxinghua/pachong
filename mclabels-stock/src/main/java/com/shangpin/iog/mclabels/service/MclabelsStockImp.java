@@ -34,7 +34,8 @@ public class MclabelsStockImp extends AbsUpdateProductStock {
     	logger.info("开始执行");
     	Map<String,String> map = new HashMap<>();
 //		String url = "http://nodo.azurewebsites.net/api/channel/export/?channelName=Shangpin&token=bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlcnZpY2VzQHNoYW5ncGluLmNvbSIsInBhc3N3b3JkIjoiJDJhJDA4JEdrcDZENmdYVkQxVmtOYWdGandrak9yRGRQekcvdjBuN3ZTUzFScEhKYnNyNHZXY0g2OTNPIiwiaWQiOjEzLCJpYXQiOjE0ODA2OTgxMTF9.7kRekC3N7xe0TjuFGbbpK93Kv4ry7eyrS897qmPvBIc";
-		String url = "http://nodo-stage.azurewebsites.net/api/channel/export/?channelName=Shangpin&token=bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlcnZpY2VzQHNoYW5ncGluLmNvbSIsInBhc3N3b3JkIjoiJDJhJDA4JEdrcDZENmdYVkQxVmtOYWdGandrak9yRGRQekcvdjBuN3ZTUzFScEhKYnNyNHZXY0g2OTNPIiwiaWQiOjEzLCJpYXQiOjE0ODA2OTgxMTF9.7kRekC3N7xe0TjuFGbbpK93Kv4ry7eyrS897qmPvBIc";
+		//String url = "http://nodo-stage.azurewebsites.net/api/channel/export/?channelName=Shangpin&token=bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlcnZpY2VzQHNoYW5ncGluLmNvbSIsInBhc3N3b3JkIjoiJDJhJDA4JEdrcDZENmdYVkQxVmtOYWdGandrak9yRGRQekcvdjBuN3ZTUzFScEhKYnNyNHZXY0g2OTNPIiwiaWQiOjEzLCJpYXQiOjE0ODA2OTgxMTF9.7kRekC3N7xe0TjuFGbbpK93Kv4ry7eyrS897qmPvBIc";
+        String url = "http://nodo.azurewebsites.net/api/channel/export/?channelName=Shangpin&token=bearer%20eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNlcnZpY2VzQHNoYW5ncGluLmNvbSIsInBhc3N3b3JkIjoiJDJhJDA4JEdrcDZENmdYVkQxVmtOYWdGandrak9yRGRQekcvdjBuN3ZTUzFScEhKYnNyNHZXY0g2OTNPIiwiaWQiOjEzLCJpYXQiOjE0ODA2OTgxMTF9.7kRekC3N7xe0TjuFGbbpK93Kv4ry7eyrS897qmPvBIc";
 		String json =  null;
 		try{
 			json = HttpUtil45

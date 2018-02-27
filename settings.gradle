@@ -9,4 +9,5 @@ include 'openapi-ice'
 include 'iog-common-product'
 include 'iog-sop'
 include 'coccole-day-stock'
-
+include 'atelier-ostore-stock'
+ include 'theclutcher-stock'
