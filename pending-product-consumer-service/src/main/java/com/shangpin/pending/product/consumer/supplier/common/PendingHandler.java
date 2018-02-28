@@ -601,7 +601,7 @@ public class PendingHandler extends VariableInit {
 
 	}
 
-	public SpuPending addNewSpu(PendingSpu spu) throws Exception {
+	public SpuPending	addNewSpu(PendingSpu spu) throws Exception {
 
 		// judage in hub_spu by product_code ,if exist ,set value from hub_spu
 		// and set spu status value is 1
@@ -917,7 +917,7 @@ public class PendingHandler extends VariableInit {
 
 
 
-	    //判断HUBSPU  是否存在 其它状态 比如过滤的 不在处理的 认为不存在HUB_SPU 即使已经存在HUB_SPU
+	    //判断spuPending 是否存在 其它状态 比如过滤的 不在处理的 认为不存在
 		if (SpuStatus.SPU_HANDLED.getIndex() == hubSpuPending.getSpuState().intValue()
 				||(SpuStatus.SPU_WAIT_HANDLE.getIndex()==hubSpuPending.getSpuState().intValue()
 				&&StringUtils.isNotBlank(hubSpuPending.getHubSpuNo()))
@@ -937,7 +937,7 @@ public class PendingHandler extends VariableInit {
 			setSkuPending(hubSpuPending, supplierSpu, supplierSku, hubSkuPending, date, hubSize);
 		
 		} else {
-			// hubspu 不存在
+			// 不存在
 			if ("".equals(hubSize)) {
 
 //				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());

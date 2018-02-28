@@ -47,10 +47,115 @@ public class CommonTest {
 //                System.out.println("size1 =" + size1 );
 //            }
 //        }
-        String stockResult ="{\"Stock\":1}";
-        JSONObject obj = JSON.parseObject(stockResult);;
 
-        int num = obj.getIntValue("Stock");
-        System.out.println("SupplierValueMappingType.TYPE_SIZE.getIndex()=" + SupplierValueMappingType.TYPE_SIZE.getIndex())  ;
+
+//        String stockResult ="{\"Stock\":1}";
+//        JSONObject obj = JSON.parseObject(stockResult);;
+//
+//        int num = obj.getIntValue("Stock");
+//        System.out.println("SupplierValueMappingType.TYPE_SIZE.getIndex()=" + SupplierValueMappingType.TYPE_SIZE.getIndex())  ;
+        CommonTest test = new CommonTest();
+        String line = "4509509HVAT 8697";
+        String[] words = line.split("\\s+",-1);
+        System.out.println("words length "+words.length);
+
+        String line4 = "GY6GMZ FSFFZ HWI86";
+        String[] words4 = line4.split("\\s+",-1);
+        System.out.println("words4 length "+words4.length);
+
+        String line1 = "97%  ,ksjd ksd,kdkd     viscose, 3% 弹性纤维ne  离中国";
+        String[] words1 = line1.split("\\s+|\\t| ");
+        test.setValue(words1);
+        System.out.println("words1 length "+words1.length);
+
+        String line2 = "primo tessuto: 100% 棉/ secondo tessuto: 65% 醋酸纤维 我说呀 啊, 35% 铜氨/ terzo tessuto: 88% poliammide, 12% 弹性纤维n";
+        String[] words2 = line2.split("\\s+|\\t| ");
+        test.setValue(words2);
+        System.out.println("words2 length "+words2.length);
+        test.test();
+    }
+
+    public void setValue(String[] words){
+        String material="";
+        int i=0;
+        StringBuilder builder = new StringBuilder();
+        for(String word:words){
+            material = "";
+
+            i= word.indexOf(",");
+            if(i==0){
+                builder.append(",");
+                word = word.substring(1);
+
+                builder.append(word);
+
+
+
+            }else if(i>0){
+                if(i==word.length()-1){
+                    word = word.substring(0,word.length()-1);
+                    if(this.isChinese(word)) {
+                        builder.append(word).append(",");
+                    }else{
+                        builder.append(" ").append(word).append(",");
+                    }
+
+                }else{
+                    String[]  wordList = word.split(",");
+                    int j=1;
+                    for(String wd:wordList){
+                         if(j==1){
+
+                             builder.append(" ").append(wd);
+                         }else{
+                             builder.append(wd);
+                         }
+
+                        if(j!=wordList.length){
+                            builder.append(",");
+                        }
+                        j++;
+                    }
+
+                }
+
+            }else{
+                 if(this.isChinese(word)){
+                     builder.append(word);
+                 }else{
+                     builder.append(" ").append(word);
+                 }
+
+            }
+
+
+
+        }
+        System.out.println("word value=" + builder.toString());
+    }
+
+
+    public  boolean isChinese(String str) {
+        String regex = "^[\u4e00-\u9fa5]+$";//其他需要，直接修改正则表达式就好
+        return str.matches(regex);
+    }
+
+    public void test(){
+        String brandMode ="7E1108A1GN F11F0";
+        String modelRex = "([0-9A-Z]{6})([A-Z0-9]{5})([0-9]{4})";
+        String excludeRex = "[^A-Z0-9]";
+        String separator = "$1 $2 $3";
+        String  result ="";
+        String processed = brandMode.replaceAll(excludeRex, "");
+        if (StringUtils.isBlank(processed)) {
+
+        } else {
+            if (processed.matches(modelRex)) {
+                 result = processed.replaceAll(modelRex, separator);
+            } else {
+
+            }
+        }
+        System.out.println("result  = "+result );
     }
 }

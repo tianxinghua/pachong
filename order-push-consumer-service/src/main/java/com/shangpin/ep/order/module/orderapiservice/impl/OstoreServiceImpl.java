@@ -8,17 +8,21 @@ import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
+import com.shangpin.ep.order.module.sku.bean.HubSku;
 import com.shangpin.ep.order.module.sku.bean.HubSkuCriteria;
 import com.shangpin.ep.order.module.sku.mapper.HubSkuMapper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component("ostoreServiceImpl")
@@ -33,6 +37,9 @@ public class OstoreServiceImpl implements IOrderService {
     HandleException handleException;
     @Autowired
     HubSkuMapper skuDAO;
+
+    @Autowired
+	CommonService commonService;
     
     /**
      * 给对方推送数据
@@ -64,7 +71,10 @@ public class OstoreServiceImpl implements IOrderService {
     		HubSkuCriteria skuCriteria  = new HubSkuCriteria();
         	skuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSkuIdEqualTo(supplierSkuId);
         	skuCriteria.setFields("PRODUCT_SIZE");
-        	return skuDAO.selectByExample(skuCriteria).get(0).getProductSize();
+			List<HubSku> list = skuDAO.selectByExample(skuCriteria);
+
+			return list.get(0).getProductSize();
+
 		} catch (Exception e) {			
 			return "";
 		}
@@ -101,7 +111,7 @@ public class OstoreServiceImpl implements IOrderService {
 			
 			int qty = Integer.valueOf(orderDTO.getDetail().split(",")[0].split(":")[1]);
 			//先通过查询库存接口查询库存,如果库存大于0则下单,否则采购异常
-			String productSize = getProductSize(orderDTO.getSupplierId(),skuId);
+			String productSize = commonService.getProductSize(orderDTO.getSupplierId(),skuId);//getProductSize(orderDTO.getSupplierId(),skuId);
 			if(StringUtils.isNotBlank(productSize)){
 				String size = productSize.replaceAll("\\+", "½");				
 				//查询对方库存接口				

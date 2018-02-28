@@ -405,23 +405,39 @@ public class PendingCommonHandler {
 	}
 
 	public Map<String, String> getThreeMaterialMap() {
-		Map<String, String> firstStaticMap = shangpinRedis
+		Map<String, String> staticMap = shangpinRedis
 				.hgetAll(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY);
-		if (firstStaticMap == null || firstStaticMap.size() < 1) {
+		if (staticMap == null || staticMap.size() < 1) {
 			log.info("第三级别材质的redis为空");
-			firstStaticMap = new HashMap<>();
+			staticMap = new HashMap<>();
 			List<MaterialDTO> materialDTO = dataServiceHandler.getMaterialMappingByMappingLevel((byte) 3);
 			for (MaterialDTO dto : materialDTO) {
-				firstStaticMap.put(dto.getSupplierMaterial().toLowerCase().trim(), dto.getHubMaterial());
+				staticMap.put(dto.getSupplierMaterial().toLowerCase().trim(), dto.getHubMaterial());
 			}
-			if (firstStaticMap.size() > 0) {
-				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY, firstStaticMap);
+			if (staticMap.size() > 0) {
+				shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY, staticMap);
 				shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY,
 						ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME *  6 *12);
 			}
 		}
-		return firstStaticMap;
+		return staticMap;
 	}
+
+
+	public String  getHubMaterialWordFromRedis(String word){
+		if(!shangpinRedis.exists(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY )){
+			//只赋值
+			this.getThreeMaterialMap();
+
+
+		}
+		List<String> mapValue = shangpinRedis.hmget(ConstantProperty.REDIS_EPHUB_THREE_MATERIAL_MAPPING_MAP_KEY ,word.toLowerCase()) ;
+		log.debug("supplier material :"+word + " material :" + mapValue.get(0));
+		return mapValue.get(0);
+
+	}
+
+
 
 	public Map<String, String> getReplaceMaterialMap() {
 		Map<String, String> firstStaticMap = shangpinRedis

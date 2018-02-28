@@ -497,6 +497,42 @@ public class VariableInit {
                 return "";
             }
         }
+        /**
+         *
+         if(matchSizeResult.isPassing()){//通过
+
+         hubSkuPendingDto.setScreenSize(matchSizeResult.getSizeId());
+         hubSkuPendingDto.setHubSkuSizeType(matchSizeResult.getSizeType());
+         hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
+         hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
+         hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
+
+         isHaveMapping = true;
+
+         }else  if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
+         log.info("sku pending 含有多个匹配，不更新："+matchSizeResult.getResult()+"|原始数据："+hubSkuSize);
+         isHaveNoHandle = true;
+         PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
+         skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
+         skuUpdatedVo.setSkuResult(matchSizeResult.getResult());
+         skuVOs.add(skuUpdatedVo);
+         hubSkuPendingDto.setMemo(matchSizeResult.getResult());
+
+         }else  if(matchSizeResult.isFilter()){//有模板没匹配上
+
+         hubSkuPendingDto.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+         hubSkuPendingDto.setHubSkuSizeType("排除");
+         hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
+         hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
+
+         }else {//不做处理
+         isHaveNoHandle = true;
+         PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
+         skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
+         skuUpdatedVo.setSkuResult("没有模板，无法匹配，不做处理");
+         skuVOs.add(skuUpdatedVo);
+         }
+         */
     }
 
 
@@ -1040,19 +1076,19 @@ public class VariableInit {
      * @return
      */
     public boolean replaceMaterialByRedis(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
-    	//材质替换顺序：firstMaterialMap替换不要的字符 、secondMaterialMap词组替换、threeMaterialMap单词替换
-        Map<String, String> firstMaterialMap = pendingCommonHandler.getFirstMaterialMap();
+    	//材质替换顺序：firstMaterialMap 全匹配 、secondMaterialMap 词组替换、threeMaterialMap单词替换
+     //   Map<String, String> firstMaterialMap = pendingCommonHandler.getFirstMaterialMap();
         Map<String, String> secondMaterialMap = pendingCommonHandler.getSecondMaterialMap();
         Map<String, String> threeMaterialMap = pendingCommonHandler.getThreeMaterialMap();
         Map<String, String> replaceMaterialMap = pendingCommonHandler.getReplaceMaterialMap();
         
         String supplierMaterial = replace(spu.getHubMaterial());
         
-        if (StringUtils.isNotBlank(supplierMaterial)&&firstMaterialMap!=null&&firstMaterialMap.containsKey(supplierMaterial.toLowerCase().trim())) {
-            spu.setHubMaterial(firstMaterialMap.get(supplierMaterial.toLowerCase().trim()).trim());
-            hubSpuPending.setHubMaterial(spu.getHubMaterial());
-            supplierMaterial = spu.getHubMaterial();
-        }
+//        if (StringUtils.isNotBlank(supplierMaterial)&&firstMaterialMap!=null&&firstMaterialMap.containsKey(supplierMaterial.toLowerCase().trim())) {
+//            spu.setHubMaterial(firstMaterialMap.get(supplierMaterial.toLowerCase().trim()).trim());
+//            hubSpuPending.setHubMaterial(spu.getHubMaterial());
+//            supplierMaterial = spu.getHubMaterial();
+//        }
         
         Set<String> secondMaterialSet = secondMaterialMap.keySet();
         for (String material : secondMaterialSet) {
@@ -1063,14 +1099,29 @@ public class VariableInit {
              }
         }
         
-        Set<String> threeMaterialSet = threeMaterialMap.keySet();
-        for (String material : threeMaterialSet) {
-        	 if (StringUtils.isNotBlank(supplierMaterial)&&supplierMaterial.toLowerCase().trim().contains(material)) {
-        		 spu.setHubMaterial(supplierMaterial.toLowerCase().trim().replaceAll(material, threeMaterialMap.get(material)).trim());
-             	hubSpuPending.setHubMaterial(spu.getHubMaterial());
-             	 supplierMaterial = spu.getHubMaterial();
-             }
+//        Set<String> threeMaterialSet = threeMaterialMap.keySet();
+//        for (String material : threeMaterialSet) {
+//        	 if (StringUtils.isNotBlank(supplierMaterial)&&supplierMaterial.toLowerCase().trim().contains(material)) {
+//        		 spu.setHubMaterial(supplierMaterial.toLowerCase().trim().replaceAll(material, threeMaterialMap.get(material)).trim());
+//             	hubSpuPending.setHubMaterial(spu.getHubMaterial());
+//             	 supplierMaterial = spu.getHubMaterial();
+//             }
+//        }
+        //拆分材质，每个单词去替换中
+        if(StringUtils.isNotBlank(supplierMaterial)){
+
+            String[] words = this.splitString(supplierMaterial);
+            if(null!=words&&words.length>0){
+
+                supplierMaterial = getMatrial(words);
+
+                hubSpuPending.setHubMaterial(supplierMaterial);
+
+
+
+            }
         }
+
         
         Set<String> replaceMaterialSet = replaceMaterialMap.keySet();
         for (String material : replaceMaterialSet) {
@@ -1091,6 +1142,105 @@ public class VariableInit {
         }
 
     }
+
+    private String getMatrial(String[] words) {
+        String supplierMaterial;
+        StringBuilder builder = new StringBuilder();
+
+
+        for(String word:words){
+            convertMaterial(builder, word,",");
+        }
+        supplierMaterial = builder.toString();
+        return supplierMaterial;
+    }
+
+    /**
+     * 非中文的需要判断前面是否加上空格
+     * @param builder
+     * @param word
+     * @param symbol
+     */
+    private void convertMaterial(StringBuilder builder, String word,String symbol) {
+        String material="";
+        int i=0;
+        i= word.indexOf(symbol);
+        if(i==0){//开始含有符号
+            builder.append(symbol);
+            word = word.substring(1);
+            material = pendingCommonHandler.getHubMaterialWordFromRedis(word);
+            if(StringUtils.isBlank(material)){
+                builder.append(word);
+            }else{
+                builder.append(material);
+            }
+        }else if(i>0){//中间或者结尾还有符号
+            if(i==word.length()-1){//结尾
+                word = word.substring(0,word.length()-1);
+                material = pendingCommonHandler.getHubMaterialWordFromRedis(word);
+                if(StringUtils.isBlank(material)){
+                    if(this.isChinese(word)){
+
+                        builder.append(word).append(symbol);
+                    }else{
+                        builder.append(" ").append(word).append(symbol);
+                    }
+                }else{
+                    builder.append(material).append(symbol);
+                }
+            }else{//中间
+                String[]  wordList = word.split(symbol);
+                int j=1;
+                for(String wd:wordList){
+                    //material 有值 代表着映射的为中文 前面不需要空格
+                    material = pendingCommonHandler.getHubMaterialWordFromRedis(wd);
+                    if(StringUtils.isBlank(material)){
+                        if(this.isChinese(word)) {
+                            builder.append(word);
+                        }else{
+                            if(j==1){//第一个需要非中文的需要加空格
+
+                                builder.append(" ").append(word);
+                            }else{
+                                builder.append(word);
+                            }
+                        }
+                    }else{
+                        builder.append(material);
+                    }
+                    if(j!=wordList.length){
+                        builder.append(symbol);
+                    }
+                    j++;
+                }
+
+            }
+
+        }else{
+            material = pendingCommonHandler.getHubMaterialWordFromRedis(word);
+            if(StringUtils.isBlank(material)){
+                if(this.isChinese(word)) {
+                    builder.append(word);
+                }else{
+                    builder.append(" ").append(word);
+                }
+            }else{
+                builder.append(material);
+            }
+        }
+    }
+
+    private   String[] splitString(String line){
+        return  line.split("\\s+|\\t| ");
+
+    }
+
+    //是否是中文
+    private  boolean isChinese(String str) {
+        String regex = "^[\u4e00-\u9fa5]+$";
+        return str.matches(regex);
+    }
+
     public static String replace(String str) // 识别括号并将括号内容替换的函数
     {
     	if(StringUtils.isBlank(str)){
