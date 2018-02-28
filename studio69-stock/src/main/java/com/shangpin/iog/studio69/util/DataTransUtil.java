@@ -37,7 +37,7 @@ public class DataTransUtil {
 	}
 
 	public static Map<String,String> getGoodsStockList(){
-		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*10, 1000*60*10);
+		OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*10, 1000*60*20, 1000*60*20);
 		Map<String,String> returnMap = new HashMap<String, String>();
 		logger.info("获取所有库存");
 		String data = HttpUtil45.postAuth(url+"GetGoodsStockList", null, outTimeConf, username, password);

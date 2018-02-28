@@ -13,10 +13,8 @@ include 'atelier-ostore-stock'
 include 'synchSupplierIdAndSpId'
 include 'syn-spsku-hub'
 include 'coltorti-v2'
-include 'spinnaker-stock'
-include 'spinnaker-stock-template'
+include 'studio69-stock'
 
 
 
-include 'atelier-ostore-stock'
- include 'theclutcher-stock'
+
