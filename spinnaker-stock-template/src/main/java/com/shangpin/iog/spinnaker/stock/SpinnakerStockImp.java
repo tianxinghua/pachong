@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
@@ -24,12 +27,14 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
 	private static String uri = null;
 	private static String DBContext = null;
 	private static String key = null;
+	private static String season = null;
 	static {
 		if (null == bdl)
 			bdl = ResourceBundle.getBundle("conf");
 		uri = bdl.getString("uri");
 		DBContext = bdl.getString("DBContext");
 		key = bdl.getString("key");
+		season = bdl.getString("season");
 	}
 
 	@Override
@@ -62,7 +67,23 @@ public class SpinnakerStockImp extends AbsUpdateProductStock {
 			logger.info("获取季节码返回结果：" + season_json);
 			return null;
 		}
+		boolean flag = false;
+		Map<String,String> mapSeason = null;
+		if(StringUtils.isNotBlank(season)){
+			mapSeason = new HashMap<>();
+			flag = true;
+			String [] seasons = season.split(",");
+			for(String sea:seasons){
+				mapSeason.put(sea, "1");
+			}
+			
+		}
+		
 		for (Seasoncode obj : season_list.getSeasonCode()) {
+			if(flag&&!mapSeason.containsKey(obj.getSeasonCode())){
+				logger.info("季节被过滤不更新:"+obj.getSeasonCode());
+				continue;
+			}
 			String code = URLEncoder.encode(obj.getSeasonCode(), "UTF-8");
 			String url = uri+"/Myapi/Productslist/GetAllStockForSync?DBContext="+DBContext+"&SeasonCode="+ code + "&typeSync=web&key="+key;
 			String stockData = HttpUtil45.get(url, new OutTimeConfig(1200000,
