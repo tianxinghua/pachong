@@ -13,6 +13,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
 import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 import com.shangpin.pending.product.consumer.common.*;
+import com.shangpin.pending.product.consumer.service.MaterialService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,9 @@ public class PendingHandler extends VariableInit {
 
 	@Autowired
 	SpuPendingMsgHandleService spuPendingMsgHandleService;
+
+	@Autowired
+	MaterialService materialService;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -730,7 +734,7 @@ public class PendingHandler extends VariableInit {
 //            allStatus = false;
 		
 		// 获取材质
-		if (!replaceMaterialByRedis(spu, hubSpuPending))
+		if (!materialService.changeSupplierToHub(spu, hubSpuPending))
             allStatus = false;
 		
 		// 产地映射

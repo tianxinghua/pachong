@@ -915,3 +915,7 @@ shangpin:
              gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetProductSize
              gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetCategory
+       commonProperty:
+             googleKey: AIzaSyA6IpNM1Ubk4bnoxOBuoewb95AUvgmB5Wo
+             supplierId:
+             translateAll: true

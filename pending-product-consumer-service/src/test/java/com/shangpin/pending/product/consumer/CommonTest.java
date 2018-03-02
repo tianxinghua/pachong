@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by lizhongren on 2017/1/19.
@@ -56,23 +53,24 @@ public class CommonTest {
 //        System.out.println("SupplierValueMappingType.TYPE_SIZE.getIndex()=" + SupplierValueMappingType.TYPE_SIZE.getIndex())  ;
         CommonTest test = new CommonTest();
         String line = "4509509HVAT 8697";
-        String[] words = line.split("\\s+",-1);
-        System.out.println("words length "+words.length);
-
-        String line4 = "GY6GMZ FSFFZ HWI86";
-        String[] words4 = line4.split("\\s+",-1);
-        System.out.println("words4 length "+words4.length);
-
-        String line1 = "97%  ,ksjd ksd,kdkd     viscose, 3% 弹性纤维ne  离中国";
-        String[] words1 = line1.split("\\s+|\\t| ");
-        test.setValue(words1);
-        System.out.println("words1 length "+words1.length);
-
-        String line2 = "primo tessuto: 100% 棉/ secondo tessuto: 65% 醋酸纤维 我说呀 啊, 35% 铜氨/ terzo tessuto: 88% poliammide, 12% 弹性纤维n";
-        String[] words2 = line2.split("\\s+|\\t| ");
-        test.setValue(words2);
-        System.out.println("words2 length "+words2.length);
-        test.test();
+//        String[] words = line.split("\\s+",-1);
+//        System.out.println("words length "+words.length);
+//
+//        String line4 = "GY6GMZ FSFFZ HWI86";
+//        String[] words4 = line4.split("\\s+",-1);
+//        System.out.println("words4 length "+words4.length);
+//
+//        String line1 = "97%  ,ksjd ksd,kdkd     viscose, 3% 弹性纤维ne  离中国";
+//        String[] words1 = line1.split("\\s+|\\t| ");
+//        test.setValue(words1);
+//        System.out.println("words1 length "+words1.length);
+//
+//        String line2 = "primo tessuto: 100% 棉/ secondo tessuto: 65% 醋酸纤维 我说呀 啊, 35% 铜氨/ terzo tessuto: 88% poliammide, 12% 弹性纤维n";
+//        String[] words2 = line2.split("\\s+|\\t| ");
+//        test.setValue(words2);
+//        System.out.println("words2 length "+words2.length);
+//        test.test();
+        test.getSysEnv();
     }
 
     public void setValue(String[] words){
@@ -157,5 +155,31 @@ public class CommonTest {
             }
         }
         System.out.println("result  = "+result );
+    }
+
+    public  void  getSysEnv(){
+
+        System.setProperty("GOOGLE_APPLICATION_CREDENTIALS","D:\\empolder\\google\\MyTranslation-d51da5164bfd.json");
+        Map map = System.getenv();
+
+        Iterator it = map.entrySet().iterator();
+        while(it.hasNext())
+        {
+            Map.Entry entry = (Map.Entry)it.next();
+            System.out.print(entry.getKey()+"=");
+            System.out.println(entry.getValue());
+        }
+        System.out.println("----------------------------------------------");
+        Properties properties = System.getProperties();
+        Iterator it1 =  properties.entrySet().iterator();
+        while(it1.hasNext())
+        {
+            Map.Entry entry = (Map.Entry)it1.next();
+            System.out.print(entry.getKey()+"=");
+            System.out.println(entry.getValue());
+        }
+        String credentialsPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
+        System.out.println("GOOGLE_APPLICATION_CREDENTIALS="+ credentialsPath);
+        System.out.println("path ="+ System.getenv("path"));
     }
 }
