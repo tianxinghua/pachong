@@ -54,7 +54,8 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	 */
 	private String verifyUseBrandNo(String hubBrandNo, String brandMode) {
 		HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
-		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
+		criteria.setPageSize(50);
+		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo).andHubCategoryNoIsNull();
 		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = brandModelRuleManager.findByCriteria(criteria);
 		if (CollectionUtils.isEmpty(hubBrandModelRuleDtoList)) {
 			return brandMode;
@@ -168,9 +169,9 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	}
 	/**
 	 * 根据品牌编号和品类进行校验货号是否符合规则
-	 * @param hubBrandNo 品牌编号
-	 * @param hubCategory 品类
-	 * @param brandMode 货号
+	 * @param hubBrandModelRuleDtoList 品牌编号
+	 * @param brandMode 品类
+
 	 * @return 通过则非空字符串货号返回，否则返回null
 	 */
 	private String verify(List<HubBrandModelRuleDto> hubBrandModelRuleDtoList, String brandMode) {

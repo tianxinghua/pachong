@@ -153,7 +153,8 @@ public class PendingProductService extends PendingSkuService{
                         pendingProduct.setUpdateTimeStr(null != pendingSpu.getUpdateTime() ? DateTimeUtil.getTime(pendingSpu.getUpdateTime()) : "");
                         pendingProduct.setCreatTimeStr(null != pendingSpu.getCreateTime() ? DateTimeUtil.getTime(pendingSpu.getCreateTime()) : ""); 
                         pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : ""); 
-                        pendingProduct.setErrorReason(null != errorReasons ? errorReasons.get(pendingSpu.getSpuPendingId()) : "");  
+                        pendingProduct.setErrorReason(null != errorReasons ? errorReasons.get(pendingSpu.getSpuPendingId()) : "");
+						pendingProduct.setSupplierSpuDesc(null != pendingSpu.getSpuDesc() ? pendingSpu.getSpuDesc() : "");
                         products.add(pendingProduct);
                     }
                     pendingProducts.setProduts(products);
