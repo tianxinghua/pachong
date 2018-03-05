@@ -118,40 +118,6 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 			return recursiveVerifyWithCategory(hubBrandNo, hubCategoryNo, brandMode);
 		}
 	}
-
-	@Override
-	public String replaceSymbol(String hubBrandNo, String hubCategoryNo, String brandMode, String symbol) {
-		HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
-		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
-		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = brandModelRuleManager.findByCriteria(criteria);
-		if (CollectionUtils.isEmpty(hubBrandModelRuleDtoList)) {
-			return brandMode;
-		} else {
-			String result = null;
-			String modelRex="",excludeRex="",separator="";
-			for (HubBrandModelRuleDto hubBrandModelRuleDto : hubBrandModelRuleDtoList) {
-				modelRex = hubBrandModelRuleDto.getModelRex();
-				excludeRex = hubBrandModelRuleDto.getExcludeRex();
-				separator = hubBrandModelRuleDto.getFormatSeparator();
-				if (StringUtils.isBlank(modelRex) || StringUtils.isBlank(excludeRex) || StringUtils.isBlank(separator)) {
-					continue;
-				}
-				String processed = brandMode.replaceAll(excludeRex, symbol);
-				if (StringUtils.isBlank(processed)) {
-					log.warn("系统检测到加工之后的品牌方型号为空，品牌方型号校验不通过");
-					continue;
-				} else {
-					if (processed.matches(modelRex)) {
-						result = processed.replaceAll(modelRex, separator);
-					} else {
-						continue;
-					}
-				}
-			}
-			return result;
-		}
-	}
-
 	/**
 	 * 根据品类递归结合品牌校验货号规则
 	 * @param hubBrandNo 品牌编号
@@ -203,8 +169,8 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	}
 	/**
 	 * 根据品牌编号和品类进行校验货号是否符合规则
-
-	 * @param hubBrandModelRuleDtoList 品类
+	 * @param hubBrandNo 品牌编号
+	 * @param hubCategory 品类
 	 * @param brandMode 货号
 	 * @return 通过则非空字符串货号返回，否则返回null
 	 */
@@ -231,8 +197,6 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 			}
 			return result;
 	}
-
-
 	
 	/**
 	 * 获取规则
