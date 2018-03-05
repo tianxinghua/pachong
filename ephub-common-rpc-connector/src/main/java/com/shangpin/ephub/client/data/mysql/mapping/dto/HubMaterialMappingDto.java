@@ -25,6 +25,11 @@ public class HubMaterialMappingDto implements Serializable {
     private Byte mappingLevel;
 
     /**
+     * 0:翻译 1:人工
+     */
+    private Byte source;
+
+    /**
      * 创建时间
      */
     private Date createTime;
@@ -93,6 +98,14 @@ public class HubMaterialMappingDto implements Serializable {
         this.mappingLevel = mappingLevel;
     }
 
+    public Byte getSource() {
+        return source;
+    }
+
+    public void setSource(Byte source) {
+        this.source = source;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -159,6 +172,7 @@ public class HubMaterialMappingDto implements Serializable {
         sb.append(", supplierMaterial=").append(supplierMaterial);
         sb.append(", hubMaterial=").append(hubMaterial);
         sb.append(", mappingLevel=").append(mappingLevel);
+        sb.append(", source=").append(source);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
         sb.append(", updateTime=").append(updateTime);
@@ -187,6 +201,7 @@ public class HubMaterialMappingDto implements Serializable {
             && (this.getSupplierMaterial() == null ? other.getSupplierMaterial() == null : this.getSupplierMaterial().equals(other.getSupplierMaterial()))
             && (this.getHubMaterial() == null ? other.getHubMaterial() == null : this.getHubMaterial().equals(other.getHubMaterial()))
             && (this.getMappingLevel() == null ? other.getMappingLevel() == null : this.getMappingLevel().equals(other.getMappingLevel()))
+            && (this.getSource() == null ? other.getSource() == null : this.getSource().equals(other.getSource()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
@@ -204,6 +219,7 @@ public class HubMaterialMappingDto implements Serializable {
         result = prime * result + ((getSupplierMaterial() == null) ? 0 : getSupplierMaterial().hashCode());
         result = prime * result + ((getHubMaterial() == null) ? 0 : getHubMaterial().hashCode());
         result = prime * result + ((getMappingLevel() == null) ? 0 : getMappingLevel().hashCode());
+        result = prime * result + ((getSource() == null) ? 0 : getSource().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());

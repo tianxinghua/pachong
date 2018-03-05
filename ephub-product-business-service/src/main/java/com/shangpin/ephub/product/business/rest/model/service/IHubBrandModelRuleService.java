@@ -32,4 +32,14 @@ public interface IHubBrandModelRuleService {
 	 */
 	String regexVerifyWithCategory(String hubBrandNo, String hubCategoryNo, String brandMode);
 
+	/**
+	 *  查找规则 替换符号
+	 * @param hubBrandNo
+	 * @param hubCategoryNo
+	 * @param brandMode
+	 * @param symbol
+	 * @return
+	 */
+	String replaceSymbol(String hubBrandNo, String hubCategoryNo, String brandMode,String symbol);
+
 }
