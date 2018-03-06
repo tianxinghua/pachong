@@ -107,12 +107,12 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		Map<String, String> skustock = new HashMap<>(skuNo.size());
 		Map<String, String> stockMap = new HashMap<>();
 		List<Product> productList = null;
-		// Products products = null;
+		Products products = null;
 		try {
 			logger.info("拉取stefaniamode数据开始");
-
+			FtpUtil ftpUtil = new FtpUtil();
 			Map<String, String> mongMap = new HashMap<>();
-			productList = getProductList(url);
+			products = ftpUtil.downloadFTP();
 			logger.info("拉取stefaniamode数据成功");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -121,32 +121,38 @@ public class GrabStockImp extends AbsUpdateProductStock {
 
 		} 
 		String skuId = "";
-		for (Product product : productList) {
+		if(null!=products){
+			productList = products.getProducts();
+            if(null!=productList){
 
-			Items items = product.getItems();
-			if (null == items) {
-				continue;
-			}
-			List<Item> itemList = items.getItems();
-			if (null == itemList)
-				continue;
-			for (Item item : items.getItems()) {
-				if (StringUtils.isNotBlank(item.getStock())) {
-					skuId = item.getItem_id();
-					if (skuId.indexOf("½") > 0) {
-						skuId = skuId.replace("½", "+");
+				for (Product product : productList) {
+
+					Items items = product.getItems();
+					if (null == items) {
+						continue;
 					}
-					stockMap.put(skuId, item.getStock());
+					List<Item> itemList = items.getItems();
+					if (null == itemList)
+						continue;
+					for (Item item : items.getItems()) {
+						if (StringUtils.isNotBlank(item.getStock())) {
+							skuId = item.getItem_id();
+							if (skuId.indexOf("½") > 0) {
+								skuId = skuId.replace("½", "+");
+							}
+							stockMap.put(skuId, item.getStock());
+						}
+					}
 				}
 			}
-		}
 
-		for (String skuno : skuNo) {
+			for (String skuno : skuNo) {
 
-			if (stockMap.containsKey(skuno)) {
-				skustock.put(skuno, stockMap.get(skuno));
-			} else {
-				skustock.put(skuno, "0");
+				if (stockMap.containsKey(skuno)) {
+					skustock.put(skuno, stockMap.get(skuno));
+				} else {
+					skustock.put(skuno, "0");
+				}
 			}
 		}
 		logger.info("stefaniamode赋值库存数据成功");
