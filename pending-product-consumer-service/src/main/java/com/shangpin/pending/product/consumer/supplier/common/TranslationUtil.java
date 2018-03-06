@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by lizhongren on 2018/3/2.
  *
@@ -21,11 +23,20 @@ public class TranslationUtil {
     @Autowired
     MaterialProperties commonProperties;
 
+    private Translate translate = null;
+
+    @PostConstruct
+    public void postConstruct() {
+        translate = TranslateOptions.newBuilder().setApiKey(commonProperties.getGoogleKey()).build().getService();
+    }
+
+
 
 
     public String translate(String text ){
         try {
-            Translate translate = TranslateOptions.newBuilder().setApiKey(commonProperties.getGoogleKey()).build().getService();//TranslateOptions.getDefaultInstance().getService();
+            long start = System.currentTimeMillis();
+           // Translate translate = TranslateOptions.newBuilder().setApiKey(commonProperties.getGoogleKey()).build().getService();//TranslateOptions.getDefaultInstance().getService();
 
 
             // The text to translate
@@ -46,7 +57,8 @@ public class TranslationUtil {
 //        System.out.printf("Text: %s%n", text);
 //        System.out.printf("Translation: %s%n", translation.getTranslatedText());
             String translationTxt  =  translation.getTranslatedText();
-            log.info("before=" + text  +" after=" +translationTxt);
+            log.info("before=" + text  +" after=" +translationTxt  +  "  耗时："+ (System.currentTimeMillis() - start ));
+
             return translationTxt;
         } catch (Exception e) {
             log.error("翻译失败：" + e.getMessage(),e);

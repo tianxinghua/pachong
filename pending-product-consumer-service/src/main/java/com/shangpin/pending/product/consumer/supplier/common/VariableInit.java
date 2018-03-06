@@ -25,6 +25,7 @@ import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
 import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
 import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
@@ -495,48 +496,18 @@ public class VariableInit {
         if(null==matchSizeResult){
             return "";
         }else{
-            if(matchSizeResult.isPassing()) {
+            if(matchSizeResult.isPassing()){//通过
                 return (null==matchSizeResult.getSizeId()||"null".equals(matchSizeResult.getSizeId())?"":matchSizeResult.getSizeId())+","+ matchSizeResult.getSizeType()+":"+matchSizeResult.getSizeValue();
-            }else{
+            }else  if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
+                log.info("sku pending 含有多个匹配，不更新："+matchSizeResult.getResult()+"|原始数据："+supplierSize);
+                return "";
+            }else  if(matchSizeResult.isFilter()){//有模板没匹配上
+                return ConstantProperty.SIZE_EXCLUDE;
+            }else {//不做处理
                 return "";
             }
         }
-        /**
-         *
-         if(matchSizeResult.isPassing()){//通过
 
-         hubSkuPendingDto.setScreenSize(matchSizeResult.getSizeId());
-         hubSkuPendingDto.setHubSkuSizeType(matchSizeResult.getSizeType());
-         hubSkuPendingDto.setSkuState(SpuState.INFO_IMPECCABLE.getIndex());
-         hubSkuPendingDto.setSpSkuSizeState(SkuState.INFO_IMPECCABLE.getIndex());
-         hubSkuPendingDto.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-
-         isHaveMapping = true;
-
-         }else  if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
-         log.info("sku pending 含有多个匹配，不更新："+matchSizeResult.getResult()+"|原始数据："+hubSkuSize);
-         isHaveNoHandle = true;
-         PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
-         skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
-         skuUpdatedVo.setSkuResult(matchSizeResult.getResult());
-         skuVOs.add(skuUpdatedVo);
-         hubSkuPendingDto.setMemo(matchSizeResult.getResult());
-
-         }else  if(matchSizeResult.isFilter()){//有模板没匹配上
-
-         hubSkuPendingDto.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
-         hubSkuPendingDto.setHubSkuSizeType("排除");
-         hubSkuPendingDto.setFilterFlag(FilterFlag.INVALID.getIndex());
-         hubSkuPendingDto.setSkuState(SkuState.INFO_IMPECCABLE.getIndex());
-
-         }else {//不做处理
-         isHaveNoHandle = true;
-         PendingSkuUpdatedVo skuUpdatedVo = new PendingSkuUpdatedVo();
-         skuUpdatedVo.setSkuPendingId(hubSkuPendingDto.getSkuPendingId());
-         skuUpdatedVo.setSkuResult("没有模板，无法匹配，不做处理");
-         skuVOs.add(skuUpdatedVo);
-         }
-         */
     }
 
 

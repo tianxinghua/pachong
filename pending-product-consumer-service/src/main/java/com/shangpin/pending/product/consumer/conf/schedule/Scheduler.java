@@ -69,7 +69,7 @@ public class Scheduler {
 	}
 
 
-	@Scheduled(cron = "0 0/1 * * * ?")
+//	@Scheduled(cron = "0 0/1 * * * ?")
 	public void refreshMaterial() {
 		try {
 			if(materialProperties.isRefresh()){

@@ -48,7 +48,10 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
+
+
+
 	@Scheduled(cron = "0/15 * * * * ?")
 	public void refreshCategoryTask() {
 		try {
@@ -58,7 +61,7 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Scheduled(cron = "0/15 * * * * ?")
 	public void refreshColorTask() {
 		try {
@@ -68,13 +71,24 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Scheduled(cron = "0/30 * * * * ?")
 	public void refreshSpuMergeTask() {
 		try {
 			supplierProductPictureService.processProduct(InfoState.Union.getIndex(),true);
 		} catch (Throwable e) {
 			log.info("=======系统扫描同款需要重新推送的数据事件发生异常======",e);
+			e.printStackTrace();
+		}
+	}
+
+
+	@Scheduled(cron = "0/15 * * * * ?")
+	public void refreshMaterial() {
+		try {
+			supplierProductPictureService.processProduct(InfoState.RefreshMaterial.getIndex(),false);
+		} catch (Throwable e) {
+			log.info("×××××系统扫描需要重新推送的数据事件发生异常××××××××××",e);
 			e.printStackTrace();
 		}
 	}
