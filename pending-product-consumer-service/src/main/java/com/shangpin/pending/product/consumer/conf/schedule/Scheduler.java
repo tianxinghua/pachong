@@ -3,6 +3,9 @@ package com.shangpin.pending.product.consumer.conf.schedule;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.pending.product.consumer.service.MaterialProperties;
+import com.shangpin.pending.product.consumer.service.MaterialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -29,9 +32,17 @@ public class Scheduler {
 	
 	@Autowired
 	PendingHandler pendingHandler;
+
+	@Autowired
+	MaterialProperties materialProperties;
 	
 	@Autowired
 	HubFilterService hubFilterService;
+
+	@Autowired
+	MaterialService materialService;
+
+
 	@Autowired
 	VariableInit variableInit;
 	@Scheduled(cron = "0 10 8 * * ?")
@@ -55,6 +66,24 @@ public class Scheduler {
 			e.printStackTrace();
 		}
 		
+	}
+
+
+	@Scheduled(cron = "0 0/1 * * * ?")
+	public void refreshMaterial() {
+		try {
+			if(materialProperties.isRefresh()){
+				List<HubSupplierSpuDto> supplierSpuList  = materialService.getSupplierSpuList();
+				if(null!=supplierSpuList&&supplierSpuList.size()>0){
+
+					materialService.translateMaterial(supplierSpuList);
+				}
+			}
+			;
+		} catch (Throwable e) {
+			log.info("=======刷新材质发生异常======",e);
+			e.printStackTrace();
+		}
 	}
 	
 //	@Scheduled(cron = "0/30 * * * * ?")

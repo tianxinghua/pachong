@@ -5,19 +5,24 @@ package com.shangpin.pending.product.consumer.service;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.*;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.util.RegexUtil;
+import com.shangpin.ephub.response.HubResponse;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.enumeration.DataBusinessStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.InfoState;
 import com.shangpin.pending.product.consumer.common.enumeration.MaterialSourceEnum;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
-import com.shangpin.pending.product.consumer.supplier.common.CommonProperties;
+import com.shangpin.pending.product.consumer.rest.dto.MaterialQuery;
 import com.shangpin.pending.product.consumer.supplier.common.PendingCommonHandler;
 import com.shangpin.pending.product.consumer.supplier.common.TranslationUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,20 +31,39 @@ import java.util.*;
  * Created by lizhongren on 2018/3/1.
  */
 @Service
+@Slf4j
 public class MaterialService {
 
     @Autowired
-    CommonProperties properties;
+    MaterialProperties properties;
+
+
 
 
     @Autowired
     private HubMaterialMappingGateWay hubMaterialMappingGateWay;
 
     @Autowired
+    private HubSupplierSpuGateWay supplierSpuGateWay;
+
+    @Autowired
+    private HubSpuPendingGateWay spuPendingGateWay;
+
+    @Autowired
     TranslationUtil translationUtil;
 
     @Autowired
     PendingCommonHandler pendingCommonHandler;
+
+    /**
+     * 查询supplierSpuNum 的数量
+     */
+    int searchSupplierSpuNum = 500;
+
+    /**
+     * 一次需要翻译的数量
+     */
+    int PAGE_SIZE = 200;
 
 
     static Map<String,String> supplierIdMap = null;
@@ -59,6 +83,163 @@ public class MaterialService {
             // 二级 词组替换 三级 单词替换
             return replaceMaterialByRedis(spu,hubSpuPending);
         }
+    }
+
+
+    public boolean translateMaterial(HubSpuPendingDto dto,String supplierMaterial){
+
+        if(StringUtils.isBlank(supplierMaterial)) return true;
+
+        String hubMaterial = this.getHubMaterialOfFirstLevel(supplierMaterial);
+        if(StringUtils.isBlank(hubMaterial)) {
+            //材质字典中没有
+
+            //第一级匹配
+            if (firstLevelTranslation(dto, supplierMaterial)) {
+                return true;
+            } else {
+                // 二级 词组替换 三级 单词替换
+                return replaceMaterialByRedis(dto);
+            }
+
+
+        }else{
+            dto.setHubMaterial(hubMaterial);
+            if (!RegexUtil.excludeLetter(hubMaterial)) {
+                // 材质含有英文 返回false
+                return false;
+            } else {
+                return true;
+            }
+
+        }
+
+    }
+
+    /**
+     * 获取需要刷新材质的商品
+     * @return
+     */
+    public  List<HubSupplierSpuDto> getSupplierSpuList(){
+        HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+        criteria.createCriteria().andInfoStateEqualTo(InfoState.RefreshMaterial.getIndex().byteValue());
+        criteria.setPageNo(1);
+        criteria.setPageSize(searchSupplierSpuNum);
+        List<HubSupplierSpuDto> products = supplierSpuGateWay.selectByCriteria(criteria);
+        if(products!=null&&products.size()>0){
+            List<Long> supplierSpuIdList= new ArrayList<>();
+            for(HubSupplierSpuDto supplierSpuDto : products){
+                supplierSpuIdList.add(supplierSpuDto.getSupplierSpuId());
+            }
+            this.updateSupplierInfoState(supplierSpuIdList);
+        }
+        return products;
+    }
+
+
+    public void translateMaterial(List<HubSupplierSpuDto> supplierSpuList){
+        try {
+            int  i= 0;
+            Map<Long,String> supplierMaterialMap = new HashMap<>();
+            //每二百条处理一次
+            List<Long> supplierSpuPendingIdList = new ArrayList<>();
+
+            for(HubSupplierSpuDto supplierSpuDto:supplierSpuList){
+
+                supplierMaterialMap.put(supplierSpuDto.getSupplierSpuId(),supplierSpuDto.getSupplierMaterial());
+
+                if(i%199==0){
+                    if(i!=0){
+                        //翻译
+                        List<HubSpuPendingDto>  spuPendingDtoList = this.searchMaterial(supplierSpuPendingIdList);
+                        translateMaterial(spuPendingDtoList,supplierMaterialMap);
+                        supplierSpuPendingIdList = new ArrayList<>();
+                    }
+                }
+                supplierSpuPendingIdList.add(supplierSpuDto.getSupplierSpuId());
+                i++;
+            }
+            //补不够200的查询
+            if(supplierSpuPendingIdList.size()>0){
+
+                List<HubSpuPendingDto>  spuPendingDtoList = this.searchMaterial(supplierSpuPendingIdList);
+                //翻译
+                translateMaterial(spuPendingDtoList,supplierMaterialMap);
+            }
+            log.info("翻译处理成功");
+
+        } catch (Exception e) {
+            log.error("update  error. reason :"+ e.getMessage(),e);
+
+        }
+    }
+
+
+    private  List<HubSpuPendingDto>   searchMaterial(List<Long> supplierSpuIdList) throws Exception{
+
+        HubSpuPendingCriteriaDto criterial = new  HubSpuPendingCriteriaDto();
+        criterial.setPageSize(PAGE_SIZE);
+        criterial.createCriteria().andSupplierSpuIdIn(supplierSpuIdList)
+                .andMaterialStateEqualTo(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue()).andHubMaterialIsNotNull()
+        .andHubMaterialNotEqualTo("");
+
+        return spuPendingGateWay.selectByCriteria(criterial);
+
+    }
+
+
+    private void translateMaterial(List<HubSpuPendingDto> spuPendingDtoList,Map<Long,String> supplierMaterialMap) {
+        if(null!=spuPendingDtoList&&spuPendingDtoList.size()>0){
+
+            spuPendingDtoList.forEach(dto->{
+                HubSpuPendingDto updateDto =new HubSpuPendingDto();
+                updateDto.setSpuPendingId(dto.getSpuPendingId());
+                if(this.translateMaterial(dto,supplierMaterialMap.get(dto.getSupplierSpuId()))){
+
+                    updateDto.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+                }else{
+                    updateDto.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+                }
+                updateDto.setHubMaterial(dto.getHubMaterial());
+                try {
+                    spuPendingGateWay.updateByPrimaryKeySelective(updateDto);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            });
+        }
+    }
+
+
+    private boolean firstLevelTranslation(HubSpuPendingDto dto,String supplierMaterial) {
+
+        String  hubMaterial = "";
+        if(StringUtils.isNotBlank(supplierMaterial)){
+            //判断是否需要翻译翻译
+
+            hubMaterial = translationUtil.translate(supplierMaterial.toLowerCase());
+            //插入到材质表中
+            if (!RegexUtil.excludeLetter(hubMaterial)) {
+                // 材质含有英文 返回false
+                this.saveMaterialToDB(supplierMaterial,hubMaterial, DataBusinessStatus.NO_PUSH);
+
+            } else {
+                this.saveMaterialToDB(supplierMaterial,hubMaterial,DataBusinessStatus.PUSH);
+
+            }
+
+        }
+        dto.setHubMaterial(hubMaterial);
+        if (!RegexUtil.excludeLetter(hubMaterial)) {
+            // 材质含有英文 返回false
+            return false;
+        } else {
+            return true;
+        }
+
+
+
     }
 
     private boolean firstLevelTranslation(PendingSpu spu, HubSpuPendingDto hubSpuPending) {
@@ -186,6 +367,70 @@ public class MaterialService {
             return false;
         } else {
             hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+            return true;
+        }
+
+    }
+
+
+    private void updateSupplierInfoState(Long  supplierSpuId) {
+        HubSupplierSpuDto hubSupplierSpu = new HubSupplierSpuDto();
+        hubSupplierSpu.setSupplierSpuId(supplierSpuId);
+        hubSupplierSpu.setInfoState((byte)0);
+        hubSupplierSpu.setUpdateTime(new Date());
+        supplierSpuGateWay.updateByPrimaryKeySelective(hubSupplierSpu);
+    }
+
+    /**
+     * 回复供货商数据的刷新状态
+     * @param supplierSpuId
+     */
+    private void updateSupplierInfoState(List<Long>  supplierSpuId) {
+
+
+
+        HubSupplierSpuCriteriaDto criteriaDto =new HubSupplierSpuCriteriaDto();
+        criteriaDto.createCriteria().andSupplierSpuIdIn(supplierSpuId);
+
+        HubSupplierSpuDto supplierSpuDto = new HubSupplierSpuDto();
+        supplierSpuDto.setInfoState((byte)0);
+        supplierSpuDto.setUpdateTime(new Date());
+        HubSupplierSpuWithCriteriaDto criterial = new HubSupplierSpuWithCriteriaDto(supplierSpuDto,criteriaDto);
+
+        supplierSpuGateWay.updateByCriteriaSelective(criterial);
+    }
+
+    private boolean replaceMaterialByRedis(HubSpuPendingDto hubSpuPending) {
+        //材质替换顺序：secondMaterialMap 词组替换、threeMaterialMap单词替换
+
+        Map<String, String> secondMaterialMap = pendingCommonHandler.getSecondMaterialMap();
+
+
+        String hubMaterial = replace(hubSpuPending.getHubMaterial());
+
+        Set<String> secondMaterialSet = secondMaterialMap.keySet();
+        for (String material : secondMaterialSet) {
+            if (StringUtils.isNotBlank(hubMaterial)&&hubMaterial.toLowerCase().trim().contains(material)) {
+                hubMaterial = hubMaterial.toLowerCase().trim().replaceAll(material, secondMaterialMap.get(material)).trim();
+            }
+        }
+        //拆分材质，每个单词去替换中
+        if(StringUtils.isNotBlank(hubMaterial)){
+
+            String[] words = this.splitString(hubMaterial);
+            if(null!=words&&words.length>0){
+                hubMaterial = getMatrial(words);
+
+            }
+        }
+        hubSpuPending.setHubMaterial(hubMaterial);
+
+        if (!RegexUtil.excludeLetter(hubMaterial)) {
+
+            // 材质含有英文 返回false
+            return false;
+        } else {
+
             return true;
         }
 

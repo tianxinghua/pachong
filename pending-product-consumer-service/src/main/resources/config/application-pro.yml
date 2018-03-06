@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: ${rabbitmq.host:172.20.11.49}
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -972,3 +972,8 @@ shangpin:
              gmsSizeUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetProductSize
              gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetCategory
+       translateProperty:
+             googleKey: AIzaSyA6IpNM1Ubk4bnoxOBuoewb95AUvgmB5Wo
+             supplierId:
+             translateAll: true
+             refresh: ${translateProperty.refresh:true}
