@@ -126,8 +126,8 @@ public class MaterialService {
         String hubMaterial = hubSpuPending.getHubMaterial();
 
         boolean result =  replaceMaterial(hubSpuPending);
-        log.info("一二三级翻译总耗时 =="+ (System.currentTimeMillis()- start ));
-        if(StringUtils.isBlank(hubMaterial)){
+        log.debug("一二三级翻译总耗时 =="+ (System.currentTimeMillis()- start ));
+        if(StringUtils.isNotBlank(hubMaterial)){
             if(!hubMaterial.equals(hubSpuPending.getHubMaterial())){
                 // 处理过 更新
                 if(result){
@@ -312,7 +312,7 @@ public class MaterialService {
                 this.saveMaterialMapping(supplierMaterial,hubMaterial,DataBusinessStatus.PUSH);
             }
         }
-
+        hubMaterial = hubMaterial.replaceAll("％","%");
         hubSpuPending.setHubMaterial(hubMaterial);
         if (!RegexUtil.excludeLetter(hubMaterial)) {
             hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());;
@@ -399,7 +399,7 @@ public class MaterialService {
             return false;
         }
 
-        log.info("after first translate material  =  " + supplierMaterial);
+        log.debug("after first translate material  =  " + supplierMaterial);
         //词组处理
         Set<String> secondMaterialSet = secondMaterialMap.keySet();
         for (String material : secondMaterialSet) {
@@ -429,7 +429,7 @@ public class MaterialService {
             }
         }
 
-        log.info(" after 2,3 translate =" + hubSpuPending.getHubMaterial());
+        log.debug(" after 2,3 translate =" + hubSpuPending.getHubMaterial());
 
         if (!RegexUtil.excludeLetter(hubSpuPending.getHubMaterial())) {
             hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
