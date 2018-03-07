@@ -920,11 +920,13 @@ public class VariableInit {
     }
 
     protected boolean setBrandModel(PendingSpu spu, HubSpuPendingDto hubSpuPending) throws Exception {
-        boolean result = true;
-        String spuModel = "";
-        log.info("校验货号参数： 货号:" + spu.getSpuModel().trim().toUpperCase() + " 品牌:" + hubSpuPending.getHubBrandNo() +" 品类:" + hubSpuPending.getHubCategoryNo()  );
-        if (StringUtils.isNotBlank(hubSpuPending.getHubBrandNo())&&StringUtils.isNotBlank(spu.getSpuModel())) {
-            BrandModelDto queryDto = new BrandModelDto();
+        boolean result = false;
+
+
+       if (StringUtils.isNotBlank(hubSpuPending.getHubBrandNo())&&StringUtils.isNotBlank(spu.getSpuModel())) {
+//           log.info("校验货号参数： 货号:" + spu.getSpuModel().trim().toUpperCase() + " 品牌:" + hubSpuPending.getHubBrandNo() +" 品类:" + hubSpuPending.getHubCategoryNo()  );
+
+           BrandModelDto queryDto = new BrandModelDto();
             queryDto.setBrandMode(spu.getSpuModel().trim().toUpperCase());
             queryDto.setHubBrandNo(hubSpuPending.getHubBrandNo());
             queryDto.setHubCategoryNo(hubSpuPending.getHubCategoryNo());
@@ -935,18 +937,19 @@ public class VariableInit {
                 if (verify.isPassing()) {
                     hubSpuPending.setSpuModel(verify.getBrandMode());
                     hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+                    result = true;
                 } else {
-                    result = false;
+
                     hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
                 }
 
             } else {
-                result = false;
+
                 hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
             }
 
         }else{
-            result = false;
+
             hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }
 

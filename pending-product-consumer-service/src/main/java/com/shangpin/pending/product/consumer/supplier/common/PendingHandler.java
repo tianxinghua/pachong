@@ -296,9 +296,9 @@ public class PendingHandler extends VariableInit {
 
 			HubSpuPendingDto updateSpuPending = new HubSpuPendingDto();
 			updateSpuPending.setUpdateTime(new Date());
-			if(materialService.changeSupplierToHub(spuPendingDto,updateSpuPending)){
-				dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
-			}
+			materialService.changeSupplierToHub(spuPendingDto,updateSpuPending);
+			dataServiceHandler.updatePendingSpu(existSpuPendingDto.getSpuPendingId(), updateSpuPending);
+
 
 		}
 	}
