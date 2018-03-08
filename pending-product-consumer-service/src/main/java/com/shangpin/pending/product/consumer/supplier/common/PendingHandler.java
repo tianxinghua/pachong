@@ -666,11 +666,23 @@ public class PendingHandler extends VariableInit {
 		}
 
 		if (null != hubSpuDto) {
-			// 直接复制HUB-SPU里的信息 ，SPU状态 直接为待审核
-			setColorMapping(spu, hubSpuPending);
+			//--------------- 直接复制HUB-SPU里的信息 ，SPU状态 直接为待审核
+
+			//先校验颜色
+			if (setColorMapping(spu, hubSpuPending)){
+				hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+			}else{
+				hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
+			}
+            //校验季节
+			setSeasonMapping(spu, hubSpuPending);
+
 			if(spu.getPicState()==PicState.NO_PIC.getIndex()){
 				hubSpuPending.setPicState(PicState.NO_PIC.getIndex());
 			}
+
+
+
 			objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
 			setShootState(hubSpuPending);
 			dataServiceHandler.savePendingSpu(hubSpuPending);
@@ -1048,12 +1060,12 @@ public class PendingHandler extends VariableInit {
 			}else{
 
 				String[] sizeAndIdArray = hubSize.split(",");
-				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
+
 				String spSizeTypeAndSize =   sizeAndIdArray[1];
 				hubSkuPending.setHubSkuSizeType(spSizeTypeAndSize.substring(0,spSizeTypeAndSize.indexOf(":")));
 				hubSkuPending.setHubSkuSize(spSizeTypeAndSize.substring(spSizeTypeAndSize.indexOf(":")+1,spSizeTypeAndSize.length()));
 				hubSkuPending.setScreenSize(sizeAndIdArray[0]);
-
+				hubSkuPending.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
 				hubSkuPending.setSpSkuSizeState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
 				hubSkuPending.setSkuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 			}

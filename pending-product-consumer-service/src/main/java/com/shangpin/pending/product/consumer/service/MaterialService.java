@@ -604,4 +604,8 @@ public class MaterialService {
         return  line.split("\\s+|\\t| ");
 
     }
+
+    private void replaceExcludeLetter(){
+
+    }
 }

@@ -144,7 +144,7 @@ public class TaskImportService {
 //			}else{
 //				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
 //			}
-			hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
+			hubSkuPendingDto.setSkuState( SpuState.INFO_IMPECCABLE.getIndex());
 			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
 			hubSkuPendingDto.setFilterFlag((byte)1);
 		} else {
@@ -152,7 +152,12 @@ public class TaskImportService {
 				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
 				//此尺码含有多个尺码类型，需要手动选择
 				hubSkuPendingDto.setFilterFlag((byte)1);
-				hubSkuPendingDto.setMemo("此尺码含有多个尺码类型，需要手动选择");
+				hubSkuPendingDto.setMemo("此尺码含有多个尺码类型");
+			}else  if(hubPendingSkuCheckResult.isFilter()){//有模板没匹配上
+				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
+				hubSkuPendingDto.setMemo("此尺码过滤不处理");
+				hubSkuPendingDto.setFilterFlag((byte)0);
+				hubSkuPendingDto.setHubSkuSizeType("排除");
 			}else{
 				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
 				//此尺码过滤不处理
@@ -161,9 +166,9 @@ public class TaskImportService {
 			}
 			
 			//临时加
-			hubSkuPendingDto.setMemo("此尺码过滤不处理");
-			hubSkuPendingDto.setFilterFlag((byte)0);
-			hubSkuPendingDto.setHubSkuSizeType("排除");
+//			hubSkuPendingDto.setMemo("此尺码过滤不处理");
+//			hubSkuPendingDto.setFilterFlag((byte)0);
+//			hubSkuPendingDto.setHubSkuSizeType("排除");
 		}
 		
 		//更新或插入操作
@@ -383,31 +388,45 @@ public class TaskImportService {
 			hubPendingSpuDto.setSpuModel(spuModel);
 			HubSpuDto list = dataHandleService.selectHubSpu(hubPendingSpuDto.getSpuModel(),hubPendingSpuDto.getHubBrandNo());
 			if (list != null) {
+
+
+                //直接进入待审核 不管颜色是否相同 但颜色需要保留供货商的颜色 如果没有匹配上 取hubspu中的颜色
+				String suplierColor = hubPendingSpuDto.getHubColor();
+				convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+				hubPendingSpuDto.setHubColor(suplierColor);
+
+				hubSpuId = list.getSpuId();
+				hubSpuNo = list.getSpuNo();
+				spuIsPassing = true;
+				hubIsExist = true;
+				checkResult = spuModel+"在hub已存在";
+				hubPendingSpuCheckResult.setPassing(true);
+
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				if(list.getHubColor().equals(hubPendingSpuDto.getHubColor())){
-					convertHubSpuToPendingSpu(hubPendingSpuDto, list);
-					hubSpuId = list.getSpuId();
-					hubSpuNo = list.getSpuNo();
-					spuIsPassing = true;
-					hubIsExist = true;
-					checkResult = spuModel+"在hub已存在";
-					hubPendingSpuCheckResult.setPassing(true);
-				}else{
-					//同品牌同货号不同颜色
-					spuIsPassing = false;
-					hubIsExist = false;
-					map.put("taskState", "校验失败");
-					map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
-					checkResult =  "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor();
-					hubPendingSpuCheckResult.setPassing(false);
-					hubPendingSpuDto.setAuditState((byte)0);
-					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-					hubPendingSpuDto.setAuditDate(new Date());
-					hubPendingSpuDto.setAuditUser("chenxu");
-					hubPendingSpuDto.setSpuState((byte)0);
-					hubPendingSpuDto.setMemo("同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-//					dataHandleService.updateHubSpuPending(hubPendingSpuDto);
-				}
+//				if(list.getHubColor().equals(hubPendingSpuDto.getHubColor())){
+//					convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+//					hubSpuId = list.getSpuId();
+//					hubSpuNo = list.getSpuNo();
+//					spuIsPassing = true;
+//					hubIsExist = true;
+//					checkResult = spuModel+"在hub已存在";
+//					hubPendingSpuCheckResult.setPassing(true);
+//				}else{
+//					//同品牌同货号不同颜色
+//					spuIsPassing = false;
+//					hubIsExist = false;
+//					map.put("taskState", "校验失败");
+//					map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
+//					checkResult =  "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor();
+//					hubPendingSpuCheckResult.setPassing(false);
+//					hubPendingSpuDto.setAuditState((byte)0);
+//					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
+//					hubPendingSpuDto.setAuditDate(new Date());
+//					hubPendingSpuDto.setAuditUser("chenxu");
+//					hubPendingSpuDto.setSpuState((byte)0);
+//					hubPendingSpuDto.setMemo("同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
+////					dataHandleService.updateHubSpuPending(hubPendingSpuDto);
+//				}
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				if (hubPendingSpuCheckResult.isPassing()) {

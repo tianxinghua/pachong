@@ -939,7 +939,8 @@ public class VariableInit {
                     hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
                     result = true;
                 } else {
-
+                    //去掉特殊符号
+                    hubSpuPending.setSpuModel(brandModelRuleGateWay.replaceSymbol(queryDto));
                     hubSpuPending.setSpuModelState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
                 }
 

@@ -345,7 +345,7 @@ public class OrderHandleSearch {
 			return parisiMailServiceImpl;
 		}else if("2015100701573".equals(supplierId)){
 			return bagheeraOrderService;
-		}else if ("2015091801501".equals(supplierId)) {
+		}else if ("2017111401993".equals(supplierId)) {
 			return gaudenziServiceImpl;
 		}else if("2015100501570".equals(supplierId)){
 			return julianFashionHandler;
@@ -456,7 +456,7 @@ public class OrderHandleSearch {
 			return supplierProperties.getYlati();
 		}else if("2015100701573".equals(supplierId)){
 			return supplierProperties.getBagheera();
-		}else if ("2015091801501".equals(supplierId)) {
+		}else if ("2017111401993".equals(supplierId)) {
 			return supplierProperties.getGaudenzi();
 		}else if("2015100501570".equals(supplierId)){
 			return supplierProperties.getJulianFashion();
