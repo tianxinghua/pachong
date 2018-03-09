@@ -166,8 +166,8 @@ shangpin:
                   password: shang3108
                   messageType: text/html;charset=utf-8
                   isPurchaseExp:
-                  openApiKey: 34ba9613f2544c279a7523d015184b1e
-                  openApiSecret: 43e578550e9047b5936f7bc44876061d
+                  openApiKey: 7d5144cc4c3f4d049a8b18cc8bd21cc5
+                  openApiSecret: 2f8dfde6460648389a536ff4d92645a3
           vietti: 
                   url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace

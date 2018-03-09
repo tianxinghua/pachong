@@ -385,52 +385,21 @@ public class PendingSpuImportService {
 
 
 
-	private void  convertHubSpuToHubSpuPendingImportDTO(HubSpuDto spuDto,HubPendingSpuImportDTO productImport) {
+	private void  convertHubSpuToHubSpuPendingImportDTO(HubSpuDto hubSpuDto,HubPendingSpuImportDTO productImport) {
 
-		productImport.setHubCategoryNo(spuDto.getCategoryNo());
+		productImport.setHubCategoryNo(hubSpuDto.getCategoryNo());
 		if(StringUtils.isBlank(productImport.getHubColor())){
-			productImport.setHubColor(spuDto.getHubColor());
+			productImport.setHubColor(hubSpuDto.getHubColor());
 		}
+		if(StringUtils.isBlank(productImport.getSeasonYear())||StringUtils.isBlank(productImport.getSeasonName())){
+			productImport.setSeasonYear(hubSpuDto.getMarketTime());
+			productImport.setSeasonName(hubSpuDto.getSeason());
+		}
+		productImport.setHubMaterial(hubSpuDto.getMaterial());
+		productImport.setHubOrigin(hubSpuDto.getOrigin());
+		productImport.setHubGender(hubSpuDto.getGender());
 
 
-//		productImport.setHubBrandNo(hubSpuDto.getBrandNo());
-//		productImport.setSpuBrandState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//		productImport.setHubCategoryNo(hubSpuDto.getCategoryNo());
-//		productImport.setCatgoryState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//
-//		if(null!=productImport.getSpuSeasonState()){
-//			if(productImport.getSpuSeasonState()!=PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue()){
-//				productImport.setHubSeason(hubSpuDto.getMarketTime() + "_" + hubSpuDto.getSeason());
-//			}
-//		}else{
-//			productImport.setHubSeason(hubSpuDto.getMarketTime() + "_" + hubSpuDto.getSeason());
-//		}
-//		productImport.setSpuSeasonState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//
-//		productImport.setHubMaterial(hubSpuDto.getMaterial());
-//		productImport.setHubOrigin(hubSpuDto.getOrigin());
-//		productImport.setOriginState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//
-//		if(null!=productImport.getSpuColorState()){
-//			if(productImport.getSpuColorState()!=PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue()){
-//				productImport.setHubColorNo(hubSpuDto.getHubColorNo());
-//			}
-//		}else{
-//			productImport.setHubColorNo(hubSpuDto.getHubColorNo());
-//		}
-//		productImport.setSpuColorState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//
-//		productImport.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
-//
-//
-//		hubSpuPending.setIsCurrentSeason(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//
-//		hubSpuPending.setFilterFlag(FilterFlag.EFFECTIVE.getIndex());
-//
-//
-//		hubSpuPending.setHubGender(hubSpuDto.getGender());
-//		hubSpuPending.setSpuGenderState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-//		hubSpuPending.setDataState(DataStatus.DATA_STATUS_NORMAL.getIndex().byteValue());
 
 	}
 

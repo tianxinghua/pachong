@@ -120,7 +120,7 @@ public class SupplierPriceService {
                 }
             }else{
 
-                supplierService.sendMail(productPriceDTO.getSupplierNo());
+//                supplierService.sendMail(productPriceDTO.getSupplierNo());
             }
 
 
