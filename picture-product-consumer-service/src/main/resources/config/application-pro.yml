@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: ${rabbitmq.host:172.20.11.49}
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -35,7 +35,7 @@ spring:
                               destination: retry.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
                                        maxAttempts: 1
               rabbit: 
                       bindings: 

@@ -569,6 +569,17 @@ shangpin:
                   isPurchaseExp: 
                   openApiKey: e53c1bba4adf4f02841e4f815dc35960
                   openApiSecret: bbc5a77507d64e59ae24ce976c68c538
+          marino:
+                   url: http://94.101.54.211:65327/ws_sito_shang/ws_sito_p15.asmx/
+                   createOrderInterface: NewOrderMarketPlace
+                   setStatusInterface: SetStatusOrderMarketplace
+                   getStatusInterface: GetStatusOrderMarketplace
+                   getItemStockInterface: GetItemStockBySizeMarketPlace
+                   user: shangpin
+                   password: Atelier2015
+                   isPurchaseExp:
+                   openApiKey: 388aae22a7e24cc9ab216e6854768fa7
+                   openApiSecret: 5a68d73d40204aa895e97fce0e6b79fa
           cocorose:
                   isPurchaseExp:
                   openApiKey:

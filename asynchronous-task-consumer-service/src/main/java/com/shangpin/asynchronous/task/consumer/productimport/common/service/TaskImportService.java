@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import javafx.scene.paint.Material;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -22,8 +24,6 @@ import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
@@ -392,7 +392,9 @@ public class TaskImportService {
 
                 //直接进入待审核 不管颜色是否相同 但颜色需要保留供货商的颜色 如果没有匹配上 取hubspu中的颜色
 				String suplierColor = hubPendingSpuDto.getHubColor();
-				convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+				convertHubSpuToPendingSpu(hubPendingSpuDto, list,hubPendingSpuCheckResult);
+
+
 				hubPendingSpuDto.setHubColor(suplierColor);
 
 				hubSpuId = list.getSpuId();
@@ -471,18 +473,36 @@ public class TaskImportService {
 		map.put("hubSpuId",hubSpuId+"");
 		map.put("hubSpuNo",hubSpuNo);
 	}
-	private void convertHubSpuToPendingSpu(HubSpuPendingDto hubPendingSpuDto, HubSpuDto hubSpuDto) {
+	private void convertHubSpuToPendingSpu(HubSpuPendingDto hubPendingSpuDto, HubSpuDto hubSpuDto,HubPendingSpuCheckResult hubPendingSpuCheckResult) {
 		hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
+		hubPendingSpuDto.setSpuBrandState(SpuBrandState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
+		hubPendingSpuDto.setCatgoryState(CatgoryState.PERFECT_MATCHED.getIndex());
 		hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
 		hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
+		hubPendingSpuDto.setSpuColorState(SpuColorState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
+		hubPendingSpuDto.setSpuGenderState(SpuGenderState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
+		hubPendingSpuDto.setMaterialState(MaterialState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
+		hubPendingSpuDto.setOriginState(OriginState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+		hubPendingSpuDto.setSpuSeasonState(SpuSeasonState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
 		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
+
+		hubPendingSpuCheckResult.setMaterial(true);
+		hubPendingSpuCheckResult.setBrand(true);
+		hubPendingSpuCheckResult.setCategory(true);
+		hubPendingSpuCheckResult.setColor(true);
+		hubPendingSpuCheckResult.setGender(true);
+		hubPendingSpuCheckResult.setOriginal(true);
+		hubPendingSpuCheckResult.setSeasonName(true);
+		hubPendingSpuCheckResult.setSpuModel(true);
+
+
 	}
 
 	public void sendToHub(HubSpuPendingDto hubPendingSpuDto, Map<String,String> map) {

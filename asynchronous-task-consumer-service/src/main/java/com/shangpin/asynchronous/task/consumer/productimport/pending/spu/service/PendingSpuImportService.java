@@ -341,22 +341,25 @@ public class PendingSpuImportService {
 						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
 						pendingSkuImportDto.setSizeType(matchSizeResult.getSizeType());
+						result = matchSizeResult.getResult();
 					}else if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
 						isMultiSizeType = matchSizeResult.isMultiSizeType();
+						result ="多个匹配,失败";
 					}else  if(matchSizeResult.isFilter()){//有模板没匹配上
 						flag = true;
 						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType("排除");
 						pendingSkuImportDto.setSizeType("排除");
+						result ="有模板没匹配上,排除";
 					}else {//不做处理
-
+						result ="未找到品牌品类尺码，不做处理";
 					}
-					result = matchSizeResult.getResult();
+
 				}else{
 					result = "返回结果为空，校验失败";
 				}
 			} else {
-				flag = false;
+
 				result = hubSkuPendingDto.getSupplierSkuNo() + "尺码为空";
 			}
 		}else if("尺寸".equals(pendingSpuImportDto.getSpecificationType())){
@@ -366,7 +369,7 @@ public class PendingSpuImportService {
 			hubPendingSkuCheckResult.setSizeValue(hubSkuPendingDto.getHubSkuSize());
 		}else{
 			result = "校验失败,规格类型无效:" + pendingSpuImportDto.getSpecificationType();
-			flag = false;
+
 		}
 		
 		hubPendingSkuCheckResult.setMessage(result);

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
-import com.shangpin.ephub.client.data.mysql.enumeration.ErrorType;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
@@ -18,6 +15,9 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonD
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.product.business.gms.gateway.GmsGateWay;
+import com.shangpin.ephub.client.product.business.gms.result.*;
+import com.shangpin.ephub.client.product.business.gms.result.BrandDom;
 import com.shangpin.ephub.client.product.business.model.dto.BrandModelDto;
 import com.shangpin.ephub.client.product.business.model.gateway.HubBrandModelRuleGateWay;
 import com.shangpin.ephub.client.product.business.model.result.BrandModelResult;
@@ -28,9 +28,13 @@ import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.pending.product.consumer.common.ConstantProperty;
 import com.shangpin.pending.product.consumer.common.DateUtils;
 import com.shangpin.pending.product.consumer.common.enumeration.*;
+import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.conf.rpc.ApiAddressProperties;
 import com.shangpin.pending.product.consumer.service.MaterialService;
 import com.shangpin.pending.product.consumer.supplier.dto.*;
+import com.shangpin.pending.product.consumer.supplier.dto.CategoryScreenSizeDom;
+import com.shangpin.pending.product.consumer.supplier.dto.HubResponseDto;
+import com.shangpin.pending.product.consumer.supplier.dto.SizeStandardItem;
 import com.shangpin.pending.product.consumer.util.BurberryModelRule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -86,6 +90,9 @@ public class VariableInit {
 
     @Autowired
     MaterialService materialService;
+
+    @Autowired
+    GmsGateWay gmsGateWay;
 
     @Autowired
     SpuPendingMsgHandleService spuPendingMsgHandleService;
@@ -857,6 +864,21 @@ public class VariableInit {
             result = false;
             hubSpuPending.setSpuBrandState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
         }
+
+        //增加品牌的SCM的校验
+        if(result){
+            BrandDom brand = gmsGateWay.findBrand(hubSpuPending.getHubBrandNo());
+            if(null!=brand){
+                 if(brand.getIsValid()!=1){
+                     result = false;
+                     hubSpuPending.setSpuBrandState(SpuBrandState.UNUSEABLE.getIndex());
+                 }
+            }else{
+                result = false;
+                hubSpuPending.setSpuBrandState(SpuBrandState.UNUSEABLE.getIndex());
+            }
+        }
+
         return result;
     }
 
