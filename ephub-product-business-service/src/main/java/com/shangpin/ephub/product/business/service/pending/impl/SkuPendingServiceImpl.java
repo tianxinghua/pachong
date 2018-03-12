@@ -110,7 +110,7 @@ public class SkuPendingServiceImpl implements SkuPendingService {
     public String  setWaitHandleSkuPendingSize(Long spuPendingId, String hubBrand, String hubCategory, List<HubSkuPendingDto> skuPendings, List<PendingSkuUpdatedVo> skuVOs) {
         String  result = "0";
         String hubSkuSize ="";
-        boolean isHaveMapping = false,isCheck = true ,isHaveNoHandle = false;
+        boolean isHaveMapping = false,isHaveNoHandle = false;
         for(HubSkuPendingDto hubSkuPendingDto : skuPendings){
 
 

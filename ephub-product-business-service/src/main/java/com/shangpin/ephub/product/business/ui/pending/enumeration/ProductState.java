@@ -62,7 +62,13 @@ public enum ProductState {
 	/**
 	 * 有供价
 	 */
-	HAVE_SUPPLYPRICE(14,"有供价");
+	HAVE_SUPPLYPRICE(14,"有供价"),
+
+	/**
+	 * SCM品牌状态
+	 */
+	SCM_BRAND_STATE(15,"scmBrandState"),
+	;
 	
 	/**
      * 数字索引标识

@@ -16,7 +16,7 @@ public interface IHubBrandModelRuleService {
 	 */
 	String regexVerify(String hubBrandNo, String hubCategoryNo, String brandMode);
 	/**
-	 * 规则校验
+	 * 规则校验  无
 	 * @param hubBrandNo 品牌编号
 	 * @param hubCategoryNo 品类编号
 	 * @param brandMode 品牌方型号

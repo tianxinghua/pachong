@@ -18,7 +18,8 @@ public enum InfoState {
 	RefreshBrand((byte)9,"刷新品牌"),
 	RefreshColor((byte)11,"刷新颜色"),
 	RefreshSeason((byte)12,"刷新季节"),
-	RefreshOrigin((byte)10,"刷新产地");
+	RefreshOrigin((byte)10,"刷新产地"),
+	RefreshMaterial((byte)13, "刷新材质");
 	
 	/**
      * 数字索引标识

@@ -153,8 +153,13 @@ public abstract class PendingSpuService implements IPendingProductService {
         		if (ProductState.SPU_GENDER_STATE.getIndex() == inconformities.get(i)) {
         			criteria.andSpuGenderStateEqualTo(SpuGenderState.UNHANDLED.getIndex());
         		} else if (ProductState.SPU_BRAND_STATE.getIndex() == inconformities.get(i)) {
-        			criteria.andSpuBrandStateEqualTo(SpuBrandState.UNHANDLED.getIndex());
-        		} else if(ProductState.CATGORY_STATE.getIndex() == inconformities.get(i)){
+        			List<Byte> brandStateList =new ArrayList<>();
+        			brandStateList.add(SpuBrandState.UNHANDLED.getIndex());
+        			brandStateList.add(SpuBrandState.UNUSEABLE.getIndex());
+        			criteria.andSpuBrandStateIn(brandStateList);
+        		} else if (ProductState.SCM_BRAND_STATE.getIndex() == inconformities.get(i)) {
+					criteria.andSpuBrandStateEqualTo(SpuBrandState.UNUSEABLE.getIndex());
+				} else if(ProductState.CATGORY_STATE.getIndex() == inconformities.get(i)){
         			criteria.andCatgoryStateNotEqualTo(CatgoryState.PERFECT_MATCHED.getIndex());
         		} else if(ProductState.SPU_MODEL_STATE.getIndex() == inconformities.get(i)){
         			criteria.andSpuModelStateEqualTo(SpuModelState.VERIFY_FAILED.getIndex());
