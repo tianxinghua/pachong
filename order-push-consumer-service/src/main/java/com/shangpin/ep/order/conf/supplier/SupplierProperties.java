@@ -132,4 +132,6 @@ public class SupplierProperties {
 
 	private Marino marino;
 	
+	private Srl srl;
+	
 }

@@ -232,6 +232,10 @@ public class OrderHandleSearch {
 	IOrderService marinoOrderService;
 
 	
+	@Autowired
+	@Qualifier("srlOrderService") 
+	IOrderService srlOrderService;
+	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -353,6 +357,8 @@ public class OrderHandleSearch {
 			return cocoroseServiceImpl;
 		}else if("2017122101995".equals(supplierId)){
 			return marinoOrderService;
+		}else if("2015103001637srl".equals(supplierId)){
+			return srlOrderService;
 		}else {
 			return null;
 		}
@@ -464,6 +470,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getCocorose();
 		}else if("2017122101995".equals(supplierId)){
 			return supplierProperties.getMarino();
+		}else if("2015103001637srl".equals(supplierId)){
+			return supplierProperties.getSrl();
 		}
 		else {
 			return null;

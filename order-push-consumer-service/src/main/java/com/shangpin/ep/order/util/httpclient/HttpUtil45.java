@@ -354,6 +354,58 @@ public class HttpUtil45 {
 
 	}
 	
+	public static String operateData3(String operatorType, String transParaType , String url, OutTimeConfig outTimeConf, Map<String,String> param, String jsonValue , Map<String,String> headerMap, String username, String password) throws ServiceException{
+		HttpClientContext localContext =null;
+		//验证
+		if(StringUtils.isNotBlank(username)){
+			localContext = getAuthContext(url, username, password);
+		}else{
+			localContext = getPlainContext(url);
+		}
+
+		HttpUriRequest request = null;
+		if("get".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+			request  = new HttpGet(urlStr);
+		}else if("post".equals(operatorType.toLowerCase())){
+
+			HttpPost post=new HttpPost(url);
+			setTransParam3(transParaType, param, jsonValue, post);
+
+			return getResultWithStatusCode(post, outTimeConf, headerMap, localContext);
+
+
+		}else if("put".equals(operatorType.toLowerCase())){
+
+			HttpPut putMothod = new HttpPut(url);
+			setTransParam(transParaType, param, jsonValue, putMothod);
+
+
+			return getResultWithStatusCode(putMothod, outTimeConf, headerMap, localContext);
+
+
+		}else if("patch".equals(operatorType.toLowerCase())){
+
+			HttpPatch patch  = new HttpPatch(url);
+
+			setTransParam(transParaType, param, jsonValue, patch);
+
+
+			return getResultWithStatusCode(patch, outTimeConf, headerMap,localContext);
+
+
+		}else if("delete".equals(operatorType.toLowerCase())){
+			String urlStr=paramGetUrl(url, param);
+            request = new HttpDelete(urlStr);
+		}else{
+		    throw new ServiceMessageException("无此操作方法");
+		}
+
+
+		return getResultWithStatusCode(request, outTimeConf, headerMap,localContext);
+
+	}
+	
 	/**
 	 * 获取返回的头信息
 	 * @param operatorType 操作类型  get put patch delete
@@ -468,6 +520,55 @@ public class HttpUtil45 {
 
         }
 	}
+	
+	//设置传递参数
+		private static void setTransParam3(String transParaType, Map<String, String> param, String value, HttpEntityEnclosingRequestBase method) {
+			if("json".equals(transParaType.toLowerCase())){
+	            if(StringUtils.isNotBlank(value)){
+	                StringEntity s = null;
+	                try {
+	                    s = new StringEntity(value);
+	                    s.setContentType("application/json");//发送json数据需要设置contentType
+						method.setEntity(s);
+	                } catch (UnsupportedEncodingException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+	        }else if("form".equals(transParaType.toLowerCase())){
+				if(StringUtils.isNotBlank(value)){
+					StringEntity s = null;
+					try {
+						s = new StringEntity(value);
+						s.setContentEncoding("UTF-8");
+						s.setContentType("application/x-www-form-urlencoded");//发送json数据需要设置contentType
+						method.setEntity(s);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}else if("soap".equals(transParaType.toLowerCase())){
+				if(StringUtils.isNotBlank(value)){
+					StringEntity s = null;
+					try {
+						s = new StringEntity(value);
+						s.setContentEncoding("UTF-8");
+						s.setContentType("application/soap+xml");//
+						method.setEntity(s);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}else{
+	            if(param!=null){
+	                Iterable<? extends NameValuePair> nvs = map2NameValuePair(param);
+					method.setEntity(new UrlEncodedFormEntity(nvs, Charset
+	                        .forName("UTF-8")));
+	            }
+
+	        }
+		}
 
 
 
