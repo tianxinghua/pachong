@@ -684,7 +684,7 @@ public class PendingProductStreamListenerAdapter {
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
-	public void srlPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+	public void starPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
 		
 	}

@@ -148,7 +148,7 @@ public interface PendingProductSource {
 	
 	public static final String MONNALISA = "monnalisaPendingProduct";
 	
-	public static final String SRL = "srlPendingProduct";
+	public static final String STAR = "starPendingProduct";
 
 	public static final String JULIANFASHION = "julianFashionPendingProduct";
 
@@ -595,15 +595,15 @@ public interface PendingProductSource {
 	public MessageChannel monnalisaPendingProduct();
 
 	/**
-	 * 供货商SRL 通道组件配置
-	 * @return 供货商SRL 通道组件
+	 * 供货商STAR 通道组件配置
+	 * @return STAR 通道组件
 	 */
-	@Output(value = PendingProductSource.SRL)
-	public MessageChannel srlPendingProduct();
+	@Output(value = PendingProductSource.STAR)
+	public MessageChannel starPendingProduct();
 
 	/**
-	 * 供货商SRL 通道组件配置
-	 * @return 供货商SRL 通道组件
+	 * MARINO 通道组件配置
+	 * @return MARINO 通道组件
 	 */
 	@Output(value = PendingProductSource.MARINO)
 	public MessageChannel marinoPendingProduct();

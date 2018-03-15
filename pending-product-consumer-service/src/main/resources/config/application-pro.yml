@@ -471,8 +471,8 @@ spring:
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
-                        srlPendingProduct:
-                              destination: srl.pending.product
+                        starPendingProduct:
+                              destination: star.pending.product
                               group: one
                               consumer:
                                        concurrency: 1
@@ -935,7 +935,7 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            srlPendingProduct:
+                            starPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

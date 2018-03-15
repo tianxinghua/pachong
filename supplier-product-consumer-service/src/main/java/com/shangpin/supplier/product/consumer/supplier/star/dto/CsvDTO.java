@@ -1,4 +1,4 @@
-package com.shangpin.supplier.product.consumer.supplier.srl.dto;
+package com.shangpin.supplier.product.consumer.supplier.star.dto;
 
 import lombok.Getter;
 import lombok.Setter;

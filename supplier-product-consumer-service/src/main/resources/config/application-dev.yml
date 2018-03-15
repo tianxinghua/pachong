@@ -628,13 +628,13 @@ spring:
                               destination: julianFashion.pending.product
                               content-type: application/json
                         srlOriginalProduct:
-                              destination: srl.original.product
+                              destination: star.original.product
                               group: one
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
                         srlPendingProduct:
-                              destination: srl.pending.product
+                              destination: star.pending.product
                               content-type: application/json
               rabbit:
                       bindings: 

@@ -290,7 +290,7 @@ public class PendingSpuImportService {
 	
 		// 如果规格为尺码，则校验spu下所有的尺码
 		HubPendingSkuCheckResult checkResult = new HubPendingSkuCheckResult();
-		boolean flag = false;
+		boolean flag = true;
 		StringBuffer str = new StringBuffer();
 		if (isSpuPendingExist != null) {
 			boolean allFliter = true;
@@ -303,8 +303,8 @@ public class PendingSpuImportService {
 					if(hubSkuPendingDto.getFilterFlag()==1){
 						allFliter = false;
 					}
-					if(hubPendingSkuCheckResult.isPassing()){
-						flag = true;
+					if(!hubPendingSkuCheckResult.isPassing()){
+						flag = false;
 					}
 					str.append(hubPendingSkuCheckResult.getMessage()).append(",");
 				}
@@ -344,19 +344,20 @@ public class PendingSpuImportService {
 						result = matchSizeResult.getResult();
 					}else if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
 						isMultiSizeType = matchSizeResult.isMultiSizeType();
-						result ="多个匹配,失败";
+						result = " " + hubSkuPendingDto.getHubSkuSize() + "多个匹配,失败";
 					}else  if(matchSizeResult.isFilter()){//有模板没匹配上
 						flag = true;
-						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
+//						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType("排除");
 						pendingSkuImportDto.setSizeType("排除");
-						result ="有模板没匹配上,排除";
-					}else {//不做处理
-						result ="未找到品牌品类尺码，不做处理";
+						result =" " + hubSkuPendingDto.getHubSkuSize() + "有模板没匹配上,排除";
+					}else{
+					   //不做处理
+						result =" " + hubSkuPendingDto.getHubSkuSize() + "未找到品牌品类尺码，不做处理";
 					}
 
 				}else{
-					result = "返回结果为空，校验失败";
+					result =  hubSkuPendingDto.getHubSkuSize() +" 返回结果为空，校验失败";
 				}
 			} else {
 

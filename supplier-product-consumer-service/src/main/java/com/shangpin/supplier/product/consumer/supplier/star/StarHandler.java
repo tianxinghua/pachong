@@ -1,4 +1,4 @@
-package com.shangpin.supplier.product.consumer.supplier.srl;
+package com.shangpin.supplier.product.consumer.supplier.star;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.srl.dto.CsvDTO;
+import com.shangpin.supplier.product.consumer.supplier.star.dto.CsvDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component("srlHandler")
 @Slf4j
-public class SrlHandler implements ISupplierHandler{
+public class StarHandler implements ISupplierHandler{
 	
 	@Autowired
 	private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -87,12 +87,12 @@ public class SrlHandler implements ISupplierHandler{
 		String picture0 = jsonObject.getUrlImage();
 		List<Image> images = new ArrayList<Image>();
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
-			log.info("srl "+picture0+" 将推送");
+			log.info("star "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX srl "+picture0+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX star "+picture0+" 已存在XXXXXXXXXXXX");
 		}
 		
 		return images;

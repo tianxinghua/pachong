@@ -713,9 +713,9 @@ public class PendingProductStreamListener {
 		adapter.monnalisaPendingProductStreamListen(message,headers);
     }
 	
-	@StreamListener(PendingProductSink.SRL)
-    public void srlPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		adapter.srlPendingProductStreamListen(message,headers);
+	@StreamListener(PendingProductSink.STAR)
+    public void starPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.starPendingProductStreamListen(message,headers);
     }
 
 	/**

@@ -23,7 +23,7 @@ public class PendingProductStreamSender {
 	
 	/**
 	 * 发送供应商angeloMinetti商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean angeloMinettiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -31,7 +31,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商cocoroseLondon商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean cocoroseLondonPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -39,7 +39,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商dolciTrame商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean dolciTramePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -47,7 +47,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商julianFashion商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean julianFashionPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -56,7 +56,7 @@ public class PendingProductStreamSender {
 	
 	/**
 	 * 发送供应商portofino商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean portofinoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -64,7 +64,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商coccolebimbi商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean coccolebimbiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -72,7 +72,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商fratinardi商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean fratinardiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -80,7 +80,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商forzieri商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean forzieriPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -88,7 +88,7 @@ public class PendingProductStreamSender {
 	}
 	/**
 	 * 发送供应商biondioni商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean biondioniPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -96,7 +96,7 @@ public class PendingProductStreamSender {
     }
 	/**
 	 * 发送供应商brunarosso商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean brunarossoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -104,7 +104,7 @@ public class PendingProductStreamSender {
     }
 	/**
 	 * 发送供应商coltorti商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean coltortiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -112,7 +112,7 @@ public class PendingProductStreamSender {
     }
 	/**
 	 * 发送供应商ostore商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean ostorePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -120,7 +120,7 @@ public class PendingProductStreamSender {
     }
 	/**
 	 * 发送供应商spinnaker商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean spinnakerPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -128,7 +128,7 @@ public class PendingProductStreamSender {
     }
 	/**
 	 * 发送供应商stefania商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean stefaniaPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -136,7 +136,7 @@ public class PendingProductStreamSender {
     }
 	/**
 	 * 发送供应商tony商品流数据
-	 * @param supplierProduct 消息体
+	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
     public boolean tonyPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -144,7 +144,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商geb商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean gebPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -152,7 +152,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean pozzileiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -160,7 +160,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean pozzileiartePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -168,7 +168,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean pozzileifortePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -176,7 +176,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean carofiglioPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -184,7 +184,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean genteromaPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -192,7 +192,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean danielloPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -200,7 +200,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean italianiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -208,7 +208,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean tufanoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -216,7 +216,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean monnierfreresPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -224,7 +224,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean eleonorabonucciPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -232,7 +232,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean russocapriPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -240,7 +240,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean giglioPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -248,7 +248,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean divoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -256,7 +256,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean biondiniPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -264,7 +264,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean dellogliostorePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -272,7 +272,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean francescomassaPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -280,7 +280,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean tessabitPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -288,7 +288,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean alducadaostaPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -296,7 +296,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean sanremoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -304,7 +304,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean paolofiorilloPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -312,7 +312,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean viettiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -320,7 +320,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean anielloPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -328,7 +328,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean lindelepalaisPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -336,7 +336,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean pritelliPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -344,7 +344,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean piccadillyPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -352,7 +352,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean velaPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -360,7 +360,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean montiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -368,7 +368,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean creative99PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -376,7 +376,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean leamPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -384,7 +384,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean bagheeraPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -392,7 +392,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean papiniPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -400,7 +400,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean zitafabianiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -408,7 +408,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean wisePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -416,7 +416,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean basebluPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -424,7 +424,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean raffaellonetworkPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -432,7 +432,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean frmodaPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -440,7 +440,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean studio69PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -448,7 +448,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean delibertiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -456,7 +456,7 @@ public class PendingProductStreamSender {
     }
     /**
      * 发送供应商商品流数据
-     * @param supplierProduct 消息体
+     * @param pendingProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
     public boolean parisiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
@@ -623,8 +623,8 @@ public class PendingProductStreamSender {
      * @param headers 消息头
      * @return 如果发送成功返回true,否则返回false
      */
-    public boolean srlPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
-    	return pendingProductSource.srlPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    public boolean starPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+    	return pendingProductSource.starPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
 
 

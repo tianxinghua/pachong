@@ -131,9 +131,7 @@ public class TaskImportService {
 		}
 		hubSkuPendingDto.setHubSkuSize(hubPendingSkuCheckResult.getSizeValue());
 		if (hubPendingSkuCheckResult.isPassing()) {
-			hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
-			
-			
+
 			//不再直接进入待选品，所有屏蔽下面代码，改为进入待复合
 //			if(hubSkuPendingTempDto!=null){
 //				if(hubSpuNo!=null){
@@ -146,7 +144,15 @@ public class TaskImportService {
 //			}
 			hubSkuPendingDto.setSkuState( SpuState.INFO_IMPECCABLE.getIndex());
 			hubSkuPendingDto.setSpSkuSizeState((byte) 1);
-			hubSkuPendingDto.setFilterFlag((byte)1);
+			if("排除".equals(sizeType)) {
+				hubSkuPendingDto.setMemo("此尺码过滤不处理");
+				hubSkuPendingDto.setFilterFlag((byte) 0);
+			}else{
+				hubSkuPendingDto.setScreenSize(hubPendingSkuCheckResult.getSizeId());
+				hubSkuPendingDto.setFilterFlag((byte)1);
+			}
+
+
 		} else {
 			if(isMultiSizeType){
 				hubSkuPendingDto.setSkuState((byte) SpuState.INFO_PECCABLE.getIndex());
@@ -390,11 +396,9 @@ public class TaskImportService {
 			if (list != null) {
 
 
-                //直接进入待审核 不管颜色是否相同 但颜色需要保留供货商的颜色 如果没有匹配上 取hubspu中的颜色
+                //颜色需要保留供货商的颜色 如果没有匹配上 取hubspu中的颜色
 				String suplierColor = hubPendingSpuDto.getHubColor();
 				convertHubSpuToPendingSpu(hubPendingSpuDto, list,hubPendingSpuCheckResult);
-
-
 				hubPendingSpuDto.setHubColor(suplierColor);
 
 				hubSpuId = list.getSpuId();
@@ -402,6 +406,7 @@ public class TaskImportService {
 				spuIsPassing = true;
 				hubIsExist = true;
 				checkResult = spuModel+"在hub已存在";
+
 				hubPendingSpuCheckResult.setPassing(true);
 
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表

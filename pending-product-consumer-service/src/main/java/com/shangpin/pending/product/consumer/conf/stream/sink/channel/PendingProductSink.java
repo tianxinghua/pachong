@@ -151,7 +151,7 @@ public interface PendingProductSink {
 	
 	public static final String MONNALISA = "monnalisaPendingProduct";
 
-	public static final String SRL = "srlPendingProduct";
+	public static final String STAR = "starPendingProduct";
 
 	public static final String JULIANFASHION = "julianFashionPendingProduct";
 
@@ -613,11 +613,11 @@ public interface PendingProductSink {
 	public SubscribableChannel monnalisaPendingProduct();
 
 	/**
-	 * 供应商SRL通道组件配置
+	 * 供应商STAR通道组件配置
 	 * @return 供货商MONNALISA通道组件
 	 */
-	@Input(value = PendingProductSink.SRL)
-	public SubscribableChannel srlPendingProduct();
+	@Input(value = PendingProductSink.STAR)
+	public SubscribableChannel starPendingProduct();
 
 
 	/**

@@ -684,14 +684,14 @@ spring:
                         julianFashionPendingProduct:
                               destination: julianFashion.pending.product
                               content-type: application/json
-                        srlOriginalProduct:
-                              destination: srl.original.product
+                        starOriginalProduct:
+                              destination: star.original.product
                               group: one
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
-                        srlPendingProduct:
-                              destination: srl.pending.product
+                        starPendingProduct:
+                              destination: star.pending.product
                               content-type: application/json
                         marinoOriginalProduct:
                               destination: marino.original.product
@@ -1377,13 +1377,13 @@ spring:
                               julianFashionPendingProduct:
                                     producer:
                                          prefix: HA.
-                              srlOriginalProduct:
+                              starOriginalProduct:
                                     consumer:
                                          prefix: HA.
                                          autoBindDlq: false
                                          requeueRejected: true
                                          republishToDlq: false
-                              srlPendingProduct:
+                              starPendingProduct:
                                     producer:
                                          prefix: HA.
                               marinoOriginalProduct:

@@ -415,7 +415,7 @@ spring:
                                        concurrency: 5
                                        maxAttempts: 1
                         srlPendingProduct:
-                              destination: srl.pending.product
+                              destination: star.pending.product
                               group: one
                               consumer:
                                        concurrency: 5
