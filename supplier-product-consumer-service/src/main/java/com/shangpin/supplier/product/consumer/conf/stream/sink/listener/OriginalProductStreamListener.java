@@ -730,8 +730,8 @@ public class OriginalProductStreamListener {
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
-	@StreamListener(OriginalProductSink.SRL)
-    public void srlStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+	@StreamListener(OriginalProductSink.STAR)
+    public void starStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.starStreamListen(message,headers);
     }
 

@@ -19,8 +19,8 @@ import com.shangpin.ep.order.module.supplier.bean.SupplierSkuRequestDto;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
-@Component("srlOrderService")
-public class SrlOrderService implements IOrderService {
+@Component("starOrderService")
+public class StarOrderService implements IOrderService {
 	
 	@Autowired
     LogCommon logCommon;    
@@ -64,7 +64,7 @@ public class SrlOrderService implements IOrderService {
 			
 			String queryJson = "{\"skuId\":\""+skuId+"\",\"supplierId\":\""+orderDTO.getSupplierId()+"\"}";
 			String result  =  HttpUtil45.operateData("post","json",
-					supplierProperties.getSrl().getBusinessApi()+"supplier-sku-handle/supplier-sku",
+					supplierProperties.getStar().getBusinessApi()+"supplier-sku-handle/supplier-sku",
 					defaultConfig,null,queryJson,null,"","");
 			if(result==null) {
 				//推送订单失败
@@ -82,7 +82,7 @@ public class SrlOrderService implements IOrderService {
 				String requestdata = "{\"sku\":\""+skuId+"\",\"qty\":\""+String.valueOf(qty)+"\",\"supplyPrice\":\""+supplierPrice+"\"}";
 				if(supplierPrice!=null&&!supplierPrice.equals("")) {
 					rtnData  =  HttpUtil45.operateData3("post","json",
-					supplierProperties.getSrl().getSalesUpdate()+"?sellid="+spOrderId,
+					supplierProperties.getStar().getSalesUpdate()+"?sellid="+spOrderId,
 					defaultConfig,null,requestdata,null,"","");
 					orderDTO.setLogContent("下单参数=================param:"+requestdata+ "sellid:"+ spOrderId +"返回结果rtnData:"+rtnData);
 					logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -136,7 +136,7 @@ public class SrlOrderService implements IOrderService {
 			// 调用对方退单接口
 			String queryJson = "{\"skuId\":\"" + skuId + "\",\"supplierId\":\"" + deleteOrder.getSupplierId() + "\"}";
 			String result = HttpUtil45.operateData("post", "json",
-					supplierProperties.getSrl().getBusinessApi()+"supplier-sku-handle/supplier-sku", defaultConfig,
+					supplierProperties.getStar().getBusinessApi()+"supplier-sku-handle/supplier-sku", defaultConfig,
 					null, queryJson, null, "", "");
 			if(result==null) {
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
@@ -155,7 +155,7 @@ public class SrlOrderService implements IOrderService {
 
 				if (supplierPrice != null && !supplierPrice.equals("")) {
 					rtnData = HttpUtil45.operateData3("post", "json",
-							supplierProperties.getSrl().getReturnsUpdate() + "?sellid=" + spOrderId, defaultConfig, null,
+							supplierProperties.getStar().getReturnsUpdate() + "?sellid=" + spOrderId, defaultConfig, null,
 							requestdata, null, "", "");
 					deleteOrder.setLogContent("退单参数=================param:" + requestdata + "sellid:"+ spOrderId + "返回结果rtnData:" + rtnData);
 					logCommon.loggerOrder(deleteOrder, LogTypeStatus.CONFIRM_LOG);
@@ -189,7 +189,7 @@ public class SrlOrderService implements IOrderService {
 //		OrderDTO dto = new OrderDTO();
 //		dto.setSpOrderId("test12323122");
 //		dto.setSupplierId("2016030701799");
-//		SrlOrderService t = new SrlOrderService();
+//		StarOrderService t = new StarOrderService();
 //		t.handleConfirmOrder(dto);
 //		t.handleRefundlOrder(dto);
 		try {

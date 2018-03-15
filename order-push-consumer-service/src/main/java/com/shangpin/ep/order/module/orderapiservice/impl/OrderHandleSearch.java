@@ -233,8 +233,8 @@ public class OrderHandleSearch {
 
 	
 	@Autowired
-	@Qualifier("srlOrderService") 
-	IOrderService srlOrderService;
+	@Qualifier("starOrderService")
+	IOrderService starOrderService;
 	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
@@ -357,8 +357,8 @@ public class OrderHandleSearch {
 			return cocoroseServiceImpl;
 		}else if("2017122101995".equals(supplierId)){
 			return marinoOrderService;
-		}else if("2015103001637srl".equals(supplierId)){
-			return srlOrderService;
+		}else if("2018022701997".equals(supplierId)){
+			return starOrderService;
 		}else {
 			return null;
 		}
@@ -470,8 +470,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getCocorose();
 		}else if("2017122101995".equals(supplierId)){
 			return supplierProperties.getMarino();
-		}else if("2015103001637srl".equals(supplierId)){
-			return supplierProperties.getSrl();
+		}else if("2018022701997".equals(supplierId)){
+			return supplierProperties.getStar();
 		}
 		else {
 			return null;

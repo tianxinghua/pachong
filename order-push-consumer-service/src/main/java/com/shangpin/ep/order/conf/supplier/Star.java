@@ -14,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Srl extends SupplierCommon implements Serializable {
+public class Star extends SupplierCommon implements Serializable {
 
 	/**
 	 * 

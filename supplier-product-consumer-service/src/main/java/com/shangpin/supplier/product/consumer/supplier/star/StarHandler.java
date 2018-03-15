@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author lubaijang
  * @date 2016年12月8日 上午11:36:22
  */
-@Component("srlHandler")
+@Component("starHandler")
 @Slf4j
 public class StarHandler implements ISupplierHandler{
 	
