@@ -152,6 +152,9 @@ public interface PendingProductSink {
 	public static final String MONNALISA = "monnalisaPendingProduct";
 
 	public static final String STAR = "starPendingProduct";
+	public static final String SRL = "srlPendingProduct";
+	
+	public static final String THESTYLESIDE = "theStyleSidePendingProduct";
 
 	public static final String JULIANFASHION = "julianFashionPendingProduct";
 
@@ -613,6 +616,7 @@ public interface PendingProductSink {
 	public SubscribableChannel monnalisaPendingProduct();
 
 	/**
+<<<<<<< HEAD
 	 * 供应商STAR通道组件配置
 	 * @return 供货商MONNALISA通道组件
 	 */
@@ -626,4 +630,17 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.MARINO)
 	public SubscribableChannel marinoPendingProduct();
+	/**
+	 * 供应商SRL通道组件配置
+	 * @return 供货商SRL通道组件
+	 */
+	@Input(value = PendingProductSink.SRL)
+	public SubscribableChannel srlPendingProduct();
+	
+	/**
+	 * 供应商THESTYLESIDE通道组件配置
+	 * @return 供货商THESTYLESIDE通道组件
+	 */
+	@Input(value = PendingProductSink.THESTYLESIDE)
+	public SubscribableChannel theStyleSidePendingProduct();
 }

@@ -161,6 +161,10 @@ public interface OriginalProductSink {
 
 	public static final String MARINO = "marinoOriginalProduct";
 
+	public static final String SRL = "srlOriginalProduct";
+	
+	public static final String THESTYLESIDE = "theStyleSideOriginalProduct";
+
 
 	//===============================
 
@@ -631,6 +635,13 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.STAR)
 	public MessageChannel srlOriginalProduct();
+	
+	/**
+	 * 供应商theStyleSide通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.THESTYLESIDE)
+	public MessageChannel theStyleSideOriginalProduct();
 
 	/**
 	 * 供应商srl通道组件配置

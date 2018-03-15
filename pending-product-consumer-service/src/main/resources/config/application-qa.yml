@@ -462,6 +462,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -885,6 +891,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             marinoPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            theStyleSidePendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

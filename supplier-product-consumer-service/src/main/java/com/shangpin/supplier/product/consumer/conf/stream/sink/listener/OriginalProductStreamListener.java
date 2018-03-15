@@ -726,7 +726,7 @@ public class OriginalProductStreamListener {
     }
 	
 	/**
-	 * 供应商MONNALISA原始商品数据流通道监听者
+	 * 供应商SRL原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
@@ -740,5 +740,14 @@ public class OriginalProductStreamListener {
 	public void marinoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.marinoStreamListen(message,headers);
 	}
-
+	
+	/**
+	 * 供应商THESTYLESIDE原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.THESTYLESIDE)
+    public void theStyleSideStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.theStyleSideStreamListen(message,headers);
+    }
 }

@@ -702,6 +702,15 @@ spring:
                         marinoPendingProduct:
                               destination: marino.pending.product
                               content-type: application/json
+                        theStyleSideOriginalProduct:
+                              destination: theStyleSide.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1393,6 +1402,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               marinoPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              theStyleSideOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              theStyleSidePendingProduct:
                                     producer:
                                          prefix: HA.
         consul: 

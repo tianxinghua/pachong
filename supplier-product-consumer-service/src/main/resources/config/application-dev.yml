@@ -636,6 +636,15 @@ spring:
                         srlPendingProduct:
                               destination: star.pending.product
                               content-type: application/json
+                        theStyleSideOriginalProduct:
+                              destination: theStyleSide.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             supplierPictureProduct: 
@@ -1254,6 +1263,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                             srlPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            theStyleSideOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            theStyleSidePendingProduct:
                                     producer:
                                          prefix: HA.
 

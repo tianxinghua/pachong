@@ -728,4 +728,9 @@ public class PendingProductStreamListener {
 	public void marinoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.marinoPendingProductStreamListen(message,headers);
 	}
+	
+	@StreamListener(PendingProductSink.THESTYLESIDE)
+    public void theStyleSidePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.theStyleSidePendingProductStreamListen(message,headers);
+    }
 }

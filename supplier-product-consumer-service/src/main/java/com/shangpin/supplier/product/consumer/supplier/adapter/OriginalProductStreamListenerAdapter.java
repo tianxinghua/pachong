@@ -146,6 +146,10 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler starHandler;
 	
 	@Autowired
+	@Qualifier("theStyleSideHandler")
+	private ISupplierHandler theStyleSideHandler;
+	
+	@Autowired
 	@Qualifier("coccolebimbiCommonHandler")
 	private ISupplierHandler coccolebimbiCommonHandler;
 	
@@ -787,6 +791,15 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void starStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		starHandler.handleOriginalProduct(message, headers);
+	}
+	
+	/**
+	 * theStyleSide供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void theStyleSideStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		theStyleSideHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**
