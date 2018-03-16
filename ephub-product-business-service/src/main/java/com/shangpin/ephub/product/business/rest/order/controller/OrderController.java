@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.rest.order.controller;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.product.business.rest.order.dto.SpuQueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +38,17 @@ public class OrderController {
 			return HubResponse.errorResp("查询失败");
 		}else{
 			return HubResponse.successResp(size);
+		}
+	}
+
+
+	@RequestMapping(value= "/supplier-spu", method= RequestMethod.POST)
+	public HubResponse<?> findSupplierSpu(@RequestBody SpuQueryVO queryVO){
+		HubSupplierSpuDto supplierSpuDto = orderService.getSupplierSpu(queryVO.getSupplierId(), queryVO.getSupplierSpuNo());
+		if(null== supplierSpuDto){
+			return HubResponse.errorResp("查询失败");
+		}else{
+			return HubResponse.successResp(supplierSpuDto);
 		}
 	}
 }

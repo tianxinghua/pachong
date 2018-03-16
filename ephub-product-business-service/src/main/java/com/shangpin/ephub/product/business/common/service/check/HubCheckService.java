@@ -93,6 +93,9 @@ public class HubCheckService {
 	public boolean checkBrand(String brandNo) {
 		BrandDom brand = brandService.getGmsBrand(brandNo);
         if(null != brand){
+        	if(1!=brand.getIsValid()){
+        		return false;
+			}
         	return true;
         }else{
         	return false;
@@ -121,21 +124,12 @@ public class HubCheckService {
 		//品牌
 		HubPendingSpuCheckResult result = new HubPendingSpuCheckResult();
 		result.setPassing(true);
-		
-		String spuModel = checkSpuModel(hubProduct.getSpuModel(),hubProduct.getHubBrandNo(),hubProduct.getHubCategoryNo());
-		if(spuModel!=null){
-			result.setSpuModel(true);
-			result.setModel(spuModel);
-		}else{
-			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败");
-			result.setPassing(false);
-			result.setSpuModel(false);
-		}
-		
+
+
 		//校验品牌
 		if(StringUtils.isNotBlank(hubProduct.getHubBrandNo())){
 			if(!checkBrand(hubProduct.getHubBrandNo())){
-				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,") ;
+				str.append("品牌编号:"+hubProduct.getHubBrandNo()+"不存在,或已失效") ;
 				result.setBrand(false);
 				result.setPassing(false);
 			}else{
@@ -146,7 +140,7 @@ public class HubCheckService {
 			result.setPassing(false);
 			result.setBrand(false);
 		}
-		
+
 		//校验品类
 		if(StringUtils.isNotBlank(hubProduct.getHubCategoryNo())){
 			if(hubProduct.getHubCategoryNo().matches("A[0-9]{2}B[0-9]{2}C[0-9]{2}D[0-9]{2}")){
@@ -162,12 +156,25 @@ public class HubCheckService {
 				result.setPassing(false);
 				result.setCategory(false);
 			}
-			
+
 		}else{
 			str.append("品类编号为空，");
 			result.setPassing(false);
 			result.setCategory(false);
 		}
+
+		
+		String spuModel = checkSpuModel(hubProduct.getSpuModel(),hubProduct.getHubBrandNo(),hubProduct.getHubCategoryNo());
+		if(spuModel!=null){
+			result.setSpuModel(true);
+			result.setModel(spuModel);
+		}else{
+			str.append("spuModel："+hubProduct.getSpuModel()+"校验失败");
+			result.setPassing(false);
+			result.setSpuModel(false);
+		}
+		
+
 		
 		//校验颜色
 		if(StringUtils.isNoneBlank(hubProduct.getHubColor())){

@@ -200,6 +200,10 @@ public class PendingProductService extends PendingSkuService{
 
 				//如果货号校验通过  则先查询是否与HUB_SPU 如果有 直接赋值 并自动过滤尺码
 				if(null!=brandModelResult&&brandModelResult.isPassing()){
+
+
+					//检验品牌是否
+
 					if(null==hubSpuDto) hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
 					if(null!=hubSpuDto){
 						setSpuState(pendingProductDto);
