@@ -161,8 +161,8 @@ shangpin:
               returnsUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/prod/returns-update
               businessApi: http://api.ephub.spidc1.com/
               isPurchaseExp: 
-              openApiKey: 2ec8cd7d96cc4e9191b534481d727bfa
-              openApiSecret: 72c413d6440049e48d4c5d7f2fae5ebe
+              openApiKey:
+              openApiSecret:
           gaudenzi:
                   url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace

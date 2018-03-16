@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.shangpin.ep.order.enumeration.LogLeve;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +51,10 @@ public class OpenApiService {
      * @param quantity
      */
     public void setSkuQuantity( String app_key, String app_secret,String sku,int quantity) throws ServiceMessageException{
-    	
+    	if(StringUtils.isBlank(app_key)) {
+			LogCommon.recordLog("无app_key");
+    		return;
+		}
         String request = "",url="";
         request = "{\"InventoryQuantity\":" + quantity + ",\"SkuNo\":\""+sku+"\",\"SupplierSkuNo\":\"\"}";
         url= openApiProperties.getOpenApi().getUpdatestock(); //"/stock/updatestock";
@@ -77,6 +81,11 @@ public class OpenApiService {
      * @param purchaseNo
      */
     public void setPurchaseException( String app_key, String app_secret,String purchaseNo)  throws Exception{
+
+		if(StringUtils.isBlank(app_key)) {
+			LogCommon.recordLog("无app_key");
+			return;
+		}
     	 String request = "",url="";
     	 request = "{\"purchaseOrderNo\":\"" + purchaseNo +"\"}";
     	 url= openApiProperties.getOpenApi().getFindporder(); //"/purchase/findporder";
@@ -121,6 +130,10 @@ public class OpenApiService {
     }
 
 	public BigDecimal getPurchasePrice(String app_key, String app_secret,String purchaseNo, String skuNo)  throws Exception{
+		if(StringUtils.isBlank(app_key)) {
+			LogCommon.recordLog("无app_key");
+			return new BigDecimal("-1");
+		}
 		String request = "",url="";
 		request = "{\"Endtime\":\"\",\"Starttime\":\"\",\"SkuNos\":\"" + skuNo +"\"}";
 		url= openApiProperties.getOpenApi().getSupplyfindinfo();
