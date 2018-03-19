@@ -28,7 +28,7 @@ public class StarOrderService implements IOrderService {
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
-    @Autowired
+
 	private OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*2, 1000 * 60*2);
     
     public String handleException(String url, Map<String,String> param, OutTimeConfig outTimeConf, String userName, String password,OrderDTO order,Throwable e){

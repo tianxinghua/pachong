@@ -467,7 +467,7 @@ shangpin:
                   openApiKey: 7e879235ab0f41cf9a928bfde195e14c
                   openApiSecret: 7cfabdcdc91744aaa43e07c313caef6e
           tonyConf:
-                  url: http://www.cloudstore.star/ws/
+                  url: http://www.cloudstore.srl/ws/
                   key: fb8ea6839b486dba8c5cabb374c03d9d
                   period: 30
                   merchantId: 55f707f6b49dbbe14ec6354d
@@ -476,7 +476,7 @@ shangpin:
                   openApiKey: dbfd41bd18a14daba52751a2bcc7daf9
                   openApiSecret: f50d85deb3ee445bb7ed8d0927a2e7ea
           tonySub:
-                  url: http://www.cloudstore.star/ws/
+                  url: http://www.cloudstore.srl/ws/
                   key: fb8ea6839b486dba8c5cabb374c03d9d
                   period: 30
                   merchantId: 56e95bb7f868647d13873d98
