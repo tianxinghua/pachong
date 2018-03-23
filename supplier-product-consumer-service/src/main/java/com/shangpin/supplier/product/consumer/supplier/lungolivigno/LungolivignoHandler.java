@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.message.picture.ProductPicture;
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.message.picture.image.Image;
+import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
+import com.shangpin.supplier.product.consumer.util.DateTimeUtil;
+import com.shangpin.supplier.product.consumer.util.UUIDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -31,6 +37,9 @@ public class LungolivignoHandler implements ISupplierHandler {
 	@Autowired
 	private SupplierProductMongoService mongoService;
 
+	@Autowired
+	private PictureHandler pictureHandler;
+
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
@@ -51,7 +60,12 @@ public class LungolivignoHandler implements ISupplierHandler {
 					}
 				}
 				if(success){
-					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,null);
+					//处理图片
+					SupplierPicture supplierPicture = null;
+
+					supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu,converImage(result.getPicUrls()) );
+
+					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
 			}
 			
@@ -98,6 +112,40 @@ public class LungolivignoHandler implements ISupplierHandler {
 		}else{
 			return false;
 		}
+	}
+
+	/**
+	 * 初始化发送图片消息体
+	 * @param message 供应商原始消息
+	 * @param hubSpu
+	 * @param images
+	 * @return
+	 */
+	public SupplierPicture initSupplierPicture(SupplierProduct message,HubSupplierSpuDto hubSpu,List<Image> images){
+		SupplierPicture supplierPicture = new SupplierPicture();
+		supplierPicture.setMessageId(UUIDGenerator.getUUID());
+		supplierPicture.setMessageDate(DateTimeUtil.getDateTime());
+		supplierPicture.setSupplierId(message.getSupplierId());
+		supplierPicture.setSupplierName(message.getSupplierName());
+		ProductPicture productPicture = new ProductPicture();
+		productPicture.setSupplierSpuNo(hubSpu.getSupplierSpuNo());
+		productPicture.setImages(images);
+		supplierPicture.setProductPicture(productPicture);
+		return supplierPicture;
+	}
+
+
+	private List<Image> converImage(List<String> imgUrl){
+		List<Image> images = new ArrayList<Image>();
+		if(null!=imgUrl&&imgUrl.size()>0){
+			for(String url : imgUrl){
+				Image image = new Image();
+				image.setUrl(url.trim());
+				images.add(image);
+			}
+		}
+
+		return images;
 	}
 
 }

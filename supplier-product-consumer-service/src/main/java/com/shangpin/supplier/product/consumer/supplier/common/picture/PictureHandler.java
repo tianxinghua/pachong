@@ -46,6 +46,7 @@ public class PictureHandler {
 	 * @return
 	 */
 	public SupplierPicture initSupplierPicture(SupplierProduct message,HubSupplierSpuDto hubSpu,List<Image> images){
+		if(null==images||images.size()==0) return null;
 		SupplierPicture supplierPicture = new SupplierPicture();
 		supplierPicture.setMessageId(UUIDGenerator.getUUID());
 		supplierPicture.setMessageDate(DateTimeUtil.getDateTime());
