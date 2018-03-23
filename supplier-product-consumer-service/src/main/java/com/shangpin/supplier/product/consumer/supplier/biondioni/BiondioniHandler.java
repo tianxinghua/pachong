@@ -124,8 +124,10 @@ public class BiondioniHandler implements ISupplierHandler {
 				size = "A";
 			}
 			hubSku.setSupplierSkuNo(modele.getNumMdle()+article.getNumArti()+ "|" + size);
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(qty.getPrixVente())));
 			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(qty.getPrixVente())));
 			hubSku.setSupplierSkuSize(size);
+			hubSku.setSupplierBarcode(qty.getCodeBarre());
 			hubSku.setStock(StringUtil.verifyStock(qty.getQty()));
 			return true;
 		}else{

@@ -178,7 +178,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void biondioniStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		
+		biondiniHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**
