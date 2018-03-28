@@ -74,9 +74,10 @@ public class BuGroup {
             put("A15B01","ceac2440-f874-4ac8-b62b-1367d2f287a1");
             put("A02B01","c4fe8f65-4829-4591-a826-6118e602167b");
             put("A03B02","94ffeb84-6115-4654-9dab-464fc8994ed4");
-            put("A02B02","91e28bd9-b544-4679-8afb-75d0dc6b08a3");
+            put("A02B02","5f173e90-400a-4f93-9cff-6f8c1e8e0719");
             put("A01B02","91e28bd9-b544-4679-8afb-75d0dc6b08a3");
             put("A15B02","91e28bd9-b544-4679-8afb-75d0dc6b08a3");
+            put("A05B11","91e28bd9-b544-4679-8afb-75d0dc6b08a3");
             put("A03B01","a56cec80-1ba8-41d2-b3e5-35cdc895b30a");
             put("A05B02","db874447-211b-4a20-90fc-84712cea3a01");
             put("A05B08","db874447-211b-4a20-90fc-84712cea3a01");

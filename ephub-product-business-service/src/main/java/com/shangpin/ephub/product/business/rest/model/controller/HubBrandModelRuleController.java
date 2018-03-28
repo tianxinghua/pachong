@@ -75,7 +75,7 @@ public class HubBrandModelRuleController {
 			result.setPassing(true);
 			result.setBrandMode(brandModel);
 		} else {
-			String _brandModel = hubBrandModelRuleService.ruleVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+			String _brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
 			if (StringUtils.isBlank(_brandModel)) {
 				result.setPassing(false);
 			} else {
