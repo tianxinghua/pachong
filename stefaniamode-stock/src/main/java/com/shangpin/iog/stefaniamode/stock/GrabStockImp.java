@@ -55,9 +55,6 @@ public class GrabStockImp extends AbsUpdateProductStock {
 	private static Logger loggerError = Logger.getLogger("error");
 	private static ApplicationContext factory;
 
-	private static void loadSpringContext() {
-		factory = new AnnotationConfigApplicationContext(AppContext.class);
-	}
 
 	private static ResourceBundle bdl = null;
 	private static String supplierId;
@@ -159,25 +156,14 @@ public class GrabStockImp extends AbsUpdateProductStock {
 		return skustock;
 	}
 
-//	public static void main(String[] args) throws Exception {
-//
-//		// 加载spring
-//		loadSpringContext();
-//		GrabStockImp grabStockImp = (GrabStockImp) factory
-//				.getBean("stefaniamodeStock");
-//		// AbsUpdateProductStock grabStockImp = new GrabStockImp();
-//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//		logger.info("stefaniamode更新数据库开始");
-//		try {
-//			grabStockImp.updateProductStock(supplierId, "2015-01-01 00:00",
-//					format.format(new Date()));
-//			logger.info("stefaniamode更新数据库成功结束");
-//		} catch (Exception e) {
-//			loggerError.error("stefaniamode更新库存失败");
-//		}
-//
-//		System.exit(0);
-//
-//	}
+	public static void main(String[] args) throws Exception {
+
+		// 加载spring
+		GrabStockImp  impl = new GrabStockImp();
+		Collection<String> skuNos = new ArrayList<>();
+		impl.grabStock(skuNos);
+		System.exit(0);
+
+	}
 
 }

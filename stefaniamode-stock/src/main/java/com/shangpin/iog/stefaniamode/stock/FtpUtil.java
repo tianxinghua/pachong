@@ -79,8 +79,8 @@ public class FtpUtil {
 	}
 
 	public static void main(String[] args) {
-		FtpUtil ftpUtil = new FtpUtil();
-		ftpUtil.downloadFTP();
+//		FtpUtil ftpUtil = new FtpUtil();
+//		ftpUtil.downloadFTP();
 
 	}
 }
