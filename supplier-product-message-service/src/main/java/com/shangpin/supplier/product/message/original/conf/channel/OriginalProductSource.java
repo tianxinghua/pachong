@@ -151,13 +151,15 @@ public interface OriginalProductSource {
     
     public static final String MONNALISA = "monnalisaOriginalProduct";
     
-    public static final String SRL = "srlOriginalProduct";
+    public static final String STAR = "starOriginalProduct";
     
     public static final String THESTYLESIDE = "theStyleSideOriginalProduct";
     
     public static final String JULIANFASHION = "julianFashionOriginalProduct";
 
     public static final String MARINO ="marinoOriginalProduct";
+
+	public static final String REDI ="rediOriginalProduct";
     
     /**
      * 供货商angeloMinetti通道组件配置
@@ -624,11 +626,11 @@ public interface OriginalProductSource {
 	public MessageChannel monnalisa();
 	
 	/**
-	 * 供货商srl通道组件配置
+	 * 供货商star通道组件配置
 	 * @return 供货商通道组件
 	 */
-	@Output(value = OriginalProductSource.SRL)
-	public MessageChannel srl();
+	@Output(value = OriginalProductSource.STAR)
+	public MessageChannel star();
 	
 	/**
 	 * 供货商theStyleSide通道组件配置
@@ -640,4 +642,7 @@ public interface OriginalProductSource {
 	/* OUTPUT channel */
 	@Output(value = OriginalProductSource.MARINO)
 	public MessageChannel marino();
+
+	@Output(value = OriginalProductSource.REDI)
+	public MessageChannel redi();
 }

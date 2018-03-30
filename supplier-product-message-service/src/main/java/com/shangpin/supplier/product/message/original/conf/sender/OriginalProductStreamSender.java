@@ -640,8 +640,8 @@ public class OriginalProductStreamSender {
      * @param supplierProduct 消息体
      * @return 如果发送成功返回true,否则返回false
      */
-    public boolean srlStream(SupplierProduct supplierProduct) {
-        return originalProductSource.srl().send(MessageBuilder.withPayload(supplierProduct).build());
+    public boolean starStream(SupplierProduct supplierProduct) {
+        return originalProductSource.star().send(MessageBuilder.withPayload(supplierProduct).build());
     }
     
     /**
@@ -660,6 +660,11 @@ public class OriginalProductStreamSender {
      */
     public boolean marinoStream(SupplierProduct supplierProduct) {
         return originalProductSource.marino().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
+
+    public boolean rediStream(SupplierProduct supplierProduct) {
+        return originalProductSource.redi().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 
 }

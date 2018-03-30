@@ -233,8 +233,8 @@ spring:
                         monnalisaOriginalProduct: 
                               destination: monnalisa.original.product
                               content-type: application/json 
-                        srlOriginalProduct: 
-                              destination: srl.original.product
+                        starOriginalProduct:
+                              destination: star.original.product
                               content-type: application/json 
                         theStyleSideOriginalProduct: 
                               destination: theStyleSide.original.product
@@ -245,7 +245,9 @@ spring:
                         marinoOriginalProduct:
                              destination: marino.original.product
                              content-type: application/json
-
+                        rediOriginalProduct:
+                             destination: redi.original.product
+                             content-type: application/json
               rabbit:
                       bindings: 
                             cocoroseLondonOriginalProduct:
@@ -473,7 +475,7 @@ spring:
                             monnalisaOriginalProduct:
                                   producer:
                                            prefix: HA.
-                            srlOriginalProduct:
+                            starOriginalProduct:
                                   producer:
                                            prefix: HA.
                             theStyleSideOriginalProduct:
@@ -483,6 +485,9 @@ spring:
                                   producer: 
                                            prefix: HA. 
                             marinoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            rediOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

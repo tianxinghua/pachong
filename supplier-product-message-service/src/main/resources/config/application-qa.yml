@@ -218,8 +218,8 @@ spring:
                         monnalisaOriginalProduct: 
                               destination: monnalisa.original.product
                               content-type: application/json   
-                        srlOriginalProduct: 
-                              destination: srl.original.product
+                        starOriginalProduct:
+                              destination: star.original.product
                               content-type: application/json   
                         theStyleSideOriginalProduct: 
                               destination: theStyleSide.original.product
@@ -233,8 +233,10 @@ spring:
                         marinoOriginalProduct:
                              destination: marino.original.product
                              content-type: application/json
-
-              rabbit: 
+                        rediOriginalProduct:
+                             destination: redi.original.product
+                             content-type: application/json
+              rabbit:
                       bindings: 
                             coccolebimbiOriginalProduct:
                                   producer: 
@@ -446,7 +448,7 @@ spring:
                             monnalisaOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
-                            srlOriginalProduct: 
+                            starOriginalProduct:
                                   producer: 
                                            prefix: HA. 
                             theStyleSideOriginalProduct:
@@ -458,7 +460,7 @@ spring:
                             julianFashionOriginalProduct: 
                                   producer: 
                                            prefix: HA.
-                            marinoOriginalProduct:
+                            rediOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
