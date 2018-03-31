@@ -1,7 +1,6 @@
-package com.shangpin.iog.srl.schedule;
+package com.shangpin.iog.redi.schedule;
 
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.srl.service.FetchStockImpl;
+import com.shangpin.iog.redi.service.FetchStockImpl;
 
 
 @Component

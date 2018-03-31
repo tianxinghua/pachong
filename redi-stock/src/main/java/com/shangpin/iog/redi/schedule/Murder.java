@@ -1,4 +1,4 @@
-package com.shangpin.iog.srl.schedule;
+package com.shangpin.iog.redi.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.srl.service.FetchStockImpl;
+import com.shangpin.iog.redi.service.FetchStockImpl;
 
 @Component
 public class Murder extends TimerTask{

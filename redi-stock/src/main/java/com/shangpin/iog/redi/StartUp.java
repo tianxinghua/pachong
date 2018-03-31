@@ -1,4 +1,4 @@
-package com.shangpin.iog.srl;
+package com.shangpin.iog.redi;
 
 import java.util.ResourceBundle;
 
@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.shangpin.iog.srl.schedule.AppContext;
+import com.shangpin.iog.redi.schedule.AppContext;
 
 public class StartUp {
 	private static Logger log = Logger.getLogger("info");
@@ -34,15 +34,10 @@ public class StartUp {
 	{
 
         //加载spring
-        log.info("----拉取srl数据开始----");
 		loadSpringContext();
         log.info("----初始SPRING成功----");
         //拉取数据
-//        FetchStockImpl fetchProduct =(FetchStockImpl)factory.getBean("parisi");
-//        fetchProduct.handleData("spu", supplierId, day, picpath);;
 
-
-        log.info("----拉取parisi数据完成----");
 		System.out.println("-------fetch end---------");
 
 	}
