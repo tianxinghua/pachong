@@ -15,3 +15,6 @@ include 'syn-spsku-hub'
 include 'coltorti-v2'
 include 'studio69-stock'
 include 'stefaniamode-stock'
+include 'srl-stock'
+include 'redi-stock'
+
