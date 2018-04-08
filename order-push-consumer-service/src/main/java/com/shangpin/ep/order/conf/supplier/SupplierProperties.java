@@ -133,5 +133,7 @@ public class SupplierProperties {
 	private Marino marino;
 	
 	private Star star;
+
+	private Redi redi;
 	
 }

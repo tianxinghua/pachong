@@ -165,6 +165,8 @@ public interface OriginalProductSink {
 	
 	public static final String THESTYLESIDE = "theStyleSideOriginalProduct";
 
+	public static final String REDI = "rediOriginalProduct";
+
 
 	//===============================
 
@@ -649,5 +651,9 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.MARINO)
 	public MessageChannel marinoOriginalProduct();
+
+
+	@Input(value = OriginalProductSink.REDI)
+	public MessageChannel rediOriginalProduct();
 
 }

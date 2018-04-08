@@ -733,4 +733,10 @@ public class PendingProductStreamListener {
     public void theStyleSidePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.theStyleSidePendingProductStreamListen(message,headers);
     }
+
+
+	@StreamListener(PendingProductSink.REDI)
+	public void rediPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.theStyleSidePendingProductStreamListen(message,headers);
+	}
 }

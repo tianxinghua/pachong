@@ -750,4 +750,15 @@ public class OriginalProductStreamListener {
     public void theStyleSideStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.theStyleSideStreamListen(message,headers);
     }
+
+
+	/**
+	 * 供应商redi原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.REDI)
+	public void rediStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.rediStreamListen(message,headers);
+	}
 }

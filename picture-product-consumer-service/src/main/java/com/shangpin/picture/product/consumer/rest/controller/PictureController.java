@@ -30,9 +30,8 @@ public class PictureController {
 	private PictureService pictureService;
 	/**
 	 * 图片上传
-	 * @param file 文件
-	 * @param request 
-	 * @param response
+	 * @param retryPictureDto
+
 	 * @return
 	 * @throws Exception
 	 */
@@ -53,4 +52,25 @@ public class PictureController {
 		}
 		log.info("重试拉取图片服务发送{}完毕",ids);
     }
+
+
+	@RequestMapping(value = "/inspect-pic", method = RequestMethod.POST)
+	public void inspectPic(@RequestBody List<Long> supplierSpuIdList) {
+		//获取
+
+		List<Long> ids = supplierSpuIdList;
+		log.info("重试拉取图片服务接收到请求参数：{}",ids);
+		if (CollectionUtils.isNotEmpty(ids)) {
+			for (Long id : ids) {
+				if (id != null) {
+					if(pictureService.sendRetryPicId(id)){
+						log.info("图片服务发送重试拉取图片消息主键{}成功",id);
+					}else{
+						log.error("图片服务发送重试拉取图片消息主键{}失败",id);
+					}
+				}
+			}
+		}
+		log.info("重试拉取图片服务发送{}完毕",ids);
+	}
 }

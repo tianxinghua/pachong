@@ -1,5 +1,7 @@
 package com.shangpin.supplier.product.consumer.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class SupplierProductMongoService {
 	
 	@Autowired
 	private SupplierProductGateway gateway;
+
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	/**
 	 * 保存原始数据到mongodb
@@ -35,6 +39,7 @@ public class SupplierProductMongoService {
 		try {
 			SupplierProductDto supplierProductDto = new SupplierProductDto();
 			Map<String, Object> data = ReflectBeanUtils.objectToMap(spuDto);
+			data.put("handleTime",dateFormat.format(new Date()));
 			supplierProductDto.setProduct(data);
 			supplierProductDto.setId(supplierId+"_"+supplierSpuNo);
 			boolean flag = gateway.save(supplierProductDto);

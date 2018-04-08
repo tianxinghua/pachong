@@ -711,6 +711,15 @@ spring:
                         theStyleSidePendingProduct:
                               destination: theStyleSide.pending.product
                               content-type: application/json
+                        rediOriginalProduct:
+                              destination: redi.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        rediPendingProduct:
+                              destination: redi.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1411,6 +1420,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               theStyleSidePendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              rediOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              rediPendingProduct:
                                     producer:
                                          prefix: HA.
         consul: 

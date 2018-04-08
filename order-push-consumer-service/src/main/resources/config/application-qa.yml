@@ -503,6 +503,12 @@ shangpin:
               isPurchaseExp:
               openApiKey:
               openApiSecret:
+      redi:
+              isPurchaseExp:
+              openApiKey:
+              openApiSecret:
+              purchaseOrderUrl:
+              orderUrl: https://www.redigroup.it/api/orders/1.8/e9b0a077-fc34-46bb-bfef-7ad3401a35c7
       supplier:
               delayTime: 1000
               retry: 120

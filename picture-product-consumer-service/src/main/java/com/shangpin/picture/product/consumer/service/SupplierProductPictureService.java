@@ -188,16 +188,24 @@ public class SupplierProductPictureService {
 	 * @param authenticationInformation 必须将ftp的用户名密码配置到配置文件
 	 * @return
 	 */
-	private int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+	public int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		FTPClient ftpClient = null;
 		InputStream inputStream = null;
 		int flag = 0;
 		try {
-			String url = picUrl.substring(picUrl.indexOf("@")+1);
+			String url = picUrl.substring(picUrl.indexOf("@")+1).trim();
 			String ip = url.substring(0,url.indexOf("/"));
 			String remotePath =  url.substring(url.indexOf("/"),url.lastIndexOf("/")); 
 			String remoteFileName = picUrl.substring(picUrl.lastIndexOf("/")+1);
 			int port = 21;
+			if(ip.indexOf(":")>0){
+				try {
+					port = Integer.valueOf(ip.substring(ip.indexOf(":")+1,ip.length()).trim());
+					ip=ip.substring(0,ip.indexOf(":"));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
 			inputStream = FtpUtil.getFtpUtil().downFile(ftpClient,authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
 			if(null == inputStream){
 				return 404;
@@ -399,4 +407,6 @@ public class SupplierProductPictureService {
 			supplierProductPictureManager.deleteImageAndSetNull(hubSpuPendingPicDto);
 		}
 	}
+
+
 }

@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
+import com.shangpin.ephub.client.message.picture.image.Image;
+import com.shangpin.supplier.product.consumer.supplier.coccolebimbi.dto.Item;
+import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -40,6 +44,9 @@ public class BiondioniHandler implements ISupplierHandler {
 	@Autowired
 	private SupplierProductMongoService mongoService;
 
+	@Autowired
+	private PictureHandler pictureHandler;
+
 	@Override
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
@@ -62,8 +69,9 @@ public class BiondioniHandler implements ISupplierHandler {
 							hubSkus.add(hubSku);
 						}
 					}
+					SupplierPicture supplierPicture =  pictureHandler.initSupplierPicture(message, hubSpu, converImage(article.getImageUrl()));
 					if(success){
-						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,null);
+						supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 					}
 				}
 				
@@ -85,7 +93,7 @@ public class BiondioniHandler implements ISupplierHandler {
 		if(modele != null && article != null){
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(modele.getNumMdle()+article.getNumArti());
-			hubSpu.setSupplierSpuModel(modele.getNumMdle()+article.getNumArti());
+			hubSpu.setSupplierSpuModel(StringUtils.isEmpty(article.getSpuModel())?modele.getNumMdle()+article.getNumArti():article.getSpuModel());
 			hubSpu.setSupplierSpuName(modele.getNomFour());
 			hubSpu.setSupplierSpuColor(article.getCouleurPrincipale());
 			hubSpu.setSupplierGender(modele.getRayon());
@@ -134,6 +142,22 @@ public class BiondioniHandler implements ISupplierHandler {
 			
 			return false;
 		}
+	}
+
+	private List<Image> converImage(String  imageUrl) {
+		List<Image> images = new ArrayList<Image>();
+		if(!StringUtils.isEmpty(imageUrl)){
+
+			String[] urlArray = imageUrl.split("\\|");
+			if(null!=urlArray){
+				for(String url :urlArray){
+					Image image = new Image();
+					image.setUrl(url);
+					images.add(image);
+				}
+			}
+		}
+		return images;
 	}
 
 }
