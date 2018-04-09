@@ -54,7 +54,7 @@ public class FastDFSClientManager {
      * @return 文件访问地址
      * @throws IOException
      */
-    public  String uploadFile(byte[] buffer, String extension) {
+    public  String uploadFile(byte[] buffer, String extension,String requestId) {
 //        FastFileStorageClient storageClient = new DefaultFastFileStorageClient();
         boolean upload = true;
         String picUrl = "";
@@ -79,7 +79,7 @@ public class FastDFSClientManager {
                       //防止异常
                       upload = false;
                   }
-                  log.error("发生错乱");
+                  log.error("请求编号" + null!=requestId?requestId:"" + ",第" + i+"次发生错乱");
               }
 
             } catch (Exception e) {
