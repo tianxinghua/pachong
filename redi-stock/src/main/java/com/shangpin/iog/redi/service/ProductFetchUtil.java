@@ -73,8 +73,5 @@ public class ProductFetchUtil {
 		return spuLis;
 	}
 
-	public static void main(String[] args) {
 
-
-	}
 }

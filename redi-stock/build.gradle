@@ -19,7 +19,7 @@ jar {
 //    }.join(' ')
 
     manifest {
- //       Attributes 'Main-Class': 'com.shangpin.iog.redi.StartUp'
+        attributes 'Main-Class': 'com.shangpin.iog.redi.StartUp'
 //       attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }
 }
