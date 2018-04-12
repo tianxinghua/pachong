@@ -103,6 +103,7 @@ public class LungolivignoHandler implements ISupplierHandler {
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(size.getPrice())));
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(size.getSupplierPrice())));
 			String skuSize = size.getLabel();
+			if(StringUtils.isEmpty(skuSize)) return false;
 			if(!StringUtils.isEmpty(skuSize) && skuSize.contains("½")){
 				skuSize = skuSize.replaceAll("½", "+");
 			}

@@ -79,7 +79,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 	
 	/**
 	 * stefania处理图片
-	 * @param stefPicture
+	 * @param
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
@@ -102,9 +102,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 	/**
 	 * 将stefania原始数据转换成hub spu
 	 * @param supplierId 供应商门户编号
-	 * @param stefProduct stef 原始dto
-	 * @param stefItem stef 原始dto
-	 * @param hubSpu hub spu
+
 	 * @return
 	 */
 	public boolean convertSpu(String supplierId,CsvDTO ob,HubSupplierSpuDto hubSpu,String data){
@@ -126,7 +124,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 				hubSpu.setSupplierCategoryname("");
 			}
 			hubSpu.setSupplierBrandname(ob.getBrand());
-			hubSpu.setSupplierSeasonname(ob.getSeason());
+			hubSpu.setSupplierSeasonname((StringUtils.isEmpty(ob.getAnno())?"":ob.getAnno())+ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());
 			hubSpu.setSupplierOrigin(ob.getCountry());
 			hubSpu.setSupplierSpuDesc(ob.getDescription());
@@ -139,7 +137,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 	 * 将stefania原始数据转换成hub sku
 	 * @param supplierId
 	 * @param supplierSpuId
-	 * @param stefItem
+	 * @param
 	 * @param hubSku
 	 * @return
 	 */

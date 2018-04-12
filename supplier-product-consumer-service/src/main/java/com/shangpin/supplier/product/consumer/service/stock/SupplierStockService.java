@@ -1,8 +1,10 @@
 package com.shangpin.supplier.product.consumer.service.stock;
 
 
+import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +51,10 @@ public class SupplierStockService {
 			}else{
 				int result1 = updateSupplierStock(supplierStock);
 				int result2 = updatePendingStock(supplierStock);
-				updatePendingSpuStockState(supplierStock);
-				if(1 == result1 && 1 == result2){
-					log.info("SUPPLIERID："+supplierStock.getSupplierId()+" SUPPLIERSKUNO："+supplierStock.getSupplierSkuNo()+" STOCK："+supplierStock.getStock()+"更新库存成功");
-				}else{
+				if(result2>0){
+					updatePendingSpuStockState(supplierStock);
+				}
+				if(result1<0 ){
 					log.info("SUPPLIERID："+supplierStock.getSupplierId()+" SUPPLIERSKUNO："+supplierStock.getSupplierSkuNo()+" STOCK："+supplierStock.getStock()+"更新库存失败");
 				}
 			}
@@ -73,7 +75,9 @@ public class SupplierStockService {
 		criteria.createCriteria().andSupplierIdEqualTo(supplierStock.getSupplierId()).andSupplierSkuNoEqualTo(supplierStock.getSupplierSkuNo());
 		withCriteria.setCriteria(criteria );
 		HubSupplierSkuDto hubSupplierSku = new HubSupplierSkuDto();
-		hubSupplierSku.setStock(supplierStock.getStock()); 
+		hubSupplierSku.setStock(supplierStock.getStock());
+//		hubSupplierSku.setUpdateTime(new Date());  // BI统计可能用的此致 不做修改
+//		hubSupplierSku.setMemo("OPENAPI更新库存"); // BI统计可能用的此致 不做修改
 		withCriteria.setHubSupplierSku(hubSupplierSku );
 		return hubSupplierSkuGateWay.updateByCriteriaSelective(withCriteria );
 	}
@@ -99,17 +103,24 @@ public class SupplierStockService {
 	 */
 	private int updatePendingSpuStockState(SupplierStock supplierStock){
 		int result = 0;
-		if(supplierStock.getStock() > 0){
-			HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
-			criteria.createCriteria().andSupplierIdEqualTo(supplierStock.getSupplierId()).andSupplierSkuNoEqualTo(supplierStock.getSupplierSkuNo());
-			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteria);
-			if(CollectionUtils.isNotEmpty(list)){
-				HubSpuPendingDto dto = new HubSpuPendingDto();
-				dto.setSpuPendingId(list.get(0).getSpuPendingId());
+		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierStock.getSupplierId()).andSupplierSkuNoEqualTo(supplierStock.getSupplierSkuNo());
+		List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isNotEmpty(list)) {
+			HubSpuPendingDto dto = new HubSpuPendingDto();
+			dto.setSpuPendingId(list.get(0).getSpuPendingId());
+			if(supplierStock.getStock() > 0){
 				dto.setStockState(StockState.HANDLED.getIndex());
-				result = hubSpuPendingGateWay.updateByPrimaryKeySelective(dto );
+			}else if(0==supplierStock.getStock()){
+				int total = hubSkuPendingGateWay.sumStockBySpuPendingId(list.get(0).getSpuPendingId());
+				if(total>0){
+					dto.setStockState(StockState.HANDLED.getIndex());
+				}else{
+					dto.setStockState(StockState.NOSTOCK.getIndex());
+				}
 			}
-		}
+			result = hubSpuPendingGateWay.updateByPrimaryKeySelective(dto );
+	    }
 		return result;
 	}
 }
