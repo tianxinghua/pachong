@@ -1,6 +1,7 @@
 package com.shangpin.iog.reebonz.schedule;
 
-import com.shangpin.iog.redi.service.FetchStockImpl;
+
+import com.shangpin.iog.reebonz.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;

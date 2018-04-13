@@ -2,7 +2,7 @@
 repositories {
     mavenLocal()
     maven {
-        url "http://192.168.4.203:8181/nexus/content/groups/public/"
+        url "http://192.168.20.223:8081/nexus/content/groups/public/"
     }
     mavenCentral()
 }

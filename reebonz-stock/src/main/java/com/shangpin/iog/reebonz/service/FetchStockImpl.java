@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Created by lizhongren on 2017/2/22.
  */
-@Component("redi")
+@Component("reebonz")
 public class FetchStockImpl extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");

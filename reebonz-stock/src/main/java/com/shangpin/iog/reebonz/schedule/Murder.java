@@ -1,7 +1,8 @@
 package com.shangpin.iog.reebonz.schedule;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.redi.service.FetchStockImpl;
+
+import com.shangpin.iog.reebonz.service.FetchStockImpl;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
