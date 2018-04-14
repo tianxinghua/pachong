@@ -585,7 +585,9 @@ public class ExportServiceImpl {
 				}  else if(rowTemplate[i].startsWith("reason4")){
 					row.createCell(i).setCellValue(null != errorReasons && errorReasons.length>3 ? errorReasons[3] : "");
 					ExcelDropdown.setDataValidation(row, i); 
-				} else {
+				}  else if(rowTemplate[i].startsWith("picRetry")){
+					row.createCell(i).setCellValue("");
+				}else {
 					if ("specificationType".equals(rowTemplate[i])) {
 						continue;
 					}

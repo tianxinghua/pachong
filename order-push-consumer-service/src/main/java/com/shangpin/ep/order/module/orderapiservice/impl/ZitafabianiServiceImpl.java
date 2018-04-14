@@ -1,5 +1,7 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
+import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,5 +43,15 @@ public class ZitafabianiServiceImpl extends AtelierOrderHandler {
 	public String getSetStatusInterface() {
 		return properties.getZitafabiani().getSetStatusInterface();
 	}
-	
+
+	@Override
+	public ShangpinMail getEmailMessage() {
+		return null;
+	}
+
+	@Override
+	public String getEmailContent(OrderDTO orderDTO, String size) {
+		return null;
+	}
+
 }

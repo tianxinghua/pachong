@@ -160,6 +160,8 @@ public interface PendingProductSink {
 
 	public static final String MARINO = "marinoPendingProduct";
 
+	public static final String REDI = "rediPendingProduct";
+
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件
@@ -638,4 +640,7 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.THESTYLESIDE)
 	public SubscribableChannel theStyleSidePendingProduct();
+
+	@Input(value = PendingProductSink.REDI)
+	public SubscribableChannel rediPendingProduct();
 }

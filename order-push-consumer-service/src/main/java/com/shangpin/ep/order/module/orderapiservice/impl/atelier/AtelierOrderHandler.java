@@ -2,8 +2,11 @@ package com.shangpin.ep.order.module.orderapiservice.impl.atelier;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
+import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,10 @@ public abstract class AtelierOrderHandler implements IOrderService {
     private HandleException handleException;
     @Autowired
     private CommonService commonService;
+
+    @Autowired
+	private ShangpinMailSender shangpinMailSender;
+
     /**
      * 获取api url
      * @return
@@ -68,8 +75,18 @@ public abstract class AtelierOrderHandler implements IOrderService {
      * @return
      */
     public abstract String getSetStatusInterface();
-    
-    
+
+
+	/**
+	 * 获取产品信息
+	 * @return
+	 */
+	public abstract ShangpinMail getEmailMessage();
+
+    /*
+     获取发送给供货商的邮件内容
+     */
+    public abstract String getEmailContent(OrderDTO orderDTO, String size);
     
     /**
      * 给对方推送数据
@@ -161,7 +178,21 @@ public abstract class AtelierOrderHandler implements IOrderService {
 						
 						if (returnData.contains("OK")) {
 							orderDTO.setConfirmTime(new Date()); 
-							orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
+							orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+							//下单成功 发送邮件
+							String content = this.getEmailContent(orderDTO,size);
+							if(StringUtils.isNotBlank(content)){
+								try {
+									ShangpinMail shangpinMail = this.getEmailMessage();
+									if(null!=shangpinMail){
+                                        shangpinMail.setText(content);
+                                        shangpinMailSender.sendShangpinMail(shangpinMail);
+                                    }
+								} catch (Exception e) {
+
+								}
+							}
+
 						} else {
 							//推送订单失败
 							orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);

@@ -160,6 +160,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("reebonzHandler")
 	private ISupplierHandler reebonzHandler;
 
+	@Autowired
+	@Qualifier("rediHandler")
+	private ISupplierHandler rediHandler;
+
 
 	
 	
@@ -825,6 +829,16 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void marinoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+
+
+	/**
+	 * 供应商redi处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void rediStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);
 	}
 

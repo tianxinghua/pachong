@@ -1,3 +1,4 @@
+
 feign.hystrix.enabled: false
 ribbon:
   ConnectTimeout: 120000

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -70,13 +71,30 @@ public class PendingSpuImportService {
 	TaskImportService taskService;
 	@Autowired
 	HubNohandleReasonGateWay nohandleGateWay;
+	@Autowired
+	HubPendingHandleGateWay pendingHandleGateWay;
 
 	private static String[] pendingSpuValueTemplate = null;
 	static {
 		pendingSpuValueTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
 	}
 
-	public String handMessage(Task task) throws Exception {
+	public String
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	handMessage(Task task) throws Exception {
 		
 		//从ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
@@ -236,6 +254,21 @@ public class PendingSpuImportService {
 		HubSpuPendingDto isSpuPendingExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
 			isSpuPendingExist = listSpu.get(0);
+			//存在 看是否是需要重新处理SPU图片的 ，重新处理
+			if("1".equals(productImport.getPicRetry())){
+				if(null!=isSpuPendingExist.getSupplierSpuId()) {
+					try {
+						List<String> spAvailablePicList = dataHandleService.getSpAvailablePicList(isSpuPendingExist.getSupplierSpuId());
+						if(null!=spAvailablePicList&&spAvailablePicList.size()>0){
+
+							pendingHandleGateWay.retryPictures(spAvailablePicList);
+						}
+					} catch (Exception e) {
+						log.error("spu pending id:" + isSpuPendingExist.getSpuPendingId() +" 图片处理失败. Reason : "+e.getMessage() );
+					}
+				}
+			}
+
 			map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");
 		}
 		

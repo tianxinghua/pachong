@@ -1,5 +1,7 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
+import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
+import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +42,16 @@ public class JulianFashionHandler extends AtelierOrderHandler {
 	@Override
 	public String getSetStatusInterface() {
 		return properties.getJulianFashion().getSetStatusInterface();
+	}
+
+	@Override
+	public ShangpinMail getEmailMessage() {
+		return null;
+	}
+
+	@Override
+	public String getEmailContent(OrderDTO orderDTO, String size) {
+		return null;
 	}
 
 }
