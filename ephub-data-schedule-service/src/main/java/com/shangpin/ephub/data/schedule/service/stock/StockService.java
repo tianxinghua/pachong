@@ -86,8 +86,9 @@ public class StockService {
          * 以下2个供应商是暂时不检测的两个供应商
          */
         List<String> values = new ArrayList<String>();
-        values.add("2015092801542");
-        values.add("2015101501616");
+        values.add("2015092801542");//francescomassa
+        values.add("2015101501616");//frmoda
+        values.add("2016051001890");//reebonz
 
 		criteriaDto.createCriteria().andLastPullTimeLessThan(date).andSupplierIdNotIn(values ).andStockGreaterThan(0);
 		criteriaDto.or(criteriaDto.createCriteria().andLastPullTimeIsNull().andSupplierIdNotIn(values ).andStockGreaterThan(0));

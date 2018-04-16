@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
+import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
+import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
+import com.shangpin.ephub.product.business.ui.pending.vo.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -55,11 +59,6 @@ import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.HubSpuPendingNohandleReasonService;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
-import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -101,6 +100,10 @@ public class PendingProductService extends PendingSkuService{
 	private CheckService checkService;
 	@Autowired
 	private SkuPendingService skuPendingService;
+
+
+	@Autowired
+	PendingService pendingService;
 
 	@Override
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -329,6 +332,14 @@ public class PendingProductService extends PendingSkuService{
 			setHubSlotSpu(pendingProductDto);
 
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+
+			//如果处于审核成功 需要直接进入待选品 而不是待审核
+			SpuPendingAuditVO auditVO = this.getAuditProduct(pendingProductDto);
+			if(null!=auditVO){
+				if(!pendingService.audit(auditVO)){
+					return HubResponse.errorResp(auditVO.getMemo());
+				}
+			}
 
 
 
@@ -776,6 +787,18 @@ public class PendingProductService extends PendingSkuService{
 		}else{
 			hubPendingSpuDto.setSpuSeasonState((byte)0);
 		}
+	}
+
+
+	private SpuPendingAuditVO getAuditProduct(PendingProductDto pendingProductDto){
+		SpuPendingAuditVO auditVO = null;
+		if(pendingProductDto.getSpuState()== SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()){
+			auditVO = new SpuPendingAuditVO();
+			auditVO.setAuditUser(pendingProductDto.getUpdateUser());
+			auditVO.setAuditStatus((int)AuditState.AGREE.getIndex());
+		}
+		return auditVO;
+
 	}
 
 }

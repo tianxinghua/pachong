@@ -61,29 +61,34 @@ public class FastDFSClientManager {
         int i=0;
         while(upload){
 
-            StorePath storePath = storageClient.uploadFile(apiAddressProperties.getGroupName(), new ByteArrayInputStream(buffer), buffer.length, extension);
 
-//        StorePath storePath = storageClient.uploadFile(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
-             picUrl  =  getResAccessUrl(storePath);
-             byte[]  newPicByte = this.pullPicAndPushToPicServer(picUrl);
             //md5 校验
             try {
-              String oldMd5 = this.MD5(buffer);
-              String newMd5 = this.MD5(newPicByte);
-              if(oldMd5.equals(newMd5)){
+                StorePath storePath = storageClient.uploadFile(apiAddressProperties.getGroupName(), new ByteArrayInputStream(buffer), buffer.length, extension);
 
-                  upload = false;
-              }else{
-                  i++;
-                  if(5==i){
-                      //防止异常
+//        StorePath storePath = storageClient.uploadFile(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
+                picUrl  =  getResAccessUrl(storePath);
+                byte[]  newPicByte = this.pullPicAndPushToPicServer(picUrl);
+                String oldMd5 = this.MD5(buffer);
+                 String newMd5 = this.MD5(newPicByte);
+                 if(oldMd5.equals(newMd5)){
+
                       upload = false;
-                  }
-                  log.error("请求编号" + null!=requestId?requestId:"" + ",第" + i+"次发生错乱");
-              }
+                 }else{
+                      i++;
+                      if(5==i){
+                          //防止异常
+                          upload = false;
+                      }
+                      log.error("请求编号" + null!=requestId?requestId:"" + ",第" + i+"次发生错乱");
+                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                i++;
+                if(i>5){
+                    upload = false;
+                }
+                picUrl="";
             }
             //
 

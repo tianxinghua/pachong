@@ -77,7 +77,7 @@ public class ProductScheduler {
 	/**
 	 * 修改数据和图片状态
 	 */
-	@Scheduled(cron = "00 55 08 * * ?")
+	@Scheduled(cron = "00 30 08 * * ?")
 	public void modifyUpdateStatus(){
 		try {
 			log.info("======================更新库存定时任务开始======================");
