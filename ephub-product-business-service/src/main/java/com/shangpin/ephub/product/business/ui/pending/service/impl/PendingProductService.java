@@ -333,16 +333,6 @@ public class PendingProductService extends PendingSkuService{
 
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
 
-			//如果处于审核成功 需要直接进入待选品 而不是待审核
-			SpuPendingAuditVO auditVO = this.getAuditProduct(pendingProductDto);
-			if(null!=auditVO){
-				if(!pendingService.audit(auditVO)){
-					return HubResponse.errorResp(auditVO.getMemo());
-				}
-			}
-
-
-
 		} catch (Exception e) {
 			log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
 			setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
