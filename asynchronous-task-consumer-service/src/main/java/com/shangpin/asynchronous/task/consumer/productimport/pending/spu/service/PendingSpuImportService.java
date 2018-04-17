@@ -79,22 +79,7 @@ public class PendingSpuImportService {
 		pendingSpuValueTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
 	}
 
-	public String
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	handMessage(Task task) throws Exception {
+	public String handMessage(Task task) throws Exception {
 		
 		//从ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
@@ -337,7 +322,9 @@ public class PendingSpuImportService {
 						allFliter = false;
 					}
 					if(!hubPendingSkuCheckResult.isPassing()){
-						flag = false;
+						if(!hubPendingSkuCheckResult.isFilter()){
+							flag = false;	
+						}
 					}
 					str.append(hubPendingSkuCheckResult.getMessage()).append(",");
 				}
@@ -379,10 +366,10 @@ public class PendingSpuImportService {
 						isMultiSizeType = matchSizeResult.isMultiSizeType();
 						result = " " + hubSkuPendingDto.getHubSkuSize() + "多个匹配,失败";
 					}else  if(matchSizeResult.isFilter()){//有模板没匹配上
-						flag = true;
 //						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType("排除");
 						pendingSkuImportDto.setSizeType("排除");
+						hubPendingSkuCheckResult.setFilter(true);
 						result =" " + hubSkuPendingDto.getHubSkuSize() + "有模板没匹配上,排除";
 					}else{
 					   //不做处理
