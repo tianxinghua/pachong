@@ -354,15 +354,6 @@ public class HubCheckService {
 		if(StringUtils.isNotBlank(size)){
 			size = size.replaceAll(regex, "");	
 		}
-	    
-		if("排除".equals(sizeType)){
-			checkResult.setPassing(false);
-	     	checkResult.setSizeType("排除");
-        	checkResult.setSizeValue(size);
-        	checkResult.setMessage("尺码排除");
-        	checkResult.setFilter(true);
-        	return checkResult;
-		}
 		checkResult.setPassing(false);
 		try {
 			CategoryScreenSizeDom sizeDom =  sizeService.getGmsSize(hubBrandNo, hubCategoryNo);

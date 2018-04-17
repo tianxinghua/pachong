@@ -1,25 +1,36 @@
 package com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.controller;
 
+import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierSelectState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
-import com.shangpin.ephub.client.data.mysql.sku.dto.*;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
+import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.service.PendingProductCommonService;
 import com.shangpin.ephub.product.business.service.pending.PendingCommonService;
+import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.response.HubResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  *
@@ -38,13 +49,16 @@ public class PendingProductCommonController {
 
 	@Autowired
 	HubSkuSupplierMappingGateWay skuSupplierMappingGateWay;
-
+	@Autowired
+	HubPendingHandleGateWay hubPendingHandleGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
-
+	@Autowired
+	PendingService pendingService;
 	@Autowired
 	PendingCommonService pendingCommonService;
-	
+	@Autowired
+	PendingProductCommonService pendingProductCommonService;
 	@RequestMapping(value = "/handle-pending")
 	public HubResponse<?> checkSku(@RequestBody PendingSpu dto){
 		log.info("receive PendingSpu :{}",dto);
@@ -105,11 +119,18 @@ public class PendingProductCommonController {
 			HubSkuWithCriteriaDto criteriaWithSku = new HubSkuWithCriteriaDto(hubSku,skuCriteria);
 			hubSkuGateWay.updateByCriteriaSelective(criteriaWithSku);
 		}
-
-
-
-
 	}
-
 	
+	/**
+	 * 待审核提交按钮逻辑
+	 * @param auditVO
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/spu-pending-audit/{spuPendingId}")
+	 public String audit(@PathVariable("spuPendingId") Long spuPendingId) throws Exception {
+		log.info("自动审核spuPendingId参数："+spuPendingId);
+		return pendingProductCommonService.audit(spuPendingId);
+		
+	}
 }

@@ -1,6 +1,7 @@
 package com.shangpin.ephub.client.data.mysql.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.*;
 
 import java.io.Serializable;
@@ -42,4 +43,6 @@ public class SpuPendingCommonDto implements Serializable{
     private String origin;//产地
 
     private String updateTime ;
+
+    private String memo;
 }

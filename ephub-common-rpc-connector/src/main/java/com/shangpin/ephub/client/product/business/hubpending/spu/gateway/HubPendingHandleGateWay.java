@@ -1,14 +1,14 @@
 package com.shangpin.ephub.client.product.business.hubpending.spu.gateway;
 
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.response.HubResponse;
+import java.util.List;
+
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
+import com.shangpin.ephub.response.HubResponse;
 
 /**
  * <p>Title:HubBrandModelRuleController.java </p>
@@ -28,8 +28,6 @@ public interface HubPendingHandleGateWay {
 	@RequestMapping(value = "/pending-product/retry-pictures", method = RequestMethod.POST,consumes = "application/json")
 	public HubResponse<?> retryPictures(@RequestBody List<String> spPicUrl);
 
-
-
-
-
+	@RequestMapping(value = "/pending-product/spu-pending-audit/{spuPendingId}", method = RequestMethod.POST,consumes = "application/json")
+	public String audit(@PathVariable("spuPendingId") Long spuPendingId);
 }

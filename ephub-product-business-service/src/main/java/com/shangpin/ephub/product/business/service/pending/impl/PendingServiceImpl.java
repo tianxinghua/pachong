@@ -357,7 +357,6 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
             //更新 skuPendign 状态
             setSkuPendingSkuStatus(auditVO, hubSpuPendingDtos);
-
             //只有审核通过的才处理
             if(SpuStatus.getOrderStatus(auditVO.getAuditStatus()).getIndex()==SpuStatus.SPU_HANDLED.getIndex()){
                 SpuModelDto spuModelVO = new SpuModelDto();
@@ -587,7 +586,9 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
         }else{
             if(StringUtils.isNotBlank(auditVO.getSpuModel())){//单个货号更新
-                criterion.andHubBrandNoEqualTo(auditVO.getBrandNo()).andSpuModelEqualTo(auditVO.getSpuModel()).andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+                criterion.andHubBrandNoEqualTo(auditVO.getBrandNo()).
+                andSpuModelEqualTo(auditVO.getSpuModel()).
+                andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 
 //                if(StringUtils.isNotBlank(auditVO.getCategoryNo())){
 //                    hubSpuPending.setHubCategoryNo(auditVO.getCategoryNo());
@@ -624,7 +625,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
 
         HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
-        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+        criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList).andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()).andFilterFlagEqualTo((byte)1);
         HubSkuPendingWithCriteriaDto criteriaSkuDto = new HubSkuPendingWithCriteriaDto(hubSkuPending,criteriaSku);
         skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
     }

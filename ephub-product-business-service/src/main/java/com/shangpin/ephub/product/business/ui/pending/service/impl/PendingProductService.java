@@ -10,8 +10,10 @@ import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
 import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
 import com.shangpin.ephub.product.business.ui.pending.vo.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,7 +31,9 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
@@ -48,6 +52,7 @@ import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
+import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.service.PendingProductCommonService;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
@@ -73,7 +78,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class PendingProductService extends PendingSkuService{
-
+	@Autowired
+	PendingProductCommonService pendingProductCommonService;
 	@Autowired
 	private HubCheckService hubCheckService;
 	@Autowired
@@ -334,15 +340,20 @@ public class PendingProductService extends PendingSkuService{
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
 
 			//如果处于审核成功 需要直接进入待选品 而不是待审核
-			SpuPendingAuditVO auditVO = this.getAuditProduct(pendingProductDto);
-			if(null!=auditVO){
-				if(!pendingService.audit(auditVO)){
-					return HubResponse.errorResp(auditVO.getMemo());
+			if(hubSpuDto!=null&&pendingProductDto.getHubColor().equals(hubSpuDto.getHubColor())){
+				//如果都是排除，则不能进入
+				HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+		        criteriaSku.createCriteria().andSpuPendingIdEqualTo(pendingProductDto.getSpuPendingId()).andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue())
+		        .andSpSkuSizeStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()).andFilterFlagEqualTo((byte)1);
+		        List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteriaSku);
+				if(list!=null&&!list.isEmpty()){
+					 String result = pendingProductCommonService.audit(pendingProductDto.getSpuPendingId());
+//						SpuPendingAuditVO auditVO = this.getAuditProduct(pendingProductDto);
+						if(null!=result){
+							return HubResponse.errorResp(result);
+						}
 				}
 			}
-
-
-
 		} catch (Exception e) {
 			log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
 			setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");
@@ -790,15 +801,20 @@ public class PendingProductService extends PendingSkuService{
 	}
 
 
-	private SpuPendingAuditVO getAuditProduct(PendingProductDto pendingProductDto){
-		SpuPendingAuditVO auditVO = null;
-		if(pendingProductDto.getSpuState()== SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()){
-			auditVO = new SpuPendingAuditVO();
-			auditVO.setAuditUser(pendingProductDto.getUpdateUser());
-			auditVO.setAuditStatus((int)AuditState.AGREE.getIndex());
-		}
-		return auditVO;
-
-	}
+//	private SpuPendingAuditVO getAuditProduct(PendingProductDto pendingProductDto){
+//		SpuPendingAuditVO auditVO = null;
+//		if(pendingProductDto.getSpuState()== SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()){
+//			Long spuPendingId = pendingProductDto.getSpuPendingId();
+//			HubSpuPendingDto spuPending = hubSpuPendingGateWay.selectByPrimaryKey(spuPendingId);
+//			BeanUtils.copyProperties(spuPending, auditVO);
+//			
+//			auditVO = new SpuPendingAuditVO();
+//			auditVO.setAuditUser(pendingProductDto.getUpdateUser());
+//			auditVO.setAuditStatus((int)AuditState.AGREE.getIndex());
+//			
+//		}
+//		return auditVO;
+//
+//	}
 
 }
