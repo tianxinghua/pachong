@@ -88,18 +88,12 @@ public class ProductFetchUtil {
 				}
 				if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
 					for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
-
-					/*System.out.println("brand="+vo.getBrand().getValue());
-					System.out.println("category(Brand ID)="+vo.getCategory().getValue());
-					System.out.println("categoryName(brandName)="+vo.getCategoryName().getValue());
-					System.out.println("colourName="+vo.getColour().getValue());
-					System.out.println("colourID="+vo.getColourID().getValue());
-					System.out.println("colourWeb="+vo.getColourWeb().getValue());
-					System.out.println("colourWebID="+vo.getColourWebID().getValue());
-					System.out.println("description="+vo.getDescription().getValue());*/
-						String barCode = vo.getBarCode().getValue();
+						/**
+						 * modelCode 对应商品的spu , modelCode+size 对应商品的sku
+						 */
+						String modelCode = vo.getModelCode().getValue();
 						String size = vo.getSize().getValue();
-						String skuNo = barCode + size;
+						String skuNo = modelCode + size;
 						/**
 						 * collect 中包含有该 skuNO 则放入到spStockMap中，没有的话不存放，
 						 * 供应商接口数据中可能没有提供全 skuNos 所包含的所有商品库存信息，该spStockMap中则不存放该key value，方法外处理置0
