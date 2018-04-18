@@ -1,13 +1,8 @@
 package com.shangpin.iog.styleside.service;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.iog.common.utils.httpclient.HttpUtil45;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
-
-import com.shangpin.iog.styleside.dto.StockQuery;
-import com.shangpin.iog.styleside.dto.StockResult;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.maximag_connector_vidra_service.ArrayOfArticoloFlatExtLocaleVO;
@@ -50,20 +45,16 @@ public class ProductFetchUtil {
 	ObjectMapper mapper = new ObjectMapper();
 	OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
-
-
 	/**
 	 * 程序配置：
 	 * 拉取的时间、用户名、用户密码、fiter、每页拉取数、语言为配置文件控制
 	 * 页码为程序中循环增加，
 	 * 程序的循环结束（while循环）标志：
 	 * 拉取的信息的 list size()为 0 的时候结束
-	 *
 	 */
 	public  Map<String,String> getProductStock(Collection<String> skuNos) {
 		//定义供应商 skuNo （key） Quantita(value) Map集合
 		Map<String, String> spStockMap = new HashMap<>(skuNos.size());
-		String result = null;
 		int page=0;
 		boolean loop= true;
 		try {
@@ -78,6 +69,7 @@ public class ProductFetchUtil {
 				xmlGregorianCalendar.setMinute(Integer.parseInt(minute));
 				xmlGregorianCalendar.setSecond(Integer.parseInt(second));
 				xmlGregorianCalendar.setMillisecond(Integer.parseInt(millisecond));
+
 				ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate(usr, pwd, filter, xmlGregorianCalendar, Integer.parseInt(recordCount), page, language);
 
 				List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
@@ -107,10 +99,10 @@ public class ProductFetchUtil {
 					}
 				}
 			}
-			logger.info("  theStyleSide  循环获取库存数据结束==");
+			logger.info("  thestyleside  循环获取库存数据结束==");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.info("  ==theStyleSide 获取第"+page+"页库存数据出现错误,错误如下："+e.getMessage());
+			logger.info("  ==thestyleside 获取第"+page+"页库存数据出现错误,错误如下："+e.getMessage());
 		}
 		logger.info("成功获取到的map大小  spStockMap.size======"+spStockMap.size());
 		return spStockMap;

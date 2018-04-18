@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/2/22.
  */
-@Component("redi")
+@Component("thestyleside")
 public class FetchStockImpl extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -35,9 +34,9 @@ public class FetchStockImpl extends AbsUpdateProductStock {
                 }
             }
         } catch (Exception e) {
-            throw new ServiceMessageException("拉取theStyleSide 库存数据失败");
+            throw new ServiceMessageException("拉取thestyleside 库存数据失败");
         }
-        logger.info(" theStyleSide 赋值库存数据成功");
+        logger.info(" thestyleside 赋值库存数据成功");
         return spStockMap;
     }
 }
