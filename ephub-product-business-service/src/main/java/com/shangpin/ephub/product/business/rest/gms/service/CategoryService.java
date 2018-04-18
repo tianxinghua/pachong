@@ -94,7 +94,7 @@ public class CategoryService {
 	 */
 	private void setCateGoryIntoReids(String categoryNo, FourLevelCategory category){
 		try {
-			shangpinRedis.setex(GlobalConstant.REDIS_HUB_CATEGORY_KEY+"_"+categoryNo,1000*60*5,JsonUtil.serialize(category));
+			shangpinRedis.setex(GlobalConstant.REDIS_HUB_CATEGORY_KEY+"_"+categoryNo,60*60*24*7,JsonUtil.serialize(category));
 		} catch (Exception e) {
 			log.error("缓存品类到redis时异常："+e.getMessage(),e);
 		}

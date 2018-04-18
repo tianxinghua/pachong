@@ -31,11 +31,11 @@ public class MatchSizeController {
 	 */
 	@RequestMapping(value = "/match")
 	public MatchSizeResult matchSize(@RequestBody MatchSizeDto dto){
-		long start = System.currentTimeMillis();
+//		long start = System.currentTimeMillis();
 		MatchSizeResult result = null;
-		log.info(MatchSizeController.class.getName()+".matchSize接收到的参数为:{}", dto.toString());
+//		log.info(MatchSizeController.class.getName()+".matchSize接收到的参数为:{}", dto.toString());
 		result = matchSizeService.matchSize(dto);
-		log.info(MatchSizeController.class.getName()+"验证结果为{}， 耗时{}milliseconds!", result.toString(), System.currentTimeMillis() - start);
+//		log.info(MatchSizeController.class.getName()+"验证结果为{}， 耗时{}milliseconds!", result.toString(), System.currentTimeMillis() - start);
 		return result;
 	}
 }

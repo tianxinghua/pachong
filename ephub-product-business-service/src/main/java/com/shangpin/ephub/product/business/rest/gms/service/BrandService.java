@@ -74,7 +74,7 @@ public class BrandService {
 	 */
 	private void setBrandIntoReids(String brandNo, BrandDom brand){
 		try {
-			shangpinRedis.setex(GlobalConstant.REDIS_HUB_BRAND_KEY+"_"+brandNo,1000*60*5,JsonUtil.serialize(brand));
+			shangpinRedis.setex(GlobalConstant.REDIS_HUB_BRAND_KEY+"_"+brandNo,60*60*24*7,JsonUtil.serialize(brand));
 		} catch (Exception e) {
 			log.error("缓存品类到redis时异常："+e.getMessage(),e);
 		}
