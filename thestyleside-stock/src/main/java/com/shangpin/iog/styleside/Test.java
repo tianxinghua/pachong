@@ -8,7 +8,10 @@ import org.tempuri.IVidraSvcOfArticoloFlatExtVOArticoloFlatVO;
 import org.tempuri.VidraSvc;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lizhongren on 2018/4/13.
@@ -24,28 +27,54 @@ public class Test {
          * 程序的循环结束（while循环）标志：
          * 拉取的信息的 list size()为 0 的时候结束
          */
-        IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
-        XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
-        xmlGregorianCalendar.setYear(2017);
-        xmlGregorianCalendar.setMonth(2);
-        xmlGregorianCalendar.setDay(10);
-        xmlGregorianCalendar.setHour(10);
-        xmlGregorianCalendar.setMinute(58);
-        xmlGregorianCalendar.setSecond(4);
-        xmlGregorianCalendar.setMillisecond(445);
-        ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "0000jj", xmlGregorianCalendar, 100, 1, "eng");
-        List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
+        int page=0;
+        boolean loop= true;
+        try {
+            Calendar cal = Calendar.getInstance();
+            int year = cal.get(Calendar.YEAR);//获取年份
+            int month=cal.get(Calendar.MONTH);//获取月份
+            int day=cal.get(Calendar.DATE);//获取日
+            int hour=cal.get(Calendar.HOUR);//小时
+            int minute=cal.get(Calendar.MINUTE);//分
+            int second=cal.get(Calendar.SECOND);//秒
+            int millisecond = cal.get(Calendar.MILLISECOND);
+            IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
+            XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
+            while(loop){
+                page++;
+                xmlGregorianCalendar.setYear(year);
+                xmlGregorianCalendar.setMonth(month);
+                xmlGregorianCalendar.setDay(day);
+                xmlGregorianCalendar.setHour(hour);
+                xmlGregorianCalendar.setMinute(minute);
+                xmlGregorianCalendar.setSecond(second);
+                xmlGregorianCalendar.setMillisecond(millisecond);
 
-        for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
-            String sku = vo.getModelCode().getValue();
-            String size = vo.getSize().getValue();
-            MgDispo mgDispo = vo.getQuantita().getValue();
-            BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
-            System.out.println("sku="+sku+"    quantitaDimm="+quantitaDimm);
-            System.out.println("size=="+size);
-            System.out.println();
-            System.out.println();
+                ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", xmlGregorianCalendar, 100, 1, "eng");
+                List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
+
+                if(null==articoloFlatExtLocaleVO||articoloFlatExtLocaleVO.size()<100){
+                    loop = false;
+                }
+                if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
+                    for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
+                        String modelCode = vo.getModelCode().getValue();
+                        String size = vo.getSize().getValue();
+                        String skuNo = modelCode + size;
+                        MgDispo mgDispo = vo.getQuantita().getValue();
+                        BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
+                        System.out.println(skuNo+"="+quantitaDimm);
+
+                    }
+                    System.out.println("==thestyleside 获取第"+page+"页结束==");
+                    System.out.println();
+                    System.out.println();
+                    System.out.println();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return;
     }
 }
