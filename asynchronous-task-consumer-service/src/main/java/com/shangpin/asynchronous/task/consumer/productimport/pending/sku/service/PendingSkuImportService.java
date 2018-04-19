@@ -169,11 +169,12 @@ public class PendingSkuImportService {
 		
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
-		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,pendingSkuImportDto,false);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,false);
 		if(hubPendingSkuCheckResult.isFilter()){
 			map.put("allFilter","true");
 		}
-		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,hubPendingSkuCheckResult.isPassing());
+		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,
+				hubPendingSkuCheckResult.isPassing());
 //		if (Boolean.parseBoolean(map.get("isPassing"))) {
 //			taskService.sendToHub(hubPendingSpuDto, map);
 //		}

@@ -6,43 +6,51 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
-import com.shangpin.ephub.client.business.supplier.gateway.SupplierInHubGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
-import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
-import com.shangpin.pending.product.consumer.common.*;
-import com.shangpin.pending.product.consumer.service.MaterialService;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
+import com.shangpin.ephub.client.business.supplier.gateway.SupplierInHubGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
+import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
+import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
+import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingNohandleReasonDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.pending.body.PendingProduct;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.message.pending.header.MessageHeaderKey;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuHandleGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuHandleGateWay;
 import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
 import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
+import com.shangpin.ephub.client.product.business.studio.gateway.HubSlotSpuTaskGateWay;
 import com.shangpin.pending.product.consumer.common.enumeration.MessageType;
 import com.shangpin.pending.product.consumer.common.enumeration.PropertyStatus;
 import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
+import com.shangpin.pending.product.consumer.service.MaterialService;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSku;
 import com.shangpin.pending.product.consumer.supplier.dto.PendingHeaderSpu;
 import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 16/12/13. 数据从缓存中拉取
@@ -56,7 +64,9 @@ public class PendingHandler extends VariableInit {
 	@Autowired
 	HubPendingSkuHandleGateWay hubPendingSkuHandleGateWay;
 
-
+	@Autowired
+	HubPendingHandleGateWay hubPendingHandleGateWay;
+	
 	@Autowired
 	MatchSizeGateWay matchSizeGateWay;
 
@@ -681,9 +691,8 @@ public class PendingHandler extends VariableInit {
 				hubSpuPending.setPicState(PicState.NO_PIC.getIndex());
 			}
 
-
-
-			objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
+			boolean hubSpuIsPassing = objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
+			hubSpuPending.setHubSpuIsPassing(hubSpuIsPassing);
 			setShootState(hubSpuPending);
 			dataServiceHandler.savePendingSpu(hubSpuPending);
 
@@ -999,12 +1008,21 @@ public class PendingHandler extends VariableInit {
 			dataServiceHandler.savePendingSku(hubSkuPending);
 
 		}
+		
         //整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
 		log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
 		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-			spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
+			boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
+			//true表面sku都校验通过
+			if(flag){
+				
+				//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
+				if(hubSpuPending.isHubSpuIsPassing()){
+					log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
+					hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
+				}
+			}
 		}
-
 		//整体处理拍照状态
 		boolean isNeedSend = true;
 		log.info("spuNo = " + hubSpuPending.getSupplierSpuNo() + "  hubspuno = " + hubSpuPending.getHubSpuNo() + " is hava pic " + hubSpuPending.isHavePic() );
@@ -1187,17 +1205,11 @@ public class PendingHandler extends VariableInit {
                 dataServiceHandler.saveSkuSupplierMapping(hubSku.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
             } else { // 不存在 创建hubsku 并创建 对应关系
 				//先创建hub_sku 然后反写到SKUPENDING 中
-
 				HubSkuDto hubSkuNo = dataServiceHandler.insertHubSku(hubSpuPending.getHubSpuNo(), hubSpuPending.getHubColor(), date,
                         hubSkuPending);
-
 				hubSkuPending.setHubSkuNo(hubSkuNo.getSkuNo());
 				dataServiceHandler.savePendingSku(hubSkuPending);
-
-
                 dataServiceHandler.saveSkuSupplierMapping(hubSkuNo.getSkuNo(), hubSkuPending, supplierSpu, supplierSku);
-
-
             }
         } else {// 无尺码映射
             hubSkuPending.setSkuState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());

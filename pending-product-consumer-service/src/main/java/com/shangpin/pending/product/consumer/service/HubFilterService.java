@@ -66,7 +66,8 @@ public class HubFilterService {
 	    	List<Byte> liByte = new ArrayList<Byte>();
 	    	liByte.add((byte)0);
 	    	liByte.add((byte)4);
-			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).andSpuStateIn(liByte).andSupplierIdNotIn(supplierIds);
+			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).
+			andSpuStateIn(liByte).andSupplierIdNotIn(supplierIds);
 			int totalSize = hubSpuPendingGateway.countByCriteria(criteria);
 			int pageCount = getPageCount(totalSize, 100);// 页数
 			for (int i = 1; i <= pageCount; i++) {

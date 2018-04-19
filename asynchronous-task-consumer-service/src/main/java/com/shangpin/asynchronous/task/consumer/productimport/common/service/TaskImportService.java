@@ -111,15 +111,13 @@ public class TaskImportService {
 	}
 
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-			 Map<String, String> map,HubPendingProductImportDTO pendingSkuImportDto,boolean isMultiSizeType) throws Exception{
+			 Map<String, String> map,boolean isMultiSizeType) throws Exception{
 		
 //		String hubSpuNo = map.get("hubSpuNo");
 		if (map.get("pendingSpuId") != null) {
 			hubSkuPendingDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
 
-		String specificationType = pendingSkuImportDto.getSpecificationType();
-		String sizeType = pendingSkuImportDto.getSizeType();
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
 		
@@ -391,40 +389,12 @@ public class TaskImportService {
 				spuIsPassing = true;
 				if(suplierColor!=null&&suplierColor.equals(list.getHubColor())){
 					hubIsExist = true;
-					checkResult = spuModel+"在hub已存在";
+					checkResult = spuModel+"在hub已存在，并且颜色一致";
 				}else{
 					hubIsExist = false;
 					checkResult = spuModel+"hub已存在,但颜色不一样,hub颜色："+list.getHubColor()+",待处理颜色："+suplierColor;
 				}
-				
-
 				hubPendingSpuCheckResult.setPassing(true);
-
-				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-//				if(list.getHubColor().equals(hubPendingSpuDto.getHubColor())){
-//					convertHubSpuToPendingSpu(hubPendingSpuDto, list);
-//					hubSpuId = list.getSpuId();
-//					hubSpuNo = list.getSpuNo();
-//					spuIsPassing = true;
-//					hubIsExist = true;
-//					checkResult = spuModel+"在hub已存在";
-//					hubPendingSpuCheckResult.setPassing(true);
-//				}else{
-//					//同品牌同货号不同颜色
-//					spuIsPassing = false;
-//					hubIsExist = false;
-//					map.put("taskState", "校验失败");
-//					map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
-//					checkResult =  "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor();
-//					hubPendingSpuCheckResult.setPassing(false);
-//					hubPendingSpuDto.setAuditState((byte)0);
-//					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-//					hubPendingSpuDto.setAuditDate(new Date());
-//					hubPendingSpuDto.setAuditUser("chenxu");
-//					hubPendingSpuDto.setSpuState((byte)0);
-//					hubPendingSpuDto.setMemo("同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-////					dataHandleService.updateHubSpuPending(hubPendingSpuDto);
-//				}
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				if (hubPendingSpuCheckResult.isPassing()) {
@@ -484,7 +454,10 @@ public class TaskImportService {
 		hubPendingSpuDto.setMaterialState(MaterialState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
 		hubPendingSpuDto.setOriginState(OriginState.HANDLED.getIndex());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+		if(StringUtils.isBlank(hubPendingSpuDto.getHubSeason())){
+			hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+		}
+//		
 		hubPendingSpuDto.setSpuSeasonState(SpuSeasonState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
@@ -534,7 +507,9 @@ public class TaskImportService {
 		}
 		if (spuIsPassing&&skuIsPassing==true) {//&&skuIsPassing==true
 			if(hubIsExist){
-				//hub存在同品牌同货号，进入待复合
+				//hub存在同品牌同货号同颜色并且有尺码信息，进入待选品
+				//TODO 此处如果更改为待选品，后面审核推送可屏蔽
+//				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());
 				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());	
 			}else{
 				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
@@ -547,65 +522,56 @@ public class TaskImportService {
 			hubPendingSpuDto.setSpuGenderState((byte)1);
 			hubPendingSpuDto.setSpuModelState((byte)1);
 			hubPendingSpuDto.setSpuSeasonState((byte)1);
-			
 		} else {
 			if(hubPendingSpuCheckResult.isSpuModel()){
 				hubPendingSpuDto.setSpuModelState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuModelState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isCategory()){
 				hubPendingSpuDto.setCatgoryState((byte)1);
 			}else{
 				hubPendingSpuDto.setCatgoryState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isMaterial()){
 				hubPendingSpuDto.setMaterialState((byte)1);
 			}else{
 				hubPendingSpuDto.setMaterialState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isOriginal()){
 				hubPendingSpuDto.setOriginState((byte)1);
 			}else{
 				hubPendingSpuDto.setOriginState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isBrand()){
 				hubPendingSpuDto.setSpuBrandState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuBrandState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isColor()){
 				hubPendingSpuDto.setSpuColorState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuColorState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isGender()){
 				hubPendingSpuDto.setSpuGenderState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuGenderState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isSeasonName()){
 				hubPendingSpuDto.setSpuSeasonState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuSeasonState((byte)0);
 			}
-			
 			hubPendingSpuDto.setSpuState((byte) SpuState.INFO_PECCABLE.getIndex());
 		}
-		
-		if(allFilter){
-			hubPendingSpuDto.setSpuState((byte)1);	
-		}
-		if(noSku){
-			hubPendingSpuDto.setSpuState((byte)2);
-		}
+		//TODO 全部排除的是否进入待审核
+//		if(allFilter){
+//			hubPendingSpuDto.setSpuState((byte)2);	
+//		}
+//		if(noSku){
+//			hubPendingSpuDto.setSpuState((byte)2);
+//		}
 		
 		//新加的 记录校验结果
 		hubPendingSpuDto.setMemo(memo);

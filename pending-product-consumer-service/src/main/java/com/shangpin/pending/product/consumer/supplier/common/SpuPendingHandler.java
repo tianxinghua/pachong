@@ -76,7 +76,7 @@ public class SpuPendingHandler {
             hubSpuPending.setAuditDate(new Date());
             hubSpuPending.setAuditUser("pendingService");
             spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
-
+            result = false;
         }
         return result;
     }

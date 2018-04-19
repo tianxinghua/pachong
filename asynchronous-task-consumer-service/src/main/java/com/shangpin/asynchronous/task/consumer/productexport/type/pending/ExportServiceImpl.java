@@ -178,14 +178,18 @@ public class ExportServiceImpl {
 			int pageCount = getPageCount(totalSize, SKUPAGESIZE);// 页数
 			log.info("sku导出总页数：" + pageCount);
 			for (int i = 1; i <= pageCount; i++) {
+				long startTime = System.currentTimeMillis();
 				pendingQuryDto.setPageIndex(i);
 				pendingQuryDto.setPageSize(SKUPAGESIZE);
 				PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
 				lists.add(products);
+				log.info("查询"+i+"页"+SKUPAGESIZE+"条数据耗时：{}",System.currentTimeMillis()-startTime);
 			}
+	
 			int j = 0;
 			for (PendingProducts products : lists) {
 				for (PendingProductDto product : products.getProduts()) {
+					long startTime = System.currentTimeMillis();
 					for (HubSkuPendingDto sku : product.getHubSkus()) {
 						try {
 							j++;
@@ -196,6 +200,7 @@ public class ExportServiceImpl {
 							j--;
 						}
 					}
+					log.info("excel插入100条数据耗时：{}",System.currentTimeMillis()-startTime);
 				}
 			}
 		}
