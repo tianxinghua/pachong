@@ -355,6 +355,7 @@ public class PendingSpuImportService {
 		}else if("尺寸".equals(pendingSpuImportDto.getSpecificationType())){
 			result = "校验通过：" + hubSkuPendingDto.getHubSkuSize();
 			flag = true;
+			hubPendingSkuCheckResult.setSizeType("尺寸");
 			hubPendingSkuCheckResult.setSizeValue(hubSkuPendingDto.getHubSkuSize());
 		}else{
 			result = "校验失败,规格类型无效:" + pendingSpuImportDto.getSpecificationType();
@@ -376,26 +377,6 @@ public class PendingSpuImportService {
 		
 		HubPendingSpuDto.setUpdateUser(createUser);
 		return HubPendingSpuDto;
-	}
-
-
-
-	private void  convertHubSpuToHubSpuPendingImportDTO(HubSpuDto hubSpuDto,HubPendingSpuImportDTO productImport) {
-
-		productImport.setHubCategoryNo(hubSpuDto.getCategoryNo());
-		if(StringUtils.isBlank(productImport.getHubColor())){
-			productImport.setHubColor(hubSpuDto.getHubColor());
-		}
-		if(StringUtils.isBlank(productImport.getSeasonYear())||StringUtils.isBlank(productImport.getSeasonName())){
-			productImport.setSeasonYear(hubSpuDto.getMarketTime());
-			productImport.setSeasonName(hubSpuDto.getSeason());
-		}
-		productImport.setHubMaterial(hubSpuDto.getMaterial());
-		productImport.setHubOrigin(hubSpuDto.getOrigin());
-		productImport.setHubGender(hubSpuDto.getGender());
-
-
-
 	}
 
 	@SuppressWarnings("unchecked")
