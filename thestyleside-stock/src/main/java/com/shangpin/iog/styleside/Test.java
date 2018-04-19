@@ -1,19 +1,71 @@
 package com.shangpin.iog.styleside;
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+import org.datacontract.schemas._2004._07.maximag_connector_vidra_service.ArrayOfArticoloFlatExtLocaleVO;
+import org.datacontract.schemas._2004._07.maximag_connector_vidra_service.ArticoloFlatExtLocaleVO;
+import org.datacontract.schemas._2004._07.maximag_connector_vidra_service.MgDispo;
+import org.tempuri.IVidraSvcOfArticoloFlatExtVOArticoloFlatVO;
+import org.tempuri.VidraSvc;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by lizhongren on 2018/4/13.
  */
 public class Test {
 
     public static void main(String[] args){
-        String kk = "81-991010RC-1083-0042-10;Bathingsuit BEACH BIMBA;DUE PEZZI FASCIA ROSES;Girl > Spring Summer, Girl > From 2 to 12 years, Girl > Beachwear;http://www.e-monnalisa.cn/cn/catalog/product/view/id/268925;http://www.e-monnalisa.cn/media/catalog/product/9/9/991010RC_1083_0001_A.jpg;;is in stock;1228;1228;;Monnalisa Beach;no;Girl > Spring Summer, Girl > From 2 to 12 years, Girl > Beachwear;http://www.e-monnalisa.cn/cn/catalog/product/view/id/268925;new;81-991010RC-1083;Coral;female;;\"主要面料：86％涤纶，14％氨纶/氨纶;内衬：92％涤纶，8％氨纶/氨纶“主要面料：86％涤纶，14％氨纶/氨纶;内衬：92％涤纶，8％氨纶/氨纶“\";;10;IT::Standard:10 EUR;;FALSE;;Primavera Estate;EU;2018";
-        String[] sur = kk.split(";");
-        System.out.println("size = " +sur.length);
-        for(int i = 0;i<sur.length;i++){
-            System.out.println(i + "=" + sur[i]);
-        }
 
-        String title = "id;title;description;google_product_category;link;image_link;additional_image_link;availability;price;sale_price;barcode;brand;adult;product_type;mobile_link;condition;item_group_id;color;gender;age_group;material;pattern;size;shipping;multipack;is_bundle;custom_label_0;season;country;anno";
-        System.out.println("length ="+title.split(";").length);
+        /**
+         * 程序配置：
+         * 拉取的时间、用户名、用户密码、fiter、每页拉取数、语言为配置文件控制
+         * 页码为程序中循环增加，
+         * 程序的循环结束（while循环）标志：
+         * 拉取的信息的 list size()为 0 的时候结束
+         */
+        int page=0;
+        boolean loop= true;
+        try {
+            Calendar cal = Calendar.getInstance();
+            IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
+            XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
+            xmlGregorianCalendar.setYear(cal.get(Calendar.YEAR));
+            xmlGregorianCalendar.setMonth(cal.get(Calendar.MONTH));
+            xmlGregorianCalendar.setDay(cal.get(Calendar.DATE));
+            xmlGregorianCalendar.setHour(cal.get(Calendar.HOUR));
+            xmlGregorianCalendar.setMinute(cal.get(Calendar.MINUTE));
+            xmlGregorianCalendar.setSecond(cal.get(Calendar.SECOND));
+            xmlGregorianCalendar.setMillisecond(cal.get(Calendar.MILLISECOND));
+            while(loop){
+                page++;
+                ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", xmlGregorianCalendar, 100, page, "eng");
+                List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
+
+                if(null==articoloFlatExtLocaleVO||articoloFlatExtLocaleVO.size()<100){
+                    loop = false;
+                }
+                if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
+                    for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
+                        String modelCode = vo.getModelCode().getValue();
+                        String size = vo.getSize().getValue();
+                        String skuNo = modelCode + size;
+                        MgDispo mgDispo = vo.getQuantita().getValue();
+                        BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
+                        System.out.println(skuNo+"="+quantitaDimm);
+                    }
+                    System.out.println("==thestyleside 获取第"+page+"页结束==");
+                    System.out.println();
+                    System.out.println();
+                    System.out.println();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

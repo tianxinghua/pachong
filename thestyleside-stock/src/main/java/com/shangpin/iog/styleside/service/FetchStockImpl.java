@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/2/22.
  */
-@Component("redi")
+@Component("thestyleside")
 public class FetchStockImpl extends AbsUpdateProductStock {
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -22,27 +21,22 @@ public class FetchStockImpl extends AbsUpdateProductStock {
     ProductFetchUtil  productFetchUtil;
     @Override
     public Map<String, String> grabStock(Collection<String> skuNos) throws ServiceException, Exception {
-        Map<String, String> spStockMap = new HashMap<>(skuNos.size());
-        Map<String, String> supplierStockMap = new HashMap<>();
-
+        //定义返回map 结果集
+        Map<String, String> spStockMap =null;
         try {
-            productFetchUtil.getProductStock(supplierStockMap);
-        } catch (Exception e) {
-
-            throw new ServiceMessageException("拉取stefaniamode数据失败");
-
-        }
-
-        for (String skuno : skuNos) {
-
-            if (supplierStockMap.containsKey(skuno)) {
-                spStockMap.put(skuno, supplierStockMap.get(skuno));
-            } else {
-                spStockMap.put(skuno, "0");
+            spStockMap = productFetchUtil.getProductStock(skuNos);
+            /**
+             * 判断供应商接口没有提供的商品库存信息，没有提供库存数量置0
+             */
+            for (String skuno : skuNos) {
+                if (!spStockMap.containsKey(skuno)) {
+                    spStockMap.put(skuno, "0");
+                }
             }
+        } catch (Exception e) {
+            throw new ServiceMessageException("拉取thestyleside 库存数据失败");
         }
-
-        logger.info("stefaniamode赋值库存数据成功");
+        logger.info(" thestyleside 赋值库存数据成功");
         return spStockMap;
     }
 }
