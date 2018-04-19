@@ -56,7 +56,7 @@ public class Scheduler {
 			categoryList.add("A02B02");
 			categoryList.add("A03B01");
 			categoryList.add("A03B02");
-//			categoryList.add("A11");
+			categoryList.add("A05B10");
 			for(String category:categoryList){
 				log.info("待刷新的品类："+category);
 				hubFilterService.refreshHubFilter(category);
