@@ -97,7 +97,6 @@ public class SizeService {
 	 */
 	private String getGmsSizeByRedis(String hubBrandNo,String hubCategoryNo){
 		try {
-			shangpinRedis.del(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo);
 			return shangpinRedis.get(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo);
 		} catch (Exception e) {
 			log.error("通过redis获取尺码时异常："+e.getMessage(),e); 
