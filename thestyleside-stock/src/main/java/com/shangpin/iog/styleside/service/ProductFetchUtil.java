@@ -54,26 +54,18 @@ public class ProductFetchUtil {
 		boolean loop= true;
 		//获取当期那时间
 		Calendar cal = Calendar.getInstance();
-		int year = cal.get(Calendar.YEAR);//获取年份
-		int month=cal.get(Calendar.MONTH);//获取月份
-		int day=cal.get(Calendar.DATE);//获取日
-		int hour=cal.get(Calendar.HOUR);//小时
-		int minute=cal.get(Calendar.MINUTE);//分
-		int second=cal.get(Calendar.SECOND);//秒
-		int millisecond = cal.get(Calendar.MILLISECOND);
 		IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
 		XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
+		xmlGregorianCalendar.setYear(cal.get(Calendar.YEAR));
+		xmlGregorianCalendar.setMonth(cal.get(Calendar.MONTH));
+		xmlGregorianCalendar.setDay(cal.get(Calendar.DATE));
+		xmlGregorianCalendar.setHour(cal.get(Calendar.HOUR));
+		xmlGregorianCalendar.setMinute(cal.get(Calendar.MINUTE));
+		xmlGregorianCalendar.setSecond(cal.get(Calendar.SECOND));
+		xmlGregorianCalendar.setMillisecond(cal.get(Calendar.MILLISECOND));
 		try {
 			while(loop){
 				page++;
-				xmlGregorianCalendar.setYear(year);
-				xmlGregorianCalendar.setMonth(month);
-				xmlGregorianCalendar.setDay(day);
-				xmlGregorianCalendar.setHour(hour);
-				xmlGregorianCalendar.setMinute(minute);
-				xmlGregorianCalendar.setSecond(second);
-				xmlGregorianCalendar.setMillisecond(millisecond);
-
 				ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate(usr, pwd, "", xmlGregorianCalendar, Integer.parseInt(recordCount), page, language);
 				List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
 

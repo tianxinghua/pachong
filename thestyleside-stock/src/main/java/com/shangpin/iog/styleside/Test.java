@@ -31,26 +31,18 @@ public class Test {
         boolean loop= true;
         try {
             Calendar cal = Calendar.getInstance();
-            int year = cal.get(Calendar.YEAR);//获取年份
-            int month=cal.get(Calendar.MONTH);//获取月份
-            int day=cal.get(Calendar.DATE);//获取日
-            int hour=cal.get(Calendar.HOUR);//小时
-            int minute=cal.get(Calendar.MINUTE);//分
-            int second=cal.get(Calendar.SECOND);//秒
-            int millisecond = cal.get(Calendar.MILLISECOND);
             IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
             XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
+            xmlGregorianCalendar.setYear(cal.get(Calendar.YEAR));
+            xmlGregorianCalendar.setMonth(cal.get(Calendar.MONTH));
+            xmlGregorianCalendar.setDay(cal.get(Calendar.DATE));
+            xmlGregorianCalendar.setHour(cal.get(Calendar.HOUR));
+            xmlGregorianCalendar.setMinute(cal.get(Calendar.MINUTE));
+            xmlGregorianCalendar.setSecond(cal.get(Calendar.SECOND));
+            xmlGregorianCalendar.setMillisecond(cal.get(Calendar.MILLISECOND));
             while(loop){
                 page++;
-                xmlGregorianCalendar.setYear(year);
-                xmlGregorianCalendar.setMonth(month);
-                xmlGregorianCalendar.setDay(day);
-                xmlGregorianCalendar.setHour(hour);
-                xmlGregorianCalendar.setMinute(minute);
-                xmlGregorianCalendar.setSecond(second);
-                xmlGregorianCalendar.setMillisecond(millisecond);
-
-                ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", xmlGregorianCalendar, 100, 1, "eng");
+                ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", xmlGregorianCalendar, 100, page, "eng");
                 List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
 
                 if(null==articoloFlatExtLocaleVO||articoloFlatExtLocaleVO.size()<100){
@@ -64,7 +56,6 @@ public class Test {
                         MgDispo mgDispo = vo.getQuantita().getValue();
                         BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
                         System.out.println(skuNo+"="+quantitaDimm);
-
                     }
                     System.out.println("==thestyleside 获取第"+page+"页结束==");
                     System.out.println();
