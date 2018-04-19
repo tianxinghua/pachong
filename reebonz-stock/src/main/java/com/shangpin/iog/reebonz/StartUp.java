@@ -1,6 +1,7 @@
 package com.shangpin.iog.reebonz;
 
-import com.shangpin.iog.redi.schedule.AppContext;
+
+import com.shangpin.iog.reebonz.schedule.AppContext;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
