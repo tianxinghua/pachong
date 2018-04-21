@@ -571,14 +571,18 @@ public class OrderCommonUtil {
         if(StringUtils.isNotBlank(supplierMsg)){
             try {
                 dto = om.readValue(supplierMsg, SupplierDTO.class);
-                SupplierCommon supplierCommon = orderHandleSearch.getSupplierProperty(dto.getSupplierId());
-                if(null!=supplierCommon){
-                    dto.setOpenApiKey(supplierCommon.getOpenApiKey());
-                    dto.setOpenApiSecret(supplierCommon.getOpenApiSecret());
-                    dto.setIsPurchaseException("true".equals(supplierCommon.getIsPurchaseExp())?true:false);
-                    dto.setInterfaceType(3);
+                if(null!=dto&&StringUtils.isNotBlank(dto.getSupplierId())&&!"null".equals(dto.getSupplierId())){
+
+                    SupplierCommon supplierCommon = orderHandleSearch.getSupplierProperty(dto.getSupplierId());
+
+                    if(null!=supplierCommon){
+                        dto.setOpenApiKey(supplierCommon.getOpenApiKey());
+                        dto.setOpenApiSecret(supplierCommon.getOpenApiSecret());
+                        dto.setIsPurchaseException("true".equals(supplierCommon.getIsPurchaseExp())?true:false);
+                        dto.setInterfaceType(3);
+                    }
+                    return dto;
                 }
-                return dto;
             } catch (Exception e) {
                 e.printStackTrace();
             }
