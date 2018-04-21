@@ -290,7 +290,7 @@ shangpin:
               openApiKey: 
               openApiSecret: 
       paolo: 
-              url: http://95.110.163.89:8580/ws_sito_shang/ws_sito_p15.asmx/
+              url: http://89.21.204.79:8523/ws_sito_shang/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace
               setStatusInterface: SetStatusOrderMarketplace
               getStatusInterface: GetStatusOrderMarketplace

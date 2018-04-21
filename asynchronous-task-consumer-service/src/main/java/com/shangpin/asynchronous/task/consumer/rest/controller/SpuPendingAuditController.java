@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.asynchronous.task.consumer.rest.service.MessageSendService;
 import com.shangpin.ephub.client.data.mysql.product.dto.SpuModelDto;
 
@@ -27,6 +28,7 @@ public class SpuPendingAuditController {
 	 */
 	@RequestMapping(value = "/audit", method = RequestMethod.POST)
 	public boolean  auditSpu(@RequestBody SpuModelDto spuModelDto) {
+		Log.info("推送到审核队列："+spuModelDto.getSpuModel());
 		return spuPendingAuditService.sendMessageToMQ(spuModelDto);
     }
 }

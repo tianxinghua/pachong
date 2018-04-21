@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -32,8 +34,8 @@ import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-
-import lombok.extern.slf4j.Slf4j;
+import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
+import com.shangpin.ephub.response.HubResponse;
 
 /**
  * <p>
@@ -66,7 +68,8 @@ public class PendingSkuImportService {
 	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
 	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
-
+	@Autowired
+	HubPendingHandleGateWay hubPendingHandleGateWay;
 	/**
 	 * 处理消息
 	 * @param task
@@ -121,25 +124,29 @@ public class PendingSkuImportService {
 			HubSkuPendingCriteriaDto criate = new HubSkuPendingCriteriaDto();
 			criate.setPageNo(1);
 			criate.setPageSize(10000);
-			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andFilterFlagEqualTo((byte)1).andSpSkuSizeStateEqualTo((byte)1);
+			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andFilterFlagEqualTo((byte)1).andSpSkuSizeStateEqualTo((byte)0);
 			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criate);
 			boolean flag = false;
 			if(list!=null&&list.size()>0){
 				flag = true;
 			}
 			
-			if(!flag){
+			if(flag){
 				HubSpuPendingDto spu = new HubSpuPendingDto();
 				spu.setSpuPendingId(spuPendingId);
 				spu.setSpuState((byte)0);
 				hubSpuPendingGateWay.updateByPrimaryKeySelective(spu);
+			}else{
+				
+				
 			}
 		
 		}
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
-	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap,String createUser) throws Exception{
+	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,
+			Map<Long,String> spuMap,String createUser) throws Exception{
 
 		map.put("taskNo", taskNo);
 		map.put("spuModel", pendingSkuImportDto.getSpuModel());
@@ -160,14 +167,17 @@ public class PendingSkuImportService {
 			spuMap.put(isPendingSpuExist.getSpuPendingId(),null);
 		}
 		
-		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
-		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,pendingSkuImportDto,false);
-
-		if (Boolean.parseBoolean(map.get("isPassing"))) {
-			taskService.sendToHub(hubPendingSpuDto, map);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,false);
+		if(hubPendingSkuCheckResult.isFilter()){
+			map.put("allFilter","true");
 		}
+		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,
+				hubPendingSkuCheckResult.isPassing());
+//		if (Boolean.parseBoolean(map.get("isPassing"))) {
+//			taskService.sendToHub(hubPendingSpuDto, map);
+//		}
 	}
 
 	private HubSkuPendingDto convertHubPendingProduct2PendingSku(HubPendingProductImportDTO product) throws Exception{
