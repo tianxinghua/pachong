@@ -37,6 +37,7 @@ public class StockScheduler {
 		} catch (Exception e) {
 			log.error("清除库存定时任务执行失败："+e.getMessage(),e);
 		}
+
 	}
 
 }

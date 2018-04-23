@@ -89,6 +89,7 @@ public class StockService {
         values.add("2015092801542");//francescomassa
         values.add("2015101501616");//frmoda
         values.add("2016051001890");//reebonz
+        values.add("2018041302004");//BAC (reebonz)
 
 		criteriaDto.createCriteria().andLastPullTimeLessThan(date).andSupplierIdNotIn(values ).andStockGreaterThan(0);
 		criteriaDto.or(criteriaDto.createCriteria().andLastPullTimeIsNull().andSupplierIdNotIn(values ).andStockGreaterThan(0));

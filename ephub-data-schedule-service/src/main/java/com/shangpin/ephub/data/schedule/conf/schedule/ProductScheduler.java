@@ -34,7 +34,7 @@ public class ProductScheduler {
     @Autowired
     private ScheduleConfig scheduleConfig;
     
-	@Scheduled(cron = "00 25 20 * * ?")
+	@Scheduled(cron = "0 0 12 * * ?")
 	public void pricePush() {
 		try {
 			log.info("===========pricePush任务开始============"); 

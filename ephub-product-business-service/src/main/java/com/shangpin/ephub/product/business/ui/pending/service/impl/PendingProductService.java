@@ -113,7 +113,7 @@ public class PendingProductService extends PendingSkuService{
 
 	@Override
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
-		log.info("接收到的查询条件："+JsonUtil.serialize(pendingQuryDto));
+		log.info("findPendingProducts接收到的查询条件："+JsonUtil.serialize(pendingQuryDto));
 		long start = System.currentTimeMillis();
 		PendingProducts pendingProducts = new PendingProducts();
 		List<PendingProductDto> products = new ArrayList<PendingProductDto>();
