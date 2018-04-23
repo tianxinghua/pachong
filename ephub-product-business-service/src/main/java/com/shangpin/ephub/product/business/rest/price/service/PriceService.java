@@ -150,7 +150,7 @@ public class PriceService {
 				return null;
 			}
 			PriceQueryDto priceQueryDto = copyPriceQueryToPriceQueryDto(priceQuery);
-			log.info("转换后的查询参数："+JsonUtil.serialize(priceQueryDto));  
+//			log.info("转换后的查询参数："+JsonUtil.serialize(priceQueryDto));  
 			ProductPrice productPrice = new ProductPrice();
 			int total = hubSupplierPriceGateWay.countByQuery(priceQueryDto);
 			log.info("供价记录查询总数："+total); 
