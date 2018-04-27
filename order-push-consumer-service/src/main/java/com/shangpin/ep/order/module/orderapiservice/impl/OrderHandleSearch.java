@@ -254,7 +254,7 @@ public class OrderHandleSearch {
 			return clutcherOrderImpl;
 		} else if ("2016102401951".equals(supplierId)) {
 			return carofiglioOrderImpl;
-		} else if ("2016110101955".equals(supplierId)) {
+		} else if ("2018041102003".equals(supplierId)) {
 			return lungolivignoOrderService;
 		} else if ("2016090601940".equals(supplierId)) {
 			return tufanoOrderImpl;
@@ -380,7 +380,7 @@ public class OrderHandleSearch {
 			return supplierProperties.getClutcher();
 		}  else if ("2016102401951".equals(supplierId)) {
 			return supplierProperties.getCarofiglio();
-		} else if ("2016110101955".equals(supplierId)) {
+		} else if ("2018041102003".equals(supplierId)) {
 			return supplierProperties.getLungolivigno();
 		} else if ("2016090601940".equals(supplierId)) {
 			return supplierProperties.getTufano();

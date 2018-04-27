@@ -66,7 +66,7 @@ public class SupplierPriceService {
 
                 String supplierType = supplierMessageDTO.getQuoteMode();;
 //                log.info("supplier type ="+ supplierType);
-                if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
+                if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货价格
 
                     Map<String,String> supplierMap = this.getValidSupplier();
                     Iterator<String> iterator = supplierMap.keySet().iterator();

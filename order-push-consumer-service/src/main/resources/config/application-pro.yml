@@ -108,8 +108,8 @@ shangpin:
                   url_cancelOrder: http://lungolivigno.vdr-s.com/BSWebApi20/api/Order/CancelOrder?SessionId=
                   url_getStock: http://lungolivigno.vdr-s.com/BSWebApi20/api/Stock/GetStock?SessionId=
                   isPurchaseExp:
-                  openApiKey: 1c071674e24c4ad2a81424bc46c6e968
-                  openApiSecret: 8d873268a0f44294a73750d747dd0b60
+                  openApiKey: 0d86c3ad2aed42c3be929f8ba9c7e7cb
+                  openApiSecret: 9a52a2e4724e4a51a54fb497f870375d
           tufano: 
                   url: http://79.9.69.28/ws_sito/ws_sito_P15.asmx/
                   createOrderInterface: NewOrderMarketPlace
