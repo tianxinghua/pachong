@@ -785,12 +785,12 @@ public class DataServiceHandler {
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 
-	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(String supplierId,
+	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(List<String> supplierIds,
 			Integer type) {
 		HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
 		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
 		criteria.setPageNo(1);
-		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andHubValTypeEqualTo(type.byteValue());
+		criteria.createCriteria().andSupplierIdIn(supplierIds).andHubValTypeEqualTo(type.byteValue());
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 

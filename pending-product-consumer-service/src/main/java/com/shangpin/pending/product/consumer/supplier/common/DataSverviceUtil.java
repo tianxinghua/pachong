@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,8 +25,6 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
 import com.shangpin.pending.product.consumer.supplier.dto.SupplierSizeMappingDto;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 17/1/7.
@@ -100,7 +100,10 @@ public class DataSverviceUtil {
 
             try {
                 supplierSizeMappingDtos = new ArrayList<>();
-                List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler.getHubSupplierValueMappingBySupplierIdAndType(supplierId, SupplierValueMappingType.TYPE_SIZE.getIndex());
+                List<String> supplierList = new ArrayList<>();
+                supplierList.add("quanju");
+                supplierList.add(supplierId);
+                List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler.getHubSupplierValueMappingBySupplierIdAndType(supplierList, SupplierValueMappingType.TYPE_SIZE.getIndex());
                 if(null!=supplierValueMappingDtos&&supplierValueMappingDtos.size()>0){
 
                     for(HubSupplierValueMappingDto dto:supplierValueMappingDtos){
