@@ -145,13 +145,14 @@ public class SupplierProductSaveAndSendToPending {
 	 */
 	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto supplierSpuDto,List<HubSupplierSkuDto> supplierSkuDtos,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
+			//价格推送
 			savePriceRecordAndSendConsumer(supplierNo,supplierSpuDto,supplierSkuDtos);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 
 			HubSupplierSpuDto hubSupplierSpuInDataBase = supplierProductMysqlService.hasHadTheHubSpu(supplierSpuDto);
 
-			//保存hubSpu到数据库
+			//保存SupplierSpu到数据库 对比图片链接 逻辑删除供货商不要的链接地址
 
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
 				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.AIR_STUDIO_UPLOAD.getIndex()){
@@ -162,6 +163,7 @@ public class SupplierProductSaveAndSendToPending {
 					pendingSpu.setPicState(PicState.NO_PIC.getIndex());
 				}
 			}
+			//判断商品信息是新增的还是需要更新的 转化对象
 			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,hubSupplierSpuInDataBase,pendingSpu);
 			//开始构造消息头
 			Spu spuHead = setSpuHead(supplierId,supplierSpuDto.getSupplierSpuNo(),productStatus.getIndex());
