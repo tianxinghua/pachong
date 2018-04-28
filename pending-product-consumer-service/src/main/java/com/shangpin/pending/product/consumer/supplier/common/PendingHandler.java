@@ -1144,7 +1144,7 @@ public class PendingHandler extends VariableInit {
 			replaceSize(supplierSku, hubSkuPending, sizeMap);
 //			mappingSize = true;
 		} else {
-			Map<String, String> commonSizeMap = dataSverviceUtil.getSupplierSizeMapping(ConstantProperty.REDIS_EPHUB_SUPPLIER_ALL_SIZE_MAPPING_KEY);
+			Map<String, String> commonSizeMap = dataSverviceUtil.getSupplierSizeMapping("quanju");
 			if (commonSizeMap.containsKey(supplierSku.getHubSkuSize())) {
 				replaceSize(supplierSku, hubSkuPending, commonSizeMap);
 

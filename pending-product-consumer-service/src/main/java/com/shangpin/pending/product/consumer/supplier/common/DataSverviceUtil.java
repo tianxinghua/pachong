@@ -100,10 +100,7 @@ public class DataSverviceUtil {
 
             try {
                 supplierSizeMappingDtos = new ArrayList<>();
-                List<String> supplierList = new ArrayList<>();
-                supplierList.add("quanju");
-                supplierList.add(supplierId);
-                List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler.getHubSupplierValueMappingBySupplierIdAndType(supplierList, SupplierValueMappingType.TYPE_SIZE.getIndex());
+                List<HubSupplierValueMappingDto> supplierValueMappingDtos = dataServiceHandler.getHubSupplierValueMappingBySupplierIdAndType(supplierId, SupplierValueMappingType.TYPE_SIZE.getIndex());
                 if(null!=supplierValueMappingDtos&&supplierValueMappingDtos.size()>0){
 
                     for(HubSupplierValueMappingDto dto:supplierValueMappingDtos){
