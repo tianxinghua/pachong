@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component("reebonzHandler")
+@Component("obluHandler")
 @Slf4j
 public class ObluHandler implements ISupplierHandler {
 	

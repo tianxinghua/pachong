@@ -165,6 +165,10 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler rediHandler;
 
 
+	@Autowired
+	@Qualifier("obluHandler")
+	private ISupplierHandler obluHandler;
+
 	
 	
 	/**
@@ -839,7 +843,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void rediStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);
+		rediHandler.handleOriginalProduct(message, headers);
 	}
 
 	/**
@@ -848,7 +852,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void obluStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);
+		obluHandler.handleOriginalProduct(message, headers);
 	}
 
 }
