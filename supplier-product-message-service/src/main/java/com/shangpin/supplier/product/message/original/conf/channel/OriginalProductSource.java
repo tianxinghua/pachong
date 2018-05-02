@@ -160,6 +160,8 @@ public interface OriginalProductSource {
     public static final String MARINO ="marinoOriginalProduct";
 
 	public static final String REDI ="rediOriginalProduct";
+
+	public static final String OBLU ="obluOriginalProduct";
     
     /**
      * 供货商angeloMinetti通道组件配置
@@ -645,4 +647,8 @@ public interface OriginalProductSource {
 
 	@Output(value = OriginalProductSource.REDI)
 	public MessageChannel redi();
+
+
+	@Output(value = OriginalProductSource.OBLU)
+	public MessageChannel oblu();
 }

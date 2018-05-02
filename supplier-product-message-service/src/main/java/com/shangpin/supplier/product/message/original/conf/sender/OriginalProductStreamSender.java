@@ -667,4 +667,9 @@ public class OriginalProductStreamSender {
         return originalProductSource.redi().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 
+
+    public boolean obluStream(SupplierProduct supplierProduct) {
+        return originalProductSource.oblu().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
 }

@@ -248,6 +248,9 @@ spring:
                         rediOriginalProduct:
                              destination: redi.original.product
                              content-type: application/json
+                        obluOriginalProduct:
+                             destination: oblu.original.product
+                             content-type: application/json
               rabbit:
                       bindings: 
                             cocoroseLondonOriginalProduct:
@@ -488,6 +491,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             rediOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            obluOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
