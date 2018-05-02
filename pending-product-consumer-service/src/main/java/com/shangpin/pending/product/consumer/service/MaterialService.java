@@ -312,7 +312,7 @@ public class MaterialService {
                 this.saveMaterialMapping(supplierMaterial,hubMaterial,DataBusinessStatus.PUSH);
             }
         }
-        hubMaterial = hubMaterial.replaceAll("％","%");
+        hubMaterial = filterChars(hubMaterial);
         hubSpuPending.setHubMaterial(hubMaterial);
         if (!RegexUtil.excludeLetter(hubMaterial)) {
             hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());;
@@ -321,6 +321,13 @@ public class MaterialService {
             hubSpuPending.setMaterialState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
             return true;
         }
+    }
+
+    private String filterChars(String hubMaterial) {
+        hubMaterial = hubMaterial.replaceAll("％","%").replaceAll(" %","%").replaceAll("."," ")
+        .replaceAll(","," ").replaceAll(";"," ").replaceAll("-"," ").replaceAll("\""," ")
+                .replaceAll("（"," ").replaceAll("）"," ");
+        return hubMaterial;
     }
 
     /**

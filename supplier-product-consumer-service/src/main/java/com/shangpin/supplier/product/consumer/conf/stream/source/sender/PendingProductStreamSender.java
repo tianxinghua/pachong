@@ -647,4 +647,24 @@ public class PendingProductStreamSender {
     public boolean theStyleSidePendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
     	return pendingProductSource.theStyleSidePendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
+
+	/**
+	 * 发送供应商商品流数据
+	 * @param pendingProduct 消息体
+	 * @param headers 消息头
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean rediPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+		return pendingProductSource.rediPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+
+	/**
+	 * 发送供应商商品流数据
+	 * @param pendingProduct 消息体
+	 * @param headers 消息头
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean obluPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+		return pendingProductSource.obluPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
 }

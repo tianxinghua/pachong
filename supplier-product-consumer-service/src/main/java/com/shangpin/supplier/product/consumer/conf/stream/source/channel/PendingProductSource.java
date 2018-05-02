@@ -157,6 +157,11 @@ public interface PendingProductSource {
 
 	public static final String MARINO = "marinoPendingProduct";
 
+
+	public static final String REDI = "rediPendingProduct";
+
+	public static final String OBLU = "obluPendingProduct";
+
 	/**
 	 * 供货商dolciTrame通道组件配置
 	 * @return 供货商dolciTrame通道组件
@@ -610,6 +615,8 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.MARINO)
 	public MessageChannel marinoPendingProduct();
+
+
 	@Output(value = PendingProductSource.SRL)
 	public MessageChannel srlPendingProduct();
 	
@@ -619,4 +626,19 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.THESTYLESIDE)
 	public MessageChannel theStyleSidePendingProduct();
+
+
+	/**
+	 * redi 通道组件配置
+	 * @return 供货商THESTYLESIDE 通道组件
+	 */
+	@Output(value = PendingProductSource.REDI)
+	public MessageChannel rediPendingProduct();
+
+	/**
+	 * OBLU 通道组件配置
+	 * @return 供货商OBLU 通道组件
+	 */
+	@Output(value = PendingProductSource.OBLU)
+	public MessageChannel obluPendingProduct();
 }

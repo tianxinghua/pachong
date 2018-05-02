@@ -167,6 +167,8 @@ public interface OriginalProductSink {
 
 	public static final String REDI = "rediOriginalProduct";
 
+	public static final String OBLU = "obluOriginalProduct";
+
 
 	//===============================
 
@@ -655,5 +657,8 @@ public interface OriginalProductSink {
 
 	@Input(value = OriginalProductSink.REDI)
 	public MessageChannel rediOriginalProduct();
+
+	@Input(value = OriginalProductSink.OBLU)
+	public MessageChannel obluOriginalProduct();
 
 }

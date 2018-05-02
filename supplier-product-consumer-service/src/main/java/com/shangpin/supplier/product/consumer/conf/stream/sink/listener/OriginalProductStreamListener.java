@@ -761,4 +761,9 @@ public class OriginalProductStreamListener {
 	public void rediStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.rediStreamListen(message,headers);
 	}
+
+	@StreamListener(OriginalProductSink.OBLU)
+	public void obluStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.obluStreamListen(message,headers);
+	}
 }

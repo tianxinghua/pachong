@@ -842,4 +842,13 @@ public class OriginalProductStreamListenerAdapter {
 		atelierCommonHandler.handleOriginalProduct(message, headers);
 	}
 
+	/**
+	 * 供应商oblu处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void obluStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+
 }

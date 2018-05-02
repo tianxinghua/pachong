@@ -720,6 +720,15 @@ spring:
                         rediPendingProduct:
                               destination: redi.pending.product
                               content-type: application/json
+                        obluOriginalProduct:
+                              destination: oblu.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1429,6 +1438,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               rediPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              obluOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              obluPendingProduct:
                                     producer:
                                          prefix: HA.
         consul: 

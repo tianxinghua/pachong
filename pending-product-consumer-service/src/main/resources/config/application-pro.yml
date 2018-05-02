@@ -484,13 +484,19 @@ spring:
                               destination: theStyleSide.pending.product
                               group: one
                               consumer:
-                                       concurrency: 2
+                                       concurrency: 1
                                        maxAttempts: 1
                         rediPendingProduct:
                               destination: redi.pending.product
                               group: one
                               consumer:
-                                       concurrency: 2
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit:
                       bindings: 
@@ -963,6 +969,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             rediPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            obluPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

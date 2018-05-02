@@ -162,6 +162,8 @@ public interface PendingProductSink {
 
 	public static final String REDI = "rediPendingProduct";
 
+	public static final String OBLU = "obluPendingProduct";
+
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件
@@ -643,4 +645,8 @@ public interface PendingProductSink {
 
 	@Input(value = PendingProductSink.REDI)
 	public SubscribableChannel rediPendingProduct();
+
+
+	@Input(value = PendingProductSink.OBLU)
+	public SubscribableChannel obluPendingProduct();
 }
