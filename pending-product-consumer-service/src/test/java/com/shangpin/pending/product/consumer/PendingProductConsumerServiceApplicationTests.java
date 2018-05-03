@@ -2,7 +2,7 @@ package com.shangpin.pending.product.consumer;
 
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
-import com.shangpin.pending.product.consumer.supplier.common.DataOfPendingServiceHandler;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
