@@ -21,6 +21,8 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component("obluHandler")
 @Slf4j
@@ -113,14 +115,27 @@ public class ObluHandler implements ISupplierHandler {
 					hubSpu.setSupplierSpuColor(item.getColor());
 					hubSpu.setSupplierSpuModel(item.getProductCode()+" "+item.getColor());
 				}else {
-					String substring = item.getColor().substring(2);
-					hubSpu.setSupplierSpuColor(substring);
-					col=item.getColor().substring(0, 2);
-					hubSpu.setSupplierSpuModel(item.getProductCode()+" "+col);
-				}
-			}
-			//hubSpu.setSupplierSpuColor(item.getColor());
-			//hubSpu.setSupplierSpuModel(item.getProductCode()+" "+col);
+				    //获取所有数字
+                    String regex = "\\d*";
+                    Pattern p = Pattern.compile(regex);
+                    Matcher m = p.matcher(item.getColor());
+                    while (m.find()) {
+                        if (!"".equals(m.group()))
+                            System.out.println( m.group());
+                        hubSpu.setSupplierSpuModel(item.getProductCode()+" "+m.group());
+                    }
+                    //获取非数字字符
+                    String[] temp =item.getColor() .split("\\d");
+                    String s="";
+                    for (String ss:temp){
+                        s+=ss;
+                    }
+                    hubSpu.setSupplierSpuColor(s);
+                }
+			}else {
+                hubSpu.setSupplierSpuModel(item.getProductCode());
+            }
+
 			hubSpu.setSupplierGender(item.getCategoryGender());
 			hubSpu.setSupplierCategoryname(item.getCategoryName());
 			hubSpu.setSupplierBrandname(item.getBrandName());
