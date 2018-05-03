@@ -97,14 +97,30 @@ public class ObluHandler implements ISupplierHandler {
 	 * @param hubSpu hub spu表
 	 */
 	public boolean convertSpu(String supplierId,ProductDTO item, HubSupplierSpuDto hubSpu) throws EpHubSupplierProductConsumerRuntimeException{
-		if(null != item){			
+		if(null != item){
+			String col=null;
+			String col2=null;
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(item.getSpuId());
             //无货号
-			hubSpu.setSupplierSpuModel(item.getProductCode());
+			//hubSpu.setSupplierSpuModel(item.getProductCode());
 
 			hubSpu.setSupplierSpuName(item.getProductName());
-			hubSpu.setSupplierSpuColor(item.getColor());
+			if(!item.getColor().equals("无")){
+				boolean result=item.getColor().matches("[0-9]+");
+				if (result==true){
+				System.out.println("全为数字");
+					hubSpu.setSupplierSpuColor(item.getColor());
+					hubSpu.setSupplierSpuModel(item.getProductCode()+" "+item.getColor());
+				}else {
+					String substring = item.getColor().substring(2);
+					hubSpu.setSupplierSpuColor(substring);
+					col=item.getColor().substring(0, 2);
+					hubSpu.setSupplierSpuModel(item.getProductCode()+" "+col);
+				}
+			}
+			//hubSpu.setSupplierSpuColor(item.getColor());
+			//hubSpu.setSupplierSpuModel(item.getProductCode()+" "+col);
 			hubSpu.setSupplierGender(item.getCategoryGender());
 			hubSpu.setSupplierCategoryname(item.getCategoryName());
 			hubSpu.setSupplierBrandname(item.getBrandName());
