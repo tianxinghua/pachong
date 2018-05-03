@@ -324,9 +324,11 @@ public class MaterialService {
     }
 
     private String filterChars(String hubMaterial) {
-        hubMaterial = hubMaterial.replaceAll("％","%").replaceAll(" %","%").replaceAll("."," ")
-        .replaceAll(","," ").replaceAll(";"," ").replaceAll("-"," ").replaceAll("\""," ")
-                .replaceAll("（"," ").replaceAll("）"," ");
+        hubMaterial = hubMaterial.replaceAll("％","%").replaceAll(" %","%")
+                .replaceAll("\\."," ").replaceAll(","," ")
+                .replaceAll(";"," ").replaceAll("-"," ").replaceAll("\""," ")
+                .replaceAll("（"," ").replaceAll("）"," ")
+                .replaceAll("\\("," ").replaceAll("\\)"," ");
         return hubMaterial;
     }
 
