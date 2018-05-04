@@ -44,6 +44,9 @@ public class HubFilterService {
 		supplierIds.add("2015091801508");
 		//coltorti
 		supplierIds.add("2015081701440");
+
+		//上海欧蓝电子商务有限公司
+		supplierIds.add("2018040902001");
 	}
 	@Autowired
 	IShangpinRedis shangpinRedis;

@@ -45,8 +45,16 @@ public class Scheduler {
 
 	@Autowired
 	VariableInit variableInit;
+
+	@Autowired
+	private ScheduleConfig scheduleConfig;
+
 	@Scheduled(cron = "0 10 8 * * ?")
 	public void modelTask() {
+
+		if(!scheduleConfig.isBrand()){
+			return;
+		}
 		
 		try {
 			List<String> categoryList = new ArrayList<String>();
