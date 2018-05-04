@@ -933,7 +933,8 @@ public class PendingHandler extends VariableInit {
 	 * @param filterFlag
 	 * @throws Exception
 	 */
-	private void addNewSku(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,
+	private void
+	addNewSku(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,
 			Map<String, Object> headers, byte filterFlag) throws Exception {
 
 		// 公共属性
@@ -1124,8 +1125,13 @@ public class PendingHandler extends VariableInit {
 		//如果是儿童 如果是数字 需要需要加上岁
 		if(StringUtils.isNotBlank(hubSpuPending.getHubCategoryNo())&&hubSpuPending.getHubCategoryNo().startsWith("A11")){
               try{
-				  boolean result=hubSkuPending.getHubSkuSize().matches("[0-9]+$");
-				  if(result) hubSkuPending.setHubSkuSize(hubSkuPending.getHubSkuSize()+"岁");
+              	  if(hubSpuPending.getHubCategoryNo().startsWith("A11B02")||hubSpuPending.getHubCategoryNo().startsWith("A11B04")||hubSpuPending.getHubCategoryNo().startsWith("A11")){
+
+				  }else{
+
+					  boolean result=hubSkuPending.getHubSkuSize().matches("[0-9]+$");
+					  if(result) hubSkuPending.setHubSkuSize(hubSkuPending.getHubSkuSize()+"岁");
+				  }
 			  }catch (Exception ex){
 
 			  }

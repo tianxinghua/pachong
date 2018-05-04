@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -106,7 +107,7 @@ public class ClutcherOrderImpl implements IOrderService {
             rtnData = getResponseJson(orderDTO,json,method,uri,uuid);
             logger.info(uri+","+type+"推送订单返回结果=="+rtnData+",推送的数据："+json);
         	orderDTO.setLogContent(uri+","+type+"推送订单返回结果=="+rtnData);
-            if(HttpUtil45.errorResult.equals(rtnData)){
+            if(HttpUtil45.errorResult.equals(rtnData)||StringUtils.isBlank(rtnData)){
             	setType(orderDTO,type,"ERROR",uuid);
             	return ;
             }
