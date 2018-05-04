@@ -17,7 +17,7 @@
         <file>${LOG_HOME}/shangpin-ephub-data-mysql-service-error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_HOME}/shangpin-ephub-data-mysql-service-error.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <MaxHistory>5</MaxHistory>
+            <MaxHistory>2</MaxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
@@ -31,7 +31,7 @@
         <file>${LOG_HOME}/shangpin-ephub-data-mysql-service-info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy" >
             <fileNamePattern>${LOG_HOME}/shangpin-ephub-data-mysql-service-info.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <MaxHistory>5</MaxHistory>
+            <MaxHistory>2</MaxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>

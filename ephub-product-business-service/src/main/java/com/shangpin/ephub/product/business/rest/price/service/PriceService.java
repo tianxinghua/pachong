@@ -137,8 +137,7 @@ public class PriceService {
 		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
 		log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
 	}
-	
-	/**
+    /**
 	 * scm调用
 	 * @param priceQuery
 	 * @return
