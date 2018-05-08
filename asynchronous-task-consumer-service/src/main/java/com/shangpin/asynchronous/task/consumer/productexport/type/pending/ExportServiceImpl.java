@@ -172,7 +172,7 @@ public class ExportServiceImpl {
 		}
 		String[] rowTemplate = TaskImportTemplate.getPendingSkuValueTemplate();
 		int totalSize = pendingQuryDto.getPageSize();// 总记录数
-		log.info("sku导出总记录数：" + totalSize);
+		log.info("任务编号:"+ taskNo +" sku导出总记录数：" + totalSize);
 		if (totalSize > 0) {
 			List<PendingProducts> lists = new ArrayList<PendingProducts>();
 			int pageCount = getPageCount(totalSize, SKUPAGESIZE);// 页数
