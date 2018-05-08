@@ -117,7 +117,7 @@ public class ProductScheduler {
 		}
 		try {
 			log.info("===========漏掉的价格重新推送============"); 
-			pricePushService.savePriceRecordAndSendConsumer();
+			pricePushService.savePriceRecordAndSendConsumer(1);
 			log.info("===========漏掉的价格重新推送============"); 
 		} catch (Exception e) {
 			log.error("检测季节任务异常："+e.getMessage(),e);
