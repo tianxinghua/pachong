@@ -21,6 +21,8 @@ public interface OriginalProductSink {
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
 	
 	public static final String OSTORE = "ostoreOriginalProduct";
+
+	public static final String MENGOTTISNC = "mengottiSncOriginalProduct";
 	
 	public static final String BRUNAROSSO = "brunarossoOriginalProduct";
 	
@@ -233,6 +235,13 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.OSTORE)
     public SubscribableChannel ostoreOriginalProduct();
+
+	/**
+	 * 供货商通道组件配置
+	 * @return MENGOTTTSNC通道组件
+	 */
+	@Input(value = OriginalProductSink.MENGOTTISNC)
+	public SubscribableChannel mengottiSncOriginalProduct();
 	/**
 	 * 供货商BRUNAROSSO通道组件配置
 	 * @return BRUNAROSSO通道组件

@@ -1,3 +1,4 @@
+/*
 package com.shangpin.pending.product.consumer;
 
 import com.alibaba.fastjson.JSON;
@@ -7,9 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
+*/
 /**
  * Created by lizhongren on 2017/1/19.
- */
+ *//*
+
 public class CommonTest {
 
     public static void main(String[] args){
@@ -198,3 +201,4 @@ public class CommonTest {
         System.out.println("material = " +hubMaterial);
     }
 }
+*/

@@ -729,6 +729,15 @@ spring:
                         obluPendingProduct:
                               destination: oblu.pending.product
                               content-type: application/json
+                        mengottiSncOriginalProduct:
+                              destination: mengottiSnc.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1449,6 +1458,15 @@ spring:
                               obluPendingProduct:
                                     producer:
                                          prefix: HA.
+                              mengottiSncOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              mengottiSncPendingProduct:
+                                    producer:
+                                        　prefix: HA.
         consul: 
           host: localhost
           port: 8500

@@ -74,11 +74,12 @@ public class ColtortiProductConvert {
 		dto.setSupplierBrandno(p.getBrand_id());
 		dto.setSupplierGender(p.getGenderName());
 		//dto.setSupplierCategoryname(p.getCategoryName());
-		if(p.getName().getEn()!=null){
+		/*if(p.getName().getEn()!=null){
 			dto.setSupplierCategoryname(p.getName().getEn()+" "+p.getCategoryName());
 		}else {
 			dto.setSupplierCategoryname(p.getCategoryName());
-		}
+		}*/
+
 		dto.setSupplierSpuName(p.getName().getEn());
 		dto.setSupplierSeasonname(p.getSeasonName());
 		dto.setSupplierSeasonno(p.getSeason_id());

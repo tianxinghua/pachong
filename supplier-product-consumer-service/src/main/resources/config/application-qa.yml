@@ -74,10 +74,19 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1
-                        ostorePendingProduct: 
+                        mengottiSncOriginalProduct:
+                              destination: mengottiSnc.original.product
+                              group: one
+                              consumer:
+                                        concurrency: 2
+                                        maxAttempts: 1
+                        ostorePendingProduct:
                               destination: ostore.pending.product
                               content-type: application/json                        
-                        brunarossoOriginalProduct: 
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              content-type: application/json
+                        brunarossoOriginalProduct:
                               destination: brunarosso.original.product
                               group: one
                               consumer: 
@@ -775,10 +784,19 @@ spring:
                                          autoBindDlq: false
                                          requeueRejected: true
                                          republishToDlq: false
-                              ostorePendingProduct: 
+                              mengottiSncOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              ostorePendingProduct:
                                     producer: 
                                          prefix: HA.                                        
-                              brunarossoOriginalProduct: 
+                              mengottiSncPendingProduct:
+                                    producer:
+                                        　prefix: HA.
+                              brunarossoOriginalProduct:
                                     consumer: 
                                          prefix: HA.
                                          autoBindDlq: false

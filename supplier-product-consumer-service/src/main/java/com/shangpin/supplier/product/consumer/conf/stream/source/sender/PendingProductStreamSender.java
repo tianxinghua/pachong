@@ -119,6 +119,15 @@ public class PendingProductStreamSender {
     	return pendingProductSource.ostorePendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
 	/**
+	 * 发送供应商MENGOTTISNC商品流数据
+	 * @param pendingProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean mengottiSncPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+		return pendingProductSource.mengottiSncPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+
+	/**
 	 * 发送供应商spinnaker商品流数据
 	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false

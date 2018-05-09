@@ -162,6 +162,15 @@ public class PendingProductStreamListener {
 		adapter.ostorePendingProductStreamListen(message,headers);
     }
 	/**
+	 * 供应商MENGOTTTSNC待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.MENGOTTISNC)
+	public void mengottiSncPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.mengottiSncPendingProductStreamListen(message,headers);
+	}
+	/**
 	 * 供应商SPINNAKER待处理商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

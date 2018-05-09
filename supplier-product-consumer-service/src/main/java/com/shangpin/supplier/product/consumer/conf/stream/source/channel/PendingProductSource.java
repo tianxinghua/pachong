@@ -21,6 +21,8 @@ public interface PendingProductSource {
 	public static final String SPINNAKER = "spinnakerPendingProduct";
 	
 	public static final String OSTORE = "ostorePendingProduct";
+
+	public static final String MENGOTTISNC = "mengottiSncPendingProduct";
 	
 	public static final String BRUNAROSSO = "brunarossoPendingProduct";
 	
@@ -223,6 +225,13 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.OSTORE)
     public MessageChannel ostorePendingProduct();
+	/**
+	 * 供货商MENGOTTISNC通道组件配置
+	 * @return 供货商OSTORE通道组件
+	 */
+	@Output(value = PendingProductSource.MENGOTTISNC)
+	public MessageChannel mengottiSncPendingProduct();
+
 	/**
 	 * 供货商BRUNAROSSO通道组件配置
 	 * @return 供货商BRUNAROSSO通道组件

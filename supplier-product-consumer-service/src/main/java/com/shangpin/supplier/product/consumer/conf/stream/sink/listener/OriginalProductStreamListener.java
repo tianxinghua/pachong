@@ -155,6 +155,17 @@ public class OriginalProductStreamListener {
 		adapter.ostoreStreamListen(message,headers);
     }
 	/**
+	 * 供应商MENGOTTTSNC原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.MENGOTTISNC)
+	public void mengottiSncStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.mengottiSncStreamListen(message,headers);
+	}
+
+
+	/**
 	 * 供应商FORZIERI原始商品数据流通道监听者
 	 * @param message 消息
 	 * @param headers 消息头

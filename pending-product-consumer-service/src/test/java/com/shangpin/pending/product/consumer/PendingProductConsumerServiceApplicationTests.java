@@ -1,3 +1,4 @@
+/*
 package com.shangpin.pending.product.consumer;
 
 import com.shangpin.commons.redis.IShangpinRedis;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 public class PendingProductConsumerServiceApplicationTests {
 //    @Autowired
 //    DataOfPendingServiceHandler dataOfPendingServiceHandler;
@@ -22,7 +23,7 @@ public class PendingProductConsumerServiceApplicationTests {
     @Autowired
     IShangpinRedis shangpinRedis;
 
-	@Test
+	//@Test
 	public void contextLoads() {
 //        int totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(25L);
 //        System.out.println("totalStock  =" + totalStock);
@@ -49,3 +50,4 @@ public class PendingProductConsumerServiceApplicationTests {
     }
 
 }
+*/

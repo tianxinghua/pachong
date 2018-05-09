@@ -498,6 +498,12 @@ spring:
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings: 
                             angeloMinettiPendingProduct: 
@@ -975,6 +981,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             obluPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            mengottiSncPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

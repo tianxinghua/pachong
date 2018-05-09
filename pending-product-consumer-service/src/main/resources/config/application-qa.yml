@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.176
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -54,7 +54,13 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        brunarossoPendingProduct: 
+                        mengottiSncPendingProduct:
+                                destination: mengottiSnc.pending.product
+                                group: one
+                                consumer:
+                                         concurrency: 5
+                                         maxAttempts: 1
+                        brunarossoPendingProduct:
                               destination: brunarosso.pending.product
                               group: one
                               consumer: 
@@ -494,7 +500,13 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            brunarossoPendingProduct: 
+                            mengottiSncPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            brunarossoPendingProduct:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
