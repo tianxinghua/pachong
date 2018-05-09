@@ -59,7 +59,9 @@ public interface OriginalProductSource {
 	
 	public static final String GIGLIO = "giglioOriginalProduct"; 
 	
-	public static final String DIVO = "divoOriginalProduct";	 
+	public static final String DIVO = "divoOriginalProduct";
+
+	public static final String  MENGOTTISNC= "mengottiSncOriginalProduct";
 	
 	public static final String BIONDINI = "biondiniOriginalProduct";
 	
@@ -352,6 +354,14 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.DIVO)
     public MessageChannel divo();
+
+	/**
+	 * 供货商mengottiSnc通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.MENGOTTISNC)
+	public MessageChannel mengottiSnc();
+
 	/**
 	 * 供货商BIONDINI通道组件配置
 	 * @return 供货商通道组件

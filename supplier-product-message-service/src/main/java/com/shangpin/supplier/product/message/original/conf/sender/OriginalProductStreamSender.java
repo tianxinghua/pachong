@@ -19,7 +19,8 @@ public class OriginalProductStreamSender {
 	
 	@Autowired
 	private OriginalProductSource originalProductSource;
-	
+
+
 
 	/**
 	 * 发送供应商angeloMinetti商品流数据
@@ -270,6 +271,15 @@ public class OriginalProductStreamSender {
     public boolean divoStream(SupplierProduct supplierProduct) {
     	return originalProductSource.divo().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    /**
+     * 发送供应商mengottiSnc商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean mengottiSncStream(SupplierProduct supplierProduct) {
+        return originalProductSource.mengottiSnc().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
     /**
      * 发送供应商biondini商品流数据
      * @param supplierProduct 消息体

@@ -251,6 +251,9 @@ spring:
                         obluOriginalProduct:
                              destination: oblu.original.product
                              content-type: application/json
+                        mengottiSncOriginalProduct:
+                             destination: mengottiSnc.original.product
+                             content-type: application/json
               rabbit:
                       bindings: 
                             cocoroseLondonOriginalProduct:
@@ -494,6 +497,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             obluOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            mengottiSncOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

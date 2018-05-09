@@ -92,6 +92,9 @@ spring:
                         divoOriginalProduct: 
                               destination: divo.original.product
                               content-type: application/json
+                        mengottiSncOriginalProduct:
+                               destination: mengottiSnc.original.product
+                               content-type: application/json
                         biondiniOriginalProduct: 
                               destination: biondini.original.product
                               content-type: application/json
@@ -256,6 +259,9 @@ spring:
                             ostoreOriginalProduct: 
                                   producer: 
                                            prefix: HA.
+                            mengottiSncOriginalProduct:
+                                  producer:
+                                            prefix: HA.
                             brunarossoOriginalProduct: 
                                   producer: 
                                            prefix: HA.
