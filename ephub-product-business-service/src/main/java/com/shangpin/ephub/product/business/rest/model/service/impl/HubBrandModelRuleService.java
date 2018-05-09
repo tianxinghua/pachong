@@ -53,9 +53,8 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
 	 */
 	private String verifyUseBrandNo(String hubBrandNo, String brandMode) {
-		HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
-		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo);
-		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = brandModelRuleManager.findByCriteria(criteria);
+
+		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = this.getRegxRuleListByHubBrandNo(hubBrandNo);
 		if (CollectionUtils.isEmpty(hubBrandModelRuleDtoList)) {
 			return brandMode;
 		} else {
@@ -89,10 +88,10 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	 * @param brandMode 品牌方型号
 	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
 	 */
-	@Override
+
 	public String ruleVerify(String hubBrandNo, String hubCategoryNo, String brandMode) {
 		// TODO Auto-generated method stub (B[0-9]{2})(C[0-9]{2})(D[0-9]{2})
-		return null;
+           return brandMode;
 	}
 	/**
 	 * 既校验品牌又校验品类的正则校验
@@ -117,6 +116,42 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 			return recursiveVerifyWithCategory(hubBrandNo, hubCategoryNo, brandMode);
 		}
 	}
+
+	@Override
+	public String replaceSymbol(String hubBrandNo, String hubCategoryNo, String brandMode, String symbol) {
+		if(StringUtils.isBlank(brandMode)) return "";
+		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = null;
+        if(StringUtils.isNotBlank(hubCategoryNo)){
+			hubBrandModelRuleDtoList = getRegxRuleListByHubBrandNoAndHubCategory(hubBrandNo, hubCategoryNo);
+			if (CollectionUtils.isEmpty(hubBrandModelRuleDtoList)) {
+				hubBrandModelRuleDtoList = this.getRegxRuleListByHubBrandNo(hubBrandNo);
+			}
+		}else{
+			hubBrandModelRuleDtoList = this.getRegxRuleListByHubBrandNo(hubBrandNo);
+		}
+
+
+		if (CollectionUtils.isEmpty(hubBrandModelRuleDtoList)) {
+			return brandMode;
+		} else {
+			//默认取第一个规则中的排除符号
+			HubBrandModelRuleDto hubBrandModelRuleDto = hubBrandModelRuleDtoList.get(0);
+			String excludeRex = hubBrandModelRuleDto.getExcludeRex();
+			if (StringUtils.isBlank(excludeRex)) {
+				return  brandMode;
+			}
+			String processed = brandMode.replaceAll(excludeRex, symbol).replaceAll("  "," ");
+			if (StringUtils.isBlank(processed)) {
+				log.warn("系统检测到加工之后的品牌方型号为空，品牌方型号校验不通过");
+				return brandMode;
+			} else {
+				return processed;
+			}
+
+
+		}
+	}
+
 	/**
 	 * 根据品类递归结合品牌校验货号规则
 	 * @param hubBrandNo 品牌编号
@@ -168,8 +203,8 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	}
 	/**
 	 * 根据品牌编号和品类进行校验货号是否符合规则
-	 * @param hubBrandNo 品牌编号
-	 * @param hubCategory 品类
+
+	 * @param hubBrandModelRuleDtoList
 	 * @param brandMode 货号
 	 * @return 通过则非空字符串货号返回，否则返回null
 	 */
@@ -206,8 +241,21 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 	private List<HubBrandModelRuleDto> getRegxRuleListByHubBrandNoAndHubCategory(String hubBrandNo,
 			String hubCategory) {
 		HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
+		criteria.setPageSize(100);
 		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo).andHubCategoryNoEqualTo(hubCategory);
 		List<HubBrandModelRuleDto> hubBrandModelRuleDtoList = brandModelRuleManager.findByCriteria(criteria);
 		return hubBrandModelRuleDtoList;
+	}
+
+	/**
+	 *
+	 * @param hubBrandNo
+	 * @return
+	 */
+	private  List<HubBrandModelRuleDto> getRegxRuleListByHubBrandNo(String hubBrandNo) {
+		HubBrandModelRuleCriteriaDto criteria = new HubBrandModelRuleCriteriaDto();
+		criteria.setPageSize(100);
+		criteria.createCriteria().andHubBrandNoEqualTo(hubBrandNo).andHubCategoryNoIsNull();
+		return  brandModelRuleManager.findByCriteria(criteria);
 	}
 }

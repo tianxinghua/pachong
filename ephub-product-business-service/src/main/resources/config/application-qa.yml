@@ -1,8 +1,8 @@
 feign.hystrix.enabled: true
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 30000
 ribbon:
-  ConnectTimeout: 30000
-  ReadTimeout: 30000
+  ConnectTimeout: 120000
+  ReadTimeout: 120000
 spring: 
   rabbitmq: 
            host: 192.168.20.175
@@ -63,16 +63,16 @@ spring:
        studioPort: 21
        studioUserName: dev
        studioPassword: shangpin@123
-#  mail:
-#       default-recipient: chengxu@shangpin.com
-#       default-sender: chengxu@shangpin.com
-#       default-encoding: UTF-8 # Default MimeMessage encoding.
-#       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-#       port: 25 # SMTP server port.
-#       protocol: smtp # Protocol used by the SMTP server.
-#       username: chengxu@shangpin.com # Login user of the SMTP server.
-#       password: shangpin001 # Login password of the SMTP server.
-#       test-connection: false # Test that the mail server is available on startup.
+  mail:
+       default-recipient: chengxu@shangpin.com
+       default-sender: chengxu@shangpin.com
+       default-encoding: UTF-8 # Default MimeMessage encoding.
+       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+       port: 25 # SMTP server port.
+       protocol: smtp # Protocol used by the SMTP server.
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
+       test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.

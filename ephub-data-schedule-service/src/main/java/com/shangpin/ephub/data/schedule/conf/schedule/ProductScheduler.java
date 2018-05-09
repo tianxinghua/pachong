@@ -34,7 +34,7 @@ public class ProductScheduler {
     @Autowired
     private ScheduleConfig scheduleConfig;
     
-	@Scheduled(cron = "00 25 20 * * ?")
+	@Scheduled(cron = "0 0 12 * * ?")
 	public void pricePush() {
 		try {
 			log.info("===========pricePush任务开始============"); 
@@ -77,7 +77,7 @@ public class ProductScheduler {
 	/**
 	 * 修改数据和图片状态
 	 */
-	@Scheduled(cron = "00 55 08 * * ?")
+	@Scheduled(cron = "00 30 08 * * ?")
 	public void modifyUpdateStatus(){
 		try {
 			log.info("======================更新库存定时任务开始======================");

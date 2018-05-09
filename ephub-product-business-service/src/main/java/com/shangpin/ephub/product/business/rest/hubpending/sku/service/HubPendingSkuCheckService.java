@@ -11,9 +11,16 @@ import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * <p>Title:HubCheckRuleService.java </p>
- * <p>Description: hua商品校验实现</p>
- * <p>Company: www.shangpin.com</p> 
+ * <p>
+ * Title:HubCheckRuleService.java
+ * </p>
+ * <p>
+ * Description: hua商品校验实现
+ * </p>
+ * <p>
+ * Company: www.shangpin.com
+ * </p>
+ * 
  * @author zhaogenchun
  * @date 2016年12月23日 下午4:15:16
  */
@@ -21,43 +28,49 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class HubPendingSkuCheckService {
-	
+
 	@Autowired
 	HubCheckService hubCheckService;
-	
-	public HubPendingSkuCheckResult checkHubPendingSku(HubSkuCheckDto hubProduct){
+
+	public HubPendingSkuCheckResult checkHubPendingSku(HubSkuCheckDto hubProduct) {
 		StringBuffer str = new StringBuffer();
-		HubPendingSkuCheckResult result = null;
+		HubPendingSkuCheckResult result = new HubPendingSkuCheckResult();
 		String message = null;
 		boolean flag = false;
-		 if("尺寸".equals(hubProduct.getSpecificationType())||"尺寸".equals(hubProduct.getSizeType())){
-				flag = true;
-				message = "尺码类型为尺寸不校验";
-		 }else if("尺码".equals(hubProduct.getSpecificationType())||StringUtils.isBlank(hubProduct.getSpecificationType())){
-			if(StringUtils.isNotBlank(hubProduct.getSizeType())){
-				result = hubCheckService.hubSizeExist(hubProduct.getCategoryNo(),hubProduct.getBrandNo(),hubProduct.getSizeType(),hubProduct.getSkuSize());
+
+		if ("排除".equals(hubProduct.getSizeType())) {
+			result.setPassing(false);
+			result.setSizeType("排除");
+			result.setSizeValue(hubProduct.getSkuSize());
+			result.setMessage("尺码排除");
+			result.setFilter(true);
+			return result;
+		}
+
+		if ("尺寸".equals(hubProduct.getSpecificationType())
+				|| "尺寸".equals(hubProduct.getSizeType())) {
+			flag = true;
+			hubProduct.setSizeType("尺寸");
+			message = "尺码类型为尺寸不校验";
+		} else if ("尺码".equals(hubProduct.getSpecificationType())
+				|| StringUtils.isBlank(hubProduct.getSpecificationType())) {
+			if (StringUtils.isNotBlank(hubProduct.getSizeType())) {
+				result = hubCheckService.hubSizeExist(
+						hubProduct.getCategoryNo(), hubProduct.getBrandNo(),
+						hubProduct.getSizeType(), hubProduct.getSkuSize());
 				return result;
-			}else{
+			} else {
 				flag = false;
 				message = "尺码类型为空";
 			}
-		}else{
+		} else {
 			flag = false;
 			message = "规格类型无效";
 		}
-		result = new HubPendingSkuCheckResult();
-		if(flag){
-			result.setPassing(true);
-			result.setMessage(message);
-			result.setSizeType(hubProduct.getSpecificationType());
-			result.setSizeValue(hubProduct.getSkuSize());
-		}else{
-			result.setPassing(false);
-			result.setMessage(message);
-			result.setSizeType(hubProduct.getSpecificationType());
-			result.setSizeValue(hubProduct.getSkuSize());
-		}
+		result.setPassing(flag);
+		result.setMessage(message);
+		result.setSizeType(hubProduct.getSizeType());
+		result.setSizeValue(hubProduct.getSkuSize());
 		return result;
 	}
-
 }

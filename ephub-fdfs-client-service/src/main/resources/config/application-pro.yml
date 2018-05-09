@@ -1,4 +1,4 @@
-spring.jmx.enabled: false
+#spring.jmx.enabled: false
 feign.hystrix.enabled: false
 spring:
   cloud:

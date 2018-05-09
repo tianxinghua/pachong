@@ -75,7 +75,7 @@ public class HubBrandModelRuleController {
 			result.setPassing(true);
 			result.setBrandMode(brandModel);
 		} else {
-			String _brandModel = hubBrandModelRuleService.ruleVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+			String _brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
 			if (StringUtils.isBlank(_brandModel)) {
 				result.setPassing(false);
 			} else {
@@ -86,6 +86,15 @@ public class HubBrandModelRuleController {
 		log.info("品牌校验规则（校验品牌并且校验品类）服务接收到的参数为:{}， 系统品牌型号规则验证结果为{}， 耗时{}milliseconds!", dto.toString(), result.toString(), System.currentTimeMillis() - start);
 		return result;
 	}
+
+
+	@RequestMapping(value = "/replace-symbol")
+	public String  replaceSymbol(@RequestBody BrandModelDto dto){
+
+		return  hubBrandModelRuleService.replaceSymbol(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode()," ");
+
+	}
+
 	private boolean checkHubCategoryIsYanJing(BrandModelDto dto,BrandModelResult result) {
 		if(dto!=null&&dto.getHubCategoryNo()!=null&&dto.getHubCategoryNo().startsWith("A13")){
 			if(dto.getBrandMode()!=null){

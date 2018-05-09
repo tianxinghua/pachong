@@ -6,6 +6,7 @@
     <result column="supplier_material" property="supplierMaterial" jdbcType="VARCHAR" />
     <result column="hub_material" property="hubMaterial" jdbcType="VARCHAR" />
     <result column="mapping_level" property="mappingLevel" jdbcType="TINYINT" />
+    <result column="source" property="source" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -74,7 +75,7 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      material_mapping_id, supplier_material, hub_material, mapping_level, create_time, 
+      material_mapping_id, supplier_material, hub_material, mapping_level, source, create_time, 
       create_user, update_time, update_user, memo, data_state, version
     </if>
     <if test="fields != null" >
@@ -100,7 +101,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    material_mapping_id,supplier_material,hub_material,mapping_level,create_time,create_user,update_time,update_user,memo,data_state,version
+    material_mapping_id,supplier_material,hub_material,mapping_level,source,create_time,create_user,update_time,update_user,memo,data_state,version
     from hub_material_mapping
     where material_mapping_id = #{materialMappingId,jdbcType=BIGINT}
   </select>
@@ -115,24 +116,18 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.material.po.HubMaterialMapping" >
-    <selectKey keyColumn="material_mapping_id" keyProperty="materialMappingId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS material_mapping_id
-  	</selectKey>
     insert into hub_material_mapping (material_mapping_id, supplier_material, 
-      hub_material, mapping_level, create_time, 
-      create_user, update_time, update_user, 
-      memo, data_state, version
-      )
+      hub_material, mapping_level, source, 
+      create_time, create_user, update_time, 
+      update_user, memo, data_state, 
+      version)
     values (#{materialMappingId,jdbcType=BIGINT}, #{supplierMaterial,jdbcType=VARCHAR}, 
-      #{hubMaterial,jdbcType=VARCHAR}, #{mappingLevel,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
-      )
+      #{hubMaterial,jdbcType=VARCHAR}, #{mappingLevel,jdbcType=TINYINT}, #{source,jdbcType=TINYINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.material.po.HubMaterialMapping" >
-    <selectKey keyColumn="material_mapping_id" keyProperty="materialMappingId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS material_mapping_id
-  	</selectKey>
     insert into hub_material_mapping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="materialMappingId != null" >
@@ -146,6 +141,9 @@
       </if>
       <if test="mappingLevel != null" >
         mapping_level,
+      </if>
+      <if test="source != null" >
+        source,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -181,6 +179,9 @@
       </if>
       <if test="mappingLevel != null" >
         #{mappingLevel,jdbcType=TINYINT},
+      </if>
+      <if test="source != null" >
+        #{source,jdbcType=TINYINT},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -226,6 +227,9 @@
       <if test="record.mappingLevel != null" >
         mapping_level = #{record.mappingLevel,jdbcType=TINYINT},
       </if>
+      <if test="record.source != null" >
+        source = #{record.source,jdbcType=TINYINT},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -258,6 +262,7 @@
       supplier_material = #{record.supplierMaterial,jdbcType=VARCHAR},
       hub_material = #{record.hubMaterial,jdbcType=VARCHAR},
       mapping_level = #{record.mappingLevel,jdbcType=TINYINT},
+      source = #{record.source,jdbcType=TINYINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -280,6 +285,9 @@
       </if>
       <if test="mappingLevel != null" >
         mapping_level = #{mappingLevel,jdbcType=TINYINT},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=TINYINT},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -310,6 +318,7 @@
     set supplier_material = #{supplierMaterial,jdbcType=VARCHAR},
       hub_material = #{hubMaterial,jdbcType=VARCHAR},
       mapping_level = #{mappingLevel,jdbcType=TINYINT},
+      source = #{source,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP},

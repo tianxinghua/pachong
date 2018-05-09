@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
 	//compile('commons-io:commons-io:2.5')
-	compile('com.github.tobato:fastdfs-client:1.25.3-RELEASE')
+	compile('com.github.tobato:fastdfs-client:1.26.1-RELEASE')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-aop')
 	compile('org.springframework.cloud:spring-cloud-starter-hystrix')
@@ -41,6 +41,8 @@ dependencies {
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+	testCompile('junit:junit:4.12')
 }
 
 dependencyManagement {

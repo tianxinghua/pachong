@@ -16,7 +16,7 @@ public interface IHubBrandModelRuleService {
 	 */
 	String regexVerify(String hubBrandNo, String hubCategoryNo, String brandMode);
 	/**
-	 * 规则校验
+	 * 规则校验  无
 	 * @param hubBrandNo 品牌编号
 	 * @param hubCategoryNo 品类编号
 	 * @param brandMode 品牌方型号
@@ -31,5 +31,15 @@ public interface IHubBrandModelRuleService {
 	 * @return 如果校验通过将返回通过的品牌型号，否则将返回null；
 	 */
 	String regexVerifyWithCategory(String hubBrandNo, String hubCategoryNo, String brandMode);
+
+	/**
+	 *  查找规则 替换符号
+	 * @param hubBrandNo
+	 * @param hubCategoryNo
+	 * @param brandMode
+	 * @param symbol
+	 * @return
+	 */
+	String replaceSymbol(String hubBrandNo, String hubCategoryNo, String brandMode,String symbol);
 
 }

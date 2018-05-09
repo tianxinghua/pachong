@@ -95,8 +95,11 @@ public class HubSupplierCategoryDicController {
 						if(listMapp!=null&&listMapp.size()>0){
 							dic.setSupplierNo(listMapp.get(0).getHubValNo());
 							dic.setSupplierName(listMapp.get(0).getHubVal());
-						}	
-						dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+						}
+						if(dicDto.getCreateTime()!=null){
+							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
+						}
+
 						if(dicDto.getUpdateTime()!=null){
 							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}

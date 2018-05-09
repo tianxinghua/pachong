@@ -92,7 +92,7 @@ public class SupplierService {
     public void setScmsSupplierInfoToRedis(String supplierNo,SupplierDTO supplierDto){
     	try {
         	//缓存到redis中
-            shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,1000*60*5,JsonUtil.serialize(supplierDto));
+            shangpinRedis.setex(GlobalConstant.REDIS_ORDER_SUPPLIER_KEY+"_"+supplierNo,60*60*24*7,JsonUtil.serialize(supplierDto));
 		} catch (Exception e) {
 			log.error(supplierNo+"缓存供应商信息到redis时出错，错误信息为："+e.getMessage(),e); 
 		}

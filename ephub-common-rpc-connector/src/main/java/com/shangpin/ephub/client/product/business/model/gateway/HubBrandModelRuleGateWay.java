@@ -34,4 +34,12 @@ public interface HubBrandModelRuleGateWay {
 	 */
 	@RequestMapping(value = "/hub-brand-model-rule/verify-with-category", method = RequestMethod.POST,consumes = "application/json")
 	public BrandModelResult verifyWithCategory(@RequestBody BrandModelDto dto);
+
+	/**
+	 * 当未找到
+	 * @param dto
+	 * @return
+	 */
+	@RequestMapping(value = "/hub-brand-model-rule/replace-symbol", method = RequestMethod.POST,consumes = "application/json")
+	public String  replaceSymbol(@RequestBody BrandModelDto dto);
 }

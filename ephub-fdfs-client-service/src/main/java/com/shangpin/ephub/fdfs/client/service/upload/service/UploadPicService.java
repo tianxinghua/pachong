@@ -18,8 +18,8 @@ public class UploadPicService {
 	@Autowired
 	private FastDFSClientManager dfsClientManager;
 	
-	public String uploadFile(byte[] buffer, String extension) {
-		return dfsClientManager.uploadFile(buffer,extension);
+	public String uploadFile(byte[] buffer, String extension,String requestId ) {
+		return dfsClientManager.uploadFile(buffer,extension,requestId);
 	}
 
 }

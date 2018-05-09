@@ -97,7 +97,6 @@ public class SizeService {
 	 */
 	private String getGmsSizeByRedis(String hubBrandNo,String hubCategoryNo){
 		try {
-			shangpinRedis.del(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo);
 			return shangpinRedis.get(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo);
 		} catch (Exception e) {
 			log.error("通过redis获取尺码时异常："+e.getMessage(),e); 
@@ -113,7 +112,7 @@ public class SizeService {
 	public void setGmsSizeIntoReids(String hubBrandNo,String hubCategoryNo,CategoryScreenSizeDom categoryScreenSizeDom){
 		try {
 //			log.info("尺码缓存到redis:{}",categoryScreenSizeDom);
-			shangpinRedis.setex(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo,60*5,JsonUtil.serialize(categoryScreenSizeDom));
+			shangpinRedis.setex(GlobalConstant.REDIS_HUB_SIZE_KEY+"_"+hubCategoryNo+"_"+hubBrandNo,60*60*24,JsonUtil.serialize(categoryScreenSizeDom));
 		} catch (Exception e) {
 			log.error("缓存尺码到redis时异常："+e.getMessage(),e);
 		}

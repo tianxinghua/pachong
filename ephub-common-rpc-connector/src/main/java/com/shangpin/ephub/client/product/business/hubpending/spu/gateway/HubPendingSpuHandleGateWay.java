@@ -33,4 +33,7 @@ public interface HubPendingSpuHandleGateWay {
 	 */
 	@RequestMapping(value = "/pending-spu-handle/update-spu/{spuPendingId}", method = RequestMethod.POST,consumes = "application/json")
 	public Long updateSpuState(@PathVariable(value = "spuPendingId") Long spuPendingId);
+
+
+
 }

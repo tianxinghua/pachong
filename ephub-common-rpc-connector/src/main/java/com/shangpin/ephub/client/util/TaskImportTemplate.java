@@ -34,7 +34,7 @@ public class TaskImportTemplate {
 	public static String[] getPendingSpuTemplate() {
 		String[] headers = { "图片", "详情链接", "供应商门户编号*", "供应商编号", "供应商名称", "供应商SpuNo", "供应商品类", "品类名称", "品类编号*", "供应商品牌","品牌编号*",
 				"品牌名称", "供应商货号", "货号*", "上市年份*", "上市季节*", "适应性别*", "商品名称*", "供应商颜色", "颜色*", "供应商材质", "材质*", "产地*", "描述", "不符合项", "商品状态", "规格类型",
-				"库存总数", "操作人", "过滤", "无法处理原因1", "无法处理原因2", "无法处理原因3", "无法处理原因4" };
+				"库存总数", "操作人", "过滤", "无法处理原因1", "无法处理原因2", "无法处理原因3", "无法处理原因4","重新拉图片" };
 		return headers;
 	}
 
@@ -43,7 +43,7 @@ public class TaskImportTemplate {
 				"supplierCategoryname", "hubCategoryName", "hubCategoryNo", "supplierBrandName", "hubBrandNo", "hubBrandName", "supplierSpuModel", "spuModel",
 				"seasonYear", "seasonName", "hubGender", "spuName", "supplierSpuColor", "hubColor", "supplierMaterial", "hubMaterial", "hubOrigin", "spuDesc",
 				"memo", "spuState", "specificationType", "totalStock", "updateUser", "filter", "reason1", "reason2",
-				"reason3", "reason4" };
+				"reason3", "reason4","picRetry" };
 		return value;
 	}
 

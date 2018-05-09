@@ -42,7 +42,7 @@ public class UploadPicController {
 		try {
 			log.info("id="+uploadPicDto.getRequestId()+"==第二步==>> 图片服务上传图片前接收到的数据为"+uploadPicDto.getBase64().substring(0, 100)+"，长度为"+uploadPicDto.getBase64().length()+" ， 下一步将调用上传图片到图片服务器");
 			buffer = new BASE64Decoder().decodeBuffer(uploadPicDto.getBase64());
-			String fdfsUrl = uploadPicService.uploadFile(buffer,uploadPicDto.getExtension());
+			String fdfsUrl = uploadPicService.uploadFile(buffer,uploadPicDto.getExtension(),uploadPicDto.getRequestId());
 			log.info("id="+uploadPicDto.getRequestId()+"==第三步==>> 图片服务上传图片后返回的图片URL为"+fdfsUrl+"， 下一步将返回结果（上传图片到图片服务器后返回的地址）给调用方");
 			return fdfsUrl;
 		} catch (IOException e) {

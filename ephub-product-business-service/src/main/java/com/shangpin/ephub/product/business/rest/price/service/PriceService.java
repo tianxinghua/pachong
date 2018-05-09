@@ -147,8 +147,7 @@ public class PriceService {
 		sendMessageToPriceConsumer(supplierPriceChangeRecordId,productPrice);
 		log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+"发送消息队列成功 "+supplierPriceChangeRecordId+"】");
 	}
-	
-	/**
+    /**
 	 * scm调用
 	 * @param priceQuery
 	 * @return
@@ -160,7 +159,7 @@ public class PriceService {
 				return null;
 			}
 			PriceQueryDto priceQueryDto = copyPriceQueryToPriceQueryDto(priceQuery);
-			log.info("转换后的查询参数："+JsonUtil.serialize(priceQueryDto));  
+//			log.info("转换后的查询参数："+JsonUtil.serialize(priceQueryDto));  
 			ProductPrice productPrice = new ProductPrice();
 			int total = hubSupplierPriceGateWay.countByQuery(priceQueryDto);
 			log.info("供价记录查询总数："+total); 

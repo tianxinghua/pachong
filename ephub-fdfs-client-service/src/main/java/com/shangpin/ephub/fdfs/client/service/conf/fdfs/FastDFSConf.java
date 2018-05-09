@@ -2,9 +2,11 @@ package com.shangpin.ephub.fdfs.client.service.conf.fdfs;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.context.annotation.Import;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
+import org.springframework.jmx.support.RegistrationPolicy;
 
 /**
  * <p>Title:FastDFSConf.java </p>
@@ -15,6 +17,7 @@ import com.github.tobato.fastdfs.FdfsClientConfig;
  */
 @Configuration
 @Import(FdfsClientConfig.class)
+@EnableMBeanExport(registration = RegistrationPolicy.IGNORE_EXISTING)
 public class FastDFSConf {
 
 	@Autowired

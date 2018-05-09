@@ -17,7 +17,14 @@ public enum SpuBrandState {
 	/**
 	 * 处理已完成
 	 */
-	HANDLED((byte)1,"处理已完成");
+	HANDLED((byte)1,"处理已完成"),
+
+    /**
+     * 处理已完成
+     */
+    UNUSEABLE((byte)2,"SCM不可用")
+
+    ;
 
 	/**
      * 数字索引标识

@@ -65,5 +65,10 @@ public class PendingProductDto extends HubSpuPendingDto {
 	 * 供应商材质
 	 */
 	private String supplierMaterial;
-	
+
+	/**
+	 * 描述
+	 */
+	private String supplierSpuDesc;
+
 }
