@@ -107,4 +107,23 @@ public class ProductScheduler {
 		}
 	}
 	
+	/**
+	 * 漏掉的价格重新推送
+	 */
+	@Scheduled(cron = "00 30 01 * * ?")
+	public void savePriceRecordAndSendConsumer(){
+		if(!scheduleConfig.isStartPro()){
+			return;
+		}
+		try {
+			log.info("===========漏掉的价格重新推送============"); 
+			pricePushService.savePriceRecordAndSendConsumer(1);
+			log.info("===========漏掉的价格重新推送============"); 
+		} catch (Exception e) {
+			log.error("检测季节任务异常："+e.getMessage(),e);
+		}
+	}
+	
+	
+	
 }

@@ -6,32 +6,44 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
 import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.product.business.gms.dto.SupplierDTO;
 import com.shangpin.ephub.client.product.business.gms.gateway.GmsGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.ephub.data.schedule.service.dto.PriceDto;
 import com.shangpin.ephub.data.schedule.service.mail.SendMailService;
 import com.shangpin.ephub.data.schedule.service.product.ProductPullDataService;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by lizhongren on 2017/5/23.
@@ -54,6 +66,16 @@ public class PricePushService {
     HubSupplierPriceChangeRecordGateWay priceChangeRecordGateWay;
     @Autowired
     private SendMailService sendMailService;
+    @Autowired
+    private HubSkuSupplierMappingGateWay hubSkuSupplierMappingGateWay;
+    @Autowired
+    private HubSupplierPriceChangeRecordGateWay hubSupplierPriceChangeRecordGateWay;
+    @Autowired
+    private HubSupplierSpuGateWay hubSupplierSpuGateWay;
+    @Autowired
+    private HubSupplierSkuGateWay hubSupplierSkuGateWay;
+    @Autowired
+    private RestTemplate restTemplate;    
 
     public void handleErrorPush() throws Exception{
     	int startRow = 1;
@@ -203,4 +225,54 @@ public class PricePushService {
 			e.printStackTrace();
 		}
 	}
+    public void savePriceRecordAndSendConsumer(int pageNo) throws Exception {
+        Calendar calendar = Calendar.getInstance();  
+        calendar.setTime(new Date());  
+        calendar.add(Calendar.DAY_OF_MONTH, -1);  
+        Date date = calendar.getTime();  
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+        String defaultDate = sdf.format(date);    //格式化前一天
+        String defaultStartDate = defaultDate+" 00:00:00";
+        String defaultEndDate = defaultDate+" 23:59:59";
+        SimpleDateFormat fmt=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        HubSkuSupplierMappingCriteriaDto hubSkuSupplierMappingCriteriaDto = new HubSkuSupplierMappingCriteriaDto();
+        //前一天并且状态为已选品的
+        hubSkuSupplierMappingCriteriaDto.createCriteria().andSupplierSelectStateEqualTo((byte)2).andUpdateTimeBetween(fmt.parse(defaultStartDate), fmt.parse(defaultEndDate));
+        hubSkuSupplierMappingCriteriaDto.setPageNo(pageNo);
+        hubSkuSupplierMappingCriteriaDto.setPageSize(500);
+        List<HubSkuSupplierMappingDto> hubSkuSupplierMappingDtoList = hubSkuSupplierMappingGateWay.selectByCriteria(hubSkuSupplierMappingCriteriaDto);
+        int count = hubSkuSupplierMappingDtoList.size();
+        log.info("hubSkuSupplierMappingDtoList数量:"+hubSkuSupplierMappingDtoList.size());
+        for(HubSkuSupplierMappingDto hubSkuSupplierMappingDto : hubSkuSupplierMappingDtoList) {
+            try {
+                if(StringUtils.isNotEmpty(hubSkuSupplierMappingDto.getSupplierId())&&StringUtils.isNotEmpty(hubSkuSupplierMappingDto.getSupplierSkuNo())) {
+                    HubSupplierPriceChangeRecordCriteriaDto hubSupplierPriceChangeRecordCriteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
+                    hubSupplierPriceChangeRecordCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSkuSupplierMappingDto.getSupplierId()).andSupplierSkuNoEqualTo(hubSkuSupplierMappingDto.getSupplierSkuNo());
+                    List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtoList = hubSupplierPriceChangeRecordGateWay.selectByCriteria(hubSupplierPriceChangeRecordCriteriaDto);
+                    if(hubSupplierPriceChangeRecordDtoList==null||hubSupplierPriceChangeRecordDtoList.size()==0) {
+                    	log.info("hubSkuSupplierMappingDto数据:"+JSONObject.toJSONString(hubSkuSupplierMappingDto));
+                        HubSupplierSkuCriteriaDto hubSupplierSkuCriteriaDto = new HubSupplierSkuCriteriaDto();
+                        hubSupplierSkuCriteriaDto.createCriteria().andSupplierIdEqualTo(hubSkuSupplierMappingDto.getSupplierId()).andSupplierSkuNoEqualTo(hubSkuSupplierMappingDto.getSupplierSkuNo());
+                        List<HubSupplierSkuDto> hubSupplierSkuDtoList = hubSupplierSkuGateWay.selectByCriteria(hubSupplierSkuCriteriaDto);
+                        if(hubSupplierSkuDtoList==null||hubSupplierSkuDtoList.size()==0)
+                        	continue;
+                        HubSupplierSpuDto hubSupplierSpuDto = hubSupplierSpuGateWay.selectByPrimaryKey(hubSupplierSkuDtoList.get(0).getSupplierSpuId());
+                        PriceDto dto = new PriceDto();
+                        dto.setSupplierNo(hubSkuSupplierMappingDto.getSupplierNo());
+                        dto.setHubSpu(hubSupplierSpuDto);
+                        dto.setHubSkus(hubSupplierSkuDtoList);
+                        log.info("save-and-sendmessage方法请求数据:"+JSONObject.toJSONString(dto));
+                        restTemplate.postForObject("http://api.ephub.spidc1.com/price/save-and-sendmessage-new", dto, Object.class);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("价格推送失败数据 hubSkuSupplierMappingDto:"+JSONObject.toJSONString(hubSkuSupplierMappingDto));
+            }
+        }
+        if(count==500) {
+        	pageNo = pageNo + 1;
+        	savePriceRecordAndSendConsumer(pageNo);
+        }
+    }
+	
 }
