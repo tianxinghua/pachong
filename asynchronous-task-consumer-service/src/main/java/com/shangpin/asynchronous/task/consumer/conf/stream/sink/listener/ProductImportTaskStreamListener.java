@@ -28,8 +28,7 @@ public class ProductImportTaskStreamListener {
 	private ProductImportHandler pendingProductImportHandler;
 	@Autowired
 	private HubProductImportHandler hubProductImportHandler;
-	@Autowired
-	private ProductExportHandler productExportHandler;
+
 	/**
 	 * pending导入处理
 	 * @param message
@@ -51,13 +50,5 @@ public class ProductImportTaskStreamListener {
 		hubProductImportHandler.hubProductImportStreamListen(message,headers);
     }
 	
-	/**
-	 * 待处理商品导入任务数据流发送
-	 * @param supplierProduct 消息体
-	 * @return 如果发送成功返回true,否则返回false
-	 */
-	@StreamListener(ProductImportTaskSink.PRODUCT_EXPORT)
-    public void productStreamListen(@Payload Task message, @Headers Map<String,Object> headers) throws Exception  {
-		productExportHandler.productExportTask(message,headers);
-    }
+
 }

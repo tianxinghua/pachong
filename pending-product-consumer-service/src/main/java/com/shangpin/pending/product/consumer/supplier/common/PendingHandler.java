@@ -502,6 +502,21 @@ public class PendingHandler extends VariableInit {
             }
             //整体处理下库存状态和价格状态更新
 			dataBusinessService.updateSpuPendingStockAndPriceState(hubSpuPending.getSpuPendingId());
+
+            //整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
+            log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
+            if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
+                boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
+                //true表面sku都校验通过
+                if(flag){
+
+                    //2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
+                    if(hubSpuPending.isHubSpuIsPassing()){
+                        log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
+                        hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
+                    }
+                }
+            }
         }else{
             if(null!=spuStatus&&(spuStatus == MessageType.NEW.getIndex())){
                 //新增的SPU 但没有sku
@@ -1013,20 +1028,7 @@ public class PendingHandler extends VariableInit {
 		}
 
 
-        //整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
-		log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
-		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-			boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
-			//true表面sku都校验通过
-			if(flag){
-				
-				//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
-				if(hubSpuPending.isHubSpuIsPassing()){
-					log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
-					hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
-				}
-			}
-		}
+
 		//整体处理拍照状态
 		boolean isNeedSend = true;
 		log.info("spuNo = " + hubSpuPending.getSupplierSpuNo() + "  hubspuno = " + hubSpuPending.getHubSpuNo() + " is hava pic " + hubSpuPending.isHavePic() );

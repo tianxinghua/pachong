@@ -479,7 +479,10 @@ spring:
                                        maxAttempts: 1
                         marinoPendingProduct:
                               destination: marino.pending.product
-                              
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
                         theStyleSidePendingProduct:
                               destination: theStyleSide.pending.product
                               group: one
