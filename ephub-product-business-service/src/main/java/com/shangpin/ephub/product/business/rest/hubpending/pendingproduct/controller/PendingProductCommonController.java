@@ -37,7 +37,7 @@ import com.shangpin.ephub.response.HubResponse;
  * 外部调用 非页面
  */
 @RestController
-@RequestMapping(value = "/pending-product")
+@RequestMapping(value = "/pending-product-rest")
 @Slf4j
 public class PendingProductCommonController {
 	
@@ -123,7 +123,7 @@ public class PendingProductCommonController {
 	
 	/**
 	 * 待审核提交按钮逻辑
-	 * @param auditVO
+	 * @param spuPendingId
 	 * @return
 	 * @throws Exception
 	 */
