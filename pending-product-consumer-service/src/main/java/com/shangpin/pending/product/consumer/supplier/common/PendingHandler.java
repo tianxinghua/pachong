@@ -948,8 +948,7 @@ public class PendingHandler extends VariableInit {
 	 * @param filterFlag
 	 * @throws Exception
 	 */
-	private void
-	addNewSku(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,
+	private void	addNewSku(SpuPending hubSpuPending, PendingSpu supplierSpu, PendingSku supplierSku,
 			Map<String, Object> headers, byte filterFlag) throws Exception {
 
 		// 公共属性
