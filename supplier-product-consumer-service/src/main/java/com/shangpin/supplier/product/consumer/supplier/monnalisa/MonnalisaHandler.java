@@ -113,11 +113,23 @@ public class MonnalisaHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuName(ob.getTitle());
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getGender());
-			if(ob.getGoogle_product_category()!=null) {
+			/*if(ob.getGoogle_product_category()!=null) {
 				if(ob.getGoogle_product_category().length()<50) {
 					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
 				}else {
 					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 48));
+					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
+				}
+			}else {
+				hubSpu.setSupplierCategoryname("");
+			}*/
+			if(ob.getGoogle_product_category()!=null) {
+				if(ob.getGoogle_product_category().length()<50) {
+					String s1=ob.getGoogle_product_category();
+					hubSpu.setSupplierCategoryname(SubCategory(s1));
+				}else {
+					String s2=ob.getGoogle_product_category().substring(0, 48);
+					hubSpu.setSupplierCategoryname(SubCategory(s2));
 					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
 				}
 			}else {
@@ -132,6 +144,33 @@ public class MonnalisaHandler implements ISupplierHandler{
 		}else{
 			return false;
 		}
+	}
+	public String SubCategory(String s){
+		String[] sp = s.split(">");
+		String k="";
+		StringBuffer buffer = new StringBuffer();
+		ArrayList<Object> list = new ArrayList<>();
+		for (int i = 0; i < sp.length; i++) {
+			if (sp[i].contains("Summer")|| sp[i].contains("Winter")){
+				String string = sp[i].toString();
+				sp[i].replace(string,"");
+			}else {
+				k=buffer.append(sp[i]).toString();
+			}
+		}
+		String sgirl="";
+		if (k.contains("Girl")){
+			String s1 = k.replaceAll("Girl", "").replace(" ","");
+			sgirl= "Girl" + " " + s1;
+			return sgirl;
+		}
+		String  sboy="";
+		if (k.contains("Boy")){
+			String s2 = k.replaceAll("Boy", "").replace(" ","");
+			sboy="Boy"+" "+s2;
+			return sboy;
+		}
+		return  k;
 	}
 	/**
 	 * 将stefania原始数据转换成hub sku
