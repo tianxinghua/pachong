@@ -505,7 +505,7 @@ spring:
                               destination: mengottiSnc.pending.product
                               group: one
                               consumer:
-                                       concurrency: 5
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit:
                       bindings: 

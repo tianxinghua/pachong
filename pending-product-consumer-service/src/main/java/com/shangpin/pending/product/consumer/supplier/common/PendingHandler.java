@@ -1127,7 +1127,7 @@ public class PendingHandler extends VariableInit {
 		//如果是儿童 如果是数字 需要需要加上岁
 		if(StringUtils.isNotBlank(hubSpuPending.getHubCategoryNo())&&hubSpuPending.getHubCategoryNo().startsWith("A11")){
               try{
-              	  if(hubSpuPending.getHubCategoryNo().startsWith("A11B02")||hubSpuPending.getHubCategoryNo().startsWith("A11B04")||hubSpuPending.getHubCategoryNo().startsWith("A11")){
+              	  if(hubSpuPending.getHubCategoryNo().startsWith("A11B02")||hubSpuPending.getHubCategoryNo().startsWith("A11B04")||hubSpuPending.getHubCategoryNo().startsWith("A11B05")){
 
 				  }else{
 
