@@ -152,7 +152,7 @@ public class SupplierProductSaveAndSendToPending {
 
 			HubSupplierSpuDto hubSupplierSpuInDataBase = supplierProductMysqlService.hasHadTheHubSpu(supplierSpuDto);
 
-			//保存SupplierSpu到数据库 对比图片链接 逻辑删除供货商不要的链接地址
+			//保存SupplierSpu到数据库 如果没有图片 逻辑删除供货商不要的链接地址
 
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
 				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.AIR_STUDIO_UPLOAD.getIndex()){
