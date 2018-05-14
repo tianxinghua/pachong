@@ -193,6 +193,9 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
+	@Autowired
+	@Qualifier("mengottiServiceImpl") 
+	IOrderService mengottiServiceImpl;
 
 	@Autowired
 	@Qualifier("ylatiServiceImpl")
@@ -343,6 +346,8 @@ public class OrderHandleSearch {
 			return dlrboutiqueServiceImpl;
 		}else if("2016032101816".equals(supplierId)){
 			return zitafabianiServiceImpl;
+		}else if("2018042002008".equals(supplierId)){
+			return mengottiServiceImpl;
 		}else if("2017071701978".equals(supplierId)){
 			return ylatiServiceImpl;
 		}else if("2015101201596".equals(supplierId)){
@@ -454,6 +459,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getDlrboutique();
 		}else if("2016032101816".equals(supplierId)){
 			return supplierProperties.getZitafabiani();
+		}else if("2018042002008".equals(supplierId)){
+			return supplierProperties.getMengotti();
 		}else if ("2016072601910".equals(supplierId)) {
 			return supplierProperties.getVietti();
 		}else if("2015101201596".equals(supplierId)){
