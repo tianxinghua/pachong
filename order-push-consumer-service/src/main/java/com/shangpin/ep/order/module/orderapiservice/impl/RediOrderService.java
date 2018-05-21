@@ -97,34 +97,48 @@ public class RediOrderService implements IOrderService {
 
 
 		BillingInfo billing_address = new BillingInfo();
-		billing_address.setName("1");
-		billing_address.setSurname("");
+		billing_address.setName("John");
+		billing_address.setSurname("Doe");
 		billing_address.setCompany("");
 		billing_address.setVatcode("");
-		billing_address.setAddress("");
-		billing_address.setCity("");
-		billing_address.setState("");
-		billing_address.setCountry("");
-		billing_address.setZip("");
-		billing_address.setEmail("");
-		billing_address.setPhone("");
-		billing_address.setMobile("");
+		billing_address.setAddress("89 Xizhimen Outer St");
+		billing_address.setCity("Pechino");
+		billing_address.setState("Bei");
+		billing_address.setCountry("CN");
+		billing_address.setZip("100005");
+		billing_address.setEmail("j.doe@fashion.us");
+		billing_address.setPhone("555-333-112345");
+		billing_address.setMobile("333-113-34565");
 		rediOrderDto.setBillingInfo(billing_address);
-
+		
+		ShippingInfo shipping_address_ch = new ShippingInfo();
+		shipping_address_ch.setName("约翰");
+		shipping_address_ch.setSurname("母鹿");
+		shipping_address_ch.setCompany("");
+		shipping_address_ch.setVatcode("");
+		shipping_address_ch.setAddress("西直门外89号");
+		shipping_address_ch.setCity("Pechino");
+		shipping_address_ch.setState("北");
+		shipping_address_ch.setCountry("CN");
+		shipping_address_ch.setZip("100005");
+		shipping_address_ch.setEmail("j.doe@fashion.us");
+		shipping_address_ch.setPhone("555-333-112345");
+		shipping_address_ch.setMobile("333-113-34565");
+		rediOrderDto.setShippingChInfo(shipping_address_ch);
 
 		ShippingInfo shipping_address = new ShippingInfo();
-		shipping_address.setName("1");
-		shipping_address.setSurname("");
+		shipping_address.setName("John");
+		shipping_address.setSurname("Doe");
 		shipping_address.setCompany("");
 		shipping_address.setVatcode("");
-		shipping_address.setAddress("");
-		shipping_address.setCity("");
-		shipping_address.setState("");
-		shipping_address.setCountry("");
-		shipping_address.setZip("");
-		shipping_address.setEmail("");
-		shipping_address.setPhone("");
-		shipping_address.setMobile("");
+		shipping_address.setAddress("89 Xizhimen Outer St");
+		shipping_address.setCity("Pechino");
+		shipping_address.setState("Bei");
+		shipping_address.setCountry("CN");
+		shipping_address.setZip("100005");
+		shipping_address.setEmail("j.doe@fashion.us");
+		shipping_address.setPhone("555-333-112345");
+		shipping_address.setMobile("333-113-34565");
 		rediOrderDto.setShippingInfo(shipping_address);
 
 
