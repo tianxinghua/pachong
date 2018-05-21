@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.shangpin.ep.order.common.HandleException;
 import com.shangpin.ep.order.common.LogCommon;
+import com.shangpin.ep.order.conf.mail.message.ShangpinMail;
+import com.shangpin.ep.order.conf.mail.sender.ShangpinMailSender;
 import com.shangpin.ep.order.conf.supplier.SupplierProperties;
 import com.shangpin.ep.order.enumeration.ErrorStatus;
 import com.shangpin.ep.order.enumeration.LogLeve;
@@ -36,6 +38,8 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.Rows;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.Shippingcustomer;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.Sizes;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.lungolivigno.User;
+import com.shangpin.ep.order.module.sku.bean.HubSku;
+import com.shangpin.ep.order.module.sku.service.impl.HubSkuService;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
@@ -55,6 +59,11 @@ public class LungolivignoOrderService implements IOrderService{
     OpenApiService openApiService;  
     @Autowired
 	PriceService priceService;
+    private static String split = ";";
+	@Autowired
+	private ShangpinMailSender shangpinMailSender;
+	@Autowired
+	private HubSkuService hubSkuService;
     
 	private static OutTimeConfig outTimeConf = new OutTimeConfig(1000*60*2, 1000*60 * 2, 1000*60 * 2);	
 	    
@@ -255,7 +264,6 @@ public class LungolivignoOrderService implements IOrderService{
 	 */
 	@SuppressWarnings("static-access")
 	public void createOrder(OrderDTO orderDTO,String createOrderJsonParam,String sessionId) throws ServiceException{
-		
 		String url_createOrder = supplierProperties.getLungolivigno().getUrl_saveOrder()+sessionId;
 		orderDTO.setLogContent("创建订单url============"+url_createOrder);
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -270,12 +278,13 @@ public class LungolivignoOrderService implements IOrderService{
 			orderDTO.setSupplierOrderNo(supplierOrderNo.trim());
 			orderDTO.setConfirmTime(new Date()); 
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
-		
 		}else{//其他都失败
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
 			orderDTO.setDescription("下单失败：" + orderResult.getErrMessage());
 		}
+		//下单邮件提醒
+		handleConfirmSendMail(orderDTO);
 	}
 
 	@Override
@@ -288,7 +297,6 @@ public class LungolivignoOrderService implements IOrderService{
 	@Override
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
-			
 			String cancleUrl = supplierProperties.getLungolivigno().getUrl_cancelOrder()+getSessionId();
 			deleteOrder.setLogContent("退单url============="+cancleUrl);
 			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);	
@@ -307,11 +315,70 @@ public class LungolivignoOrderService implements IOrderService{
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
 				deleteOrder.setDescription(responseCancelOrder.getErrMessage());
 			}
+			//退单邮件提醒
+			handleRefundSendMail(deleteOrder);
 			
 		} catch (Exception e) {
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 			handleException.handleException(deleteOrder, e); 
 			deleteOrder.setLogContent("退款发生异常============"+e.getMessage());
+			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);		
+		}
+	}
+	//下单邮件提醒
+	public void handleConfirmSendMail(OrderDTO orderDTO) {
+		try {
+			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
+			if(null != sku){
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(orderDTO.getPurchaseNo()).append(split)
+				.append(sku.getProductSize()).append(split).append(orderDTO.getSupplierSkuNo()).append(split)
+				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
+				.append(orderDTO.getQuantity());
+				log.info("lungolivigno推送订单参数："+buffer.toString()); 
+				sendMail("order-shangpin",buffer.toString());
+				orderDTO.setConfirmTime(new Date()); 
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
+				log.info("lungolivigno推送成功。"); 
+			}else{
+				log.info("lungolivigno根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku："+ orderDTO.getSupplierSkuNo());
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
+				orderDTO.setDescription("parisi根据供应商门户编号和供应商skuid查找SKU失败");
+			}
+		} catch (Exception e) {
+			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+			handleException.handleException(orderDTO,e);
+			orderDTO.setLogContent("lungolivigno推送订单异常========= "+e.getMessage());
+			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+		}
+		
+		
+	}
+	//退单邮件提醒
+	public void handleRefundSendMail(OrderDTO deleteOrder) {
+		try {
+			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
+			if(null != sku){
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(deleteOrder.getPurchaseNo()).append(split)
+				.append(sku.getProductSize()).append(split).append(deleteOrder.getSupplierSkuNo()).append(split)
+				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
+				.append(deleteOrder.getQuantity());
+				log.info("lungolivigno退款单参数："+buffer.toString()); 
+				sendMail("cancelled order-shangpin",buffer.toString());
+				deleteOrder.setRefundTime(new Date());
+				deleteOrder.setPushStatus(PushStatus.REFUNDED);
+				log.info("lungolivigno退款成功。"); 
+			}else{
+				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
+				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
+				deleteOrder.setDescription("parisi根据供应商门户编号和供应商skuid查找SKU失败");
+			}
+		} catch (Exception e) {
+			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
+			handleException.handleException(deleteOrder, e); 
+			deleteOrder.setLogContent("lungolivigno退款发生异常============"+e.getMessage());
 			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);		
 		}
 	}
@@ -340,6 +407,22 @@ public class LungolivignoOrderService implements IOrderService{
 		}
 		return sessionId;
 	}
-	
-
+	/**
+	 * 发送邮件
+	 * @param subject 邮件主题
+	 * @param text 邮件内容
+	 * @throws Exception
+	 */
+	private void sendMail(String subject,String text) throws Exception {
+		ShangpinMail shangpinMail = new ShangpinMail();
+		shangpinMail.setFrom("chengxu@shangpin.com");
+		shangpinMail.setSubject(subject);
+		shangpinMail.setText(text);
+		shangpinMail.setTo("ecommerce@lungolivigno.com");
+		List<String> addTo = new ArrayList<>();
+		addTo.add("steven.ding@shangpin.com");
+//		addTo.add("steven.ding@shangpin.com");
+		shangpinMail.setAddTo(addTo );
+		shangpinMailSender.sendShangpinMail(shangpinMail);
+	}
 }
