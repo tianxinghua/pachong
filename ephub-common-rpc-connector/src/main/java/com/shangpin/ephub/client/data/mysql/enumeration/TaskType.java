@@ -52,7 +52,26 @@ public enum TaskType {
 	
 	EXPORT_COMMITED(17,"已提交导出"),
 	AIRSHOP_IMPORT(18,"airshop导入"),
-	SUPPLIER_PIC_EXPORT(19,"供应商图片导出");
+	SUPPLIER_PIC_EXPORT(19,"供应商图片导出"),
+
+	IMPORT_COLOR(20,"图片导入"),
+	EXPORT_COLOR(21,"图片导出"),
+
+	IMPORT_MATERIAL(22,"材质导入"),
+	EXPORT_MATERIAL(23,"材质导出"),
+
+	IMPORT_ORIGIN(24,"产地导入"),
+	EXPORT_ORIGIN(25,"产地导出"),
+
+	IMPORT_CATEGORY(24,"品类导入"),
+	EXPORT_CATEGORY(25,"品类导出"),
+
+	IMPORT_BRAND(24,"品牌导入"),
+	EXPORT_BRAND(25,"品牌导出"),
+
+	;
+
+
 	/**
      * 数字索引标识
      */

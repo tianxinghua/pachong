@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.pending.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SpuPendingAuditQueryVO implements Serializable {
 
     /**
@@ -53,6 +55,11 @@ public class SpuPendingAuditQueryVO implements Serializable {
      * 操作人
      */
     private String operator;
+
+    /**
+     * 是否存在
+     */
+    private Boolean  isExist;
 
 
 }

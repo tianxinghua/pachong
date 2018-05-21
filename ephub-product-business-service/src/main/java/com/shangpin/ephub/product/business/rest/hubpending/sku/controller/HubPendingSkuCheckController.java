@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.rest.hubpending.sku.controller;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +17,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 
 /**
  * <p>Title:HubCheckRuleController.java </p>
- * <p>Description: HubPendingSku入库前校验规则rest服务接口</p>
+ * <p>Description: HubPendingSku入库前 审核前校验规则rest服务接口</p>
  * <p>Company: www.shangpin.com</p> 
  * @author zhaogenchun
  * @date 2016年12月22 下午3:52:56
@@ -28,6 +30,9 @@ public class HubPendingSkuCheckController {
 	private HubPendingSkuCheckService hubCheckRuleService;
 	@Autowired
 	private IPendingProductService pendingProductService;
+
+	@Autowired
+	private SkuPendingService skuPendingService;
 	
 	@RequestMapping(value = "/check-sku")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuCheckDto dto){
@@ -46,5 +51,11 @@ public class HubPendingSkuCheckController {
 		return products;
 	}
 
+	@RequestMapping(value = "/before-audit-check-sku")
+	public HubSpuPendingDto   checkSkuBeforeAudit(@RequestBody HubSpuPendingDto dto){
 
+		 skuPendingService.judgeSizeBeforeAudit(dto);
+		 return dto;
+
+	}
 }

@@ -40,6 +40,11 @@ public class PriceController {
 		priceService.savePriceRecordAndSendConsumer(priceDto);
 	}
 	
+	@RequestMapping(value = "/save-and-sendmessage-new")
+	public void savePriceRecordAndSendConsumerNew(@RequestBody PriceDto priceDto) throws Exception{
+		priceService.savePriceRecordAndSendConsumerNew(priceDto);
+	}
+	
 	@RequestMapping(value="/list",method=RequestMethod.POST)
 	public HubResponse<?> priceList(@RequestBody PriceQuery priceQueryDto){
 		ProductPrice price = priceService.priceList(priceQueryDto);

@@ -28,6 +28,6 @@ public interface HubPendingHandleGateWay {
 	@RequestMapping(value = "/pending-product/retry-pictures", method = RequestMethod.POST,consumes = "application/json")
 	public HubResponse<?> retryPictures(@RequestBody List<String> spPicUrl);
 
-	@RequestMapping(value = "/pending-product/spu-pending-audit/{spuPendingId}", method = RequestMethod.POST,consumes = "application/json")
+	@RequestMapping(value = "/pending-product-rest/spu-pending-audit/{spuPendingId}", method = RequestMethod.POST,consumes = "application/json")
 	public String audit(@PathVariable("spuPendingId") Long spuPendingId);
 }
