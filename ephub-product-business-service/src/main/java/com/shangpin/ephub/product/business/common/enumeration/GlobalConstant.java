@@ -23,4 +23,6 @@ public interface GlobalConstant {
 	 */
 	public static final String REDIS_HUB_MEASURE_SIGN_KEY = "尺寸";
 
+	public static final String HUB_SKE_SIZE_TYPE_EXCLUDE="排除";
+
 }

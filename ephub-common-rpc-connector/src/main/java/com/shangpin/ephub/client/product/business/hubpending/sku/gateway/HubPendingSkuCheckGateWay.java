@@ -1,5 +1,6 @@
 package com.shangpin.ephub.client.product.business.hubpending.sku.gateway;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,11 @@ public interface HubPendingSkuCheckGateWay {
 	 */
 	@RequestMapping(value = "/pending-sku/check-sku", method = RequestMethod.POST,consumes = "application/json")
 	public HubPendingSkuCheckResult checkSku(@RequestBody HubSkuCheckDto dto);
+
+
+	@RequestMapping(value = "/pending-sku/before-audit-check-sku", method = RequestMethod.POST,consumes = "application/json")
+	public HubSpuPendingDto checkSkuBeforeAudit(@RequestBody HubSpuPendingDto dto);
+
 	/**
 	 * 到处理页面导出sku异步调用
 	 * @param pendingQuryDto 查询条件

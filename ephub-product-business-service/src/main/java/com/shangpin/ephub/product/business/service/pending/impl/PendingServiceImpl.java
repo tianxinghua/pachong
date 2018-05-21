@@ -1,10 +1,6 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.data.mysql.spu.dto.*;
@@ -82,8 +78,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     @Autowired
     SlotPicService slotPicService;
 
-    @Autowired
-    private TaskExecutor executor;
+//    @Autowired
+//    private TaskExecutor executor;
 
     @Autowired
     private CategoryService categoryService;
@@ -145,13 +141,16 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
 //            log.info("sartDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getStartDate() ));
-				criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.parse(queryVO.getStartDate()  ));
-//            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 08:00:00" ));
+//				criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.parse(queryVO.getStartDate()  ));
+            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00" ));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
 //            log.info("getEndDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getEndDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getEndDate()));
-				criterion.andUpdateTimeLessThan(DateTimeUtil.parse(queryVO.getEndDate() ));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(DateTimeUtil.getShortDate(queryVO.getEndDate()));
+            calendar.add(Calendar.DAY_OF_YEAR,1);
+            criterion.andUpdateTimeLessThan(DateTimeUtil.getDateTimeFormate(DateTimeUtil.shortFmt(calendar.getTime())+" 00:00:00"));
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -160,6 +159,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
         if(StringUtils.isNotBlank(queryVO.getOperator())){
         	criterion.andUpdateUserLike(queryVO.getOperator()+"%"); 
+        }
+        if(null!=queryVO.getIsExist()){
+            if(queryVO.getIsExist()){
+
+                criterion.andHubSpuNoIsNotNull();
+            }else{
+                criterion.andHubSpuNoIsNull();
+            }
         }
 
         return criteria;
