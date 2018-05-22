@@ -59,7 +59,7 @@ public class LungolivignoOrderService implements IOrderService{
     OpenApiService openApiService;  
     @Autowired
 	PriceService priceService;
-    private static String split = ";";
+    private static String split = "\r\n";
 	@Autowired
 	private ShangpinMailSender shangpinMailSender;
 	@Autowired
@@ -278,13 +278,13 @@ public class LungolivignoOrderService implements IOrderService{
 			orderDTO.setSupplierOrderNo(supplierOrderNo.trim());
 			orderDTO.setConfirmTime(new Date()); 
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
+			//下单邮件提醒
+			handleConfirmSendMail(orderDTO);
 		}else{//其他都失败
 			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
 			orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
 			orderDTO.setDescription("下单失败：" + orderResult.getErrMessage());
 		}
-		//下单邮件提醒
-		handleConfirmSendMail(orderDTO);
 	}
 
 	@Override
@@ -310,13 +310,13 @@ public class LungolivignoOrderService implements IOrderService{
 			if(1 == responseCancelOrder.getResult()){
 				deleteOrder.setRefundTime(new Date());
 				deleteOrder.setPushStatus(PushStatus.REFUNDED);
+				//退单邮件提醒
+				handleRefundSendMail(deleteOrder);
 			}else{
 				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
 				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
 				deleteOrder.setDescription(responseCancelOrder.getErrMessage());
 			}
-			//退单邮件提醒
-			handleRefundSendMail(deleteOrder);
 			
 		} catch (Exception e) {
 			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
@@ -328,29 +328,15 @@ public class LungolivignoOrderService implements IOrderService{
 	//下单邮件提醒
 	public void handleConfirmSendMail(OrderDTO orderDTO) {
 		try {
-			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
-			if(null != sku){
 				StringBuffer buffer = new StringBuffer();
-				buffer.append(orderDTO.getPurchaseNo()).append(split)
-				.append(sku.getProductSize()).append(split).append(orderDTO.getSupplierSkuNo()).append(split)
-				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
-				.append(orderDTO.getQuantity());
+				buffer.append("purchaseNo:"+orderDTO.getPurchaseNo()).append(split)
+				.append("skuNo:"+orderDTO.getSupplierSkuNo()).append(split)
+				.append("Quantity:"+orderDTO.getQuantity());
 				log.info("lungolivigno推送订单参数："+buffer.toString()); 
 				sendMail("order-shangpin",buffer.toString());
-				orderDTO.setConfirmTime(new Date()); 
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED); 
 				log.info("lungolivigno推送成功。"); 
-			}else{
-				log.info("lungolivigno根据供应商门户编号和供应商skuid查找SKU失败："+ orderDTO.getSupplierId()+" 供应商sku："+ orderDTO.getSupplierSkuNo());
-				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);							
-				orderDTO.setDescription("parisi根据供应商门户编号和供应商skuid查找SKU失败");
-			}
 		} catch (Exception e) {
-			orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-			handleException.handleException(orderDTO,e);
-			orderDTO.setLogContent("lungolivigno推送订单异常========= "+e.getMessage());
-			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+			e.printStackTrace();
 		}
 		
 		
@@ -358,28 +344,15 @@ public class LungolivignoOrderService implements IOrderService{
 	//退单邮件提醒
 	public void handleRefundSendMail(OrderDTO deleteOrder) {
 		try {
-			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
-			if(null != sku){
 				StringBuffer buffer = new StringBuffer();
-				buffer.append(deleteOrder.getPurchaseNo()).append(split)
-				.append(sku.getProductSize()).append(split).append(deleteOrder.getSupplierSkuNo()).append(split)
-				.append(sku.getProductCode()).append(split).append(sku.getBarcode()).append(split)
-				.append(deleteOrder.getQuantity());
+				buffer.append("purchaseNo:"+deleteOrder.getPurchaseNo()).append(split)
+				.append("skuNo:"+deleteOrder.getSupplierSkuNo()).append(split)
+				.append("Quantity:"+deleteOrder.getQuantity());
 				log.info("lungolivigno退款单参数："+buffer.toString()); 
 				sendMail("cancelled order-shangpin",buffer.toString());
-				deleteOrder.setRefundTime(new Date());
-				deleteOrder.setPushStatus(PushStatus.REFUNDED);
 				log.info("lungolivigno退款成功。"); 
-			}else{
-				deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-				deleteOrder.setErrorType(ErrorStatus.OTHER_ERROR);
-				deleteOrder.setDescription("parisi根据供应商门户编号和供应商skuid查找SKU失败");
-			}
 		} catch (Exception e) {
-			deleteOrder.setPushStatus(PushStatus.REFUNDED_ERROR);
-			handleException.handleException(deleteOrder, e); 
-			deleteOrder.setLogContent("lungolivigno退款发生异常============"+e.getMessage());
-			logCommon.loggerOrder(deleteOrder, LogTypeStatus.REFUNDED_LOG);		
+			e.printStackTrace();
 		}
 	}
 
