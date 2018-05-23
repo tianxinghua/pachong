@@ -34,6 +34,7 @@ import com.shangpin.picture.product.consumer.util.FtpUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Encoder;
+import sun.net.www.protocol.ftp.FtpURLConnection;
 
 /**
  * <p>Title:SupplierProductPictureService.java </p>
@@ -90,7 +91,12 @@ public class SupplierProductPictureService {
 					if(picUrl.toUpperCase().startsWith("HTTP")){
 						code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 					}else if(picUrl.toUpperCase().startsWith("FTP")){
-						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+						if("2016110101955".equals(picDto.getSupplierId())){
+							code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
+						}else{
+							code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+						}
+
 					}	
 				}
 				
@@ -181,6 +187,65 @@ public class SupplierProductPictureService {
 		dto.setUpdateTime(new Date());
 		return flag;
 	}
+
+
+	/**
+	 *
+	 * @param picUrl
+	 * @param dto
+	 * @param authenticationInformation
+	 * @return
+	 */
+	private int pullFtpPicByBrownAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+		InputStream inputStream = null;
+		FtpURLConnection httpUrlConnection = null;
+		int flag = 0;
+		try {
+			if (authenticationInformation != null) {//需要认证
+				Authenticator.setDefault(new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(authenticationInformation.getUsername(),
+								new String(authenticationInformation.getPassword()).toCharArray());
+					}
+				});
+			}
+			URL url = new URL(picUrl.replaceAll(" +", "%20"));
+			URLConnection openConnection = url.openConnection();
+			httpUrlConnection  =  (FtpURLConnection) openConnection;
+			httpUrlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+			httpUrlConnection.setConnectTimeout(CONNECT_TIMEOUT);
+			httpUrlConnection.setReadTimeout(TIMEOUT);
+			httpUrlConnection.connect();
+
+
+			inputStream = openConnection.getInputStream();
+			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			if (byteArray == null || byteArray.length == 0) {
+				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
+			}
+			String base64 = new BASE64Encoder().encode(byteArray);
+			log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+picUrl+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
+			UploadPicDto uploadPicDto = new UploadPicDto();
+			uploadPicDto.setRequestId(String.valueOf(dto.getSpuPendingPicId()));
+			uploadPicDto.setBase64(base64);
+			uploadPicDto.setExtension(getExtension(picUrl));
+			String fdfsURL = supplierProductPictureManager.uploadPic(uploadPicDto);
+			log.info("id="+dto.getSpuPendingPicId()+"==第四步==>> 调用图片服务上传图片后返回的图片URL为"+fdfsURL+"， 下一步将更改数据库");
+			dto.setSpPicUrl(fdfsURL);
+			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
+			dto.setMemo("图片拉取成功");
+
+		}catch (Throwable e) {
+			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
+			e.printStackTrace();
+			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
+			dto.setMemo("图片拉取失败:"+flag);
+		} finally {
+			closeFtpURL(inputStream, httpUrlConnection);
+		}
+		dto.setUpdateTime(new Date());
+		return flag;
+	}
 	/**
 	 * 从ftp下载图片并上传图片服务器
 	 * @param picUrl 供应商原始链接，格式必须为：ftp://user:password@ip/urlpath
@@ -255,6 +320,33 @@ public class SupplierProductPictureService {
 		if (httpUrlConnection != null) {
 			try {
 				httpUrlConnection.disconnect();
+			} catch (Throwable e) {
+				log.error("关闭链接发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭链接发生异常");
+			}
+		}
+	}
+
+
+	/**
+	 * 关闭链接以及资源
+	 * @param inputStream
+	 * @param httpUrlConnection
+	 */
+	private void closeFtpURL(InputStream inputStream, FtpURLConnection httpUrlConnection) {
+		if (inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (Throwable e) {
+				log.error("关闭资源流发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭资源流发生异常");
+			}
+		}
+		if (httpUrlConnection != null) {
+			try {
+				httpUrlConnection.close();
 			} catch (Throwable e) {
 				log.error("关闭链接发生异常", e);
 				e.printStackTrace();

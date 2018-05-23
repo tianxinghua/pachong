@@ -120,7 +120,9 @@ public class LungolivignoOrderService implements IOrderService{
 			row.setSku(sku.substring(0, sku.indexOf("-")));
 			row.setSizeIndex(sku.substring(sku.indexOf("-")+1)); 
 			row.setQty(Integer.parseInt(stock));
-			Double priceDetail = Double.valueOf(getpriceDetail(orderDTO));
+			String purchasePrice = getpriceDetail(orderDTO);
+			orderDTO.setPurchasePriceDetail(purchasePrice);
+			Double priceDetail = Double.valueOf(purchasePrice);
 			row.setPrice(priceDetail); 
 			row.setFinalPrice(priceDetail); 
 			row.setPickStoreCode(storecode); 
@@ -242,16 +244,17 @@ public class LungolivignoOrderService implements IOrderService{
 		BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 		orderDTO.setLogContent("【lungolivigno在推送订单时获取采购价："+priceInt.toString()+"】"); 
 		logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-		String price = priceInt.divide(new BigDecimal(1.05), 2)
-				.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+
+//		String price = priceInt.divide(new BigDecimal(1.05), 2).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+		String price =  priceInt.toString();
 		return price;
 	}
 	
 	/**
 	 * 创建订单
 	 * @param orderDTO
-	 * @param createOrderStr 下订单所需参数json格式
-	 * @param headMap
+	 * @param createOrderJsonParam 下订单所需参数json格式
+	 * @param sessionId
 	 */
 	@SuppressWarnings("static-access")
 	public void createOrder(OrderDTO orderDTO,String createOrderJsonParam,String sessionId) throws ServiceException{

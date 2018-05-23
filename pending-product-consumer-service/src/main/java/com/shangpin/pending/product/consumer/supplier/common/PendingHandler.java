@@ -528,16 +528,18 @@ public class PendingHandler extends VariableInit {
 
 				HubSpuPendingDto spuPendingDto  = new HubSpuPendingDto();
 				spuPendingDto.setSpuPendingId(hubSpuPending.getSpuPendingId());
+				spuPendingDto.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 				HubSpuPendingDto  spuTmp = skuPendingCheckGateWay.checkSkuBeforeAudit(spuPendingDto);
-				if(spuTmp.getSpuState().intValue() != SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-
-				}else{
-
+				if(spuTmp.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
 					//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
 					if(hubSpuPending.isHubSpuIsPassing()){
 						log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
 						hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
 					}
+				}else{
+                    //更新状态
+					spuPendingHandler.updateSpuState(spuTmp);
+
 				}
 
 			}

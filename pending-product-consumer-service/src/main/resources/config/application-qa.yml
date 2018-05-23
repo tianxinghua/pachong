@@ -54,12 +54,6 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        mengottiSncPendingProduct:
-                                destination: mengottiSnc.pending.product
-                                group: one
-                                consumer:
-                                         concurrency: 5
-                                         maxAttempts: 1
                         brunarossoPendingProduct:
                               destination: brunarosso.pending.product
                               group: one
@@ -480,6 +474,18 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -496,12 +502,6 @@ spring:
                                        republishToDlq: false
                             ostorePendingProduct: 
                                   consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
-                            mengottiSncPendingProduct:
-                                  consumer:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
@@ -921,6 +921,18 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             rediPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            obluPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            mengottiSncPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false
