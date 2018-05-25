@@ -91,6 +91,7 @@ public class ProductFetchUtil {
 							MgDispo mgDispo = vo.getQuantita().getValue();
 							BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
 							String stockNum = quantitaDimm+"";
+							logger.info("=====skuNO:stockNum-========"+skuNo+":"+stockNum);
 							spStockMap.put(skuNo,stockNum);
 						}
 					}

@@ -43,27 +43,32 @@ public class Test {
             while(loop){
                 page++;
                 ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", xmlGregorianCalendar, 100, page, "eng");
+
+
                 List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
 
+                System.out.println("thestyleside成功获取第"+page+"页库存数据，当前页有"+articoloFlatExtLocaleVO.size()+"条数据");
                 if(null==articoloFlatExtLocaleVO||articoloFlatExtLocaleVO.size()<100){
                     loop = false;
                 }
                 if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
                     for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
+                        /**
+                         * modelCode 对应商品的spu , modelCode-size 对应商品的sku
+                         */
                         String modelCode = vo.getModelCode().getValue();
                         String size = vo.getSize().getValue();
-                        String skuNo = modelCode + size;
+                        String skuNo = modelCode +"-"+ size;
+                        System.out.println("============skuNo=============>:"+skuNo);
+
                         MgDispo mgDispo = vo.getQuantita().getValue();
                         BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
-                        System.out.println(skuNo+"="+quantitaDimm);
+                        String stockNum = quantitaDimm+"";
+                        System.out.println("=====skuNO:stockNum-========"+skuNo+":"+stockNum);
+
                     }
-                    System.out.println("==thestyleside 获取第"+page+"页结束==");
-                    System.out.println();
-                    System.out.println();
-                    System.out.println();
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
