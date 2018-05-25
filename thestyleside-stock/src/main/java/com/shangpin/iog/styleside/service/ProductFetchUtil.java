@@ -49,6 +49,7 @@ public class ProductFetchUtil {
 	 */
 	public  Map<String,String> getProductStock(Collection<String> skuNos) {
 		//定义供应商 skuNo （key） Quantita(value) Map集合
+		logger.info("===============Collection<String> skuNos size()================"+skuNos.size());
 		Map<String, String> spStockMap = new HashMap<>(skuNos.size());
 		int page=0;
 		boolean loop= true;
@@ -76,11 +77,11 @@ public class ProductFetchUtil {
 				if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
 					for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
 						/**
-						 * modelCode 对应商品的spu , modelCode+size 对应商品的sku
+						 * modelCode 对应商品的spu , modelCode-size 对应商品的sku
 						 */
 						String modelCode = vo.getModelCode().getValue();
 						String size = vo.getSize().getValue();
-						String skuNo = modelCode + size;
+						String skuNo = modelCode +"-"+ size;
 						/**
 						 * collect 中包含有该 skuNO 则放入到spStockMap中，没有的话不存放，
 						 * 供应商接口数据中可能没有提供全 skuNos 所包含的所有商品库存信息，该spStockMap中则不存放该key value，方法外处理置0
