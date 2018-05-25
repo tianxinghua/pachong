@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
 import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
@@ -47,6 +46,7 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
@@ -75,6 +75,8 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
 @Slf4j
 public class TaskImportService {
 
+	@Autowired
+	HubPendingSkuCheckGateWay hubPendingSkuCheckGateWay;
 	@Autowired
 	HubPendingHandleGateWay hubPendingHandleGateWay;
 	@Autowired
@@ -580,8 +582,10 @@ public class TaskImportService {
 			pengingSpuId = isPendingSpuExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
-			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 			
+			hubPendingSkuCheckGateWay.checkSkuBeforeAudit(hubPendingSpuDto);
+			
+			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 			if(hubIsExist&&!allFilter){
 				//2018-4-16需求 检验通过的直接进入待选品，跳过待审核
 				if(SpuState.INFO_IMPECCABLE.getIndex()==hubPendingSpuDto.getSpuState()){
