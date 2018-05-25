@@ -82,6 +82,7 @@ public class ProductFetchUtil {
 						String modelCode = vo.getModelCode().getValue();
 						String size = vo.getSize().getValue();
 						String skuNo = modelCode +"-"+ size;
+						logger.info("============skuNo=============>:"+skuNo);
 						/**
 						 * collect 中包含有该 skuNO 则放入到spStockMap中，没有的话不存放，
 						 * 供应商接口数据中可能没有提供全 skuNos 所包含的所有商品库存信息，该spStockMap中则不存放该key value，方法外处理置0
@@ -90,7 +91,7 @@ public class ProductFetchUtil {
 							MgDispo mgDispo = vo.getQuantita().getValue();
 							BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
 							String stockNum = quantitaDimm+"";
-							spStockMap.put(skuNo,quantitaDimm+stockNum);
+							spStockMap.put(skuNo,stockNum);
 						}
 					}
 				}
