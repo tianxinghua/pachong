@@ -61,7 +61,11 @@ public class AtelierCommonHandler extends IAtelierHandler {
 			atelierSku.setSpuId(skuArr[0]);
 			atelierSku.setSize(skuArr[1]);
 			atelierSku.setStock(skuArr[2]);
-			atelierSku.setBarcode(skuArr[5]); 
+			if (skuArr[5].equals("0")){
+				return  null;
+			}else {
+				atelierSku.setBarcode(skuArr[5]);
+			}
 			return atelierSku;
 		}else{
 			return null;

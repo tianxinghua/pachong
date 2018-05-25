@@ -20,4 +20,5 @@ public interface Template {
 	 */
 	public static String[] COMMITED_CH = {"货号","品牌","品类","供应商","关系状态","摄影棚","更新时间"}; 
 	public static String[] COMMITED_EN = {"spuModel","hubBrandName","hubCategoryName","supplierName","relationState","studioName","updateTime"};
+
 }

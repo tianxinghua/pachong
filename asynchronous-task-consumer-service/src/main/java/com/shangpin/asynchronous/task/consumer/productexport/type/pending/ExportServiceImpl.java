@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.imageio.ImageIO;
 
+import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -130,6 +131,9 @@ public class ExportServiceImpl {
 	@Autowired
 	MatchSizeGateWay matchSizeGateWay;
 	@Autowired
+	HubColorDicItemGateWay hubColorDicItem;
+
+	@Autowired
 	GmsGateWay gmsGateWay;
 	@Autowired
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
@@ -157,7 +161,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param taskNo
 	 *            任务编号
-	 * @param products
+	 * @param pendingQuryDto
 	 */
 	public void exportSku(String taskNo, PendingQuryDto pendingQuryDto) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -182,10 +186,11 @@ public class ExportServiceImpl {
 				pendingQuryDto.setPageIndex(i);
 				pendingQuryDto.setPageSize(SKUPAGESIZE);
 				PendingProducts products = hubPendingSkuClient.exportPengdingSku(pendingQuryDto);
+
 				lists.add(products);
 				log.info("查询"+i+"页"+SKUPAGESIZE+"条数据耗时：{}",System.currentTimeMillis()-startTime);
 			}
-	
+
 			int j = 0;
 			for (PendingProducts products : lists) {
 				for (PendingProductDto product : products.getProduts()) {
@@ -213,7 +218,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param totalSize
 	 *            总计路数
-	 * @param pagesize
+	 * @param pageSize
 	 *            每页记录数
 	 * @return
 	 */
@@ -230,7 +235,7 @@ public class ExportServiceImpl {
 	 * 
 	 * @param taskNo
 	 *            任务编号
-	 * @param products
+	 * @param pendingQuryDto
 	 */
 	public void exportSpu(String taskNo, PendingQuryDto pendingQuryDto) throws Exception {
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -265,6 +270,7 @@ public class ExportServiceImpl {
 				pendingQuryDto.setPageIndex(i);
 				pendingQuryDto.setPageSize(PAGESIZE);
 				PendingProducts products = hubPendingSpuClient.exportPengdingSpu(pendingQuryDto);
+
 				lists.add(products);
 			}
 			int j = 0;
@@ -661,8 +667,7 @@ public class ExportServiceImpl {
 		String fileName = "getHubSeason";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(product);
-		row.createCell(i)
-				.setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[0] : "");
+		row.createCell(i).setCellValue((null != value && value.toString().contains("_")) ? value.toString().split("_")[0] : "");
 	}
 
 	/**
@@ -1124,6 +1129,7 @@ public class ExportServiceImpl {
 					HubSkuCriteriaDto criteria = new HubSkuCriteriaDto();
 					criteria.createCriteria().andSpSkuNoEqualTo(spSkuNo);
 					List<HubSkuDto> listHubSku = hubSkuGateWay.selectByCriteria(criteria);
+
 					if(listHubSku!=null){
 						mapSpSkuNo.put(spSpuNo,spSkuNo);
 						list.add(listHubSku.get(0).getSpSkuNo());

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,16 +99,32 @@ public class TaskImportService {
 	private static String[] pendingSpuTemplate = null;
 	static {
 		pendingSpuTemplate = TaskImportTemplate.getPendingSpuTemplate();
+
 	}
 
 	private static String[] pendingSkuTemplate = null;
 	static {
 		pendingSkuTemplate = TaskImportTemplate.getPendingSkuTemplate();
 	}
-
+	private static String[] colorTemplate=null;
+	static {
+		colorTemplate = TaskImportTemplate2.getColorTemplate();
+	}
+	private static String[] categroyTemplate=null;
+	static {
+		categroyTemplate = TaskImportTemplate2.getCategoryTemplate();
+	}
 	private static String[] hubProductTemplate = null;
 	static {
 		hubProductTemplate = HubProductDto.getHubProductTemplate();
+	}
+	private static String[] madeTemplate = null;
+	static {
+		madeTemplate = TaskImportTemplate2.getMadeTemplate();
+	}
+	private static String[] materialTemplate = null;
+	static {
+		materialTemplate = TaskImportTemplate2.getMaterialTemplate();
 	}
 
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
@@ -299,6 +316,18 @@ public class TaskImportService {
 				}
 			}
 		}
+		if ("color".equals(type)) {
+			for (int i = 0; i < colorTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!colorTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+
 		if(!flag){
 			log.info("任务编号：" + taskNo + "," + "上传文件与模板不一致");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);
@@ -337,6 +366,50 @@ public class TaskImportService {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!hubProductTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("color".equals(type)) {
+			for (int i = 0; i < colorTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!colorTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("categroy".equals(type)) {
+			for (int i = 0; i < categroyTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!categroyTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("made".equals(type)) {
+			for (int i = 0; i < madeTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!madeTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("material".equals(type)) {
+			for (int i = 0; i < materialTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!materialTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}
