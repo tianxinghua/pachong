@@ -270,6 +270,8 @@ public class SkuPendingServiceImpl implements SkuPendingService {
         HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
         criteriaSku.createCriteria().andSpuPendingIdEqualTo(hubSpuPending.getSpuPendingId())
                 .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+        criteriaSku.setPageNo(1);
+        criteriaSku.setPageSize(1000);
         List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
         if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
             int total = hubSkuPendingDtos.size();
@@ -293,7 +295,6 @@ public class SkuPendingServiceImpl implements SkuPendingService {
                     hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
                     return;
                 }
-
                 sizeType.put(dto.getHubSkuSizeType(),"");
             }
             if(total==excludeNum){//全部为排除
@@ -306,8 +307,11 @@ public class SkuPendingServiceImpl implements SkuPendingService {
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
                     hubSpuPending.setMemo("SKU尺码类型包含尺寸以及非尺寸,请重新处理");
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    return;
                 }
             }
+
+            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 
         }else{
 
