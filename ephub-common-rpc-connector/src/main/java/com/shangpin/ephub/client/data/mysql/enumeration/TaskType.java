@@ -67,7 +67,7 @@ public enum TaskType {
 	EXPORT_CATEGORY(25,"品类导出"),
 
 	IMPORT_BRAND(24,"品牌导入"),
-	EXPORT_BRAND(25,"品牌导出"),
+	EXPORT_BRAND(25,"品牌导出")
 
 	;
 

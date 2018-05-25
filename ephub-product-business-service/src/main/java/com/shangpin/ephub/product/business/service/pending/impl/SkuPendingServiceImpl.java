@@ -279,17 +279,27 @@ public class SkuPendingServiceImpl implements SkuPendingService {
                 HubSkuPendingDto dto = hubSkuPendingDtos.get(i);
                 if(GlobalConstant.HUB_SKE_SIZE_TYPE_EXCLUDE.equals(dto.getHubSkuSizeType())){
                     excludeNum++;
+                }else{
+                     if(!GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY.equals(dto.getHubSkuSizeType())){
+                        if(StringUtils.isEmpty(dto.getHubSkuSize())){
+                            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                            hubSpuPending.setMemo("尺码有空值,整体不能审核通过");
+                            return;
+                        }
+                     }
                 }
                 if(SpuStatus.SPU_WAIT_HANDLE.getIndex()==dto.getSkuState().intValue()){
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
                     hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
                     return;
                 }
+
                 sizeType.put(dto.getHubSkuSizeType(),"");
             }
             if(total==excludeNum){//全部为排除
                 hubSpuPending.setMemo("SPU下未审核成功的SKU全部为排除,不需要审核");
                 hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+                return ;
             }
             if(sizeType.size()>1){
                 if(sizeType.containsKey(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)){
