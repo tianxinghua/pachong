@@ -29,6 +29,7 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingD
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSkuSupplierMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
+import com.shangpin.ephub.client.data.mysql.material.dto.HubMaterialDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPicCriteriaDto;
@@ -201,17 +202,38 @@ public class ExportServiceImplDic {
 			cell.setCellValue(materialTemplate[i]);
 		}
 		String[] materialValueTemplate = TaskImportTemplate2.getMaterialValueTemplate();
-		//获取总条数
-		Integer totalSize = materialRequestDto.getPageSize();
+		/*//获取总条数
+		HubMaterialDicCriteriaDto hubMaterialDicCriteriaDto = new HubMaterialDicCriteriaDto();
+			if (materialRequestDto.getHubMaterial()!=null){
+				hubMaterialDicCriteriaDto.createCriteria().andMaterialNameEqualTo(materialRequestDto.getHubMaterial());
+			}
+			if (materialRequestDto.getSupplierMaterial()!=null){
+				hubMaterialDicCriteriaDto.createCriteria().andMaterialNameEqualTo(materialRequestDto.getHubMaterial());
+			}
+*/
+			//获取总页数
+		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto1 =new HubMaterialMappingCriteriaDto() ;
+		hubMaterialMappingCriteriaDto1.setPageNo(materialRequestDto.getPageNo());
+		hubMaterialMappingCriteriaDto1.setPageSize(materialRequestDto.getPageSize());
+		if (materialRequestDto.getSupplierMaterial()!=null){
+			hubMaterialMappingCriteriaDto1.createCriteria().andSupplierMaterialEqualTo(materialRequestDto.getSupplierMaterial());
+		}
+		if (materialRequestDto.getHubMaterial()!=null){
+			hubMaterialMappingCriteriaDto1.createCriteria().andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
+		}
+
+		int totalSize = hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto1);
+
+		//Integer totalSize = materialRequestDto.getPageSize();
 		if (totalSize>0){
 			int pageCount = getPageCount(totalSize, PAGESIZE);// 总页数
 			log.info("导出总页数：" + pageCount);
 			ArrayList<List<HubMaterialMappingDto>> lists = new ArrayList<>();
 
-			for (int i = 1; i <= pageCount; i++) {
-				HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto =null ;
+			for (int i = 1; i<= pageCount; i++) {
+				HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto =new HubMaterialMappingCriteriaDto() ;
 				hubMaterialMappingCriteriaDto.setPageNo(i);
-				hubMaterialMappingCriteriaDto.setPageSize(50);
+				hubMaterialMappingCriteriaDto.setPageSize(PAGESIZE);
 				if (materialRequestDto.getHubMaterial()!=null){
 					hubMaterialMappingCriteriaDto.createCriteria().andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
 				}
@@ -531,9 +553,6 @@ public class ExportServiceImplDic {
 			}else  if ("supplierMaterial".equals(rowTemplate[i])){
 				setRowOfsupplierMaterial(row,hubMaterialMappingDto,cls,i);
 			}
-			else  if ("supplierMaterial".equals(rowTemplate[i])){
-				setRowOfsupplierMaterial(row,hubMaterialMappingDto,cls,i);
-			}
 			else  if ("createTime".equals(rowTemplate[i])){
 				setRowOfcreateTime(row,hubMaterialMappingDto,cls,i);
 			}else  if ("updateTime".equals(rowTemplate[i])){
@@ -549,9 +568,10 @@ public class ExportServiceImplDic {
 	}
 	//材质 set cell updateUser
 	private void setRowOfupdateTime(HSSFRow row, HubMaterialMappingDto hubMaterialMappingDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-		String fileName = "getUpdateUser()";
+		String fileName = "getUpdateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(hubMaterialMappingDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 	//set 材质 cell createTime
@@ -559,6 +579,7 @@ public class ExportServiceImplDic {
 		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(hubMaterialMappingDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
@@ -576,6 +597,7 @@ public class ExportServiceImplDic {
 		String fileName = "getSupplierMaterial";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(hubMaterialMappingDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 	/**
@@ -592,6 +614,7 @@ public class ExportServiceImplDic {
 		String fileName = "getHubMaterial";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(hubMaterialMappingDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 	/**
@@ -608,6 +631,7 @@ public class ExportServiceImplDic {
 		String fileName = "getMaterialMappingId";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(hubMaterialMappingDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
