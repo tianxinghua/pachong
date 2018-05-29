@@ -131,9 +131,12 @@ public class ClutcherOrderImpl implements IOrderService {
     private void setType(OrderDTO orderDTO,String type,String flag,String id){
     	if("refund".equals(type)){
     		if("ko".equals(flag)){
-				orderDTO.setPushStatus(PushStatus.REFUNDED_ERROR);
-                orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
-                orderDTO.setDescription(orderDTO.getLogContent());
+//				orderDTO.setPushStatus(PushStatus.REFUNDED_ERROR);
+//                orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+//                orderDTO.setDescription(orderDTO.getLogContent());
+				orderDTO.setDescription(orderDTO.getLogContent());
+				orderDTO.setRefundTime(new Date());
+				orderDTO.setPushStatus(PushStatus.REFUNDED);
 			}else if("ok".equals(flag)){
 				orderDTO.setRefundTime(new Date());
 				orderDTO.setPushStatus(PushStatus.REFUNDED);
