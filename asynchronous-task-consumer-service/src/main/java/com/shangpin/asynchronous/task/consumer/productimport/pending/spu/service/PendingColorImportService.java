@@ -142,13 +142,16 @@ public class PendingColorImportService {
 	}
 
 	private void filterColor(HubColorImportDTO productImport, String createUser, Map<String, String> map) throws ParseException {
-		HubColorDicItemDto hubColorDicItemDto = null;
+		HubColorDicItemDto hubColorDicItemDto = new HubColorDicItemDto();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto=null;
 		if (productImport.getColorDicItemId()!=null){
+			HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto=new HubSupplierColorDicRequestDto();
+
 			HubColorDicItemDto hubColorDicItemDto1 = hubColorDicItemGateWay.selectByPrimaryKey(Long.parseLong(productImport.getColorDicItemId()));
 			hubColorDicItemDto.setColorDicItemId(Long.parseLong(productImport.getColorDicItemId()));
-			    	hubColorDicItemDto.setColorItemName(productImport.getColorItemName());
+			    if (productImport.getColorItemName()==null)return;
+				hubColorDicItemDto.setColorItemName(productImport.getColorItemName());
+
 			    	//获取字典的全部颜色
 			        Map<String, Long> stringLongMap = queryHubColorDicCriteriaColor(productImport);
 			for (Map.Entry<String, Long> entry : stringLongMap.entrySet()) {
@@ -156,12 +159,14 @@ public class PendingColorImportService {
 				  //Long value = entry.getValue();
 				  if (key.equals(productImport.getColorDicId())){
 					  Long value = entry.getValue();
+					  if (value==null)return;
+
 					  hubColorDicItemDto.setColorDicId(value);
 				  }
 			}
-			        hubColorDicItemDto.setUpdateTime(new Date());
-			        hubColorDicItemDto.setCreateTime(format.parse(productImport.getCreateTime()));
-					hubColorDicItemDto.setUpdateUser(productImport.getUpdateUser());
+			       hubColorDicItemDto.setUpdateTime(new Date());
+			       // hubColorDicItemDto.setCreateTime(format.parse(productImport.getCreateTime()));
+					//hubColorDicItemDto.setUpdateUser(productImport.getUpdateUser());
 					hubColorDicItemGateWay.updateByPrimaryKeySelective(hubColorDicItemDto);
 
 			hubSupplierColorDicRequestDto.setColorDicItemId(hubColorDicItemDto.getColorDicItemId());
@@ -178,6 +183,7 @@ public class PendingColorImportService {
 
 			}
 		else {
+			HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto=new HubSupplierColorDicRequestDto();
 
 			hubColorDicItemDto.setColorItemName(productImport.getColorItemName());
 			hubColorDicItemDto.setUpdateTime(new Date());
@@ -424,12 +430,14 @@ public class PendingColorImportService {
 			try {
 				item = new HubColorImportDTO();
 				Class c = item.getClass();
-				for (int i = 0; i < pendingColorValueTemplate.length; i++) {
+				for (int i = 0; i< pendingColorValueTemplate.length; i++) {
+
 					if (xssfRow.getCell(i) != null) {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
 						String setMethodName = "set" + pendingColorValueTemplate[i].toUpperCase().charAt(0)
 								+ pendingColorValueTemplate[i].substring(1);
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
+
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}
 				}
