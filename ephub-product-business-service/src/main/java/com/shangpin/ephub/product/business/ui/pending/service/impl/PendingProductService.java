@@ -341,18 +341,20 @@ public class PendingProductService extends PendingSkuService{
 
 			//如果处于审核成功 需要直接进入待选品 而不是待审核
 			if(hubSpuDto!=null&&pendingProductDto.getHubColor().equals(hubSpuDto.getHubColor())){
-				//如果都是排除，则不能进入
-				HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
-		        criteriaSku.createCriteria().andSpuPendingIdEqualTo(pendingProductDto.getSpuPendingId()).andSkuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue())
-		        .andSpSkuSizeStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()).andFilterFlagEqualTo((byte)1);
-		        List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criteriaSku);
-				if(list!=null&&!list.isEmpty()){
-					 String result = pendingProductCommonService.audit(pendingProductDto.getSpuPendingId());
+
+				//审核前整体判断尺码状态
+				skuPendingService.judgeSizeBeforeAudit(pendingProductDto);
+				if(pendingProductDto.getSpuState()==SpuState.INFO_IMPECCABLE.getIndex()){
+					String result = pendingProductCommonService.audit(pendingProductDto.getSpuPendingId());
 //						SpuPendingAuditVO auditVO = this.getAuditProduct(pendingProductDto);
-						if(null!=result){
-							return HubResponse.errorResp(result);
-						}
+					if(null!=result){
+						return HubResponse.errorResp(result);
+					}
+				}else{//审核状态发生变化 重新赋值
+					hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
 				}
+
+
 			}
 		} catch (Exception e) {
 			log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
