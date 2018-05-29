@@ -134,4 +134,16 @@ public class SpuPendingHandler {
         return spuPendingGateWay.selectByPrimaryKey(spuPendingId);
     }
 
+
+    public boolean updateSpuState(HubSpuPendingDto hubSpuPending){
+        boolean  result = true;
+        hubSpuPending.setUpdateTime(new Date());
+        try {
+            spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
+    }
+
 }

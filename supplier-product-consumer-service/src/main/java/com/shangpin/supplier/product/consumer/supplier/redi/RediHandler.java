@@ -72,8 +72,8 @@ public class RediHandler implements ISupplierHandler {
 			hubSpu.setSupplierCategoryname(product.getItem_category());
 			hubSpu.setSupplierBrandname(product.getItem_brand());
 			hubSpu.setSupplierBrandno(product.getItem_brand_id());
-			hubSpu.setSupplierSeasonname(product.getItem_detailed_composition());
-			hubSpu.setSupplierMaterial(product.getItem_sku());
+			hubSpu.setSupplierSeasonname(product.getItem_season());
+			hubSpu.setSupplierMaterial(product.getItem_detailed_composition());
 			hubSpu.setSupplierOrigin(product.getItem_madein());
 			hubSpu.setSupplierSpuDesc(product.getItem_longDescription());
 			return true;

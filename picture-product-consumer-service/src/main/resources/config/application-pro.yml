@@ -29,7 +29,7 @@ spring:
                               destination: supplier.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 3
                                        maxAttempts: 1
                         retryPictureProduct: 
                               destination: retry.product.picture

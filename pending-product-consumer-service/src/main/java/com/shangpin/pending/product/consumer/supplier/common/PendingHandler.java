@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.StringUtils;
@@ -72,6 +73,9 @@ public class PendingHandler extends VariableInit {
 
 	@Autowired
 	HubSlotSpuTaskGateWay slotSpuTaskGateWay;
+
+	@Autowired
+	HubPendingSkuCheckGateWay skuPendingCheckGateWay;
 
 
 
@@ -500,30 +504,48 @@ public class PendingHandler extends VariableInit {
 					}
                 }
             }
-            //整体处理下库存状态和价格状态更新
-			dataBusinessService.updateSpuPendingStockAndPriceState(hubSpuPending.getSpuPendingId());
+            //整体判断sku的库存和尺码映射状态 更新SPU状态
+			updateSpuStateBySkuState(hubSpuPending);
 
-            //整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
-            log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
-            if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-                boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
-                //true表面sku都校验通过
-                if(flag){
-
-                    //2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
-                    if(hubSpuPending.isHubSpuIsPassing()){
-                        log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
-                        hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
-                    }
-                }
-            }
-        }else{
+		}else{
             if(null!=spuStatus&&(spuStatus == MessageType.NEW.getIndex())){
                 //新增的SPU 但没有sku
 
             }
         }
 	}
+
+	private void updateSpuStateBySkuState(SpuPending hubSpuPending) {
+		//整体处理下库存状态和价格状态更新
+		dataBusinessService.updateSpuPendingStockAndPriceState(hubSpuPending.getSpuPendingId());
+
+		//整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
+		log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
+		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
+			boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
+			//true表面sku都校验通过
+			if(flag){
+
+				HubSpuPendingDto spuPendingDto  = new HubSpuPendingDto();
+				spuPendingDto.setSpuPendingId(hubSpuPending.getSpuPendingId());
+				spuPendingDto.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+				HubSpuPendingDto  spuTmp = skuPendingCheckGateWay.checkSkuBeforeAudit(spuPendingDto);
+				if(spuTmp.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
+					//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
+					if(hubSpuPending.isHubSpuIsPassing()){
+						log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
+						hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
+					}
+				}else{
+                    //更新状态
+					spuPendingHandler.updateSpuState(spuTmp);
+
+				}
+
+			}
+		}
+	}
+
 
 	private SpuPending handleSpuPending(PendingProduct message, Map<String, Object> headers,Integer spuStatus, HubSpuPendingDto tmp) throws Exception {
 		SpuPending hubSpuPending = null;

@@ -14,6 +14,8 @@ import java.util.List;
 public class RediOrderDto implements Serializable{
 
     private ShippingInfo shippingInfo;
+    
+    private ShippingInfo shippingChInfo;
 
     private BillingInfo  billingInfo;
 

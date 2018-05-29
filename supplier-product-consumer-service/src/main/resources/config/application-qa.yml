@@ -74,17 +74,8 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1
-                        mengottiSncOriginalProduct:
-                              destination: mengottiSnc.original.product
-                              group: one
-                              consumer:
-                                        concurrency: 2
-                                        maxAttempts: 1
                         ostorePendingProduct:
                               destination: ostore.pending.product
-                              content-type: application/json                        
-                        mengottiSncPendingProduct:
-                              destination: mengottiSnc.pending.product
                               content-type: application/json
                         brunarossoOriginalProduct:
                               destination: brunarosso.original.product
@@ -722,6 +713,24 @@ spring:
                         rediPendingProduct:
                               destination: redi.pending.product
                               content-type: application/json
+                        obluOriginalProduct:
+                              destination: oblu.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              content-type: application/json
+                        mengottiSncOriginalProduct:
+                              destination: mengottiSnc.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              content-type: application/json
               rabbit:
                         bindings: 
                               supplierPictureProduct: 
@@ -784,18 +793,9 @@ spring:
                                          autoBindDlq: false
                                          requeueRejected: true
                                          republishToDlq: false
-                              mengottiSncOriginalProduct:
-                                    consumer:
-                                         prefix: HA.
-                                         autoBindDlq: false
-                                         requeueRejected: true
-                                         republishToDlq: false
                               ostorePendingProduct:
                                     producer: 
-                                         prefix: HA.                                        
-                              mengottiSncPendingProduct:
-                                    producer:
-                                        　prefix: HA.
+                                         prefix: HA.
                               brunarossoOriginalProduct:
                                     consumer: 
                                          prefix: HA.
@@ -1432,6 +1432,24 @@ spring:
                               rediPendingProduct:
                                     producer:
                                          prefix: HA.
+                              obluOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              obluPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              mengottiSncOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              mengottiSncPendingProduct:
+                                    producer:
+                                        　prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8

@@ -38,6 +38,8 @@ public class SupplierProperties {
 	
 	private Zitafabiani zitafabiani;
 	
+	private Mengotti mengotti;
+	
 	private Coltorti coltorti;
 	
 	private Creative99 creative99;

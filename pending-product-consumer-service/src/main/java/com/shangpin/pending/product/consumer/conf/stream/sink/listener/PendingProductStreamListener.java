@@ -753,4 +753,7 @@ public class PendingProductStreamListener {
 	public void obluPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.obluPendingProductStreamListen(message,headers);
 	}
+
+
+
 }
