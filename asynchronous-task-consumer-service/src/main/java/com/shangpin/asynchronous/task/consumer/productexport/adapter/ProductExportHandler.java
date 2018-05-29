@@ -2,10 +2,7 @@ package com.shangpin.asynchronous.task.consumer.productexport.adapter;
 
 import java.util.Map;
 
-import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.HubColorDic;
-import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.HubSupplierMadeMappingDto;
-import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.MaterialRequestDto;
-import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.SupplierCategroyDicCriteriaDto;
+import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.*;
 import com.shangpin.asynchronous.task.consumer.productexport.type.pending.ExportServiceImplDic;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +108,11 @@ public class ProductExportHandler {
 					MaterialRequestDto materialRequestDto= JsonUtil.deserialize(message.getData(), MaterialRequestDto.class);
 					exportServiceImplDic.exportMaterial(message.getTaskNo(),materialRequestDto);
 				}
+				else if(message.getType() == TaskType.EXPORT_BRAND.getIndex()){
+					BrandRequestDTO brandRequestDTO= JsonUtil.deserialize(message.getData(), BrandRequestDTO.class);
+					exportServiceImplDic.exportBrand(message.getTaskNo(),brandRequestDTO);
+				}
+
 
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 
