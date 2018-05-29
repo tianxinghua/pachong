@@ -1,3 +1,4 @@
+/*
 package com.shangpin.ephub.product.business;
 
 import com.shangpin.ephub.product.business.service.studio.hubslot.dto.SlotSpuSendDetailCheckDto;
@@ -7,9 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+*/
 /**
  * Created by lizhongren on 2017/9/7.
- */
+ *//*
+
 public class Test {
 
     public static void main(String[] args){
@@ -29,3 +32,4 @@ public class Test {
         }
     }
 }
+*/

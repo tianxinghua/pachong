@@ -45,6 +45,7 @@ public class ExportServiceImpl implements ExportService {
 		task.setCreateUser(createusr); 
 		String fileName = createusr+"_" + task.getTaskNo()+".xls";
 		String filePath = remotePath+File.separator+fileName;
+
 		task.setTaskFtpFilePath(filePath); 
 		task.setSysFileName(fileName); 
 		task.setResultFilePath(filePath); 
