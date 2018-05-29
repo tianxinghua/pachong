@@ -146,8 +146,8 @@ public class PendingSpuImportService {
 			if(insertReason){
 				hubPendingSpuDto.setMsgMissHandleState(MsgMissHandleState.HAVE_HANDLED.getIndex());
 			}
-			hubPendingSpuDto.setSpuState((byte)4);
-			hubPendingSpuDto.setMemo("spu导入人工排除");
+			hubPendingSpuDto.setSpuState((byte)3);
+			hubPendingSpuDto.setMemo("spu导入人工排除，设置成无法处理");
 			hubPendingSpuDto.setUpdateUser(createUser);
 			hubPendingSpuDto.setUpdateTime(new Date());
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
