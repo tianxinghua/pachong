@@ -1,6 +1,7 @@
 package com.shangpin.ephub.product.business.service.pending;
 
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
 
 import java.util.List;
@@ -37,5 +38,11 @@ public interface SkuPendingService {
      * @return
      */
     public List<HubSkuPendingDto> getWaitHandleSkuPending(Long spuPendingId);
+
+    /**
+     * 审核前尺码判断 状态直接赋值到传入参数中
+     * @param hubSpuPending
+     */
+    public  void judgeSizeBeforeAudit(HubSpuPendingDto hubSpuPending);
 
 }

@@ -6,8 +6,6 @@ public enum TaskType {
 	 * 一般任务
 	 */
 	NO_TYPE(0,"NO_TYPE"),
-
-
 	/**
 	 * pending-spu导入
 	 */
@@ -56,13 +54,24 @@ public enum TaskType {
 	AIRSHOP_IMPORT(18,"airshop导入"),
 	SUPPLIER_PIC_EXPORT(19,"供应商图片导出"),
 
+	IMPORT_COLOR(20,"颜色导入"),
+	EXPORT_COLOR(21,"颜色导出"),
+
+	IMPORT_MATERIAL(22,"材质导入"),
+	EXPORT_MATERIAL(23,"材质导出"),
+
+	IMPORT_ORIGIN(24,"产地导入"),
+	EXPORT_ORIGIN(25,"产地导出"),
+
+	IMPORT_CATEGORY(24,"品类导入"),
+	EXPORT_CATEGORY(25,"品类导出"),
+
+	IMPORT_BRAND(24,"品牌导入"),
+	EXPORT_BRAND(25,"品牌导出")
+
+	;
 
 
-	/**
-	 * 字典颜色导出
-	 *
-	 */
-	EXPORT_COlOR(20,"字典颜色导出");
 	/**
      * 数字索引标识
      */

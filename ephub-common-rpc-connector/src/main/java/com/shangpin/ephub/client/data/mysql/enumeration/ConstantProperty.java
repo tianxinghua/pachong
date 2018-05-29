@@ -37,7 +37,7 @@ public class ConstantProperty {
 	   // --------------尺码映射
 	   public static String SIZE_TYPE="尺寸";
 	   public static String REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_KEY";
-	   public static String REDIS_EPHUB_SUPPLIER_ALL_SIZE_MAPPING_KEY="ALL";
+	   public static String REDIS_EPHUB_SUPPLIER_ALL_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_ALL_SIZE_MAPPING_KEY_QUANJU";
 	   public static String REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY="REDIS_EPHUB_SUPPLIER_COMMON_SIZE_MAPPING_KEY";
 	   public static int  REDIS_EPHUB_SUPPLIER_SIZE_MAPPING_TIME = 60;
 	   // --------------尺码映射end

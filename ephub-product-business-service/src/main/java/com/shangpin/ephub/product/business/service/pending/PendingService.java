@@ -6,6 +6,7 @@ import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
+import com.shangpin.ephub.response.HubResponse;
 
 import java.util.List;
 
@@ -49,4 +50,6 @@ public interface PendingService {
 
 
     public HubSpuPendingDto getSpuPendingByKey(Long spuPendingId);
+
+	public HubResponse<?> batchAudit(List<SpuPendingAuditVO> auditList);
 }

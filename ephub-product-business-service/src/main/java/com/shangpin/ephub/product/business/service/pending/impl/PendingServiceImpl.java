@@ -1,19 +1,20 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
+import static com.shangpin.ephub.product.business.service.ServiceConstant.HUB_SPU_PIC_USE_SHOOT;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.*;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.client.data.mysql.spu.dto.*;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
-import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
-import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
-import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
-import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
-import com.shangpin.ephub.product.business.service.studio.hubslotpic.SlotPicService;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,12 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
+import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
+import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -30,7 +37,16 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.studio.pic.dto.HubSlotSpuPicDto;
+import com.shangpin.ephub.client.data.mysql.studio.spu.dto.HubSlotSpuDto;
+import com.shangpin.ephub.client.data.studio.enumeration.UploadPicSign;
 import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.client.util.RegexUtil;
@@ -38,16 +54,15 @@ import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
+import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
+import com.shangpin.ephub.product.business.service.studio.hubslotpic.SlotPicService;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditQueryVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingPicVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingVO;
-
-import lombok.extern.slf4j.Slf4j;
-
-import static com.shangpin.ephub.product.business.service.ServiceConstant.HUB_SPU_PIC_USE_SHOOT;
+import com.shangpin.ephub.response.HubResponse;
 
 /**
  * Created by loyalty on 16/12/24.
@@ -82,8 +97,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
     @Autowired
     SlotPicService slotPicService;
 
-    @Autowired
-    private TaskExecutor executor;
+//    @Autowired
+//    private TaskExecutor executor;
 
     @Autowired
     private CategoryService categoryService;
@@ -145,13 +160,16 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         if(StringUtils.isNotBlank(queryVO.getStartDate())){
 //            log.info("sartDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getStartDate() ));
-				criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.parse(queryVO.getStartDate()  ));
-//            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 08:00:00" ));
+//				criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.parse(queryVO.getStartDate()  ));
+            criterion.andUpdateTimeGreaterThanOrEqualTo(DateTimeUtil.getDateTimeFormate(queryVO.getStartDate() +" 00:00:00" ));
         }
         if(StringUtils.isNotBlank(queryVO.getEndDate())){
 //            log.info("getEndDate = " + DateTimeUtil.getDateTimeFormate(queryVO.getEndDate() +" 00:00:00").toString());
 //            System.out.println(DateTimeUtil.getShortDate(queryVO.getEndDate()));
-				criterion.andUpdateTimeLessThan(DateTimeUtil.parse(queryVO.getEndDate() ));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(DateTimeUtil.getShortDate(queryVO.getEndDate()));
+            calendar.add(Calendar.DAY_OF_YEAR,1);
+            criterion.andUpdateTimeLessThan(DateTimeUtil.getDateTimeFormate(DateTimeUtil.shortFmt(calendar.getTime())+" 00:00:00"));
         }
         if(null==queryVO.getStatus()){
             criterion.andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
@@ -160,6 +178,14 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
         if(StringUtils.isNotBlank(queryVO.getOperator())){
         	criterion.andUpdateUserLike(queryVO.getOperator()+"%"); 
+        }
+        if(null!=queryVO.getIsExist()){
+            if(queryVO.getIsExist()){
+
+                criterion.andHubSpuNoIsNotNull();
+            }else{
+                criterion.andHubSpuNoIsNull();
+            }
         }
 
         return criteria;
@@ -313,7 +339,65 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
         return null;
     }
-
+    
+    @Override
+    /**
+     * 事务问题 需要考虑  是否整体处理
+     *
+     * 异步处理 先处理pending的状态为审核中，
+     * 线程启动 调用hubspu和hubsku的生成
+     * 成功的修改PENDING 状态为审核通过 ，失败的修改pending状态为待处理
+     *
+     */
+	public HubResponse<?> batchAudit(List<SpuPendingAuditVO> auditList){
+    	StringBuilder result = new StringBuilder();
+    	try {   
+	    	ExecutorService exe = new ThreadPoolExecutor(10,10, 500, TimeUnit.MILLISECONDS,
+					new ArrayBlockingQueue<Runnable>(100),new ThreadPoolExecutor.CallerRunsPolicy());
+	        int threadNum = 0;  
+	        if(auditList!=null&&!auditList.isEmpty()){
+	        	for(SpuPendingAuditVO auditVO:auditList){
+	        		 threadNum++;  
+	 	            final int currentThreadNum = threadNum;  
+	 	            exe.execute(new Runnable() {  
+	 	                @Override  
+	 	                public void run() {  
+	 	                    try {  
+	 	                        log.info("子线程[" + currentThreadNum + "]开启");  
+	 	                        boolean message = audit(auditVO);
+	 	                        if(!message){
+	 	                        	result.append("货号："+auditVO.getSpuModel()+"失败原因："+auditVO.getMemo()).append(";");
+	 	                        }
+	 	                        log.info(message+"");
+	 	                    } catch (Exception e) {  
+	 	                        e.printStackTrace();  
+	 	                    }finally{  
+	 	                    	log.info("子线程[" + currentThreadNum + "]结束");  
+	 	                    }  
+	 	                }  
+	 	            });    
+	        	}
+	        }
+	        exe.shutdown();  
+	        while(true){  
+	            if(exe.isTerminated()){  
+	                log.info("所有的子线程都结束了！"); 
+	                break;
+	            }  
+	        }  
+	    } catch (Exception e) {  
+	    	return HubResponse.errorResp(null);
+	    }finally{  
+	    	log.info("主线程结束");  
+	    }  
+    	if(StringUtils.isNotBlank(result.toString())){
+    		return HubResponse.errorResp(result);
+    	}else{
+    		return HubResponse.successResp(null);
+    	}
+			
+	}
+    
     @Override
     /**
      * 事务问题 需要考虑  是否整体处理

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
@@ -7,8 +8,10 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
 import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
@@ -24,7 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/11/23.
@@ -39,8 +44,7 @@ public class SkuPendingServiceImpl implements SkuPendingService {
     @Autowired
     MatchSizeService matchSizeService;
 
-    @Autowired
-    HubSkuPendingGateWay hubSkuPendingGateWay;
+
 
 
     @Autowired
@@ -200,7 +204,7 @@ public class SkuPendingServiceImpl implements SkuPendingService {
             hubSkuPendingDto.setMarketPrice(null);
             hubSkuPendingDto.setSalesPrice(null);
             hubSkuPendingDto.setSupplierBarcode(null);
-            hubSkuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
+            skuPendingGateWay.updateByPrimaryKeySelective(hubSkuPendingDto);
         }
 
         if(isHaveMapping){//有映射的
@@ -256,5 +260,71 @@ public class SkuPendingServiceImpl implements SkuPendingService {
               ;
         return  skuPendingGateWay.selectByCriteria(dto);
     }
+
+
+
+    @Override
+    public  void judgeSizeBeforeAudit( HubSpuPendingDto hubSpuPending) {
+
+        //获取未完成的所有SKU数量
+        HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
+        criteriaSku.createCriteria().andSpuPendingIdEqualTo(hubSpuPending.getSpuPendingId())
+                .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+        criteriaSku.setPageNo(1);
+        criteriaSku.setPageSize(1000);
+        List<HubSkuPendingDto> hubSkuPendingDtos = skuPendingGateWay.selectByCriteria(criteriaSku);
+        if(null!=hubSkuPendingDtos&&hubSkuPendingDtos.size()>0){
+            int total = hubSkuPendingDtos.size();
+            int excludeNum = 0;
+            Map<String,String> sizeType = new HashMap<>();
+            for(int i=0;i<total;i++){
+                HubSkuPendingDto dto = hubSkuPendingDtos.get(i);
+                if(GlobalConstant.HUB_SKE_SIZE_TYPE_EXCLUDE.equals(dto.getHubSkuSizeType())){
+                    excludeNum++;
+                }else{
+                     if(!GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY.equals(dto.getHubSkuSizeType())){
+                        if(StringUtils.isEmpty(dto.getHubSkuSize())){
+                            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                            hubSpuPending.setMemo("尺码有空值,整体不能审核通过");
+                            return;
+                        }
+                     }
+                }
+                if(SpuStatus.SPU_WAIT_HANDLE.getIndex()==dto.getSkuState().intValue()){
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("同品牌同货号的产品，尺码有未匹配的,整体不能审核通过");
+                    return;
+                }
+                sizeType.put(dto.getHubSkuSizeType(),"");
+            }
+            if(total==excludeNum){//全部为排除
+                hubSpuPending.setMemo("SPU下未审核成功的SKU全部为排除,不需要审核");
+                hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+                return ;
+            }
+            if(sizeType.size()>1){
+                if(sizeType.containsKey(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)){
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    hubSpuPending.setMemo("SKU尺码类型包含尺寸以及非尺寸,请重新处理");
+                    hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                    return;
+                }
+            }
+
+            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+
+        }else{
+
+
+            hubSpuPending.setMemo("SPU下没有可处理的SKU,不能审核");
+            hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
+        }
+    }
+
+
+
+
+
+
 
 }
