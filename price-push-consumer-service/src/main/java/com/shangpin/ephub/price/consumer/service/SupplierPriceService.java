@@ -265,7 +265,8 @@ public class SupplierPriceService {
         if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.MARKET_SUPPLY_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.SUPPLY_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
-                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
             return  true;
         }else{
             return false;
