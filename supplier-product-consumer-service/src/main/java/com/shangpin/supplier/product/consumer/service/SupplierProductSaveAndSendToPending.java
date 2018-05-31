@@ -64,6 +64,9 @@ public class SupplierProductSaveAndSendToPending {
 	private SupplierProductRetryManager supplierProductRetryManager;
 	@Autowired
 	private PriceGateWay priceGateWay;
+
+	@Autowired
+	private PriceService priceService;
 	@Autowired
 	ShangpinMailProperties shangpinMailProperties;
 	/**
@@ -223,7 +226,7 @@ public class SupplierProductSaveAndSendToPending {
 				priceDto.setSupplierNo(supplierNo);
 				priceDto.setHubSpu(hubSpu);
 				priceDto.setHubSkus(hubSkus);
-				priceGateWay.savePriceRecordAndSendConsumer(priceDto);
+				priceService.savePriceRecordAndSendConsumer(priceDto);
 			}
 		} catch (Exception e) {
 			log.error("【"+hubSpu.getSupplierId()+" "+hubSpu.getSupplierSpuNo()+"推送供价变化记录异常："+e.getMessage()+"】",e);  
