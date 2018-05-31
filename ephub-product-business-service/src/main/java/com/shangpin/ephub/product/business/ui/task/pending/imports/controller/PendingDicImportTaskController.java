@@ -81,7 +81,7 @@ public class PendingDicImportTaskController {
 			return HubResponse.errorResp("材质上传文件失败，请重新上传");
 		}
 	}
-	@RequestMapping(value = "/import-categroy",method = RequestMethod.POST)
+	@RequestMapping(value = "/import-category",method = RequestMethod.POST)
 	public HubResponse importCateGroy(@RequestBody HubImportTaskRequestDto dto){
 
 		try {
