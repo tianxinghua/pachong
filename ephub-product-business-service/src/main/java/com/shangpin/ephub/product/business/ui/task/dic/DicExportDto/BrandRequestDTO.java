@@ -11,6 +11,7 @@ public class BrandRequestDTO {
     protected String hubBrand;
     protected String createUser;
 
+
     public String getCreateUser() {
         return createUser;
     }

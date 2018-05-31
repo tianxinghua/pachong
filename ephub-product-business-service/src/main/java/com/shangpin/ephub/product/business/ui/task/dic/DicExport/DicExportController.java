@@ -130,11 +130,11 @@ public class DicExportController {
 			//第一步创建任务
 			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(madeMappingDtoDto.getCreateUser(), remotePath , TaskType.EXPORT_ORIGIN);
 			//第二步发送队列
-			HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto = new HubSupplierValueMappingCriteriaDto();
+			/*HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto = new HubSupplierValueMappingCriteriaDto();
 			hubSupplierValueMappingCriteriaDto.createCriteria().andHubValTypeEqualTo(madeMappingDtoDto.getType());
 			//获取总条数
 			int total = hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto);
-			madeMappingDtoDto.setPageSize(total);
+			madeMappingDtoDto.setPageSize(total);*/
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_ORIGIN, madeMappingDtoDto);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
