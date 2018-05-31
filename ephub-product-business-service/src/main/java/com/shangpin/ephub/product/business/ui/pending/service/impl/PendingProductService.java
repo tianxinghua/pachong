@@ -352,6 +352,9 @@ public class PendingProductService extends PendingSkuService{
 					}
 				}else{//审核状态发生变化 重新赋值
 					hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+                    updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),pendingProductDto.getMemo());
+                    response.setErrorMsg(updatedVo);
+
 				}
 
 
