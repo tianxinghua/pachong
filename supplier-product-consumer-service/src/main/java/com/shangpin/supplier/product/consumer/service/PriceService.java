@@ -67,7 +67,7 @@ public class PriceService {
 		String supplierNo = priceVO.getSupplierNo();
 		HubSupplierSpuDto supplierSpuDto = supplierProductService.getSupplierSpuBySupplierIdAndSupplierSpuNo(supplierSpuVO.getSupplierId(),supplierSpuVO.getSupplierSpuNo());
         if(null==supplierSpuDto) return ;//新品 不需要推送
-
+		supplierSpuDto.setSupplierSpuNo(supplierSpuVO.getSupplierSpuNo());//查询时过滤了supplierspuno 补上
 		List<HubSupplierSkuDto> supplierSkuDtoList = supplierProductService.findSupplierSkusSpSkuNoIsNotNull(supplierSpuDto.getSupplierSpuId());
 		Map<String,HubSupplierSkuDto> skuDtoMap = new HashMap<>();
 		if(CollectionUtils.isEmpty(supplierSkuDtoList)) return;//尚未有供货商SKU生成尚品的SKU
@@ -120,15 +120,7 @@ public class PriceService {
 		}
 	}
 
-	public void savePriceRecordAndSendConsumerNew(PriceDto priceDto) throws Exception{
-		HubSupplierSpuDto supplierSpuDto = priceDto.getHubSpu();
-		String supplierNo = priceDto.getSupplierNo();
-		List<HubSupplierSkuDto> supplierSkus = priceDto.getHubSkus();
-		for(HubSupplierSkuDto skuDto : supplierSkus){
-			log.info("【推送供价记录New："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"初始化状态："+skuDto.getMarketPrice()+"】");
-			savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto, PriceHandleType.NEW_DEFAULT);
-		}
-	}
+
 	
 	/**
 	 * 将季节或价格发生变化的sku保存数据库并发送消息队列
