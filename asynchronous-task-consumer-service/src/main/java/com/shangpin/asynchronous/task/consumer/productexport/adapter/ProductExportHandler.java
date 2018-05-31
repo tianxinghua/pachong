@@ -92,23 +92,19 @@ public class ProductExportHandler {
 				}else if(message.getType() == TaskType.EXPORT_COMMITED.getIndex()){
 					commitedExporter.productExportTask(message, headers);
 
-				}else if(message.getType() == TaskType.EXPORT_COLOR.getIndex()){
-					HubColorDic hubColorDto = JsonUtil.deserialize(message.getData(), HubColorDic.class);
-					exportServiceImplDic.exportColor(message.getTaskNo(), hubColorDto);
-				}
-				else if(message.getType() == TaskType.EXPORT_CATEGORY.getIndex()){
-					SupplierCategroyDicCriteriaDto categroyDicCriteriaDto = JsonUtil.deserialize(message.getData(), SupplierCategroyDicCriteriaDto.class);
-					exportServiceImplDic.exportCategroy(message.getTaskNo(),categroyDicCriteriaDto);
-				}
-				else if(message.getType() == TaskType.EXPORT_ORIGIN.getIndex()){
+				}else if(message.getType() == TaskType.EXPORT_ORIGIN.getIndex()){
 					HubSupplierMadeMappingDto hubSupplierMadeMappingDto= JsonUtil.deserialize(message.getData(), HubSupplierMadeMappingDto.class);
 					exportServiceImplDic.exportMade(message.getTaskNo(),hubSupplierMadeMappingDto);
-				}
-				else if(message.getType() == TaskType.EXPORT_MATERIAL.getIndex()){
+				} else if(message.getType() == TaskType.EXPORT_COLOR.getIndex()){
+					HubColorDic hubColorDto = JsonUtil.deserialize(message.getData(), HubColorDic.class);
+					exportServiceImplDic.exportColor(message.getTaskNo(), hubColorDto);
+				} else if(message.getType() == TaskType.EXPORT_CATEGORY.getIndex()){
+					SupplierCategroyDicCriteriaDto categroyDicCriteriaDto = JsonUtil.deserialize(message.getData(), SupplierCategroyDicCriteriaDto.class);
+					exportServiceImplDic.exportCategroy(message.getTaskNo(),categroyDicCriteriaDto);
+				} else if(message.getType() == TaskType.EXPORT_MATERIAL.getIndex()){
 					MaterialRequestDto materialRequestDto= JsonUtil.deserialize(message.getData(), MaterialRequestDto.class);
 					exportServiceImplDic.exportMaterial(message.getTaskNo(),materialRequestDto);
-				}
-				else if(message.getType() == TaskType.EXPORT_BRAND.getIndex()){
+				} else if(message.getType() == TaskType.EXPORT_BRAND.getIndex()){
 					BrandRequestDTO brandRequestDTO= JsonUtil.deserialize(message.getData(), BrandRequestDTO.class);
 					exportServiceImplDic.exportBrand(message.getTaskNo(),brandRequestDTO);
 				}

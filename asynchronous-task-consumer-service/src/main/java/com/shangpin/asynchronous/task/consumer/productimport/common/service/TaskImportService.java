@@ -249,6 +249,30 @@ public class TaskImportService {
 		
 		return path + resultFileName + ".xls";
 	}
+	public String convertExcelCategory(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+
+		String[] headers = { "品类ID", "供货商品类", "品类编码", "任务说明"};
+		String[] columns = { "supplierCategoryDicId", "supplierCategory", "hubCategoryNo","task"};
+		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
+		return path + resultFileName + ".xls";
+	}
 	public String convertExcelColor(List<Map<String, String>> result, String taskNo) throws Exception {
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		String resultFileName = sim.format(new Date());

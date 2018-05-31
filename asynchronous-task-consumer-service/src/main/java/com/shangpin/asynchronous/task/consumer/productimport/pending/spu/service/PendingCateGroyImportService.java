@@ -62,7 +62,7 @@ import java.util.*;
 @Service
 @Slf4j
 public class PendingCateGroyImportService {
-	
+
 
 	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
@@ -84,15 +84,15 @@ public class PendingCateGroyImportService {
 		pendingCateGroyTemplate = TaskImportTemplate2.getCategoryValueTemplate();
 	}
 	public String handMessage(Task task) throws Exception {
-		
+
 		//从ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
 		String filePath = json.get("taskFtpFilePath").toString();
 		String createUser = json.get("createUser").toString();
 		task.setData(filePath);
-		
+
 		InputStream in = taskService.downFileFromFtp(task);
-		
+
 		//excel转对象
 		List<HubPendingCateGroyImportDTO> hubPendingCateGroyImportDTO = null;
 		String fileFormat = task.getData().split("\\.")[1];
@@ -105,94 +105,120 @@ public class PendingCateGroyImportService {
 		//校验数据并把校验结果写入excel
 		return checkAndsaveHubPendingProduct(task.getTaskNo(), hubPendingCateGroyImportDTO,createUser);
 	}
-	
+
 	//开始校验数据
 	public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingCateGroyImportDTO> hubPendingCateGroyImportDTOS,String createUser)
 			throws Exception {
-		
+
 		if (hubPendingCateGroyImportDTOS == null) {
 			return null;
 		}
-		
-		//记录单条数据的校验结果
-		Map<String, String> map = null;
 		//记录所有数据的校验结果集
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
-	
+
 		for (HubPendingCateGroyImportDTO productImport : hubPendingCateGroyImportDTOS) {
 			if (productImport == null || StringUtils.isBlank(productImport.getSupplierId())) {
 				continue;
 			}
-			map = new HashMap<String, String>();
-			map.put("taskNo", taskNo);
-			filterCateGroy(productImport,createUser,map);
-			//首先判断是否人工排除
+			//记录单条数据的校验结果
+			Map<String, String> map = new HashMap<String, String>();
 
-			/*if(!filterSpu(productImport,createUser,map)){
-				//处理SPU及SKU
-				//loopHandleSpuImportDto(map,productImport,createUser);
-			}*/
-			listMap.add(map);
+			Map<String, String> map1 = filterCateGroy(productImport, createUser, map);
+			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcel(listMap, taskNo);
+		return taskService.convertExcelMarterial(listMap, taskNo);
 	}
-	private void  filterCateGroy(HubPendingCateGroyImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
-		HubSupplierCategroyDicDto hubSupplierCategroyDic=null;
-         //修改操作
+	private Map<String, String>  filterCateGroy(HubPendingCateGroyImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
+		HubSupplierCategroyDicDto categroyDicDto2 = hubSupplierCategroyDicGateWay.selectByPrimaryKey(Long.parseLong(productImport.getSupplierCategoryDicId()));
 		if (productImport.getSupplierCategoryDicId()!=null){
-			HubSupplierCategroyDicDto categroyDicDto1 = hubSupplierCategroyDicGateWay.selectByPrimaryKey(Long.parseLong(productImport.getSupplierCategoryDicId()));
-			HubSupplierCategroyDicWithCriteriaDto hubSupplierCategroyDicWithCriteriaDto=null;
-			hubSupplierCategroyDic.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
-			hubSupplierCategroyDic.setSupplierCategory(productImport.getSupplierCategory());
-			HubSupplierCategroyDicCriteriaDto criteria=new HubSupplierCategroyDicCriteriaDto();
-			criteria.createCriteria().andSupplierIdEqualTo(productImport.getSupplierId()).andCategoryTypeEqualTo(Byte.parseByte(productImport.getCategroyType()));
 
-			if (productImport.getCategroyType()!=null){
-				hubSupplierCategroyDic.setCategoryType(Byte.parseByte(productImport.getCategroyType()));
-				if (productImport.getCategroyType().equals("四级")){
-					hubSupplierCategroyDic.setMappingState((byte)1);
+			HubSupplierCategroyDicDto categroyDicDto = new HubSupplierCategroyDicDto();
+			categroyDicDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
+			map.put("supplierCategoryDicId",productImport.getSupplierCategoryDicId());
+			if (productImport.getSupplierCategory()!=null){
+				categroyDicDto.setSupplierCategory(productImport.getSupplierCategory());
+				map.put("supplierCategory",productImport.getSupplierCategory());
+			}if (productImport.getSupplierGender()!=null){
+				categroyDicDto.setSupplierGender(productImport.getSupplierGender());
+			}/*if (productImport.getCategoryType()!=null){
+				categroyDicDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
+			}*/if (productImport.getHubCategoryNo()!=null){
+				byte[] bytes = productImport.getHubCategoryNo().getBytes();
+				if (bytes.length==12){
+					categroyDicDto.setCategoryType((byte)4);
+					categroyDicDto.setMappingState((byte)1);
+				}else  if (bytes.length==9){
+					categroyDicDto.setCategoryType((byte)3);
+					categroyDicDto.setMappingState((byte)2);
+				}else  if (bytes.length==6){
+					categroyDicDto.setCategoryType((byte)2);
+					categroyDicDto.setMappingState((byte)2);
 				}else {
-					hubSupplierCategroyDic.setMappingState((byte)2);
+					categroyDicDto.setCategoryType((byte)1);
+					categroyDicDto.setMappingState((byte)2); }
+				map.put("hubCategoryNo",productImport.getHubCategoryNo());
+			}
+
+			categroyDicDto.setUpdateTime(new Date());
+			int i = hubSupplierCategroyDicGateWay.updateByPrimaryKey(categroyDicDto);
+			if (i==1){
+				map.put("task","校验成功");
+			}else {
+				map.put("task","校验失败");
+			}
+			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto =new HubSupplierCategoryDicRequestDto();
+			if (productImport.getSupplierId()!=null){
+				hubSupplierCategoryDicRequestDto.setSupplierId(productImport.getSupplierId());
+			}if (productImport.getSupplierCategoryDicId()!=null){
+				hubSupplierCategoryDicRequestDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
+			}
+			if (productImport.getCategoryType()!=null){
+				if (!categroyDicDto2.getCategoryType().equals(productImport.getCategoryType())){
+					dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
 				}
 			}
-			hubSupplierCategroyDicWithCriteriaDto.setCriteria(criteria);
-			hubSupplierCategroyDicWithCriteriaDto.setHubSupplierCategroyDic(hubSupplierCategroyDic);
-			hubSupplierCategroyDicGateWay.updateByCriteriaSelective(hubSupplierCategroyDicWithCriteriaDto);
-
-			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto = null;
-			hubSupplierCategoryDicRequestDto.setCategoryType(hubSupplierCategroyDic.getCategoryType());
-			hubSupplierCategoryDicRequestDto.setHubCategoryNo(hubSupplierCategroyDic.getHubCategoryNo());
-			hubSupplierCategoryDicRequestDto.setSupplierCategory(hubSupplierCategroyDic.getSupplierCategory());
-			hubSupplierCategoryDicRequestDto.setSupplierCategoryDicId(hubSupplierCategroyDic.getSupplierCategoryDicId());
-			hubSupplierCategoryDicRequestDto.setSupplierId(hubSupplierCategroyDic.getSupplierId());
-			hubSupplierCategoryDicRequestDto.setCategoryType(hubSupplierCategroyDic.getCategoryType());
-			//对比是否刷新
-			if (categroyDicDto1.getCategoryType().equals(hubSupplierCategroyDic.getCategoryType())){
-				return;
-			}else {
-				dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
+			if (productImport.getHubCategoryNo()!=null){
+				if (!categroyDicDto2.getHubCategoryNo().equals(productImport.getHubCategoryNo())){
+					dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
+				}
 			}
-		}
-		//添加操作
-		else {
-			hubSupplierCategroyDic.setMappingState(Byte.parseByte(productImport.getMappingState()));
-			hubSupplierCategroyDic.setCategoryType(Byte.parseByte(productImport.getCategroyType()));
-			hubSupplierCategroyDic.setSupplierCategory(productImport.getSupplierCategory());
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			hubSupplierCategroyDic.setCreateTime(format.parse(productImport.getCreateTime()));
-			hubSupplierCategroyDic.setHubCategoryNo(productImport.getHubCategoryNo());
-			hubSupplierCategroyDicGateWay.insert(hubSupplierCategroyDic);
+			return  map;
 
-			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto = null;
-			hubSupplierCategoryDicRequestDto.setCategoryType(hubSupplierCategroyDic.getCategoryType());
-			hubSupplierCategoryDicRequestDto.setHubCategoryNo(hubSupplierCategroyDic.getHubCategoryNo());
-			hubSupplierCategoryDicRequestDto.setSupplierCategory(hubSupplierCategroyDic.getSupplierCategory());
-			hubSupplierCategoryDicRequestDto.setCategoryType(hubSupplierCategroyDic.getCategoryType());
+		}else {
+			//添加
+			HubSupplierCategroyDicDto categroyDicDto =new  HubSupplierCategroyDicDto();
+			if (productImport.getSupplierCategory()!=null){
+				categroyDicDto.setSupplierCategory(productImport.getSupplierCategory());
+				map.put("supplierCategory",productImport.getSupplierCategory());
+			}if (productImport.getSupplierGender()!=null){
+				categroyDicDto.setSupplierGender(productImport.getSupplierGender());
+			}if (productImport.getCategoryType()!=null){
+				categroyDicDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
+			}if (productImport.getHubCategoryNo()!=null){
+				categroyDicDto.setHubCategoryNo(productImport.getHubCategoryNo());
+				map.put("hubCategoryNo",productImport.getHubCategoryNo());
+			}if (productImport.getMappingState()!=null){
+				categroyDicDto.setMappingState(Byte.parseByte(productImport.getMappingState()));
+			}
+			categroyDicDto.setCreateTime(new Date());
+			hubSupplierCategroyDicGateWay.insert(categroyDicDto);
+			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto = new HubSupplierCategoryDicRequestDto();
+			if (productImport.getSupplierCategory()!=null){
+				hubSupplierCategoryDicRequestDto.setSupplierCategory(productImport.getSupplierCategory());
+			}if (productImport.getSupplierId()!=null){
+				hubSupplierCategoryDicRequestDto.setSupplierId(productImport.getSupplierId());
+			}
+			if (productImport.getHubCategoryNo()!=null){
+				hubSupplierCategoryDicRequestDto.setHubCategoryNo(productImport.getHubCategoryNo());
+			}if (productImport.getCategoryType()!=null){
+				hubSupplierCategoryDicRequestDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
+			}
 			dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
 
-		}
+			return map;
 
+		}
 	}
 	
 
@@ -300,7 +326,7 @@ public class PendingCateGroyImportService {
 			try {
 				item = new HubPendingCateGroyImportDTO();
 				Class c = item.getClass();
-				for (int i = 0; i < pendingCateGroyTemplate.length; i++) {
+				for (int i = 0; i <pendingCateGroyTemplate.length; i++) {
 					if (xssfRow.getCell(i) != null) {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
 						String setMethodName = "set" + pendingCateGroyTemplate[i].toUpperCase().charAt(0)

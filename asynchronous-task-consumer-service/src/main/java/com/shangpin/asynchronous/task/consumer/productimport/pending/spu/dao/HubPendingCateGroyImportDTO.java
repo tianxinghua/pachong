@@ -17,7 +17,7 @@ public class HubPendingCateGroyImportDTO {
 	private String supplierCategoryDicId;
 	private String supplierCategory;
 	private String supplierGender;
-	private String categroyType;
+	private String categoryType;
 	private String mappingState;
 	private String hubCategoryNo;
 	private String createTime;

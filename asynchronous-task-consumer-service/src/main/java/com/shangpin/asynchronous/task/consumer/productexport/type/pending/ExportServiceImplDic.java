@@ -271,15 +271,19 @@ public class ExportServiceImplDic {
 			HSSFCell cell = row.createCell(i);
 			cell.setCellValue(madeTemplate[i]);
 		}
-		String[] madeValueTemplate = TaskImportTemplate2.getMadeValueTemplate();
+		 String[] madeValueTemplate = TaskImportTemplate2.getMadeValueTemplate();
 		//获取总条数
-		Integer totalSize = hubSupplierMadeMappingDto.getPageSize();
+		    HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto2 = new HubSupplierValueMappingCriteriaDto();
+			hubSupplierValueMappingCriteriaDto2.createCriteria().andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
+			//获取总条数
+			int totalSize = hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto2);
+
 		if (totalSize>0){
 			int pageCount = getPageCount(totalSize, PAGESIZE);// 总页数
 			log.info("导出总页数：" + pageCount);
 			ArrayList<List<HubSupplierValueMappingDto>> lists= new ArrayList<>();
 			for (int i = 1; i <= pageCount; i++) {
-				HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto =null ;
+				HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto =new HubSupplierValueMappingCriteriaDto() ;
 				hubSupplierValueMappingCriteriaDto.setPageNo(i);
 				hubSupplierValueMappingCriteriaDto.setPageSize(PAGESIZE);
 				if (hubSupplierMadeMappingDto.getType()!=null){
@@ -291,6 +295,9 @@ public class ExportServiceImplDic {
 				if (hubSupplierMadeMappingDto.getSupplierVal()!=null){
 					hubSupplierValueMappingCriteriaDto.createCriteria().andSupplierValEqualTo(hubSupplierMadeMappingDto.getSupplierVal());
 				}
+				if (hubSupplierMadeMappingDto.getMappingType()!=null){
+					hubSupplierValueMappingCriteriaDto.createCriteria().andMappingStateEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+				}
 				List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(hubSupplierValueMappingCriteriaDto);
 				lists.add(hubSupplierValueMappingDtos);
 
@@ -300,12 +307,12 @@ public class ExportServiceImplDic {
 				for (HubSupplierValueMappingDto hubSupplierValueMappingDto:list){
 					j++;
 					HSSFRow row1 = sheet.createRow(j);
-					insertProductMadeOfRow(row1, hubSupplierValueMappingDto, madeValueTemplate);
+					insertProductMadeOfRow(row1,hubSupplierValueMappingDto,madeValueTemplate);
 
 				}
 			}
 		}
-		saveAndUploadExcel(taskNo,hubSupplierMadeMappingDto.getCreateUser() ,wb);
+		saveAndUploadExcel(taskNo,hubSupplierMadeMappingDto.getCreateUser(),wb);
 
 	}
 
@@ -702,6 +709,7 @@ public class ExportServiceImplDic {
 		String fileName = "getUpdateUser";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(madeDicDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
@@ -719,6 +727,7 @@ public class ExportServiceImplDic {
 		String fileName = "getUpdateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(madeDicDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 	/**
@@ -732,9 +741,10 @@ public class ExportServiceImplDic {
 	 * @throws NoSuchMethodException
 	 */
 	private void setRowOfCreateTime(HSSFRow row, HubSupplierValueMappingDto madeDicDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-		String fileName = "getHubVal";
+		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(madeDicDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
@@ -752,6 +762,7 @@ public class ExportServiceImplDic {
 		String fileName = "getHubVal";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(madeDicDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
@@ -766,9 +777,10 @@ public class ExportServiceImplDic {
 	 * @throws NoSuchMethodException
 	 */
 	private void setsupplierVal(HSSFRow row, HubSupplierValueMappingDto madeDicDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-		String fileName = "getSupplierId";
+		String fileName = "getSupplierVal";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(madeDicDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
@@ -786,6 +798,7 @@ public class ExportServiceImplDic {
 		String fileName = "getHubSupplierValMappingId";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(madeDicDto);
+		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 	/**
