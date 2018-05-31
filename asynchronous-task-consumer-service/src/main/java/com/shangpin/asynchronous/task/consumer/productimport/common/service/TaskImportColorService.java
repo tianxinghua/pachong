@@ -1,38 +1,9 @@
 package com.shangpin.asynchronous.task.consumer.productimport.common.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
-import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
-import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
-import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuColorState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuGenderState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuSeasonState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
 import com.shangpin.ephub.client.data.mysql.product.gateway.PengdingToHubGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
@@ -47,7 +18,6 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
-import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
@@ -57,6 +27,24 @@ import com.shangpin.ephub.client.product.business.size.dto.MatchSizeDto;
 import com.shangpin.ephub.client.product.business.size.gateway.MatchSizeGateWay;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.client.util.TaskImportTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -74,10 +62,8 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
  */
 @Service
 @Slf4j
-public class TaskImportService {
+public class TaskImportColorService {
 
-	@Autowired
-	HubPendingSkuCheckGateWay hubPendingSkuCheckGateWay;
 	@Autowired
 	HubPendingHandleGateWay hubPendingHandleGateWay;
 	@Autowired
@@ -101,32 +87,16 @@ public class TaskImportService {
 	private static String[] pendingSpuTemplate = null;
 	static {
 		pendingSpuTemplate = TaskImportTemplate.getPendingSpuTemplate();
-
 	}
 
 	private static String[] pendingSkuTemplate = null;
 	static {
 		pendingSkuTemplate = TaskImportTemplate.getPendingSkuTemplate();
 	}
-	private static String[] colorTemplate=null;
-	static {
-		colorTemplate = TaskImportTemplate2.getColorTemplate();
-	}
-	private static String[] categroyTemplate=null;
-	static {
-		categroyTemplate = TaskImportTemplate2.getCategoryTemplate();
-	}
+
 	private static String[] hubProductTemplate = null;
 	static {
 		hubProductTemplate = HubProductDto.getHubProductTemplate();
-	}
-	private static String[] madeTemplate = null;
-	static {
-		madeTemplate = TaskImportTemplate2.getMadeTemplate();
-	}
-	private static String[] materialTemplate = null;
-	static {
-		materialTemplate = TaskImportTemplate2.getMaterialTemplate();
 	}
 
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
@@ -236,8 +206,9 @@ public class TaskImportService {
 		File file = new File(pathFile);
 		FileOutputStream out = new FileOutputStream(file);
 
-		String[] headers = { "任务编号", "货号", "任务状态", "任务说明","新货号" };
-		String[] columns = { "taskNo", "spuModel", "taskState", "processInfo","spuNewModel"};
+		//String[] headers = { "任务编号", "货号", "任务状态", "任务说明","新货号" };
+		String[] headers = { "colorDicItemId","供应商颜色","尚品颜色","创建时间","修改时间","修改人"};
+		String[] columns = { "colorDicItemId","colorItemName","colorDicId","createTime","updateTime","updateUser"};
 		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
 		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
@@ -247,54 +218,6 @@ public class TaskImportService {
 		}
 		// 更新结果文件路径到表中
 		
-		return path + resultFileName + ".xls";
-	}
-	public String convertExcelColor(List<Map<String, String>> result, String taskNo) throws Exception {
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		String resultFileName = sim.format(new Date());
-		File filePath = new File(ftpProperties.getLocalResultPath());
-		if (!filePath.exists()) {
-			filePath.mkdirs();
-		}
-		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-		File file = new File(pathFile);
-		FileOutputStream out = new FileOutputStream(file);
-
-		String[] headers = {"颜色id","供应商颜色","sp颜色","任务状态" };
-		String[] columns = {"colorDicItemId","colorItemName","hubcolor","task"};
-		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-		FTPClientUtil.closeFtp();
-		if (file.exists()) {
-			file.delete();
-		}
-		// 更新结果文件路径到表中
-
-		return path + resultFileName + ".xls";
-	}
-	//材质状态
-	public String convertExcelMarterial(List<Map<String, String>> result, String taskNo) throws Exception {
-		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		String resultFileName = sim.format(new Date());
-		File filePath = new File(ftpProperties.getLocalResultPath());
-		if (!filePath.exists()) {
-			filePath.mkdirs();
-		}
-		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-		File file = new File(pathFile);
-		FileOutputStream out = new FileOutputStream(file);
-		String[] header = {"材质Id", "尚品材质名","供应商材质名","任务状态"};
-		String[] column = {"materialMappingId", "hubMaterial","supplierMaterial","task"};
-		ExportExcelUtils.exportExcel(resultFileName,header,column, result,out);
-		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-		FTPClientUtil.closeFtp();
-		if (file.exists()) {
-			file.delete();
-		}
-		// 更新结果文件路径到表中
-
 		return path + resultFileName + ".xls";
 	}
 
@@ -367,17 +290,16 @@ public class TaskImportService {
 			}
 		}
 		if ("color".equals(type)) {
-			for (int i = 0; i < colorTemplate.length; i++) {
+			for (int i = 0; i < hubProductTemplate.length; i++) {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
-					if (!colorTemplate[i].equals(fieldName)) {
+					if (!hubProductTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}
 				}
 			}
 		}
-
 		if(!flag){
 			log.info("任务编号：" + taskNo + "," + "上传文件与模板不一致");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);
@@ -416,50 +338,6 @@ public class TaskImportService {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!hubProductTemplate[i].equals(fieldName)) {
-						flag = false;
-						break;
-					}
-				}
-			}
-		}
-		if ("color".equals(type)) {
-			for (int i = 0; i < colorTemplate.length; i++) {
-				if (xssfRow.getCell(i) != null) {
-					String fieldName = xssfRow.getCell(i).toString();
-					if (!colorTemplate[i].equals(fieldName)) {
-						flag = false;
-						break;
-					}
-				}
-			}
-		}
-		if ("categroy".equals(type)) {
-			for (int i = 0; i < categroyTemplate.length; i++) {
-				if (xssfRow.getCell(i) != null) {
-					String fieldName = xssfRow.getCell(i).toString();
-					if (!categroyTemplate[i].equals(fieldName)) {
-						flag = false;
-						break;
-					}
-				}
-			}
-		}
-		if ("made".equals(type)) {
-			for (int i = 0; i < madeTemplate.length; i++) {
-				if (xssfRow.getCell(i) != null) {
-					String fieldName = xssfRow.getCell(i).toString();
-					if (!madeTemplate[i].equals(fieldName)) {
-						flag = false;
-						break;
-					}
-				}
-			}
-		}
-		if ("material".equals(type)) {
-			for (int i = 0; i < materialTemplate.length; i++) {
-				if (xssfRow.getCell(i) != null) {
-					String fieldName = xssfRow.getCell(i).toString();
-					if (!materialTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}
@@ -703,10 +581,8 @@ public class TaskImportService {
 			pengingSpuId = isPendingSpuExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
-			
-			hubPendingSkuCheckGateWay.checkSkuBeforeAudit(hubPendingSpuDto);
-			
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
+			
 			if(hubIsExist&&!allFilter){
 				//2018-4-16需求 检验通过的直接进入待选品，跳过待审核
 				if(SpuState.INFO_IMPECCABLE.getIndex()==hubPendingSpuDto.getSpuState()){

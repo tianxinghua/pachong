@@ -2,6 +2,9 @@ package com.shangpin.asynchronous.task.consumer.productimport.adapter;
 
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingCateGroyImportService;
+import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingColorImportService;
+import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingMaterialImportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,11 +35,18 @@ public class ProductImportHandler {
 	@Autowired
 	PendingSpuImportService PendingSpuImportService;
 	@Autowired
+	PendingColorImportService PendingColorImportService;
+	@Autowired
 	SlotSpuImportService slotSpuImportService;
 	@Autowired 
 	TaskImportService taskService;
 	@Autowired
 	AirshopImportService airshopImportService;
+	@Autowired
+	PendingCateGroyImportService  CateGroyImportService;
+	@Autowired
+	PendingMaterialImportService pendingMaterialImportService;
+
 	/**
 	 * 待处理商品导入数据流监听
 	 * @param message 消息体
@@ -61,6 +71,12 @@ public class ProductImportHandler {
 				resultFile = slotSpuImportService.handMessage(message);
 			}else if("18".equals(message.getType())){
 				resultFile = airshopImportService.handMessage(message);
+			}else if(TaskType.IMPORT_COLOR.getIndex().equals(message.getType())){
+				resultFile = PendingColorImportService.handMessage(message);
+			}else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
+				resultFile = CateGroyImportService.handMessage(message);
+			}else if(TaskType.IMPORT_MATERIAL.getIndex().equals(message.getType())){
+				resultFile = pendingMaterialImportService.handMessage(message);
 			}
 			
 			// 更新结果文件路径到表中
@@ -69,6 +85,7 @@ public class ProductImportHandler {
 		} catch (Exception e) {
 			taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
 			log.error("导入任务编号："+message.getTaskNo()+"处理时发生异常",e);
+			System.out.println(e.getMessage());
 		}
 	}
 

@@ -2,6 +2,9 @@ package com.shangpin.asynchronous.task.consumer.productexport.adapter;
 
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto.*;
+import com.shangpin.asynchronous.task.consumer.productexport.type.pending.ExportServiceImplDic;
+import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -34,10 +37,14 @@ public class ProductExportHandler {
 	@Autowired
 	private ExportServiceImpl exportServiceImpl;
 	@Autowired
+	private ExportServiceImplDic exportServiceImplDic;
+	@Autowired
 	TaskImportService taskService;
 	@Autowired
 	AllProductServiceImpl allProductServiceImpl;
-	
+	@Autowired
+	HubColorDicItemGateWay hubColorDicItemGateWay;
+
 	@Autowired
 	@Qualifier("waitShootExporter")
 	private IExportService waitShootExporter;
@@ -82,7 +89,31 @@ public class ProductExportHandler {
 					waitShootExporter.productExportTask(message, headers); 
 				}else if(message.getType() == TaskType.EXPORT_COMMITED.getIndex()){
 					commitedExporter.productExportTask(message, headers); 
+				}else if(message.getType() == TaskType.EXPORT_COMMITED.getIndex()){
+					commitedExporter.productExportTask(message, headers);
+
+				}else if(message.getType() == TaskType.EXPORT_COLOR.getIndex()){
+					HubColorDic hubColorDto = JsonUtil.deserialize(message.getData(), HubColorDic.class);
+					exportServiceImplDic.exportColor(message.getTaskNo(), hubColorDto);
 				}
+				else if(message.getType() == TaskType.EXPORT_CATEGORY.getIndex()){
+					SupplierCategroyDicCriteriaDto categroyDicCriteriaDto = JsonUtil.deserialize(message.getData(), SupplierCategroyDicCriteriaDto.class);
+					exportServiceImplDic.exportCategroy(message.getTaskNo(),categroyDicCriteriaDto);
+				}
+				else if(message.getType() == TaskType.EXPORT_ORIGIN.getIndex()){
+					HubSupplierMadeMappingDto hubSupplierMadeMappingDto= JsonUtil.deserialize(message.getData(), HubSupplierMadeMappingDto.class);
+					exportServiceImplDic.exportMade(message.getTaskNo(),hubSupplierMadeMappingDto);
+				}
+				else if(message.getType() == TaskType.EXPORT_MATERIAL.getIndex()){
+					MaterialRequestDto materialRequestDto= JsonUtil.deserialize(message.getData(), MaterialRequestDto.class);
+					exportServiceImplDic.exportMaterial(message.getTaskNo(),materialRequestDto);
+				}
+				else if(message.getType() == TaskType.EXPORT_BRAND.getIndex()){
+					BrandRequestDTO brandRequestDTO= JsonUtil.deserialize(message.getData(), BrandRequestDTO.class);
+					exportServiceImplDic.exportBrand(message.getTaskNo(),brandRequestDTO);
+				}
+
+
 			}else{
 				log.error("待处理页导出请传入参数！！！"); 
 			}

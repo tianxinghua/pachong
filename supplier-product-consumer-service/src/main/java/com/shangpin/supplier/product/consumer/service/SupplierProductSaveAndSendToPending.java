@@ -86,7 +86,7 @@ public class SupplierProductSaveAndSendToPending {
 			log.error("发送邮件失败："+e.getMessage(),e); 
 		}
 	}
-	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
+	public void  saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
 		//映射表里维护supplierId、supplierNo、supplierName
 		HubSupplierValueMappingDto list = supplierProductRetryManager.findHubSupplierValueMapping(supplierId);
@@ -275,11 +275,11 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @return
 	 */
-	private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
+private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
 		PendingProduct pendingProduct = new PendingProduct();
-		pendingProduct.setSupplierNo(supplierNo); 
+		pendingProduct.setSupplierNo(supplierNo);
 		pendingProduct.setSupplierId(supplierId);
 		pendingProduct.setSupplierName(supplierName);
 		return pendingProduct;
-	}
-}
+		}
+		}
