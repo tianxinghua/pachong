@@ -317,8 +317,7 @@ public class ExportServiceImplDic {
 	 * @param categroyDicCriteriaDto
 	 */
 	public void exportCategroy(String taskNo,SupplierCategroyDicCriteriaDto categroyDicCriteriaDto) throws Exception {
-		         HSSFWorkbook wb = new HSSFWorkbook();
-
+		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("品类信息");
 		HSSFRow row = sheet.createRow(0);
 		HSSFCellStyle style = wb.createCellStyle();
@@ -352,7 +351,7 @@ public class ExportServiceImplDic {
 			log.info("导出总页数：" + pageCount);
 			HubSupplierCategroyDicCriteriaDto suppliercategroyDicCriteriaDto=new HubSupplierCategroyDicCriteriaDto();
 			ArrayList<List<HubSupplierCategroyDicDto>> lists = new ArrayList<>();
-			for (int i = 1; i <= pageCount; i++) {
+			for (int i = 1; i<= pageCount; i++) {
 				suppliercategroyDicCriteriaDto.setPageNo(i);
 				suppliercategroyDicCriteriaDto.setPageSize(PAGESIZE);
 				String supplierId = categroyDicCriteriaDto.getSupplierId();
@@ -386,7 +385,7 @@ public class ExportServiceImplDic {
 				}
 			}
 		}
-		saveAndUploadExcel(taskNo,"category_export",wb);
+		saveAndUploadExcel(taskNo,categroyDicCriteriaDto.getCreateName(),wb);
 	}
 
 	/**
@@ -456,7 +455,7 @@ public class ExportServiceImplDic {
 				}
 			}
 		}
-		saveAndUploadExcel(taskNo,hubColorDic.getCreateName(), wb);
+		saveAndUploadExcel(taskNo,hubColorDic.getCreateName(),wb);
 	}
 
 	/**
@@ -797,23 +796,23 @@ public class ExportServiceImplDic {
 		StringBuffer buffer = new StringBuffer();
 		Method fieldSetMet = null;
 		Object value = null;
-		for (int i = 0; i < rowTemplate.length; i++) {
+		for (int i = 0;i<rowTemplate.length;i++) {
          if ("supplierCategoryDicId".equals(rowTemplate[i])){
-			 setcategroyDicItemId(row, categroyDicDto, cls,i);
+			 setcategroyDicItemId(row,categroyDicDto,cls,i);
 		 }else  if ("supplierCategory".equals(rowTemplate[i])){
-			 setsupplierCategoryName(row, categroyDicDto, cls,i);
+			 setsupplierCategoryName(row,categroyDicDto,cls,i);
 		 }
 		 else  if ("supplierGender".equals(rowTemplate[i])){
-			 setsupplierGender(row, categroyDicDto, cls,i);
+			 setsupplierGender(row,categroyDicDto,cls,i);
 		 }
 		 else  if ("mappingState".equals(rowTemplate[i])){
-			 setmappingState(row, categroyDicDto, cls,i);
+			 setmappingState(row,categroyDicDto,cls,i);
 		 }
 		 else  if ("categoryType".equals(rowTemplate[i])){
-			 setcategoryType(row, categroyDicDto, cls,i);
+			 setcategoryType(row,categroyDicDto,cls,i);
 
 		 }else  if ("hubCategoryNo".equals(rowTemplate[i])){
-			 sethubCategoryNo(row, categroyDicDto, cls,i);
+			 sethubCategoryNo(row,categroyDicDto,cls,i);
 		 }else  if ("createTime".equals(rowTemplate[i])){
 			 setcategroycreateTime(row,categroyDicDto, cls,i);
 		 }
@@ -821,10 +820,10 @@ public class ExportServiceImplDic {
 			 setcategroyupdateTime(row,categroyDicDto, cls,i);
 		 }
 		 else  if ("updateUser".equals(rowTemplate[i])){
-			 setcategroyupdateUser(row,categroyDicDto, cls,i);
+			 setcategroyupdateUser(row,categroyDicDto,cls,i);
 		 }
 		 else  if ("supplierId".equals(rowTemplate[i])){
-			 setcategroysupplierId(row,categroyDicDto, cls,i);
+			 setcategroysupplierId(row,categroyDicDto,cls,i);
 		 }
 		 else  if ("supplierName".equals(rowTemplate[i])){
 			 row.createCell(i).setCellValue("");
@@ -866,7 +865,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
-			if (value==null) return;
+			if (value==null)return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();

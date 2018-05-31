@@ -15,7 +15,7 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubPendingCateGroyImportDTO {
 	private String supplierCategoryDicId;
-	private String supplierCategoryName;
+	private String supplierCategory;
 	private String supplierGender;
 	private String categroyType;
 	private String mappingState;

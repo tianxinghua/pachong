@@ -144,7 +144,7 @@ public class PendingCateGroyImportService {
 			HubSupplierCategroyDicDto categroyDicDto1 = hubSupplierCategroyDicGateWay.selectByPrimaryKey(Long.parseLong(productImport.getSupplierCategoryDicId()));
 			HubSupplierCategroyDicWithCriteriaDto hubSupplierCategroyDicWithCriteriaDto=null;
 			hubSupplierCategroyDic.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
-			hubSupplierCategroyDic.setSupplierCategory(productImport.getSupplierCategoryName());
+			hubSupplierCategroyDic.setSupplierCategory(productImport.getSupplierCategory());
 			HubSupplierCategroyDicCriteriaDto criteria=new HubSupplierCategroyDicCriteriaDto();
 			criteria.createCriteria().andSupplierIdEqualTo(productImport.getSupplierId()).andCategoryTypeEqualTo(Byte.parseByte(productImport.getCategroyType()));
 
@@ -178,7 +178,7 @@ public class PendingCateGroyImportService {
 		else {
 			hubSupplierCategroyDic.setMappingState(Byte.parseByte(productImport.getMappingState()));
 			hubSupplierCategroyDic.setCategoryType(Byte.parseByte(productImport.getCategroyType()));
-			hubSupplierCategroyDic.setSupplierCategory(productImport.getSupplierCategoryName());
+			hubSupplierCategroyDic.setSupplierCategory(productImport.getSupplierCategory());
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			hubSupplierCategroyDic.setCreateTime(format.parse(productImport.getCreateTime()));
 			hubSupplierCategroyDic.setHubCategoryNo(productImport.getHubCategoryNo());
