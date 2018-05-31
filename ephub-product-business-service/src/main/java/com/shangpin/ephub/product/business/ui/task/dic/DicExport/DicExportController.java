@@ -154,12 +154,7 @@ public class DicExportController {
 		try {
 			String remotePath = "pending_export";
 			//第一步创建任务
-			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql("category_export",remotePath,TaskType.EXPORT_CATEGORY);
-			//第二步发送队列
-			/*String categoryType = SupplierCategroyDicCriteriaDto.getSupplierCategoryType();
-			byte parseByte = Byte.parseByte(categoryType);
-			int categorytotal = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(SupplierCategroyDicCriteriaDto.getSupplierId(),parseByte,SupplierCategroyDicCriteriaDto.getCreateName(),SupplierCategroyDicCriteriaDto.getSupplierGender());
-			SupplierCategroyDicCriteriaDto.setPageSize(categorytotal);*/
+			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(SupplierCategroyDicCriteriaDto.getCreateName(),remotePath,TaskType.EXPORT_CATEGORY);
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_CATEGORY, SupplierCategroyDicCriteriaDto);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
