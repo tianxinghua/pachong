@@ -1,3 +1,4 @@
+/*
 package com.shangpin.ephub.fdfs.client.service;
 
 import com.shangpin.ephub.fdfs.client.service.upload.manager.FastDFSClientManager;
@@ -32,3 +33,4 @@ public class EphubFdfsClientServiceApplicationTests {
 
 	}
 }
+*/
