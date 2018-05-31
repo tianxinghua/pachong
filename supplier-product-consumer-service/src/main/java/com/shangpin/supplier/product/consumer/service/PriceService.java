@@ -14,11 +14,12 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 
+import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSenderGateWay;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.util.JsonUtil;
 
-import com.shangpin.supplier.product.consumer.conf.mail.message.ShangpinMail;
-import com.shangpin.supplier.product.consumer.conf.mail.sender.ShangpinMailSender;
+import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,13 @@ public class PriceService {
 	private SupplierProductMysqlService supplierProductService;
 	@Autowired
 	private PriceMqGateWay priceMqGateWay;
-	@Autowired
-	private ShangpinMailSender shangpinMailSender;
 
-	
+	@Autowired
+	ShangpinMailSenderGateWay shangpinMailSenderGateWay;
+
+
+	@Autowired
+	ShangpinMailProperties shangpinMailProperties;
 	/**
 	 * 保存价格并推送消息
 	 * @param priceVO
@@ -324,14 +328,17 @@ public class PriceService {
 	 * @param subject
 	 * @param text
 	 */
+
+
+
 	public void sendMail(String subject,String text){
 		try {
-			ShangpinMail shangpinMail = new ShangpinMail();
+			com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail shangpinMail = new com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail();
 			shangpinMail.setFrom("chengxu@shangpin.com");
 			shangpinMail.setSubject(subject);
 			shangpinMail.setText(text);
-			shangpinMail.setTo("ephub_support.list@shangpin.com");
-			shangpinMailSender.sendShangpinMail(shangpinMail);
+			shangpinMail.setTo(shangpinMailProperties.getMailSendTo());
+			shangpinMailSenderGateWay.send(shangpinMail);
 		} catch (Exception e) {
 			log.error("发送邮件失败："+e.getMessage(),e);
 		}
