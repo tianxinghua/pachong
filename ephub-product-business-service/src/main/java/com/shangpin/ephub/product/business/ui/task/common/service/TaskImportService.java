@@ -54,7 +54,7 @@ public class TaskImportService {
     TaskStreamSender productImportTaskStreamSender;
     public HubResponse uploadFileAndSave(HubImportTaskRequestDto task,TaskType importType) throws Exception{
 
-    	String name  = new String(task.getFileName().getBytes("UTF-8"));
+        String name  = new String(task.getFileName().getBytes("UTF-8"));
         String []fileName = name.split("\\.");
         if(fileName!=null&&fileName.length==2){
             if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
@@ -84,8 +84,8 @@ public class TaskImportService {
         productImportTask.setData("{\"taskFtpFilePath\":\""+ftpFilePath+"\",\"createUser\":\""+createUser+"\"}");
         log.info("推送任务的参数：{}",productImportTask);
         if(TaskType.HUB_PRODUCT.getIndex()==importType.getIndex()){
-        	productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
-        	return;
+            productImportTaskStreamSender.hubProductImportTaskStream(productImportTask, null);
+            return;
         }
         productImportTaskStreamSender.pendingProductImportTaskStream(productImportTask, null);
     }
@@ -102,7 +102,7 @@ public class TaskImportService {
         spuImportGateway.insert(hubSpuTask);
         return true;
     }
-    
+
     public boolean saveTask(String taskNo,String memo,String createUser,int importType) throws Exception{
         HubSpuImportTaskDto hubSpuTask = new HubSpuImportTaskDto();
         hubSpuTask.setTaskNo(taskNo);
@@ -141,11 +141,11 @@ public class TaskImportService {
             criteria.andLocalFileNameEqualTo(param.getLocalFileName());
         }
         if(!StringUtils.isEmpty(param.getStartDate())){
-			criteria.andCreateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(param.getStartDate()+" 00:00:00", dateFormat));
-		}
-		if(!StringUtils.isEmpty(param.getEndDate())){
-			criteria.andCreateTimeLessThan(DateTimeUtil.convertFormat(param.getEndDate()+" 00:00:00",dateFormat));
-		}
+            criteria.andCreateTimeGreaterThanOrEqualTo(DateTimeUtil.convertFormat(param.getStartDate()+" 00:00:00", dateFormat));
+        }
+        if(!StringUtils.isEmpty(param.getEndDate())){
+            criteria.andCreateTimeLessThan(DateTimeUtil.convertFormat(param.getEndDate()+" 00:00:00",dateFormat));
+        }
         int total = spuImportGateway.countByCriteria(hubSpuImportTaskCriteriaDto);
         log.info("hub任务列表查询到数量："+total);
         if(total<1){
@@ -170,7 +170,7 @@ public class TaskImportService {
                 BeanUtils.copyProperties(dto,response);
                 response.setCreateTime(DateTimeUtil.getTime(dto.getCreateTime()));
                 if(dto.getUpdateTime()!=null){
-                	response.setUpdateTime(DateTimeUtil.getTime(dto.getUpdateTime()));                	
+                    response.setUpdateTime(DateTimeUtil.getTime(dto.getUpdateTime()));
                 }
                 responseList.add(response);
             }

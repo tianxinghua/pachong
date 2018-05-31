@@ -1,14 +1,5 @@
 package com.shangpin.ephub.product.business.ui.task.pending.imports.controller;
 
-import java.util.Date;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.client.util.DateTimeUtil;
@@ -18,8 +9,15 @@ import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskLi
 import com.shangpin.ephub.product.business.ui.task.spuimport.dto.HubImportTaskRequestDto;
 import com.shangpin.ephub.product.business.ui.task.spuimport.vo.HubTaskProductResponseWithPageDTO;
 import com.shangpin.ephub.response.HubResponse;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
+import java.util.UUID;
 
 
 /**
@@ -35,16 +33,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PendingSpuImportTaskController {
 	@Autowired
-	TaskStreamSender productImportTaskStreamSender;
+    TaskStreamSender productImportTaskStreamSender;
 	@Autowired
-	TaskImportService pendingImportTaskService;
+    TaskImportService pendingImportTaskService;
 	
 	@RequestMapping(value = "/import-spu",method = RequestMethod.POST)
     public HubResponse importSpu(@RequestBody HubImportTaskRequestDto dto){
 	        	
 		try {
 			log.info("pendingSpu上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.PENDING_SPU);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.PENDING_SPU);
 		} catch (Exception e) {
 			log.error("pendingSpu上传文件失败",e);
 			e.printStackTrace();
@@ -57,7 +55,7 @@ public class PendingSpuImportTaskController {
 	        	
 		try {
 			log.info("pendingSku上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.PENDING_SKU);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.PENDING_SKU);
 		} catch (Exception e) {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
@@ -91,7 +89,7 @@ public class PendingSpuImportTaskController {
 	public HubResponse<?> importSlotSpu(@RequestBody HubImportTaskRequestDto dto){
 		try {
 			log.info("带拍照上传参数：{}",dto);
-			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.IMPORT_SLOT_SPU);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.IMPORT_SLOT_SPU);
 		} catch (Exception e) {
 			log.error("带拍照上传文件失败",e);
 			e.printStackTrace();

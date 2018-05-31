@@ -8,7 +8,16 @@ public class BrandRequestDTO {
     protected Integer pageSize = 10;
     protected String  supplierId;
     protected String  supplierBrand;
-    protected String hubBrandNo;
+    protected String hubBrand;
+    protected String createUser;
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
 
     public Integer getPageNo() {
         return pageNo;
@@ -50,12 +59,12 @@ public class BrandRequestDTO {
         this.supplierBrand = supplierBrand;
     }
 
-    public String getHubBrandNo() {
-        return hubBrandNo;
+    public String getHubBrand() {
+        return hubBrand;
     }
 
-    public void setHubBrandNo(String hubBrandNo) {
-        this.hubBrandNo = hubBrandNo;
+    public void setHubBrand(String hubBrand) {
+        this.hubBrand = hubBrand;
     }
 
     @Override
@@ -66,7 +75,8 @@ public class BrandRequestDTO {
                 ", pageSize=" + pageSize +
                 ", supplierId='" + supplierId + '\'' +
                 ", supplierBrand='" + supplierBrand + '\'' +
-                ", hubBrandNo='" + hubBrandNo + '\'' +
+                ", hubBrand='" + hubBrand + '\'' +
+                ", createUser='" + createUser + '\'' +
                 '}';
     }
 }
