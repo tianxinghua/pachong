@@ -75,7 +75,7 @@ public class ProductImportHandler {
 				resultFile = PendingColorImportService.handMessage(message);
 			}else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
 				resultFile = CateGroyImportService.handMessage(message);
-			}else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
+			}else if(TaskType.IMPORT_MATERIAL.getIndex().equals(message.getType())){
 				resultFile = pendingMaterialImportService.handMessage(message);
 			}
 			
@@ -85,6 +85,7 @@ public class ProductImportHandler {
 		} catch (Exception e) {
 			taskService.updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(), message.getTaskNo(), "处理任务时发生异常："+e.getMessage(),null);
 			log.error("导入任务编号："+message.getTaskNo()+"处理时发生异常",e);
+			System.out.println(e.getMessage());
 		}
 	}
 

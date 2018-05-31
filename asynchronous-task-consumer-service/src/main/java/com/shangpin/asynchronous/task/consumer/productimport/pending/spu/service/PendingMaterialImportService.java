@@ -8,6 +8,9 @@ import com.shangpin.asynchronous.task.consumer.productimport.common.service.Task
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubMaterialImportDto;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubMaterialMappingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubMaterialMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
@@ -79,6 +82,12 @@ public class PendingMaterialImportService {
 		pendingMaterialValueTemplate = TaskImportTemplate2.getMaterialValueTemplate();
 	}
 
+	/**
+	 *  材质的导入
+	 * @param task
+	 * @return
+	 * @throws Exception
+	 */
 	public String handMessage(Task task) throws Exception {
 		
 		//从ftp下载文件
@@ -120,15 +129,57 @@ public class PendingMaterialImportService {
 				continue;
 			}
 			map = new HashMap<String, String>();
-			map.put("taskNo", taskNo);
-			filterMaterial(productImport,createUser,map);
-			listMap.add(map);
+			//map.put("taskNo", taskNo);
+			Map<String, String> map1 = filterMaterial(productImport, createUser, map);
+			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcel(listMap, taskNo);
+		return taskService.convertExcelMarterial(listMap, taskNo);
 	}
-	private void filterMaterial(HubMaterialImportDto productImport,String createUser,Map<String, String> map) {
+	private Map<String, String>  filterMaterial(HubMaterialImportDto productImport,String createUser,Map<String, String> map) {
 
+         if (productImport.getMaterialMappingId()!=null){
+			HubMaterialMappingDto hubMaterialMapping=new HubMaterialMappingDto();
+			 hubMaterialMapping.setMaterialMappingId(Long.parseLong(productImport.getMaterialMappingId()));
+			 map.put("materialMappingId",productImport.getMaterialMappingId());
+			 hubMaterialMapping.setUpdateTime(new Date());
+			 if (productImport.getSupplierMaterial()!=null){
+				 hubMaterialMapping.setSupplierMaterial(productImport.getSupplierMaterial());
+				 map.put("supplierMaterial",productImport.getSupplierMaterial());
+			 }if (productImport.getHubMaterial()!=null){
+				 hubMaterialMapping.setHubMaterial(productImport.getHubMaterial());
+				 map.put("hubMaterial",productImport.getHubMaterial());
+			 }/*if (productImport.getMappingLevel()!=null){
+				 hubMaterialMapping.setMappingLevel(Byte.parseByte(productImport.getMappingLevel()));
+			 }*/
+
+			 int i= hubMaterialMappingGateWay.updateByPrimaryKeySelective(hubMaterialMapping);
+			 System.out.println("状态值i="+i);
+			 if (i==1){
+			 	map.put("task","校验成功");
+			 }else {
+				 map.put("task","校验失败");
+			 }
+			 return map;
+
+		 }else {
+			 HubMaterialMappingDto hubMaterialMappingDto = new HubMaterialMappingDto();
+			 if (productImport.getSupplierMaterial()!=null){
+				 hubMaterialMappingDto.setSupplierMaterial(productImport.getSupplierMaterial());
+				 map.put("supplierMaterial",productImport.getSupplierMaterial());
+			 }
+			 if (productImport.getHubMaterial()!=null){
+				 hubMaterialMappingDto.setHubMaterial(productImport.getHubMaterial());
+				 map.put("hubMaterial",productImport.getHubMaterial());
+			 }
+			 hubMaterialMappingDto.setCreateTime(new Date());
+			 /*if (productImport.getMappingLevel()!=null && productImport.getMappingLevel()!=""){
+				 hubMaterialMappingDto.setMappingLevel(Byte.parseByte(productImport.getMappingLevel()));
+			 }*/
+			 Long aLong = hubMaterialMappingGateWay.insert(hubMaterialMappingDto);
+			 System.out.println("long值======"+aLong);
+			 return map;
+		 }
 
 	}
 	
@@ -364,13 +415,15 @@ public class PendingMaterialImportService {
 			try {
 				item = new HubMaterialImportDto();
 				Class c = item.getClass();
-				for (int i = 0; i < pendingMaterialValueTemplate.length; i++) {
+				for (int i = 0; i <pendingMaterialValueTemplate.length; i++) {
 					if (xssfRow.getCell(i) != null) {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
-						String setMethodName = "set" + pendingSpuValueTemplate[i].toUpperCase().charAt(0)
+						String setMethodName = "set" + pendingMaterialValueTemplate[i].toUpperCase().charAt(0)
 								+ pendingMaterialValueTemplate[i].substring(1);
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
-						setMethod.invoke(item, xssfRow.getCell(i).toString());
+						if (xssfRow.getCell(i).toString()!=null){
+							setMethod.invoke(item, xssfRow.getCell(i).toString());
+						}
 					}
 				}
 			} catch (Exception ex) {

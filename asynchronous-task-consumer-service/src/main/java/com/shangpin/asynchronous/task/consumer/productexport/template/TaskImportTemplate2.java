@@ -14,7 +14,7 @@ public class TaskImportTemplate2 {
         return headers;
     }
     public static String[] getCategoryValueTemplate() {
-        String[] headers = { "supplierCategoryDicId","supplierCategoryName","supplierGender","categroyType","mappingState","hubCategoryNo","createTime","updateTime","updateUser","supplierId","supplierName","genderDicId"};
+        String[] headers = { "supplierCategoryDicId","supplierCategory","supplierGender","categoryType","mappingState","hubCategoryNo","createTime","updateTime","updateUser","supplierId","supplierName","genderDicId"};
         return headers;
     }
     public static String[] getMaterialTemplate() {

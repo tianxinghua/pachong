@@ -11,7 +11,7 @@ public class SupplierCategroyDicCriteriaDto {
     protected String fields;
     protected String CreateName;
     protected String supplierId;
-    protected String hubCategoryNo;
+    protected String supplierCategory;
     protected String supplierGender;
     protected String supplierCategoryType;
     public String getSupplierCategoryType() {
@@ -36,12 +36,12 @@ public class SupplierCategroyDicCriteriaDto {
         this.supplierId = supplierId;
     }
 
-    public String getHubCategoryNo() {
-        return hubCategoryNo;
+    public String getSupplierCategory() {
+        return supplierCategory;
     }
 
-    public void setHubCategoryNo(String hubCategoryNo) {
-        this.hubCategoryNo = hubCategoryNo;
+    public void setSupplierCategory(String supplierCategory) {
+        this.supplierCategory = supplierCategory;
     }
 
     public String getSupplierGender() {

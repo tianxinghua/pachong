@@ -50,5 +50,4 @@ public class ProductImportTaskStreamListener {
 		hubProductImportHandler.hubProductImportStreamListen(message,headers);
     }
 	
-
 }

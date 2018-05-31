@@ -15,8 +15,8 @@ public class HubMaterialImportDto {
     private String hubMaterial;
     private String supplierMaterial;
     private String mappingLevel;
-    private Date createTime;
-    private Date updateTime;
+    private String createTime;
+    private String updateTime;
     private String updateUser;
     public String getMaterialMappingId() {
         return materialMappingId;
@@ -50,19 +50,19 @@ public class HubMaterialImportDto {
         this.mappingLevel = mappingLevel;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 

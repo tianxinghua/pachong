@@ -318,13 +318,8 @@ public class ExportServiceImplDic {
 	 */
 	public void exportCategroy(String taskNo,SupplierCategroyDicCriteriaDto categroyDicCriteriaDto) throws Exception {
 		         HSSFWorkbook wb = new HSSFWorkbook();
-		HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto = null;
-		List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(hubSupplierValueMappingCriteriaDto);
-		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = null;
-		/**
-		 * 第一个sheet：产品信息
-		 */
-		HSSFSheet sheet = wb.createSheet("产品信息");
+
+		HSSFSheet sheet = wb.createSheet("品类信息");
 		HSSFRow row = sheet.createRow(0);
 		HSSFCellStyle style = wb.createCellStyle();
 		String[] categoryTemplate = TaskImportTemplate2.getCategoryTemplate();
@@ -334,11 +329,28 @@ public class ExportServiceImplDic {
 			cell.setCellStyle(style);
 		}
 		String[] categoryValueTemplate = TaskImportTemplate2.getCategoryValueTemplate();
-		Integer totalSize= categroyDicCriteriaDto.getPageSize();//总条数
+
+		HubSupplierCategroyDicCriteriaDto hubSupplierCategroyDicCriteriaDto1 = new HubSupplierCategroyDicCriteriaDto();
+		hubSupplierCategroyDicCriteriaDto1.setPageNo(categroyDicCriteriaDto.getPageNo());
+		hubSupplierCategroyDicCriteriaDto1.setPageSize(categroyDicCriteriaDto.getPageSize());
+		if (categroyDicCriteriaDto.getSupplierCategoryType()!=null){
+			hubSupplierCategroyDicCriteriaDto1.createCriteria().andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+		}
+		if (categroyDicCriteriaDto.getSupplierId()!=null){
+			hubSupplierCategroyDicCriteriaDto1.createCriteria().andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
+		}
+		if (categroyDicCriteriaDto.getSupplierGender()!=null){
+			hubSupplierCategroyDicCriteriaDto1.createCriteria().andSupplierGenderEqualTo(categroyDicCriteriaDto.getSupplierGender());
+		}
+		if (categroyDicCriteriaDto.getSupplierCategory()!=null){
+			hubSupplierCategroyDicCriteriaDto1.createCriteria().andSupplierCategoryEqualTo(categroyDicCriteriaDto.getSupplierCategory());
+		}
+		//总条数
+		int totalSize = hubSupplierCategroyDicGateWay.countByCriteria(hubSupplierCategroyDicCriteriaDto1);
 		if (totalSize > 0) {
 			int pageCount = getPageCount(totalSize, PAGESIZE);// 总页数
 			log.info("导出总页数：" + pageCount);
-			HubSupplierCategroyDicCriteriaDto suppliercategroyDicCriteriaDto=null;
+			HubSupplierCategroyDicCriteriaDto suppliercategroyDicCriteriaDto=new HubSupplierCategroyDicCriteriaDto();
 			ArrayList<List<HubSupplierCategroyDicDto>> lists = new ArrayList<>();
 			for (int i = 1; i <= pageCount; i++) {
 				suppliercategroyDicCriteriaDto.setPageNo(i);
@@ -346,6 +358,15 @@ public class ExportServiceImplDic {
 				String supplierId = categroyDicCriteriaDto.getSupplierId();
 				if (supplierId!=null){
 					suppliercategroyDicCriteriaDto.createCriteria().andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
+				}
+				if (categroyDicCriteriaDto.getSupplierCategory()!=null){
+					suppliercategroyDicCriteriaDto.createCriteria().andSupplierCategoryEqualTo(categroyDicCriteriaDto.getSupplierCategory());
+				}
+				if (categroyDicCriteriaDto.getSupplierCategoryType()!=null){
+					suppliercategroyDicCriteriaDto.createCriteria().andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+				}
+				if (categroyDicCriteriaDto.getSupplierGender()!=null){
+					suppliercategroyDicCriteriaDto.createCriteria().andSupplierGenderEqualTo(categroyDicCriteriaDto.getSupplierGender());
 				}
 				List<HubSupplierCategroyDicDto>	 hubSupplierCategroyDicDtos = hubSupplierCategroyDicGateWay.selectByCriteria(suppliercategroyDicCriteriaDto);
 				lists.add(hubSupplierCategroyDicDtos);
@@ -356,16 +377,16 @@ public class ExportServiceImplDic {
 					try {
 						j++;
 						row = sheet.createRow(j);
-						insertProductCategoryOfRow(row, hubSupplierCategroyDicDto, categoryValueTemplate);
+						insertProductCategoryOfRow(row,hubSupplierCategroyDicDto,categoryValueTemplate);
 					} catch (Exception e) {
-						log.error("insertProductCategoryOfRow异常：" + e.getMessage(), e);
+						log.error("insertProductCategoryOfRow异常：" + e.getMessage(),e);
 						j--;
 						throw e;
 					}
 				}
 			}
 		}
-		saveAndUploadExcel(taskNo,"categroy-load", wb);
+		saveAndUploadExcel(taskNo,"category_export",wb);
 	}
 
 	/**
@@ -779,7 +800,7 @@ public class ExportServiceImplDic {
 		for (int i = 0; i < rowTemplate.length; i++) {
          if ("supplierCategoryDicId".equals(rowTemplate[i])){
 			 setcategroyDicItemId(row, categroyDicDto, cls,i);
-		 }else  if ("supplierCategoryName".equals(rowTemplate[i])){
+		 }else  if ("supplierCategory".equals(rowTemplate[i])){
 			 setsupplierCategoryName(row, categroyDicDto, cls,i);
 		 }
 		 else  if ("supplierGender".equals(rowTemplate[i])){
@@ -826,6 +847,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -844,6 +866,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -862,6 +885,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -879,6 +903,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -896,6 +921,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -910,6 +936,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -927,6 +954,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -941,6 +969,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -955,6 +984,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -969,6 +999,7 @@ public class ExportServiceImplDic {
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
+			if (value==null) return;
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
@@ -985,6 +1016,7 @@ public class ExportServiceImplDic {
 		String fileName = "getSupplierCategoryDicId";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(categroyDicDto);
+		if (value==null) return;
 		row.createCell(i).setCellValue(value.toString());
 	}
 
