@@ -38,7 +38,7 @@ public class TaskImportTemplate2 {
         return headers;
     }
     public static String[] getBrandValueTemplate() {
-        String[] headers = {"supplierBrandDicId","supplierId","supplierBrand","hubBrand","createTime","updateTime","updateUser"};
+        String[] headers = {"supplierBrandDicId","supplierId","supplierBrand","hubBrandNo","createTime","updateTime","updateUser"};
         return headers;
     }
 

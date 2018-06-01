@@ -128,6 +128,10 @@ public class TaskImportService {
 	static {
 		materialTemplate = TaskImportTemplate2.getMaterialTemplate();
 	}
+	private static String[] brandTemplate  = null;
+	static {
+		brandTemplate = TaskImportTemplate2.getBrandTemplate();
+	}
 
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
 			 Map<String, String> map,boolean isMultiSizeType) throws Exception{
@@ -247,6 +251,30 @@ public class TaskImportService {
 		}
 		// 更新结果文件路径到表中
 		
+		return path + resultFileName + ".xls";
+	}
+	public String convertExcelBrand(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+
+		String[] headers = { "任务编号", "供应商品牌", "尚品品牌", "任务说明" };
+		String[] columns = { "taskNo", "supplierBrand", "hubBrandNo", "task"};
+		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
 		return path + resultFileName + ".xls";
 	}
 	public String convertExcelCategory(List<Map<String, String>> result, String taskNo) throws Exception {
@@ -469,7 +497,7 @@ public class TaskImportService {
 			}
 		}
 		if ("made".equals(type)) {
-			for (int i = 0; i < madeTemplate.length; i++) {
+			for (int i = 0; i <madeTemplate.length; i++) {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!madeTemplate[i].equals(fieldName)) {
@@ -484,6 +512,17 @@ public class TaskImportService {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!materialTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("brand".equals(type)) {
+			for (int i = 0; i<brandTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!brandTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}

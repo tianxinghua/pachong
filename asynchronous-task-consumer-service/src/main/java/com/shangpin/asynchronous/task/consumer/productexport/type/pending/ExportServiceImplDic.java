@@ -12,6 +12,10 @@ import com.shangpin.asynchronous.task.consumer.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.util.HubWaitSelectStateDto;
 import com.shangpin.asynchronous.task.consumer.util.ImageUtils;
 import com.shangpin.asynchronous.task.consumer.util.excel.ExcelDropdown;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicCriteriaWithRowBoundsDto;
+import com.shangpin.ephub.client.data.mysql.brand.dto.HubSupplierBrandDicDto;
+import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGateWay;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
@@ -142,6 +146,8 @@ public class ExportServiceImplDic {
 	HubMaterialMappingGateWay hubMaterialMappingGateWay;
 	@Autowired
 	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
+	@Autowired
+	HubSupplierBrandDicGateWay hubSupplierBrandDicGateWay;
 
 	private static final Integer PAGESIZE = 50;
 
@@ -171,7 +177,7 @@ public class ExportServiceImplDic {
 	/**
 	 * 字典品牌的导出
 	 */
-	public void exportBrand (String taskNo,BrandRequestDTO brandRequestDTO){
+	public void exportBrand (String taskNo,BrandRequestDTO brandRequestDTO) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("品牌信息");
 		HSSFRow row = sheet.createRow(0);
@@ -182,10 +188,133 @@ public class ExportServiceImplDic {
 			cell.setCellValue(brandTemplate[i]);
 		}
 		String[] brandValueTemplate = TaskImportTemplate2.getBrandValueTemplate();
+		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
+		hubSupplierBrandDicCriteriaDto.setPageSize(brandRequestDTO.getPageSize());
+		hubSupplierBrandDicCriteriaDto.setPageNo(brandRequestDTO.getPageNo());
+		if (brandRequestDTO.getSupplierBrand()!=null){
+			hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
+		}
+		if (brandRequestDTO.getHubBrand()!=null){
+			hubSupplierBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
 
+		}
+		if (brandRequestDTO.getSupplierId()!=null){
+			hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
+		}
+		//求取总条数
+		int totalSize = hubSupplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
+		if (totalSize>0){
+			int pageCount = getPageCount(totalSize, PAGESIZE);// 总页数
+			log.info("导出总页数：" + pageCount);
+			ArrayList<List<HubSupplierBrandDicDto>> lists = new ArrayList<>();
+			for(int i=1;i<=pageCount;i++){
+				HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto1 = new HubSupplierBrandDicCriteriaDto();
+				hubSupplierBrandDicCriteriaDto1.setPageNo(i);
+				hubSupplierBrandDicCriteriaDto1.setPageSize(50);
+				if (brandRequestDTO.getSupplierBrand()!=null){
+					hubSupplierBrandDicCriteriaDto1.createCriteria().andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
+				};
+				if (brandRequestDTO.getSupplierId()!=null){
+					hubSupplierBrandDicCriteriaDto1.createCriteria().andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
+				}
+				if (brandRequestDTO.getHubBrand()!=null){
+					hubSupplierBrandDicCriteriaDto1.createCriteria().andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
+				}
 
-
+				List<HubSupplierBrandDicDto> hubSupplierBrandDicDtos = hubSupplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto1);
+				lists.add(hubSupplierBrandDicDtos);
+			}
+			int j=0;
+			for(List<HubSupplierBrandDicDto> list:lists){
+				for(HubSupplierBrandDicDto brandDto:list){
+					j++;
+					HSSFRow row1 = sheet.createRow(j);
+					insertProductBrandOfRow(row1,brandDto,brandValueTemplate);
+				}
+			}
+		}
+		try {
+			saveAndUploadExcel(taskNo,brandRequestDTO.getCreateUser(),wb);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	//品牌行的插入
+
+	private void insertProductBrandOfRow(HSSFRow row,HubSupplierBrandDicDto brandDto, String[] rowTemplate) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+		Class<? extends HubSupplierBrandDicDto> aClass = brandDto.getClass();
+		Method fieldSetMet = null;
+		Object value = null;
+		for(int i=0;i<rowTemplate.length;i++){
+			if ("supplierBrandDicId".equals(rowTemplate[i])){
+				setBrandDicIdOfRow(row,brandDto,aClass,i);
+			}else if ("supplierBrand".equals(rowTemplate[i])){
+				setsupplierBrand(row,brandDto,aClass,i);
+			}else if ("hubBrandNo".equals(rowTemplate[i])){
+				sethubBrandNo(row,brandDto,aClass,i);
+			}else if ("supplierId".equals(rowTemplate[i])){
+				setsupplierId(row,brandDto,aClass,i);
+			}else if ("createTime".equals(rowTemplate[i])){
+				setBrandcreateTime(row,brandDto,aClass,i);
+			}else if ("updateTime".equals(rowTemplate[i])){
+				setBrandupdateTime(row,brandDto,aClass,i);
+			}else {
+				if ("updateUser".equals(rowTemplate[i])){
+					setBrandupdateUser(row,brandDto,aClass,i);
+				}
+			}
+		}
+	}
+	private void setBrandDicIdOfRow(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getSupplierBrandDicId";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+	private void setsupplierId(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getSupplierId";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+	private void sethubBrandNo(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getHubBrandNo";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+	private void setsupplierBrand(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getSupplierBrand";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+	private void setBrandcreateTime(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getCreateTime";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+	private void setBrandupdateTime(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getUpdateTime";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+	private void setBrandupdateUser(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getUpdateUser";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Object value = fieldSetMet.invoke(brandDto);
+		if (value==null)return;
+		row.createCell(i).setCellValue(value.toString());
+	}
+
 
 	/**
 	 *
@@ -221,10 +350,9 @@ public class ExportServiceImplDic {
 		if (materialRequestDto.getHubMaterial()!=null){
 			hubMaterialMappingCriteriaDto1.createCriteria().andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
 		}
-
+          //总条数的方法
 		int totalSize = hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto1);
 
-		//Integer totalSize = materialRequestDto.getPageSize();
 		if (totalSize>0){
 			int pageCount = getPageCount(totalSize, PAGESIZE);// 总页数
 			log.info("导出总页数：" + pageCount);

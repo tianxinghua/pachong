@@ -2,16 +2,13 @@ package com.shangpin.asynchronous.task.consumer.productimport.adapter;
 
 import java.util.Map;
 
-import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingCateGroyImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingColorImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingMaterialImportService;
+import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.asynchronous.task.consumer.productimport.airshop.service.AirshopImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.service.PendingSkuImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.service.PendingSpuImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.slot.service.SlotSpuImportService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskState;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
@@ -46,6 +43,10 @@ public class ProductImportHandler {
 	PendingCateGroyImportService  CateGroyImportService;
 	@Autowired
 	PendingMaterialImportService pendingMaterialImportService;
+	@Autowired
+	PendingMadeImportService pendingMadeImportService;
+	@Autowired
+	PendingBrandImportService pendingBrandImportService;
 
 	/**
 	 * 待处理商品导入数据流监听
@@ -73,7 +74,11 @@ public class ProductImportHandler {
 				resultFile = airshopImportService.handMessage(message);
 			}else if(TaskType.IMPORT_COLOR.getIndex().equals(message.getType())){
 				resultFile = PendingColorImportService.handMessage(message);
-			}else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
+			}else if(TaskType.IMPORT_ORIGIN.getIndex().equals(message.getType())){
+				resultFile = pendingMadeImportService.handMessage(message);
+			}else if(TaskType.IMPORT_BRAND.getIndex().equals(message.getType())){
+				resultFile = pendingBrandImportService.handMessage(message);
+			} else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
 				resultFile = CateGroyImportService.handMessage(message);
 			}else if(TaskType.IMPORT_MATERIAL.getIndex().equals(message.getType())){
 				resultFile = pendingMaterialImportService.handMessage(message);
