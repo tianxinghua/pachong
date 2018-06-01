@@ -15,6 +15,7 @@ import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSende
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.util.JsonUtil;
 
+import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
