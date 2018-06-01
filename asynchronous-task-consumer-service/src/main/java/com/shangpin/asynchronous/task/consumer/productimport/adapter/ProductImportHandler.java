@@ -76,12 +76,12 @@ public class ProductImportHandler {
 				resultFile = PendingColorImportService.handMessage(message);
 			}else if(TaskType.IMPORT_ORIGIN.getIndex().equals(message.getType())){
 				resultFile = pendingMadeImportService.handMessage(message);
-			}else if(TaskType.IMPORT_BRAND.getIndex().equals(message.getType())){
-				resultFile = pendingBrandImportService.handMessage(message);
-			} else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
+			}else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){
 				resultFile = CateGroyImportService.handMessage(message);
 			}else if(TaskType.IMPORT_MATERIAL.getIndex().equals(message.getType())){
 				resultFile = pendingMaterialImportService.handMessage(message);
+			}else if(TaskType.IMPORT_BRAND.getIndex().equals(message.getType())){
+				resultFile =pendingBrandImportService.handMessage(message);
 			}
 			
 			// 更新结果文件路径到表中

@@ -519,7 +519,7 @@ public class TaskImportService {
 			}
 		}
 		if ("brand".equals(type)) {
-			for (int i = 0; i<brandTemplate.length; i++) {
+			for (int i = 0;i<brandTemplate.length; i++) {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!brandTemplate[i].equals(fieldName)) {

@@ -30,7 +30,6 @@ import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSende
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.product.business.price.gateway.PriceGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
