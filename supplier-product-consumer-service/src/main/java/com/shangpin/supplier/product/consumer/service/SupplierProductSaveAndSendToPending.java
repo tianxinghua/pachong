@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,13 +32,12 @@ import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSende
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.product.business.price.gateway.PriceGateWay;
 import com.shangpin.ephub.client.util.JsonUtil;
+import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
-
-import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductSaveAndSendToPending </p>
  * <p>Description: 各个供应商保存数据并且发消息给Pending</p>
