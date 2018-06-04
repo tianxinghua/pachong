@@ -3,6 +3,7 @@ package com.shangpin.ephub.data.mysql.dictionary.brand.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,8 +58,8 @@ public class HubSupplierBrandDicController {
     public List<HubSupplierBrandDic> selectByCriteria(@RequestBody HubSupplierBrandDicCriteria criteria){
     	return hubSupplierBrandDicService.selectByCriteria(criteria);
     }
-	@RequestMapping(value = "/select-by-primary-key")
-    public HubSupplierBrandDic selectByPrimaryKey(Long supplierBrandDicId){
+	@RequestMapping(value = "/select-by-primary-key/{supplierBrandDicId}")
+    public HubSupplierBrandDic selectByPrimaryKey(@PathVariable("supplierBrandDicId" )Long supplierBrandDicId){
     	return hubSupplierBrandDicService.selectByPrimaryKey(supplierBrandDicId);
     }
 	@RequestMapping(value = "/update-by-criteria-selective")

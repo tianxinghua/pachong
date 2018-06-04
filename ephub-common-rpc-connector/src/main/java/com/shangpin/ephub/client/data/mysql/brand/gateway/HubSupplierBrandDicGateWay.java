@@ -3,6 +3,7 @@ package com.shangpin.ephub.client.data.mysql.brand.gateway;
 import java.util.List;
 
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,8 +44,8 @@ public interface HubSupplierBrandDicGateWay {
 	@RequestMapping(value = "/hub-supplier-brand-dic/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSupplierBrandDicDto> selectByCriteria(@RequestBody HubSupplierBrandDicCriteriaDto criteria);
 	
-	@RequestMapping(value = "/hub-supplier-brand-dic/select-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
-    public HubSupplierBrandDicDto selectByPrimaryKey(Long supplierBrandDicId);
+	@RequestMapping(value = "/hub-supplier-brand-dic/select-by-primary-key/{supplierBrandDicId}", method = RequestMethod.POST,consumes = "application/json")
+    public HubSupplierBrandDicDto selectByPrimaryKey(@PathVariable("supplierBrandDicId") Long supplierBrandDicId);
 	
 	@RequestMapping(value = "/hub-supplier-brand-dic/update-by-criteria-selective", method = RequestMethod.POST,consumes = "application/json")
     public int updateByCriteriaSelective(@RequestBody HubSupplierBrandDicWithCriteriaDto hubSupplierBrandDicWithCriteria);

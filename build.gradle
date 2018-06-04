@@ -12,6 +12,6 @@ subprojects {
     }
 
     jar {
-        manifest.attributes provider: 'yanxiaobin'
+        manifest.attributes provider: 'shangpin'
     }
 }
