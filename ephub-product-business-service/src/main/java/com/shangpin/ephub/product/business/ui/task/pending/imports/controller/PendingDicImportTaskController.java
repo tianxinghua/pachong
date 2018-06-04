@@ -71,6 +71,12 @@ public class PendingDicImportTaskController {
 		}
 	}
 
+	/**
+	 * 材质的导入
+	 * @param dto
+	 * @return
+	 */
+
 	@RequestMapping(value = "/import-material",method = RequestMethod.POST)
 	public HubResponse importMaterial(@RequestBody HubImportTaskRequestDto dto){
 
@@ -81,6 +87,12 @@ public class PendingDicImportTaskController {
 			return HubResponse.errorResp("材质上传文件失败，请重新上传");
 		}
 	}
+
+	/**
+	 * 品类的导入
+	 * @param dto
+	 * @return
+	 */
 	@RequestMapping(value = "/import-category",method = RequestMethod.POST)
 	public HubResponse importCateGroy(@RequestBody HubImportTaskRequestDto dto){
 
@@ -90,11 +102,19 @@ public class PendingDicImportTaskController {
 		} catch (Exception e) {
 			return HubResponse.errorResp("品类上传文件失败，请重新上传");
 		}
+
 	}
+	@RequestMapping(value = "/import-brand",method = RequestMethod.POST)
+	public HubResponse importBrand(@RequestBody HubImportTaskRequestDto dto){
 
+		try {
+			log.info("品牌上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSave(dto,TaskType.IMPORT_BRAND);
+		} catch (Exception e) {
+			return HubResponse.errorResp("品牌上传文件失败，请重新上传");
+		}
 
-
-
+	}
 }
 
 
