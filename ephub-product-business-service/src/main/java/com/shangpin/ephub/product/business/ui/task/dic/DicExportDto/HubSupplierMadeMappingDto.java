@@ -7,7 +7,7 @@ public class HubSupplierMadeMappingDto  implements Serializable{
     protected Integer startRow;
     protected Integer pageSize = 10;
     // 3代表表中的产地
-    protected String type = "3";
+    protected Byte type = 3;
     protected String fields;
     protected String supplierVal;
     protected String hubVal;
@@ -21,11 +21,11 @@ public class HubSupplierMadeMappingDto  implements Serializable{
         CreateUser = createUser;
     }
 
-    public String getType() {
+    public Byte getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Byte type) {
         this.type = type;
     }
 
