@@ -1,11 +1,13 @@
 package com.shangpin.ephub.product.business.ui.task.dic.DicExportDto;
 
-public class HubSupplierMadeMappingDto {
+import java.io.Serializable;
+
+public class HubSupplierMadeMappingDto  implements Serializable{
     protected Integer pageNo = 1;
     protected Integer startRow;
     protected Integer pageSize = 10;
     // 3代表表中的产地
-    protected Byte type = 3;
+    protected String type = "3";
     protected String fields;
     protected String supplierVal;
     protected String hubVal;
@@ -19,11 +21,11 @@ public class HubSupplierMadeMappingDto {
         CreateUser = createUser;
     }
 
-    public Byte getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Byte type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -88,10 +90,12 @@ public class HubSupplierMadeMappingDto {
                 "pageNo=" + pageNo +
                 ", startRow=" + startRow +
                 ", pageSize=" + pageSize +
+                ", type='" + type + '\'' +
                 ", fields='" + fields + '\'' +
                 ", supplierVal='" + supplierVal + '\'' +
                 ", hubVal='" + hubVal + '\'' +
                 ", mappingType='" + mappingType + '\'' +
+                ", CreateUser='" + CreateUser + '\'' +
                 '}';
     }
 }
