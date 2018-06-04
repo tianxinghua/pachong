@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
+import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubColorImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingCateGroyImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
@@ -99,12 +100,32 @@ public class PendingCateGroyImportService {
 		if ("xls".equals(fileFormat)) {
 			hubPendingCateGroyImportDTO = handlePendingCateGroyXls(in, task, "categroy");
 		} else if ("xlsx".equals(fileFormat)) {
-			//listHubProductImport = handlePendingCateGroyXlsx(in, task, "spu");
+			hubPendingCateGroyImportDTO = handlePendingCateGroyXlsx(in, task, "categroy");
 		}
 
 		//校验数据并把校验结果写入excel
 		return checkAndsaveHubPendingProduct(task.getTaskNo(), hubPendingCateGroyImportDTO,createUser);
 	}
+	private List<HubPendingCateGroyImportDTO> handlePendingCateGroyXlsx(InputStream in, Task task, String type)
+			throws Exception {
+
+		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, type);
+		if (xssfSheet == null) {
+			return null;
+		}
+		List<HubPendingCateGroyImportDTO> listHubProduct = new ArrayList<>();
+		for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+			XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+			HubPendingCateGroyImportDTO product = convertCategroyXlsxDTO(xssfRow);
+			if (product != null) {
+				listHubProduct.add(product);
+			}
+
+		}
+		return listHubProduct;
+	}
+
+
 
 	//开始校验数据
 	public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingCateGroyImportDTO> hubPendingCateGroyImportDTOS,String createUser)
@@ -122,7 +143,7 @@ public class PendingCateGroyImportService {
 			}
 			//记录单条数据的校验结果
 			Map<String, String> map = new HashMap<String, String>();
-
+			map.put("taskNo", taskNo);
 			Map<String, String> map1 = filterCateGroy(productImport, createUser, map);
 			listMap.add(map1);
 		}
@@ -135,7 +156,7 @@ public class PendingCateGroyImportService {
 
 			HubSupplierCategroyDicDto categroyDicDto = new HubSupplierCategroyDicDto();
 			categroyDicDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
-			map.put("supplierCategoryDicId",productImport.getSupplierCategoryDicId());
+			//map.put("supplierCategoryDicId",productImport.getSupplierCategoryDicId());
 			if (productImport.getSupplierCategory()!=null){
 				categroyDicDto.setSupplierCategory(productImport.getSupplierCategory());
 				map.put("supplierCategory",productImport.getSupplierCategory());
@@ -203,6 +224,7 @@ public class PendingCateGroyImportService {
 			}
 			categroyDicDto.setCreateTime(new Date());
 			hubSupplierCategroyDicGateWay.insert(categroyDicDto);
+			map.put("task","成功");
 			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto = new HubSupplierCategoryDicRequestDto();
 			if (productImport.getSupplierCategory()!=null){
 				hubSupplierCategoryDicRequestDto.setSupplierCategory(productImport.getSupplierCategory());
@@ -338,6 +360,27 @@ public class PendingCateGroyImportService {
 			} catch (Exception ex) {
 				ex.getStackTrace();
 				throw ex; 
+			}
+		}
+		return item;
+	}
+	private static HubPendingCateGroyImportDTO convertCategroyXlsxDTO(XSSFRow xssfRow) {
+		HubPendingCateGroyImportDTO item=null;
+		if (xssfRow != null) {
+			try {
+				item = new HubPendingCateGroyImportDTO();
+				Class c = item.getClass();
+				for (int i = 0; i < pendingCateGroyTemplate.length; i++) {
+					if (xssfRow.getCell(i) != null) {
+						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+						String setMethodName = "set" + pendingCateGroyTemplate[i].toUpperCase().charAt(0)
+								+ pendingCateGroyTemplate[i].substring(1);
+						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
+						setMethod.invoke(item, xssfRow.getCell(i).toString());
+					}
+				}
+			} catch (Exception ex) {
+				ex.getStackTrace();
 			}
 		}
 		return item;

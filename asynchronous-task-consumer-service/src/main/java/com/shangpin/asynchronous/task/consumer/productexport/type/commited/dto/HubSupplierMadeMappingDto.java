@@ -1,6 +1,8 @@
 package com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto;
 
-public class HubSupplierMadeMappingDto {
+import java.io.Serializable;
+
+public class HubSupplierMadeMappingDto implements Serializable{
     protected Integer pageNo = 1;
     protected Integer startRow;
     protected Integer pageSize = 10;

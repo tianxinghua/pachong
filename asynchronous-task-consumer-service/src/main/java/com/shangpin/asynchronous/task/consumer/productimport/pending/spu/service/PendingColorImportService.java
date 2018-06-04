@@ -105,7 +105,7 @@ public class PendingColorImportService {
 		if ("xls".equals(fileFormat)) {
 			listHubProductImport = handlePendingColorXls(in, task, "color");
 		} else if ("xlsx".equals(fileFormat)) {
-			//listHubProductImport = handlePendingColorXlsx(in, task, "color");
+			listHubProductImport = handlePendingColorXlsx(in, task, "color");
 		}
 
 		//校验数据并把校验结果写入excel
@@ -131,7 +131,7 @@ public class PendingColorImportService {
 				continue;
 			}
 			Map<String, String> map = new HashMap<String, String>();
-			//map.put("taskNo", taskNo);
+			map.put("taskNo", taskNo);
 			//对数据的添加，或修改 并 保存数据到数据库
 			Map<String, String> map1 = filterColor(productImport, createUser, map);
 			listMap.add(map1);
@@ -150,7 +150,7 @@ public class PendingColorImportService {
 
 			HubColorDicItemDto hubColorDicItemDto1 = hubColorDicItemGateWay.selectByPrimaryKey(Long.parseLong(productImport.getColorDicItemId()));
 			hubColorDicItemDto.setColorDicItemId(Long.parseLong(productImport.getColorDicItemId()));
-			map.put("colorDicItemId",productImport.getColorDicItemId());
+			//map.put("colorDicItemId",productImport.getColorDicItemId());
 			//  if (productImport.getColorItemName()==null)return null;
 			  if (productImport.getColorItemName()!=null){
 				  hubColorDicItemDto.setColorItemName(productImport.getColorItemName());
