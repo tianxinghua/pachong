@@ -105,7 +105,7 @@ public class PendingColorImportService {
 		if ("xls".equals(fileFormat)) {
 			listHubProductImport = handlePendingColorXls(in, task, "color");
 		} else if ("xlsx".equals(fileFormat)) {
-			listHubProductImport = handlePendingColorXlsx(in, task, "color");
+			//listHubProductImport = handlePendingColorXlsx(in, task, "color");
 		}
 
 		//校验数据并把校验结果写入excel

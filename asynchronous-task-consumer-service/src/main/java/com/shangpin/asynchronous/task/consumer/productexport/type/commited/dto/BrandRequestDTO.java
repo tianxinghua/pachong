@@ -7,6 +7,15 @@ public class BrandRequestDTO {
     protected String  supplierId;
     protected String  supplierBrand;
     protected String hubBrand;
+    protected String createUser;
+
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
 
     public Integer getPageNo() {
         return pageNo;

@@ -4,9 +4,6 @@ import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
 import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
-import com.shangpin.ephub.client.data.mysql.price.unionselect.dto.PriceQueryDto;
-import com.shangpin.ephub.client.data.mysql.price.unionselect.gateway.HubSupplierPriceGateWay;
-import com.shangpin.ephub.client.data.mysql.price.unionselect.result.HubSupplierPrice;
 import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
@@ -19,7 +16,6 @@ import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.util.JsonUtil;
 
 import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;

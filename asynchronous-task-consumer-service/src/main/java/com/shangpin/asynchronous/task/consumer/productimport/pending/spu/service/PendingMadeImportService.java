@@ -120,7 +120,7 @@ public class PendingMadeImportService {
 		}
 		
 		//记录单条数据的校验结果
-		Map<String, String> map = null;
+
 		//记录所有数据的校验结果集
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 	
@@ -128,14 +128,10 @@ public class PendingMadeImportService {
 			if (productImport == null ) {
 				continue;
 			}
-			map = new HashMap<String, String>();
-			map.put("taskNo", taskNo);
+			Map<String, String>	map = new HashMap<String, String>();
+			//map.put("taskNo", taskNo);
 			//首先判断是否人工排除
 			filterMade(productImport,createUser,map);
-			/*if(!filterSpu(productImport,createUser,map)){
-				//处理SPU及SKU
-				loopHandleSpuImportDto(map,productImport,createUser);
-			}*/
 			listMap.add(map);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
@@ -144,37 +140,62 @@ public class PendingMadeImportService {
 	private void filterMade(HubMadeImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		if (productImport.getHubSupplierValMappingId()!=null){
-			HubSupplierValueMappingDto hubSupplierValueMappingDto = hubSupplierValueMappingGateWay.selectByPrimaryKey(Long.parseLong(productImport.getHubSupplierValMappingId()));
-			HubSupplierValueMappingDto hubSupplierValueMapping=new HubSupplierValueMappingDto();
-			hubSupplierValueMapping.setHubSupplierValMappingId(Long.parseLong(productImport.getHubSupplierValMappingId()));
-			hubSupplierValueMapping.setHubVal(productImport.getHubVal());
-			hubSupplierValueMapping.setHubValType((byte)3);
-			hubSupplierValueMapping.setSupplierId(hubSupplierValueMappingDto.getSupplierId());
-			hubSupplierValueMapping.setSupplierVal(productImport.getSupplierVal());
-			hubSupplierValueMapping.setCreateTime(format.parse(productImport.getCreateTime()));
-			hubSupplierValueMapping.setUpdateTime(format.parse(productImport.getUpdateTime()));
-			hubSupplierValueMapping.setUpdateUser(productImport.getUpdateUser());
-			HubSupplierValueMappingCriteriaDto criteria=new HubSupplierValueMappingCriteriaDto();
-			criteria.createCriteria().andSupplierValEqualTo(productImport.getSupplierVal()).andHubValEqualTo(productImport.getHubVal());
-			HubSupplierValueMappingWithCriteriaDto hubSupplierValueMappingWithCriteriaDto = null;
-			hubSupplierValueMappingWithCriteriaDto.setHubSupplierValueMapping(hubSupplierValueMapping);
-			hubSupplierValueMappingWithCriteriaDto.setCriteria(criteria);
-			hubSupplierValueMappingGateWay.updateByCriteriaSelective(hubSupplierValueMappingWithCriteriaDto);
+			//先查数据库，
+			HubSupplierValueMappingDto hubSupplierValueMappingDto1 = hubSupplierValueMappingGateWay.selectByPrimaryKey(Long.parseLong(productImport.getHubSupplierValMappingId()));
+			HubSupplierValueMappingDto hubSupplierValueMappingDto =new HubSupplierValueMappingDto() ;
+			if (productImport.getHubSupplierValMappingId()!=null){
+				hubSupplierValueMappingDto.setHubSupplierValMappingId(Long.parseLong(productImport.getHubSupplierValMappingId()));
+			}
+			if (productImport.getSupplierVal()!=null){
+				hubSupplierValueMappingDto.setSupplierVal(productImport.getSupplierVal());
+			}
+			if (productImport.getHubVal()!=null){
+				hubSupplierValueMappingDto.setHubVal(productImport.getHubVal());
+			}
+			hubSupplierValueMappingDto.setHubValType((byte)3);
+			hubSupplierValueMappingDto.setUpdateTime(new Date());
+			hubSupplierValueMappingGateWay.updateByPrimaryKeySelective(hubSupplierValueMappingDto);
 
-			HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto = null;
-			if (!hubSupplierValueMappingDto.getHubVal().equals(productImport.getHubVal())){
-				hubSupplierSizeDicRequestDto.setHubSupplierValMappingId(hubSupplierValueMapping.getHubSupplierValMappingId());
-				hubSupplierSizeDicRequestDto.setHubVal(hubSupplierValueMapping.getHubVal());
-				hubSupplierSizeDicRequestDto.setMappingType(hubSupplierValueMapping.getHubValType());
-				hubSupplierSizeDicRequestDto.setSupplierId(hubSupplierValueMappingDto.getSupplierId());
-				hubSupplierSizeDicRequestDto.setSupplierVal(hubSupplierValueMappingDto.getSupplierVal());
-				dicRefreshGateWay.originRefresh(hubSupplierSizeDicRequestDto);
-
-			}else {
-               return;
+			HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto = new HubSupplierSizeDicRequestDto();
+			hubSupplierSizeDicRequestDto.setHubSupplierValMappingId(Long.parseLong(productImport.getHubSupplierValMappingId()));
+			if (productImport.getHubVal()!=null){
+				hubSupplierSizeDicRequestDto.setHubVal(productImport.getHubVal());
+			}if (productImport.getSupplierVal()!=null){
+				hubSupplierSizeDicRequestDto.setSupplierVal(productImport.getHubVal());
+			}
+			if (hubSupplierValueMappingDto1.getHubVal()!=null){
+				if (!hubSupplierValueMappingDto1.getHubVal().equals(productImport.getHubVal())){
+					dicRefreshGateWay.originRefresh(hubSupplierSizeDicRequestDto);
+				}
 			}
 
 		}else {
+
+			HubSupplierValueMappingDto hubSupplierValueMappingDto = new HubSupplierValueMappingDto();
+			if (productImport.getSupplierVal()!=null){
+				hubSupplierValueMappingDto.setSupplierVal(productImport.getSupplierVal());
+			}
+			if (productImport.getHubVal()!=null){
+				hubSupplierValueMappingDto.setHubVal(productImport.getHubVal());
+			}
+			hubSupplierValueMappingDto.setCreateTime(new Date());
+			hubSupplierValueMappingGateWay.insert(hubSupplierValueMappingDto);
+			HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto =new HubSupplierSizeDicRequestDto();
+			if (productImport.getHubVal()!=null){
+				hubSupplierSizeDicRequestDto.setHubVal(productImport.getHubVal());
+			}if (productImport.getSupplierVal()!=null){
+				hubSupplierSizeDicRequestDto.setSupplierVal(productImport.getHubVal());
+			}
+
+			dicRefreshGateWay.originRefresh(hubSupplierSizeDicRequestDto);
+		}
+
+
+
+
+
+/*
+		else {
 			HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto = null;
 
 			HubSupplierValueMappingDto hubSupplierValueMappingDto =null ;
@@ -189,7 +210,7 @@ public class PendingMadeImportService {
 			hubSupplierSizeDicRequestDto.setSupplierVal(hubSupplierValueMappingDto.getSupplierVal());
 			dicRefreshGateWay.originRefresh(hubSupplierSizeDicRequestDto);
 
-		}
+		}*/
 	}
 	
 	private boolean insertNohandleReason(HubPendingSpuImportDTO product,String createUser){
