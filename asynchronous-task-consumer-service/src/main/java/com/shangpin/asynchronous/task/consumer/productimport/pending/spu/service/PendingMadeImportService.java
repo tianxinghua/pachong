@@ -78,6 +78,8 @@ public class PendingMadeImportService {
 	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 	@Autowired
 	DicRefreshGateWay dicRefreshGateWay;
+	@Autowired
+
 
 	private static String[] pendingSpuValueTemplate = null;
 	static {
