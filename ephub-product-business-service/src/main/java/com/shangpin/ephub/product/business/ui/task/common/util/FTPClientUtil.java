@@ -46,8 +46,8 @@ public class FTPClientUtil {
 
 	/**
 	 * 
-	 * @param file
-	 *            上传的文件
+	 * @param
+	 *
 	 * @throws Exception
 	 */
 	public static String uploadFile(byte[] data, String fileName) throws Exception {
@@ -74,8 +74,7 @@ public class FTPClientUtil {
 	
 	/**
 	 * 
-	 * @param file
-	 *            上传的文件
+	 * @param
 	 * @throws Exception
 	 */
 	public static void uploadNewFile(String pathName, String fileName,InputStream in) throws Exception {
@@ -213,8 +212,8 @@ public class FTPClientUtil {
 	
 	/**
 	 * 
-	 * @param file
-	 *            上传的文件
+	 * @param
+	 *
 	 * @throws Exception
 	 */
 	public static void uploadStudioNewFile(String pathName, String fileName,InputStream in) throws Exception {

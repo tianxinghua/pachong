@@ -281,6 +281,14 @@ public class SkuPendingServiceImpl implements SkuPendingService {
                 HubSkuPendingDto dto = hubSkuPendingDtos.get(i);
                 if(GlobalConstant.HUB_SKE_SIZE_TYPE_EXCLUDE.equals(dto.getHubSkuSizeType())){
                     excludeNum++;
+                }else{
+                     if(!GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY.equals(dto.getHubSkuSizeType())){
+                        if(StringUtils.isEmpty(dto.getHubSkuSize())){
+                            hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
+                            hubSpuPending.setMemo("尺码有空值,整体不能审核通过");
+                            return;
+                        }
+                     }
                 }
                 if(SpuStatus.SPU_WAIT_HANDLE.getIndex()==dto.getSkuState().intValue()){
                     hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_HANDLE.getIndex().byteValue());
@@ -292,7 +300,7 @@ public class SkuPendingServiceImpl implements SkuPendingService {
             if(total==excludeNum){//全部为排除
                 hubSpuPending.setMemo("SPU下未审核成功的SKU全部为排除,不需要审核");
                 hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
-                return;
+                return ;
             }
             if(sizeType.size()>1){
                 if(sizeType.containsKey(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)){
@@ -302,10 +310,12 @@ public class SkuPendingServiceImpl implements SkuPendingService {
                     return;
                 }
             }
-            
+
             hubSpuPending.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 
         }else{
+
+
             hubSpuPending.setMemo("SPU下没有可处理的SKU,不能审核");
             hubSpuPending.setSpuState(SpuStatus.SPU_HANDLED.getIndex().byteValue());
         }

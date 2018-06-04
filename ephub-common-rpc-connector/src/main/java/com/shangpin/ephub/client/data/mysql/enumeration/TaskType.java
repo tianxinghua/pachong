@@ -54,8 +54,8 @@ public enum TaskType {
 	AIRSHOP_IMPORT(18,"airshop导入"),
 	SUPPLIER_PIC_EXPORT(19,"供应商图片导出"),
 
-	IMPORT_COLOR(20,"图片导入"),
-	EXPORT_COLOR(21,"图片导出"),
+	IMPORT_COLOR(20,"颜色导入"),
+	EXPORT_COLOR(21,"颜色导出"),
 
 	IMPORT_MATERIAL(22,"材质导入"),
 	EXPORT_MATERIAL(23,"材质导出"),
@@ -63,11 +63,11 @@ public enum TaskType {
 	IMPORT_ORIGIN(24,"产地导入"),
 	EXPORT_ORIGIN(25,"产地导出"),
 
-	IMPORT_CATEGORY(24,"品类导入"),
-	EXPORT_CATEGORY(25,"品类导出"),
+	IMPORT_CATEGORY(26,"品类导入"),
+	EXPORT_CATEGORY(27,"品类导出"),
 
-	IMPORT_BRAND(24,"品牌导入"),
-	EXPORT_BRAND(25,"品牌导出"),
+	IMPORT_BRAND(28,"品牌导入"),
+	EXPORT_BRAND(29,"品牌导出")
 
 	;
 

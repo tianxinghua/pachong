@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.stereotype.Component;
+
 /**
  * 邮件默认值
  * <p>Title:DefaultMailProperties.java </p>
