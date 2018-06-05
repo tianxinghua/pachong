@@ -105,7 +105,7 @@ public class PendingColorImportService {
 		if ("xls".equals(fileFormat)) {
 			listHubProductImport = handlePendingColorXls(in, task, "color");
 		} else if ("xlsx".equals(fileFormat)) {
-			//listHubProductImport = handlePendingColorXlsx(in, task, "color");
+			listHubProductImport = handlePendingColorXlsx(in, task, "color");
 		}
 
 		//校验数据并把校验结果写入excel
@@ -131,7 +131,7 @@ public class PendingColorImportService {
 				continue;
 			}
 			Map<String, String> map = new HashMap<String, String>();
-			//map.put("taskNo", taskNo);
+			map.put("taskNo", taskNo);
 			//对数据的添加，或修改 并 保存数据到数据库
 			Map<String, String> map1 = filterColor(productImport, createUser, map);
 			listMap.add(map1);
@@ -150,7 +150,7 @@ public class PendingColorImportService {
 
 			HubColorDicItemDto hubColorDicItemDto1 = hubColorDicItemGateWay.selectByPrimaryKey(Long.parseLong(productImport.getColorDicItemId()));
 			hubColorDicItemDto.setColorDicItemId(Long.parseLong(productImport.getColorDicItemId()));
-			map.put("colorDicItemId",productImport.getColorDicItemId());
+			//map.put("colorDicItemId",productImport.getColorDicItemId());
 			//  if (productImport.getColorItemName()==null)return null;
 			  if (productImport.getColorItemName()!=null){
 				  hubColorDicItemDto.setColorItemName(productImport.getColorItemName());
@@ -163,9 +163,10 @@ public class PendingColorImportService {
 
 			    	//获取字典的全部颜色
 			Map<String, Long> stringLongMap = queryHubColorDicCriteriaColor(productImport);
-			for (Map.Entry<String, Long> entry : stringLongMap.entrySet()) {
+			//Long value =null;
+			  for (Map.Entry<String, Long> entry : stringLongMap.entrySet()) {
 				  String key = entry.getKey().toString();
-				  //Long value = entry.getValue();
+				//  Long value = entry.getValue();
 				  if (key.equals(productImport.getColorDicId())){
 					  Long value = entry.getValue();
 					  if (value==null)continue;
@@ -188,9 +189,13 @@ public class PendingColorImportService {
 			hubSupplierColorDicRequestDto.setSupplierColor(productImport.getColorItemName());
 			hubSupplierColorDicRequestDto.setHubColor(productImport.getColorDicId());
 			//对比是否要刷新
-			if (!hubColorDicItemDto1.getColorDicId().equals(hubSupplierColorDicRequestDto.getColorDicId())){
+			//不相同是刷新
+			if (!stringLongMap.get(productImport.getColorDicId()).equals(hubColorDicItemDto1.getColorDicId())){
 				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
 			}
+			/*if (!hubColorDicItemDto1.getColorDicId().equals(hubSupplierColorDicRequestDto.getColorDicId())){
+				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
+			}*/
 
 			//刷新颜色
 			return map;

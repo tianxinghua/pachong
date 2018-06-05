@@ -402,8 +402,21 @@ public class ExportServiceImplDic {
 		 String[] madeValueTemplate = TaskImportTemplate2.getMadeValueTemplate();
 		//获取总条数
 		    HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto2 = new HubSupplierValueMappingCriteriaDto();
-			hubSupplierValueMappingCriteriaDto2.createCriteria().andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
-			//获取总条数
+		HubSupplierValueMappingCriteriaDto.Criteria  criteria= hubSupplierValueMappingCriteriaDto2.createCriteria();
+			if (hubSupplierMadeMappingDto.getSupplierVal()!=null){
+				criteria.andSupplierValEqualTo(hubSupplierMadeMappingDto.getSupplierVal());
+			}
+			if (hubSupplierMadeMappingDto.getHubVal()!=null){
+				criteria.andHubValEqualTo(hubSupplierMadeMappingDto.getHubVal());
+			}
+
+		   criteria.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
+
+		if (hubSupplierMadeMappingDto.getMappingType()!=null){
+			criteria.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+		}
+
+		//获取总条数
 			int totalSize = hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto2);
 
 		if (totalSize>0){
@@ -411,21 +424,38 @@ public class ExportServiceImplDic {
 			log.info("导出总页数：" + pageCount);
 			ArrayList<List<HubSupplierValueMappingDto>> lists= new ArrayList<>();
 			for (int i = 1; i <= pageCount; i++) {
-				HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto =new HubSupplierValueMappingCriteriaDto() ;
+				HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto = new HubSupplierValueMappingCriteriaDto();
 				hubSupplierValueMappingCriteriaDto.setPageNo(i);
 				hubSupplierValueMappingCriteriaDto.setPageSize(PAGESIZE);
-				if (hubSupplierMadeMappingDto.getType()!=null){
-					hubSupplierValueMappingCriteriaDto.createCriteria().andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
+				HubSupplierValueMappingCriteriaDto.Criteria  criteria2= hubSupplierValueMappingCriteriaDto.createCriteria();
+				if (hubSupplierMadeMappingDto.getSupplierVal()!=null){
+					criteria2.andSupplierValEqualTo(hubSupplierMadeMappingDto.getSupplierVal());
 				}
 				if (hubSupplierMadeMappingDto.getHubVal()!=null){
+					criteria2.andHubValEqualTo(hubSupplierMadeMappingDto.getHubVal());
+				}
+
+				criteria2.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
+
+				if (hubSupplierMadeMappingDto.getMappingType()!=null){
+					criteria2.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+				}
+				/*HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto =new HubSupplierValueMappingCriteriaDto() ;
+				hubSupplierValueMappingCriteriaDto.setPageNo(i);
+			hubSupplierValueMappingCriteriaDto.setPageSize(PAGESIZE);*/
+
+			/*	if (hubSupplierMadeMappingDto.getHubVal()!=null){
 					hubSupplierValueMappingCriteriaDto.createCriteria().andHubValEqualTo(hubSupplierMadeMappingDto.getHubVal());
 				}
 				if (hubSupplierMadeMappingDto.getSupplierVal()!=null){
 					hubSupplierValueMappingCriteriaDto.createCriteria().andSupplierValEqualTo(hubSupplierMadeMappingDto.getSupplierVal());
+
 				}
+				hubSupplierValueMappingCriteriaDto.createCriteria().andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
 				if (hubSupplierMadeMappingDto.getMappingType()!=null){
-					hubSupplierValueMappingCriteriaDto.createCriteria().andMappingStateEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
-				}
+					hubSupplierValueMappingCriteriaDto.createCriteria().andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+				}*/
+
 				List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(hubSupplierValueMappingCriteriaDto);
 				lists.add(hubSupplierValueMappingDtos);
 

@@ -106,7 +106,7 @@ public class PendingMadeImportService {
 		if ("xls".equals(fileFormat)) {
 			hubMadeImportDTO = handlePendingMadeXls(in, task, "made");
 		} else if ("xlsx".equals(fileFormat)) {
-			//listHubProductImport = handlePendingSpuXlsx(in, task, "spu");
+			hubMadeImportDTO = handlePendingMadeXlsx(in, task, "made");
 		}
 
 		//校验数据并把校验结果写入excel
@@ -131,15 +131,15 @@ public class PendingMadeImportService {
 				continue;
 			}
 			Map<String, String>	map = new HashMap<String, String>();
-			//map.put("taskNo", taskNo);
+			map.put("taskNo", taskNo);
 			//首先判断是否人工排除
-			filterMade(productImport,createUser,map);
-			listMap.add(map);
+			Map<String, String> map1 = filterMade(productImport, createUser, map);
+			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcel(listMap, taskNo);
+		return taskService.convertExcelMade(listMap, taskNo);
 	}
-	private void filterMade(HubMadeImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
+	private Map<String, String>filterMade(HubMadeImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		if (productImport.getHubSupplierValMappingId()!=null){
 			//先查数据库，
@@ -150,14 +150,20 @@ public class PendingMadeImportService {
 			}
 			if (productImport.getSupplierVal()!=null){
 				hubSupplierValueMappingDto.setSupplierVal(productImport.getSupplierVal());
+				map.put("supplierVal",(productImport.getSupplierVal()));
 			}
 			if (productImport.getHubVal()!=null){
 				hubSupplierValueMappingDto.setHubVal(productImport.getHubVal());
+				map.put("hubVal",(productImport.getHubVal()));
 			}
 			hubSupplierValueMappingDto.setHubValType((byte)3);
 			hubSupplierValueMappingDto.setUpdateTime(new Date());
-			hubSupplierValueMappingGateWay.updateByPrimaryKeySelective(hubSupplierValueMappingDto);
-
+			int i = hubSupplierValueMappingGateWay.updateByPrimaryKeySelective(hubSupplierValueMappingDto);
+            if (i==1){
+            	map.put("task","校验成功");
+			}else {
+				map.put("task","失败");
+			}
 			HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto = new HubSupplierSizeDicRequestDto();
 			hubSupplierSizeDicRequestDto.setHubSupplierValMappingId(Long.parseLong(productImport.getHubSupplierValMappingId()));
 			if (productImport.getHubVal()!=null){
@@ -170,15 +176,18 @@ public class PendingMadeImportService {
 					dicRefreshGateWay.originRefresh(hubSupplierSizeDicRequestDto);
 				}
 			}
+			return map;
 
 		}else {
 
 			HubSupplierValueMappingDto hubSupplierValueMappingDto = new HubSupplierValueMappingDto();
 			if (productImport.getSupplierVal()!=null){
 				hubSupplierValueMappingDto.setSupplierVal(productImport.getSupplierVal());
+				map.put("supplierVal",(productImport.getSupplierVal()));
 			}
 			if (productImport.getHubVal()!=null){
 				hubSupplierValueMappingDto.setHubVal(productImport.getHubVal());
+				map.put("hubVal",(productImport.getHubVal()));
 			}
 			hubSupplierValueMappingDto.setCreateTime(new Date());
 			hubSupplierValueMappingGateWay.insert(hubSupplierValueMappingDto);
@@ -190,6 +199,7 @@ public class PendingMadeImportService {
 			}
 
 			dicRefreshGateWay.originRefresh(hubSupplierSizeDicRequestDto);
+			return map;
 		}
 
 
@@ -273,17 +283,17 @@ public class PendingMadeImportService {
 //		}
 				
 	}
-	private List<HubPendingSpuImportDTO> handlePendingSpuXlsx(InputStream in, Task task, String type)
+	private List<HubMadeImportDTO> handlePendingMadeXlsx(InputStream in, Task task, String type)
 			throws Exception {
 
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, type);
 		if (xssfSheet == null) {
 			return null;
 		}
-		List<HubPendingSpuImportDTO> listHubProduct = new ArrayList<>();
+		List<HubMadeImportDTO> listHubProduct = new ArrayList<>();
 		for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
 			XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-			HubPendingSpuImportDTO product = convertSpuDTO(xssfRow);
+			HubMadeImportDTO product = convertMadeDTO(xssfRow);
 			if (product != null) {
 				listHubProduct.add(product);
 			}
@@ -417,17 +427,17 @@ public class PendingMadeImportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static HubPendingSpuImportDTO convertSpuDTO(XSSFRow xssfRow)  throws Exception{
-		HubPendingSpuImportDTO item = null;
+	private static HubMadeImportDTO convertMadeDTO(XSSFRow xssfRow)  throws Exception{
+		HubMadeImportDTO item = null;
 		if (xssfRow != null) {
 			try {
-				item = new HubPendingSpuImportDTO();
+				item = new HubMadeImportDTO();
 				Class c = item.getClass();
-				for (int i = 0; i < pendingSpuValueTemplate.length; i++) {
+				for (int i = 0; i < madeValueTemplate.length; i++) {
 					if (xssfRow.getCell(i) != null) {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
-						String setMethodName = "set" + pendingSpuValueTemplate[i].toUpperCase().charAt(0)
-								+ pendingSpuValueTemplate[i].substring(1);
+						String setMethodName = "set" + madeValueTemplate[i].toUpperCase().charAt(0)
+								+ madeValueTemplate[i].substring(1);
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}
