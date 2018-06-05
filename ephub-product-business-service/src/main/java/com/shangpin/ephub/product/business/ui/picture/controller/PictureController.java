@@ -7,10 +7,7 @@ import com.shangpin.ephub.product.business.ui.picture.dto.QueryPicDto;
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,5 +38,16 @@ public class PictureController {
 		return HubResponse.successResp(true);
 	}
 
+
+	@RequestMapping(value="/retry-pictures/{supplierSpuId}",method=RequestMethod.POST)
+	public HubResponse<?> updateProductToUnableToProcess(@PathVariable Long  supplierSpuId){
+		boolean bool = picHandleService.retryPictures(supplierSpuId);
+		if(bool){
+			return HubResponse.successResp("success");
+		}else{
+			return HubResponse.errorResp("error");
+		}
+
+	}
 
 }
