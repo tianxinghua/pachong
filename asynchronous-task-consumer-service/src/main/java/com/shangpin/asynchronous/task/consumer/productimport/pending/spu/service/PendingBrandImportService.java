@@ -121,7 +121,6 @@ public class PendingBrandImportService {
 		
 		//记录单条数据的校验结果
 
-		//记录所有数据的校验结果集
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 	
 		for (HubBrandImportDTO productImport : hubBrandImportDTO) {
@@ -140,9 +139,10 @@ public class PendingBrandImportService {
 	private Map<String, String> filterBrand(HubBrandImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         if (productImport.getSupplierBrandDicId()!=null){
-			//HubSupplierBrandDicDto hubSupplierBrandDicDto1 = hubSupplierBrandDicGateWay.selectByPrimaryKey(Long.parseLong(productImport.getSupplierBrandDicId()));
+        	//数据库先查，后面比较刷新
 			HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto =new HubSupplierBrandDicCriteriaDto() ;
 			 hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierBrandDicIdEqualTo(Long.parseLong(productImport.getSupplierBrandDicId()));
+
 			List<HubSupplierBrandDicDto> list = hubSupplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto);
 			HubSupplierBrandDicDto hubSupplierBrandDicDto1 = list.get(0);
 			HubSupplierBrandDicDto hubSupplierBrandDicDto = new HubSupplierBrandDicDto();
@@ -157,11 +157,11 @@ public class PendingBrandImportService {
 			hubSupplierBrandDicDto.setUpdateTime(new Date());
 			int i = hubSupplierBrandDicGateWay.updateByPrimaryKeySelective(hubSupplierBrandDicDto);
 			if (i==1){
-				map.put("task","校验成功");
+				map.put("task","修改品牌数据成功");
 			}else {
 				map.put("task","校验失败");
 			}
-
+			    //对比修改前后的品牌类型是否相同
 				if (productImport.getHubBrandNo()!=null){
 					if (hubSupplierBrandDicDto1.getHubBrandNo()==null || !hubSupplierBrandDicDto1.getHubBrandNo().equals(productImport.getHubBrandNo())){
 						HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto = new HubSupplierBrandDicRequestDto();
@@ -179,13 +179,14 @@ public class PendingBrandImportService {
 			HubSupplierBrandDicDto hubSupplierBrandDicDto =new HubSupplierBrandDicDto() ;
 			if (productImport.getSupplierBrand()!=null){
 				hubSupplierBrandDicDto.setSupplierBrand(productImport.getSupplierBrand());
-				//map.put("supplierBrand",productImport.getSupplierBrand());
+				map.put("supplierBrand",productImport.getSupplierBrand());
 			}if (productImport.getHubBrandNo()!=null){
 				hubSupplierBrandDicDto.setHubBrandNo(productImport.getHubBrandNo());
-				//map.put("hubBrandNo",productImport.getHubBrandNo());
+				map.put("hubBrandNo",productImport.getHubBrandNo());
 			}
 			hubSupplierBrandDicDto.setCreateTime(new Date());
 			hubSupplierBrandDicGateWay.insert(hubSupplierBrandDicDto);
+			map.put("task","添加品牌数据成功");
 			HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto = new HubSupplierBrandDicRequestDto();
 			if (productImport.getSupplierBrand()!=null){
 				hubSupplierBrandDicRequestDto.setSupplierBrand(productImport.getSupplierBrand());
@@ -194,7 +195,7 @@ public class PendingBrandImportService {
 			}
 			dicRefreshGateWay.brandRefresh(hubSupplierBrandDicRequestDto);
 
-			return null;
+			return map;
 		}
 
 	}

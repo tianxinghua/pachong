@@ -163,9 +163,10 @@ public class PendingColorImportService {
 
 			    	//获取字典的全部颜色
 			Map<String, Long> stringLongMap = queryHubColorDicCriteriaColor(productImport);
-			for (Map.Entry<String, Long> entry : stringLongMap.entrySet()) {
+			//Long value =null;
+			  for (Map.Entry<String, Long> entry : stringLongMap.entrySet()) {
 				  String key = entry.getKey().toString();
-				  //Long value = entry.getValue();
+				//  Long value = entry.getValue();
 				  if (key.equals(productImport.getColorDicId())){
 					  Long value = entry.getValue();
 					  if (value==null)continue;
@@ -188,9 +189,13 @@ public class PendingColorImportService {
 			hubSupplierColorDicRequestDto.setSupplierColor(productImport.getColorItemName());
 			hubSupplierColorDicRequestDto.setHubColor(productImport.getColorDicId());
 			//对比是否要刷新
-			if (!hubColorDicItemDto1.getColorDicId().equals(hubSupplierColorDicRequestDto.getColorDicId())){
+			//不相同是刷新
+			if (!stringLongMap.get(productImport.getColorDicId()).equals(hubColorDicItemDto1.getColorDicId())){
 				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
 			}
+			/*if (!hubColorDicItemDto1.getColorDicId().equals(hubSupplierColorDicRequestDto.getColorDicId())){
+				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
+			}*/
 
 			//刷新颜色
 			return map;
