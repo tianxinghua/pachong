@@ -120,7 +120,7 @@ public class PicHandleService {
     private   List<HubSpuPendingPicDto> findPendingPics(Long supplierSpuId){
         HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
         criteria.setFields("spu_pending_pic_id");
-        criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+        criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
         return  spuPendingPicGateWay.selectByCriteria(criteria);
 
     }
