@@ -137,7 +137,7 @@ public class PendingMadeImportService {
 			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcel(listMap, taskNo);
+		return taskService.convertExcelMade(listMap, taskNo);
 	}
 	private Map<String, String>filterMade(HubMadeImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

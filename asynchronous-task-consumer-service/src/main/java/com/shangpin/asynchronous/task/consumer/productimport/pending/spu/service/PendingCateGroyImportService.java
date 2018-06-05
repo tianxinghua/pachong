@@ -148,11 +148,11 @@ public class PendingCateGroyImportService {
 			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcelMarterial(listMap, taskNo);
+		return taskService.convertExcelCategory(listMap, taskNo);
 	}
 	private Map<String, String>  filterCateGroy(HubPendingCateGroyImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		HubSupplierCategroyDicDto categroyDicDto2 = hubSupplierCategroyDicGateWay.selectByPrimaryKey(Long.parseLong(productImport.getSupplierCategoryDicId()));
-		if (productImport.getSupplierCategoryDicId()!=null){
+		    if (productImport.getSupplierCategoryDicId()!=null){
 
 			HubSupplierCategroyDicDto categroyDicDto = new HubSupplierCategroyDicDto();
 			categroyDicDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
@@ -165,6 +165,7 @@ public class PendingCateGroyImportService {
 			}/*if (productImport.getCategoryType()!=null){
 				categroyDicDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
 			}*/if (productImport.getHubCategoryNo()!=null){
+				categroyDicDto.setHubCategoryNo(productImport.getHubCategoryNo());
 				byte[] bytes = productImport.getHubCategoryNo().getBytes();
 				if (bytes.length==12){
 					categroyDicDto.setCategoryType((byte)4);
@@ -193,18 +194,17 @@ public class PendingCateGroyImportService {
 				hubSupplierCategoryDicRequestDto.setSupplierId(productImport.getSupplierId());
 			}if (productImport.getSupplierCategoryDicId()!=null){
 				hubSupplierCategoryDicRequestDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
-			}
-			if (productImport.getCategoryType()!=null){
-				if (!categroyDicDto2.getCategoryType().equals(productImport.getCategoryType())){
+				}if (productImport.getHubCategoryNo()!=null){
+					hubSupplierCategoryDicRequestDto.setHubCategoryNo(productImport.getSupplierCategoryDicId());
+				}
+				dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
+
+		/*if (productImport.getHubCategoryNo()!=null ){
+				if (!categroyDicDto2.getHubCategoryNo().equals(productImport.getHubCategoryNo()) || categroyDicDto2.getHubCategoryNo()==null){
 					dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
 				}
-			}
-			if (productImport.getHubCategoryNo()!=null){
-				if (!categroyDicDto2.getHubCategoryNo().equals(productImport.getHubCategoryNo())){
-					dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
-				}
-			}
-			return  map;
+			}*/
+			return map ;
 
 		}else {
 			//添加

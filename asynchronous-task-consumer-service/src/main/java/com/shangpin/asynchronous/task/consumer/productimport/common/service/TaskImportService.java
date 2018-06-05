@@ -313,8 +313,8 @@ public class TaskImportService {
 		File file = new File(pathFile);
 		FileOutputStream out = new FileOutputStream(file);
 
-		String[] headers = { "品类ID", "供货商品类", "品类编码", "任务说明"};
-		String[] columns = { "supplierCategoryDicId", "supplierCategory", "hubCategoryNo","task"};
+		String[] headers = { "任务编码", "供货商品类", "品类编码", "任务说明"};
+		String[] columns = { "taskNo", "supplierCategory", "hubCategoryNo","task"};
 		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
 		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
 		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
@@ -350,6 +350,7 @@ public class TaskImportService {
 
 		return path + resultFileName + ".xls";
 	}
+
 	//材质状态
 	public String convertExcelMarterial(List<Map<String, String>> result, String taskNo) throws Exception {
 		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
