@@ -86,6 +86,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -198,6 +199,7 @@ public class ExportServiceImplDic {
 			hubSupplierBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
 
 		}
+
 		if (brandRequestDTO.getSupplierId()!=null){
 			hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
 		}
@@ -601,6 +603,13 @@ public class ExportServiceImplDic {
 				criteria.setPageSize(PAGESIZE);
 				if (hubColorDic.getSupplierColorName()!= null) {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
+				}
+                if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HHmmssSSS");
+					Date end = format.parse(hubColorDic.getEndTime());
+					Date start = format.parse(hubColorDic.getStartTime());
+					criteria.createCriteria().andCreateTimeBetween(start,end);
+
 				}
 				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(criteria);
 				lists.add(ColorDicItemDto);
