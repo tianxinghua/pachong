@@ -44,6 +44,10 @@
         <appender-ref ref="FILE_INFO" />
     </logger>
 
+    <logger name="com.shangpin.ephub.data.mysql.dictionary.color.mapper.HubColorDicItemMapper" level="debug">
+        <appender-ref ref="FILE_INFO" />
+    </logger>
+
 	<logger name="com.shangpin" level="DEGUG" ></logger>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
