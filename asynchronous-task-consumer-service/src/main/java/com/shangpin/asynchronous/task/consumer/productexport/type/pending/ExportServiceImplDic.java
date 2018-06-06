@@ -592,7 +592,9 @@ public class ExportServiceImplDic {
 		if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			Date end = format.parse(hubColorDic.getEndTime());
+			System.out.println("end时间-------"+end);
 			Date start = format.parse(hubColorDic.getStartTime());
+			System.out.println("start 时间-------"+start);
 			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeBetween(start,end);
 
 		}
