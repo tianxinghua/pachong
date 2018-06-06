@@ -3,7 +3,11 @@ package com.shangpin.supplier.product.consumer.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +58,10 @@ public class SupplierProductMysqlService {
 	private HubSpuPendingGateWay hubSpuPendingGateWay;
 	@Autowired
 	private HubSpuPendingNohandleReasonGateWay nohandleReasonGateWay;
+
+
+	@Autowired
+	private HubSeasonDicGateWay hubSeasonDicGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param supplierNo
@@ -467,5 +475,142 @@ public class SupplierProductMysqlService {
 		criteria.setPageSize(10000);
 		return hubSupplierSkuGateWay.selectByCriteria(criteria);
 	}
-	
+
+
+	/**
+	 * 根据supplierSpuId查找该spu下所有尚品sku编号不为空的sku
+	 * @param supplierSpuId
+	 * @return
+	 * @throws Exception
+	 */
+	public List<HubSupplierSkuDto> findSupplierSkusSpSkuNoIsNotNull(Long supplierSpuId) throws Exception{
+		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+		criteriaDto.setPageNo(1);
+		criteriaDto.setPageSize(1000);
+		criteriaDto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo("");
+		return hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+	}
+
+	/**
+	 * 根据supplierId和供应商spu编号查询商品
+	 * @param supplierSpuDto
+	 * @return
+	 * @throws Exception
+	 */
+	private  List<HubSupplierSpuDto> findHubSupplierSpuDtos(HubSupplierSpuDto supplierSpuDto) throws Exception{
+		if(StringUtils.isEmpty(supplierSpuDto.getSupplierId()) || StringUtils.isEmpty(supplierSpuDto.getSupplierSpuNo())){
+			return null;
+		}
+		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
+		criteriaDto.setFields("supplier_spu_id,supplier_seasonname,supplier_categoryname,supplier_brandname");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierSpuDto.getSupplierId()).andSupplierSpuNoEqualTo(supplierSpuDto.getSupplierSpuNo());
+		return hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
+	}
+
+	/**
+	 *
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @return
+	 */
+	public HubSupplierSpuDto getSupplierSpuBySupplierIdAndSupplierSpuNo(String supplierId,String supplierSpuNo) {
+		if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(supplierSpuNo)){
+			return null;
+		}
+		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
+		criteriaDto.setFields("supplier_spu_id,supplier_seasonname,supplier_categoryname,supplier_brandname");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		List<HubSupplierSpuDto> hubSupplierSpuDtos = hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
+		if(null == hubSupplierSpuDtos || hubSupplierSpuDtos.size() == 0){
+			return null;
+		}else{
+			return hubSupplierSpuDtos.get(0);
+
+		}
+	}
+
+
+	/**
+	 * 判断供价是否变化
+	 * @param skuVO
+	 * @param skuDtoMap
+	 * @return
+	 */
+	public boolean isSupplyPriceChanged(HubSupplierSkuDto skuVO, Map<String,HubSupplierSkuDto> skuDtoMap) throws Exception{
+
+		if(skuDtoMap.containsKey(skuVO.getSupplierSkuNo())){
+			HubSupplierSkuDto hubSkuSel = skuDtoMap.get(skuVO.getSupplierSkuNo());
+			skuVO.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : "");
+			BigDecimal supplierPrice = null;
+			if(null!=skuVO.getSupplyPrice()){
+				supplierPrice = skuVO.getSupplyPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
+				if(!supplierPrice.equals(hubSkuSel.getSupplyPrice())){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * 根据供应商门户编号和供应商sku编号查询
+	 * @param supplierId
+	 * @param supplierSkuNo
+	 * @return
+	 */
+	private List<HubSupplierSkuDto> selectHubSupplierSku(String supplierId,String supplierSkuNo) {
+		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+		criteriaDto.setFields("supply_price,market_price,sp_sku_no");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo("");
+		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+		return hubSkus;
+	}
+
+
+	/**
+	 * 判断市场价是否变化
+	 * @param skuVO
+	 * @param  skuDtoMap
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isMarketPriceChanged(HubSupplierSkuDto skuVO, Map<String,HubSupplierSkuDto> skuDtoMap) throws Exception{
+
+		if(skuDtoMap.containsKey(skuVO.getSupplierSkuNo())){
+			HubSupplierSkuDto hubSkuSel = skuDtoMap.get(skuVO.getSupplierSkuNo());
+			skuVO.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : "");
+			BigDecimal marketPrice = null;
+			if(skuVO.getMarketPrice()!=null){
+				marketPrice =  skuVO.getMarketPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
+				if(!marketPrice.equals(hubSkuSel.getMarketPrice())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * 根据供应商门户编号和供应商季节名称查询季节字典表
+	 * @param supplierId
+	 * @param supplierSeason
+	 * @return
+	 */
+	public HubSeasonDicDto findHubSeason(String supplierId, String supplierSeason){
+		HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
+		criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason);
+		List<HubSeasonDicDto> lists = hubSeasonDicGateWay.selectByCriteria(criteriaDto);
+		if(CollectionUtils.isNotEmpty(lists)){
+			return lists.get(0);
+		}else{
+			return null;
+		}
+	}
+
+
+
+
 }

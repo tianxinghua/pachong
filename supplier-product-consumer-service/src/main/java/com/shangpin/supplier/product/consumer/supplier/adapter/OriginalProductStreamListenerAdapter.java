@@ -165,6 +165,10 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler rediHandler;
 
 
+	@Autowired
+	@Qualifier("obluHandler")
+	private ISupplierHandler obluHandler;
+
 	
 	
 	/**
@@ -346,6 +350,14 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void ostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);		
+	}
+	/**
+	 * MENGOTTISNC供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void mengottiSncStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * brunarosso供货商原始数据监听方法
@@ -839,7 +851,16 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers
 	 */
 	public void rediStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		atelierCommonHandler.handleOriginalProduct(message, headers);
+		rediHandler.handleOriginalProduct(message, headers);
+	}
+
+	/**
+	 * 供应商oblu处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void obluStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		obluHandler.handleOriginalProduct(message, headers);
 	}
 
 }

@@ -720,6 +720,24 @@ spring:
                         rediPendingProduct:
                               destination: redi.pending.product
                               content-type: application/json
+                        obluOriginalProduct:
+                              destination: oblu.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              content-type: application/json
+                        mengottiSncOriginalProduct:
+                              destination: mengottiSnc.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              content-type: application/json
 
               rabbit: 
                         bindings: 
@@ -1431,6 +1449,24 @@ spring:
                               rediPendingProduct:
                                     producer:
                                          prefix: HA.
+                              obluOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              obluPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              mengottiSncOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              mengottiSncPendingProduct:
+                                    producer:
+                                        　prefix: HA.
         consul: 
           host: localhost
           port: 8500
@@ -1439,16 +1475,16 @@ spring:
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
-  #mail: 
-       #default-recipient: yan_xiao_bin@126.com
-       #default-sender: yanxiaobin@shangpin.com
-       #default-encoding: UTF-8 # Default MimeMessage encoding.
-       #host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-       #port: 25 # SMTP server port.
-       #protocol: smtp # Protocol used by the SMTP server.
-       #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       #password: 123.com # Login password of the SMTP server.
-       #test-connection: true # Test that the mail server is available on startup.
+#  mail:
+#       default-recipient: chengxu@shangpin.com
+#       default-sender: chengxu@shangpin.com
+#       default-encoding: UTF-8 # Default MimeMessage encoding.
+#       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+#       port: 25 # SMTP server port.
+#       protocol: smtp # Protocol used by the SMTP server.
+#       username: chengxu@shangpin.com # Login user of the SMTP server.
+#       password: shangpin001 # Login password of the SMTP server.
+#       test-connection: false # Test that the mail server is available on startup.
 shangpin:
   hub:
        mailSendTo: ephub_support.list@shangpin.com

@@ -2,6 +2,7 @@ package com.shangpin.ep.order.module.order.service.impl;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +46,7 @@ public class PriceService {
         int priceStatus=0;
 
         //获取采购单明细
-        if(result!=null){
+        if(StringUtils.isNotBlank(result)){
             JSONObject json = JSONObject.parseObject(result);
             if((boolean)json.get("IsSuccess")){
 

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,8 +38,6 @@ import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductCons
 import com.shangpin.supplier.product.consumer.manager.SupplierProductRetryManager;
 import com.shangpin.supplier.product.consumer.service.dto.Sku;
 import com.shangpin.supplier.product.consumer.service.dto.Spu;
-
-import lombok.extern.slf4j.Slf4j;
 /**
  * <p>Title:SupplierProductSaveAndSendToPending </p>
  * <p>Description: 各个供应商保存数据并且发消息给Pending</p>
@@ -64,6 +64,9 @@ public class SupplierProductSaveAndSendToPending {
 	private SupplierProductRetryManager supplierProductRetryManager;
 	@Autowired
 	private PriceGateWay priceGateWay;
+
+	@Autowired
+	private PriceService priceService;
 	@Autowired
 	ShangpinMailProperties shangpinMailProperties;
 	/**
@@ -83,7 +86,7 @@ public class SupplierProductSaveAndSendToPending {
 			log.error("发送邮件失败："+e.getMessage(),e); 
 		}
 	}
-	public void saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
+	public void  saveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto hubSpu,List<HubSupplierSkuDto> hubSkus,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		
 		//映射表里维护supplierId、supplierNo、supplierName
 		HubSupplierValueMappingDto list = supplierProductRetryManager.findHubSupplierValueMapping(supplierId);
@@ -145,13 +148,14 @@ public class SupplierProductSaveAndSendToPending {
 	 */
 	public boolean supplierSaveAndSendToPending(String supplierNo,String supplierId,String supplierName,HubSupplierSpuDto supplierSpuDto,List<HubSupplierSkuDto> supplierSkuDtos,PendingProduct pendingProduct,Map<String,String> headers,SupplierPicture supplierPicture) throws EpHubSupplierProductConsumerException{
 		try {
+			//价格推送
 			savePriceRecordAndSendConsumer(supplierNo,supplierSpuDto,supplierSkuDtos);
 			PendingSpu pendingSpu = new PendingSpu();		
 			List<PendingSku> skus = new ArrayList<PendingSku>();
 
 			HubSupplierSpuDto hubSupplierSpuInDataBase = supplierProductMysqlService.hasHadTheHubSpu(supplierSpuDto);
 
-			//保存hubSpu到数据库
+			//保存SupplierSpu到数据库 如果没有图片 逻辑删除供货商不要的链接地址
 
 			if(null == supplierPicture || null == supplierPicture.getProductPicture() || CollectionUtils.isEmpty(supplierPicture.getProductPicture().getImages())){
 				if(null!=hubSupplierSpuInDataBase&&null != hubSupplierSpuInDataBase.getIsexistpic() && hubSupplierSpuInDataBase.getIsexistpic() == Isexistpic.AIR_STUDIO_UPLOAD.getIndex()){
@@ -162,6 +166,7 @@ public class SupplierProductSaveAndSendToPending {
 					pendingSpu.setPicState(PicState.NO_PIC.getIndex());
 				}
 			}
+			//判断商品信息是新增的还是需要更新的 转化对象
 			ProductStatus productStatus = supplierProductMysqlService.isHubSpuChanged(supplierNo,supplierSpuDto,hubSupplierSpuInDataBase,pendingSpu);
 			//开始构造消息头
 			Spu spuHead = setSpuHead(supplierId,supplierSpuDto.getSupplierSpuNo(),productStatus.getIndex());
@@ -221,7 +226,7 @@ public class SupplierProductSaveAndSendToPending {
 				priceDto.setSupplierNo(supplierNo);
 				priceDto.setHubSpu(hubSpu);
 				priceDto.setHubSkus(hubSkus);
-				priceGateWay.savePriceRecordAndSendConsumer(priceDto);
+				priceService.savePriceRecordAndSendConsumer(priceDto);
 			}
 		} catch (Exception e) {
 			log.error("【"+hubSpu.getSupplierId()+" "+hubSpu.getSupplierSpuNo()+"推送供价变化记录异常："+e.getMessage()+"】",e);  
@@ -270,11 +275,11 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @return
 	 */
-	private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
+private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
 		PendingProduct pendingProduct = new PendingProduct();
-		pendingProduct.setSupplierNo(supplierNo); 
+		pendingProduct.setSupplierNo(supplierNo);
 		pendingProduct.setSupplierId(supplierId);
 		pendingProduct.setSupplierName(supplierName);
 		return pendingProduct;
-	}
-}
+		}
+		}

@@ -99,7 +99,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 	
 	/**
 	 * stefania处理图片
-	 * @param supplierId
+	 * @param
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,Product jsonObject){
@@ -124,9 +124,9 @@ public class TheStyleSideHandler implements ISupplierHandler{
 	/**
 	 * 将stefania原始数据转换成hub spu
 	 * @param supplierId 供应商门户编号
-	 * @param stefProduct stef 原始dto
-	 * @param stefItem stef 原始dto
-	 * @param hubSpu hub spu
+	 * @param ob
+	 * @param hubSpu
+	 * @param data
 	 * @return
 	 */
 	public boolean convertSpu(String supplierId,Product ob,HubSupplierSpuDto hubSpu,String data){
@@ -160,7 +160,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 		if(null != ob){
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuNo(ob.getSpu()+ob.getSize());
+			hubSku.setSupplierSkuNo(ob.getSpu()+"-"+ob.getSize());
 			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getItalian_retail_price())));
 			hubSku.setMarketPriceCurrencyorg("EUR");
 			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getItalian_retail_price())));

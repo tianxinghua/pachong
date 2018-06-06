@@ -44,6 +44,9 @@ public class HubFilterService {
 		supplierIds.add("2015091801508");
 		//coltorti
 		supplierIds.add("2015081701440");
+
+		//上海欧蓝电子商务有限公司
+		supplierIds.add("2018040902001");
 	}
 	@Autowired
 	IShangpinRedis shangpinRedis;
@@ -66,7 +69,8 @@ public class HubFilterService {
 	    	List<Byte> liByte = new ArrayList<Byte>();
 	    	liByte.add((byte)0);
 	    	liByte.add((byte)4);
-			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).andSpuStateIn(liByte).andSupplierIdNotIn(supplierIds);
+			criteria.createCriteria().andHubCategoryNoLike(hubCategoryNo+"%").andSpuBrandStateEqualTo((byte)1).
+			andSpuStateIn(liByte).andSupplierIdNotIn(supplierIds);
 			int totalSize = hubSpuPendingGateway.countByCriteria(criteria);
 			int pageCount = getPageCount(totalSize, 100);// 页数
 			for (int i = 1; i <= pageCount; i++) {

@@ -163,7 +163,7 @@ public class AirshopImportService {
 		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
-		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,pendingSkuImportDto,false);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,false);
 
 		if (Boolean.parseBoolean(map.get("isPassing"))) {
 			taskService.sendToHub(hubPendingSpuDto, map);

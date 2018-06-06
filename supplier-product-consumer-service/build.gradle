@@ -31,7 +31,7 @@ repositories {
 
 
 dependencies {
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.3.4-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.4.1-SNAPSHOT')
 	compile('com.alibaba:fastjson:1.2.22')
 	compile('com.google.code.gson:gson:2.2.2')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
@@ -41,6 +41,7 @@ dependencies {
 	compile('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	runtime('org.springframework.boot:spring-boot-devtools')
+	compile('org.apache.velocity:velocity:1.7')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
@@ -51,4 +52,8 @@ dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR3"
 	}
+}
+
+springBoot{
+	mainClass = "com.shangpin.supplier.product.consumer.SupplierProductConsumerServiceApplication"
 }

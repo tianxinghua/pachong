@@ -119,29 +119,25 @@ public class PendingSkuImportService {
 			listMap.add(map);
 		}
 		
-		for (Map.Entry<Long, String> entry : spuMap.entrySet()) {
-			Long spuPendingId = entry.getKey();
-			HubSkuPendingCriteriaDto criate = new HubSkuPendingCriteriaDto();
-			criate.setPageNo(1);
-			criate.setPageSize(10000);
-			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andFilterFlagEqualTo((byte)1).andSpSkuSizeStateEqualTo((byte)0);
-			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criate);
-			boolean flag = false;
-			if(list!=null&&list.size()>0){
-				flag = true;
-			}
-			
-			if(flag){
-				HubSpuPendingDto spu = new HubSpuPendingDto();
-				spu.setSpuPendingId(spuPendingId);
-				spu.setSpuState((byte)0);
-				hubSpuPendingGateWay.updateByPrimaryKeySelective(spu);
-			}else{
-				
-				
-			}
-		
-		}
+//		for (Map.Entry<Long, String> entry : spuMap.entrySet()) {
+//			Long spuPendingId = entry.getKey();
+//			HubSkuPendingCriteriaDto criate = new HubSkuPendingCriteriaDto();
+//			criate.setPageNo(1);
+//			criate.setPageSize(10000);
+//			criate.createCriteria().andSpuPendingIdEqualTo(spuPendingId).andFilterFlagEqualTo((byte)1).andSpSkuSizeStateEqualTo((byte)0);
+//			List<HubSkuPendingDto> list = hubSkuPendingGateWay.selectByCriteria(criate);
+//			boolean flag = false;
+//			if(list!=null&&list.size()>0){
+//				flag = true;
+//			}
+//			if(flag){
+//				HubSpuPendingDto spu = new HubSpuPendingDto();
+//				spu.setSpuPendingId(spuPendingId);
+//				spu.setSpuState((byte)0);
+//				hubSpuPendingGateWay.updateByPrimaryKeySelective(spu);
+//			}else{
+//			}
+//		}
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
@@ -169,11 +165,12 @@ public class PendingSkuImportService {
 		
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
-		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,pendingSkuImportDto,false);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,false);
 		if(hubPendingSkuCheckResult.isFilter()){
 			map.put("allFilter","true");
 		}
-		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,hubPendingSkuCheckResult.isPassing());
+		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,
+				hubPendingSkuCheckResult.isPassing());
 //		if (Boolean.parseBoolean(map.get("isPassing"))) {
 //			taskService.sendToHub(hubPendingSpuDto, map);
 //		}

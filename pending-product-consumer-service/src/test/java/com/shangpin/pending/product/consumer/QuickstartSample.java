@@ -1,3 +1,4 @@
+/*
 package com.shangpin.pending.product.consumer;
 
 // Imports the Google Cloud client library
@@ -26,3 +27,4 @@ public class QuickstartSample {
         System.out.printf("Translation: %s%n", translation.getTranslatedText());
     }
 }
+*/

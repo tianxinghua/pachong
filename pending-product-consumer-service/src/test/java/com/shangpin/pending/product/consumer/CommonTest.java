@@ -1,3 +1,4 @@
+/*
 package com.shangpin.pending.product.consumer;
 
 import com.alibaba.fastjson.JSON;
@@ -7,9 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
+*/
 /**
  * Created by lizhongren on 2017/1/19.
- */
+ *//*
+
 public class CommonTest {
 
     public static void main(String[] args){
@@ -52,7 +55,7 @@ public class CommonTest {
 //        int num = obj.getIntValue("Stock");
 //        System.out.println("SupplierValueMappingType.TYPE_SIZE.getIndex()=" + SupplierValueMappingType.TYPE_SIZE.getIndex())  ;
         CommonTest test = new CommonTest();
-        String line = "4509509HVAT 8697";
+
 //        String[] words = line.split("\\s+",-1);
 //        System.out.println("words length "+words.length);
 //
@@ -70,7 +73,9 @@ public class CommonTest {
 //        test.setValue(words2);
 //        System.out.println("words2 length "+words2.length);
 //        test.test();
-        test.getSysEnv();
+          String material = "面料:(100 %)棉|里料:无 .,skjdk ";
+          test.materialTest(material);
+
     }
 
     public void setValue(String[] words){
@@ -182,4 +187,18 @@ public class CommonTest {
         System.out.println("GOOGLE_APPLICATION_CREDENTIALS="+ credentialsPath);
         System.out.println("path ="+ System.getenv("path"));
     }
+    public void materialTest(String hubMaterial){
+        try {
+            hubMaterial = hubMaterial.replaceAll("％","%").replaceAll(" %","%");
+            System.out.println("material = " +hubMaterial);
+            hubMaterial = hubMaterial.replaceAll("\\."," ").replaceAll(","," ").replaceAll(";"," ").replaceAll("-"," ");
+            System.out.println("material = " +hubMaterial);
+            hubMaterial = hubMaterial.replaceAll("\""," ").replaceAll("（"," ").replaceAll("（"," ").replaceAll("）"," ")
+                    .replaceAll("\\("," ").replaceAll("\\)"," ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("material = " +hubMaterial);
+    }
 }
+*/

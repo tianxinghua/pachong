@@ -146,8 +146,8 @@ public class PendingSpuImportService {
 			if(insertReason){
 				hubPendingSpuDto.setMsgMissHandleState(MsgMissHandleState.HAVE_HANDLED.getIndex());
 			}
-			hubPendingSpuDto.setSpuState((byte)4);
-			hubPendingSpuDto.setMemo("spu导入人工排除");
+			hubPendingSpuDto.setSpuState((byte)3);
+			hubPendingSpuDto.setMemo("spu导入人工排除，设置成无法处理");
 			hubPendingSpuDto.setUpdateUser(createUser);
 			hubPendingSpuDto.setUpdateTime(new Date());
 			HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
@@ -205,35 +205,8 @@ public class PendingSpuImportService {
 	
 	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO productImport,String createUser) throws Exception{
 
-
-		//		//判断hubSpu是否已存在
-		HubSpuDto hubSpuDto = dataHandleService.selectHubSpu(productImport.getSpuModel(),productImport.getHubBrandNo());
-		if (hubSpuDto != null) {
-
-			convertHubSpuToHubSpuPendingImportDTO(hubSpuDto,productImport);
-
-			//原来要求判断颜色是否相同  现在不判断  在待审核那里人工判断
-//			if(hubSpuDto.getHubColor().equals(productImport.getHubColor())){
-//				Long hubSpuId = hubSpuDto.getSpuId();
-//				String hubSpuNo = hubSpuDto.getSpuNo();
-//				boolean hubIsExist = true;
-//				map.put("hubIsExist", hubIsExist + "");
-//				map.put("hubSpuId", hubSpuId + "");
-//				map.put("hubSpuNo", hubSpuNo);
-//				if(isSpuPendingExist!=null){
-//
-//				}
-//			}else{
-//				//同品牌同货号不同颜色
-//				map.put("taskState", "校验失败");
-//				map.put("processInfo", "同品牌同货号，颜色不一样");
-//				dataHandleService.updateHubSpuPending(hubPendingSpuDto);
-//				return;
-//			}
-		}
 		//excel数据转换为数据库对象
 		HubSpuPendingDto conversionSpuPendingDto = convertHubPendingProduct2PendingSpu(productImport,createUser);
-		
 		//判断spuPending是否已存在
 		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(conversionSpuPendingDto);
 		HubSpuPendingDto isSpuPendingExist = null;
@@ -253,13 +226,10 @@ public class PendingSpuImportService {
 					}
 				}
 			}
-
-			map.put("pendingSpuId", isSpuPendingExist.getSpuPendingId() + "");
 		}
-		
 
-		HubPendingSkuCheckResult checkResult = selectAndcheckSku(productImport,isSpuPendingExist, map);
-		taskService.checkPendingSpu(isSpuPendingExist, checkResult, conversionSpuPendingDto, map, checkResult.isPassing());
+		HubPendingSkuCheckResult checkSkuResult = selectAndcheckSku(productImport,isSpuPendingExist, map);
+		taskService.checkPendingSpu(isSpuPendingExist, checkSkuResult, conversionSpuPendingDto, map, checkSkuResult.isPassing());
 //		boolean isPassing = Boolean.parseBoolean(map.get("isPassing"));
 //		if (isPassing) {
 //			taskService.sendToHub(hubPendingSpuDto, map);
@@ -313,7 +283,8 @@ public class PendingSpuImportService {
 		if (isSpuPendingExist != null) {
 			boolean allFliter = true;
 			boolean noSku = false;
-			List<HubSkuPendingDto> listSku = dataHandleService.selectHubSkuPendingBySpuPendingId1(isSpuPendingExist);
+			//查询出所有状态不是2(已完成)或5(审核中)的sku
+			List<HubSkuPendingDto> listSku = dataHandleService.selectHubSkuPendingBySpuPendingId(isSpuPendingExist);
 			if (listSku != null && listSku.size() > 0) {
 				//判断sku是否都过滤或者都已处理
 				for (HubSkuPendingDto hubSkuPendingDto : listSku) {
@@ -330,27 +301,29 @@ public class PendingSpuImportService {
 				}
 				map.put("allFilter",allFliter+"");
 			} else {
+				flag = false;
 				noSku = true;
 				map.put("noSku",noSku+"");
 				str.append("无sku信息或者sku都已处理");
 			}
+		}else{
+			flag = false;
 		}
 		checkResult.setPassing(flag);
 		checkResult.setMessage(str.toString());
 		return checkResult;
 	}
 
-	private HubPendingSkuCheckResult loopCheckHubSkuPending(HubSkuPendingDto hubSkuPendingDto,HubPendingSpuImportDTO pendingSpuImportDto,Map<String, String> map) throws Exception{
+	private HubPendingSkuCheckResult loopCheckHubSkuPending(HubSkuPendingDto hubSkuPendingDto,
+			HubPendingSpuImportDTO pendingSpuImportDto,
+			Map<String, String> map) throws Exception{
 		
 		boolean flag = false;
 		String result = null;
 		HubPendingSkuCheckResult hubPendingSkuCheckResult = new HubPendingSkuCheckResult();
-		HubPendingProductImportDTO pendingSkuImportDto = new HubPendingProductImportDTO();
-		pendingSkuImportDto.setSpecificationType(pendingSpuImportDto.getSpecificationType());
-		pendingSkuImportDto.setHubSkuSize(hubSkuPendingDto.getHubSkuSize());
-		pendingSkuImportDto.setSizeType(hubSkuPendingDto.getHubSkuSizeType());
 		boolean isMultiSizeType = false;
-		if ("尺码".equals(pendingSpuImportDto.getSpecificationType())|| StringUtils.isBlank(pendingSpuImportDto.getSpecificationType())) {
+		if ("尺码".equals(pendingSpuImportDto.getSpecificationType())|| 
+				StringUtils.isBlank(pendingSpuImportDto.getSpecificationType())) {
 	
 			if (hubSkuPendingDto.getHubSkuSize() != null) {
 				MatchSizeResult matchSizeResult = taskService.matchSize(pendingSpuImportDto.getHubBrandNo(),pendingSpuImportDto.getHubCategoryNo(),hubSkuPendingDto.getHubSkuSize());
@@ -360,7 +333,6 @@ public class PendingSpuImportService {
 						flag = true;
 						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType(matchSizeResult.getSizeType());
-						pendingSkuImportDto.setSizeType(matchSizeResult.getSizeType());
 						result = matchSizeResult.getResult();
 					}else if(matchSizeResult.isMultiSizeType()) {//多个匹配  失败 增加备注
 						isMultiSizeType = matchSizeResult.isMultiSizeType();
@@ -368,25 +340,22 @@ public class PendingSpuImportService {
 					}else  if(matchSizeResult.isFilter()){//有模板没匹配上
 //						hubPendingSkuCheckResult.setSizeId(matchSizeResult.getSizeId());
 						hubPendingSkuCheckResult.setSizeType("排除");
-						pendingSkuImportDto.setSizeType("排除");
 						hubPendingSkuCheckResult.setFilter(true);
 						result =" " + hubSkuPendingDto.getHubSkuSize() + "有模板没匹配上,排除";
 					}else{
 					   //不做处理
 						result =" " + hubSkuPendingDto.getHubSkuSize() + "未找到品牌品类尺码，不做处理";
 					}
-
 				}else{
 					result =  hubSkuPendingDto.getHubSkuSize() +" 返回结果为空，校验失败";
 				}
 			} else {
-
 				result = hubSkuPendingDto.getSupplierSkuNo() + "尺码为空";
 			}
 		}else if("尺寸".equals(pendingSpuImportDto.getSpecificationType())){
-			pendingSkuImportDto.setSizeType("尺寸");
 			result = "校验通过：" + hubSkuPendingDto.getHubSkuSize();
 			flag = true;
+			hubPendingSkuCheckResult.setSizeType("尺寸");
 			hubPendingSkuCheckResult.setSizeValue(hubSkuPendingDto.getHubSkuSize());
 		}else{
 			result = "校验失败,规格类型无效:" + pendingSpuImportDto.getSpecificationType();
@@ -395,36 +364,19 @@ public class PendingSpuImportService {
 		
 		hubPendingSkuCheckResult.setMessage(result);
 		hubPendingSkuCheckResult.setPassing(flag);
-		taskService.checkPendingSku(hubPendingSkuCheckResult, hubSkuPendingDto, map, pendingSkuImportDto, isMultiSizeType);
+		taskService.checkPendingSku(hubPendingSkuCheckResult, hubSkuPendingDto, map, isMultiSizeType);
 		return hubPendingSkuCheckResult;
 	}
 
 	private HubSpuPendingDto convertHubPendingProduct2PendingSpu(HubPendingSpuImportDTO product,String createUser) {
 		HubSpuPendingDto HubPendingSpuDto = new HubSpuPendingDto();
 		BeanUtils.copyProperties(product, HubPendingSpuDto);
-		HubPendingSpuDto.setHubSeason(product.getSeasonYear() + "_" + product.getSeasonName());
+		if(StringUtils.isNotBlank(product.getSeasonYear())&&StringUtils.isNotBlank(product.getSeasonName())){
+			HubPendingSpuDto.setHubSeason(product.getSeasonYear() + "_" + product.getSeasonName());
+		}
+		
 		HubPendingSpuDto.setUpdateUser(createUser);
 		return HubPendingSpuDto;
-	}
-
-
-
-	private void  convertHubSpuToHubSpuPendingImportDTO(HubSpuDto hubSpuDto,HubPendingSpuImportDTO productImport) {
-
-		productImport.setHubCategoryNo(hubSpuDto.getCategoryNo());
-		if(StringUtils.isBlank(productImport.getHubColor())){
-			productImport.setHubColor(hubSpuDto.getHubColor());
-		}
-		if(StringUtils.isBlank(productImport.getSeasonYear())||StringUtils.isBlank(productImport.getSeasonName())){
-			productImport.setSeasonYear(hubSpuDto.getMarketTime());
-			productImport.setSeasonName(hubSpuDto.getSeason());
-		}
-		productImport.setHubMaterial(hubSpuDto.getMaterial());
-		productImport.setHubOrigin(hubSpuDto.getOrigin());
-		productImport.setHubGender(hubSpuDto.getGender());
-
-
-
 	}
 
 	@SuppressWarnings("unchecked")

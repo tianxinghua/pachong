@@ -14,7 +14,7 @@ public interface ProductImportTaskSink {
 	public String PENDING_IMPORT = "pendingProductImportTask";
 	
 	public String HUB_IMPORT = "hubProductImportTask";
-	public String PRODUCT_EXPORT = "productExportTask";
+
 	
     /**
      * pending导入处理
@@ -29,11 +29,6 @@ public interface ProductImportTaskSink {
 	@Input(value = ProductImportTaskSink.HUB_IMPORT)
     public SubscribableChannel hubProductImport();
 	
-	/**
-	 * 导出处理
-	 * @return 通道
-	 */
-	@Input(value = ProductImportTaskSink.PRODUCT_EXPORT)
-    public SubscribableChannel productExport();
+
 	
 }

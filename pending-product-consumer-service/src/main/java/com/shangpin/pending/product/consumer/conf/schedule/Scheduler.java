@@ -45,8 +45,16 @@ public class Scheduler {
 
 	@Autowired
 	VariableInit variableInit;
+
+	@Autowired
+	private ScheduleConfig scheduleConfig;
+
 	@Scheduled(cron = "0 10 8 * * ?")
 	public void modelTask() {
+
+		if(!scheduleConfig.isBrand()){
+			return;
+		}
 		
 		try {
 			List<String> categoryList = new ArrayList<String>();
@@ -56,7 +64,7 @@ public class Scheduler {
 			categoryList.add("A02B02");
 			categoryList.add("A03B01");
 			categoryList.add("A03B02");
-//			categoryList.add("A11");
+			categoryList.add("A05B10");
 			for(String category:categoryList){
 				log.info("待刷新的品类："+category);
 				hubFilterService.refreshHubFilter(category);

@@ -21,6 +21,8 @@ public interface PendingProductSink {
 	public static final String SPINNAKER = "spinnakerPendingProduct";
 	
 	public static final String OSTORE = "ostorePendingProduct";
+
+	public static final String MENGOTTISNC = "mengottiSncPendingProduct";
 	
 	public static final String BRUNAROSSO = "brunarossoPendingProduct";
 	
@@ -162,6 +164,8 @@ public interface PendingProductSink {
 
 	public static final String REDI = "rediPendingProduct";
 
+	public static final String OBLU = "obluPendingProduct";
+
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件
@@ -223,6 +227,12 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.OSTORE)
     public SubscribableChannel ostorePendingProduct();
+	/**
+	 * 供货商MENGOTTISNC通道组件配置
+	 * @return 供货商MENGOTTTSNC通道组件
+	 */
+	@Input(value = PendingProductSink.MENGOTTISNC)
+	public SubscribableChannel mengottiSncPendingProduct();
 	/**
 	 * 供货商BRUNAROSSO通道组件配置
 	 * @return 供货商BRUNAROSSO通道组件
@@ -643,4 +653,8 @@ public interface PendingProductSink {
 
 	@Input(value = PendingProductSink.REDI)
 	public SubscribableChannel rediPendingProduct();
+
+
+	@Input(value = PendingProductSink.OBLU)
+	public SubscribableChannel obluPendingProduct();
 }

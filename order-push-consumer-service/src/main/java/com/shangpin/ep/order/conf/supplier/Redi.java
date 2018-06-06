@@ -19,7 +19,7 @@ public class Redi extends SupplierCommon implements Serializable {
 	private static final long serialVersionUID = -8714769888978504331L;
 
 
-	private String orderUrl = "";
+	private String orderUrl;
 
 
 }

@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.176
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -54,7 +54,7 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        brunarossoPendingProduct: 
+                        brunarossoPendingProduct:
                               destination: brunarosso.pending.product
                               group: one
                               consumer: 
@@ -474,6 +474,18 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -494,7 +506,7 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            brunarossoPendingProduct: 
+                            brunarossoPendingProduct:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -914,6 +926,18 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            obluPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            mengottiSncPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
@@ -944,3 +968,5 @@ shangpin:
              supplierId:
              translateAll: true
              refresh: ${translateProperty.refresh:true}
+   schedule:
+        brand: ${shangpin.schedule.brand:true}

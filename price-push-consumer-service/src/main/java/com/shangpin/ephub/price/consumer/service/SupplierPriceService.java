@@ -66,7 +66,7 @@ public class SupplierPriceService {
 
                 String supplierType = supplierMessageDTO.getQuoteMode();;
 //                log.info("supplier type ="+ supplierType);
-                if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
+                if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货价格
 
                     Map<String,String> supplierMap = this.getValidSupplier();
                     Iterator<String> iterator = supplierMap.keySet().iterator();
@@ -265,7 +265,8 @@ public class SupplierPriceService {
         if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.MARKET_SUPPLY_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.SUPPLY_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
-                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
             return  true;
         }else{
             return false;

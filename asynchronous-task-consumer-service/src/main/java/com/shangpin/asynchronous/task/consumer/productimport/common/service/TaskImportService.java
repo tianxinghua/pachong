@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Service;
 import com.shangpin.asynchronous.task.consumer.conf.ftp.FtpProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.ExportExcelUtils;
 import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
 import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
 import com.shangpin.ephub.client.data.mysql.enumeration.MaterialState;
 import com.shangpin.ephub.client.data.mysql.enumeration.OriginState;
@@ -47,6 +47,7 @@ import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskDto;
 import com.shangpin.ephub.client.data.mysql.task.dto.HubSpuImportTaskWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.task.gateway.HubSpuImportTaskGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
+import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingSpuCheckGateWay;
@@ -76,6 +77,8 @@ import com.shangpin.ephub.client.util.TaskImportTemplate;
 public class TaskImportService {
 
 	@Autowired
+	HubPendingSkuCheckGateWay hubPendingSkuCheckGateWay;
+	@Autowired
 	HubPendingHandleGateWay hubPendingHandleGateWay;
 	@Autowired
 	PengdingToHubGateWay pengdingToHubGateWay;
@@ -98,28 +101,46 @@ public class TaskImportService {
 	private static String[] pendingSpuTemplate = null;
 	static {
 		pendingSpuTemplate = TaskImportTemplate.getPendingSpuTemplate();
+
 	}
 
 	private static String[] pendingSkuTemplate = null;
 	static {
 		pendingSkuTemplate = TaskImportTemplate.getPendingSkuTemplate();
 	}
-
+	private static String[] colorTemplate=null;
+	static {
+		colorTemplate = TaskImportTemplate2.getColorTemplate();
+	}
+	private static String[] categroyTemplate=null;
+	static {
+		categroyTemplate = TaskImportTemplate2.getCategoryTemplate();
+	}
 	private static String[] hubProductTemplate = null;
 	static {
 		hubProductTemplate = HubProductDto.getHubProductTemplate();
 	}
+	private static String[] madeTemplate = null;
+	static {
+		madeTemplate = TaskImportTemplate2.getMadeTemplate();
+	}
+	private static String[] materialTemplate = null;
+	static {
+		materialTemplate = TaskImportTemplate2.getMaterialTemplate();
+	}
+	private static String[] brandTemplate  = null;
+	static {
+		brandTemplate = TaskImportTemplate2.getBrandTemplate();
+	}
 
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
-			 Map<String, String> map,HubPendingProductImportDTO pendingSkuImportDto,boolean isMultiSizeType) throws Exception{
+			 Map<String, String> map,boolean isMultiSizeType) throws Exception{
 		
 //		String hubSpuNo = map.get("hubSpuNo");
 		if (map.get("pendingSpuId") != null) {
 			hubSkuPendingDto.setSpuPendingId(Long.valueOf(map.get("pendingSpuId")));
 		}
 
-		String specificationType = pendingSkuImportDto.getSpecificationType();
-		String sizeType = pendingSkuImportDto.getSizeType();
 		HubSkuPendingDto hubSkuPendingTempDto = findHubSkuPending(hubSkuPendingDto.getSupplierId(),
 				hubSkuPendingDto.getSupplierSkuNo());
 		
@@ -232,6 +253,128 @@ public class TaskImportService {
 		
 		return path + resultFileName + ".xls";
 	}
+	public String convertExcelMade(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+
+		String[] headers = { "任务编号", "供货商产地", "尚品产地", "任务说明"};
+		String[] columns = { "taskNo", "supplierVal", "hubVal", "task"};
+		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
+		return path + resultFileName + ".xls";
+	}
+
+	public String convertExcelBrand(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+
+		String[] headers = { "任务编号", "供应商品牌", "尚品品牌", "任务说明" };
+		String[] columns = { "taskNo", "supplierBrand", "hubBrandNo", "task"};
+		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
+		return path + resultFileName + ".xls";
+	}
+	public String convertExcelCategory(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+
+		String[] headers = { "任务编码", "供货商品类", "品类编码", "任务说明"};
+		String[] columns = { "taskNo", "supplierCategory", "hubCategoryNo","task"};
+		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
+		return path + resultFileName + ".xls";
+	}
+	public String convertExcelColor(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+
+		String[] headers = {"任务编号","供应商颜色","sp颜色","任务状态" };
+		String[] columns = {"colorDicItemId","colorItemName","hubcolor","task"};
+		ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
+		return path + resultFileName + ".xls";
+	}
+
+	//材质状态
+	public String convertExcelMarterial(List<Map<String, String>> result, String taskNo) throws Exception {
+		SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		String resultFileName = sim.format(new Date());
+		File filePath = new File(ftpProperties.getLocalResultPath());
+		if (!filePath.exists()) {
+			filePath.mkdirs();
+		}
+		String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
+		File file = new File(pathFile);
+		FileOutputStream out = new FileOutputStream(file);
+		String[] header = {"任务编码", "尚品材质名","供应商材质名","任务状态"};
+		String[] column = {"taskNo", "hubMaterial","supplierMaterial","task"};
+		ExportExcelUtils.exportExcel(resultFileName,header,column, result,out);
+		// 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
+		String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
+		FTPClientUtil.closeFtp();
+		if (file.exists()) {
+			file.delete();
+		}
+		// 更新结果文件路径到表中
+
+		return path + resultFileName + ".xls";
+	}
 
 	public XSSFSheet checkXlsxExcel(InputStream in, Task task, String type) throws Exception {
 
@@ -301,6 +444,51 @@ public class TaskImportService {
 				}
 			}
 		}
+		if ("color".equals(type)) {
+			for (int i = 0; i < colorTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!colorTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("made".equals(type)) {
+			for (int i = 0; i < madeTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!madeTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("material".equals(type)) {
+			for (int i = 0; i < materialTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!materialTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("brand".equals(type)) {
+			for (int i = 0; i < brandTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!brandTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+
 		if(!flag){
 			log.info("任务编号：" + taskNo + "," + "上传文件与模板不一致");
 			updateHubSpuImportByTaskNo(TaskState.SOME_SUCCESS.getIndex(),taskNo, "上传文件与模板不一致", null);
@@ -339,6 +527,61 @@ public class TaskImportService {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!hubProductTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("color".equals(type)) {
+			for (int i = 0; i < colorTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!colorTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("categroy".equals(type)) {
+			for (int i = 0; i < categroyTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!categroyTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("made".equals(type)) {
+			for (int i = 0; i <madeTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!madeTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("material".equals(type)) {
+			for (int i = 0; i < materialTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!materialTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("brand".equals(type)) {
+			for (int i = 0;i<brandTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!brandTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}
@@ -391,40 +634,12 @@ public class TaskImportService {
 				spuIsPassing = true;
 				if(suplierColor!=null&&suplierColor.equals(list.getHubColor())){
 					hubIsExist = true;
-					checkResult = spuModel+"在hub已存在";
+					checkResult = spuModel+"在hub已存在，并且颜色一致";
 				}else{
 					hubIsExist = false;
 					checkResult = spuModel+"hub已存在,但颜色不一样,hub颜色："+list.getHubColor()+",待处理颜色："+suplierColor;
 				}
-				
-
 				hubPendingSpuCheckResult.setPassing(true);
-
-				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-//				if(list.getHubColor().equals(hubPendingSpuDto.getHubColor())){
-//					convertHubSpuToPendingSpu(hubPendingSpuDto, list);
-//					hubSpuId = list.getSpuId();
-//					hubSpuNo = list.getSpuNo();
-//					spuIsPassing = true;
-//					hubIsExist = true;
-//					checkResult = spuModel+"在hub已存在";
-//					hubPendingSpuCheckResult.setPassing(true);
-//				}else{
-//					//同品牌同货号不同颜色
-//					spuIsPassing = false;
-//					hubIsExist = false;
-//					map.put("taskState", "校验失败");
-//					map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
-//					checkResult =  "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor();
-//					hubPendingSpuCheckResult.setPassing(false);
-//					hubPendingSpuDto.setAuditState((byte)0);
-//					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-//					hubPendingSpuDto.setAuditDate(new Date());
-//					hubPendingSpuDto.setAuditUser("chenxu");
-//					hubPendingSpuDto.setSpuState((byte)0);
-//					hubPendingSpuDto.setMemo("同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-////					dataHandleService.updateHubSpuPending(hubPendingSpuDto);
-//				}
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
 				if (hubPendingSpuCheckResult.isPassing()) {
@@ -484,7 +699,10 @@ public class TaskImportService {
 		hubPendingSpuDto.setMaterialState(MaterialState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
 		hubPendingSpuDto.setOriginState(OriginState.HANDLED.getIndex());
-		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+		if(StringUtils.isBlank(hubPendingSpuDto.getHubSeason())){
+			hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
+		}
+//		
 		hubPendingSpuDto.setSpuSeasonState(SpuSeasonState.HANDLED.getIndex());
 		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
 		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
@@ -534,7 +752,9 @@ public class TaskImportService {
 		}
 		if (spuIsPassing&&skuIsPassing==true) {//&&skuIsPassing==true
 			if(hubIsExist){
-				//hub存在同品牌同货号，进入待复合
+				//hub存在同品牌同货号同颜色并且有尺码信息，进入待选品
+				//TODO 此处如果更改为待选品，后面审核推送可屏蔽
+//				hubPendingSpuDto.setSpuState((byte) SpuState.HANDLED.getIndex());
 				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());	
 			}else{
 				hubPendingSpuDto.setSpuState((byte) SpuState.INFO_IMPECCABLE.getIndex());
@@ -547,65 +767,56 @@ public class TaskImportService {
 			hubPendingSpuDto.setSpuGenderState((byte)1);
 			hubPendingSpuDto.setSpuModelState((byte)1);
 			hubPendingSpuDto.setSpuSeasonState((byte)1);
-			
 		} else {
 			if(hubPendingSpuCheckResult.isSpuModel()){
 				hubPendingSpuDto.setSpuModelState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuModelState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isCategory()){
 				hubPendingSpuDto.setCatgoryState((byte)1);
 			}else{
 				hubPendingSpuDto.setCatgoryState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isMaterial()){
 				hubPendingSpuDto.setMaterialState((byte)1);
 			}else{
 				hubPendingSpuDto.setMaterialState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isOriginal()){
 				hubPendingSpuDto.setOriginState((byte)1);
 			}else{
 				hubPendingSpuDto.setOriginState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isBrand()){
 				hubPendingSpuDto.setSpuBrandState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuBrandState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isColor()){
 				hubPendingSpuDto.setSpuColorState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuColorState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isGender()){
 				hubPendingSpuDto.setSpuGenderState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuGenderState((byte)0);
 			}
-			
 			if(hubPendingSpuCheckResult.isSeasonName()){
 				hubPendingSpuDto.setSpuSeasonState((byte)1);
 			}else{
 				hubPendingSpuDto.setSpuSeasonState((byte)0);
 			}
-			
 			hubPendingSpuDto.setSpuState((byte) SpuState.INFO_PECCABLE.getIndex());
 		}
-		
-		if(allFilter){
-			hubPendingSpuDto.setSpuState((byte)1);	
-		}
-		if(noSku){
-			hubPendingSpuDto.setSpuState((byte)2);
-		}
+		//TODO 全部排除的是否进入待审核
+//		if(allFilter){
+//			hubPendingSpuDto.setSpuState((byte)2);	
+//		}
+//		if(noSku){
+//			hubPendingSpuDto.setSpuState((byte)2);
+//		}
 		
 		//新加的 记录校验结果
 		hubPendingSpuDto.setMemo(memo);
@@ -614,8 +825,10 @@ public class TaskImportService {
 			pengingSpuId = isPendingSpuExist.getSpuPendingId();
 			hubPendingSpuDto.setUpdateTime(new Date());
 			hubPendingSpuDto.setSpuPendingId(pengingSpuId);
-			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 			
+			hubPendingSkuCheckGateWay.checkSkuBeforeAudit(hubPendingSpuDto);
+			
+			hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
 			if(hubIsExist&&!allFilter){
 				//2018-4-16需求 检验通过的直接进入待选品，跳过待审核
 				if(SpuState.INFO_IMPECCABLE.getIndex()==hubPendingSpuDto.getSpuState()){

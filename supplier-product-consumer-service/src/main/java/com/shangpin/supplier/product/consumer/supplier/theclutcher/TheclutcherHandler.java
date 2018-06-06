@@ -82,7 +82,12 @@ public class TheclutcherHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuColor(studioSpuDto.getColor());
 			hubSpu.setSupplierGender(studioSpuDto.getGender());
 			hubSpu.setSupplierCategoryno(studioSpuDto.getCategory());
-			hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
+			if (studioSpuDto.getName()!=null){
+				hubSpu.setSupplierCategoryname(studioSpuDto.getName()+" "+studioSpuDto.getCategory());
+			}else {
+				hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
+			}
+			//hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
 			hubSpu.setSupplierBrandname(studioSpuDto.getBrand());
 			hubSpu.setSupplierSeasonname(studioSpuDto.getSeason());
 		

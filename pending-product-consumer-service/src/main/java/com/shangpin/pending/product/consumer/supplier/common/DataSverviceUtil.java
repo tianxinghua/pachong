@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,8 +25,6 @@ import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.pending.product.consumer.common.enumeration.SupplierValueMappingType;
 import com.shangpin.pending.product.consumer.supplier.dto.SpuPending;
 import com.shangpin.pending.product.consumer.supplier.dto.SupplierSizeMappingDto;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by loyalty on 17/1/7.
@@ -63,7 +63,7 @@ public class DataSverviceUtil {
     DataServiceHandler dataServiceHandler;
 
     @Autowired
-    DataOfPendingServiceHandler dataOfPendingServiceHandler;
+    DataBusinessService dataBusinessService;
 
     @Autowired
     SpuPendingHandler spuPendingHandler;
@@ -263,7 +263,7 @@ public class DataSverviceUtil {
 
     private void updateStockAndPriceStateWhenStockZero(SpuPending hubSpuPending, boolean isHaveMarketPrice, boolean isHaveSupplyPrice) {
         //判断此SPU下是否有库存
-        int totalStock = dataOfPendingServiceHandler.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
+        int totalStock = dataBusinessService.getStockTotalBySpuPendingId(hubSpuPending.getSpuPendingId());
         if(totalStock>0){
 //                            if(!String.valueOf(StockState.HANDLED.getIndex()).equals(hubSpuPending.getStockState().toString())) {
                 spuPendingHandler.updateStotckStateAndPriceState(hubSpuPending.getSpuPendingId(),totalStock,isHaveMarketPrice,isHaveSupplyPrice);

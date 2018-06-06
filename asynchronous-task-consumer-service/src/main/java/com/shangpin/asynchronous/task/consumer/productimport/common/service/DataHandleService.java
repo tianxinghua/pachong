@@ -93,7 +93,7 @@ public class DataHandleService {
 		
 	}
 
-	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId1(HubSpuPendingDto hubSpuPendingDro) {
+	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId(HubSpuPendingDto hubSpuPendingDro) {
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		List<Byte> listSkuState = new ArrayList<Byte>();
         listSkuState.add(SpuState.HANDLED.getIndex());

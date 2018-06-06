@@ -397,9 +397,9 @@ public class VariableInit {
     protected byte screenSupplierBrandAndSeasonEffectiveOrNot(String supplierId, String supplierBrandName,
                                                             String supplierSeason) {
 
-        getHubSupplierBrandFlag();
+        getHubSupplierBrandFlag();//获取品牌信息
         if (hubSupplierBrandFlag.containsKey(supplierId + "_" + supplierBrandName)) {
-            getHubSeasonFlag();
+            getHubSeasonFlag();//获取季节信息
             if (hubSeasonFlag.containsKey(supplierId + "_" + supplierSeason)) {
                 return FilterFlag.EFFECTIVE.getIndex();
             }

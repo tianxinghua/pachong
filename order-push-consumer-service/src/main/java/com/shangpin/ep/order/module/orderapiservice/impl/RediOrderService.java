@@ -97,34 +97,48 @@ public class RediOrderService implements IOrderService {
 
 
 		BillingInfo billing_address = new BillingInfo();
-		billing_address.setName("1");
-		billing_address.setSurname("");
+		billing_address.setName("John");
+		billing_address.setSurname("Doe");
 		billing_address.setCompany("");
 		billing_address.setVatcode("");
-		billing_address.setAddress("");
-		billing_address.setCity("");
-		billing_address.setState("");
-		billing_address.setCountry("");
-		billing_address.setZip("");
-		billing_address.setEmail("");
-		billing_address.setPhone("");
-		billing_address.setMobile("");
+		billing_address.setAddress("JingBeiShiTongZhouQuXingMaoYiJie11HaoHuaRunWuLiu5HaoKu");
+		billing_address.setCity("Pechino");
+		billing_address.setState("Bei");
+		billing_address.setCountry("CN");
+		billing_address.setZip("100005");
+		billing_address.setEmail("j.doe@fashion.us");
+		billing_address.setPhone("4006900900");
+		billing_address.setMobile("333-113-34565");
 		rediOrderDto.setBillingInfo(billing_address);
-
+		
+		ShippingInfo shipping_address_ch = new ShippingInfo();
+		shipping_address_ch.setName("约翰");
+		shipping_address_ch.setSurname("母鹿");
+		shipping_address_ch.setCompany("");
+		shipping_address_ch.setVatcode("");
+		shipping_address_ch.setAddress("北京市通州区兴贸一街11号华润物流5号库");
+		shipping_address_ch.setCity("Pechino");
+		shipping_address_ch.setState("北");
+		shipping_address_ch.setCountry("CN");
+		shipping_address_ch.setZip("100005");
+		shipping_address_ch.setEmail("j.doe@fashion.us");
+		shipping_address_ch.setPhone("4006900900");
+		shipping_address_ch.setMobile("333-113-34565");
+		rediOrderDto.setShippingChInfo(shipping_address_ch);
 
 		ShippingInfo shipping_address = new ShippingInfo();
-		shipping_address.setName("1");
-		shipping_address.setSurname("");
+		shipping_address.setName("John");
+		shipping_address.setSurname("Doe");
 		shipping_address.setCompany("");
 		shipping_address.setVatcode("");
-		shipping_address.setAddress("");
-		shipping_address.setCity("");
-		shipping_address.setState("");
-		shipping_address.setCountry("");
-		shipping_address.setZip("");
-		shipping_address.setEmail("");
-		shipping_address.setPhone("");
-		shipping_address.setMobile("");
+		shipping_address.setAddress("JingBeiShiTongZhouQuXingMaoYiJie11HaoHuaRunWuLiu5HaoKu");
+		shipping_address.setCity("Pechino");
+		shipping_address.setState("Bei");
+		shipping_address.setCountry("CN");
+		shipping_address.setZip("100005");
+		shipping_address.setEmail("j.doe@fashion.us");
+		shipping_address.setPhone("4006900900");
+		shipping_address.setMobile("333-113-34565");
 		rediOrderDto.setShippingInfo(shipping_address);
 
 
@@ -143,6 +157,15 @@ public class RediOrderService implements IOrderService {
 		String result =  HttpUtil45.operateData("post", "json", url, new OutTimeConfig(1000*60*1,1000*60*3,1000*60*3), null, jsonValue, null, null,null);
 		orderDTO.setLogContent("推送订单返回结果="+result+"推送的订单="+jsonValue);
 		return result;
+	}
+	
+	public static void main(String[] args) {
+		RediOrderService service = new RediOrderService();
+		try {
+			service.pushOrder("https://www.redigroup.it/api/orders/1.8/e9b0a077-fc34-46bb-bfef-7ad3401a35c7", null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public String handleException(String url,OrderDTO orderDTO,Map<String, String> map,Throwable e){
 		handleException.handleException(orderDTO, e); 

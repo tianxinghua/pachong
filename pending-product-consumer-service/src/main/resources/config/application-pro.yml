@@ -479,18 +479,33 @@ spring:
                                        maxAttempts: 1
                         marinoPendingProduct:
                               destination: marino.pending.product
-                              
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
                         theStyleSidePendingProduct:
                               destination: theStyleSide.pending.product
                               group: one
                               consumer:
-                                       concurrency: 2
+                                       concurrency: 1
                                        maxAttempts: 1
                         rediPendingProduct:
                               destination: redi.pending.product
                               group: one
                               consumer:
-                                       concurrency: 2
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit:
                       bindings: 
@@ -968,6 +983,18 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            obluPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            mengottiSncPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
@@ -998,3 +1025,5 @@ shangpin:
              supplierId:
              translateAll: true
              refresh: ${translateProperty.refresh:true}
+   schedule:
+        brand: ${shangpin.schedule.brand:true}
