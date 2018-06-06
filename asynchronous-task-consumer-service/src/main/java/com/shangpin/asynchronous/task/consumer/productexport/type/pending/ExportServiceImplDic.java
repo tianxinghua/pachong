@@ -591,8 +591,8 @@ public class ExportServiceImplDic {
 		}
 	if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
 			String dateFormat = "yyyy-MM-dd";
-			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThan(DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat));
-			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThan(DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat));
+		hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThanOrEqualTo(DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat));
+		hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThan(DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat));
 		}
 
 
