@@ -590,13 +590,9 @@ public class ExportServiceImplDic {
 			hubColorDicItemCriteriaDto.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 		}
 		if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date end = format.parse(hubColorDic.getEndTime());
-			System.out.println("end时间-------"+end);
-			Date start = format.parse(hubColorDic.getStartTime());
-			System.out.println("start 时间-------"+start);
-			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeBetween(start,end);
-
+			String dateFormat = "yyyy-MM-dd HH:mm:ss";
+			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThanOrEqualTo(DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat));
+			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThanOrEqualTo(DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat));
 		}
 
 		int totalSize= hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
@@ -615,12 +611,11 @@ public class ExportServiceImplDic {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
                  if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-					Date end = format.parse(hubColorDic.getEndTime());
-					Date start = format.parse(hubColorDic.getStartTime());
-					criteria.createCriteria().andCreateTimeBetween(start,end);
+					  String dateFormat = "yyyy-MM-dd HH:mm:ss";
+					  criteria.createCriteria().andCreateTimeLessThanOrEqualTo(DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat));
+					  criteria.createCriteria().andCreateTimeLessThanOrEqualTo(DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat));
 
-				}
+				 }
 				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(criteria);
 				lists.add(ColorDicItemDto);
 			}
