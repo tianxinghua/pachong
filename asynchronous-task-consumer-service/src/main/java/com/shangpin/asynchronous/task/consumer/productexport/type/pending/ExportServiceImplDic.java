@@ -551,6 +551,8 @@ public class ExportServiceImplDic {
 	 */
 
 	public void exportColor(String taskNo,HubColorDic hubColorDic) throws Exception {
+		System.out.println("start----"+hubColorDic.getStartTime());
+		System.out.println("end----"+hubColorDic.getEndTime());
 		HSSFWorkbook wb = new HSSFWorkbook();
 		/**
 		 * 第一个sheet：产品信息
@@ -605,8 +607,6 @@ public class ExportServiceImplDic {
 			HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto1 =new HubColorDicItemCriteriaDto();
 			HubColorDicItemCriteriaDto.Criteria criteria2 =hubColorDicItemCriteriaDto.createCriteria();
 
-
-
 			List<List<HubColorDicItemDto>> lists = new ArrayList<List<HubColorDicItemDto>>();
 			for (int i = 1; i <= pageCount; i++) {
 				criteria.setPageNo(i);
@@ -617,13 +617,13 @@ public class ExportServiceImplDic {
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(hubColorDic.getStartTime());
-					criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
+					criteria2 .andCreateTimeGreaterThanOrEqualTo(parse);
 
 				}
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getEndTime())){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(hubColorDic.getEndTime());
-					criteria1.andCreateTimeLessThan(parse);
+					criteria2 .andCreateTimeLessThan(parse);
 				}
 
 				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(hubColorDicItemCriteriaDto1);
