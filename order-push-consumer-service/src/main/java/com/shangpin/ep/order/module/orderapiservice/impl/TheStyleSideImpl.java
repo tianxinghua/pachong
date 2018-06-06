@@ -113,7 +113,7 @@ public class TheStyleSideImpl implements IOrderService{
     }
 
     /**
-     * theStyleSide 订单推送 wsdl-java客户端发送方式（success）
+     * theStyleSide 订单推送 wsdl-java客户端发送方式
      * @param orderDTO
      * @return
      */
@@ -163,14 +163,14 @@ public class TheStyleSideImpl implements IOrderService{
             documentoRigaVOs = new ArrayList<>();
         }
         DocumentoRigaVO documentoRigaVO = new DocumentoRigaVO();
-        //注意格式： 货号|尺码
+        //注意格式： 货号|尺码 00004F|27
         String detail = orderDTO.getDetail();
         logger.info("== 推送订单 orderDTO.getDetail():"+detail);
         String[] details = detail.split(":");
         String skuId = details[0];
         skuId = skuId.replace("-","|");
         String qty = details[1];
-        //sku|size   documentoRigaVO.setBarCode(objFac.createDocumentoRigaVOBarCode("00004F|27"));
+        //sku|size   documentoRigaVO.setBarCode(objFac.createDocumentoRigaVOBarCode(""));
         documentoRigaVO.setBarCode(objFac.createDocumentoRigaVOBarCode(skuId));
         //数量qty
         documentoRigaVO.setQty(Integer.parseInt(qty));
@@ -220,7 +220,7 @@ public class TheStyleSideImpl implements IOrderService{
         String result = null;
         try {
             IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
-            result = http.insertOrderItalist("ECOMM", "vendiamotutto", order);
+            result = http.insertOrderItalist(usr, pwd, order);
             if(null==result){
                 logger.info("=== theStyleSide 推送订单失败 结果为空 result： "+result);
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
@@ -230,7 +230,6 @@ public class TheStyleSideImpl implements IOrderService{
                 logger.info("=== theStyleSide 推送订单成功 result： "+result);
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
                 orderDTO.setConfirmTime(new Date());
-                //orderDTO.setSupplierOrderNo(String.valueOf(responseObject.getId_b2b_order()));
             }
         } catch (Exception e) {
             e.printStackTrace();

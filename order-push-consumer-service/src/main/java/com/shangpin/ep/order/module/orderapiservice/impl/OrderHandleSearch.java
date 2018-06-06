@@ -235,6 +235,10 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("starOrderService")
 	IOrderService starOrderService;
+
+	@Autowired
+	@Qualifier("theStyleSideImpl")
+	IOrderService theStyleSideImpl;
 	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
@@ -359,6 +363,8 @@ public class OrderHandleSearch {
 			return marinoOrderService;
 		}else if("2018022701997".equals(supplierId)){
 			return starOrderService;
+		}else if("2018042002007".equals(supplierId)){
+			return theStyleSideImpl;
 		}else {
 			return null;
 		}
@@ -472,6 +478,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getMarino();
 		}else if("2018022701997".equals(supplierId)){
 			return supplierProperties.getStar();
+		}else if("2018042002007".equals(supplierId)){
+			return supplierProperties.getTheStyleSide();
 		}
 		else {
 			return null;
