@@ -99,7 +99,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 	
 	/**
 	 * stefania处理图片
-	 * @param stefPicture
+	 * @param supplierId
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,Product jsonObject){

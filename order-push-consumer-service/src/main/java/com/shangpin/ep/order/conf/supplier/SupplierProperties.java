@@ -135,5 +135,7 @@ public class SupplierProperties {
 	private Star star;
 
 	private Redi redi;
+
+	private TheStyleSide theStyleSide;
 	
 }
