@@ -655,7 +655,7 @@ public class ExportServiceImplDic {
 			is_upload_success = false;
 			log.error(taskNo+" 保存并上传ftp时异常：" + e.getMessage(), e);
 			throw e;
-		} finally {
+		}/* finally {
 			try {
 				if (null != fout) {
 					fout.close();
@@ -667,7 +667,7 @@ public class ExportServiceImplDic {
 				is_upload_success = false;
 				throw e2;
 			}
-		}
+		}*/
 		return is_upload_success;
 	}
 
