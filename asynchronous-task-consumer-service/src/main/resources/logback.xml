@@ -25,7 +25,7 @@
     <appender name="FILE_INFO"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">   <!-- 临界值过滤器，过滤掉低于指定临界值的日志，NEUTRAL会传递给下一个 -->
-			<level>INFO</level>
+			<!--<level>INFO</level>-->
 		</filter>
 		<file>${LOG_HOME}/shangpin-asynchronous-task-consumer-service-info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy" >
@@ -36,6 +36,14 @@
             <pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+
+    <logger name="com.shangpin" level="INFO"></logger>
+    <logger name="org" level="info"></logger>
+
+    <logger name="com.shangpin.ephub.data.mysql.task.spuimport.mapper" level="debug">
+        <appender-ref ref="FILE_INFO" />
+    </logger>
+
 	<logger name="com.shangpin" level="DEGUG" ></logger>
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

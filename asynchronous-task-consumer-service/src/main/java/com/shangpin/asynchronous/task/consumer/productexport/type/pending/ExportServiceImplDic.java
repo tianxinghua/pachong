@@ -571,6 +571,8 @@ public class ExportServiceImplDic {
 		//ExcelDropdown.creatExcelHidePage(wb);
 		String[] rowTemplate= TaskImportTemplate2.getColorValueTemplate();
 		HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto =new HubColorDicItemCriteriaDto();
+		HubColorDicItemCriteriaDto.Criteria criteria1 =hubColorDicItemCriteriaDto.createCriteria();
+
 		hubColorDicItemCriteriaDto.setPageNo(hubColorDic.getPageNo());
 		hubColorDicItemCriteriaDto.setPageSize(hubColorDic.getPageSize());
 		if (hubColorDic.getSupplierColorName()!=null){
@@ -578,23 +580,18 @@ public class ExportServiceImplDic {
 		}
 
 
-
-
 		if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
-			//Date startTime = DateTimeUtil.convertFormat(hubColorDic.getStartTime(), dateFormat);
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(hubColorDic.getStartTime());
-			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeGreaterThanOrEqualTo(parse);
-
+			criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
 		}
 		if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getEndTime())){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(hubColorDic.getEndTime());
-			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThan(parse);
+			criteria1.andCreateTimeLessThan(parse);
 		}
 
-
-
+            //查询总条数
 		int totalSize= hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
 		System.out.println("总条数"+totalSize);
 
@@ -603,6 +600,13 @@ public class ExportServiceImplDic {
 			int pageCount = getPageCount(totalSize, PAGESIZE);//总页数
 			log.info("导出总页数：" + pageCount);
 			HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
+
+
+			HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto1 =new HubColorDicItemCriteriaDto();
+			HubColorDicItemCriteriaDto.Criteria criteria2 =hubColorDicItemCriteriaDto.createCriteria();
+
+
+
 			List<List<HubColorDicItemDto>> lists = new ArrayList<List<HubColorDicItemDto>>();
 			for (int i = 1; i <= pageCount; i++) {
 				criteria.setPageNo(i);
@@ -611,17 +615,18 @@ public class ExportServiceImplDic {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
-					Date startTime = DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat);
-					criteria.createCriteria().andCreateTimeGreaterThanOrEqualTo(startTime);
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(hubColorDic.getStartTime());
+					criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
 
 				}
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getEndTime())){
-					//System.out.println(hubColorDic.getEndTime());
-					Date endTime = DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat);
-					criteria.createCriteria().andCreateTimeLessThan(endTime);
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(hubColorDic.getEndTime());
+					criteria1.andCreateTimeLessThan(parse);
 				}
 
-				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(criteria);
+				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(hubColorDicItemCriteriaDto1);
 				lists.add(ColorDicItemDto);
 			}
 			int j = 0;
