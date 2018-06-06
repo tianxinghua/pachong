@@ -86,6 +86,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -149,6 +150,7 @@ public class ExportServiceImplDic {
 	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
 	@Autowired
 	HubSupplierBrandDicGateWay hubSupplierBrandDicGateWay;
+	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	private static final Integer PAGESIZE = 50;
 
@@ -442,21 +444,6 @@ public class ExportServiceImplDic {
 				if (hubSupplierMadeMappingDto.getMappingType()!=null){
 					criteria2.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
 				}
-				/*HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto =new HubSupplierValueMappingCriteriaDto() ;
-				hubSupplierValueMappingCriteriaDto.setPageNo(i);
-			hubSupplierValueMappingCriteriaDto.setPageSize(PAGESIZE);*/
-
-			/*	if (hubSupplierMadeMappingDto.getHubVal()!=null){
-					hubSupplierValueMappingCriteriaDto.createCriteria().andHubValEqualTo(hubSupplierMadeMappingDto.getHubVal());
-				}
-				if (hubSupplierMadeMappingDto.getSupplierVal()!=null){
-					hubSupplierValueMappingCriteriaDto.createCriteria().andSupplierValEqualTo(hubSupplierMadeMappingDto.getSupplierVal());
-
-				}
-				hubSupplierValueMappingCriteriaDto.createCriteria().andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
-				if (hubSupplierMadeMappingDto.getMappingType()!=null){
-					hubSupplierValueMappingCriteriaDto.createCriteria().andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
-				}*/
 
 				List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(hubSupplierValueMappingCriteriaDto);
 				lists.add(hubSupplierValueMappingDtos);
@@ -589,10 +576,21 @@ public class ExportServiceImplDic {
 		if (hubColorDic.getSupplierColorName()!=null){
 			hubColorDicItemCriteriaDto.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 		}
-	if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
-			String dateFormat = "yyyy-MM-dd";
-		hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThanOrEqualTo(DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat));
-		hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThan(DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat));
+
+
+
+
+		if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
+			//Date startTime = DateTimeUtil.convertFormat(hubColorDic.getStartTime(), dateFormat);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(hubColorDic.getStartTime());
+			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeGreaterThanOrEqualTo(parse);
+
+		}
+		if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getEndTime())){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(hubColorDic.getEndTime());
+			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeLessThan(parse);
 		}
 
 
@@ -612,12 +610,17 @@ public class ExportServiceImplDic {
 				if (hubColorDic.getSupplierColorName()!= null) {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
-                 if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
-					  String dateFormat = "yyyy-MM-dd";
-					  criteria.createCriteria().andCreateTimeLessThan(DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat));
-					  criteria.createCriteria().andCreateTimeLessThan(DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat));
+				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
+					Date startTime = DateTimeUtil.convertFormat(hubColorDic.getStartTime(), dateFormat);
+					criteria.createCriteria().andCreateTimeGreaterThanOrEqualTo(startTime);
 
-				 }
+				}
+				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getEndTime())){
+					//System.out.println(hubColorDic.getEndTime());
+					Date endTime = DateTimeUtil.convertFormat(hubColorDic.getEndTime(),dateFormat);
+					criteria.createCriteria().andCreateTimeLessThan(endTime);
+				}
+
 				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(criteria);
 				lists.add(ColorDicItemDto);
 			}
@@ -638,6 +641,16 @@ public class ExportServiceImplDic {
 		}
 		saveAndUploadExcel(taskNo,hubColorDic.getCreateName(),wb);
 	}
+
+
+	public static Calendar parseString(String dateStr, String pattern) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		Date date = sdf.parse(dateStr);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar;
+	}
+
 
 	/**
 	 * 上传Excel到ftp
