@@ -604,13 +604,13 @@ public class ExportServiceImplDic {
 				if (hubColorDic.getSupplierColorName()!= null) {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
-               /* if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
+                 if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HHmmssSSS");
 					Date end = format.parse(hubColorDic.getEndTime());
 					Date start = format.parse(hubColorDic.getStartTime());
 					criteria.createCriteria().andCreateTimeBetween(start,end);
 
-				}*/
+				}
 				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(criteria);
 				lists.add(ColorDicItemDto);
 			}
