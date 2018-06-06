@@ -611,7 +611,7 @@ public class ExportServiceImplDic {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
-					Date startTime = DateTimeUtil.convertFormat(hubColorDic.getStartTime(), dateFormat);
+					Date startTime = DateTimeUtil.convertFormat(hubColorDic.getStartTime(),dateFormat);
 					criteria.createCriteria().andCreateTimeGreaterThanOrEqualTo(startTime);
 
 				}
