@@ -589,6 +589,14 @@ public class ExportServiceImplDic {
 		if (hubColorDic.getSupplierColorName()!=null){
 			hubColorDicItemCriteriaDto.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 		}
+		if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			Date end = format.parse(hubColorDic.getEndTime());
+			Date start = format.parse(hubColorDic.getStartTime());
+			hubColorDicItemCriteriaDto.createCriteria().andCreateTimeBetween(start,end);
+
+		}
+
 		int totalSize= hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
 		System.out.println("总条数"+totalSize);
 
