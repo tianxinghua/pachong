@@ -605,7 +605,7 @@ public class ExportServiceImplDic {
 					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
                  if (hubColorDic.getEndTime()!=null && hubColorDic.getStartTime()!=null){
-					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HHmmssSSS");
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 					Date end = format.parse(hubColorDic.getEndTime());
 					Date start = format.parse(hubColorDic.getStartTime());
 					criteria.createCriteria().andCreateTimeBetween(start,end);

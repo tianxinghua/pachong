@@ -108,7 +108,7 @@ spring:
        ftpPendingPath: pending/
        exportPath: pending_export/
        studioPath: studio_export/
-       localResultPath: /usr/local/share/applications/asynchronous-task-consumer-service/ftp/
+       localResultPath: /c:/
   mail: 
        default-recipient: chengxu@shangpin.com
        default-sender: chengxu@shangpin.com
