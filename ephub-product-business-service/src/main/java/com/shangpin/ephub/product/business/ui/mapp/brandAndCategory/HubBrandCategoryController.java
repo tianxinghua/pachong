@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.brandAndCategory;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -93,12 +94,12 @@ public class HubBrandCategoryController {
 		}
 	}
 
-	private HubResponse getHubBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+	private HubResponse getHubBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) throws ParseException {
 		
-		int total = hubBrandDicService.countHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo());
+		int total = hubBrandDicService.countHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 		log.info("返回个数："+total);
 		if(total>0){
-			List<HubBrandDicDto> list = hubBrandDicService.getHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+			List<HubBrandDicDto> list = hubBrandDicService.getHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 			if (list != null && list.size() > 0) {
 				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
 				for (HubBrandDicDto dicDto : list) {
@@ -115,13 +116,13 @@ public class HubBrandCategoryController {
 		return HubResponse.errorResp("列表为空");
 	}
 
-	private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+	private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) throws ParseException {
 		
-		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),null);
+		int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),null,hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 		log.info("返回个数："+total);
 		if(total>0){
 			List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),
-					null,hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+					null,hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 			if (list != null && list.size() > 0) {
 				List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
 				for (HubSupplierBrandDicDto dicDto : list) {
@@ -194,7 +195,7 @@ public class HubBrandCategoryController {
 	}
 	/**
 	 * 导出查询商品
-	 * @param dto
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
