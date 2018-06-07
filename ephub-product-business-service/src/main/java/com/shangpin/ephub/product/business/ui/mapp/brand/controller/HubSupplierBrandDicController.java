@@ -130,14 +130,14 @@ public class HubSupplierBrandDicController {
 	        return HubResponse.errorResp("列表为空");
 	    }
 
-	    private HubResponse getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+	    private HubResponse 	getHubSupplierBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) throws ParseException {
 
-	        int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo());
+	        int total = hubBrandDicService.countSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 
 	        log.info("返回个数："+total);
 	        if(total>0){
 	            List<HubSupplierBrandDicDto> list = hubBrandDicService.getSupplierBrandBySupplierIdAndType(hubSupplierBrandDicRequestDto.getSupplierId(),
-	                    hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+	                    hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 	            if (list != null && list.size() > 0) {
 	                List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
 	                for (HubSupplierBrandDicDto dicDto : list) {

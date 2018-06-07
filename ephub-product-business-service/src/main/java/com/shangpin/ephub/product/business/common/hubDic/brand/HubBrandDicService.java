@@ -110,7 +110,7 @@ public class HubBrandDicService {
 
 	}
 
-	public int countSupplierBrandBySupplierIdAndType(String supplierId, String supplierBrand,String hubBrandNo) {
+	public int countSupplierBrandBySupplierIdAndType(String supplierId, String supplierBrand,String hubBrandNo,String startTime,String endTime) throws ParseException {
 		
 		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
 		HubSupplierBrandDicCriteriaDto.Criteria criteria = hubSupplierBrandDicCriteriaDto.createCriteria();
@@ -122,6 +122,16 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria.andCreateTimeLessThan(parse);
 		}
 		criteria.andPushStateEqualTo((byte)0);
 		
@@ -135,12 +145,22 @@ public class HubBrandDicService {
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria2.andHubBrandNoEqualTo(hubBrandNo);
 		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria2.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria2.andCreateTimeLessThan(parse);
+		}
 		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
 		return supplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
 	}
 
 	public List<HubSupplierBrandDicDto> getSupplierBrandBySupplierIdAndType(String supplierId, String supplierBrand,String hubBrandNo,
-			int pageNo, int pageSize) {
+			int pageNo, int pageSize,String startTime,String endTime) throws ParseException {
 		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
 		HubSupplierBrandDicCriteriaDto.Criteria criteria = hubSupplierBrandDicCriteriaDto.createCriteria();
 		hubSupplierBrandDicCriteriaDto.setPageNo(pageNo);
@@ -154,6 +174,16 @@ public class HubBrandDicService {
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);
 		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria.andCreateTimeLessThan(parse);
+		}
 		criteria.andPushStateEqualTo((byte)0);
 		
 		HubSupplierBrandDicCriteriaDto.Criteria criteria2 = hubSupplierBrandDicCriteriaDto.createCriteria();
@@ -165,6 +195,16 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria2.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria2.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria2.andCreateTimeLessThan(parse);
 		}
 		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
 		
