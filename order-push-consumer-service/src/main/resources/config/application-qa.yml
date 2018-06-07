@@ -517,6 +517,9 @@ shangpin:
               productSpuUrl: http://192.168.20.176:8003/order/supplier-spu
               stockSupplierMapping: 
               orderSupplierMapping: S0000779:2016102701834
+      theStyleSide:
+              usr: ECOMM
+              pwd: vendiamotutto
 
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
