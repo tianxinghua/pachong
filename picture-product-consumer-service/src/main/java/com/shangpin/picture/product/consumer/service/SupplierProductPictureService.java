@@ -483,10 +483,16 @@ public class SupplierProductPictureService {
 				deleteImage(hubSpuPendingPicDto);
 				String picUrl = hubSpuPendingPicDto.getPicUrl();
 				int code = 0;
-				if(picUrl.startsWith("http")){
+				if(picUrl.toUpperCase().startsWith("HTTP")){
 					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
-				}else if(picUrl.startsWith("ftp")){
-					code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+				}else if(picUrl.toUpperCase().startsWith("FTP")){
+
+					if("2016110101955".equals(hubSpuPendingPicDto.getSupplierId())){
+						code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
+					}else{
+						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+					}
+
 				}
 				
 				if (code == 404 || code == 400) {
