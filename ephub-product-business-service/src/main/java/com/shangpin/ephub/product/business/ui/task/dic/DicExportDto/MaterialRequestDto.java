@@ -24,6 +24,24 @@ public class MaterialRequestDto {
     protected String  hubMaterial;
     protected String createUser;
     protected String mappingLevel;
+    protected String startTime;
+    protected String endTime;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
     public String getMappingLevel() {
         return mappingLevel;
@@ -81,77 +99,18 @@ public class MaterialRequestDto {
         this.hubMaterial = hubMaterial;
     }
 
-    /**
-     * <p>Title: ExportController</p>
-     * <p>Description: 待处理页（待拍照）的导出 </p>
-     * <p>Company: </p>
-     * @author lubaijiang
-     * @date 2017年7月5日 上午11:21:42
-     *
-     */
-
-    @RestController
-    @RequestMapping("/made-export")
-    @Slf4j
-    public static class MadeExportController {
-
-        @Autowired
-        private ExportService exportService;
-        @Autowired
-        private IPendingProductService pendingProductService;
-        @Autowired
-        private HubSlotSpuService slotSpuService;
-        @Autowired
-        HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
-
-        /**
-         * 待拍照导出
-         * @param
-         * @return
-         */
-        @RequestMapping(value="/made-dic-export",method= RequestMethod.POST)
-        public HubResponse<?> exportWaitToShoot(@RequestBody HubSupplierMadeMappingDto madeMappingDtoDto){
-            try {
-                String remotePath = "pending_export";
-                //第一步创建任务
-                HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(madeMappingDtoDto.getCreateUser(), remotePath , TaskType.EXPORT_ORIGIN);
-                //第二步发送队列
-                HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto = new HubSupplierValueMappingCriteriaDto();
-                hubSupplierValueMappingCriteriaDto.createCriteria().andHubValTypeEqualTo(madeMappingDtoDto.getType());
-                //获取总条数
-                int total = hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto);
-                madeMappingDtoDto.setPageSize(total);
-                boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_ORIGIN, madeMappingDtoDto);
-                if(bool){
-                    return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
-                }
-            } catch (Exception e) {
-                MadeExportController.log.error("产地导出异常："+e.getMessage(),e);
-            }
-            return HubResponse.errorResp("产地导出异常");
-        }
-
-        /**
-         * 已提交导出
-         * @param quryDto
-         * @return
-         */
-        @RequestMapping(value="/commited",method=RequestMethod.POST)
-        public HubResponse<?> exportCommited(@RequestBody SpuSupplierQueryDto quryDto){
-            try {
-                String remotePath = "pending_export";
-                //第一步创建任务
-                HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(quryDto.getCreateUser(), remotePath , TaskType.EXPORT_COMMITED);
-                //第二步发送队列
-                quryDto.setPageSize(slotSpuService.countSlotSpu(quryDto));
-                boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_COMMITED, quryDto);
-                if(bool){
-                    return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
-                }
-            } catch (Exception e) {
-                MadeExportController.log.error("已提交页面导出异常："+e.getMessage(),e);
-            }
-            return HubResponse.errorResp("已提交页面导出异常");
-        }
+    @Override
+    public String toString() {
+        return "MaterialRequestDto{" +
+                "pageNo=" + pageNo +
+                ", startRow=" + startRow +
+                ", pageSize=" + pageSize +
+                ", supplierMaterial='" + supplierMaterial + '\'' +
+                ", hubMaterial='" + hubMaterial + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", mappingLevel='" + mappingLevel + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
     }
 }

@@ -14,6 +14,24 @@ public class SupplierCategroyDicCriteriaDto {
     protected String supplierCategory;
     protected String supplierGender;
     protected String supplierCategoryType;
+    protected String startTime;
+    protected String endTime;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
     public Integer getPageNo() {
         return pageNo;
@@ -99,6 +117,8 @@ public class SupplierCategroyDicCriteriaDto {
                 ", supplierCategory='" + supplierCategory + '\'' +
                 ", supplierGender='" + supplierGender + '\'' +
                 ", supplierCategoryType='" + supplierCategoryType + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 '}';
     }
 }

@@ -1,8 +1,9 @@
 package com.shangpin.ephub.product.business.ui.task.dic.DicExportDto;
 
-import java.util.Date;
+import java.io.Serializable;
 
-public class BrandRequestDTO {
+
+public class BrandRequestDTO  implements Serializable{
     protected Integer pageNo = 1;
     protected Integer startRow;
     protected Integer pageSize = 10;
@@ -10,7 +11,24 @@ public class BrandRequestDTO {
     protected String  supplierBrand;
     protected String hubBrand;
     protected String createUser;
+    protected String startTime;
+    protected String endTime;
 
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
     public String getCreateUser() {
         return createUser;

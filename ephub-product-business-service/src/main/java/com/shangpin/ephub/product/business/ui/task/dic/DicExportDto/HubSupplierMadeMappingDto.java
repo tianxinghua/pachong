@@ -13,6 +13,25 @@ public class HubSupplierMadeMappingDto  implements Serializable{
     protected String hubVal;
     protected String  mappingType;
     protected String CreateUser;
+    protected String startTime;
+    protected String endTime;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
     public String getCreateUser() {
         return CreateUser;
     }
@@ -90,12 +109,14 @@ public class HubSupplierMadeMappingDto  implements Serializable{
                 "pageNo=" + pageNo +
                 ", startRow=" + startRow +
                 ", pageSize=" + pageSize +
-                ", type='" + type + '\'' +
+                ", type=" + type +
                 ", fields='" + fields + '\'' +
                 ", supplierVal='" + supplierVal + '\'' +
                 ", hubVal='" + hubVal + '\'' +
                 ", mappingType='" + mappingType + '\'' +
                 ", CreateUser='" + CreateUser + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 '}';
     }
 }
