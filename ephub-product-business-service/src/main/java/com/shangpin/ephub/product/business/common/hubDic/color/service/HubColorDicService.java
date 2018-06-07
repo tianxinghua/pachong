@@ -106,7 +106,7 @@ public class HubColorDicService {
 		}
 	}
 
-	public int countSupplierColorByType(Byte type, String supplierColor, Long colorDicId,String startTime,String andTime) throws ParseException {
+	public int countSupplierColorByType(Byte type, String supplierColor, Long colorDicId,String startTime,String endTime) throws ParseException {
 		HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto = new HubColorDicItemCriteriaDto();
 		HubColorDicItemCriteriaDto.Criteria criteria = hubColorDicItemCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(supplierColor)){
@@ -117,15 +117,15 @@ public class HubColorDicService {
 			Date parse = format.parse(startTime);
 			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
 		}
-		if(StringUtils.isNotBlank(andTime)){
+		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(andTime);
+			Date parse = format.parse(endTime);
 			criteria.andCreateTimeLessThan(parse);
 		}
 		if(colorDicId!=null){
 			criteria.andColorDicIdEqualTo(colorDicId);
 		}
-		criteria.andPushStateEqualTo(type);
+	      criteria.andPushStateEqualTo(type);
 		if(type==0){
 			HubColorDicItemCriteriaDto.Criteria criteria1 = hubColorDicItemCriteriaDto.createCriteria();
 			if(StringUtils.isNotBlank(supplierColor)){
@@ -139,9 +139,9 @@ public class HubColorDicService {
 				Date parse = format.parse(startTime);
 				criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
 			}
-			if(StringUtils.isNotBlank(andTime)){
+			if(StringUtils.isNotBlank(endTime)){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(andTime);
+				Date parse = format.parse(endTime);
 				criteria1.andCreateTimeLessThan(parse);
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
@@ -168,7 +168,7 @@ public class HubColorDicService {
 			if (endTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date parse = format.parse(endTime);
-				criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+				criteria.andCreateTimeLessThan(parse);
 			}
 		}
 		if(colorDicId!=null){
@@ -195,7 +195,7 @@ public class HubColorDicService {
 				if (endTime!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(endTime);
-					criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
+					criteria1.andCreateTimeLessThan(parse);
 				}
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
