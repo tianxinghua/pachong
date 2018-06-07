@@ -82,11 +82,11 @@ public class HubSupplierCategoryDicController {
 				supplierId = supplierDto.getSopUserNo();
 			}
 			
-			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
+			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender(),hubSupplierCategoryDicRequestDto.getStartTime(),hubSupplierCategoryDicRequestDto.getEndTime());
 			log.info("返回个数："+total);
 			if(total>0){
 				List<HubSupplierCategroyDicDto> list = hubCategoryDicService.getSupplierCategoryBySupplierIdAndType(supplierId,
-						hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender());
+						hubSupplierCategoryDicRequestDto.getPageNo(), hubSupplierCategoryDicRequestDto.getPageSize(),hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender(),hubSupplierCategoryDicRequestDto.getStartTime(),hubSupplierCategoryDicRequestDto.getEndTime());
 				if (list != null && list.size() > 0) {
 					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
 					for (HubSupplierCategroyDicDto dicDto : list) {

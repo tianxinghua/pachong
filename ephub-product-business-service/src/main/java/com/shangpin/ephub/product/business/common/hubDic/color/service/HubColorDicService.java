@@ -1,4 +1,6 @@
 package com.shangpin.ephub.product.business.common.hubDic.color.service;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -104,11 +106,21 @@ public class HubColorDicService {
 		}
 	}
 
-	public int countSupplierColorByType(Byte type, String supplierColor, Long colorDicId) {
+	public int countSupplierColorByType(Byte type, String supplierColor, Long colorDicId,String startTime,String andTime) throws ParseException {
 		HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto = new HubColorDicItemCriteriaDto();
 		HubColorDicItemCriteriaDto.Criteria criteria = hubColorDicItemCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(supplierColor)){
 			criteria.andColorItemNameLike("%"+supplierColor+"%");
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(andTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(andTime);
+			criteria.andCreateTimeLessThan(parse);
 		}
 		if(colorDicId!=null){
 			criteria.andColorDicIdEqualTo(colorDicId);
@@ -127,13 +139,27 @@ public class HubColorDicService {
 		return hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
 	}
 
-	public List<HubColorDicItemDto> getSupplierColorByType(int pageNo,int pageSize,Byte type, String supplierColor, Long colorDicId) {
+	public List<HubColorDicItemDto> getSupplierColorByType(int pageNo,int pageSize,Byte type, String supplierColor, Long colorDicId,String startTime,String andTime) throws ParseException {
 		HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto = new HubColorDicItemCriteriaDto();
 		HubColorDicItemCriteriaDto.Criteria criteria = hubColorDicItemCriteriaDto.createCriteria();
 		hubColorDicItemCriteriaDto.setPageNo(pageNo);
 		hubColorDicItemCriteriaDto.setPageSize(pageSize);
 		if(StringUtils.isNotBlank(supplierColor)){
 			criteria.andColorItemNameLike("%"+supplierColor+"%");
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			if (startTime!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(startTime);
+				criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			}
+		}
+		if(StringUtils.isNotBlank(andTime)){
+			if (andTime!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(andTime);
+				criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			}
 		}
 		if(colorDicId!=null){
 			criteria.andColorDicIdEqualTo(colorDicId);

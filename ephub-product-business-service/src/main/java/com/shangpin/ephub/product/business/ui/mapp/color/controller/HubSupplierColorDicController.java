@@ -76,13 +76,13 @@ public class HubSupplierColorDicController {
 				hubSupplierColorDicRequestDto.setColorDicId(HubColorDic.getHubColorId(hubSupplierColorDicRequestDto.getHubColor()));
 			}
 //			if(type==0){
-			total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
+			total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getStartTime(),hubSupplierColorDicRequestDto.getEndTime());
 //			}else if(type==1){
 //				total = HubColorDic.getHubColorMap().size();
 //			}
 			log.info("返回个数："+total);
 			if(total>0){
-				List<HubColorDicItemDto> list = hubColorDicService.getSupplierColorByType(hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId());
+				List<HubColorDicItemDto> list = hubColorDicService.getSupplierColorByType(hubSupplierColorDicRequestDto.getPageNo(),hubSupplierColorDicRequestDto.getPageSize(),hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getStartTime(),hubSupplierColorDicRequestDto.getEndTime());
 				Map<Long,HubColorDicItemDto> map = new HashMap<>();
 				List<HubSupplierColorDicResponseDto> responseList = new ArrayList<HubSupplierColorDicResponseDto>();
 				if (list != null && list.size() > 0) {

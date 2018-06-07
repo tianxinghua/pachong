@@ -53,12 +53,12 @@ public class HubSupplierMaterialDicController {
 			log.info("===材质映射list请求参数：{}",hubSupplierMaterialDicRequestDto);
 			int total =0;
 			Byte type = hubSupplierMaterialDicRequestDto.getMappingLevel();
-			total = hubMaterialDicService.countSupplierMaterialByType(type,hubSupplierMaterialDicRequestDto.getSupplierMaterial(),hubSupplierMaterialDicRequestDto.getHubMaterial());
+			total = hubMaterialDicService.countSupplierMaterialByType(type,hubSupplierMaterialDicRequestDto.getSupplierMaterial(),hubSupplierMaterialDicRequestDto.getHubMaterial(),hubSupplierMaterialDicRequestDto.getStartTime(),hubSupplierMaterialDicRequestDto.getEndTime());
 			log.info("返回个数："+total);
 			if(total>0){
 				List<HubMaterialMappingDto> list = hubMaterialDicService.getSupplierMaterialByType(hubSupplierMaterialDicRequestDto.getPageNo(),hubSupplierMaterialDicRequestDto.getPageSize(),
 						hubSupplierMaterialDicRequestDto.getMappingLevel(),hubSupplierMaterialDicRequestDto.getSupplierMaterial(),
-						hubSupplierMaterialDicRequestDto.getHubMaterial());
+						hubSupplierMaterialDicRequestDto.getHubMaterial(),hubSupplierMaterialDicRequestDto.getStartTime(),hubSupplierMaterialDicRequestDto.getEndTime());
 				List<HubSupplierMaterialDicResponseDto> responseList = new ArrayList<HubSupplierMaterialDicResponseDto>();
 				if (list != null && list.size() > 0) {
 					for (HubMaterialMappingDto dicDto : list) {

@@ -1,6 +1,9 @@
 package com.shangpin.ephub.product.business.common.hubDic.material.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,7 +46,7 @@ public class HubMaterialDicService {
 		return materialDTOS;
 
 	}
-	public int countSupplierMaterialByType(Byte type, String supplierMaterial, String hubMaterial) {
+	public int countSupplierMaterialByType(Byte type, String supplierMaterial, String hubMaterial,String startTime,String andTime) throws ParseException {
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
 		if(type!=null){
@@ -56,11 +59,23 @@ public class HubMaterialDicService {
 		if(StringUtils.isNotBlank(supplierMaterial)){
 			criteria.andSupplierMaterialLike("%"+supplierMaterial+"%");
 		}
-		
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+
+		}
+		if(StringUtils.isNotBlank(andTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(andTime);
+			criteria.andCreateTimeLessThan(parse);
+
+
+		}
 		return hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto);
 	}
 	public List<HubMaterialMappingDto> getSupplierMaterialByType(int pageNo, int pageSize, Byte type,
-			String supplierMaterial, String hubMaterial) {
+			String supplierMaterial, String hubMaterial,String startTime,String andTime) throws ParseException {
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
 		if(type!=null){
@@ -71,6 +86,16 @@ public class HubMaterialDicService {
 		}
 		if(StringUtils.isNotBlank(supplierMaterial)){
 			criteria.andSupplierMaterialLike("%"+supplierMaterial+"%");
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(andTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(andTime);
+			criteria.andCreateTimeLessThan(parse);
 		}
 		hubMaterialMappingCriteriaDto.setPageNo(pageNo);
 		hubMaterialMappingCriteriaDto.setPageSize(pageSize);

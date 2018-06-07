@@ -1,5 +1,8 @@
 package com.shangpin.ephub.product.business.common.hubDic.origin.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +49,7 @@ public class HubOriginDicService {
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 
-	public int countHubSupplierValueMapping(String hubVal, String supplierVal,Byte type) {
+	public int countHubSupplierValueMapping(String hubVal, String supplierVal,Byte type,String startTime,String andTime) throws ParseException {
 		HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto  = new HubSupplierValueMappingCriteriaDto();
 		HubSupplierValueMappingCriteriaDto.Criteria criteria = hubSupplierValueMappingCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(hubVal)){
@@ -55,6 +58,15 @@ public class HubOriginDicService {
 		if(StringUtils.isNotBlank(supplierVal)){
 			criteria.andSupplierValEqualTo(supplierVal);
 		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(andTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(andTime);
+			criteria.andCreateTimeLessThan(parse);}
 		if(type!=null){
 			criteria.andMappingTypeEqualTo(type);
 		}
@@ -63,7 +75,7 @@ public class HubOriginDicService {
 	}
 
 	public List<HubSupplierValueMappingDto> getHubSupplierValueMappingBySupplierIdAndType(String hubVal,
-			String supplierVal, int pageNo, int pageSize,Byte type) {
+			String supplierVal, int pageNo, int pageSize,Byte type,String startTime,String endTime) throws ParseException {
 		HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto  = new HubSupplierValueMappingCriteriaDto();
 		HubSupplierValueMappingCriteriaDto.Criteria criteria = hubSupplierValueMappingCriteriaDto.createCriteria();
 		hubSupplierValueMappingCriteriaDto.setPageNo(pageNo);
@@ -78,6 +90,16 @@ public class HubOriginDicService {
 		}
 		if(StringUtils.isNotBlank(supplierVal)){
 			criteria.andSupplierValEqualTo(supplierVal);
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria.andCreateTimeLessThan(parse);
 		}
 		return hubSupplierValueMappingGateWay.selectByCriteria(hubSupplierValueMappingCriteriaDto);
 	}

@@ -27,4 +27,6 @@ public class HubSupplierBrandDicRequestDto {
 	private Byte type;
 	private String updateUser;
 	private byte refreshDicType;
+	private String startTime;
+	private String endTime;
 }

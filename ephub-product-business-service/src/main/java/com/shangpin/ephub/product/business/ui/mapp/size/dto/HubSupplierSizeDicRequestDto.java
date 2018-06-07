@@ -27,5 +27,7 @@ public class HubSupplierSizeDicRequestDto {
 	private String updateUser;
 	private byte mappingType;
 	public byte refreshDicType;
+	private String startTime;
+	private String endTime;
 
 }

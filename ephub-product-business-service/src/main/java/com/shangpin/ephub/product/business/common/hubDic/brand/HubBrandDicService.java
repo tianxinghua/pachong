@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.common.hubDic.brand;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -173,7 +175,7 @@ public class HubBrandDicService {
 	public int countHubBrand() {
 		return brandDicGateway.count();
 	}
-	public int countHubBrand(String supplierBrand, String hubBrandNo) {
+	public int countHubBrand(String supplierBrand, String hubBrandNo,String startTime,String endTime) throws ParseException {
 		HubBrandDicCriteriaDto cruteria = new HubBrandDicCriteriaDto();
 		HubBrandDicCriteriaDto.Criteria criteria = cruteria.createCriteria();
 		if(StringUtils.isNotBlank(hubBrandNo)){
@@ -181,10 +183,20 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(supplierBrand)){
 			criteria.andSupplierBrandEqualTo(supplierBrand);
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria.andCreateTimeLessThan(parse);
 		}
 		return brandDicGateway.countByCriteria(cruteria);
 	}
-	public List<HubBrandDicDto> getHubBrand(String supplierBrand, String hubBrandNo, int pageNo, int pageSize) {
+	public List<HubBrandDicDto> getHubBrand(String supplierBrand, String hubBrandNo, int pageNo, int pageSize,String startTime,String endTime) throws ParseException {
 		HubBrandDicCriteriaDto cruteria = new HubBrandDicCriteriaDto();
 		HubBrandDicCriteriaDto.Criteria criteria = cruteria.createCriteria();
 		if(StringUtils.isNotBlank(supplierBrand)){
@@ -192,6 +204,16 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(hubBrandNo)){
 			criteria.andHubBrandNoEqualTo(hubBrandNo);
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime);
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			criteria.andCreateTimeLessThan(parse);
 		}
 		cruteria.setPageNo(pageNo);
 		cruteria.setPageSize(pageSize);

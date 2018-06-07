@@ -26,4 +26,6 @@ public class HubSupplierColorDicRequestDto {
 	private String updateUser;
 	private String createUser;
 	private Byte refreshDicType;
+	private String startTime;
+	private String endTime;
 }

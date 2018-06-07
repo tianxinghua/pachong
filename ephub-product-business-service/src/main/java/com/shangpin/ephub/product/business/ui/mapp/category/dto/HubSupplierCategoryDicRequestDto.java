@@ -30,6 +30,8 @@ public class HubSupplierCategoryDicRequestDto {
 	private Byte categoryType;
 	private String updateUser;
 	private byte refreshDicType;
+	private String startTime;
+	private String endTime;
 	
 	public static void main(String[] args) {
 		

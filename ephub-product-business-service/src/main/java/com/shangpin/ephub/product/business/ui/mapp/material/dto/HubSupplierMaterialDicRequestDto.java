@@ -25,4 +25,6 @@ public class HubSupplierMaterialDicRequestDto {
 	private Byte mappingLevel;
 	private String updateUser;
 	private String createUser;
+	private String startTime;
+	private String endTime;
 }

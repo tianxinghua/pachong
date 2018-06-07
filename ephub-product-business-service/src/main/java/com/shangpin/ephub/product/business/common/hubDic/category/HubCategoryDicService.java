@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.common.hubDic.category;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -42,13 +44,27 @@ public class HubCategoryDicService {
 	public List<HubSupplierCategroyDicDto> getSupplierCategory(HubSupplierCategroyDicCriteriaDto criteria) {
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
-	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType,String supplierCategory,String supplierGender) {
+	public List<HubSupplierCategroyDicDto> getSupplierCategoryBySupplierIdAndType(String supplierId,int pageNo,int pageSize,Byte categoryType,String supplierCategory,String supplierGender,String startTime,String endTime) throws ParseException {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		criteria.setPageNo(pageNo);
 		criteria.setPageSize(pageSize);
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		if(StringUtils.isNotBlank(supplierId)){
 			criterion.andSupplierIdEqualTo(supplierId);	
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			if (startTime!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(startTime);
+				criterion.andCreateTimeGreaterThanOrEqualTo(parse);
+			}
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			if (endTime!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(endTime);
+				criterion.andCreateTimeLessThan(parse);
+			}
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
@@ -67,11 +83,25 @@ public class HubCategoryDicService {
 		return hubSupplierCategroyDicGateWay.selectByCriteria(criteria);
 	}
 
-	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType,String supplilerCategory,String supplierGender) {
+	public int countSupplierCategoryBySupplierIdAndType(String supplierId,Byte categoryType,String supplilerCategory,String supplierGender,String startTime,String endTime) throws ParseException {
 		HubSupplierCategroyDicCriteriaDto criteria = new HubSupplierCategroyDicCriteriaDto();
 		HubSupplierCategroyDicCriteriaDto.Criteria criterion = criteria.createCriteria();
 		if(StringUtils.isNotBlank(supplierId)){
 			criterion.andSupplierIdEqualTo(supplierId);	
+		}
+		if(StringUtils.isNotBlank(startTime)){
+			if (startTime!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(startTime);
+				criterion.andCreateTimeGreaterThanOrEqualTo(parse);
+			}
+		}
+		if(StringUtils.isNotBlank(endTime)){
+			if (endTime!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(endTime);
+				criterion.andCreateTimeLessThan(parse);
+			}
 		}
 		if(categoryType!=0){
 			if(categoryType==5){

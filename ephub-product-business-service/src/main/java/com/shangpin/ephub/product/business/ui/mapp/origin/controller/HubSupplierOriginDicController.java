@@ -1,4 +1,5 @@
 package com.shangpin.ephub.product.business.ui.mapp.origin.controller;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,15 +70,15 @@ public class HubSupplierOriginDicController {
 		}
     }
 	
-	private HubResponse getOriginMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) {
+	private HubResponse getOriginMapp(HubSupplierSizeDicRequestDto hubSupplierSizeDicRequestDto) throws ParseException {
 		
 		int total = 0;
-		total = hubOriginDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal(),hubSupplierSizeDicRequestDto.getType());
+		total = hubOriginDicService.countHubSupplierValueMapping(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal(),hubSupplierSizeDicRequestDto.getType(),hubSupplierSizeDicRequestDto.getStartTime(),hubSupplierSizeDicRequestDto.getEndTime());
 		log.info("查询总个数："+total);
 		if (total > 0) {
 			List<HubSupplierValueMappingDto> list = hubOriginDicService
 					.getHubSupplierValueMappingBySupplierIdAndType(hubSupplierSizeDicRequestDto.getHubVal(),hubSupplierSizeDicRequestDto.getSupplierVal(),
-							hubSupplierSizeDicRequestDto.getPageNo(),hubSupplierSizeDicRequestDto.getPageSize(),hubSupplierSizeDicRequestDto.getType());
+							hubSupplierSizeDicRequestDto.getPageNo(),hubSupplierSizeDicRequestDto.getPageSize(),hubSupplierSizeDicRequestDto.getType(),hubSupplierSizeDicRequestDto.getStartTime(),hubSupplierSizeDicRequestDto.getEndTime());
 			if (list != null && list.size() > 0) {
 
 				HubSupplierSizeDicResponseWithPageDto page = new HubSupplierSizeDicResponseWithPageDto();

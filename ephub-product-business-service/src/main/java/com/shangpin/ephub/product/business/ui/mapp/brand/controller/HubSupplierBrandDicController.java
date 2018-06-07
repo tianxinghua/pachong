@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.brand.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,12 +104,12 @@ public class HubSupplierBrandDicController {
 	        }
 	    }
 
-	    private HubResponse getHubBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) {
+	    private HubResponse getHubBrandDic(HubSupplierBrandDicRequestDto hubSupplierBrandDicRequestDto) throws ParseException {
 
-	        int total = hubBrandDicService.countHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo());
+	        int total = hubBrandDicService.countHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 	        log.info("返回个数："+total);
 	        if(total>0){
-	            List<HubBrandDicDto> list = hubBrandDicService.getHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize());
+	            List<HubBrandDicDto> list = hubBrandDicService.getHubBrand(hubSupplierBrandDicRequestDto.getSupplierBrand(),hubSupplierBrandDicRequestDto.getHubBrandNo(),hubSupplierBrandDicRequestDto.getPageNo(), hubSupplierBrandDicRequestDto.getPageSize(),hubSupplierBrandDicRequestDto.getStartTime(),hubSupplierBrandDicRequestDto.getEndTime());
 	            if (list != null && list.size() > 0) {
 	                List<HubSupplierBrandDicResponseDto> responseList = new ArrayList<HubSupplierBrandDicResponseDto>();
 	                for (HubBrandDicDto dicDto : list) {
@@ -259,7 +260,7 @@ public class HubSupplierBrandDicController {
 	    }
 	    /**
 	     * 导出查询商品
-	     * @param dto
+	     * @param
 	     * @return
 	     */
 	    @RequestMapping(value = "/save", method = { RequestMethod.POST, RequestMethod.GET })
