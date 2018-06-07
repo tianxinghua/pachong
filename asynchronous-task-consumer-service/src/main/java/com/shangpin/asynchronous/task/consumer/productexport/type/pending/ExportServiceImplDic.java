@@ -180,7 +180,7 @@ public class ExportServiceImplDic {
 	/**
 	 * 字典品牌的导出
 	 */
-	public void exportBrand (String taskNo,BrandRequestDTO brandRequestDTO) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public void exportBrand (String taskNo,BrandRequestDTO brandRequestDTO) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("品牌信息");
 		HSSFRow row = sheet.createRow(0);
@@ -192,19 +192,30 @@ public class ExportServiceImplDic {
 		}
 		String[] brandValueTemplate = TaskImportTemplate2.getBrandValueTemplate();
 		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
+		HubSupplierBrandDicCriteriaDto.Criteria criteria=hubSupplierBrandDicCriteriaDto.createCriteria();
+
 		hubSupplierBrandDicCriteriaDto.setPageSize(brandRequestDTO.getPageSize());
 		hubSupplierBrandDicCriteriaDto.setPageNo(brandRequestDTO.getPageNo());
 		if (brandRequestDTO.getSupplierBrand()!=null){
-			hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
+			criteria.andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
 		}
 		if (brandRequestDTO.getHubBrand()!=null){
-			hubSupplierBrandDicCriteriaDto.createCriteria().andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
-
+			criteria.andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
 		}
-
 		if (brandRequestDTO.getSupplierId()!=null){
-			hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
+			criteria.andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
 		}
+		if (brandRequestDTO.getStartTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(brandRequestDTO.getStartTime());
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if (brandRequestDTO.getEndTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(brandRequestDTO.getEndTime());
+			criteria.andCreateTimeLessThan(parse);
+		}
+
 		//求取总条数
 		int totalSize = hubSupplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
 		if (totalSize>0){
@@ -213,18 +224,29 @@ public class ExportServiceImplDic {
 			ArrayList<List<HubSupplierBrandDicDto>> lists = new ArrayList<>();
 			for(int i=1;i<=pageCount;i++){
 				HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto1 = new HubSupplierBrandDicCriteriaDto();
+				HubSupplierBrandDicCriteriaDto.Criteria  criteria1=hubSupplierBrandDicCriteriaDto1.createCriteria();
+
 				hubSupplierBrandDicCriteriaDto1.setPageNo(i);
-				hubSupplierBrandDicCriteriaDto1.setPageSize(50);
+				hubSupplierBrandDicCriteriaDto1.setPageSize(PAGESIZE);
 				if (brandRequestDTO.getSupplierBrand()!=null){
-					hubSupplierBrandDicCriteriaDto1.createCriteria().andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
+					criteria1.andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
 				};
 				if (brandRequestDTO.getSupplierId()!=null){
-					hubSupplierBrandDicCriteriaDto1.createCriteria().andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
+					criteria1.andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
 				}
 				if (brandRequestDTO.getHubBrand()!=null){
-					hubSupplierBrandDicCriteriaDto1.createCriteria().andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
+					criteria1.andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
 				}
-
+				if (brandRequestDTO.getStartTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(brandRequestDTO.getStartTime());
+					criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
+				}
+				if (brandRequestDTO.getEndTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(brandRequestDTO.getEndTime());
+					criteria1.andCreateTimeLessThan(parse);
+				}
 				List<HubSupplierBrandDicDto> hubSupplierBrandDicDtos = hubSupplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto1);
 				lists.add(hubSupplierBrandDicDtos);
 			}
@@ -300,9 +322,11 @@ public class ExportServiceImplDic {
 	private void setBrandcreateTime(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
-		Object value = fieldSetMet.invoke(brandDto);
-		if (value==null)return;
-		row.createCell(i).setCellValue(value.toString());
+		Date value = (Date)fieldSetMet.invoke(brandDto);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = format.format(value);
+		if (s==null)return;
+		row.createCell(i).setCellValue(s);
 	}
 	private void setBrandupdateTime(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 		String fileName = "getUpdateTime";
@@ -578,7 +602,7 @@ public class ExportServiceImplDic {
 		hubColorDicItemCriteriaDto.setPageNo(hubColorDic.getPageNo());
 		hubColorDicItemCriteriaDto.setPageSize(hubColorDic.getPageSize());
 		if (hubColorDic.getSupplierColorName()!=null){
-			hubColorDicItemCriteriaDto.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
+			criteria1.andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 		}
 
 
@@ -601,18 +625,17 @@ public class ExportServiceImplDic {
 		if (totalSize > 0) {
 			int pageCount = getPageCount(totalSize, PAGESIZE);//总页数
 			log.info("导出总页数：" + pageCount);
-			HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
-
+			//HubColorDicItemCriteriaDto criteria = new HubColorDicItemCriteriaDto();
 
 			HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto1 =new HubColorDicItemCriteriaDto();
-			HubColorDicItemCriteriaDto.Criteria criteria2 =hubColorDicItemCriteriaDto.createCriteria();
+			HubColorDicItemCriteriaDto.Criteria criteria2 =hubColorDicItemCriteriaDto1.createCriteria();
 
 			List<List<HubColorDicItemDto>> lists = new ArrayList<List<HubColorDicItemDto>>();
 			for (int i = 1; i <= pageCount; i++) {
-				criteria.setPageNo(i);
-				criteria.setPageSize(PAGESIZE);
+				hubColorDicItemCriteriaDto1.setPageNo(i);
+				hubColorDicItemCriteriaDto1.setPageSize(PAGESIZE);
 				if (hubColorDic.getSupplierColorName()!= null) {
-					criteria.createCriteria().andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
+					criteria2.andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 				}
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -646,16 +669,6 @@ public class ExportServiceImplDic {
 		}
 		saveAndUploadExcel(taskNo,hubColorDic.getCreateName(),wb);
 	}
-
-
-	public static Calendar parseString(String dateStr, String pattern) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-		Date date = sdf.parse(dateStr);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return calendar;
-	}
-
 
 	/**
 	 * 上传Excel到ftp
@@ -1314,9 +1327,11 @@ public class ExportServiceImplDic {
 	private void setcreateTime(HSSFRow row, HubColorDicItemDto product, Class<?> clazz, int i) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
-		Object value = fieldSetMet.invoke(product);
-		if (value==null)return;
-		row.createCell(i).setCellValue(value.toString());
+		Date value = (Date)fieldSetMet.invoke(product);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = format.format(value);
+		if (s==null)return;
+		row.createCell(i).setCellValue(s);
 	}
 
 	/**
