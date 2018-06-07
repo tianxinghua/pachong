@@ -192,7 +192,7 @@ public class ExportServiceImplDic {
 		}
 		String[] brandValueTemplate = TaskImportTemplate2.getBrandValueTemplate();
 		HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
-		HubSupplierBrandDicCriteriaDto.Criteria criteria=hubSupplierBrandDicCriteriaDto.createCriteria();
+		HubSupplierBrandDicCriteriaDto.Criteria  criteria=hubSupplierBrandDicCriteriaDto.createCriteria();
 
 		hubSupplierBrandDicCriteriaDto.setPageSize(brandRequestDTO.getPageSize());
 		hubSupplierBrandDicCriteriaDto.setPageNo(brandRequestDTO.getPageNo());
