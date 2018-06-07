@@ -46,7 +46,7 @@ public class HubMaterialDicService {
 		return materialDTOS;
 
 	}
-	public int countSupplierMaterialByType(Byte type, String supplierMaterial, String hubMaterial,String startTime,String andTime) throws ParseException {
+	public int countSupplierMaterialByType(Byte type, String supplierMaterial, String hubMaterial,String startTime,String endTime) throws ParseException {
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
 		if(type!=null){
@@ -65,12 +65,10 @@ public class HubMaterialDicService {
 			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
 
 		}
-		if(StringUtils.isNotBlank(andTime)){
+		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(andTime);
+			Date parse = format.parse(endTime);
 			criteria.andCreateTimeLessThan(parse);
-
-
 		}
 		return hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto);
 	}

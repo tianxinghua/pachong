@@ -49,7 +49,7 @@ public class HubOriginDicService {
 		return hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 	}
 
-	public int countHubSupplierValueMapping(String hubVal, String supplierVal,Byte type,String startTime,String andTime) throws ParseException {
+	public int countHubSupplierValueMapping(String hubVal, String supplierVal,Byte type,String startTime,String endTime) throws ParseException {
 		HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto  = new HubSupplierValueMappingCriteriaDto();
 		HubSupplierValueMappingCriteriaDto.Criteria criteria = hubSupplierValueMappingCriteriaDto.createCriteria();
 		if(StringUtils.isNotBlank(hubVal)){
@@ -63,9 +63,9 @@ public class HubOriginDicService {
 			Date parse = format.parse(startTime);
 			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
 		}
-		if(StringUtils.isNotBlank(andTime)){
+		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(andTime);
+			Date parse = format.parse(endTime);
 			criteria.andCreateTimeLessThan(parse);}
 		if(type!=null){
 			criteria.andMappingTypeEqualTo(type);
