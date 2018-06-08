@@ -323,9 +323,10 @@ public class ExportServiceImplDic {
 		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Date value = (Date)fieldSetMet.invoke(brandDto);
+		if (value==null)return;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String s = format.format(value);
-		if (s==null)return;
+	//	if (s==null)return;
 		row.createCell(i).setCellValue(s);
 	}
 	private void setBrandupdateTime(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
@@ -359,24 +360,27 @@ public class ExportServiceImplDic {
 			cell.setCellValue(materialTemplate[i]);
 		}
 		String[] materialValueTemplate = TaskImportTemplate2.getMaterialValueTemplate();
-		/*//获取总条数
-		HubMaterialDicCriteriaDto hubMaterialDicCriteriaDto = new HubMaterialDicCriteriaDto();
-			if (materialRequestDto.getHubMaterial()!=null){
-				hubMaterialDicCriteriaDto.createCriteria().andMaterialNameEqualTo(materialRequestDto.getHubMaterial());
-			}
-			if (materialRequestDto.getSupplierMaterial()!=null){
-				hubMaterialDicCriteriaDto.createCriteria().andMaterialNameEqualTo(materialRequestDto.getHubMaterial());
-			}
-*/
+
 			//获取总页数
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto1 =new HubMaterialMappingCriteriaDto() ;
+		HubMaterialMappingCriteriaDto.Criteria  criteria=hubMaterialMappingCriteriaDto1.createCriteria();
 		hubMaterialMappingCriteriaDto1.setPageNo(materialRequestDto.getPageNo());
 		hubMaterialMappingCriteriaDto1.setPageSize(materialRequestDto.getPageSize());
 		if (materialRequestDto.getSupplierMaterial()!=null){
-			hubMaterialMappingCriteriaDto1.createCriteria().andSupplierMaterialEqualTo(materialRequestDto.getSupplierMaterial());
+			criteria.andSupplierMaterialEqualTo(materialRequestDto.getSupplierMaterial());
 		}
 		if (materialRequestDto.getHubMaterial()!=null){
-			hubMaterialMappingCriteriaDto1.createCriteria().andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
+			criteria.andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
+		}
+		if (materialRequestDto.getStartTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(materialRequestDto.getStartTime());
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if (materialRequestDto.getEndTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(materialRequestDto.getEndTime());
+			criteria.andCreateTimeLessThan(parse);
 		}
           //总条数的方法
 		int totalSize = hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto1);
@@ -388,13 +392,25 @@ public class ExportServiceImplDic {
 
 			for (int i = 1; i<= pageCount; i++) {
 				HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto =new HubMaterialMappingCriteriaDto() ;
+				HubMaterialMappingCriteriaDto.Criteria  Criteria1=hubMaterialMappingCriteriaDto.createCriteria();
+
 				hubMaterialMappingCriteriaDto.setPageNo(i);
 				hubMaterialMappingCriteriaDto.setPageSize(PAGESIZE);
 				if (materialRequestDto.getHubMaterial()!=null){
-					hubMaterialMappingCriteriaDto.createCriteria().andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
+					Criteria1.andHubMaterialEqualTo(materialRequestDto.getHubMaterial());
 				}
 				if (materialRequestDto.getSupplierMaterial()!=null){
-					hubMaterialMappingCriteriaDto.createCriteria().andSupplierMaterialEqualTo(materialRequestDto.getSupplierMaterial());
+					Criteria1.andSupplierMaterialEqualTo(materialRequestDto.getSupplierMaterial());
+				}
+				if (materialRequestDto.getStartTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(materialRequestDto.getStartTime());
+					Criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
+				}
+				if (materialRequestDto.getEndTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(materialRequestDto.getEndTime());
+					Criteria1.andCreateTimeLessThan(parse);
 				}
 				List<HubMaterialMappingDto> hubMaterialMappingDtos = hubMaterialMappingGateWay.selectByCriteria(hubMaterialMappingCriteriaDto);
 				lists.add(hubMaterialMappingDtos);
@@ -437,12 +453,20 @@ public class ExportServiceImplDic {
 			if (hubSupplierMadeMappingDto.getHubVal()!=null){
 				criteria.andHubValEqualTo(hubSupplierMadeMappingDto.getHubVal());
 			}
-
-		   criteria.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
-
-		if (hubSupplierMadeMappingDto.getMappingType()!=null){
-			criteria.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
-		}
+			if (hubSupplierMadeMappingDto.getStartTime()!=null){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(hubSupplierMadeMappingDto.getStartTime());
+				criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			}
+		   if (hubSupplierMadeMappingDto.getEndTime()!=null){
+			   SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			   Date parse = format.parse(hubSupplierMadeMappingDto.getEndTime());
+			   criteria.andCreateTimeLessThan(parse);
+		   }
+		       criteria.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
+		    if (hubSupplierMadeMappingDto.getMappingType()!=null){
+			   criteria.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+		    }
 
 		//获取总条数
 			int totalSize = hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto2);
@@ -461,6 +485,16 @@ public class ExportServiceImplDic {
 				}
 				if (hubSupplierMadeMappingDto.getHubVal()!=null){
 					criteria2.andHubValEqualTo(hubSupplierMadeMappingDto.getHubVal());
+				}
+				if (hubSupplierMadeMappingDto.getStartTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(hubSupplierMadeMappingDto.getStartTime());
+					criteria2.andCreateTimeGreaterThanOrEqualTo(parse);
+				}
+				if (hubSupplierMadeMappingDto.getEndTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(hubSupplierMadeMappingDto.getEndTime());
+					criteria2.andCreateTimeLessThan(parse);
 				}
 
 				criteria2.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
@@ -508,19 +542,31 @@ public class ExportServiceImplDic {
 		String[] categoryValueTemplate = TaskImportTemplate2.getCategoryValueTemplate();
 
 		HubSupplierCategroyDicCriteriaDto hubSupplierCategroyDicCriteriaDto1 = new HubSupplierCategroyDicCriteriaDto();
+		HubSupplierCategroyDicCriteriaDto.Criteria  criteria=hubSupplierCategroyDicCriteriaDto1.createCriteria();
+
 		hubSupplierCategroyDicCriteriaDto1.setPageNo(categroyDicCriteriaDto.getPageNo());
 		hubSupplierCategroyDicCriteriaDto1.setPageSize(categroyDicCriteriaDto.getPageSize());
 		if (categroyDicCriteriaDto.getSupplierCategoryType()!=null){
-			hubSupplierCategroyDicCriteriaDto1.createCriteria().andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+			criteria.andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
 		}
 		if (categroyDicCriteriaDto.getSupplierId()!=null){
-			hubSupplierCategroyDicCriteriaDto1.createCriteria().andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
+			criteria.andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
 		}
 		if (categroyDicCriteriaDto.getSupplierGender()!=null){
-			hubSupplierCategroyDicCriteriaDto1.createCriteria().andSupplierGenderEqualTo(categroyDicCriteriaDto.getSupplierGender());
+			criteria.andSupplierGenderEqualTo(categroyDicCriteriaDto.getSupplierGender());
 		}
 		if (categroyDicCriteriaDto.getSupplierCategory()!=null){
-			hubSupplierCategroyDicCriteriaDto1.createCriteria().andSupplierCategoryEqualTo(categroyDicCriteriaDto.getSupplierCategory());
+			criteria.andSupplierCategoryEqualTo(categroyDicCriteriaDto.getSupplierCategory());
+		}
+		if (categroyDicCriteriaDto.getStartTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(categroyDicCriteriaDto.getStartTime());
+			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+		}
+		if (categroyDicCriteriaDto.getEndTime()!=null){
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(categroyDicCriteriaDto.getEndTime());
+			criteria.andCreateTimeLessThan(parse);
 		}
 		//总条数
 		int totalSize = hubSupplierCategroyDicGateWay.countByCriteria(hubSupplierCategroyDicCriteriaDto1);
@@ -528,23 +574,36 @@ public class ExportServiceImplDic {
 			int pageCount = getPageCount(totalSize, PAGESIZE);// 总页数
 			log.info("导出总页数：" + pageCount);
 			HubSupplierCategroyDicCriteriaDto suppliercategroyDicCriteriaDto=new HubSupplierCategroyDicCriteriaDto();
+			HubSupplierCategroyDicCriteriaDto.Criteria criteria1=suppliercategroyDicCriteriaDto.createCriteria();
+
 			ArrayList<List<HubSupplierCategroyDicDto>> lists = new ArrayList<>();
 			for (int i = 1; i<= pageCount; i++) {
 				suppliercategroyDicCriteriaDto.setPageNo(i);
 				suppliercategroyDicCriteriaDto.setPageSize(PAGESIZE);
 				String supplierId = categroyDicCriteriaDto.getSupplierId();
 				if (supplierId!=null){
-					suppliercategroyDicCriteriaDto.createCriteria().andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
+					criteria1.andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
 				}
 				if (categroyDicCriteriaDto.getSupplierCategory()!=null){
-					suppliercategroyDicCriteriaDto.createCriteria().andSupplierCategoryEqualTo(categroyDicCriteriaDto.getSupplierCategory());
+					criteria1.andSupplierCategoryEqualTo(categroyDicCriteriaDto.getSupplierCategory());
 				}
 				if (categroyDicCriteriaDto.getSupplierCategoryType()!=null){
-					suppliercategroyDicCriteriaDto.createCriteria().andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+					criteria1.andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
 				}
 				if (categroyDicCriteriaDto.getSupplierGender()!=null){
-					suppliercategroyDicCriteriaDto.createCriteria().andSupplierGenderEqualTo(categroyDicCriteriaDto.getSupplierGender());
+					criteria1.andSupplierGenderEqualTo(categroyDicCriteriaDto.getSupplierGender());
 				}
+				if (categroyDicCriteriaDto.getStartTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(categroyDicCriteriaDto.getStartTime());
+					criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
+				}
+				if (categroyDicCriteriaDto.getEndTime()!=null){
+					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date parse = format.parse(categroyDicCriteriaDto.getEndTime());
+					criteria1.andCreateTimeLessThan(parse);
+				}
+
 				List<HubSupplierCategroyDicDto>	 hubSupplierCategroyDicDtos = hubSupplierCategroyDicGateWay.selectByCriteria(suppliercategroyDicCriteriaDto);
 				lists.add(hubSupplierCategroyDicDtos);
 			}
@@ -790,7 +849,8 @@ public class ExportServiceImplDic {
 			}else  if ("updateTime".equals(rowTemplate[i])){
 				setRowOfupdateTime(row,hubMaterialMappingDto,cls,i);
 			}else  if ("updateUser".equals(rowTemplate[i])){
-				setRowOfupdateTime(row,hubMaterialMappingDto,cls,i);
+				setRowOfupdateUser(row,hubMaterialMappingDto,cls,i);
+
 			}else {
                 if("mappingLevel".equals(rowTemplate[i])){
                 	row.createCell(i).setCellValue("");
@@ -806,13 +866,23 @@ public class ExportServiceImplDic {
 		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
 	}
-	//set 材质 cell createTime
-	private void setRowOfcreateTime(HSSFRow row, HubMaterialMappingDto hubMaterialMappingDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-		String fileName = "getCreateTime";
+	private void setRowOfupdateUser(HSSFRow row, HubMaterialMappingDto hubMaterialMappingDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getCreateUser";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Object value = fieldSetMet.invoke(hubMaterialMappingDto);
 		if (value==null)return;
 		row.createCell(i).setCellValue(value.toString());
+	}
+
+	//set 材质 cell createTime
+	private void setRowOfcreateTime(HSSFRow row, HubMaterialMappingDto hubMaterialMappingDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		String fileName = "getCreateTime";
+		Method fieldSetMet = clazz.getMethod(fileName);
+		Date value = (Date)fieldSetMet.invoke(hubMaterialMappingDto);
+		if (value==null)return;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = format.format(value);
+		row.createCell(i).setCellValue(s);
 	}
 
 	/**
@@ -948,9 +1018,11 @@ public class ExportServiceImplDic {
 	private void setRowOfCreateTime(HSSFRow row, HubSupplierValueMappingDto madeDicDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
-		Object value = fieldSetMet.invoke(madeDicDto);
+		Date value = (Date)fieldSetMet.invoke(madeDicDto);
 		if (value==null)return;
-		row.createCell(i).setCellValue(value.toString());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String s = format.format(value);
+		row.createCell(i).setCellValue(s);
 	}
 
 	/**
@@ -1137,9 +1209,11 @@ public class ExportServiceImplDic {
 		String fileName = "getCreateTime";
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
-			Object value = fieldSetMet.invoke(categroyDicDto);
+			Date value = (Date)fieldSetMet.invoke(categroyDicDto);
 			if (value==null) return;
-			row.createCell(i).setCellValue(value.toString());
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String s = format.format(value);
+			row.createCell(i).setCellValue(s);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -1328,9 +1402,9 @@ public class ExportServiceImplDic {
 		String fileName = "getCreateTime";
 		Method fieldSetMet = clazz.getMethod(fileName);
 		Date value = (Date)fieldSetMet.invoke(product);
+		if (value==null)return;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String s = format.format(value);
-		if (s==null)return;
 		row.createCell(i).setCellValue(s);
 	}
 
