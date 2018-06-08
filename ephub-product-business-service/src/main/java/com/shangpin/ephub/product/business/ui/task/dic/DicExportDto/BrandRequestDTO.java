@@ -13,6 +13,15 @@ public class BrandRequestDTO  implements Serializable{
     protected String createUser;
     protected String startTime;
     protected String endTime;
+    protected String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getStartTime() {
         return startTime;
