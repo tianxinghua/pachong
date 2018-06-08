@@ -45,25 +45,25 @@ public class ProductScheduler {
 	}
 	
 	/**
-	 * 检测产品拉去
+	 * 检测产品拉取
 	 */
-	@Scheduled(cron = "00 00 09 * * ?")
+	@Scheduled(cron = "0 0 9 * * ?")
 	public void productCheck(){
 		if(!scheduleConfig.isStartPro()){
 			return;
 		}
 		try {
-			log.info("===========检测产品拉去任务开始============"); 
+			log.info("===========检测产品拉取任务开始============");
 			productPullDataService.productCheck();
-			log.info("===========检测产品拉去任务结束============"); 
+			log.info("===========检测产品拉取任务结束============");
 		} catch (Exception e) {
-			log.error("检测产品拉去任务异常："+e.getMessage(),e);
+			log.error("检测产品拉取任务异常："+e.getMessage(),e);
 		}
 	}
 	/**
 	 * 检测价格推送
 	 */
-	@Scheduled(cron = "00 00 09 * * ?")
+	@Scheduled(cron = "0 0 9 * * ?")
 	public void priceCheck(){
 		try {
 			log.info("===========检测价格推送任务开始============"); 
@@ -77,7 +77,7 @@ public class ProductScheduler {
 	/**
 	 * 修改数据和图片状态
 	 */
-	@Scheduled(cron = "00 30 08 * * ?")
+	@Scheduled(cron = "0 30 8 * * ?")
 	public void modifyUpdateStatus(){
 		try {
 			log.info("======================更新库存定时任务开始======================");
@@ -96,7 +96,7 @@ public class ProductScheduler {
 	/**
 	 * 
 	 */
-	@Scheduled(cron = "00 50 08 * * ?")
+	@Scheduled(cron = "0 50 8 * * ?")
 	public void sendSeason(){
 		try {
 			log.info("===========检测季节变化推送任务开始============"); 
@@ -110,7 +110,7 @@ public class ProductScheduler {
 	/**
 	 * 漏掉的价格重新推送
 	 */
-	@Scheduled(cron = "00 30 01 * * ?")
+	@Scheduled(cron = "0 30 1 * * ?")
 	public void savePriceRecordAndSendConsumer(){
 		if(!scheduleConfig.isStartPro()){
 			return;
