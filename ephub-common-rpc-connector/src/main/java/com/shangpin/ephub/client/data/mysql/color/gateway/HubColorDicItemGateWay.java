@@ -20,7 +20,7 @@ import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemWithCriteri
  * @date 2016年12月14日 下午4:28:19
  */
 @FeignClient("ephub-data-mysql-service")
-public interface HubColorDicItemGateWay {
+public interface  HubColorDicItemGateWay {
 
 	
 	@RequestMapping(value = "/hub-color-dic-item/count-by-criteria", method = RequestMethod.POST,consumes = "application/json")

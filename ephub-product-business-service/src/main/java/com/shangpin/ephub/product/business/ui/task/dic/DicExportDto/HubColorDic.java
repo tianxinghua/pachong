@@ -15,5 +15,8 @@ public class HubColorDic implements Serializable{
     protected String createName;
     protected String supplierColorName;
     protected String hubColorName;
+   /* protected String startTime;
+    protected String endTime;
+*/
 
 }
