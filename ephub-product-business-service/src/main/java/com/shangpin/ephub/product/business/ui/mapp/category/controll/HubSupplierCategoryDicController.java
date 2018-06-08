@@ -91,11 +91,11 @@ public class HubSupplierCategoryDicController {
 					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
 					for (HubSupplierCategroyDicDto dicDto : list) {
 						HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-						List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
+						/*List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
 						if(listMapp!=null&&listMapp.size()>0){
 							dic.setSupplierNo(listMapp.get(0).getHubValNo());
 							dic.setSupplierName(listMapp.get(0).getHubVal());
-						}
+						}*/
 						if(dicDto.getCreateTime()!=null){
 							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
 						}
