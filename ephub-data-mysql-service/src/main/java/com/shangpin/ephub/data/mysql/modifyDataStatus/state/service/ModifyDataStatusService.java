@@ -12,7 +12,8 @@ public class ModifyDataStatusService{
     private ModifyDataStatusMapper modifyDataStatusMapper;
 
     public void updateStatus(){
-        modifyDataStatusMapper.updateStatus();
+        modifyDataStatusMapper.updateStockStatusToHaveStock();
+        modifyDataStatusMapper.updateStockStatusToNoStcok();
     }
     
     public void updatePicStatus(){

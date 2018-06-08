@@ -54,7 +54,7 @@ public class ProductPullDataService {
     			}
     		}
     		if(haveSupplier){
-    			sendMailService.sendMail("EPHUB拉去产品检测", buffer.toString()); 
+    			sendMailService.sendMail("EPHUB拉取产品检测", buffer.toString());
     		}
     	}
     }

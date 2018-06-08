@@ -2,9 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.ephub.data.mysql.modifyDataStatus.state.mapper.ModifyDataStatusMapper" >
   
-  <update id="updateStatus">
+  <update id="updateStockStatusToHaveStock">
     update  hub_spu_pending p inner join (select supplier_spu_id from hub_supplier_sku   group by supplier_spu_id having sum(stock)>1) tmp on p.supplier_spu_id = tmp.supplier_spu_id set p.stock_state = 1 where p.stock_state = 0
   </update>
+
+  <update id="updateStockStatusToNoStcok">
+    update hub_spu_pending sp inner join ( select spu_pending_id,sum(stock) from hub_sku_pending group by spu_pending_id having sum(stock)=0   ) t on  sp.spu_pending_id = t.spu_pending_id set sp.stock_state = 0 where sp.stock_state = 1
+  </update>
+
   
   <update id="updatePicStatus">
     update  hub_spu_pending p inner join (select distinct supplier_id,supplier_spu_no  from hub_spu_pending_pic where data_state=1 ) tmp on p.supplier_id = tmp.supplier_id and p.supplier_spu_no = tmp.supplier_spu_no set p.pic_state = 2 where p.pic_state = 3
