@@ -11,6 +11,7 @@ public class BrandRequestDTO {
     protected String startTime;
     protected String endTime;
 
+
     public String getStartTime() {
         return startTime;
     }

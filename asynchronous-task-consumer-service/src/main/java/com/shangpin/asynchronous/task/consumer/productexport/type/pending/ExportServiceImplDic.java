@@ -663,20 +663,24 @@ public class ExportServiceImplDic {
 		if (hubColorDic.getSupplierColorName()!=null){
 			criteria1.andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
 		}
+		if (!hubColorDic.getType().equals("0")){
+			criteria1.andPushStateEqualTo(Byte.parseByte(hubColorDic.getType()));
+		}
+		System.out.println("byte"+hubColorDic.getType());
 
-
-		if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
+		if(!StringUtils.isEmpty(hubColorDic.getStartTime())){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(hubColorDic.getStartTime());
 			criteria1.andCreateTimeGreaterThanOrEqualTo(parse);
 		}
-		if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getEndTime())){
+		if(!StringUtils.isEmpty(hubColorDic.getEndTime())){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(hubColorDic.getEndTime());
 			criteria1.andCreateTimeLessThan(parse);
 		}
 
-            //查询总条数
+
+		//查询总条数
 		int totalSize= hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
 		System.out.println("总条数"+totalSize);
 
@@ -695,6 +699,9 @@ public class ExportServiceImplDic {
 				hubColorDicItemCriteriaDto1.setPageSize(PAGESIZE);
 				if (hubColorDic.getSupplierColorName()!= null) {
 					criteria2.andColorItemNameEqualTo(hubColorDic.getSupplierColorName());
+				}
+				if (!hubColorDic.getType().equals("0")){
+					criteria2.andPushStateEqualTo(Byte.parseByte(hubColorDic.getType()));
 				}
 				if(!org.springframework.util.StringUtils.isEmpty(hubColorDic.getStartTime())){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
