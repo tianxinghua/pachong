@@ -68,7 +68,7 @@ public class DicExportController {
 		try {
 			String remotePath = "pending_export";
 			//第一步创建任务
-			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(materialRequestDto.getCreateUser(), remotePath , TaskType.EXPORT_MATERIAL);
+			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql("material", remotePath , TaskType.EXPORT_MATERIAL);
 
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_MATERIAL,materialRequestDto);
 			if(bool){
@@ -94,19 +94,9 @@ public class DicExportController {
 			String remotePath = "pending_export";
 			//第一步创建任务
 			System.out.println(pendingColorDto.getPageSize());
-			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(pendingColorDto.getCreateName(), remotePath , TaskType.EXPORT_COLOR);
+			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql("color", remotePath , TaskType.EXPORT_COLOR);
 			//第二步发送队列
-			//HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto = new HubColorDicItemCriteriaDto();
-			/*hubColorDicItemCriteriaDto.setPageNo(pendingColorDto.getPageNo());
-			hubColorDicItemCriteriaDto.setPageSize(pendingColorDto.getPageSize());
-			if (pendingColorDto.getSupplierColorName()!=null){
-				hubColorDicItemCriteriaDto.createCriteria().andColorItemNameEqualTo(pendingColorDto.getSupplierColorName());
-			}
-			if (pendingColorDto.getHubColorName()!=null){
-				hubColorDicItemCriteriaDto.createCriteria().andColorDicIdIsNotNull();
-			}
-			int count = hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
-			pendingColorDto.setPageSize(count);*/
+
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_COLOR, pendingColorDto);
 
 			if(bool){
@@ -128,13 +118,9 @@ public class DicExportController {
 		try {
 			String remotePath = "pending_export";
 			//第一步创建任务
-			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(madeMappingDtoDto.getCreateUser(), remotePath , TaskType.EXPORT_ORIGIN);
+			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql("origin", remotePath , TaskType.EXPORT_ORIGIN);
 			//第二步发送队列
-			/*HubSupplierValueMappingCriteriaDto hubSupplierValueMappingCriteriaDto = new HubSupplierValueMappingCriteriaDto();
-			hubSupplierValueMappingCriteriaDto.createCriteria().andHubValTypeEqualTo(madeMappingDtoDto.getType());
-			//获取总条数
-			int total = hubSupplierValueMappingGateWay.countByCriteria(hubSupplierValueMappingCriteriaDto);
-			madeMappingDtoDto.setPageSize(total);*/
+
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_ORIGIN, madeMappingDtoDto);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
@@ -154,7 +140,7 @@ public class DicExportController {
 		try {
 			String remotePath = "pending_export";
 			//第一步创建任务
-			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(SupplierCategroyDicCriteriaDto.getCreateName(),remotePath,TaskType.EXPORT_CATEGORY);
+			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql("category",remotePath,TaskType.EXPORT_CATEGORY);
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_CATEGORY, SupplierCategroyDicCriteriaDto);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
@@ -175,18 +161,9 @@ public class DicExportController {
 		try {
 			String remotePath = "pending_export";
 			//第一步创建任务
-			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql(brandRequestDTO.getCreateUser(), remotePath , TaskType.EXPORT_BRAND);
+			HubSpuImportTaskDto task = exportService.createAndSaveTaskIntoMysql("brand", remotePath , TaskType.EXPORT_BRAND);
 			//第二步发送队
-			/*HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto =null ;
-			hubSupplierBrandDicCriteriaDto.setPageNo(brandRequestDTO.getPageNo());
-			hubSupplierBrandDicCriteriaDto.setPageSize(brandRequestDTO.getPageSize());
-			if (brandRequestDTO.getSupplierBrand()!=null){
-				hubSupplierBrandDicCriteriaDto.createCriteria().andSupplierBrandEqualTo(brandRequestDTO.getSupplierBrand());
-			}
 
-			int count = hubSupplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
-			brandRequestDTO.setPageSize(count);
-*/
 			boolean bool = exportService.sendTaskToQueue(task.getTaskNo(), TaskType.EXPORT_BRAND, brandRequestDTO);
 			if(bool){
 				return HubResponse.successResp(task.getTaskNo()+":"+task.getSysFileName());
