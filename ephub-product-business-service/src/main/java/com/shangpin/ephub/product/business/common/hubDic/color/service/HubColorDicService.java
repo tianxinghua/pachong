@@ -1,11 +1,7 @@
 package com.shangpin.ephub.product.business.common.hubDic.color.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,12 +111,15 @@ public class HubColorDicService {
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(startTime+" 00:00:00");
-			criteria.andUpdateTimeGreaterThan(parse);
+			criteria.andUpdateTimeGreaterThanOrEqualTo(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime+" 23:59:59");
-			criteria.andUpdateTimeLessThanOrEqualTo(parse);
+			Date parse = format.parse(endTime);
+			Calendar calendar   =   new  GregorianCalendar();
+			calendar.setTime(parse);
+			calendar.add(calendar.DATE,1);
+			criteria.andCreateTimeLessThan(calendar.getTime());
 		}
 		if(colorDicId!=null){
 			criteria.andColorDicIdEqualTo(colorDicId);
@@ -141,8 +140,11 @@ public class HubColorDicService {
 			}
 			if(StringUtils.isNotBlank(endTime)){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime+" 23:59:59");
-				criteria1.andUpdateTimeLessThanOrEqualTo(parse);
+				Date parse = format.parse(endTime);
+				Calendar calendar   =   new  GregorianCalendar();
+				calendar.setTime(parse);
+				calendar.add(calendar.DATE,1);
+				criteria1.andCreateTimeLessThan(calendar.getTime());
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
 
@@ -163,14 +165,17 @@ public class HubColorDicService {
 			if (startTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date parse = format.parse(startTime+" 00:00:00");
-				criteria.andUpdateTimeGreaterThan(parse);
+				criteria.andUpdateTimeGreaterThanOrEqualTo(parse);
 			}
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			if (endTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime+" 23:59:59");
-				criteria.andUpdateTimeLessThanOrEqualTo(parse);
+				Date parse = format.parse(endTime);
+				Calendar calendar   =   new  GregorianCalendar();
+				calendar.setTime(parse);
+				calendar.add(calendar.DATE,1);
+				criteria.andCreateTimeLessThan(calendar.getTime());
 			}
 		}
 		if(colorDicId!=null){
@@ -190,14 +195,17 @@ public class HubColorDicService {
 				if (startTime!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(startTime+" 00:00:00");
-					criteria1.andUpdateTimeGreaterThan(parse);
+					criteria1.andUpdateTimeGreaterThanOrEqualTo(parse);
 				}
 			}
 			if(StringUtils.isNotBlank(endTime)){
 				if (endTime!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					Date parse = format.parse(endTime+" 23:59:59");
-					criteria1.andUpdateTimeLessThanOrEqualTo(parse);
+					Date parse = format.parse(endTime);
+					Calendar calendar   =   new  GregorianCalendar();
+					calendar.setTime(parse);
+					calendar.add(calendar.DATE,1);
+					criteria1.andCreateTimeLessThan(calendar.getTime());
 				}
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
