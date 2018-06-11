@@ -114,12 +114,12 @@ public class HubColorDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime + " 00:00:00");
+			Date parse = format.parse(startTime+" 00:00:00");
 			criteria.andUpdateTimeGreaterThan(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime + " 23:59:59");
+			Date parse = format.parse(endTime+" 23:59:59");
 			criteria.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		if(colorDicId!=null){
@@ -136,13 +136,13 @@ public class HubColorDicService {
 			}
 			if(StringUtils.isNotBlank(startTime)){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(startTime + " 00:00:00");
-				criteria.andUpdateTimeGreaterThan(parse);
+				Date parse = format.parse(startTime+" 00:00:00");
+				criteria1.andUpdateTimeGreaterThan(parse);
 			}
 			if(StringUtils.isNotBlank(endTime)){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime + " 23:59:59");
-				criteria.andUpdateTimeLessThanOrEqualTo(parse);
+				Date parse = format.parse(endTime+" 23:59:59");
+				criteria1.andUpdateTimeLessThanOrEqualTo(parse);
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
 		}
@@ -188,14 +188,14 @@ public class HubColorDicService {
 				if (startTime!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(startTime+" 00:00:00");
-					criteria.andUpdateTimeGreaterThan(parse);
+					criteria1.andUpdateTimeGreaterThan(parse);
 				}
 			}
 			if(StringUtils.isNotBlank(endTime)){
 				if (endTime!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(endTime+" 23:59:59");
-					criteria.andUpdateTimeLessThanOrEqualTo(parse);
+					criteria1.andUpdateTimeLessThanOrEqualTo(parse);
 				}
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());

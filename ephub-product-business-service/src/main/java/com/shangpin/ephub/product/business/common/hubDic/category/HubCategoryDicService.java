@@ -55,15 +55,15 @@ public class HubCategoryDicService {
 		if(StringUtils.isNotBlank(startTime)){
 			if (startTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(startTime);
-				criterion.andCreateTimeGreaterThanOrEqualTo(parse);
+				Date parse = format.parse(startTime+" 00:00:00");
+				criterion.andUpdateTimeGreaterThan(parse);
 			}
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			if (endTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime);
-				criterion.andCreateTimeLessThan(parse);
+				Date parse = format.parse(endTime+" 23:59:59");
+				criterion.andUpdateTimeLessThanOrEqualTo(parse);
 			}
 		}
 		if(categoryType!=0){
@@ -92,15 +92,15 @@ public class HubCategoryDicService {
 		if(StringUtils.isNotBlank(startTime)){
 			if (startTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(startTime);
-				criterion.andCreateTimeGreaterThanOrEqualTo(parse);
+				Date parse = format.parse(startTime+" 00:00:00");
+				criterion.andUpdateTimeGreaterThan(parse);
 			}
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			if (endTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime);
-				criterion.andCreateTimeLessThan(parse);
+				Date parse = format.parse(endTime+" 23:59:59");
+				criterion.andUpdateTimeLessThanOrEqualTo(parse);
 			}
 		}
 		if(categoryType!=0){

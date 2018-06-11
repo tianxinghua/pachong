@@ -125,13 +125,13 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime);
-			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			Date parse = format.parse(startTime+" 00:00:00");
+			criteria.andUpdateTimeGreaterThan(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime);
-			criteria.andCreateTimeLessThan(parse);
+			Date parse = format.parse(endTime+" 23:59:59");
+			criteria.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		criteria.andPushStateEqualTo((byte)0);
 		
@@ -147,13 +147,13 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime);
-			criteria2.andCreateTimeGreaterThanOrEqualTo(parse);
+			Date parse = format.parse(startTime+" 00:00:00");
+			criteria2.andUpdateTimeGreaterThan(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime);
-			criteria2.andCreateTimeLessThan(parse);
+			Date parse = format.parse(endTime+" 23:59:59");
+			criteria2.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
 		return supplierBrandDicGateWay.countByCriteria(hubSupplierBrandDicCriteriaDto);
@@ -176,13 +176,13 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime);
-			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			Date parse = format.parse(startTime+" 00:00:00");
+			criteria.andUpdateTimeGreaterThan(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime);
-			criteria.andCreateTimeLessThan(parse);
+			Date parse = format.parse(endTime+" 23:59:59");
+			criteria.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		criteria.andPushStateEqualTo((byte)0);
 		
@@ -198,13 +198,13 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime);
-			criteria2.andCreateTimeGreaterThanOrEqualTo(parse);
+			Date parse = format.parse(startTime+" 00:00:00");
+			criteria2.andUpdateTimeGreaterThan(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime);
-			criteria2.andCreateTimeLessThan(parse);
+			Date parse = format.parse(endTime+" 23:59:59");
+			criteria2.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		hubSupplierBrandDicCriteriaDto.or(criteria2.andPushStateIsNull());
 		
@@ -226,13 +226,14 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime);
-			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			Date parse = format.parse(startTime+" 00:00:00");
+			criteria.andUpdateTimeGreaterThan(parse);
+
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime);
-			criteria.andCreateTimeLessThan(parse);
+			Date parse = format.parse(endTime+" 23:59:59");
+			criteria.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		return brandDicGateway.countByCriteria(cruteria);
 	}
@@ -247,13 +248,13 @@ public class HubBrandDicService {
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(startTime);
-			criteria.andCreateTimeGreaterThanOrEqualTo(parse);
+			Date parse = format.parse(startTime+" 00:00:00");
+			criteria.andUpdateTimeGreaterThan(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime);
-			criteria.andCreateTimeLessThan(parse);
+			Date parse = format.parse(endTime+" 23:59:59");
+			criteria.andUpdateTimeLessThanOrEqualTo(parse);
 		}
 		cruteria.setPageNo(pageNo);
 		cruteria.setPageSize(pageSize);
