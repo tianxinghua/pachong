@@ -33,17 +33,17 @@ public class Test {
             Calendar cal = Calendar.getInstance();
             IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
             XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
-            xmlGregorianCalendar.setYear(cal.get(Calendar.YEAR));
-            xmlGregorianCalendar.setMonth(cal.get(Calendar.MONTH));
-            xmlGregorianCalendar.setDay(cal.get(Calendar.DATE));
-            xmlGregorianCalendar.setHour(cal.get(Calendar.HOUR));
-            xmlGregorianCalendar.setMinute(cal.get(Calendar.MINUTE));
-            xmlGregorianCalendar.setSecond(cal.get(Calendar.SECOND));
+            xmlGregorianCalendar.setYear(2017);
+            xmlGregorianCalendar.setMonth(12);
+            xmlGregorianCalendar.setDay(1);
+            xmlGregorianCalendar.setHour(0);
+            xmlGregorianCalendar.setMinute(0);
+            xmlGregorianCalendar.setSecond(0);
             xmlGregorianCalendar.setMillisecond(cal.get(Calendar.MILLISECOND));
+            int count = 0;
             while(loop){
                 page++;
-                ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", xmlGregorianCalendar, 100, page, "eng");
-
+                ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate("ECOMM", "vendiamotutto", "", null, 100, page, "eng");
 
                 List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
 
@@ -51,6 +51,7 @@ public class Test {
                 if(null==articoloFlatExtLocaleVO||articoloFlatExtLocaleVO.size()<100){
                     loop = false;
                 }
+                count+=articoloFlatExtLocaleVO.size();
                 if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
                     for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
                         /**
@@ -59,16 +60,16 @@ public class Test {
                         String modelCode = vo.getModelCode().getValue();
                         String size = vo.getSize().getValue();
                         String skuNo = modelCode +"-"+ size;
-                        System.out.println("============skuNo=============>:"+skuNo);
+                        //System.out.println("============skuNo=============>:"+skuNo);
 
                         MgDispo mgDispo = vo.getQuantita().getValue();
                         BigDecimal quantitaDimm = mgDispo.getQuantitaDimm();
                         String stockNum = quantitaDimm+"";
                         System.out.println("=====skuNO:stockNum-========"+skuNo+":"+stockNum);
-
                     }
                 }
             }
+            System.out.println("一共有"+count+"条记录======");
         } catch (Exception e) {
             e.printStackTrace();
         }

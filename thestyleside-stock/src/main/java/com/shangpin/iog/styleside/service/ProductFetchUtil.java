@@ -57,23 +57,25 @@ public class ProductFetchUtil {
 		Calendar cal = Calendar.getInstance();
 		IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
 		XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
-		xmlGregorianCalendar.setYear(cal.get(Calendar.YEAR));
-		xmlGregorianCalendar.setMonth(cal.get(Calendar.MONTH));
-		xmlGregorianCalendar.setDay(cal.get(Calendar.DATE));
-		xmlGregorianCalendar.setHour(cal.get(Calendar.HOUR));
-		xmlGregorianCalendar.setMinute(cal.get(Calendar.MINUTE));
-		xmlGregorianCalendar.setSecond(cal.get(Calendar.SECOND));
-		xmlGregorianCalendar.setMillisecond(cal.get(Calendar.MILLISECOND));
+		xmlGregorianCalendar.setYear(2017);
+		xmlGregorianCalendar.setMonth(12);
+		xmlGregorianCalendar.setDay(1);
+		xmlGregorianCalendar.setHour(0);
+		xmlGregorianCalendar.setMinute(0);
+		xmlGregorianCalendar.setSecond(0);
+		xmlGregorianCalendar.setMillisecond(0);
+		int count = 0;
 		try {
 			while(loop){
 				page++;
-				ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate(usr, pwd, "", xmlGregorianCalendar, Integer.parseInt(recordCount), page, language);
+				ArrayOfArticoloFlatExtLocaleVO articoliFlatExtLocaleByDate = http.getArticoliFlatExtLocaleByDate(usr, pwd, "", null, Integer.parseInt(recordCount), page, language);
 				List<ArticoloFlatExtLocaleVO> articoloFlatExtLocaleVO = articoliFlatExtLocaleByDate.getArticoloFlatExtLocaleVO();
 
 				logger.info("thestyleside成功获取第"+page+"页库存数据，当前页有"+articoloFlatExtLocaleVO.size()+"条数据");
 				if(null==articoloFlatExtLocaleVO||articoloFlatExtLocaleVO.size()<Integer.parseInt(recordCount)){
 					loop = false;
 				}
+				count+=articoloFlatExtLocaleVO.size();
 				if(null!=articoloFlatExtLocaleVO&&articoloFlatExtLocaleVO.size()>0){
 					for (ArticoloFlatExtLocaleVO vo :articoloFlatExtLocaleVO) {
 						/**
@@ -97,7 +99,7 @@ public class ProductFetchUtil {
 					}
 				}
 			}
-			logger.info("  thestyleside  循环获取库存数据结束==");
+			logger.info("  thestyleside  循环获取库存数据结束，一共拉取到"+count+"条数据");
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.info("  ==thestyleside 获取第"+page+"页库存数据出现错误,错误如下："+e.getMessage());
