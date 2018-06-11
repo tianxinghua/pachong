@@ -118,7 +118,7 @@ public class HubColorDicService {
 			Date parse = format.parse(endTime);
 			Calendar calendar   =   new  GregorianCalendar();
 			calendar.setTime(parse);
-			calendar.add(calendar.DATE,1);
+			calendar.add(calendar.DAY_OF_MONTH,1);
 			criteria.andCreateTimeLessThan(calendar.getTime());
 		}
 		if(colorDicId!=null){
@@ -143,7 +143,7 @@ public class HubColorDicService {
 				Date parse = format.parse(endTime);
 				Calendar calendar   =   new  GregorianCalendar();
 				calendar.setTime(parse);
-				calendar.add(calendar.DATE,1);
+				calendar.add(calendar.DAY_OF_MONTH,1);
 				criteria1.andCreateTimeLessThan(calendar.getTime());
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
@@ -174,7 +174,7 @@ public class HubColorDicService {
 				Date parse = format.parse(endTime);
 				Calendar calendar   =   new  GregorianCalendar();
 				calendar.setTime(parse);
-				calendar.add(calendar.DATE,1);
+				calendar.add(calendar.DAY_OF_MONTH,1);
 				criteria.andCreateTimeLessThan(calendar.getTime());
 			}
 		}
@@ -204,7 +204,7 @@ public class HubColorDicService {
 					Date parse = format.parse(endTime);
 					Calendar calendar   =   new  GregorianCalendar();
 					calendar.setTime(parse);
-					calendar.add(calendar.DATE,1);
+					calendar.add(Calendar.DAY_OF_MONTH,1);
 					criteria1.andCreateTimeLessThan(calendar.getTime());
 				}
 			}
