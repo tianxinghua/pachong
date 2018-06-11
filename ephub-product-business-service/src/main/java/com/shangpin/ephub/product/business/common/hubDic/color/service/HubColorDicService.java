@@ -145,6 +145,8 @@ public class HubColorDicService {
 				criteria1.andUpdateTimeLessThanOrEqualTo(parse);
 			}
 			hubColorDicItemCriteriaDto.or(criteria1.andPushStateIsNull());
+
+
 		}
 		return hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
 	}
