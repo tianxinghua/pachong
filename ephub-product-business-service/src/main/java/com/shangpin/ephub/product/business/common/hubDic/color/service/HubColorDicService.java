@@ -1,8 +1,10 @@
 package com.shangpin.ephub.product.business.common.hubDic.color.service;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -116,7 +118,7 @@ public class HubColorDicService {
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(endTime);
-			Calendar calendar   =   new  GregorianCalendar();
+			Calendar calendar   = Calendar.getInstance();
 			calendar.setTime(parse);
 			calendar.add(calendar.DAY_OF_MONTH,1);
 			criteria.andCreateTimeLessThan(calendar.getTime());
@@ -141,7 +143,7 @@ public class HubColorDicService {
 			if(StringUtils.isNotBlank(endTime)){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date parse = format.parse(endTime);
-				Calendar calendar   =   new  GregorianCalendar();
+				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(parse);
 				calendar.add(calendar.DAY_OF_MONTH,1);
 				criteria1.andCreateTimeLessThan(calendar.getTime());
@@ -172,7 +174,7 @@ public class HubColorDicService {
 			if (endTime!=null){
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date parse = format.parse(endTime);
-				Calendar calendar   =   new  GregorianCalendar();
+				Calendar calendar   = Calendar.getInstance();
 				calendar.setTime(parse);
 				calendar.add(calendar.DAY_OF_MONTH,1);
 				criteria.andCreateTimeLessThan(calendar.getTime());
@@ -202,7 +204,7 @@ public class HubColorDicService {
 				if (endTime!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(endTime);
-					Calendar calendar   =   new  GregorianCalendar();
+					Calendar calendar  = Calendar.getInstance();
 					calendar.setTime(parse);
 					calendar.add(Calendar.DAY_OF_MONTH,1);
 					criteria1.andCreateTimeLessThan(calendar.getTime());
@@ -264,4 +266,19 @@ public class HubColorDicService {
 	public void deleteHubSupplierColorById(Long id) {
 		hubColorDicItemGateWay.deleteByPrimaryKey(id);		
 	}
+
+	public static void main(String[] args) {
+		Format f = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date today = new Date();
+		System.out.println("今天是:" + f.format(today));
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(today);
+		c.add(Calendar.DAY_OF_MONTH, 1);// 今天+1天
+
+		Date tomorrow = c.getTime();
+		System.out.println("明天是:" + f.format(tomorrow));
+	}
+
 }
