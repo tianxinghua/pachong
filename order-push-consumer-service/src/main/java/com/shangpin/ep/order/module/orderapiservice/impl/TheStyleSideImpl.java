@@ -228,6 +228,7 @@ public class TheStyleSideImpl implements IOrderService{
                 orderDTO.setDescription("=== theStyleSide 推送订单失败 结果为空 result： "+result);
             } else {
                 logger.info("=== theStyleSide 推送订单成功 result： "+result);
+                orderDTO.setSupplierOrderNo(result);
                 orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
                 orderDTO.setConfirmTime(new Date());
             }
