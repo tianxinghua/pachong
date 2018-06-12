@@ -53,7 +53,12 @@ public class Product {
 	 * 货号
 	 */
 	private String pvr_model;
+
 	/**
+	 * 材质码
+	 */
+	private String pvr_;
+/**
 	 * 产地
 	 */
 	private String origin;
