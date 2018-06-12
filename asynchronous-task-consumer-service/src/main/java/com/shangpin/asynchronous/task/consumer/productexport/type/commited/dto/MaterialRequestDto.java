@@ -8,6 +8,24 @@ public class MaterialRequestDto {
     protected String  hubMaterial;
     protected String createUser;
     protected String mappingLevel;
+    protected String startTime;
+    protected String endTime;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
     public String getMappingLevel() {
         return mappingLevel;
@@ -63,5 +81,20 @@ public class MaterialRequestDto {
 
     public void setHubMaterial(String hubMaterial) {
         this.hubMaterial = hubMaterial;
+    }
+
+    @Override
+    public String toString() {
+        return "MaterialRequestDto{" +
+                "pageNo=" + pageNo +
+                ", startRow=" + startRow +
+                ", pageSize=" + pageSize +
+                ", supplierMaterial='" + supplierMaterial + '\'' +
+                ", hubMaterial='" + hubMaterial + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", mappingLevel='" + mappingLevel + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
     }
 }
