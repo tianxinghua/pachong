@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.common.hubDic.category;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -53,18 +54,17 @@ public class HubCategoryDicService {
 			criterion.andSupplierIdEqualTo(supplierId);	
 		}
 		if(StringUtils.isNotBlank(startTime)){
-			if (startTime!=null){
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(startTime+" 00:00:00");
-				criterion.andUpdateTimeGreaterThan(parse);
-			}
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(startTime+" 00:00:00");
+			criterion.andUpdateTimeGreaterThanOrEqualTo(parse);
 		}
 		if(StringUtils.isNotBlank(endTime)){
-			if (endTime!=null){
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime+" 23:59:59");
-				criterion.andUpdateTimeLessThanOrEqualTo(parse);
-			}
+			    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(endTime);
+				Calendar calendar   = Calendar.getInstance();
+				calendar.setTime(parse);
+				calendar.add(calendar.DAY_OF_MONTH,1);
+				criterion.andUpdateTimeLessThan(calendar.getTime());
 		}
 		if(categoryType!=0){
 			if(categoryType==5){
@@ -90,18 +90,19 @@ public class HubCategoryDicService {
 			criterion.andSupplierIdEqualTo(supplierId);	
 		}
 		if(StringUtils.isNotBlank(startTime)){
-			if (startTime!=null){
+
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date parse = format.parse(startTime+" 00:00:00");
-				criterion.andUpdateTimeGreaterThan(parse);
-			}
+				criterion.andUpdateTimeGreaterThanOrEqualTo(parse);
+
 		}
 		if(StringUtils.isNotBlank(endTime)){
-			if (endTime!=null){
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date parse = format.parse(endTime+" 23:59:59");
-				criterion.andUpdateTimeLessThanOrEqualTo(parse);
-			}
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date parse = format.parse(endTime);
+			Calendar calendar   = Calendar.getInstance();
+			calendar.setTime(parse);
+			calendar.add(calendar.DAY_OF_MONTH,1);
+			criterion.andUpdateTimeLessThan(calendar.getTime());
 		}
 		if(categoryType!=0){
 			if(categoryType==5){

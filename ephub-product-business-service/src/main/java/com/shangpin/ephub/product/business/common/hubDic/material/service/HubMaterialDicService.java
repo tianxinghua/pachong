@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.common.hubDic.material.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -63,18 +64,21 @@ public class HubMaterialDicService {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			//Date parse = format.parse(startTime);
 			Date parse = format.parse(startTime+" 00:00:00");
-			criteria.andUpdateTimeGreaterThan(parse);
+			criteria.andUpdateTimeGreaterThanOrEqualTo(parse);
 
 		}
 		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(endTime+" 23:59:59");
-			criteria.andUpdateTimeLessThanOrEqualTo(parse);
+			Date parse = format.parse(endTime);
+			Calendar calendar   = Calendar.getInstance();
+			calendar.setTime(parse);
+			calendar.add(calendar.DAY_OF_MONTH,1);
+			criteria.andUpdateTimeLessThan(calendar.getTime());
 		}
 		return hubMaterialMappingGateWay.countByCriteria(hubMaterialMappingCriteriaDto);
 	}
 	public List<HubMaterialMappingDto> getSupplierMaterialByType(int pageNo, int pageSize, Byte type,
-			String supplierMaterial, String hubMaterial,String startTime,String andTime) throws ParseException {
+			String supplierMaterial, String hubMaterial,String startTime,String endTime) throws ParseException {
 		HubMaterialMappingCriteriaDto hubMaterialMappingCriteriaDto = new HubMaterialMappingCriteriaDto();
 		HubMaterialMappingCriteriaDto.Criteria criteria = hubMaterialMappingCriteriaDto.createCriteria();
 		if(type!=null){
@@ -89,12 +93,15 @@ public class HubMaterialDicService {
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(startTime+" 00:00:00");
-			criteria.andUpdateTimeGreaterThan(parse);
+			criteria.andUpdateTimeGreaterThanOrEqualTo(parse);
 		}
-		if(StringUtils.isNotBlank(andTime)){
+		if(StringUtils.isNotBlank(endTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parse = format.parse(andTime+" 23:59:59");
-			criteria.andUpdateTimeLessThanOrEqualTo(parse);
+			Date parse = format.parse(endTime);
+			Calendar calendar   = Calendar.getInstance();
+			calendar.setTime(parse);
+			calendar.add(calendar.DAY_OF_MONTH,1);
+			criteria.andUpdateTimeLessThan(calendar.getTime());
 		}
 		hubMaterialMappingCriteriaDto.setPageNo(pageNo);
 		hubMaterialMappingCriteriaDto.setPageSize(pageSize);
