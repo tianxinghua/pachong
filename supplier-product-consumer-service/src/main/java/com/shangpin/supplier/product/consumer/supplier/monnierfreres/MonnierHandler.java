@@ -148,7 +148,7 @@ public class MonnierHandler implements ISupplierHandler {
 
 				//品牌  Valentino Garavani 特殊处理
 				if("Valentino Garavani".equals(item.getBrand())){
-					String materialNo = item.getPvr_model();
+					String materialNo = item.getPvr_material();
 					if(StringUtils.isNotBlank(materialNo)){
 						String[] ar = materialNo.split("\\s+");
 						if(null!=ar&&ar.length>0){

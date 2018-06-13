@@ -57,7 +57,7 @@ public class Product {
 	/**
 	 * 材质码
 	 */
-	private String pvr_;
+	private String pvr_material;
 /**
 	 * 产地
 	 */
