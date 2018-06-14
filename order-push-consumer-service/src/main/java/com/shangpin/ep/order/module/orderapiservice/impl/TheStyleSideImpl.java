@@ -148,8 +148,10 @@ public class TheStyleSideImpl implements IOrderService{
         //?
         order.setIdTipoDocumento(objFac.createDocumentoVOIdTipoDocumento(new Short("54")));
 
-        //订单号
-        order.setOrderNumber(objFac.createDocumentoVOOrderNumber(orderDTO.getSpOrderId()));
+        //theStyleSide 订单推送 -> 订单号生成规则修改  由采购单号 如： CGDF2018061458047 截取后9位 生成 061458047
+        String purchaseNo = orderDTO.getPurchaseNo();
+        String orderNo = purchaseNo.substring(8,17);
+        order.setOrderNumber(objFac.createDocumentoVOOrderNumber(orderNo));
         //?
         order.setPriceListCode(objFac.createDocumentoVOPriceListCode("PUBBL"));
 
@@ -181,6 +183,7 @@ public class TheStyleSideImpl implements IOrderService{
         //订单价格
         try {
             String price = getpriceDetail(orderDTO);
+            logger.info("获取订单价格为：price="+price);
             if(price!=null){
                 documentoRigaVO.setPrice(Float.parseFloat(price));
             }else{
@@ -256,6 +259,85 @@ public class TheStyleSideImpl implements IOrderService{
         String price = priceInt.divide(new BigDecimal(1.05), 2)
                 .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         return price;
+    }
+
+    //订单推送测试
+    public static void main2(String[] args){
+        ObjectFactory objFac=new ObjectFactory();
+        //定义订单数据
+        DocumentoVO order = new DocumentoVO();
+        /**
+         * 设置订单的用户信息
+         */
+        AnagraficaVO anagraficaVO = new AnagraficaVO();
+        anagraficaVO.setID(objFac.createAnagraficaVOID("GENER"));
+        JAXBElement<AnagraficaVO> anagraficaVOJaxbe = objFac.createDocumentoVOCustomer(anagraficaVO);
+        order.setCustomer(anagraficaVOJaxbe);
+        /**
+         *  设置订单时间
+         */
+        Calendar cal = Calendar.getInstance();
+        XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
+        xmlGregorianCalendar.setTimezone(8);
+        xmlGregorianCalendar.setYear(2018);
+        xmlGregorianCalendar.setMonth(6);
+        xmlGregorianCalendar.setDay(14);
+        xmlGregorianCalendar.setHour(0);
+        xmlGregorianCalendar.setMinute(16);
+        xmlGregorianCalendar.setSecond(13);
+        xmlGregorianCalendar.setMillisecond(cal.get(Calendar.MILLISECOND));
+
+        order.setDate(xmlGregorianCalendar);
+        order.setIdTipoDocumento(objFac.createDocumentoVOIdTipoDocumento(new Short("54")));
+        order.setOrderDate(xmlGregorianCalendar);
+        order.setOrderNumber(objFac.createDocumentoVOOrderNumber("201806141"));
+        order.setPriceListCode(objFac.createDocumentoVOPriceListCode("PUBBL"));
+
+        /**
+         * 设置订单的商品的 barCode|size、qty折扣disCount
+         * 可以添加多个商品信息 注意格式： 货号|尺码
+         */
+        ArrayOfDocumentoRigaVO arrayOfDocumentoRigaVO = new ArrayOfDocumentoRigaVO();
+        List<DocumentoRigaVO> documentoRigaVOs = arrayOfDocumentoRigaVO.getDocumentoRigaVO();
+        if(documentoRigaVOs==null){
+            documentoRigaVOs = new ArrayList<>();
+        }
+        DocumentoRigaVO documentoRigaVO = new DocumentoRigaVO();
+        //注意格式： 货号|尺码
+        documentoRigaVO.setBarCode(objFac.createDocumentoRigaVOBarCode("000237|36"));
+        documentoRigaVO.setDiscount((float)0);
+        documentoRigaVO.setIDDocumentoContatore(objFac.createDocumentoRigaVOIDDocumentoContatore("1"));
+        documentoRigaVO.setPrice((float)187.84);
+        documentoRigaVO.setQty(1);
+        documentoRigaVOs.add(documentoRigaVO);
+        JAXBElement<ArrayOfDocumentoRigaVO> righe = objFac.createDocumentoVORighe(arrayOfDocumentoRigaVO);
+        order.setRighe(righe);
+
+        /**
+         * 设置支付方式  ArrayOfTipoPagamentoVO
+         */
+        ArrayOfTipoPagamentoVO arrayOfTipoPagamentoVO = new ArrayOfTipoPagamentoVO();
+        List<TipoPagamentoVO> tipoPagamentoVOs = arrayOfTipoPagamentoVO.getTipoPagamentoVO();
+        if(tipoPagamentoVOs==null){
+            tipoPagamentoVOs = new ArrayList<>();
+        }
+        TipoPagamentoVO tipoPagamentoVO = new TipoPagamentoVO();
+        tipoPagamentoVO.setDescrizione(objFac.createTagliaVODescrizione("Fattura Fine Mese"));
+        tipoPagamentoVOs.add(tipoPagamentoVO);
+        JAXBElement<ArrayOfTipoPagamentoVO> jaArrayOfTipoPagamentoVO = objFac.createDocumentoVOTipiPagamento(arrayOfTipoPagamentoVO);
+        order.setTipiPagamento(jaArrayOfTipoPagamentoVO);
+
+        IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
+        String result = http.insertOrderItalist("ECOMM", "vendiamotutto", order);
+        System.out.println(result);
+
+
+    }
+
+    //采购单号截取 测试
+    public static void main(String[] test){
+        String testStr = "CGDF2018061458047";
+        System.out.println(testStr.substring(8,17));
     }
 
 }
