@@ -169,7 +169,7 @@ public class PendingMadeImportService {
 			if (productImport.getHubVal()!=null){
 				hubSupplierSizeDicRequestDto.setHubVal(productImport.getHubVal());
 			}if (productImport.getSupplierVal()!=null){
-				hubSupplierSizeDicRequestDto.setSupplierVal(productImport.getHubVal());
+				hubSupplierSizeDicRequestDto.setSupplierVal(productImport.getSupplierVal());
 			}
 			if (hubSupplierValueMappingDto1.getHubVal()!=null){
 				if (!hubSupplierValueMappingDto1.getHubVal().equals(productImport.getHubVal())){

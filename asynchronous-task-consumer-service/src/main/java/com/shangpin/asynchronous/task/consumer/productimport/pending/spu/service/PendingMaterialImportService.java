@@ -129,7 +129,7 @@ public class PendingMaterialImportService {
 				continue;
 			}
 			map = new HashMap<String, String>();
-			//map.put("taskNo", taskNo);
+			map.put("taskNo", taskNo);
 			Map<String, String> map1 = filterMaterial(productImport, createUser, map);
 			listMap.add(map1);
 		}
@@ -141,8 +141,24 @@ public class PendingMaterialImportService {
          if (productImport.getMaterialMappingId()!=null){
 			HubMaterialMappingDto hubMaterialMapping=new HubMaterialMappingDto();
 			 hubMaterialMapping.setMaterialMappingId(Long.parseLong(productImport.getMaterialMappingId()));
+/*
 			 map.put("materialMappingId",productImport.getMaterialMappingId());
+*/
 			 hubMaterialMapping.setUpdateTime(new Date());
+			 if (productImport.getMappingLevel()!=null){
+			 	if (productImport.getMappingLevel().contains("全匹配")){
+					hubMaterialMapping.setMappingLevel((byte)1);
+				}
+				 if (productImport.getMappingLevel().contains("词组匹配")){
+					 hubMaterialMapping.setMappingLevel((byte)2);
+				 }
+				 if (productImport.getMappingLevel().contains("单词匹配")){
+					 hubMaterialMapping.setMappingLevel((byte)3);
+				 }
+				 if (productImport.getMappingLevel().contains("替换匹配")){
+					 hubMaterialMapping.setMappingLevel((byte)4);
+				 }
+			 }
 			 if (productImport.getSupplierMaterial()!=null){
 				 hubMaterialMapping.setSupplierMaterial(productImport.getSupplierMaterial());
 				 map.put("supplierMaterial",productImport.getSupplierMaterial());
@@ -177,6 +193,7 @@ public class PendingMaterialImportService {
 				 hubMaterialMappingDto.setMappingLevel(Byte.parseByte(productImport.getMappingLevel()));
 			 }*/
 			 Long aLong = hubMaterialMappingGateWay.insert(hubMaterialMappingDto);
+			 map.put("task","校验成功");
 			 System.out.println("long值======"+aLong);
 			 return map;
 		 }
