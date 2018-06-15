@@ -154,6 +154,7 @@ public class PendingMadeImportService {
 			}
 			if (productImport.getHubVal()!=null){
 				hubSupplierValueMappingDto.setHubVal(productImport.getHubVal());
+				hubSupplierValueMappingDto.setMappingState((byte)1);
 				map.put("hubVal",(productImport.getHubVal()));
 			}
 			hubSupplierValueMappingDto.setHubValType((byte)3);
@@ -169,7 +170,7 @@ public class PendingMadeImportService {
 			if (productImport.getHubVal()!=null){
 				hubSupplierSizeDicRequestDto.setHubVal(productImport.getHubVal());
 			}if (productImport.getSupplierVal()!=null){
-				hubSupplierSizeDicRequestDto.setSupplierVal(productImport.getHubVal());
+				hubSupplierSizeDicRequestDto.setSupplierVal(productImport.getSupplierVal());
 			}
 			if (hubSupplierValueMappingDto1.getHubVal()!=null){
 				if (!hubSupplierValueMappingDto1.getHubVal().equals(productImport.getHubVal())){

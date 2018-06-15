@@ -130,8 +130,8 @@ public class PendingBrandImportService {
 			Map<String, String>	map = new HashMap<String, String>();
 			map.put("taskNo", taskNo);
 			//首先判断是否人工排除
-			filterBrand(productImport,createUser,map);
-			listMap.add(map);
+			Map<String, String> map1 = filterBrand(productImport, createUser, map);
+			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
 		return taskService.convertExcelBrand(listMap, taskNo);
@@ -152,6 +152,7 @@ public class PendingBrandImportService {
 				map.put("supplierBrand",productImport.getSupplierBrand());
 			}if (productImport.getHubBrandNo()!=null){
 				hubSupplierBrandDicDto.setHubBrandNo(productImport.getHubBrandNo());
+				hubSupplierBrandDicDto.setFilterFlag((byte)1);
 				map.put("hubBrandNo",productImport.getHubBrandNo());
 			}
 			hubSupplierBrandDicDto.setUpdateTime(new Date());
@@ -235,9 +236,12 @@ public class PendingBrandImportService {
 				for (int i = 0; i < brandValueTemplate.length; i++) {
 					if (xssfRow.getCell(i) != null) {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
+						if (brandValueTemplate[i]=="hubBrand")continue;
 						String setMethodName = "set" + brandValueTemplate[i].toUpperCase().charAt(0)
 								+ brandValueTemplate[i].substring(1);
+
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
+
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}
 				}

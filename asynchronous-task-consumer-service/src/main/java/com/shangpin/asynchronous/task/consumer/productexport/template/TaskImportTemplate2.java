@@ -34,11 +34,11 @@ public class TaskImportTemplate2 {
         return headers;
     }
     public static String[] getBrandTemplate() {
-        String[] headers = {"supplierBrandDicId","供应商","供应商品牌","尚品品牌","创建时间","更新时间","更新人"};
+        String[] headers = {"supplierBrandDicId","供应商","供应商品牌","品牌编码","尚品品牌","创建时间","更新时间","更新人"};
         return headers;
     }
     public static String[] getBrandValueTemplate() {
-        String[] headers = {"supplierBrandDicId","supplierId","supplierBrand","hubBrandNo","createTime","updateTime","updateUser"};
+        String[] headers = {"supplierBrandDicId","supplierId","supplierBrand","hubBrandNo","hubBrand","createTime","updateTime","updateUser"};
         return headers;
     }
 
