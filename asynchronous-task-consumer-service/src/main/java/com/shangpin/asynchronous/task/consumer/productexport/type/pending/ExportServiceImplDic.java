@@ -741,7 +741,7 @@ public class ExportServiceImplDic {
 		hubColorDicItemCriteriaDto.setPageNo(hubColorDic.getPageNo());
 		hubColorDicItemCriteriaDto.setPageSize(hubColorDic.getPageSize());
 		if (hubColorDic.getSupplierColorName()!=null){
-			criteria1.andColorItemNameLike("%"+ hubColorDic.getSupplierColorName() +"%");
+			criteria1.andColorItemNameLike("%"+hubColorDic.getSupplierColorName()+"%");
 		}
 		if (hubColorDic.getHubColorName()!=null){
 			HubColorDicCriteriaDto hubColorDicCriteriaDto =new HubColorDicCriteriaDto();
@@ -792,7 +792,7 @@ public class ExportServiceImplDic {
 				hubColorDicItemCriteriaDto1.setPageNo(i);
 				hubColorDicItemCriteriaDto1.setPageSize(PAGESIZE);
 				if (hubColorDic.getSupplierColorName()!= null) {
-					criteria2.andColorItemNameLike("%"+ hubColorDic.getSupplierColorName() +"%");
+					criteria2.andColorItemNameLike("%"+hubColorDic.getSupplierColorName()+"%");
 				}
 				if (hubColorDic.getType()!=null){
 					criteria2.andPushStateEqualTo(Byte.parseByte(hubColorDic.getType()));
