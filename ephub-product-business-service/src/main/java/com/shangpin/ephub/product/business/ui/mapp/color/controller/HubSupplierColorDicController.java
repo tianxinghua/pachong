@@ -154,7 +154,7 @@ public class HubSupplierColorDicController {
 			response.setList(responseList);
 			return HubResponse.successResp(response);
 			}else{
-				return HubResponse.successResp(null);
+				return HubResponse.successResp("列表页为空");
 			}
 		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
