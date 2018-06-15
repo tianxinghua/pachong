@@ -120,9 +120,13 @@ public class WiseOrderService implements IOrderService {
 					String prex = "<string xmlns=\"http://tempuri.org/\">";
 					String end = "</string>";
 					String stocks = stockData.substring(stockData.indexOf(prex)+prex.length(), stockData.indexOf(end));
+					String supplierSize = "";
 					for(String size_stock : stocks.split("\\|")){
 						if(StringUtils.isNotBlank(size_stock)){
-							if(size.equals(size_stock.split(";")[0])){
+							supplierSize = "";
+							supplierSize = size_stock.split(";")[0];
+							supplierSize = supplierSize.replaceAll("\\+", "½");
+							if(size.equals(supplierSize)){
 								stock = Integer.parseInt(size_stock.split(";")[1]);
 								orderDTO.setLogContent("查询到的供货商的库存为============"+stock);
 								logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -145,7 +149,7 @@ public class WiseOrderService implements IOrderService {
 							orderDTO.setDescription("下单失败：" + returnData);
 						}
 					}else{
-						orderDTO.setConfirmTime(new Date()); 
+//						orderDTO.setConfirmTime(new Date());
 						orderDTO.setPushStatus(PushStatus.NO_STOCK);
 					}
 				}else{
@@ -234,7 +238,7 @@ public class WiseOrderService implements IOrderService {
 	@SuppressWarnings("static-access")
 	private String newOrderMarketPlace(long id_order_mrkp, String barcode, int qty,OrderDTO orderDTO) throws Exception {
 		Map<String,String> param = new HashMap<String,String>();
-		param.put("ID_ORDER_MRKP", String.valueOf(id_order_mrkp));
+		param.put("ID_ORDER_MRKP", orderDTO.getSpOrderDetailNo());//String.valueOf(id_order_mrkp)
 		param.put("BARCODE", barcode);
 		param.put("QTY", String.valueOf(qty));
 		orderDTO.setLogContent("下单参数============"+param.toString());

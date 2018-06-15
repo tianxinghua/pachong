@@ -176,6 +176,7 @@ public abstract class AtelierOrderHandler implements IOrderService {
 						}
 					}
 					//如果库存大于0,则下单
+//					stock =1;//不在判断库存
 					if(stock > 0){
 						//下单
 						String returnData = newOrderMarketPlace(id_order_mrkp,barcode,qty,orderDTO);
@@ -204,7 +205,7 @@ public abstract class AtelierOrderHandler implements IOrderService {
 							orderDTO.setDescription("下单失败：" + returnData);
 						}
 					}else{
-						orderDTO.setConfirmTime(new Date()); 
+//						orderDTO.setConfirmTime(new Date());
 						orderDTO.setPushStatus(PushStatus.NO_STOCK);
 //						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}
