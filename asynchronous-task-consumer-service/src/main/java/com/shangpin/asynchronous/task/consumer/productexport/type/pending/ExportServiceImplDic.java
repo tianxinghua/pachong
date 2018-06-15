@@ -527,7 +527,7 @@ public class ExportServiceImplDic {
 		   }
 		       criteria.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
 		    if (hubSupplierMadeMappingDto.getMappingType()!=null){
-			   criteria.andMappingStateEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+			   criteria.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
 		    }
 
 		//获取总条数
@@ -565,7 +565,7 @@ public class ExportServiceImplDic {
 				criteria2.andHubValTypeEqualTo(hubSupplierMadeMappingDto.getType());
 
 				if (hubSupplierMadeMappingDto.getMappingType()!=null){
-					criteria2.andMappingStateEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
+					criteria2.andMappingTypeEqualTo(Byte.parseByte(hubSupplierMadeMappingDto.getMappingType()));
 				}
 
 				List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(hubSupplierValueMappingCriteriaDto);
