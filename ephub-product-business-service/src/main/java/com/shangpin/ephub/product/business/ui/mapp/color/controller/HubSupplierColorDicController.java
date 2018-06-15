@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.ui.mapp.color.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,8 +68,8 @@ public class HubSupplierColorDicController {
 	IShangpinRedis shangpinRedis;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierColorList(
-			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
-		try {
+			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) throws ParseException {
+		/*try {*/
 			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
 			int total =0;
 			
@@ -99,18 +100,19 @@ public class HubSupplierColorDicController {
 							dic.setUpdateUser(dicDto.getUpdateUser());
 							responseList.add(dic);
 					}
+
+					HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
+					response.setTotal(total);
+					response.setList(responseList);
+					return HubResponse.successResp(response);
 				}
-				HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
-				response.setTotal(total);
-				response.setList(responseList);
-				return HubResponse.successResp(response);
 			}
-			return HubResponse.successResp(null);
-			
-		} catch (Exception e) {
+			//return HubResponse.successResp(null);
+		   return HubResponse.errorResp("获取列表失败");
+		/*}*/ /*catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
-		}
+		}*/
 	}
 
 	@RequestMapping(value = "/sp-color-list", method = RequestMethod.POST)
