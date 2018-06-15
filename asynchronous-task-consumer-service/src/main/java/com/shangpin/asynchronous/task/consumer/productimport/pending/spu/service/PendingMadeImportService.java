@@ -154,6 +154,7 @@ public class PendingMadeImportService {
 			}
 			if (productImport.getHubVal()!=null){
 				hubSupplierValueMappingDto.setHubVal(productImport.getHubVal());
+				hubSupplierValueMappingDto.setMappingState((byte)1);
 				map.put("hubVal",(productImport.getHubVal()));
 			}
 			hubSupplierValueMappingDto.setHubValType((byte)3);
