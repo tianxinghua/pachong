@@ -1,12 +1,13 @@
 package com.shangpin.ephub.product.business.ui.mapp.color.controller;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,16 +69,37 @@ public class HubSupplierColorDicController {
 	IShangpinRedis shangpinRedis;
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierColorList(
-			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) throws ParseException {
-		/*try {*/
+			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
+		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
-			int total =0;
+		//	int total =0;
 			
-			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
+			/*if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
 				hubSupplierColorDicRequestDto.setColorDicId(HubColorDic.getHubColorId(hubSupplierColorDicRequestDto.getHubColor()));
+			}*/
+
+			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getSupplierColor())){
+				HubColorDicItemDto hubColorDicItem = hubColorDicService.getHubColorDicItem(hubSupplierColorDicRequestDto.getSupplierColor());
+				if(hubColorDicItem==null){
+					return HubResponse.errorResp("供应商为空");
+				}
 			}
+			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getStartTime())){
+				HubColorDicItemDto hubColorDicItem = hubColorDicService.getHubColorDicItem(hubSupplierColorDicRequestDto.getStartTime());
+				if(hubColorDicItem==null){
+					return HubResponse.errorResp("供应商为空");
+				}
+			}
+			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getEndTime())){
+				HubColorDicItemDto hubColorDicItem = hubColorDicService.getHubColorDicItem(hubSupplierColorDicRequestDto.getEndTime());
+				if(hubColorDicItem==null){
+					return HubResponse.errorResp("供应商为空");
+				}
+			}
+
+
 //			if(type==0){
-			total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getStartTime(),hubSupplierColorDicRequestDto.getEndTime());
+			int total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getStartTime(),hubSupplierColorDicRequestDto.getEndTime());
 //			}else if(type==1){
 //				total = HubColorDic.getHubColorMap().size();
 //			}
@@ -100,19 +122,18 @@ public class HubSupplierColorDicController {
 							dic.setUpdateUser(dicDto.getUpdateUser());
 							responseList.add(dic);
 					}
-
-					HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
-					response.setTotal(total);
-					response.setList(responseList);
-					return HubResponse.successResp(response);
 				}
+				HubSupplierColorDicResponseWithPageDto response = new HubSupplierColorDicResponseWithPageDto();
+				response.setTotal(total);
+				response.setList(responseList);
+				return HubResponse.successResp(response);
 			}
-			//return HubResponse.successResp(null);
-		   return HubResponse.errorResp("获取列表失败");
-		/*}*/ /*catch (Exception e) {
+			return HubResponse.successResp("列表页为空");
+
+		} catch (Exception e) {
 			log.error("获取列表失败：{}", e);
 			return HubResponse.errorResp("获取列表失败");
-		}*/
+		}
 	}
 
 	@RequestMapping(value = "/sp-color-list", method = RequestMethod.POST)
