@@ -152,6 +152,8 @@ public class ExportServiceImplDic {
 	HubSupplierBrandDicGateWay hubSupplierBrandDicGateWay;
 	@Autowired
 	HubColorDicGateWay hubColorDicGateWay;
+	@Autowired
+    GmsGateWay getGmsGateWay;
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	private static final Integer PAGESIZE = 50;
@@ -299,7 +301,7 @@ public class ExportServiceImplDic {
 			}else if ("updateTime".equals(rowTemplate[i])){
 				setBrandupdateTime(row,brandDto,aClass,i);
 			}else if ("hubBrand".equals(rowTemplate[i])){
-				row.createCell(i).setCellValue("");
+                sethubBrand(row,brandDto,aClass,i);
 			}
 			else {
 				if ("updateUser".equals(rowTemplate[i])){
@@ -308,6 +310,33 @@ public class ExportServiceImplDic {
 			}
 		}
 	}
+
+
+	//获取品牌
+    private void sethubBrand(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        if(brandDto.getHubBrandNo()!=null){
+            BrandDom brand = getGmsGateWay.findBrand(brandDto.getHubBrandNo());
+            if (brand.getBrandEnName()!=null){
+                row.createCell(i).setCellValue(brand.getBrandEnName());
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
 	private void setBrandDicIdOfRow(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
 		String fileName = "getSupplierBrandDicId";
 		Method fieldSetMet = clazz.getMethod(fileName);
