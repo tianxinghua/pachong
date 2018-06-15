@@ -217,6 +217,9 @@ public class ExportServiceImplDic {
 			Date parse = format.parse(brandRequestDTO.getStartTime()+" 00:00:00");
 			criteria.andUpdateTimeGreaterThanOrEqualTo(parse);
 		}
+/*
+		hubSupplierBrandDicCriteriaDto.or(criteria.andPushStateIsNull());
+*/
 		if (brandRequestDTO.getEndTime()!=null){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(brandRequestDTO.getEndTime());
@@ -247,9 +250,12 @@ public class ExportServiceImplDic {
 				if (brandRequestDTO.getHubBrand()!=null){
 					criteria1.andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
 				}
-				if (brandRequestDTO.getType()!=null){
+				if (brandRequestDTO.getType().equals("0")){
 					criteria1.andPushStateEqualTo(Byte.parseByte(brandRequestDTO.getType()));
 				}
+/*
+				hubSupplierBrandDicCriteriaDto1.or(criteria1.andPushStateIsNull());
+*/
 				if (brandRequestDTO.getStartTime()!=null){
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					Date parse = format.parse(brandRequestDTO.getStartTime()+" 00:00:00");
@@ -301,6 +307,8 @@ public class ExportServiceImplDic {
 			}else if ("updateTime".equals(rowTemplate[i])){
 				setBrandupdateTime(row,brandDto,aClass,i);
 			}else if ("hubBrand".equals(rowTemplate[i])){
+
+
                 sethubBrand(row,brandDto,aClass,i);
 			}
 			else {
@@ -316,9 +324,18 @@ public class ExportServiceImplDic {
     private void sethubBrand(HSSFRow row, HubSupplierBrandDicDto brandDto, Class<?> clazz, int i) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         if(brandDto.getHubBrandNo()!=null){
             BrandDom brand = getGmsGateWay.findBrand(brandDto.getHubBrandNo());
-            if (brand.getBrandEnName()!=null){
-                row.createCell(i).setCellValue(brand.getBrandEnName());
-            }
+            if (brand!=null && brand.getBrandEnName()!=null){
+				row.createCell(i).setCellValue(brand.getBrandEnName());
+
+			}
+			else {
+
+				row.createCell(i).setCellValue(" ");
+			}
+            /*if (brand.getBrandEnName()!=null){
+
+				row.createCell(i).setCellValue(brand.getBrandEnName());
+			}*/
         }
 
 
