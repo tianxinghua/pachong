@@ -19,10 +19,7 @@ import com.shangpin.ephub.client.data.mysql.brand.gateway.HubSupplierBrandDicGat
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.categroy.dto.HubSupplierCategroyDicDto;
 import com.shangpin.ephub.client.data.mysql.categroy.gateway.HubSupplierCategroyDicGateWay;
-import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicDto;
-import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.color.dto.HubColorDicItemDto;
+import com.shangpin.ephub.client.data.mysql.color.dto.*;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicGateWay;
 import com.shangpin.ephub.client.data.mysql.color.gateway.HubColorDicItemGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
@@ -1473,16 +1470,29 @@ public class ExportServiceImplDic {
 					//row.createCell(i).setCellValue("");
 					//sethubDicColor(row, product, cls, i);
 					Long colorDicId = product.getColorDicId();
+					System.out.println(colorDicId);
+					if (colorDicId==null)return;
 					HubColorDicCriteriaDto hubColorDicCriteriaDto =new HubColorDicCriteriaDto() ;
+					HubColorDicCriteriaDto.Criteria criteria = hubColorDicCriteriaDto.createCriteria();
+					criteria.andColorDicIdEqualTo(colorDicId);
+					List<HubColorDicDto> hubColorDicDtos = hubColorDicGateWay.selectByCriteria(hubColorDicCriteriaDto);
+					for(HubColorDicDto hubColorDicDto:hubColorDicDtos){
+                          if (hubColorDicDto.getColorDicId()==product.getColorDicId()){
+							  hubColorDicDto.getColorName();
+							  row.createCell(i).setCellValue(hubColorDicDto.getColorName());
+						  }
+
+					 }
+
+					/*HubColorDicCriteriaDto hubColorDicCriteriaDto =new HubColorDicCriteriaDto() ;
 					HubColorDicCriteriaDto.Criteria criteria=hubColorDicCriteriaDto.createCriteria();
-					if (colorDicId!=null){
-						criteria.andColorDicIdEqualTo(colorDicId);
-					}
+					criteria.andColorDicIdEqualTo(colorDicId);
+
 					List<HubColorDicDto> hubColorDicDtos = hubColorDicGateWay.selectByCriteria(hubColorDicCriteriaDto);
 					HubColorDicDto hubColorDicDto = hubColorDicDtos.get(0);
 					hubColorDicDto.getColorName();
 					row.createCell(i).setCellValue(hubColorDicDto.getColorName());
-
+*/
 				}
 			}
 		}
