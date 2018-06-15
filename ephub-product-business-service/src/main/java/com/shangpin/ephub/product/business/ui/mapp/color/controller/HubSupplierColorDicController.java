@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,34 +70,13 @@ public class HubSupplierColorDicController {
 			@RequestBody HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto) {
 		try {
 			log.info("===颜色映射list请求参数：{}",hubSupplierColorDicRequestDto);
-		//	int total =0;
+			int total =0;
 			
-			/*if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
+			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getHubColor())){
 				hubSupplierColorDicRequestDto.setColorDicId(HubColorDic.getHubColorId(hubSupplierColorDicRequestDto.getHubColor()));
-			}*/
-
-			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getSupplierColor())){
-				HubColorDicItemDto hubColorDicItem = hubColorDicService.getHubColorDicItem(hubSupplierColorDicRequestDto.getSupplierColor());
-				if(hubColorDicItem==null){
-					return HubResponse.errorResp("供应商为空");
-				}
 			}
-			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getStartTime())){
-				HubColorDicItemDto hubColorDicItem = hubColorDicService.getHubColorDicItem(hubSupplierColorDicRequestDto.getStartTime());
-				if(hubColorDicItem==null){
-					return HubResponse.errorResp("供应商为空");
-				}
-			}
-			if(StringUtils.isNotBlank(hubSupplierColorDicRequestDto.getEndTime())){
-				HubColorDicItemDto hubColorDicItem = hubColorDicService.getHubColorDicItem(hubSupplierColorDicRequestDto.getEndTime());
-				if(hubColorDicItem==null){
-					return HubResponse.errorResp("供应商为空");
-				}
-			}
-
-
 //			if(type==0){
-			int total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getStartTime(),hubSupplierColorDicRequestDto.getEndTime());
+			total = hubColorDicService.countSupplierColorByType(hubSupplierColorDicRequestDto.getType(),hubSupplierColorDicRequestDto.getSupplierColor(),hubSupplierColorDicRequestDto.getColorDicId(),hubSupplierColorDicRequestDto.getStartTime(),hubSupplierColorDicRequestDto.getEndTime());
 //			}else if(type==1){
 //				total = HubColorDic.getHubColorMap().size();
 //			}
