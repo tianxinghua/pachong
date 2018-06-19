@@ -57,8 +57,9 @@ public class HubOriginDicService {
 			criteria.andHubValEqualTo(hubVal);	
 		}
 		if(StringUtils.isNotBlank(supplierVal)){
-			criteria.andSupplierValEqualTo(supplierVal);
+			criteria.andSupplierValEqualTo("%"+supplierVal+"%");
 		}
+
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(startTime+" 00:00:00");
@@ -94,7 +95,7 @@ public class HubOriginDicService {
 			criteria.andHubValEqualTo(hubVal);	
 		}
 		if(StringUtils.isNotBlank(supplierVal)){
-			criteria.andSupplierValEqualTo(supplierVal);
+			criteria.andSupplierValEqualTo("%"+supplierVal+"%");
 		}
 		if(StringUtils.isNotBlank(startTime)){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
