@@ -138,7 +138,7 @@ public class PendingCateGroyImportService {
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
 
 		for (HubPendingCateGroyImportDTO productImport : hubPendingCateGroyImportDTOS) {
-			if (productImport == null || StringUtils.isBlank(productImport.getSupplierId())) {
+			if (productImport == null) {
 				continue;
 			}
 			//记录单条数据的校验结果
