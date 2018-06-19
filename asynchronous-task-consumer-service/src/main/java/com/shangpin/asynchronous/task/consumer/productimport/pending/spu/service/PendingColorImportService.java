@@ -146,24 +146,20 @@ public class PendingColorImportService {
 		HubColorDicItemDto hubColorDicItemDto = new HubColorDicItemDto();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		if (productImport.getColorDicItemId()!=null){
-			HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto=new HubSupplierColorDicRequestDto();
 
 			HubColorDicItemDto hubColorDicItemDto1 = hubColorDicItemGateWay.selectByPrimaryKey(Long.parseLong(productImport.getColorDicItemId()));
 			hubColorDicItemDto.setColorDicItemId(Long.parseLong(productImport.getColorDicItemId()));
-			//map.put("colorDicItemId",productImport.getColorDicItemId());
-			//  if (productImport.getColorItemName()==null)return null;
+
 			  if (productImport.getColorItemName()!=null){
 				  hubColorDicItemDto.setColorItemName(productImport.getColorItemName());
 				  map.put("colorItemName",productImport.getColorItemName());
-
-			  }/*else {
-				  hubColorDicItemDto.setColorItemName("");
-			  }*/
+			  }
 
           if (productImport.getColorDicId()!=null){
 		  //Map<String, Long> stringLongMap = queryHubColorDicCriteriaColor(productImport);
 		   HubColorDicCriteriaDto criteria=new HubColorDicCriteriaDto();
-		   criteria.createCriteria().andColorNameEqualTo(productImport.getColorDicId());
+			  HubColorDicCriteriaDto.Criteria c =criteria.createCriteria();
+			  c.andColorNameEqualTo(productImport.getColorDicId());
 		   List<HubColorDicDto> hubColorDicDtos = hubColorDicGateWay.selectByCriteria(criteria);
 		   for (HubColorDicDto hubColorDicDto:hubColorDicDtos){
 		   	if (hubColorDicDto.getColorName().equals(productImport.getColorDicId())){
@@ -176,44 +172,37 @@ public class PendingColorImportService {
 		   }
 	   }
 			    	//获取字典的全部颜色
-			/*Map<String, Long> stringLongMap = queryHubColorDicCriteriaColor(productImport);
-			  for (Map.Entry<String, Long> entry : stringLongMap.entrySet()) {
-				  String key = entry.getKey().toString();
-				  if (key.equals(productImport.getColorDicId())){
-					  Long value = entry.getValue();
-					  if (value==null)continue;
-					  hubColorDicItemDto.setColorDicId(value);
-					  map.put("hubcolor",value.toString());
-				  }
-			}*/
+
 			       hubColorDicItemDto.setUpdateTime(new Date());
 			int i = hubColorDicItemGateWay.updateByPrimaryKeySelective(hubColorDicItemDto);
-			//int i= hubColorDicItemGateWay.updateByPrimaryKeySelective()
 			if (i==1){
 				map.put("task","校验成功");
 			}else {
 				map.put("task","校验失败");
 			}
 
-
+			HubSupplierColorDicRequestDto hubSupplierColorDicRequestDto=new HubSupplierColorDicRequestDto();
 			hubSupplierColorDicRequestDto.setColorDicItemId(hubColorDicItemDto.getColorDicItemId());
 			if (hubColorDicItemDto.getColorDicId()!=null){
-				hubSupplierColorDicRequestDto.setColorDicId(hubColorDicItemDto.getColorDicId());
+				//hubSupplierColorDicRequestDto.setColorDicId(hubColorDicItemDto.getColorDicId());
+				hubSupplierColorDicRequestDto.setSupplierColor(productImport.getColorItemName());
+				hubSupplierColorDicRequestDto.setHubColor(productImport.getColorDicId().toString());
+
+				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
+
 			}
-			hubSupplierColorDicRequestDto.setSupplierColor(productImport.getColorItemName());
 			//对比是否要刷新
 			//不相同是刷新
+          /*if (hubColorDicItemDto.getColorDicId()!=null){
 
-			if (hubColorDicItemDto1.getColorDicId()!=hubColorDicItemDto.getColorDicId()){
-				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
 
-			}
-			/*if (!stringLongMap.get(productImport.getColorDicId()).equals(hubColorDicItemDto1.getColorDicId())){
-				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
-			}*/
-			/*if (!hubColorDicItemDto1.getColorDicId().equals(hubSupplierColorDicRequestDto.getColorDicId())){
-				dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
-			}*/
+			  if (!hubColorDicItemDto1.getColorDicId().equals(hubColorDicItemDto.getColorDicId())){
+				  dicRefreshGateWay.colorRefresh(hubSupplierColorDicRequestDto);
+			  }
+
+		  }*/
+
+
 
 			//刷新颜色
 			return map;

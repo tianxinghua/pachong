@@ -153,6 +153,8 @@ public class PendingBrandImportService {
 			}if (productImport.getHubBrandNo()!=null){
 				hubSupplierBrandDicDto.setHubBrandNo(productImport.getHubBrandNo());
 				hubSupplierBrandDicDto.setFilterFlag((byte)1);
+				hubSupplierBrandDicDto.setMappingState(Byte.parseByte("1"));
+
 				map.put("hubBrandNo",productImport.getHubBrandNo());
 			}
 			hubSupplierBrandDicDto.setUpdateTime(new Date());
