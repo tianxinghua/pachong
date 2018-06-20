@@ -240,7 +240,7 @@ public class ExportServiceImplDic {
 				criteria2.andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
 			}
 			if(StringUtils.isNotBlank(brandRequestDTO.getSupplierBrand())){
-				criteria2.andSupplierBrandEqualTo("%"+brandRequestDTO.getSupplierBrand()+"%");
+				criteria2.andSupplierBrandLike("%"+brandRequestDTO.getSupplierBrand()+"%");
 			}
 			if(StringUtils.isNotBlank(brandRequestDTO.getHubBrand())){
 				criteria2.andHubBrandNoEqualTo(brandRequestDTO.getHubBrand());
@@ -270,8 +270,8 @@ public class ExportServiceImplDic {
 				for(int i=1;i<=pageCount;i++){
 					HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto1 = new HubSupplierBrandDicCriteriaDto();
 					HubSupplierBrandDicCriteriaDto.Criteria criteria3 = hubSupplierBrandDicCriteriaDto.createCriteria();
-					hubSupplierBrandDicCriteriaDto.setPageNo(i);
-					hubSupplierBrandDicCriteriaDto.setPageSize(PAGESIZE);
+					hubSupplierBrandDicCriteriaDto1.setPageNo(i);
+					hubSupplierBrandDicCriteriaDto1.setPageSize(PAGESIZE);
 					if(StringUtils.isNotBlank(brandRequestDTO.getSupplierId())){
 						criteria3.andSupplierIdEqualTo(brandRequestDTO.getSupplierId());
 					}
@@ -313,7 +313,7 @@ public class ExportServiceImplDic {
 						Date parse = format.parse(brandRequestDTO.getEndTime()+" 23:59:59");
 						criteria4.andUpdateTimeLessThanOrEqualTo(parse);
 					}
-					hubSupplierBrandDicCriteriaDto.or(criteria4.andPushStateIsNull());
+					hubSupplierBrandDicCriteriaDto1.or(criteria4.andPushStateIsNull());
 
 					List<HubSupplierBrandDicDto> hubSupplierBrandDicDtos=hubSupplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto1);
 					lists.add(hubSupplierBrandDicDtos);
@@ -376,7 +376,7 @@ public class ExportServiceImplDic {
 				ArrayList<List<HubBrandDicDto>> lists = new ArrayList<>();
 				for(int i=1;i<=pageCount;i++){
 					HubBrandDicCriteriaDto hubBrandDicCriteriaDto = new HubBrandDicCriteriaDto();
-					HubBrandDicCriteriaDto.Criteria hubBrandDicCriteria = cruteria.createCriteria();
+					HubBrandDicCriteriaDto.Criteria hubBrandDicCriteria = hubBrandDicCriteriaDto.createCriteria();
 					if(StringUtils.isNotBlank(brandRequestDTO.getSupplierBrand())){
 						hubBrandDicCriteria.andSupplierBrandLike("%"+brandRequestDTO.getSupplierBrand()+"%");
 					}
@@ -394,11 +394,11 @@ public class ExportServiceImplDic {
 						Calendar calendar   = Calendar.getInstance();
 						calendar.setTime(parse);
 						calendar.add(calendar.DAY_OF_MONTH,1);
-						criteria.andUpdateTimeLessThan(calendar.getTime());
+						hubBrandDicCriteria.andUpdateTimeLessThan(calendar.getTime());
 					}
-					cruteria.setPageNo(i);
-					cruteria.setPageSize(PAGESIZE);
-					cruteria.setOrderByClause("update_time desc");
+					hubBrandDicCriteriaDto.setPageNo(i);
+					hubBrandDicCriteriaDto.setPageSize(PAGESIZE);
+					//cruteria.setOrderByClause("update_time desc");
 
 
 					List<HubBrandDicDto> hubBrandDicDtos = brandDicGateway.selectByCriteria(hubBrandDicCriteriaDto);
