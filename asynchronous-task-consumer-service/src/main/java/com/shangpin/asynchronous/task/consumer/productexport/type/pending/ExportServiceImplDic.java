@@ -209,7 +209,6 @@ public class ExportServiceImplDic {
 			}
 			String[] brandValueTemplate = TaskImportTemplate2.getBrandValueTemplate();
 			//查询hubSupplierBrand表
-			//return getHubSupplierBrandDic(brandRequestDTO);
 			HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto = new HubSupplierBrandDicCriteriaDto();
 			HubSupplierBrandDicCriteriaDto.Criteria criteria = hubSupplierBrandDicCriteriaDto.createCriteria();
 			if(StringUtils.isNotBlank(brandRequestDTO.getSupplierId())){
@@ -316,7 +315,6 @@ public class ExportServiceImplDic {
 					}
 					hubSupplierBrandDicCriteriaDto.or(criteria4.andPushStateIsNull());
 
-					hubSupplierBrandDicCriteriaDto.setOrderByClause("update_time desc");
 					List<HubSupplierBrandDicDto> hubSupplierBrandDicDtos=hubSupplierBrandDicGateWay.selectByCriteria(hubSupplierBrandDicCriteriaDto1);
 					lists.add(hubSupplierBrandDicDtos);
 					int j=0;
