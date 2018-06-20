@@ -1062,6 +1062,9 @@ public class ExportServiceImplDic {
 		 */
 		//ExcelDropdown.creatExcelHidePage(wb);
 		String[] rowTemplate= TaskImportTemplate2.getColorValueTemplate();
+
+
+
 		HubColorDicItemCriteriaDto hubColorDicItemCriteriaDto =new HubColorDicItemCriteriaDto();
 		HubColorDicItemCriteriaDto.Criteria criteria1 =hubColorDicItemCriteriaDto.createCriteria();
 
@@ -1081,12 +1084,6 @@ public class ExportServiceImplDic {
 
 		}
 
-
-		if (Integer.parseInt(hubColorDic.getType())!=1){
-			criteria1.andPushStateIsNull();
-		}
-		System.out.println("byte"+hubColorDic.getType());
-
 		if(!StringUtils.isEmpty(hubColorDic.getStartTime())){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date parse = format.parse(hubColorDic.getStartTime()+" 00:00:00");
@@ -1100,7 +1097,43 @@ public class ExportServiceImplDic {
 			calendar.add(calendar.DAY_OF_MONTH,1);
 			criteria1.andUpdateTimeLessThan(calendar.getTime());
 		}
+		criteria1.andPushStateEqualTo(Byte.parseByte(hubColorDic.getType()));
+		if(hubColorDic.getType().equals("0")){
+			HubColorDicItemCriteriaDto.Criteria criteria2 = hubColorDicItemCriteriaDto.createCriteria();
+			if (hubColorDic.getSupplierColorName()!=null){
+				criteria2.andColorItemNameLike("%"+hubColorDic.getSupplierColorName()+"%");
+			}
+			if (hubColorDic.getHubColorName()!=null){
+				HubColorDicCriteriaDto hubColorDicCriteriaDto =new HubColorDicCriteriaDto();
+				HubColorDicCriteriaDto.Criteria c=hubColorDicCriteriaDto.createCriteria();
+				c.andColorNameEqualTo(hubColorDic.getHubColorName());
+				List<HubColorDicDto> hubColorDicDtos = hubColorDicGateWay.selectByCriteria(hubColorDicCriteriaDto);
+				HubColorDicDto hubColorDicDto = hubColorDicDtos.get(0);
+				System.out.println("hubColorDicDto.getColorDicId()"+hubColorDicDto.getColorDicId());
+				criteria2.andColorDicIdEqualTo(hubColorDicDto.getColorDicId());
 
+			}
+
+			if(!StringUtils.isEmpty(hubColorDic.getStartTime())){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(hubColorDic.getStartTime()+" 00:00:00");
+				criteria2.andUpdateTimeGreaterThan(parse);
+			}
+			if(!StringUtils.isEmpty(hubColorDic.getEndTime())){
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parse = format.parse(hubColorDic.getEndTime());
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(parse);
+				calendar.add(calendar.DAY_OF_MONTH,1);
+				criteria2.andUpdateTimeLessThan(calendar.getTime());
+			}
+			hubColorDicItemCriteriaDto.or(criteria2.andPushStateIsNull());
+		}
+
+		/*if (Integer.parseInt(hubColorDic.getType())!=1){
+			criteria1.andPushStateIsNull();
+		}
+		System.out.println("byte"+hubColorDic.getType());*/
 
 		//查询总条数
 		int totalSize= hubColorDicItemGateWay.countByCriteria(hubColorDicItemCriteriaDto);
@@ -1122,9 +1155,9 @@ public class ExportServiceImplDic {
 				if (hubColorDic.getSupplierColorName()!= null) {
 					criteria2.andColorItemNameLike("%"+hubColorDic.getSupplierColorName()+"%");
 				}
-				if (Integer.parseInt(hubColorDic.getType())!=1){
+				/*if (Integer.parseInt(hubColorDic.getType())!=1){
 					criteria2.andPushStateIsNull();
-				}
+				}*/
 				if (hubColorDic.getHubColorName()!=null){
 					HubColorDicCriteriaDto hubColorDicCriteriaDto =new HubColorDicCriteriaDto();
 					HubColorDicCriteriaDto.Criteria c=hubColorDicCriteriaDto.createCriteria();
@@ -1150,6 +1183,41 @@ public class ExportServiceImplDic {
 					calendar.add(calendar.DAY_OF_MONTH,1);
 					criteria2.andUpdateTimeLessThan(calendar.getTime());
 				}
+				criteria2.andPushStateEqualTo(Byte.parseByte(hubColorDic.getType()));
+
+				if(hubColorDic.getType().equals("0")){
+					HubColorDicItemCriteriaDto.Criteria criteria3 = hubColorDicItemCriteriaDto1.createCriteria();
+					if (hubColorDic.getSupplierColorName()!=null){
+						criteria3.andColorItemNameLike("%"+hubColorDic.getSupplierColorName()+"%");
+					}
+					if (hubColorDic.getHubColorName()!=null){
+						HubColorDicCriteriaDto hubColorDicCriteriaDto =new HubColorDicCriteriaDto();
+						HubColorDicCriteriaDto.Criteria c=hubColorDicCriteriaDto.createCriteria();
+						c.andColorNameEqualTo(hubColorDic.getHubColorName());
+						List<HubColorDicDto> hubColorDicDtos = hubColorDicGateWay.selectByCriteria(hubColorDicCriteriaDto);
+						HubColorDicDto hubColorDicDto = hubColorDicDtos.get(0);
+						System.out.println("hubColorDicDto.getColorDicId()"+hubColorDicDto.getColorDicId());
+						criteria3.andColorDicIdEqualTo(hubColorDicDto.getColorDicId());
+
+					}
+
+					if(!StringUtils.isEmpty(hubColorDic.getStartTime())){
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						Date parse = format.parse(hubColorDic.getStartTime()+" 00:00:00");
+						criteria3.andUpdateTimeGreaterThan(parse);
+					}
+					if(!StringUtils.isEmpty(hubColorDic.getEndTime())){
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						Date parse = format.parse(hubColorDic.getEndTime());
+						Calendar calendar = Calendar.getInstance();
+						calendar.setTime(parse);
+						calendar.add(calendar.DAY_OF_MONTH,1);
+						criteria3.andUpdateTimeLessThan(calendar.getTime());
+					}
+						hubColorDicItemCriteriaDto1.or(criteria3.andPushStateIsNull());
+				}
+
+
 
 				List<HubColorDicItemDto> ColorDicItemDto = hubColorDicItemGateWay.selectByCriteria(hubColorDicItemCriteriaDto1);
 				lists.add(ColorDicItemDto);
