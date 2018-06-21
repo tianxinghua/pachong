@@ -937,13 +937,16 @@ public class ExportServiceImplDic {
 		hubSupplierCategroyDicCriteriaDto1.setPageNo(categroyDicCriteriaDto.getPageNo());
 		hubSupplierCategroyDicCriteriaDto1.setPageSize(categroyDicCriteriaDto.getPageSize());
 
+        if (categroyDicCriteriaDto.getSupplierCategoryType()!=null){
 
-		if(Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType())!=0){
-			if(Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType())==5){
-				criteria.andCategoryTypeIsNull();
-			}else{
-				criteria.andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+			if(Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType())!=0){
+				if(Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType())==5){
+					criteria.andCategoryTypeIsNull();
+				}else{
+					criteria.andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+				}
 			}
+
 		}
 		if (categroyDicCriteriaDto.getSupplierId()!=null){
 			criteria.andSupplierIdEqualTo(categroyDicCriteriaDto.getSupplierId());
@@ -987,11 +990,13 @@ public class ExportServiceImplDic {
 				if (categroyDicCriteriaDto.getSupplierCategory()!=null){
 					criteria1.andSupplierCategoryLike("%"+ categroyDicCriteriaDto.getSupplierCategory() +"%");
 				}
-				if(Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType())!=0){
-					if(Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType())==5){
-						criteria1.andCategoryTypeIsNull();
-					}else{
-						criteria1.andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+				if (categroyDicCriteriaDto.getSupplierCategoryType()!=null) {
+					if (Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType()) != 0) {
+						if (Integer.parseInt(categroyDicCriteriaDto.getSupplierCategoryType()) == 5) {
+							criteria1.andCategoryTypeIsNull();
+						} else {
+							criteria1.andCategoryTypeEqualTo(Byte.parseByte(categroyDicCriteriaDto.getSupplierCategoryType()));
+						}
 					}
 				}
 				if (categroyDicCriteriaDto.getSupplierGender()!=null){
