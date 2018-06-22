@@ -14,16 +14,16 @@ import org.springframework.stereotype.Component;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = ApiAddressProperties.API_ADDRESS_PREFIX)
+@ConfigurationProperties(prefix = SupplierApiProperties.PARAMS)
 @Component
-public class ApiAddressProperties {
+public class SupplierApiProperties {
 	
-	public static final String API_ADDRESS_PREFIX = "shangpin.hub.callAddress";
+	public static final String PARAMS = "supplier.params";
 
-	private String pendingProductInfoUrl;
+	private String supplierName;
 
-	private String  gmsAddProductUrl;
+	private String  supplierId;
 	
-	private String hubProductUrl;
+	private String supplierNo;
 	
 }

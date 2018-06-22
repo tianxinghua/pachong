@@ -133,6 +133,22 @@ public class FTPClientUtil {
 		sbs.close();
 		return ftpHubPatht;
 	}
+	public static void uploadNewFile(String pathName, String fileName,InputStream in) throws Exception {
+
+		FTPClient ftp = new FTPClient();
+		int reply;
+		ftp.connect(host, Integer.parseInt(port));
+		ftp.login(userName, password);
+		ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
+		reply = ftp.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			ftp.disconnect();
+		}
+		ftp.changeWorkingDirectory(pathName);
+		ftp.storeFile(fileName, in);
+		in.close();
+		ftp.disconnect();
+	}
 	public static InputStream downFile(String remotePath) throws Exception{
 		
 		try{

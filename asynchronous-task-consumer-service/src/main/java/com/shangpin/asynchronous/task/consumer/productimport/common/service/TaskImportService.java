@@ -132,6 +132,10 @@ public class TaskImportService {
 	static {
 		brandTemplate = TaskImportTemplate2.getBrandTemplate();
 	}
+	private static String[] supplierDataTemplate = null;
+	static {
+		supplierDataTemplate = TaskImportTemplate.getSupplierDataTemplate();
+	}
 
 	public void checkPendingSku(HubPendingSkuCheckResult hubPendingSkuCheckResult, HubSkuPendingDto hubSkuPendingDto,
 			 Map<String, String> map,boolean isMultiSizeType) throws Exception{
@@ -582,6 +586,17 @@ public class TaskImportService {
 				if (xssfRow.getCell(i) != null) {
 					String fieldName = xssfRow.getCell(i).toString();
 					if (!brandTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
+		if ("supplierData".equals(type)) {
+			for (int i = 0; i < supplierDataTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!supplierDataTemplate[i].equals(fieldName)) {
 						flag = false;
 						break;
 					}
