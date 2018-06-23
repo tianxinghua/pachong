@@ -133,7 +133,7 @@ public class FTPClientUtil {
 		sbs.close();
 		return ftpHubPatht;
 	}
-	public static void uploadNewFile(String pathName, String fileName,InputStream in) throws Exception {
+	public static String uploadNewFile(String fileName,InputStream in) throws Exception {
 
 		FTPClient ftp = new FTPClient();
 		int reply;
@@ -144,10 +144,11 @@ public class FTPClientUtil {
 		if (!FTPReply.isPositiveCompletion(reply)) {
 			ftp.disconnect();
 		}
-		ftp.changeWorkingDirectory(pathName);
+		ftp.changeWorkingDirectory(ftpHubPatht);
 		ftp.storeFile(fileName, in);
 		in.close();
 		ftp.disconnect();
+		return ftpHubPatht;
 	}
 	public static InputStream downFile(String remotePath) throws Exception{
 		

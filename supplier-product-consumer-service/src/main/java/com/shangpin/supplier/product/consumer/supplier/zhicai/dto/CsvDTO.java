@@ -1,4 +1,4 @@
-package com.shangpin.asynchronous.task.consumer.productimport.supplier.dto;
+package com.shangpin.supplier.product.consumer.supplier.zhicai.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,9 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CsvDTO {
-//	Gender	brand	category	SPU	barCode	size	proName	市场价	
-//	售价	qty	made	desc	pics	detailLink	demo1	demo2	
-//	demo3	demo4	demo5	demo6	demo7	demo8	demo9	demo10	demo11	demo12	demo13			
 
 	private String gender;
 	private String brand;
@@ -27,10 +24,5 @@ public class CsvDTO {
 	private String desc;
 	private String pics;
 	private String detailLink;
-
-	public String[] getCsvDTO() {
-		String [] temp = {"gender","brand","category","spu","productModel","season","material","color","size","proName","marketPrice","salePrice","qty","made","desc","pics","detailLink"};
-		return temp;
-	}
 	
 }

@@ -3,17 +3,14 @@ package com.shangpin.asynchronous.task.consumer.productimport.supplier.service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,7 +19,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -34,20 +30,16 @@ import com.shangpin.asynchronous.task.consumer.conf.rpc.RpcConf;
 import com.shangpin.asynchronous.task.consumer.conf.rpc.SupplierApiProperties;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
-import com.shangpin.asynchronous.task.consumer.productimport.pending.sku.dao.HubPendingProductImportDTO;
+import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
 import com.shangpin.asynchronous.task.consumer.productimport.supplier.dto.CsvDTO;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.task.product.body.Task;
-import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
-import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
-import com.shangpin.asynchronous.task.consumer.productimport.common.util.FTPClientUtil;
+
 import lombok.extern.slf4j.Slf4j;
 /**
  * <p>
@@ -114,14 +106,19 @@ public class SupplierDataImportService {
 		if(listCsvDTO==null)
 			return null;
 		
+		String uploadFtp = sendMessageAndUploadFile(listCsvDTO);
+		return uploadFtp;
+	}
+
+	private String sendMessageAndUploadFile(List<CsvDTO> listCsvDTO)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		HSSFWorkbook wb = new HSSFWorkbook();  
         HSSFSheet sheet = wb.createSheet("SupplierData");  
         HSSFRow row = sheet.createRow((int) 0);  
         HSSFCellStyle style = wb.createCellStyle();  
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER);  
 
-        String [] temp = {"执行结果","gender","brand","category","spu","barCode","size","proName","marketPrice","salePrice","qty","made","desc","pics","detailLink","demo1",
-				"demo2","demo3", "demo4", "demo5","demo6","demo7","demo8","demo9","demo10","demo11","demo12","demo13"};
+        String [] temp = {"执行结果","gender","brand","category","spu","productModel","season","material","color","size","proName","marketPrice","salePrice","qty","made","desc","pics","detailLink"};
         for(int i=0;i<temp.length;i++) {
         	HSSFCell cell = row.createCell(i);  
             cell.setCellValue(temp[i]);  
@@ -131,7 +128,7 @@ public class SupplierDataImportService {
 		for(CsvDTO csvDTO : listCsvDTO){
 			String result = "SUCCESS";
 			try {
-				pushMessage(gson.toJson(csvDTO));
+				result = pushMessage(gson.toJson(csvDTO));
 			} catch (Exception e) {
 				log.info(e.getMessage());
 				e.printStackTrace();
@@ -141,11 +138,12 @@ public class SupplierDataImportService {
 	        rowNew.createCell(0).setCellValue(result); 
 	        for(int g =1;g<temp.length;g++){
 	        		String fieldGetName = "get" + temp[g].toUpperCase().charAt(0)
-							+ temp[i].substring(1);
+							+ temp[g].substring(1);
 	        		Class cls = csvDTO.getClass();
 					Method getMethod = cls.getDeclaredMethod(fieldGetName);
 					Object object = getMethod.invoke(csvDTO);
-	        		rowNew.createCell(g).setCellValue(object.toString());
+					if(object!=null)
+						rowNew.createCell(g).setCellValue(object.toString());
 	        }
 	        i++;
 		}
@@ -154,15 +152,15 @@ public class SupplierDataImportService {
 	        try {
 				wb.write(os);
 				InputStream newIn = new ByteArrayInputStream(os.toByteArray());  
-				FTPClientUtil.uploadNewFile("/hub" , format.format(new Date())+".xls", newIn);
-				uploadFtp = "/hub/"+format.format(new Date())+".xls";
+				String path = FTPClientUtil.uploadNewFile(format.format(new Date())+".xls", newIn);
+				uploadFtp = path+format.format(new Date())+".xls";
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		return uploadFtp;
 	}
 
-	public void pushMessage(String json) throws Exception {
+	public String pushMessage(String json) throws Exception {
 		SupplierProduct supp = new SupplierProduct();
 		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		supp.setMessageType("json");
@@ -179,20 +177,9 @@ public class SupplierDataImportService {
 		JSONObject supplierDto = restTemplate
 				.postForEntity(apiAddressProperties.getHubProductUrl(), supp, JSONObject.class).getBody();
 		log.info(supp.getSupplierName() + "==" + supplierDto.toString());
+		return supplierDto.toString();
 	}
 	
-
-	// 校验数据以及上传excel执行结果
-	private String checkSupplierData(String taskNo, List<CsvDTO> listCsvDTO,String createUser)
-			throws Exception {
-
-		if (listCsvDTO == null) {
-			return null;
-		}
-		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-		return "";
-	}
-
 	// 解析excel转换为对象
 	private List<CsvDTO> handleHubXlsxExcel(InputStream in, Task task, String type)
 			throws Exception {

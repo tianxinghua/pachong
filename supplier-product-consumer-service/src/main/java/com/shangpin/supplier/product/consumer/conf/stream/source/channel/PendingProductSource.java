@@ -163,6 +163,8 @@ public interface PendingProductSource {
 	public static final String REDI = "rediPendingProduct";
 
 	public static final String OBLU = "obluPendingProduct";
+	
+	public static final String ZHICAI = "zhicaiPendingProduct";
 
 	/**
 	 * 供货商dolciTrame通道组件配置
@@ -650,4 +652,12 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.OBLU)
 	public MessageChannel obluPendingProduct();
+
+	/**
+	 * zhicai 通道组件配置
+	 * @return 供货商zhicai 通道组件
+	 */
+	@Output(value = PendingProductSource.ZHICAI)
+	public MessageChannel zhicaiPendingProduct();
+
 }
