@@ -1,10 +1,11 @@
 package com.shangpin.ephub.data.mysql.spu.supplier.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class HubSupplierSpuCriteria {
     protected String orderByClause;
@@ -119,6 +120,7 @@ public class HubSupplierSpuCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
+
         @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
@@ -1319,6 +1321,266 @@ public class HubSupplierSpuCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andSupplierMeasurementIsNull() {
+            addCriterion("supplier_measurement is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementIsNotNull() {
+            addCriterion("supplier_measurement is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementEqualTo(String value) {
+            addCriterion("supplier_measurement =", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementNotEqualTo(String value) {
+            addCriterion("supplier_measurement <>", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementGreaterThan(String value) {
+            addCriterion("supplier_measurement >", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementGreaterThanOrEqualTo(String value) {
+            addCriterion("supplier_measurement >=", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementLessThan(String value) {
+            addCriterion("supplier_measurement <", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementLessThanOrEqualTo(String value) {
+            addCriterion("supplier_measurement <=", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementLike(String value) {
+            addCriterion("supplier_measurement like", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementNotLike(String value) {
+            addCriterion("supplier_measurement not like", value, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementIn(List<String> values) {
+            addCriterion("supplier_measurement in", values, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementNotIn(List<String> values) {
+            addCriterion("supplier_measurement not in", values, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementBetween(String value1, String value2) {
+            addCriterion("supplier_measurement between", value1, value2, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andSupplierMeasurementNotBetween(String value1, String value2) {
+            addCriterion("supplier_measurement not between", value1, value2, "supplierMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlIsNull() {
+            addCriterion("product_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlIsNotNull() {
+            addCriterion("product_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlEqualTo(String value) {
+            addCriterion("product_url =", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlNotEqualTo(String value) {
+            addCriterion("product_url <>", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlGreaterThan(String value) {
+            addCriterion("product_url >", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("product_url >=", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlLessThan(String value) {
+            addCriterion("product_url <", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlLessThanOrEqualTo(String value) {
+            addCriterion("product_url <=", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlLike(String value) {
+            addCriterion("product_url like", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlNotLike(String value) {
+            addCriterion("product_url not like", value, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlIn(List<String> values) {
+            addCriterion("product_url in", values, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlNotIn(List<String> values) {
+            addCriterion("product_url not in", values, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlBetween(String value1, String value2) {
+            addCriterion("product_url between", value1, value2, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductUrlNotBetween(String value1, String value2) {
+            addCriterion("product_url not between", value1, value2, "productUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceIsNull() {
+            addCriterion("market_price is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceIsNotNull() {
+            addCriterion("market_price is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceEqualTo(BigDecimal value) {
+            addCriterion("market_price =", value, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceNotEqualTo(BigDecimal value) {
+            addCriterion("market_price <>", value, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceGreaterThan(BigDecimal value) {
+            addCriterion("market_price >", value, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("market_price >=", value, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceLessThan(BigDecimal value) {
+            addCriterion("market_price <", value, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("market_price <=", value, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceIn(List<BigDecimal> values) {
+            addCriterion("market_price in", values, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceNotIn(List<BigDecimal> values) {
+            addCriterion("market_price not in", values, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("market_price between", value1, value2, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("market_price not between", value1, value2, "marketPrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnIsNull() {
+            addCriterion("market_price_cn is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnIsNotNull() {
+            addCriterion("market_price_cn is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnEqualTo(BigDecimal value) {
+            addCriterion("market_price_cn =", value, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnNotEqualTo(BigDecimal value) {
+            addCriterion("market_price_cn <>", value, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnGreaterThan(BigDecimal value) {
+            addCriterion("market_price_cn >", value, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("market_price_cn >=", value, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnLessThan(BigDecimal value) {
+            addCriterion("market_price_cn <", value, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("market_price_cn <=", value, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnIn(List<BigDecimal> values) {
+            addCriterion("market_price_cn in", values, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnNotIn(List<BigDecimal> values) {
+            addCriterion("market_price_cn not in", values, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("market_price_cn between", value1, value2, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andMarketPriceCnNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("market_price_cn not between", value1, value2, "marketPriceCn");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
@@ -1692,18 +1954,19 @@ public class HubSupplierSpuCriteria {
 
     public static class Criteria extends GeneratedCriteria {
 
-    	public Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-    	
-        public Criterion() {
-			super();
-		}
 
-		private String condition;
+
+        public Criterion() {
+            super();
+        }
+
+        private String condition;
 
         private Object value;
 

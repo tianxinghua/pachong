@@ -1,6 +1,7 @@
 package com.shangpin.ephub.data.mysql.spu.supplier.po;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class HubSupplierSpu implements Serializable {
@@ -70,7 +71,7 @@ public class HubSupplierSpu implements Serializable {
     private String supplierSeasonname;
 
     /**
-     * 0:不存在  1：存在
+     * 0：不存在  1：存在  2：通过airStudio上传
      */
     private Byte isexistpic;
 
@@ -88,6 +89,26 @@ public class HubSupplierSpu implements Serializable {
      * 商品描述
      */
     private String supplierSpuDesc;
+
+    /**
+     * 测量信息
+     */
+    private String supplierMeasurement;
+
+    /**
+     * 产品的原始链接
+     */
+    private String productUrl;
+
+    /**
+     * 市场价-国外
+     */
+    private BigDecimal marketPrice;
+
+    /**
+     * 国内市场价
+     */
+    private BigDecimal marketPriceCn;
 
     /**
      * 创建时间
@@ -257,6 +278,38 @@ public class HubSupplierSpu implements Serializable {
         this.supplierSpuDesc = supplierSpuDesc == null ? null : supplierSpuDesc.trim();
     }
 
+    public String getSupplierMeasurement() {
+        return supplierMeasurement;
+    }
+
+    public void setSupplierMeasurement(String supplierMeasurement) {
+        this.supplierMeasurement = supplierMeasurement == null ? null : supplierMeasurement.trim();
+    }
+
+    public String getProductUrl() {
+        return productUrl;
+    }
+
+    public void setProductUrl(String productUrl) {
+        this.productUrl = productUrl == null ? null : productUrl.trim();
+    }
+
+    public BigDecimal getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(BigDecimal marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public BigDecimal getMarketPriceCn() {
+        return marketPriceCn;
+    }
+
+    public void setMarketPriceCn(BigDecimal marketPriceCn) {
+        this.marketPriceCn = marketPriceCn;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -328,6 +381,10 @@ public class HubSupplierSpu implements Serializable {
         sb.append(", supplierMaterial=").append(supplierMaterial);
         sb.append(", supplierOrigin=").append(supplierOrigin);
         sb.append(", supplierSpuDesc=").append(supplierSpuDesc);
+        sb.append(", supplierMeasurement=").append(supplierMeasurement);
+        sb.append(", productUrl=").append(productUrl);
+        sb.append(", marketPrice=").append(marketPrice);
+        sb.append(", marketPriceCn=").append(marketPriceCn);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", infoState=").append(infoState);
@@ -368,6 +425,10 @@ public class HubSupplierSpu implements Serializable {
             && (this.getSupplierMaterial() == null ? other.getSupplierMaterial() == null : this.getSupplierMaterial().equals(other.getSupplierMaterial()))
             && (this.getSupplierOrigin() == null ? other.getSupplierOrigin() == null : this.getSupplierOrigin().equals(other.getSupplierOrigin()))
             && (this.getSupplierSpuDesc() == null ? other.getSupplierSpuDesc() == null : this.getSupplierSpuDesc().equals(other.getSupplierSpuDesc()))
+            && (this.getSupplierMeasurement() == null ? other.getSupplierMeasurement() == null : this.getSupplierMeasurement().equals(other.getSupplierMeasurement()))
+            && (this.getProductUrl() == null ? other.getProductUrl() == null : this.getProductUrl().equals(other.getProductUrl()))
+            && (this.getMarketPrice() == null ? other.getMarketPrice() == null : this.getMarketPrice().equals(other.getMarketPrice()))
+            && (this.getMarketPriceCn() == null ? other.getMarketPriceCn() == null : this.getMarketPriceCn().equals(other.getMarketPriceCn()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getInfoState() == null ? other.getInfoState() == null : this.getInfoState().equals(other.getInfoState()))
@@ -397,6 +458,10 @@ public class HubSupplierSpu implements Serializable {
         result = prime * result + ((getSupplierMaterial() == null) ? 0 : getSupplierMaterial().hashCode());
         result = prime * result + ((getSupplierOrigin() == null) ? 0 : getSupplierOrigin().hashCode());
         result = prime * result + ((getSupplierSpuDesc() == null) ? 0 : getSupplierSpuDesc().hashCode());
+        result = prime * result + ((getSupplierMeasurement() == null) ? 0 : getSupplierMeasurement().hashCode());
+        result = prime * result + ((getProductUrl() == null) ? 0 : getProductUrl().hashCode());
+        result = prime * result + ((getMarketPrice() == null) ? 0 : getMarketPrice().hashCode());
+        result = prime * result + ((getMarketPriceCn() == null) ? 0 : getMarketPriceCn().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getInfoState() == null) ? 0 : getInfoState().hashCode());
