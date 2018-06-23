@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.task.common.service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,13 +60,15 @@ public class TaskImportService {
         String []fileName = name.split("\\.");
         if(fileName!=null&&fileName.length==2){
             if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
-
+//            	byte[] buffer = getContent("");
                 SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
                 Date date = new Date();
                 String taskNo = sim.format(date);
                 String systemFileName = taskNo +"."+fileName[1];
-                //第一步 ： 上传ftp
-                String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
+                //第一步 ： 上传ftp 正式由前端传入
+              String ftpPath = FTPClientUtil.uploadFile(task.getUploadfile(),systemFileName);
+                //自测 读取本地文件byte数据
+//                String ftpPath = FTPClientUtil.uploadFile(buffer,systemFileName);
                 //第二步 ： 保存数据库
                 saveTask(task,taskNo,ftpPath,systemFileName,importType.getIndex());
                 //TODO 第三步 ：发送到hub消息队列
@@ -75,6 +79,29 @@ public class TaskImportService {
         log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
         return HubResponse.errorResp("文件格式有误，请下载模板");
     }
+    public byte[] getContent(String filePath) throws Exception {  
+        File file = new File("D:\\gucci.xls");  
+        long fileSize = file.length();  
+        if (fileSize > Integer.MAX_VALUE) {  
+            System.out.println("file too big...");  
+            return null;  
+        }  
+        FileInputStream fi = new FileInputStream(file);  
+        byte[] buffer = new byte[(int) fileSize];  
+        int offset = 0;  
+        int numRead = 0;  
+        while (offset < buffer.length  
+        && (numRead = fi.read(buffer, offset, buffer.length - offset)) >= 0) {  
+            offset += numRead;  
+        }  
+        // 确保所有数据均被读取  
+        if (offset != buffer.length) {  
+        throw new Exception("Could not completely read file "  
+                    + file.getName());  
+        }  
+        fi.close();  
+        return buffer;  
+    }  
     private void sendTaskMessage(String createUser,String taskNo,String ftpFilePath,TaskType importType){
         Task productImportTask = new Task();
         productImportTask.setMessageDate(new SimpleDateFormat(dateFormat).format(new Date()));
