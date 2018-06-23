@@ -123,6 +123,7 @@ public class ZhiCaiHandler implements ISupplierHandler{
 			hubSpu.setSupplierMaterial(ob.getMaterial());
 			hubSpu.setSupplierOrigin(ob.getMade());
 			hubSpu.setSupplierSpuDesc(ob.getDesc());
+			hubSpu.setProductUrl(ob.getDetailLink());
 			return true;
 		}else{
 			return false;
