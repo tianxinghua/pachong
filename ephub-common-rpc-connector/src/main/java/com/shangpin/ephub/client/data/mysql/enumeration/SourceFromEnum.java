@@ -1,18 +1,12 @@
 package com.shangpin.ephub.client.data.mysql.enumeration;
 
 /**
- * Created by loyalty on 16/12/22.
+ *
  */
-public enum SupplierValueMappingType {
+public enum SourceFromEnum {
 
-    TYPE_BRAND(1,"品牌类型"),
-    TYPE_CATEGORY(2,"品类类型"),
-    TYPE_ORIGIN(3,"产地类型"),
-    TYPE_SIZE(4,"尺码"),
-    TYPE_SUPPLIER(5,"供货商"),
-    TYPE_BRAND_SUPPLIER(6,"品牌供货商"),
-    TYPE_BRAND_SUPPLIER_URL(7,"品牌供货商拉取地址")
-    ;
+    TYPE_SUPPLIER_API(0,"供货商API"),
+    TYPE_BRAND(1,"品牌方")   ;
 
 
     /**
@@ -35,7 +29,7 @@ public enum SupplierValueMappingType {
     public void setDescription(String description) {
         this.description = description;
     }
-    private SupplierValueMappingType(Integer index, String description) {
+    private SourceFromEnum(Integer index, String description) {
         this.index = index;
         this.description = description;
     }

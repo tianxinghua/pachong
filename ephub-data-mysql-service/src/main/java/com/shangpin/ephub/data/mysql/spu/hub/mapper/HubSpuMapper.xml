@@ -139,6 +139,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS spu_id
+    </selectKey>
     insert into hub_spu (spu_id, spu_model, spu_name,
       gender, category_no, brand_no,
       market_time, season, spu_desc,
@@ -163,6 +166,9 @@
       #{hotboomSign,jdbcType=TINYINT}, #{hotboomSpuModel,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
+    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS spu_id
+    </selectKey>
     insert into hub_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuId != null" >
