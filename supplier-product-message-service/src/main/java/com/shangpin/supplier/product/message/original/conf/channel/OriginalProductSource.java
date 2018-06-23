@@ -164,6 +164,8 @@ public interface OriginalProductSource {
 	public static final String REDI ="rediOriginalProduct";
 
 	public static final String OBLU ="obluOriginalProduct";
+	
+	public static final String ZHICAI ="zhicaiOriginalProduct";
     
     /**
      * 供货商angeloMinetti通道组件配置
@@ -661,4 +663,7 @@ public interface OriginalProductSource {
 
 	@Output(value = OriginalProductSource.OBLU)
 	public MessageChannel oblu();
+	
+	@Output(value = OriginalProductSource.ZHICAI)
+	public MessageChannel zhicai();
 }

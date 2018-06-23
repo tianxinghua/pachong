@@ -681,5 +681,10 @@ public class OriginalProductStreamSender {
     public boolean obluStream(SupplierProduct supplierProduct) {
         return originalProductSource.oblu().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    
+    public boolean zhicaiStream(SupplierProduct supplierProduct) {
+        return originalProductSource.zhicai().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
 
 }
