@@ -55,6 +55,10 @@
     <result column="market_price_state" property="marketPriceState" jdbcType="TINYINT" />
     <result column="supply_price_state" property="supplyPriceState" jdbcType="TINYINT" />
     <result column="old_hub_season" property="oldHubSeason" jdbcType="VARCHAR" />
+    <result column="source_from" property="sourceFrom" jdbcType="TINYINT" />
+    <result column="origin_supplier_id" property="originSupplierId" jdbcType="VARCHAR" />
+    <result column="origin_source" property="originSource" jdbcType="TINYINT" />
+    <result column="hub_measurement" property="hubMeasurement" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -124,7 +128,8 @@
       material_state, origin_state, filter_flag, info_state, stock_state, create_user,
       update_user, audit_state, audit_date, audit_user, audit_opinion, handle_from, handle_state,
       slot_state, slot_handle_date, slot_handle_user, msg_miss_handle_state, market_price_state,
-      supply_price_state, old_hub_season
+      supply_price_state, old_hub_season, source_from, origin_supplier_id, origin_source,
+      hub_measurement
     </if>
     <if test="fields != null" >
       ${fields}
@@ -149,7 +154,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
-    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag,info_state,stock_state,create_user,update_user,audit_state,audit_date,audit_user,audit_opinion,handle_from,handle_state,slot_state,slot_handle_date,slot_handle_user,msg_miss_handle_state,market_price_state,supply_price_state,old_hub_season
+    spu_pending_id,supplier_id,supplier_no,supplier_spu_no,spu_model,spu_name,hub_gender,hub_category_no,hub_brand_no,hub_season,spu_state,pic_state,is_current_season,is_new_data,hub_material,hub_origin,create_time,update_time,spu_desc,hub_spu_no,spu_model_state,catgory_state,supplier_spu_id,memo,data_state,version,spu_brand_state,spu_gender_state,spu_season_state,hub_color,hub_color_no,spu_color_state,sp_sku_size_state,material_state,origin_state,filter_flag,info_state,stock_state,create_user,update_user,audit_state,audit_date,audit_user,audit_opinion,handle_from,handle_state,slot_state,slot_handle_date,slot_handle_user,msg_miss_handle_state,market_price_state,supply_price_state,old_hub_season,source_from,origin_supplier_id,origin_source,hub_measurement
     from hub_spu_pending
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </select>
@@ -164,50 +169,48 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
-    <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS spu_pending_id
-    </selectKey>
     insert into hub_spu_pending (spu_pending_id, supplier_id, supplier_no,
-    supplier_spu_no, spu_model, spu_name,
-    hub_gender, hub_category_no, hub_brand_no,
-    hub_season, spu_state, pic_state,
-    is_current_season, is_new_data, hub_material,
-    hub_origin, create_time, update_time,
-    spu_desc, hub_spu_no, spu_model_state,
-    catgory_state, supplier_spu_id, memo,
-    data_state, version, spu_brand_state,
-    spu_gender_state, spu_season_state, hub_color,
-    hub_color_no, spu_color_state, sp_sku_size_state,
-    material_state, origin_state, filter_flag,
-    info_state, stock_state, create_user,
-    update_user, audit_state, audit_date,
-    audit_user, audit_opinion, handle_from,
-    handle_state, slot_state, slot_handle_date,
-    slot_handle_user, msg_miss_handle_state, market_price_state,
-    supply_price_state, old_hub_season)
+      supplier_spu_no, spu_model, spu_name,
+      hub_gender, hub_category_no, hub_brand_no,
+      hub_season, spu_state, pic_state,
+      is_current_season, is_new_data, hub_material,
+      hub_origin, create_time, update_time,
+      spu_desc, hub_spu_no, spu_model_state,
+      catgory_state, supplier_spu_id, memo,
+      data_state, version, spu_brand_state,
+      spu_gender_state, spu_season_state, hub_color,
+      hub_color_no, spu_color_state, sp_sku_size_state,
+      material_state, origin_state, filter_flag,
+      info_state, stock_state, create_user,
+      update_user, audit_state, audit_date,
+      audit_user, audit_opinion, handle_from,
+      handle_state, slot_state, slot_handle_date,
+      slot_handle_user, msg_miss_handle_state, market_price_state,
+      supply_price_state, old_hub_season, source_from,
+      origin_supplier_id, origin_source, hub_measurement
+      )
     values (#{spuPendingId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR},
-    #{supplierSpuNo,jdbcType=VARCHAR}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR},
-    #{hubGender,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, #{hubBrandNo,jdbcType=VARCHAR},
-    #{hubSeason,jdbcType=VARCHAR}, #{spuState,jdbcType=TINYINT}, #{picState,jdbcType=TINYINT},
-    #{isCurrentSeason,jdbcType=TINYINT}, #{isNewData,jdbcType=TINYINT}, #{hubMaterial,jdbcType=VARCHAR},
-    #{hubOrigin,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
-    #{spuDesc,jdbcType=VARCHAR}, #{hubSpuNo,jdbcType=VARCHAR}, #{spuModelState,jdbcType=TINYINT},
-    #{catgoryState,jdbcType=TINYINT}, #{supplierSpuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR},
-    #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{spuBrandState,jdbcType=TINYINT},
-    #{spuGenderState,jdbcType=TINYINT}, #{spuSeasonState,jdbcType=TINYINT}, #{hubColor,jdbcType=VARCHAR},
-    #{hubColorNo,jdbcType=VARCHAR}, #{spuColorState,jdbcType=TINYINT}, #{spSkuSizeState,jdbcType=TINYINT},
-    #{materialState,jdbcType=TINYINT}, #{originState,jdbcType=TINYINT}, #{filterFlag,jdbcType=TINYINT},
-    #{infoState,jdbcType=TINYINT}, #{stockState,jdbcType=TINYINT}, #{createUser,jdbcType=VARCHAR},
-    #{updateUser,jdbcType=VARCHAR}, #{auditState,jdbcType=TINYINT}, #{auditDate,jdbcType=TIMESTAMP},
-    #{auditUser,jdbcType=VARCHAR}, #{auditOpinion,jdbcType=VARCHAR}, #{handleFrom,jdbcType=TINYINT},
-    #{handleState,jdbcType=TINYINT}, #{slotState,jdbcType=TINYINT}, #{slotHandleDate,jdbcType=TIMESTAMP},
-    #{slotHandleUser,jdbcType=VARCHAR}, #{msgMissHandleState,jdbcType=TINYINT}, #{marketPriceState,jdbcType=TINYINT},
-    #{supplyPriceState,jdbcType=TINYINT}, #{oldHubSeason,jdbcType=VARCHAR})
+      #{supplierSpuNo,jdbcType=VARCHAR}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR},
+      #{hubGender,jdbcType=VARCHAR}, #{hubCategoryNo,jdbcType=VARCHAR}, #{hubBrandNo,jdbcType=VARCHAR},
+      #{hubSeason,jdbcType=VARCHAR}, #{spuState,jdbcType=TINYINT}, #{picState,jdbcType=TINYINT},
+      #{isCurrentSeason,jdbcType=TINYINT}, #{isNewData,jdbcType=TINYINT}, #{hubMaterial,jdbcType=VARCHAR},
+      #{hubOrigin,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
+      #{spuDesc,jdbcType=VARCHAR}, #{hubSpuNo,jdbcType=VARCHAR}, #{spuModelState,jdbcType=TINYINT},
+      #{catgoryState,jdbcType=TINYINT}, #{supplierSpuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR},
+      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{spuBrandState,jdbcType=TINYINT},
+      #{spuGenderState,jdbcType=TINYINT}, #{spuSeasonState,jdbcType=TINYINT}, #{hubColor,jdbcType=VARCHAR},
+      #{hubColorNo,jdbcType=VARCHAR}, #{spuColorState,jdbcType=TINYINT}, #{spSkuSizeState,jdbcType=TINYINT},
+      #{materialState,jdbcType=TINYINT}, #{originState,jdbcType=TINYINT}, #{filterFlag,jdbcType=TINYINT},
+      #{infoState,jdbcType=TINYINT}, #{stockState,jdbcType=TINYINT}, #{createUser,jdbcType=VARCHAR},
+      #{updateUser,jdbcType=VARCHAR}, #{auditState,jdbcType=TINYINT}, #{auditDate,jdbcType=TIMESTAMP},
+      #{auditUser,jdbcType=VARCHAR}, #{auditOpinion,jdbcType=VARCHAR}, #{handleFrom,jdbcType=TINYINT},
+      #{handleState,jdbcType=TINYINT}, #{slotState,jdbcType=TINYINT}, #{slotHandleDate,jdbcType=TIMESTAMP},
+      #{slotHandleUser,jdbcType=VARCHAR}, #{msgMissHandleState,jdbcType=TINYINT}, #{marketPriceState,jdbcType=TINYINT},
+      #{supplyPriceState,jdbcType=TINYINT}, #{oldHubSeason,jdbcType=VARCHAR}, #{sourceFrom,jdbcType=TINYINT},
+      #{originSupplierId,jdbcType=VARCHAR}, #{originSource,jdbcType=TINYINT}, #{hubMeasurement,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
-    <selectKey keyColumn="spu_pending_id" keyProperty="spuPendingId" order="AFTER" resultType="long">
-      SELECT LAST_INSERT_ID() AS spu_pending_id
-    </selectKey>
     insert into hub_spu_pending
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
@@ -369,6 +372,18 @@
       <if test="oldHubSeason != null" >
         old_hub_season,
       </if>
+      <if test="sourceFrom != null" >
+        source_from,
+      </if>
+      <if test="originSupplierId != null" >
+        origin_supplier_id,
+      </if>
+      <if test="originSource != null" >
+        origin_source,
+      </if>
+      <if test="hubMeasurement != null" >
+        hub_measurement,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="spuPendingId != null" >
@@ -529,6 +544,18 @@
       </if>
       <if test="oldHubSeason != null" >
         #{oldHubSeason,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceFrom != null" >
+        #{sourceFrom,jdbcType=TINYINT},
+      </if>
+      <if test="originSupplierId != null" >
+        #{originSupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="originSource != null" >
+        #{originSource,jdbcType=TINYINT},
+      </if>
+      <if test="hubMeasurement != null" >
+        #{hubMeasurement,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -700,6 +727,18 @@
       <if test="record.oldHubSeason != null" >
         old_hub_season = #{record.oldHubSeason,jdbcType=VARCHAR},
       </if>
+      <if test="record.sourceFrom != null" >
+        source_from = #{record.sourceFrom,jdbcType=TINYINT},
+      </if>
+      <if test="record.originSupplierId != null" >
+        origin_supplier_id = #{record.originSupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.originSource != null" >
+        origin_source = #{record.originSource,jdbcType=TINYINT},
+      </if>
+      <if test="record.hubMeasurement != null" >
+        hub_measurement = #{record.hubMeasurement,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -759,7 +798,11 @@
     msg_miss_handle_state = #{record.msgMissHandleState,jdbcType=TINYINT},
     market_price_state = #{record.marketPriceState,jdbcType=TINYINT},
     supply_price_state = #{record.supplyPriceState,jdbcType=TINYINT},
-    old_hub_season = #{record.oldHubSeason,jdbcType=VARCHAR}
+    old_hub_season = #{record.oldHubSeason,jdbcType=VARCHAR},
+    source_from = #{record.sourceFrom,jdbcType=TINYINT},
+    origin_supplier_id = #{record.originSupplierId,jdbcType=VARCHAR},
+    origin_source = #{record.originSource,jdbcType=TINYINT},
+    hub_measurement = #{record.hubMeasurement,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -923,63 +966,79 @@
       <if test="oldHubSeason != null" >
         old_hub_season = #{oldHubSeason,jdbcType=VARCHAR},
       </if>
+      <if test="sourceFrom != null" >
+        source_from = #{sourceFrom,jdbcType=TINYINT},
+      </if>
+      <if test="originSupplierId != null" >
+        origin_supplier_id = #{originSupplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="originSource != null" >
+        origin_source = #{originSource,jdbcType=TINYINT},
+      </if>
+      <if test="hubMeasurement != null" >
+        hub_measurement = #{hubMeasurement,jdbcType=VARCHAR},
+      </if>
     </set>
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPending" >
     update hub_spu_pending
     set supplier_id = #{supplierId,jdbcType=VARCHAR},
-    supplier_no = #{supplierNo,jdbcType=VARCHAR},
-    supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
-    spu_model = #{spuModel,jdbcType=VARCHAR},
-    spu_name = #{spuName,jdbcType=VARCHAR},
-    hub_gender = #{hubGender,jdbcType=VARCHAR},
-    hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
-    hub_brand_no = #{hubBrandNo,jdbcType=VARCHAR},
-    hub_season = #{hubSeason,jdbcType=VARCHAR},
-    spu_state = #{spuState,jdbcType=TINYINT},
-    pic_state = #{picState,jdbcType=TINYINT},
-    is_current_season = #{isCurrentSeason,jdbcType=TINYINT},
-    is_new_data = #{isNewData,jdbcType=TINYINT},
-    hub_material = #{hubMaterial,jdbcType=VARCHAR},
-    hub_origin = #{hubOrigin,jdbcType=VARCHAR},
-    create_time = #{createTime,jdbcType=TIMESTAMP},
-    update_time = #{updateTime,jdbcType=TIMESTAMP},
-    spu_desc = #{spuDesc,jdbcType=VARCHAR},
-    hub_spu_no = #{hubSpuNo,jdbcType=VARCHAR},
-    spu_model_state = #{spuModelState,jdbcType=TINYINT},
-    catgory_state = #{catgoryState,jdbcType=TINYINT},
-    supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
-    memo = #{memo,jdbcType=VARCHAR},
-    data_state = #{dataState,jdbcType=TINYINT},
-    version = #{version,jdbcType=BIGINT},
-    spu_brand_state = #{spuBrandState,jdbcType=TINYINT},
-    spu_gender_state = #{spuGenderState,jdbcType=TINYINT},
-    spu_season_state = #{spuSeasonState,jdbcType=TINYINT},
-    hub_color = #{hubColor,jdbcType=VARCHAR},
-    hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
-    spu_color_state = #{spuColorState,jdbcType=TINYINT},
-    sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
-    material_state = #{materialState,jdbcType=TINYINT},
-    origin_state = #{originState,jdbcType=TINYINT},
-    filter_flag = #{filterFlag,jdbcType=TINYINT},
-    info_state = #{infoState,jdbcType=TINYINT},
-    stock_state = #{stockState,jdbcType=TINYINT},
-    create_user = #{createUser,jdbcType=VARCHAR},
-    update_user = #{updateUser,jdbcType=VARCHAR},
-    audit_state = #{auditState,jdbcType=TINYINT},
-    audit_date = #{auditDate,jdbcType=TIMESTAMP},
-    audit_user = #{auditUser,jdbcType=VARCHAR},
-    audit_opinion = #{auditOpinion,jdbcType=VARCHAR},
-    handle_from = #{handleFrom,jdbcType=TINYINT},
-    handle_state = #{handleState,jdbcType=TINYINT},
-    slot_state = #{slotState,jdbcType=TINYINT},
-    slot_handle_date = #{slotHandleDate,jdbcType=TIMESTAMP},
-    slot_handle_user = #{slotHandleUser,jdbcType=VARCHAR},
-    msg_miss_handle_state = #{msgMissHandleState,jdbcType=TINYINT},
-    market_price_state = #{marketPriceState,jdbcType=TINYINT},
-    supply_price_state = #{supplyPriceState,jdbcType=TINYINT},
-    old_hub_season = #{oldHubSeason,jdbcType=VARCHAR}
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_spu_no = #{supplierSpuNo,jdbcType=VARCHAR},
+      spu_model = #{spuModel,jdbcType=VARCHAR},
+      spu_name = #{spuName,jdbcType=VARCHAR},
+      hub_gender = #{hubGender,jdbcType=VARCHAR},
+      hub_category_no = #{hubCategoryNo,jdbcType=VARCHAR},
+      hub_brand_no = #{hubBrandNo,jdbcType=VARCHAR},
+      hub_season = #{hubSeason,jdbcType=VARCHAR},
+      spu_state = #{spuState,jdbcType=TINYINT},
+      pic_state = #{picState,jdbcType=TINYINT},
+      is_current_season = #{isCurrentSeason,jdbcType=TINYINT},
+      is_new_data = #{isNewData,jdbcType=TINYINT},
+      hub_material = #{hubMaterial,jdbcType=VARCHAR},
+      hub_origin = #{hubOrigin,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      spu_desc = #{spuDesc,jdbcType=VARCHAR},
+      hub_spu_no = #{hubSpuNo,jdbcType=VARCHAR},
+      spu_model_state = #{spuModelState,jdbcType=TINYINT},
+      catgory_state = #{catgoryState,jdbcType=TINYINT},
+      supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT},
+      memo = #{memo,jdbcType=VARCHAR},
+      data_state = #{dataState,jdbcType=TINYINT},
+      version = #{version,jdbcType=BIGINT},
+      spu_brand_state = #{spuBrandState,jdbcType=TINYINT},
+      spu_gender_state = #{spuGenderState,jdbcType=TINYINT},
+      spu_season_state = #{spuSeasonState,jdbcType=TINYINT},
+      hub_color = #{hubColor,jdbcType=VARCHAR},
+      hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
+      spu_color_state = #{spuColorState,jdbcType=TINYINT},
+      sp_sku_size_state = #{spSkuSizeState,jdbcType=TINYINT},
+      material_state = #{materialState,jdbcType=TINYINT},
+      origin_state = #{originState,jdbcType=TINYINT},
+      filter_flag = #{filterFlag,jdbcType=TINYINT},
+      info_state = #{infoState,jdbcType=TINYINT},
+      stock_state = #{stockState,jdbcType=TINYINT},
+      create_user = #{createUser,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      audit_state = #{auditState,jdbcType=TINYINT},
+      audit_date = #{auditDate,jdbcType=TIMESTAMP},
+      audit_user = #{auditUser,jdbcType=VARCHAR},
+      audit_opinion = #{auditOpinion,jdbcType=VARCHAR},
+      handle_from = #{handleFrom,jdbcType=TINYINT},
+      handle_state = #{handleState,jdbcType=TINYINT},
+      slot_state = #{slotState,jdbcType=TINYINT},
+      slot_handle_date = #{slotHandleDate,jdbcType=TIMESTAMP},
+      slot_handle_user = #{slotHandleUser,jdbcType=VARCHAR},
+      msg_miss_handle_state = #{msgMissHandleState,jdbcType=TINYINT},
+      market_price_state = #{marketPriceState,jdbcType=TINYINT},
+      supply_price_state = #{supplyPriceState,jdbcType=TINYINT},
+      old_hub_season = #{oldHubSeason,jdbcType=VARCHAR},
+      source_from = #{sourceFrom,jdbcType=TINYINT},
+      origin_supplier_id = #{originSupplierId,jdbcType=VARCHAR},
+      origin_source = #{originSource,jdbcType=TINYINT},
+      hub_measurement = #{hubMeasurement,jdbcType=VARCHAR}
     where spu_pending_id = #{spuPendingId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.pending.po.HubSpuPendingCriteria" id="selectByExampleWithRowbounds" >

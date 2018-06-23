@@ -35,16 +35,6 @@ public class HubSkuSupplierMapping implements Serializable {
     private Byte newSpuType;
 
     /**
-     * 供应商选择状态
-     */
-    private Byte supplierSelectState;
-
-    /**
-     * 供应商编号
-     */
-    private String supplierNo;
-
-    /**
      * 是否新供应商供货
      */
     private Byte isNewSupplier;
@@ -93,6 +83,19 @@ public class HubSkuSupplierMapping implements Serializable {
      * 版本字段
      */
     private Long version;
+
+    private String supplierNo;
+
+    /**
+     * =0 待选  =1 选品中  =2 已选 =3 scm审核中 =4 选品失败
+     */
+    private Byte supplierSelectState;
+
+    private String spSkuNo;
+
+    private String spuNo;
+
+    private String spSpuNo;
 
     /**
      * 产地
@@ -149,22 +152,6 @@ public class HubSkuSupplierMapping implements Serializable {
 
     public void setNewSpuType(Byte newSpuType) {
         this.newSpuType = newSpuType;
-    }
-
-    public Byte getSupplierSelectState() {
-        return supplierSelectState;
-    }
-
-    public void setSupplierSelectState(Byte supplierSelectState) {
-        this.supplierSelectState = supplierSelectState;
-    }
-
-    public String getSupplierNo() {
-        return supplierNo;
-    }
-
-    public void setSupplierNo(String supplierNo) {
-        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
     }
 
     public Byte getIsNewSupplier() {
@@ -247,6 +234,46 @@ public class HubSkuSupplierMapping implements Serializable {
         this.version = version;
     }
 
+    public String getSupplierNo() {
+        return supplierNo;
+    }
+
+    public void setSupplierNo(String supplierNo) {
+        this.supplierNo = supplierNo == null ? null : supplierNo.trim();
+    }
+
+    public Byte getSupplierSelectState() {
+        return supplierSelectState;
+    }
+
+    public void setSupplierSelectState(Byte supplierSelectState) {
+        this.supplierSelectState = supplierSelectState;
+    }
+
+    public String getSpSkuNo() {
+        return spSkuNo;
+    }
+
+    public void setSpSkuNo(String spSkuNo) {
+        this.spSkuNo = spSkuNo == null ? null : spSkuNo.trim();
+    }
+
+    public String getSpuNo() {
+        return spuNo;
+    }
+
+    public void setSpuNo(String spuNo) {
+        this.spuNo = spuNo == null ? null : spuNo.trim();
+    }
+
+    public String getSpSpuNo() {
+        return spSpuNo;
+    }
+
+    public void setSpSpuNo(String spSpuNo) {
+        this.spSpuNo = spSpuNo == null ? null : spSpuNo.trim();
+    }
+
     public String getOrigin() {
         return origin;
     }
@@ -275,8 +302,6 @@ public class HubSkuSupplierMapping implements Serializable {
         sb.append(", barcode=").append(barcode);
         sb.append(", supplierId=").append(supplierId);
         sb.append(", newSpuType=").append(newSpuType);
-        sb.append(", supplierSelectState=").append(supplierSelectState);
-        sb.append(", supplierNo=").append(supplierNo);
         sb.append(", isNewSupplier=").append(isNewSupplier);
         sb.append(", createTime=").append(createTime);
         sb.append(", createUser=").append(createUser);
@@ -287,6 +312,11 @@ public class HubSkuSupplierMapping implements Serializable {
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
+        sb.append(", supplierNo=").append(supplierNo);
+        sb.append(", supplierSelectState=").append(supplierSelectState);
+        sb.append(", spSkuNo=").append(spSkuNo);
+        sb.append(", spuNo=").append(spuNo);
+        sb.append(", spSpuNo=").append(spSpuNo);
         sb.append(", origin=").append(origin);
         sb.append(", retryNum=").append(retryNum);
         sb.append(", serialVersionUID=").append(serialVersionUID);
@@ -312,8 +342,6 @@ public class HubSkuSupplierMapping implements Serializable {
             && (this.getBarcode() == null ? other.getBarcode() == null : this.getBarcode().equals(other.getBarcode()))
             && (this.getSupplierId() == null ? other.getSupplierId() == null : this.getSupplierId().equals(other.getSupplierId()))
             && (this.getNewSpuType() == null ? other.getNewSpuType() == null : this.getNewSpuType().equals(other.getNewSpuType()))
-            && (this.getSupplierSelectState() == null ? other.getSupplierSelectState() == null : this.getSupplierSelectState().equals(other.getSupplierSelectState()))
-            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
             && (this.getIsNewSupplier() == null ? other.getIsNewSupplier() == null : this.getIsNewSupplier().equals(other.getIsNewSupplier()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getCreateUser() == null ? other.getCreateUser() == null : this.getCreateUser().equals(other.getCreateUser()))
@@ -324,6 +352,11 @@ public class HubSkuSupplierMapping implements Serializable {
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getSupplierNo() == null ? other.getSupplierNo() == null : this.getSupplierNo().equals(other.getSupplierNo()))
+            && (this.getSupplierSelectState() == null ? other.getSupplierSelectState() == null : this.getSupplierSelectState().equals(other.getSupplierSelectState()))
+            && (this.getSpSkuNo() == null ? other.getSpSkuNo() == null : this.getSpSkuNo().equals(other.getSpSkuNo()))
+            && (this.getSpuNo() == null ? other.getSpuNo() == null : this.getSpuNo().equals(other.getSpuNo()))
+            && (this.getSpSpuNo() == null ? other.getSpSpuNo() == null : this.getSpSpuNo().equals(other.getSpSpuNo()))
             && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()))
             && (this.getRetryNum() == null ? other.getRetryNum() == null : this.getRetryNum().equals(other.getRetryNum()));
     }
@@ -338,8 +371,6 @@ public class HubSkuSupplierMapping implements Serializable {
         result = prime * result + ((getBarcode() == null) ? 0 : getBarcode().hashCode());
         result = prime * result + ((getSupplierId() == null) ? 0 : getSupplierId().hashCode());
         result = prime * result + ((getNewSpuType() == null) ? 0 : getNewSpuType().hashCode());
-        result = prime * result + ((getSupplierSelectState() == null) ? 0 : getSupplierSelectState().hashCode());
-        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
         result = prime * result + ((getIsNewSupplier() == null) ? 0 : getIsNewSupplier().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getCreateUser() == null) ? 0 : getCreateUser().hashCode());
@@ -350,6 +381,11 @@ public class HubSkuSupplierMapping implements Serializable {
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getSupplierNo() == null) ? 0 : getSupplierNo().hashCode());
+        result = prime * result + ((getSupplierSelectState() == null) ? 0 : getSupplierSelectState().hashCode());
+        result = prime * result + ((getSpSkuNo() == null) ? 0 : getSpSkuNo().hashCode());
+        result = prime * result + ((getSpuNo() == null) ? 0 : getSpuNo().hashCode());
+        result = prime * result + ((getSpSpuNo() == null) ? 0 : getSpSpuNo().hashCode());
         result = prime * result + ((getOrigin() == null) ? 0 : getOrigin().hashCode());
         result = prime * result + ((getRetryNum() == null) ? 0 : getRetryNum().hashCode());
         return result;

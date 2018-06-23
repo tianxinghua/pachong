@@ -19,6 +19,10 @@
     <result column="supplier_material" property="supplierMaterial" jdbcType="VARCHAR" />
     <result column="supplier_origin" property="supplierOrigin" jdbcType="VARCHAR" />
     <result column="supplier_spu_desc" property="supplierSpuDesc" jdbcType="VARCHAR" />
+    <result column="supplier_measurement" property="supplierMeasurement" jdbcType="VARCHAR" />
+    <result column="product_url" property="productUrl" jdbcType="VARCHAR" />
+    <result column="market_price" property="marketPrice" jdbcType="DECIMAL" />
+    <result column="market_price_cn" property="marketPriceCn" jdbcType="DECIMAL" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="info_state" property="infoState" jdbcType="TINYINT" />
@@ -86,11 +90,12 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      supplier_spu_id, supplier_id, supplier_spu_no, supplier_spu_model, supplier_spu_name, 
-      supplier_spu_color, supplier_gender, supplier_categoryno, supplier_categoryname, 
-      supplier_brandno, supplier_brandname, supplier_seasonno, supplier_seasonname, isexistpic, 
-      supplier_material, supplier_origin, supplier_spu_desc, create_time, update_time, 
-      info_state, memo, data_state, version
+      supplier_spu_id, supplier_id, supplier_spu_no, supplier_spu_model, supplier_spu_name,
+      supplier_spu_color, supplier_gender, supplier_categoryno, supplier_categoryname,
+      supplier_brandno, supplier_brandname, supplier_seasonno, supplier_seasonname, isexistpic,
+      supplier_material, supplier_origin, supplier_spu_desc, supplier_measurement, product_url,
+      market_price, market_price_cn, create_time, update_time, info_state, memo, data_state,
+      version
     </if>
     <if test="fields != null" >
       ${fields}
@@ -114,8 +119,8 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    supplier_spu_id,supplier_id,supplier_spu_no,supplier_spu_model,supplier_spu_name,supplier_spu_color,supplier_gender,supplier_categoryno,supplier_categoryname,supplier_brandno,supplier_brandname,supplier_seasonno,supplier_seasonname,isexistpic,supplier_material,supplier_origin,supplier_spu_desc,create_time,update_time,info_state,memo,data_state,version
+    select
+    supplier_spu_id,supplier_id,supplier_spu_no,supplier_spu_model,supplier_spu_name,supplier_spu_color,supplier_gender,supplier_categoryno,supplier_categoryname,supplier_brandno,supplier_brandname,supplier_seasonno,supplier_seasonname,isexistpic,supplier_material,supplier_origin,supplier_spu_desc,supplier_measurement,product_url,market_price,market_price_cn,create_time,update_time,info_state,memo,data_state,version
     from hub_supplier_spu
     where supplier_spu_id = #{supplierSpuId,jdbcType=BIGINT}
   </select>
@@ -130,30 +135,28 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
-    <selectKey keyColumn="supplier_spu_id" keyProperty="supplierSpuId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS supplier_spu_id
-  	</selectKey>
-    insert into hub_supplier_spu (supplier_spu_id, supplier_id, supplier_spu_no, 
-      supplier_spu_model, supplier_spu_name, supplier_spu_color, 
-      supplier_gender, supplier_categoryno, supplier_categoryname, 
-      supplier_brandno, supplier_brandname, supplier_seasonno, 
-      supplier_seasonname, isexistpic, supplier_material, 
-      supplier_origin, supplier_spu_desc, create_time, 
-      update_time, info_state, memo, 
-      data_state, version)
-    values (#{supplierSpuId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR}, 
-      #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuColor,jdbcType=VARCHAR}, 
-      #{supplierGender,jdbcType=VARCHAR}, #{supplierCategoryno,jdbcType=VARCHAR}, #{supplierCategoryname,jdbcType=VARCHAR}, 
-      #{supplierBrandno,jdbcType=VARCHAR}, #{supplierBrandname,jdbcType=VARCHAR}, #{supplierSeasonno,jdbcType=VARCHAR}, 
-      #{supplierSeasonname,jdbcType=VARCHAR}, #{isexistpic,jdbcType=TINYINT}, #{supplierMaterial,jdbcType=VARCHAR}, 
-      #{supplierOrigin,jdbcType=VARCHAR}, #{supplierSpuDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{infoState,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT})
+    insert into hub_supplier_spu (supplier_spu_id, supplier_id, supplier_spu_no,
+      supplier_spu_model, supplier_spu_name, supplier_spu_color,
+      supplier_gender, supplier_categoryno, supplier_categoryname,
+      supplier_brandno, supplier_brandname, supplier_seasonno,
+      supplier_seasonname, isexistpic, supplier_material,
+      supplier_origin, supplier_spu_desc, supplier_measurement,
+      product_url, market_price, market_price_cn,
+      create_time, update_time, info_state,
+      memo, data_state, version
+      )
+    values (#{supplierSpuId,jdbcType=BIGINT}, #{supplierId,jdbcType=VARCHAR}, #{supplierSpuNo,jdbcType=VARCHAR},
+      #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSpuName,jdbcType=VARCHAR}, #{supplierSpuColor,jdbcType=VARCHAR},
+      #{supplierGender,jdbcType=VARCHAR}, #{supplierCategoryno,jdbcType=VARCHAR}, #{supplierCategoryname,jdbcType=VARCHAR},
+      #{supplierBrandno,jdbcType=VARCHAR}, #{supplierBrandname,jdbcType=VARCHAR}, #{supplierSeasonno,jdbcType=VARCHAR},
+      #{supplierSeasonname,jdbcType=VARCHAR}, #{isexistpic,jdbcType=TINYINT}, #{supplierMaterial,jdbcType=VARCHAR},
+      #{supplierOrigin,jdbcType=VARCHAR}, #{supplierSpuDesc,jdbcType=VARCHAR}, #{supplierMeasurement,jdbcType=VARCHAR},
+      #{productUrl,jdbcType=VARCHAR}, #{marketPrice,jdbcType=DECIMAL}, #{marketPriceCn,jdbcType=DECIMAL},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{infoState,jdbcType=TINYINT},
+      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu" >
-    <selectKey keyColumn="supplier_spu_id" keyProperty="supplierSpuId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS supplier_spu_id
-  	</selectKey>
     insert into hub_supplier_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="supplierSpuId != null" >
@@ -206,6 +209,18 @@
       </if>
       <if test="supplierSpuDesc != null" >
         supplier_spu_desc,
+      </if>
+      <if test="supplierMeasurement != null" >
+        supplier_measurement,
+      </if>
+      <if test="productUrl != null" >
+        product_url,
+      </if>
+      <if test="marketPrice != null" >
+        market_price,
+      </if>
+      <if test="marketPriceCn != null" >
+        market_price_cn,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -277,6 +292,18 @@
       </if>
       <if test="supplierSpuDesc != null" >
         #{supplierSpuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierMeasurement != null" >
+        #{supplierMeasurement,jdbcType=VARCHAR},
+      </if>
+      <if test="productUrl != null" >
+        #{productUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null" >
+        #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketPriceCn != null" >
+        #{marketPriceCn,jdbcType=DECIMAL},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -358,6 +385,18 @@
       <if test="record.supplierSpuDesc != null" >
         supplier_spu_desc = #{record.supplierSpuDesc,jdbcType=VARCHAR},
       </if>
+      <if test="record.supplierMeasurement != null" >
+        supplier_measurement = #{record.supplierMeasurement,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productUrl != null" >
+        product_url = #{record.productUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.marketPrice != null" >
+        market_price = #{record.marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.marketPriceCn != null" >
+        market_price_cn = #{record.marketPriceCn,jdbcType=DECIMAL},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -384,28 +423,32 @@
   <update id="updateByExample" parameterType="map" >
     update hub_supplier_spu
     set supplier_spu_id = #{record.supplierSpuId,jdbcType=BIGINT},
-      supplier_id = #{record.supplierId,jdbcType=VARCHAR},
-      supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
-      supplier_spu_model = #{record.supplierSpuModel,jdbcType=VARCHAR},
-      supplier_spu_name = #{record.supplierSpuName,jdbcType=VARCHAR},
-      supplier_spu_color = #{record.supplierSpuColor,jdbcType=VARCHAR},
-      supplier_gender = #{record.supplierGender,jdbcType=VARCHAR},
-      supplier_categoryno = #{record.supplierCategoryno,jdbcType=VARCHAR},
-      supplier_categoryname = #{record.supplierCategoryname,jdbcType=VARCHAR},
-      supplier_brandno = #{record.supplierBrandno,jdbcType=VARCHAR},
-      supplier_brandname = #{record.supplierBrandname,jdbcType=VARCHAR},
-      supplier_seasonno = #{record.supplierSeasonno,jdbcType=VARCHAR},
-      supplier_seasonname = #{record.supplierSeasonname,jdbcType=VARCHAR},
-      isexistpic = #{record.isexistpic,jdbcType=TINYINT},
-      supplier_material = #{record.supplierMaterial,jdbcType=VARCHAR},
-      supplier_origin = #{record.supplierOrigin,jdbcType=VARCHAR},
-      supplier_spu_desc = #{record.supplierSpuDesc,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      info_state = #{record.infoState,jdbcType=TINYINT},
-      memo = #{record.memo,jdbcType=VARCHAR},
-      data_state = #{record.dataState,jdbcType=TINYINT},
-      version = #{record.version,jdbcType=BIGINT}
+    supplier_id = #{record.supplierId,jdbcType=VARCHAR},
+    supplier_spu_no = #{record.supplierSpuNo,jdbcType=VARCHAR},
+    supplier_spu_model = #{record.supplierSpuModel,jdbcType=VARCHAR},
+    supplier_spu_name = #{record.supplierSpuName,jdbcType=VARCHAR},
+    supplier_spu_color = #{record.supplierSpuColor,jdbcType=VARCHAR},
+    supplier_gender = #{record.supplierGender,jdbcType=VARCHAR},
+    supplier_categoryno = #{record.supplierCategoryno,jdbcType=VARCHAR},
+    supplier_categoryname = #{record.supplierCategoryname,jdbcType=VARCHAR},
+    supplier_brandno = #{record.supplierBrandno,jdbcType=VARCHAR},
+    supplier_brandname = #{record.supplierBrandname,jdbcType=VARCHAR},
+    supplier_seasonno = #{record.supplierSeasonno,jdbcType=VARCHAR},
+    supplier_seasonname = #{record.supplierSeasonname,jdbcType=VARCHAR},
+    isexistpic = #{record.isexistpic,jdbcType=TINYINT},
+    supplier_material = #{record.supplierMaterial,jdbcType=VARCHAR},
+    supplier_origin = #{record.supplierOrigin,jdbcType=VARCHAR},
+    supplier_spu_desc = #{record.supplierSpuDesc,jdbcType=VARCHAR},
+    supplier_measurement = #{record.supplierMeasurement,jdbcType=VARCHAR},
+    product_url = #{record.productUrl,jdbcType=VARCHAR},
+    market_price = #{record.marketPrice,jdbcType=DECIMAL},
+    market_price_cn = #{record.marketPriceCn,jdbcType=DECIMAL},
+    create_time = #{record.createTime,jdbcType=TIMESTAMP},
+    update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+    info_state = #{record.infoState,jdbcType=TINYINT},
+    memo = #{record.memo,jdbcType=VARCHAR},
+    data_state = #{record.dataState,jdbcType=TINYINT},
+    version = #{record.version,jdbcType=BIGINT}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -461,6 +504,18 @@
       <if test="supplierSpuDesc != null" >
         supplier_spu_desc = #{supplierSpuDesc,jdbcType=VARCHAR},
       </if>
+      <if test="supplierMeasurement != null" >
+        supplier_measurement = #{supplierMeasurement,jdbcType=VARCHAR},
+      </if>
+      <if test="productUrl != null" >
+        product_url = #{productUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPrice != null" >
+        market_price = #{marketPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketPriceCn != null" >
+        market_price_cn = #{marketPriceCn,jdbcType=DECIMAL},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -500,6 +555,10 @@
       supplier_material = #{supplierMaterial,jdbcType=VARCHAR},
       supplier_origin = #{supplierOrigin,jdbcType=VARCHAR},
       supplier_spu_desc = #{supplierSpuDesc,jdbcType=VARCHAR},
+      supplier_measurement = #{supplierMeasurement,jdbcType=VARCHAR},
+      product_url = #{productUrl,jdbcType=VARCHAR},
+      market_price = #{marketPrice,jdbcType=DECIMAL},
+      market_price_cn = #{marketPriceCn,jdbcType=DECIMAL},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       info_state = #{infoState,jdbcType=TINYINT},
