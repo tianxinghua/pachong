@@ -1,12 +1,14 @@
 package com.shangpin.ephub.data.mysql.spu.supplier.mapper;
 
-import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu;
-import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu;
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria;
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto;
 /**
  * <p>Title:HubBrandDicMapper.java </p>
  * <p>Description: </p>
@@ -30,6 +32,10 @@ public interface HubSupplierSpuMapper {
     List<HubSupplierSpu> selectByExampleWithRowbounds(HubSupplierSpuCriteria example, RowBounds rowBounds);
 
     List<HubSupplierSpu> selectByExample(HubSupplierSpuCriteria example);
+    
+    List<HubSupplierSpu> selectByBrand(HubSupplierSpuQureyDto dto);
+    
+    int count(HubSupplierSpuQureyDto dto);
 
     HubSupplierSpu selectByPrimaryKey(Long supplierSpuId);
 

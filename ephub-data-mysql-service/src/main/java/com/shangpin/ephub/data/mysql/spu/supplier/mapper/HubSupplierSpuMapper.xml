@@ -591,4 +591,26 @@
       limit #{startRow} , #{pageSize}
     </if>
   </select>
+   <select id="selectByBrand" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto" >
+    select DISTINCT p.supplier_spu_id,p.supplier_spu_no,p.supplier_spu_model,p.product_url,p.create_time,p.supplier_id from hub_supplier_spu p INNER JOIN hub_supplier_sku k ON p.supplier_spu_id = k.supplier_spu_id where k.sp_sku_no is not null 
+    <if test="null!= supplierId" >
+       and p.supplier_id = #{supplierId} 
+    </if>
+    <if test="null!= brandName" >
+       and p.supplier_brandname = #{brandName} 
+    </if>
+       order by p.create_time desc
+    <if test="pageIndex != null" >
+       limit #{pageIndex} , #{pageSize}
+    </if>
+  </select>
+  <select id="count" resultType="java.lang.Integer" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto" >
+    select count(DISTINCT p.supplier_spu_id,p.supplier_spu_no,p.supplier_spu_model,p.product_url,p.create_time,p.supplier_id) from hub_supplier_spu p INNER JOIN hub_supplier_sku k ON p.supplier_spu_id = k.supplier_spu_id where k.sp_sku_no is not null 
+    <if test="null!= supplierId" >
+       and p.supplier_id = #{supplierId} 
+    </if>
+    <if test="null!= brandName" >
+       and p.supplier_brandname = #{brandName} 
+    </if>
+  </select>
 </mapper>
