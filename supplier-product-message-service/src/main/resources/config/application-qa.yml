@@ -469,7 +469,10 @@ spring:
                             rediOriginalProduct:
                                   producer:
                                            prefix: HA.
-  jackson: 
+                            delibertiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.
