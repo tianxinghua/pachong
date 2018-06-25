@@ -124,6 +124,8 @@ public class ZhiCaiHandler implements ISupplierHandler{
 			hubSpu.setSupplierOrigin(ob.getMade());
 			hubSpu.setSupplierSpuDesc(ob.getDesc());
 			hubSpu.setProductUrl(ob.getDetailLink());
+			hubSpu.setMarketPrice(new BigDecimal(ob.getMarketPrice()));
+			hubSpu.setMarketPriceCn(new BigDecimal(ob.getMarketPrice()));
 			return true;
 		}else{
 			return false;
@@ -168,18 +170,18 @@ public class ZhiCaiHandler implements ISupplierHandler{
 		if(null != ob){
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuNo(ob.getProductModel()+"G");
+			hubSku.setSupplierSkuNo(ob.getProductModel()+"-"+ob.getSize());
 			hubSku.setMarketPrice(new BigDecimal(ob.getMarketPrice()));
 			hubSku.setSalesPrice(new BigDecimal(ob.getSalePrice()));
 			hubSku.setSupplyPrice(new BigDecimal(ob.getMarketPrice()));
-			hubSku.setSupplierBarcode(ob.getProductModel()+"G");
+			hubSku.setSupplierBarcode(ob.getProductModel()+"-"+ob.getSize());
 			if(!StringUtils.isEmpty(ob.getSize())){
 				hubSku.setSupplierSkuSize(ob.getSize());
 			}
-			if(ob.equals("售罄"))
-				hubSku.setStock(0);
+			if(ob.getQty()!=null&&!ob.getQty().equals(""))
+				hubSku.setStock(Integer.parseInt(ob.getQty()));
 			else
-				hubSku.setStock(1);
+				hubSku.setStock(0);
 			return true;
 		}else{
 			return false;
