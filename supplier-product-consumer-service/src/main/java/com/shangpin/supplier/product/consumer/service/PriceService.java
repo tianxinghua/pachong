@@ -11,6 +11,7 @@ import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierPriceChangeRecordGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 
+import com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail;
 import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSenderGateWay;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
 import com.shangpin.ephub.client.util.JsonUtil;
@@ -321,7 +322,7 @@ public class PriceService {
 
 	public void sendMail(String subject,String text){
 		try {
-			com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail shangpinMail = new com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail();
+			ShangpinMail shangpinMail = new ShangpinMail();
 			shangpinMail.setFrom("chengxu@shangpin.com");
 			shangpinMail.setSubject(subject);
 			shangpinMail.setText(text);
