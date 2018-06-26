@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: localhost
+          host: 192.168.20.174
           port: 8500
           discovery: 
               register: false
