@@ -968,5 +968,5 @@ shangpin:
              supplierId:
              translateAll: true
              refresh: ${translateProperty.refresh:true}
-   schedule:
-        brand: ${shangpin.schedule.brand:true}
+  # schedule:
+   #     brand: ${shangpin.schedule.brand:true}
