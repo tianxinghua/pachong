@@ -95,5 +95,9 @@ public class PendingQuryDto {
      * 错误原因处理状态
      */
     private String msgMissHandleState;
+    /**
+     * 是否代购
+     */
+    private boolean isHotboom ;
     
 }

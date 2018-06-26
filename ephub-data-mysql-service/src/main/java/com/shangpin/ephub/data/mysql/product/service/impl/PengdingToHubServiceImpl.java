@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import com.shangpin.ephub.data.mysql.common.PropertyConstant;
+import com.shangpin.ephub.data.mysql.product.common.enumeration.SupplierValueMappingType;
+import com.shangpin.ephub.data.mysql.mapping.value.mapper.HubSupplierValueMappingMapper;
+import com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMapping;
+import com.shangpin.ephub.data.mysql.mapping.value.po.HubSupplierValueMappingCriteria;
 import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSku;
 import com.shangpin.ephub.data.mysql.sku.supplier.po.HubSupplierSkuCriteria;
 import org.apache.commons.lang.StringUtils;
@@ -91,6 +95,10 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     @Autowired
     private HubSpuPicMapper hubSpuPicMapper;
+
+
+    @Autowired
+    private HubSupplierValueMappingMapper supplierValueMappingMapper;
 
     public PengdingToHubServiceImpl() {
     }
@@ -420,6 +428,13 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         hubSpu.setDataState(DataStatus.NOT_DELETE.getIndex().byteValue());
         hubSpu.setSpuNo(hubSpuUtil.createHubSpuNo(0L));//插入SPU编号
         hubSpu.setPictureState((byte)0);
+        //判断是否是代购的供货商
+        if(isHotBoomSupplierId(spuPending.getSupplierId())){
+
+            hubSpu.setHotboomSign(DataStatus.NOT_DELETE.getIndex().byteValue());
+        }else{
+            hubSpu.setHotboomSign(DataStatus.DELETE.getIndex().byteValue());
+        }
         hubSpuMapper.insert(hubSpu);
 
 
@@ -640,6 +655,17 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
         return  hubSkuMapper.selectByExample(hubSkuCriteria);
 
 
+    }
+
+    private boolean isHotBoomSupplierId(String supplierId ){
+        HubSupplierValueMappingCriteria criteria = new HubSupplierValueMappingCriteria();
+        criteria.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue())
+                .andSupplierIdEqualTo(supplierId).andDataStateEqualTo(DataStatus.NOT_DELETE.getIndex().byteValue());
+        List<HubSupplierValueMapping> hubSupplierValueMappings = supplierValueMappingMapper.selectByExample(criteria);
+        if(null!=hubSupplierValueMappings&&hubSupplierValueMappings.size()>0){
+            return true;
+        }
+        return false;
     }
 
 }

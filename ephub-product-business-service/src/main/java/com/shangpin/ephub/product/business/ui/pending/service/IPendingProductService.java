@@ -75,11 +75,30 @@ public interface IPendingProductService {
 	 * @param pendingProductDto
 	 */
 	public HubResponse<PendingUpdatedVo> updatePendingProduct(PendingProductDto pendingProductDto);
+
+
+
+    /**
+     * 更新单个pending数据，一个pending数据包括一个PengdingSpu和对应的多个PendingSku
+     * @param pendingProductDto
+     */
+    public HubResponse<PendingUpdatedVo> selectHotBoom(PendingProductDto pendingProductDto);
+
+
 	/**
 	 * 批量更新pending数据
 	 * @param pendingProducts
 	 */
 	public HubResponse<List<PendingUpdatedVo>> batchUpdatePendingProduct(PendingProducts pendingProducts);
+
+
+
+    /**
+     * 批量更新pending数据
+     * @param pendingProducts
+     */
+    public HubResponse<List<PendingUpdatedVo>> batchSelectHotBoom(PendingProducts pendingProducts);
+
 	/**
 	 * 将HubSpuPendingDto更新为无法处理
 	 * @param updateUser 操作人
@@ -117,4 +136,7 @@ public interface IPendingProductService {
 	 * @return
 	 */
 	public int countByPendingQury(PendingQuryDto pendingQuryDto);
+
+
+
 }

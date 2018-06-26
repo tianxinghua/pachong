@@ -345,6 +345,12 @@ public abstract class PendingSpuService implements IPendingProductService {
 				}
 			}
 		}
+		//代购查询
+        if(pendingQuryDto.isHotboom()){
+			criteria.andSourceFromEqualTo(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+		}else{
+			criteria.andSourceFromNotEqualTo(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+		}
 		return criteria;
 	}
 	
