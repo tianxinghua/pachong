@@ -69,7 +69,7 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("alducadaostaHandler") 
 	private ISupplierHandler alducadaostaHandler;
 	@Autowired
-	@Qualifier("delibertiHandler") 
+	@Qualifier("delibertiHandler2")
 	private ISupplierHandler delibertiHandler;
     @Autowired
     @Qualifier("parisiHandler") 
