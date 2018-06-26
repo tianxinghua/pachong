@@ -131,12 +131,16 @@ public class DelibertiHandler implements ISupplierHandler {
 		String stock = s.substring(s.indexOf("(") + 1, s.indexOf(")"));
 		hubSku.setStock(Integer.parseInt(stock));
 		hubSku.setSupplierSkuSize(substring1);
+		System.out.println("getPrice"+productDto.getPrice());
+		String s1 = productDto.getPrice().replaceAll("\"", "");
+		System.out.println("s1------"+s1);
+		hubSku.setMarketPrice(new BigDecimal(s1));
 
-		hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(productDto.getPrice())));
-		if (productDto.getDiscountIfAny().equals("0")){
+
+		/*if (productDto.getDiscountIfAny().equals("0")){
 			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(productDto.getPrice())));
-		}
-		if (!productDto.getDiscountIfAny().equals("0")){
+		}*/
+		if (productDto.getDiscountIfAny()!=null){
 			String str3="100";
 			BigDecimal decimal = new BigDecimal(StringUtil.verifyPrice(productDto.getPrice()));//189
 			BigDecimal decima2 = new BigDecimal(StringUtil.verifyPrice(productDto.getDiscountIfAny()));//30
@@ -144,6 +148,7 @@ public class DelibertiHandler implements ISupplierHandler {
 			BigDecimal subtract = decima3.subtract(decima2);//70
 			BigDecimal divide = subtract.divide(decima3);
 			BigDecimal multiply = decimal.multiply(divide);
+			System.out.println("setSupplyPrice"+multiply);
 			hubSku.setSupplyPrice(multiply);
 		}
 		/*hubSku.setSupplierId(supplierId);
