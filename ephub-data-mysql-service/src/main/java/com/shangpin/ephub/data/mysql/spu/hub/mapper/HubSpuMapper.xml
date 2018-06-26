@@ -671,4 +671,26 @@
     select   max(spu_no)
     from hub_spu
   </select>
+  <select id="selectByBrand" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto" >
+    select DISTINCT p.spu_model,p.spu_no,p.create_time from hub_spu p INNER JOIN hub_spu_pending s ON p.spu_no = s.hub_spu_no where 1=1   
+    <if test="null!= supplierId" >
+      and s.supplier_id = #{supplierId} 
+    </if>
+    <if test="null!= brandNo" >
+      and p.brand_no = #{brandNo} 
+    </if>
+       order by p.create_time desc 
+    <if test="pageIndex != null" >
+       limit #{pageIndex} , #{pageSize}
+    </if>
+  </select>
+  <select id="count" resultType="java.lang.Integer" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto" >
+    select count(DISTINCT p.spu_model,p.spu_no,p.create_time) from hub_spu p INNER JOIN hub_spu_pending s ON p.spu_no = s.hub_spu_no where 1=1   
+    <if test="null!= supplierId" >
+      and s.supplier_id = #{supplierId} 
+    </if>
+    <if test="null!= brandNo" >
+      and p.brand_no = #{brandNo} 
+    </if>
+  </select>
 </mapper>

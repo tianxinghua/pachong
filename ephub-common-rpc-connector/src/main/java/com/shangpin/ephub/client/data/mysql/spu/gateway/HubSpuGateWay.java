@@ -12,6 +12,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaWithRowBoundsDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuWithCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuQureyDto;
 /**
  * <p>Title:HubSpuController.java </p>
  * <p>Description: </p>
@@ -42,6 +43,12 @@ public interface HubSpuGateWay {
 	
 	@RequestMapping(value = "/hub-spu/select-by-criteria", method = RequestMethod.POST,consumes = "application/json")
     public List<HubSpuDto> selectByCriteria(@RequestBody HubSpuCriteriaDto criteria);
+	
+	@RequestMapping(value = "/hub-spu/select-by-brand", method = RequestMethod.POST,consumes = "application/json")
+    public List<HubSpuDto> selectByBrand(@RequestBody HubSupplierSpuQureyDto dto);
+	
+	@RequestMapping(value = "/hub-spu/select-by-brand-conut", method = RequestMethod.POST,consumes = "application/json")
+    public int count(@RequestBody HubSupplierSpuQureyDto dto);
 	
 	@RequestMapping(value = "/hub-spu/select-by-primary-key/{spuId}", method = RequestMethod.POST,consumes = "application/json")
     public HubSpuDto selectByPrimaryKey(@PathVariable("spuId") Long spuId);

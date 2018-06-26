@@ -85,5 +85,15 @@ public class TaskImportTemplate {
 	 *
 	 */
 
+	/**
+	 * 直采导入模板
+	 * 
+	 * @return
+	 */
+	public static String[] getSupplierDataTemplate() {
+		String[] headers = { "gender", "brand", "category", "SPU", "productModel","season","material","color", "size", "proName", "市场价", "售价", "qty", "made",
+				"desc", "pics","detailLink"};
+		return headers;
+	}
 
 }
