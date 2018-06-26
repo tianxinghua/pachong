@@ -48,7 +48,8 @@ public class ZhiCaiHandler implements ISupplierHandler{
 				CsvDTO jsonObject = JsonUtil.deserialize(message.getData(), CsvDTO.class);
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				List<Image> images = converImage(supplierId,jsonObject);
+//				List<Image> images = converImage(supplierId,jsonObject);
+				List<Image> images = null;
 //				if(null == images){
 //					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
 //				}else{
