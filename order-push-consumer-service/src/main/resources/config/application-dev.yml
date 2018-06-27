@@ -516,7 +516,9 @@ shangpin:
               getSizeFromEphubUrl: http://192.168.20.176:8003/order/product-size
               stockSupplierMapping: 
               orderSupplierMapping: S0000779:2016102701834,S0000775:2016102701830,S0000776:2016102701831,S0000780:2016102701835
-
+      theStyleSide:
+                    usr: ECOMM
+                    pwd: vendiamotutto
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 

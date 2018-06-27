@@ -161,9 +161,13 @@ public abstract class AtelierOrderHandler implements IOrderService {
 					String prex = "<string xmlns=\"http://tempuri.org/\">";
 					String end = "</string>";
 					String stocks = stockData.substring(stockData.indexOf(prex)+prex.length(), stockData.indexOf(end));
+					String supplierSize = "";
 					for(String size_stock : stocks.split("\\|")){
 						if(StringUtils.isNotBlank(size_stock)){
-							if(size.equals(size_stock.split(";")[0])){
+							supplierSize = "";
+							supplierSize = size_stock.split(";")[0];
+							supplierSize = supplierSize.replaceAll("\\+", "½");
+							if(size.equals(supplierSize)){
 								stock = Integer.parseInt(size_stock.split(";")[1]);
 								orderDTO.setLogContent("查询到的供货商的库存为============"+stock);
 								logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
@@ -172,6 +176,7 @@ public abstract class AtelierOrderHandler implements IOrderService {
 						}
 					}
 					//如果库存大于0,则下单
+//					stock =1;//不在判断库存
 					if(stock > 0){
 						//下单
 						String returnData = newOrderMarketPlace(id_order_mrkp,barcode,qty,orderDTO);
@@ -200,7 +205,7 @@ public abstract class AtelierOrderHandler implements IOrderService {
 							orderDTO.setDescription("下单失败：" + returnData);
 						}
 					}else{
-						orderDTO.setConfirmTime(new Date()); 
+//						orderDTO.setConfirmTime(new Date());
 						orderDTO.setPushStatus(PushStatus.NO_STOCK);
 //						sendMail(item_id+" 该产品库存不足!采购单号是："+orderDTO.getSpPurchaseNo());
 					}

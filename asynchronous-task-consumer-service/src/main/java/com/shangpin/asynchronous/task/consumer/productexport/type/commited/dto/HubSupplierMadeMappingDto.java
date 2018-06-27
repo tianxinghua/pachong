@@ -1,6 +1,8 @@
 package com.shangpin.asynchronous.task.consumer.productexport.type.commited.dto;
 
-public class HubSupplierMadeMappingDto {
+import java.io.Serializable;
+
+public class HubSupplierMadeMappingDto implements Serializable{
     protected Integer pageNo = 1;
     protected Integer startRow;
     protected Integer pageSize = 10;
@@ -11,6 +13,25 @@ public class HubSupplierMadeMappingDto {
     protected String hubVal;
     protected String  mappingType;
     protected String CreateUser;
+    protected String startTime;
+    protected String endTime;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
     public String getCreateUser() {
         return CreateUser;
     }
@@ -88,10 +109,14 @@ public class HubSupplierMadeMappingDto {
                 "pageNo=" + pageNo +
                 ", startRow=" + startRow +
                 ", pageSize=" + pageSize +
+                ", type=" + type +
                 ", fields='" + fields + '\'' +
                 ", supplierVal='" + supplierVal + '\'' +
                 ", hubVal='" + hubVal + '\'' +
                 ", mappingType='" + mappingType + '\'' +
+                ", CreateUser='" + CreateUser + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 '}';
     }
 }

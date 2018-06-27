@@ -101,12 +101,12 @@ public class RediOrderService implements IOrderService {
 		billing_address.setSurname("Doe");
 		billing_address.setCompany("");
 		billing_address.setVatcode("");
-		billing_address.setAddress("JingBeiShiTongZhouQuXingMaoYiJie11HaoHuaRunWuLiu5HaoKu");
+		billing_address.setAddress("No.5,HuaRunWuLiu,No.11,XingMao First Street ,TongZhou District ,BeiJing China");
 		billing_address.setCity("Pechino");
 		billing_address.setState("Bei");
 		billing_address.setCountry("CN");
 		billing_address.setZip("100005");
-		billing_address.setEmail("j.doe@fashion.us");
+		billing_address.setEmail("steven@shangpin.com");
 		billing_address.setPhone("4006900900");
 		billing_address.setMobile("333-113-34565");
 		rediOrderDto.setBillingInfo(billing_address);
@@ -121,7 +121,7 @@ public class RediOrderService implements IOrderService {
 		shipping_address_ch.setState("北");
 		shipping_address_ch.setCountry("CN");
 		shipping_address_ch.setZip("100005");
-		shipping_address_ch.setEmail("j.doe@fashion.us");
+		shipping_address_ch.setEmail("steven@shangpin.com");
 		shipping_address_ch.setPhone("4006900900");
 		shipping_address_ch.setMobile("333-113-34565");
 		rediOrderDto.setShippingChInfo(shipping_address_ch);
@@ -131,12 +131,12 @@ public class RediOrderService implements IOrderService {
 		shipping_address.setSurname("Doe");
 		shipping_address.setCompany("");
 		shipping_address.setVatcode("");
-		shipping_address.setAddress("JingBeiShiTongZhouQuXingMaoYiJie11HaoHuaRunWuLiu5HaoKu");
+		shipping_address.setAddress("No.5,HuaRunWuLiu,No.11,XingMao First Street ,TongZhou District ,BeiJing China");
 		shipping_address.setCity("Pechino");
 		shipping_address.setState("Bei");
 		shipping_address.setCountry("CN");
 		shipping_address.setZip("100005");
-		shipping_address.setEmail("j.doe@fashion.us");
+		shipping_address.setEmail("steven@shangpin.com");
 		shipping_address.setPhone("4006900900");
 		shipping_address.setMobile("333-113-34565");
 		rediOrderDto.setShippingInfo(shipping_address);

@@ -104,7 +104,7 @@ public class PendingMaterialImportService {
 		if ("xls".equals(fileFormat)) {
 			listHubProductImport = handlePendingMaterialXls(in, task, "material");
 		} else if ("xlsx".equals(fileFormat)) {
-			//listHubProductImport = handlePendingSpuXlsx(in, task, "spu");
+			listHubProductImport = handlePendingMaterialXlsx(in, task, "material");
 		}
 
 		//校验数据并把校验结果写入excel
@@ -129,7 +129,7 @@ public class PendingMaterialImportService {
 				continue;
 			}
 			map = new HashMap<String, String>();
-			//map.put("taskNo", taskNo);
+			map.put("taskNo", taskNo);
 			Map<String, String> map1 = filterMaterial(productImport, createUser, map);
 			listMap.add(map1);
 		}
@@ -141,8 +141,24 @@ public class PendingMaterialImportService {
          if (productImport.getMaterialMappingId()!=null){
 			HubMaterialMappingDto hubMaterialMapping=new HubMaterialMappingDto();
 			 hubMaterialMapping.setMaterialMappingId(Long.parseLong(productImport.getMaterialMappingId()));
+/*
 			 map.put("materialMappingId",productImport.getMaterialMappingId());
+*/
 			 hubMaterialMapping.setUpdateTime(new Date());
+			 if (productImport.getMappingLevel()!=null){
+			 	if (productImport.getMappingLevel().contains("全匹配")){
+					hubMaterialMapping.setMappingLevel((byte)1);
+				}
+				 if (productImport.getMappingLevel().contains("词组匹配")){
+					 hubMaterialMapping.setMappingLevel((byte)2);
+				 }
+				 if (productImport.getMappingLevel().contains("单词匹配")){
+					 hubMaterialMapping.setMappingLevel((byte)3);
+				 }
+				 if (productImport.getMappingLevel().contains("替换匹配")){
+					 hubMaterialMapping.setMappingLevel((byte)4);
+				 }
+			 }
 			 if (productImport.getSupplierMaterial()!=null){
 				 hubMaterialMapping.setSupplierMaterial(productImport.getSupplierMaterial());
 				 map.put("supplierMaterial",productImport.getSupplierMaterial());
@@ -177,6 +193,7 @@ public class PendingMaterialImportService {
 				 hubMaterialMappingDto.setMappingLevel(Byte.parseByte(productImport.getMappingLevel()));
 			 }*/
 			 Long aLong = hubMaterialMappingGateWay.insert(hubMaterialMappingDto);
+			 map.put("task","校验成功");
 			 System.out.println("long值======"+aLong);
 			 return map;
 		 }
@@ -241,21 +258,20 @@ public class PendingMaterialImportService {
 //		}
 				
 	}
-	private List<HubPendingSpuImportDTO> handlePendingSpuXlsx(InputStream in, Task task, String type)
+	private List<HubMaterialImportDto> handlePendingMaterialXlsx(InputStream in, Task task, String type)
 			throws Exception {
 
 		XSSFSheet xssfSheet = taskService.checkXlsxExcel(in, task, type);
 		if (xssfSheet == null) {
 			return null;
 		}
-		List<HubPendingSpuImportDTO> listHubProduct = new ArrayList<>();
+		List<HubMaterialImportDto> listHubProduct = new ArrayList<>();
 		for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
 			XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-			HubPendingSpuImportDTO product = convertSpuDTO(xssfRow);
+			HubMaterialImportDto product = convertMaterialDTO(xssfRow);
 			if (product != null) {
 				listHubProduct.add(product);
 			}
-
 		}
 		return listHubProduct;
 	}
@@ -385,17 +401,17 @@ public class PendingMaterialImportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static HubPendingSpuImportDTO convertSpuDTO(XSSFRow xssfRow)  throws Exception{
-		HubPendingSpuImportDTO item = null;
+	private static HubMaterialImportDto convertMaterialDTO(XSSFRow xssfRow)  throws Exception{
+		HubMaterialImportDto item = null;
 		if (xssfRow != null) {
 			try {
-				item = new HubPendingSpuImportDTO();
+				item = new HubMaterialImportDto();
 				Class c = item.getClass();
 				for (int i = 0; i < pendingSpuValueTemplate.length; i++) {
 					if (xssfRow.getCell(i) != null) {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
-						String setMethodName = "set" + pendingSpuValueTemplate[i].toUpperCase().charAt(0)
-								+ pendingSpuValueTemplate[i].substring(1);
+						String setMethodName = "set" + pendingMaterialValueTemplate[i].toUpperCase().charAt(0)
+								+ pendingMaterialValueTemplate[i].substring(1);
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}

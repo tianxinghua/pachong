@@ -61,6 +61,9 @@ public class SupplierProductPictureService {
 
 	@Autowired
 	private SpuPicStatusServiceManager spuPicStatusServiceManager;
+
+	@Autowired
+	private SpuPendingService spuPendingService;
 	
 	
 	@Autowired
@@ -72,17 +75,33 @@ public class SupplierProductPictureService {
 	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
-			for (HubSpuPendingPicDto picDto : picDtos) {
-				String picUrl = picDto.getPicUrl();
-				if(!supplierProductPictureManager.exists(picDto.getSupplierId(),picUrl)){
-					continue;
+			for (HubSpuPendingPicDto picVO : picDtos) {
+				String picUrl = picVO.getPicUrl();
+				HubSpuPendingPicDto picDto = supplierProductPictureManager.getSpuPendingPicDtoBySupplierIdAndPicUrl(picVO.getSupplierId(), picUrl);
+				if(null!=picDto){
+					//如果连接存在 且状态为使用中 则不操作
+					if(DataState.NOT_DELETED.getIndex()==picDto.getDataState()){
+                         continue;
+					}else{
+						//更新图片状态
+						HubSpuPendingPicDto updatePic = new HubSpuPendingPicDto();
+						updatePic.setSpuPendingPicId(picDto.getSpuPendingPicId());
+						updatePic.setDataState(DataState.NOT_DELETED.getIndex());
+						updatePic.setMemo("");
+						supplierProductPictureManager.updateSelective(updatePic);
+						//更新spupending 图片状态
+						spuPendingService.updateSpuPendingPicState(picDto.getSupplierId(),picDto.getSupplierSpuNo());
+
+						continue;
+					}
 				}
-				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据
+
+				Long spuPendingPicId = supplierProductPictureManager.save(picVO);//保存初始化数据
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
-				updateDto.setSupplierSpuId(picDto.getSupplierSpuId());
+				updateDto.setSupplierSpuId(picVO.getSupplierSpuId());
 				AuthenticationInformation information = null;
-				String supplierId = picDto.getSupplierId();
+				String supplierId = picVO.getSupplierId();
 				if (StringUtils.isNotBlank(supplierId)) {
 					information = getAuthentication(supplierId);
 				}
@@ -91,7 +110,7 @@ public class SupplierProductPictureService {
 					if(picUrl.toUpperCase().startsWith("HTTP")){
 						code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 					}else if(picUrl.toUpperCase().startsWith("FTP")){
-						if("2016110101955".equals(picDto.getSupplierId())){
+						if("2016110101955".equals(picVO.getSupplierId())){
 							code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
 						}else{
 							code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
@@ -464,10 +483,16 @@ public class SupplierProductPictureService {
 				deleteImage(hubSpuPendingPicDto);
 				String picUrl = hubSpuPendingPicDto.getPicUrl();
 				int code = 0;
-				if(picUrl.startsWith("http")){
+				if(picUrl.toUpperCase().startsWith("HTTP")){
 					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
-				}else if(picUrl.startsWith("ftp")){
-					code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+				}else if(picUrl.toUpperCase().startsWith("FTP")){
+
+					if("2016110101955".equals(hubSpuPendingPicDto.getSupplierId())){
+						code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
+					}else{
+						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+					}
+
 				}
 				
 				if (code == 404 || code == 400) {

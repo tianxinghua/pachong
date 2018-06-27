@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.picture.product.consumer.service.SpuPendingService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class SupplierProductPictureManager {
 	
 	@Autowired
 	private DeletePicGateWay deletePicGateWay;
+
+
+
 	/**
 	 * 保存初始化数据
 	 * @param picDto
@@ -79,7 +83,7 @@ public class SupplierProductPictureManager {
 	/**
 	 * @param supplierId 供应商门户id
 	 * @param picUrl 原始图片地址
-	 * @return 检查是否存在，如果存在则返回true，否则返回false
+	 * @return 检查是否存在，如果不存在则返回true，存在返回false
 	 */
 	public boolean exists(String supplierId,String picUrl) {
 		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
@@ -91,6 +95,21 @@ public class SupplierProductPictureManager {
 			return false;
 		}
 	}
+
+	/**
+	 * 获取spupendingpic 信息
+	 * @param supplierId
+	 * @param picUrl
+	 * @return
+	 */
+	public HubSpuPendingPicDto getSpuPendingPicDtoBySupplierIdAndPicUrl(String supplierId,String picUrl){
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andPicUrlEqualTo(picUrl);
+		List<HubSpuPendingPicDto> hubSpuPendingPicDtos = hubSpuPendingPicGateWay.selectByCriteria(criteria);
+		if(CollectionUtils.isEmpty(hubSpuPendingPicDtos)) return null;
+		return hubSpuPendingPicDtos.get(0);
+	}
+
 	/**
 	 * 查找图片
 	 * @param supplierSpuId 供应商原始spu表id

@@ -8,6 +8,33 @@ public class BrandRequestDTO {
     protected String  supplierBrand;
     protected String hubBrand;
     protected String createUser;
+    protected String startTime;
+    protected String endTime;
+    protected String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
     public String getCreateUser() {
         return createUser;
@@ -74,6 +101,9 @@ public class BrandRequestDTO {
                 ", supplierId='" + supplierId + '\'' +
                 ", supplierBrand='" + supplierBrand + '\'' +
                 ", hubBrand='" + hubBrand + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 '}';
     }
 }

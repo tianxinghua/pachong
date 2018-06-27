@@ -618,7 +618,13 @@ shangpin:
                   productSpuUrl: http://api.ephub.spidc1.com/order/supplier-spu
                   stockSupplierMapping: 
                   orderSupplierMapping: S0000558:2015102201625,S0000631:2016030701799,S0000593:2015111001657,S0000372:2015081701441,S0000370:2015081701439
-
+          theStyleSide:
+                  usr: ECOMM
+                  pwd: vendiamotutto
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 

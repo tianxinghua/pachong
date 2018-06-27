@@ -92,9 +92,13 @@ public class LeamServiceImpl implements IOrderService {
 					String prex = "<string xmlns=\"http://tempuri.org/\">";
 					String end = "</string>";
 					String stocks = stockData.substring(stockData.indexOf(prex)+prex.length(), stockData.indexOf(end));
+					String supplierSize = "";
 					for(String size_stock : stocks.split("\\|")){
 						if(StringUtils.isNotBlank(size_stock)){
-							if(size.equals(size_stock.split(";")[0])){
+							supplierSize = "";
+							supplierSize = size_stock.split(";")[0];
+							supplierSize = supplierSize.replaceAll("\\+", "½");
+							if(size.equals(supplierSize)){
 								stock = Integer.parseInt(size_stock.split(";")[1]);
 								orderDTO.setLogContent("查询到的供货商的库存为============"+stock);
 								logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);

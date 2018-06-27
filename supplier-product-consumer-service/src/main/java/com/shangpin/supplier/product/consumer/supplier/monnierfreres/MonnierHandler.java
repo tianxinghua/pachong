@@ -145,7 +145,24 @@ public class MonnierHandler implements ISupplierHandler {
 				return false;
 			}
 			if(!StringUtils.isEmpty(item.getPvr_model()) && !StringUtils.isEmpty(item.getPvr_color())){
-				spuModel = item.getPvr_model() + " "+item.getPvr_color();
+
+				//品牌  Valentino Garavani 特殊处理
+				if("Valentino Garavani".equals(item.getBrand())){
+					String materialNo = item.getPvr_material();
+					if(StringUtils.isNotBlank(materialNo)){
+						String[] ar = materialNo.split("\\s+");
+						if(null!=ar&&ar.length>0){
+							spuModel = item.getPvr_model() + " " + ar[0]+ " "+item.getPvr_color();
+						}else{
+							spuModel = item.getPvr_model() + " "+item.getPvr_color();
+						}
+					}else{
+						spuModel = item.getPvr_model() + " "+item.getPvr_color();
+					}
+				}else{
+					spuModel = item.getPvr_model() + " "+item.getPvr_color();
+				}
+
 			}else{
 				spuModel = supplierSpuNo;
 			}
@@ -155,6 +172,7 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender(item.getGender());
 			hubSpu.setSupplierCategoryname(item.getType());
 			hubSpu.setSupplierBrandname(item.getBrand());
+
 			if(StringUtils.isNotBlank(item.getFashioncollection())){
 				hubSpu.setSupplierSeasonname(item.getFashioncollection());
 			}else{
