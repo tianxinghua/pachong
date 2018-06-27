@@ -186,7 +186,7 @@ public class CoccolebimbiCommonHandler implements ISupplierHandler {
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(item.getKEY());
 //			hubSku.setSupplierBarcode(item.getBarCode());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPREZZO_NETTO())));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getLISTINO())));
 //			hubSku.setMarketPriceCurrencyorg(item.getCurrency());
 //			hubSku.setSupplyPriceCurrency(item.getCurrency());
 			hubSku.setSupplierSkuSize(item.getTAGLIA());
