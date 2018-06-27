@@ -58,6 +58,10 @@ public class HubSpuController {
     public List<HubSpu> selectByCriteriaWithRowbounds(@RequestBody HubSpuCriteriaWithRowBounds criteriaWithRowBounds){
     	return hubSpuService.selectByCriteriaWithRowbounds(criteriaWithRowBounds);
     }
+	@RequestMapping(value = "/select-by-criteria")
+	public List<HubSpu> selectByCriteria(@RequestBody HubSpuCriteria criteria){
+	    return hubSpuService.selectByCriteria(criteria);
+	}
 	@RequestMapping(value = "/select-by-brand")
     public List<HubSpu> selectByBrand(@RequestBody HubSupplierSpuQureyDto dto){
     	return hubSpuService.selectByBrand(dto);
