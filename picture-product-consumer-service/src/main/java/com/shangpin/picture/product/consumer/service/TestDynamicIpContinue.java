@@ -166,17 +166,17 @@ public class TestDynamicIpContinue {
             return oldFactory;
         }
         String charset = "UTF-8";
-        public String webParseHtml(String url) {
+        public String webParseHtml(String targetUrl) {
 
             try {
-                String targetUrl = "http://www.baidu.com";
+//                String targetUrl = "http://www.baidu.com";
                 HttpURLConnection connection = null;
                 URL link = new URL(targetUrl);
                 // 这个IP要换 成可用的IP哦，这里案例只是随便写的一个IP
 
 
                 // 设置代理IP
-                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress((ipport.split(":"))[0], Integer.parseInt((ipport.split(":"))[1])));
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress((ipport.split(",")[0]).split(":")[0], Integer.parseInt((ipport.split(",")[0]).split(":")[1])));
                 connection = (HttpURLConnection)link.openConnection(proxy);
 
                 // 处理SSL证书问题
@@ -225,10 +225,12 @@ public class TestDynamicIpContinue {
 
                     System.out.println("请求" + targetUrl + ", 得到如下信息：");
                     System.out.println(html.toString());
+
                 }
             } catch (Exception e) {
                 System.err.println("发生异常：" + e.getMessage());
             }
+            return "";
 
 
 
@@ -253,91 +255,90 @@ public class TestDynamicIpContinue {
 
 
 
-
-            String html = "";
-            BrowserVersion[] versions = { BrowserVersion.CHROME, BrowserVersion.FIREFOX_52, BrowserVersion.INTERNET_EXPLORER, BrowserVersion.CHROME};
-            WebClient client = new WebClient(versions[(int)(versions.length * Math.random())]);
-            try {
-                client.getOptions().setThrowExceptionOnFailingStatusCode(false);
-                client.getOptions().setJavaScriptEnabled(useJs);
-                client.getOptions().setCssEnabled(false);
-                client.getOptions().setThrowExceptionOnScriptError(false);
-                client.getOptions().setTimeout(timeOut);
-                client.getOptions().setAppletEnabled(true);
-                client.getOptions().setGeolocationEnabled(true);
-                client.getOptions().setRedirectEnabled(true);
-
-                // 对于HTTPS网站，加上这行代码可以跳过SSL验证
-                client.getOptions().setUseInsecureSSL(https);
-
-                if (referer != null && !"".equals(referer)) {
-                    client.addRequestHeader("Referer", referer);
-                }
-
-                if (ipport != null) {
-                    ProxyConfig proxyConfig = new ProxyConfig((ipport.split(",")[0]).split(":")[0], Integer.parseInt((ipport.split(",")[0]).split(":")[1]));
-                    client.getOptions().setProxyConfig(proxyConfig);
-                }else {
-                    System.out.print(".");
-                    return "";
-                }
-
-                long startMs = System.currentTimeMillis();
-
-                Page page = client.getPage(url);
-                WebResponse response = page.getWebResponse();
-
-                if (outputHeaderInfo) {
-                    // 输出header信息
-                    List<NameValuePair> headers = response.getResponseHeaders();
-                    for (NameValuePair nameValuePair : headers) {
-                        System.out.println(nameValuePair.getName() + "-->" + nameValuePair.getValue());
-                    }
-                }
-
-                boolean isJson = false ;
-                if (response.getContentType().equals("application/json")) {
-                    html = response.getContentAsString();
-                    isJson = true ;
-                }else if(page.isHtmlPage()){
-                    html = ((HtmlPage)page).asXml();
-                }
-
-                long endMs = System.currentTimeMillis();
-
-                if (url.indexOf("2017.ip138.com") != -1) {
-                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" + Jsoup.parse(html).select("center").text());
-                }else if(url.equals("http://www.xxorg.com/tools/checkproxy/")) {
-                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" + Jsoup.parse(html).select("#result .jiacu").text());
-                }else if(isJson) {
-                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" +html);
-                }else if(url.indexOf("tianyancha.com") != -1) {
-                    Document doc = Jsoup.parse(html);
-                    Elements els = doc.select(".c8");
-                    System.out.println(getName() + "企业基本信息：");
-                    for (Element element : els) {
-                        System.out.println("\t*" + element.text());
-                    }
-                    els = doc.select(".companyInfo-table tr");
-                    System.out.println(getName() + "企业股东信息：");
-                    for (Element element : els) {
-                        System.out.println("\t*" + element.text());
-                    }
-                    els = doc.select("#_container_check tr");
-                    System.out.println(getName() + "企业抽查息：");
-                    for (Element element : els) {
-                        System.out.println("\t*" + element.text());
-                    }
-                }else{
-                    Document doc = Jsoup.parse(html);
-                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" + doc.select("title").text());
-                }
-            } catch (Exception e) {
-                System.err.println(ipport + ":" + e.getMessage());
-            } finally {
-                client.close();
-            }
-            return html;
+//            String html = "";
+//            BrowserVersion[] versions = { BrowserVersion.CHROME, BrowserVersion.FIREFOX_52, BrowserVersion.INTERNET_EXPLORER, BrowserVersion.CHROME};
+//            WebClient client = new WebClient(versions[(int)(versions.length * Math.random())]);
+//            try {
+//                client.getOptions().setThrowExceptionOnFailingStatusCode(false);
+//                client.getOptions().setJavaScriptEnabled(useJs);
+//                client.getOptions().setCssEnabled(false);
+//                client.getOptions().setThrowExceptionOnScriptError(false);
+//                client.getOptions().setTimeout(timeOut);
+//                client.getOptions().setAppletEnabled(true);
+//                client.getOptions().setGeolocationEnabled(true);
+//                client.getOptions().setRedirectEnabled(true);
+//
+//                // 对于HTTPS网站，加上这行代码可以跳过SSL验证
+//                client.getOptions().setUseInsecureSSL(https);
+//
+//                if (referer != null && !"".equals(referer)) {
+//                    client.addRequestHeader("Referer", referer);
+//                }
+//
+//                if (ipport != null) {
+//                    ProxyConfig proxyConfig = new ProxyConfig((ipport.split(",")[0]).split(":")[0], Integer.parseInt((ipport.split(",")[0]).split(":")[1]));
+//                    client.getOptions().setProxyConfig(proxyConfig);
+//                }else {
+//                    System.out.print(".");
+//                    return "";
+//                }
+//
+//                long startMs = System.currentTimeMillis();
+//
+//                Page page = client.getPage(url);
+//                WebResponse response = page.getWebResponse();
+//
+//                if (outputHeaderInfo) {
+//                    // 输出header信息
+//                    List<NameValuePair> headers = response.getResponseHeaders();
+//                    for (NameValuePair nameValuePair : headers) {
+//                        System.out.println(nameValuePair.getName() + "-->" + nameValuePair.getValue());
+//                    }
+//                }
+//
+//                boolean isJson = false ;
+//                if (response.getContentType().equals("application/json")) {
+//                    html = response.getContentAsString();
+//                    isJson = true ;
+//                }else if(page.isHtmlPage()){
+//                    html = ((HtmlPage)page).asXml();
+//                }
+//
+//                long endMs = System.currentTimeMillis();
+//
+//                if (url.indexOf("2017.ip138.com") != -1) {
+//                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" + Jsoup.parse(html).select("center").text());
+//                }else if(url.equals("http://www.xxorg.com/tools/checkproxy/")) {
+//                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" + Jsoup.parse(html).select("#result .jiacu").text());
+//                }else if(isJson) {
+//                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" +html);
+//                }else if(url.indexOf("tianyancha.com") != -1) {
+//                    Document doc = Jsoup.parse(html);
+//                    Elements els = doc.select(".c8");
+//                    System.out.println(getName() + "企业基本信息：");
+//                    for (Element element : els) {
+//                        System.out.println("\t*" + element.text());
+//                    }
+//                    els = doc.select(".companyInfo-table tr");
+//                    System.out.println(getName() + "企业股东信息：");
+//                    for (Element element : els) {
+//                        System.out.println("\t*" + element.text());
+//                    }
+//                    els = doc.select("#_container_check tr");
+//                    System.out.println(getName() + "企业抽查息：");
+//                    for (Element element : els) {
+//                        System.out.println("\t*" + element.text());
+//                    }
+//                }else{
+//                    Document doc = Jsoup.parse(html);
+//                    System.out.println(getName() + " " + ipport + " 用时 " + (endMs - startMs) + "毫秒 ：" + doc.select("title").text());
+//                }
+//            } catch (Exception e) {
+//                System.err.println(ipport + ":" + e.getMessage());
+//            } finally {
+//                client.close();
+//            }
+//            return html;
         }
 
     }
