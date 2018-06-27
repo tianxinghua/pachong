@@ -738,7 +738,15 @@ spring:
                         mengottiSncPendingProduct:
                               destination: mengottiSnc.pending.product
                               content-type: application/json
-
+                        zhicaiOriginalProduct:
+                              destination: zhicai.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        zhicaiPendingProduct:
+                              destination: zhicai.pending.product
+                              content-type: application/json
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
@@ -1466,7 +1474,16 @@ spring:
                                          republishToDlq: false
                               mengottiSncPendingProduct:
                                     producer:
-                                        　prefix: HA.
+                                        　						 prefix: HA.
+                              zhicaiOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              zhicaiPendingProduct:
+                                    producer:
+                                         prefix: HA.                                        
         consul: 
           host: localhost
           port: 8500

@@ -495,6 +495,12 @@ spring:
                               consumer:
                                        concurrency: 1
                                        maxAttempts: 1
+                        zhicaiPendingProduct:
+                              destination: zhicai.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1                                       
                         obluPendingProduct:
                               destination: oblu.pending.product
                               group: one
@@ -983,6 +989,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            zhicaiPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                       
                             obluPendingProduct:
                                   consumer:
                                        prefix: HA.

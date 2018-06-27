@@ -754,6 +754,9 @@ public class PendingProductStreamListener {
 		adapter.obluPendingProductStreamListen(message,headers);
 	}
 
-
+	@StreamListener(PendingProductSink.ZHICAI)
+	public void zhicaiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.zhicaiPendingProductStreamListen(message,headers);
+	}
 
 }

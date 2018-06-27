@@ -777,4 +777,14 @@ public class OriginalProductStreamListener {
 	public void obluStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.obluStreamListen(message,headers);
 	}
+	/**
+	 * 供应商zhicai(爬虫)原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ZHICAI)
+	public void zhicaiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.zhicaiStreamListen(message,headers);
+	}
+
 }

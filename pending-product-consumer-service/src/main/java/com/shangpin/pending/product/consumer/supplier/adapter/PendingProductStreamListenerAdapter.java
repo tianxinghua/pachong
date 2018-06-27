@@ -747,6 +747,17 @@ public class PendingProductStreamListenerAdapter {
 		this.messageHandle(message, headers);
 
 	}
+	
+	/**
+	 * 供应商 zhicai 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void zhicaiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+
 
 
 

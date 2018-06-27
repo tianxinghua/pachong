@@ -138,6 +138,11 @@ public class PendingBrandImportService {
 	}
 	private Map<String, String> filterBrand(HubBrandImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+
+
+
+
         if (productImport.getSupplierBrandDicId()!=null){
         	//数据库先查，后面比较刷新
 			HubSupplierBrandDicCriteriaDto hubSupplierBrandDicCriteriaDto =new HubSupplierBrandDicCriteriaDto() ;
@@ -153,6 +158,8 @@ public class PendingBrandImportService {
 			}if (productImport.getHubBrandNo()!=null){
 				hubSupplierBrandDicDto.setHubBrandNo(productImport.getHubBrandNo());
 				hubSupplierBrandDicDto.setFilterFlag((byte)1);
+				hubSupplierBrandDicDto.setMappingState(Byte.parseByte("1"));
+				hubSupplierBrandDicDto.setPushState(Byte.parseByte("1"));
 				map.put("hubBrandNo",productImport.getHubBrandNo());
 			}
 			hubSupplierBrandDicDto.setUpdateTime(new Date());
@@ -172,6 +179,7 @@ public class PendingBrandImportService {
 							hubSupplierBrandDicRequestDto.setSupplierBrand(productImport.getSupplierBrand());
 						}
 						dicRefreshGateWay.brandRefresh(hubSupplierBrandDicRequestDto);
+
 					}
 				}
 

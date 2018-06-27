@@ -486,6 +486,12 @@ spring:
                               consumer:
                                        concurrency: 4
                                        maxAttempts: 1
+                        zhicaiPendingProduct:
+                              destination: zhicai.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1                                       
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -938,6 +944,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            zhicaiPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                                      
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
@@ -969,4 +981,4 @@ shangpin:
              translateAll: true
              refresh: ${translateProperty.refresh:true}
    schedule:
-        brand: ${shangpin.schedule.brand:true}
+        brand: true
