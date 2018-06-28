@@ -11,7 +11,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.174
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -133,5 +133,5 @@ shangpin:
 supplier: 
         params: 
               supplierName: zhicai
-              supplierId: 2017031301866
-              supplierNo: S0000864
+              supplierId: 2018062801885
+              supplierNo: S0000945
