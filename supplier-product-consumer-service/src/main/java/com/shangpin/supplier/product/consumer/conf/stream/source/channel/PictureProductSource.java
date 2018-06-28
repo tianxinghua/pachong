@@ -14,9 +14,17 @@ public interface PictureProductSource {
 
 	public String SUPPLIER_PICTURE = "supplierPictureProduct";
 	
+	public String BRAND_PICTURE = "brandPictureProduct";
+	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
 	 */
 	@Output(value = PictureProductSource.SUPPLIER_PICTURE)
     public MessageChannel supplierPictureProduct();
+	
+	/**
+	 * @return 品牌方通用图片数据流通道组件
+	 */
+	@Output(value = PictureProductSource.BRAND_PICTURE)
+    public MessageChannel brandPictureProduct();
 }

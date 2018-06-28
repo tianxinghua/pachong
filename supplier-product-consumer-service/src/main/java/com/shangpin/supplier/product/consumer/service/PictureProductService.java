@@ -49,7 +49,7 @@ public class PictureProductService {
 	public void sendSupplierPicture(SupplierPicture supplierPicture, Map<String, ?> headers){
 		try {
 			if(toPush(supplierPicture)){
-				boolean result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
+				boolean result = pictureProductStreamSender.brandPictureProductStream(supplierPicture, headers);
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 发送图片 "+result);
 			}else{
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 下所有图片已存在，不推送");
