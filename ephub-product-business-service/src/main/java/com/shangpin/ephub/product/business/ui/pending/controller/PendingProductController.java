@@ -71,7 +71,10 @@ public class PendingProductController {
 	public HubResponse<?> batchSelectHotboom(@RequestBody PendingProducts pendingProducts){
 		return pendingProductService.batchSelectHotBoom(pendingProducts);
 	}
-
+	@RequestMapping(value="/save-hotboom",method=RequestMethod.POST)
+	public HubResponse<?> saveHotboom(@RequestBody PendingProductDto pendingProductDto){
+		return pendingProductService.saveHotBoom(pendingProductDto);
+	}
 
 
 
