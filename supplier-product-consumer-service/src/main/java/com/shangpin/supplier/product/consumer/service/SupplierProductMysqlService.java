@@ -1,6 +1,7 @@
 package com.shangpin.supplier.product.consumer.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,9 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingNohandleRea
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail;
+import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSenderGateWay;
+import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
 
@@ -62,6 +66,8 @@ public class SupplierProductMysqlService {
 
 	@Autowired
 	private HubSeasonDicGateWay hubSeasonDicGateWay;
+	@Autowired
+	ShangpinMailSenderGateWay shangpinMailSenderGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param supplierNo
@@ -261,6 +267,10 @@ public class SupplierProductMysqlService {
 			if(!hubSku.getSupplierSkuSize().equals(hubSkuSel.getSupplierSkuSize())){
 				hubSkuUpdated.setSupplierSkuSize(hubSku.getSupplierSkuSize()); 
 				isChanged = true;
+				//当sku尺码发生变化，并且老的sku已经生成尚品sku编号，发送邮件通知
+				if(hubSkuSel.getSpSkuNo()!=null&&!hubSkuSel.getSpSkuNo().equals("")) {
+					sendMail("尚品skuNo原始尺码发生变化","尚品skuNo:"+hubSkuSel.getSpSkuNo()+"原始尺码"+hubSkuSel.getSupplierSkuSize()+"更新为"+hubSku.getSupplierSkuSize());
+				}
 			}
 		}
 		return isChanged;
@@ -610,6 +620,22 @@ public class SupplierProductMysqlService {
 		}
 	}
 
+	public void sendMail(String subject,String text){
+		try {
+			ShangpinMail shangpinMail = new ShangpinMail();
+			shangpinMail.setFrom("chengxu@shangpin.com");
+			shangpinMail.setSubject(subject);
+			shangpinMail.setText(text);
+			shangpinMail.setTo("andraw.chen@shangpin.com");
+			List<String> addTo = new ArrayList<>();
+			addTo.add("lizhongren@shangpin.com");
+			addTo.add("Terry.Zhao@shangpin.com");
+			shangpinMail.setAddTo(addTo );
+			shangpinMailSenderGateWay.send(shangpinMail);
+		} catch (Exception e) {
+			log.error("发送邮件失败："+e.getMessage(),e); 
+		}
+	}
 
 
 
