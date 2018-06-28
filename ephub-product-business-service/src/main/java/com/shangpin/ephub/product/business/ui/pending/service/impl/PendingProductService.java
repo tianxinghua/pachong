@@ -505,9 +505,10 @@ public class PendingProductService extends PendingSkuService{
                 }else{//审核状态发生变化 重新赋值
                     hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
                 }
-                response.setCode("0"); //
+
 
             }
+			response.setCode("0"); //
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
             setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");

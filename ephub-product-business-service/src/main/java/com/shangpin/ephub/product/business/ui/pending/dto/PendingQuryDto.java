@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.ui.pending.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -90,6 +91,7 @@ public class PendingQuryDto {
     /**
      * 是否是待拍照展示页面  true:是
      */
+    @JsonProperty("isShoot")
     private boolean isShoot;
     /**
      * 错误原因处理状态
@@ -97,7 +99,9 @@ public class PendingQuryDto {
     private String msgMissHandleState;
     /**
      * 是否代购
+     * 0：否  1:是
      */
-    private boolean isHotboom ;
+
+    private String  isHotboom ;
     
 }
