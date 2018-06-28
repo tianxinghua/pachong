@@ -44,7 +44,7 @@ public class SupplierSkuController {
 	private HubSupplierSpuGateWay supplierSpuGateWay;
 	@Autowired
 	private HubSpuGateWay hubSpuGateWay;
-	private final static String supplierId = "2017031301866";
+	private final static String supplierId = "2018062801885";
 
 
 	
