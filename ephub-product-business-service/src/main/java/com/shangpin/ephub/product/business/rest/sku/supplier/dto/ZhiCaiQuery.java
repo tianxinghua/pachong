@@ -17,8 +17,8 @@ import java.util.List;
 @Setter
 public class ZhiCaiQuery {
 	
-	private Integer pageIndex;
-    private Integer pageSize;
+	private int pageIndex;
+    private int pageSize;
     private String supplierId;
     private String brandName;
     private String brandNo;
