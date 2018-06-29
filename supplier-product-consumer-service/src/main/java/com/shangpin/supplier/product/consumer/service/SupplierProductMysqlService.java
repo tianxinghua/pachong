@@ -269,7 +269,7 @@ public class SupplierProductMysqlService {
 				isChanged = true;
 				//当sku尺码发生变化，并且老的sku已经生成尚品sku编号，发送邮件通知
 				if(hubSkuSel.getSpSkuNo()!=null&&!hubSkuSel.getSpSkuNo().equals("")) {
-					sendMail("尚品skuNo原始尺码发生变化","尚品skuNo:"+hubSkuSel.getSpSkuNo()+"原始尺码"+hubSkuSel.getSupplierSkuSize()+"更新为"+hubSku.getSupplierSkuSize());
+					sendMail("尚品skuNo原始尺码发生变化","供应商id:"+hubSkuSel.getSupplierId()+"尚品skuNo:"+hubSkuSel.getSpSkuNo()+"原始尺码"+hubSkuSel.getSupplierSkuSize()+"更新为"+hubSku.getSupplierSkuSize());
 				}
 			}
 		}
