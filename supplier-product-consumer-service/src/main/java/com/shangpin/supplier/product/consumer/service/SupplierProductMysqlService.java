@@ -263,6 +263,13 @@ public class SupplierProductMysqlService {
 				isChanged = true;
 			}
 		}
+		if(hubSku.getMeasurement()!=null){
+			if(!hubSku.getMeasurement().equals(hubSkuSel.getMeasurement())){
+				pendingSku.setMeasurement(hubSku.getMeasurement());
+				hubSkuUpdated.setMeasurement(hubSku.getMeasurement()); 
+				isChanged = true;
+			}
+		}
 		return isChanged;
 	}
 	/**
@@ -284,6 +291,7 @@ public class SupplierProductMysqlService {
 		pendingSku.setSupplierBarcode(hubSku.getSupplierBarcode());
 		pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
 		pendingSku.setSupplyPriceCurrency(hubSku.getSupplyPriceCurrency());
+		pendingSku.setMeasurement(hubSku.getMeasurement());
 	}
 	/**
 	 * 查找hubSku是否存在，如果存在则返回查询结果
