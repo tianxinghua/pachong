@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.price.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.ephub.client.consumer.price.dto.ProductPriceDTO;
+import com.shangpin.ephub.client.consumer.price.gateway.PriceMqGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PriceHandleType;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierPriceChangeRecordDto;
 import com.shangpin.ephub.client.product.business.price.dto.PriceDto;
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.rest.price.dto.PriceQuery;
 import com.shangpin.ephub.product.business.rest.price.service.PriceService;
 import com.shangpin.ephub.product.business.rest.price.vo.PriceChangeRecordDto;
@@ -34,6 +40,8 @@ public class PriceController {
 	
 	@Autowired
 	private PriceService priceService;
+	@Autowired
+    PriceMqGateWay priceMqGateWay;
 
 	@RequestMapping(value = "/save-and-sendmessage")
 	public void savePriceRecordAndSendConsumer(@RequestBody PriceDto priceDto) throws Exception{
@@ -91,4 +99,43 @@ public class PriceController {
 		 return HubResponse.successResp(true);
 
 	}
+	
+	@RequestMapping(value="/push-price",method=RequestMethod.POST)
+	public HubResponse<?> pushPrice(@RequestBody PriceQuery priceQueryDto){
+		int startRow = 1;
+    	List<HubSupplierPriceChangeRecordDto> pushMqErrorRecordList = new ArrayList<>();
+    	try {
+	    	priceService.findPushMqErrorRecordList(startRow,pushMqErrorRecordList,priceQueryDto);
+	        List<HubSupplierPriceChangeRecordDto> needHandleRecords = priceService.findNeedHandleRecord(pushMqErrorRecordList);
+	        for(HubSupplierPriceChangeRecordDto tryDao:needHandleRecords){
+	        	try {
+		            ProductPriceDTO productPriceDTO = new ProductPriceDTO();
+		            this.transObject(tryDao,productPriceDTO);
+		            log.info("重推价格消息体："+ JsonUtil.serialize(productPriceDTO));
+		            priceMqGateWay.transPrice(productPriceDTO);
+		            log.info(productPriceDTO.getSopUserNo()+" "+productPriceDTO.getSupplierSkuNo()+" 发送队列成功。");
+	        	} catch (Exception e) {
+	        		log.info(e.getMessage());
+					e.printStackTrace();
+				}
+	        }
+    	} catch (Exception e) {
+			e.printStackTrace();
+			log.info(e.getMessage());
+			return HubResponse.successResp("推送失败!");
+		}
+        return HubResponse.successResp("推送成功!");
+	}
+	private void  transObject(HubSupplierPriceChangeRecordDto sourceObj,ProductPriceDTO targetObj){
+        targetObj.setSupplierPriceChangeRecordId(sourceObj.getSupplierPriceChangeRecordId());
+        targetObj.setMarketPrice(sourceObj.getMarketPrice().toString());
+        targetObj.setPurchasePrice(sourceObj.getSupplyPrice().toString());
+        targetObj.setMarketSeason(sourceObj.getMarketSeason());
+        targetObj.setMarketYear(sourceObj.getMarketYear());
+        targetObj.setSkuNo(sourceObj.getSpSkuNo());
+        targetObj.setSupplierSkuNo(sourceObj.getSupplierSkuNo());
+        targetObj.setSopUserNo(sourceObj.getSupplierId());
+        targetObj.setSupplierNo(sourceObj.getSupplierNo()); 
+        targetObj.setPriceHandleType(PriceHandleType.NEW_DEFAULT.getIndex());
+    }
 }

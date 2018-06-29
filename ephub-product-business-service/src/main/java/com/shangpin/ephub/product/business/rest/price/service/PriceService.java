@@ -1,6 +1,9 @@
 package com.shangpin.ephub.product.business.rest.price.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -355,6 +358,68 @@ public class PriceService {
 			log.error("发送邮件失败："+e.getMessage(),e); 
 		}
 	}
+	
+	public void  findPushMqErrorRecordList(int startRow,List<HubSupplierPriceChangeRecordDto> recordDtos,PriceQuery priceQueryDto) throws Exception{
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    	SimpleDateFormat sdformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	Date start = null;
+    	Date end = null;
+    	if(StringUtils.isEmpty(priceQueryDto.getStartDate())||StringUtils.isEmpty(priceQueryDto.getEndDate())) {
+			Calendar c = Calendar.getInstance();
+			c.setTime(new Date()); 
+			c.add(Calendar.DAY_OF_MONTH, -1);
+			start = sdformat.parse(sdf.format(c.getTime())+" 00:00:00");
+			end = sdformat.parse(sdf.format(c.getTime())+" 23:59:59");
+    	}else {
+    		start = sdformat.parse(priceQueryDto.getStartDate()+" 00:00:00");
+			end = sdformat.parse(priceQueryDto.getEndDate()+" 23:59:59");
+    	}
+		List<Byte> list = new ArrayList<>();
+		if(priceQueryDto.getStatus()==null||priceQueryDto.getStatus().size()==0) {
+			list.add(PriceHandleState.PUSHED_ERROR.getIndex());
+			list.add(PriceHandleState.PUSHED_OPENAPI_ERROR.getIndex());
+		}else {
+			list = priceQueryDto.getStatus();
+		}
+        HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
+        criteriaDto.setOrderByClause(" create_time desc ");
+        criteriaDto.createCriteria().andStateIn(list).andMarketSeasonIsNotNull().andCreateTimeGreaterThanOrEqualTo(start).andCreateTimeLessThanOrEqualTo(end); 
+        criteriaDto.setPageNo(startRow);
+        criteriaDto.setPageSize(100);
+        List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteriaDto);
+        Map<String,String> priceChangeMap = new HashMap<>();
+        int count = hubSupplierPriceChangeRecordDtos.size();
+        for(int i= 0 ;i<hubSupplierPriceChangeRecordDtos.size();i++){
+            HubSupplierPriceChangeRecordDto dto = hubSupplierPriceChangeRecordDtos.get(i);
+            if(priceChangeMap.containsKey(dto.getSupplierId()+"-"+dto.getSupplierSkuNo())){
+                hubSupplierPriceChangeRecordDtos.remove(i);
+                i--;
+            }else{
+                priceChangeMap.put(dto.getSupplierId()+"-"+dto.getSupplierSkuNo(),"");
+            }
+        }
+        recordDtos.addAll(hubSupplierPriceChangeRecordDtos);
+        if(count==100){
+        	startRow++;
+        	findPushMqErrorRecordList(startRow,recordDtos,priceQueryDto);
+        }
+    }
+	
+	 public List<HubSupplierPriceChangeRecordDto>  findNeedHandleRecord(List<HubSupplierPriceChangeRecordDto>  dtos){
+	        List<HubSupplierPriceChangeRecordDto> needHandles = new ArrayList<>();
+	        for(HubSupplierPriceChangeRecordDto dto:dtos){
+	            HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
 
+	            criteriaDto.createCriteria().andSupplierIdEqualTo(dto.getSupplierId()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo()).andMarketSeasonIsNotNull()
+	            .andCreateTimeGreaterThan(dto.getCreateTime());
+	            List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteriaDto);
+	            if(null ==hubSupplierPriceChangeRecordDtos || hubSupplierPriceChangeRecordDtos.size()== 0){
+	            	needHandles.add(dto);
+	            }
+	        }
+	        return needHandles;
+
+
+	    }
 	
 }
