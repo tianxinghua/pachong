@@ -15,6 +15,9 @@ spring:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
+                        brandPictureProduct: 
+                              destination: brand.product.picture
+                              content-type: application/json
                         refreshDicTask: 
                               destination: refresh.dic.task
                               group: one
@@ -750,6 +753,9 @@ spring:
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
+                                    producer: 
+                                         prefix: HA.
+                              brandPictureProduct: 
                                     producer: 
                                          prefix: HA.
                               refreshDicTask: 
