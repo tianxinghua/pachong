@@ -103,7 +103,8 @@ public class DelibertiHandler implements ISupplierHandler {
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(proDto.getSpuId());
 			//缺少货号,不确定
-			hubSpu.setSupplierSpuModel(proDto.getGtin());
+			String colorCode = proDto.getColorCode();
+			hubSpu.setSupplierSpuModel(proDto.getGtin()+""+colorCode);
 			hubSpu.setSupplierSpuName(proDto.getProductName());
 			hubSpu.setSupplierSpuColor(proDto.getColor());
 			hubSpu.setSupplierGender(proDto.getGender());
