@@ -13,10 +13,17 @@ import org.springframework.messaging.MessageChannel;
 public interface RetryPictureProductSource {
 
 	public String SUPPLIER_PICTURE = "supplierRetryPictureProduct";
+	public String BRAND_PICTURE = "brandRetryPictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
 	 */
 	@Output(value = RetryPictureProductSource.SUPPLIER_PICTURE)
     public MessageChannel supplierRetryPictureProduct();
+	
+	/**
+	 * @return 供应商商品通用图片数据流通道组件
+	 */
+	@Output(value = RetryPictureProductSource.BRAND_PICTURE)
+    public MessageChannel brandRetryPictureProduct();
 }
