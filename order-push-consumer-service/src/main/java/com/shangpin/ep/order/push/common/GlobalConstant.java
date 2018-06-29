@@ -50,4 +50,5 @@ public interface GlobalConstant {
 
 	public static final String  REDIS_ORDER_SUPPLIER_KEY="REDIS_ORDER_SUPPLIER_KEY";
 
+    public static String REDIS_PRICE_PUSH_CONSUMER_SERVICE_SUPPLIER_KEY ="REDIS_PRICE_PUSH_CONSUMER_SERVICE_SUPPLIER_KEY";
 }

@@ -113,7 +113,8 @@ public class StefaniaService implements IOrderService {
 				return ;
 			}
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
+			String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
+			BigDecimal price = priceInt.divide(new BigDecimal(serviceRate),5).setScale(0, BigDecimal.ROUND_HALF_UP);
 			orderDTO.setPurchasePriceDetail(price.toString());
 //			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
 			detail.setPRICE(price);

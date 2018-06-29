@@ -42,6 +42,8 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Item;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObject;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
+import com.shangpin.ep.order.module.supplier.bean.SupplierDTONew;
+import com.shangpin.ep.order.module.supplier.service.SupplierServiceNew;
 
 @Component("baseBluOrderImpl")
 public class BaseBluOrderImpl  implements IOrderService {
@@ -59,6 +61,8 @@ public class BaseBluOrderImpl  implements IOrderService {
 
     @Autowired
 	PriceService priceService;
+    @Autowired
+    SupplierServiceNew supplierServiceNew;
 
     private  String cancelUrl;
     private  String placeUrl;
@@ -259,10 +263,12 @@ public class BaseBluOrderImpl  implements IOrderService {
 			item.setPurchase_price("1");
 		}else{
 			try{
+				String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
+				
 				BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 				orderDTO.setLogContent("【geb在推送订单时获取采购价："+priceInt.toString()+"】"); 
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-				String price = priceInt.divide(new BigDecimal(1.05), 2)
+				String price = priceInt.divide(new BigDecimal(serviceRate), 2)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 				orderDTO.setPurchasePriceDetail(price);
 				item.setPurchase_price(price);

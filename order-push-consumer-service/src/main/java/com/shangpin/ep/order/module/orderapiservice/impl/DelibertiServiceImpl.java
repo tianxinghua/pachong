@@ -1,23 +1,25 @@
 package com.shangpin.ep.order.module.orderapiservice.impl;
 
-import com.shangpin.ep.order.common.HandleException;
-import com.shangpin.ep.order.common.LogCommon;
-import com.shangpin.ep.order.conf.supplier.SupplierProperties;
-import com.shangpin.ep.order.enumeration.PushStatus;
-import com.shangpin.ep.order.module.order.bean.OrderDTO;
-import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.util.httpclient.HttpUtil45;
-import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
-import com.shangpin.ep.order.util.date.DateTimeUtil;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import com.shangpin.ep.order.common.HandleException;
+import com.shangpin.ep.order.common.LogCommon;
+import com.shangpin.ep.order.conf.supplier.SupplierProperties;
+import com.shangpin.ep.order.enumeration.PushStatus;
+import com.shangpin.ep.order.module.order.bean.OrderDTO;
+import com.shangpin.ep.order.module.order.service.impl.PriceService;
+import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.supplier.bean.SupplierDTONew;
+import com.shangpin.ep.order.util.date.DateTimeUtil;
+import com.shangpin.ep.order.util.httpclient.HttpUtil45;
+import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 
 @Component("delibertiServiceImpl")
 public class DelibertiServiceImpl implements IOrderService {
@@ -33,12 +35,15 @@ public class DelibertiServiceImpl implements IOrderService {
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
+    @Autowired
+    PriceService priceService;
 	private void createOrder(OrderDTO orderDTO) {
 		
 		try {
 //			ProductDTO product = productSearchService.findProductForOrder(supplierId,orderDTO.getDetail().split(":")[0]);
 			BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
-			String price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+			String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
+			String price = priceInt.divide(new BigDecimal(serviceRate),5).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
 			//if(product!=null){
 				StringBuffer sb = new StringBuffer();
 				String detail[] = orderDTO.getDetail().split(":");
