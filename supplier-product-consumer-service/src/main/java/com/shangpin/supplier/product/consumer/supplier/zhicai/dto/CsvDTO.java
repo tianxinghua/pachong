@@ -17,12 +17,13 @@ public class CsvDTO {
 	private String color;
 	private String size;
 	private String proName;
-	private String marketPrice;
-	private String salePrice;
+	private String foreignMarketPrice;//国外市场价
+	private String domesticMarketPrice;//国内市场价
 	private String qty;
 	private String made;
 	private String desc;
 	private String pics;
 	private String detailLink;
+	private String measurement;
 	
 }

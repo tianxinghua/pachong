@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.Isexistpic;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -48,13 +49,12 @@ public class ZhiCaiHandler implements ISupplierHandler{
 				CsvDTO jsonObject = JsonUtil.deserialize(message.getData(), CsvDTO.class);
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-//				List<Image> images = converImage(supplierId,jsonObject);
-				List<Image> images = null;
-//				if(null == images){
-//					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
-//				}else{
-//					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
-//				}
+				List<Image> images = converImage(supplierId,jsonObject);
+				if(null == images){
+					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
+				}else{
+					hubSpu.setIsexistpic(Isexistpic.YES.getIndex()); 
+				}
 				boolean success = convertSpu(supplierId, jsonObject, hubSpu,message.getData());
 				
 				mongoService.save(supplierId, hubSpu.getSupplierSpuNo(), jsonObject);
@@ -72,7 +72,7 @@ public class ZhiCaiHandler implements ISupplierHandler{
 				}
 			}	
 		} catch (Exception e) {
-			log.error("stefania异常："+e.getMessage(),e); 
+			log.error("zhicai异常："+e.getMessage(),e); 
 		}		
 		
 	}
@@ -125,8 +125,8 @@ public class ZhiCaiHandler implements ISupplierHandler{
 			hubSpu.setSupplierOrigin(ob.getMade());
 			hubSpu.setSupplierSpuDesc(ob.getDesc());
 			hubSpu.setProductUrl(ob.getDetailLink());
-			hubSpu.setMarketPrice(new BigDecimal(ob.getMarketPrice()));
-			hubSpu.setMarketPriceCn(new BigDecimal(ob.getSalePrice()));
+			hubSpu.setMarketPrice(new BigDecimal(ob.getForeignMarketPrice()));
+			hubSpu.setMarketPriceCn(new BigDecimal(ob.getDomesticMarketPrice()));
 			return true;
 		}else{
 			return false;
@@ -172,10 +172,11 @@ public class ZhiCaiHandler implements ISupplierHandler{
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(ob.getProductModel()+"-"+ob.getSize());
-			hubSku.setMarketPrice(new BigDecimal(ob.getSalePrice()));
-			hubSku.setSalesPrice(new BigDecimal(ob.getSalePrice()));
-			hubSku.setSupplyPrice(new BigDecimal(ob.getSalePrice()));
+			hubSku.setMarketPrice(new BigDecimal(ob.getDomesticMarketPrice()));
+			hubSku.setSalesPrice(new BigDecimal(ob.getDomesticMarketPrice()));
+			hubSku.setSupplyPrice(new BigDecimal(ob.getDomesticMarketPrice()));
 			hubSku.setSupplierBarcode(ob.getProductModel()+"-"+ob.getSize());
+			hubSku.setMeasurement(ob.getMeasurement());
 			if(!StringUtils.isEmpty(ob.getSize())){
 				hubSku.setSupplierSkuSize(ob.getSize());
 			}

@@ -20,16 +20,17 @@ public class CsvDTO {
 	private String color;
 	private String size;
 	private String proName;
-	private String marketPrice;
-	private String salePrice;
+	private String foreignMarketPrice;//国外市场价
+	private String domesticMarketPrice;//国内市场价
 	private String qty;
 	private String made;
 	private String desc;
 	private String pics;
 	private String detailLink;
+	private String measurement;
 
 	public String[] getCsvDTO() {
-		String [] temp = {"gender","brand","category","spu","productModel","season","material","color","size","proName","marketPrice","salePrice","qty","made","desc","pics","detailLink"};
+		String [] temp = {"gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement"};
 		return temp;
 	}
 	
