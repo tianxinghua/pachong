@@ -224,6 +224,9 @@ public class DataSverviceUtil {
                 if(null!=supplierSku.getSupplyPrice()&&0!=supplierSku.getSupplyPrice().intValue()){
                     hubSkuPending.setSupplyPrice(supplierSku.getSupplyPrice());
                 }
+                if(null!=supplierSku.getMeasurement()){
+                    hubSkuPending.setMeasurement(supplierSku.getMeasurement());
+                }
                 Date date = new Date();
                 hubSkuPending.setUpdateTime(date);
 

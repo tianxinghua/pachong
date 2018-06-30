@@ -97,5 +97,6 @@ public class ObjectConvertCommon {
         pendingSku.setSupplierBarcode(hubSku.getSupplierBarcode());
         pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
         pendingSku.setSupplyPriceCurrency(hubSku.getSupplyPriceCurrency());
+        pendingSku.setMeasurement(hubSku.getMeasurement());
     }
 }

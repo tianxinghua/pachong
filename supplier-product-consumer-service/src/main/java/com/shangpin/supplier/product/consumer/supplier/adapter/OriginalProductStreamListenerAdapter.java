@@ -169,6 +169,9 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("obluHandler")
 	private ISupplierHandler obluHandler;
 
+	@Autowired
+	@Qualifier("zhicaiHandler")
+	private ISupplierHandler zhicaiHandler;
 	
 	
 	/**
@@ -862,5 +865,14 @@ public class OriginalProductStreamListenerAdapter {
 	public void obluStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		obluHandler.handleOriginalProduct(message, headers);
 	}
+	/**
+	 * 供应商zhicai处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void zhicaiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		zhicaiHandler.handleOriginalProduct(message, headers);
+	}
+	
 
 }

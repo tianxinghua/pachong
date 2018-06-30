@@ -128,3 +128,9 @@ shangpin:
    hub: 
        callAddress: 
              pendingProductInfoUrl: http://qa.scm.shangpin.com/gms/HubSupplierProduct/PendingProductInfo?productId=
+             hubProductUrl: http://api-queue.ephub.spidc1.com/message/api/original-product
+supplier: 
+        params: 
+              supplierName: zhicai
+              supplierId: 123456789
+              supplierNo: 987654321

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,16 +18,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.business.supplier.gateway.SupplierInHubGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.CatgoryState;
-import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
-import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuBrandState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
@@ -734,8 +725,6 @@ public class PendingHandler extends VariableInit {
 
 			boolean hubSpuIsPassing = objectConvertCommon.setSpuPropertyFromHubSpu(hubSpuPending, hubSpuDto);
 			hubSpuPending.setHubSpuIsPassing(hubSpuIsPassing);// //待处理和已选品是否同品牌同货号同颜色
-			setShootState(hubSpuPending);
-			dataServiceHandler.savePendingSpu(hubSpuPending);
 
 			hubSpuPending.setHubSpuNo(hubSpuDto.getSpuNo());
 
@@ -749,12 +738,27 @@ public class PendingHandler extends VariableInit {
 			byte filterFlag = screenSupplierBrandAndSeasonEffectiveOrNot(hubSpuPending.getSupplierId(),
 					hubSpuPending.getHubBrandNo(), hubSpuPending.getHubSeason());
 			hubSpuPending.setFilterFlag(filterFlag);
-            setShootState(hubSpuPending);
-			dataServiceHandler.savePendingSpu(hubSpuPending);
-
 		}
+		//设置摄影状态
+		setShootState(hubSpuPending);
+		//设置来源
+		setProductSourceFrom(hubSpuPending);
+
+		dataServiceHandler.savePendingSpu(hubSpuPending);
 		return hubSpuPending;
 
+	}
+
+	private void setProductSourceFrom(SpuPending hubSpuPending) {
+		Map<String,String> brandSupplierIdMap = dataBusinessService.getBrandSupplierIdMap();
+		if(null!=brandSupplierIdMap&&brandSupplierIdMap.containsKey(hubSpuPending.getSupplierId())){
+			hubSpuPending.setOriginSource(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+			hubSpuPending.setOriginSource(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+		}else{
+			hubSpuPending.setOriginSource(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
+			hubSpuPending.setOriginSource(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
+		}
+		hubSpuPending.setOriginSupplierId(hubSpuPending.getSupplierId());
 	}
 
 	/**

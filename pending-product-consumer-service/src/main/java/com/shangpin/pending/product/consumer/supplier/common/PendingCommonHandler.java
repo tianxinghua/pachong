@@ -317,7 +317,7 @@ public class PendingCommonHandler {
 			supplierBrandStaticMap = new HashMap<>();
 			List<HubBrandDicDto> brandDTOS = dataServiceHandler.getBrand();
 			for (HubBrandDicDto dto : brandDTOS) {
-				if (dto.getSupplierBrand() != null) {
+				if (dto.getSupplierBrand() != null&&dto.getHubBrandNo() != null) {
 					supplierBrandStaticMap.put(dto.getSupplierBrand().toUpperCase(), dto.getHubBrandNo());
 				}
 			}

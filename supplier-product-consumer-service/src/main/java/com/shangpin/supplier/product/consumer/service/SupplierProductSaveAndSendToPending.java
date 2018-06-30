@@ -275,11 +275,12 @@ public class SupplierProductSaveAndSendToPending {
 	 * @param supplierName
 	 * @return
 	 */
-private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
-		PendingProduct pendingProduct = new PendingProduct();
-		pendingProduct.setSupplierNo(supplierNo);
-		pendingProduct.setSupplierId(supplierId);
-		pendingProduct.setSupplierName(supplierName);
-		return pendingProduct;
-		}
-		}
+	private PendingProduct initPendingProduct(String supplierNo,String supplierId, String supplierName) throws EpHubSupplierProductConsumerException {
+			PendingProduct pendingProduct = new PendingProduct();
+			pendingProduct.setSupplierNo(supplierNo);
+			pendingProduct.setSupplierId(supplierId);
+			pendingProduct.setSupplierName(supplierName);
+			return pendingProduct;
+	}
+
+}

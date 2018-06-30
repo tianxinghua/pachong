@@ -1,7 +1,10 @@
 package com.shangpin.pending.product.consumer.supplier.common;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.StockState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SupplierPriceState;
+import com.shangpin.commons.redis.IShangpinRedis;
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
@@ -11,11 +14,15 @@ import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandCrit
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandDto;
 import com.shangpin.ephub.client.data.mysql.studio.dic.gateway.HubDicStudioBrandGateway;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lizhongren on 2017/8/24.
@@ -35,6 +42,12 @@ public class DataBusinessService extends DataServiceHandler {
     @Autowired
     private HubDicStudioBrandGateway studioBrandGateway;
 
+
+    @Autowired
+    private HubSupplierValueMappingGateWay mappingGateWay;
+
+    @Autowired
+    private IShangpinRedis shangpinRedis;
 
 
     public void updateSpuPendingStockAndPriceState(Long  spuPendingId){
@@ -130,7 +143,30 @@ public class DataBusinessService extends DataServiceHandler {
 
     }
 
+    public Map<String,String> getBrandSupplierIdMap(){
 
+
+         Map<String, String> brandSupplierMap = shangpinRedis
+                .hgetAll(ConstantProperty.REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY);
+        if (brandSupplierMap == null || brandSupplierMap.size() < 1) {
+            log.info("supplierOrigin的redis为空");
+
+            Map<String, String> tmpBrandSupplierMap = new HashMap<>();
+            HubSupplierValueMappingCriteriaDto criteriaDto = new HubSupplierValueMappingCriteriaDto();
+            criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+            List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = mappingGateWay.selectByCriteria(criteriaDto);
+            hubSupplierValueMappingDtos.forEach(mapping ->{
+                tmpBrandSupplierMap.put(mapping.getSupplierId(),mapping.getSupplierId());
+            });
+            shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY, tmpBrandSupplierMap);
+            shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY,
+                    ConstantProperty.REDIS_EPHUB_CATEGORY_COMMON_MAPPING_MAP_TIME );
+            return tmpBrandSupplierMap;
+        }
+
+        return  brandSupplierMap;
+
+    }
 
 
 
