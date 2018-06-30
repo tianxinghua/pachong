@@ -499,7 +499,7 @@ public class HubProductServiceImpl implements HubProductService {
         skuOrgDom.setSupplierSkuNo(hubSkuSupplierMappingDto.getSupplierSkuNo());
         skuOrgDom.setSkuNo("");
         skuOrgDom.setSupplierNo(hubSkuSupplierMappingDto.getSupplierNo());
-
+        skuOrgDom.setSopUserNo(hubSkuSupplierMappingDto.getSupplierId());
         HubSkuPendingDto hubSkuPendingDto = getHubSkuPendingBySupplierIdAndSuppierSkuNo(hubSkuSupplierMappingDto.getSupplierId(), hubSkuSupplierMappingDto.getSupplierSkuNo());
         if(null!=hubSkuPendingDto){
 //            skuOrgDom.setSkuOrgName("");

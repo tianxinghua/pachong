@@ -9,8 +9,6 @@
     <result column="category_no" property="categoryNo" jdbcType="VARCHAR" />
     <result column="brand_no" property="brandNo" jdbcType="VARCHAR" />
     <result column="market_time" property="marketTime" jdbcType="VARCHAR" />
-    <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
-    <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
     <result column="season" property="season" jdbcType="VARCHAR" />
     <result column="spu_desc" property="spuDesc" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -19,18 +17,23 @@
     <result column="update_user" property="updateUser" jdbcType="VARCHAR" />
     <result column="spu_state" property="spuState" jdbcType="TINYINT" />
     <result column="spu_select_state" property="spuSelectState" jdbcType="TINYINT" />
+    <result column="hub_color" property="hubColor" jdbcType="VARCHAR" />
+    <result column="hub_color_no" property="hubColorNo" jdbcType="VARCHAR" />
     <result column="new_type" property="newType" jdbcType="TINYINT" />
     <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
-    <result column="origin" property="origin" jdbcType="VARCHAR" />
-    <result column="material" property="material" jdbcType="VARCHAR" />
     <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
     <result column="info_from" property="infoFrom" jdbcType="TINYINT" />
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="material" property="material" jdbcType="VARCHAR" />
+    <result column="origin" property="origin" jdbcType="VARCHAR" />
     <result column="picture_export_time" property="pictureExportTime" jdbcType="TIMESTAMP" />
     <result column="picture_export_user" property="pictureExportUser" jdbcType="VARCHAR" />
     <result column="picture_state" property="pictureState" jdbcType="TINYINT" />
+    <result column="measurement" property="measurement" jdbcType="VARCHAR" />
+    <result column="hotboom_sign" property="hotboomSign" jdbcType="TINYINT" />
+    <result column="hotboom_spu_model" property="hotboomSpuModel" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -92,10 +95,11 @@
   </sql>
   <sql id="Base_Column_List" >
     <if test="fields == null" >
-      spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, hub_color, 
-      hub_color_no, season, spu_desc, create_time, create_user, update_time, update_user, 
-      spu_state, spu_select_state, new_type, pic_url, origin, material, spu_no, info_from, 
-      memo, data_state, version, picture_export_time, picture_export_user, picture_state
+      spu_id, spu_model, spu_name, gender, category_no, brand_no, market_time, season,
+      spu_desc, create_time, create_user, update_time, update_user, spu_state, spu_select_state,
+      hub_color, hub_color_no, new_type, pic_url, spu_no, info_from, memo, data_state,
+      version, material, origin, picture_export_time, picture_export_user, picture_state,
+      measurement, hotboom_sign, hotboom_spu_model
     </if>
     <if test="fields != null" >
       ${fields}
@@ -119,8 +123,8 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
-    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,hub_color,hub_color_no,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,new_type,pic_url,origin,material,spu_no,info_from,memo,data_state,version,picture_export_time,picture_export_user,picture_state
+    select
+    spu_id,spu_model,spu_name,gender,category_no,brand_no,market_time,season,spu_desc,create_time,create_user,update_time,update_user,spu_state,spu_select_state,hub_color,hub_color_no,new_type,pic_url,spu_no,info_from,memo,data_state,version,material,origin,picture_export_time,picture_export_user,picture_state,measurement,hotboom_sign,hotboom_spu_model
     from hub_spu
     where spu_id = #{spuId,jdbcType=BIGINT}
   </select>
@@ -135,34 +139,36 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
-    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="java.lang.Long">
-  		SELECT LAST_INSERT_ID() AS spu_id
-  	</selectKey>
-    insert into hub_spu (spu_id, spu_model, spu_name, 
-      gender, category_no, brand_no, 
-      market_time, hub_color, hub_color_no, 
-      season, spu_desc, create_time, 
-      create_user, update_time, update_user, 
-      spu_state, spu_select_state, new_type, 
-      pic_url, origin, material, 
-      spu_no, info_from, memo, 
-      data_state, version, picture_export_time, 
-      picture_export_user, picture_state)
-    values (#{spuId,jdbcType=BIGINT}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR}, 
-      #{gender,jdbcType=VARCHAR}, #{categoryNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR}, 
-      #{marketTime,jdbcType=VARCHAR}, #{hubColor,jdbcType=VARCHAR}, #{hubColorNo,jdbcType=VARCHAR}, 
-      #{season,jdbcType=VARCHAR}, #{spuDesc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT}, #{newType,jdbcType=TINYINT}, 
-      #{picUrl,jdbcType=VARCHAR}, #{origin,jdbcType=VARCHAR}, #{material,jdbcType=VARCHAR}, 
-      #{spuNo,jdbcType=VARCHAR}, #{infoFrom,jdbcType=TINYINT}, #{memo,jdbcType=VARCHAR}, 
-      #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, #{pictureExportTime,jdbcType=TIMESTAMP}, 
-      #{pictureExportUser,jdbcType=VARCHAR}, #{pictureState,jdbcType=TINYINT})
+    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS spu_id
+    </selectKey>
+    insert into hub_spu (spu_id, spu_model, spu_name,
+      gender, category_no, brand_no,
+      market_time, season, spu_desc,
+      create_time, create_user, update_time,
+      update_user, spu_state, spu_select_state,
+      hub_color, hub_color_no, new_type,
+      pic_url, spu_no, info_from,
+      memo, data_state, version,
+      material, origin, picture_export_time,
+      picture_export_user, picture_state, measurement,
+      hotboom_sign, hotboom_spu_model)
+    values (#{spuId,jdbcType=BIGINT}, #{spuModel,jdbcType=VARCHAR}, #{spuName,jdbcType=VARCHAR},
+      #{gender,jdbcType=VARCHAR}, #{categoryNo,jdbcType=VARCHAR}, #{brandNo,jdbcType=VARCHAR},
+      #{marketTime,jdbcType=VARCHAR}, #{season,jdbcType=VARCHAR}, #{spuDesc,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+      #{updateUser,jdbcType=VARCHAR}, #{spuState,jdbcType=TINYINT}, #{spuSelectState,jdbcType=TINYINT},
+      #{hubColor,jdbcType=VARCHAR}, #{hubColorNo,jdbcType=VARCHAR}, #{newType,jdbcType=TINYINT},
+      #{picUrl,jdbcType=VARCHAR}, #{spuNo,jdbcType=VARCHAR}, #{infoFrom,jdbcType=TINYINT},
+      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT},
+      #{material,jdbcType=VARCHAR}, #{origin,jdbcType=VARCHAR}, #{pictureExportTime,jdbcType=TIMESTAMP},
+      #{pictureExportUser,jdbcType=VARCHAR}, #{pictureState,jdbcType=TINYINT}, #{measurement,jdbcType=VARCHAR},
+      #{hotboomSign,jdbcType=TINYINT}, #{hotboomSpuModel,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu" >
-    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="java.lang.Long">
-  		SELECT LAST_INSERT_ID() AS spu_id
-  	</selectKey>
+    <selectKey keyColumn="spu_id" keyProperty="spuId" order="AFTER" resultType="long">
+      SELECT LAST_INSERT_ID() AS spu_id
+    </selectKey>
     insert into hub_spu
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="spuId != null" >
@@ -185,12 +191,6 @@
       </if>
       <if test="marketTime != null" >
         market_time,
-      </if>
-      <if test="hubColor != null" >
-        hub_color,
-      </if>
-      <if test="hubColorNo != null" >
-        hub_color_no,
       </if>
       <if test="season != null" >
         season,
@@ -216,17 +216,17 @@
       <if test="spuSelectState != null" >
         spu_select_state,
       </if>
+      <if test="hubColor != null" >
+        hub_color,
+      </if>
+      <if test="hubColorNo != null" >
+        hub_color_no,
+      </if>
       <if test="newType != null" >
         new_type,
       </if>
       <if test="picUrl != null" >
         pic_url,
-      </if>
-      <if test="origin != null" >
-        origin,
-      </if>
-      <if test="material != null" >
-        material,
       </if>
       <if test="spuNo != null" >
         spu_no,
@@ -243,6 +243,12 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="material != null" >
+        material,
+      </if>
+      <if test="origin != null" >
+        origin,
+      </if>
       <if test="pictureExportTime != null" >
         picture_export_time,
       </if>
@@ -251,6 +257,15 @@
       </if>
       <if test="pictureState != null" >
         picture_state,
+      </if>
+      <if test="measurement != null" >
+        measurement,
+      </if>
+      <if test="hotboomSign != null" >
+        hotboom_sign,
+      </if>
+      <if test="hotboomSpuModel != null" >
+        hotboom_spu_model,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -274,12 +289,6 @@
       </if>
       <if test="marketTime != null" >
         #{marketTime,jdbcType=VARCHAR},
-      </if>
-      <if test="hubColor != null" >
-        #{hubColor,jdbcType=VARCHAR},
-      </if>
-      <if test="hubColorNo != null" >
-        #{hubColorNo,jdbcType=VARCHAR},
       </if>
       <if test="season != null" >
         #{season,jdbcType=VARCHAR},
@@ -305,17 +314,17 @@
       <if test="spuSelectState != null" >
         #{spuSelectState,jdbcType=TINYINT},
       </if>
+      <if test="hubColor != null" >
+        #{hubColor,jdbcType=VARCHAR},
+      </if>
+      <if test="hubColorNo != null" >
+        #{hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="newType != null" >
         #{newType,jdbcType=TINYINT},
       </if>
       <if test="picUrl != null" >
         #{picUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="origin != null" >
-        #{origin,jdbcType=VARCHAR},
-      </if>
-      <if test="material != null" >
-        #{material,jdbcType=VARCHAR},
       </if>
       <if test="spuNo != null" >
         #{spuNo,jdbcType=VARCHAR},
@@ -332,6 +341,12 @@
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
       </if>
+      <if test="material != null" >
+        #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        #{origin,jdbcType=VARCHAR},
+      </if>
       <if test="pictureExportTime != null" >
         #{pictureExportTime,jdbcType=TIMESTAMP},
       </if>
@@ -340,6 +355,15 @@
       </if>
       <if test="pictureState != null" >
         #{pictureState,jdbcType=TINYINT},
+      </if>
+      <if test="measurement != null" >
+        #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="hotboomSign != null" >
+        #{hotboomSign,jdbcType=TINYINT},
+      </if>
+      <if test="hotboomSpuModel != null" >
+        #{hotboomSpuModel,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -373,12 +397,6 @@
       <if test="record.marketTime != null" >
         market_time = #{record.marketTime,jdbcType=VARCHAR},
       </if>
-      <if test="record.hubColor != null" >
-        hub_color = #{record.hubColor,jdbcType=VARCHAR},
-      </if>
-      <if test="record.hubColorNo != null" >
-        hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
-      </if>
       <if test="record.season != null" >
         season = #{record.season,jdbcType=VARCHAR},
       </if>
@@ -403,17 +421,17 @@
       <if test="record.spuSelectState != null" >
         spu_select_state = #{record.spuSelectState,jdbcType=TINYINT},
       </if>
+      <if test="record.hubColor != null" >
+        hub_color = #{record.hubColor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hubColorNo != null" >
+        hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.newType != null" >
         new_type = #{record.newType,jdbcType=TINYINT},
       </if>
       <if test="record.picUrl != null" >
         pic_url = #{record.picUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="record.origin != null" >
-        origin = #{record.origin,jdbcType=VARCHAR},
-      </if>
-      <if test="record.material != null" >
-        material = #{record.material,jdbcType=VARCHAR},
       </if>
       <if test="record.spuNo != null" >
         spu_no = #{record.spuNo,jdbcType=VARCHAR},
@@ -430,6 +448,12 @@
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.material != null" >
+        material = #{record.material,jdbcType=VARCHAR},
+      </if>
+      <if test="record.origin != null" >
+        origin = #{record.origin,jdbcType=VARCHAR},
+      </if>
       <if test="record.pictureExportTime != null" >
         picture_export_time = #{record.pictureExportTime,jdbcType=TIMESTAMP},
       </if>
@@ -439,6 +463,15 @@
       <if test="record.pictureState != null" >
         picture_state = #{record.pictureState,jdbcType=TINYINT},
       </if>
+      <if test="record.measurement != null" >
+        measurement = #{record.measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hotboomSign != null" >
+        hotboom_sign = #{record.hotboomSign,jdbcType=TINYINT},
+      </if>
+      <if test="record.hotboomSpuModel != null" >
+        hotboom_spu_model = #{record.hotboomSpuModel,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -447,34 +480,37 @@
   <update id="updateByExample" parameterType="map" >
     update hub_spu
     set spu_id = #{record.spuId,jdbcType=BIGINT},
-      spu_model = #{record.spuModel,jdbcType=VARCHAR},
-      spu_name = #{record.spuName,jdbcType=VARCHAR},
-      gender = #{record.gender,jdbcType=VARCHAR},
-      category_no = #{record.categoryNo,jdbcType=VARCHAR},
-      brand_no = #{record.brandNo,jdbcType=VARCHAR},
-      market_time = #{record.marketTime,jdbcType=VARCHAR},
-      hub_color = #{record.hubColor,jdbcType=VARCHAR},
-      hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
-      season = #{record.season,jdbcType=VARCHAR},
-      spu_desc = #{record.spuDesc,jdbcType=VARCHAR},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      create_user = #{record.createUser,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      update_user = #{record.updateUser,jdbcType=VARCHAR},
-      spu_state = #{record.spuState,jdbcType=TINYINT},
-      spu_select_state = #{record.spuSelectState,jdbcType=TINYINT},
-      new_type = #{record.newType,jdbcType=TINYINT},
-      pic_url = #{record.picUrl,jdbcType=VARCHAR},
-      origin = #{record.origin,jdbcType=VARCHAR},
-      material = #{record.material,jdbcType=VARCHAR},
-      spu_no = #{record.spuNo,jdbcType=VARCHAR},
-      info_from = #{record.infoFrom,jdbcType=TINYINT},
-      memo = #{record.memo,jdbcType=VARCHAR},
-      data_state = #{record.dataState,jdbcType=TINYINT},
-      version = #{record.version,jdbcType=BIGINT},
-      picture_export_time = #{record.pictureExportTime,jdbcType=TIMESTAMP},
-      picture_export_user = #{record.pictureExportUser,jdbcType=VARCHAR},
-      picture_state = #{record.pictureState,jdbcType=TINYINT}
+    spu_model = #{record.spuModel,jdbcType=VARCHAR},
+    spu_name = #{record.spuName,jdbcType=VARCHAR},
+    gender = #{record.gender,jdbcType=VARCHAR},
+    category_no = #{record.categoryNo,jdbcType=VARCHAR},
+    brand_no = #{record.brandNo,jdbcType=VARCHAR},
+    market_time = #{record.marketTime,jdbcType=VARCHAR},
+    season = #{record.season,jdbcType=VARCHAR},
+    spu_desc = #{record.spuDesc,jdbcType=VARCHAR},
+    create_time = #{record.createTime,jdbcType=TIMESTAMP},
+    create_user = #{record.createUser,jdbcType=VARCHAR},
+    update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+    update_user = #{record.updateUser,jdbcType=VARCHAR},
+    spu_state = #{record.spuState,jdbcType=TINYINT},
+    spu_select_state = #{record.spuSelectState,jdbcType=TINYINT},
+    hub_color = #{record.hubColor,jdbcType=VARCHAR},
+    hub_color_no = #{record.hubColorNo,jdbcType=VARCHAR},
+    new_type = #{record.newType,jdbcType=TINYINT},
+    pic_url = #{record.picUrl,jdbcType=VARCHAR},
+    spu_no = #{record.spuNo,jdbcType=VARCHAR},
+    info_from = #{record.infoFrom,jdbcType=TINYINT},
+    memo = #{record.memo,jdbcType=VARCHAR},
+    data_state = #{record.dataState,jdbcType=TINYINT},
+    version = #{record.version,jdbcType=BIGINT},
+    material = #{record.material,jdbcType=VARCHAR},
+    origin = #{record.origin,jdbcType=VARCHAR},
+    picture_export_time = #{record.pictureExportTime,jdbcType=TIMESTAMP},
+    picture_export_user = #{record.pictureExportUser,jdbcType=VARCHAR},
+    picture_state = #{record.pictureState,jdbcType=TINYINT},
+    measurement = #{record.measurement,jdbcType=VARCHAR},
+    hotboom_sign = #{record.hotboomSign,jdbcType=TINYINT},
+    hotboom_spu_model = #{record.hotboomSpuModel,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -500,12 +536,6 @@
       <if test="marketTime != null" >
         market_time = #{marketTime,jdbcType=VARCHAR},
       </if>
-      <if test="hubColor != null" >
-        hub_color = #{hubColor,jdbcType=VARCHAR},
-      </if>
-      <if test="hubColorNo != null" >
-        hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
-      </if>
       <if test="season != null" >
         season = #{season,jdbcType=VARCHAR},
       </if>
@@ -530,17 +560,17 @@
       <if test="spuSelectState != null" >
         spu_select_state = #{spuSelectState,jdbcType=TINYINT},
       </if>
+      <if test="hubColor != null" >
+        hub_color = #{hubColor,jdbcType=VARCHAR},
+      </if>
+      <if test="hubColorNo != null" >
+        hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
+      </if>
       <if test="newType != null" >
         new_type = #{newType,jdbcType=TINYINT},
       </if>
       <if test="picUrl != null" >
         pic_url = #{picUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="origin != null" >
-        origin = #{origin,jdbcType=VARCHAR},
-      </if>
-      <if test="material != null" >
-        material = #{material,jdbcType=VARCHAR},
       </if>
       <if test="spuNo != null" >
         spu_no = #{spuNo,jdbcType=VARCHAR},
@@ -557,6 +587,12 @@
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="material != null" >
+        material = #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="origin != null" >
+        origin = #{origin,jdbcType=VARCHAR},
+      </if>
       <if test="pictureExportTime != null" >
         picture_export_time = #{pictureExportTime,jdbcType=TIMESTAMP},
       </if>
@@ -565,6 +601,15 @@
       </if>
       <if test="pictureState != null" >
         picture_state = #{pictureState,jdbcType=TINYINT},
+      </if>
+      <if test="measurement != null" >
+        measurement = #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="hotboomSign != null" >
+        hotboom_sign = #{hotboomSign,jdbcType=TINYINT},
+      </if>
+      <if test="hotboomSpuModel != null" >
+        hotboom_spu_model = #{hotboomSpuModel,jdbcType=VARCHAR},
       </if>
     </set>
     where spu_id = #{spuId,jdbcType=BIGINT}
@@ -577,8 +622,6 @@
       category_no = #{categoryNo,jdbcType=VARCHAR},
       brand_no = #{brandNo,jdbcType=VARCHAR},
       market_time = #{marketTime,jdbcType=VARCHAR},
-      hub_color = #{hubColor,jdbcType=VARCHAR},
-      hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
       season = #{season,jdbcType=VARCHAR},
       spu_desc = #{spuDesc,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -587,18 +630,23 @@
       update_user = #{updateUser,jdbcType=VARCHAR},
       spu_state = #{spuState,jdbcType=TINYINT},
       spu_select_state = #{spuSelectState,jdbcType=TINYINT},
+      hub_color = #{hubColor,jdbcType=VARCHAR},
+      hub_color_no = #{hubColorNo,jdbcType=VARCHAR},
       new_type = #{newType,jdbcType=TINYINT},
       pic_url = #{picUrl,jdbcType=VARCHAR},
-      origin = #{origin,jdbcType=VARCHAR},
-      material = #{material,jdbcType=VARCHAR},
       spu_no = #{spuNo,jdbcType=VARCHAR},
       info_from = #{infoFrom,jdbcType=TINYINT},
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT},
+      material = #{material,jdbcType=VARCHAR},
+      origin = #{origin,jdbcType=VARCHAR},
       picture_export_time = #{pictureExportTime,jdbcType=TIMESTAMP},
       picture_export_user = #{pictureExportUser,jdbcType=VARCHAR},
-      picture_state = #{pictureState,jdbcType=TINYINT}
+      picture_state = #{pictureState,jdbcType=TINYINT},
+      measurement = #{measurement,jdbcType=VARCHAR},
+      hotboom_sign = #{hotboomSign,jdbcType=TINYINT},
+      hotboom_spu_model = #{hotboomSpuModel,jdbcType=VARCHAR}
     where spu_id = #{spuId,jdbcType=BIGINT}
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria" id="selectByExampleWithRowbounds" >
@@ -622,5 +670,27 @@
   <select   id="getMaxSpuNo" resultType="java.lang.String">
     select   max(spu_no)
     from hub_spu
+  </select>
+  <select id="selectByBrand" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto" >
+    select DISTINCT p.spu_model,p.spu_no,p.create_time from hub_spu p INNER JOIN hub_spu_pending s ON p.spu_no = s.hub_spu_no where 1=1   
+    <if test="null!= supplierId" >
+      and s.supplier_id = #{supplierId} 
+    </if>
+    <if test="null!= brandNo" >
+      and p.brand_no = #{brandNo} 
+    </if>
+       order by p.create_time desc 
+    <if test="pageIndex != null" >
+       limit #{pageIndex} , #{pageSize}
+    </if>
+  </select>
+  <select id="count" resultType="java.lang.Integer" parameterType="com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto" >
+    select count(DISTINCT p.spu_model,p.spu_no,p.create_time) from hub_spu p INNER JOIN hub_spu_pending s ON p.spu_no = s.hub_spu_no where 1=1   
+    <if test="null!= supplierId" >
+      and s.supplier_id = #{supplierId} 
+    </if>
+    <if test="null!= brandNo" >
+      and p.brand_no = #{brandNo} 
+    </if>
   </select>
 </mapper>

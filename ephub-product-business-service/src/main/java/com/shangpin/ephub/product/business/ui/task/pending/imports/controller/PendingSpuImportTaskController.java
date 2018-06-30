@@ -50,6 +50,17 @@ public class PendingSpuImportTaskController {
 		}
     }
 	
+	@RequestMapping(value = "/import-supplier-data",method = RequestMethod.POST)
+    public HubResponse importSupplierData(@RequestBody HubImportTaskRequestDto dto){
+	        	
+		try {
+			log.info("供应商数据上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.SUPPLIER_DATA);
+		} catch (Exception e) {
+			return HubResponse.errorResp("上传文件失败，请重新上传");
+		}
+    }
+	
 	@RequestMapping(value = "/import-sku",method = RequestMethod.POST)
     public HubResponse importSku(@RequestBody HubImportTaskRequestDto dto){
 	        	

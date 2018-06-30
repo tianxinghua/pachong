@@ -53,6 +53,12 @@ public class ApiSkuOrgDom implements Serializable {
     /// </summary>
     private String SupplierNo;
 
+
+    /// <summary>
+    /// SOP账号编号
+    /// </summary>
+    private String SopUserNo;
+
     /// <summary>
     /// 市场价
     /// </summary>

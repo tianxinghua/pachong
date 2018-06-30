@@ -88,4 +88,8 @@ public class ConstantProperty {
 	   
 	   //品类下保留的所有的品牌
 	   public static String REDIS_EPHUB_CATEGORY_BRNAD_MAPPING_MAP_KEY="REDIS_EPHUB_CATEGORY_BRAND_MAPPING_MAP_KEY";
+
+	   //品牌供货商编号
+	   public static String REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY="REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY";
+
 	}

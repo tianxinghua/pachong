@@ -1,4 +1,4 @@
-package com.shangpin.ephub.client.data.mysql.enumeration;
+package com.shangpin.ephub.data.mysql.product.common.enumeration;
 
 /**
  * Created by loyalty on 16/12/22.

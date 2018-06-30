@@ -1,10 +1,10 @@
 package com.shangpin.ephub.data.mysql.spu.hub.po;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class HubSpuCriteria {
     protected String orderByClause;
@@ -119,6 +119,7 @@ public class HubSpuCriteria {
         public boolean isValid() {
             return criteria.size() > 0;
         }
+
         @JsonIgnore
         public List<Criterion> getAllCriteria() {
             return criteria;
@@ -626,146 +627,6 @@ public class HubSpuCriteria {
 
         public Criteria andMarketTimeNotBetween(String value1, String value2) {
             addCriterion("market_time not between", value1, value2, "marketTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorIsNull() {
-            addCriterion("hub_color is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorIsNotNull() {
-            addCriterion("hub_color is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorEqualTo(String value) {
-            addCriterion("hub_color =", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNotEqualTo(String value) {
-            addCriterion("hub_color <>", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorGreaterThan(String value) {
-            addCriterion("hub_color >", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorGreaterThanOrEqualTo(String value) {
-            addCriterion("hub_color >=", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorLessThan(String value) {
-            addCriterion("hub_color <", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorLessThanOrEqualTo(String value) {
-            addCriterion("hub_color <=", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorLike(String value) {
-            addCriterion("hub_color like", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNotLike(String value) {
-            addCriterion("hub_color not like", value, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorIn(List<String> values) {
-            addCriterion("hub_color in", values, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNotIn(List<String> values) {
-            addCriterion("hub_color not in", values, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorBetween(String value1, String value2) {
-            addCriterion("hub_color between", value1, value2, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNotBetween(String value1, String value2) {
-            addCriterion("hub_color not between", value1, value2, "hubColor");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoIsNull() {
-            addCriterion("hub_color_no is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoIsNotNull() {
-            addCriterion("hub_color_no is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoEqualTo(String value) {
-            addCriterion("hub_color_no =", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotEqualTo(String value) {
-            addCriterion("hub_color_no <>", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoGreaterThan(String value) {
-            addCriterion("hub_color_no >", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoGreaterThanOrEqualTo(String value) {
-            addCriterion("hub_color_no >=", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoLessThan(String value) {
-            addCriterion("hub_color_no <", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoLessThanOrEqualTo(String value) {
-            addCriterion("hub_color_no <=", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoLike(String value) {
-            addCriterion("hub_color_no like", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotLike(String value) {
-            addCriterion("hub_color_no not like", value, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoIn(List<String> values) {
-            addCriterion("hub_color_no in", values, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotIn(List<String> values) {
-            addCriterion("hub_color_no not in", values, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoBetween(String value1, String value2) {
-            addCriterion("hub_color_no between", value1, value2, "hubColorNo");
-            return (Criteria) this;
-        }
-
-        public Criteria andHubColorNoNotBetween(String value1, String value2) {
-            addCriterion("hub_color_no not between", value1, value2, "hubColorNo");
             return (Criteria) this;
         }
 
@@ -1289,6 +1150,146 @@ public class HubSpuCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andHubColorIsNull() {
+            addCriterion("hub_color is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorIsNotNull() {
+            addCriterion("hub_color is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorEqualTo(String value) {
+            addCriterion("hub_color =", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNotEqualTo(String value) {
+            addCriterion("hub_color <>", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorGreaterThan(String value) {
+            addCriterion("hub_color >", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorGreaterThanOrEqualTo(String value) {
+            addCriterion("hub_color >=", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorLessThan(String value) {
+            addCriterion("hub_color <", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorLessThanOrEqualTo(String value) {
+            addCriterion("hub_color <=", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorLike(String value) {
+            addCriterion("hub_color like", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNotLike(String value) {
+            addCriterion("hub_color not like", value, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorIn(List<String> values) {
+            addCriterion("hub_color in", values, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNotIn(List<String> values) {
+            addCriterion("hub_color not in", values, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorBetween(String value1, String value2) {
+            addCriterion("hub_color between", value1, value2, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNotBetween(String value1, String value2) {
+            addCriterion("hub_color not between", value1, value2, "hubColor");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIsNull() {
+            addCriterion("hub_color_no is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIsNotNull() {
+            addCriterion("hub_color_no is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoEqualTo(String value) {
+            addCriterion("hub_color_no =", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotEqualTo(String value) {
+            addCriterion("hub_color_no <>", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoGreaterThan(String value) {
+            addCriterion("hub_color_no >", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoGreaterThanOrEqualTo(String value) {
+            addCriterion("hub_color_no >=", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLessThan(String value) {
+            addCriterion("hub_color_no <", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLessThanOrEqualTo(String value) {
+            addCriterion("hub_color_no <=", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoLike(String value) {
+            addCriterion("hub_color_no like", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotLike(String value) {
+            addCriterion("hub_color_no not like", value, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoIn(List<String> values) {
+            addCriterion("hub_color_no in", values, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotIn(List<String> values) {
+            addCriterion("hub_color_no not in", values, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoBetween(String value1, String value2) {
+            addCriterion("hub_color_no between", value1, value2, "hubColorNo");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubColorNoNotBetween(String value1, String value2) {
+            addCriterion("hub_color_no not between", value1, value2, "hubColorNo");
+            return (Criteria) this;
+        }
+
         public Criteria andNewTypeIsNull() {
             addCriterion("new_type is null");
             return (Criteria) this;
@@ -1416,146 +1417,6 @@ public class HubSpuCriteria {
 
         public Criteria andPicUrlNotBetween(String value1, String value2) {
             addCriterion("pic_url not between", value1, value2, "picUrl");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginIsNull() {
-            addCriterion("origin is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginIsNotNull() {
-            addCriterion("origin is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginEqualTo(String value) {
-            addCriterion("origin =", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginNotEqualTo(String value) {
-            addCriterion("origin <>", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginGreaterThan(String value) {
-            addCriterion("origin >", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginGreaterThanOrEqualTo(String value) {
-            addCriterion("origin >=", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginLessThan(String value) {
-            addCriterion("origin <", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginLessThanOrEqualTo(String value) {
-            addCriterion("origin <=", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginLike(String value) {
-            addCriterion("origin like", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginNotLike(String value) {
-            addCriterion("origin not like", value, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginIn(List<String> values) {
-            addCriterion("origin in", values, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginNotIn(List<String> values) {
-            addCriterion("origin not in", values, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginBetween(String value1, String value2) {
-            addCriterion("origin between", value1, value2, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andOriginNotBetween(String value1, String value2) {
-            addCriterion("origin not between", value1, value2, "origin");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialIsNull() {
-            addCriterion("material is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialIsNotNull() {
-            addCriterion("material is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialEqualTo(String value) {
-            addCriterion("material =", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialNotEqualTo(String value) {
-            addCriterion("material <>", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialGreaterThan(String value) {
-            addCriterion("material >", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialGreaterThanOrEqualTo(String value) {
-            addCriterion("material >=", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialLessThan(String value) {
-            addCriterion("material <", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialLessThanOrEqualTo(String value) {
-            addCriterion("material <=", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialLike(String value) {
-            addCriterion("material like", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialNotLike(String value) {
-            addCriterion("material not like", value, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialIn(List<String> values) {
-            addCriterion("material in", values, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialNotIn(List<String> values) {
-            addCriterion("material not in", values, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialBetween(String value1, String value2) {
-            addCriterion("material between", value1, value2, "material");
-            return (Criteria) this;
-        }
-
-        public Criteria andMaterialNotBetween(String value1, String value2) {
-            addCriterion("material not between", value1, value2, "material");
             return (Criteria) this;
         }
 
@@ -1879,6 +1740,146 @@ public class HubSpuCriteria {
             return (Criteria) this;
         }
 
+        public Criteria andMaterialIsNull() {
+            addCriterion("material is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialIsNotNull() {
+            addCriterion("material is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialEqualTo(String value) {
+            addCriterion("material =", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotEqualTo(String value) {
+            addCriterion("material <>", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialGreaterThan(String value) {
+            addCriterion("material >", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialGreaterThanOrEqualTo(String value) {
+            addCriterion("material >=", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialLessThan(String value) {
+            addCriterion("material <", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialLessThanOrEqualTo(String value) {
+            addCriterion("material <=", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialLike(String value) {
+            addCriterion("material like", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotLike(String value) {
+            addCriterion("material not like", value, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialIn(List<String> values) {
+            addCriterion("material in", values, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotIn(List<String> values) {
+            addCriterion("material not in", values, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialBetween(String value1, String value2) {
+            addCriterion("material between", value1, value2, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andMaterialNotBetween(String value1, String value2) {
+            addCriterion("material not between", value1, value2, "material");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIsNull() {
+            addCriterion("origin is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIsNotNull() {
+            addCriterion("origin is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginEqualTo(String value) {
+            addCriterion("origin =", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotEqualTo(String value) {
+            addCriterion("origin <>", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGreaterThan(String value) {
+            addCriterion("origin >", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGreaterThanOrEqualTo(String value) {
+            addCriterion("origin >=", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLessThan(String value) {
+            addCriterion("origin <", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLessThanOrEqualTo(String value) {
+            addCriterion("origin <=", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginLike(String value) {
+            addCriterion("origin like", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotLike(String value) {
+            addCriterion("origin not like", value, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIn(List<String> values) {
+            addCriterion("origin in", values, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotIn(List<String> values) {
+            addCriterion("origin not in", values, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginBetween(String value1, String value2) {
+            addCriterion("origin between", value1, value2, "origin");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginNotBetween(String value1, String value2) {
+            addCriterion("origin not between", value1, value2, "origin");
+            return (Criteria) this;
+        }
+
         public Criteria andPictureExportTimeIsNull() {
             addCriterion("picture_export_time is null");
             return (Criteria) this;
@@ -2068,22 +2069,222 @@ public class HubSpuCriteria {
             addCriterion("picture_state not between", value1, value2, "pictureState");
             return (Criteria) this;
         }
+
+        public Criteria andMeasurementIsNull() {
+            addCriterion("measurement is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIsNotNull() {
+            addCriterion("measurement is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementEqualTo(String value) {
+            addCriterion("measurement =", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotEqualTo(String value) {
+            addCriterion("measurement <>", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementGreaterThan(String value) {
+            addCriterion("measurement >", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementGreaterThanOrEqualTo(String value) {
+            addCriterion("measurement >=", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLessThan(String value) {
+            addCriterion("measurement <", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLessThanOrEqualTo(String value) {
+            addCriterion("measurement <=", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementLike(String value) {
+            addCriterion("measurement like", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotLike(String value) {
+            addCriterion("measurement not like", value, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementIn(List<String> values) {
+            addCriterion("measurement in", values, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotIn(List<String> values) {
+            addCriterion("measurement not in", values, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementBetween(String value1, String value2) {
+            addCriterion("measurement between", value1, value2, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andMeasurementNotBetween(String value1, String value2) {
+            addCriterion("measurement not between", value1, value2, "measurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignIsNull() {
+            addCriterion("hotboom_sign is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignIsNotNull() {
+            addCriterion("hotboom_sign is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignEqualTo(Byte value) {
+            addCriterion("hotboom_sign =", value, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignNotEqualTo(Byte value) {
+            addCriterion("hotboom_sign <>", value, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignGreaterThan(Byte value) {
+            addCriterion("hotboom_sign >", value, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignGreaterThanOrEqualTo(Byte value) {
+            addCriterion("hotboom_sign >=", value, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignLessThan(Byte value) {
+            addCriterion("hotboom_sign <", value, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignLessThanOrEqualTo(Byte value) {
+            addCriterion("hotboom_sign <=", value, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignIn(List<Byte> values) {
+            addCriterion("hotboom_sign in", values, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignNotIn(List<Byte> values) {
+            addCriterion("hotboom_sign not in", values, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignBetween(Byte value1, Byte value2) {
+            addCriterion("hotboom_sign between", value1, value2, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSignNotBetween(Byte value1, Byte value2) {
+            addCriterion("hotboom_sign not between", value1, value2, "hotboomSign");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelIsNull() {
+            addCriterion("hotboom_spu_model is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelIsNotNull() {
+            addCriterion("hotboom_spu_model is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelEqualTo(String value) {
+            addCriterion("hotboom_spu_model =", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelNotEqualTo(String value) {
+            addCriterion("hotboom_spu_model <>", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelGreaterThan(String value) {
+            addCriterion("hotboom_spu_model >", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelGreaterThanOrEqualTo(String value) {
+            addCriterion("hotboom_spu_model >=", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelLessThan(String value) {
+            addCriterion("hotboom_spu_model <", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelLessThanOrEqualTo(String value) {
+            addCriterion("hotboom_spu_model <=", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelLike(String value) {
+            addCriterion("hotboom_spu_model like", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelNotLike(String value) {
+            addCriterion("hotboom_spu_model not like", value, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelIn(List<String> values) {
+            addCriterion("hotboom_spu_model in", values, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelNotIn(List<String> values) {
+            addCriterion("hotboom_spu_model not in", values, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelBetween(String value1, String value2) {
+            addCriterion("hotboom_spu_model between", value1, value2, "hotboomSpuModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andHotboomSpuModelNotBetween(String value1, String value2) {
+            addCriterion("hotboom_spu_model not between", value1, value2, "hotboomSpuModel");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {
 
-    	public Criteria() {
+        public Criteria() {
             super();
         }
     }
 
     public static class Criterion {
-    	
-        public Criterion() {
-			super();
-		}
 
-		private String condition;
+        public Criterion() {
+            super();
+        }
+
+        private String condition;
 
         private Object value;
 

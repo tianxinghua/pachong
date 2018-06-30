@@ -8,8 +8,6 @@
     <result column="barcode" property="barcode" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="new_spu_type" property="newSpuType" jdbcType="TINYINT" />
-    <result column="supplier_select_state" property="supplierSelectState" jdbcType="TINYINT" />
-    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
     <result column="is_new_supplier" property="isNewSupplier" jdbcType="TINYINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="create_user" property="createUser" jdbcType="VARCHAR" />
@@ -20,6 +18,11 @@
     <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="data_state" property="dataState" jdbcType="TINYINT" />
     <result column="version" property="version" jdbcType="BIGINT" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_select_state" property="supplierSelectState" jdbcType="TINYINT" />
+    <result column="sp_sku_no" property="spSkuNo" jdbcType="VARCHAR" />
+    <result column="spu_no" property="spuNo" jdbcType="VARCHAR" />
+    <result column="sp_spu_no" property="spSpuNo" jdbcType="VARCHAR" />
     <result column="origin" property="origin" jdbcType="VARCHAR" />
     <result column="retry_num" property="retryNum" jdbcType="INTEGER" />
   </resultMap>
@@ -84,9 +87,9 @@
   <sql id="Base_Column_List" >
     <if test="fields == null" >
       sku_supplier_mapping_id, sku_no, supplier_sku_no, barcode, supplier_id, new_spu_type, 
-      supplier_select_state, supplier_no, is_new_supplier, create_time, create_user, update_time, 
-      update_user, supplier_spu_model, supplier_sku_id, memo, data_state, version, origin, 
-      retry_num
+      is_new_supplier, create_time, create_user, update_time, update_user, supplier_spu_model, 
+      supplier_sku_id, memo, data_state, version, supplier_no, supplier_select_state, sp_sku_no, 
+      spu_no, sp_spu_no, origin, retry_num
     </if>
     <if test="fields != null" >
       ${fields}
@@ -111,7 +114,7 @@
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,supplier_select_state,supplier_no,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version,origin,retry_num
+    sku_supplier_mapping_id,sku_no,supplier_sku_no,barcode,supplier_id,new_spu_type,is_new_supplier,create_time,create_user,update_time,update_user,supplier_spu_model,supplier_sku_id,memo,data_state,version,supplier_no,supplier_select_state,sp_sku_no,spu_no,sp_spu_no,origin,retry_num
     from hub_sku_supplier_mapping
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
   </select>
@@ -127,27 +130,29 @@
   </delete>
   <insert id="insert" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS sku_supplier_mapping_id
-  	</selectKey>
+      SELECT LAST_INSERT_ID() AS sku_supplier_mapping_id
+    </selectKey>
     insert into hub_sku_supplier_mapping (sku_supplier_mapping_id, sku_no, supplier_sku_no, 
       barcode, supplier_id, new_spu_type, 
-      supplier_select_state, supplier_no, is_new_supplier, 
-      create_time, create_user, update_time, 
-      update_user, supplier_spu_model, supplier_sku_id, 
-      memo, data_state, version, 
+      is_new_supplier, create_time, create_user, 
+      update_time, update_user, supplier_spu_model, 
+      supplier_sku_id, memo, data_state, 
+      version, supplier_no, supplier_select_state, 
+      sp_sku_no, spu_no, sp_spu_no, 
       origin, retry_num)
     values (#{skuSupplierMappingId,jdbcType=BIGINT}, #{skuNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, 
       #{barcode,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{newSpuType,jdbcType=TINYINT}, 
-      #{supplierSelectState,jdbcType=TINYINT}, #{supplierNo,jdbcType=VARCHAR}, #{isNewSupplier,jdbcType=TINYINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, #{supplierSkuId,jdbcType=BIGINT}, 
-      #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, #{version,jdbcType=BIGINT}, 
+      #{isNewSupplier,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{supplierSpuModel,jdbcType=VARCHAR}, 
+      #{supplierSkuId,jdbcType=BIGINT}, #{memo,jdbcType=VARCHAR}, #{dataState,jdbcType=TINYINT}, 
+      #{version,jdbcType=BIGINT}, #{supplierNo,jdbcType=VARCHAR}, #{supplierSelectState,jdbcType=TINYINT}, 
+      #{spSkuNo,jdbcType=VARCHAR}, #{spuNo,jdbcType=VARCHAR}, #{spSpuNo,jdbcType=VARCHAR}, 
       #{origin,jdbcType=VARCHAR}, #{retryNum,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.mapping.sku.po.HubSkuSupplierMapping" >
     <selectKey keyColumn="sku_supplier_mapping_id" keyProperty="skuSupplierMappingId" order="AFTER" resultType="long">
-  		SELECT LAST_INSERT_ID() AS sku_supplier_mapping_id
-  	</selectKey>
+      SELECT LAST_INSERT_ID() AS sku_supplier_mapping_id
+    </selectKey>
     insert into hub_sku_supplier_mapping
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="skuSupplierMappingId != null" >
@@ -167,12 +172,6 @@
       </if>
       <if test="newSpuType != null" >
         new_spu_type,
-      </if>
-      <if test="supplierSelectState != null" >
-        supplier_select_state,
-      </if>
-      <if test="supplierNo != null" >
-        supplier_no,
       </if>
       <if test="isNewSupplier != null" >
         is_new_supplier,
@@ -204,6 +203,21 @@
       <if test="version != null" >
         version,
       </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="supplierSelectState != null" >
+        supplier_select_state,
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no,
+      </if>
+      <if test="spuNo != null" >
+        spu_no,
+      </if>
+      <if test="spSpuNo != null" >
+        sp_spu_no,
+      </if>
       <if test="origin != null" >
         origin,
       </if>
@@ -229,12 +243,6 @@
       </if>
       <if test="newSpuType != null" >
         #{newSpuType,jdbcType=TINYINT},
-      </if>
-      <if test="supplierSelectState != null" >
-        #{supplierSelectState,jdbcType=TINYINT},
-      </if>
-      <if test="supplierNo != null" >
-        #{supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="isNewSupplier != null" >
         #{isNewSupplier,jdbcType=TINYINT},
@@ -265,6 +273,21 @@
       </if>
       <if test="version != null" >
         #{version,jdbcType=BIGINT},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSelectState != null" >
+        #{supplierSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuNo != null" >
+        #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spuNo != null" >
+        #{spuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSpuNo != null" >
+        #{spSpuNo,jdbcType=VARCHAR},
       </if>
       <if test="origin != null" >
         #{origin,jdbcType=VARCHAR},
@@ -301,12 +324,6 @@
       <if test="record.newSpuType != null" >
         new_spu_type = #{record.newSpuType,jdbcType=TINYINT},
       </if>
-      <if test="record.supplierSelectState != null" >
-        supplier_select_state = #{record.supplierSelectState,jdbcType=TINYINT},
-      </if>
-      <if test="record.supplierNo != null" >
-        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
-      </if>
       <if test="record.isNewSupplier != null" >
         is_new_supplier = #{record.isNewSupplier,jdbcType=TINYINT},
       </if>
@@ -337,6 +354,21 @@
       <if test="record.version != null" >
         version = #{record.version,jdbcType=BIGINT},
       </if>
+      <if test="record.supplierNo != null" >
+        supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.supplierSelectState != null" >
+        supplier_select_state = #{record.supplierSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="record.spSkuNo != null" >
+        sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spuNo != null" >
+        spu_no = #{record.spuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spSpuNo != null" >
+        sp_spu_no = #{record.spSpuNo,jdbcType=VARCHAR},
+      </if>
       <if test="record.origin != null" >
         origin = #{record.origin,jdbcType=VARCHAR},
       </if>
@@ -356,8 +388,6 @@
       barcode = #{record.barcode,jdbcType=VARCHAR},
       supplier_id = #{record.supplierId,jdbcType=VARCHAR},
       new_spu_type = #{record.newSpuType,jdbcType=TINYINT},
-      supplier_select_state = #{record.supplierSelectState,jdbcType=TINYINT},
-      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
       is_new_supplier = #{record.isNewSupplier,jdbcType=TINYINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -368,6 +398,11 @@
       memo = #{record.memo,jdbcType=VARCHAR},
       data_state = #{record.dataState,jdbcType=TINYINT},
       version = #{record.version,jdbcType=BIGINT},
+      supplier_no = #{record.supplierNo,jdbcType=VARCHAR},
+      supplier_select_state = #{record.supplierSelectState,jdbcType=TINYINT},
+      sp_sku_no = #{record.spSkuNo,jdbcType=VARCHAR},
+      spu_no = #{record.spuNo,jdbcType=VARCHAR},
+      sp_spu_no = #{record.spSpuNo,jdbcType=VARCHAR},
       origin = #{record.origin,jdbcType=VARCHAR},
       retry_num = #{record.retryNum,jdbcType=INTEGER}
     <if test="_parameter != null" >
@@ -391,12 +426,6 @@
       </if>
       <if test="newSpuType != null" >
         new_spu_type = #{newSpuType,jdbcType=TINYINT},
-      </if>
-      <if test="supplierSelectState != null" >
-        supplier_select_state = #{supplierSelectState,jdbcType=TINYINT},
-      </if>
-      <if test="supplierNo != null" >
-        supplier_no = #{supplierNo,jdbcType=VARCHAR},
       </if>
       <if test="isNewSupplier != null" >
         is_new_supplier = #{isNewSupplier,jdbcType=TINYINT},
@@ -428,6 +457,21 @@
       <if test="version != null" >
         version = #{version,jdbcType=BIGINT},
       </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSelectState != null" >
+        supplier_select_state = #{supplierSelectState,jdbcType=TINYINT},
+      </if>
+      <if test="spSkuNo != null" >
+        sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spuNo != null" >
+        spu_no = #{spuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="spSpuNo != null" >
+        sp_spu_no = #{spSpuNo,jdbcType=VARCHAR},
+      </if>
       <if test="origin != null" >
         origin = #{origin,jdbcType=VARCHAR},
       </if>
@@ -444,8 +488,6 @@
       barcode = #{barcode,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       new_spu_type = #{newSpuType,jdbcType=TINYINT},
-      supplier_select_state = #{supplierSelectState,jdbcType=TINYINT},
-      supplier_no = #{supplierNo,jdbcType=VARCHAR},
       is_new_supplier = #{isNewSupplier,jdbcType=TINYINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
@@ -456,6 +498,11 @@
       memo = #{memo,jdbcType=VARCHAR},
       data_state = #{dataState,jdbcType=TINYINT},
       version = #{version,jdbcType=BIGINT},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_select_state = #{supplierSelectState,jdbcType=TINYINT},
+      sp_sku_no = #{spSkuNo,jdbcType=VARCHAR},
+      spu_no = #{spuNo,jdbcType=VARCHAR},
+      sp_spu_no = #{spSpuNo,jdbcType=VARCHAR},
       origin = #{origin,jdbcType=VARCHAR},
       retry_num = #{retryNum,jdbcType=INTEGER}
     where sku_supplier_mapping_id = #{skuSupplierMappingId,jdbcType=BIGINT}
