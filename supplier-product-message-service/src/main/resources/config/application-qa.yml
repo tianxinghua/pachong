@@ -239,6 +239,9 @@ spring:
                         rediOriginalProduct:
                              destination: redi.original.product
                              content-type: application/json
+                        zhicaiOriginalProduct:
+                             destination: zhicai.original.product
+                             content-type: application/json                             
               rabbit:
                       bindings: 
                             coccolebimbiOriginalProduct:
@@ -472,7 +475,10 @@ spring:
                             delibertiOriginalProduct:
                                   producer:
                                            prefix: HA.
-  jackson:
+                            zhicaiOriginalProduct:
+                                  producer:
+                                           prefix: HA.                                           
+  jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.
