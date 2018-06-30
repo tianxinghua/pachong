@@ -90,20 +90,21 @@ public class PriceService {
     }
     //获取价格汇率
 	public String GetServiceRate(String supplierNo) {
-		String serviceRate = "1.05";
+		String serviceRate = "";
 		try {
 			LogCommon.recordLog("供应商获取汇率start：" + supplierNo);
 		    SupplierDTONew supplierDTONew = supplierServiceNew.getSupplier(supplierNo);
 		    LogCommon.recordLog("供应商获取汇率返回实体：" + JSONObject.toJSONString(supplierDTONew));
-//			if(supplierDTONew!=null)
-//				serviceRate = String.valueOf((supplierDTONew.getSupplierContract().get(0).getServiceRate()));
-//			else
-//				serviceRate = "1.03";
+			if(supplierDTONew!=null)
+				serviceRate = String.valueOf((supplierDTONew.getSupplierContract().get(0).getServiceRate()+1));
+			else
+				serviceRate = "1.03";
 		} catch (Exception e) {
-//			serviceRate = "1.03";
+			serviceRate = "1.03";
 			LogCommon.recordLog(e.getMessage());
 			e.printStackTrace();
 		}
+		LogCommon.recordLog("供应商获取汇率end：" + supplierNo +"serviceRate:"+serviceRate);
 		return serviceRate;
     }
 
