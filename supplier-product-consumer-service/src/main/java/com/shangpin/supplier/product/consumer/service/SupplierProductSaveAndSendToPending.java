@@ -178,7 +178,7 @@ public class SupplierProductSaveAndSendToPending {
 						PendingSku pendingSku = new PendingSku();
 						//开始保存hubSku到数据库
 						hubSku.setSupplierSpuId(supplierSpuDto.getSupplierSpuId()); //在这里回写supplierSpuId
-						ProductStatus skuStatus = supplierProductMysqlService.isHubSkuChanged(hubSku, pendingSku);
+						ProductStatus skuStatus = supplierProductMysqlService.isHubSkuChanged(hubSku, pendingSku,supplierNo);
 						skus.add(pendingSku);
 						headSku.setSupplierId(supplierId);
 						headSku.setSkuNo(hubSku.getSupplierSkuNo());

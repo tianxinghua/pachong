@@ -178,7 +178,7 @@ public class SupplierProductMysqlService {
 	 * @param pendingSku 把hubSku发生变化的价格信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku) throws EpHubSupplierProductConsumerException{
+	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku,String supplierNo) throws EpHubSupplierProductConsumerException{
 		try {
 			HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 			if(null == hubSkuSel){
@@ -192,7 +192,7 @@ public class SupplierProductMysqlService {
 			}else{
 				hubSku.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
 				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
-				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
+				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated,supplierNo);
 				Date nowTime = new Date();
 				if(isChanged){
 					hubSkuUpdated.setUpdateTime(nowTime); 
@@ -218,7 +218,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSkuUpdated 待更新的对象，用来更新本地库
 	 * @return
 	 */
-	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated) throws Exception {
+	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated,String supplierNo) throws Exception {
 		boolean isChanged = false;
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -269,7 +269,7 @@ public class SupplierProductMysqlService {
 				isChanged = true;
 				//当sku尺码发生变化，并且老的sku已经生成尚品sku编号，发送邮件通知
 				if(hubSkuSel.getSpSkuNo()!=null&&!hubSkuSel.getSpSkuNo().equals("")) {
-					sendMail("尚品skuNo原始尺码发生变化","供应商id:"+hubSkuSel.getSupplierId()+"尚品skuNo:"+hubSkuSel.getSpSkuNo()+"原始尺码"+hubSkuSel.getSupplierSkuSize()+"更新为"+hubSku.getSupplierSkuSize());
+					sendMail("尚品skuNo原始尺码发生变化","供应商id:"+hubSkuSel.getSupplierId()+"supplierNo:"+supplierNo+"尚品skuNo:"+hubSkuSel.getSpSkuNo()+"原始尺码"+hubSkuSel.getSupplierSkuSize()+"更新为"+hubSku.getSupplierSkuSize());
 				}
 			}
 		}
