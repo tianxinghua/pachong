@@ -104,6 +104,7 @@ public class SupplierSkuController {
 				zhiCaiSkuResult.setSize(hubSupplierSkuDto.getSupplierSkuSize());
 				zhiCaiSkuResult.setSpSkuNo(hubSupplierSkuDto.getSpSkuNo());
 				zhiCaiSkuResult.setSupplierSkuNo(hubSupplierSkuDto.getSupplierSkuNo());
+				zhiCaiSkuResult.setMarketPrice(hubSupplierSkuDto.getMarketPrice());
 				skuList.add(zhiCaiSkuResult);
 			}
 			zhiCaiResult.setZhiCaiSkuResultList(skuList);
