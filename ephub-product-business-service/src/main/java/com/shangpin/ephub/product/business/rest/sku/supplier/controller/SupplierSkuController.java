@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.rest.sku.supplier.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +45,6 @@ public class SupplierSkuController {
 	private HubSupplierSpuGateWay supplierSpuGateWay;
 	@Autowired
 	private HubSpuGateWay hubSpuGateWay;
-	private final static String supplierId = "2018062902013";
 
 
 	
@@ -73,6 +73,8 @@ public class SupplierSkuController {
 	@RequestMapping(value="/get-product",method=RequestMethod.POST)
 	public HubResponse<?> getZhiCaiByBrand(@RequestBody ZhiCaiQuery zhiCaiQuery){
 		HubSupplierSpuQureyDto dto = new HubSupplierSpuQureyDto();
+		if(StringUtils.isBlank(zhiCaiQuery.getSupplierId()))
+			return HubResponse.errorResp("supplierId不能为null!");
 		if(zhiCaiQuery.getPageIndex()==0||zhiCaiQuery.getPageSize()==0) {
 			dto.setPageIndex(0);
 			dto.setPageSize(20);
@@ -81,9 +83,9 @@ public class SupplierSkuController {
 			dto.setPageSize(zhiCaiQuery.getPageSize());
 		}
 		if(zhiCaiQuery.getBrandName()==null||zhiCaiQuery.getBrandName().equals(""))
-			dto.setSupplierId(supplierId);
+			dto.setSupplierId(zhiCaiQuery.getSupplierId());
 		else {
-			dto.setSupplierId(supplierId);
+			dto.setSupplierId(zhiCaiQuery.getSupplierId());
 			dto.setBrandName(zhiCaiQuery.getBrandName());
 		}
 		List<HubSupplierSpuDto> hubSupplierSpuDtoList = supplierSpuGateWay.selectByBrand(dto);
@@ -120,6 +122,8 @@ public class SupplierSkuController {
 	@RequestMapping(value="/get-spu-model",method=RequestMethod.POST)
 	public HubResponse<?> getZhiCaiSpuModelByBrand(@RequestBody ZhiCaiQuery zhiCaiQuery){
 		HubSupplierSpuQureyDto dto = new HubSupplierSpuQureyDto();
+		if(StringUtils.isBlank(zhiCaiQuery.getSupplierId()))
+			return HubResponse.errorResp("supplierId不能为null!");
 		if(zhiCaiQuery.getPageIndex()==0||zhiCaiQuery.getPageSize()==0) {
 			dto.setPageIndex(0);
 			dto.setPageSize(20);
@@ -128,9 +132,9 @@ public class SupplierSkuController {
 			dto.setPageSize(zhiCaiQuery.getPageSize());
 		}
 		if(zhiCaiQuery.getBrandNo()==null||zhiCaiQuery.getBrandNo().equals(""))
-			dto.setSupplierId(supplierId);
+			dto.setSupplierId(zhiCaiQuery.getSupplierId());
 		else {
-			dto.setSupplierId(supplierId);
+			dto.setSupplierId(zhiCaiQuery.getSupplierId());
 			dto.setBrandNo(zhiCaiQuery.getBrandNo());
 		}
 		List<HubSpuDto> hubSpuDtoList= hubSpuGateWay.selectByBrand(dto);
