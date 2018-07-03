@@ -79,6 +79,26 @@ public class TaskImportService {
         log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
         return HubResponse.errorResp("文件格式有误，请下载模板");
     }
+    public HubResponse uploadFileAndSaveNew(HubImportTaskRequestDto task,TaskType importType) throws Exception{
+
+        String name  = new String(task.getFileName().getBytes("UTF-8"));
+        String []fileName = name.split("\\.");
+        if(fileName!=null&&fileName.length==2){
+            if("xlsx".equals(fileName[1])||"xls".equals(fileName[1])){
+                SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                Date date = new Date();
+                String taskNo = sim.format(date);
+//                String systemFileName = taskNo +"."+fileName[1];
+                //第二步 ： 保存数据库
+                saveTask(task,taskNo,task.getFtpPath(),name,importType.getIndex());
+                //TODO 第三步 ：发送到hub消息队列
+                sendTaskMessage(task.getCreateUser(),taskNo,task.getFtpPath()+name,importType);
+                return HubResponse.successResp(null);
+            }
+        }
+        log.info("上传文件为"+task.getFileName()+"，格式有误，请下载模板");
+        return HubResponse.errorResp("文件格式有误，请下载模板");
+    }
     public byte[] getContent(String filePath) throws Exception {  
         File file = new File("D:\\gucci.xls");  
         long fileSize = file.length();  
