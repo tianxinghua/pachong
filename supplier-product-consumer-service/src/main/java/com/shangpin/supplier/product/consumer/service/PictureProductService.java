@@ -14,6 +14,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicWithCriteriaDto;
@@ -40,7 +44,8 @@ public class PictureProductService {
 	private PictureProductStreamSender pictureProductStreamSender;
 	@Autowired
 	private HubSpuPendingPicGateWay picClient;
-	
+	@Autowired
+	HubSupplierValueMappingGateWay mappingGateWay;
 	/**
 	 * 发送供应商图片到图片消息队列
 	 * @param supplierPicture
@@ -49,7 +54,22 @@ public class PictureProductService {
 	public void sendSupplierPicture(SupplierPicture supplierPicture, Map<String, ?> headers){
 		try {
 			if(toPush(supplierPicture)){
-				boolean result = pictureProductStreamSender.brandPictureProductStream(supplierPicture, headers);
+				
+				Map<String, String> tmpBrandSupplierMap = new HashMap<>();
+	            HubSupplierValueMappingCriteriaDto criteriaDto = new HubSupplierValueMappingCriteriaDto();
+	            criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+	            List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = mappingGateWay.selectByCriteria(criteriaDto);
+	            hubSupplierValueMappingDtos.forEach(mapping ->{
+	                tmpBrandSupplierMap.put(mapping.getSupplierId(),mapping.getSupplierId());
+	            });
+			
+				boolean result = false;
+				if(tmpBrandSupplierMap.containsKey(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.brandPictureProductStream(supplierPicture, headers);	
+				}else{
+					result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
+				}
+				
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 发送图片 "+result);
 			}else{
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 下所有图片已存在，不推送");
