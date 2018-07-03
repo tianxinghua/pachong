@@ -205,6 +205,13 @@ public class SupplierPriceService {
 
     }
 
+    /**
+     * 计算价格 采购价* serviceRate
+     * @param supplierMessageDTO
+     * @param productPriceDTO
+     * @param rateForMarket
+     * @throws Exception
+     */
     private void reSetPrice( SupplierMessageDTO supplierMessageDTO,ProductPriceDTO productPriceDTO,String rateForMarket) throws  Exception{
         BigDecimal supplyPrice = null;
         if(StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
