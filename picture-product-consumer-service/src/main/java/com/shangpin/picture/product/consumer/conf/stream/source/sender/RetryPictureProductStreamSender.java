@@ -31,4 +31,14 @@ public class RetryPictureProductStreamSender {
     public boolean supplierPictureProductStream(RetryPicture retryPicture, Map<String, ?> headers) {
     	return pictureRetryProductSource.supplierRetryPictureProduct().send(MessageBuilder.withPayload(retryPicture).copyHeaders(headers).build());
     }
+    
+    /**
+	 * 发送供应商biondioni商品流数据
+	 * @param headers 
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+    public boolean brandPictureProductStream(RetryPicture retryPicture, Map<String, ?> headers) {
+    	return pictureRetryProductSource.brandRetryPictureProduct().send(MessageBuilder.withPayload(retryPicture).copyHeaders(headers).build());
+    }
 }

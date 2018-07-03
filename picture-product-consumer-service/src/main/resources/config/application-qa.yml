@@ -12,7 +12,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: localhost
+          host: 192.168.20.174
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -25,36 +25,66 @@ spring:
               bindings: 
                         supplierRetryPictureProduct: 
                               destination: retry.product.picture
-                              content-type: application/json              
+                              content-type: application/json  
+                        retryPictureProduct: 
+                              destination: retry.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
+                                       maxAttempts: 1 
+                        brandRetryPictureProduct: 
+                              destination: retry.brand.product.picture
+                              content-type: application/json 
+                        retryBrandPictureProduct: 
+                              destination: retry.brand.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
+                                       maxAttempts: 1            
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               group: one
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
-                        retryPictureProduct: 
-                              destination: retry.product.picture
+                        brandPictureProduct: 
+                              destination: brand.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 1
+                                       concurrency: 3
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
                                   producer: 
-                                       prefix: HA.                      
+                                       prefix: HA.    
+                            retryPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false  
+                            brandRetryPictureProduct: 
+                                  producer: 
+                                       prefix: HA.   
+                            retryBrandPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false                
                             supplierPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            retryPictureProduct: 
+                            brandPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false
+                                       republishToDlq: false 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       

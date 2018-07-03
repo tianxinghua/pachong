@@ -29,4 +29,16 @@ public class PictureProductStreamListener {
     public void supplierPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
     }
+	
+	@StreamListener(PictureProductSink.BRAND_PICTURE)
+    public void brandPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		try {
+			Thread.sleep(1000*10);
+			pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+    }
+	
 }

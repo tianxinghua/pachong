@@ -31,11 +31,23 @@ spring:
                               consumer: 
                                        concurrency: 3
                                        maxAttempts: 1
+                        brandPictureProduct: 
+                              destination: brand.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 3
+                                       maxAttempts: 1
                         retryPictureProduct: 
                               destination: retry.product.picture
                               group: one
                               consumer: 
                                        concurrency: 2
+                                       maxAttempts: 1
+                        retryBrandPictureProduct: 
+                              destination: retry.brand.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
@@ -48,7 +60,19 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            brandPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false 
                             retryPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            retryBrandPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
