@@ -57,7 +57,7 @@ public class TestDynamicIpContinue {
         // 新浪微博 https://m.weibo.cn/api/container/getIndex?containerid=100103type%3D3%26q%3D%E6%B1%BD%E8%BD%A6&queryVal=%E6%B1%BD%E8%BD%A6&type=user&page=2
         // 法院文书 https://m.itslaw.com/mobile
         // 分类信息百姓网 http://china.baixing.com/cheliang/
-        String targetUrl = "http://www.tianyancha.com/company/1184508115";
+        String targetUrl = "https://www.gucci.cn/zh/pr/476541DVUXT9193?nid=27";
 
         // 设置referer信息，如果抓取淘宝、天猫需要设置
         String referer = "";
@@ -171,6 +171,7 @@ public class TestDynamicIpContinue {
             try {
 //                String targetUrl = "http://www.baidu.com";
                 HttpURLConnection connection = null;
+                HttpsURLConnection https = null;
                 URL link = new URL(targetUrl);
                 // 这个IP要换 成可用的IP哦，这里案例只是随便写的一个IP
 
@@ -186,7 +187,7 @@ public class TestDynamicIpContinue {
 
                     boolean useHttps = targetUrl.startsWith("https");
                     if (useHttps) {
-                        HttpsURLConnection https = (HttpsURLConnection) connection;
+                        https = (HttpsURLConnection) connection;
                         oldSocketFactory = trustAllHosts(https);
                         oldHostnameVerifier = https.getHostnameVerifier();
                         https.setHostnameVerifier(DO_NOT_VERIFY);
@@ -399,6 +400,7 @@ public class TestDynamicIpContinue {
                     String[] res = new String(data, "UTF-8").split("\n");
                     System.out.println(">>>>>>>>>>>>>>当前返回IP量 " + res.length);
                     for (String ip : res) {
+                        System.out.println("ip = "+ip );
                         new Crawler(100, targetUrl, useJs, timeOut, ip, referer, https, outputHeaderInfo).start();
                     }
                 } catch (Exception e) {

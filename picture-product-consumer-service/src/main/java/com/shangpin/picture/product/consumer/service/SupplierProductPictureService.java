@@ -443,7 +443,12 @@ public class SupplierProductPictureService {
 							if (retryCount != null && retryCount > 6) {
 								continue;
 							}
-							streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
+							if("2017031301866 ".equals(dto.getSupplierId())){
+								streamSender.brandPictureProductStream(new RetryPicture(spuPendingPicId) , null);
+							}else{
+								streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
+							}
+							
 						}
 				}
 			}

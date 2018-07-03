@@ -12,7 +12,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.174
+          host: localhost
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -114,3 +114,4 @@ shangpin:
                   2016110101955:
                       username: Shangpin
                       password: Shangpin17!
+       brandSupplierIds: 2017031301866,2018062801885
