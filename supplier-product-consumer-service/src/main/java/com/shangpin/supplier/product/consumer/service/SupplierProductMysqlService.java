@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
@@ -78,11 +79,13 @@ public class SupplierProductMysqlService {
 	 */
 	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto supplierSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu){
 		try {	
+			log.info("zhicai supplierSpu:"+JSONObject.toJSONString(supplierSpu));
 //			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
 //			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
 				supplierSpu.setCreateTime(new Date());
 				Long spuId = hubSupplierSpuGateWay.insert(supplierSpu);
+				log.info(supplierSpu.getSupplierSpuNo()+"插入成功!");
 				supplierSpu.setSupplierSpuId(spuId);
 				convertHubSpuToPendingSpu(supplierSpu,pendingSpu);
 				return ProductStatus.NEW;
@@ -98,6 +101,7 @@ public class SupplierProductMysqlService {
 				if(isChanged){
 					hubSpuUpdated.setUpdateTime(new Date()); 
 					updateHubSpu(hubSpuUpdated);
+					log.info(supplierSpu.getSupplierSpuNo()+"更新成功!");
 					return ProductStatus.UPDATE;
 				}else{
 					return ProductStatus.NO_NEED_HANDLE;
@@ -476,6 +480,10 @@ public class SupplierProductMysqlService {
 		}
 		if(null != hubSpuSel.getIsexistpic() && hubSpuSel.getIsexistpic() == Isexistpic.YES.getIndex()){
 			pendingSpu.setPicState(PicState.HANDLED.getIndex());
+		}
+		if(!StringUtils.isEmpty(hubSpu.getProductUrl()) && !hubSpu.getProductUrl().equals(hubSpuSel.getProductUrl())){
+			hubSpuUpdated.setProductUrl(hubSpu.getProductUrl()); 
+			isChanged = true;
 		}
 		
 		return isChanged;
