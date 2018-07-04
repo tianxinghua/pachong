@@ -72,7 +72,7 @@ public class PriceController {
 	public void savePriceRecordAndSendConsumerNew(@RequestBody PriceDto priceDto) throws Exception{
 		priceService.savePriceRecordAndSendConsumerNew(priceDto);
 	}
-	
+	//zhicai商品变价
 	@RequestMapping(value = "/save-and-sendmessage-zhicai")
 	public HubResponse<?> savePriceRecordAndSendConsumerzhicai(@RequestBody com.shangpin.ephub.product.business.rest.price.dto.PriceDto priceDto) throws Exception{
 		
