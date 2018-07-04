@@ -166,8 +166,10 @@ public interface OriginalProductSource {
 	public static final String OBLU ="obluOriginalProduct";
 	
 	public static final String ZHICAI ="zhicaiOriginalProduct";
-    
-    /**
+	public static final String YLATI ="ylatiOriginalProduct";
+
+
+	/**
      * 供货商angeloMinetti通道组件配置
      * @return 供货商angeloMinetti通道组件
      */
@@ -666,4 +668,7 @@ public interface OriginalProductSource {
 	
 	@Output(value = OriginalProductSource.ZHICAI)
 	public MessageChannel zhicai();
+
+	@Output(value = OriginalProductSource.YLATI)
+	public MessageChannel ylati();
 }

@@ -256,7 +256,10 @@ spring:
                              content-type: application/json
                         zhicaiOriginalProduct:
                              destination: zhicai.original.product
-                             content-type: application/json                             
+                             content-type: application/json
+                        ylatiOriginalProduct:
+                             destination: redi.original.product
+                             content-type: application/json
               rabbit:
                       bindings: 
                             cocoroseLondonOriginalProduct:
@@ -507,7 +510,10 @@ spring:
                                            prefix: HA.
                             zhicaiOriginalProduct:
                                   producer:
-                                           prefix: HA.                                           
+                                           prefix: HA.
+                            ylatiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 

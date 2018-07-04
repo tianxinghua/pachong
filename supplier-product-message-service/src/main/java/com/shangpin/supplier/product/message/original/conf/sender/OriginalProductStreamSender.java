@@ -686,5 +686,9 @@ public class OriginalProductStreamSender {
         return originalProductSource.zhicai().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 
+    public boolean ylatiStream(SupplierProduct supplierProduct) {
+        return originalProductSource.ylati().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
 
 }
