@@ -492,6 +492,17 @@ public class TaskImportService {
 				}
 			}
 		}
+		if ("supplierData".equals(type)) {
+			for (int i = 0; i < supplierDataTemplate.length; i++) {
+				if (xssfRow.getCell(i) != null) {
+					String fieldName = xssfRow.getCell(i).toString();
+					if (!supplierDataTemplate[i].equals(fieldName)) {
+						flag = false;
+						break;
+					}
+				}
+			}
+		}
 
 		if(!flag){
 			log.info("任务编号：" + taskNo + "," + "上传文件与模板不一致");
