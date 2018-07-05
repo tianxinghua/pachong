@@ -172,6 +172,11 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("zhicaiHandler")
 	private ISupplierHandler zhicaiHandler;
+
+	@Autowired
+	@Qualifier("ylatiHandler")
+	private ISupplierHandler ylatiHandler;
+
 	
 	
 	/**
@@ -872,6 +877,10 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void zhicaiStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		zhicaiHandler.handleOriginalProduct(message, headers);
+	}
+
+	public void ylatiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		ylatiHandler.handleOriginalProduct(message, headers);
 	}
 	
 

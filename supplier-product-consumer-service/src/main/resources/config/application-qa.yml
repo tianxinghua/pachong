@@ -742,7 +742,16 @@ spring:
                                        maxAttempts: 1
                         zhicaiPendingProduct:
                               destination: zhicai.pending.product
-                              content-type: application/json                              
+                              content-type: application/json
+                        ylatiOriginalProduct:
+                              destination: ylati.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        ylatiPendingProduct:
+                              destination: ylati.pending.product
+                              content-type: application/json
               rabbit:
                         bindings: 
                               supplierPictureProduct: 
@@ -1472,6 +1481,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               zhicaiPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              ylatiOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              ylatiPendingProduct:
                                     producer:
                                          prefix: HA.
 
