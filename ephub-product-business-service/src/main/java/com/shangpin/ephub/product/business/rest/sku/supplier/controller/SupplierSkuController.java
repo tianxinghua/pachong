@@ -102,6 +102,8 @@ public class SupplierSkuController {
 			
 			List<ZhiCaiSkuResult> skuList = new ArrayList<>();
 			for(HubSupplierSkuDto hubSupplierSkuDto : skuDtos) {
+				if(StringUtils.isBlank(hubSupplierSkuDto.getSpSkuNo()))
+					continue;
 				ZhiCaiSkuResult zhiCaiSkuResult = new ZhiCaiSkuResult();
 				zhiCaiSkuResult.setSize(hubSupplierSkuDto.getSupplierSkuSize());
 				zhiCaiSkuResult.setSpSkuNo(hubSupplierSkuDto.getSpSkuNo());
