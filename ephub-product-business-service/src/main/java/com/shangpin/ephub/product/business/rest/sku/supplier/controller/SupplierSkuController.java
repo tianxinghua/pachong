@@ -130,7 +130,7 @@ public class SupplierSkuController {
 			dto.setPageIndex(0);
 			dto.setPageSize(20);
 		}else {
-			dto.setPageIndex(zhiCaiQuery.getPageIndex()-1);
+			dto.setPageIndex((zhiCaiQuery.getPageIndex()-1)*zhiCaiQuery.getPageSize());
 			dto.setPageSize(zhiCaiQuery.getPageSize());
 		}
 		if(zhiCaiQuery.getBrandNo()==null||zhiCaiQuery.getBrandNo().equals(""))
