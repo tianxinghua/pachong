@@ -166,6 +166,7 @@ public interface OriginalProductSource {
 	public static final String OBLU ="obluOriginalProduct";
 	
 	public static final String ZHICAI ="zhicaiOriginalProduct";
+
 	public static final String YLATI ="ylatiOriginalProduct";
 
 

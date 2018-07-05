@@ -258,7 +258,7 @@ spring:
                              destination: zhicai.original.product
                              content-type: application/json
                         ylatiOriginalProduct:
-                             destination: redi.original.product
+                             destination: ylati.original.product
                              content-type: application/json
               rabbit:
                       bindings: 
