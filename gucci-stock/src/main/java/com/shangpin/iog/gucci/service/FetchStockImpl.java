@@ -30,7 +30,7 @@ public class FetchStockImpl  {
     private static Logger loggerError = Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
+    private static String supplierId = "",supplierNo = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
 
     private static OutputStreamWriter  out= null;
     static String splitSign = ",";
@@ -54,6 +54,8 @@ public class FetchStockImpl  {
             bdl = ResourceBundle.getBundle("conf");
         }
         supplierId = bdl.getString("supplierId");
+
+        supplierNo = bdl.getString("supplierNo");
 
         fetchSpProductInfosUrl = bdl.getString("fetchSpProductInfosUrl");
 
@@ -107,7 +109,7 @@ public class FetchStockImpl  {
         List<ProductDTO> productDTOAllList =  new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam("GUCCI", 1, Integer.parseInt(pageSize));
+        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam(supplierId,"GUCCI", 1, Integer.parseInt(pageSize));
         productDTOAllList.addAll(gucciPageContent.getZhiCaiResultList());
 
         if(gucciPageContent == null) return;
@@ -115,16 +117,19 @@ public class FetchStockImpl  {
         Integer total = gucciPageContent.getTotal();
         Integer pageNumber = getPageNumber(total, 20);
         for (int i = 2; i <= pageNumber; i++) {
-            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam("GUCCI", i, Integer.parseInt(pageSize));
+            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam(supplierId,"GUCCI", i, Integer.parseInt(pageSize));
             if(temgucciPageContent!=null){
                 productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
-            }else{
-                temgucciPageContent = getShangPinPageContentByParam("GUCCI", null, null);
+            }else{ //请求失败重新 再次请求
+                temgucciPageContent = getShangPinPageContentByParam(supplierId,"GUCCI", i, Integer.parseInt(pageSize));
                 if(temgucciPageContent!=null){
                     productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
                 }
             }
         }
+
+        logger.info("=====需要更新GUCCI spProduct Size:"+productDTOAllList.size());
+        System.out.println("=====需要更新GUCCI spProduct Size:"+productDTOAllList.size());
         //导出尚品库存数据
         exportQtyInfoForProductList(productDTOAllList);
 
@@ -161,10 +166,11 @@ public class FetchStockImpl  {
      * @param pageSize 分页条数
      * @return
      */
-    public static ShangPinPageContent getShangPinPageContentByParam(String brandName,Integer pageIndex,Integer pageSize){
+    public static ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize){
         //String fetchSpProductInfosUrl = "http://192.168.20.176:8003/supplier-sku/get-product";
         //1. 请求需要更新库存商品 信息接口
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("supplierId",supplierId);
         jsonObject.put("brandName",brandName);
         jsonObject.put("pageIndex",pageIndex);
         jsonObject.put("pageSize",pageSize);
@@ -174,61 +180,17 @@ public class FetchStockImpl  {
         ShangPinPageContent shangPinPageContent = null;
         try {
             String resultJsonStr = HttpUtil45.operateData("post","json",fetchSpProductInfosUrl,timeConfig,null,jsonStr,null,null);
-            /*String resultJsonStr = "{\n" +
-                    "    \"code\": \"0\",\n" +
-                    "    \"msg\": \"success\",\n" +
-                    "    \"content\": {\n" +
-                    "        \"total\": 82,\n" +
-                    "        \"zhiCaiResultList\": [\n" +
-                    "            {\n" +
-                    "                \"productUrl\": \"https://www.gucci.com/it/it/pr/women/handbags/womens-shoulder-bags/ophidia-suede-mini-bag-p-5173500KCDG8774?position=4&listName=VariationOverlay\",\n" +
-                    "                \"supplierSpuNo\": \"5173500KCDG8774\",\n" +
-                    "                \"supplierSpuModel\": \"5173500KCDG8774\",\n" +
-                    "                \"zhiCaiSkuResultList\": [\n" +
-                    "                    {\n" +
-                    "                        \"supplierSkuNo\": \"5173500KCDG8774-U\",\n" +
-                    "                        \"spSkuNo\": \"1\",\n" +
-                    "                        \"size\": \"U\"\n" +
-                    "                    }\n" +
-                    "                ]\n" +
-                    "            },\n" +
-                    "            {\n" +
-                    "                \"productUrl\": \"https://www.gucci.com/it/it/pr/women/handbags/womens-shoulder-bags/broadway-leather-mini-bag-p-453778DVUDT8007?position=1&listName=VariationOverlay\",\n" +
-                    "                \"supplierSpuNo\": \"453778DVUDT8007\",\n" +
-                    "                \"supplierSpuModel\": \"453778DVUDT8007\",\n" +
-                    "                \"zhiCaiSkuResultList\": [\n" +
-                    "                    {\n" +
-                    "                        \"supplierSkuNo\": \"453778DVUDT8007-U\",\n" +
-                    "                        \"spSkuNo\": \"1\",\n" +
-                    "                        \"size\": \"U\"\n" +
-                    "                    }\n" +
-                    "                ]\n" +
-                    "            },\n" +
-                    "            {\n" +
-                    "                \"productUrl\": \"https://www.gucci.com/it/it/pr/women/handbags/womens-shoulder-bags/dionysus-medium-bucket-bag-p-499622D6ZVX8379?position=1&listName=VariationOverlay\",\n" +
-                    "                \"supplierSpuNo\": \"499622D6ZVX8379\",\n" +
-                    "                \"supplierSpuModel\": \"499622D6ZVX8379\",\n" +
-                    "                \"zhiCaiSkuResultList\": [\n" +
-                    "                    {\n" +
-                    "                        \"supplierSkuNo\": \"499622D6ZVX8379-U\",\n" +
-                    "                        \"spSkuNo\": \"30670697001\",\n" +
-                    "                        \"size\": \"U\"\n" +
-                    "                    }\n" +
-                    "                ]\n" +
-                    "            }\n" +
-                    "        ]\n" +
-                    "    },\n" +
-                    "    \"errorMsg\": null\n" +
-                    "}";*/
-
+            System.out.println("=======resultJsonStr:"+resultJsonStr);
+            logger.info("=======resultJsonStr:"+resultJsonStr);
             JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
             Map<String,Class> keyMapConfig= new HashMap<>();
             keyMapConfig.put("zhiCaiResultList",ProductDTO.class);
             keyMapConfig.put("zhiCaiSkuResultList",SkuDTO.class);
+            keyMapConfig.put("content",ShangPinPageContent.class);
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
 
             if(apiResponseBody!=null){
-                shangPinPageContent = apiResponseBody.getContent();
+                shangPinPageContent = (ShangPinPageContent) apiResponseBody.getContent();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -387,7 +349,7 @@ public class FetchStockImpl  {
                         logger.error("获取商品价格异常=============productUrl:"+productUrl+"==============================");
                     }
 
-                    for (Element sizeElement:sizeElements ) {
+                    sizeElement:  for (Element sizeElement:sizeElements ) {
                         //处理尺码信息
                         String pcode = sizeElement.attr("value");
                         String classValue = sizeElement.attr("class");
@@ -404,8 +366,12 @@ public class FetchStockImpl  {
                             continue;
                         }
                         // 校对 商品尺码信息
-                        for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
+                        zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
                             SkuDTO skuDTO = zhiCaiSkuResultList.get(i);
+                            String spSkuNo = skuDTO.getSpSkuNo();
+                            if(spSkuNo == null || "".equals(spSkuNo)){
+                                continue zhiCai;
+                            }
                             /**
                              * 校验价格信息
                              */
@@ -436,11 +402,11 @@ public class FetchStockImpl  {
                                         //加入到失败库存信息中
                                         failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(),pcode));
                                     }
+                                    /**
+                                     * 获取需要请求的都休息 0.5s
+                                     */
+                                    Thread.sleep(500);
                                 }
-                                /**
-                                 * 获取每一个尺码都休息 0.5s
-                                 */
-                                Thread.sleep(500);
                             }
                         }
                     }
@@ -451,16 +417,19 @@ public class FetchStockImpl  {
                     // 商品页面中没有获取到尺码信息重新请求
                     return false;
                 }
-
             }else{
-
                 logger.error("================请求商品地址失败===========================================");
                 logger.error(productDTO.toString());
                 logger.error("================请求商品地址失败===========================================");
-
                 return false;
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //每一款商品休息5s
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return true;
@@ -473,17 +442,25 @@ public class FetchStockImpl  {
      */
     private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice) {
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put("supplierId",supplierId);
+        jsonObject.put("supplierNo",supplierNo);
         jsonObject.put("supplierSkuNo",supplierSkuNo);
         jsonObject.put("marketPrice",marketPrice);
         String jsonStr = jsonObject.toString();
         try {
             String resultJsonStr = HttpUtil45.operateData("post","json",updateSpMarketPriceUrl,timeConfig,null,jsonStr,null,null);
-            /*JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
+            JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
             Map<String,Class> keyMapConfig= new HashMap<>();
-            keyMapConfig.put("zhiCaiResultList",ProductDTO.class);
-            keyMapConfig.put("zhiCaiSkuResultList",SkuDTO.class);
+            keyMapConfig.put("content",String.class);
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
-           */
+            String code = apiResponseBody.getCode();
+            if("0".equals(code)){
+                logger.info("=============更新updateSpSkuMarketPrice成功===============");
+                System.out.println("=============更新updateSpSkuMarketPrice成功===============");
+            }else{
+                loggerError.error("=============更新updateSpSkuMarketPrice 失败===============");
+                System.err.println("=============更新updateSpSkuMarketPrice成功===============");
+            }
             System.out.println("更新updateSpMarketPrice resultJsonStr:"+resultJsonStr);
             logger.info("更新updateSpMarketPrice resultJsonStr:"+resultJsonStr);
         } catch (Exception e) {
@@ -590,6 +567,12 @@ public class FetchStockImpl  {
             out.flush();
         } catch (Exception e) {
         }
+    }
+
+
+    public static void main(String[] args) {
+        FetchStockImpl fetchStock = new FetchStockImpl();
+        fetchStock.fetchItlyProductStock();
     }
 
 }

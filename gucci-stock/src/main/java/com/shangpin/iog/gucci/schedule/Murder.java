@@ -1,6 +1,7 @@
 package com.shangpin.iog.gucci.schedule;
 
 import com.shangpin.iog.gucci.service.FetchStockImpl;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
@@ -9,6 +10,9 @@ import java.util.concurrent.*;
 
 @Component
 public class Murder extends TimerTask{
+	private static Logger logger = Logger.getLogger("info");
+	private static Logger loggerError = Logger.getLogger("error");
+
 	private static ResourceBundle bdl=null;
 	private static int time;
     static {
@@ -33,13 +37,14 @@ public class Murder extends TimerTask{
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread().getName()+"执行murder");
+		logger.info(Thread.currentThread().getName()+"执行murder");
 		Thread t = new Thread(new Worker(stockImp));
 		Future<?> future = executor.submit(t);
 		try {
 			future.get(time, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			future.cancel(true);
-//			logError.error(Thread.currentThread().getName()+"超时销毁");
+			loggerError.error(Thread.currentThread().getName()+"超时销毁");
 			System.out.println(Thread.currentThread().getName()+"超时销毁");
 		}
 	}
