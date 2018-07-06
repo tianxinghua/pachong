@@ -81,6 +81,10 @@ public class SupplierProductSaveAndSendToPending {
 			shangpinMail.setSubject(subject);
 			shangpinMail.setText(text);
 			shangpinMail.setTo(shangpinMailProperties.getMailSendTo());
+			List<String> addTo = new ArrayList<>();
+			addTo.add("bd.list@shangpin.com");
+			shangpinMail.setAddTo(addTo);
+			
 			shangpinMailSenderGateWay.send(shangpinMail);
 		} catch (Exception e) {
 			log.error("发送邮件失败："+e.getMessage(),e); 
