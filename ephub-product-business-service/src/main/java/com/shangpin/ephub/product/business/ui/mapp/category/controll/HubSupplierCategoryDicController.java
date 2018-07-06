@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,8 @@ public class HubSupplierCategoryDicController {
 	@Autowired
 	HubSupplierValueMappingService hubSupplierValueMappingService;
 	@Autowired
+	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay; 
+	@Autowired
 	SupplierService supplierService;
 	@Autowired
 	TaskImportService taskImportService;
@@ -81,7 +85,7 @@ public class HubSupplierCategoryDicController {
 				}	
 				supplierId = supplierDto.getSopUserNo();
 			}
-			
+		
 			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender(),hubSupplierCategoryDicRequestDto.getStartTime(),hubSupplierCategoryDicRequestDto.getEndTime());
 			log.info("返回个数："+total);
 			if(total>0){
@@ -103,6 +107,11 @@ public class HubSupplierCategoryDicController {
 						if(dicDto.getUpdateTime()!=null){
 							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}
+						HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+						criteria.createCriteria().andHubValTypeEqualTo((byte)5).andSupplierIdEqualTo(dicDto.getSupplierId());
+						List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+						HubSupplierValueMappingDto hubSupplierValueMappingDto = hubSupplierValueMappingDtos.get(0);
+						dic.setSupplierName(hubSupplierValueMappingDto.getUpdateUser());
 						BeanUtils.copyProperties(dicDto, dic);
 						responseList.add(dic);
 					}
