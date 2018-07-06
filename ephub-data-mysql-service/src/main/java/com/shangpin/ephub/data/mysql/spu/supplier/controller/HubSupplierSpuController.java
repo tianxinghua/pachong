@@ -12,6 +12,7 @@ import com.shangpin.ephub.data.mysql.spu.supplier.bean.HubSupplierSpuCriteriaWit
 import com.shangpin.ephub.data.mysql.spu.supplier.bean.HubSupplierSpuWithCriteria;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria;
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto;
 import com.shangpin.ephub.data.mysql.spu.supplier.servcie.HubSupplierSpuService;
 /**
  * <p>Title:HubSupplierSpuController.java </p>
@@ -56,6 +57,14 @@ public class HubSupplierSpuController {
 	@RequestMapping(value = "/select-by-criteria")
     public List<HubSupplierSpu> selectByCriteria(@RequestBody HubSupplierSpuCriteria criteria){
     	return hubSupplierSpuService.selectByCriteria(criteria);
+    }
+	@RequestMapping(value = "/select-by-brand")
+    public List<HubSupplierSpu> selectByBrand(@RequestBody HubSupplierSpuQureyDto dto){
+    	return hubSupplierSpuService.selectByBrand(dto);
+    }
+	@RequestMapping(value = "/select-by-brand-count")
+    public int count(@RequestBody HubSupplierSpuQureyDto dto){
+    	return hubSupplierSpuService.count(dto);
     }
 	@RequestMapping(value = "/select-by-primary-key/{supplierSpuId}")
     public HubSupplierSpu selectByPrimaryKey(@PathVariable("supplierSpuId") Long supplierSpuId){

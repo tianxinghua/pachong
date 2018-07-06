@@ -40,16 +40,6 @@ public class HubSpu implements Serializable {
     private String marketTime;
 
     /**
-     * 颜色
-     */
-    private String hubColor;
-
-    /**
-     * 颜色码
-     */
-    private String hubColorNo;
-
-    /**
      * 上市季节
      */
     private String season;
@@ -85,9 +75,19 @@ public class HubSpu implements Serializable {
     private Byte spuState;
 
     /**
-     * 商品选品状态
+     * 商品选品状态 =0 待选 =1 已选 =2 未选',
      */
     private Byte spuSelectState;
+
+    /**
+     * 颜色
+     */
+    private String hubColor;
+
+    /**
+     * 颜色码
+     */
+    private String hubColorNo;
 
     /**
      * 新品类型
@@ -99,20 +99,13 @@ public class HubSpu implements Serializable {
      */
     private String picUrl;
 
-    private String origin;
-
-    /**
-     * 材质
-     */
-    private String material;
-
     /**
      * hubspuno
      */
     private String spuNo;
 
     /**
-     * 信息来源
+     * 信息来源   0:对接供应商   1:导入
      */
     private Byte infoFrom;
 
@@ -131,11 +124,42 @@ public class HubSpu implements Serializable {
      */
     private Long version;
 
+    /**
+     * 材质
+     */
+    private String material;
+
+    /**
+     * 产地
+     */
+    private String origin;
+
+    /**
+     * 导出时间
+     */
     private Date pictureExportTime;
 
+    /**
+     * 图片导出用户
+     */
     private String pictureExportUser;
 
     private Byte pictureState;
+
+    /**
+     * 测量信息
+     */
+    private String measurement;
+
+    /**
+     * 代购标示
+     */
+    private Byte hotboomSign;
+
+    /**
+     * 代购推送货号
+     */
+    private String hotboomSpuModel;
 
     private static final long serialVersionUID = 1L;
 
@@ -193,22 +217,6 @@ public class HubSpu implements Serializable {
 
     public void setMarketTime(String marketTime) {
         this.marketTime = marketTime == null ? null : marketTime.trim();
-    }
-
-    public String getHubColor() {
-        return hubColor;
-    }
-
-    public void setHubColor(String hubColor) {
-        this.hubColor = hubColor == null ? null : hubColor.trim();
-    }
-
-    public String getHubColorNo() {
-        return hubColorNo;
-    }
-
-    public void setHubColorNo(String hubColorNo) {
-        this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
     }
 
     public String getSeason() {
@@ -275,6 +283,22 @@ public class HubSpu implements Serializable {
         this.spuSelectState = spuSelectState;
     }
 
+    public String getHubColor() {
+        return hubColor;
+    }
+
+    public void setHubColor(String hubColor) {
+        this.hubColor = hubColor == null ? null : hubColor.trim();
+    }
+
+    public String getHubColorNo() {
+        return hubColorNo;
+    }
+
+    public void setHubColorNo(String hubColorNo) {
+        this.hubColorNo = hubColorNo == null ? null : hubColorNo.trim();
+    }
+
     public Byte getNewType() {
         return newType;
     }
@@ -289,22 +313,6 @@ public class HubSpu implements Serializable {
 
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl == null ? null : picUrl.trim();
-    }
-
-    public String getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin == null ? null : origin.trim();
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material == null ? null : material.trim();
     }
 
     public String getSpuNo() {
@@ -347,6 +355,22 @@ public class HubSpu implements Serializable {
         this.version = version;
     }
 
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material == null ? null : material.trim();
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin == null ? null : origin.trim();
+    }
+
     public Date getPictureExportTime() {
         return pictureExportTime;
     }
@@ -371,6 +395,30 @@ public class HubSpu implements Serializable {
         this.pictureState = pictureState;
     }
 
+    public String getMeasurement() {
+        return measurement;
+    }
+
+    public void setMeasurement(String measurement) {
+        this.measurement = measurement == null ? null : measurement.trim();
+    }
+
+    public Byte getHotboomSign() {
+        return hotboomSign;
+    }
+
+    public void setHotboomSign(Byte hotboomSign) {
+        this.hotboomSign = hotboomSign;
+    }
+
+    public String getHotboomSpuModel() {
+        return hotboomSpuModel;
+    }
+
+    public void setHotboomSpuModel(String hotboomSpuModel) {
+        this.hotboomSpuModel = hotboomSpuModel == null ? null : hotboomSpuModel.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -384,8 +432,6 @@ public class HubSpu implements Serializable {
         sb.append(", categoryNo=").append(categoryNo);
         sb.append(", brandNo=").append(brandNo);
         sb.append(", marketTime=").append(marketTime);
-        sb.append(", hubColor=").append(hubColor);
-        sb.append(", hubColorNo=").append(hubColorNo);
         sb.append(", season=").append(season);
         sb.append(", spuDesc=").append(spuDesc);
         sb.append(", createTime=").append(createTime);
@@ -394,18 +440,23 @@ public class HubSpu implements Serializable {
         sb.append(", updateUser=").append(updateUser);
         sb.append(", spuState=").append(spuState);
         sb.append(", spuSelectState=").append(spuSelectState);
+        sb.append(", hubColor=").append(hubColor);
+        sb.append(", hubColorNo=").append(hubColorNo);
         sb.append(", newType=").append(newType);
         sb.append(", picUrl=").append(picUrl);
-        sb.append(", origin=").append(origin);
-        sb.append(", material=").append(material);
         sb.append(", spuNo=").append(spuNo);
         sb.append(", infoFrom=").append(infoFrom);
         sb.append(", memo=").append(memo);
         sb.append(", dataState=").append(dataState);
         sb.append(", version=").append(version);
+        sb.append(", material=").append(material);
+        sb.append(", origin=").append(origin);
         sb.append(", pictureExportTime=").append(pictureExportTime);
         sb.append(", pictureExportUser=").append(pictureExportUser);
         sb.append(", pictureState=").append(pictureState);
+        sb.append(", measurement=").append(measurement);
+        sb.append(", hotboomSign=").append(hotboomSign);
+        sb.append(", hotboomSpuModel=").append(hotboomSpuModel);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -430,8 +481,6 @@ public class HubSpu implements Serializable {
             && (this.getCategoryNo() == null ? other.getCategoryNo() == null : this.getCategoryNo().equals(other.getCategoryNo()))
             && (this.getBrandNo() == null ? other.getBrandNo() == null : this.getBrandNo().equals(other.getBrandNo()))
             && (this.getMarketTime() == null ? other.getMarketTime() == null : this.getMarketTime().equals(other.getMarketTime()))
-            && (this.getHubColor() == null ? other.getHubColor() == null : this.getHubColor().equals(other.getHubColor()))
-            && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
             && (this.getSeason() == null ? other.getSeason() == null : this.getSeason().equals(other.getSeason()))
             && (this.getSpuDesc() == null ? other.getSpuDesc() == null : this.getSpuDesc().equals(other.getSpuDesc()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
@@ -440,18 +489,23 @@ public class HubSpu implements Serializable {
             && (this.getUpdateUser() == null ? other.getUpdateUser() == null : this.getUpdateUser().equals(other.getUpdateUser()))
             && (this.getSpuState() == null ? other.getSpuState() == null : this.getSpuState().equals(other.getSpuState()))
             && (this.getSpuSelectState() == null ? other.getSpuSelectState() == null : this.getSpuSelectState().equals(other.getSpuSelectState()))
+            && (this.getHubColor() == null ? other.getHubColor() == null : this.getHubColor().equals(other.getHubColor()))
+            && (this.getHubColorNo() == null ? other.getHubColorNo() == null : this.getHubColorNo().equals(other.getHubColorNo()))
             && (this.getNewType() == null ? other.getNewType() == null : this.getNewType().equals(other.getNewType()))
             && (this.getPicUrl() == null ? other.getPicUrl() == null : this.getPicUrl().equals(other.getPicUrl()))
-            && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()))
-            && (this.getMaterial() == null ? other.getMaterial() == null : this.getMaterial().equals(other.getMaterial()))
             && (this.getSpuNo() == null ? other.getSpuNo() == null : this.getSpuNo().equals(other.getSpuNo()))
             && (this.getInfoFrom() == null ? other.getInfoFrom() == null : this.getInfoFrom().equals(other.getInfoFrom()))
             && (this.getMemo() == null ? other.getMemo() == null : this.getMemo().equals(other.getMemo()))
             && (this.getDataState() == null ? other.getDataState() == null : this.getDataState().equals(other.getDataState()))
             && (this.getVersion() == null ? other.getVersion() == null : this.getVersion().equals(other.getVersion()))
+            && (this.getMaterial() == null ? other.getMaterial() == null : this.getMaterial().equals(other.getMaterial()))
+            && (this.getOrigin() == null ? other.getOrigin() == null : this.getOrigin().equals(other.getOrigin()))
             && (this.getPictureExportTime() == null ? other.getPictureExportTime() == null : this.getPictureExportTime().equals(other.getPictureExportTime()))
             && (this.getPictureExportUser() == null ? other.getPictureExportUser() == null : this.getPictureExportUser().equals(other.getPictureExportUser()))
-            && (this.getPictureState() == null ? other.getPictureState() == null : this.getPictureState().equals(other.getPictureState()));
+            && (this.getPictureState() == null ? other.getPictureState() == null : this.getPictureState().equals(other.getPictureState()))
+            && (this.getMeasurement() == null ? other.getMeasurement() == null : this.getMeasurement().equals(other.getMeasurement()))
+            && (this.getHotboomSign() == null ? other.getHotboomSign() == null : this.getHotboomSign().equals(other.getHotboomSign()))
+            && (this.getHotboomSpuModel() == null ? other.getHotboomSpuModel() == null : this.getHotboomSpuModel().equals(other.getHotboomSpuModel()));
     }
 
     @Override
@@ -465,8 +519,6 @@ public class HubSpu implements Serializable {
         result = prime * result + ((getCategoryNo() == null) ? 0 : getCategoryNo().hashCode());
         result = prime * result + ((getBrandNo() == null) ? 0 : getBrandNo().hashCode());
         result = prime * result + ((getMarketTime() == null) ? 0 : getMarketTime().hashCode());
-        result = prime * result + ((getHubColor() == null) ? 0 : getHubColor().hashCode());
-        result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
         result = prime * result + ((getSeason() == null) ? 0 : getSeason().hashCode());
         result = prime * result + ((getSpuDesc() == null) ? 0 : getSpuDesc().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
@@ -475,18 +527,23 @@ public class HubSpu implements Serializable {
         result = prime * result + ((getUpdateUser() == null) ? 0 : getUpdateUser().hashCode());
         result = prime * result + ((getSpuState() == null) ? 0 : getSpuState().hashCode());
         result = prime * result + ((getSpuSelectState() == null) ? 0 : getSpuSelectState().hashCode());
+        result = prime * result + ((getHubColor() == null) ? 0 : getHubColor().hashCode());
+        result = prime * result + ((getHubColorNo() == null) ? 0 : getHubColorNo().hashCode());
         result = prime * result + ((getNewType() == null) ? 0 : getNewType().hashCode());
         result = prime * result + ((getPicUrl() == null) ? 0 : getPicUrl().hashCode());
-        result = prime * result + ((getOrigin() == null) ? 0 : getOrigin().hashCode());
-        result = prime * result + ((getMaterial() == null) ? 0 : getMaterial().hashCode());
         result = prime * result + ((getSpuNo() == null) ? 0 : getSpuNo().hashCode());
         result = prime * result + ((getInfoFrom() == null) ? 0 : getInfoFrom().hashCode());
         result = prime * result + ((getMemo() == null) ? 0 : getMemo().hashCode());
         result = prime * result + ((getDataState() == null) ? 0 : getDataState().hashCode());
         result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+        result = prime * result + ((getMaterial() == null) ? 0 : getMaterial().hashCode());
+        result = prime * result + ((getOrigin() == null) ? 0 : getOrigin().hashCode());
         result = prime * result + ((getPictureExportTime() == null) ? 0 : getPictureExportTime().hashCode());
         result = prime * result + ((getPictureExportUser() == null) ? 0 : getPictureExportUser().hashCode());
         result = prime * result + ((getPictureState() == null) ? 0 : getPictureState().hashCode());
+        result = prime * result + ((getMeasurement() == null) ? 0 : getMeasurement().hashCode());
+        result = prime * result + ((getHotboomSign() == null) ? 0 : getHotboomSign().hashCode());
+        result = prime * result + ((getHotboomSpuModel() == null) ? 0 : getHotboomSpuModel().hashCode());
         return result;
     }
 }

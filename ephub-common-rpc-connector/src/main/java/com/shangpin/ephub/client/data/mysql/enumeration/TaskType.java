@@ -67,7 +67,11 @@ public enum TaskType {
 	EXPORT_CATEGORY(27,"品类导出"),
 
 	IMPORT_BRAND(28,"品牌导入"),
-	EXPORT_BRAND(29,"品牌导出")
+	EXPORT_BRAND(29,"品牌导出"),
+	/**
+	 * 供应商数据导入
+	 */
+	SUPPLIER_DATA(30,"SUPPLIER_DATA")
 
 	;
 

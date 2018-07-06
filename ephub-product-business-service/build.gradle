@@ -25,12 +25,13 @@ repositories {
 	mavenCentral()
 	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
 	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
+	maven { url "http://192.168.20.223:8081/nexus/content/groups/public/" }
 }
 
 
 dependencies {
 
-	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.4.3-SNAPSHOT')
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.5.11-SNAPSHOT')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-actuator-docs')
 	compile('org.springframework.boot:spring-boot-starter-aop')
@@ -42,6 +43,9 @@ dependencies {
 	compile('org.springframework.cloud:spring-cloud-starter-zuul')
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('com.shangpin:openapi-api-sdk:4.7')
+    compile('com.shangpin:openapi-api:4.7.14')
+    compile('ZeroC:Ice:3.5.1')
 
 	compile('commons-net:commons-net:3.3')
 	compile('org.apache.velocity:velocity:1.7')

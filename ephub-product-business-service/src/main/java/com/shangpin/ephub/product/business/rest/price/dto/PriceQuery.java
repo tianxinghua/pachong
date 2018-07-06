@@ -36,4 +36,8 @@ public class PriceQuery {
      */
     private List<String> spSkuIds;
     
+    private String startDate;
+    private String endDate;
+    private List<Byte> status;
+    
 }

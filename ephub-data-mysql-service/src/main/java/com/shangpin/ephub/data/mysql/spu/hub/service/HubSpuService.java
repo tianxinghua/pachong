@@ -10,6 +10,7 @@ import com.shangpin.ephub.data.mysql.spu.hub.bean.HubSpuWithCriteria;
 import com.shangpin.ephub.data.mysql.spu.hub.mapper.HubSpuMapper;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
 import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto;
 
 /**
  * <p>Title:HubSpuService.java </p>
@@ -50,6 +51,14 @@ public class HubSpuService {
 
 	public List<HubSpu> selectByCriteria(HubSpuCriteria criteria) {
 		return hubSpuMapper.selectByExample(criteria);
+	}
+	
+	public List<HubSpu> selectByBrand(HubSupplierSpuQureyDto dto) {
+		return hubSpuMapper.selectByBrand(dto);
+	}
+	
+	public int count(HubSupplierSpuQureyDto dto) {
+		return hubSpuMapper.count(dto);
 	}
 
 	public HubSpu selectByPrimaryKey(Long spuId) {

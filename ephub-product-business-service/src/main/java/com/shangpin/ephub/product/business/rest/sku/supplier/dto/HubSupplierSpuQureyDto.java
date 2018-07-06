@@ -1,0 +1,23 @@
+package com.shangpin.ephub.product.business.rest.sku.supplier.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+/**
+ * <p>Title:PendingQuryDto </p>
+ * <p>Description: 待处理页面请求参数实体类 </p>
+ * <p>Company: www.shangpin.com</p> 
+ * @author lubaijiang
+ * @date 2016年12月17日 下午2:58:15
+ *
+ */
+@Getter
+@Setter
+public class HubSupplierSpuQureyDto {
+
+	private Integer pageIndex;
+    private Integer pageSize;
+    private String supplierId;
+    private String brandName;
+    private String brandNo;
+    
+}
