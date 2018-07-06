@@ -8,7 +8,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.HubSpuState;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSkuSupplierMappingDto;
@@ -29,6 +31,7 @@ import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetail;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductPicParam;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.product.business.ui.hub.common.service.HubCommonProductService;
@@ -134,7 +137,7 @@ public class HubProductServiceImpl implements IHubProductService {
 				}catch(Exception e){
 				}
 				updateHubSpu(hubSpuDto);
-			}			
+			}
 			hubProductDetails.getProductName();
 			List<HubProductDetail> hubProducts = hubProductDetails.getHubDetails();
 			if(null != hubProducts && hubProducts.size()>0){
@@ -264,6 +267,20 @@ public class HubProductServiceImpl implements IHubProductService {
 			return null;
 		}
 			
+	}
+	public Long addPicBySpuId(HubProductPicParam hubProductPicParam) {
+		HubSpuPicDto dto = new HubSpuPicDto();
+	    dto.setSpuId(Long.parseLong(hubProductPicParam.getSpuId()));
+		dto.setSpPicUrl(hubProductPicParam.getSpPicUrl());
+		dto.setCreateTime(new Date());
+		dto.setUpdateTime(new Date());
+		dto.setDataState(DataState.NOT_DELETED.getIndex());
+		return hubSpuPicClient.insertSelective(dto);
+	}
+	public void deletePicBySpuId(HubProductPicParam hubProductPicParam) {
+		HubSpuPicCriteriaDto dto = new HubSpuPicCriteriaDto();
+		dto.createCriteria().andSpuPicIdEqualTo(Long.parseLong(hubProductPicParam.getSpuPicId()));
+		hubSpuPicClient.deleteByCriteria(dto);
 	}
 
 }

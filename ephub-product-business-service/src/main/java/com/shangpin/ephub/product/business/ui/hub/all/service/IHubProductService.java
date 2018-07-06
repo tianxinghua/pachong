@@ -1,6 +1,9 @@
 package com.shangpin.ephub.product.business.ui.hub.all.service;
 
+import java.util.List;
+
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductPicParam;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProducts;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 
@@ -32,4 +35,16 @@ public interface IHubProductService {
 	 * @return
 	 */
 	public boolean updateHubProductDetails(HubProductDetails hubProductDetail);
+	/**
+	 * scm添加图片
+	 * @param spuId
+	 * @return
+	 */
+	public Long addPicBySpuId(HubProductPicParam hubProductPicParam);
+	/**
+	 * scm删除图片
+	 * @param spuId
+	 * @return
+	 */
+	public void deletePicBySpuId(HubProductPicParam hubProductPicParam);
 }
