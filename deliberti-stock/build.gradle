@@ -16,7 +16,7 @@ jar {
     exclude ("**/*.properties")
     //def manifestCp = configurations.compile.files.collect  {
     //    File file = it
-    //    "lib/${file.name}" 
+    //    "lib/${file.name}"
     //}.join(' ')
 
     manifest {
