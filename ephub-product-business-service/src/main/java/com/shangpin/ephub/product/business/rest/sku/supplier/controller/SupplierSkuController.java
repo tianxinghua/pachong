@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
@@ -79,7 +80,7 @@ public class SupplierSkuController {
 			dto.setPageIndex(0);
 			dto.setPageSize(20);
 		}else {
-			dto.setPageIndex(zhiCaiQuery.getPageIndex()-1);
+			dto.setPageIndex((zhiCaiQuery.getPageIndex()-1)*zhiCaiQuery.getPageSize());
 			dto.setPageSize(zhiCaiQuery.getPageSize());
 		}
 		if(zhiCaiQuery.getBrandName()==null||zhiCaiQuery.getBrandName().equals(""))
@@ -139,6 +140,7 @@ public class SupplierSkuController {
 			dto.setSupplierId(zhiCaiQuery.getSupplierId());
 			dto.setBrandNo(zhiCaiQuery.getBrandNo());
 		}
+		log.info("dto:"+JSONObject.toJSONString(dto));
 		List<HubSpuDto> hubSpuDtoList= hubSpuGateWay.selectByBrand(dto);
 		int total = hubSpuGateWay.count(dto);
 		List<ZhiCaiModelResult> list = new ArrayList<>();
