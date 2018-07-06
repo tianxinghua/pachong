@@ -73,7 +73,7 @@ public class HubSupplierCategoryDicController {
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryList(
 			@RequestBody HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto) {
-		
+		System.out.println("updateUser---------"+hubSupplierCategoryDicRequestDto.getUpdateUser());
 		try {
 			log.info("===品类映射list请求参数：{}",hubSupplierCategoryDicRequestDto);
 			String supplierNo = hubSupplierCategoryDicRequestDto.getSupplierNo();
@@ -95,11 +95,15 @@ public class HubSupplierCategoryDicController {
 					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
 					for (HubSupplierCategroyDicDto dicDto : list) {
 						HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-						/*List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
-						if(listMapp!=null&&listMapp.size()>0){
-							dic.setSupplierNo(listMapp.get(0).getHubValNo());
-							dic.setSupplierName(listMapp.get(0).getHubVal());
-						}*/
+						if (dicDto.getSupplierId()!=null){
+
+							List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
+							if(listMapp!=null&&listMapp.size()>0){
+								dic.setSupplierNo(listMapp.get(0).getHubValNo());
+								dic.setSupplierName(listMapp.get(0).getHubVal());
+							}
+
+						}
 						if(dicDto.getCreateTime()!=null){
 							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
 						}
@@ -107,11 +111,10 @@ public class HubSupplierCategoryDicController {
 						if(dicDto.getUpdateTime()!=null){
 							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}
-						HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
-						criteria.createCriteria().andHubValTypeEqualTo((byte)5).andSupplierIdEqualTo(dicDto.getSupplierId());
-						List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteria);
-						HubSupplierValueMappingDto hubSupplierValueMappingDto = hubSupplierValueMappingDtos.get(0);
-						dic.setSupplierName(hubSupplierValueMappingDto.getUpdateUser());
+						if (hubSupplierCategoryDicRequestDto.getUpdateUser()!=null){
+							dic.setUpdateUser(hubSupplierCategoryDicRequestDto.getUpdateUser());
+						}
+
 						BeanUtils.copyProperties(dicDto, dic);
 						responseList.add(dic);
 					}
