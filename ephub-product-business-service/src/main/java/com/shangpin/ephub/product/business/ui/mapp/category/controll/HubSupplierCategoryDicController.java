@@ -111,9 +111,9 @@ public class HubSupplierCategoryDicController {
 						if(dicDto.getUpdateTime()!=null){
 							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}
-						if (hubSupplierCategoryDicRequestDto.getUpdateUser()!=null){
+						/*if (hubSupplierCategoryDicRequestDto.getUpdateUser()!=null){
 							dic.setUpdateUser(hubSupplierCategoryDicRequestDto.getUpdateUser());
-						}
+						}*/
 
 						BeanUtils.copyProperties(dicDto, dic);
 						responseList.add(dic);

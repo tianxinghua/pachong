@@ -16,6 +16,15 @@ public class SupplierCategroyDicCriteriaDto {
     protected String supplierCategoryType;
     protected String startTime;
     protected String endTime;
+    protected String updateUser;
+
+    public String getUpdateUser() {
+        return updateUser;
+    }
+
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
 
     public String getStartTime() {
         return startTime;
