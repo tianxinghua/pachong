@@ -491,7 +491,13 @@ spring:
                               group: one
                               consumer:
                                        concurrency: 5
-                                       maxAttempts: 1                                       
+                                       maxAttempts: 1
+                        ylatiPendingProduct:
+                              destination: ylati.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -949,7 +955,13 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                      
+                                       republishToDlq: false
+                            ylatiPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       

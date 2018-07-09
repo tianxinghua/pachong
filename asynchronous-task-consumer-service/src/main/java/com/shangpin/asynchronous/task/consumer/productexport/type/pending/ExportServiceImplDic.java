@@ -155,6 +155,7 @@ public class ExportServiceImplDic {
 	private HubBrandDicGateway brandDicGateway;
 	@Autowired
     GmsGateWay getGmsGateWay;
+
 	private static String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 	private static final Integer PAGESIZE = 50;
@@ -1664,12 +1665,15 @@ public class ExportServiceImplDic {
 		 }
 		 else  if ("updateUser".equals(rowTemplate[i])){
 			 setcategroyupdateUser(row,categroyDicDto,cls,i);
-		 }
+		 }//供应商编号
 		 else  if ("supplierId".equals(rowTemplate[i])){
+
 			 setcategroysupplierId(row,categroyDicDto,cls,i);
-		 }
+		 }//供应商名称
 		 else  if ("supplierName".equals(rowTemplate[i])){
-			 row.createCell(i).setCellValue("");
+
+			 setcategroysupplierName(row,categroyDicDto,cls,i);
+			 //row.createCell(i).setCellValue("");
 		 }
 		 else  if ("genderDicId".equals(rowTemplate[i])){
 			 setgenderDicId(row,categroyDicDto, cls,i);
@@ -1704,7 +1708,7 @@ public class ExportServiceImplDic {
 	 * @param i
 	 */
 	private void  setcategroysupplierId(HSSFRow row, HubSupplierCategroyDicDto categroyDicDto, Class<?> clazz, int i){
-		String fileName = "getSupplierId";
+		/*String fileName = "getSupplierId";
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
@@ -1712,9 +1716,47 @@ public class ExportServiceImplDic {
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
+		}*/
+
+		if (categroyDicDto.getSupplierId()!=null){
+			HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+			//criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+			criteria.createCriteria().andHubValTypeEqualTo((byte)5).andSupplierIdEqualTo(categroyDicDto.getSupplierId());
+			List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+			if(listMapp!=null&&listMapp.size()>0){
+				HubSupplierValueMappingDto valueMappingDto = listMapp.get(0);
+				valueMappingDto.getHubValNo();
+				if (valueMappingDto.getHubValNo()!=null){
+					row.createCell(i).setCellValue(valueMappingDto.getHubValNo());
+				}
+
+			}
 		}
 	}
 
+	/**
+	 * 供应商名称
+	 * @param row
+	 * @param categroyDicDto
+	 * @param clazz
+	 * @param i
+	 */
+	private void  setcategroysupplierName(HSSFRow row, HubSupplierCategroyDicDto categroyDicDto, Class<?> clazz, int i) {
+		if (categroyDicDto.getSupplierId()!=null){
+			HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
+			//criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+			criteria.createCriteria().andHubValTypeEqualTo((byte)5).andSupplierIdEqualTo(categroyDicDto.getSupplierId());
+			List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingGateWay.selectByCriteria(criteria);
+			if(listMapp!=null&&listMapp.size()>0){
+				HubSupplierValueMappingDto valueMappingDto = listMapp.get(0);
+
+				if (valueMappingDto.getHubVal()!=null){
+					row.createCell(i).setCellValue(valueMappingDto.getHubVal());
+				}
+			}
+		}
+
+	}
 	/**
 	 * set cell  updateUser
 	 * @param row

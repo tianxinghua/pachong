@@ -90,6 +90,7 @@ public class PendingCateGroyImportService {
 		JSONObject json = JSONObject.parseObject(task.getData());
 		String filePath = json.get("taskFtpFilePath").toString();
 		String createUser = json.get("createUser").toString();
+		System.out.println("createUser-----"+createUser);
 		task.setData(filePath);
 
 		InputStream in = taskService.downFileFromFtp(task);
@@ -183,6 +184,9 @@ public class PendingCateGroyImportService {
 			}
 
 			categroyDicDto.setUpdateTime(new Date());
+			if (createUser!=null){
+				categroyDicDto.setUpdateUser(createUser);
+			}
 			int i = hubSupplierCategroyDicGateWay.updateByPrimaryKey(categroyDicDto);
 			if (i==1){
 				map.put("task","校验成功");
