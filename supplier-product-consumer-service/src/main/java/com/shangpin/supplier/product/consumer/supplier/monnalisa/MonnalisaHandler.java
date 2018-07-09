@@ -1,9 +1,7 @@
 package com.shangpin.supplier.product.consumer.supplier.monnalisa;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,17 +84,36 @@ public class MonnalisaHandler implements ISupplierHandler{
 //		String supplierSpuNo =jsonObject.getId().substring(0,jsonObject.getId().lastIndexOf("-"));
 //		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture0 = jsonObject.getImage_link();
-		List<Image> images = new ArrayList<Image>();
+
+		Map<String,String> urlMap = new HashMap<>();
+		List<Image> imagesList = new ArrayList<>();
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
-			log.info("monnalisa "+picture0+" 将推送");
+			log.info("monnalisa pic : "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
-			images.add(image);
+			urlMap.put(picture0,"");
+			imagesList.add(image);
 		}else{
-			log.info("XXXXXXXXX monnalisa "+picture0+" 已存在XXXXXXXXXXXX");
+
 		}
-		
-		return images;
+
+		if(null!=jsonObject.getAdditional_image_link()&&org.apache.commons.lang.StringUtils.isNotBlank(jsonObject.getAdditional_image_link())){
+
+			String[] picUrlArray = jsonObject.getAdditional_image_link().split(",");
+            if(null!=picUrlArray){
+            	for(int i= 0 ;i<picUrlArray.length;i++){
+            		if(!urlMap.containsKey(picUrlArray[i])){
+						log.info("monnalisa pic:"+picUrlArray[i]+" 将推送");
+						Image image = new Image();
+						image.setUrl(picUrlArray[i]);
+						imagesList.add(image);
+					}
+				}
+			}
+
+		}
+
+		return imagesList;
 	}
 	
 	/**
