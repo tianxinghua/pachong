@@ -787,4 +787,9 @@ public class OriginalProductStreamListener {
 		adapter.zhicaiStreamListen(message,headers);
 	}
 
+	@StreamListener(OriginalProductSink.YLATI)
+	public void ylatiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.ylatiStreamListen(message,headers);
+	}
+
 }

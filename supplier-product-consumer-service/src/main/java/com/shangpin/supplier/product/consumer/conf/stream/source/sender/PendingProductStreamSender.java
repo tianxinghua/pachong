@@ -687,4 +687,8 @@ public class PendingProductStreamSender {
 		return pendingProductSource.zhicaiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
 	}
 
+	public boolean ylatiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+		return pendingProductSource.ylatiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+
 }

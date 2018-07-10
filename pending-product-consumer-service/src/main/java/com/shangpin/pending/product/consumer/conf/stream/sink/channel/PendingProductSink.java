@@ -167,7 +167,7 @@ public interface PendingProductSink {
 	public static final String OBLU = "obluPendingProduct";
 	
 	public static final String ZHICAI = "zhicaiPendingProduct";
-
+	public static final String YLATI = "ylatiPendingProduct";
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件
@@ -662,4 +662,7 @@ public interface PendingProductSink {
 	
 	@Input(value = PendingProductSink.ZHICAI)
 	public SubscribableChannel zhicaiPendingProduct();
+
+	@Input(value = PendingProductSink.YLATI)
+	public SubscribableChannel ylatiPendingProduct();
 }

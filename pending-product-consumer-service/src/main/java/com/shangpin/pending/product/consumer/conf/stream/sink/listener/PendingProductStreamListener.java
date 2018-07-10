@@ -759,4 +759,9 @@ public class PendingProductStreamListener {
 		adapter.zhicaiPendingProductStreamListen(message,headers);
 	}
 
+	@StreamListener(PendingProductSink.YLATI)
+	public void ylatiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.ylatiPendingProductStreamListen(message,headers);
+	}
+
 }

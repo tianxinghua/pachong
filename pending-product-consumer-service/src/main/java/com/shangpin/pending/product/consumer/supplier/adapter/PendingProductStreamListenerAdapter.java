@@ -757,6 +757,16 @@ public class PendingProductStreamListenerAdapter {
 		this.messageHandle(message, headers);
 
 	}
+	/**
+	 * 供应商 ylati 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+
+	public void ylatiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
 
 
 
