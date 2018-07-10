@@ -121,7 +121,7 @@ public class LungolivignoOrderService implements IOrderService{
 				billingCustomer.setState("");
 				billingCustomer.setCountry("CN – Cina");
 				billingCustomer.setPhone("008615701395910");
-				billingCustomer.setEmail("steven.ding@shangpin.com");
+				billingCustomer.setEmail("chengxu@shangpin.com");
 				billingCustomer.setVatNumber("1600787");//增值税税号
 				billingCustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setBillingCustomer(billingCustomer);
@@ -135,7 +135,7 @@ public class LungolivignoOrderService implements IOrderService{
 				Shippingcustomer.setState("");
 				Shippingcustomer.setCountry("CN – Cina");
 				Shippingcustomer.setPhone("008615701395910");
-				Shippingcustomer.setEmail("steven.ding@shangpin.com");
+				Shippingcustomer.setEmail("chengxu@shangpin.com");
 				Shippingcustomer.setVatNumber("1600787");//增值税税号
 				Shippingcustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
@@ -150,7 +150,7 @@ public class LungolivignoOrderService implements IOrderService{
 				billingCustomer.setState("");
 				billingCustomer.setCountry("CN – Cina");
 				billingCustomer.setPhone("008615701395910");
-				billingCustomer.setEmail("steven.ding@shangpin.com");
+				billingCustomer.setEmail("chengxu@shangpin.com");
 				billingCustomer.setVatNumber("235865");//增值税税号
 				billingCustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setBillingCustomer(billingCustomer);
@@ -164,7 +164,7 @@ public class LungolivignoOrderService implements IOrderService{
 				Shippingcustomer.setState("");
 				Shippingcustomer.setCountry("CN – Cina");
 				Shippingcustomer.setPhone("008615701395910");
-				Shippingcustomer.setEmail("steven.ding@shangpin.com");
+				Shippingcustomer.setEmail("chengxu@shangpin.com");
 				Shippingcustomer.setVatNumber("235865");//增值税税号
 				Shippingcustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
@@ -441,8 +441,8 @@ public class LungolivignoOrderService implements IOrderService{
 		shangpinMail.setText(text);
 		shangpinMail.setTo("ecommerce@lungolivigno.com");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("steven.ding@shangpin.com");
-//		addTo.add("steven.ding@shangpin.com");
+		addTo.add("chengxu@shangpin.com");
+
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
