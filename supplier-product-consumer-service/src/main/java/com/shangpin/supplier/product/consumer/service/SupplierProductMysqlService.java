@@ -269,6 +269,7 @@ public class SupplierProductMysqlService {
 		}
 		if(hubSku.getSupplierSkuSize()!=null){
 			if(!hubSku.getSupplierSkuSize().equals(hubSkuSel.getSupplierSkuSize())){
+				pendingSku.setHubSkuSize(hubSku.getSupplierSkuSize());
 				hubSkuUpdated.setSupplierSkuSize(hubSku.getSupplierSkuSize()); 
 				isChanged = true;
 				//当sku尺码发生变化，并且老的sku已经生成尚品sku编号，发送邮件通知
