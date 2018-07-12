@@ -227,9 +227,9 @@ public class DataSverviceUtil {
                 if(null!=supplierSku.getMeasurement()){
                     hubSkuPending.setMeasurement(supplierSku.getMeasurement());
                 }
-                if(null!=supplierSku.getHubSkuSize()){
-                    hubSkuPending.setHubSkuSize(supplierSku.getHubSkuSize());
-                }
+//                if(null!=supplierSku.getHubSkuSize()){
+//                    hubSkuPending.setHubSkuSize(supplierSku.getHubSkuSize());
+//                }
                 Date date = new Date();
                 hubSkuPending.setUpdateTime(date);
 
