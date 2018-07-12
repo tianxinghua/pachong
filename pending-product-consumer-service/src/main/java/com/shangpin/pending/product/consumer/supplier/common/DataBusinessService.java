@@ -156,7 +156,7 @@ public class DataBusinessService extends DataServiceHandler {
             criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
             List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = mappingGateWay.selectByCriteria(criteriaDto);
             hubSupplierValueMappingDtos.forEach(mapping ->{
-                tmpBrandSupplierMap.put(mapping.getSupplierId(),mapping.getSupplierId());
+                tmpBrandSupplierMap.put(mapping.getSupplierId(),mapping.getSupplierVal());
             });
             shangpinRedis.hmset(ConstantProperty.REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY, tmpBrandSupplierMap);
             shangpinRedis.expire(ConstantProperty.REDIS_EPHUB_BRAND_SUPPLIER_MAP_KEY,

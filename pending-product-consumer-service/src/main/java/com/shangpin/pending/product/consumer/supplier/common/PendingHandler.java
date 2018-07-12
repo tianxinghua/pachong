@@ -752,9 +752,14 @@ public class PendingHandler extends VariableInit {
 	private void setProductSourceFrom(SpuPending hubSpuPending) {
 		Map<String,String> brandSupplierIdMap = dataBusinessService.getBrandSupplierIdMap();
 		if(null!=brandSupplierIdMap&&brandSupplierIdMap.containsKey(hubSpuPending.getSupplierId())){
+           if(brandSupplierIdMap.get(hubSpuPending.getSupplierId()).equals(SourceFromEnum.TYPE_BRAND.getIndex().toString())){
 
-			hubSpuPending.setSourceFrom(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
-			hubSpuPending.setOriginSource(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+			   hubSpuPending.setSourceFrom(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+			   hubSpuPending.setOriginSource(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
+		   }else  if(brandSupplierIdMap.get(hubSpuPending.getSupplierId()).equals(SourceFromEnum.TYPE_WEBSPIDER.getIndex().toString())){
+			   hubSpuPending.setSourceFrom(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue());
+			   hubSpuPending.setOriginSource(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue());
+		   }
 		}else{
 			hubSpuPending.setSourceFrom(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
 			hubSpuPending.setOriginSource(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
