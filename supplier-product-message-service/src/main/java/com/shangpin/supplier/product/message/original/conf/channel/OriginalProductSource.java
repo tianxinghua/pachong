@@ -169,6 +169,8 @@ public interface OriginalProductSource {
 
 	public static final String YLATI ="ylatiOriginalProduct";
 
+	public static final String MAX1980 ="max1980OriginalProduct";
+
 
 	/**
      * 供货商angeloMinetti通道组件配置
@@ -672,4 +674,7 @@ public interface OriginalProductSource {
 
 	@Output(value = OriginalProductSource.YLATI)
 	public MessageChannel ylati();
+
+	@Output(value = OriginalProductSource.MAX1980)
+	public MessageChannel max1980();
 }

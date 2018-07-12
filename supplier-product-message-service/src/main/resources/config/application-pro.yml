@@ -260,6 +260,9 @@ spring:
                         ylatiOriginalProduct:
                              destination: ylati.original.product
                              content-type: application/json
+                        max1980OriginalProduct:
+                             destination: max1980.original.product
+                             content-type: application/json
               rabbit:
                       bindings: 
                             cocoroseLondonOriginalProduct:
@@ -512,6 +515,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             ylatiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            max1980OriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
