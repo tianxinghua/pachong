@@ -29,6 +29,9 @@ public class FetchStockSchedule {
 	@Qualifier("updateStockImpl")
 	UpdateStockImpl updateImp;
 
+	/**
+	 * 拉取商品库存 任务
+	 */
 	@SuppressWarnings("deprecation")
 	@Scheduled(cron="${fetchJobsSchedule}")
 	public void startFetch(){
@@ -41,6 +44,9 @@ public class FetchStockSchedule {
 	}
 
 
+	/**
+	 * 推送商品库存信息 任务
+	 */
 	@SuppressWarnings("deprecation")
 	@Scheduled(cron="${updateJobsSchedule}")
 	public void startUpdate(){
@@ -53,7 +59,13 @@ public class FetchStockSchedule {
 	}
 
 
-
-	
+	/**
+	 * 再次 推送商品库存信息 任务
+	 */
+	@SuppressWarnings("deprecation")
+	@Scheduled(cron="${secondUpdateJobsSchedule}")
+	public void secondUpdate(){
+		startUpdate();
+	}
 	
 }
