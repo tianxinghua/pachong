@@ -28,7 +28,7 @@ import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.dto.SpSkuNoDto;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.service.PendingProductCommonService;
-import com.shangpin.ephub.product.business.service.pending.PendingCommonService;
+
 import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -55,8 +55,7 @@ public class PendingProductCommonController {
 	HubSkuGateWay hubSkuGateWay;
 	@Autowired
 	PendingService pendingService;
-	@Autowired
-	PendingCommonService pendingCommonService;
+
 	@Autowired
 	PendingProductCommonService pendingProductCommonService;
 	@RequestMapping(value = "/handle-pending")

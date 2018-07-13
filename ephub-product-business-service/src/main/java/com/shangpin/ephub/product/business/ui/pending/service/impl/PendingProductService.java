@@ -1128,20 +1128,6 @@ public class PendingProductService extends PendingSkuService{
 	}
 
 
-//	private SpuPendingAuditVO getAuditProduct(PendingProductDto pendingProductDto){
-//		SpuPendingAuditVO auditVO = null;
-//		if(pendingProductDto.getSpuState()== SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()){
-//			Long spuPendingId = pendingProductDto.getSpuPendingId();
-//			HubSpuPendingDto spuPending = hubSpuPendingGateWay.selectByPrimaryKey(spuPendingId);
-//			BeanUtils.copyProperties(spuPending, auditVO);
-//			
-//			auditVO = new SpuPendingAuditVO();
-//			auditVO.setAuditUser(pendingProductDto.getUpdateUser());
-//			auditVO.setAuditStatus((int)AuditState.AGREE.getIndex());
-//			
-//		}
-//		return auditVO;
-//
-//	}
+
 
 }

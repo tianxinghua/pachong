@@ -103,5 +103,12 @@ public class PendingQuryDto {
      */
 
     private String  isHotboom ;
+
+    /**
+     * 商品来源
+     * 0 : api  1:品牌  2: 爬虫
+     */
+    private Integer  sourceFrom ;
+
     
 }
