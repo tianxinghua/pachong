@@ -54,11 +54,10 @@ public class ProductFetchUtil {
 		int page=0;
 		boolean loop= true;
 		//获取当期那时间
-		Calendar cal = Calendar.getInstance();
 		IVidraSvcOfArticoloFlatExtVOArticoloFlatVO http = new VidraSvc().getHTTP();
 		XMLGregorianCalendarImpl xmlGregorianCalendar = new XMLGregorianCalendarImpl();
-		xmlGregorianCalendar.setYear(2017);
-		xmlGregorianCalendar.setMonth(12);
+		xmlGregorianCalendar.setYear(2018);
+		xmlGregorianCalendar.setMonth(3);
 		xmlGregorianCalendar.setDay(1);
 		xmlGregorianCalendar.setHour(0);
 		xmlGregorianCalendar.setMinute(0);

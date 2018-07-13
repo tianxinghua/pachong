@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 @Component
 public class Worker implements Runnable{
 	private static Logger logger = Logger.getLogger("info");
+	private static Logger loggerError = Logger.getLogger("error");
 	private static ResourceBundle bdl=null;
     private static String supplierId = "";
     static {
@@ -20,7 +21,7 @@ public class Worker implements Runnable{
         supplierId = bdl.getString("supplierId");
     }
 	private FetchStockImpl stockImp;
-	public Worker(){};
+	public Worker(){}
 	public Worker(FetchStockImpl stockImp) {
 		this.stockImp = stockImp;
 	}
@@ -35,12 +36,15 @@ public class Worker implements Runnable{
 //				stockImp.setSkuCount4Thread(500);
 				stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
 			} catch (Exception e) {
-				logger.info("更新库存数据库出错"+e.toString());
+				loggerError.error("更新库存数据库出错"+e.getMessage());
+				e.printStackTrace();
 			}
 			logger.info("更新数据库结束");
 			System.out.println("结束");
 		} catch (Exception e) {
-			logger.info("parisi被取消了");
+			loggerError.error("theStyleSide 被取消了");
+			e.printStackTrace();
+			logger.info("theStyleSide被取消了");
 		}
 	}
 	

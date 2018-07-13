@@ -13,17 +13,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @Configuration
 
-@ComponentScan(basePackages={"com.shangpin.iog"}
-)
+@ComponentScan(basePackages={"com.shangpin.iog"})
 @EnableScheduling
 @Import({com.shangpin.iog.app.AppContext.class})
 
-
 public class AppContext {
     final static Logger log = LoggerFactory.getLogger(AppContext.class);
-    
-    
-    
-    
+
 }
 
