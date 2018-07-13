@@ -50,6 +50,29 @@ public class PendingSpuImportTaskController {
 		}
     }
 	
+	@RequestMapping(value = "/import-supplier-data",method = RequestMethod.POST)
+    public HubResponse importSupplierData(@RequestBody HubImportTaskRequestDto dto){
+	        	
+		try {
+			log.info("import-supplier-data 供应商数据上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.SUPPLIER_DATA);
+		} catch (Exception e) {
+			return HubResponse.errorResp("import-supplier-data 上传文件失败，请重新上传");
+		}
+    }
+	
+	@RequestMapping(value = "/import-supplier-new-data",method = RequestMethod.POST)
+    public HubResponse importSupplierNewData(@RequestBody HubImportTaskRequestDto dto){
+	        	
+		try {
+			log.info("import-supplier-new-data 供应商数据上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSaveNew(dto, TaskType.SUPPLIER_DATA);
+		} catch (Exception e) {
+			return HubResponse.errorResp("import-supplier-new-data 上传文件失败，请重新上传");
+		}
+    }
+
+	
 	@RequestMapping(value = "/import-sku",method = RequestMethod.POST)
     public HubResponse importSku(@RequestBody HubImportTaskRequestDto dto){
 	        	

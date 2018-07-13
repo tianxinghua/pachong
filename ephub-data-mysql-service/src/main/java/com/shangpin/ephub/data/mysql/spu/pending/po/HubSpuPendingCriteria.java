@@ -3549,6 +3549,266 @@ public class HubSpuPendingCriteria {
             addCriterion("old_hub_season not between", value1, value2, "oldHubSeason");
             return (Criteria) this;
         }
+
+        public Criteria andSourceFromIsNull() {
+            addCriterion("source_from is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromIsNotNull() {
+            addCriterion("source_from is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromEqualTo(Byte value) {
+            addCriterion("source_from =", value, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromNotEqualTo(Byte value) {
+            addCriterion("source_from <>", value, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromGreaterThan(Byte value) {
+            addCriterion("source_from >", value, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromGreaterThanOrEqualTo(Byte value) {
+            addCriterion("source_from >=", value, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromLessThan(Byte value) {
+            addCriterion("source_from <", value, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromLessThanOrEqualTo(Byte value) {
+            addCriterion("source_from <=", value, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromIn(List<Byte> values) {
+            addCriterion("source_from in", values, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromNotIn(List<Byte> values) {
+            addCriterion("source_from not in", values, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromBetween(Byte value1, Byte value2) {
+            addCriterion("source_from between", value1, value2, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andSourceFromNotBetween(Byte value1, Byte value2) {
+            addCriterion("source_from not between", value1, value2, "sourceFrom");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdIsNull() {
+            addCriterion("origin_supplier_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdIsNotNull() {
+            addCriterion("origin_supplier_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdEqualTo(String value) {
+            addCriterion("origin_supplier_id =", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotEqualTo(String value) {
+            addCriterion("origin_supplier_id <>", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdGreaterThan(String value) {
+            addCriterion("origin_supplier_id >", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdGreaterThanOrEqualTo(String value) {
+            addCriterion("origin_supplier_id >=", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdLessThan(String value) {
+            addCriterion("origin_supplier_id <", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdLessThanOrEqualTo(String value) {
+            addCriterion("origin_supplier_id <=", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdLike(String value) {
+            addCriterion("origin_supplier_id like", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotLike(String value) {
+            addCriterion("origin_supplier_id not like", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdIn(List<String> values) {
+            addCriterion("origin_supplier_id in", values, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotIn(List<String> values) {
+            addCriterion("origin_supplier_id not in", values, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdBetween(String value1, String value2) {
+            addCriterion("origin_supplier_id between", value1, value2, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotBetween(String value1, String value2) {
+            addCriterion("origin_supplier_id not between", value1, value2, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceIsNull() {
+            addCriterion("origin_source is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceIsNotNull() {
+            addCriterion("origin_source is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceEqualTo(Byte value) {
+            addCriterion("origin_source =", value, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceNotEqualTo(Byte value) {
+            addCriterion("origin_source <>", value, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceGreaterThan(Byte value) {
+            addCriterion("origin_source >", value, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceGreaterThanOrEqualTo(Byte value) {
+            addCriterion("origin_source >=", value, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceLessThan(Byte value) {
+            addCriterion("origin_source <", value, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceLessThanOrEqualTo(Byte value) {
+            addCriterion("origin_source <=", value, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceIn(List<Byte> values) {
+            addCriterion("origin_source in", values, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceNotIn(List<Byte> values) {
+            addCriterion("origin_source not in", values, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceBetween(Byte value1, Byte value2) {
+            addCriterion("origin_source between", value1, value2, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSourceNotBetween(Byte value1, Byte value2) {
+            addCriterion("origin_source not between", value1, value2, "originSource");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementIsNull() {
+            addCriterion("hub_measurement is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementIsNotNull() {
+            addCriterion("hub_measurement is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementEqualTo(String value) {
+            addCriterion("hub_measurement =", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementNotEqualTo(String value) {
+            addCriterion("hub_measurement <>", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementGreaterThan(String value) {
+            addCriterion("hub_measurement >", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementGreaterThanOrEqualTo(String value) {
+            addCriterion("hub_measurement >=", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementLessThan(String value) {
+            addCriterion("hub_measurement <", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementLessThanOrEqualTo(String value) {
+            addCriterion("hub_measurement <=", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementLike(String value) {
+            addCriterion("hub_measurement like", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementNotLike(String value) {
+            addCriterion("hub_measurement not like", value, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementIn(List<String> values) {
+            addCriterion("hub_measurement in", values, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementNotIn(List<String> values) {
+            addCriterion("hub_measurement not in", values, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementBetween(String value1, String value2) {
+            addCriterion("hub_measurement between", value1, value2, "hubMeasurement");
+            return (Criteria) this;
+        }
+
+        public Criteria andHubMeasurementNotBetween(String value1, String value2) {
+            addCriterion("hub_measurement not between", value1, value2, "hubMeasurement");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

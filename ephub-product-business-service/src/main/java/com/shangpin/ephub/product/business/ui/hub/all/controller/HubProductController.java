@@ -1,13 +1,23 @@
 package com.shangpin.ephub.product.business.ui.hub.all.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductQuery;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductResult;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductSpuModel;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.response.HubResponse;
 
@@ -28,6 +38,8 @@ public class HubProductController {
 	
 	@Autowired
 	private IHubProductService hubProductService;
+	@Autowired
+	private HubSpuGateWay hubSpuGateWay;
 
 	@RequestMapping(value="/list",method=RequestMethod.POST)
 	public HubResponse<?> hubList(@RequestBody HubQuryDto hubQuryDto){	
@@ -50,5 +62,36 @@ public class HubProductController {
 			return HubResponse.errorResp(resultFail);
 		}
 		
+	}
+	
+	@RequestMapping(value="/getSpuModel",method=RequestMethod.POST)
+	public HubResponse<?> getSpuModel(@RequestBody HubProductQuery hubProductQuery){
+		if(StringUtils.isBlank(hubProductQuery.getBrandNo()))
+			return HubResponse.errorResp("品牌编号不能为null!");
+		HubSpuCriteriaDto hubSpuCriteriaDto = new HubSpuCriteriaDto();
+		hubSpuCriteriaDto.createCriteria().andBrandNoEqualTo(hubProductQuery.getBrandNo());
+		if(hubProductQuery.getPageIndex()==null||hubProductQuery.getPageSize()==null) {
+			hubSpuCriteriaDto.setPageNo(1);
+			hubSpuCriteriaDto.setPageSize(20);
+		}else {
+			hubSpuCriteriaDto.setPageNo(hubProductQuery.getPageIndex());
+			hubSpuCriteriaDto.setPageSize(hubProductQuery.getPageSize());
+		}
+		List<HubSpuDto> hubSpuDtoList = hubSpuGateWay.selectByCriteria(hubSpuCriteriaDto);
+		int count = hubSpuGateWay.countByCriteria(hubSpuCriteriaDto);
+		if(hubSpuDtoList!=null) {
+			List<HubProductSpuModel> spuModelList = new ArrayList<>();
+			for(HubSpuDto hubSpuDto : hubSpuDtoList) {
+				HubProductSpuModel hubProductSpuModel = new HubProductSpuModel();
+				hubProductSpuModel.setSpuModel(hubSpuDto.getSpuModel());
+				hubProductSpuModel.setSpuNo(hubSpuDto.getSpuNo());
+				spuModelList.add(hubProductSpuModel);
+			}
+			HubProductResult result = new HubProductResult();
+			result.setHubProductSpuModel(spuModelList);
+			result.setTotal(count);
+			return HubResponse.successResp(result);
+		}
+		return null;
 	}
 }

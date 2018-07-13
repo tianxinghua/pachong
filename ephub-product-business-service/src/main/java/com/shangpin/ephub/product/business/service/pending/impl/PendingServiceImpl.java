@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.*;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,12 +23,6 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.consumer.pending.gateway.HubSpuPendingAuditGateWay;
-import com.shangpin.ephub.client.data.mysql.enumeration.AuditState;
-import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
-import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
-import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
-import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
-import com.shangpin.ephub.client.data.mysql.enumeration.SpuPendingStudioState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -187,6 +182,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 criterion.andHubSpuNoIsNull();
             }
         }
+        criterion.andSourceFromEqualTo(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
 
         return criteria;
     }
@@ -205,7 +201,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
         criterion.andSpuModelEqualTo(spuModel).andHubBrandNoEqualTo(brandNo)
-                .andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
+                .andSpuStateEqualTo(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()).andSourceFromEqualTo(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
 
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
 

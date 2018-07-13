@@ -22,5 +22,6 @@ public class HubImportTaskRequestDto implements Serializable {
     private String fileName;
     private String createUser;
     private byte [] uploadfile;
+    private String ftpPath;
 
 }

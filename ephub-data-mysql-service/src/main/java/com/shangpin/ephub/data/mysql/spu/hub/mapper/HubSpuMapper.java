@@ -1,12 +1,14 @@
 package com.shangpin.ephub.data.mysql.spu.hub.mapper;
 
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
-import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
+
+import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpu;
+import com.shangpin.ephub.data.mysql.spu.hub.po.HubSpuCriteria;
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto;
 /**
  * 
  * @author yanxiaobin
@@ -27,6 +29,10 @@ public interface HubSpuMapper {
     List<HubSpu> selectByExampleWithRowbounds(HubSpuCriteria example, RowBounds rowBounds);
 
     List<HubSpu> selectByExample(HubSpuCriteria example);
+    
+    List<HubSpu> selectByBrand(HubSupplierSpuQureyDto dto);
+    
+    int count(HubSupplierSpuQureyDto dto);
 
     HubSpu selectByPrimaryKey(Long spuId);
 

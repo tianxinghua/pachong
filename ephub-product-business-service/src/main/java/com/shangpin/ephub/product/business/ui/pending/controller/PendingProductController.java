@@ -52,6 +52,7 @@ public class PendingProductController {
         PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
         return HubResponse.successResp(pendingProducts);
     }
+
     @RequestMapping(value="/update",method=RequestMethod.POST)
     public HubResponse<?> updateProduct(@RequestBody PendingProductDto pendingProductDto){
     	return pendingProductService.updatePendingProduct(pendingProductDto);
@@ -60,6 +61,23 @@ public class PendingProductController {
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
         return pendingProductService.batchUpdatePendingProduct(pendingProducts);
     }
+
+
+	@RequestMapping(value="/select-hotboom",method=RequestMethod.POST)
+	public HubResponse<?> selectHotboom(@RequestBody PendingProductDto pendingProductDto){
+		return pendingProductService.selectHotBoom(pendingProductDto);
+	}
+	@RequestMapping(value="/batch-select-hotboom",method=RequestMethod.POST)
+	public HubResponse<?> batchSelectHotboom(@RequestBody PendingProducts pendingProducts){
+		return pendingProductService.batchSelectHotBoom(pendingProducts);
+	}
+	@RequestMapping(value="/save-hotboom",method=RequestMethod.POST)
+	public HubResponse<?> saveHotboom(@RequestBody PendingProductDto pendingProductDto){
+		return pendingProductService.saveHotBoom(pendingProductDto);
+	}
+
+
+
     @RequestMapping(value="/unable-to-process/{updateUser}",method=RequestMethod.POST)
     public HubResponse<?> updateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody String id){
     	try {

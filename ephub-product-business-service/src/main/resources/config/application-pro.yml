@@ -62,7 +62,7 @@ spring:
        studioPort: 60021
        studioUserName: ephub_begheera
        studioPassword: "!&A@dE*S"
-  mail: 
+  mail:
        default-recipient: chengxu@shangpin.com
        default-sender: chengxu@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.

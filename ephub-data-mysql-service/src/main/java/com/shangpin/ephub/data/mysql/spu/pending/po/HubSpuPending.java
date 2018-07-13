@@ -60,7 +60,7 @@ public class HubSpuPending implements Serializable {
     private Byte spuState;
 
     /**
-     * =0:无图片 =1图片信息未完成 =2 图片信息已完成 
+     * 0：未处理  1：处理异常  2：处理完成  3：没有图片
      */
     private Byte picState;
 
@@ -239,6 +239,26 @@ public class HubSpuPending implements Serializable {
      * 原映射的季节
      */
     private String oldHubSeason;
+
+    /**
+     * 来源  0:supplierApi 1:品牌方
+     */
+    private Byte sourceFrom;
+
+    /**
+     * 原始供货商ID
+     */
+    private String originSupplierId;
+
+    /**
+     * 原始来源  0:supplierApi 1:品牌方
+     */
+    private Byte originSource;
+
+    /**
+     * 测量信息
+     */
+    private String hubMeasurement;
 
     private static final long serialVersionUID = 1L;
 
@@ -666,6 +686,38 @@ public class HubSpuPending implements Serializable {
         this.oldHubSeason = oldHubSeason == null ? null : oldHubSeason.trim();
     }
 
+    public Byte getSourceFrom() {
+        return sourceFrom;
+    }
+
+    public void setSourceFrom(Byte sourceFrom) {
+        this.sourceFrom = sourceFrom;
+    }
+
+    public String getOriginSupplierId() {
+        return originSupplierId;
+    }
+
+    public void setOriginSupplierId(String originSupplierId) {
+        this.originSupplierId = originSupplierId == null ? null : originSupplierId.trim();
+    }
+
+    public Byte getOriginSource() {
+        return originSource;
+    }
+
+    public void setOriginSource(Byte originSource) {
+        this.originSource = originSource;
+    }
+
+    public String getHubMeasurement() {
+        return hubMeasurement;
+    }
+
+    public void setHubMeasurement(String hubMeasurement) {
+        this.hubMeasurement = hubMeasurement == null ? null : hubMeasurement.trim();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -725,6 +777,10 @@ public class HubSpuPending implements Serializable {
         sb.append(", marketPriceState=").append(marketPriceState);
         sb.append(", supplyPriceState=").append(supplyPriceState);
         sb.append(", oldHubSeason=").append(oldHubSeason);
+        sb.append(", sourceFrom=").append(sourceFrom);
+        sb.append(", originSupplierId=").append(originSupplierId);
+        sb.append(", originSource=").append(originSource);
+        sb.append(", hubMeasurement=").append(hubMeasurement);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
@@ -794,7 +850,11 @@ public class HubSpuPending implements Serializable {
             && (this.getMsgMissHandleState() == null ? other.getMsgMissHandleState() == null : this.getMsgMissHandleState().equals(other.getMsgMissHandleState()))
             && (this.getMarketPriceState() == null ? other.getMarketPriceState() == null : this.getMarketPriceState().equals(other.getMarketPriceState()))
             && (this.getSupplyPriceState() == null ? other.getSupplyPriceState() == null : this.getSupplyPriceState().equals(other.getSupplyPriceState()))
-            && (this.getOldHubSeason() == null ? other.getOldHubSeason() == null : this.getOldHubSeason().equals(other.getOldHubSeason()));
+            && (this.getOldHubSeason() == null ? other.getOldHubSeason() == null : this.getOldHubSeason().equals(other.getOldHubSeason()))
+            && (this.getSourceFrom() == null ? other.getSourceFrom() == null : this.getSourceFrom().equals(other.getSourceFrom()))
+            && (this.getOriginSupplierId() == null ? other.getOriginSupplierId() == null : this.getOriginSupplierId().equals(other.getOriginSupplierId()))
+            && (this.getOriginSource() == null ? other.getOriginSource() == null : this.getOriginSource().equals(other.getOriginSource()))
+            && (this.getHubMeasurement() == null ? other.getHubMeasurement() == null : this.getHubMeasurement().equals(other.getHubMeasurement()));
     }
 
     @Override
@@ -854,6 +914,10 @@ public class HubSpuPending implements Serializable {
         result = prime * result + ((getMarketPriceState() == null) ? 0 : getMarketPriceState().hashCode());
         result = prime * result + ((getSupplyPriceState() == null) ? 0 : getSupplyPriceState().hashCode());
         result = prime * result + ((getOldHubSeason() == null) ? 0 : getOldHubSeason().hashCode());
+        result = prime * result + ((getSourceFrom() == null) ? 0 : getSourceFrom().hashCode());
+        result = prime * result + ((getOriginSupplierId() == null) ? 0 : getOriginSupplierId().hashCode());
+        result = prime * result + ((getOriginSource() == null) ? 0 : getOriginSource().hashCode());
+        result = prime * result + ((getHubMeasurement() == null) ? 0 : getHubMeasurement().hashCode());
         return result;
     }
 }

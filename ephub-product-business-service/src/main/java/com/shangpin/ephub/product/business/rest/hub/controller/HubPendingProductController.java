@@ -221,6 +221,7 @@ public class HubPendingProductController {
 		criteriaDto.createCriteria().andSupplierNoEqualTo(dto.getSupplierNo()).andSupplierSkuNoEqualTo(dto.getSupplierSkuNo());
 
 		HubSkuSupplierMappingDto hubSkuSupplierMapping = new HubSkuSupplierMappingDto();
+		hubSkuSupplierMapping.setMemo("");
 		if(dto.getSign()==1){
 			if(StringUtils.isEmpty(dto.getSkuNo())){
 				hubSkuSupplierMapping.setSupplierSelectState(Integer.valueOf(SupplierSelectState.SELECTE_FAIL.getIndex()).byteValue());
@@ -242,6 +243,8 @@ public class HubPendingProductController {
 				hubSkuSupplierMapping.setMemo(dto.getErrorReason());
 			}
 		}
+		hubSkuSupplierMapping.setSpSkuNo(dto.getSkuNo());
+
 		hubSkuSupplierMapping.setUpdateTime(new Date());
 		HubSkuSupplierMappingWithCriteriaDto skumappingCritria = new HubSkuSupplierMappingWithCriteriaDto(hubSkuSupplierMapping,criteriaDto);
 		skuSupplierMappingGateWay.updateByCriteriaSelective(skumappingCritria);
