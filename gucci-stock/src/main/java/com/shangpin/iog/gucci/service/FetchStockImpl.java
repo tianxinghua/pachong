@@ -48,7 +48,6 @@ public class FetchStockImpl  {
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
 
-
     static {
         if (null == bdl){
             bdl = ResourceBundle.getBundle("conf");
@@ -68,8 +67,8 @@ public class FetchStockImpl  {
         uri = bdl.getString("uri");
 
     }
-    private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
+    private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
     /**
      * 拉取 意大利官网 商品库存数据
@@ -86,11 +85,11 @@ public class FetchStockImpl  {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        filePath = filePath + "gucci-qty-"+todayStr+".csv";
-        System.out.println("文件保存目录："+filePath);
-        logger.info("文件保存目录："+filePath);
+        String temFilePath = filePath + "gucci-qty-"+todayStr+".csv";
+        System.out.println("文件保存目录："+temFilePath);
+        logger.info("文件保存目录："+temFilePath);
         try {
-            out = new OutputStreamWriter(new FileOutputStream(filePath, true),"gb2312");
+            out = new OutputStreamWriter(new FileOutputStream(temFilePath, true),"gb2312");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -142,6 +141,7 @@ public class FetchStockImpl  {
         String endtDateTime = format.format(new Date());
         logger.info("===================拉取GUCCI库存数据结束 "+endtDateTime+"=========================");
         System.out.println("=================拉取GUCCI库存数据结束 "+endtDateTime+"=========================");
+
     }
 
     /**
@@ -426,9 +426,9 @@ public class FetchStockImpl  {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //每一款商品休息5s
+        //每一款商品休息10s
         try {
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -571,8 +571,17 @@ public class FetchStockImpl  {
 
 
     public static void main(String[] args) {
-        FetchStockImpl fetchStock = new FetchStockImpl();
-        fetchStock.fetchItlyProductStock();
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductUrl("https://www.gucci.com/it/it/pr/gifts/gifts-for-women/rhyton-glitter-gucci-leather-sneaker-p-524990DRW009022?position=1&listName=VariationOverlay");
+        List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
+        SkuDTO skuDTO = new SkuDTO();
+        skuDTO.setSpSkuNo("30970081005");
+        skuDTO.setSize("37");
+        skuDTO.setSupplierSkuNo("37");
+        zhiCaiSkuResultList.add(skuDTO);
+        productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
+        solveProductQty(productDTO);
+
     }
 
 }

@@ -150,10 +150,9 @@ public class UpdateStockImpl extends FetchStockImpl {
      * @param spSkuNoDTOS
      */
     private  void batchUpdateSpSkuQtyBySpSkuNoDTOList(List<SpSkuNoDTO> spSkuNoDTOS) {
-        //定义 需要更新下的spSkuMap key：spSkuNo  value:qty
-        Map<String,Integer> spSkuMap = new HashMap<String,Integer>();
 
         if(spSkuNoDTOS==null){
+            System.out.println("批量更新 spSku 信息 spSkuNoDTOS 为空");
             return;
         }
         //定义传送 直采数据httpDTO
