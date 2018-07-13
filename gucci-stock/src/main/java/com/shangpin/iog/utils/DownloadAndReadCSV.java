@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * Created by monkey on 2015/10/29.
@@ -57,8 +56,7 @@ public class DownloadAndReadCSV {
     	for (String realPath : realPaths) {
     		//解析csv文件
         	cr = new CsvReader(new FileReader(realPath));
-
-    		System.out.println("创建cr对象成功");
+    		System.out.println("读取 csv 文件对象成功："+filePath);
     		//得到列名集合
     		cr.readRecord();
     		int a = 0;
