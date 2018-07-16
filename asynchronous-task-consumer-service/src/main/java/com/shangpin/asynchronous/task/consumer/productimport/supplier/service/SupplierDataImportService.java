@@ -118,7 +118,7 @@ public class SupplierDataImportService {
         HSSFCellStyle style = wb.createCellStyle();  
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER);  
 
-        String [] temp = {"执行结果","gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement"};
+        String [] temp = {"执行结果","gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement","supplierId","supplierNo"};
         for(int i=0;i<temp.length;i++) {
         	HSSFCell cell = row.createCell(i);  
             cell.setCellValue(temp[i]);  
@@ -128,7 +128,7 @@ public class SupplierDataImportService {
 		for(CsvDTO csvDTO : listCsvDTO){
 			String result = "SUCCESS";
 			try {
-				result = pushMessage(gson.toJson(csvDTO));
+				result = pushMessage(gson.toJson(csvDTO),csvDTO.getSupplierId(),csvDTO.getSupplierNo());
 			} catch (Exception e) {
 				log.info(e.getMessage());
 				e.printStackTrace();
@@ -160,13 +160,13 @@ public class SupplierDataImportService {
 		return uploadFtp;
 	}
 
-	public String pushMessage(String json) throws Exception {
+	public String pushMessage(String json,String supplierId,String supplierNo) throws Exception {
 		SupplierProduct supp = new SupplierProduct();
 		SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		supp.setMessageType("json");
 		supp.setSupplierName(supplierApiProperties.getSupplierName());
-		supp.setSupplierId(supplierApiProperties.getSupplierId());
-		supp.setSupplierNo(supplierApiProperties.getSupplierNo());
+		supp.setSupplierId(supplierId);
+		supp.setSupplierNo(supplierNo);
 		UUID uuid = UUID.randomUUID();
 		String str = uuid.toString();
 		supp.setMessageId(str.replace("-", ""));

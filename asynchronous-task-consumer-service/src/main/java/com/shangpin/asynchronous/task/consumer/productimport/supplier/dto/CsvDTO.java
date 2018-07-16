@@ -28,9 +28,11 @@ public class CsvDTO {
 	private String pics;
 	private String detailLink;
 	private String measurement;
+	private String supplierId;
+	private String supplierNo;
 
 	public String[] getCsvDTO() {
-		String [] temp = {"gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement"};
+		String [] temp = {"gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement","supplierId","supplierNo"};
 		return temp;
 	}
 	
