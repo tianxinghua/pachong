@@ -98,6 +98,13 @@ public class BiondioniHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(article.getCouleurPrincipale());
 			hubSpu.setSupplierGender(modele.getRayon());
 			hubSpu.setSupplierCategoryname(modele.getFamille());
+			String[] parm={"BALLERINE","BASKET","BOOTS","BOTTE","BOTTINE","ENTRE DOIGTS","ESCARPIN","mocassins","MULE","SANDALE","SLING BACK","SLIP ON"};
+			for(int i=0;i<parm.length;i++){
+				if (modele.getNomFour().toUpperCase().contains(parm[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(parm[i]);
+				}
+			}
+
 			hubSpu.setSupplierBrandname(modele.getNomFour());
 			hubSpu.setSupplierSeasonname(article.getSaisonArticle());
 			hubSpu.setSupplierMaterial(article.getMatière());

@@ -113,6 +113,15 @@ public class TonyHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(tonyItems.getColor());
 			hubSpu.setSupplierGender(tonyItems.getSex());
 			hubSpu.setSupplierCategoryname(tonyItems.getCat_ids());
+
+			String[] tony={"ABITO", "Accessori", "ballet ", "Camicia", "CAPPOTTO", "COMPLETO", "derby shoes", "Felpa", "GIACCA", "Gonna", "Jeans", "MAGLIA", "Mocassini", "monk-strap", "Mules", "Pantaloni", "Polo", "Pump", "Pumps", "Sandali", "SANDALS", "sling-back", "SNEAKERS", "Top", "T-Shirt"
+			};
+            for(int i=0;i<tony.length;i++){
+            	if (tonyItems.getTitle_en().toUpperCase().contains(tony[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(tony[i]);
+				}
+			}
+
 			hubSpu.setSupplierBrandname(tonyItems.getBrand());
 			hubSpu.setSupplierSeasonname(tonyItems.getSeason());
 			hubSpu.setSupplierMaterial((!StringUtils.isEmpty(tonyItems.getDesc())) ? getMaterial(tonyItems.getDesc()) : getMaterial(tonyItems.getDesc_en()));

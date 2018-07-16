@@ -79,6 +79,17 @@ public class GiglioHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(value(colunms,"Colore ENG"));
 			hubSpu.setSupplierGender(value(colunms,"Sesso(unisex, uomo, donna)"));
 			hubSpu.setSupplierCategoryname(value(colunms,"Categoria"));
+			 //giglio
+			String[] giglio={"Bag","Ballet","Beach towel","BERMUDA SHORTS","Blanket","Blazer","Body","BOOTS","Brogue","Cape","Cardigan","Clothing set","Coat","Dress","Flat","Fur coats","Hat","Hat girl","Heeled","High heel","Jacket","Jeans","Jumpsuit","Jumpsuits","Loafers","Neck scarf","Oxford","Pants","Pumps","Romper","SANDALS","Scarf","Scarf boy","Shirt","Shoes","Short","Skirt","SNEAKERS","Suit","Sweater","Sweatshirt","Swimsuit","Tank","Top","Tote bags","TRACKSUIT","T-Shirt","Tunic","VEST","Waistcoat","Wedge"};
+			for(int i=0;i<giglio.length;i++){
+				if (value(colunms,"Nome Modello").toUpperCase().contains(giglio[i].toUpperCase())){
+
+					hubSpu.setSupplierCategoryname(giglio[i]);
+				}
+			}
+
+
+
 			hubSpu.setSupplierBrandname(value(colunms,"Marca"));
 			hubSpu.setSupplierSeasonname(org.apache.commons.lang.StringUtils.isNotBlank(value(colunms,"Collezione / Anno"))?value(colunms,"Collezione / Anno"):"Primavera/Estate 2018");
 			hubSpu.setSupplierMaterial(value(colunms,"Materiale ENG"));

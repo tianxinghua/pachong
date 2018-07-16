@@ -99,6 +99,15 @@ public class Studio69Handler implements ISupplierHandler{
 			hubSpu.setSupplierGender(studioSpuDto.getCategoryGender());
 			hubSpu.setSupplierCategoryno(studioSpuDto.getCategoryId());
 			hubSpu.setSupplierCategoryname(studioSpuDto.getCategoryName());
+
+			String[] studio69={"BACKPACKS", "BAGS", "BALLERINAS", "BEACHWEAR", "BOOTS", "BOOTS & BOOTIES", "Coats", "Denim", "Down Jacket", "Dresses", "Espadrillas", "Flip Flops", "FURS", "GILET & VESTS", "HANDBAGS", "HATS", "Jacket", "jackets", "Jumpsuits", "Knitwear", "LEATHER", "Leggins", "POLOS", "POLOS & T-SHIRTS", "RAINCOATS", "RAINCOATS & TRENCH","SANDALS", "SCARVES", "Shirts", "SHOES CLASSIC", "Shorts", "SHOULDER BAGS", "Skirts", "SLIP", "SNEAKERS", "Suits", "Sweaters & Knitwear", "Sweatshirt", "TANKS", "TOP & TANKS", "Trousers", "UNDERWEAR", "vests", "Wedges", "WITH HEEL"
+			};
+			for(int i=0;i<studio69.length;i++){
+				if (studioSpuDto.getSpuName().toUpperCase().contains(studio69[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(studio69[i]);
+				}
+			}
+
 			hubSpu.setSupplierBrandname(studioSpuDto.getBrandName());
 			hubSpu.setSupplierSeasonname(studioSpuDto.getSeasonName());
 			hubSpu.setSupplierMaterial(studioSpuDto.getMaterial());

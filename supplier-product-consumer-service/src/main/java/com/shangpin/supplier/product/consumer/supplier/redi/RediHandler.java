@@ -70,6 +70,14 @@ public class RediHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(product.getItem_color());
 			hubSpu.setSupplierGender(product.getItem_gender());
 			hubSpu.setSupplierCategoryname(product.getItem_category());
+			String[] redigroup={"Leggings", "Sweater", "Vest", "T-Shirt", "Top", "Dress", "Jacket", "Jeans", "Skirt", "Sweatshirt", "Coat", "Pants", "Jeans ", "Swimsuit", "Shirt", "body", "Gown", "Blouse", "Jumpsuit ", "Trench", "Trousers", "Blazer", "Culottes", "Hoodie", "Tights", "Leather Jacket", "Cardigan", "Shorts", "jean", "suits", "Shirt ", "Pullover", "suiting", "Wide Leg", "Peplum", "jersey", "Dress ", "Polo Shirt", "Tunic", "Bikini"
+			};
+			for (int i=0;i<redigroup.length;i++){
+				if (product.getItem_name().toUpperCase().contains(redigroup[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(redigroup[i]);
+				} }
+
+
 			hubSpu.setSupplierBrandname(product.getItem_brand());
 			hubSpu.setSupplierBrandno(product.getItem_brand_id());
 			hubSpu.setSupplierSeasonname(product.getItem_season());

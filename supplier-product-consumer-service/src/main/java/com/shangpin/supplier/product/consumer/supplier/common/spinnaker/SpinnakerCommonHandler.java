@@ -55,6 +55,91 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSpu.setSupplierSpuColor(colorName);
 			hubSpu.setSupplierGender(spu.getType());
 			hubSpu.setSupplierCategoryname(spu.getCategory());
+
+		 	            //dolciTrame
+			String[] dolciTrame={"ABITO","Camicia","GIACCA","Gonna","Jeans","MAGLIA","Pantaloni","Top","T-Shirt"};
+            if(supplierId.equals("2017110801991")){
+             for(int i=0;i<dolciTrame.length;i++){
+             	if (hubSpu.getSupplierSpuName().toUpperCase().contains(dolciTrame[i].toUpperCase())){
+
+					hubSpu.setSupplierCategoryname(dolciTrame[i]);
+
+				}
+			 }
+			}
+
+			//Monti
+
+			String[] Monti={"ABITO", "Camicia", "CAPPOTTO", "Felpa", "GIACCA", "Gonna", "MAGLIA", "Pantaloni", "Polo", "Shorts", "Top", "T-Shirt"
+			};
+			if(supplierId.equals("2016032401822")){
+				for(int i=0;i<Monti.length;i++){
+					if (hubSpu.getSupplierSpuName().toUpperCase().contains(Monti[i].toUpperCase())){
+
+						hubSpu.setSupplierCategoryname(Monti[i]);
+
+					}
+				}
+			}
+			//papini
+			String[] papini={"ABITO", "Camicia", "CAPPOTTO", "Costume", "Felpa", "GIACCA", "Giubbotto", "Gonna", "Jeans", "MAGLIA", "Pantaloni", "Polo", "Shorts", "Top", "Trench", "T-Shirt"
+			};
+			if(supplierId.equals("2016030401797")){
+				for(int i=0;i<papini.length;i++){
+					if (hubSpu.getSupplierSpuName().toUpperCase().contains(papini[i].toUpperCase())){
+
+						hubSpu.setSupplierCategoryname(papini[i]);
+
+					}
+				}
+			}
+
+			String[] portofino={"ABITO", "Body", "Camicia", "CAPPOTTO", "COMPLETO", "GIACCA", "Gonna", "Jeans", "MAGLIA", "Pantaloni", "Top", "T-Shirt"
+			};
+			if(supplierId.equals("2017060101976")){
+				for(int i=0;i<portofino.length;i++){
+					if (hubSpu.getSupplierSpuName().toUpperCase().contains(portofino[i].toUpperCase())){
+
+						hubSpu.setSupplierCategoryname(portofino[i]);
+
+					}
+				}
+			}
+
+			//Sanremo
+			String[] Sanremo={"ABITO", "Blazer", "Body", "Camicia", "CAPPOTTO", "COMPLETO", "Costume", "Felpa", "GIACCA", "Giubbotto", "Gonna", "Jeans", "MAGLIA", "Pantaloni", "Polo", "Shorts", "Top", "Tops", "T-Shirt"
+			};
+			if(supplierId.equals("2015082801463")){
+				for(int i=0;i<Sanremo.length;i++){
+					if (hubSpu.getSupplierSpuName().toUpperCase().contains(Sanremo[i].toUpperCase())){
+
+						hubSpu.setSupplierCategoryname(Sanremo[i]);
+
+					}
+				}
+			}
+
+			//SPINNAKER
+			String[] SPINNAKER={"ABITO", "Camicia", "CAPPOTTO", "Felpa", "GIACCA", "Gonna", "MAGLIA", "Pantaloni", "Top", "T-Shirt"
+			};
+			if(supplierId.equals("2015081701439")){
+				for(int i=0;i<SPINNAKER.length;i++){
+					if (hubSpu.getSupplierSpuName().toUpperCase().contains(SPINNAKER[i].toUpperCase())){
+
+						hubSpu.setSupplierCategoryname(SPINNAKER[i]);
+
+					}
+				}
+			}
+
+
+
+
+
+
+
+
+
 			hubSpu.setSupplierBrandname(spu.getProducer_id());
 			hubSpu.setSupplierSeasonname(spu.getSeason());
 			hubSpu.setSupplierMaterial(spu.getProduct_detail());

@@ -137,6 +137,17 @@ public class EleonoraHandler implements ISupplierHandler {
 
             hubSpu.setSupplierGender(item.getGender());
             hubSpu.setSupplierCategoryname(item.getCategory());
+                      //eleonorabonucci
+            String[] eleonorabonucci={"Dresses","jackets","Jeans","LEATHER JACKETS","Polo shirts","Shirts","Shorts","Skirts","sports jackets","Suits","sweaters","Sweatshirts","SWIMWEAR","Tops","track suits","trenches and coats","Trousers","T-SHIRTS","vests"};
+            if(supplierId.equals("2015100901579")){
+                for(int i=0;i<eleonorabonucci.length;i++){
+                if(item.getProduct_name().toUpperCase().contains(eleonorabonucci[i].toUpperCase())){
+                    hubSpu.setSupplierCategoryname(eleonorabonucci[i]);
+                }
+                }
+            }
+
+
             hubSpu.setSupplierBrandname(item.getProduct_brand());
             hubSpu.setSupplierSeasonname(item.getSeason_code());
 

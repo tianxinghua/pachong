@@ -149,9 +149,17 @@ public class MonnalisaHandler implements ISupplierHandler{
 					hubSpu.setSupplierCategoryname(SubCategory(s2));
 					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
 				}
-			}else {
+			}/*else {
 				hubSpu.setSupplierCategoryname("");
+			}*/
+
+			String[] parm={"ABITO","Bag","Bathingsuit","Belt","beret","blouse","bolero","BOOTS","Cardigan","Coat","Denim","Dress","Eco-fur","Foulard","Gilet","Handbag","Hat","Jacket","Jeans","jumper","Jumpsuit","Knitwear","Leggings","NeckWear","Overall","Pants","Plush","Romper","Scarf","Shirt","Shoes","Short","shrug","Skirt","Sleeveless","SNEAKER","sweat shirt","sweat top","Sweater","Sweatpants","Sweatshirt","Top","Trousers","T-Shirt","underskirt"};
+            for(int i=0;i<parm.length;i++){
+            	if (ob.getTitle().toUpperCase().contains(parm[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(parm[i]);
+				}
 			}
+
 			hubSpu.setSupplierBrandname(ob.getBrand());
 			hubSpu.setSupplierSeasonname((StringUtils.isEmpty(ob.getAnno())?"":ob.getAnno())+ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());

@@ -71,7 +71,7 @@ public class AntonacciHandler implements ISupplierHandler {
 	
 	/**
 	 * geb处理图片
-	 * @param itemImages
+	 * @param
 	 * @return
 	 */
 	private List<Image> converImage(String itemImage){
@@ -114,6 +114,13 @@ public class AntonacciHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());
 			hubSpu.setSupplierCategoryname(item.getCategoryName());
+			String[] parm={"Abiti","Camicie","Costumi da bagno","Felpe","Giacche","Giacche Casual","Gilet","Gonne","Intimo","Jeans","Maglieria","Pantaloni","Shorts","Top","T-Shirt","Tute"};
+            for(int i=0;i<parm.length;i++){
+            	if (item.getProductName().toUpperCase().contains(parm[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(parm[i]);
+				}
+			}
+
 			hubSpu.setSupplierBrandname(item.getBrandName());
 			hubSpu.setSupplierSeasonname(item.getSeasonName());
 			hubSpu.setSupplierMaterial(item.getMaterial());
