@@ -38,7 +38,7 @@
     <if test="marketYear != null">
     	and dic.hub_market_time = #{marketYear}
     </if>
-    ORDER BY sku.sp_sku_no
+    ORDER BY sku.supplier_sku_no
     <if test="startRow != null" >
       limit #{startRow} , #{pageSize}
     </if>
