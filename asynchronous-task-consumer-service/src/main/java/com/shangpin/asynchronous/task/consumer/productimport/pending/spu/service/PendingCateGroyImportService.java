@@ -163,9 +163,8 @@ public class PendingCateGroyImportService {
 				map.put("supplierCategory",productImport.getSupplierCategory());
 			}if (productImport.getSupplierGender()!=null){
 				categroyDicDto.setSupplierGender(productImport.getSupplierGender());
-			}if (productImport.getSupplierName()!=null){
-
-
+			}if (productImport.getSupplierId()!=null){
+					categroyDicDto.setSupplierId(productImport.getSupplierId());
 				}
 
 
@@ -366,6 +365,7 @@ public class PendingCateGroyImportService {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
 						String setMethodName = "set" + pendingCateGroyTemplate[i].toUpperCase().charAt(0)
 								+ pendingCateGroyTemplate[i].substring(1);
+						if (setMethodName.equals("setSupplierNo")) continue;
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}
