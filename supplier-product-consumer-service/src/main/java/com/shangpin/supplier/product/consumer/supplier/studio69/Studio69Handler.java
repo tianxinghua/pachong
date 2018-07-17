@@ -105,6 +105,7 @@ public class Studio69Handler implements ISupplierHandler{
 			for(int i=0;i<studio69.length;i++){
 				if (studioSpuDto.getSpuName().toUpperCase().contains(studio69[i].toUpperCase())){
 					hubSpu.setSupplierCategoryname(studio69[i]);
+					System.out.println("--");
 				}
 			}
 

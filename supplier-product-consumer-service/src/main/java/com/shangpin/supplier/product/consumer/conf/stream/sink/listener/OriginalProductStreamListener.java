@@ -154,6 +154,16 @@ public class OriginalProductStreamListener {
     public void ostoreStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.ostoreStreamListen(message,headers);
     }
+
+	/**
+	 * 供应商MAX1980原始商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 */
+	@StreamListener(OriginalProductSink.MAX1980)
+	public void MAX1980StreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.MAX1980StreamListen(message,headers);
+	}
 	/**
 	 * 供应商MENGOTTTSNC原始商品数据流通道监听者
 	 * @param message 消息

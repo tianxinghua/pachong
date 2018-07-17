@@ -104,6 +104,7 @@ public class AlducadaostaHandler implements ISupplierHandler{
             for(int i =0;i<parm.length;i++){
             	if(alducaSpuDto.getSpuName().toUpperCase().contains(parm[i].toUpperCase())){
 					hubSpu.setSupplierCategoryname(parm[i]);
+					System.out.println("--------------i"+parm[i]);
 				}
 			}
 

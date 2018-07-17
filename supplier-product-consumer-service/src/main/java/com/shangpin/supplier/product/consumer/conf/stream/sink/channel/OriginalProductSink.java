@@ -174,6 +174,8 @@ public interface OriginalProductSink {
 	public static final String ZHICAI = "zhicaiOriginalProduct";
 	public static final String YLATI ="ylatiOriginalProduct";
 
+	public static final String  MAX1980 ="max1980OriginalProduct";
+
 
 	//===============================
 
@@ -238,6 +240,14 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.OSTORE)
     public SubscribableChannel ostoreOriginalProduct();
+
+	/**
+	 * 供货商MAX1980通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.MAX1980)
+	public SubscribableChannel max1980OriginalProduct();
+
 
 	/**
 	 * 供货商通道组件配置

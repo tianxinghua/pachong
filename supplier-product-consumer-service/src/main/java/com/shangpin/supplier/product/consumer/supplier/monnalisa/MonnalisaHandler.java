@@ -156,6 +156,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 			String[] parm={"ABITO","Bag","Bathingsuit","Belt","beret","blouse","bolero","BOOTS","Cardigan","Coat","Denim","Dress","Eco-fur","Foulard","Gilet","Handbag","Hat","Jacket","Jeans","jumper","Jumpsuit","Knitwear","Leggings","NeckWear","Overall","Pants","Plush","Romper","Scarf","Shirt","Shoes","Short","shrug","Skirt","Sleeveless","SNEAKER","sweat shirt","sweat top","Sweater","Sweatpants","Sweatshirt","Top","Trousers","T-Shirt","underskirt"};
             for(int i=0;i<parm.length;i++){
             	if (ob.getTitle().toUpperCase().contains(parm[i].toUpperCase())){
+					System.out.println("iiiiiiiiii==="+i+""+parm[i]);
 					hubSpu.setSupplierCategoryname(parm[i]);
 				}
 			}

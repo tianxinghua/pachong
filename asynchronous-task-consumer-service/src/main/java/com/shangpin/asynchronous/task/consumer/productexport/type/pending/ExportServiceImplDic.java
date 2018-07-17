@@ -1669,7 +1669,12 @@ public class ExportServiceImplDic {
 		 else  if ("supplierId".equals(rowTemplate[i])){
 
 			 setcategroysupplierId(row,categroyDicDto,cls,i);
-		 }//供应商名称
+		 }else  if ("supplierNo".equals(rowTemplate[i])){
+
+			 setcategroysupplierNo(row,categroyDicDto,cls,i);
+		 }
+
+		 //供应商名称
 		 else  if ("supplierName".equals(rowTemplate[i])){
 
 			 setcategroysupplierName(row,categroyDicDto,cls,i);
@@ -1708,7 +1713,7 @@ public class ExportServiceImplDic {
 	 * @param i
 	 */
 	private void  setcategroysupplierId(HSSFRow row, HubSupplierCategroyDicDto categroyDicDto, Class<?> clazz, int i){
-		/*String fileName = "getSupplierId";
+		String fileName = "getSupplierId";
 		try {
 			Method fieldSetMet = clazz.getMethod(fileName);
 			Object value = fieldSetMet.invoke(categroyDicDto);
@@ -1716,11 +1721,16 @@ public class ExportServiceImplDic {
 			row.createCell(i).setCellValue(value.toString());
 		}catch (Exception e){
 			e.printStackTrace();
-		}*/
+		}
+
+
+	}
+
+	private void  setcategroysupplierNo(HSSFRow row, HubSupplierCategroyDicDto categroyDicDto, Class<?> clazz, int i){
+
 
 		if (categroyDicDto.getSupplierId()!=null){
 			HubSupplierValueMappingCriteriaDto criteria = new HubSupplierValueMappingCriteriaDto();
-			//criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
 			criteria.createCriteria().andHubValTypeEqualTo((byte)5).andSupplierIdEqualTo(categroyDicDto.getSupplierId());
 			List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingGateWay.selectByCriteria(criteria);
 			if(listMapp!=null&&listMapp.size()>0){

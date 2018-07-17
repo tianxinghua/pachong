@@ -163,7 +163,14 @@ public class PendingCateGroyImportService {
 				map.put("supplierCategory",productImport.getSupplierCategory());
 			}if (productImport.getSupplierGender()!=null){
 				categroyDicDto.setSupplierGender(productImport.getSupplierGender());
-			}/*if (productImport.getCategoryType()!=null){
+			}if (productImport.getSupplierName()!=null){
+
+
+				}
+
+
+
+			/*if (productImport.getCategoryType()!=null){
 				categroyDicDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
 			}*/if (productImport.getHubCategoryNo()!=null){
 				categroyDicDto.setHubCategoryNo(productImport.getHubCategoryNo());
@@ -187,7 +194,9 @@ public class PendingCateGroyImportService {
 			if (createUser!=null){
 				categroyDicDto.setUpdateUser(createUser);
 			}
-			int i = hubSupplierCategroyDicGateWay.updateByPrimaryKey(categroyDicDto);
+			//int i = hubSupplierCategroyDicGateWay.updateByPrimaryKey(categroyDicDto);
+				int i =hubSupplierCategroyDicGateWay.updateByPrimaryKeySelective(categroyDicDto);
+			
 			if (i==1){
 				map.put("task","校验成功");
 			}else {

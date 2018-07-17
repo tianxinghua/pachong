@@ -172,6 +172,7 @@ public class MonnierHandler implements ISupplierHandler {
 			String[] parm={"BALLERINAS","boot","BOTTINE","cross","Espadrilles","Loafer","mocassins","MULE","Pumps","SANDALS","Slides","SNEAKERS","toe","Trainers"};
 			for (int i=0;i<parm.length;i++){
             if (item.getName().toUpperCase().contains(parm[i].toUpperCase())){
+				System.out.println("---------------i===" + i + " " + parm[i]);
 				hubSpu.setSupplierCategoryname(parm[i]);
 			}
 			}

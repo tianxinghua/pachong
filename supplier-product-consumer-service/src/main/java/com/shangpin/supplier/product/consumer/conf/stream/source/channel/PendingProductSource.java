@@ -166,6 +166,7 @@ public interface PendingProductSource {
 	
 	public static final String ZHICAI = "zhicaiPendingProduct";
 	public static final String YLATI = "ylatiPendingProduct";
+	public static final String MAX1980 = "max1980PendingProduct";
 
 	/**
 	 * 供货商dolciTrame通道组件配置
@@ -663,5 +664,11 @@ public interface PendingProductSource {
 
 	@Output(value = PendingProductSource.YLATI)
 	public MessageChannel ylatiPendingProduct();
+	/**
+	 *MAX1980 通道组件配置
+	 * @return 供货商MAX1980通道组件
+	 */
+	@Output(value = PendingProductSource.MAX1980)
+	public MessageChannel max1980PendingProduct();
 
 }

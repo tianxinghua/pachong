@@ -84,13 +84,15 @@ public class LungolivignoHandler implements ISupplierHandler {
 			hubSpu.setSupplierCategoryname(result.getAttributes().get(8).getValue().trim());
 			hubSpu.setSupplierSpuName(result.getName());
 
-
-            for(int i=0;i<parm.length;i++){
-            	if (result.getName().toUpperCase().contains(parm[i].toUpperCase())){
-					hubSpu.setSupplierCategoryname(parm[i]);
-				}
-			}
-
+           if (supplierId.equals("2016110101955")) {
+			   for (int i = 0; i < parm.length; i++) {
+			   	if (result.getName()!=null){
+				   if (result.getName().toUpperCase().contains(parm[i].toUpperCase())) {
+					   System.out.println("---------------i===" + i + " " + parm[i]);
+					   hubSpu.setSupplierCategoryname(parm[i]);
+				   }
+			   }}
+		   }
 			hubSpu.setSupplierSpuColor(result.getAttributes().get(9).getValue().trim());
 			hubSpu.setSupplierGender(result.getAttributes().get(2).getValue());
 			hubSpu.setSupplierBrandname(result.getAttributes().get(1).getValue());

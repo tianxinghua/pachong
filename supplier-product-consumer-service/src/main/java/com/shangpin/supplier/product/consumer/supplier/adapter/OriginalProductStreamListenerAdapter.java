@@ -360,6 +360,16 @@ public class OriginalProductStreamListenerAdapter {
 		atelierCommonHandler.handleOriginalProduct(message, headers);		
 	}
 	/**
+	 * max1980供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void MAX1980StreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+
+
+	/**
 	 * MENGOTTISNC供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头

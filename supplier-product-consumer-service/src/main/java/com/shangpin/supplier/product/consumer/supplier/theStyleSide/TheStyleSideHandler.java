@@ -143,6 +143,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
             for (int i=0;i<parm.length;i++){
 
             	if (ob.getProductCode().toUpperCase().contains(parm[i].toUpperCase())){
+					System.out.println("---------------i===" + i + " " + parm[i]);
 					hubSpu.setSupplierCategoryname(parm[i]);
 				}
 			}
