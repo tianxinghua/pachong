@@ -1,5 +1,7 @@
 package com.shangpin.ep.order.module.sku.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 /**
@@ -9,6 +11,7 @@ import java.util.Date;
  * @author yanxiaobin
  * @date 2016年11月18日 下午2:36:28
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSku implements Serializable {
     private String id;
 

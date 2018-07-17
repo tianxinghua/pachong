@@ -89,7 +89,7 @@ public class CocoroseServiceImpl implements IOrderService {
 		shangpinMail.setTo("studio@cocoroselondon.com ");
 		List<String> addTo = new ArrayList<>();
 		addTo.add("gareth@cocoroselondon.com");
-		addTo.add("steven.ding@shangpin.com ");
+//		addTo.add("steven.ding@shangpin.com ");
 //		addTo.add("lizhongren@shangpin.com");
 
 

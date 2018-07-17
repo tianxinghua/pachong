@@ -148,10 +148,10 @@ public class CoccolebimbiCommonHandler implements ISupplierHandler {
 			hubSpu.setSupplierCategoryname(item.getMODELLO_ENG());
 			hubSpu.setSupplierBrandname(item.getBRAND());
 			
-			if(item.getSTAGIONE_ITA()!=null){
-				hubSpu.setSupplierSeasonname(item.getSTAGIONE_ITA());
-			}else{
+			if(item.getSTAGIONE_ENG()!=null){
 				hubSpu.setSupplierSeasonname(item.getSTAGIONE_ENG());
+			}else{
+				hubSpu.setSupplierSeasonname(item.getSTAGIONE_ITA());
 			}
 			
 			

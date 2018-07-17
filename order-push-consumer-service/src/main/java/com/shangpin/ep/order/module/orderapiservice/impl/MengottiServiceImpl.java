@@ -62,7 +62,7 @@ public class MengottiServiceImpl extends AtelierOrderHandler {
 		shangpinMail.setTo("info@mengotti-online.com");
 		List<String> addTo = new ArrayList<>();
 		addTo.add("ordini@mengotti-online.com ");
-		addTo.add("steven.ding@shangpin.com");
+//		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		return shangpinMail;
 	}

@@ -25,5 +25,7 @@ public class CsvDTO {
 	private String pics;
 	private String detailLink;
 	private String measurement;
+	private String supplierId;
+	private String supplierNo;
 	
 }

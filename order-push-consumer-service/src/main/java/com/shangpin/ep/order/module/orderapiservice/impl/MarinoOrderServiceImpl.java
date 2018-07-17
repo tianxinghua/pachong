@@ -64,7 +64,7 @@ public class MarinoOrderServiceImpl extends AtelierOrderHandler {
 
         List<String> addTo = new ArrayList<>();
 		addTo.add("customer@mancinijunior.com");
-		addTo.add("steven.ding@shangpin.com");
+//		addTo.add("steven.ding@shangpin.com");
 		shangpinMail.setAddTo(addTo );
 		return shangpinMail;
 

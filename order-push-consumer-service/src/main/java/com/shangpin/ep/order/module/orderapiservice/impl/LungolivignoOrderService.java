@@ -110,7 +110,7 @@ public class LungolivignoOrderService implements IOrderService{
 				throw new Exception(orderDTO.getSupplierOrderNo()+"查询订单是一般贸易还是境外贸易接口出错!");
 			if(importType.equals("0"))
 				throw new Exception(orderDTO.getSupplierOrderNo()+"此单为国内订单,无配置参数!");
-			if(importType.equals("1")) {
+			if(importType.equals("2")) {//一般贸易
 				Billingcustomer billingCustomer = new Billingcustomer();
 				billingCustomer.setID("00000172");
 				billingCustomer.setFirstName("Science and Technology Co");
@@ -121,7 +121,7 @@ public class LungolivignoOrderService implements IOrderService{
 				billingCustomer.setState("");
 				billingCustomer.setCountry("CN – Cina");
 				billingCustomer.setPhone("008615701395910");
-				billingCustomer.setEmail("steven.ding@shangpin.com");
+				billingCustomer.setEmail("bd4@shangpin.com");
 				billingCustomer.setVatNumber("1600787");//增值税税号
 				billingCustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setBillingCustomer(billingCustomer);
@@ -135,11 +135,11 @@ public class LungolivignoOrderService implements IOrderService{
 				Shippingcustomer.setState("");
 				Shippingcustomer.setCountry("CN – Cina");
 				Shippingcustomer.setPhone("008615701395910");
-				Shippingcustomer.setEmail("steven.ding@shangpin.com");
+				Shippingcustomer.setEmail("bd4@shangpin.com");
 				Shippingcustomer.setVatNumber("1600787");//增值税税号
 				Shippingcustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
-			}else if (importType.equals("2")) {
+			}else if (importType.equals("1")||importType.equals("3")) {//跨境 和 个人物品
 				Billingcustomer billingCustomer = new Billingcustomer();
 				billingCustomer.setID("00000184");
 				billingCustomer.setFirstName("Skycredit (Hong Kong)");
@@ -150,7 +150,7 @@ public class LungolivignoOrderService implements IOrderService{
 				billingCustomer.setState("");
 				billingCustomer.setCountry("CN – Cina");
 				billingCustomer.setPhone("008615701395910");
-				billingCustomer.setEmail("steven.ding@shangpin.com");
+				billingCustomer.setEmail("bd4@shangpin.com");
 				billingCustomer.setVatNumber("235865");//增值税税号
 				billingCustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setBillingCustomer(billingCustomer);
@@ -164,7 +164,7 @@ public class LungolivignoOrderService implements IOrderService{
 				Shippingcustomer.setState("");
 				Shippingcustomer.setCountry("CN – Cina");
 				Shippingcustomer.setPhone("008615701395910");
-				Shippingcustomer.setEmail("steven.ding@shangpin.com");
+				Shippingcustomer.setEmail("bd4@shangpin.com");
 				Shippingcustomer.setVatNumber("235865");//增值税税号
 				Shippingcustomer.setFiscalCode(""); //财政代码
 				requestSaveOrderDTO.setShippingCustomer(Shippingcustomer);
@@ -441,8 +441,8 @@ public class LungolivignoOrderService implements IOrderService{
 		shangpinMail.setText(text);
 		shangpinMail.setTo("ecommerce@lungolivigno.com");
 		List<String> addTo = new ArrayList<>();
-		addTo.add("steven.ding@shangpin.com");
-//		addTo.add("steven.ding@shangpin.com");
+		addTo.add("chengxu@shangpin.com");
+
 		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
