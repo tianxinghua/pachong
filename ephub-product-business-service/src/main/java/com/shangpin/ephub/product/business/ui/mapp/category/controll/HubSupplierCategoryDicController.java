@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,8 @@ public class HubSupplierCategoryDicController {
 	@Autowired
 	HubSupplierValueMappingService hubSupplierValueMappingService;
 	@Autowired
+	HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay; 
+	@Autowired
 	SupplierService supplierService;
 	@Autowired
 	TaskImportService taskImportService;
@@ -69,7 +73,7 @@ public class HubSupplierCategoryDicController {
 	@RequestMapping(value = "/list", method = RequestMethod.POST)
 	public HubResponse selectHubSupplierCateoryList(
 			@RequestBody HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto) {
-		
+		System.out.println("updateUser---------"+hubSupplierCategoryDicRequestDto.getUpdateUser());
 		try {
 			log.info("===品类映射list请求参数：{}",hubSupplierCategoryDicRequestDto);
 			String supplierNo = hubSupplierCategoryDicRequestDto.getSupplierNo();
@@ -81,7 +85,7 @@ public class HubSupplierCategoryDicController {
 				}	
 				supplierId = supplierDto.getSopUserNo();
 			}
-			
+		
 			int total = hubCategoryDicService.countSupplierCategoryBySupplierIdAndType(supplierId,hubSupplierCategoryDicRequestDto.getCategoryType(),hubSupplierCategoryDicRequestDto.getSupplierCategory(),hubSupplierCategoryDicRequestDto.getSupplierGender(),hubSupplierCategoryDicRequestDto.getStartTime(),hubSupplierCategoryDicRequestDto.getEndTime());
 			log.info("返回个数："+total);
 			if(total>0){
@@ -91,11 +95,15 @@ public class HubSupplierCategoryDicController {
 					List<HubSupplierCategoryDicResponseDto> responseList = new ArrayList<HubSupplierCategoryDicResponseDto>();
 					for (HubSupplierCategroyDicDto dicDto : list) {
 						HubSupplierCategoryDicResponseDto dic = new HubSupplierCategoryDicResponseDto();
-						/*List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
-						if(listMapp!=null&&listMapp.size()>0){
-							dic.setSupplierNo(listMapp.get(0).getHubValNo());
-							dic.setSupplierName(listMapp.get(0).getHubVal());
-						}*/
+						if (dicDto.getSupplierId()!=null){
+
+							List<HubSupplierValueMappingDto> listMapp = hubSupplierValueMappingService.getHubSupplierValueMappingByTypeAndSupplierId((byte)5,dicDto.getSupplierId());
+							if(listMapp!=null&&listMapp.size()>0){
+								dic.setSupplierNo(listMapp.get(0).getHubValNo());
+								dic.setSupplierName(listMapp.get(0).getHubVal());
+							}
+
+						}
 						if(dicDto.getCreateTime()!=null){
 							dic.setCreateTime(DateTimeUtil.getTime(dicDto.getCreateTime()));
 						}
@@ -103,6 +111,10 @@ public class HubSupplierCategoryDicController {
 						if(dicDto.getUpdateTime()!=null){
 							dic.setUpdateTime(DateTimeUtil.getTime(dicDto.getUpdateTime()));	
 						}
+						/*if (hubSupplierCategoryDicRequestDto.getUpdateUser()!=null){
+							dic.setUpdateUser(hubSupplierCategoryDicRequestDto.getUpdateUser());
+						}*/
+
 						BeanUtils.copyProperties(dicDto, dic);
 						responseList.add(dic);
 					}
