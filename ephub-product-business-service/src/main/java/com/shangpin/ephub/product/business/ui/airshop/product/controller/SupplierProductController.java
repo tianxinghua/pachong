@@ -78,7 +78,7 @@ public class SupplierProductController {
 	HubSupplierSkuGateWay hubSupplierSkuGateWay;
 	@Autowired
 	HubSupplierSpuGateWay hubSupplierSpuGateWay;
-	@RequestMapping(value="/selectSupplierProduct",method=RequestMethod.POST)
+	@RequestMapping(value="/selectSupplierProductInfo",method=RequestMethod.POST)
     public String selectProductDetail(@RequestBody SkuProductDTO skuQuryDto){
     	log.info("airshop查询品牌方原始链接请求参数：{}",skuQuryDto);
     	HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
@@ -88,7 +88,7 @@ public class SupplierProductController {
 			Long spuId = listSku.get(0).getSupplierSpuId();
 			HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(spuId);
 			if(spuDto!=null){
-				return "";
+				return spuDto.getProductUrl();
 			}
 		}
         return null;
