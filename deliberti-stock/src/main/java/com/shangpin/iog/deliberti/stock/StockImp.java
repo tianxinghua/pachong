@@ -59,7 +59,7 @@ public class StockImp  extends AbsUpdateProductStock {
                                     sku.setProductSize(substring1);
                                     String stock = s.substring(s.indexOf("(") + 1, s.indexOf(")"));
                                     sku.setStock(stock);
-                                    stockMap.put(pro.getSpuId() + "-" + sku.getProductSize(), sku.getStock());
+                                    stockMap.put(pro.getSpuId() + "_" + sku.getProductSize(), sku.getStock());
 
                                 }
                             }
