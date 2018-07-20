@@ -1,26 +1,21 @@
 package com.shangpin.ephub.product.business.service.pending.impl;
 
-import com.shangpin.ephub.client.data.mysql.enumeration.CommonHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.enumeration.SkuState;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.size.result.MatchSizeResult;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.size.dto.MatchSizeDto;
 import com.shangpin.ephub.product.business.rest.size.service.MatchSizeService;
 import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
-import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

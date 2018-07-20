@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.rest.model.service.impl;
+package com.shangpin.ephub.product.business.service.model.impl;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.rest.model.manager.HubBrandModelRuleManager;
-import com.shangpin.ephub.product.business.rest.model.service.IHubBrandModelRuleService;
+import com.shangpin.ephub.product.business.service.model.IHubBrandModelRuleService;
 
 import lombok.extern.slf4j.Slf4j;
 

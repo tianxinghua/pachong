@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.check.property;
+package com.shangpin.ephub.product.business.service.check.property;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuModelState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
-import com.shangpin.ephub.product.business.rest.model.service.impl.HubBrandModelRuleService;
+import com.shangpin.ephub.product.business.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.service.model.impl.HubBrandModelRuleService;
 
 /**
  * Created by lizhongren on 2017/3/3. 单个具体的实现类

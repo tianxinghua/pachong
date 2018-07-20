@@ -1,25 +1,14 @@
 package com.shangpin.ephub.product.business.rest.hubpending.sku.service;
 
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
-import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
-import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
-import com.shangpin.ephub.product.business.ui.pending.vo.SpuPendingAuditVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.product.business.hubpending.sku.dto.HubSkuCheckDto;
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.service.check.HubCheckService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>

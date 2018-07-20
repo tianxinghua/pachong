@@ -1,49 +1,34 @@
 package com.shangpin.ephub.product.business.ui.studio.pending.service.impl;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.product.dto.HubPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingWithCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
-import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
-import com.shangpin.ephub.product.business.common.service.check.PropertyCheck;
-import com.shangpin.ephub.product.business.common.service.check.property.BrandCheck;
-import com.shangpin.ephub.product.business.common.service.check.property.CategoryCheck;
-import com.shangpin.ephub.product.business.common.service.check.property.SpuModelCheck;
+import com.shangpin.ephub.product.business.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.service.check.PropertyCheck;
+import com.shangpin.ephub.product.business.service.check.property.BrandCheck;
+import com.shangpin.ephub.product.business.service.check.property.CategoryCheck;
+import com.shangpin.ephub.product.business.service.check.property.SpuModelCheck;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
-import com.shangpin.ephub.product.business.rest.gms.service.BrandService;
-import com.shangpin.ephub.product.business.rest.gms.service.CategoryService;
-import com.shangpin.ephub.product.business.rest.gms.service.SupplierService;
-import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
-import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
-import com.shangpin.ephub.product.business.ui.pending.enumeration.ProductState;
 import com.shangpin.ephub.product.business.ui.pending.service.impl.PendingProductService;
 import com.shangpin.ephub.product.business.ui.pending.util.JavaUtil;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingSkuUpdatedVo;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
 import com.shangpin.ephub.product.business.ui.studio.pending.service.StudioPendingService;
 import com.shangpin.ephub.product.business.utils.time.DateTimeUtil;
 
 import com.shangpin.ephub.response.HubResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,7 +36,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by loyalty on 17/6/8.

@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.check.property;
+package com.shangpin.ephub.product.business.service.check.property;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +12,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.SpuGenderState;
 import com.shangpin.ephub.client.data.mysql.gender.dto.HubGenderDicDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.hubDic.gender.service.HubGenderDicService;
-import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.service.check.CommonCheckBase;
 
 /**
  * Created by lizhongren on 2017/3/3. 单个具体的实现类

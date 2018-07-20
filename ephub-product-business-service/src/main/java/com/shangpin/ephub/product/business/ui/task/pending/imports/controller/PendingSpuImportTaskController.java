@@ -49,6 +49,34 @@ public class PendingSpuImportTaskController {
 			return HubResponse.errorResp("上传文件失败，请重新上传");
 		}
     }
+
+
+	@RequestMapping(value = "/import-hotboom-spu",method = RequestMethod.POST)
+	public HubResponse importHotboomSpu(@RequestBody HubImportTaskRequestDto dto){
+
+		try {
+			log.info("pendingSpu上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.PENDING_SPU);
+		} catch (Exception e) {
+			log.error("pendingSpu上传文件失败",e);
+			e.printStackTrace();
+			return HubResponse.errorResp("上传文件失败，请重新上传");
+		}
+	}
+
+
+	@RequestMapping(value = "/import-webspider-spu",method = RequestMethod.POST)
+	public HubResponse importWebSpiderSpu(@RequestBody HubImportTaskRequestDto dto){
+
+		try {
+			log.info("pendingSpu上传参数：{}",dto);
+			return pendingImportTaskService.uploadFileAndSave(dto, TaskType.IMPORT_WEBSPIDER_SPU);
+		} catch (Exception e) {
+			log.error("pendingSpu上传文件失败",e);
+			e.printStackTrace();
+			return HubResponse.errorResp("上传文件失败，请重新上传");
+		}
+	}
 	
 	@RequestMapping(value = "/import-supplier-data",method = RequestMethod.POST)
     public HubResponse importSupplierData(@RequestBody HubImportTaskRequestDto dto){

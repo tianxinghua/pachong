@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.check.property;
+package com.shangpin.ephub.product.business.service.check.property;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,7 +15,7 @@ import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.util.RegexUtil;
 import com.shangpin.ephub.product.business.common.hubDic.material.dto.MaterialDTO;
 import com.shangpin.ephub.product.business.common.hubDic.material.service.HubMaterialDicService;
-import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.service.check.CommonCheckBase;
 
 /**
  * Created by lizhongren on 2017/3/3. 单个具体的实现类

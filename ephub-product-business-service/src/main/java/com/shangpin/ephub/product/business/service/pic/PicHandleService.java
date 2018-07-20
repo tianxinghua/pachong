@@ -4,6 +4,7 @@ import com.shangpin.ephub.client.consumer.picture.dto.RetryPictureDto;
 import com.shangpin.ephub.client.consumer.picture.gateway.PictureGateWay;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.*;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPicGateWay;
@@ -136,6 +137,15 @@ public class PicHandleService {
         hubSpuPendingPic.setPicHandleState(picHandleState.getIndex());
         criteriaDto.setHubSpuPendingPic(hubSpuPendingPic);
         spuPendingPicGateWay.updateByCriteriaSelective(criteriaDto);
+    }
+
+    public List<HubSpuPendingPicDto>  getProductAvailablePic(Long supplierSpuId){
+        HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
+        criteriaPic.setPageNo(1);
+        criteriaPic.setPageSize(100);
+        criteriaPic.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId)
+                .andPicHandleStateEqualTo(PicState.HANDLED.getIndex()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+        return  spuPendingPicGateWay.selectByCriteria(criteriaPic);
     }
 
 }

@@ -1,29 +1,22 @@
 package com.shangpin.ephub.product.business.ui.pending.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
-import com.shangpin.ephub.product.business.common.enumeration.DataBusinessStatus;
-import com.shangpin.ephub.product.business.common.enumeration.SpuStatus;
-import com.shangpin.ephub.product.business.service.pending.PendingService;
-import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
+import com.shangpin.ephub.product.business.service.model.BrandModelRuleBSService;
+import com.shangpin.ephub.product.business.service.pending.*;
 import com.shangpin.ephub.product.business.ui.pending.vo.*;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingWithCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
@@ -38,16 +31,14 @@ import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendi
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.client.util.DateTimeUtil;
 import com.shangpin.ephub.client.util.JsonUtil;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.hubpending.pendingproduct.service.PendingProductCommonService;
 import com.shangpin.ephub.product.business.rest.hubpending.spu.service.HubPendingSpuCheckService;
 import com.shangpin.ephub.product.business.rest.model.controller.HubBrandModelRuleController;
-import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
-import com.shangpin.ephub.product.business.service.pending.CheckService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
@@ -100,6 +91,15 @@ public class PendingProductService extends PendingSkuService{
 
 	@Autowired
 	PendingService pendingService;
+
+	@Autowired
+	BrandModelRuleBSService brandModelRuleBSService;
+
+	@Autowired
+	PendingCommonService pendingCommonService;
+
+	@Autowired
+	WebSpiderService webSpiderService;
 
 	@Override
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
@@ -175,6 +175,7 @@ public class PendingProductService extends PendingSkuService{
 		PendingUpdatedVo updatedVo = null;
 		boolean pass = true; //全局用来判断整条数据是否校验通过
 		boolean isSkuPass = false;
+		boolean isHavWebSpider = false;
 		HubSpuDto hubSpuDto = null;
 		try {
 			if(null != pendingProductDto){
@@ -182,16 +183,23 @@ public class PendingProductService extends PendingSkuService{
 				List<HubSpuDto>  hubSpuDtos = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 				if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
 					hubSpuDto = hubSpuDtos.get(0);
-					convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
+					pendingCommonService.convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
 					if(!hubCheckService.checkHubSeason(pendingProductDto.getHubSeason())){
 						pendingProductDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 					}
 					setSpuState(pendingProductDto);
+				}else{
+					//检测是否有
+					HubSpuPendingDto webSpiderSpu = pendingCommonService.getHandleWebSpiderdSpuPending(pendingProductDto.getHubBrandNo(),pendingProductDto.getSpuModel());
+					if(null!=webSpiderSpu){
+						isHavWebSpider = true;
+						pendingCommonService.convertWebSpiderSpuToPendingSpu(webSpiderSpu,pendingProductDto);
+					}
 				}
 				/**
 				 * 校验货号
 				 */
-				BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
+				BrandModelResult brandModelResult = brandModelRuleBSService.verifyProductModle(pendingProductDto);
 
 				boolean isHaveHubSpu = false;
 				//返回信息中的SKU的信息状态
@@ -204,7 +212,7 @@ public class PendingProductService extends PendingSkuService{
 					//检验品牌是否
 
 					if(null==hubSpuDto) hubSpuDto = findAndUpdatedFromHubSpu(brandModelResult.getBrandMode(),pendingProductDto);
-					if(null!=hubSpuDto){
+					if(null!=hubSpuDto||isHavWebSpider){
 						setSpuState(pendingProductDto);
 						//尺码处理  ,从页面上获取的
 						isHaveHubSpu = true;
@@ -222,7 +230,8 @@ public class PendingProductService extends PendingSkuService{
 					}
 					//
 				}
-				if(!isHaveHubSpu){//无HubSpu的处理逻辑
+				if(!isHaveHubSpu&&!isHavWebSpider){
+					//无HubSpu且没有备份SPU的处理逻辑
 					/**
 					 * 校验品类和性别是否一致
 					 */
@@ -372,7 +381,7 @@ public class PendingProductService extends PendingSkuService{
                 List<HubSpuDto>  hubSpuDtos = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
                 if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
                     hubSpuDto = hubSpuDtos.get(0);
-                    convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
+					pendingCommonService.convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
                     if(!hubCheckService.checkHubSeason(pendingProductDto.getHubSeason())){
                         pendingProductDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
                     }
@@ -386,7 +395,7 @@ public class PendingProductService extends PendingSkuService{
                 /**
                  * 校验货号
                  */
-                BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
+                BrandModelResult brandModelResult = brandModelRuleBSService.verifyProductModle(pendingProductDto);
 
                 boolean isHaveHubSpu = false;
                 //返回信息中的SKU的信息状态
@@ -481,9 +490,7 @@ public class PendingProductService extends PendingSkuService{
                 pendingProductDto.setSupplierSpuId(null);
             }
 
-            if(pass &&isSkuPass&& null != hubSpuDto){
-                pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
-            }else if(pass&&isSkuPass){
+            if(pass&&isSkuPass){
                 pendingProductDto.setSpuState(SpuState.INFO_IMPECCABLE.getIndex());
             }
             pendingProductDto.setCreateTime(null);
@@ -532,7 +539,7 @@ public class PendingProductService extends PendingSkuService{
 				List<HubSpuDto>  hubSpuDtos = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 				if(null!=hubSpuDtos&&hubSpuDtos.size()>0){
 					hubSpuDto = hubSpuDtos.get(0);
-					convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
+					pendingCommonService.convertHubSpuDtoToPendingSpu(hubSpuDto,pendingProductDto);
 					if(!hubCheckService.checkHubSeason(pendingProductDto.getHubSeason())){
 						pendingProductDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
 					}
@@ -542,7 +549,7 @@ public class PendingProductService extends PendingSkuService{
 				/**
 				 * 校验货号
 				 */
-				BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
+				BrandModelResult brandModelResult = brandModelRuleBSService.verifyProductModle(pendingProductDto);
 
 				boolean isHaveHubSpu = false;
 				//返回信息中的SKU的信息状态
@@ -1005,7 +1012,7 @@ public class PendingProductService extends PendingSkuService{
 		pendingProductDto.setSpuModel(spuModel);
 		List<HubSpuDto> hubSpus = selectHubSpu(pendingProductDto.getSpuModel(),pendingProductDto.getHubBrandNo());
 		if(null != hubSpus && hubSpus.size()>0){
-			convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
+			pendingCommonService.convertHubSpuDtoToPendingSpu(hubSpus.get(0),pendingProductDto);
 			if(!hubCheckService.checkHubSeason(pendingProductDto.getHubSeason())){
 				pendingProductDto.setHubSeason(hubSpus.get(0).getMarketTime()+"_"+hubSpus.get(0).getSeason());
 			}
@@ -1014,44 +1021,8 @@ public class PendingProductService extends PendingSkuService{
 			return null;
 		}
 	}
-	/**
-	 * 验证货号
-	 * @param pendingProductDto
-	 * @return
-	 */
-	protected BrandModelResult verifyProductModle(PendingProductDto pendingProductDto) {
-		BrandModelDto brandModelDto = new BrandModelDto();
-		brandModelDto.setBrandMode(pendingProductDto.getSpuModel());
-		brandModelDto.setHubBrandNo(pendingProductDto.getHubBrandNo());
-		brandModelDto.setHubCategoryNo(pendingProductDto.getHubCategoryNo());
-		BrandModelResult brandModelResult=  hubBrandModelRule.verifyWithCategory(brandModelDto);
-		if(null!=brandModelResult&&!brandModelResult.isPassing()){
-			//未通过替换 查找货号规则 若存在 替换代码
-			pendingProductDto.setSpuModel(hubBrandModelRule.replaceSymbol(brandModelDto));
 
-		}
-		return brandModelResult;
-	}
-	/**
-	 * 将hub_spu中的信息付给pending_spu
-	 * @param hubSpuDto
-	 * @param
-	 */
-	private void convertHubSpuDtoToPendingSpu(HubSpuDto hubSpuDto,PendingProductDto hubPendingSpuDto){
-		hubPendingSpuDto.setHubBrandNo(hubSpuDto.getBrandNo());
-		hubPendingSpuDto.setHubCategoryNo(hubSpuDto.getCategoryNo());
-		if(hubPendingSpuDto.getHubColor()!=null&&hubPendingSpuDto.getHubColor().equals(hubSpuDto.getHubColor())){
-			hubPendingSpuDto.setHubColor(hubSpuDto.getHubColor());
-		}
-		hubPendingSpuDto.setHubColorNo(hubSpuDto.getHubColorNo());
-		hubPendingSpuDto.setHubGender(hubSpuDto.getGender());
-		hubPendingSpuDto.setHubMaterial(hubSpuDto.getMaterial());
-		hubPendingSpuDto.setHubOrigin(hubSpuDto.getOrigin());
-//		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason()); 季节可以修改 ，所以不赋值
-		hubPendingSpuDto.setHubSpuNo(hubSpuDto.getSpuNo());
-		hubPendingSpuDto.setSpuModel(hubSpuDto.getSpuModel());
-		hubPendingSpuDto.setSpuName(hubSpuDto.getSpuName());
-	}
+
 	/**
 	 * 根据品牌和货号查找hub_spu表中的记录
 	 * @param spuModle

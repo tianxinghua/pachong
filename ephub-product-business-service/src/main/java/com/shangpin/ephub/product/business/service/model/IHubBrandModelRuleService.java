@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.rest.model.service;
+package com.shangpin.ephub.product.business.service.model;
 /**
  * <p>Title:IHubBrandModelRuleService.java </p>
  * <p>Description: 品牌型号规则接口规范</p>

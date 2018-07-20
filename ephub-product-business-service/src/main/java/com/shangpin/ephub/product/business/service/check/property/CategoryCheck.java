@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.check.property;
+package com.shangpin.ephub.product.business.service.check.property;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +15,8 @@ import com.shangpin.ephub.client.data.mysql.enumeration.ConstantProperty;
 import com.shangpin.ephub.client.data.mysql.enumeration.InfoState;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.common.hubDic.category.HubCategoryDicService;
-import com.shangpin.ephub.product.business.common.service.check.CommonCheckBase;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.service.check.CommonCheckBase;
+import com.shangpin.ephub.product.business.service.check.HubCheckService;
 
 /**
  * Created by zhaogenchun on 2017/03/06.

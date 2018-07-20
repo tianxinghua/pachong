@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.client.product.business.hubpending.sku.result.HubPendingSkuCheckResult;
 import com.shangpin.ephub.client.util.RegexUtil;
-import com.shangpin.ephub.product.business.common.service.check.HubCheckService;
+import com.shangpin.ephub.product.business.service.check.HubCheckService;
 import com.shangpin.ephub.product.business.rest.hubproduct.dto.HubProductDto;
 import com.shangpin.ephub.product.business.rest.hubproduct.manager.HubProductCheckManager;
 import com.shangpin.ephub.product.business.rest.hubproduct.result.HubProductCheckResult;

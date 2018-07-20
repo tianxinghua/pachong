@@ -1,4 +1,4 @@
-package com.shangpin.ephub.product.business.common.service.check;
+package com.shangpin.ephub.product.business.service.check;
 
 import org.apache.commons.lang.StringUtils;
 

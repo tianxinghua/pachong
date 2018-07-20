@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.ui.pending.controller;
 
 import java.util.List;
 
+import com.shangpin.ephub.product.business.service.pending.WebSpiderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +48,9 @@ public class PendingProductController {
 	@Autowired
 	private HubSpuPendingNohandleReasonService reasonService;
 
+	@Autowired
+	private WebSpiderService webSpiderService;
+
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
         PendingProducts pendingProducts = pendingProductService.findPendingProducts(pendingQuryDto,false);
@@ -78,7 +82,10 @@ public class PendingProductController {
 		return pendingProductService.saveHotBoom(pendingProductDto);
 	}
 
-
+	@RequestMapping(value="/save-webspider",method=RequestMethod.POST)
+	public HubResponse<?> saveWebSpider(@RequestBody PendingProductDto pendingProductDto){
+		return webSpiderService.saveWebSpider(pendingProductDto);
+	}
 
     @RequestMapping(value="/unable-to-process/{updateUser}",method=RequestMethod.POST)
     public HubResponse<?> updateProductToUnableToProcess(@PathVariable String updateUser,@RequestBody String id){

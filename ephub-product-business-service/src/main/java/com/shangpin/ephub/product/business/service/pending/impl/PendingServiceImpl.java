@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.*;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.product.business.service.pending.WebSpiderService;
+import com.shangpin.ephub.product.business.service.pic.PicHandleService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang.StringUtils;
@@ -97,6 +99,11 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    WebSpiderService webSpiderService;
+    @Autowired
+    PicHandleService picHandleService;
 
     @Override
     public SpuModelMsgVO getSpuModel(SpuPendingAuditQueryVO queryVO) {
@@ -220,6 +227,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
             //获取hubslotspupic
             Map<String, List<HubSlotSpuPicDto>> shootPicMap =     getShootPic(brandNo, spuModel);
             boolean isUseShootPic = false;
+            boolean isUseWebSpider = false;
             for(int i=0;i<hubSpuPendingDtos.size();i++){
                 HubSpuPendingDto spuPendingDto = hubSpuPendingDtos.get(i);
                 SpuPendingVO spuPendingVO = new SpuPendingVO();
@@ -231,6 +239,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                 spuPendingVO.setOrigin(spuPendingDto.getHubOrigin());
                 spuPendingVO.setIsDefaultSupplier(false);
                 spuPendingVO.setHaveHubSpu(isHaveHubSpu);
+                if(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue()==spuPendingDto.getOriginSource()) isUseWebSpider = true;
                 if(isHaveHubSpu){
                     //赋值hubspu属性
                     spuPendingVO.setHub_Category(spuDto.getCategoryNo());
@@ -250,12 +259,8 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
                     useShootPic(shootPicMap,  spuPendingDto, spuPendingVO);
                 }else{
 
-                    HubSpuPendingPicCriteriaDto criteriaPic = new HubSpuPendingPicCriteriaDto();
-                    criteriaPic.setPageNo(1);
-                    criteriaPic.setPageSize(100);
-                    criteriaPic.createCriteria().andSupplierSpuIdEqualTo(spuPendingDto.getSupplierSpuId())
-                            .andPicHandleStateEqualTo(PicState.HANDLED.getIndex()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
-                    List<HubSpuPendingPicDto> hubSpuPendingPicDtos = spuPendingPicGateWay.selectByCriteria(criteriaPic);
+
+                    List<HubSpuPendingPicDto> hubSpuPendingPicDtos = picHandleService.getProductAvailablePic(spuPendingDto.getSupplierSpuId());
                     if(null!=hubSpuPendingDtos){
                         if(hubSpuPendingDtos.size()>maxPic){
                             maxPic = hubSpuPendingPicDtos.size();
@@ -264,8 +269,41 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 
                         List<SpuPendingPicVO>  picVOs = new ArrayList<>();
 
-                        for(HubSpuPendingPicDto picDto:hubSpuPendingPicDtos){
-                            //首先查询 图片是否已经有spuPending编号，如果没有反写进去
+                        this.convertPicDtoToVo(hubSpuPendingPicDtos,picVOs);
+
+                        spuPendingVO.setPicVOs(picVOs);
+                    }
+                }
+
+                spuPendingVO.setHaveShootPic(isUseShootPic);
+                spuPendingVOS.add(spuPendingVO);
+            }
+
+            spuPendingVOS.get(index).setIsDefaultSupplier(true);
+
+            //查看是否有图片  若无  需要查询是否来着爬虫 找有爬虫的产品图片
+            SpuPendingVO picSpuPending = spuPendingVOS.get(index);
+            List<SpuPendingPicVO> picVOs = picSpuPending.getPicVOs();
+            if(null==picVOs||picVOs.isEmpty()){
+                if(isUseWebSpider){
+                    if(null==picVOs) picVOs = new ArrayList<>();
+                    HubSpuPendingDto webSpiderHandedSpuWithHavePic = webSpiderService.getWebSpiderHandedSpuWithHavePic(picSpuPending.getBrandNo(), picSpuPending.getSpuModel());
+                    if(null!=webSpiderHandedSpuWithHavePic){
+                        List<HubSpuPendingPicDto> productAvailablePic = picHandleService.getProductAvailablePic(webSpiderHandedSpuWithHavePic.getSupplierSpuId());
+                        this.convertPicDtoToVo(productAvailablePic,picVOs);
+                        picSpuPending.setPicVOs(picVOs);
+                    }
+                }
+            }
+        }
+
+        return spuPendingVOS;
+    }
+
+
+    private void convertPicDtoToVo(List<HubSpuPendingPicDto> hubSpuPendingPicDtos,List<SpuPendingPicVO> picVOs){
+        for(HubSpuPendingPicDto picDto:hubSpuPendingPicDtos){
+            //首先查询 图片是否已经有spuPending编号，如果没有反写进去
 //                        if(null==picDto.getSpuPendingId()){
 //                            HubSpuPendingPicDto tmp = new HubSpuPendingPicDto();
 //                            tmp.setSpuPendingPicId(picDto.getSpuPendingPicId());
@@ -273,24 +311,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
 //                            spuPendingPicGateWay.updateByPrimaryKeySelective(tmp);
 //                            picDto.setSpuPendingId(tmp.getSpuPendingId());
 //                        }
-                            SpuPendingPicVO picVO = new SpuPendingPicVO();
-                            picVO.setSpuPendingId(null==picDto.getSpuPendingId()?0:picDto.getSpuPendingId());
-                            picVO.setPicId(picDto.getSpuPendingPicId());
-                            picVO.setSpPicUrl(picDto.getSpPicUrl());
-                            picVOs.add(picVO);
-                        }
-
-                        spuPendingVO.setPicVOs(picVOs);
-                    }
-                }
-                spuPendingVO.setHaveShootPic(isUseShootPic);
-                spuPendingVOS.add(spuPendingVO);
-            }
-
-            spuPendingVOS.get(index).setIsDefaultSupplier(true);
+            SpuPendingPicVO picVO = new SpuPendingPicVO();
+            picVO.setSpuPendingId(null==picDto.getSpuPendingId()?0:picDto.getSpuPendingId());
+            picVO.setPicId(picDto.getSpuPendingPicId());
+            picVO.setSpPicUrl(picDto.getSpPicUrl());
+            picVOs.add(picVO);
         }
-
-        return spuPendingVOS;
     }
 
     private void useShootPic(Map<String, List<HubSlotSpuPicDto>> shootPicMap, HubSpuPendingDto spuPendingDto, SpuPendingVO spuPendingVO) {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shangpin.ephub.product.business.rest.model.dto.BrandModelDto;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
-import com.shangpin.ephub.product.business.rest.model.service.IHubBrandModelRuleService;
+import com.shangpin.ephub.product.business.service.model.IHubBrandModelRuleService;
 
 import lombok.extern.slf4j.Slf4j;
 

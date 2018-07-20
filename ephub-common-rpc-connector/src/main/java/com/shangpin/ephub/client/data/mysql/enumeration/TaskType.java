@@ -71,7 +71,12 @@ public enum TaskType {
 	/**
 	 * 供应商数据导入
 	 */
-	SUPPLIER_DATA(30,"SUPPLIER_DATA")
+	SUPPLIER_DATA(30,"SUPPLIER_DATA"),
+
+
+	IMPORT_WEBSPIDER_SPU(31,"备用SPU导入"),
+
+	IMPORT_HOTBOOM_SPU(32,"备选SPU导入"),
 
 	;
 
