@@ -30,7 +30,7 @@ public class ProductImportHandler {
 	@Autowired
 	PendingSkuImportService PendingSkuImportService;
 	@Autowired
-	PendingSpuImportService PendingSpuImportService;
+	PendingSpuImportService pendingSpuImportService;
 	@Autowired
 	SlotSpuImportService slotSpuImportService;
 	@Autowired 
@@ -56,7 +56,9 @@ public class ProductImportHandler {
 			if(TaskType.PENDING_SKU.getIndex().equals(message.getType())){
 				resultFile = PendingSkuImportService.handMessage(message);
 			}else if(TaskType.PENDING_SPU.getIndex().equals(message.getType())){
-				resultFile = PendingSpuImportService.handMessage(message);
+				resultFile = pendingSpuImportService.handMessage(message);
+			}else if(TaskType.IMPORT_WEBSPIDER_SPU.getIndex().equals(message.getType())){
+				resultFile = pendingSpuImportService.handMessage(message);
 			}else if(TaskType.IMPORT_SLOT_SPU.getIndex().equals(message.getType())){
 				resultFile = slotSpuImportService.handMessage(message);
 			}else if("18".equals(message.getType())){

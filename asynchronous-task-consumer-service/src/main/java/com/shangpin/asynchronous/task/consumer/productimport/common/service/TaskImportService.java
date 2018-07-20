@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -362,8 +363,17 @@ public class TaskImportService {
 		return in;
 	}
 
-	public void checkPendingSpu(HubSpuPendingDto isPendingSpuExist,HubPendingSkuCheckResult hubPendingSkuCheckResult,HubSpuPendingDto hubPendingSpuDto, 
-			Map<String, String> map,boolean flag) {
+	/**
+	 *
+	 * @param isPendingSpuExist:数据库现有数据
+	 * @param hubPendingSkuCheckResult
+	 * @param spuPendingVO：传入的数据
+	 * @param map
+	 * @param flag：SKU检测结果是否通过
+	 * @param importType:导入类型
+	 */
+	public void checkPendingSpu(HubSpuPendingDto isPendingSpuExist,HubPendingSkuCheckResult hubPendingSkuCheckResult,HubSpuPendingDto spuPendingVO,
+			Map<String, String> map,boolean flag,int importType) {
 		
 		boolean skuIsPassing  = flag;
 		Long pendingSpuId = null;
@@ -374,18 +384,18 @@ public class TaskImportService {
 		String checkResult = null;
 		
 		// 校验货号
-		 HubPendingSpuCheckResult hubPendingSpuCheckResult = pendingSpuCheckGateWay.checkSpu(hubPendingSpuDto);
-		log.info(hubPendingSpuDto.getSpuModel()+"检验spu结果：{}",hubPendingSpuCheckResult);
+		 HubPendingSpuCheckResult hubPendingSpuCheckResult = pendingSpuCheckGateWay.checkSpu(spuPendingVO);
+		log.info(spuPendingVO.getSpuModel()+"检验spu结果：{}",hubPendingSpuCheckResult);
 		String spuModel = null;
 		if (hubPendingSpuCheckResult.isSpuModel()) {
 			spuModel = hubPendingSpuCheckResult.getModel();
 			// 查询货号是否已存在hubSpu中
-			hubPendingSpuDto.setSpuModel(spuModel);
-			HubSpuDto list = dataHandleService.selectHubSpu(hubPendingSpuDto.getSpuModel(),hubPendingSpuDto.getHubBrandNo());
+			spuPendingVO.setSpuModel(spuModel);
+			HubSpuDto list = dataHandleService.selectHubSpu(spuPendingVO.getSpuModel(),spuPendingVO.getHubBrandNo());
 			if (list != null) {
 				// 货号已存在hubSpu中,不需要推送hub，直接把hubSpu信息拿过来，查询pendingSpu是否存在==》保存或更新pendingSpu表
-				if(list.getHubColor().equals(hubPendingSpuDto.getHubColor())){
-					convertHubSpuToPendingSpu(hubPendingSpuDto, list);
+				if(list.getHubColor().equals(spuPendingVO.getHubColor())){
+					convertHubSpuToPendingSpu(spuPendingVO, list);
 					hubSpuId = list.getSpuId();
 					hubSpuNo = list.getSpuNo();
 					spuIsPassing = true;
@@ -393,20 +403,31 @@ public class TaskImportService {
 					checkResult = spuModel+"在hub已存在";
 					hubPendingSpuCheckResult.setPassing(true);
 				}else{
-					//同品牌同货号不同颜色
-					spuIsPassing = false;
-					hubIsExist = false;
-					map.put("taskState", "校验失败");
-					map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
-					checkResult =  "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor();
-					hubPendingSpuCheckResult.setPassing(false);
-					hubPendingSpuDto.setAuditState((byte)0);
-					hubPendingSpuDto.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
-					hubPendingSpuDto.setAuditDate(new Date());
-					hubPendingSpuDto.setAuditUser("chenxu");
-					hubPendingSpuDto.setSpuState((byte)0);
-					hubPendingSpuDto.setMemo("同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
+					if(importType==TaskType.IMPORT_WEBSPIDER_SPU.getIndex()){
+						convertHubSpuToPendingSpu(spuPendingVO, list);
+						hubSpuId = list.getSpuId();
+						hubSpuNo = list.getSpuNo();
+						spuIsPassing = true;
+						hubIsExist = true;
+						checkResult = spuModel+"在hub已存在";
+						hubPendingSpuCheckResult.setPassing(true);
+					}else{
+
+						//同品牌同货号不同颜色
+						spuIsPassing = false;
+						hubIsExist = false;
+						map.put("taskState", "校验失败");
+						map.put("processInfo", "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor());
+						checkResult =  "同品牌同货号，颜色不一样,hub颜色："+list.getHubColor();
+						hubPendingSpuCheckResult.setPassing(false);
+						spuPendingVO.setAuditState((byte)0);
+						spuPendingVO.setAuditOpinion("再处理：同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
+						spuPendingVO.setAuditDate(new Date());
+						spuPendingVO.setAuditUser("chenxu");
+						spuPendingVO.setSpuState((byte)0);
+						spuPendingVO.setMemo("同品牌同货号颜色不一样，hub颜色："+list.getHubColor());
 //					dataHandleService.updateHubSpuPending(hubPendingSpuDto);
+					}
 				}
 			} else {
 				// 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
@@ -427,7 +448,7 @@ public class TaskImportService {
 			hubIsExist = false;
 			checkResult = "货号校验失败";
 		}
-		String memo = "spu:"+checkResult+",sku:"+hubPendingSkuCheckResult.getMessage();
+		String memo = "spu:"+checkResult+",sku:"+ (null!=hubPendingSkuCheckResult?hubPendingSkuCheckResult.getMessage():"");
 		boolean allFilter = false;
 		if(map.get("allFilter")!=null){
 			allFilter = Boolean.parseBoolean(map.get("allFilter"));
@@ -437,13 +458,13 @@ public class TaskImportService {
 			noSku = Boolean.parseBoolean(map.get("noSku"));
 		}
 		
-		pendingSpuId = saveOrUpdatePendingSpu(noSku,allFilter,hubIsExist,isPendingSpuExist, hubPendingSpuDto, hubPendingSpuCheckResult,skuIsPassing,memo);
+		pendingSpuId = saveOrUpdatePendingSpu(noSku,allFilter,hubIsExist,isPendingSpuExist, spuPendingVO, hubPendingSpuCheckResult,skuIsPassing,memo);
 		if (spuIsPassing==true&&skuIsPassing==true) {
 			map.put("taskState", "校验通过");
-			map.put("processInfo", "spu:"+checkResult+",sku:"+hubPendingSkuCheckResult.getMessage());
+			map.put("processInfo", "spu:"+checkResult+",sku:"+(null!=hubPendingSkuCheckResult?hubPendingSkuCheckResult.getMessage():""));
 		} else {
 			map.put("taskState", "校验失败");
-			map.put("processInfo", "spu："+checkResult+",sku:"+hubPendingSkuCheckResult.getMessage());
+			map.put("processInfo", "spu："+checkResult+",sku:"+(null!=hubPendingSkuCheckResult?hubPendingSkuCheckResult.getMessage():""));
 		}
 	
 		map.put("pendingSpuId",pendingSpuId+"");

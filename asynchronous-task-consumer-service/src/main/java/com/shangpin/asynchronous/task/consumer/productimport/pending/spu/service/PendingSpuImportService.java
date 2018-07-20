@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -94,11 +95,11 @@ public class PendingSpuImportService {
 		}
 
 		//校验数据并把校验结果写入excel
-		return checkAndsaveHubPendingProduct(task.getTaskNo(), listHubProduct,createUser);
+		return checkAndsaveHubPendingProduct(task.getTaskNo(),task.getType(), listHubProduct,createUser);
 	}
 	
 	//开始校验数据
-	public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
+	public String checkAndsaveHubPendingProduct(String taskNo,int importType, List<HubPendingSpuImportDTO> listHubProduct,String createUser)
 			throws Exception {
 		
 		if (listHubProduct == null) {
@@ -119,7 +120,7 @@ public class PendingSpuImportService {
 			map.put("spuModel", product.getSpuModel());
 			//首先判断是否人工排除
 			if(!filterSpu(product,createUser,map)){
-				loopHandleSpuImportDto(map,product,createUser);	
+				loopHandleSpuImportDto(map,product,createUser,importType);
 			}
 			listMap.add(map);
 		}
@@ -197,13 +198,13 @@ public class PendingSpuImportService {
 		}
 	}
 	
-	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO product,String createUser) throws Exception{
+	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO product,String createUser,int importType) throws Exception{
 		
 		//excel数据转换为数据库对象
-		HubSpuPendingDto hubPendingSpuDto = convertHubPendingProduct2PendingSpu(product,createUser);
+		HubSpuPendingDto spuPendingVO = convertHubPendingProduct2PendingSpu(product,createUser);
 		
 		//判断spuPending是否已存在
-		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(hubPendingSpuDto);
+		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(spuPendingVO);
 		HubSpuPendingDto isSpuPendingExist = null;
 		if (listSpu != null && listSpu.size() > 0) {
 			isSpuPendingExist = listSpu.get(0);
@@ -231,8 +232,10 @@ public class PendingSpuImportService {
 //				return;
 //			}
 //		}
-		HubPendingSkuCheckResult checkResult = selectAndcheckSku(product,isSpuPendingExist, map);
-		taskService.checkPendingSpu(isSpuPendingExist, checkResult, hubPendingSpuDto, map, checkResult.isPassing());
+		HubPendingSkuCheckResult checkResult = null ;
+		if(TaskType.PENDING_SPU.getIndex() == importType) 	checkResult = selectAndcheckSku(product,isSpuPendingExist, map);
+		taskService.checkPendingSpu(isSpuPendingExist, checkResult, spuPendingVO, map,
+				TaskType.PENDING_SPU.getIndex() == importType?checkResult.isPassing():true,importType);
 //		boolean isPassing = Boolean.parseBoolean(map.get("isPassing"));
 //		if (isPassing) {
 //			taskService.sendToHub(hubPendingSpuDto, map);
