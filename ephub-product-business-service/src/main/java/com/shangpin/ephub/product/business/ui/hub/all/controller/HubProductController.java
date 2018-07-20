@@ -10,16 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.product.business.ui.hub.all.service.IHubProductService;
+import com.shangpin.ephub.product.business.ui.hub.all.service.impl.HubProductServiceImpl;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductDetails;
+import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductPicParam;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductQuery;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductResult;
 import com.shangpin.ephub.product.business.ui.hub.all.vo.HubProductSpuModel;
 import com.shangpin.ephub.product.business.ui.hub.common.dto.HubQuryDto;
 import com.shangpin.ephub.response.HubResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * <p>Title:HubProductController </p>
@@ -31,6 +36,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @RestController
 @RequestMapping("/hub-product")
+@Slf4j
 public class HubProductController {
 	
 	private static String resultSuccess = "success";
@@ -62,6 +68,37 @@ public class HubProductController {
 			return HubResponse.errorResp(resultFail);
 		}
 		
+	}
+	
+	@RequestMapping(value="/add-pic",method=RequestMethod.POST)
+	public HubResponse<?> addPic(@RequestBody HubProductPicParam hubProductPicParam){
+		
+		if(StringUtils.isBlank(hubProductPicParam.getSpuId()))
+			return HubResponse.errorResp("spuId不能为null!");
+		HubSpuDto hubSpuDto = hubSpuGateWay.selectByPrimaryKey(Long.parseLong(hubProductPicParam.getSpuId()));
+		if(hubSpuDto==null)
+			return HubResponse.errorResp("spu不存在!");
+		if(StringUtils.isBlank(hubProductPicParam.getSpPicUrl()))
+			return HubResponse.errorResp("图片url不能为null!");
+		try {
+			return HubResponse.successResp(hubProductService.addPicBySpuId(hubProductPicParam));
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return HubResponse.errorResp("添加失败!");
+		}
+	}
+	
+	@RequestMapping(value="/delete-pic",method=RequestMethod.POST)
+	public HubResponse<?> deletePic(@RequestBody HubProductPicParam hubProductPicParam){
+		if(StringUtils.isBlank(hubProductPicParam.getSpuPicId()))
+			return HubResponse.errorResp("spuPicId不能为null!");
+		try {
+			hubProductService.deletePicBySpuId(hubProductPicParam);
+			return HubResponse.successResp("删除成功!");
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			return HubResponse.errorResp("删除失败!");
+		}
 	}
 	
 	@RequestMapping(value="/getSpuModel",method=RequestMethod.POST)

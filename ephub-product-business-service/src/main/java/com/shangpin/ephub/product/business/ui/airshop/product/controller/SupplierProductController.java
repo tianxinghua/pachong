@@ -23,8 +23,11 @@ import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingD
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.task.product.body.Task;
 import com.shangpin.ephub.product.business.common.mapp.hubSupplierValueMapping.HubSupplierValueMappingService;
 import com.shangpin.ephub.product.business.common.supplier.product.HubSupplierProductService;
@@ -71,7 +74,26 @@ public class SupplierProductController {
 	private HubSupplierSpuService hubSupplierSpuService;
 	@Autowired
 	HubSpuPendingPicGateWay hubSpuPendingPicGateWay;
-
+	@Autowired
+	HubSupplierSkuGateWay hubSupplierSkuGateWay;
+	@Autowired
+	HubSupplierSpuGateWay hubSupplierSpuGateWay;
+	@RequestMapping(value="/selectSupplierProductInfo",method=RequestMethod.POST)
+    public String selectProductDetail(@RequestBody SkuProductDTO skuQuryDto){
+    	log.info("airshop查询品牌方原始链接请求参数：{}",skuQuryDto);
+    	HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+    	criteria.createCriteria().andSupplierIdEqualTo(skuQuryDto.getSupplierId()).andSupplierSkuNoEqualTo(skuQuryDto.getSkuId());
+    	List<HubSupplierSkuDto> listSku = hubSupplierSkuGateWay.selectByCriteria(criteria);
+		if(listSku!=null&&!listSku.isEmpty()){
+			Long spuId = listSku.get(0).getSupplierSpuId();
+			HubSupplierSpuDto spuDto = hubSupplierSpuGateWay.selectByPrimaryKey(spuId);
+			if(spuDto!=null){
+				return spuDto.getProductUrl();
+			}
+		}
+        return null;
+    }
+	
     @RequestMapping(value="/selectSupplierProduct",method=RequestMethod.POST)
     public PageResponseDTO pendingList(@RequestBody HubSupplierProductRequestWithPage pendingQuryDto){
     	log.info("airshop查询请求参数：{}",pendingQuryDto);
