@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shangpin.ephub.client.util.JsonUtil;
 import com.shangpin.ephub.product.business.service.pending.PendingService;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelMsgVO;
 import com.shangpin.ephub.product.business.ui.pending.vo.SpuModelVO;
@@ -51,7 +52,7 @@ public class PendingAuditController {
 
 	@RequestMapping(value="audit-spupendig",method=RequestMethod.POST)
 	public HubResponse<?> querySpuPending(@RequestBody SpuPendingAuditVO auditVO){
-		log.info("待审核请求参数：{}",auditVO);
+		log.info("待审核请求参数：{}",JsonUtil.serialize(auditVO));
 		List<SpuPendingAuditVO> auditList = new ArrayList<>();
 		auditList.add(auditVO);
 //		try {
