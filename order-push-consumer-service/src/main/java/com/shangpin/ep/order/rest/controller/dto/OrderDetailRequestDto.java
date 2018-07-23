@@ -14,3 +14,4 @@ public class OrderDetailRequestDto {
 	private String masterOrderNo;
 
 }
+

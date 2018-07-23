@@ -40,6 +40,8 @@ public class ProductImportHandler {
 	@Autowired
 	PendingColorImportService PendingColorImportService;
 	@Autowired
+	PendingColorImportService PendingColorImportService;
+	@Autowired
 	SlotSpuImportService slotSpuImportService;
 	@Autowired 
 	TaskImportService taskService;
