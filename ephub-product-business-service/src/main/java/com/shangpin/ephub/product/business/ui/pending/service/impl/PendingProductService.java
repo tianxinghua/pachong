@@ -335,6 +335,10 @@ public class PendingProductService extends PendingSkuService{
 
 			//摄影棚处理
 			setHubSlotSpu(pendingProductDto);
+			//更改SPU的数据来源
+			if(isHavWebSpider){
+				pendingProductDto.setOriginSource(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue());
+			}
 
 			hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
 
