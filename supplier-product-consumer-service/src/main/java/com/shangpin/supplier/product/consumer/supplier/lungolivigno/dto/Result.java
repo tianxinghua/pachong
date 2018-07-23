@@ -14,5 +14,5 @@ public class Result {
     private List<Attributes> Attributes;
     private List<Sizes> Sizes;
     private List<String> Children;    
-
+    private List<String> picUrls;
 }

@@ -1,10 +1,9 @@
 package com.shangpin.supplier.product.consumer.supplier.monnalisa;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -78,32 +77,49 @@ public class MonnalisaHandler implements ISupplierHandler{
 	
 	/**
 	 * stefania处理图片
-	 * @param stefPicture
+	 * @param
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
-		String supplierSpuNo =jsonObject.getId().substring(0,jsonObject.getId().lastIndexOf("-"));
-		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
+//		String supplierSpuNo =jsonObject.getId().substring(0,jsonObject.getId().lastIndexOf("-"));
+//		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture0 = jsonObject.getImage_link();
-		List<Image> images = new ArrayList<Image>();
-		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)&&!existPics.containsKey(picture0)){
-			log.info("monnalisa "+picture0+" 将推送");
+
+		Map<String,String> urlMap = new HashMap<>();
+		List<Image> imagesList = new ArrayList<>();
+		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
+			log.info("monnalisa pic : "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
-			images.add(image);
+			urlMap.put(picture0,"");
+			imagesList.add(image);
 		}else{
-			log.info("XXXXXXXXX monnalisa "+picture0+" 已存在XXXXXXXXXXXX");
+
 		}
-		
-		return images;
+
+		if(null!=jsonObject.getAdditional_image_link()&&org.apache.commons.lang.StringUtils.isNotBlank(jsonObject.getAdditional_image_link())){
+
+			String[] picUrlArray = jsonObject.getAdditional_image_link().split(",");
+            if(null!=picUrlArray){
+            	for(int i= 0 ;i<picUrlArray.length;i++){
+            		if(!urlMap.containsKey(picUrlArray[i])){
+						log.info("monnalisa pic:"+picUrlArray[i]+" 将推送");
+						Image image = new Image();
+						image.setUrl(picUrlArray[i]);
+						imagesList.add(image);
+					}
+				}
+			}
+
+		}
+
+		return imagesList;
 	}
 	
 	/**
 	 * 将stefania原始数据转换成hub spu
 	 * @param supplierId 供应商门户编号
-	 * @param stefProduct stef 原始dto
-	 * @param stefItem stef 原始dto
-	 * @param hubSpu hub spu
+
 	 * @return
 	 */
 	public boolean convertSpu(String supplierId,CsvDTO ob,HubSupplierSpuDto hubSpu,String data){
@@ -114,22 +130,70 @@ public class MonnalisaHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuName(ob.getTitle());
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getGender());
-			hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
+			/*if(ob.getGoogle_product_category()!=null) {
+				if(ob.getGoogle_product_category().length()<50) {
+					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
+				}else {
+					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 48));
+					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
+				}
+			}else {
+				hubSpu.setSupplierCategoryname("");
+			}*/
+			if(ob.getGoogle_product_category()!=null) {
+				if(ob.getGoogle_product_category().length()<50) {
+					String s1=ob.getGoogle_product_category();
+					hubSpu.setSupplierCategoryname(SubCategory(s1));
+				}else {
+					String s2=ob.getGoogle_product_category().substring(0, 48);
+					hubSpu.setSupplierCategoryname(SubCategory(s2));
+					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
+				}
+			}else {
+				hubSpu.setSupplierCategoryname("");
+			}
 			hubSpu.setSupplierBrandname(ob.getBrand());
-			hubSpu.setSupplierSeasonname(ob.getSeason());
+			hubSpu.setSupplierSeasonname((StringUtils.isEmpty(ob.getAnno())?"":ob.getAnno())+ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());
-			hubSpu.setSupplierOrigin(null);
+			hubSpu.setSupplierOrigin(ob.getCountry());
 			hubSpu.setSupplierSpuDesc(ob.getDescription());
 			return true;
 		}else{
 			return false;
 		}
 	}
+	public String SubCategory(String s){
+		String[] sp = s.split(">");
+		String k="";
+		StringBuffer buffer = new StringBuffer();
+		ArrayList<Object> list = new ArrayList<>();
+		for (int i = 0; i < sp.length; i++) {
+			if (sp[i].contains("Summer")|| sp[i].contains("Winter")){
+				String string = sp[i].toString();
+				sp[i].replace(string,"");
+			}else {
+				k=buffer.append(sp[i]).toString();
+			}
+		}
+		String sgirl="";
+		if (k.contains("Girl")){
+			String s1 = k.replaceAll("Girl", "").replace(" ","");
+			sgirl= "Girl" + " " + s1;
+			return sgirl;
+		}
+		String  sboy="";
+		if (k.contains("Boy")){
+			String s2 = k.replaceAll("Boy", "").replace(" ","");
+			sboy="Boy"+" "+s2;
+			return sboy;
+		}
+		return  k;
+	}
 	/**
 	 * 将stefania原始数据转换成hub sku
 	 * @param supplierId
 	 * @param supplierSpuId
-	 * @param stefItem
+	 * @param
 	 * @param hubSku
 	 * @return
 	 */
@@ -146,7 +210,7 @@ public class MonnalisaHandler implements ISupplierHandler{
 				hubSku.setSupplierSkuSize(ob.getSize());
 			}
 			
-			hubSku.setStock(StringUtil.verifyStock("10"));
+			hubSku.setStock(ob.getStock());
 //			String stock = ob.getString("availability");
 //			Pattern pattern = Pattern.compile("[0-9]*"); 
 //		    Matcher isNum = pattern.matcher(stock);

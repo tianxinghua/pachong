@@ -35,5 +35,8 @@ public class CsvDTO {
 	private String is_bundle;
 	private String custom_label_0;
 	private String season;
+	private String country;
+	private String anno;
+	private int stock;
 	
 }

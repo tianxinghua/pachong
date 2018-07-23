@@ -66,7 +66,7 @@ public class SupplierPriceService {
 
                 String supplierType = supplierMessageDTO.getQuoteMode();;
 //                log.info("supplier type ="+ supplierType);
-                if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货架
+                if("PurchasePrice".equals(supplierType)||"1".equals(supplierType)){       //供货价格
 
                     Map<String,String> supplierMap = this.getValidSupplier();
                     Iterator<String> iterator = supplierMap.keySet().iterator();
@@ -120,7 +120,7 @@ public class SupplierPriceService {
                 }
             }else{
 
-                supplierService.sendMail(productPriceDTO.getSupplierNo());
+//                supplierService.sendMail(productPriceDTO.getSupplierNo());
             }
 
 
@@ -205,6 +205,13 @@ public class SupplierPriceService {
 
     }
 
+    /**
+     * 计算价格 采购价* serviceRate
+     * @param supplierMessageDTO
+     * @param productPriceDTO
+     * @param rateForMarket
+     * @throws Exception
+     */
     private void reSetPrice( SupplierMessageDTO supplierMessageDTO,ProductPriceDTO productPriceDTO,String rateForMarket) throws  Exception{
         BigDecimal supplyPrice = null;
         if(StringUtils.isNotBlank(productPriceDTO.getPurchasePrice())){
@@ -221,7 +228,7 @@ public class SupplierPriceService {
             if(!"1".equals(rateForMarket)){
                 BigDecimal marketRate = new BigDecimal(rateForMarket);
                 productPriceDTO.setMarketPrice(new BigDecimal(productPriceDTO.getMarketPrice())
-                        .multiply(marketRate).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
+                        .multiply(marketRate).setScale(0,BigDecimal.ROUND_HALF_UP).toString());
             }
 
         }
@@ -231,7 +238,7 @@ public class SupplierPriceService {
     private Map<String,String> getValidSupplier(){
         Map<String,String> supplierMap = new HashMap<>();
         HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
-        criteriaDto.setPageSize(100);
+        criteriaDto.setPageSize(500);
         criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_SUPPLIER.getIndex().byteValue())
                 .andMappingStateEqualTo(DataState.NOT_DELETED.getIndex());
         List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
@@ -265,7 +272,8 @@ public class SupplierPriceService {
         if(PriceHandleType.NEW_DEFAULT.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.MARKET_SUPPLY_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
                 PriceHandleType.SUPPLY_PRICE_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
-                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
+                PriceHandleType.SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()||
+                PriceHandleType.MARKET_SUPPLY_SEASON_CHANGED.getIndex()==productPriceDTO.getPriceHandleType().byteValue()){
             return  true;
         }else{
             return false;

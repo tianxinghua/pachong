@@ -109,7 +109,9 @@ public class EleonoraHandler implements ISupplierHandler {
             hubSku.setSupplierSkuNo(supplierSkuNo);
             hubSku.setSupplierSkuName("");
             if(item.getMarket_price() != null) {
-                hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getMarket_price().replaceAll(",", "."))));
+        		BigDecimal num = new BigDecimal(1.22);
+        		BigDecimal marketPrice = (new BigDecimal(StringUtil.verifyPrice(item.getMarket_price().replaceAll(",", ".")))).multiply(num).setScale(0, BigDecimal.ROUND_HALF_UP);
+                hubSku.setMarketPrice(marketPrice);
             }
             if (item.getSupply_price() != null) {
                 hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getSupply_price().replaceAll(",", "."))));

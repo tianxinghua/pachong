@@ -11,6 +11,9 @@ import org.springframework.messaging.SubscribableChannel;
  * @date 2016年12月6日 下午4:06:53
  */
 public interface OriginalProductSink {
+	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
+	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
+	public static final String dolciTrame = "dolciTrameOriginalProduct";
 	public static final String portofino = "portofinoOriginalProduct";
 	public static final String coccolebimbi = "coccolebimbiOriginalProduct";
 	public static final String fratinardi = "fratinardiOriginalProduct";
@@ -18,6 +21,8 @@ public interface OriginalProductSink {
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
 	
 	public static final String OSTORE = "ostoreOriginalProduct";
+
+	public static final String MENGOTTISNC = "mengottiSncOriginalProduct";
 	
 	public static final String BRUNAROSSO = "brunarossoOriginalProduct";
 	
@@ -151,8 +156,52 @@ public interface OriginalProductSink {
 	
 	public static final String MONNALISA = "monnalisaOriginalProduct";
 
+	public static final String JULIANFASHION = "julianFashionOriginalProduct";
+
+	public static final String STAR = "starOriginalProduct";
+
+
+	public static final String MARINO = "marinoOriginalProduct";
+
+
+	
+	public static final String THESTYLESIDE = "theStyleSideOriginalProduct";
+
+	public static final String REDI = "rediOriginalProduct";
+
+	public static final String OBLU = "obluOriginalProduct";
+	
+	public static final String ZHICAI = "zhicaiOriginalProduct";
+	public static final String YLATI ="ylatiOriginalProduct";
+
 
 	//===============================
+
+	/**
+	 * 供货商dolciTrame通道组件配置
+	 * @return dolciTrame通道组件
+	 */
+	@Input(value = OriginalProductSink.dolciTrame)
+	public SubscribableChannel dolciTrameOriginalProduct();
+	/**
+	 * 供货商cocoroseLondon通道组件配置
+	 * @return cocoroseLondon通道组件
+	 */
+	@Input(value = OriginalProductSink.cocoroseLondon)
+	public SubscribableChannel cocoroseLondonOriginalProduct();
+	/**
+	 * 供货商angeloMinetti通道组件配置
+	 * @return angeloMinetti通道组件
+	 */
+	@Input(value = OriginalProductSink.angeloMinetti)
+	public SubscribableChannel angeloMinettiOriginalProduct();
+	/**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return JULIANFASHION通道组件
+	 */
+	@Input(value = OriginalProductSink.JULIANFASHION)
+	public SubscribableChannel julianFashionOriginalProduct();
+
 	/**
 	 * 供货商portofino通道组件配置
 	 * @return portofino通道组件
@@ -189,6 +238,13 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.OSTORE)
     public SubscribableChannel ostoreOriginalProduct();
+
+	/**
+	 * 供货商通道组件配置
+	 * @return MENGOTTTSNC通道组件
+	 */
+	@Input(value = OriginalProductSink.MENGOTTISNC)
+	public SubscribableChannel mengottiSncOriginalProduct();
 	/**
 	 * 供货商BRUNAROSSO通道组件配置
 	 * @return BRUNAROSSO通道组件
@@ -588,5 +644,40 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.MONNALISA)
 	public MessageChannel monnalisaOriginalProduct();
+
+	/**
+	 * 供应商srl通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.STAR)
+	public MessageChannel starOriginalProduct();
+	
+	/**
+	 * 供应商theStyleSide通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.THESTYLESIDE)
+	public MessageChannel theStyleSideOriginalProduct();
+
+	/**
+	 * 供应商MARINO通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.MARINO)
+	public MessageChannel marinoOriginalProduct();
+
+
+	@Input(value = OriginalProductSink.REDI)
+	public MessageChannel rediOriginalProduct();
+
+	@Input(value = OriginalProductSink.OBLU)
+	public MessageChannel obluOriginalProduct();
+	
+	@Input(value = OriginalProductSink.ZHICAI)
+	public MessageChannel zhicaiOriginalProduct();
+
+	@Input(value = OriginalProductSink.YLATI)
+	public MessageChannel ylatiOriginalProduct();
+
 
 }

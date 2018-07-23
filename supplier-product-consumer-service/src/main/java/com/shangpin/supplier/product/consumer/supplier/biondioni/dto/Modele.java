@@ -25,6 +25,7 @@ public class Modele {
 	private String Talon        ;	
 	private String matièreDeTalon       ;
 	private String Saison;
+
 	private List<Article> ArticleList;
 	
 }

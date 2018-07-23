@@ -22,15 +22,16 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+	mavenLocal()
+	maven { url "http://192.168.20.223:8081/nexus/content/groups/public/" }
 	mavenCentral()
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/releases/" }
-	maven { url "http://192.168.20.223:8081/nexus/content/repositories/snapshots/" }
 }
 
 
 dependencies {
 	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.13.26-SNAPSHOT')
 	compile('commons-net:commons-net:3.3')
+
 	compile('commons-beanutils:commons-beanutils:1.9.3')
 	compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
 	compile('commons-codec:commons-codec:1.10')
@@ -46,10 +47,16 @@ dependencies {
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+	compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
+	compile group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.31'
 }
 
 dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR3"
 	}
+}
+
+springBoot{
+	mainClass = "com.shangpin.picture.product.consumer.PictureProductConsumerServiceApplication"
 }

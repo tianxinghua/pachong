@@ -45,4 +45,8 @@ public class Supplier extends SupplierCommon implements Serializable {
 	 * 从ephub获取尺码服务
 	 */
 	private String getSizeFromEphubUrl;
+
+	//从ephub获取供货商原始信息
+
+	private  String productSpuUrl;
 }

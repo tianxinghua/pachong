@@ -68,6 +68,27 @@ shangpin:
       pricehost: http://sopoutapi.spidc1.com
       findsupplyprice: /Product/FindSupplyInfo
     Supplier: #以下配置为各个供货商的配置
+          dolciTrameParam:
+                  setOrderUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/setOrder
+                  queryOrderUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+                  cancelUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/CancelOrder
+                  qtyUrl: http://net13server2.net/dolcitrameapi/Myapi/Productslist/GetQuantityByBarcode
+                  key: AXz6YgV044
+                  dBContext: default
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
+          angeloMinetti:
+                  url: http://angelominetti.no-ip.org/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang3110
+                  isPurchaseExp:
+                  openApiKey: 
+                  openApiSecret: 
           coccolebimbiParam:
                   url:
                   isPurchaseExp:
@@ -87,8 +108,8 @@ shangpin:
                   url_cancelOrder: http://lungolivigno.vdr-s.com/BSWebApi20/api/Order/CancelOrder?SessionId=
                   url_getStock: http://lungolivigno.vdr-s.com/BSWebApi20/api/Stock/GetStock?SessionId=
                   isPurchaseExp:
-                  openApiKey: 1c071674e24c4ad2a81424bc46c6e968
-                  openApiSecret: 8d873268a0f44294a73750d747dd0b60
+                  openApiKey: 0d86c3ad2aed42c3be929f8ba9c7e7cb
+                  openApiSecret: 9a52a2e4724e4a51a54fb497f870375d
           tufano: 
                   url: http://79.9.69.28/ws_sito/ws_sito_P15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -135,6 +156,13 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 34ba9613f2544c279a7523d015184b1e
                   openApiSecret: 43e578550e9047b5936f7bc44876061d
+          star:
+              salesUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/prod/sales-update
+              returnsUpdate:  https://x4ve3rz1nf.execute-api.us-east-1.amazonaws.com/prod/returns-update
+              businessApi: http://api.ephub.spidc1.com/
+              isPurchaseExp: 
+              openApiKey:
+              openApiSecret:
           gaudenzi:
                   url: http://213.82.169.121:8080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -145,8 +173,8 @@ shangpin:
                   password: shang3108
                   messageType: text/html;charset=utf-8
                   isPurchaseExp:
-                  openApiKey: 34ba9613f2544c279a7523d015184b1e
-                  openApiSecret: 43e578550e9047b5936f7bc44876061d
+                  openApiKey: 7d5144cc4c3f4d049a8b18cc8bd21cc5
+                  openApiSecret: 2f8dfde6460648389a536ff4d92645a3
           vietti: 
                   url: http://94.138.162.6/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
@@ -160,7 +188,7 @@ shangpin:
                   openApiKey: 7bded5d1a0b44c5998a3ac319ff2fbaa
                   openApiSecret: 89bcf533c81e41d5a7a688ed13bc2d4b
           zitafabiani:
-                  url: http://87.25.100.1:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  url: http://80.19.236.198:8080/WS_SITO_P15/WS_SITO_P15.ASMX/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -171,6 +199,18 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 641bd1f4f41047e49789bbf0f33fb8c7
                   openApiSecret: 87cdf3ad12474b3ea992bebf27440599
+          mengotti:
+                  url: http://93.39.241.194:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang0205
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: d7276967727f4ccb8ab76aa328e6e8ee
+                  openApiSecret: 758d59f684ac4c8d8fb25ea1b5bc574e
           coltorti:
                   userName: SHANGPIN
                   password: 12345678
@@ -197,7 +237,7 @@ shangpin:
                   openApiKey: dc44a1702a8a4f0ca290fab9b90c910e
                   openApiSecret: cd4b5cc7e5a842f8b32ffd88dcb24bdb
           daniello:
-                  url: http://95.110.163.154:8580/ws_sito_shangpin/ws_sito_p15.asmx/
+                  url: http://212.83.175.83:63130/ws_sito_shangpin/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -214,13 +254,13 @@ shangpin:
                   openApiKey: 23f2549070394d47a6f82aa3f5c0922f
                   openApiSecret: 174c5788112c4b1984e1dc06adc73f37
           divo:
-                  url: http://185.5.180.90/ws_sito/ws_sito_p15.asmx/
+                  url: http://78.134.74.112:8080/ws_sito_P15/ws_sito_P15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
                   getItemStockInterface: GetItemStockBySizeMarketPlace
                   user: shangpin
-                  password: shang1606
+                  password: Shang0711
                   isPurchaseExp:
                   openApiKey: 31c1ae971a484ceab29d13b1e98b1e39
                   openApiSecret: d79d948d65cf43398486cb1882bc2b94
@@ -321,7 +361,7 @@ shangpin:
                   openApiKey: 8abb28decd6645008a810d8da47a10f8
                   openApiSecret: bb3c35b4c06a4de19a8e9652cba61fee
           ostore:
-                  url: http://188.11.248.175/WS_SITO_p15/WS_SITO_P15.ASMX/
+                  url: http://atelier.officinastore.net/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -343,7 +383,7 @@ shangpin:
                   openApiKey: f82cd9c9eeee4ee584acdff5b3b5d73c
                   openApiSecret: ec44c8cf8afb4c4c80e66ffd90d8e9b6
           paolo:
-                  url: http://95.110.163.89:8580/ws_sito_shang/ws_sito_p15.asmx/
+                  url: http://89.21.204.79:8523/ws_sito_shang/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -537,14 +577,54 @@ shangpin:
                   isPurchaseExp: 
                   openApiKey: 2ec8cd7d96cc4e9191b534481d727bfa
                   openApiSecret: 72c413d6440049e48d4c5d7f2fae5ebe
+          julianFashion: 
+                  url: http://213.209.202.38:8080/ws_shangpin/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang1409
+                  isPurchaseExp: 
+                  openApiKey: e53c1bba4adf4f02841e4f815dc35960
+                  openApiSecret: bbc5a77507d64e59ae24ce976c68c538
+          marino:
+                  url: http://94.101.54.211:65327/ws_sito_shang/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Atelier2015
+                  isPurchaseExp:
+                  openApiKey: 388aae22a7e24cc9ab216e6854768fa7
+                  openApiSecret: 5a68d73d40204aa895e97fce0e6b79fa
+          cocorose:
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
+          redi:
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
+                  orderUrl: https://www.redigroup.it/api/orders/1.8/e9b0a077-fc34-46bb-bfef-7ad3401a35c7
           supplier:
                   delayTime: 1000
                   retry: 120
                   serviceUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
                   getSizeFromEphubUrl: http://api.ephub.spidc1.com/order/product-size
+                  productSpuUrl: http://api.ephub.spidc1.com/order/supplier-spu
                   stockSupplierMapping: 
                   orderSupplierMapping: S0000558:2015102201625,S0000631:2016030701799,S0000593:2015111001657,S0000372:2015081701441,S0000370:2015081701439
-
+          theStyleSide:
+                  usr: ECOMM
+                  pwd: vendiamotutto
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 
@@ -552,3 +632,5 @@ banner:
        location: classpath:banner/banner.txt # Banner file location.
        image: 
              location: classpath:banner/logo.jpg # Banner image file location (jpg/png can also be used).
+callAddress:
+      scmsSupplierInfoUrl: http://scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=

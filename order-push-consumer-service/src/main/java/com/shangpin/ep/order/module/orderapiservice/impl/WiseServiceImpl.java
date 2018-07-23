@@ -3,6 +3,10 @@ package com.shangpin.ep.order.module.orderapiservice.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
+import com.shangpin.ep.order.module.spu.bean.HubSupplierSpu;
+import com.shangpin.ep.order.module.spu.service.SupplierSpuService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,18 +34,25 @@ public class WiseServiceImpl{
 	private ShangpinMailSender shangpinMailSender;
 	@Autowired
 	private HubSkuService hubSkuService;
+
+	@Autowired
+	private CommonService commonService;
+
+	@Autowired
+	SupplierSpuService supplierSpuService;
 	
 	/**
 	 * 判断状态，如果推送api成功则给供应商发送邮件，否则给尚品发送邮件
 	 * @param orderDTO
 	 */
-	public void pushConfirmOrder(OrderDTO orderDTO){
+	public void pushConfirmOrder(OrderDTO orderDTO,String size){
 		try {
 			if(PushStatus.ORDER_CONFIRMED.equals(orderDTO.getPushStatus())){
-				handleConfirmOrder(orderDTO);
-			}else{
-				handleConfirmError(orderDTO);
+				handleConfirmOrder(orderDTO,size);
 			}
+//			else{
+//				handleConfirmError(orderDTO);
+//			}
 		} catch (Exception e) {
 			log.error(e.getMessage(),e); 
 		}
@@ -51,16 +62,25 @@ public class WiseServiceImpl{
 	 * 给供应商发送邮件
 	 * @param orderDTO
 	 */
-	private void handleConfirmOrder(OrderDTO orderDTO) {
+	private void handleConfirmOrder(OrderDTO orderDTO,String size) {
 		try {
-			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
-			if(null != sku){
+//			HubSku sku = hubSkuService.getSku(orderDTO.getSupplierId(), orderDTO.getSupplierSkuNo());
+			String supplierSkuNo = orderDTO.getSupplierSkuNo();
+			int index = supplierSkuNo.lastIndexOf("-");
+			String item_id = null;
+			String barcode = null;
+			if(index>0){
+				item_id = supplierSkuNo.substring(0,index);
+				barcode = supplierSkuNo.substring(index+1);
+			}
+			HubSupplierSpu supplierSpu  = supplierSpuService.getSupplierSpuBySupplierSpuNo(orderDTO.getSupplierId(), item_id);
+			if(null != supplierSpu){
 				//采购单号 尺码  skuId 货号  barcode 数量    
 				String messageText ="Shangpin OrderNo: "+orderDTO.getPurchaseNo()+"<br>"+
-									"ProductSize: "+sku.getProductSize()+"<br>"+
+									"ProductSize: "+size+"<br>"+
 									"SpuId-SkuId: "+orderDTO.getSupplierSkuNo()+"<br>"+
-									"StyleCode-ColorCode: "+(null != sku.getProductCode()? sku.getProductCode():"")+"<br>"+
-									"Barcode: "+sku.getBarcode()+"<br>"+
+									"StyleCode-ColorCode: "+(null != supplierSpu.getSupplierSpuModel()? supplierSpu.getSupplierSpuModel():"")+"<br>"+
+									"Barcode: "+barcode+"<br>"+
 									"Qty: "+orderDTO.getQuantity()+"<br>"+
 									"Status: confirmed";
 				log.info("wise推送订单参数："+messageText); 
@@ -77,21 +97,49 @@ public class WiseServiceImpl{
 
 	public void handleRefundlOrder(OrderDTO deleteOrder) {
 		try {
-			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
-			if(null != sku){
+
+			String supplierSkuNo = deleteOrder.getSupplierSkuNo();
+			int index = supplierSkuNo.lastIndexOf("-");
+			String item_id = null;
+			String barcode = null;
+			if(index>0){
+				item_id = supplierSkuNo.substring(0,index);
+				barcode = supplierSkuNo.substring(index+1);
+			}
+			String productSize = commonService.getProductSize(deleteOrder.getSupplierId(),supplierSkuNo);
+			if(StringUtils.isNotBlank(productSize)) {
+				productSize = productSize.replaceAll("\\+", "½");
+			}
+			HubSupplierSpu supplierSpu  = supplierSpuService.getSupplierSpuBySupplierSpuNo(deleteOrder.getSupplierId(), item_id);
+			if(null != supplierSpu){
 				String messageText ="Shangpin OrderNo: "+deleteOrder.getPurchaseNo()+"<br>"+
-						"ProductSize: "+sku.getProductSize()+"<br>"+
+						"ProductSize: "+productSize+"<br>"+
 						"SpuId-SkuId: "+deleteOrder.getSupplierSkuNo()+"<br>"+
-						"StyleCode-ColorCode: "+(null != sku.getProductCode()? sku.getProductCode():"")+"<br>"+
-						"Barcode: "+sku.getBarcode()+"<br>"+
+						"StyleCode-ColorCode: "+(null != supplierSpu.getSupplierSpuModel()? supplierSpu.getSupplierSpuModel():"")+"<br>"+
+						"Barcode: "+barcode+"<br>"+
 						"Qty: "+deleteOrder.getQuantity()+"<br>"+
 						"Status: cancelled";
-				log.info("wise退款单参数："+messageText); 
+				log.info("wise退款单参数："+messageText);
 				sendMail("wise-cancelled order-shangpin",messageText);
-				log.info("wise退款成功。"); 
+				log.info("wise退款成功。");
 			}else{
 				log.error("wise根据供应商门户编号和供应商skuid查找SKU失败");
 			}
+			//			HubSku sku = hubSkuService.getSku(deleteOrder.getSupplierId(), deleteOrder.getSupplierSkuNo());
+//			if(null != sku){
+//				String messageText ="Shangpin OrderNo: "+deleteOrder.getPurchaseNo()+"<br>"+
+//						"ProductSize: "+sku.getProductSize()+"<br>"+
+//						"SpuId-SkuId: "+deleteOrder.getSupplierSkuNo()+"<br>"+
+//						"StyleCode-ColorCode: "+(null != sku.getProductCode()? sku.getProductCode():"")+"<br>"+
+//						"Barcode: "+sku.getBarcode()+"<br>"+
+//						"Qty: "+deleteOrder.getQuantity()+"<br>"+
+//						"Status: cancelled";
+//				log.info("wise退款单参数："+messageText);
+//				sendMail("wise-cancelled order-shangpin",messageText);
+//				log.info("wise退款成功。");
+//			}else{
+//				log.error("wise根据供应商门户编号和供应商skuid查找SKU失败");
+//			}
 		} catch (Exception e) {
 			log.error("wise发送退款邮件发生异常============"+e.getMessage());
 		}
@@ -112,7 +160,7 @@ public class WiseServiceImpl{
 		List<String> addTo = new ArrayList<>();
 		addTo.add("francesca.fiorani@wiseboutique.com");
 		addTo.add("marketplace@wiseboutique.com");
-//		addTo.add("andrea.venturini@wiseboutique.com");
+		addTo.add("veronica.calicchia@wiseboutique.com");
 //		addTo.add("wangsaying@shangpin.com");
 //		addTo.add("lubaijiang@shangpin.com");
 //		addTo.add("steven.ding@shangpin.com");
@@ -141,10 +189,10 @@ public class WiseServiceImpl{
 		shangpinMail.setSubject(subject);
 		shangpinMail.setText(text);
 		shangpinMail.setTo("lizhongren@shangpin.com");
-		List<String> addTo = new ArrayList<>();
-		addTo.add("lubaijiang@shangpin.com");
+//		List<String> addTo = new ArrayList<>();
+//		addTo.add("lubaijiang@shangpin.com");
 //		addTo.add("steven.ding@shangpin.com");
-		shangpinMail.setAddTo(addTo );
+//		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
 

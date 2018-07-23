@@ -1,16 +1,24 @@
 package com.shangpin.supplier.product.consumer.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.season.dto.HubSeasonDicDto;
+import com.shangpin.ephub.client.data.mysql.season.gateway.HubSeasonDicGateWay;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.esotericsoftware.minlog.Log;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.ErrorReason;
+import com.shangpin.ephub.client.data.mysql.enumeration.Isexistpic;
 import com.shangpin.ephub.client.data.mysql.enumeration.MsgMissHandleState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicState;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
@@ -28,9 +36,11 @@ import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingNohandleRea
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.sku.PendingSku;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
+import com.shangpin.ephub.client.product.business.mail.dto.ShangpinMail;
+import com.shangpin.ephub.client.product.business.mail.gateway.ShangpinMailSenderGateWay;
+import com.shangpin.supplier.product.consumer.conf.mail.ShangpinMailProperties;
 import com.shangpin.supplier.product.consumer.enumeration.ProductStatus;
 import com.shangpin.supplier.product.consumer.exception.EpHubSupplierProductConsumerException;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -53,27 +63,36 @@ public class SupplierProductMysqlService {
 	private HubSpuPendingGateWay hubSpuPendingGateWay;
 	@Autowired
 	private HubSpuPendingNohandleReasonGateWay nohandleReasonGateWay;
+
+
+	@Autowired
+	private HubSeasonDicGateWay hubSeasonDicGateWay;
+	@Autowired
+	ShangpinMailSenderGateWay shangpinMailSenderGateWay;
 	/**
 	 * 判断hubSpu是否存在或主要信息发生变化
 	 * @param supplierNo
-	 * @param hubSpu
+	 * @param supplierSpu      供货商的原始SPU
+	 * @param hubSpuSel  从数据库查出的hubsupplierspu
 	 * @param pendingSpu 把hubSpu发生变化了的信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto hubSpu,PendingSpu pendingSpu){
+	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto supplierSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu){
 		try {	
+			log.info("zhicai supplierSpu:"+JSONObject.toJSONString(supplierSpu));
 //			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
-			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
+//			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){
-				hubSpu.setCreateTime(new Date());
-				Long spuId = hubSupplierSpuGateWay.insert(hubSpu);
-				hubSpu.setSupplierSpuId(spuId); 
-				convertHubSpuToPendingSpu(hubSpu,pendingSpu);
+				supplierSpu.setCreateTime(new Date());
+				Long spuId = hubSupplierSpuGateWay.insert(supplierSpu);
+				log.info(supplierSpu.getSupplierSpuNo()+"插入成功!");
+				supplierSpu.setSupplierSpuId(spuId);
+				convertHubSpuToPendingSpu(supplierSpu,pendingSpu);
 				return ProductStatus.NEW;
 			}else{
-				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
+				supplierSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId());
 				HubSupplierSpuDto hubSpuUpdated = new HubSupplierSpuDto();
-				boolean isChanged = comparisonHubSpu(supplierNo,hubSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
+				boolean isChanged = comparisonHubSpu(supplierNo,supplierSpu, hubSpuSel, pendingSpu,hubSpuUpdated);
 				/**
 				 * 处理错误原因
 				 */
@@ -82,6 +101,7 @@ public class SupplierProductMysqlService {
 				if(isChanged){
 					hubSpuUpdated.setUpdateTime(new Date()); 
 					updateHubSpu(hubSpuUpdated);
+					log.info(supplierSpu.getSupplierSpuNo()+"更新成功!");
 					return ProductStatus.UPDATE;
 				}else{
 					return ProductStatus.NO_NEED_HANDLE;
@@ -90,8 +110,8 @@ public class SupplierProductMysqlService {
 		} catch (Exception e) {
 			log.error("系统在保存待处理spu时发生异常：异常为"+e.getMessage());
 			try {
-				HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
-				hubSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId()); 
+//				HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
+				if(null!=hubSpuSel)	supplierSpu.setSupplierSpuId(hubSpuSel.getSupplierSpuId());
 			} catch (Exception e1) {
 				log.error(">>>>>>>>>>>>>>>>>异常为"+e1.getMessage(),e1);
 			}
@@ -162,7 +182,7 @@ public class SupplierProductMysqlService {
 	 * @param pendingSku 把hubSku发生变化的价格信息记录到这个对象中
 	 * @return
 	 */
-	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku) throws EpHubSupplierProductConsumerException{
+	public ProductStatus isHubSkuChanged(HubSupplierSkuDto hubSku,PendingSku pendingSku,String supplierNo) throws EpHubSupplierProductConsumerException{
 		try {
 			HubSupplierSkuDto hubSkuSel = hasHadTheHubSku(hubSku);
 			if(null == hubSkuSel){
@@ -176,7 +196,7 @@ public class SupplierProductMysqlService {
 			}else{
 				hubSku.setSupplierSkuId(hubSkuSel.getSupplierSkuId()); 
 				HubSupplierSkuDto hubSkuUpdated = new HubSupplierSkuDto();
-				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated);
+				boolean isChanged = comparisonHubSku(hubSku,hubSkuSel,pendingSku,hubSkuUpdated,supplierNo);
 				Date nowTime = new Date();
 				if(isChanged){
 					hubSkuUpdated.setUpdateTime(nowTime); 
@@ -202,7 +222,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSkuUpdated 待更新的对象，用来更新本地库
 	 * @return
 	 */
-	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated) throws Exception {
+	private boolean comparisonHubSku(HubSupplierSkuDto hubSku, HubSupplierSkuDto hubSkuSel, PendingSku pendingSku,HubSupplierSkuDto hubSkuUpdated,String supplierNo) throws Exception {
 		boolean isChanged = false;
 		pendingSku.setSupplierId(hubSku.getSupplierId());
 		pendingSku.setSupplierSkuNo(hubSku.getSupplierSkuNo());
@@ -240,7 +260,8 @@ public class SupplierProductMysqlService {
 			}
 		}
 		if(hubSku.getStock()!=null){
-			if(!hubSku.getStock().equals(hubSkuSel.getStock())){
+			if(hubSku.getStock()!=hubSkuSel.getStock()){
+				Log.info("供应商supplierSkuNo:"+hubSku.getSupplierSkuNo()+"库存发生变化："+hubSkuSel.getStock()+"=>"+hubSku.getStock());
 				pendingSku.setStock(hubSku.getStock());
 				hubSkuUpdated.setStock(hubSku.getStock()); 
 				isChanged = true;
@@ -248,7 +269,19 @@ public class SupplierProductMysqlService {
 		}
 		if(hubSku.getSupplierSkuSize()!=null){
 			if(!hubSku.getSupplierSkuSize().equals(hubSkuSel.getSupplierSkuSize())){
+				pendingSku.setHubSkuSize(hubSku.getSupplierSkuSize());
 				hubSkuUpdated.setSupplierSkuSize(hubSku.getSupplierSkuSize()); 
+				isChanged = true;
+				//当sku尺码发生变化，并且老的sku已经生成尚品sku编号，发送邮件通知
+				if(hubSkuSel.getSpSkuNo()!=null&&!hubSkuSel.getSpSkuNo().equals("")) {
+					sendMail("尚品skuNo原始尺码发生变化","供应商id:"+hubSkuSel.getSupplierId()+"supplierNo:"+supplierNo+"尚品skuNo:"+hubSkuSel.getSpSkuNo()+"原始尺码"+hubSkuSel.getSupplierSkuSize()+"更新为"+hubSku.getSupplierSkuSize());
+				}
+			}
+		}
+		if(hubSku.getMeasurement()!=null){
+			if(!hubSku.getMeasurement().equals(hubSkuSel.getMeasurement())){
+				pendingSku.setMeasurement(hubSku.getMeasurement());
+				hubSkuUpdated.setMeasurement(hubSku.getMeasurement()); 
 				isChanged = true;
 			}
 		}
@@ -273,6 +306,7 @@ public class SupplierProductMysqlService {
 		pendingSku.setSupplierBarcode(hubSku.getSupplierBarcode());
 		pendingSku.setSupplyPrice(hubSku.getSupplyPrice());
 		pendingSku.setSupplyPriceCurrency(hubSku.getSupplyPriceCurrency());
+		pendingSku.setMeasurement(hubSku.getMeasurement());
 	}
 	/**
 	 * 查找hubSku是否存在，如果存在则返回查询结果
@@ -294,7 +328,7 @@ public class SupplierProductMysqlService {
 	 * @param hubSpu
 	 * @return
 	 */
-	private HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) throws Exception {
+	public HubSupplierSpuDto hasHadTheHubSpu(HubSupplierSpuDto hubSpu) throws Exception {
 		if(StringUtils.isEmpty(hubSpu.getSupplierId()) || StringUtils.isEmpty(hubSpu.getSupplierSpuNo())){
 			throw new Exception("产品信息异常。"); 
 		}
@@ -448,6 +482,10 @@ public class SupplierProductMysqlService {
 		if(null != hubSpuSel.getIsexistpic() && hubSpuSel.getIsexistpic() == Isexistpic.YES.getIndex()){
 			pendingSpu.setPicState(PicState.HANDLED.getIndex());
 		}
+		if(!StringUtils.isEmpty(hubSpu.getProductUrl()) && !hubSpu.getProductUrl().equals(hubSpuSel.getProductUrl())){
+			hubSpuUpdated.setProductUrl(hubSpu.getProductUrl()); 
+			isChanged = true;
+		}
 		
 		return isChanged;
 	}
@@ -464,5 +502,158 @@ public class SupplierProductMysqlService {
 		criteria.setPageSize(10000);
 		return hubSupplierSkuGateWay.selectByCriteria(criteria);
 	}
-	
+
+
+	/**
+	 * 根据supplierSpuId查找该spu下所有尚品sku编号不为空的sku
+	 * @param supplierSpuId
+	 * @return
+	 * @throws Exception
+	 */
+	public List<HubSupplierSkuDto> findSupplierSkusSpSkuNoIsNotNull(Long supplierSpuId) throws Exception{
+		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+		criteriaDto.setPageNo(1);
+		criteriaDto.setPageSize(1000);
+		criteriaDto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo("");
+		return hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+	}
+
+	/**
+	 * 根据supplierId和供应商spu编号查询商品
+	 * @param supplierSpuDto
+	 * @return
+	 * @throws Exception
+	 */
+	private  List<HubSupplierSpuDto> findHubSupplierSpuDtos(HubSupplierSpuDto supplierSpuDto) throws Exception{
+		if(StringUtils.isEmpty(supplierSpuDto.getSupplierId()) || StringUtils.isEmpty(supplierSpuDto.getSupplierSpuNo())){
+			return null;
+		}
+		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
+		criteriaDto.setFields("supplier_spu_id,supplier_seasonname,supplier_categoryname,supplier_brandname");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierSpuDto.getSupplierId()).andSupplierSpuNoEqualTo(supplierSpuDto.getSupplierSpuNo());
+		return hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
+	}
+
+	/**
+	 *
+	 * @param supplierId
+	 * @param supplierSpuNo
+	 * @return
+	 */
+	public HubSupplierSpuDto getSupplierSpuBySupplierIdAndSupplierSpuNo(String supplierId,String supplierSpuNo) {
+		if(StringUtils.isEmpty(supplierId) || StringUtils.isEmpty(supplierSpuNo)){
+			return null;
+		}
+		HubSupplierSpuCriteriaDto criteriaDto = new HubSupplierSpuCriteriaDto();
+		criteriaDto.setFields("supplier_spu_id,supplier_seasonname,supplier_categoryname,supplier_brandname");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		List<HubSupplierSpuDto> hubSupplierSpuDtos = hubSupplierSpuGateWay.selectByCriteria(criteriaDto);
+		if(null == hubSupplierSpuDtos || hubSupplierSpuDtos.size() == 0){
+			return null;
+		}else{
+			return hubSupplierSpuDtos.get(0);
+
+		}
+	}
+
+
+	/**
+	 * 判断供价是否变化
+	 * @param skuVO
+	 * @param skuDtoMap
+	 * @return
+	 */
+	public boolean isSupplyPriceChanged(HubSupplierSkuDto skuVO, Map<String,HubSupplierSkuDto> skuDtoMap) throws Exception{
+
+		if(skuDtoMap.containsKey(skuVO.getSupplierSkuNo())){
+			HubSupplierSkuDto hubSkuSel = skuDtoMap.get(skuVO.getSupplierSkuNo());
+			skuVO.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : "");
+			BigDecimal supplierPrice = null;
+			if(null!=skuVO.getSupplyPrice()){
+				supplierPrice = skuVO.getSupplyPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
+				if(!supplierPrice.equals(hubSkuSel.getSupplyPrice())){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * 根据供应商门户编号和供应商sku编号查询
+	 * @param supplierId
+	 * @param supplierSkuNo
+	 * @return
+	 */
+	private List<HubSupplierSkuDto> selectHubSupplierSku(String supplierId,String supplierSkuNo) {
+		HubSupplierSkuCriteriaDto criteriaDto = new HubSupplierSkuCriteriaDto();
+		criteriaDto.setFields("supply_price,market_price,sp_sku_no");
+		criteriaDto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo).andSpSkuNoIsNotNull().andSpSkuNoNotEqualTo("");
+		List<HubSupplierSkuDto> hubSkus = hubSupplierSkuGateWay.selectByCriteria(criteriaDto);
+		return hubSkus;
+	}
+
+
+	/**
+	 * 判断市场价是否变化
+	 * @param skuVO
+	 * @param  skuDtoMap
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isMarketPriceChanged(HubSupplierSkuDto skuVO, Map<String,HubSupplierSkuDto> skuDtoMap) throws Exception{
+
+		if(skuDtoMap.containsKey(skuVO.getSupplierSkuNo())){
+			HubSupplierSkuDto hubSkuSel = skuDtoMap.get(skuVO.getSupplierSkuNo());
+			skuVO.setSpSkuNo(null != hubSkuSel.getSpSkuNo() ? hubSkuSel.getSpSkuNo() : "");
+			BigDecimal marketPrice = null;
+			if(skuVO.getMarketPrice()!=null){
+				marketPrice =  skuVO.getMarketPrice().setScale(2,BigDecimal.ROUND_HALF_UP);
+				if(!marketPrice.equals(hubSkuSel.getMarketPrice())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	/**
+	 * 根据供应商门户编号和供应商季节名称查询季节字典表
+	 * @param supplierId
+	 * @param supplierSeason
+	 * @return
+	 */
+	public HubSeasonDicDto findHubSeason(String supplierId, String supplierSeason){
+		HubSeasonDicCriteriaDto criteriaDto = new HubSeasonDicCriteriaDto();
+		criteriaDto.createCriteria().andSupplieridEqualTo(supplierId).andSupplierSeasonEqualTo(supplierSeason);
+		List<HubSeasonDicDto> lists = hubSeasonDicGateWay.selectByCriteria(criteriaDto);
+		if(CollectionUtils.isNotEmpty(lists)){
+			return lists.get(0);
+		}else{
+			return null;
+		}
+	}
+
+	public void sendMail(String subject,String text){
+		try {
+			ShangpinMail shangpinMail = new ShangpinMail();
+			shangpinMail.setFrom("chengxu@shangpin.com");
+			shangpinMail.setSubject(subject);
+			shangpinMail.setText(text);
+			shangpinMail.setTo("andraw.chen@shangpin.com");
+			List<String> addTo = new ArrayList<>();
+			addTo.add("lizhongren@shangpin.com");
+			addTo.add("Terry.Zhao@shangpin.com");
+			shangpinMail.setAddTo(addTo );
+			shangpinMailSenderGateWay.send(shangpinMail);
+		} catch (Exception e) {
+			log.error("发送邮件失败："+e.getMessage(),e); 
+		}
+	}
+
+
+
 }

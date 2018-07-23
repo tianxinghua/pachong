@@ -82,7 +82,7 @@ public class StefaniaHandler implements ISupplierHandler{
 	
 	/**
 	 * stefania处理图片
-	 * @param stefPicture
+	 * @param stefItem
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,StefItem stefItem){
@@ -132,7 +132,7 @@ public class StefaniaHandler implements ISupplierHandler{
 				hubSpu.setSupplierGender(splitGender(gender));
 				hubSpu.setSupplierCategoryname(stefProduct.getCategory());
 				hubSpu.setSupplierBrandname(stefProduct.getProduct_brand());
-				hubSpu.setSupplierSeasonname(stefProduct.getSeason_code());
+				hubSpu.setSupplierSeasonname(org.apache.commons.lang.StringUtils.isNotBlank(stefProduct.getSeason_code())?stefProduct.getSeason_code():"2018-1");
 				hubSpu.setSupplierMaterial(stefProduct.getProduct_material());
 				hubSpu.setSupplierOrigin(stefProduct.getMade_in());
 				hubSpu.setSupplierSpuDesc(stefItem.getDescription());

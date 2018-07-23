@@ -29,6 +29,13 @@ public class Product {
 	private String height;
 	private String characteristics1;
 	private String characteristics2;
+	private String characteristics3;
+	private String characteristics4;
+	private String characteristics5;
+	private String characteristics6;
+	private String characteristics7;
+	private String characteristics8;
+
 	
 	private String sku;//sku->skuid
 	private String size;//size->sku:size
@@ -46,7 +53,12 @@ public class Product {
 	 * 货号
 	 */
 	private String pvr_model;
+
 	/**
+	 * 材质码
+	 */
+	private String pvr_material;
+/**
 	 * 产地
 	 */
 	private String origin;

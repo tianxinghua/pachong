@@ -39,6 +39,7 @@ public class AlducaSpuDto implements Serializable{
     private String newseasonName;
     private String spCategory;
     private String spBrand;
+
 	
 	private List<String> pictures;
 	
@@ -47,5 +48,7 @@ public class AlducaSpuDto implements Serializable{
 	private String color;
 	
 	private String productModel;
+
+	private String spuDesc;
 
 }

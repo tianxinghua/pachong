@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -45,6 +46,7 @@ public class PictureHandler {
 	 * @return
 	 */
 	public SupplierPicture initSupplierPicture(SupplierProduct message,HubSupplierSpuDto hubSpu,List<Image> images){
+		if(null==images||images.size()==0) return null;
 		SupplierPicture supplierPicture = new SupplierPicture();
 		supplierPicture.setMessageId(UUIDGenerator.getUUID());
 		supplierPicture.setMessageDate(DateTimeUtil.getDateTime());
@@ -96,7 +98,7 @@ public class PictureHandler {
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
 		dto.setPageNo(1);
 		dto.setPageSize(1000);
-		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		dto.createCriteria().andDataStateEqualTo(DataState.NOT_DELETED.getIndex()).andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
 			String picurl = "";
@@ -108,6 +110,11 @@ public class PictureHandler {
 		}
 		return existPics;
 	}
+
+
+
+
+
 	
 	/**
 	 * 只判断sku编号12位（LIMS08000360）或19位的（CONFIG_LIMS08000360）
@@ -120,7 +127,7 @@ public class PictureHandler {
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
 		dto.setPageNo(1);
 		dto.setPageSize(1000);
-		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo);
+		dto.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo((byte)1);
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
 			String picurl = "";

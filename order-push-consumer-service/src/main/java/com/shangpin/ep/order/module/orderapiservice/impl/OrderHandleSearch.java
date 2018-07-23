@@ -193,6 +193,9 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("zitafabianiServiceImpl") 
 	IOrderService zitafabianiServiceImpl;
+	@Autowired
+	@Qualifier("mengottiServiceImpl") 
+	IOrderService mengottiServiceImpl;
 
 	@Autowired
 	@Qualifier("ylatiServiceImpl")
@@ -210,12 +213,52 @@ public class OrderHandleSearch {
 	@Qualifier("bagheeraOrderService") 
 	IOrderService bagheeraOrderService;
 	
+	@Autowired
+	@Qualifier("julianFashionHandler") 
+	IOrderService julianFashionHandler;
+
+
+	@Autowired
+	@Qualifier("cocoroseMailService")
+	IOrderService cocoroseServiceImpl;
+	
+	@Autowired
+	@Qualifier("dolciTrameOrderService")
+	IOrderService dolciTrameOrderService;
+	
+	@Autowired
+	@Qualifier("angeloMinettiServiceImpl")
+	IOrderService angeloMinettiServiceImpl;
+
+	@Autowired
+	@Qualifier("marinoOrderService")
+	IOrderService marinoOrderService;
+
+	
+	@Autowired
+	@Qualifier("starOrderService")
+	IOrderService starOrderService;
+
+	@Autowired
+	@Qualifier("theStyleSideImpl")
+	IOrderService theStyleSideImpl;
+
+
+	@Autowired
+	@Qualifier("rediOrderService")
+	IOrderService rediOrderService;
+	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
 //			return tonySubOrderImpl;
 //		}else
-		if ("2017070501977".equals(supplierId)) {
+		if("2017111401992".equals(supplierId)){
+
+			return angeloMinettiServiceImpl;
+		}else if("2017110801991".equals(supplierId)){
+			return dolciTrameOrderService;
+		}else if ("2017070501977".equals(supplierId)) {
 			return baseBluOrderImpl;
 		}else if("2017072601979".equals(supplierId)){
 			return coccolebimbiOrderImpl;
@@ -312,14 +355,28 @@ public class OrderHandleSearch {
 			return dlrboutiqueServiceImpl;
 		}else if("2016032101816".equals(supplierId)){
 			return zitafabianiServiceImpl;
+		}else if("2018042002008".equals(supplierId)){
+			return mengottiServiceImpl;
 		}else if("2017071701978".equals(supplierId)){
 			return ylatiServiceImpl;
 		}else if("2015101201596".equals(supplierId)){
 			return parisiMailServiceImpl;
 		}else if("2015100701573".equals(supplierId)){
 			return bagheeraOrderService;
-		}else if ("2015091801501".equals(supplierId)) {
+		}else if ("2017111401993".equals(supplierId)) {
 			return gaudenziServiceImpl;
+		}else if("2015100501570".equals(supplierId)){
+			return julianFashionHandler;
+		}else if("2017101101983".equals(supplierId)){
+			return cocoroseServiceImpl;
+		}else if("2017122101995".equals(supplierId)){
+			return marinoOrderService;
+		}else if("2018022701997".equals(supplierId)){
+			return starOrderService;
+		}else if("2018042002007".equals(supplierId)){
+			return theStyleSideImpl;
+		}else if("2018041802006".equals(supplierId)){
+			return rediOrderService;
 		}else {
 			return null;
 		}
@@ -329,6 +386,10 @@ public class OrderHandleSearch {
 		
 		if("2017070501977".equals(supplierId)){
 			return supplierProperties.getBaseBluEdsConf();
+		}else if("2017111401992".equals(supplierId)){
+			return supplierProperties.getAngeloMinetti();
+		}else if("2017110801991".equals(supplierId)){
+			return supplierProperties.getDolciTrameParam();
 		}else if("2017072601979".equals(supplierId)){
 			return supplierProperties.getCoccolebimbiParam();
 		}else if("2017060101976".equals(supplierId)){
@@ -411,6 +472,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getDlrboutique();
 		}else if("2016032101816".equals(supplierId)){
 			return supplierProperties.getZitafabiani();
+		}else if("2018042002008".equals(supplierId)){
+			return supplierProperties.getMengotti();
 		}else if ("2016072601910".equals(supplierId)) {
 			return supplierProperties.getVietti();
 		}else if("2015101201596".equals(supplierId)){
@@ -419,8 +482,20 @@ public class OrderHandleSearch {
 			return supplierProperties.getYlati();
 		}else if("2015100701573".equals(supplierId)){
 			return supplierProperties.getBagheera();
-		}else if ("2015091801501".equals(supplierId)) {
+		}else if ("2017111401993".equals(supplierId)) {
 			return supplierProperties.getGaudenzi();
+		}else if("2015100501570".equals(supplierId)){
+			return supplierProperties.getJulianFashion();
+		}else if("2017101101983".equals(supplierId)){
+			return supplierProperties.getCocorose();
+		}else if("2017122101995".equals(supplierId)){
+			return supplierProperties.getMarino();
+		}else if("2018022701997".equals(supplierId)){
+			return supplierProperties.getStar();
+		}else if("2018042002007".equals(supplierId)){
+			return supplierProperties.getTheStyleSide();
+		}else if("2018041802006".equals(supplierId)){
+			return supplierProperties.getRedi();
 		}
 		else {
 			return null;

@@ -11,6 +11,9 @@ import org.springframework.messaging.MessageChannel;
  */
 public interface PendingProductSource {
 	
+	public static final String cocoroseLondon = "cocoroseLondonPendingProduct";
+	public static final String angeloMinetti = "angeloMinettiPendingProduct";
+	public static final String dolciTrame = "dolciTramePendingProduct";
 	public static final String fratinardi = "fratinardiPendingProduct";
 	public static final String coccolebimbi = "coccolebimbiPendingProduct";
 	public static final String portofino = "portofinoPendingProduct";
@@ -18,6 +21,8 @@ public interface PendingProductSource {
 	public static final String SPINNAKER = "spinnakerPendingProduct";
 	
 	public static final String OSTORE = "ostorePendingProduct";
+
+	public static final String MENGOTTISNC = "mengottiSncPendingProduct";
 	
 	public static final String BRUNAROSSO = "brunarossoPendingProduct";
 	
@@ -145,6 +150,48 @@ public interface PendingProductSource {
 	
 	public static final String MONNALISA = "monnalisaPendingProduct";
 	
+	public static final String STAR = "starPendingProduct";
+	public static final String SRL = "srlPendingProduct";
+	
+	public static final String THESTYLESIDE = "theStyleSidePendingProduct";
+
+	public static final String JULIANFASHION = "julianFashionPendingProduct";
+
+	public static final String MARINO = "marinoPendingProduct";
+
+
+	public static final String REDI = "rediPendingProduct";
+
+	public static final String OBLU = "obluPendingProduct";
+	
+	public static final String ZHICAI = "zhicaiPendingProduct";
+	public static final String YLATI = "ylatiPendingProduct";
+
+	/**
+	 * 供货商dolciTrame通道组件配置
+	 * @return 供货商dolciTrame通道组件
+	 */
+	@Output(value = PendingProductSource.dolciTrame)
+	public MessageChannel dolciTramePendingProduct();
+	/**
+	 * 供货商cocoroseLondon通道组件配置
+	 * @return 供货商cocoroseLondon通道组件
+	 */
+	@Output(value = PendingProductSource.cocoroseLondon)
+	public MessageChannel cocoroseLondonPendingProduct();
+	/**
+	 * 供货商angeloMinetti通道组件配置
+	 * @return 供货商angeloMinetti通道组件
+	 */
+	@Output(value = PendingProductSource.angeloMinetti)
+	public MessageChannel angeloMinettiPendingProduct();
+	/**
+	 * 供货商JULIANFASHION通道组件配置
+	 * @return 供货商JULIANFASHION通道组件
+	 */
+	@Output(value = PendingProductSource.JULIANFASHION)
+	public MessageChannel julianFashionPendingProduct();
+
 	/**
 	 * 供货商fratinardi通道组件配置
 	 * @return 供货商fratinardi通道组件
@@ -181,6 +228,13 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.OSTORE)
     public MessageChannel ostorePendingProduct();
+	/**
+	 * 供货商MENGOTTISNC通道组件配置
+	 * @return 供货商OSTORE通道组件
+	 */
+	@Output(value = PendingProductSource.MENGOTTISNC)
+	public MessageChannel mengottiSncPendingProduct();
+
 	/**
 	 * 供货商BRUNAROSSO通道组件配置
 	 * @return 供货商BRUNAROSSO通道组件
@@ -559,4 +613,55 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.MONNALISA)
 	public MessageChannel monnalisaPendingProduct();
+
+	/**
+	 * 供货商STAR 通道组件配置
+	 * @return STAR 通道组件
+	 */
+	@Output(value = PendingProductSource.STAR)
+	public MessageChannel starPendingProduct();
+
+	/**
+	 * MARINO 通道组件配置
+	 * @return MARINO 通道组件
+	 */
+	@Output(value = PendingProductSource.MARINO)
+	public MessageChannel marinoPendingProduct();
+
+
+	@Output(value = PendingProductSource.SRL)
+	public MessageChannel srlPendingProduct();
+	
+	/**
+	 * 供货商THESTYLESIDE 通道组件配置
+	 * @return 供货商THESTYLESIDE 通道组件
+	 */
+	@Output(value = PendingProductSource.THESTYLESIDE)
+	public MessageChannel theStyleSidePendingProduct();
+
+
+	/**
+	 * redi 通道组件配置
+	 * @return 供货商THESTYLESIDE 通道组件
+	 */
+	@Output(value = PendingProductSource.REDI)
+	public MessageChannel rediPendingProduct();
+
+	/**
+	 * OBLU 通道组件配置
+	 * @return 供货商OBLU 通道组件
+	 */
+	@Output(value = PendingProductSource.OBLU)
+	public MessageChannel obluPendingProduct();
+
+	/**
+	 * zhicai 通道组件配置
+	 * @return 供货商zhicai 通道组件
+	 */
+	@Output(value = PendingProductSource.ZHICAI)
+	public MessageChannel zhicaiPendingProduct();
+
+	@Output(value = PendingProductSource.YLATI)
+	public MessageChannel ylatiPendingProduct();
+
 }

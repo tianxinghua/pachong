@@ -61,7 +61,7 @@ public class SupplierProductRetryService {
 	/**
 	 * 字典两种刷新方式，1、页面修改走任务队列刷新redis，2、更新数据库infoState对应的字典状态定时任务刷新
 	 * 此方法是定时任务刷新
-	 * @param picDtos
+	 * @param state
 	 */
 	public void processProduct(Byte state,boolean flag) throws Exception{
 		long start = System.currentTimeMillis();

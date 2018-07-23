@@ -103,6 +103,7 @@ public class AlducadaostaHandler implements ISupplierHandler{
 			hubSpu.setSupplierSeasonname(alducaSpuDto.getSeasonName());
 			hubSpu.setSupplierMaterial(alducaSpuDto.getMaterial());
 			hubSpu.setSupplierOrigin(alducaSpuDto.getProductOrigin());
+			hubSpu.setSupplierSpuDesc(alducaSpuDto.getSpuDesc());
 			return true;
 		}
 	}

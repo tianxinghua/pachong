@@ -141,14 +141,30 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(supplierSpuNo);
 			String spuModel = "";
+			if(supplierSpuNo.contains("CONFIG")){
+				return false;
+			}
 			if(!StringUtils.isEmpty(item.getPvr_model()) && !StringUtils.isEmpty(item.getPvr_color())){
-				spuModel = item.getPvr_model() + " "+item.getPvr_color();
-			}else{
-				if(supplierSpuNo.contains("CONFIG")){
-					return false;
+
+				//品牌  Valentino Garavani 特殊处理
+				if("Valentino Garavani".equals(item.getBrand())){
+					String materialNo = item.getPvr_material();
+					if(StringUtils.isNotBlank(materialNo)){
+						String[] ar = materialNo.split("\\s+");
+						if(null!=ar&&ar.length>0){
+							spuModel = item.getPvr_model() + " " + ar[0]+ " "+item.getPvr_color();
+						}else{
+							spuModel = item.getPvr_model() + " "+item.getPvr_color();
+						}
+					}else{
+						spuModel = item.getPvr_model() + " "+item.getPvr_color();
+					}
 				}else{
-					spuModel = supplierSpuNo;
+					spuModel = item.getPvr_model() + " "+item.getPvr_color();
 				}
+
+			}else{
+				spuModel = supplierSpuNo;
 			}
 			hubSpu.setSupplierSpuModel(spuModel);
 			hubSpu.setSupplierSpuName(item.getName());
@@ -156,7 +172,12 @@ public class MonnierHandler implements ISupplierHandler {
 			hubSpu.setSupplierGender(item.getGender());
 			hubSpu.setSupplierCategoryname(item.getType());
 			hubSpu.setSupplierBrandname(item.getBrand());
-			hubSpu.setSupplierSeasonname(item.getFashioncollection());
+
+			if(StringUtils.isNotBlank(item.getFashioncollection())){
+				hubSpu.setSupplierSeasonname(item.getFashioncollection());
+			}else{
+				hubSpu.setSupplierSeasonname("SS18");
+			}
 			hubSpu.setSupplierGender("female");
 			hubSpu.setSupplierMaterial(item.getMaterial());
 			hubSpu.setSupplierOrigin(item.getOrigin());
@@ -179,6 +200,25 @@ public class MonnierHandler implements ISupplierHandler {
 			if(item.getCharacteristics2()!=null){
 				str.append(",").append(item.getCharacteristics2());
 			}
+			if(StringUtils.isNotBlank(item.getCharacteristics3())){
+				str.append(",").append(item.getCharacteristics3());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics4())){
+				str.append(",").append(item.getCharacteristics4());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics5())){
+				str.append(",").append(item.getCharacteristics5());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics6())){
+				str.append(",").append(item.getCharacteristics6());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics7())){
+				str.append(",").append(item.getCharacteristics7());
+			}
+			if(StringUtils.isNotBlank(item.getCharacteristics8())){
+				str.append(",").append(item.getCharacteristics8());
+			}
+
 			hubSpu.setSupplierSpuDesc(desc+str.toString());
 			return true;
 		}else{

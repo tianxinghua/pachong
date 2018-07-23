@@ -35,6 +35,33 @@ public class PendingProductStreamListenerAdapter {
 	}
 
 	/**
+	 * 供应商dolciTrame待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void dolciTramePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
+	 * 供应商cocoroseLondon待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void cocoroseLondonPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
+	 * 供应商angeloMinetti待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void angeloMinettiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	/**
 	 * 供应商portofino待处理商品数据流监听
 	 * @param message 消息体
 	 * @param headers 消息头
@@ -87,6 +114,15 @@ public class PendingProductStreamListenerAdapter {
 	public void ostorePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
 		
+	}
+	/**
+	 * 供应商MENGOTTTSNC待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void mengottiSncPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
 	}
 	/**
 	 * 供应商spinnaker待处理商品数据流监听
@@ -651,5 +687,89 @@ public class PendingProductStreamListenerAdapter {
 		this.messageHandle(message, headers);
 		
 	}
+	
+	/**
+	 * 供应商srl待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void starPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	
+	/**
+	 * 供应商theStyleSide待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void theStyleSidePendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+
+	/**
+	 * 供应商julianFashion待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void julianFashionPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+
+	/**
+	 * 供应商 marino 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void marinoPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+
+	/**
+	 * 供应商 redi 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void rediPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+
+	/**
+	 * 供应商 oblu 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void obluPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+	
+	/**
+	 * 供应商 zhicai 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void zhicaiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+	/**
+	 * 供应商 ylati 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+
+	public void ylatiPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+
+	}
+
+
+
+
 
 }

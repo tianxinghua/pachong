@@ -161,7 +161,7 @@ public class CoccoServiceImpl implements IOrderService{
 		addTo.add("cesare.m@coccolebimbi.com");
 		addTo.add("sabino.m@coccolebimbi.com");
 		addTo.add("gio.p@coccolebimbi.com");
-		addTo.add("winnie.liu@shangpin.com");
+//		addTo.add("winnie.liu@shangpin.com");
 		shangpinMail.setAddTo(addTo);
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
@@ -174,5 +174,13 @@ public class CoccoServiceImpl implements IOrderService{
 		deleteOrder.setLogContent("------取消结束-------");
 		logCommon.loggerOrder(deleteOrder, LogTypeStatus.LOCK_LOG);		
 	}
+	
+//	public static void main(String[] args) {
+//		CoccoServiceImpl s = new CoccoServiceImpl();
+//		OrderDTO orderDTO = new OrderDTO();
+//		orderDTO.setPurchaseNo("CGDF2017092493577");
+//		orderDTO.setSupplierSkuNo("29429-4 A/Y");
+//		s.handleConfirmOrder(orderDTO);
+//	}
 
 }

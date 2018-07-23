@@ -6,4 +6,6 @@ package com.shangpin.pending.product.consumer.common;
 public class ConstantProperty {
 
     public static final  String SIZE_EXCLUDE = "排除";
+
+    public static final  String OPERATOR="procedure";
 }

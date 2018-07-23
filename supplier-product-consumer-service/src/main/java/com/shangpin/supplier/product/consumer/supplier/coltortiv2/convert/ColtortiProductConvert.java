@@ -84,7 +84,7 @@ public class ColtortiProductConvert {
 		List<String> others = p.getOther_ids();
 		if(CollectionUtils.isNotEmpty(others)){
 			for(String id : others){
-				if(!id.equals(p.getSupplierSpuNo())){
+				if(!id.equals(p.getProduct_id())){
 					dto.setSupplierSpuModel(id + " "+p.getVariation_id());
 					break;
 				}

@@ -353,15 +353,16 @@ public class DataServiceHandler {
 
 	public void saveHubCategory(String supplierId, String supplierCategory, String supplierGender) throws Exception {
 
-		// 先获取性别字典的值 目的是品类映射表需要性别字典的主键
-		HubGenderDicDto hubGenderDicDto = this.getHubGenderDicBySupplierIdAndSupplierGender(null, supplierGender);
 
-		HubSupplierCategroyDicDto dto = new HubSupplierCategroyDicDto();
 
 		if (null != getSupplierCategoryBySupplierIdAndSupplierCategoryAndSupplierGender(supplierId, supplierCategory,
 				supplierGender)) {
 			return;
 		}
+		// 先获取性别字典的值 目的是品类映射表需要性别字典的主键
+		HubGenderDicDto hubGenderDicDto = this.getHubGenderDicBySupplierIdAndSupplierGender(null, supplierGender);
+
+		HubSupplierCategroyDicDto dto = new HubSupplierCategroyDicDto();
 		Date date = new Date();
 		dto.setSupplierId(supplierId);
 		dto.setSupplierCategory(supplierCategory);
@@ -477,6 +478,17 @@ public class DataServiceHandler {
 		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
 		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
 		HubSeasonDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+		return hubSeasonDicGateWay.selectByCriteria(criteria);
+
+	}
+
+
+
+	public List<HubSeasonDicDto> getHubSeasonDicBySupplierId(String supplierId) {
+		HubSeasonDicCriteriaDto criteria = new HubSeasonDicCriteriaDto();
+		criteria.setPageSize(ConstantProperty.MAX_COMMON_QUERY_NUM);
+		HubSeasonDicCriteriaDto.Criteria criterion = criteria.createCriteria();
+		criterion.andSupplieridEqualTo(supplierId);
 		return hubSeasonDicGateWay.selectByCriteria(criteria);
 
 	}

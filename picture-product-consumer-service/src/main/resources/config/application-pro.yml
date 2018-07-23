@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.50
+           host: ${rabbitmq.host:172.20.11.49}
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -29,13 +29,25 @@ spring:
                               destination: supplier.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 2
+                                       concurrency: 3
+                                       maxAttempts: 1
+                        brandPictureProduct: 
+                              destination: brand.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 3
                                        maxAttempts: 1
                         retryPictureProduct: 
                               destination: retry.product.picture
                               group: one
                               consumer: 
-                                       concurrency: 5
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        retryBrandPictureProduct: 
+                              destination: retry.brand.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
                                        maxAttempts: 1
               rabbit: 
                       bindings: 
@@ -48,7 +60,19 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            brandPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false 
                             retryPictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            retryBrandPictureProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -79,4 +103,7 @@ shangpin:
                       password: Atelier2015  
                   2015112001671: 
                       username: mosuftp
-                      password: inter2015£           
+                      password: inter2015£
+                  2016110101955:
+                      username: Shangpin
+                      password: Shangpin17!

@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +61,8 @@ public class DataHandleService {
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
 	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
+	@Autowired
+	HubSpuPendingPicGateWay picGateWay;
 	
 	public HubSpuDto  selectHubSpu(String spuModel,String hubBrandNo) {
 		
@@ -86,7 +93,7 @@ public class DataHandleService {
 		
 	}
 
-	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId1(HubSpuPendingDto hubSpuPendingDro) {
+	public List<HubSkuPendingDto> selectHubSkuPendingBySpuPendingId(HubSpuPendingDto hubSpuPendingDro) {
 		HubSkuPendingCriteriaDto criteria = new HubSkuPendingCriteriaDto();
 		List<Byte> listSkuState = new ArrayList<Byte>();
         listSkuState.add(SpuState.HANDLED.getIndex());
@@ -140,6 +147,22 @@ public class DataHandleService {
 		dto.setSpuState((byte)0);
 		hubSpuPendingWithCriteriaDto.setHubSpuPending(dto);
 		hubSpuPendingGateWay.updateByCriteriaSelective(hubSpuPendingWithCriteriaDto);
+	}
+
+	public List<String> getSpAvailablePicList(Long supplierSpuId ){
+		HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+		List<HubSpuPendingPicDto> picDtoList = picGateWay.selectByCriteria(criteria);
+		List<String> urlList = new ArrayList<>();
+		if(null!=picDtoList&&picDtoList.size()>0){
+			picDtoList.forEach(pic->{
+				if(StringUtils.isNotBlank(pic.getSpPicUrl())){
+
+					urlList.add(pic.getSpPicUrl());
+				}
+			});
+		}
+		return urlList;
 	}
 	
 }

@@ -236,6 +236,18 @@ shangpin:
                   isPurchaseExp:
                   openApiKey:
                   openApiSecret:
+          mengotti:
+                  url: http://93.39.241.194:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang0205
+                  messageType: text/html;charset=utf-8
+                  isPurchaseExp:
+                  openApiKey: 641bd1f4f41047e49789bbf0f33fb8c7
+                  openApiSecret: 87cdf3ad12474b3ea992bebf27440599        
           montiParam:
                   setOrderUrl: http://net13server2.net/MontiApi/Myapi/Productslist/setOrder
                   queryOrderUrl: http://net13server2.net/MontiApi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
@@ -258,7 +270,7 @@ shangpin:
                   openApiKey:
                   openApiSecret:
           paolo:
-                  url: http://95.110.163.89:8580/ws_sito_shang/ws_sito_p15.asmx/
+                  url: http://89.21.204.79:8523/ws_sito_shang/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace
@@ -414,6 +426,22 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 0173a41214d345dd88f78a9d3e82837b
                   openApiSecret: 8468cca27d904e929c5330d7f57d6d30
+          julianFashion: 
+                  url: http://213.209.202.38:8080/ws_shangpin/ws_sito_p15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: Shang1409
+                  isPurchaseExp: 
+                  openApiKey: 
+                  openApiSecret:
+          cocorose:
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
           supplier:
                   delayTime: 1000
                   retry: 120
@@ -421,7 +449,9 @@ shangpin:
                   getSizeFromEphubUrl: http://192.168.20.176:8003/order/product-size
                   stockSupplierMapping: 
                   orderSupplierMapping: S0000779:2016102701834
-
+          theStyleSide:
+                        usr: ECOMM
+                        pwd: vendiamotutto
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 

@@ -26,7 +26,7 @@ public class TaskStreamListener {
 	private RefreshDicStreamListenerAdapter refreshDicStreamListenerAdapter;
 	/**
 	 * 待处理商品导入任务数据流发送
-	 * @param supplierProduct 消息体
+	 * @param message 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	@StreamListener(TaskSink.REFRESH_DIC)

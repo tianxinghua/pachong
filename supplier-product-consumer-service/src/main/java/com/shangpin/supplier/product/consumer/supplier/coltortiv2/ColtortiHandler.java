@@ -18,7 +18,6 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.coltortiv2.convert.ColtortiProductConvert;
 import com.shangpin.supplier.product.consumer.supplier.coltortiv2.dto.ColtortiProduct;
-import com.shangpin.supplier.product.consumer.supplier.common.enumeration.Isexistpic;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 
 import lombok.extern.slf4j.Slf4j;
@@ -53,11 +52,6 @@ public class ColtortiHandler implements ISupplierHandler {
 				
 				HubSupplierSpuDto supplierSpuDto = ColtortiProductConvert.product2spu(supplierId, p);
 				List<Image> images = ColtortiProductConvert.productPic(p);
-				if(null != images){
-					supplierSpuDto.setIsexistpic(Isexistpic.YES.getIndex());
-				}else{
-					supplierSpuDto.setIsexistpic(Isexistpic.NO.getIndex());
-				}
 				List<HubSupplierSkuDto> hubSkus = ColtortiProductConvert.product2sku(supplierId, p);
 				
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, supplierSpuDto, images);

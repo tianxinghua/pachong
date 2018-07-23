@@ -69,7 +69,7 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("alducadaostaHandler") 
 	private ISupplierHandler alducadaostaHandler;
 	@Autowired
-	@Qualifier("delibertiHandler") 
+	@Qualifier("delibertiHandler2")
 	private ISupplierHandler delibertiHandler;
     @Autowired
     @Qualifier("parisiHandler") 
@@ -142,6 +142,14 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler monnalisaHandler;
 	
 	@Autowired
+	@Qualifier("starHandler")
+	private ISupplierHandler starHandler;
+	
+	@Autowired
+	@Qualifier("theStyleSideHandler")
+	private ISupplierHandler theStyleSideHandler;
+	
+	@Autowired
 	@Qualifier("coccolebimbiCommonHandler")
 	private ISupplierHandler coccolebimbiCommonHandler;
 	
@@ -151,6 +159,24 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("reebonzHandler")
 	private ISupplierHandler reebonzHandler;
+
+	@Autowired
+	@Qualifier("rediHandler")
+	private ISupplierHandler rediHandler;
+
+
+	@Autowired
+	@Qualifier("obluHandler")
+	private ISupplierHandler obluHandler;
+
+	@Autowired
+	@Qualifier("zhicaiHandler")
+	private ISupplierHandler zhicaiHandler;
+
+	@Autowired
+	@Qualifier("ylatiHandler")
+	private ISupplierHandler ylatiHandler;
+
 	
 	
 	/**
@@ -168,7 +194,7 @@ public class OriginalProductStreamListenerAdapter {
 	 * @param headers 消息头
 	 */
 	public void biondioniStreamListen(SupplierProduct message, Map<String, Object> headers) {
-		
+		biondiniHandler.handleOriginalProduct(message, headers);
 	}
 	
 	/**
@@ -233,6 +259,14 @@ public class OriginalProductStreamListenerAdapter {
 	/*
 	 * 以下为spinnaker系统统一处理 ，共八家供应商
 	 */
+	/**
+	 * dolciTrame供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void dolciTrameStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		spinnakerCommonHandler.handleOriginalProduct(message, headers); 
+	}
 	/**
 	 * spinnaker供货商原始数据监听方法
 	 * @param message 消息体
@@ -310,12 +344,28 @@ public class OriginalProductStreamListenerAdapter {
 	 * 以下为atelier系统统一处理 ，共17家
 	 */
 	/**
+	 * angeloMinetti供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void angeloMinettiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);		
+	}
+	/**
 	 * ostore供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */
 	public void ostoreStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);		
+	}
+	/**
+	 * MENGOTTISNC供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void mengottiSncStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * brunarosso供货商原始数据监听方法
@@ -597,6 +647,14 @@ public class OriginalProductStreamListenerAdapter {
         
     }
 	/**
+	 * cocoroseLondon供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void cocoroseLondonStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		smetsHandler.handleOriginalProduct(message, headers); 
+	}
+	/**
 	 * smets供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
@@ -751,6 +809,24 @@ public class OriginalProductStreamListenerAdapter {
 	}
 	
 	/**
+	 * star供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void starStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		starHandler.handleOriginalProduct(message, headers);
+	}
+	
+	/**
+	 * theStyleSide供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void theStyleSideStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		theStyleSideHandler.handleOriginalProduct(message, headers);
+	}
+	
+	/**
 	 * 所以供应商更新库存监听方法
 	 * @param message
 	 * @param headers
@@ -758,4 +834,54 @@ public class OriginalProductStreamListenerAdapter {
 	public void allProductStockStreamListen(SupplierStock message, Map<String, Object> headers){
 		stockHandler.handleAllProductStock(message, headers);
 	}
+	/**
+	 * 供应商julianFashion处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void julianFashionStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+
+	/**
+	 * 供应商marino处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void marinoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		atelierCommonHandler.handleOriginalProduct(message, headers);
+	}
+
+
+	/**
+	 * 供应商redi处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void rediStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		rediHandler.handleOriginalProduct(message, headers);
+	}
+
+	/**
+	 * 供应商oblu处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void obluStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		obluHandler.handleOriginalProduct(message, headers);
+	}
+	/**
+	 * 供应商zhicai处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void zhicaiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		zhicaiHandler.handleOriginalProduct(message, headers);
+	}
+
+	public void ylatiStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		ylatiHandler.handleOriginalProduct(message, headers);
+	}
+	
+
 }

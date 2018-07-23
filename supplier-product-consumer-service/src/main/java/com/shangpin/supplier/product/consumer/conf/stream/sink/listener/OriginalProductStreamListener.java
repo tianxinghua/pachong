@@ -26,6 +26,44 @@ public class OriginalProductStreamListener {
 	
 	@Autowired
 	private OriginalProductStreamListenerAdapter adapter;
+	
+	/**
+	 * 供应商angeloMinetti原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.angeloMinetti)
+	public void angeloMinettiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.angeloMinettiStreamListen(message,headers);
+	}
+	/**
+	 * 供应商cocoroseLondon原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.cocoroseLondon)
+	public void cocoroseLondonStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.cocoroseLondonStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.dolciTrame)
+	public void dolciTrameStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.dolciTrameStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.JULIANFASHION)
+	public void julianFashionStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.julianFashionStreamListen(message,headers);
+	}
+	
 	/**
 	 * 供应商fratinardi原始商品数据流通道监听者
 	 * @param message 消息
@@ -116,6 +154,17 @@ public class OriginalProductStreamListener {
     public void ostoreStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.ostoreStreamListen(message,headers);
     }
+	/**
+	 * 供应商MENGOTTTSNC原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.MENGOTTISNC)
+	public void mengottiSncStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.mengottiSncStreamListen(message,headers);
+	}
+
+
 	/**
 	 * 供应商FORZIERI原始商品数据流通道监听者
 	 * @param message 消息
@@ -686,4 +735,61 @@ public class OriginalProductStreamListener {
     public void monnalisaStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.monnalisaStreamListen(message,headers);
     }
+	
+	/**
+	 * 供应商SRL原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.STAR)
+    public void starStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.starStreamListen(message,headers);
+    }
+
+
+	@StreamListener(OriginalProductSink.MARINO)
+	public void marinoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.marinoStreamListen(message,headers);
+	}
+	
+	/**
+	 * 供应商THESTYLESIDE原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.THESTYLESIDE)
+    public void theStyleSideStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.theStyleSideStreamListen(message,headers);
+    }
+
+
+	/**
+	 * 供应商redi原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.REDI)
+	public void rediStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.rediStreamListen(message,headers);
+	}
+
+	@StreamListener(OriginalProductSink.OBLU)
+	public void obluStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.obluStreamListen(message,headers);
+	}
+	/**
+	 * 供应商zhicai(爬虫)原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ZHICAI)
+	public void zhicaiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.zhicaiStreamListen(message,headers);
+	}
+
+	@StreamListener(OriginalProductSink.YLATI)
+	public void ylatiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.ylatiStreamListen(message,headers);
+	}
+
 }

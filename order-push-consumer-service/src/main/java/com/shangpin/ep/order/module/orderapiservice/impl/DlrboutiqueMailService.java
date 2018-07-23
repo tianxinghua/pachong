@@ -140,10 +140,10 @@ public class DlrboutiqueMailService{
 		shangpinMail.setSubject(subject);
 		shangpinMail.setText(text);
 		shangpinMail.setTo("lizhongren@shangpin.com");
-		List<String> addTo = new ArrayList<>();
-		addTo.add("lubaijiang@shangpin.com");
+//		List<String> addTo = new ArrayList<>();
+	//	addTo.add("lubaijiang@shangpin.com");
 //		addTo.add("steven.ding@shangpin.com");
-		shangpinMail.setAddTo(addTo );
+//		shangpinMail.setAddTo(addTo );
 		shangpinMailSender.sendShangpinMail(shangpinMail);
 	}
 

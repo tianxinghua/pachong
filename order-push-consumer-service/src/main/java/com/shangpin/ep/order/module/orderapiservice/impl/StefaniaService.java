@@ -36,8 +36,7 @@ public class StefaniaService implements IOrderService {
     SupplierProperties supplierProperties;
     @Autowired
     HandleException handleException;
-    @Autowired
-    HubSkuMapper skuDAO;
+
     @Autowired
     OpenApiService openApiService;
 
@@ -105,9 +104,17 @@ public class StefaniaService implements IOrderService {
 //			BigDecimal priceInt = openApiService.getPurchasePrice(supplierProperties.getStefania().getOpenApiKey(), supplierProperties.getStefania().getOpenApiSecret(), orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
 //			BigDecimal priceInt = new BigDecimal(orderDTO.getPurchasePriceDetail());
 			BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
-			orderDTO.setLogContent("【stefania在推送订单时获取采购价："+priceInt.toString()+"】"); 
+			orderDTO.setLogContent("【stefania在推送订单时获取采购价："+priceInt.toString()+"】");
+			if(priceInt.intValue()==10){
+				orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+				orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+				orderDTO.setDescription("下单失败：未获取到采购单" );
+				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+				return ;
+			}
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-			BigDecimal price = priceInt.divide(new BigDecimal(1.05),5).setScale(0, BigDecimal.ROUND_HALF_UP);
+			String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
+			BigDecimal price = priceInt.divide(new BigDecimal(serviceRate),5).setScale(0, BigDecimal.ROUND_HALF_UP);
 			orderDTO.setPurchasePriceDetail(price.toString());
 //			detail.setPRICE(new BigDecimal(orderDTO.getPurchasePriceDetail()));
 			detail.setPRICE(price);

@@ -45,14 +45,16 @@ public class MonnierfreresServiceImpl {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append(header).append("\n");
 				String dayTime = DateTimeUtil.strForDate(endTime);
+				String purchaseNo ="";
+				//原CODTRP 是62 ,现在是4701
 				for(HubOrderDetail orderDetail : orderDetails){
-					String purchaseNo = orderDetail.getPurchaseNo().substring(4);
+					purchaseNo = orderDetail.getPurchaseNo().substring(4);
 					buffer.append(purchaseNo).append(split) 
 					.append(dayTime).append(split)
 					.append("").append(split)
 					.append("").append(split)
 					.append("Shangpin").append(split)
-					.append("62").append(split)
+					.append("4701").append(split)
 					.append(purchaseNo).append(split)
 					.append("SHANGPIN").append(split)
 					.append("GENERTEC ITALIA").append(split)

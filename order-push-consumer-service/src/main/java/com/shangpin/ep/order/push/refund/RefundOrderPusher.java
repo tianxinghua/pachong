@@ -122,10 +122,12 @@ public class RefundOrderPusher extends AbstractPusher{
 	private void loopHandleOrderDTO(IOrderService iOrderService, OrderDTO orderDTO, Map<String, Object> headers,boolean isOrderApi) throws Exception{
 		
 		//退款操作，先判断订单状态是否已推送成功
-		if(OrderStatus.NO_PAY.getIndex()==orderDTO.getOrderStatus().getIndex()||(null!=orderDTO.getPushStatus()&&PushStatus.ORDER_CONFIRMED_ERROR.getIndex()==orderDTO.getPushStatus().getIndex())){
-			//未支付或者支付了推送供应商失败，都直接更新订单状态和推送状态
+		if(OrderStatus.NO_PAY.getIndex()==orderDTO.getOrderStatus().getIndex()||
+				(null!=orderDTO.getPushStatus()&&PushStatus.ORDER_CONFIRMED_ERROR.getIndex()==orderDTO.getPushStatus().getIndex())){
+			//未支付或者支付了推送供应商失败，都直接更新订单状态   推送状态不更新
 			handleOrderStatus(orderDTO,headers);
-			orderDTO.setPushStatus(PushStatus.NO_REFUNDED_API);
+
+//			orderDTO.setPushStatus(PushStatus.NO_REFUNDED_API);
 			handlePushStauts(orderDTO,headers);
 		}else if(OrderStatus.REFUNDED.getIndex()==orderDTO.getOrderStatus().getIndex()){
 			// 订单对接
@@ -204,12 +206,14 @@ public class RefundOrderPusher extends AbstractPusher{
 	private boolean isNeedHandle(OrderDTO orderDTO, HandleStep handleStep) throws Exception {
 		
 		boolean isNeed = true;
-		
-		if(null==orderDTO.getExceptionOrderStatus()) {//新的消息 需要处理
-			return isNeed;
-		}
-		
+
+
 	    if(handleStep.getIndex()==HandleStep.HANDLE_ORDER.getIndex()){ //订单处理
+
+			if(null==orderDTO.getExceptionOrderStatus()) {//新的消息 需要处理
+				return isNeed;
+			}
+			//-----------------------------------------  有异常-------------------
 			if(orderDTO.getOrderStatus().getIndex()!=orderDTO.getExceptionOrderStatus().getIndex()){// 修改订单状态时失败
 				if(orderDTO.getOrderStatus().getIndex()!=OrderStatus.NO_PAY.getIndex()&&
 						orderDTO.getOrderStatus().getIndex()!=OrderStatus.PAYED.getIndex()){
@@ -223,20 +227,36 @@ public class RefundOrderPusher extends AbstractPusher{
 				}
 			}
 		}else if((handleStep.getIndex()==HandleStep.HANDLE_PUSH.getIndex())){//推送处理
+
+			if(null==orderDTO.getExceptionPushStatus()) {//新的消息 需要处理
+				if(PushStatus.NO_STOCK.getIndex()==orderDTO.getPushStatus().getIndex()||
+						PushStatus.ORDER_CONFIRMED_ERROR.getIndex()==orderDTO.getPushStatus().getIndex()||
+						PushStatus.LOCK_PLACED_ERROR.getIndex()==orderDTO.getPushStatus().getIndex()){//无库存 ， 推送失败，锁库失败  不需要推送退货 ，不需要更新推送状态
+					isNeed = false;
+				}
+				return isNeed;
+			}
+			//-----------------------------------------  有异常-------------------
 			if(null==orderDTO.getPushStatus()){  //原来未对接 后来对接了 没有推送状态  可以去退款
 
 			}else{
-				if(orderDTO.getPushStatus().getIndex()!=orderDTO.getExceptionPushStatus().getIndex()){ //推送状态不等
-					if(orderDTO.getExceptionPushStatus().getIndex()!=PushStatus.REFUNDED_ERROR.getIndex()){//更新数据库即可
-						isNeed = false;
-					}
-				}else{
-					if(orderDTO.getPushStatus().getIndex()==PushStatus.REFUNDED_ERROR.getIndex()){ //推送异常 重新推送
+				if(orderDTO.getPushStatus().getIndex()==PushStatus.NO_STOCK.getIndex()||
+						PushStatus.ORDER_CONFIRMED_ERROR.getIndex()==orderDTO.getPushStatus().getIndex()){//无库存 或 推送失败  不需要推送退货 ，不需要更新推送状态
+					isNeed = false;
+				}else{//
 
-					}else{ //不是推送出错
-						isNeed = false;
-					}
+					if(orderDTO.getPushStatus().getIndex()!=orderDTO.getExceptionPushStatus().getIndex()){ //推送状态不等
+						if(orderDTO.getExceptionPushStatus().getIndex()!=PushStatus.REFUNDED_ERROR.getIndex()){//更新数据库即可
+							isNeed = false;
+						}
+					}else{
+						if(orderDTO.getPushStatus().getIndex()==PushStatus.REFUNDED_ERROR.getIndex()){ //推送异常 重新推送
 
+						}else{ //不是推送出错
+							isNeed = false;
+						}
+
+					}
 				}
 			}
 

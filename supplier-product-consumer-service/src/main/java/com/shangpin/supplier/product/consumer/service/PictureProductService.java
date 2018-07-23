@@ -14,6 +14,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.enumeration.PicHandleState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicWithCriteriaDto;
@@ -40,7 +44,8 @@ public class PictureProductService {
 	private PictureProductStreamSender pictureProductStreamSender;
 	@Autowired
 	private HubSpuPendingPicGateWay picClient;
-	
+	@Autowired
+	HubSupplierValueMappingGateWay mappingGateWay;
 	/**
 	 * 发送供应商图片到图片消息队列
 	 * @param supplierPicture
@@ -49,7 +54,22 @@ public class PictureProductService {
 	public void sendSupplierPicture(SupplierPicture supplierPicture, Map<String, ?> headers){
 		try {
 			if(toPush(supplierPicture)){
-				boolean result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
+				
+				Map<String, String> tmpBrandSupplierMap = new HashMap<>();
+	            HubSupplierValueMappingCriteriaDto criteriaDto = new HubSupplierValueMappingCriteriaDto();
+	            criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
+	            List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = mappingGateWay.selectByCriteria(criteriaDto);
+	            hubSupplierValueMappingDtos.forEach(mapping ->{
+	                tmpBrandSupplierMap.put(mapping.getSupplierId(),mapping.getSupplierId());
+	            });
+			
+				boolean result = false;
+				if(tmpBrandSupplierMap.containsKey(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.brandPictureProductStream(supplierPicture, headers);	
+				}else{
+					result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
+				}
+				
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 发送图片 "+result);
 			}else{
 				log.info(supplierPicture.getSupplierName()+":"+supplierPicture.getSupplierSpuId()+" 下所有图片已存在，不推送");
@@ -64,6 +84,10 @@ public class PictureProductService {
 	 * @return
 	 */
 	private boolean toPush(SupplierPicture supplierPicture){
+//		if(null!=supplierPicture){
+//			log.info("pic = " + supplierPicture.toString());
+//		}
+
 		if(null == supplierPicture || null == supplierPicture.getProductPicture() || null == supplierPicture.getProductPicture().getImages() || supplierPicture.getProductPicture().getImages().size() == 0){
 			return false;
 		}else{
@@ -73,12 +97,14 @@ public class PictureProductService {
 			 * 首先吧原始数据中的链接，已经在库里存在的排除掉，返回一个未处理的集合
 			 */
 			List<Image> images = new ArrayList<Image>();
+			String imageUrl = "";
 			for(Image image : supplierPicture.getProductPicture().getImages()){
-				if(!StringUtils.isEmpty(image.getUrl()) && (image.getUrl().startsWith("http") || image.getUrl().startsWith("HTTP") ||
-						image.getUrl().startsWith("ftp")) && !pics.containsKey(image.getUrl())){
+				imageUrl = image.getUrl();
+				if(!StringUtils.isEmpty(imageUrl) && (imageUrl.startsWith("http") || imageUrl.startsWith("HTTP") ||
+						imageUrl.startsWith("ftp")) && !pics.containsKey(imageUrl)){
 					images.add(image);
 				}
-				supplierUrls.put(image.getUrl(), null);
+				supplierUrls.put(imageUrl, null);
 			}
 			/**
 			 * 其次吧库里的链接，在原始数据中不存在的进行逻辑删除（dataState更新为0）

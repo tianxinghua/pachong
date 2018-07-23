@@ -4,7 +4,7 @@ ribbon:
   ReadTimeout: 120000
 spring: 
   rabbitmq: 
-           host: 172.20.11.49
+           host: ${rabbitmq.host:172.20.11.49}
            port: 5672
            username: ephub-message-service
            password: ephub-message-service
@@ -15,12 +15,42 @@ spring:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
+                        brandPictureProduct: 
+                              destination: brand.product.picture
+                              content-type: application/json
                         refreshDicTask: 
                               destination: refresh.dic.task
                               group: one
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1 
+                        dolciTrameOriginalProduct: 
+                              destination: dolciTrame.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        dolciTramePendingProduct: 
+                              destination: dolciTrame.pending.product
+                              content-type: application/json 
+                        cocoroseLondonOriginalProduct: 
+                              destination: cocoroseLondon.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        cocoroseLondonPendingProduct: 
+                              destination: cocoroseLondon.pending.product
+                              content-type: application/json 
+                        angeloMinettiOriginalProduct: 
+                              destination: angeloMinetti.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        angeloMinettiPendingProduct: 
+                              destination: angeloMinetti.pending.product
+                              content-type: application/json 
                         coccolebimbiOriginalProduct: 
                               destination: coccolebimbi.original.product
                               group: one
@@ -648,10 +678,84 @@ spring:
                         monnalisaPendingProduct:
                               destination: monnalisa.pending.product
                               content-type: application/json
-
+                        julianFashionOriginalProduct:
+                              destination: julianFashion.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        julianFashionPendingProduct:
+                              destination: julianFashion.pending.product
+                              content-type: application/json
+                        starOriginalProduct:
+                              destination: star.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        starPendingProduct:
+                              destination: star.pending.product
+                              content-type: application/json
+                        marinoOriginalProduct:
+                              destination: marino.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        marinoPendingProduct:
+                              destination: marino.pending.product
+                              content-type: application/json
+                        theStyleSideOriginalProduct:
+                              destination: theStyleSide.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              content-type: application/json
+                        rediOriginalProduct:
+                              destination: redi.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        rediPendingProduct:
+                              destination: redi.pending.product
+                              content-type: application/json
+                        obluOriginalProduct:
+                              destination: oblu.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              content-type: application/json
+                        mengottiSncOriginalProduct:
+                              destination: mengottiSnc.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              content-type: application/json
+                        zhicaiOriginalProduct:
+                              destination: zhicai.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        zhicaiPendingProduct:
+                              destination: zhicai.pending.product
+                              content-type: application/json
               rabbit: 
                         bindings: 
                               supplierPictureProduct: 
+                                    producer: 
+                                         prefix: HA.
+                              brandPictureProduct: 
                                     producer: 
                                          prefix: HA.
                               refreshDicTask: 
@@ -660,6 +764,33 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                              dolciTrameOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              dolciTramePendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
+                              cocoroseLondonOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              cocoroseLondonPendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
+                              angeloMinettiOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              angeloMinettiPendingProduct: 
+                                    producer: 
+                                         prefix: HA.           
                               coccolebimbiOriginalProduct: 
                                       consumer: 
                                          prefix: HA.
@@ -1287,6 +1418,78 @@ spring:
                               monnalisaPendingProduct:
                                     producer:
                                          prefix: HA.
+                              julianFashionOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              julianFashionPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              starOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              starPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              marinoOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              marinoPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              theStyleSideOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              theStyleSidePendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              rediOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              rediPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              obluOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              obluPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              mengottiSncOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              mengottiSncPendingProduct:
+                                    producer:
+                                        　						 prefix: HA.
+                              zhicaiOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              zhicaiPendingProduct:
+                                    producer:
+                                         prefix: HA.                                        
         consul: 
           host: localhost
           port: 8500
@@ -1295,16 +1498,16 @@ spring:
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8
-  #mail: 
-       #default-recipient: yan_xiao_bin@126.com
-       #default-sender: yanxiaobin@shangpin.com
-       #default-encoding: UTF-8 # Default MimeMessage encoding.
-       #host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
-       #port: 25 # SMTP server port.
-       #protocol: smtp # Protocol used by the SMTP server.
-       #username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       #password: 123.com # Login password of the SMTP server.
-       #test-connection: true # Test that the mail server is available on startup.
+#  mail:
+#       default-recipient: chengxu@shangpin.com
+#       default-sender: chengxu@shangpin.com
+#       default-encoding: UTF-8 # Default MimeMessage encoding.
+#       host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
+#       port: 25 # SMTP server port.
+#       protocol: smtp # Protocol used by the SMTP server.
+#       username: chengxu@shangpin.com # Login user of the SMTP server.
+#       password: shangpin001 # Login password of the SMTP server.
+#       test-connection: false # Test that the mail server is available on startup.
 shangpin:
   hub:
        mailSendTo: ephub_support.list@shangpin.com

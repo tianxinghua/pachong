@@ -82,7 +82,12 @@ public class TheclutcherHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuColor(studioSpuDto.getColor());
 			hubSpu.setSupplierGender(studioSpuDto.getGender());
 			hubSpu.setSupplierCategoryno(studioSpuDto.getCategory());
-			hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
+			if (studioSpuDto.getName()!=null){
+				hubSpu.setSupplierCategoryname(studioSpuDto.getName()+" "+studioSpuDto.getCategory());
+			}else {
+				hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
+			}
+			//hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
 			hubSpu.setSupplierBrandname(studioSpuDto.getBrand());
 			hubSpu.setSupplierSeasonname(studioSpuDto.getSeason());
 		
@@ -111,6 +116,7 @@ public class TheclutcherHandler implements ISupplierHandler{
 			return true;
 		}
 	}
+
 	/**
 	 * 
 	 * @param supplierId
@@ -126,7 +132,11 @@ public class TheclutcherHandler implements ISupplierHandler{
 		hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(studioSkuDto.getSupplierPrice())));
 		hubSku.setSupplierSkuSize(studioSkuDto.getSize());
 		if(skuId!=null&&skuId.split("-").length>1){
-			hubSku.setSupplierBarcode(studioSkuDto.getBarCode()+" "+skuId.split("-")[1]);	
+			if(StringUtils.isNotBlank(studioSkuDto.getBarCode())&&!"NULL".equals(studioSkuDto.getBarCode().toUpperCase())){
+				hubSku.setSupplierBarcode(studioSkuDto.getBarCode()+" "+skuId.split("-")[1]);	
+			}else{
+				hubSku.setSupplierBarcode(skuId);
+			}
 		}
 		hubSku.setStock(StringUtil.verifyStock((studioSkuDto.getStock())));
 		return true;

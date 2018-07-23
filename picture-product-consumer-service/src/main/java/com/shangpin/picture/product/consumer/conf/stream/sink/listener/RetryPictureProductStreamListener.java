@@ -29,4 +29,10 @@ public class RetryPictureProductStreamListener {
     public void supplierPictureProductStreamListen(@Payload RetryPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		pictureProductStreamListenerAdapter.supplierRetryPictureProductStreamListen(message,headers);
     }
+	
+	@StreamListener(RetryPictureProductSink.BRAND_PICTURE)
+    public void brandPictureProductStreamListen(@Payload RetryPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		Thread.sleep(1000*10);
+		pictureProductStreamListenerAdapter.supplierRetryPictureProductStreamListen(message,headers);
+    }
 }

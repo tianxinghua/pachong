@@ -110,7 +110,6 @@ public class ParisiOrderUtil  {
         try {
             Map<String,String> headerMap = new HashMap<>();
             headerMap.put("SOAPAction",deleteOrderUrl);
-            headerMap.put("SOAPAction","http://tempuri.org/DeleteOrder");
             result = HttpUtil45.operateData("post","soap",hostUrl,
                     new OutTimeConfig(1000*60,1000*60*30,1000*60*30),null,request,headerMap,"","");
             return analyzeCancelData(result);
@@ -135,6 +134,7 @@ public class ParisiOrderUtil  {
     	util.cancelOrder(orderDTO);
     	util.confirmOrder(orderDTO, sku, quantity);
     	util.refund(orderDTO, sku);
+//    	util.getSearchStock("37372-48-3 yrs");
     }
 
     public OrderOfSupplier confirmOrder(OrderDTO orderDTO ,String sku, String  quantity){
@@ -342,8 +342,47 @@ public class ParisiOrderUtil  {
             return order;
         }
         return order;
+    }
+	public int getSearchStock(String supplierSkuNo) throws Exception{
+    	String serviceUrl ="http://www.rpwebservice.it/wsnat13.asmx?op=GetStockWithSku";
+		String request = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"+
+				"<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n"+
+				"  <soap12:Body>\n"+
+				"    <GetStockWithSku xmlns=\"http://tempuri.org/\">\n" +
+				"      <sku>"+supplierSkuNo+"</sku>\n"+
+				"      <strKey>"+strKey+"</strKey>\n"+
+				"    </GetStockWithSku>\n"+
+				"  </soap12:Body>\n"+
+				"</soap12:Envelope>";
+		logger.info("请求的参数=========="+request);
+		Map<String,String> headerMap = new HashMap<>();
+	    headerMap.put("SOAPAction",serviceUrl);
+	
+	    String result = HttpUtil45.operateData("post","soap",hostUrl,
+	            new OutTimeConfig(1000*60,1000*60*30,1000*60*30),null,request,headerMap,"","");
+	    int stock = analyzeData(result);
+		return stock;
+	}
+	
+	private int analyzeData(String xmlContent){
+		int stock = 0;
+        SAXReader reader = new SAXReader();
+        InputStream in_withcode =null;
+        try {
+            in_withcode = new ByteArrayInputStream(xmlContent.getBytes("UTF-8"));
+            Document document =reader.read(in_withcode);
+            Element root = document.getRootElement();
 
-
+            Element  productElement = root.element("Body").element("GetStockWithSkuResponse")
+                    .element("GetStockWithSkuResult").element("diffgram").element("DocumentElement");
+            Element  stockElement = productElement.element("Dati").element("Stock");
+            stock = Integer.parseInt(stockElement.getText());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+        return stock;
     }
 
 

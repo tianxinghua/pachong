@@ -618,7 +618,34 @@ spring:
                         monnalisaPendingProduct:
                               destination: monnalisa.pending.product
                               content-type: application/json
-              rabbit: 
+                        julianFashionOriginalProduct:
+                              destination: julianFashion.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        julianFashionPendingProduct:
+                              destination: julianFashion.pending.product
+                              content-type: application/json
+                        srlOriginalProduct:
+                              destination: star.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        srlPendingProduct:
+                              destination: star.pending.product
+                              content-type: application/json
+                        theStyleSideOriginalProduct:
+                              destination: theStyleSide.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              content-type: application/json
+              rabbit:
                       bindings: 
                             supplierPictureProduct: 
                                   producer: 
@@ -1218,6 +1245,33 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                             monnalisaPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            julianFashionOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            julianFashionPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            srlOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            srlPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            theStyleSideOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            theStyleSidePendingProduct:
                                     producer:
                                          prefix: HA.
 

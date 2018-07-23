@@ -82,7 +82,7 @@ public class FrmodaHandler implements ISupplierHandler {
 
 				for(String url : imageSpuUrlArray){
 					Image image = new Image();
-					image.setUrl(url);
+					image.setUrl(url.trim());
 					images.add(image);
 				}
 			}

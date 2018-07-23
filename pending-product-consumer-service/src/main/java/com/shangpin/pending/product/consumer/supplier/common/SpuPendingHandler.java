@@ -76,7 +76,7 @@ public class SpuPendingHandler {
             hubSpuPending.setAuditDate(new Date());
             hubSpuPending.setAuditUser("pendingService");
             spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
-
+            result = false;
         }
         return result;
     }
@@ -132,6 +132,18 @@ public class SpuPendingHandler {
 
     public HubSpuPendingDto getSpuPendingDto(Long spuPendingId){
         return spuPendingGateWay.selectByPrimaryKey(spuPendingId);
+    }
+
+
+    public boolean updateSpuState(HubSpuPendingDto hubSpuPending){
+        boolean  result = true;
+        hubSpuPending.setUpdateTime(new Date());
+        try {
+            spuPendingGateWay.updateByPrimaryKeySelective(hubSpuPending);
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
     }
 
 }

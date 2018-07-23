@@ -23,7 +23,8 @@ public class Item {
 	
 	private String BRAND;//品牌
 	private String ARTICOLO;  //暂定认为是货号  Manufacturer's product ID
-	private String PREZZO_NETTO;//price
+	private String PREZZO_NETTO1;//price
+	private String LISTINO;	
 	private String DESCRIZIONE_LUNGA_ENG;//product_name# description
 	private String DESCRIZIONE_CORTA;
 	private String COLORE_ITA;//颜色

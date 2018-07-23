@@ -256,7 +256,8 @@ public class PalomaBarceloOrderImpl  implements IOrderService {
 				BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
 				orderDTO.setLogContent("【paloma在推送订单时获取采购价："+priceInt.toString()+"】"); 
 				logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-				String price = priceInt.divide(new BigDecimal(1.05), 2)
+				String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
+				String price = priceInt.divide(new BigDecimal(serviceRate), 2)
 						.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 				orderDTO.setPurchasePriceDetail(price);
 				item.setPurchase_price(price);

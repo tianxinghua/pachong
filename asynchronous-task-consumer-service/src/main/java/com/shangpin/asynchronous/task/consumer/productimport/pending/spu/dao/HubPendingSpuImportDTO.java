@@ -53,4 +53,5 @@ public class HubPendingSpuImportDTO {
 	private String reason2;
 	private String reason3;
 	private String reason4;
+	private String picRetry;
 }

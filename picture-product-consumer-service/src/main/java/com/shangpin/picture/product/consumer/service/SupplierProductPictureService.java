@@ -34,6 +34,7 @@ import com.shangpin.picture.product.consumer.util.FtpUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Encoder;
+import sun.net.www.protocol.ftp.FtpURLConnection;
 
 /**
  * <p>Title:SupplierProductPictureService.java </p>
@@ -52,12 +53,17 @@ public class SupplierProductPictureService {
 	private static final String USERNAME = "username";
 
 	private static final int TIMEOUT = 45*60*1000;
+
+	private static final int CONNECT_TIMEOUT = 10*1000;
 	
 	@Autowired
 	private SupplierProductPictureManager supplierProductPictureManager;
 
 	@Autowired
 	private SpuPicStatusServiceManager spuPicStatusServiceManager;
+
+	@Autowired
+	private SpuPendingService spuPendingService;
 	
 	
 	@Autowired
@@ -69,17 +75,33 @@ public class SupplierProductPictureService {
 	public void processProductPicture(List<HubSpuPendingPicDto> picDtos) {
 		if (CollectionUtils.isNotEmpty(picDtos)) {
 			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
-			for (HubSpuPendingPicDto picDto : picDtos) {
-				String picUrl = picDto.getPicUrl();
-				if(!supplierProductPictureManager.exists(picDto.getSupplierId(),picUrl)){
-					continue;
+			for (HubSpuPendingPicDto picVO : picDtos) {
+				String picUrl = picVO.getPicUrl();
+				HubSpuPendingPicDto picDto = supplierProductPictureManager.getSpuPendingPicDtoBySupplierIdAndPicUrl(picVO.getSupplierId(), picUrl);
+				if(null!=picDto){
+					//如果连接存在 且状态为使用中 则不操作
+					if(DataState.NOT_DELETED.getIndex()==picDto.getDataState()){
+                         continue;
+					}else{
+						//更新图片状态
+						HubSpuPendingPicDto updatePic = new HubSpuPendingPicDto();
+						updatePic.setSpuPendingPicId(picDto.getSpuPendingPicId());
+						updatePic.setDataState(DataState.NOT_DELETED.getIndex());
+						updatePic.setMemo("");
+						supplierProductPictureManager.updateSelective(updatePic);
+						//更新spupending 图片状态
+						spuPendingService.updateSpuPendingPicState(picDto.getSupplierId(),picDto.getSupplierSpuNo());
+
+						continue;
+					}
 				}
-				Long spuPendingPicId = supplierProductPictureManager.save(picDto);//保存初始化数据
+
+				Long spuPendingPicId = supplierProductPictureManager.save(picVO);//保存初始化数据
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
-				updateDto.setSupplierSpuId(picDto.getSupplierSpuId());
+				updateDto.setSupplierSpuId(picVO.getSupplierSpuId());
 				AuthenticationInformation information = null;
-				String supplierId = picDto.getSupplierId();
+				String supplierId = picVO.getSupplierId();
 				if (StringUtils.isNotBlank(supplierId)) {
 					information = getAuthentication(supplierId);
 				}
@@ -88,7 +110,12 @@ public class SupplierProductPictureService {
 					if(picUrl.toUpperCase().startsWith("HTTP")){
 						code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 					}else if(picUrl.toUpperCase().startsWith("FTP")){
-						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+						if("2016110101955".equals(picVO.getSupplierId())){
+							code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
+						}else{
+							code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+						}
+
 					}	
 				}
 				
@@ -140,7 +167,7 @@ public class SupplierProductPictureService {
 			URLConnection openConnection = url.openConnection();
 			httpUrlConnection  =  (HttpURLConnection) openConnection;
 			httpUrlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
-			httpUrlConnection.setConnectTimeout(TIMEOUT);
+			httpUrlConnection.setConnectTimeout(CONNECT_TIMEOUT);
 			httpUrlConnection.setReadTimeout(TIMEOUT);
 			httpUrlConnection.connect();
 			flag = httpUrlConnection.getResponseCode();
@@ -179,6 +206,65 @@ public class SupplierProductPictureService {
 		dto.setUpdateTime(new Date());
 		return flag;
 	}
+
+
+	/**
+	 *
+	 * @param picUrl
+	 * @param dto
+	 * @param authenticationInformation
+	 * @return
+	 */
+	private int pullFtpPicByBrownAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+		InputStream inputStream = null;
+		FtpURLConnection httpUrlConnection = null;
+		int flag = 0;
+		try {
+			if (authenticationInformation != null) {//需要认证
+				Authenticator.setDefault(new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(authenticationInformation.getUsername(),
+								new String(authenticationInformation.getPassword()).toCharArray());
+					}
+				});
+			}
+			URL url = new URL(picUrl.replaceAll(" +", "%20"));
+			URLConnection openConnection = url.openConnection();
+			httpUrlConnection  =  (FtpURLConnection) openConnection;
+			httpUrlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0");
+			httpUrlConnection.setConnectTimeout(CONNECT_TIMEOUT);
+			httpUrlConnection.setReadTimeout(TIMEOUT);
+			httpUrlConnection.connect();
+
+
+			inputStream = openConnection.getInputStream();
+			byte[] byteArray = IOUtils.toByteArray(inputStream);
+			if (byteArray == null || byteArray.length == 0) {
+				throw new RuntimeException("读取到的图片字节为空,无法获取图片");
+			}
+			String base64 = new BASE64Encoder().encode(byteArray);
+			log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+picUrl+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
+			UploadPicDto uploadPicDto = new UploadPicDto();
+			uploadPicDto.setRequestId(String.valueOf(dto.getSpuPendingPicId()));
+			uploadPicDto.setBase64(base64);
+			uploadPicDto.setExtension(getExtension(picUrl));
+			String fdfsURL = supplierProductPictureManager.uploadPic(uploadPicDto);
+			log.info("id="+dto.getSpuPendingPicId()+"==第四步==>> 调用图片服务上传图片后返回的图片URL为"+fdfsURL+"， 下一步将更改数据库");
+			dto.setSpPicUrl(fdfsURL);
+			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
+			dto.setMemo("图片拉取成功");
+
+		}catch (Throwable e) {
+			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
+			e.printStackTrace();
+			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
+			dto.setMemo("图片拉取失败:"+flag);
+		} finally {
+			closeFtpURL(inputStream, httpUrlConnection);
+		}
+		dto.setUpdateTime(new Date());
+		return flag;
+	}
 	/**
 	 * 从ftp下载图片并上传图片服务器
 	 * @param picUrl 供应商原始链接，格式必须为：ftp://user:password@ip/urlpath
@@ -186,16 +272,24 @@ public class SupplierProductPictureService {
 	 * @param authenticationInformation 必须将ftp的用户名密码配置到配置文件
 	 * @return
 	 */
-	private int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+	public int pullPicFromFtpAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		FTPClient ftpClient = null;
 		InputStream inputStream = null;
 		int flag = 0;
 		try {
-			String url = picUrl.substring(picUrl.indexOf("@")+1);
+			String url = picUrl.substring(picUrl.indexOf("@")+1).trim();
 			String ip = url.substring(0,url.indexOf("/"));
 			String remotePath =  url.substring(url.indexOf("/"),url.lastIndexOf("/")); 
 			String remoteFileName = picUrl.substring(picUrl.lastIndexOf("/")+1);
 			int port = 21;
+			if(ip.indexOf(":")>0){
+				try {
+					port = Integer.valueOf(ip.substring(ip.indexOf(":")+1,ip.length()).trim());
+					ip=ip.substring(0,ip.indexOf(":"));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			}
 			inputStream = FtpUtil.getFtpUtil().downFile(ftpClient,authenticationInformation.getUsername(), authenticationInformation.getPassword(), ip, port, remotePath, remoteFileName);
 			if(null == inputStream){
 				return 404;
@@ -245,6 +339,33 @@ public class SupplierProductPictureService {
 		if (httpUrlConnection != null) {
 			try {
 				httpUrlConnection.disconnect();
+			} catch (Throwable e) {
+				log.error("关闭链接发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭链接发生异常");
+			}
+		}
+	}
+
+
+	/**
+	 * 关闭链接以及资源
+	 * @param inputStream
+	 * @param httpUrlConnection
+	 */
+	private void closeFtpURL(InputStream inputStream, FtpURLConnection httpUrlConnection) {
+		if (inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (Throwable e) {
+				log.error("关闭资源流发生异常", e);
+				e.printStackTrace();
+				throw new RuntimeException("关闭资源流发生异常");
+			}
+		}
+		if (httpUrlConnection != null) {
+			try {
+				httpUrlConnection.close();
 			} catch (Throwable e) {
 				log.error("关闭链接发生异常", e);
 				e.printStackTrace();
@@ -322,7 +443,12 @@ public class SupplierProductPictureService {
 							if (retryCount != null && retryCount > 6) {
 								continue;
 							}
-							streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
+							if("2017031301866 ".equals(dto.getSupplierId())){
+								streamSender.brandPictureProductStream(new RetryPicture(spuPendingPicId) , null);
+							}else{
+								streamSender.supplierPictureProductStream(new RetryPicture(spuPendingPicId) , null);
+							}
+							
 						}
 				}
 			}
@@ -362,10 +488,16 @@ public class SupplierProductPictureService {
 				deleteImage(hubSpuPendingPicDto);
 				String picUrl = hubSpuPendingPicDto.getPicUrl();
 				int code = 0;
-				if(picUrl.startsWith("http")){
+				if(picUrl.toUpperCase().startsWith("HTTP")){
 					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
-				}else if(picUrl.startsWith("ftp")){
-					code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+				}else if(picUrl.toUpperCase().startsWith("FTP")){
+
+					if("2016110101955".equals(hubSpuPendingPicDto.getSupplierId())){
+						code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
+					}else{
+						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
+					}
+
 				}
 				
 				if (code == 404 || code == 400) {
@@ -397,4 +529,6 @@ public class SupplierProductPictureService {
 			supplierProductPictureManager.deleteImageAndSetNull(hubSpuPendingPicDto);
 		}
 	}
+
+
 }

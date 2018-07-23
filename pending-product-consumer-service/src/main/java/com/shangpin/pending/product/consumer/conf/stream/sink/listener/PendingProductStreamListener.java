@@ -24,6 +24,44 @@ public class PendingProductStreamListener {
 	
 	@Autowired
 	private PendingProductStreamListenerAdapter adapter;
+	
+	/**
+	 * 供应商angeloMinetti待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.angeloMinetti)
+	public void angeloMinettiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.angeloMinettiPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.cocoroseLondon)
+	public void cocoroseLondonPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.cocoroseLondonPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.dolciTrame)
+	public void dolciTramePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.dolciTramePendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商julianFashion待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.JULIANFASHION)
+	public void julianFashionPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.julianFashionPendingProductStreamListen(message,headers);
+	}
+	
 	/**
 	 * 供应商coccolebimbi待处理商品数据流通道监听者
 	 * @param message 消息
@@ -123,6 +161,15 @@ public class PendingProductStreamListener {
     public void ostorePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.ostorePendingProductStreamListen(message,headers);
     }
+	/**
+	 * 供应商MENGOTTTSNC待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.MENGOTTISNC)
+	public void mengottiSncPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.mengottiSncPendingProductStreamListen(message,headers);
+	}
 	/**
 	 * 供应商SPINNAKER待处理商品数据流通道监听者
 	 * @param message 消息
@@ -674,4 +721,47 @@ public class PendingProductStreamListener {
     public void monnalisaPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.monnalisaPendingProductStreamListen(message,headers);
     }
+	
+	@StreamListener(PendingProductSink.STAR)
+    public void starPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.starPendingProductStreamListen(message,headers);
+    }
+
+	/**
+	 * 供应商marino待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.MARINO)
+	public void marinoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.marinoPendingProductStreamListen(message,headers);
+	}
+	
+	@StreamListener(PendingProductSink.THESTYLESIDE)
+    public void theStyleSidePendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.theStyleSidePendingProductStreamListen(message,headers);
+    }
+
+
+	@StreamListener(PendingProductSink.REDI)
+	public void rediPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.rediPendingProductStreamListen(message,headers);
+	}
+
+	@StreamListener(PendingProductSink.OBLU)
+	public void obluPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.obluPendingProductStreamListen(message,headers);
+	}
+
+	@StreamListener(PendingProductSink.ZHICAI)
+	public void zhicaiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.zhicaiPendingProductStreamListen(message,headers);
+	}
+
+	@StreamListener(PendingProductSink.YLATI)
+	public void ylatiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.ylatiPendingProductStreamListen(message,headers);
+	}
+
 }

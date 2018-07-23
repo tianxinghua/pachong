@@ -24,4 +24,6 @@ public class ApiAddressProperties {
 
 	private String  gmsAddProductUrl;
 	
+	private String hubProductUrl;
+	
 }

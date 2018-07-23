@@ -6,7 +6,7 @@ package com.shangpin.ep.order.enumeration;
  * @author yanxiaobin
  * @date 2016年11月18日 上午10:01:27
  */
-public enum OrderStatus {
+public enum  OrderStatus {
 	/**
 	 * 未支付
 	 */
