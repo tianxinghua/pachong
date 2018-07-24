@@ -17,6 +17,7 @@ import com.shangpin.ephub.product.business.rest.gms.dto.BrandDom;
 import com.shangpin.ephub.product.business.rest.gms.dto.FourLevelCategory;
 import com.shangpin.ephub.product.business.rest.gms.dto.SupplierDTO;
 import com.shangpin.ephub.product.business.rest.model.result.BrandModelResult;
+import com.shangpin.ephub.product.business.service.model.BrandModelRuleBSService;
 import com.shangpin.ephub.product.business.service.studio.hubslot.HubSlotSpuService;
 import com.shangpin.ephub.product.business.ui.pending.dto.PendingQuryDto;
 import com.shangpin.ephub.product.business.ui.pending.service.impl.PendingProductService;
@@ -61,6 +62,9 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
 
     @Autowired
     HubSlotSpuService hubSlotSpuService;
+
+    @Autowired
+    BrandModelRuleBSService brandModelRuleBSService;
 
 
     @Override
@@ -136,7 +140,7 @@ public class StudioPendingServiceImpl extends PendingProductService implements S
                     return response;
                 }
 
-                BrandModelResult brandModelResult = verifyProductModle(pendingProductDto);
+                BrandModelResult brandModelResult = brandModelRuleBSService.verifyProductModle(pendingProductDto);
                 if(brandModelResult.isPassing()){
 
 
