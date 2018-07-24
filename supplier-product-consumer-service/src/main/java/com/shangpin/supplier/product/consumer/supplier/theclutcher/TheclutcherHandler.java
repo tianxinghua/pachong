@@ -82,12 +82,21 @@ public class TheclutcherHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuColor(studioSpuDto.getColor());
 			hubSpu.setSupplierGender(studioSpuDto.getGender());
 			hubSpu.setSupplierCategoryno(studioSpuDto.getCategory());
+
 			if (studioSpuDto.getName()!=null){
 				hubSpu.setSupplierCategoryname(studioSpuDto.getName()+" "+studioSpuDto.getCategory());
 			}else {
 				hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
 			}
 			//hubSpu.setSupplierCategoryname(studioSpuDto.getCategory());
+			String[] theclutcher={"anorak", "BALLERINAS", "Bermuda", "blouse", "BOOTS", "Campana Papel ", "Cardigan", "Cardigan ", "Coat", "derby shoes", "Detroit shoes", "Dress", "Dungaree ", "Espadrilles", "Flip Flops", "Hoodie", "Jacket", "Jeans", "jersey ", "Jumpsuit", "King", "lace boat shoes", "Leather Jacket", "leather shoes", "Leggings", "Loafers", "Moccasins", "Mules", "Oxford", "Pants", "Polo", "Puff flats", "Pumps", "SANDALS", "Shirt", "Shirts", "Short", "Skirt", "Slides", "Slingback", "SLIP ON", "SLIPPERS", "SNEAKERS", "strap shoes", "Sweater", "Sweatpants", "Sweatshirt", "Swimsuit", "Top", "Trousers", "T-Shirt", "T-SHIRT ", "TURTLENECK", "Waistcoat", "Wedge"
+			};
+            for (int i=0;i<theclutcher.length;i++){
+            	if(studioSpuDto.getName().toUpperCase().contains(theclutcher[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(theclutcher[i]);
+
+				}
+			}
 			hubSpu.setSupplierBrandname(studioSpuDto.getBrand());
 			hubSpu.setSupplierSeasonname(studioSpuDto.getSeason());
 		

@@ -37,6 +37,8 @@ public class SupplierProperties {
 	private Vietti vietti;
 	
 	private Zitafabiani zitafabiani;
+
+	private MAX1980 max1980;
 	
 	private Mengotti mengotti;
 	

@@ -99,6 +99,15 @@ public class AlducadaostaHandler implements ISupplierHandler{
 			hubSpu.setSupplierGender(alducaSpuDto.getCategoryGender());
 			hubSpu.setSupplierCategoryno(alducaSpuDto.getCategoryId());
 			hubSpu.setSupplierCategoryname(alducaSpuDto.getCategoryName());
+
+			String[] parm={"Coats","Dresses","jackets","Knitwear","Pants","Polo shirts","Shirts","Shorts","Skirts","Suits","Sweatshirts","Tops","Trousers","T-Shirt","Vest jackets"};
+            for(int i =0;i<parm.length;i++){
+            	if(alducaSpuDto.getSpuName().toUpperCase().contains(parm[i].toUpperCase())){
+					hubSpu.setSupplierCategoryname(parm[i]);
+					System.out.println("--------------i"+parm[i]);
+				}
+			}
+
 			hubSpu.setSupplierBrandname(alducaSpuDto.getBrandName());
 			hubSpu.setSupplierSeasonname(alducaSpuDto.getSeasonName());
 			hubSpu.setSupplierMaterial(alducaSpuDto.getMaterial());

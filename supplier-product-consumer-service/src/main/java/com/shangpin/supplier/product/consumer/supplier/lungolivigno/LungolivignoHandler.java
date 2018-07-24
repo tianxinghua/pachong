@@ -77,13 +77,24 @@ public class LungolivignoHandler implements ISupplierHandler {
 	
 	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,Result result){
 		if(null != result){
+			String[] parm={"ABITO","Camicia","Coat","Felpa","FELPA ","GIACCA","Giubbino","Gonna","Jacket","Jeans","MAGLIA","PANT","Pantalone","PARKA","PIUMINO","POLO","PONCHO","Pull","SHIRT","TOP","Trench","T-Shirt","VESTITO"};
 			hubSpu.setSupplierId(supplierId);
 			hubSpu.setSupplierSpuNo(result.getSku());
 			hubSpu.setSupplierSpuModel(result.getAttributes().get(5).getCode());
+			hubSpu.setSupplierCategoryname(result.getAttributes().get(8).getValue().trim());
 			hubSpu.setSupplierSpuName(result.getName());
+
+           if (supplierId.equals("2016110101955")) {
+			   for (int i = 0; i < parm.length; i++) {
+			   	if (result.getName()!=null){
+				   if (result.getName().toUpperCase().contains(parm[i].toUpperCase())) {
+					   System.out.println("---------------i===" + i + " " + parm[i]);
+					   hubSpu.setSupplierCategoryname(parm[i]);
+				   }
+			   }}
+		   }
 			hubSpu.setSupplierSpuColor(result.getAttributes().get(9).getValue().trim());
 			hubSpu.setSupplierGender(result.getAttributes().get(2).getValue());
-			hubSpu.setSupplierCategoryname(result.getAttributes().get(8).getValue().trim());
 			hubSpu.setSupplierBrandname(result.getAttributes().get(1).getValue());
 			hubSpu.setSupplierSeasonname(result.getAttributes().get(3).getValue()+result.getAttributes().get(4).getValue());
 			String material = result.getAttributes().get(10).getValue().trim();

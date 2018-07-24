@@ -168,6 +168,8 @@ public interface PendingProductSink {
 	
 	public static final String ZHICAI = "zhicaiPendingProduct";
 	public static final String YLATI = "ylatiPendingProduct";
+
+	public static final String MAX1980 = "max1980PendingProduct";
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件
@@ -665,4 +667,7 @@ public interface PendingProductSink {
 
 	@Input(value = PendingProductSink.YLATI)
 	public SubscribableChannel ylatiPendingProduct();
+
+	@Input(value = PendingProductSink.MAX1980)
+	public SubscribableChannel max1980PendingProduct();
 }

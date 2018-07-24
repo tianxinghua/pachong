@@ -768,7 +768,10 @@ public class PendingProductStreamListenerAdapter {
 
 	}
 
+	public void max1980PendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
 
+	}
 
 
 

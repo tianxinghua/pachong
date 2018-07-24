@@ -81,16 +81,18 @@ public class PendingCateGroyImportService {
 	DicRefreshGateWay dicRefreshGateWay;
 
 	private static String[] pendingCateGroyTemplate = null;
+
 	static {
 		pendingCateGroyTemplate = TaskImportTemplate2.getCategoryValueTemplate();
 	}
+
 	public String handMessage(Task task) throws Exception {
 
 		//从ftp下载文件
 		JSONObject json = JSONObject.parseObject(task.getData());
 		String filePath = json.get("taskFtpFilePath").toString();
 		String createUser = json.get("createUser").toString();
-		System.out.println("createUser-----"+createUser);
+		System.out.println("createUser-----" + createUser);
 		task.setData(filePath);
 
 		InputStream in = taskService.downFileFromFtp(task);
@@ -105,8 +107,9 @@ public class PendingCateGroyImportService {
 		}
 
 		//校验数据并把校验结果写入excel
-		return checkAndsaveHubPendingProduct(task.getTaskNo(), hubPendingCateGroyImportDTO,createUser);
+		return checkAndsaveHubPendingProduct(task.getTaskNo(), hubPendingCateGroyImportDTO, createUser);
 	}
+
 	private List<HubPendingCateGroyImportDTO> handlePendingCateGroyXlsx(InputStream in, Task task, String type)
 			throws Exception {
 
@@ -127,9 +130,8 @@ public class PendingCateGroyImportService {
 	}
 
 
-
 	//开始校验数据
-	public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingCateGroyImportDTO> hubPendingCateGroyImportDTOS,String createUser)
+	public String checkAndsaveHubPendingProduct(String taskNo, List<HubPendingCateGroyImportDTO> hubPendingCateGroyImportDTOS, String createUser)
 			throws Exception {
 
 		if (hubPendingCateGroyImportDTOS == null) {
@@ -151,102 +153,65 @@ public class PendingCateGroyImportService {
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
 		return taskService.convertExcelCategory(listMap, taskNo);
 	}
-	private Map<String, String>  filterCateGroy(HubPendingCateGroyImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
-		HubSupplierCategroyDicDto categroyDicDto2 = hubSupplierCategroyDicGateWay.selectByPrimaryKey(Long.parseLong(productImport.getSupplierCategoryDicId()));
-		    if (productImport.getSupplierCategoryDicId()!=null){
 
-			HubSupplierCategroyDicDto categroyDicDto = new HubSupplierCategroyDicDto();
-			categroyDicDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
-			//map.put("supplierCategoryDicId",productImport.getSupplierCategoryDicId());
-			if (productImport.getSupplierCategory()!=null){
-				categroyDicDto.setSupplierCategory(productImport.getSupplierCategory());
-				map.put("supplierCategory",productImport.getSupplierCategory());
-			}if (productImport.getSupplierGender()!=null){
-				categroyDicDto.setSupplierGender(productImport.getSupplierGender());
-			}/*if (productImport.getCategoryType()!=null){
-				categroyDicDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
-			}*/if (productImport.getHubCategoryNo()!=null){
-				categroyDicDto.setHubCategoryNo(productImport.getHubCategoryNo());
+	private Map<String, String> filterCateGroy(HubPendingCateGroyImportDTO productImport, String createUser, Map<String, String> map) throws ParseException {
+
+
+		HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto = new HubSupplierCategoryDicRequestDto();
+		//BeanUtils.copyProperties(categroyDicDto,hubSupplierCategoryDicRequestDto);
+		if (productImport.getSupplierCategoryDicId() != null) {
+			hubSupplierCategoryDicRequestDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
+			map.put("supplierCategoryDicId", productImport.getSupplierCategoryDicId());
+		}
+		if (productImport.getSupplierId() != null) {
+			hubSupplierCategoryDicRequestDto.setSupplierId(productImport.getSupplierId());
+		}
+		if (productImport.getSupplierCategory() != null) {
+			hubSupplierCategoryDicRequestDto.setSupplierCategory(productImport.getSupplierCategory());
+			map.put("supplierCategory", productImport.getSupplierCategory());
+		}
+		if (productImport.getSupplierGender() != null) {
+			hubSupplierCategoryDicRequestDto.setSupplierGender(productImport.getSupplierGender());
+		}
+
+		hubSupplierCategoryDicRequestDto.setUpdateUser(createUser);
+
+			if (productImport.getHubCategoryNo() != null) {
+				//categroyDicDto.setHubCategoryNo(productImport.getHubCategoryNo());
+				hubSupplierCategoryDicRequestDto.setHubCategoryNo(productImport.getHubCategoryNo());
 				byte[] bytes = productImport.getHubCategoryNo().getBytes();
-				if (bytes.length==12){
-					categroyDicDto.setCategoryType((byte)4);
-					categroyDicDto.setMappingState((byte)1);
-				}else  if (bytes.length==9){
-					categroyDicDto.setCategoryType((byte)3);
-					categroyDicDto.setMappingState((byte)2);
-				}else  if (bytes.length==6){
-					categroyDicDto.setCategoryType((byte)2);
-					categroyDicDto.setMappingState((byte)2);
-				}else {
-					categroyDicDto.setCategoryType((byte)1);
-					categroyDicDto.setMappingState((byte)2); }
-				map.put("hubCategoryNo",productImport.getHubCategoryNo());
-			}
+				if (bytes.length == 12) {
+					hubSupplierCategoryDicRequestDto.setCategoryType((byte) 4);
+					//categroyDicDto.setMappingState((byte)1);
+				} else if (bytes.length == 9) {
+					hubSupplierCategoryDicRequestDto.setCategoryType((byte) 3);
+					//categroyDicDto.setMappingState((byte)2);
+				} else if (bytes.length == 6) {
+					hubSupplierCategoryDicRequestDto.setCategoryType((byte) 2);
+					//	categroyDicDto.setMappingState((byte)2);
+				} else {
+					hubSupplierCategoryDicRequestDto.setCategoryType((byte) 1);
 
-			categroyDicDto.setUpdateTime(new Date());
-			if (createUser!=null){
-				categroyDicDto.setUpdateUser(createUser);
-			}
-			int i = hubSupplierCategroyDicGateWay.updateByPrimaryKey(categroyDicDto);
-			if (i==1){
-				map.put("task","校验成功");
-			}else {
-				map.put("task","校验失败");
-			}
-			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto =new HubSupplierCategoryDicRequestDto();
-			if (productImport.getSupplierId()!=null){
-				hubSupplierCategoryDicRequestDto.setSupplierId(productImport.getSupplierId());
-			}if (productImport.getSupplierCategoryDicId()!=null){
-				hubSupplierCategoryDicRequestDto.setSupplierCategoryDicId(Long.parseLong(productImport.getSupplierCategoryDicId()));
-				}if (productImport.getHubCategoryNo()!=null){
-					hubSupplierCategoryDicRequestDto.setHubCategoryNo(productImport.getSupplierCategoryDicId());
+					//	categroyDicDto.setMappingState((byte)2); }
 				}
-				dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
 
+				map.put("hubCategoryNo", productImport.getHubCategoryNo());
+
+				map.put("task", "校验成功");
 		/*if (productImport.getHubCategoryNo()!=null ){
 				if (!categroyDicDto2.getHubCategoryNo().equals(productImport.getHubCategoryNo()) || categroyDicDto2.getHubCategoryNo()==null){
 					dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
 				}
 			}*/
-			return map ;
 
-		}else {
-			//添加
-			HubSupplierCategroyDicDto categroyDicDto =new  HubSupplierCategroyDicDto();
-			if (productImport.getSupplierCategory()!=null){
-				categroyDicDto.setSupplierCategory(productImport.getSupplierCategory());
-				map.put("supplierCategory",productImport.getSupplierCategory());
-			}if (productImport.getSupplierGender()!=null){
-				categroyDicDto.setSupplierGender(productImport.getSupplierGender());
-			}if (productImport.getCategoryType()!=null){
-				categroyDicDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
-			}if (productImport.getHubCategoryNo()!=null){
-				categroyDicDto.setHubCategoryNo(productImport.getHubCategoryNo());
-				map.put("hubCategoryNo",productImport.getHubCategoryNo());
-			}if (productImport.getMappingState()!=null){
-				categroyDicDto.setMappingState(Byte.parseByte(productImport.getMappingState()));
-			}
-			categroyDicDto.setCreateTime(new Date());
-			hubSupplierCategroyDicGateWay.insert(categroyDicDto);
-			map.put("task","成功");
-			HubSupplierCategoryDicRequestDto hubSupplierCategoryDicRequestDto = new HubSupplierCategoryDicRequestDto();
-			if (productImport.getSupplierCategory()!=null){
-				hubSupplierCategoryDicRequestDto.setSupplierCategory(productImport.getSupplierCategory());
-			}if (productImport.getSupplierId()!=null){
-				hubSupplierCategoryDicRequestDto.setSupplierId(productImport.getSupplierId());
-			}
-			if (productImport.getHubCategoryNo()!=null){
-				hubSupplierCategoryDicRequestDto.setHubCategoryNo(productImport.getHubCategoryNo());
-			}if (productImport.getCategoryType()!=null){
-				hubSupplierCategoryDicRequestDto.setCategoryType(Byte.parseByte(productImport.getCategoryType()));
-			}
-			dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
 
-			return map;
+			}
 
-		}
+		dicRefreshGateWay.categoryRefresh(hubSupplierCategoryDicRequestDto);
+		return map;
 	}
-	
+
+
 
 	
 	private void add(List<String> reasons, String e){
@@ -357,6 +322,7 @@ public class PendingCateGroyImportService {
 						xssfRow.getCell(i).setCellType(Cell.CELL_TYPE_STRING);
 						String setMethodName = "set" + pendingCateGroyTemplate[i].toUpperCase().charAt(0)
 								+ pendingCateGroyTemplate[i].substring(1);
+						if (setMethodName.equals("setSupplierNo")) continue;
 						Method setMethod = c.getDeclaredMethod(setMethodName, String.class);
 						setMethod.invoke(item, xssfRow.getCell(i).toString());
 					}

@@ -71,7 +71,7 @@ spring:
                         spinnakerPendingProduct: 
                               destination: spinnaker.pending.product
                               content-type: application/json
-                        ostoreOriginalProduct: 
+                        ostoreOriginalProduct:
                               destination: ostore.original.product
                               group: one
                               consumer: 
@@ -751,6 +751,15 @@ spring:
                                        maxAttempts: 1
                         ylatiPendingProduct:
                               destination: ylati.pending.product
+                              content-type: application/json
+                        max1980OriginalProduct:
+                              destination: max1980.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        max1980PendingProduct:
+                              destination: max1980.pending.product
                               content-type: application/json
               rabbit:
                         bindings: 
@@ -1492,6 +1501,17 @@ spring:
                               ylatiPendingProduct:
                                     producer:
                                          prefix: HA.
+                              max1980OriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              max1980PendingProduct:
+                                    producer:
+                                         prefix: HA.
+
+
 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss

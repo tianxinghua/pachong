@@ -10,11 +10,11 @@ public class TaskImportTemplate2 {
         return headers;
     }
     public static String[] getCategoryTemplate() {
-        String[] headers = {"供应商品类Id", "供应商品类","供应商性别","匹配完成度","mapping-state","品类编码","创建时间","更新时间","更新人","供应商编号","供应商名称","genderDicId"};
+        String[] headers = {"供应商品类Id", "供应商品类","供应商性别","匹配完成度","mapping-state","品类编码","创建时间","更新时间","更新人","供应商ID","供应商编号","供应商名称","genderDicId"};
         return headers;
     }
     public static String[] getCategoryValueTemplate() {
-        String[] headers = { "supplierCategoryDicId","supplierCategory","supplierGender","categoryType","mappingState","hubCategoryNo","createTime","updateTime","updateUser","supplierId","supplierName","genderDicId"};
+        String[] headers = { "supplierCategoryDicId","supplierCategory","supplierGender","categoryType","mappingState","hubCategoryNo","createTime","updateTime","updateUser","supplierId","supplierNo","supplierName","genderDicId"};
         return headers;
     }
     public static String[] getMaterialTemplate() {

@@ -239,7 +239,7 @@ shangpin:
               user: shangpin
               password: Shang1807
               openApiKey: 
-              openApiSecret: 
+              openApiSecret:
       inviqaConf: 
               magentoApiKey: drmuhfgxtg9uyfc0gd0zr9r9litnl1p6
               magentoApiSecret: vqtk7uipwa67a9wde31k5db4k1qbeela
@@ -288,7 +288,17 @@ shangpin:
               user: shangpin
               password: shang0807
               openApiKey: 
-              openApiSecret: 
+              openApiSecret:
+      max1980:
+              url:  http://212.210.129.6/ws_sito_p15/ws_sito_p15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: SHANGPIN
+              password: Shang1704
+              openApiKey:
+              openApiSecret:
       paolo: 
               url: http://89.21.204.79:8523/ws_sito_shang/ws_sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace

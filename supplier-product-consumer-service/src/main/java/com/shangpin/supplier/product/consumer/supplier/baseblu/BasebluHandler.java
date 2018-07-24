@@ -122,6 +122,13 @@ public class BasebluHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());
 			hubSpu.setSupplierCategoryname(item.getCategory());
+			String[] parm={"BERMUDA SHORTS","Coats","DOWN JACKETS","Dresses","jackets","Jeans","Knitwear","LEATHER JACKETS","Leggings","LONG DRESSES","Pants","Polo shirts","Shirts","Skirts","Suits","Sweatshirts","SWIMWEAR","Top","TRENCH COATS","T-SHIRTS","UNDERWEAR"};
+            for(int i=0;i<parm.length;i++){
+            if (standard(item.getShort_description()).toUpperCase().contains(parm[i].toUpperCase())){
+				hubSpu.setSupplierCategoryname(parm[i]);
+			}
+			}
+
 			hubSpu.setSupplierBrandname(item.getBrand());
 			hubSpu.setSupplierSeasonname(item.getSeason());
 			hubSpu.setSupplierMaterial(item.getMaterial());

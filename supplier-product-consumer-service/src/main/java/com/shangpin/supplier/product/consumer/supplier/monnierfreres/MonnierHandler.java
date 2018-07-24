@@ -167,10 +167,22 @@ public class MonnierHandler implements ISupplierHandler {
 				spuModel = supplierSpuNo;
 			}
 			hubSpu.setSupplierSpuModel(spuModel);
+			hubSpu.setSupplierCategoryname(item.getType());
 			hubSpu.setSupplierSpuName(item.getName());
+			String[] parm={"BALLERINAS","boot","BOTTINE","cross","Espadrilles","Loafer","mocassins","MULE","Pumps","SANDALS","Slides","SNEAKERS","toe","Trainers"};
+			for (int i=0;i<parm.length;i++){
+            if (item.getName().toUpperCase().contains(parm[i].toUpperCase())){
+				System.out.println("---------------i===" + i + " " + parm[i]);
+				hubSpu.setSupplierCategoryname(parm[i]);
+			}
+			}
+
+
+
+
+
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getGender());
-			hubSpu.setSupplierCategoryname(item.getType());
 			hubSpu.setSupplierBrandname(item.getBrand());
 
 			if(StringUtils.isNotBlank(item.getFashioncollection())){

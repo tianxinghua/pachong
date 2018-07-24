@@ -764,4 +764,9 @@ public class PendingProductStreamListener {
 		adapter.ylatiPendingProductStreamListen(message,headers);
 	}
 
+	@StreamListener(PendingProductSink.MAX1980)
+	public void max1980PendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.max1980PendingProductStreamListen(message,headers);
+	}
+
 }

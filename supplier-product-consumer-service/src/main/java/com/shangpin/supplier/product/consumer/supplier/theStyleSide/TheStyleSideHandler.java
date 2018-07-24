@@ -138,6 +138,16 @@ public class TheStyleSideHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getSesso());
 			hubSpu.setSupplierCategoryname(ob.getCategory());
+
+			String[] parm={"GIUBBOTTI","Jeans","Maglieria","Polo","Topwear","T-SHIRTS"};
+            for (int i=0;i<parm.length;i++){
+
+            	if (ob.getProductCode().toUpperCase().contains(parm[i].toUpperCase())){
+					System.out.println("---------------i===" + i + " " + parm[i]);
+					hubSpu.setSupplierCategoryname(parm[i]);
+				}
+			}
+
 			hubSpu.setSupplierBrandname(ob.getBrand());
 			hubSpu.setSupplierSeasonname(ob.getSeason());
 			hubSpu.setSupplierMaterial(ob.getMaterial());
@@ -152,7 +162,7 @@ public class TheStyleSideHandler implements ISupplierHandler{
 	 * 将stefania原始数据转换成hub sku
 	 * @param supplierId
 	 * @param supplierSpuId
-	 * @param stefItem
+	 * @param
 	 * @param hubSku
 	 * @return
 	 */

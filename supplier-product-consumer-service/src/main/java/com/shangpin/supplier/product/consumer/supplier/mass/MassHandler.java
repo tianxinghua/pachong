@@ -117,6 +117,16 @@ public class MassHandler implements ISupplierHandler {
 			hubSpu.setSupplierSpuColor(item.getColor());
 			hubSpu.setSupplierGender(item.getCategoryGender());
 			hubSpu.setSupplierCategoryname(item.getCategoryName());
+
+			String[] mass={"backpack","Ballet Flats","Bermudas","Blanket","Briefcases","Cap","Dress","Flip Flops","HATS","Jacket","Jeans","Knitwear","Leisure","Outerwear","Polo","Polo Shirt","RAINCOAT","Rompers","SANDALS","SCARVES","Shirts","Shoulder Bag","Skirts","slip-on","SNEAKERS","Suit","Sweater","Topwear","Totes","Trousers","T-SHIRTS"};
+			for(int i=0;i<mass.length;i++){
+			if (item.getProductName().toUpperCase().contains(mass[i].toUpperCase())){
+				hubSpu.setSupplierCategoryname(mass[i]);
+
+			}
+			}
+
+
 			hubSpu.setSupplierBrandname(item.getBrandName());
 			hubSpu.setSupplierSeasonname(item.getSeasonName());
 			hubSpu.setSupplierMaterial(item.getMaterial());
