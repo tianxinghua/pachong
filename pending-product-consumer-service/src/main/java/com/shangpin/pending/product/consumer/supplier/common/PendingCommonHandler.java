@@ -467,7 +467,7 @@ public class PendingCommonHandler {
 				.hgetAll(ConstantProperty.REDIS_EPHUB_KID_BRAND_MAPPING_MAP_KEY);
 		if (kidBrandStaticMap == null || kidBrandStaticMap.size() < 1) {
 			kidBrandStaticMap = new HashMap<>();
-			List<HubSupplierValueMappingDto> supplierValueMappList = dataServiceHandler.getHubSupplierValueMappingByType(6);
+			List<HubSupplierValueMappingDto> supplierValueMappList = dataServiceHandler.getHubSupplierValueMappingByType(8);
 			for (HubSupplierValueMappingDto supplierValueMapp : supplierValueMappList) {
 				kidBrandStaticMap.put(supplierValueMapp.getSupplierVal(),supplierValueMapp.getHubVal());
 			}
