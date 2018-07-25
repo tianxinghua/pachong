@@ -34,8 +34,10 @@ public class SpuPendingVO extends  SpuPendingCommonVO implements Serializable {
     //hub的品类
     @JsonProperty("hubCategory")
     private String hub_Category;
+    
     @JsonProperty("hubColor")
     private String hub_Color;
+    
     @JsonProperty("hubMaterial")
     private String hub_Material;
 
