@@ -16,6 +16,8 @@ public interface PictureProductSink {
 	
 	public String BRAND_PICTURE = "brandPictureProduct";
 	
+	public String stefaniamode_picture = "stefaniamodePictureProduct";
+	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
 	 */
@@ -27,4 +29,10 @@ public interface PictureProductSink {
 	 */
 	@Input(value = PictureProductSink.BRAND_PICTURE)
     public SubscribableChannel brandPictureProduct();
+	
+	/**
+	 * @return 供应商商品通用图片数据流通道组件
+	 */
+	@Input(value = PictureProductSink.stefaniamode_picture)
+    public SubscribableChannel stefaniamodePictureProduct();
 }

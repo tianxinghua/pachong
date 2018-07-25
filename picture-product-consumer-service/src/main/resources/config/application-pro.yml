@@ -49,6 +49,12 @@ spring:
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
+                        stefaniamodePictureProduct: 
+                              destination: stefaniamode.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
+                                       maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -78,6 +84,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            stefaniamodePictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false   
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
@@ -107,3 +119,4 @@ shangpin:
                   2016110101955:
                       username: Shangpin
                       password: Shangpin17!
+       brandSupplierIds: 2017031301866,2018062801885

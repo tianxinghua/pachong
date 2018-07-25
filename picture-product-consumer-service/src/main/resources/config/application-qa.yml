@@ -12,7 +12,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: localhost
+          host: 192.168.20.174
           port: 8500
           discovery: 
             prefer-agent-address: true
@@ -53,6 +53,12 @@ spring:
                               consumer: 
                                        concurrency: 3
                                        maxAttempts: 1
+                        stefaniamodePictureProduct: 
+                              destination: stefaniamode.product.picture
+                              group: one
+                              consumer: 
+                                       concurrency: 1
+                                       maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -85,6 +91,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false 
+                            stefaniamodePictureProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false           
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       

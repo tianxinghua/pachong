@@ -31,18 +31,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SpuPendingAuditService {
 
-
-
-
+	
+	
+	
     @Autowired
     HubSpuPendingGateWay spuPendingGateWay;
 
     @Autowired
     HubSkuPendingGateWay skuPendingGateWay;
 
-
-
-
+    
+    
+    
     @Autowired
     PengdingToHubGateWay pengdingToHubGateWay;
 
