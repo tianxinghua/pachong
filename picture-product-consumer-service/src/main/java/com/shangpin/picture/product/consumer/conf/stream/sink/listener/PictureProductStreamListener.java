@@ -44,6 +44,8 @@ public class PictureProductStreamListener {
 		try {
 			if(brandSupplier.getBrandSupplierIds().contains(message.getSupplierId())){
 				Thread.sleep(1000*10);	
+			}else{
+				Thread.sleep(1000*1);
 			}
 			pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
 		} catch (InterruptedException e) {
