@@ -92,11 +92,11 @@ public class AirshopImportService {
 		}
 
 		// 3、公共类校验hub数据并把校验结果写入excel
-		return checkAndHandlePendingProduct(task.getTaskNo(), listHubProduct,createUser);
+		return checkAndHandlePendingProduct(task.getTaskNo(), listHubProduct,createUser,task.getType());
 	}
 
 	// 校验数据以及保存到hub表
-	private String checkAndHandlePendingProduct(String taskNo, List<HubPendingProductImportDTO> listHubProduct,String createUser)
+	private String checkAndHandlePendingProduct(String taskNo, List<HubPendingProductImportDTO> listHubProduct,String createUser,int importType)
 			throws Exception {
 
 		if (listHubProduct == null) {
@@ -112,7 +112,7 @@ public class AirshopImportService {
 			}
 			map = new HashMap<String, String>();
 			
-			checkProduct(taskNo, product, map,spuMap,createUser);
+			checkProduct(taskNo, product, map,spuMap,createUser,importType);
 			listMap.add(map);
 		}
 		
@@ -139,7 +139,7 @@ public class AirshopImportService {
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
 		return taskService.convertExcel(listMap, taskNo);
 	}
-	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap,String createUser) throws Exception{
+	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap,String createUser,int importType) throws Exception{
 
 		map.put("taskNo", taskNo);
 		map.put("spuModel", pendingSkuImportDto.getSpuModel());
@@ -160,7 +160,7 @@ public class AirshopImportService {
 			spuMap.put(isPendingSpuExist.getSpuPendingId(),null);
 		}
 		
-		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true);
+		taskService.checkPendingSpu(isPendingSpuExist, hubPendingSkuCheckResult, hubPendingSpuDto, map,true,importType);
 		// 校验sku信息
 		HubSkuPendingDto HubPendingSkuDto = convertHubPendingProduct2PendingSku(pendingSkuImportDto);
 		taskService.checkPendingSku(hubPendingSkuCheckResult, HubPendingSkuDto, map,false);

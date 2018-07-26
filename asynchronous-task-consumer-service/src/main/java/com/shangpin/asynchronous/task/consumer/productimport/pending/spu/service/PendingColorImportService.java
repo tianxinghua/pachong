@@ -279,39 +279,7 @@ public class PendingColorImportService {
 		}
 	}
 	
-	private void loopHandleSpuImportDto(Map<String, String> map, HubPendingSpuImportDTO productImport,String createUser) throws Exception{
 
-		//excel数据转换为数据库对象
-		HubSpuPendingDto conversionSpuPendingDto = convertHubPendingProduct2PendingSpu(productImport,createUser);
-		//判断spuPending是否已存在
-		List<HubSpuPendingDto> listSpu = dataHandleService.selectPendingSpu(conversionSpuPendingDto);
-		HubSpuPendingDto isSpuPendingExist = null;
-		if (listSpu != null && listSpu.size() > 0) {
-			isSpuPendingExist = listSpu.get(0);
-			//存在 看是否是需要重新处理SPU图片的 ，重新处理
-			if("1".equals(productImport.getPicRetry())){
-				if(null!=isSpuPendingExist.getSupplierSpuId()) {
-					try {
-						List<String> spAvailablePicList = dataHandleService.getSpAvailablePicList(isSpuPendingExist.getSupplierSpuId());
-						if(null!=spAvailablePicList&&spAvailablePicList.size()>0){
-
-							pendingHandleGateWay.retryPictures(spAvailablePicList);
-						}
-					} catch (Exception e) {
-						log.error("spu pending id:" + isSpuPendingExist.getSpuPendingId() +" 图片处理失败. Reason : "+e.getMessage() );
-					}
-				}
-			}
-		}
-
-		HubPendingSkuCheckResult checkSkuResult = selectAndcheckSku(productImport,isSpuPendingExist, map);
-		taskService.checkPendingSpu(isSpuPendingExist, checkSkuResult, conversionSpuPendingDto, map, checkSkuResult.isPassing());
-//		boolean isPassing = Boolean.parseBoolean(map.get("isPassing"));
-//		if (isPassing) {
-//			taskService.sendToHub(hubPendingSpuDto, map);
-//		}
-				
-	}
 
 
 	private List<HubColorImportDTO> handlePendingColorXls(InputStream in, Task task, String type)
