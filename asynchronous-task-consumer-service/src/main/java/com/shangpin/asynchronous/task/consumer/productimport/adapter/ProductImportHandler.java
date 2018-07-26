@@ -34,13 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductImportHandler {
 	
 	@Autowired
-	PendingSkuImportService PendingSkuImportService;
+	PendingSkuImportService pendingSkuImportService;
 	@Autowired
 	PendingSpuImportService pendingSpuImportService;
 	@Autowired
-	PendingColorImportService PendingColorImportService;
-	@Autowired
-	PendingColorImportService PendingColorImportService;
+	PendingColorImportService pendingColorImportService;
 	@Autowired
 	SlotSpuImportService slotSpuImportService;
 	@Autowired 
@@ -75,7 +73,7 @@ public class ProductImportHandler {
 			
 			String resultFile = null;
 			if(TaskType.PENDING_SKU.getIndex().equals(message.getType())){
-				resultFile = PendingSkuImportService.handMessage(message);
+				resultFile = pendingSkuImportService.handMessage(message);
 			}else if(TaskType.PENDING_SPU.getIndex().equals(message.getType())){
 				resultFile = pendingSpuImportService.handMessage(message);
 			}else if(TaskType.IMPORT_WEBSPIDER_SPU.getIndex().equals(message.getType())){
@@ -85,7 +83,7 @@ public class ProductImportHandler {
 			}else if("18".equals(message.getType())){
 				resultFile = airshopImportService.handMessage(message);
 			}else if(TaskType.IMPORT_COLOR.getIndex().equals(message.getType())){
-				resultFile = PendingColorImportService.handMessage(message);
+				resultFile = pendingColorImportService.handMessage(message);
 			}else if(TaskType.IMPORT_ORIGIN.getIndex().equals(message.getType())){
 				resultFile = pendingMadeImportService.handMessage(message);
 			}else if(TaskType.IMPORT_CATEGORY.getIndex().equals(message.getType())){

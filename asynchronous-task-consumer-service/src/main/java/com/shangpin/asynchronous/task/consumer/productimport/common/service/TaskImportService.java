@@ -662,16 +662,16 @@ public class TaskImportService {
             spuModel = hubPendingSpuCheckResult.getModel();
             // 查询货号是否已存在hubSpu中
             spuPendingVO.setSpuModel(spuModel);
-            HubSpuDto list = dataHandleService.selectHubSpu(spuPendingVO.getSpuModel(),spuPendingVO.getHubBrandNo());
-            if (list != null) {
+            HubSpuDto hubSpu = dataHandleService.selectHubSpu(spuPendingVO.getSpuModel(),spuPendingVO.getHubBrandNo());
+            if (hubSpu != null) {
                 //颜色需要保留供货商的颜色 如果没有匹配上 取hubspu中的颜色
                 String suplierColor = spuPendingVO.getHubColor();
-                convertHubSpuToPendingSpu(spuPendingVO, list,hubPendingSpuCheckResult);
+                convertHubSpuToPendingSpu(spuPendingVO, hubSpu,hubPendingSpuCheckResult);
 
-                hubSpuId = list.getSpuId();
-                hubSpuNo = list.getSpuNo();
+                hubSpuId = hubSpu.getSpuId();
+                hubSpuNo = hubSpu.getSpuNo();
                 spuIsPassing = true;
-                if(suplierColor!=null&&suplierColor.equals(list.getHubColor())){
+                if(suplierColor!=null&&suplierColor.equals(hubSpu.getHubColor())){
                     hubIsExist = true;
                     checkResult = spuModel+"在hub已存在，并且颜色一致";
                 }else{
@@ -682,7 +682,7 @@ public class TaskImportService {
                     } else {
 
                         hubIsExist = false;
-                        checkResult = spuModel + "hub已存在,但颜色不一样,hub颜色：" + list.getHubColor() + ",待处理颜色：" + suplierColor;
+                        checkResult = spuModel + "hub已存在,但颜色不一样,hub颜色：" + hubSpu.getHubColor() + ",待处理颜色：" + suplierColor;
                     }
                 }
                 hubPendingSpuCheckResult.setPassing(true);
