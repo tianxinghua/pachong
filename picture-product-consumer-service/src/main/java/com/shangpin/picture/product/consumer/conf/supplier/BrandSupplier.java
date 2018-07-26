@@ -1,11 +1,10 @@
 package com.shangpin.picture.product.consumer.conf.supplier;
 
-import java.util.Map;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * <p>Title:CertificateConf.java </p>
@@ -17,9 +16,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = BrandSupplier.PREFIX)
+@Component
 public class BrandSupplier {
 
-	public static final String PREFIX = "shangpin.certificate";
+	public static final String PREFIX = "shangpin";
 	
-	private Map<String, Map<String, String>> usernameAndPassword;
+	private String brandSupplierIds;
 }

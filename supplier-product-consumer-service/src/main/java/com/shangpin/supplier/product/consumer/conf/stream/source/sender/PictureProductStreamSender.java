@@ -41,4 +41,14 @@ public class PictureProductStreamSender {
     public boolean brandPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
     	return pictureProductSource.brandPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
     }
+    
+    /**
+   	 * 发送stefaniamode图片流数据
+   	 * @param headers 
+   	 * @param supplierProduct 消息体
+   	 * @return 如果发送成功返回true,否则返回false
+   	 */
+       public boolean stefaniamodePictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
+       	return pictureProductSource.stefaniamodePictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
+       }
 }

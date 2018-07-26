@@ -15,6 +15,7 @@ public interface PictureProductSource {
 	public String SUPPLIER_PICTURE = "supplierPictureProduct";
 	
 	public String BRAND_PICTURE = "brandPictureProduct";
+	public String stefaniamode_picture = "stefaniamodePictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
@@ -27,4 +28,10 @@ public interface PictureProductSource {
 	 */
 	@Output(value = PictureProductSource.BRAND_PICTURE)
     public MessageChannel brandPictureProduct();
+	
+	/**
+	 * @return stefaniamode通用图片数据流通道组件
+	 */
+	@Output(value = PictureProductSource.stefaniamode_picture)
+    public MessageChannel stefaniamodePictureProduct();
 }

@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.picture.product.consumer.conf.stream.sink.adapter.PictureProductStreamListenerAdapter;
 import com.shangpin.picture.product.consumer.conf.stream.sink.channel.PictureProductSink;
+import com.shangpin.picture.product.consumer.conf.supplier.BrandSupplier;
 
 /**
  * <p>Title:PictureProductStreamSender.java </p>
@@ -23,17 +24,29 @@ import com.shangpin.picture.product.consumer.conf.stream.sink.channel.PicturePro
 public class PictureProductStreamListener {
 	
 	@Autowired
+	BrandSupplier brandSupplier;
+	@Autowired
 	private PictureProductStreamListenerAdapter pictureProductStreamListenerAdapter;
+	
+
 	
 	@StreamListener(PictureProductSink.SUPPLIER_PICTURE)
     public void supplierPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+    }
+	@StreamListener(PictureProductSink.stefaniamode_picture)
+    public void stefaniamodePictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
     }
 	
 	@StreamListener(PictureProductSink.BRAND_PICTURE)
     public void brandPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		try {
-			Thread.sleep(1000*10);
+			if(brandSupplier.getBrandSupplierIds().contains(message.getSupplierId())){
+				Thread.sleep(1000*10);	
+			}else{
+				Thread.sleep(1000*1);
+			}
 			pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

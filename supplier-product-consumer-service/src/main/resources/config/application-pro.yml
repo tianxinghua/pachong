@@ -12,6 +12,9 @@ spring:
   cloud: 
         stream: 
               bindings: 
+                        stefaniamodePictureProduct: 
+                              destination: stefaniamode.product.picture
+                              content-type: application/json
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
@@ -761,6 +764,9 @@ spring:
                               content-type: application/json
               rabbit: 
                         bindings: 
+                              stefaniamodePictureProduct: 
+                                    producer: 
+                                         prefix: HA.
                               supplierPictureProduct: 
                                     producer: 
                                          prefix: HA.

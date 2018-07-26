@@ -57,6 +57,8 @@ public class PictureProductService {
 				
 				Map<String, String> tmpBrandSupplierMap = new HashMap<>();
 	            HubSupplierValueMappingCriteriaDto criteriaDto = new HubSupplierValueMappingCriteriaDto();
+	            criteriaDto.setPageNo(1);
+	            criteriaDto.setPageSize(10000);
 	            criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex());
 	            List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = mappingGateWay.selectByCriteria(criteriaDto);
 	            hubSupplierValueMappingDtos.forEach(mapping ->{
@@ -66,6 +68,8 @@ public class PictureProductService {
 				boolean result = false;
 				if(tmpBrandSupplierMap.containsKey(supplierPicture.getSupplierId())){
 					result = pictureProductStreamSender.brandPictureProductStream(supplierPicture, headers);	
+				}else if("2015092401528".equals(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.stefaniamodePictureProductStream(supplierPicture, headers);
 				}else{
 					result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
 				}
@@ -135,6 +139,8 @@ public class PictureProductService {
 	 */
 	private Map<String,String> findHubSpuPendingPics(Long supplierSpuId){
 		HubSpuPendingPicCriteriaDto dto = new HubSpuPendingPicCriteriaDto();
+		dto.setPageNo(1);
+		dto.setPageSize(10000);
 		dto.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId).andPicHandleStateEqualTo(PicHandleState.HANDLED.getIndex()).andDataStateNotEqualTo(Byte.valueOf("0")); 
 		List<HubSpuPendingPicDto> pics =  picClient.selectByCriteria(dto);
 		if(null != pics && pics.size() >0){
