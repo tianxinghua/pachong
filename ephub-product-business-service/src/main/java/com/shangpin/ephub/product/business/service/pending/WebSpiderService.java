@@ -78,7 +78,7 @@ public class WebSpiderService {
     public HubSpuPendingDto getWebSpiderHandedSpuWithHavePic(String brandNo,String spuModel){
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
         criteria.createCriteria().andHubBrandNoEqualTo(brandNo).andSpuModelEqualTo(spuModel).andSpuStateEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue())
-                .andSourceFromEqualTo(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue()).andDataStateEqualTo(DataState.NOT_DELETED.getIndex())
+                .andSourceFromEqualTo(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue())
                 .andPicStateEqualTo(PicState.HANDLED.getIndex())
         ;
         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
@@ -164,6 +164,14 @@ public class WebSpiderService {
                         updatedVo = pendingCommonService.setErrorMsg(response,pendingProductDto.getSpuPendingId(),"货号校验不通过");
                     }
 
+                    if(null == updatedVo){
+                        updatedVo = new PendingUpdatedVo();
+                        updatedVo.setSpuResult("");
+                        updatedVo.setSpuPendingId(pendingProductDto.getSpuPendingId());
+                    }
+                    updatedVo.setSkus(skuMsgReturn);
+                    response.setErrorMsg(updatedVo);
+
                 }
             }
             if(0==pendingProductDto.getSupplierSpuId()){
@@ -182,7 +190,7 @@ public class WebSpiderService {
             hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
 
 
-            response.setCode("0");
+
         } catch (Exception e) {
             log.error("供应商："+pendingProductDto.getSupplierNo()+"产品："+pendingProductDto.getSpuPendingId()+"更新时发生异常："+e.getMessage());
             pendingCommonService.setErrorMsg(response,pendingProductDto.getSpuPendingId(),"服务器错误");

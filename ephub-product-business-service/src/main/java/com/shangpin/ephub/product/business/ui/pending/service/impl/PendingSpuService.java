@@ -350,7 +350,7 @@ public abstract class PendingSpuService implements IPendingProductService {
 			criteria.andSourceFromEqualTo(SourceFromEnum.TYPE_BRAND.getIndex().byteValue());
 		}else if(SourceFromEnum.TYPE_WEBSPIDER.getIndex()==pendingQuryDto.getSourceFrom()){
 			criteria.andSourceFromEqualTo(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue());
-		}else{
+		}else if(SourceFromEnum.TYPE_SUPPLIER_API.getIndex()==pendingQuryDto.getSourceFrom()){
 			criteria.andSourceFromEqualTo(SourceFromEnum.TYPE_SUPPLIER_API.getIndex().byteValue());
 		}
 		return criteria;

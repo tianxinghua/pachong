@@ -36,6 +36,7 @@ public class PendingAuditController {
 	@RequestMapping(value="query-spumodel",method=RequestMethod.POST)
 	public HubResponse<?> querySpuModel(@RequestBody SpuPendingAuditQueryVO queryVO){
 
+		log.info("query-spumodel = " + JsonUtil.serialize(queryVO));
 		SpuModelMsgVO spuModel = pendingService.getSpuModel(queryVO);
 
 		return HubResponse.successResp(spuModel);
@@ -44,7 +45,7 @@ public class PendingAuditController {
 
 	@RequestMapping(value="query-spupending",method=RequestMethod.POST)
 	public HubResponse<?> querySpuPending(@RequestBody SpuModelVO queryVO){
-
+		log.info("query-spupending query object = " + JsonUtil.serialize(queryVO));
 		List<SpuPendingVO> spuPendingVOList = pendingService.getSpuPendingByBrandNoAndSpuModel(queryVO.getBrandNo(), queryVO.getSpuModel());
 		return HubResponse.successResp(spuPendingVOList);
 	}

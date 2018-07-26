@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.rest.hubpending.spu.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shangpin.ephub.client.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,14 +65,14 @@ public class HubPendingSpuCheckController {
 	PropertyCheck commonCheckBase;
 	@RequestMapping(value = "/check-spu")
 	public HubPendingSpuCheckResult checkSpu(@RequestBody HubSpuPendingDto dto){
-		log.info("pendingSpu校验接受到数据：{}",dto);
+		log.info("pendingSpu校验接受到数据：{}",JsonUtil.serialize(dto));
 		HubPendingSpuCheckResult returnStr = hubCheckRuleService.checkHubPendingSpu(dto);
 		log.info("pendingSpu校验结果：{}",returnStr);
 		return returnStr;
 	}
 	@RequestMapping(value = "/export")
 	public PendingProducts exportPengdingSpu(@RequestBody PendingQuryDto pendingQuryDto){
-		log.info("pendingSpu导出接受到数据：{}",pendingQuryDto);
+		log.info("pendingSpu导出接受到数据：{}",JsonUtil.serialize(pendingQuryDto));
 		PendingProducts products = new PendingProducts();
 		products.setCreateUser(pendingQuryDto.getCreateUser());
     	List<PendingProductDto> productList = pendingProductService.findPengdingSpu(pendingQuryDto);

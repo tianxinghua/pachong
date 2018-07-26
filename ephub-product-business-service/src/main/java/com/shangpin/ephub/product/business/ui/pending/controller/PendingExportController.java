@@ -1,5 +1,7 @@
 package com.shangpin.ephub.product.business.ui.pending.controller;
 
+import com.shangpin.ephub.client.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,7 @@ import com.shangpin.ephub.response.HubResponse;
  */
 @RestController
 @RequestMapping("/pending-export")
+@Slf4j
 public class PendingExportController {
 	
 	@Autowired
@@ -27,6 +30,7 @@ public class PendingExportController {
 
 	@RequestMapping(value="/spu",method=RequestMethod.POST)
 	public HubResponse<?> exportSpu(@RequestBody PendingQuryDto pendingQuryDto){
+		log.info("PendingExportController.exportSpu query object =  " + JsonUtil.serialize(pendingQuryDto));
 		return pendingProductService.exportSpu(pendingQuryDto,TaskType.EXPORT_PENDING_SPU);
 	}
 	@RequestMapping(value="/sku",method=RequestMethod.POST)
