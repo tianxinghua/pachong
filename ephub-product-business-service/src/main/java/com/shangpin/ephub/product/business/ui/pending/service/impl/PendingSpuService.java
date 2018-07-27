@@ -428,6 +428,7 @@ public abstract class PendingSpuService implements IPendingProductService {
             if(null !=pendingQuryDto){
                 HubSpuPendingCriteriaDto criteriaDto = findhubSpuPendingCriteriaFromPendingQury(pendingQuryDto);
                 int total = hubSpuPendingGateWay.countByCriteria(criteriaDto);
+                log.info("待处理页面spu导出返回数据个数================"+total);
                 if(total>0){
                     List<HubSpuPendingDto> pendingSpus = hubSpuPendingGateWay.selectByCriteria(criteriaDto);
                     List<Long> supplierSpuIds = new ArrayList<>();
