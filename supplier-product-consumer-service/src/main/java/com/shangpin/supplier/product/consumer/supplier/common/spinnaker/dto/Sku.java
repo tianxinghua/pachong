@@ -22,9 +22,11 @@ public class Sku {
     private String barcode;
     private String color;
     private String stock;
+    private String season;
+    private String supply_price;
+    private String MadeIn;
     private String last_modified;
     private List<String> pictures;
-    private Price price;
     private String country_size;
 
 }
