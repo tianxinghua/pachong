@@ -1,6 +1,7 @@
 package com.shangpin.supplier.product.consumer.supplier.common.spinnaker;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -158,8 +159,9 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(sku.getBarcode());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(sku.getPrice().getMarket_price())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(sku.getPrice().getSuply_price()))); 
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(sku.getSupply_price())));
+			String marketPrice = StringUtil.verifyPrice(sku.getSupply_price());
+			hubSku.setSupplyPrice(new BigDecimal(marketPrice).divide(new BigDecimal("1.2"),2, RoundingMode.HALF_UP)); 
 			hubSku.setSupplierBarcode(sku.getBarcode());
 			String size = "";
 			if(sku.getItem_size().length()>4) {
