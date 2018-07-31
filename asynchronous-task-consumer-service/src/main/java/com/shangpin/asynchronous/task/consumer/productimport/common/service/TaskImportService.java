@@ -677,8 +677,8 @@ public class TaskImportService {
                 }else{
                     if (importType == TaskType.IMPORT_WEBSPIDER_SPU.getIndex()) {
                         hubIsExist = true;
-                        checkResult = spuModel + "在hub已存在";
-                        hubPendingSpuCheckResult.setPassing(true);
+                        checkResult = spuModel + "在hub已存在,但颜色不一样,hub颜色：" + hubSpu.getHubColor() + ",待处理颜色：" + suplierColor;
+
                     } else {
 
                         hubIsExist = false;
@@ -716,7 +716,7 @@ public class TaskImportService {
         }
 
 
-        pendingSpuId = saveOrUpdatePendingSpu(noSku,allFilter,hubIsExist,isPendingSpuExist, spuPendingVO, hubPendingSpuCheckResult,skuIsPassing,memo);
+        pendingSpuId = saveOrUpdatePendingSpu(noSku,allFilter,hubIsExist,isPendingSpuExist, spuPendingVO, hubPendingSpuCheckResult,skuIsPassing,memo,importType);
 
 
         if (spuIsPassing==true&&skuIsPassing==true) {
@@ -788,7 +788,8 @@ public class TaskImportService {
     }
 
     private Long saveOrUpdatePendingSpu(boolean noSku,boolean allFilter,boolean hubIsExist,HubSpuPendingDto isPendingSpuExist,
-                                        HubSpuPendingDto hubPendingSpuDto,HubPendingSpuCheckResult hubPendingSpuCheckResult,boolean skuIsPassing,String memo) {
+                                        HubSpuPendingDto hubPendingSpuDto,HubPendingSpuCheckResult hubPendingSpuCheckResult,
+                                        boolean skuIsPassing,String memo,int importType) {
 
         Long pengingSpuId = null;
         boolean spuIsPassing = hubPendingSpuCheckResult.isPassing();
@@ -874,8 +875,14 @@ public class TaskImportService {
             hubPendingSpuDto.setUpdateTime(new Date());
             hubPendingSpuDto.setSpuPendingId(pengingSpuId);
 
-            hubPendingSkuCheckGateWay.checkSkuBeforeAudit(hubPendingSpuDto);
-
+            if (importType == TaskType.IMPORT_WEBSPIDER_SPU.getIndex()) {
+                //爬虫不需要校验SKU
+                if(SpuState.INFO_IMPECCABLE.getIndex()==hubPendingSpuDto.getSpuState()){
+                    hubPendingSpuDto.setSpuState(SpuState.HANDLED.getIndex());
+                }
+            }else {
+                hubPendingSkuCheckGateWay.checkSkuBeforeAudit(hubPendingSpuDto);
+            }
             hubSpuPendingGateWay.updateByPrimaryKeySelective(hubPendingSpuDto);
             if(hubIsExist&&!allFilter){
                 //2018-4-16需求 检验通过的直接进入待选品，跳过待审核
