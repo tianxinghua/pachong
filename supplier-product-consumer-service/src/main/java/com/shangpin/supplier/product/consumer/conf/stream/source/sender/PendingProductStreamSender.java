@@ -22,6 +22,14 @@ public class PendingProductStreamSender {
 	private PendingProductSource pendingProductSource;
 	
 	/**
+	 * 发送供应商fashionTamers商品流数据
+	 * @param pendingProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean fashionTamersPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+		return pendingProductSource.fashionTamersPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+	}
+	/**
 	 * 发送供应商angeloMinetti商品流数据
 	 * @param pendingProduct 消息体
 	 * @return 如果发送成功返回true,否则返回false

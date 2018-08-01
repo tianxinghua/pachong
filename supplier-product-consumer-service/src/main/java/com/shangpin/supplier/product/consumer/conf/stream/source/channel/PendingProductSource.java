@@ -11,6 +11,7 @@ import org.springframework.messaging.MessageChannel;
  */
 public interface PendingProductSource {
 	
+	public static final String fashionTamers = "fashionTamersPendingProduct";
 	public static final String cocoroseLondon = "cocoroseLondonPendingProduct";
 	public static final String angeloMinetti = "angeloMinettiPendingProduct";
 	public static final String dolciTrame = "dolciTramePendingProduct";
@@ -167,7 +168,13 @@ public interface PendingProductSource {
 	public static final String ZHICAI = "zhicaiPendingProduct";
 	public static final String YLATI = "ylatiPendingProduct";
 	public static final String MAX1980 = "max1980PendingProduct";
-
+	
+	/**
+	 * 供货商fashionTamers通道组件配置
+	 * @return 供货商fashionTamers通道组件
+	 */
+	@Output(value = PendingProductSource.fashionTamers)
+	public MessageChannel fashionTamersPendingProduct();
 	/**
 	 * 供货商dolciTrame通道组件配置
 	 * @return 供货商dolciTrame通道组件

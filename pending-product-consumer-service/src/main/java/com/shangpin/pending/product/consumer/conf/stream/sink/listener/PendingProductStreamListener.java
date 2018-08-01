@@ -25,6 +25,16 @@ public class PendingProductStreamListener {
 	@Autowired
 	private PendingProductStreamListenerAdapter adapter;
 	
+	
+	/**
+	 * 供应商angeloMinetti待处理商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(PendingProductSink.fashionTamers)
+	public void fashionTamersPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.fashionTamersPendingProductStreamListen(message,headers);
+	}
 	/**
 	 * 供应商angeloMinetti待处理商品数据流通道监听者
 	 * @param message 消息

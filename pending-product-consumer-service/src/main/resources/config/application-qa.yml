@@ -18,6 +18,12 @@ spring:
             register-health-check: false
         stream: 
               bindings:
+                        fashionTamersPendingProduct:
+                              destination: fashionTamers.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         coccolebimbiPendingProduct:
                               destination: coccolebimbi.pending.product
                               group: one
@@ -957,6 +963,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             ylatiPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            fashionTamersPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

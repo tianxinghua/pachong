@@ -29,6 +29,15 @@ spring:
                               consumer: 
                                        concurrency: 2
                                        maxAttempts: 1  
+                        fashionTamersOriginalProduct: 
+                              destination: fashionTamers.original.product
+                              group: one
+                              consumer: 
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        fashionTamersPendingProduct: 
+                              destination: fashionTamers.pending.product
+                              content-type: application/json 
                         coccolebimbiOriginalProduct: 
                               destination: coccolebimbi.original.product
                               group: one
@@ -781,6 +790,15 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                              fashionTamersOriginalProduct: 
+                                      consumer: 
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              fashionTamersPendingProduct: 
+                                    producer: 
+                                         prefix: HA. 
                               coccolebimbiOriginalProduct: 
                                       consumer: 
                                          prefix: HA.
