@@ -180,8 +180,8 @@ public class FetchStockImpl  {
         ShangPinPageContent shangPinPageContent = null;
         try {
             String resultJsonStr = HttpUtil45.operateData("post","json",fetchSpProductInfosUrl,timeConfig,null,jsonStr,null,null);
-            System.out.println("=======resultJsonStr:"+resultJsonStr);
-            logger.info("=======resultJsonStr:"+resultJsonStr);
+            //System.out.println("=======resultJsonStr:"+resultJsonStr);
+            //logger.info("=======resultJsonStr:"+resultJsonStr);
             JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
             Map<String,Class> keyMapConfig= new HashMap<>();
             keyMapConfig.put("zhiCaiResultList",ProductDTO.class);
@@ -192,11 +192,15 @@ public class FetchStockImpl  {
             if(apiResponseBody!=null){
                 shangPinPageContent = (ShangPinPageContent) apiResponseBody.getContent();
             }
+            System.out.println();
+            System.out.println("获取第 "+pageIndex+"页成功 :"+resultJsonStr);
+            logger.info("获取第 "+pageIndex+"页成功 :"+resultJsonStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return shangPinPageContent;
     }
+
 
     /**
      * 循环遍历 拉取商品库存信息
@@ -333,10 +337,9 @@ public class FetchStockImpl  {
 
                  */
                 //判断当前包页面有没有尺码信息  有分成多个 product 没有 尺码为均码
-                //   .spice-dropdown-pdp-size-box
-                Elements sizeElements = doc.select("form#product-detail-add-to-shopping-bag-form")
-                        .select("select[name=size]").select("option");
-                if(sizeElements!=null&&sizeElements.size()>0){
+                Elements temSizeElements = doc.select("select[name=size]");
+                if(temSizeElements!=null&&temSizeElements.size()>0){
+                    Elements sizeElements =temSizeElements.first().select("option");
                     /** 商品价格
                      * <input type="hidden" class="gucciProductPrice" value="1690.0">
                      */
@@ -378,10 +381,12 @@ public class FetchStockImpl  {
                             String marketPrice = skuDTO.getMarketPrice();
                             if(marketPrice!=null){
                                 if(!marketPrice.equals(itemPrice)){ //价格发生改变
-                                    updateSpSkuMarketPrice(skuDTO.getSpSkuNo(),itemPrice);
+                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),itemPrice);
+                                    logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+itemPrice);
+                                    System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+itemPrice);
                                 }
                             }else{
-                                loggerError.error("ProductDTO:"+productDTO.toString());
+                                loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
                             }
 
                             String size = skuDTO.getSize();
@@ -405,15 +410,15 @@ public class FetchStockImpl  {
                                     /**
                                      * 获取需要请求的都休息 0.5s
                                      */
-                                    Thread.sleep(500);
+                                    //Thread.sleep(500);
                                 }
                             }
                         }
                     }
                 }else{
-                    logger.error("================请求商品地址解析 商品尺码失败===========================================");
+                    logger.error("===请求商品地址解析 商品尺码失败===========================================");
                     logger.error(productDTO.toString());
-                    logger.error("================请求商品地址解析 商品尺码失败===========================================");
+                    logger.error("===请求商品地址解析 商品尺码失败===========================================");
                     // 商品页面中没有获取到尺码信息重新请求
                     return false;
                 }
@@ -426,12 +431,12 @@ public class FetchStockImpl  {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //每一款商品休息10s
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        //每一款商品休息2s
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return true;
     }
 
@@ -447,6 +452,8 @@ public class FetchStockImpl  {
         jsonObject.put("supplierSkuNo",supplierSkuNo);
         jsonObject.put("marketPrice",marketPrice);
         String jsonStr = jsonObject.toString();
+        System.out.println(" 推送价格入参json:"+jsonStr);
+        logger.info(" 推送价格入参json:"+jsonStr);
         try {
             String resultJsonStr = HttpUtil45.operateData("post","json",updateSpMarketPriceUrl,timeConfig,null,jsonStr,null,null);
             JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
@@ -455,11 +462,11 @@ public class FetchStockImpl  {
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
             String code = apiResponseBody.getCode();
             if("0".equals(code)){
-                logger.info("=============更新updateSpSkuMarketPrice成功===============");
-                System.out.println("=============更新updateSpSkuMarketPrice成功===============");
+                logger.info("==更新updateSpSkuMarketPrice成功:"+supplierId+":"+supplierSkuNo+":"+marketPrice+"===============");
+                System.out.println("==更新updateSpSkuMarketPrice成功:"+supplierId+":"+supplierSkuNo+":"+marketPrice+"===============");
             }else{
-                loggerError.error("=============更新updateSpSkuMarketPrice 失败===============");
-                System.err.println("=============更新updateSpSkuMarketPrice成功===============");
+                loggerError.error("==更新updateSpSkuMarketPrice 失败=="+jsonStr);
+                System.err.println("==更新updateSpSkuMarketPrice成功=="+jsonStr);
             }
             System.out.println("更新updateSpMarketPrice resultJsonStr:"+resultJsonStr);
             logger.info("更新updateSpMarketPrice resultJsonStr:"+resultJsonStr);
@@ -478,12 +485,9 @@ public class FetchStockImpl  {
      * @return
      */
     public static  Map<String,String> getProductQtyInfo(String spSkuNO, String pcode){
-
         //库存结果集
         HashMap<String, String> mapDate = new HashMap<>();
-
         //  /it/it/p/ajax/product-detail-shipping.ajax?pcode=808354516
-
         String checkProductQtyUrl = uri + "/it/it/p/ajax/product-detail-shipping.ajax?pcode="+pcode;
 
         try {
@@ -572,16 +576,18 @@ public class FetchStockImpl  {
 
     public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://www.gucci.com/it/it/pr/gifts/gifts-for-women/rhyton-glitter-gucci-leather-sneaker-p-524990DRW009022?position=1&listName=VariationOverlay");
+        productDTO.setProductUrl("https://www.gucci.com/it/it/pr/men/mens-ready-to-wear/mens-t-shirts-polos/oversize-t-shirt-with-amour-eye-p-493117X3I319169?position=14&listName=VariationOverlay");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
-        skuDTO.setSpSkuNo("30970081005");
-        skuDTO.setSize("37");
-        skuDTO.setSupplierSkuNo("37");
+        skuDTO.setSpSkuNo("30968589002");
+        skuDTO.setSize("U");
+        skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
+        skuDTO.setMarketPrice("350.0");
         zhiCaiSkuResultList.add(skuDTO);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
         solveProductQty(productDTO);
 
+        //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
     }
 
 }

@@ -45,6 +45,8 @@ public class UpdateStockImpl extends FetchStockImpl {
 
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
+    private static List<Map<String, Integer>> filedIceStockMaps = null;
+
     static {
         if (null == bdl){
             bdl = ResourceBundle.getBundle("conf");
@@ -113,7 +115,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     }
 
     /**
-     * 更新 spSku 信息
+     * 调用服务更新 spSku 信息
      * @param spSkuNoDTO
      */
     private void updateSpSkuQtyByspSkuNoDTO(SpSkuNoDTO spSkuNoDTO) {
@@ -146,7 +148,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     }
 
     /**
-     * 批量更新 spSku 信息
+     * 调用接口 批量更新 spSku 信息
      * @param spSkuNoDTOS
      */
     private  void batchUpdateSpSkuQtyBySpSkuNoDTOList(List<SpSkuNoDTO> spSkuNoDTOS) {
@@ -198,7 +200,7 @@ public class UpdateStockImpl extends FetchStockImpl {
         //Integer updateFailedNum = updateIceSpSkuByMap(spSkuMap);
         Integer updateFailedNum = spSkuNoDTOS.size();
         System.out.println(" 本次更新尚品库存个数："+updateFailedNum);
-        logger.info("本次更新尚品库存失败的个数："+updateFailedNum);
+        logger.info("本次更新尚品库存的个数："+updateFailedNum);
     }
 
     /**
@@ -216,23 +218,19 @@ public class UpdateStockImpl extends FetchStockImpl {
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
             String code = apiResponseBody.getCode();
             if("0".equals(code)){
-                logger.info("=============更新updateZhiCaiSkuList成功===============");
-                System.out.println("=============更新updateZhiCaiSkuList成功===============");
+                logger.info("==更新updateZhiCaiSkuList成功====resultJsonStr:"+resultJsonStr);
+                System.out.println("==更新updateZhiCaiSkuList成功====resultJsonStr:"+resultJsonStr);
             }else{
-                loggerError.error("=============更新updateZhiCaiSkuList成功===============");
-                System.err.println("=============更新updateZhiCaiSkuList成功===============");
+                loggerError.error("==更新updateZhiCaiSkuList失败===resultJsonStr:"+resultJsonStr);
+                System.err.println("==更新updateZhiCaiSkuList失败==resultJsonStr:"+resultJsonStr);
             }
-
-            System.out.println("更新updateZhiCaiSkuList resultJsonStr:"+resultJsonStr);
-            logger.info("更新updateZhiCaiSkuList resultJsonStr:"+resultJsonStr);
         } catch (Exception e) {
-            loggerError.error("更新updateSpMarketPrice 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
-            System.out.println("更新updateSpMarketPrice 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
+            loggerError.error("更新updateZhiCaiSkuList 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
+            System.out.println("更新updateZhiCaiSkuList 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
             e.printStackTrace();
         }
 
     }
-
 
     /**
      * 批量更新 spSkuStock 信息
@@ -251,9 +249,6 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
         return updateFailedNum;
     }
-
-
-
 
 
 }
