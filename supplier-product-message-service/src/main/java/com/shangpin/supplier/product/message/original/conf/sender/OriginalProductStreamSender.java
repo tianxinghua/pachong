@@ -21,6 +21,14 @@ public class OriginalProductStreamSender {
 	private OriginalProductSource originalProductSource;
 
 
+	/**
+	 * 发送供应商fashionTamers商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean fashionTamersStream(SupplierProduct supplierProduct) {
+		return originalProductSource.fashionTamers().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
 
 	/**
 	 * 发送供应商angeloMinetti商品流数据
