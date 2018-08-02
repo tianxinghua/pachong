@@ -11,6 +11,7 @@ import org.springframework.messaging.SubscribableChannel;
  * @date 2016年12月6日 下午4:06:53
  */
 public interface OriginalProductSink {
+	public static final String fashionTamers = "fashionTamersOriginalProduct";
 	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
 	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
 	public static final String dolciTrame = "dolciTrameOriginalProduct";
@@ -178,7 +179,13 @@ public interface OriginalProductSink {
 
 
 	//===============================
-
+	
+	/**
+	 * 供货商dolciTrame通道组件配置
+	 * @return dolciTrame通道组件
+	 */
+	@Input(value = OriginalProductSink.fashionTamers)
+	public SubscribableChannel fashionTamersOriginalProduct();
 	/**
 	 * 供货商dolciTrame通道组件配置
 	 * @return dolciTrame通道组件

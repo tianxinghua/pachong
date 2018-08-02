@@ -223,6 +223,15 @@ public class OriginalProductStreamListenerAdapter {
 	}
 	
 	/**
+	 * geb供货商原始数据监听方法
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void fashionTamersStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		edsCommonHandler.handleOriginalProduct(message, headers); 
+	}
+	
+	/**
 	 * fratinardiHandler供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头

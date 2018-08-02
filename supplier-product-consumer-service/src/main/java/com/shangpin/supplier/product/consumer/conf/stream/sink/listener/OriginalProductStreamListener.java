@@ -32,6 +32,15 @@ public class OriginalProductStreamListener {
 	 * @param message 消息
 	 * @param headers 消息头
 	 */
+	@StreamListener(OriginalProductSink.fashionTamers)
+	public void fashionTamersStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.fashionTamersStreamListen(message,headers);
+	}
+	/**
+	 * 供应商angeloMinetti原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
 	@StreamListener(OriginalProductSink.angeloMinetti)
 	public void angeloMinettiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
 		adapter.angeloMinettiStreamListen(message,headers);

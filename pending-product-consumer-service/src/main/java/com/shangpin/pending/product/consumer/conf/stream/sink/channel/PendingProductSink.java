@@ -11,6 +11,7 @@ import org.springframework.messaging.SubscribableChannel;
  */
 public interface PendingProductSink {
 	
+	public static final String fashionTamers = "fashionTamersPendingProduct";
 	public static final String dolciTrame = "dolciTramePendingProduct";
 	public static final String cocoroseLondon = "cocoroseLondonPendingProduct";
 	public static final String angeloMinetti = "angeloMinettiPendingProduct";
@@ -170,6 +171,14 @@ public interface PendingProductSink {
 	public static final String YLATI = "ylatiPendingProduct";
 
 	public static final String MAX1980 = "max1980PendingProduct";
+	
+	
+	/**
+	 * 供货商fashionTamers通道组件配置
+	 * @return 供货商fashionTamers通道组件
+	 */
+	@Input(value = PendingProductSink.fashionTamers)
+	public SubscribableChannel fashionTamersPendingProduct();
 	/**
 	 * 供货商angeloMinetti通道组件配置
 	 * @return 供货商angeloMinetti通道组件

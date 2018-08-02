@@ -161,6 +161,16 @@ public class PendingProductStreamListenerAdapter {
 		
 	}
 	/**
+	 * 供应商fashionTamers待处理商品数据流监听
+	 * @param message 消息体
+	 * @param headers 消息头
+	 */
+	public void fashionTamersPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+		
+	}
+	
+	/**
 	 * 供应商coltorti待处理商品数据流监听
 	 * @param message 消息体
 	 * @param headers 消息头
