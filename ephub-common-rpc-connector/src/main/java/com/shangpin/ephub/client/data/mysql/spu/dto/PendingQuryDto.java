@@ -2,6 +2,8 @@ package com.shangpin.ephub.client.data.mysql.spu.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -95,5 +97,18 @@ public class PendingQuryDto {
      * 错误原因处理状态
      */
     private String msgMissHandleState;
+    
+    /**
+     * 是否代购
+     * 0：否  1:是
+     */
+
+    private String  isHotboom ;
+
+    /**
+     * 商品来源
+     * 0 : api  1:品牌  2: 爬虫
+     */
+    private Integer  sourceFrom ;
     
 }
