@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubColorImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingCateGroyImportDTO;
@@ -79,6 +80,8 @@ public class PendingCateGroyImportService {
 	HubSupplierCategroyDicGateWay hubSupplierCategroyDicGateWay;
 	@Autowired
 	DicRefreshGateWay dicRefreshGateWay;
+	@Autowired
+	ExcelConverService excelConverService;
 
 	private static String[] pendingCateGroyTemplate = null;
 
@@ -151,7 +154,7 @@ public class PendingCateGroyImportService {
 			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcelCategory(listMap, taskNo);
+		return excelConverService.convertExcelCategory(listMap, taskNo);
 	}
 
 	private Map<String, String> filterCateGroy(HubPendingCateGroyImportDTO productImport, String createUser, Map<String, String> map) throws ParseException {

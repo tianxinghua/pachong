@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubMaterialImportDto;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
@@ -73,6 +74,9 @@ public class PendingMaterialImportService {
 	@Autowired
 	HubMaterialMappingGateWay hubMaterialMappingGateWay;
 
+	@Autowired
+	ExcelConverService excelConverService;
+
 	private static String[] pendingSpuValueTemplate = null;
 	static {
 		pendingSpuValueTemplate = TaskImportTemplate.getPendingSpuValueTemplate();
@@ -134,7 +138,7 @@ public class PendingMaterialImportService {
 			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcelMarterial(listMap, taskNo);
+		return excelConverService.convertExcelMarterial(listMap, taskNo);
 	}
 	private Map<String, String>  filterMaterial(HubMaterialImportDto productImport,String createUser,Map<String, String> map) {
 

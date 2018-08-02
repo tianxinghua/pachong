@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +65,8 @@ public class PendingSkuImportService {
 	HubSkuPendingGateWay hubSkuPendingGateWay;
 	@Autowired
 	TaskImportService taskService;
+	@Autowired
+	ExcelConverService excelConverService;
 	@Autowired
 	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
 	@Autowired
@@ -139,7 +142,7 @@ public class PendingSkuImportService {
 //			}
 //		}
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-		return taskService.convertExcel(listMap, taskNo);
+		return excelConverService.convertExcel(listMap, taskNo);
 	}
 	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,
 			Map<Long,String> spuMap,String createUser,int importType) throws Exception{
