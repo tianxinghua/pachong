@@ -390,11 +390,11 @@ public class PendingProductService extends PendingSkuService{
                         pendingProductDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason());
                     }
                     setSpuState(pendingProductDto);
-                    //如果存在HUB_SPU ,不再处理
-                    updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"已存在不需要选货");
-                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
-                    response.setErrorMsg(updatedVo);
-                    return  response;
+                    //如果存在HUB_SPU ,不再处理（2018-08-02 此业务修改为可以处理）
+//                    updatedVo = setErrorMsg(response,pendingProductDto.getSpuPendingId(),"已存在不需要选货");
+//                    hubSpuPendingGateWay.updateByPrimaryKeySelective(pendingProductDto);
+//                    response.setErrorMsg(updatedVo);
+//                    return  response;
                 }
                 /**
                  * 校验货号
