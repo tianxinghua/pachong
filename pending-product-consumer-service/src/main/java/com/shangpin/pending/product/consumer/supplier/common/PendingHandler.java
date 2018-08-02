@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.product.business.hubpending.sku.gateway.HubPendingSkuCheckGateWay;
 import lombok.extern.slf4j.Slf4j;
 
@@ -81,6 +82,9 @@ public class PendingHandler extends VariableInit {
 
 	@Autowired
 	DataBusinessService dataBusinessService;
+
+	@Autowired
+	HubSpuPendingGateWay hubSpuPendingGateWay;
 
 	public void receiveMsg(PendingProduct message, Map<String, Object> headers) throws Exception {
 
@@ -507,6 +511,29 @@ public class PendingHandler extends VariableInit {
 	}
 
 	private void updateSpuStateBySkuState(SpuPending hubSpuPending) {
+
+		if(hubSpuPending.getSourceFrom()==SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue()){
+			//如果是爬虫的 如果已经是待审核的  直接更改为已完成
+		     if(hubSpuPending.getSpuState()==SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()) {
+
+				 HubSpuPendingDto spuDtoTmp = new HubSpuPendingDto();
+				 spuDtoTmp.setSpuPendingId(hubSpuPending.getSpuPendingId());
+				 spuDtoTmp.setSpuState(SpuState.HANDLED.getIndex());
+				 hubSpuPendingGateWay.updateByPrimaryKeySelective(spuDtoTmp);
+			 }
+			 return  ;
+
+		}else if(hubSpuPending.getSourceFrom()==SourceFromEnum.TYPE_BRAND.getIndex().byteValue()){
+			//如果是品牌方 直接设置成待处理 在页面上由人工处理
+			if(hubSpuPending.getSpuState()==SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue()) {
+				HubSpuPendingDto spuDtoTmp = new HubSpuPendingDto();
+				spuDtoTmp.setSpuPendingId(hubSpuPending.getSpuPendingId());
+				spuDtoTmp.setSpuState(SpuState.INFO_PECCABLE.getIndex());
+				hubSpuPendingGateWay.updateByPrimaryKeySelective(spuDtoTmp);
+			}
+			return  ;
+		}
+
 		//整体处理下库存状态和价格状态更新
 		dataBusinessService.updateSpuPendingStockAndPriceState(hubSpuPending.getSpuPendingId());
 
@@ -711,11 +738,8 @@ public class PendingHandler extends VariableInit {
 			//--------------- 直接复制HUB-SPU里的信息 ，SPU状态 直接为待审核
 
 			//先校验颜色
-			if (setColorMapping(spu, hubSpuPending)){
-				hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_HANDLED.getIndex().byteValue());
-			}else{
-				hubSpuPending.setSpuColorState(PropertyStatus.MESSAGE_WAIT_HANDLE.getIndex().byteValue());
-			}
+			setColorMapping(spu, hubSpuPending);
+
             //校验季节
 			setSeasonMapping(spu, hubSpuPending);
 
