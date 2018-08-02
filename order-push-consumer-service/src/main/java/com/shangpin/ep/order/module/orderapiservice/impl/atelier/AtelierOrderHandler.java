@@ -131,7 +131,13 @@ public abstract class AtelierOrderHandler implements IOrderService {
 	public void handleConfirmOrder(OrderDTO orderDTO) {
 		
 		try {
-			String spOrderId = orderDTO.getSpOrderId();
+			String spOrderId = null;
+			if(orderDTO.getPurchaseNo()!=null){
+				spOrderId = orderDTO.getPurchaseNo();
+				spOrderId = spOrderId.replace("CGDF","");
+			}else{
+				spOrderId = orderDTO.getSpOrderId();
+			}
 			if(spOrderId.contains("-")){
 				spOrderId = spOrderId.substring(0, spOrderId.indexOf("-")); 
 			}
