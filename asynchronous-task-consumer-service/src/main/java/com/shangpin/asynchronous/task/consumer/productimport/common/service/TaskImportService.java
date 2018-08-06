@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import com.shangpin.asynchronous.task.consumer.service.pending.PendingCommonService;
 import com.shangpin.ephub.client.data.mysql.enumeration.TaskType;
 
 import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
@@ -91,8 +92,7 @@ public class TaskImportService {
     HubPendingSpuCheckGateWay pendingSpuCheckGateWay;
     @Autowired
     HubSpuPendingGateWay hubSpuPendingGateWay;
-    @Autowired
-    FtpProperties ftpProperties;
+
     @Autowired
     HubSpuImportTaskGateWay spuImportGateway;
     @Autowired
@@ -101,6 +101,11 @@ public class TaskImportService {
     HubSkuGateWay hubSkuGateWay;
     @Autowired
     MatchSizeGateWay matchSizeGateWay;
+
+    @Autowired
+    PendingCommonService pendingCommonService;
+
+
     private static String[] pendingSpuTemplate = null;
     static {
         pendingSpuTemplate = TaskImportTemplate.getPendingSpuTemplate();
@@ -236,152 +241,7 @@ public class TaskImportService {
         return true;
     }
 
-    public String convertExcel(List<Map<String, String>> result, String taskNo) throws Exception {
-        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String resultFileName = sim.format(new Date());
-        File filePath = new File(ftpProperties.getLocalResultPath());
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-        }
-        String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-        File file = new File(pathFile);
-        FileOutputStream out = new FileOutputStream(file);
 
-        String[] headers = { "任务编号", "货号", "任务状态", "任务说明","新货号" };
-        String[] columns = { "taskNo", "spuModel", "taskState", "processInfo","spuNewModel"};
-        ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-        // 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-        String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-        FTPClientUtil.closeFtp();
-        if (file.exists()) {
-            file.delete();
-        }
-        // 更新结果文件路径到表中
-
-        return path + resultFileName + ".xls";
-    }
-    public String convertExcelMade(List<Map<String, String>> result, String taskNo) throws Exception {
-        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String resultFileName = sim.format(new Date());
-        File filePath = new File(ftpProperties.getLocalResultPath());
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-        }
-        String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-        File file = new File(pathFile);
-        FileOutputStream out = new FileOutputStream(file);
-
-        String[] headers = { "任务编号", "供货商产地", "尚品产地", "任务说明"};
-        String[] columns = { "taskNo", "supplierVal", "hubVal", "task"};
-        ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-        // 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-        String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-        FTPClientUtil.closeFtp();
-        if (file.exists()) {
-            file.delete();
-        }
-        // 更新结果文件路径到表中
-
-        return path + resultFileName + ".xls";
-    }
-
-    public String convertExcelBrand(List<Map<String, String>> result, String taskNo) throws Exception {
-        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String resultFileName = sim.format(new Date());
-        File filePath = new File(ftpProperties.getLocalResultPath());
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-        }
-        String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-        File file = new File(pathFile);
-        FileOutputStream out = new FileOutputStream(file);
-
-        String[] headers = { "任务编号", "供应商品牌", "尚品品牌", "任务说明" };
-        String[] columns = { "taskNo", "supplierBrand", "hubBrandNo", "task"};
-        ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-        // 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-        String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-        FTPClientUtil.closeFtp();
-        if (file.exists()) {
-            file.delete();
-        }
-        // 更新结果文件路径到表中
-
-        return path + resultFileName + ".xls";
-    }
-    public String convertExcelCategory(List<Map<String, String>> result, String taskNo) throws Exception {
-        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String resultFileName = sim.format(new Date());
-        File filePath = new File(ftpProperties.getLocalResultPath());
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-        }
-        String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-        File file = new File(pathFile);
-        FileOutputStream out = new FileOutputStream(file);
-
-        String[] headers = { "任务编码", "供货商品类", "品类编码", "任务说明"};
-        String[] columns = { "taskNo", "supplierCategory", "hubCategoryNo","task"};
-        ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-        // 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-        String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-        FTPClientUtil.closeFtp();
-        if (file.exists()) {
-            file.delete();
-        }
-        // 更新结果文件路径到表中
-
-        return path + resultFileName + ".xls";
-    }
-    public String convertExcelColor(List<Map<String, String>> result, String taskNo) throws Exception {
-        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String resultFileName = sim.format(new Date());
-        File filePath = new File(ftpProperties.getLocalResultPath());
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-        }
-        String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-        File file = new File(pathFile);
-        FileOutputStream out = new FileOutputStream(file);
-
-        String[] headers = {"任务编号","供应商颜色","sp颜色","任务状态" };
-        String[] columns = {"colorDicItemId","colorItemName","hubcolor","task"};
-        ExportExcelUtils.exportExcel(resultFileName, headers, columns, result, out);
-        // 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-        String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-        FTPClientUtil.closeFtp();
-        if (file.exists()) {
-            file.delete();
-        }
-        // 更新结果文件路径到表中
-
-        return path + resultFileName + ".xls";
-    }
-
-    //材质状态
-    public String convertExcelMarterial(List<Map<String, String>> result, String taskNo) throws Exception {
-        SimpleDateFormat sim = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        String resultFileName = sim.format(new Date());
-        File filePath = new File(ftpProperties.getLocalResultPath());
-        if (!filePath.exists()) {
-            filePath.mkdirs();
-        }
-        String pathFile = ftpProperties.getLocalResultPath() + resultFileName + ".xls";
-        File file = new File(pathFile);
-        FileOutputStream out = new FileOutputStream(file);
-        String[] header = {"任务编码", "尚品材质名","供应商材质名","任务状态"};
-        String[] column = {"taskNo", "hubMaterial","supplierMaterial","task"};
-        ExportExcelUtils.exportExcel(resultFileName,header,column, result,out);
-        // 4、处理结果的excel上传ftp，更新任务表状态和文件在ftp的路径
-        String path = FTPClientUtil.uploadFile(file, resultFileName + ".xls");
-        FTPClientUtil.closeFtp();
-        if (file.exists()) {
-            file.delete();
-        }
-        // 更新结果文件路径到表中
-
-        return path + resultFileName + ".xls";
-    }
 
     public XSSFSheet checkXlsxExcel(InputStream in, Task task, String type) throws Exception {
 
@@ -663,9 +523,10 @@ public class TaskImportService {
             // 查询货号是否已存在hubSpu中
             spuPendingVO.setSpuModel(spuModel);
             HubSpuDto hubSpu = dataHandleService.selectHubSpu(spuPendingVO.getSpuModel(),spuPendingVO.getHubBrandNo());
+            //颜色需要保留导入的颜色
+            String suplierColor = spuPendingVO.getHubColor();
             if (hubSpu != null) {
-                //颜色需要保留供货商的颜色 如果没有匹配上 取hubspu中的颜色
-                String suplierColor = spuPendingVO.getHubColor();
+
                 convertHubSpuToPendingSpu(spuPendingVO, hubSpu,hubPendingSpuCheckResult);
 
                 hubSpuId = hubSpu.getSpuId();
@@ -687,17 +548,31 @@ public class TaskImportService {
                 }
                 hubPendingSpuCheckResult.setPassing(true);
             } else {
-                // 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
-                if (hubPendingSpuCheckResult.isPassing()) {
-                    // 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
+                //查询爬虫数据是否有匹配的
+                HubSpuPendingDto webSpiderdSpuPending = pendingCommonService.getHandleWebSpiderdSpuPending(spuPendingVO.getHubBrandNo(), spuPendingVO.getSpuModel());
+
+                if(null!=webSpiderdSpuPending){
                     spuIsPassing = true;
                     hubIsExist = false;
-                    checkResult = "校验成功";
-                } else {
-                    spuIsPassing = false;
-                    hubIsExist = false;
-                    checkResult = hubPendingSpuCheckResult.getResult();
+                    dataHandleService.convertWebSpiderSpuToPendingSpu(webSpiderdSpuPending,spuPendingVO,hubPendingSpuCheckResult);
+                    hubPendingSpuCheckResult.setPassing(true);
+                    checkResult = spuModel + "  hub不存在爬虫存在";
+
+                }else{
+                    // 货号不存在hubSpu中,继续校验其它信息，查询pendingSpu是否存在==》保存或更新pendingSpu表
+                    if (hubPendingSpuCheckResult.isPassing()) {
+                        // 其它信息校验通过，需要推送hub，查询pendingSpu是否存在==》保存或更新pendingSpu表
+                        spuIsPassing = true;
+                        hubIsExist = false;
+                        checkResult = "校验成功";
+                    } else {
+                        spuIsPassing = false;
+                        hubIsExist = false;
+                        checkResult = hubPendingSpuCheckResult.getResult();
+                    }
                 }
+
+
             }
         } else {
             hubPendingSpuCheckResult.setPassing(false);

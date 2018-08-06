@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
+import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -163,6 +164,37 @@ public class DataHandleService {
 			});
 		}
 		return urlList;
+	}
+
+	public  void convertWebSpiderSpuToPendingSpu( HubSpuPendingDto sourceDto, HubSpuPendingDto targetPendingSpuDto,HubPendingSpuCheckResult hubPendingSpuCheckResult){
+		targetPendingSpuDto.setHubBrandNo(sourceDto.getHubBrandNo());
+		targetPendingSpuDto.setHubCategoryNo(sourceDto.getHubCategoryNo());
+		if(targetPendingSpuDto.getHubColor()!=null&&targetPendingSpuDto.getHubColor().equals(sourceDto.getHubColor())){
+			targetPendingSpuDto.setHubColor(sourceDto.getHubColor());
+		}
+		targetPendingSpuDto.setHubColorNo(sourceDto.getHubColorNo());
+		targetPendingSpuDto.setHubGender(sourceDto.getHubGender());
+		targetPendingSpuDto.setHubMaterial(sourceDto.getHubMaterial());
+		targetPendingSpuDto.setHubOrigin(sourceDto.getHubOrigin());
+		if(StringUtils.isBlank(targetPendingSpuDto.getHubSeason())){
+			targetPendingSpuDto.setHubSeason(sourceDto.getHubSeason());
+		}
+//		hubPendingSpuDto.setHubSeason(hubSpuDto.getMarketTime()+"_"+hubSpuDto.getSeason()); 季节可以修改 ，所以不赋值
+
+		targetPendingSpuDto.setHubSpuNo(sourceDto.getHubSpuNo());
+		targetPendingSpuDto.setSpuModel(sourceDto.getSpuModel());
+		targetPendingSpuDto.setSpuName(sourceDto.getSpuName());
+
+		hubPendingSpuCheckResult.setMaterial(true);
+		hubPendingSpuCheckResult.setBrand(true);
+		hubPendingSpuCheckResult.setCategory(true);
+		hubPendingSpuCheckResult.setColor(true);
+		hubPendingSpuCheckResult.setGender(true);
+		hubPendingSpuCheckResult.setOriginal(true);
+		hubPendingSpuCheckResult.setSeasonName(true);
+		hubPendingSpuCheckResult.setSpuModel(true);
+
+
 	}
 	
 }

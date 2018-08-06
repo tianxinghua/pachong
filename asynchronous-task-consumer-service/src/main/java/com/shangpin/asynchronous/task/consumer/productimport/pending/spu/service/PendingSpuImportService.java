@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import com.shangpin.ephub.client.data.mysql.enumeration.FilterFlag;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.product.business.hubpending.spu.gateway.HubPendingHandleGateWay;
@@ -70,6 +71,9 @@ public class PendingSpuImportService {
     DataHandleService dataHandleService;
     @Autowired
     TaskImportService taskService;
+
+    @Autowired
+    ExcelConverService excelConverService;
     @Autowired
     HubNohandleReasonGateWay nohandleGateWay;
     @Autowired
@@ -130,7 +134,7 @@ public class PendingSpuImportService {
             listMap.add(map);
         }
         // 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-        return taskService.convertExcel(listMap, taskNo);
+        return excelConverService.convertExcel(listMap, taskNo);
     }
     private boolean filterSpu(HubPendingSpuImportDTO productImport,String createUser,Map<String, String> map) {
         /**

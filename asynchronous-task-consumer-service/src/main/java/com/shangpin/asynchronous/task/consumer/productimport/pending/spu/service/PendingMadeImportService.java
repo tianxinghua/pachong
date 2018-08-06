@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.shangpin.asynchronous.task.consumer.productexport.template.TaskImportTemplate2;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.DataHandleService;
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import com.shangpin.asynchronous.task.consumer.productimport.common.service.TaskImportService;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubMadeImportDTO;
 import com.shangpin.asynchronous.task.consumer.productimport.pending.spu.dao.HubPendingSpuImportDTO;
@@ -71,6 +72,8 @@ public class PendingMadeImportService {
 	@Autowired
 	TaskImportService taskService;
 	@Autowired
+	ExcelConverService excelConverService;
+	@Autowired
 	HubNohandleReasonGateWay nohandleGateWay;
 	@Autowired
 	HubPendingHandleGateWay pendingHandleGateWay;
@@ -137,7 +140,7 @@ public class PendingMadeImportService {
 			listMap.add(map1);
 		}
 		// 处理的结果以excel文件上传ftp，并更新任务表的任务状态和结果文件在ftp的路径
-		return taskService.convertExcelMade(listMap, taskNo);
+		return excelConverService.convertExcelMade(listMap, taskNo);
 	}
 	private Map<String, String>filterMade(HubMadeImportDTO productImport,String createUser,Map<String, String> map) throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -66,6 +67,8 @@ public class AirshopImportService {
 	HubPendingSkuCheckGateWay pendingSkuCheckGateWay;
 	@Autowired
 	HubSpuPendingGateWay hubSpuPendingGateWay;
+	@Autowired
+	ExcelConverService excelConverService;
 
 	/**
 	 * 处理消息
@@ -137,7 +140,7 @@ public class AirshopImportService {
 		
 	  }
 		// 4、处理结果的excel上传ftp，并更新任务表状态和文件在ftp的路径
-		return taskService.convertExcel(listMap, taskNo);
+		return excelConverService.convertExcel(listMap, taskNo);
 	}
 	private void checkProduct(String taskNo, HubPendingProductImportDTO pendingSkuImportDto, Map<String, String> map,Map<Long,String> spuMap,String createUser,int importType) throws Exception{
 

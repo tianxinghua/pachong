@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -59,12 +60,17 @@ public class HubProductImportService {
 	HubProductCheckGateWay HubProductCheckGateWay;
 	@Autowired
 	TaskImportService taskService;
+
+	@Autowired
+	ExcelConverService excelConverService;
 	@Autowired
 	HubSpuGateWay hubSpuGateWay;
 	@Autowired
 	HubSkuGateWay hubSkuGateWay;
 	@Autowired
 	HubBrandModelRuleGateWay hubBrandModelRuleGateWay;
+
+
 
 	private static String[] hubKeyTemplate = null;
 	static {
@@ -189,7 +195,7 @@ public class HubProductImportService {
 			map.put("spuModel", hubProductDto.getSpuModel());
 			listMap.add(map);
 		}
-		return taskService.convertExcel(listMap, taskNo);
+		return excelConverService.convertExcel(listMap, taskNo);
 	}
 
 	private List<HubSkuDto> findHubSkuDto(String hubSpuNo, String skuSize) {

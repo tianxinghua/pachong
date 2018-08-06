@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.asynchronous.task.consumer.productimport.common.service.ExcelConverService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class SlotSpuImportService {
 	
 	@Autowired
 	private TaskImportService taskService;
+
+	@Autowired
+	ExcelConverService excelConverService;
 	@Autowired
 	private HubSpuPendingGateWay hubSpuPendingGateWay;
 	@Autowired
@@ -75,7 +79,7 @@ public class SlotSpuImportService {
 				listMap.add(ReflectBeanUtils.objectToMap(resultDto));
 			}
 		}
-		return taskService.convertExcel(listMap, taskNo);
+		return excelConverService.convertExcel(listMap, taskNo);
 	}
 
 	private HubSpuPendingCheckProperty myCheckProperty() {
