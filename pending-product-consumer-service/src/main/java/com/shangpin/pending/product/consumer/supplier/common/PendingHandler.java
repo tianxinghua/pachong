@@ -461,6 +461,7 @@ public class PendingHandler extends VariableInit {
 		Integer skuStatus=0;
 		if(null!=skus&&skus.size()>0){
             byte filterFlag = FilterFlag.EFFECTIVE.getIndex();
+            boolean  isNewSku = false;
             for (PendingSku sku : skus) {
                 if (messageMap.containsKey(sku.getSupplierSkuNo())) {
                     HubSkuPendingDto hubSkuPending = dataServiceHandler.getHubSkuPending(sku.getSupplierId(),
@@ -469,6 +470,7 @@ public class PendingHandler extends VariableInit {
                     if (skuStatus == MessageType.NEW.getIndex()) {
                         if (null == hubSkuPending) {
                             this.addNewSku(hubSpuPending, pendingSpu, sku, headers, filterFlag);
+							isNewSku =true;
                         }
                     } else if (skuStatus == MessageType.UPDATE.getIndex()) {
 						if (null == hubSkuPending) {
@@ -500,7 +502,7 @@ public class PendingHandler extends VariableInit {
                 }
             }
             //整体判断sku的库存和尺码映射状态 更新SPU状态
-			updateSpuStateBySkuState(hubSpuPending);
+			updateSpuStateBySkuState(hubSpuPending,isNewSku);
 
 		}else{
             if(null!=spuStatus&&(spuStatus == MessageType.NEW.getIndex())){
@@ -510,7 +512,7 @@ public class PendingHandler extends VariableInit {
         }
 	}
 
-	private void updateSpuStateBySkuState(SpuPending hubSpuPending) {
+	private void updateSpuStateBySkuState(SpuPending hubSpuPending,boolean isNewSku) {
 
 		if(hubSpuPending.getSourceFrom()==SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue()){
 			//如果是爬虫的 如果已经是待审核的  直接更改为已完成
@@ -539,7 +541,8 @@ public class PendingHandler extends VariableInit {
 
 		//整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
 		log.info("hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
-		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
+		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()||
+				(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()&&isNewSku)){
 			boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
 			//true表面sku都校验通过
 			if(flag){
@@ -754,14 +757,20 @@ public class PendingHandler extends VariableInit {
 
 		} else {
 
-			setSpuProperty(spu, hubSpuPending, brandmapping, spuModelJudge);
-			Date date = new Date();
-			hubSpuPending.setCreateTime(date);
-			hubSpuPending.setUpdateTime(date);
-			//过滤设置(品牌和季节是不是有效)
-			byte filterFlag = screenSupplierBrandAndSeasonEffectiveOrNot(hubSpuPending.getSupplierId(),
-					hubSpuPending.getHubBrandNo(), hubSpuPending.getHubSeason());
-			hubSpuPending.setFilterFlag(filterFlag);
+//			HubSpuPendingDto webSpiderdSpuPending = dataBusinessService.getHandleWebSpiderdSpuPending(hubSpuPending.getHubBrandNo(), hubSpuPending.getSpuModel());
+//            if(null!=webSpiderdSpuPending){
+//
+//			}else{
+				setSpuProperty(spu, hubSpuPending, brandmapping, spuModelJudge);
+				Date date = new Date();
+				hubSpuPending.setCreateTime(date);
+				hubSpuPending.setUpdateTime(date);
+				//过滤设置(品牌和季节是不是有效)
+				byte filterFlag = screenSupplierBrandAndSeasonEffectiveOrNot(hubSpuPending.getSupplierId(),
+						hubSpuPending.getHubBrandNo(), hubSpuPending.getHubSeason());
+				hubSpuPending.setFilterFlag(filterFlag);
+//			}
+
 		}
 		//设置摄影状态
 		setShootState(hubSpuPending);
