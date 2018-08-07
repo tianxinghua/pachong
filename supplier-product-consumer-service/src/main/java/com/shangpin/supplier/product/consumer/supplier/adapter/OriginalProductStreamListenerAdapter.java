@@ -42,9 +42,6 @@ public class OriginalProductStreamListenerAdapter {
 	private ISupplierHandler edsCommonHandler;
 	
 	@Autowired
-	@Qualifier("gebHandler")
-	private ISupplierHandler gebHandler;
-	@Autowired
 	@Qualifier("biondiniHandler")
 	private ISupplierHandler biondiniHandler;
 	@Autowired

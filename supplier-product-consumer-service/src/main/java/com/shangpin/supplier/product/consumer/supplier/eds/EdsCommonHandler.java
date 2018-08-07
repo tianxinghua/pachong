@@ -120,6 +120,11 @@ public class EdsCommonHandler implements ISupplierHandler {
 					str.append(",").append(m.getPercentage()).append(m.getName());
 				}
 				hubSpu.setSupplierMaterial(str.substring(1));
+			}else{
+				String desc = item.getItem_description();
+				if(desc!=null&&desc.contains("%")){
+					hubSpu.setSupplierMaterial(desc.substring(desc.indexOf("%")-3));
+				}
 			}
 			hubSpu.setSupplierOrigin(item.getMade_in());
 			hubSpu.setSupplierSpuDesc(item.getItem_description());
@@ -128,7 +133,6 @@ public class EdsCommonHandler implements ISupplierHandler {
 			return false;
 		}
 	}
-	
 	/**
 	 * 将geb原始dto转换成hub sku
 	 * @param supplierId
