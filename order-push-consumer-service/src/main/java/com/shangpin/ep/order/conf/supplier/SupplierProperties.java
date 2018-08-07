@@ -1,10 +1,10 @@
 package com.shangpin.ep.order.conf.supplier;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * <p>Title:SupplierProperties.java </p>
@@ -26,6 +26,7 @@ public class SupplierProperties {
 	
 	public static final String SUPPLIER_PREFIX = "shangpin.hub.Supplier";
 
+	private FashionTamersConf fashionTamersConf;
 	private AngeloMinetti angeloMinetti;
 	private DolciTrameParam dolciTrameParam;
 	private CoccolebimbiParam coccolebimbiParam;

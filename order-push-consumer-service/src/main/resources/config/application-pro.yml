@@ -306,6 +306,13 @@ shangpin:
                   isPurchaseExp: no
                   openApiKey: b2756447ccc24e2ca754c9deeb66c626
                   openApiSecret: 675af0fce4a149439db0918252286312
+          fashionTamersConf:
+                  url: http://fashiontamers.edstema.it/api/v2/place/order.json?storeCode=H6PRP
+                  cancelUrl: http://fashiontamers.edstema.it/api/v3.0/cancel/order.json?storeCode=H6PRP
+                  placeUrl: http://fashiontamers.edstema.it/api/v3.0/place/order.json?storeCode=H6PRP
+                  isPurchaseExp: no
+                  openApiKey: b2756447ccc24e2ca754c9deeb66c626
+                  openApiSecret: 675af0fce4a149439db0918252286312        
           lamborghiniConf:
                   cancelUrl: http://lamborghini.edstema.it/api/v3.0/cancel/order.json?storeCode=8CJXT
                   placeUrl: http://lamborghini.edstema.it/api/v3.0/place/order.json?storeCode=8CJXT
