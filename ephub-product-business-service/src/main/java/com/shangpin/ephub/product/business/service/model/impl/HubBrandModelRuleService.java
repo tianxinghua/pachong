@@ -206,10 +206,11 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 
 	 * @param hubBrandModelRuleDtoList
 	 * @param brandMode 货号
-	 * @return 通过则非空字符串货号返回，否则返回null
+	 * @return 通过则非空字符串货号返回，否则返回""  若未找到规则 返回null
 	 */
 	private String verify(List<HubBrandModelRuleDto> hubBrandModelRuleDtoList, String brandMode) {
 			String result = null;
+			boolean isHaveRule = false;
 			for (HubBrandModelRuleDto hubBrandModelRuleDto : hubBrandModelRuleDtoList) {
 				String modelRex = hubBrandModelRuleDto.getModelRex();
 				String excludeRex = hubBrandModelRuleDto.getExcludeRex();
@@ -217,6 +218,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 				if (StringUtils.isBlank(modelRex) || StringUtils.isBlank(excludeRex) || StringUtils.isBlank(separator)) {
 					continue;
 				}
+				isHaveRule = true;
 				String processed = brandMode.replaceAll(excludeRex, "");
 				if (StringUtils.isBlank(processed)) {
 					log.warn("系统检测到加工之后的品牌方型号为空，品牌方型号校验不通过");
@@ -229,6 +231,7 @@ public class HubBrandModelRuleService implements IHubBrandModelRuleService {
 					}
 				}
 			}
+			if(null==result&&isHaveRule) result ="";
 			return result;
 	}
 	

@@ -1,14 +1,20 @@
 package com.shangpin.ephub.product.business.ui.pending.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.product.business.service.hub.HubSpuCommonService;
+import com.shangpin.ephub.product.business.service.pending.PendingCommonService;
 import com.shangpin.ephub.product.business.service.pending.WebSpiderService;
+import com.shangpin.ephub.product.business.ui.pending.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.shangpin.ephub.client.data.mysql.rule.dto.HubBrandModelRuleDto;
 import com.shangpin.ephub.product.business.ui.pending.dto.Page;
@@ -18,10 +24,6 @@ import com.shangpin.ephub.product.business.ui.pending.dto.Reasons;
 import com.shangpin.ephub.product.business.ui.pending.service.HubSpuPendingNohandleReasonService;
 import com.shangpin.ephub.product.business.ui.pending.service.IHubSpuPendingPicService;
 import com.shangpin.ephub.product.business.ui.pending.service.IPendingProductService;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingOriginVo;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
-import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
-import com.shangpin.ephub.product.business.ui.pending.vo.SupplierProductVo;
 import com.shangpin.ephub.response.HubResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,13 @@ public class PendingProductController {
 
 	@Autowired
 	private WebSpiderService webSpiderService;
+	@Autowired
+	private PendingCommonService pendingCommonService;
+
+	@Autowired
+	private HubSpuCommonService spuCommonService;
+
+	int pageSize = 200;
 
     @RequestMapping(value="/list",method=RequestMethod.POST)
     public HubResponse<?> pendingList(@RequestBody PendingQuryDto pendingQuryDto){
@@ -65,6 +74,68 @@ public class PendingProductController {
     public HubResponse<?> batchUpdateProduct(@RequestBody PendingProducts pendingProducts){
         return pendingProductService.batchUpdatePendingProduct(pendingProducts);
     }
+
+
+	@RequestMapping(value="/batch-update-all",method=RequestMethod.GET)
+	public HubResponse<?> batchUpdateWaitHandleProduct(@RequestParam(value="supplierid", required=false) String supplierId,
+													   @RequestParam(value="startdate", required=false) String startDate,
+													   @RequestParam(value="enddate", required=false) String endDate){
+		HubResponse<String> response = new HubResponse<>();
+		response.setCode("0");
+    	Date start = null;
+    	Date end = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	if(StringUtils.isNotBlank(startDate)){
+
+			try {
+				start = dateFormat.parse(startDate  +  " 00:00:00");
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+		}
+		if(StringUtils.isNotBlank(endDate)){
+
+			try {
+				Calendar calendar =  Calendar.getInstance();
+				end = dateFormat.parse(endDate  +  " 00:00:00");
+				calendar.setTime(end);
+				calendar.add(Calendar.DAY_OF_YEAR,1);
+				end = calendar.getTime();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+		}
+		int i = 1;
+    	boolean isOver = false;
+    	while(true){
+			PendingProducts pendingProducts = pendingCommonService.getWaitHandleSpuPendingsWithPage(supplierId, start,end, i, pageSize);
+			if(pendingProducts.getTotal()!=pageSize){
+				isOver = true;
+			}
+			pendingProducts.getProduts().forEach(spuPendingVO->{
+				//先查询hubspu 无的话 查询爬虫
+				List<HubSpuDto> hubSpuDtos = spuCommonService.selectHubSpu(spuPendingVO.getSpuModel(), spuPendingVO.getHubBrandNo());
+				if(null!=hubSpuDtos&&hubSpuDtos.size()>0) {
+					pendingProductService.updatePendingProduct(spuPendingVO);
+				}else{
+					HubSpuPendingDto handleWebSpiderdSpuPending = pendingCommonService.getHandleWebSpiderdSpuPending(spuPendingVO.getHubBrandNo(), spuPendingVO.getSpuModel());
+					if(null!=handleWebSpiderdSpuPending){
+						pendingProductService.updatePendingProduct(spuPendingVO);
+					}
+				}
+			});
+			if(isOver) break;
+			i++;
+
+		}
+
+//    	List<PendingProducts>  pendingProducts =
+//		 pendingProductService.batchUpdatePendingProduct(pendingProducts);
+		response.setMsg("完成");
+		return response;
+	}
 
 
 	@RequestMapping(value="/select-hotboom",method=RequestMethod.POST)

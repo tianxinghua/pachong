@@ -75,13 +75,18 @@ public class HubBrandModelRuleController {
 			result.setPassing(true);
 			result.setBrandMode(brandModel);
 		} else {
-			String _brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
-			if (StringUtils.isBlank(_brandModel)) {
+			if("".equals(brandModel)){
 				result.setPassing(false);
-			} else {
-				result.setPassing(true);
-				result.setBrandMode(_brandModel);
+			}else{
+				String _brandModel = hubBrandModelRuleService.regexVerify(dto.getHubBrandNo(), dto.getHubCategoryNo(), dto.getBrandMode());
+				if (StringUtils.isBlank(_brandModel)) {
+					result.setPassing(false);
+				} else {
+					result.setPassing(true);
+					result.setBrandMode(_brandModel);
+				}
 			}
+
 		}
 		log.info("品牌校验规则（校验品牌并且校验品类）服务接收到的参数为:{}， 系统品牌型号规则验证结果为{}， 耗时{}milliseconds!", dto.toString(), result.toString(), System.currentTimeMillis() - start);
 		return result;

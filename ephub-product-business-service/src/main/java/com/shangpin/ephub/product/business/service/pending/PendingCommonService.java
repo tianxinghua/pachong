@@ -13,15 +13,15 @@ import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingProductDto;
+import com.shangpin.ephub.product.business.ui.pending.vo.PendingProducts;
 import com.shangpin.ephub.product.business.ui.pending.vo.PendingUpdatedVo;
 import com.shangpin.ephub.response.HubResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by lizhongren
@@ -166,4 +166,45 @@ public class PendingCommonService {
             hubPendingSpuDto.setSpuSeasonState((byte)0);
         }
     }
+
+    /**
+     * 获取待处理的产品和库存
+     * @param supplierId :供货尚ID 可以为空
+     * @param page 页码
+     * @param pageSize  每页的数量
+     * @return
+     */
+     public PendingProducts getWaitHandleSpuPendingsWithPage(String  supplierId,Date startDate,Date endDate ,
+                                                             Integer page, Integer pageSize){
+         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+         HubSpuPendingCriteriaDto.Criteria criterion = criteria.createCriteria();
+         criterion.andSpuStateEqualTo(SpuState.INFO_PECCABLE.getIndex());
+         if(StringUtils.isNotBlank(supplierId)){
+             criterion.andSupplierIdEqualTo(supplierId);
+         }
+         if(null!=startDate){
+             criterion.andCreateTimeGreaterThanOrEqualTo(startDate);
+         }
+         if(null!=endDate){
+             criterion.andCreateTimeLessThan(endDate);
+         }
+         criteria.setPageNo(page);
+         criteria.setPageSize(pageSize);
+         List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
+         PendingProducts  pendingProducts = new PendingProducts();
+         List<PendingProductDto> products = new ArrayList<>();
+         if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0){
+              hubSpuPendingDtos.forEach(spuDto->{
+                  PendingProductDto  spuPendingVO = new PendingProductDto();
+                  BeanUtils.copyProperties(spuDto,spuPendingVO);
+                  //获取需要处理的SKU
+
+                  products.add(spuPendingVO);
+              });
+         }
+         pendingProducts.setProduts(products);
+         pendingProducts.setTotal(products.size());
+         pendingProducts.setCreateUser("procedure");
+         return pendingProducts;
+     }
 }
