@@ -734,13 +734,6 @@ public class TaskImportService {
             }
             hubPendingSpuDto.setSpuState((byte) SpuState.INFO_PECCABLE.getIndex());
         }
-        //TODO 全部排除的是否进入待审核
-//		if(allFilter){
-//			hubPendingSpuDto.setSpuState((byte)2);
-//		}
-//		if(noSku){
-//			hubPendingSpuDto.setSpuState((byte)2);
-//		}
 
         //新加的 记录校验结果
         hubPendingSpuDto.setMemo(memo);
