@@ -48,6 +48,8 @@ public class HubFilterService {
 		supplierIds.add("2018040902001");
 		//直采品牌方供应商 Redigroup-mono brands
 		supplierIds.add("2018070502014");
+		//creative99
+		supplierIds.add("2016030401795");
 	}
 	@Autowired
 	IShangpinRedis shangpinRedis;
