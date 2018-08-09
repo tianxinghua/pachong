@@ -6,10 +6,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.product.business.service.hub.HubSpuCommonService;
 import com.shangpin.ephub.product.business.service.pending.PendingCommonService;
+import com.shangpin.ephub.product.business.service.pending.SkuPendingService;
 import com.shangpin.ephub.product.business.service.pending.WebSpiderService;
 import com.shangpin.ephub.product.business.ui.pending.vo.*;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +59,10 @@ public class PendingProductController {
 
 	@Autowired
 	private HubSpuCommonService spuCommonService;
+
+	@Autowired
+    private SkuPendingService skuPendingService;
+
 
 	int pageSize = 200;
 
@@ -115,16 +121,35 @@ public class PendingProductController {
 				isOver = true;
 			}
 			pendingProducts.getProduts().forEach(spuPendingVO->{
+
+				class SkuTmp {
+					public void setHubSkuPending(){
+						List<HubSkuPendingDto> waitHandleSkuPendings = skuPendingService.getWaitHandleSkuPending(spuPendingVO.getSpuPendingId());
+						if(null!=waitHandleSkuPendings&&waitHandleSkuPendings.size()>0){
+							spuPendingVO.setHubSkus(waitHandleSkuPendings);
+
+						}
+					}
+
+				}
+
 				//先查询hubspu 无的话 查询爬虫
 				List<HubSpuDto> hubSpuDtos = spuCommonService.selectHubSpu(spuPendingVO.getSpuModel(), spuPendingVO.getHubBrandNo());
 				if(null!=hubSpuDtos&&hubSpuDtos.size()>0) {
+					SkuTmp skuTmp  = new SkuTmp();
+					skuTmp.setHubSkuPending();
 					pendingProductService.updatePendingProduct(spuPendingVO);
+
 				}else{
 					HubSpuPendingDto handleWebSpiderdSpuPending = pendingCommonService.getHandleWebSpiderdSpuPending(spuPendingVO.getHubBrandNo(), spuPendingVO.getSpuModel());
 					if(null!=handleWebSpiderdSpuPending){
+						SkuTmp skuTmp  = new SkuTmp();
+						skuTmp.setHubSkuPending();
 						pendingProductService.updatePendingProduct(spuPendingVO);
 					}
 				}
+
+
 			});
 			if(isOver) break;
 			i++;
