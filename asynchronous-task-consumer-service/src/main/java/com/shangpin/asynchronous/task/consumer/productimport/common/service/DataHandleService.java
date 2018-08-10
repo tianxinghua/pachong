@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.DataState;
+import com.shangpin.ephub.client.data.mysql.enumeration.SourceFromEnum;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -184,6 +185,7 @@ public class DataHandleService {
 		targetPendingSpuDto.setHubSpuNo(sourceDto.getHubSpuNo());
 		targetPendingSpuDto.setSpuModel(sourceDto.getSpuModel());
 		targetPendingSpuDto.setSpuName(sourceDto.getSpuName());
+		targetPendingSpuDto.setOriginSource(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue());
 
 		hubPendingSpuCheckResult.setMaterial(true);
 		hubPendingSpuCheckResult.setBrand(true);

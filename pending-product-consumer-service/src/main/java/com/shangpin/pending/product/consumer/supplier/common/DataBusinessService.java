@@ -8,6 +8,7 @@ import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMapp
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandCriteriaDto;
@@ -48,6 +49,9 @@ public class DataBusinessService extends DataServiceHandler {
 
     @Autowired
     private IShangpinRedis shangpinRedis;
+
+    @Autowired
+    HubSpuPendingGateWay spuPendingGateWay;
 
 
     public void updateSpuPendingStockAndPriceState(Long  spuPendingId){
@@ -169,6 +173,16 @@ public class DataBusinessService extends DataServiceHandler {
     }
 
 
+
+
+    public HubSpuPendingDto getHandleWebSpiderdSpuPending(String brandNo, String spuModel){
+        HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
+        criteria.createCriteria().andHubBrandNoEqualTo(brandNo).andSpuModelEqualTo(spuModel)
+                .andSpuStateEqualTo(SpuState.HANDLED.getIndex()).andSourceFromEqualTo(SourceFromEnum.TYPE_WEBSPIDER.getIndex().byteValue());
+        List<HubSpuPendingDto> hubSpuPendingDtos = spuPendingGateWay.selectByCriteria(criteria);
+        if(null!=hubSpuPendingDtos&&hubSpuPendingDtos.size()>0) return hubSpuPendingDtos.get(0);
+        return null;
+    }
 
 
 
