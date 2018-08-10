@@ -39,7 +39,7 @@ public class SupplierProperties {
 	
 	private Zitafabiani zitafabiani;
 
-	private MAX1980 max1980;
+//	private MAX1980 max1980;
 	
 	private Mengotti mengotti;
 	
