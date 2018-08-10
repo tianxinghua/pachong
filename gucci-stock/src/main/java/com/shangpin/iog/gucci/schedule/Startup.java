@@ -7,7 +7,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 
 /**
- * Created by houkun on 2015/11/30.
+ * Created by wanner on 2018/6/30.
+ *
+ * redigroup-memo brands 爬虫品牌：GUCCI 库存价格推送程序 ，注意推送的是 昨天的库存数据
  */
 public class Startup {
 
