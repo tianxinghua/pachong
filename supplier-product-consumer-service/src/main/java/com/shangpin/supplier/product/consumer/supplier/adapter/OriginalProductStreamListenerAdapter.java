@@ -220,7 +220,7 @@ public class OriginalProductStreamListenerAdapter {
 	}
 	
 	/**
-	 * geb供货商原始数据监听方法
+	 * fashionTamers供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
 	 */

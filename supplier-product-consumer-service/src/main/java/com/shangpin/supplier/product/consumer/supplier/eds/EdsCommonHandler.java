@@ -124,6 +124,15 @@ public class EdsCommonHandler implements ISupplierHandler {
 				String desc = item.getItem_description();
 				if(desc!=null&&desc.contains("%")){
 					hubSpu.setSupplierMaterial(desc.substring(desc.indexOf("%")-3));
+				}else{
+					if(null!=desc){
+						if(desc.length()>30){
+							hubSpu.setSupplierMaterial(desc.substring(desc.length()-30));
+						}else{
+							hubSpu.setSupplierMaterial(desc);
+						}
+					}
+
 				}
 			}
 			hubSpu.setSupplierOrigin(item.getMade_in());
