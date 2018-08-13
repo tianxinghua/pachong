@@ -51,8 +51,9 @@ public class PendingProductCommonService {
 				HubSpuPendingDto spuPendingDto = spuPendingGateWay
 						.selectByPrimaryKey(spuPendingId);
 				if (spuPendingDto != null
-						&& spuPendingDto.getSpuState() == SpuStatus.SPU_WAIT_AUDIT
-								.getIndex().byteValue()) {
+						&& (spuPendingDto.getSpuState() == SpuStatus.SPU_WAIT_AUDIT
+								.getIndex().byteValue()||spuPendingDto.getSpuState() == SpuStatus.SPU_HANDLED
+						.getIndex().byteValue())) {
 
 					SpuPendingAuditVO auditVo = new SpuPendingAuditVO();
 					BeanUtils.copyProperties(spuPendingDto, auditVo);

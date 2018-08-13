@@ -132,4 +132,6 @@ public class PendingProductCommonController {
 		return pendingProductCommonService.audit(spuPendingId);
 		
 	}
+
+
 }
