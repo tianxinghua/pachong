@@ -8,12 +8,15 @@ import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMapp
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSkuPendingDto;
 import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSkuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.studio.dic.dto.HubDicStudioBrandDto;
 import com.shangpin.ephub.client.data.mysql.studio.dic.gateway.HubDicStudioBrandGateway;
+import com.shangpin.pending.product.consumer.common.enumeration.DataBusinessStatus;
+import com.shangpin.pending.product.consumer.common.enumeration.SpuStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,8 +188,29 @@ public class DataBusinessService extends DataServiceHandler {
     }
 
 
+    public boolean  isCanAutoAudit(String supplierId,String supplierSpuNo){
+        HubSpuPendingDto spuPendingDto = null;
+        boolean hubSpuIsExist = false;
 
-    //	private void updateSpuStockStateForInsertSku(SpuPending hubSpuPending, HubSkuPendingDto hubSkuPending) {
+        spuPendingDto = getHubSpuPending(supplierId, supplierSpuNo);
+        if(null!=spuPendingDto){
+            if (SpuBrandState.HANDLED.getIndex()==spuPendingDto.getSpuBrandState()&&
+                    SpuModelState.VERIFY_PASSED.getIndex()==spuPendingDto.getSpuModelState()) {
+                HubSpuDto hubSpuDto = this.getHubSpuByHubBrandNoAndProductModel(spuPendingDto.getHubBrandNo(),
+                        spuPendingDto.getSpuModel());
+                if(null!=hubSpuDto){
+                    if(hubSpuDto.getHubColor()!=null&&hubSpuDto.getHubColor().equals(spuPendingDto.getHubColor())){
+                        hubSpuIsExist = true;
+
+                    }
+                }
+            }
+        }
+        return  hubSpuIsExist;
+    }
+
+
+   //	private void updateSpuStockStateForInsertSku(SpuPending hubSpuPending, HubSkuPendingDto hubSkuPending) {
 //		boolean isMarketPrice = true, isSupplyPrice = true;
 //		if(null==hubSkuPending.getMarketPrice()||hubSkuPending.getMarketPrice().intValue()==0){
 //			isMarketPrice = false;

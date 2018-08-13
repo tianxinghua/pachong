@@ -116,6 +116,7 @@ public class PendingHandler extends VariableInit {
 					hubSpuPendingDto = handSpuPending(message.getData());
 				}else {
 					//spu pending 处理
+					//因为要自动审核  需要知道是否可以审核  所以不论新增 修改 或者不变 都要知道 hubSpuIsPassing的状态
 					hubSpuPending = handleSpuPending(message, headers, spuStatus, tmp);
 					if (spuStatus == MessageType.RESTART_HANDLE.getIndex()) {
 						//重处理的不做SKU更新
@@ -540,7 +541,7 @@ public class PendingHandler extends VariableInit {
 		dataBusinessService.updateSpuPendingStockAndPriceState(hubSpuPending.getSpuPendingId());
 
 		//整体处理SPU的状态  // 不再自动进入待选品，SPU_HANDLED==》SPU_WAIT_AUDIT
-		log.info("spu modle :"+hubSpuPending.getSpuModel() +" hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue());
+		log.info("spu modle :"+hubSpuPending.getSpuModel() +" hubSpuPending.getSpuState().intValue() = "+hubSpuPending.getSpuState().intValue()  + " isNewSku =" + isNewSku) ;
 		if(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()||
 				(hubSpuPending.getSpuState().intValue() == SpuStatus.SPU_HANDLED.getIndex()&&isNewSku)){
 			boolean flag = spuPendingHandler.updateSpuStateToWaitHandleIfSkuStateHaveWaitHandle(hubSpuPending.getSpuPendingId());
@@ -552,11 +553,12 @@ public class PendingHandler extends VariableInit {
 				spuPendingDto.setSpuPendingId(hubSpuPending.getSpuPendingId());
 				spuPendingDto.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 				HubSpuPendingDto  spuTmp = skuPendingCheckGateWay.checkSkuBeforeAudit(spuPendingDto);
-				log.info( "spu modle :"+ spuPendingDto.getSpuModel() +  "after  check sku ,spu state： " + spuTmp.getSpuState());
+				log.info( "spu modle :"+ hubSpuPending.getSpuModel() +  "after  check sku ,spu state： " + spuTmp.getSpuState());
 				if(spuTmp.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
 					//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
+
 					if(hubSpuPending.isHubSpuIsPassing()){
-						log.info("hub存在同品牌同货号同颜色，自动审核:"+hubSpuPending.getSpuModel());
+						log.info("spu modle :"+ hubSpuPending.getSpuModel() +", hub存在同品牌同货号同颜色 ，自动审核");
 						hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
 					}
 				}else{
@@ -591,6 +593,10 @@ public class PendingHandler extends VariableInit {
             if (null != tmp) {
                 hubSpuPending = new SpuPending();
                 BeanUtils.copyProperties(tmp, hubSpuPending);
+                //校验是否可以自动审核
+                if(dataBusinessService.isCanAutoAudit(hubSpuPending.getSupplierId(),hubSpuPending.getSupplierSpuNo())){
+					hubSpuPending.setHubSpuIsPassing(true);
+				}
 
 				//判断HUB_SPU是否存   （现无需再判断，在insert hub_sku_pending里处理）
 //				if (hubSpuPending.getSpuBrandState().intValue()==PropertyStatus.MESSAGE_HANDLED.getIndex()

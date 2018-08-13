@@ -1,4 +1,4 @@
-/*
+
 package com.shangpin.pending.product.consumer;
 
 import com.alibaba.fastjson.JSON;
@@ -8,10 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
-*/
-/**
- * Created by lizhongren on 2017/1/19.
- *//*
+
+
+
 
 public class CommonTest {
 
@@ -162,6 +161,8 @@ public class CommonTest {
         System.out.println("result  = "+result );
     }
 
+
+
     public  void  getSysEnv(){
 
         System.setProperty("GOOGLE_APPLICATION_CREDENTIALS","D:\\empolder\\google\\MyTranslation-d51da5164bfd.json");
@@ -200,5 +201,7 @@ public class CommonTest {
         }
         System.out.println("material = " +hubMaterial);
     }
+
+
 }
-*/
+
