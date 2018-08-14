@@ -554,18 +554,22 @@ public class PendingHandler extends VariableInit {
 				spuPendingDto.setSpuState(SpuStatus.SPU_WAIT_AUDIT.getIndex().byteValue());
 				HubSpuPendingDto  spuTmp = skuPendingCheckGateWay.checkSkuBeforeAudit(spuPendingDto);
 				log.info( "spu modle :"+ hubSpuPending.getSpuModel() +  "after  check sku ,spu state： " + spuTmp.getSpuState());
-				if(spuTmp.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
-					//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
 
-					if(hubSpuPending.isHubSpuIsPassing()){
-						log.info("spu modle :"+ hubSpuPending.getSpuModel() +", hub存在同品牌同货号同颜色 ，自动审核");
-						hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
-					}
-				}else{
-                    //更新状态
-					spuPendingHandler.updateSpuState(spuTmp);
+				spuPendingHandler.updateSpuState(spuTmp);
 
-				}
+
+//				if(spuTmp.getSpuState().intValue() == SpuStatus.SPU_WAIT_AUDIT.getIndex()){
+//					//2018-04-19新需求 hub存在同品牌同货号同颜色，自动审核
+//
+//					if(hubSpuPending.isHubSpuIsPassing()){
+//						log.info("spu modle :"+ hubSpuPending.getSpuModel() +", hub存在同品牌同货号同颜色 ，自动审核");
+//						hubPendingHandleGateWay.audit(hubSpuPending.getSpuPendingId());
+//					}
+//				}else{
+//                    //更新状态
+//					spuPendingHandler.updateSpuState(spuTmp);
+//
+//				}
 
 			}
 		}
