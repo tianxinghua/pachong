@@ -43,5 +43,12 @@ public interface SupplierInHubService {
      */
     public SupplierInHubDto getSupplierInHubBySupplierId(String supplierId);
 
+    /**
+     * 是否是直发代购的供货商
+     * @param supplierId
+     * @return
+     */
+    public boolean isDirectHotboom(String supplierId);
+
 
 }

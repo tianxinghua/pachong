@@ -44,7 +44,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.shangpin:openapi-api-sdk:4.7')
-    compile('com.shangpin:openapi-api:4.7.14')
+    compile('com.shangpin:openapi-api:4.8.1')
     compile('ZeroC:Ice:3.5.1')
 
 	compile('commons-net:commons-net:3.3')

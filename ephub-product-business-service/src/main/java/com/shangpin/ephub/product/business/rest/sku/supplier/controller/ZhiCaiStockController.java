@@ -3,6 +3,7 @@ package com.shangpin.ephub.product.business.rest.sku.supplier.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,9 @@ public class ZhiCaiStockController {
 	@Autowired
 	StockHandleService stockHandleService;
 
+	@Autowired
+	SupplierInHubService supplierInHubService;
+
 	// zhicai更新库存
 	@RequestMapping(value = "/update-stock", method = RequestMethod.POST)
 	public HubResponse<?> zhicaiUpdateStock(@RequestBody ZhiCaiStock zhiCaiStock) {
@@ -43,7 +47,12 @@ public class ZhiCaiStockController {
 
 		Integer updateFailedNum = null;
 		try {
-			updateFailedNum = stockHandleService.updateIceStock(zhiCaiStock.getSupplierId(), map);
+			if(supplierInHubService.isDirectHotboom(zhiCaiStock.getSupplierId())){//代购直发供货商
+				updateFailedNum = stockHandleService.updateIceStock(zhiCaiStock.getSupplierId(), map);
+			}else{
+				updateFailedNum = stockHandleService.updateIceStock(zhiCaiStock.getSupplierId(), map);
+			}
+
 			log.info(" updateFailedNum:" + updateFailedNum);
 		} catch (Exception e) {
 			log.error("-----------更新库存 信息失败！！！！ ");

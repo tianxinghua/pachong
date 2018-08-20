@@ -1,10 +1,12 @@
 package com.shangpin.ephub.product.business.service.supplier.impl;
 
+import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
+import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
@@ -25,6 +27,9 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
 
     @Autowired
     HubSupplierValueMappingGateWay hubSupplierValueMappingGateWay;
+
+    @Autowired
+    IShangpinRedis redisService;
 
     @Override
     public SupplierDto getSupplierBySupplierId(String supplierId) {
@@ -133,6 +138,32 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
 
         }
         return supplierDto;
+    }
+
+    @Override
+    public boolean isDirectHotboom(String supplierId) {
+
+        String directSupplier = redisService.get(GlobalConstant.REDIS_SUPPLIER_HOTBOOM_DIRECT+"-"+ supplierId);
+        if(StringUtils.isBlank(directSupplier)){
+            HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
+            criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue())
+                    .andSupplierIdEqualTo(supplierId);
+            List<HubSupplierValueMappingDto> hubSupplierValueMappingDtos = hubSupplierValueMappingGateWay.selectByCriteria(criteriaDto);
+            if(null!=hubSupplierValueMappingDtos&&hubSupplierValueMappingDtos.size()>0){
+                HubSupplierValueMappingDto  supplier = hubSupplierValueMappingDtos.get(0);
+                if("直发".equals(supplier.getHubVal())){
+
+                    redisService.setex(GlobalConstant.REDIS_SUPPLIER_HOTBOOM_DIRECT+"-"+ supplierId,60 * 10,"直发");
+
+                    return true;
+                }
+            }
+        }else{
+            return true;
+        }
+
+
+        return false;
     }
 
 

@@ -25,4 +25,10 @@ public interface GlobalConstant {
 
 	public static final String HUB_SKE_SIZE_TYPE_EXCLUDE="排除";
 
+
+	/**
+	 * 用于redis缓存代购直发
+	 */
+	public static final String REDIS_SUPPLIER_HOTBOOM_DIRECT = "REDIS_SUPPLIER_HOTBOOM_DIRECT";
+
 }

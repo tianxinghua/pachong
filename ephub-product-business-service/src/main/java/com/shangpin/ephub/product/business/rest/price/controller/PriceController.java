@@ -83,7 +83,7 @@ public class PriceController {
 			HubSupplierSkuCriteriaDto hubSupplierSkuCriteriaDto = new HubSupplierSkuCriteriaDto();
 			hubSupplierSkuCriteriaDto.createCriteria().andSupplierSkuNoEqualTo(priceDto.getSupplierSkuNo()).andSupplierIdEqualTo(priceDto.getSupplierId());
 			List<HubSupplierSkuDto> hubSupplierSkuDtoList = hubSupplierSkuGateWay.selectByCriteria(hubSupplierSkuCriteriaDto);
-			List<HubSupplierSkuDto> hubSupplierSkuDtoListNew = new ArrayList<>();
+
 			if(hubSupplierSkuDtoList!=null&&hubSupplierSkuDtoList.size()>0) {
 				HubSupplierSkuDto hubSupplierSkuDto = hubSupplierSkuDtoList.get(0);
 				log.info("hubSupplierSkuDto："+JSONObject.toJSONString(hubSupplierSkuDto)); 
@@ -91,7 +91,12 @@ public class PriceController {
 					return HubResponse.errorResp("价格与数据库市场价一致，不推送!");
 				}
 				hubSupplierSkuDto.setMarketPrice(new BigDecimal(priceDto.getMarketPrice()));
-				hubSupplierSkuDtoListNew.add(hubSupplierSkuDto);
+				//更新数据库的SKU价格
+				HubSupplierSkuDto skuDtoTmp  = new HubSupplierSkuDto();
+				skuDtoTmp.setSupplierSkuId(hubSupplierSkuDto.getSupplierSkuId());
+				skuDtoTmp.setMarketPrice(new BigDecimal(priceDto.getMarketPrice()));
+				hubSupplierSkuGateWay.updateByPrimaryKeySelective(skuDtoTmp);
+
 				Long hubSupplierSpuId = hubSupplierSkuDto.getSupplierSpuId();
 				HubSupplierSpuDto hubSupplierSpuDto = hubSupplierSpuGateWay.selectByPrimaryKey(hubSupplierSpuId);
 				PriceDto dto = new PriceDto();
