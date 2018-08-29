@@ -43,7 +43,7 @@ import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.RequestObj
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.Result;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.efashion.ReturnObject;
 
-@Component
+@Component("fashionTamersOrderImpl")
 public class FashionTamersOrderImpl  implements IOrderService {
 	private static Logger loggerError = Logger.getLogger("error");
 	private static Logger logger = Logger.getLogger("info");
@@ -94,8 +94,8 @@ public class FashionTamersOrderImpl  implements IOrderService {
 		try{
 			json = getJsonData(orderDTO,false);
 			String rtnData= null;
-//			rtnData = efashionPushOrder(orderDTO,placeUrl,json);
-			rtnData = efashionPushOrder(orderDTO,"http://geb-production.edstema.it/api/v3.0/place/order.json?storeCode=DW3LT",json);
+			rtnData = efashionPushOrder(orderDTO,placeUrl,json);
+
 			orderDTO.setLogContent("confirm返回的结果=" + rtnData+",推送的参数="+json);
 			logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
 			
