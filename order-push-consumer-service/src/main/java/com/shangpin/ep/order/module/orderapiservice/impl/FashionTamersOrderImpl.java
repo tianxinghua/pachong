@@ -256,20 +256,20 @@ public class FashionTamersOrderImpl  implements IOrderService {
 			if(flag){
 				item.setPurchase_price("1");
 			}else{
-//				try{
-//					BigDecimal priceInt = openApiService.getPurchasePrice(appKey, appSe, orderDTO.getPurchaseNo(), orderDTO.getSpSkuNo());
-//					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
-//					orderDTO.setLogContent("【geb在推送订单时获取采购价："+priceInt.toString()+"】"); 
-//					logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
-//					String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
-//					String price = priceInt.divide(new BigDecimal(serviceRate), 2)
-//							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-//					orderDTO.setPurchasePriceDetail(price);
-//					item.setPurchase_price(price);
-//				}catch(Exception e){
-//					Log.info(orderDTO.getPurchaseNo()+"geb获取采购价失败");
-//					item.setPurchase_price("1");
-//				}
+				try{
+					String serviceRate = priceService.GetServiceRate(orderDTO.getSupplierNo());
+
+					BigDecimal priceInt = priceService.getPurchasePrice(orderDTO.getSupplierId(),"",orderDTO.getSpSkuNo());
+					orderDTO.setLogContent("【fashionTamers在推送订单时获取采购价："+priceInt.toString()+"】");
+					logCommon.loggerOrder(orderDTO, LogTypeStatus.CONFIRM_LOG);
+					String price = priceInt.divide(new BigDecimal(serviceRate), 2)
+							.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+					orderDTO.setPurchasePriceDetail(price);
+					item.setPurchase_price(price);
+				}catch(Exception e){
+					logger.info(orderDTO.getPurchaseNo()+"fashionTamers获取采购价失败");
+					item.setPurchase_price("1");
+				}
 			}
 			Item[] i = { item };
 			obj.setItems(i);
