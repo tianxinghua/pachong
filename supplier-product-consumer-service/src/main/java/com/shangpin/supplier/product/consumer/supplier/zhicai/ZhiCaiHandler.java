@@ -175,9 +175,9 @@ public class ZhiCaiHandler implements ISupplierHandler{
 				hubSku.setSupplierSkuNo(ob.getProductModel()+"-"+ob.getSize());
 			else
 				hubSku.setSupplierSkuNo(ob.getSupplierSkuNo());
-			hubSku.setMarketPrice(new BigDecimal(ob.getDomesticMarketPrice()));
-			hubSku.setSalesPrice(new BigDecimal(ob.getDomesticMarketPrice()));
-			hubSku.setSupplyPrice(new BigDecimal(ob.getDomesticMarketPrice()));
+			hubSku.setMarketPrice(new BigDecimal(ob.getForeignMarketPrice()));
+			hubSku.setSalesPrice(new BigDecimal(ob.getForeignMarketPrice()));
+			hubSku.setSupplyPrice(new BigDecimal(ob.getForeignMarketPrice()));
 			hubSku.setSupplierBarcode(ob.getProductModel()+"-"+ob.getSize());
 			hubSku.setMeasurement(ob.getMeasurement());
 			if(!StringUtils.isEmpty(ob.getSize())){
