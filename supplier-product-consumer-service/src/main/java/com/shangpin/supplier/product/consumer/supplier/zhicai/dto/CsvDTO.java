@@ -28,5 +28,7 @@ public class CsvDTO {
 	private String supplierId;
 	private String supplierNo;
 	private String supplierSkuNo;
+	private String salePrice;
+	private String channel;
 	
 }

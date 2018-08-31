@@ -126,7 +126,11 @@ public class ZhiCaiHandler implements ISupplierHandler{
 			hubSpu.setSupplierSpuDesc(ob.getDesc());
 			hubSpu.setProductUrl(ob.getDetailLink());
 			hubSpu.setMarketPrice(new BigDecimal(ob.getForeignMarketPrice()));
-			hubSpu.setMarketPriceCn(new BigDecimal(ob.getDomesticMarketPrice()));
+			if(!StringUtils.isEmpty(ob.getDomesticMarketPrice()))
+				hubSpu.setMarketPriceCn(new BigDecimal(ob.getDomesticMarketPrice()));
+			if(!StringUtils.isEmpty(ob.getSalePrice()))
+				hubSpu.setSalePrice(new BigDecimal(ob.getSalePrice()));
+			hubSpu.setChannel(ob.getChannel());
 			return true;
 		}else{
 			return false;
@@ -175,9 +179,11 @@ public class ZhiCaiHandler implements ISupplierHandler{
 				hubSku.setSupplierSkuNo(ob.getProductModel()+"-"+ob.getSize());
 			else
 				hubSku.setSupplierSkuNo(ob.getSupplierSkuNo());
-			hubSku.setMarketPrice(new BigDecimal(ob.getForeignMarketPrice()));
-			hubSku.setSalesPrice(new BigDecimal(ob.getForeignMarketPrice()));
-			hubSku.setSupplyPrice(new BigDecimal(ob.getForeignMarketPrice()));
+			if(!StringUtils.isEmpty(ob.getSalePrice())) {
+				hubSku.setMarketPrice(new BigDecimal(ob.getSalePrice()));
+				hubSku.setSalesPrice(new BigDecimal(ob.getSalePrice()));
+				hubSku.setSupplyPrice(new BigDecimal(ob.getSalePrice()));
+			}
 			hubSku.setSupplierBarcode(ob.getProductModel()+"-"+ob.getSize());
 			hubSku.setMeasurement(ob.getMeasurement());
 			if(!StringUtils.isEmpty(ob.getSize())){
