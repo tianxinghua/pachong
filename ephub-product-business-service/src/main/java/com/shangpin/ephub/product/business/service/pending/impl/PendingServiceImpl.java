@@ -741,6 +741,11 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         skuPendingGateWay.updateByCriteriaSelective(criteriaSkuDto);
     }
 
+    /**
+     * 不包含排除的
+     * @param hubSpuPendingDtos
+     * @return
+     */
     private boolean hasNohandleSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos) {
         List<Long> spuIdList = new ArrayList<>();
         for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
@@ -761,6 +766,12 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         }
     }
 
+    /**
+     * 不包含排除的
+     * @param hubSpuPendingDtos
+     * @param sizeType
+     * @return
+     */
     private boolean hasNeedHandingSkuSize(List<HubSpuPendingDto> hubSpuPendingDtos,Map<String,String> sizeType) {
         List<Long> spuIdList = new ArrayList<>();
         for(HubSpuPendingDto spuDto:hubSpuPendingDtos){
@@ -770,7 +781,7 @@ public class PendingServiceImpl implements com.shangpin.ephub.product.business.s
         HubSkuPendingCriteriaDto criteriaSku = new HubSkuPendingCriteriaDto();
         criteriaSku.createCriteria().andSpuPendingIdIn(spuIdList)
 
-//                .andSkuStateEqualTo(SpuStatus.SPU_HANDLING.getIndex().byteValue())   //spu 和 sku 状态保持一致
+                .andSkuStateNotEqualTo(SpuStatus.SPU_HANDLED.getIndex().byteValue())   //spu 和 sku 状态保持一致
                 .andSpSkuSizeStateEqualTo(CommonHandleState.HANDLED.getIndex().byteValue())       //尺码已映射
                 .andFilterFlagEqualTo(FilterFlag.EFFECTIVE.getIndex());  //不过滤的才使用
 

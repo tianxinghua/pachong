@@ -83,11 +83,14 @@ public class SupplierSkuController {
 			dto.setPageIndex((zhiCaiQuery.getPageIndex()-1)*zhiCaiQuery.getPageSize());
 			dto.setPageSize(zhiCaiQuery.getPageSize());
 		}
-		if(zhiCaiQuery.getBrandName()==null||zhiCaiQuery.getBrandName().equals(""))
-			dto.setSupplierId(zhiCaiQuery.getSupplierId());
-		else {
-			dto.setSupplierId(zhiCaiQuery.getSupplierId());
+
+		dto.setSupplierId(zhiCaiQuery.getSupplierId());
+
+		if(StringUtils.isNotBlank(zhiCaiQuery.getBrandName())){
 			dto.setBrandName(zhiCaiQuery.getBrandName());
+		}
+		if(StringUtils.isNotBlank(zhiCaiQuery.getChannel())){
+
 		}
 		List<HubSupplierSpuDto> hubSupplierSpuDtoList = supplierSpuGateWay.selectByBrand(dto);
 		int total = supplierSpuGateWay.count(dto);
