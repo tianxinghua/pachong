@@ -1521,6 +1521,66 @@ public class HubSupplierSpuCriteriaDto {
             return (Criteria) this;
         }
 
+        public Criteria andSalePriceIsNull() {
+            addCriterion("sale_price is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceIsNotNull() {
+            addCriterion("sale_price is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceEqualTo(BigDecimal value) {
+            addCriterion("sale_price =", value, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceNotEqualTo(BigDecimal value) {
+            addCriterion("sale_price <>", value, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceGreaterThan(BigDecimal value) {
+            addCriterion("sale_price >", value, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("sale_price >=", value, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceLessThan(BigDecimal value) {
+            addCriterion("sale_price <", value, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("sale_price <=", value, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceIn(List<BigDecimal> values) {
+            addCriterion("sale_price in", values, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceNotIn(List<BigDecimal> values) {
+            addCriterion("sale_price not in", values, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("sale_price between", value1, value2, "salePrice");
+            return (Criteria) this;
+        }
+
+        public Criteria andSalePriceNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("sale_price not between", value1, value2, "salePrice");
+            return (Criteria) this;
+        }
+
         public Criteria andMarketPriceCnIsNull() {
             addCriterion("market_price_cn is null");
             return (Criteria) this;
@@ -1578,6 +1638,146 @@ public class HubSupplierSpuCriteriaDto {
 
         public Criteria andMarketPriceCnNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("market_price_cn not between", value1, value2, "marketPriceCn");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdIsNull() {
+            addCriterion("origin_supplier_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdIsNotNull() {
+            addCriterion("origin_supplier_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdEqualTo(String value) {
+            addCriterion("origin_supplier_id =", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotEqualTo(String value) {
+            addCriterion("origin_supplier_id <>", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdGreaterThan(String value) {
+            addCriterion("origin_supplier_id >", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdGreaterThanOrEqualTo(String value) {
+            addCriterion("origin_supplier_id >=", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdLessThan(String value) {
+            addCriterion("origin_supplier_id <", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdLessThanOrEqualTo(String value) {
+            addCriterion("origin_supplier_id <=", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdLike(String value) {
+            addCriterion("origin_supplier_id like", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotLike(String value) {
+            addCriterion("origin_supplier_id not like", value, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdIn(List<String> values) {
+            addCriterion("origin_supplier_id in", values, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotIn(List<String> values) {
+            addCriterion("origin_supplier_id not in", values, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdBetween(String value1, String value2) {
+            addCriterion("origin_supplier_id between", value1, value2, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginSupplierIdNotBetween(String value1, String value2) {
+            addCriterion("origin_supplier_id not between", value1, value2, "originSupplierId");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelIsNull() {
+            addCriterion("channel is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelIsNotNull() {
+            addCriterion("channel is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelEqualTo(String value) {
+            addCriterion("channel =", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelNotEqualTo(String value) {
+            addCriterion("channel <>", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelGreaterThan(String value) {
+            addCriterion("channel >", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelGreaterThanOrEqualTo(String value) {
+            addCriterion("channel >=", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelLessThan(String value) {
+            addCriterion("channel <", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelLessThanOrEqualTo(String value) {
+            addCriterion("channel <=", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelLike(String value) {
+            addCriterion("channel like", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelNotLike(String value) {
+            addCriterion("channel not like", value, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelIn(List<String> values) {
+            addCriterion("channel in", values, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelNotIn(List<String> values) {
+            addCriterion("channel not in", values, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelBetween(String value1, String value2) {
+            addCriterion("channel between", value1, value2, "channel");
+            return (Criteria) this;
+        }
+
+        public Criteria andChannelNotBetween(String value1, String value2) {
+            addCriterion("channel not between", value1, value2, "channel");
             return (Criteria) this;
         }
 
@@ -1960,7 +2160,6 @@ public class HubSupplierSpuCriteriaDto {
     }
 
     public static class Criterion {
-
 
         public Criterion() {
             super();

@@ -106,9 +106,24 @@ public class HubSupplierSpu implements Serializable {
     private BigDecimal marketPrice;
 
     /**
+     * 销售价
+     */
+    private BigDecimal salePrice;
+
+    /**
      * 国内市场价
      */
     private BigDecimal marketPriceCn;
+
+    /**
+     * 原始供货商ID（放弃使用只做记录）
+     */
+    private String originSupplierId;
+
+    /**
+     * 渠道
+     */
+    private String channel;
 
     /**
      * 创建时间
@@ -302,12 +317,36 @@ public class HubSupplierSpu implements Serializable {
         this.marketPrice = marketPrice;
     }
 
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
     public BigDecimal getMarketPriceCn() {
         return marketPriceCn;
     }
 
     public void setMarketPriceCn(BigDecimal marketPriceCn) {
         this.marketPriceCn = marketPriceCn;
+    }
+
+    public String getOriginSupplierId() {
+        return originSupplierId;
+    }
+
+    public void setOriginSupplierId(String originSupplierId) {
+        this.originSupplierId = originSupplierId == null ? null : originSupplierId.trim();
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel == null ? null : channel.trim();
     }
 
     public Date getCreateTime() {
@@ -384,7 +423,10 @@ public class HubSupplierSpu implements Serializable {
         sb.append(", supplierMeasurement=").append(supplierMeasurement);
         sb.append(", productUrl=").append(productUrl);
         sb.append(", marketPrice=").append(marketPrice);
+        sb.append(", salePrice=").append(salePrice);
         sb.append(", marketPriceCn=").append(marketPriceCn);
+        sb.append(", originSupplierId=").append(originSupplierId);
+        sb.append(", channel=").append(channel);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", infoState=").append(infoState);
@@ -428,7 +470,10 @@ public class HubSupplierSpu implements Serializable {
             && (this.getSupplierMeasurement() == null ? other.getSupplierMeasurement() == null : this.getSupplierMeasurement().equals(other.getSupplierMeasurement()))
             && (this.getProductUrl() == null ? other.getProductUrl() == null : this.getProductUrl().equals(other.getProductUrl()))
             && (this.getMarketPrice() == null ? other.getMarketPrice() == null : this.getMarketPrice().equals(other.getMarketPrice()))
+            && (this.getSalePrice() == null ? other.getSalePrice() == null : this.getSalePrice().equals(other.getSalePrice()))
             && (this.getMarketPriceCn() == null ? other.getMarketPriceCn() == null : this.getMarketPriceCn().equals(other.getMarketPriceCn()))
+            && (this.getOriginSupplierId() == null ? other.getOriginSupplierId() == null : this.getOriginSupplierId().equals(other.getOriginSupplierId()))
+            && (this.getChannel() == null ? other.getChannel() == null : this.getChannel().equals(other.getChannel()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getInfoState() == null ? other.getInfoState() == null : this.getInfoState().equals(other.getInfoState()))
@@ -461,7 +506,10 @@ public class HubSupplierSpu implements Serializable {
         result = prime * result + ((getSupplierMeasurement() == null) ? 0 : getSupplierMeasurement().hashCode());
         result = prime * result + ((getProductUrl() == null) ? 0 : getProductUrl().hashCode());
         result = prime * result + ((getMarketPrice() == null) ? 0 : getMarketPrice().hashCode());
+        result = prime * result + ((getSalePrice() == null) ? 0 : getSalePrice().hashCode());
         result = prime * result + ((getMarketPriceCn() == null) ? 0 : getMarketPriceCn().hashCode());
+        result = prime * result + ((getOriginSupplierId() == null) ? 0 : getOriginSupplierId().hashCode());
+        result = prime * result + ((getChannel() == null) ? 0 : getChannel().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getInfoState() == null) ? 0 : getInfoState().hashCode());

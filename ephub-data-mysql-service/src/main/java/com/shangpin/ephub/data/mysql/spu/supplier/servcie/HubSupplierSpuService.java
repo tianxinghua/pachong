@@ -1,85 +1,76 @@
 package com.shangpin.ephub.data.mysql.spu.supplier.servcie;
 
-import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.shangpin.ephub.data.mysql.spu.supplier.bean.HubSupplierSpuCriteriaWithRowBounds;
 import com.shangpin.ephub.data.mysql.spu.supplier.bean.HubSupplierSpuWithCriteria;
 import com.shangpin.ephub.data.mysql.spu.supplier.mapper.HubSupplierSpuMapper;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria;
-import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
- * <p>Title:HubSupplierSpuService.java </p>
- * <p>Description: </p>
- * <p>Company: www.shangpin.com</p> 
- * @author yanxiaobin
- * @date 2016年12月14日 下午5:21:05
+  HubSupplierSpu ����
  */
 @Service
+@Slf4j
 public class HubSupplierSpuService {
 
 	@Autowired
-	private HubSupplierSpuMapper hubSupplierSpuMapper;
+	private HubSupplierSpuMapper mapper;
 
 	public int countByCriteria(HubSupplierSpuCriteria criteria) {
-		return hubSupplierSpuMapper.countByExample(criteria);
+		return mapper.countByExample(criteria);
 	}
 
 	public int deleteByCriteria(HubSupplierSpuCriteria criteria) {
-		return hubSupplierSpuMapper.deleteByExample(criteria);
+		return mapper.deleteByExample(criteria);
 	}
 
-	public int deleteByPrimaryKey(Long supplierSpuId) {
-		return hubSupplierSpuMapper.deleteByPrimaryKey(supplierSpuId);
+	public int deleteByPrimaryKey(Long skuPendingId) {
+		return mapper.deleteByPrimaryKey(skuPendingId);
 	}
 
-	public int insert(HubSupplierSpu hubSupplierSpu) {
-		return hubSupplierSpuMapper.insert(hubSupplierSpu);
+	public int insert(HubSupplierSpu obj) {
+		return mapper.insert(obj);
 	}
 
-	public int insertSelective(HubSupplierSpu hubSupplierSpu) {
-		return hubSupplierSpuMapper.insertSelective(hubSupplierSpu);
+	public int insertSelective(HubSupplierSpu obj) {
+		return mapper.insertSelective(obj);
 	}
 
-	public List<HubSupplierSpu> selectByCriteriaWithRowbounds(
-			HubSupplierSpuCriteriaWithRowBounds criteriaWithRowBounds) {
-		return hubSupplierSpuMapper.selectByExampleWithRowbounds(criteriaWithRowBounds.getCriteria(), criteriaWithRowBounds.getRowBounds());
+	public List<HubSupplierSpu> selectByCriteriaWithRowbounds(HubSupplierSpuCriteriaWithRowBounds criteriaWithRowBounds) {
+		return mapper.selectByExampleWithRowbounds(criteriaWithRowBounds.getCriteria(), criteriaWithRowBounds.getRowBounds());
 	}
 
 	public List<HubSupplierSpu> selectByCriteria(HubSupplierSpuCriteria criteria) {
-		return hubSupplierSpuMapper.selectByExample(criteria);
+		return mapper.selectByExample(criteria);
 	}
-	
-	public List<HubSupplierSpu> selectByBrand(HubSupplierSpuQureyDto dto) {
-		return hubSupplierSpuMapper.selectByBrand(dto);
+
+	public HubSupplierSpu selectByPrimaryKey(Long id) {
+		return mapper.selectByPrimaryKey(id);
 	}
-	
-	public int count(HubSupplierSpuQureyDto dto) {
-		return hubSupplierSpuMapper.count(dto);
+
+	public int updateByCriteriaSelective(HubSupplierSpuWithCriteria criteria) {
+		return mapper.updateByExampleSelective(criteria.getHubSupplierSpu(), criteria.getCriteria());
+	}
+
+	public int updateByCriteria(HubSupplierSpuWithCriteria criteria) {
+		return mapper.updateByExample(criteria.getHubSupplierSpu(), criteria.getCriteria());
+	}
+
+	public int updateByPrimaryKeySelective(HubSupplierSpu obj) {
+		return mapper.updateByPrimaryKeySelective(obj);
+	}
+
+	public int updateByPrimaryKey(HubSupplierSpu obj) {
+		return mapper.updateByPrimaryKey(obj);
 	}
 
 
-	public HubSupplierSpu selectByPrimaryKey(Long supplierSpuId) {
-		return hubSupplierSpuMapper.selectByPrimaryKey(supplierSpuId);
-	}
 
-	public int updateByCriteriaSelective(HubSupplierSpuWithCriteria hubSupplierSpuWithCriteria) {
-		return hubSupplierSpuMapper.updateByExampleSelective(hubSupplierSpuWithCriteria.getHubSupplierSpu(), hubSupplierSpuWithCriteria.getCriteria());
-	}
-
-	public int updateByCriteria(HubSupplierSpuWithCriteria hubSupplierSpuWithCriteria) {
-		return hubSupplierSpuMapper.updateByExample(hubSupplierSpuWithCriteria.getHubSupplierSpu(), hubSupplierSpuWithCriteria.getCriteria());
-	}
-
-	public int updateByPrimaryKeySelective(HubSupplierSpu hubSupplierSpu) {
-		return hubSupplierSpuMapper.updateByPrimaryKeySelective(hubSupplierSpu);
-	}
-
-	public int updateByPrimaryKey(HubSupplierSpu hubSupplierSpu) {
-		return hubSupplierSpuMapper.updateByPrimaryKey(hubSupplierSpu);
-	}
 }

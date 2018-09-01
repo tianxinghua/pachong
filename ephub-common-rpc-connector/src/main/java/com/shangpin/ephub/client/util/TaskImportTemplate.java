@@ -91,8 +91,8 @@ public class TaskImportTemplate {
 	 * @return
 	 */
 	public static String[] getSupplierDataTemplate() {
-		String[] headers = { "gender", "brand", "category", "SPU", "productModel","season","material","color", "size", "proName", "国外市场价", "国内市场价", "qty", "made",
-				"desc", "pics","detailLink","measurement","supplierId","supplierNo","supplierSkuNo"};
+		String[] headers = { "gender", "brand", "category", "SPU", "productModel","season","material","color", "size", "proName", "国外市场价", "国内市场价","salePrice", "qty", "made",
+				"desc", "pics","detailLink","measurement","supplierId","supplierNo","supplierSkuNo","channel"};
 		return headers;
 	}
 
