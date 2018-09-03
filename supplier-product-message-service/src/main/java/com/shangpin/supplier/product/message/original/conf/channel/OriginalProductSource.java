@@ -10,6 +10,9 @@ import org.springframework.messaging.MessageChannel;
  * @date 2016年12月5日 下午7:34:44
  */
 public interface OriginalProductSource {
+	
+	
+	public static final String fashionTamers = "fashionTamersOriginalProduct";
 	public static final String dolciTrame = "dolciTrameOriginalProduct";
 	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
 	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
@@ -170,8 +173,13 @@ public interface OriginalProductSource {
 	public static final String YLATI ="ylatiOriginalProduct";
 
 	public static final String MAX1980 ="max1980OriginalProduct";
-
-
+	
+	/**
+     * 供货商fashionTamers通道组件配置
+     * @return 供货商fashionTamers通道组件
+     */
+    @Output(value = OriginalProductSource.fashionTamers)
+    public MessageChannel fashionTamers();
 	/**
      * 供货商angeloMinetti通道组件配置
      * @return 供货商angeloMinetti通道组件

@@ -263,8 +263,14 @@ spring:
                         max1980OriginalProduct:
                              destination: max1980.original.product
                              content-type: application/json
+                        fashionTamersOriginalProduct:
+                              destination: fashionTamers.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
+                            fashionTamersOriginalProduct:
+                                  producer:
+                                           prefix: HA.
                             cocoroseLondonOriginalProduct:
                                   producer:
                                            prefix: HA.
