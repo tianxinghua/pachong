@@ -302,7 +302,7 @@ public class FetchStockImpl  {
 
                 }
                 Elements temSizeElements = doc.select("#size-picker-content").select("input");
-                Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message-main").select("p");
+                Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message").select("p");
                 if(temSizeElements!=null&&temSizeElements.size()>0){
                     System.out.println(temSizeElements);
                      for (Element sizeElement:temSizeElements ) {
@@ -500,7 +500,7 @@ public class FetchStockImpl  {
             }
 
             Elements temSizeElements = doc.select("#size-picker-content").select("input");
-            Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message-main").select("p");
+            Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message").select("p");
             if(temSizeElements!=null&&temSizeElements.size()>0) {
                 System.out.println(temSizeElements);
                 for (Element sizeElement : temSizeElements) {
