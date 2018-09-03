@@ -690,7 +690,7 @@ public class OriginalProductStreamSender {
         return originalProductSource.ylati().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 
-    public boolean MAX1980Stream(SupplierProduct supplierProduct) {
+    public boolean max1980Stream(SupplierProduct supplierProduct) {
         return originalProductSource.max1980().send(MessageBuilder.withPayload(supplierProduct).build());
     }
 
