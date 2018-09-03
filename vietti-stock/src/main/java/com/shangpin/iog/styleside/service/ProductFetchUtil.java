@@ -59,6 +59,11 @@ public class ProductFetchUtil {
                 Gson gson = new Gson();
                 SkuDTO skuDTO = gson.fromJson(data, SkuDTO.class);
                 String qty = skuDTO.getQty();
+                if(qty!=null&&qty.contains(".")){
+                    qty = qty.split("\\.")[0];
+                }else{
+                    qty="0";
+                }
                 spStockMap.put(str,qty);
             }
 		} catch (Exception e) {
