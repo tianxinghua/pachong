@@ -119,6 +119,9 @@ spring:
                         viettiOriginalProduct:
                               destination: vietti.original.product
                               content-type: application/json
+                        vietti2OriginalProduct:
+                          destination: vietti2.original.product
+                          content-type: application/json
                         anielloOriginalProduct:
                               destination: aniello.original.product
                               content-type: application/json

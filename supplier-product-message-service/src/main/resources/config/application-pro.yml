@@ -122,9 +122,12 @@ spring:
                         paolofiorilloOriginalProduct: 
                               destination: paolofiorillo.original.product
                               content-type: application/json
-                        viettiOriginalProduct: 
+                        viettiOriginalProduct:
                               destination: vietti.original.product
                               content-type: application/json
+                        vietti2OriginalProduct:
+                                destination: vietti2.original.product
+                                content-type: application/json
                         anielloOriginalProduct: 
                               destination: aniello.original.product
                               content-type: application/json
@@ -388,6 +391,9 @@ spring:
                             viettiOriginalProduct: 
                                   producer: 
                                            prefix: HA.
+                            vietti2OriginalProduct:
+                                    producer:
+                                      prefix: HA.
                             anielloOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
