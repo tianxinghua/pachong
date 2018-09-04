@@ -31,7 +31,7 @@ public class OriginalProductAPI {
 	private OriginalProductService originalProductService;
 	@Autowired
 	private SupplierStockService supplierStockService;
-	
+
 	@RequestMapping(value = "/original-product")
 	public APIRsponse stockSync(@RequestBody SupplierProduct supplierProduct){
 		long start = System.currentTimeMillis();
