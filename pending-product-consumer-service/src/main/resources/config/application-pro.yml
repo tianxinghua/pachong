@@ -261,6 +261,16 @@ spring:
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
+
+                        vietti2PendingProduct:
+                              destination: vietti2.pending.product
+                              group: one
+                              consumer:
+                                concurrency: 1
+                                maxAttempts: 1
+
+
+
                         anielloPendingProduct: 
                               destination: aniello.pending.product
                               group: one
@@ -761,6 +771,15 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+
+                            vietti2PendingProduct:
+                                  consumer:
+                                    prefix: HA.
+                                    autoBindDlq: false
+                                    requeueRejected: true
+                                    republishToDlq: false
+
+
                             anielloPendingProduct: 
                                   consumer: 
                                        prefix: HA.

@@ -79,9 +79,11 @@ public interface PendingProductSink {
 	
 	public static final String PAOLOFIORILLO = "paolofiorilloPendingProduct"; 
 	
-	public static final String VIETTI = "viettiPendingProduct"; 
-	
-	public static final String ANIELLO = "anielloPendingProduct"; 
+	public static final String VIETTI = "viettiPendingProduct";
+	public static final String VIETTI2= "vietti2PendingProduct";
+
+
+    public static final String ANIELLO = "anielloPendingProduct";
 	
 	public static final String LINDELEPALAIS = "lindelepalaisPendingProduct"; 
 	
@@ -420,6 +422,15 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.VIETTI)
     public SubscribableChannel viettiPendingProduct();
+
+    /**
+     * 供货商VIETTI通道组件配置
+     * @return 供货商VIETTI通道组件
+     */
+    @Input(value = PendingProductSink.VIETTI2)
+    public SubscribableChannel vietti2PendingProduct();
+
+
 	/**
 	 * 供货商ANIELLO通道组件配置
 	 * @return 供货商ANIELLO通道组件
