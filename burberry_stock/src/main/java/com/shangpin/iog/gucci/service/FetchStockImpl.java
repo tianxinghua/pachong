@@ -76,8 +76,8 @@ public class FetchStockImpl  {
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============拉取GUCCI库存数据开始 "+startDateTime+"=========================");
-        logger.info("==============拉取GUCCI库存数据开始 "+startDateTime+"=========================");
+        System.out.println("============拉取BURBERRY库存数据开始 "+startDateTime+"=========================");
+        logger.info("==============拉取BURBERRY库存数据开始 "+startDateTime+"=========================");
 
         //1. 请求需要更新库存商品 信息接口
         failedSpSkuNoList = new ArrayList<>();
@@ -133,14 +133,15 @@ public class FetchStockImpl  {
         exportQtyInfoForProductList(productDTOAllList);
 
         // 处理 请求失败的 尚品 skuNo 信息
+        ProductDTO productDTO = new ProductDTO();
         int failedSpSkuNoSize = failedSpSkuNoList.size();
         for (int i = 0; i < failedSpSkuNoSize; i++) {
-            repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i));
+            repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i),productDTO);
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================拉取GUCCI库存数据结束 "+endtDateTime+"=========================");
-        System.out.println("=================拉取GUCCI库存数据结束 "+endtDateTime+"=========================");
+        logger.info("===================拉取BURBERRY库存数据结束 "+endtDateTime+"=========================");
+        System.out.println("=================拉取BURBERRY库存数据结束 "+endtDateTime+"=========================");
 
     }
 
@@ -219,11 +220,11 @@ public class FetchStockImpl  {
      * 重复处理 spSkuNO qty 信息
      * @param spSkuNoDTO
      */
-    public static void repeatSolveFailedSpSkuNo(SpSkuNoDTO spSkuNoDTO){
+    public static void repeatSolveFailedSpSkuNo(SpSkuNoDTO spSkuNoDTO,ProductDTO productDTO){
         int count = 0;
         while(count>4){
             count++;
-            Map<String, String> checkProductInfo = getProductQtyInfo(spSkuNoDTO.getSpSkuNo(),spSkuNoDTO.getPcode());
+            Map<String, String> checkProductInfo = getProductQtyInfo(spSkuNoDTO.getSpSkuNo(),productDTO);
             String temQty = checkProductInfo.get("qty");
             if (temQty != null) {
                 exportSpSkunoAndQty(spSkuNoDTO.getSpSkuNo(),temQty);
@@ -322,7 +323,7 @@ public class FetchStockImpl  {
                                  exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
                              } else {
 
-                                 Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),"-1");
+                                 Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),productDTO);
                                  String temQty = checkProductInfo.get("qty");
                                  if (temQty != null) {
                                      exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
@@ -344,7 +345,7 @@ public class FetchStockImpl  {
                         exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
                     }else{
                         //获取 pcode 参数value
-                        Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),"-1");
+                        Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),productDTO);
                         String temQty = checkProductInfo.get("qty");
                         if (temQty != null) {
                             exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
@@ -390,6 +391,7 @@ public class FetchStockImpl  {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
         //每一款商品休息2s
 //        try {
@@ -441,26 +443,26 @@ public class FetchStockImpl  {
     /**
      * 获取尺码库存信息
      * @param spSkuNO 尚品尺码 skuNo
-     * @param pcode 商品尺码 pcode 请求参数
+     * @param productDTO 商品尺码 pcode 请求参数
      * @return
      */
-    public static  Map<String,String> getProductQtyInfo(String spSkuNO, String pcode){
+    public static  Map<String,String> getProductQtyInfo(String spSkuNO,ProductDTO productDTO){
         //库存结果集
         HashMap<String, String> mapDate = new HashMap<>();
         //  /it/it/p/ajax/product-detail-shipping.ajax?pcode=808354516
-        String checkProductQtyUrl = uri;
+
 
         try {
-            getProductQtyUnit(checkProductQtyUrl,mapDate);
+            getProductQtyUnit(productDTO,mapDate);
         } catch (Exception e) {
             logger.info("=========尝试再次获取=====");
             try {
-                getProductQtyUnit(checkProductQtyUrl,mapDate);
+                getProductQtyUnit(productDTO,mapDate);
             } catch (Exception ee) {
-                logger.info("=========第二次：获取库存失败 ===spSkuNO: "+spSkuNO +"pcode:"+pcode);
+                logger.info("=========第二次：获取库存失败 ===spSkuNO: "+spSkuNO );
                 ee.printStackTrace();
                 System.out.println();
-                System.err.println("=========第二次：获取库存失败 ===spSkuNO: "+spSkuNO +"pcode:"+pcode);
+                System.err.println("=========第二次：获取库存失败 ===spSkuNO: "+spSkuNO );
             }
         }
         return mapDate;
@@ -469,19 +471,18 @@ public class FetchStockImpl  {
 
     /**
      * 获取商品库存信息
-     * @param checkProductUrl
+     * @param productDTO
      * @throws Exception
      */
-    public static void getProductQtyUnit(String checkProductUrl,Map<String,String> mapDate) throws Exception{
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl(checkProductUrl);
+    public static void getProductQtyUnit(ProductDTO productDTO,Map<String,String> mapDate) throws Exception{
+
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
         Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
         Header[] headers = new Header[1];
         headers[0] = header;
 
-        HttpResponse response = HttpUtils.get(checkProductUrl,headers);
+        HttpResponse response = HttpUtils.get(productDTO.getProductUrl(),headers);
 
         if (response.getStatus()==200) {
             String htmlContent = response.getResponse();
@@ -565,7 +566,7 @@ public class FetchStockImpl  {
 
 
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://uk.burberry.com/the-small-patent-leather-d-bag-p40779351/?locale=zh_GB");
+        productDTO.setProductUrl("https://uk.burberry.com/vintage-check-reversible-puffer-jacket-p80037841/?locale=zh_GB");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
         skuDTO.setSpSkuNo("30968589002");
