@@ -495,6 +495,15 @@ public class OriginalProductStreamListenerAdapter {
 	public void viettiStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);	
 	}
+
+    /**
+     * vietti2供货商原始数据监听方法
+     * @param message 消息体
+     * @param headers 消息头
+     */
+    public void vietti2StreamListen(SupplierProduct message, Map<String, Object> headers) {
+        atelierCommonHandler.handleOriginalProduct(message, headers);
+    }
 	/**
 	 * russocapri供货商原始数据监听方法
 	 * @param message 消息体

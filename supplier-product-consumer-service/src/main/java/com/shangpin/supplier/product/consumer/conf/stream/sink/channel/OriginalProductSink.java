@@ -81,9 +81,10 @@ public interface OriginalProductSink {
 	
 	public static final String PAOLOFIORILLO = "paolofiorilloOriginalProduct"; 
 	
-	public static final String VIETTI = "viettiOriginalProduct"; 
-	
-	public static final String ANIELLO = "anielloOriginalProduct"; 
+	public static final String VIETTI = "viettiOriginalProduct";
+    public static final String VIETTI2 = "vietti2OriginalProduct";
+
+    public static final String ANIELLO = "anielloOriginalProduct";
 	
 	public static final String LINDELEPALAIS = "lindelepalaisOriginalProduct"; 
 	
@@ -436,6 +437,14 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.VIETTI)
     public SubscribableChannel viettiOriginalProduct();
+
+
+    /**
+     * 供货商VIETTI2 通道组件配置
+     * @return  VIETTI2通道组件
+     */
+    @Input(value = OriginalProductSink.VIETTI2)
+    public SubscribableChannel vietti2OriginalProduct();
 	/**
 	 * 供货商ANIELLO 通道组件配置
 	 * @return  ANIELLO通道组件

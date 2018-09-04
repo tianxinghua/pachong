@@ -335,6 +335,15 @@ public class PendingProductStreamSender {
     public boolean viettiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
     	return pendingProductSource.viettiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
+
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean vietti2PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+        return pendingProductSource.vietti2PendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
     /**
      * 发送供应商商品流数据
      * @param pendingProduct 消息体

@@ -297,6 +297,21 @@ spring:
                         viettiPendingProduct: 
                               destination: vietti.pending.product
                               content-type: application/json
+
+
+
+                        vietti2OriginalProduct:
+                              destination: vietti2.original.product
+                              group: one
+                              consumer:
+                                concurrency: 5
+                                maxAttempts: 1
+                        vietti2PendingProduct:
+                          destination: vietti2.pending.product
+                          content-type: application/json
+
+
+
                         anielloOriginalProduct: 
                               destination: aniello.original.product
                               group: one
@@ -926,6 +941,21 @@ spring:
                             viettiPendingProduct: 
                                   producer: 
                                        prefix: HA.
+
+
+
+                           vietti2OriginalProduct:
+                                  consumer:
+                                    prefix: HA.
+                                    autoBindDlq: false
+                                    requeueRejected: true
+                                    republishToDlq: false
+                            vietti2PendingProduct:
+                              producer:
+                                prefix: HA.
+
+
+
                             anielloOriginalProduct: 
                                   consumer: 
                                        prefix: HA.

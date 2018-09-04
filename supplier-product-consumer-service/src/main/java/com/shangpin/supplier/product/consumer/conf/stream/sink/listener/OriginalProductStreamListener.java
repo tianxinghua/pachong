@@ -401,13 +401,23 @@ public class OriginalProductStreamListener {
 		adapter.paolofiorilloStreamListen(message,headers);
     }
 	/**
-	 * 供应商VIETTI原始商品数据流通道监听者
-	 * @param message 消息
-	 * @param headers 消息头
-	 */
-	@StreamListener(OriginalProductSink.VIETTI)
+     * 供应商VIETTI原始商品数据流通道监听者
+     * @param message 消息
+     * @param headers 消息头
+     */
+    @StreamListener(OriginalProductSink.VIETTI)
     public void viettiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		adapter.viettiStreamListen(message,headers);
+        adapter.viettiStreamListen(message,headers);
+    }
+
+    /**
+     * 供应商VIETTI2原始商品数据流通道监听者
+     * @param message 消息
+     * @param headers 消息头
+     */
+    @StreamListener(OriginalProductSink.VIETTI2)
+    public void vietti2StreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
+        adapter.vietti2StreamListen(message,headers);
     }
 	/**
 	 * 供应商ANIELLO原始商品数据流通道监听者
