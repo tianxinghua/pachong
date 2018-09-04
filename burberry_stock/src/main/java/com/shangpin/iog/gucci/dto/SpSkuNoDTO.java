@@ -21,6 +21,8 @@ public class SpSkuNoDTO {
 
     private String pcode;
 
+
+
     public SpSkuNoDTO(String spSkuNo, String pcode) {
         this.spSkuNo = spSkuNo;
         this.pcode = pcode;

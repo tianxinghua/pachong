@@ -280,6 +280,20 @@ public class FetchStockImpl  {
         String productUrl = productDTO.getProductUrl();
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
+        logger.info("货号："+productDTO.getSupplierSpuModel()+"；sku的数量："+zhiCaiSkuResultListSize);
+        /*SkuDTO skuDTO = new SkuDTO();
+        Map<String,SkuDTO> skuMap = new HashMap<>();
+        zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
+            skuDTO = zhiCaiSkuResultList.get(i);
+            String spSkuNo = skuDTO.getSpSkuNo();
+            if (spSkuNo == null || "".equals(spSkuNo)) {
+                continue zhiCai;
+            }
+            skuMap.put(skuDTO.getSize(),skuDTO);
+
+        }*/
+
+
         try {
             Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
             Header[] headers = new Header[1];
@@ -292,8 +306,8 @@ public class FetchStockImpl  {
                 Document doc = Jsoup.parse(htmlContent);
 
 
-
                 SkuDTO skuDTO = new SkuDTO();
+
                 zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
                     skuDTO = zhiCaiSkuResultList.get(i);
                     String spSkuNo = skuDTO.getSpSkuNo();
@@ -301,88 +315,87 @@ public class FetchStockImpl  {
                         continue zhiCai;
                     }
 
-                }
-                Elements temSizeElements = doc.select("#size-picker-content").select("input");
-                Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message").select("p");
-                if(temSizeElements!=null&&temSizeElements.size()>0){
-                    System.out.println(temSizeElements);
-                     for (Element sizeElement:temSizeElements ) {
-                         String sizeContent = sizeElement.attr("data-text-value");
-                         String disabled = sizeElement.attr("disabled");
-                         System.out.println("尺码：" + sizeContent + ";" + "库存标记：" + disabled);
+                    Elements temSizeElements = doc.select("#size-picker-content").select("input");
+                    Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message").select("p");
+                    if (temSizeElements != null && temSizeElements.size() > 0) {
+                        System.out.println(temSizeElements);
+                        for (Element sizeElement : temSizeElements) {
+                            String sizeContent = sizeElement.attr("data-text-value");
+                            String disabled = sizeElement.attr("disabled");
+                            System.out.println("尺码：" + sizeContent + ";" + "库存标记：" + disabled);
 
 
-                         String size = skuDTO.getSize();
-                         System.out.println("本地库存尺码："+size);
-                         if(sizeContent.equals(size)) {
-                             //如果<option> 标签上含有disabled" 为无库存
-                             if ("disabled".equals(disabled)) {
-                                 exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
-                             } else if ("".equals(disabled)) {
-                                 //获取库存数据
-                                 exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
-                             } else {
+                            String size = skuDTO.getSize();
+                            System.out.println("本地库存尺码：" + size);
+                            if (sizeContent.equals(size)) {
+                                //如果<option> 标签上含有disabled" 为无库存
+                                if ("disabled".equals(disabled)) {
+                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
+                                } else if ("".equals(disabled)) {
+                                    //获取库存数据
+                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
+                                } else {
 
-                                 Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),productDTO);
-                                 String temQty = checkProductInfo.get("qty");
-                                 if (temQty != null) {
-                                     exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
-                                 } else {
-                                     //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
-                                     exportSpSkunoAndQty(skuDTO.getSpSkuNo(),NO_STOCK);
-                                     //加入到失败库存信息中
-                                     failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(),"-1"));
-                                 }
+                                    Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(), productDTO);
+                                    String temQty = checkProductInfo.get("qty");
+                                    if (temQty != null) {
+                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
+                                    } else {
+                                        //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
+                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
+                                        //加入到失败库存信息中
+                                        failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(), "-1"));
+                                    }
 
-                             }
-                         //Thread.sleep(500);
-                         }
-                     }
-                }else if(temSizeElement2!=null && !"".equals(temSizeElement2)){
-                    String text = temSizeElement2.text();
-                    System.out.println("库存描述："+text);
-                    if(text.contains("免费次日达")||text.contains("免费标准送货服务")){
-                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
-                    }else{
-                        //获取 pcode 参数value
-                        Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),productDTO);
-                        String temQty = checkProductInfo.get("qty");
-                        if (temQty != null) {
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+                                }
+                                //Thread.sleep(500);
+                            }
+                        }
+                    } else if (temSizeElement2 != null && !"".equals(temSizeElement2)) {
+                        String text = temSizeElement2.text();
+                        System.out.println("库存描述：" + text);
+                        if (text.contains("免费次日达") || text.contains("免费标准送货服务")) {
+                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
                         } else {
-                            //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),NO_STOCK);
-                            //加入到失败库存信息中
-                            failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(),"-1"));
+                            //获取 pcode 参数value
+                            Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(), productDTO);
+                            String temQty = checkProductInfo.get("qty");
+                            if (temQty != null) {
+                                exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
+                            } else {
+                                //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
+                                exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
+                                //加入到失败库存信息中
+                                failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(), "-1"));
+                            }
+
                         }
+                    }
+
+                    Elements itemPriceElement = doc.select("#product-transactional-panel").select("div.price-container").select("span");
+                    if (itemPriceElement != null) {
+                        String price = itemPriceElement.attr("data-monogrammedTotal");
+                        float priceF = Float.parseFloat(price);
+                        System.out.println("官网价格" + price);
+                        String marketPrice = skuDTO.getMarketPrice();
+                        System.out.println("本地出售价格：" + marketPrice);
+                        if (marketPrice != null) {
+                            float marketPriceF = Float.parseFloat(marketPrice);
+
+                            if (marketPriceF != priceF) { //价格发生改变
+                                updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(), price);
+                                logger.info("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
+                                System.out.println("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
+                            }
+                        } else {
+                            loggerError.error("getMarketPrice 为空 ProductDTO:" + productDTO.toString());
+                        }
+
+                    } else {
+                        logger.error("获取商品价格异常=============productUrl:" + productUrl + "==============================");
 
                     }
                 }
-
-                Elements itemPriceElement = doc.select("#product-transactional-panel").select("div.price-container").select("span");
-                if(itemPriceElement!=null){
-                    String price = itemPriceElement.attr("data-monogrammedTotal");
-                    float priceF = Float.parseFloat(price);
-                    System.out.println("官网价格"+price);
-                    String marketPrice = skuDTO.getMarketPrice();
-                    System.out.println("本地出售价格："+marketPrice);
-                    if(marketPrice!=null){
-                    float marketPriceF = Float.parseFloat(marketPrice);
-
-                        if(marketPriceF != priceF){ //价格发生改变
-                            //updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
-                            logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
-                            System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
-                        }
-                    }else{
-                        loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
-                    }
-
-                }else {
-                    logger.error("获取商品价格异常=============productUrl:" + productUrl + "==============================");
-
-                }
-
             }else{
                 logger.error("================请求商品地址失败===========================================");
                 logger.error(productDTO.toString());
@@ -393,6 +406,8 @@ public class FetchStockImpl  {
             e.printStackTrace();
             return false;
         }
+
+
         //每一款商品休息2s
 //        try {
 //            Thread.sleep(1000);
