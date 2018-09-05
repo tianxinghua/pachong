@@ -371,6 +371,10 @@ spring:
                             viettiOriginalProduct:
                                   producer:
                                            prefix: HA.
+
+                            vietti2OriginalProduct:
+                                  producer:
+                                    prefix: HA.
                             anielloOriginalProduct:
                                   producer:
                                            prefix: HA.
