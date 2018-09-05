@@ -131,7 +131,7 @@ public class MclablesHandler implements ISupplierHandler {
 				hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getPriceInfo().getChannelPrice())));
 				String size = "";
 				for(AttributeInfo attr:item.getAttributeList().getAttributeInfo()){
-					if("size".equals(attr.getName())){
+					if("Brand_size".equals(attr.getName())){//size
 						size  = attr.getValue();
 						break;
 					}

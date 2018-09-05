@@ -704,7 +704,7 @@ public class PendingProductStreamSender {
 	 * @param headers 消息头
 	 * @return 如果发送成功返回true,否则返回false
 	 */
-	public boolean MAX1980PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+	public boolean max1980PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
 		return pendingProductSource.max1980PendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
 	}
 
