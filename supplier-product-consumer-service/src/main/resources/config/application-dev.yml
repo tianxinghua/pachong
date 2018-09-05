@@ -914,12 +914,12 @@ spring:
                             alducadaostaPendingProduct: 
                                   producer: 
                                        prefix: HA.
-                            sanremoOriginalProduct: 
-                                  consumer: 
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
+                            sanremoOriginalProduct:
+                                  consumer:
+                                    prefix: HA.
+                                    autoBindDlq: false
+                                    requeueRejected: true
+                                    republishToDlq: false
                             sanremoPendingProduct: 
                                   producer: 
                                        prefix: HA.

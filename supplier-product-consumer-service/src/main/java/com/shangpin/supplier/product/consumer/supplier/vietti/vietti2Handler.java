@@ -88,7 +88,7 @@ public class vietti2Handler implements ISupplierHandler{
 		Map<String,String> urlMap = new HashMap<>();
 		List<Image> imagesList = new ArrayList<>();
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)){
-			log.info("monnalisa pic : "+picture0+" 将推送");
+			log.info("vietti pic : "+picture0+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture0);
 			urlMap.put(picture0,"");
@@ -103,7 +103,7 @@ public class vietti2Handler implements ISupplierHandler{
             if(null!=picUrlArray){
             	for(int i= 0 ;i<picUrlArray.length;i++){
             		if(!urlMap.containsKey(picUrlArray[i])){
-						log.info("monnalisa pic:"+picUrlArray[i]+" 将推送");
+						log.info("vietti pic:"+picUrlArray[i]+" 将推送");
 						Image image = new Image();
 						image.setUrl(picUrlArray[i]);
 						imagesList.add(image);
@@ -129,9 +129,9 @@ public class vietti2Handler implements ISupplierHandler{
 			hubSpu.setSupplierSpuModel(ob.getConfigurable_sku().substring(0,ob.getConfigurable_sku().lastIndexOf("-")));
 			hubSpu.setSupplierSpuName(ob.getItem_code());
 			hubSpu.setSupplierSpuColor(ob.getColor());
-			hubSpu.setSupplierGender("");
-			hubSpu.setSupplierCategoryname("");
-			hubSpu.setSupplierCategoryname("");
+			hubSpu.setSupplierGender("21");
+			hubSpu.setSupplierCategoryname("1223");
+
 
 
 

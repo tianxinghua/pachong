@@ -369,7 +369,7 @@ spring:
                                        concurrency: 5
                                        maxAttempts: 1
                         vietti2PendingProduct: 
-                              destination: vietti.pending.product
+                              destination: vietti2.pending.product
                               content-type: application/json                              
                         anielloOriginalProduct: 
                               destination: aniello.original.product
