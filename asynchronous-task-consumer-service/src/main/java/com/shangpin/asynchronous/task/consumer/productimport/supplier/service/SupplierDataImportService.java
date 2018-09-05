@@ -118,7 +118,7 @@ public class SupplierDataImportService {
         HSSFCellStyle style = wb.createCellStyle();  
         style.setAlignment(HSSFCellStyle.ALIGN_CENTER);  
 
-        String [] temp = {"执行结果","gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement","supplierId","supplierNo","supplierSkuNo"};
+        String [] temp = {"执行结果","gender","brand","category","spu","productModel","season","material","color","size","proName","foreignMarketPrice","domesticMarketPrice","qty","made","desc","pics","detailLink","measurement","supplierId","supplierNo","supplierSkuNo","salePrice","channel"};
         for(int i=0;i<temp.length;i++) {
         	HSSFCell cell = row.createCell(i);  
             cell.setCellValue(temp[i]);  
