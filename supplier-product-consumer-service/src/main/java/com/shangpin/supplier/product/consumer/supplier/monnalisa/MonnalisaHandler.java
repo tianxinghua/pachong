@@ -124,48 +124,27 @@ public class MonnalisaHandler implements ISupplierHandler{
 	 */
 	public boolean convertSpu(String supplierId,CsvDTO ob,HubSupplierSpuDto hubSpu,String data){
 		if(null != ob && ob != null){
-			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(ob.getId().substring(0,ob.getId().lastIndexOf("-")));
-			hubSpu.setSupplierSpuModel(ob.getId().substring(0,ob.getId().lastIndexOf("-")));
-			hubSpu.setSupplierSpuName(ob.getTitle());
-			hubSpu.setSupplierSpuColor(ob.getColor());
-			hubSpu.setSupplierGender(ob.getGender());
-			/*if(ob.getGoogle_product_category()!=null) {
-				if(ob.getGoogle_product_category().length()<50) {
-					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category());
-				}else {
-					hubSpu.setSupplierCategoryname(ob.getGoogle_product_category().substring(0, 48));
-					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
-				}
-			}else {
-				hubSpu.setSupplierCategoryname("");
-			}*/
+			hubSpu.setSupplierId(supplierId);//供应商id
+			hubSpu.setSupplierSpuNo(ob.getId().substring(0,ob.getId().lastIndexOf("-")));//spu编号
+			hubSpu.setSupplierSpuModel(ob.getId().substring(0,ob.getId().lastIndexOf("-")));//货号
+			hubSpu.setSupplierSpuName(ob.getTitle());//商品名称
+			hubSpu.setSupplierSpuColor(ob.getColor());//颜色
+			hubSpu.setSupplierGender(ob.getGender());//性别
 			if(ob.getGoogle_product_category()!=null) {
 				if(ob.getGoogle_product_category().length()<50) {
 					String s1=ob.getGoogle_product_category();
-					hubSpu.setSupplierCategoryname(SubCategory(s1));
+					hubSpu.setSupplierCategoryname(SubCategory(s1));//品类名称
 				}else {
 					String s2=ob.getGoogle_product_category().substring(0, 48);
 					hubSpu.setSupplierCategoryname(SubCategory(s2));
 					log.info("getGoogle_product_category---------------"+ob.getGoogle_product_category().substring(0, 48)+"size:"+ob.getGoogle_product_category().length());
 				}
-			}/*else {
-				hubSpu.setSupplierCategoryname("");
-			}*/
-
-			String[] parm={"ABITO","Bag","Bathingsuit","Belt","beret","blouse","bolero","BOOTS","Cardigan","Coat","Denim","Dress","Eco-fur","Foulard","Gilet","Handbag","Hat","Jacket","Jeans","jumper","Jumpsuit","Knitwear","Leggings","NeckWear","Overall","Pants","Plush","Romper","Scarf","Shirt","Shoes","Short","shrug","Skirt","Sleeveless","SNEAKER","sweat shirt","sweat top","Sweater","Sweatpants","Sweatshirt","Top","Trousers","T-Shirt","underskirt"};
-            for(int i=0;i<parm.length;i++){
-            	if (ob.getTitle().toUpperCase().contains(parm[i].toUpperCase())){
-					System.out.println("iiiiiiiiii==="+i+""+parm[i]);
-					hubSpu.setSupplierCategoryname(parm[i]);
-				}
 			}
-
-			hubSpu.setSupplierBrandname(ob.getBrand());
-			hubSpu.setSupplierSeasonname((StringUtils.isEmpty(ob.getAnno())?"":ob.getAnno())+ob.getSeason());
-			hubSpu.setSupplierMaterial(ob.getMaterial());
-			hubSpu.setSupplierOrigin(ob.getCountry());
-			hubSpu.setSupplierSpuDesc(ob.getDescription());
+			hubSpu.setSupplierBrandname(ob.getBrand());//品牌名
+			hubSpu.setSupplierSeasonname((StringUtils.isEmpty(ob.getAnno())?"":ob.getAnno())+ob.getSeason());//季节
+			hubSpu.setSupplierMaterial(ob.getMaterial());//材质
+			hubSpu.setSupplierOrigin(ob.getCountry());//产地
+			hubSpu.setSupplierSpuDesc(ob.getDescription());//产品描述
 			return true;
 		}else{
 			return false;
@@ -208,18 +187,18 @@ public class MonnalisaHandler implements ISupplierHandler{
 	 */
 	public boolean convertSku(String supplierId,Long supplierSpuId,CsvDTO ob,HubSupplierSkuDto hubSku){
 		if(null != ob){
-			hubSku.setSupplierSpuId(supplierSpuId);
-			hubSku.setSupplierId(supplierId);
-			hubSku.setSupplierSkuNo(ob.getId());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSale_price())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));
-			hubSku.setSupplierBarcode(ob.getBarcode());
+			hubSku.setSupplierSpuId(supplierSpuId);//spuid
+			hubSku.setSupplierId(supplierId);//供应商id
+			hubSku.setSupplierSkuNo(ob.getId());//sku编号
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));//市场价
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSale_price())));//售价
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getPrice())));//供价
+			hubSku.setSupplierBarcode(ob.getBarcode());//barcode
 			if(!StringUtils.isEmpty(ob.getSize())){
-				hubSku.setSupplierSkuSize(ob.getSize());
+				hubSku.setSupplierSkuSize(ob.getSize());//尺码
 			}
 			
-			hubSku.setStock(ob.getStock());
+			hubSku.setStock(ob.getStock());//库存
 //			String stock = ob.getString("availability");
 //			Pattern pattern = Pattern.compile("[0-9]*"); 
 //		    Matcher isNum = pattern.matcher(stock);

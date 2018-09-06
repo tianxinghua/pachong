@@ -121,7 +121,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("emontiHandler")
 	private ISupplierHandler emontiHandler;
-	
+
+
+    @Autowired
+    @Qualifier("vietti2Handler")
+    private ISupplierHandler vietti2Handler;
+
 	@Autowired
 	@Qualifier("mclablesHandler") 
 	private ISupplierHandler mclablesHandler;
@@ -502,7 +507,7 @@ public class OriginalProductStreamListenerAdapter {
      * @param headers 消息头
      */
     public void vietti2StreamListen(SupplierProduct message, Map<String, Object> headers) {
-        atelierCommonHandler.handleOriginalProduct(message, headers);
+        vietti2Handler.handleOriginalProduct(message, headers);
     }
 	/**
 	 * russocapri供货商原始数据监听方法
