@@ -28,5 +28,6 @@ public class HubSupplierSpuQureyDto {
     private String supplierId;
     private String brandName;
     private String brandNo;
+    private String channel;
     
 }

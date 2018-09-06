@@ -90,7 +90,7 @@ public class SupplierSkuController {
 			dto.setBrandName(zhiCaiQuery.getBrandName());
 		}
 		if(StringUtils.isNotBlank(zhiCaiQuery.getChannel())){
-
+			dto.setChannel(zhiCaiQuery.getChannel());
 		}
 		List<HubSupplierSpuDto> hubSupplierSpuDtoList = supplierSpuGateWay.selectByBrand(dto);
 		int total = supplierSpuGateWay.count(dto);

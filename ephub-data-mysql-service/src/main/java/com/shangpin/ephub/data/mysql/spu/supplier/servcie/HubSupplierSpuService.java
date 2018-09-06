@@ -7,6 +7,7 @@ import com.shangpin.ephub.data.mysql.spu.supplier.bean.HubSupplierSpuWithCriteri
 import com.shangpin.ephub.data.mysql.spu.supplier.mapper.HubSupplierSpuMapper;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpu;
 import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuCriteria;
+import com.shangpin.ephub.data.mysql.spu.supplier.po.HubSupplierSpuQureyDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,12 @@ public class HubSupplierSpuService {
 		return mapper.updateByPrimaryKey(obj);
 	}
 
+	public List<HubSupplierSpu> selectByBrand(HubSupplierSpuQureyDto dto) {
+		return mapper.selectByBrand(dto);
+	}
 
+	public int count(HubSupplierSpuQureyDto dto) {
+		return mapper.count(dto);
+	}
 
 }
