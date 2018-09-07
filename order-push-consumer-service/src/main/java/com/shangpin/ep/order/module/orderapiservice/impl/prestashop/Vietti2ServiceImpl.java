@@ -215,8 +215,7 @@ public class Vietti2ServiceImpl  implements IOrderService {
         shipping_address.setTelephone("Telephone");
         order.setShipping_address(shipping_address);
         Map<String,String> map = new HashMap<>();
-        Products shopper = new Products();
-        map.put(shopper.getSKU_SIZE(),shopper.getQty());
+        map.put(orderDTO.getDetail().split(":")[0],"1");
         order.setProducts(map);
 //        shopper.setSKU_SIZE(orderDTO.getDetail().split(":")[0]);
 //        shopper.setQty(Integer.parseInt(orderDTO.getDetail().split(":")[1]));
