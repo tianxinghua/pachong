@@ -251,6 +251,10 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("fashionTamersOrderImpl")
 	IOrderService fashionTamersOrderImpl;
+
+    @Autowired
+    @Qualifier("vietti2ServiceImpl")
+    IOrderService vietti2ServiceImpl;
 	
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
@@ -383,7 +387,9 @@ public class OrderHandleSearch {
 			return rediOrderService;
 		}else if("2018072602021".equals(supplierId)){
 			return fashionTamersOrderImpl;
-		}else {
+		} else if("2018090602049".equals(supplierId)){
+            return vietti2ServiceImpl;
+        }else {
 			return null;
 		}
 	}
@@ -505,6 +511,9 @@ public class OrderHandleSearch {
 		}else if("2018072602021".equals(supplierId)){
 			return supplierProperties.getFashionTamersConf();
 		}
+        else if("2018090602049".equals(supplierId)){
+            return supplierProperties.getVietti2();
+        }
 		else {
 			return null;
 		}
