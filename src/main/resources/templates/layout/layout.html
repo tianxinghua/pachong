@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    
+    <!-- Custom styles -->
+    <base href="/"/>
+    
+    
+  </head>
+	
+  <body>
+    <div th:include="common/header :: header"></div>
+    <div layout:fragment="content"></div>
+    <div th:include="common/footer :: footer"></div>
+  </body>
+</html>

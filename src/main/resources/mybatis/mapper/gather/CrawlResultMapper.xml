@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.spider.mapper.gather.CrawlResultMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.spider.entity.gather.CrawlResult" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="gender" property="gender" jdbcType="VARCHAR" />
+    <result column="brand" property="brand" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="spu" property="spu" jdbcType="VARCHAR" />
+    <result column="product_model" property="productModel" jdbcType="VARCHAR" />
+    <result column="season" property="season" jdbcType="VARCHAR" />
+    <result column="material" property="material" jdbcType="VARCHAR" />
+    <result column="color" property="color" jdbcType="VARCHAR" />
+    <result column="size" property="size" jdbcType="VARCHAR" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="foreign_price" property="foreignPrice" jdbcType="DECIMAL" />
+    <result column="domestic_price" property="domesticPrice" jdbcType="DECIMAL" />
+    <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+    <result column="qty" property="qty" jdbcType="INTEGER" />
+    <result column="made" property="made" jdbcType="VARCHAR" />
+    <result column="detail_link" property="detailLink" jdbcType="VARCHAR" />
+    <result column="sppu_hash" property="sppuHash" jdbcType="BIGINT" />
+    <result column="measurement" property="measurement" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="supplier_sku_no" property="supplierSkuNo" jdbcType="VARCHAR" />
+    <result column="channel" property="channel" jdbcType="VARCHAR" />
+    <result column="white_id" property="whiteId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="pics" property="pics" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <!-- <resultMap id="BaseResultMap" type="com.shangpin.spider.entity.gather.CrawlResultWithBLOBs" extends="BaseResultMap" >
+    
+  </resultMap> -->
+  
+  <select id="createTable" parameterType="string">
+  create table if not exists `${tableName}` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `gender` varchar(10) NOT NULL DEFAULT '' COMMENT '性别，英文，男女',
+  `brand` varchar(50) NOT NULL DEFAULT '' COMMENT '品牌',
+  `category` varchar(100) NOT NULL DEFAULT '' COMMENT '类型',
+  `spu` varchar(255) NOT NULL DEFAULT '' COMMENT '编号',
+  `product_model` varchar(255) NOT NULL DEFAULT '' COMMENT '产品型号',
+  `season` varchar(50) NOT NULL DEFAULT '' COMMENT '季节',
+  `material` varchar(255) NOT NULL DEFAULT '' COMMENT '材质',
+  `color` varchar(255) NOT NULL DEFAULT '' COMMENT '颜色',
+  `size` varchar(50) NOT NULL DEFAULT '' COMMENT '尺寸',
+  `pro_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
+  `foreign_price` decimal(10,2) NOT NULL COMMENT '国外市场价',
+  `domestic_price` decimal(10,2) NOT NULL COMMENT '国内市场价',
+  `sale_price` decimal(10,2) NOT NULL COMMENT '售价',
+  `qty` int(1) NOT NULL DEFAULT '1' COMMENT '1有货0无货',
+  `made` varchar(255) NOT NULL DEFAULT '' COMMENT '产地',
+  `description` text NOT NULL COMMENT '描述',
+  `pics` text NOT NULL COMMENT '图片链接',
+  `detail_link` varchar(255) NOT NULL COMMENT '商品链接',
+  `sppu_hash` bigint(20) NOT NULL COMMENT '商品spu的hash值',
+  `measurement` varchar(255) NOT NULL DEFAULT '' COMMENT '尺寸详情',
+  `supplier_id` varchar(255) DEFAULT '' COMMENT '供应商ID',
+  `supplier_no` varchar(255) DEFAULT '' COMMENT '供应商编号',
+  `supplier_sku_no` varchar(255) DEFAULT '' COMMENT '货物供应商库存编号',
+  `channel` varchar(255) DEFAULT '' COMMENT '渠道域名',
+  `white_id` bigint(20) NOT NULL COMMENT '对应源网站的ID',
+  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique` (`sppu_hash`) USING HASH
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='抓取结果表';
+  </select>
+  
+  <insert id="insertByTableName">
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into `${tableName}`
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="crawlResult.gender != null" >
+        gender,
+      </if>
+      <if test="crawlResult.brand != null" >
+        brand,
+      </if>
+      <if test="crawlResult.category != null" >
+        category,
+      </if>
+      <if test="crawlResult.spu != null" >
+        spu,
+      </if>
+      <if test="crawlResult.productModel != null" >
+        product_model,
+      </if>
+      <if test="crawlResult.season != null" >
+        season,
+      </if>
+      <if test="crawlResult.material != null" >
+        material,
+      </if>
+      <if test="crawlResult.color != null" >
+        color,
+      </if>
+      <if test="crawlResult.size != null" >
+        size,
+      </if>
+      <if test="crawlResult.proName != null" >
+        pro_name,
+      </if>
+      <if test="crawlResult.foreignPrice != null" >
+        foreign_price,
+      </if>
+      <if test="crawlResult.domesticPrice != null" >
+        domestic_price,
+      </if>
+      <if test="crawlResult.salePrice != null" >
+        sale_price,
+      </if>
+      <if test="crawlResult.qty != null" >
+        qty,
+      </if>
+      <if test="crawlResult.made != null" >
+        made,
+      </if>
+      <if test="crawlResult.detailLink != null" >
+        detail_link,
+      </if>
+      <if test="crawlResult.sppuHash != null" >
+        sppu_hash,
+      </if>
+      <if test="crawlResult.measurement != null" >
+        measurement,
+      </if>
+      <if test="crawlResult.supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="crawlResult.supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="crawlResult.supplierSkuNo != null" >
+        supplier_sku_no,
+      </if>
+      <if test="crawlResult.channel != null" >
+        channel,
+      </if>
+      <if test="crawlResult.whiteId != null" >
+        white_id,
+      </if>
+        create_time,
+      <if test="crawlResult.updateTime != null" >
+        update_time,
+      </if>
+      <if test="crawlResult.description != null" >
+        description,
+      </if>
+      <if test="crawlResult.pics != null" >
+        pics,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="crawlResult.gender != null" >
+        #{crawlResult.gender,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.brand != null" >
+        #{crawlResult.brand,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.category != null" >
+        #{crawlResult.category,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.spu != null" >
+        #{crawlResult.spu,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.productModel != null" >
+        #{crawlResult.productModel,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.season != null" >
+        #{crawlResult.season,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.material != null" >
+        #{crawlResult.material,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.color != null" >
+        #{crawlResult.color,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.size != null" >
+        #{crawlResult.size,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.proName != null" >
+        #{crawlResult.proName,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.foreignPrice != null" >
+        #{crawlResult.foreignPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="crawlResult.domesticPrice != null" >
+        #{crawlResult.domesticPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="crawlResult.salePrice != null" >
+        #{crawlResult.salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="crawlResult.qty != null" >
+        #{crawlResult.qty,jdbcType=INTEGER},
+      </if>
+      <if test="crawlResult.made != null" >
+        #{crawlResult.made,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.detailLink != null" >
+        #{crawlResult.detailLink,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.sppuHash != null" >
+        #{crawlResult.sppuHash,jdbcType=BIGINT},
+      </if>
+      <if test="crawlResult.measurement != null" >
+        #{crawlResult.measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.supplierId != null" >
+        #{crawlResult.supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.supplierNo != null" >
+        #{crawlResult.supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.supplierSkuNo != null" >
+        #{crawlResult.supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.channel != null" >
+        #{crawlResult.channel,jdbcType=VARCHAR},
+      </if>
+      <if test="crawlResult.whiteId != null" >
+        #{crawlResult.whiteId,jdbcType=BIGINT},
+      </if>
+        now(),
+      <if test="crawlResult.updateTime != null" >
+        #{crawlResult.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="crawlResult.description != null" >
+        #{crawlResult.description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="crawlResult.pics != null" >
+        #{crawlResult.pics,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <!-- <insert id="insertByTableName">
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ${tableName} (gender, brand, category, 
+      spu, product_model, season, 
+      material, color, size, 
+      pro_name, foreign_price, domestic_price, 
+      sale_price, qty, made, 
+      detail_link, sppu_hash, measurement, 
+      supplier_id, supplier_no, supplier_sku_no, 
+      channel_id, white_id, create_time, 
+      update_time, description, pics
+      )
+    values (#{crawlResult.gender,jdbcType=VARCHAR}, #{crawlResult.brand,jdbcType=VARCHAR}, #{crawlResult.category,jdbcType=VARCHAR}, 
+      #{crawlResult.spu,jdbcType=VARCHAR}, #{crawlResult.productModel,jdbcType=VARCHAR}, #{crawlResult.season,jdbcType=VARCHAR}, 
+      #{crawlResult.material,jdbcType=VARCHAR}, #{crawlResult.color,jdbcType=VARCHAR}, #{crawlResult.size,jdbcType=VARCHAR}, 
+      #{crawlResult.proName,jdbcType=VARCHAR}, #{crawlResult.foreignPrice,jdbcType=DECIMAL}, #{crawlResult.domesticPrice,jdbcType=DECIMAL}, 
+      #{crawlResult.salePrice,jdbcType=DECIMAL}, #{crawlResult.qty,jdbcType=INTEGER}, #{crawlResult.made,jdbcType=VARCHAR}, 
+      #{crawlResult.detailLink,jdbcType=VARCHAR}, #{crawlResult.sppuHash,jdbcType=INTEGER}, #{crawlResult.measurement,jdbcType=VARCHAR}, 
+      #{crawlResult.supplierId,jdbcType=VARCHAR}, #{crawlResult.supplierNo,jdbcType=VARCHAR}, #{crawlResult.supplierSkuNo,jdbcType=VARCHAR}, 
+      #{crawlResult.channelId,jdbcType=BIGINT}, #{crawlResult.whiteId,jdbcType=BIGINT}, now(), 
+      #{crawlResult.updateTime,jdbcType=TIMESTAMP}, #{crawlResult.description,jdbcType=LONGVARCHAR}, #{crawlResult.pics,jdbcType=LONGVARCHAR}
+      )
+  </insert> -->
+  
+  
+  
+  <sql id="Base_Column_List" >
+    id, gender, brand, category, spu, product_model, season, material, color, size, pro_name, 
+    foreign_price, domestic_price, sale_price, qty, made, detail_link, sppu_hash, measurement, 
+    supplier_id, supplier_no, supplier_sku_no, channel, white_id, create_time, update_time,description, pics
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from crawl_result
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.shangpin.spider.entity.gather.CrawlResult" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into crawl_result (gender, brand, category, 
+      spu, product_model, season, 
+      material, color, size, 
+      pro_name, foreign_price, domestic_price, 
+      sale_price, qty, made, 
+      detail_link, sppu_hash, measurement, 
+      supplier_id, supplier_no, supplier_sku_no, 
+      channel, white_id, create_time, 
+      update_time, description, pics
+      )
+    values (#{gender,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
+      #{spu,jdbcType=VARCHAR}, #{productModel,jdbcType=VARCHAR}, #{season,jdbcType=VARCHAR}, 
+      #{material,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, #{size,jdbcType=VARCHAR}, 
+      #{proName,jdbcType=VARCHAR}, #{foreignPrice,jdbcType=DECIMAL}, #{domesticPrice,jdbcType=DECIMAL}, 
+      #{salePrice,jdbcType=DECIMAL}, #{qty,jdbcType=INTEGER}, #{made,jdbcType=VARCHAR}, 
+      #{detailLink,jdbcType=VARCHAR}, #{sppuHash,jdbcType=BIGINT}, #{measurement,jdbcType=VARCHAR}, 
+      #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, 
+      #{channel,jdbcType=VARCHAR}, #{whiteId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{description,jdbcType=LONGVARCHAR}, #{pics,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.spider.entity.gather.CrawlResult" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into crawl_result
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="spu != null" >
+        spu,
+      </if>
+      <if test="productModel != null" >
+        product_model,
+      </if>
+      <if test="season != null" >
+        season,
+      </if>
+      <if test="material != null" >
+        material,
+      </if>
+      <if test="color != null" >
+        color,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="proName != null" >
+        pro_name,
+      </if>
+      <if test="foreignPrice != null" >
+        foreign_price,
+      </if>
+      <if test="domesticPrice != null" >
+        domestic_price,
+      </if>
+      <if test="salePrice != null" >
+        sale_price,
+      </if>
+      <if test="qty != null" >
+        qty,
+      </if>
+      <if test="made != null" >
+        made,
+      </if>
+      <if test="detailLink != null" >
+        detail_link,
+      </if>
+      <if test="sppuHash != null" >
+        sppu_hash,
+      </if>
+      <if test="measurement != null" >
+        measurement,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="supplierSkuNo != null" >
+        supplier_sku_no,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="whiteId != null" >
+        white_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="pics != null" >
+        pics,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gender != null" >
+        #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="spu != null" >
+        #{spu,jdbcType=VARCHAR},
+      </if>
+      <if test="productModel != null" >
+        #{productModel,jdbcType=VARCHAR},
+      </if>
+      <if test="season != null" >
+        #{season,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="proName != null" >
+        #{proName,jdbcType=VARCHAR},
+      </if>
+      <if test="foreignPrice != null" >
+        #{foreignPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="domesticPrice != null" >
+        #{domesticPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="salePrice != null" >
+        #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="qty != null" >
+        #{qty,jdbcType=INTEGER},
+      </if>
+      <if test="made != null" >
+        #{made,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLink != null" >
+        #{detailLink,jdbcType=VARCHAR},
+      </if>
+      <if test="sppuHash != null" >
+        #{sppuHash,jdbcType=BIGINT},
+      </if>
+      <if test="measurement != null" >
+        #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null" >
+        #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="whiteId != null" >
+        #{whiteId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pics != null" >
+        #{pics,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.spider.entity.gather.CrawlResult" >
+    update crawl_result
+    <set >
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        category = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="spu != null" >
+        spu = #{spu,jdbcType=VARCHAR},
+      </if>
+      <if test="productModel != null" >
+        product_model = #{productModel,jdbcType=VARCHAR},
+      </if>
+      <if test="season != null" >
+        season = #{season,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        material = #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        size = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="proName != null" >
+        pro_name = #{proName,jdbcType=VARCHAR},
+      </if>
+      <if test="foreignPrice != null" >
+        foreign_price = #{foreignPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="domesticPrice != null" >
+        domestic_price = #{domesticPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="salePrice != null" >
+        sale_price = #{salePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="qty != null" >
+        qty = #{qty,jdbcType=INTEGER},
+      </if>
+      <if test="made != null" >
+        made = #{made,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLink != null" >
+        detail_link = #{detailLink,jdbcType=VARCHAR},
+      </if>
+      <if test="sppuHash != null" >
+        sppu_hash = #{sppuHash,jdbcType=BIGINT},
+      </if>
+      <if test="measurement != null" >
+        measurement = #{measurement,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierSkuNo != null" >
+        supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      </if>
+      <if test="channel != null" >
+        channel = #{channelId,jdbcType=VARCHAR},
+      </if>
+      <if test="whiteId != null" >
+        white_id = #{whiteId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pics != null" >
+        pics = #{pics,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.spider.entity.gather.CrawlResult" >
+    update crawl_result
+    set gender = #{gender,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      category = #{category,jdbcType=VARCHAR},
+      spu = #{spu,jdbcType=VARCHAR},
+      product_model = #{productModel,jdbcType=VARCHAR},
+      season = #{season,jdbcType=VARCHAR},
+      material = #{material,jdbcType=VARCHAR},
+      color = #{color,jdbcType=VARCHAR},
+      size = #{size,jdbcType=VARCHAR},
+      pro_name = #{proName,jdbcType=VARCHAR},
+      foreign_price = #{foreignPrice,jdbcType=DECIMAL},
+      domestic_price = #{domesticPrice,jdbcType=DECIMAL},
+      sale_price = #{salePrice,jdbcType=DECIMAL},
+      qty = #{qty,jdbcType=INTEGER},
+      made = #{made,jdbcType=VARCHAR},
+      detail_link = #{detailLink,jdbcType=VARCHAR},
+      sppu_hash = #{sppuHash,jdbcType=BIGINT},
+      measurement = #{measurement,jdbcType=VARCHAR},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      supplier_sku_no = #{supplierSkuNo,jdbcType=VARCHAR},
+      channel = #{channel,jdbcType=VARCHAR},
+      white_id = #{whiteId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      description = #{description,jdbcType=LONGVARCHAR},
+      pics = #{pics,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

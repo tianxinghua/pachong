@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+
+<title>爬虫管理 - 登录</title>
+<meta name="keywords" content="爬虫管理 - 登录"/>
+<meta name="description" content="爬虫管理 - 登录"/>
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico"></link>
+<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/Base64/1.0.1/base64.min.js"></script>
+
+<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet"></link>
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"></link>
+<!-- <link href="/css/font-awesome.min93e3.css" rel="stylesheet"/>
+<link href="/css/animate.min.css" rel="stylesheet"/> -->
+<link href="/css/style.min.css" rel="stylesheet"/>
+<link href="/css/login.min.css" rel="stylesheet"/>
+<script type="text/javascript">
+    if(window.top!==window.self){window.top.location=window.location};
+</script>
+</head>
+
+<body class="signin">
+	<div class="signinpanel">
+		<div class="row">
+			<div class="col-sm-7">
+				<div class="signin-info">
+					<div class="logopanel m-b">
+						<h1>爬虫管理</h1>
+					</div>
+					<div class="m-b"></div>
+					<h4>
+						<strong>欢迎使用 爬虫管理系统</strong>
+					</h4>
+					<ul class="m-b">
+						<li><i class="fa fa-arrow-circle-o-right m-r-xs"></i>666</li>
+						<li><i class="fa fa-arrow-circle-o-right m-r-xs"></i>666</li>
+					</ul>
+					<strong>还没有账号？ <a href="/register">立即注册&raquo;</a></strong> -->
+				</div>
+			</div>
+			<div class="col-sm-5">
+				<form action="/login/submit" method="post" id="loginForm">
+					<h4 class="no-margins">登录：</h4>
+					<p class="m-t-md">管理系统<span style="display: none;color: red;margin-left: 20px" id="loginTip" th:text="${msg}"></span></p>
+					<input type="text" class="form-control uname" placeholder="用户名" name="username"/>
+					<input type="password" class="form-control pword m-b" placeholder="密码" name="password"/>
+					<span class="btn btn-success btn-block" id="loginBtn">登录</span>
+				</form>
+			</div>
+		</div>
+		<div class="signup-footer">
+			<div class="pull-left">&copy; 2017 All Rights Reserved. AUTHORITY</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		// ucs-2 string to base64 encoded ascii
+		function utoa(str) {
+		    return window.btoa(unescape(encodeURIComponent(str)));
+		}
+		// base64 encoded ascii to ucs-2 string
+		function atou(str) {
+		    return decodeURIComponent(escape(window.atob(str)));
+		}
+	
+		$(function(){
+			var span_text = $("#loginTip").text();
+			if(span_text.length>0){
+				$("#loginTip").show();
+			}else{
+				$("#loginTip").hide();
+			}
+			$("#loginBtn").click(function(){
+				let pwd = $("input[name='password']").val();
+				$("input[name='password']").val(utoa(pwd));
+				$("#loginForm").submit();
+			})
+		})
+	
+	</script>
+</body>
+</html>

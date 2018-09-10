@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.spider.mapper.gather.SpiderWhiteInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.spider.entity.gather.SpiderWhiteInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="valid" property="valid" jdbcType="INTEGER" />
+    <result column="spider_rule_id" property="spiderRuleId" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, url, valid, spider_rule_id, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from spider_white_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.shangpin.spider.entity.gather.SpiderWhiteInfo" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into spider_white_info (name, url, valid, 
+      spider_rule_id, create_time, update_time
+      )
+    values (#{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{valid,jdbcType=INTEGER}, 
+      #{spiderRuleId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.spider.entity.gather.SpiderWhiteInfo" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into spider_white_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="valid != null" >
+        valid,
+      </if>
+      <if test="spiderRuleId != null" >
+        spider_rule_id,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="valid != null" >
+        #{valid,jdbcType=INTEGER},
+      </if>
+      <if test="spiderRuleId != null" >
+        #{spiderRuleId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.spider.entity.gather.SpiderWhiteInfo" >
+    update spider_white_info
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="valid != null" >
+        valid = #{valid,jdbcType=INTEGER},
+      </if>
+      <if test="spiderRuleId != null" >
+        spider_rule_id = #{spiderRuleId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.spider.entity.gather.SpiderWhiteInfo" >
+    update spider_white_info
+    set name = #{name,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      valid = #{valid,jdbcType=INTEGER},
+      spider_rule_id = #{spiderRuleId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 以上为自动生成 -->
+  
+  <select id="getWhiteById" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from spider_white_info where id = ${whiteId}
+	</select>
+	<select id="getCount" resultType="Long">
+		select count(id) from spider_white_info
+	</select>
+	<select id="getWebSiteList" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from spider_white_info limit ${index},${rowInt}
+	</select>
+	<update id="saveRuleId">
+		update spider_white_info set spider_rule_id = ${spiderRuleId} where id =
+		${whiteInfoId}
+	</update>
+	<select id="queryRuleId" resultType="java.lang.Long">
+		select spider_rule_id from spider_white_info where id = ${id}
+	</select>
+	<select id="getwhiteInfo" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" /> from spider_white_info
+	</select>
+	<insert id="addWhiteInfo" parameterType="com.shangpin.spider.entity.gather.SpiderWhiteInfo">
+		insert into spider_white_info(url,name,create_time)
+		values(#{url},#{name},now())
+	</insert>
+	<update id="updateWhiteInfo" parameterType="com.shangpin.spider.entity.gather.SpiderWhiteInfo">
+		update spider_white_info set url = #{url}, name = #{name}, valid = #{valid},
+		create_time = now() where id = ${id} 
+	</update>
+</mapper>

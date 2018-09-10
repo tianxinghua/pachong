@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>定时任务列表</title>
+<meta name="keywords" content="定时任务列表"/>
+<meta name="description" content="定时任务列表"/>
+
+
+<!-- jqgrid-->
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico"></link>
+<link href="/css/bootstrap.min14ed.css" rel="stylesheet"/>
+<link href="/css/font-awesome.min93e3.css" rel="stylesheet"/>
+<link href="/css/jqgrid/ui.jqgridffe4.css" rel="stylesheet"/>
+<link href="/css/animate.min.css" rel="stylesheet"/>
+<link href="/css/style.min862f.css" rel="stylesheet"/>
+<link href="/css/jquery-ui.css" rel="stylesheet"/>
+
+<script src="/js/jquery.min.js"></script>
+</head>
+<body class="gray-bg">
+	<script type="text/javascript" src="/js/h+/jqgrid5/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/js/h+/jqgrid5/jquery.jqGrid.min.js"></script>
+	<script type="text/javascript" src="/js/h+/jquery.peity.min.js"></script>
+	<script type="text/javascript" src="/js/h+/jquery-migrate-1.4.1.js"></script>
+	<script type="text/javascript"
+		src="/js/h+/jqgrid/jquery.jqGrid.minffe4.js"></script>
+		
+	<div class="jqGrid_wrapper">
+		<table id="table_list"></table>
+		<div id="pager_list"></div>
+	</div>
+    <script type="text/javascript" th:inline="javascript"> 
+        $(document).ready(function () {
+        	/*<![CDATA[*/
+        	$.jgrid.defaults.styleUI="Bootstrap";
+            $("#table_list").jqGrid({
+            	url:"/quartz/getQuartzList",
+                datatype: "json",
+                mtype: "POST",
+                height: 520,
+                hoverrows: true,
+				autowidth:true,
+				shrinkToFit:true,
+				rownumbers: true,
+				rowNum:10,//每页展示条数
+				rowList:[5,10,20,30,50],
+                page: 1,
+                colNames:["名称","最近启动时间","下次启动时间","创建时间","状态","表达式","时区","操作"],
+                colModel: [
+                    { name: 'name', key: true, width: 50, editable: false, align:"center"},                   
+                    { name:"previousTime",index:"previousTime",editable:false,width:40, align:"center"},
+                    { name:"nextTime",index:"nextTime",editable:false,width:40, align:"center"},
+                    { name:"startTime",index:"startTime",editable:false,width:40, align:"center"},
+                    { name:"state",index:"state",editable:false,width:30, align:"center"},
+                    { name:"cronExpression",index:"cronExpression",editable:false,width:30, align:"center"},
+                    { name:"timeZone",index:"timeZone",editable:false,width:30, align:"center"},
+                    { name:"",index:"",editable:false,width:50, align:"center",
+                    	formatter: function (value, grid, rows, state) {
+				        		  return "<button class='btn btn-danger pause' value='"+rows.name+"'>暂停</button>&nbsp;&nbsp;&nbsp;&nbsp;"
+									+ "<button class='btn btn-primary resume' value='"+rows.name+"'>继续</button>&nbsp;&nbsp;&nbsp;&nbsp;"
+									+ "<button class='btn btn-info delete' value='"+rows.name+"'>删除</button>"
+				        	}	
+                    },
+                ],
+                pager: "#pager_list",
+                viewrecords: true,
+                jsonReader: {  
+    				root:"dataList", page:"currentPage", total:"totalPages", //   很重要 定义了 后台分页参数的名字。
+    				records:"totalCount", repeatitems:false, id : "id"
+				},
+                loadComplete:function(xhr){  
+                    //查询为空的处理方式  
+                    var rowNum = $("#table_list").jqGrid('getGridParam','records'); 
+                    //alert("行数："+rowNum);
+                    if (rowNum == '0'){  
+                        if($("#norecords").html() == null || $("#norecords").html() == '')  
+                            $("#table_list").parent().append("<pre><div id='norecords' style='text:center;padding: 8px 8px;color: red;'>没有查询到符合条件的结果！</div></pre>");  
+                        $("#norecords").show();  
+                    }else{  
+                        $("#norecords").hide();  
+                    }  
+  
+                },
+                
+            });
+            $("#table_list").jqGrid(
+        			"navGrid",
+        			"#pager_list",
+        			{edit:false,add:false,del:false,search:true,refresh:true},
+        			{reloadAfterSubmit:true},
+    			);
+            $(window).bind("resize",function(){
+        		var width=$(".jqGrid_wrapper").width();
+        		$("#table_list").setGridWidth(width-20)
+    		})
+			
+    		$(".gohome a").attr("href","#");
+            /*]]>*/
+        });
+        
+        $(function(){
+        	/*<![CDATA[*/
+        	$(".pause").live("click",function(){
+            	var jobkeyName = $(this).val();
+            	$.post("/quartz/pauseQuartz",{
+            		jobkeyName:jobkeyName
+            	},function(msg){
+            		if(msg==1){
+            			alert("暂停成功！");
+            			location.reload();
+            		}else{
+            			alert("暂停失败！")
+            		}
+            	},"text")
+            	
+            });
+        	$(".resume").live("click",function(){
+            	var jobkeyName = $(this).val();
+            	$.post("/quartz/resumeQuartz",{
+            		jobkeyName:jobkeyName
+            	},function(msg){
+            		if(msg==1){
+            			alert("成功！");
+            			location.reload();
+            		}else{
+            			alert("失败！")
+            		}
+            	},"text")
+            	
+            });        	           
+        	$(".delete").live("click",function(){
+            	var jobkeyName = $(this).val();
+            	$.post("/quartz/deleteQuartz",{
+            		jobkeyName:jobkeyName
+            	},function(msg){
+            		if(msg==1){
+            			alert("删除成功！");
+            			location.reload();
+            		}else{
+            			alert("删除失败！")
+            		}
+            	},"text")
+            	
+            });
+        	/*]]>*/
+        	
+        })
+        
+
+    </script>
+    
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+#myTable {
+    width: 700px;
+    margin: 0px auto;
+    border-collapse: collapse;
+    font-family: arial;
+    text-align: center;
+}
+#myTable thead th {
+    border-bottom: 2px solid #3D580B;
+    background-color: #8FC629;
+    color: #fff;
+    padding: 10px 0px;
+    text-align: center;
+}
+#myTable td {
+    background-color: #F2F4B9;
+}
+#myTable th {
+    border: 1px solid #bbb;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-color: rgb(187, 187, 187);
+}

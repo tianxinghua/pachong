@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.spider.mapper.quartz.QuartzInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.spider.entity.quartz.QuartzInfo" >
+    <result column="JOB_NAME" property="name" jdbcType="VARCHAR" />
+    <result column="startTime" property="startTime" jdbcType="VARCHAR" />
+    <result column="previousTime" property="previousTime" jdbcType="VARCHAR" />
+    <result column="nextTime" property="nextTime" jdbcType="VARCHAR" />
+    <result column="TRIGGER_STATE" property="state" jdbcType="VARCHAR" />
+    <result column="CRON_EXPRESSION" property="cronExpression" jdbcType="VARCHAR" />
+    <result column="TIME_ZONE_ID" property="timeZone" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, title, white_id, keywords, summary, thumbnail_url, video_url, url_hash, url, 
+    detail_url, publish_time, author, read_num, click_num, follow_num, status, language, create_time, update_time
+  </sql>
+  
+  <select id="getCount" resultType="Long">
+		select count(JOB_NAME) from QRTZ_TRIGGERS
+  </select>
+  <select id="getQuartzList" resultMap="BaseResultMap">
+		SELECT
+				QRTZ_JOB_DETAILS.JOB_NAME,
+				<!-- qrtz_job_details.JOB_GROUP,
+				qrtz_job_details.JOB_CLASS_NAME,
+				qrtz_triggers.TRIGGER_NAME,
+				qrtz_triggers.TRIGGER_GROUP, -->
+				FROM_UNIXTIME(START_TIME/1000, '%Y-%m-%d %H:%i:%s') as startTime,
+				FROM_UNIXTIME(PREV_FIRE_TIME/1000, '%Y-%m-%d %H:%i:%s') as previousTime,
+				FROM_UNIXTIME(NEXT_FIRE_TIME/1000, '%Y-%m-%d %H:%i:%s') as nextTime,
+				QRTZ_TRIGGERS.TRIGGER_STATE,
+				QRTZ_CRON_TRIGGERS.CRON_EXPRESSION,
+				QRTZ_CRON_TRIGGERS.TIME_ZONE_ID
+			FROM
+				QRTZ_JOB_DETAILS
+			JOIN QRTZ_TRIGGERS
+			JOIN QRTZ_CRON_TRIGGERS ON QRTZ_JOB_DETAILS.JOB_NAME = QRTZ_TRIGGERS.JOB_NAME
+			AND QRTZ_TRIGGERS.TRIGGER_NAME = QRTZ_CRON_TRIGGERS.TRIGGER_NAME
+			AND QRTZ_TRIGGERS.TRIGGER_GROUP = QRTZ_CRON_TRIGGERS.TRIGGER_GROUP 
+		limit ${index},${rowInt}
+  </select>
+  
+</mapper>

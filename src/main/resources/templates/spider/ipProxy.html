@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>代理IP</title>
+<meta name="keywords" content="代理IP" />
+<meta name="description" content="代理IP" />
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico"></link>
+<link href="/css/bootstrap.min14ed.css" rel="stylesheet" />
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/font-awesome.min93e3.css" rel="stylesheet" />
+<link href="/css/jqgrid/ui.jqgridffe4.css" rel="stylesheet" />
+<link href="/css/animate.min.css" rel="stylesheet" />
+<link href="/css/style.min862f.css" rel="stylesheet" />
+<link href="/css/jquery-ui.css" rel="stylesheet" />
+<!-- <link href="/css/datepicker3.css" rel="stylesheet"> -->
+<script src="/js/jquery.min.js"></script>
+
+</head>
+
+<body class="gray-bg">
+	<div class="jqGrid_wrapper">
+		<table id="table_list"></table>
+		<div id="pager_list"></div>
+	</div>
+	
+	<script type="text/javascript" src="/js/h+/jquery-migrate-1.4.1.js"></script>
+	<script type="text/javascript" src="/js/h+/jqgrid/jquery.jqGrid.min.js"></script>
+	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/h+/jquery.peity.min.js"></script>
+	<script type="text/javascript" src="/js/h+/jqgrid5/grid.locale-cn.js"></script>
+	<script type="text/javascript"
+		src="/js/h+/jqgrid/jquery.jqGrid.minffe4.js"></script>
+	<script type="text/javascript" src="/js/h+/content.min.js"></script>
+	<script type="text/javascript" src="/js/h+/bootstrap-datepicker.js"></script>
+
+
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+        $(document).ready(function(){
+        	$.jgrid.defaults.styleUI="Bootstrap";
+        	$("#table_list").jqGrid(
+        			{
+        				editurl:"/spider/editIpProxy",
+        				url:"/spider/ipProxyList",
+        				datatype:"json",
+        				mtype: "POST",
+        				height:520,
+        				hoverrows: true,
+        				autowidth:true,
+        				shrinkToFit:true,
+        				rownumbers: true,
+        				rowNum:10,//每页展示条数
+        				rowList:[1,5,10,20,30,50],
+        				page: 1,
+        				colNames:["序号","代理IP","代理端口","创建时间"],
+        				colModel:[
+        				          {name:"id",index:"id",autowidth:true,align:"center",search:true
+        				        	  ,sopt:['eq','ne','lt','le','gt','ge'],defval:0,editable: true
+        				          },
+        				          {name:"proxyHost",index:"proxyHost",autowidth:true,align:"center",search:true
+        				        	  ,sopt:['eq','ne'],editable: true 
+        				          },
+        				          {name:"proxyPort",index:"proxyPort",autowidth:true,align:"center",search:true
+        				        	  ,sopt:['eq','ne','bw'],editable: true  
+        				          },
+        				          {name:"createTime",index:"createTime",autowidth:true,align:"center",search:true
+        				        	  ,sopt:['eq','ne','bw'],editable: false 
+        				          },
+        				         ],
+        				pager:"#pager_list",
+        				viewrecords:true,
+        				jsonReader: {  
+	        				root:"dataList", page:"currentPage", total:"totalPages", //   很重要 定义了 后台分页参数的名字。
+	        				records:"totalCount", repeatitems:false, id : "id"
+        				},
+        				
+        				loadComplete:function(xhr){  
+                            //查询为空的处理方式  
+                            var rowNum = $("#table_list").jqGrid('getGridParam','records'); 
+                            //alert("行数："+rowNum);
+                            if (rowNum == '0'){  
+                                if($("#norecords").html() == null || $("#norecords").html() == '')  
+                                    $("#table_list").parent().append("<pre><div id='norecords' style='text:center;padding: 8px 8px;color: red;'>没有查询到符合条件的结果！</div></pre>");  
+                                $("#norecords").show();  
+                            }else{  
+                                $("#norecords").hide();  
+                            }  
+          
+                        },
+                        
+        				
+        			});
+        	
+        	$("#table_list").jqGrid(
+        			"navGrid",
+        			"#pager_list",
+        			{edit:true,add:true,del:false,search:true,refresh:true},
+                    {
+        				editCaption: "修改代理IP",
+                        recreateForm: true,
+    					beforeSubmit : function( postdata, form , oper) {
+    						if( confirm('确定修改此条记录吗?') ) {
+    							return [true,''];
+    						} else {
+    							return [false, 'You can not submit!'];
+    						}
+    					},
+    					afterSubmit : function(response, postdata) { 
+    						var msg = response.responseJSON.status;
+    						var id = postdata.id;
+    						if("success"==msg){
+    							alert("修改成功！");
+    							//location.reload();
+    							return ["success","修改成功！",id];
+    						}else{
+    							return ["error","修改失败！",id];
+    						}
+    						
+    					},
+                        closeAfterEdit: true,
+                        errorTextFormat: function (data) {
+                            return 'Error: ' + data.responseText
+                        }
+                    },
+        			{
+                        closeAfterAdd: true,
+                        recreateForm: true,
+                        afterSubmit : function(response, postdata) { 
+    						var msg = response.responseJSON.status;
+    						if("success"==msg){
+    							alert("添加成功！");
+    							location.reload();
+    							return ["success","添加成功！",0];
+    						}else{
+    							return ["error","修改失败！",0];
+    						}
+    					},
+                        errorTextFormat: function (data) {
+                            return 'Error: ' + data.responseText
+                        }
+                    },
+                    {},
+        			{reloadAfterSubmit:true}
+    			);
+        	
+        	$(window).bind("resize",function(){
+	        		var width=$(".jqGrid_wrapper").width();
+	        		$("#table_list").setGridWidth(width-20)
+        		});
+        		
+        	$(".gohome a").attr("href","#");
+        	
+        });
+        
+        
+        
+        /*]]>*/
+    </script>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shangpin.spider.mapper.gather.SpiderRulesMapper" >
+  <resultMap id="BaseResultMap" type="com.shangpin.spider.entity.gather.SpiderRules" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="white_id" property="whiteId" jdbcType="BIGINT" />
+    <result column="channel_rules" property="channelRules" jdbcType="VARCHAR" />
+    <result column="thread_num" property="threadNum" jdbcType="INTEGER" />
+    <result column="retry_num" property="retryNum" jdbcType="INTEGER" />
+    <result column="sleep" property="sleep" jdbcType="INTEGER" />
+    <result column="max_page_gather" property="maxPageGather" jdbcType="INTEGER" />
+    <result column="timeout" property="timeout" jdbcType="INTEGER" />
+    <result column="user_agent" property="userAgent" jdbcType="VARCHAR" />
+    <result column="cookie" property="cookie" jdbcType="LONGVARCHAR" />
+    <result column="lie_url_reg" property="lieUrlReg" jdbcType="VARCHAR" />
+    <result column="detail_url_reg" property="detailUrlReg" jdbcType="VARCHAR" />
+    <result column="filter_url_reg" property="filterUrlReg" jdbcType="VARCHAR" />
+    <result column="charset" property="charset" jdbcType="VARCHAR" />
+    <result column="gather_first" property="gatherFirst" jdbcType="BIT" />
+    <result column="ajax_flag" property="ajaxFlag" jdbcType="BIT" />
+    <result column="gender_rules" property="genderRules" jdbcType="VARCHAR" />
+    <result column="brand_rules" property="brandRules" jdbcType="VARCHAR" />
+    <result column="brand_strategy" property="brandStrategy" jdbcType="VARCHAR" />
+    <result column="category_rules" property="categoryRules" jdbcType="VARCHAR" />
+    <result column="category_strategy" property="categoryStrategy" jdbcType="VARCHAR" />
+    <result column="spu_rules" property="spuRules" jdbcType="VARCHAR" />
+    <result column="spu_strategy" property="spuStrategy" jdbcType="VARCHAR" />
+    <result column="season_rules" property="seasonRules" jdbcType="VARCHAR" />
+    <result column="material_rules" property="materialRules" jdbcType="VARCHAR" />
+    <result column="material_strategy" property="materialStrategy" jdbcType="VARCHAR" />
+    <result column="color_rules" property="colorRules" jdbcType="VARCHAR" />
+    <result column="color_strategy" property="colorStrategy" jdbcType="VARCHAR" />
+    <result column="size_rules" property="sizeRules" jdbcType="VARCHAR" />
+    <result column="size_strategy" property="sizeStrategy" jdbcType="VARCHAR" />
+    <result column="pro_name_rules" property="proNameRules" jdbcType="VARCHAR" />
+    <result column="pro_name_strategy" property="proNameStrategy" jdbcType="VARCHAR" />
+    <result column="foreign_price_rules" property="foreignPriceRules" jdbcType="VARCHAR" />
+    <result column="foreign_price_strategy" property="foreignPriceStrategy" jdbcType="VARCHAR" />
+    <result column="domestic_price_rules" property="domesticPriceRules" jdbcType="VARCHAR" />
+    <result column="domestic_price_strategy" property="domesticPriceStrategy" jdbcType="VARCHAR" />
+    <result column="sale_price_rules" property="salePriceRules" jdbcType="VARCHAR" />
+    <result column="sale_price_strategy" property="salePriceStrategy" jdbcType="VARCHAR" />
+    <result column="made_rules" property="madeRules" jdbcType="VARCHAR" />
+    <result column="made_strategy" property="madeStrategy" jdbcType="VARCHAR" />
+    <result column="description_rules" property="descriptionRules" jdbcType="VARCHAR" />
+    <result column="description_strategy" property="descriptionStrategy" jdbcType="VARCHAR" />
+    <result column="pics_rules" property="picsRules" jdbcType="LONGVARCHAR" />
+    <result column="pics_strategy" property="picsStrategy" jdbcType="VARCHAR" />
+    <result column="measurement_rules" property="measurementRules" jdbcType="VARCHAR" />
+    <result column="measurement_strategy" property="measurementStrategy" jdbcType="VARCHAR" />
+    <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
+    <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, white_id, thread_num, retry_num, sleep, max_page_gather, timeout, cookie, user_agent, lie_url_reg, 
+    detail_url_reg, filter_url_reg, charset, ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
+    category_rules, category_strategy, spu_rules, spu_strategy, season_rules, material_rules, 
+    material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
+    pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
+    domestic_price_strategy, sale_price_rules, sale_price_strategy, made_rules, made_strategy, 
+    description_rules, description_strategy, pics_rules, pics_strategy, measurement_rules, measurement_strategy, 
+    supplier_id, supplier_no, status, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from spider_rules
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <insert id="insert" parameterType="com.shangpin.spider.entity.gather.SpiderRules" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into spider_rules (white_id, channel_rules, thread_num, retry_num, 
+      sleep, max_page_gather, timeout, cookie, user_agent
+      lie_url_reg, detail_url_reg, filter_url_reg, 
+      charset, ajax_flag, gather_first, gender_rules, 
+      brand_rules, brand_strategy, category_rules, 
+      category_strategy, spu_rules, spu_strategy, 
+      season_rules, material_rules, material_strategy, 
+      color_rules, color_strategy, size_rules, 
+      size_strategy, pro_name_rules, pro_name_strategy, 
+      foreign_price_rules, foreign_price_strategy, 
+      domestic_price_rules, domestic_price_strategy, 
+      sale_price_rules, sale_price_strategy, made_rules, 
+      made_strategy, description_rules, description_strategy, 
+      pics_rules, pics_strategy, measurement_rules, 
+      measurement_strategy, supplier_id, supplier_no, 
+      status, create_time, update_time
+      )
+    values (#{whiteId,jdbcType=BIGINT}, #{channelRules,jdbcType=VARCHAR}, #{threadNum,jdbcType=INTEGER}, #{retryNum,jdbcType=INTEGER}, 
+      #{sleep,jdbcType=INTEGER}, #{maxPageGather,jdbcType=INTEGER}, #{timeout,jdbcType=INTEGER}, 
+      #{cookie,jdbcType=LONGVARCHAR}, #{userAgent,jdbcType=VARCHAR}, 
+      #{lieUrlReg,jdbcType=VARCHAR}, #{detailUrlReg,jdbcType=VARCHAR}, #{filterUrlReg,jdbcType=VARCHAR}, 
+      #{charset,jdbcType=VARCHAR}, #{ajaxFlag,jdbcType=BIT}, #{gatherFirst,jdbcType=BIT}, #{genderRules,jdbcType=VARCHAR}, 
+      #{brandRules,jdbcType=VARCHAR}, #{brandStrategy,jdbcType=VARCHAR}, #{categoryRules,jdbcType=VARCHAR}, 
+      #{categoryStrategy,jdbcType=VARCHAR}, #{spuRules,jdbcType=VARCHAR}, #{spuStrategy,jdbcType=VARCHAR}, 
+      #{seasonRules,jdbcType=VARCHAR}, #{materialRules,jdbcType=VARCHAR}, #{materialStrategy,jdbcType=VARCHAR}, 
+      #{colorRules,jdbcType=VARCHAR}, #{colorStrategy,jdbcType=VARCHAR}, #{sizeRules,jdbcType=VARCHAR}, 
+      #{sizeStrategy,jdbcType=VARCHAR}, #{proNameRules,jdbcType=VARCHAR}, #{proNameStrategy,jdbcType=VARCHAR}, 
+      #{foreignPriceRules,jdbcType=VARCHAR}, #{foreignPriceStrategy,jdbcType=VARCHAR}, 
+      #{domesticPriceRules,jdbcType=VARCHAR}, #{domesticPriceStrategy,jdbcType=VARCHAR}, 
+      #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR}, #{madeRules,jdbcType=VARCHAR}, 
+      #{madeStrategy,jdbcType=VARCHAR}, #{descriptionRules,jdbcType=VARCHAR}, #{descriptionStrategy,jdbcType=VARCHAR}, 
+      #{picsRules,jdbcType=LONGVARCHAR}, #{picsStrategy,jdbcType=VARCHAR}, #{measurementRules,jdbcType=VARCHAR}, 
+      #{measurementStrategy,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.shangpin.spider.entity.gather.SpiderRules" >
+    <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into spider_rules
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="whiteId != null" >
+        white_id,
+      </if>
+      <if test="channelRules != null" >
+        channel_rules,
+      </if>
+      <if test="threadNum != null" >
+        thread_num,
+      </if>
+      <if test="retryNum != null" >
+        retry_num,
+      </if>
+      <if test="sleep != null" >
+        sleep,
+      </if>
+      <if test="maxPageGather != null" >
+        max_page_gather,
+      </if>
+      <if test="timeout != null" >
+        timeout,
+      </if>
+      <if test="cookie != null" >
+        cookie,
+      </if>
+      <if test="userAgent != null" >
+        user_agent,
+      </if>
+      <if test="lieUrlReg != null" >
+        lie_url_reg,
+      </if>
+      <if test="detailUrlReg != null" >
+        detail_url_reg,
+      </if>
+      <if test="filterUrlReg != null" >
+        filter_url_reg,
+      </if>
+      <if test="charset != null" >
+        charset,
+      </if>
+      <if test="ajaxFlag != null" >
+        ajax_flag,
+      </if>
+      <if test="gatherFirst != null" >
+        gather_first,
+      </if>
+      <if test="genderRules != null" >
+        gender_rules,
+      </if>
+      <if test="brandRules != null" >
+        brand_rules,
+      </if>
+      <if test="brandStrategy != null" >
+        brand_strategy,
+      </if>
+      <if test="categoryRules != null" >
+        category_rules,
+      </if>
+      <if test="categoryStrategy != null" >
+        category_strategy,
+      </if>
+      <if test="spuRules != null" >
+        spu_rules,
+      </if>
+      <if test="spuStrategy != null" >
+        spu_strategy,
+      </if>
+      <if test="seasonRules != null" >
+        season_rules,
+      </if>
+      <if test="materialRules != null" >
+        material_rules,
+      </if>
+      <if test="materialStrategy != null" >
+        material_strategy,
+      </if>
+      <if test="colorRules != null" >
+        color_rules,
+      </if>
+      <if test="colorStrategy != null" >
+        color_strategy,
+      </if>
+      <if test="sizeRules != null" >
+        size_rules,
+      </if>
+      <if test="sizeStrategy != null" >
+        size_strategy,
+      </if>
+      <if test="proNameRules != null" >
+        pro_name_rules,
+      </if>
+      <if test="proNameStrategy != null" >
+        pro_name_strategy,
+      </if>
+      <if test="foreignPriceRules != null" >
+        foreign_price_rules,
+      </if>
+      <if test="foreignPriceStrategy != null" >
+        foreign_price_strategy,
+      </if>
+      <if test="domesticPriceRules != null" >
+        domestic_price_rules,
+      </if>
+      <if test="domesticPriceStrategy != null" >
+        domestic_price_strategy,
+      </if>
+      <if test="salePriceRules != null" >
+        sale_price_rules,
+      </if>
+      <if test="salePriceStrategy != null" >
+        sale_price_strategy,
+      </if>
+      <if test="madeRules != null" >
+        made_rules,
+      </if>
+      <if test="madeStrategy != null" >
+        made_strategy,
+      </if>
+      <if test="descriptionRules != null" >
+        description_rules,
+      </if>
+      <if test="descriptionStrategy != null" >
+        description_strategy,
+      </if>
+      <if test="picsRules != null" >
+        pics_rules,
+      </if>
+      <if test="picsStrategy != null" >
+        pics_strategy,
+      </if>
+      <if test="measurementRules != null" >
+        measurement_rules,
+      </if>
+      <if test="measurementStrategy != null" >
+        measurement_strategy,
+      </if>
+      <if test="supplierId != null" >
+        supplier_id,
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="whiteId != null" >
+        #{whiteId,jdbcType=BIGINT},
+      </if>
+      <if test="channelRules != null" >
+        #{channelRules,jdbcType=VARCHAR},
+      </if>
+      <if test="threadNum != null" >
+        #{threadNum,jdbcType=INTEGER},
+      </if>
+      <if test="retryNum != null" >
+        #{retryNum,jdbcType=INTEGER},
+      </if>
+      <if test="sleep != null" >
+        #{sleep,jdbcType=INTEGER},
+      </if>
+      <if test="maxPageGather != null" >
+        #{maxPageGather,jdbcType=INTEGER},
+      </if>
+      <if test="timeout != null" >
+        #{timeout,jdbcType=INTEGER},
+      </if>
+      <if test="cookie != null" >
+        #{cookie,jdbcType=VARCHAR},
+      </if>
+      <if test="userAgent != null" >
+        #{userAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="lieUrlReg != null" >
+        #{lieUrlReg,jdbcType=VARCHAR},
+      </if>
+      <if test="detailUrlReg != null" >
+        #{detailUrlReg,jdbcType=VARCHAR},
+      </if>
+      <if test="filterUrlReg != null" >
+        #{filterUrlReg,jdbcType=VARCHAR},
+      </if>
+      <if test="charset != null" >
+        #{charset,jdbcType=VARCHAR},
+      </if>
+      <if test="ajaxFlag != null" >
+        #{ajaxFlag,jdbcType=BIT},
+      </if>
+      <if test="gatherFirst != null" >
+        #{gatherFirst,jdbcType=BIT},
+      </if>
+      <if test="genderRules != null" >
+        #{genderRules,jdbcType=VARCHAR},
+      </if>
+      <if test="brandRules != null" >
+        #{brandRules,jdbcType=VARCHAR},
+      </if>
+      <if test="brandStrategy != null" >
+        #{brandStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryRules != null" >
+        #{categoryRules,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryStrategy != null" >
+        #{categoryStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="spuRules != null" >
+        #{spuRules,jdbcType=VARCHAR},
+      </if>
+      <if test="spuStrategy != null" >
+        #{spuStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="seasonRules != null" >
+        #{seasonRules,jdbcType=VARCHAR},
+      </if>
+      <if test="materialRules != null" >
+        #{materialRules,jdbcType=VARCHAR},
+      </if>
+      <if test="materialStrategy != null" >
+        #{materialStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="colorRules != null" >
+        #{colorRules,jdbcType=VARCHAR},
+      </if>
+      <if test="colorStrategy != null" >
+        #{colorStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeRules != null" >
+        #{sizeRules,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeStrategy != null" >
+        #{sizeStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="proNameRules != null" >
+        #{proNameRules,jdbcType=VARCHAR},
+      </if>
+      <if test="proNameStrategy != null" >
+        #{proNameStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="foreignPriceRules != null" >
+        #{foreignPriceRules,jdbcType=VARCHAR},
+      </if>
+      <if test="foreignPriceStrategy != null" >
+        #{foreignPriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="domesticPriceRules != null" >
+        #{domesticPriceRules,jdbcType=VARCHAR},
+      </if>
+      <if test="domesticPriceStrategy != null" >
+        #{domesticPriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="salePriceRules != null" >
+        #{salePriceRules,jdbcType=VARCHAR},
+      </if>
+      <if test="salepriceStrategy != null" >
+        #{salepriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="madeRules != null" >
+        #{madeRules,jdbcType=VARCHAR},
+      </if>
+      <if test="madeStrategy != null" >
+        #{madeStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="descriptionRules != null" >
+        #{descriptionRules,jdbcType=VARCHAR},
+      </if>
+      <if test="descriptionStrategy != null" >
+        #{descriptionStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="picsRules != null" >
+        #{picsRules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picsStrategy != null" >
+        #{picsStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="measurementRules != null" >
+        #{measurementRules,jdbcType=VARCHAR},
+      </if>
+      <if test="measurementStrategy != null" >
+        #{measurementStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        now(),
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.shangpin.spider.entity.gather.SpiderRules" >
+    update spider_rules
+    <set >
+      <if test="whiteId != null" >
+        white_id = #{whiteId,jdbcType=BIGINT},
+      </if>
+      <if test="channelRules != null" >
+        channel_rules = #{channelRules,jdbcType=VARCHAR},
+      </if>
+      <if test="threadNum != null" >
+        thread_num = #{threadNum,jdbcType=INTEGER},
+      </if>
+      <if test="retryNum != null" >
+        retry_num = #{retryNum,jdbcType=INTEGER},
+      </if>
+      <if test="sleep != null" >
+        sleep = #{sleep,jdbcType=INTEGER},
+      </if>
+      <if test="maxPageGather != null" >
+        max_page_gather = #{maxPageGather,jdbcType=INTEGER},
+      </if>
+      <if test="timeout != null" >
+        timeout = #{timeout,jdbcType=INTEGER},
+      </if>
+      <if test="cookie != null" >
+        cookie = #{cookie,jdbcType=VARCHAR},
+      </if>
+      <if test="userAgent != null" >
+        user_agent = #{userAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="lieUrlReg != null" >
+        lie_url_reg = #{lieUrlReg,jdbcType=VARCHAR},
+      </if>
+      <if test="detailUrlReg != null" >
+        detail_url_reg = #{detailUrlReg,jdbcType=VARCHAR},
+      </if>
+      <if test="filterUrlReg != null" >
+        filter_url_reg = #{filterUrlReg,jdbcType=VARCHAR},
+      </if>
+      <if test="charset != null" >
+        charset = #{charset,jdbcType=VARCHAR},
+      </if>
+      <if test="ajaxFlag != null" >
+        ajax_flag = #{ajaxFlag,jdbcType=BIT},
+      </if>
+      <if test="gatherFirst != null" >
+        gather_first = #{gatherFirst,jdbcType=BIT},
+      </if>
+      <if test="genderRules != null" >
+        gender_rules = #{genderRules,jdbcType=VARCHAR},
+      </if>
+      <if test="brandRules != null" >
+        brand_rules = #{brandRules,jdbcType=VARCHAR},
+      </if>
+      <if test="brandStrategy != null" >
+        brand_strategy = #{brandStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryRules != null" >
+        category_rules = #{categoryRules,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryStrategy != null" >
+        category_strategy = #{categoryStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="spuRules != null" >
+        spu_rules = #{spuRules,jdbcType=VARCHAR},
+      </if>
+      <if test="spuStrategy != null" >
+        spu_strategy = #{spuStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="seasonRules != null" >
+        season_rules = #{seasonRules,jdbcType=VARCHAR},
+      </if>
+      <if test="materialRules != null" >
+        material_rules = #{materialRules,jdbcType=VARCHAR},
+      </if>
+      <if test="materialStrategy != null" >
+        material_strategy = #{materialStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="colorRules != null" >
+        color_rules = #{colorRules,jdbcType=VARCHAR},
+      </if>
+      <if test="colorStrategy != null" >
+        color_strategy = #{colorStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeRules != null" >
+        size_rules = #{sizeRules,jdbcType=VARCHAR},
+      </if>
+      <if test="sizeStrategy != null" >
+        size_strategy = #{sizeStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="proNameRules != null" >
+        pro_name_rules = #{proNameRules,jdbcType=VARCHAR},
+      </if>
+      <if test="proNameStrategy != null" >
+        pro_name_strategy = #{proNameStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="foreignPriceRules != null" >
+        foreign_price_rules = #{foreignPriceRules,jdbcType=VARCHAR},
+      </if>
+      <if test="foreignPriceStrategy != null" >
+        foreign_price_strategy = #{foreignPriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="domesticPriceRules != null" >
+        domestic_price_rules = #{domesticPriceRules,jdbcType=VARCHAR},
+      </if>
+      <if test="domesticPriceStrategy != null" >
+        domestic_price_strategy = #{domesticPriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="salePriceRules != null" >
+        sale_price_rules = #{salePriceRules,jdbcType=VARCHAR},
+      </if>
+      <if test="salePriceStrategy != null" >
+        sale_price_strategy = #{salePriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="madeRules != null" >
+        made_rules = #{madeRules,jdbcType=VARCHAR},
+      </if>
+      <if test="madeStrategy != null" >
+        made_strategy = #{madeStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="descriptionRules != null" >
+        description_rules = #{descriptionRules,jdbcType=VARCHAR},
+      </if>
+      <if test="descriptionStrategy != null" >
+        description_strategy = #{descriptionStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="picsRules != null" >
+        pics_rules = #{picsRules,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picsStrategy != null" >
+        pics_strategy = #{picsStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="measurementRules != null" >
+        measurement_rules = #{measurementRules,jdbcType=VARCHAR},
+      </if>
+      <if test="measurementStrategy != null" >
+        measurement_strategy = #{measurementStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierId != null" >
+        supplier_id = #{supplierId,jdbcType=VARCHAR},
+      </if>
+      <if test="supplierNo != null" >
+        supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.shangpin.spider.entity.gather.SpiderRules" >
+    update spider_rules
+    set white_id = #{whiteId,jdbcType=BIGINT},
+    	channel_rules = #{channelRules,jdbcType=VARCHAR},
+      thread_num = #{threadNum,jdbcType=INTEGER},
+      retry_num = #{retryNum,jdbcType=INTEGER},
+      sleep = #{sleep,jdbcType=INTEGER},
+      max_page_gather = #{maxPageGather,jdbcType=INTEGER},
+      timeout = #{timeout,jdbcType=INTEGER},
+      cookie = #{cookie,jdbcType=VARCHAR},
+      user_agent = #{userAgent,jdbcType=VARCHAR},
+      lie_url_reg = #{lieUrlReg,jdbcType=VARCHAR},
+      detail_url_reg = #{detailUrlReg,jdbcType=VARCHAR},
+      filter_url_reg = #{filterUrlReg,jdbcType=VARCHAR},
+      charset = #{charset,jdbcType=VARCHAR},
+      ajax_flag = #{ajaxFlag,jdbcType=BIT},
+      gather_first = #{gatherFirst,jdbcType=BIT},
+      gender_rules = #{genderRules,jdbcType=VARCHAR},
+      brand_rules = #{brandRules,jdbcType=VARCHAR},
+      brand_strategy = #{brandStrategy,jdbcType=VARCHAR},
+      category_rules = #{categoryRules,jdbcType=VARCHAR},
+      category_strategy = #{categoryStrategy,jdbcType=VARCHAR},
+      spu_rules = #{spuRules,jdbcType=VARCHAR},
+      spu_strategy = #{spuStrategy,jdbcType=VARCHAR},
+      season_rules = #{seasonRules,jdbcType=VARCHAR},
+      material_rules = #{materialRules,jdbcType=VARCHAR},
+      material_strategy = #{materialStrategy,jdbcType=VARCHAR},
+      color_rules = #{colorRules,jdbcType=VARCHAR},
+      color_strategy = #{colorStrategy,jdbcType=VARCHAR},
+      size_rules = #{sizeRules,jdbcType=VARCHAR},
+      size_strategy = #{sizeStrategy,jdbcType=VARCHAR},
+      pro_name_rules = #{proNameRules,jdbcType=VARCHAR},
+      pro_name_strategy = #{proNameStrategy,jdbcType=VARCHAR},
+      foreign_price_rules = #{foreignPriceRules,jdbcType=VARCHAR},
+      foreign_price_strategy = #{foreignPriceStrategy,jdbcType=VARCHAR},
+      domestic_price_rules = #{domesticPriceRules,jdbcType=VARCHAR},
+      domestic_price_strategy = #{domesticPriceStrategy,jdbcType=VARCHAR},
+      sale_price_rules = #{salePriceRules,jdbcType=VARCHAR},
+      sale_price_strategy = #{salePriceStrategy,jdbcType=VARCHAR},
+      made_rules = #{madeRules,jdbcType=VARCHAR},
+      made_strategy = #{madeStrategy,jdbcType=VARCHAR},
+      description_rules = #{descriptionRules,jdbcType=VARCHAR},
+      description_strategy = #{descriptionStrategy,jdbcType=VARCHAR},
+      pics_rules = #{picsRules,jdbcType=LONGVARCHAR},
+      pics_strategy = #{picsStrategy,jdbcType=VARCHAR},
+      measurement_rules = #{measurementRules,jdbcType=VARCHAR},
+      measurement_strategy = #{measurementStrategy,jdbcType=VARCHAR},
+      supplier_id = #{supplierId,jdbcType=VARCHAR},
+      supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="getRuleById" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from spider_rules
+    where id = #{id,jdbcType=BIGINT} 
+  </select>
+</mapper>

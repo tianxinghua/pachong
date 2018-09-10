@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>缓存列表</title>
+<meta name="keywords" content="缓存列表"/>
+<meta name="description" content="缓存列表"/>
+
+
+<!-- jqgrid-->
+<link rel="icon" type="image/x-icon" href="/static/favicon.ico"></link>
+<link href="/css/bootstrap.min14ed.css" rel="stylesheet"/>
+<link href="/css/font-awesome.min93e3.css" rel="stylesheet"/>
+<link href="/css/jqgrid/ui.jqgridffe4.css" rel="stylesheet"/>
+<link href="/css/animate.min.css" rel="stylesheet"/>
+<link href="/css/style.min862f.css" rel="stylesheet"/>
+<link href="/css/jquery-ui.css" rel="stylesheet"/>
+
+<script src="/js/jquery.min.js"></script>
+</head>
+
+<body class="gray-bg" layout:fragment="content">
+	<script type="text/javascript" src="/js/h+/jqgrid5/grid.locale-cn.js"></script>
+    <script type="text/javascript" src="/js/h+/jqgrid5/jquery.jqGrid.min.js"></script>
+	<script type="text/javascript" src="/js/h+/jquery.peity.min.js"></script>
+	<script type="text/javascript" src="/js/h+/jquery-migrate-1.4.1.js"></script>
+	<script type="text/javascript"
+		src="/js/h+/jqgrid/jquery.jqGrid.minffe4.js"></script>
+	<div class="jqGrid_wrapper">
+		<table id="table_list"></table>
+		<div id="pager_list"></div>
+	</div>
+    <script type="text/javascript" th:inline="javascript"> 
+        $(document).ready(function () {
+        	/*<![CDATA[*/
+        	$.jgrid.defaults.styleUI="Bootstrap";
+            $("#table_list").jqGrid({
+                url:"/cache/getCacheList",
+                datatype: "json",
+                mtype: "POST",
+                height: 520,
+                hoverrows: true,
+				autowidth:true,
+				shrinkToFit:true,
+				rownumbers: true,
+				rowNum:10,//每页展示条数
+				rowList:[5,10,20,30,50],
+                page: 1,
+                colNames:["UUID","相关网站","未处理链接数","已处理链接数（总）","清除缓存（未处理）"],
+                colModel: [
+                    { name:"uuid", index:"name",key: true,editable:false,autowidth:true,align:"center"},
+                    { name:"webName",index:"webName",editable:false,autowidth:true,align:"center"},
+                    { name:"taskCount",index:"taskCount",editable:false,autowidth:true,align:"center"},
+                    { name:"remTaskCount",index:"remTaskCount",editable:false,autowidth:true,align:"center"},
+                    { name:"",index:"",editable:false,autowidth:true,align:"center",
+                    	formatter: function (value, grid, rows, state) {
+                    		return "<button class='btn btn-danger deleteCache' value='"+rows.uuid+"'>清除</button>"
+                    	}	
+                    },
+                ],
+                pager: "#pager_list",
+                viewrecords: true,
+                loadComplete:function(xhr){  
+                    //查询为空的处理方式  
+                    var rowNum = $("#table_list").jqGrid('getGridParam','records'); 
+                    //alert("行数："+rowNum);
+                    if (rowNum == '0'){  
+                        if($("#norecords").html() == null || $("#norecords").html() == '')  
+                            $("#table_list").parent().append("<pre><div id='norecords' style='text:center;padding: 8px 8px;color: red;'>没有查询到符合条件的结果！</div></pre>");  
+                        $("#norecords").show();  
+                    }else{  
+                        $("#norecords").hide();  
+                    }  
+  
+                },
+                
+            });
+            $("#table_list").jqGrid(
+        			"navGrid",
+        			"#pager_list",
+        			{edit:false,add:false,del:false,search:true,refresh:true},
+        			{reloadAfterSubmit:true}
+    			);
+            $(window).bind("resize",function(){
+        		var width=$(".jqGrid_wrapper").width();
+        		$("#table_list").setGridWidth(width-20)
+    		})
+			
+    		$(".gohome a").attr("href","#");
+            /*]]>*/
+        });
+        
+        $(function(){
+        	/*<![CDATA[*/
+        	$(".deleteCache").live("click",function(){
+            	var uuid = $(this).val();
+            	$.post("/cache/delTaskuuid",{
+            		uuid:uuid
+            	},function(msg){
+            		if(msg==1){
+            			alert("成功！");
+            			location.reload();
+            		}else{
+            			alert("失败！")
+            		}
+            	},"text")
+            	
+            });
+        	/*]]>*/
+        })
+
+    </script>
+    
+</body>
+
+</html>

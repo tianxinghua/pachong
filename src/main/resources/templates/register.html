@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+
+    <title>后台 - 注册</title>
+    <meta name="keywords" content="后台 - 注册"/>
+    <meta name="description" content="后台 - 注册"/>
+	<link rel="icon" type="image/x-icon" href="/static/favicon.ico"></link>
+   <!--  <link href="/css/bootstrap.min14ed.css" rel="stylesheet"/>
+    <link href="/css/font-awesome.min93e3.css" rel="stylesheet"/>
+    <link href="/css/animate.min.css" rel="stylesheet"/> -->
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+	
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://cdn.bootcss.com/Base64/1.0.1/base64.min.js"></script>
+	
+	<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet"></link>
+	<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"></link>
+	
+    <link href="/css/custom.css" rel="stylesheet"/>
+    <link href="/css/style.min862f.css" rel="stylesheet"/>
+</head>
+
+<body class="gray-bg">
+    <div class="middle-box text-center loginscreen   animated fadeInDown">
+        <div>
+            <div>
+                <h1 class="logo-name">SHANGPIN</h1>
+            </div>
+            <h3>欢迎注册</h3>
+            <p>创建一个新账户</p>
+            <p class="text-muted text-center" th:text="${msg}" id="msg"></p>
+            <div class="m-t" role="form" >
+              <form action="/register/submit" method="post" id="registerForm">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入账号" required="required" name="username"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="请输入密码" required="required" name="password"/>
+                </div>
+                <!--  
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入昵称" required="required" name="name"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入邮箱" required="required" name="email"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入电话" required="required" name="phone"/>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入手机号" required="required" name="mobile"/>
+                </div>
+                -->
+                <!-- <div class="form-group text-left">
+                    <div class="checkbox i-checks">
+                        <label class="no-padding">
+                            <input type="checkbox"><i></i> 我同意注册协议</label>
+                    </div>
+                </div> -->
+                <button  class="btn btn-primary block full-width m-b" id="addBtn">注 册</button>
+                <p class="text-muted text-center"><small>已经有账户了？</small><a href="/login">点此登录</a>
+                </p>
+              </form>
+            </div> 
+        </div>
+    </div>
+    <!-- <script src="/js/h+/icheck.min.js" type="text/javascript"></script> -->
+    <script src="https://cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+    
+    <script th:inline="javascript">
+    	/*<![CDATA[*/
+        $(document).ready(function(){$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
+        	var msg = [[${msg}]];
+        	if(msg=="注册成功！"){
+        		$("#msg").append("<a href='/login'>请登录</a>");
+        	}
+        });
+        $(function(){
+        	// ucs-2 string to base64 encoded ascii
+    		function utoa(str) {
+    		    return window.btoa(unescape(encodeURIComponent(str)));
+    		}
+    		// base64 encoded ascii to ucs-2 string
+    		function atou(str) {
+    		    return decodeURIComponent(escape(window.atob(str)));
+    		}
+	        function checkForm(){
+	        	var username = $("input[name='username']").val();
+				var password = $("input[name='password']").val();
+				/*var name = $("input[name='name']").val();
+				var email = $("input[name='email']").val();
+				var phone = $("input[name='phone']").val();
+				var mobile = $("input[name='mobile']").val();
+				*/
+				if(username.length <=0 ){
+					alert("请输入账号！");
+					return false;
+				}
+				if(password.length <= 0){
+					alert("请输入密码！");
+					return  false;
+				}
+				$("input[name='password']").val(utoa(password));
+				/*
+				if(name.length <=0){
+					alert("请输入昵称！");
+					return  false;
+				}
+				if(email.length <=0){
+					alert("请输入邮箱！");
+					return false;
+				}
+				if(phone.length <= 0){
+					alert("请输入电话！");
+					return false;
+				}
+				if(mobile.length <= 0){
+					alert("请输入手机号！");
+					return false;
+				}
+				*/
+				return true;
+	        }
+    	
+    		$(".gohome a").attr("href","#");
+    		$("#addBtn").click(function(){
+    			if(checkForm()){
+    				$("#registerForm").submit();
+    			}
+    		});
+    	});
+     /*]]>*/
+   </script>
+</body>
+</html>
+

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+		xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    
+    <!-- Custom styles -->
+    <base href="/"/>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" th:fragment="header">
+    <header class="g-head">
+     	<!--左侧导航开始-->
+		<nav class="navbar-default navbar-static-side" role="navigation">
+			<div class="nav-close">
+				<i class="fa fa-times-circle"></i>
+			</div>
+			<div class="sidebar-collapse">
+				<div class="nav-header">
+					<div class="dropdown profile-element">
+						<span><img alt="image" class="img-circle" src="/img/auth.jpg" /></span> 
+						<a data-toggle="dropdown" class="dropdown-toggle" href="#"> 
+						<span class="clear">
+							<span class="block m-t-xs"> <strong class="font-bold" id="username" th:text="${user.name}"> </strong></span>
+						</span>
+						</a>
+					</div>
+				</div>
+				<ul class="nav" id="menuId">
+					<!-- 
+					<li class='perli'><a href="#"><span class="nav-label">权限管理</span><b class="fa arrow"></b></a>
+						<ul class="nav nav-second-level" th:each="subMenu : ${menuList}">
+							<li class='perli' ><a class="J_menuItem" href="/manager/userAdmin"><span>会员列表</span></a></li>
+							<li class='perli' ><a class="J_menuItem" href="/manager/roleAdmin"><span>角色列表</span></a></li>
+						</ul>
+					</li>
+					 -->
+				</ul>
+			</div>
+		</nav>
+		<!--左侧导航结束-->
+    	<!--右侧部分开始-->
+		<div id="page-wrapper" class="gray-bg dashbard-1">
+			<div class="row border-bottom">
+				<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+					<div class="navbar-header">
+						<a class="navbar-minimalize minimalize-styl-2 btn btn-primary "
+							href="#"><i class="fa fa-bars"></i> 欢迎使用银承猫后台管理系统"  </a>
+					</div>
+					<ul class="nav navbar-top-links navbar-right">
+						<li class="dropdown hidden-xs"><a class="right-sidebar-toggle" aria-expanded="false"> <i class="fa fa-tasks"></i> 皮肤 </a></li>
+					</ul>
+				</nav>
+			</div>
+			<div class="row content-tabs">
+				<button class="roll-nav roll-left J_tabLeft">
+					<i class="fa fa-backward"></i>
+				</button>
+				<nav class="page-tabs J_menuTabs">
+					<div class="page-tabs-content">
+						<a href="javascript:;" class="active J_menuTab" data-id="first.html">首页</a>
+					</div>
+				</nav>
+				<button class="roll-nav roll-right J_tabRight">
+					<i class="fa fa-forward"></i>
+				</button>
+				<div class="btn-group roll-nav roll-right">
+					<button class="dropdown J_tabClose" data-toggle="dropdown">
+						关闭操作<span class="caret"></span>
+					</button>
+					<ul role="menu" class="dropdown-menu dropdown-menu-right">
+						<li class="J_tabShowActive"><a>定位当前选项卡</a></li>
+						<li class="divider"></li>
+						<li class="J_tabCloseAll"><a>关闭全部选项卡</a></li>
+						<li class="J_tabCloseOther"><a>关闭其他选项卡</a></li>
+					</ul>
+				</div>
+				<a href="/logout" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
+			</div>
+			
+		</div>
+       
+    </header>
+	</nav>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		/**
+	     * 根据节点中的sort进行排序
+	     * @param nodes 数组
+	     */
+	    function sortNode(nodes){
+	        var size = nodes.length; // 数组大小
+	        for (var i = 0; i < size - 1; i++) {
+	            for (var j = i + 1; j < size; j++) {
+	                if (nodes[i].sort > nodes[j].sort) { // 交换两数的位置
+	                    swap(nodes[i],nodes[j]);
+	                }
+	            }
+	        }
+	    }
+	
+	    /**
+	     * 交换数据节点
+	     * @param prev  上一个节点
+	     * @param current  当前节点
+	     */
+	    function swap(prev,current){
+	        var tmp = prev;
+	        prev = current;
+	        current = tmp;
+	    }
+	
+	
+	    /**
+	     * 给当前节点添加子节点
+	     * @param curNode 当前节点
+	     * @param childrenNode 所有子节点
+	     */
+	    function addChildren(curNode,childrenNode) {
+	        sortNode(childrenNode);
+	        curNode.childrenNode = childrenNode;
+	    }
+	
+	    /**
+	     * 查找menuList中所有属于menu的子节点
+	     * @param menuList  所有节点
+	     * @param firstMenu 第一级
+	     *
+	     */
+	    function findChildren(menuList,firstMenu){
+	        var childNode = [];
+	        var index = 0;
+	        for(var i=0;i<menuList.length;++i){
+	
+	            if(firstMenu.id!=undefined && firstMenu.id!=0
+	                && menuList[i].parent.id == firstMenu.id){
+	                findChildren(menuList, menuList[i]);
+	                childNode[index++] =  menuList[i];
+	
+	            }
+	
+	        }
+	        addChildren(firstMenu,childNode);
+	
+	        return firstMenu;
+	    }
+	
+	    /**
+	     * 处理第一节节点
+	     * @param menuList 所有节点
+	     * @returns {Array} 所有第一级节点
+	     */
+	    function oneLevelMenu(menuList){
+	        var firstMenu =[];
+	        var index = 0 ;
+	        for(var i=0;i<menuList.length;++i){
+	            if(menuList[i].parent.id == 1){
+	                firstMenu[index++]=menuList[i];
+	            }
+	        }
+	        for(var i=0;i<firstMenu.length;++i){
+	            firstMenu[i] = findChildren(menuList,firstMenu[i]);
+	        }
+	        return firstMenu;
+	    }
+	     
+       /**
+        * 渲染菜单
+        * @param sysMenu 经过处理的菜单
+        * @returns {*} 返回带标签样式的菜单
+       */
+       function renderMenu(sysMenu){
+         
+         if(sysMenu!=undefined){
+             let menuList = sysMenu.map(function(item,i){
+				 let menu = "<li class='perli'><a href='#'><span class='nav-label'>权限管理</span><b class='fa arrow'></b></a><ul class='nav nav-second-level'>";
+				 let submenu = renderMenu(item.childrenNode)+"</ul></li>"
+                 return menu + submenu;
+             })
+
+             return menuList;
+         }
+
+      }
+	      
+      var list = /*[[${menuList}]]*/
+      $("#menuId").html(renderMenu(oneLevelMenu(list)));
+      
+     /*]]>*/
+	</script>
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+	
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://cdn.bootcss.com/Base64/1.0.1/base64.min.js"></script>
+	
+	<link href="https://cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet"></link>
+	<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"></link>
+	<script src="/js/h+/jquery.metisMenu.js"></script>
+	<script src="/js/h+/jquery.slimscroll.min.js"></script>
+	<script src="/js/h+/layer.min.js"></script>
+	<script src="/js/h+/hplus.min.js"></script>
+	<script type="text/javascript" src="/js/h+/contabs.min.js"></script>
+	<script src="/js/h+/pace.min.js"></script>
+</body>
+</html>
