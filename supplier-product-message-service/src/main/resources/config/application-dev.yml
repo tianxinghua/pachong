@@ -218,7 +218,11 @@ spring:
                              content-type: application/json
                         zhicaiOriginalProduct:
                              destination: zhicai.original.product
-                             content-type: application/json                                                          
+                             content-type: application/json
+                        gebnegozioOriginalProduct:
+                             destination: gebnegozio.original.product
+                             content-type: application/json
+
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -427,8 +431,12 @@ spring:
                                            prefix: HA.
                             zhicaiOriginalProduct:
                                   producer:
-                                           prefix: HA.                                                                                      
-  jackson: 
+                                           prefix: HA.
+                            gebnegozioOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.

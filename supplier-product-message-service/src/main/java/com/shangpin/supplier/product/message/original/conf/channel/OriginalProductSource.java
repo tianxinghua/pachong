@@ -173,7 +173,9 @@ public interface OriginalProductSource {
 	public static final String YLATI ="ylatiOriginalProduct";
 
 	public static final String MAX1980 ="max1980OriginalProduct";
-	
+
+	public static final String GEBNEGOZIO = "gebnegozioOriginalProduct";
+
 	/**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -685,4 +687,11 @@ public interface OriginalProductSource {
 
 	@Output(value = OriginalProductSource.MAX1980)
 	public MessageChannel max1980();
+
+	/**
+	 * 供货商gebnegozio通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.GEBNEGOZIO)
+	public MessageChannel gebnegozio();
 }

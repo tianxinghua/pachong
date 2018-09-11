@@ -266,6 +266,9 @@ spring:
                         fashionTamersOriginalProduct:
                               destination: fashionTamers.original.product
                               content-type: application/json
+                        gebnegozioOriginalProduct:
+                              destination: gebnegozio.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             fashionTamersOriginalProduct:
@@ -524,6 +527,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             max1980OriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            gebnegozioOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
