@@ -17,8 +17,38 @@ spring:
             register: false
             register-health-check: false
         stream: 
-              bindings: 
-                        spinnakerPendingProduct: 
+              bindings:
+                        fashionTamersPendingProduct:
+                              destination: fashionTamers.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        coccolebimbiPendingProduct:
+                              destination: coccolebimbi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        portofinoPendingProduct:
+                              destination: portofino.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        fratinardiPendingProduct:
+                              destination: fratinardi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        forzieriPendingProduct:
+                              destination: forzieri.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        spinnakerPendingProduct:
                               destination: spinnaker.pending.product
                               group: one
                               consumer: 
@@ -30,8 +60,14 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        brunarossoPendingProduct: 
+                        brunarossoPendingProduct:
                               destination: brunarosso.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        gaudenziPendingProduct: 
+                              destination: gaudenzi.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
@@ -44,6 +80,18 @@ spring:
                                        maxAttempts: 1
                         gebPendingProduct: 
                               destination: geb.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        lamborghiniPendingProduct: 
+                              destination: lamborghini.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        palomaPendingProduct: 
+                              destination: paloma.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
@@ -294,6 +342,12 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
+                        parisiPendingProduct: 
+                              destination: parisi.pending.product
+                              group: one
+                              consumer: 
+                                       concurrency: 5
+                                       maxAttempts: 1
                         smetsPendingProduct: 
                               destination: smets.pending.product
                               group: one
@@ -341,19 +395,19 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1  
+                                       maxAttempts: 1 
                         lungolivignoPendingProduct: 
                               destination: lungolivigno.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1 
+                                       maxAttempts: 1  
                         filippoPendingProduct: 
                               destination: filippo.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1 
+                                       maxAttempts: 1  
                         dellaMartiraPendingProduct: 
                               destination: dellaMartira.pending.product
                               group: one
@@ -365,39 +419,99 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1  
+                                       maxAttempts: 1   
                         mclablesPendingProduct: 
                               destination: mclables.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1 
+                                       maxAttempts: 1  
                         emontiPendingProduct: 
                               destination: emonti.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1 
+                                       maxAttempts: 1   
                         dlrboutiquePendingProduct: 
                               destination: dlrboutique.pending.product
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1    
+                                       maxAttempts: 1
+                        reebonzPendingProduct:
+                              destination: reebonz.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        monnalisaPendingProduct:
+                              destination: monnalisa.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
                         julianFashionPendingProduct:
                               destination: julianFashion.pending.product
                               group: one
                               consumer:
                                        concurrency: 5
-                                       maxAttempts: 1                                                                                                                                                                                                                                                                                                           
-                        gebnegozioPendingProduct:
-                              destination: gebnegozio.pending.product
+                                       maxAttempts: 1
+                        starPendingProduct:
+                              destination: star.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        marinoPendingProduct:
+                              destination: marino.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        theStyleSidePendingProduct:
+                              destination: theStyleSide.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        rediPendingProduct:
+                              destination: redi.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        obluPendingProduct:
+                              destination: oblu.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        mengottiSncPendingProduct:
+                              destination: mengottiSnc.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        zhicaiPendingProduct:
+                              destination: zhicai.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        ylatiPendingProduct:
+                              destination: ylati.pending.product
                               group: one
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
               rabbit:
-                      bindings: 
+                      bindings:
+                            forzieriPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                             spinnakerPendingProduct: 
                                   consumer: 
                                        prefix: HA.
@@ -410,7 +524,13 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            brunarossoPendingProduct: 
+                            brunarossoPendingProduct:
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            gaudenziPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -423,6 +543,18 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             gebPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            palomaPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            lamborghiniPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -674,6 +806,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            parisiPendingProduct: 
+                                  consumer: 
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                             smetsPendingProduct: 
                                   consumer: 
                                        prefix: HA.
@@ -721,7 +859,7 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false
+                                       republishToDlq: false 
                             lungolivignoPendingProduct: 
                                   consumer: 
                                        prefix: HA.
@@ -733,25 +871,25 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false 
+                                       republishToDlq: false  
                             dellaMartiraPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false 
+                                       republishToDlq: false  
                             rosiSerliPendingProduct:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false 
+                                       republishToDlq: false  
                             mclablesPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false 
+                                       republishToDlq: false
                             emontiPendingProduct: 
                                   consumer: 
                                        prefix: HA.
@@ -763,14 +901,74 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false    
-                            julianFashionPendingProduct: 
+                                       republishToDlq: false
+                            reebonzPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            gebnegozioPendingProduct:
+                            monnalisaPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            julianFashionPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            starPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            marinoPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            theStyleSidePendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            rediPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            obluPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            mengottiSncPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            zhicaiPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            ylatiPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            fashionTamersPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false
@@ -780,14 +978,14 @@ spring:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
   mail: 
-       default-recipient: yan_xiao_bin@126.com
+       default-recipient: chengxu@shangpin.com
        default-sender: yanxiaobin@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
        host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
        port: 25 # SMTP server port.
        protocol: smtp # Protocol used by the SMTP server.
-       username: yanxiaobin@shangpin.com # Login user of the SMTP server.
-       password: 123.com # Login password of the SMTP server.
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
        test-connection: false # Test that the mail server is available on startup.
 banner: 
        charset: UTF-8 # Banner file encoding.
@@ -797,7 +995,14 @@ banner:
 shangpin:
    hub:
        callAddress:
-             gmsAddProductUrl: http://scmapi.spidc1.com/gms/Product/AddProduct
-             gmsSizeUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetProductSize
-             gmsBrandUrl: http://scmapi.spidc1.com/gms/ProductBasicData/GetBrands
+             gmsAddProductUrl: http://qa.scmapi.shangpin.com/gms/Product/AddProduct
+             gmsSizeUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetProductSize
+             gmsBrandUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetBrands
              gmsCategoryUrl: http://qa.scmapi.shangpin.com/gms/ProductBasicData/GetCategory
+       translateProperty:
+             googleKey: AIzaSyA6IpNM1Ubk4bnoxOBuoewb95AUvgmB5Wo
+             supplierId:
+             translateAll: true
+             refresh: ${translateProperty.refresh:true}
+   schedule:
+        brand: true

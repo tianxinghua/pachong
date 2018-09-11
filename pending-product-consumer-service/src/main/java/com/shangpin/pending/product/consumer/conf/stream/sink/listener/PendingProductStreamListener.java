@@ -778,5 +778,15 @@ public class PendingProductStreamListener {
 	public void max1980PendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.max1980PendingProductStreamListen(message,headers);
 	}
+	/**
+	* 供应商gebnegozio待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.GEBNEGOZIO)
+	public void gebnegozioPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.gebnegozioPendingProductStreamListen(message,headers);
+	}
 
 }

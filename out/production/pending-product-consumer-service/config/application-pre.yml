@@ -390,13 +390,7 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1                                                                                                                                                                                                                                                                                                           
-                        gebnegozioPendingProduct:
-                              destination: gebnegozio.pending.product
-                              group: one
-                              consumer:
-                                       concurrency: 5
-                                       maxAttempts: 1
-              rabbit:
+              rabbit: 
                       bindings: 
                             spinnakerPendingProduct: 
                                   consumer: 
@@ -769,13 +763,7 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false
-                            gebnegozioPendingProduct:
-                                  consumer:
-                                       prefix: HA.
-                                       autoBindDlq: false
-                                       requeueRejected: true
-                                       republishToDlq: false
+                                       republishToDlq: false                                                                                                                                                                                                                                                                                                        
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       

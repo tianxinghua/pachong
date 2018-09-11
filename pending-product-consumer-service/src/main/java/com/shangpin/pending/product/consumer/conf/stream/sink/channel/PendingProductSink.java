@@ -172,7 +172,8 @@ public interface PendingProductSink {
 
 	public static final String MAX1980 = "max1980PendingProduct";
 	
-	
+	public static final String GEBNEGOZIO = "gebnegozioPendingProduct";
+
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -679,4 +680,11 @@ public interface PendingProductSink {
 
 	@Input(value = PendingProductSink.MAX1980)
 	public SubscribableChannel max1980PendingProduct();
+
+	/**
+	 * 供应商gebnegozio通道组件配置
+	 * @return 供货商gebnegozio通道组件
+	 */
+	@Input(value = PendingProductSink.GEBNEGOZIO)
+	public SubscribableChannel gebnegozioPendingProduct();
 }

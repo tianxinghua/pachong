@@ -645,6 +645,15 @@ spring:
                         theStyleSidePendingProduct:
                               destination: theStyleSide.pending.product
                               content-type: application/json
+                        gebnegozioOriginalProduct:
+                              destination: gebnegozio.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        gebnegozioPendingProduct:
+                              destination: gebnegozio.pending.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             supplierPictureProduct: 
@@ -1272,6 +1281,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                             theStyleSidePendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            gebnegozioOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            gebnegozioPendingProduct:
                                     producer:
                                          prefix: HA.
 
