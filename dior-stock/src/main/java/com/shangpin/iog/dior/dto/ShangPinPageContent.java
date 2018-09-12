@@ -1,4 +1,4 @@
-package com.shangpin.iog.hermes.dto;
+package com.shangpin.iog.dior.dto;
 
 import lombok.Getter;
 import lombok.Setter;

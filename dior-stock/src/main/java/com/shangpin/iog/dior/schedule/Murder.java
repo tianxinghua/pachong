@@ -1,6 +1,6 @@
-package com.shangpin.iog.hermes.schedule;
+package com.shangpin.iog.dior.schedule;
 
-import com.shangpin.iog.hermes.service.FetchStockImpl;
+import com.shangpin.iog.dior.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
