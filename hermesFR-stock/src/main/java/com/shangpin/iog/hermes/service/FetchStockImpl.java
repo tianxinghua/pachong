@@ -36,7 +36,7 @@ public class FetchStockImpl  {
     private static Logger loggerError = Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",supplierNo = "",supplierName = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
+    private static String supplierId = "",supplierNo = "",supplierName = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="",channel="";
 
     private static OutputStreamWriter  out= null;
     static String splitSign = ",";
@@ -80,6 +80,8 @@ public class FetchStockImpl  {
         pageSize = bdl.getString("pageSize");
 
         filePath = bdl.getString("csvFilePath");
+
+        channel = bdl.getString("channel")
 
     }
 
@@ -125,7 +127,7 @@ public class FetchStockImpl  {
         List<ProductDTO> productDTOAllList =  new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent prpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, 1, Integer.parseInt(pageSize));
+        ShangPinPageContent prpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, 1, Integer.parseInt(pageSize),String channel);
         if(prpductPageContent == null) return;
 
         productDTOAllList.addAll(prpductPageContent.getZhiCaiResultList());
@@ -136,11 +138,11 @@ public class FetchStockImpl  {
         if(total>Integer.parseInt(pageSize)){
             Integer pageNumber = getPageNumber(total, 20);
             for (int i = 17; i <= pageNumber; i++) {
-                ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
+                ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize),String channel);
                 if(temprpductPageContent!=null){
                     productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
                 }else{ //请求失败重新 再次请求
-                    temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
+                    temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize),String channel);
                     if(temprpductPageContent!=null){
                         productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
                     }
@@ -198,7 +200,7 @@ public class FetchStockImpl  {
      * @param pageSize 分页条数
      * @return
      */
-    public  ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize){
+    public  ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize，String channel){
         //String fetchSpProductInfosUrl = "http://192.168.20.176:8003/supplier-sku/get-product";
         //1. 请求需要更新库存商品 信息接口
         JSONObject jsonObject = new JSONObject();
@@ -206,6 +208,7 @@ public class FetchStockImpl  {
         jsonObject.put("brandName",brandName);
         jsonObject.put("pageIndex",pageIndex);
         jsonObject.put("pageSize",pageSize);
+        jsonObject.put("channel",channel);
 
         String jsonStr = jsonObject.toString();
 
