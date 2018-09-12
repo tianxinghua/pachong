@@ -1,7 +1,7 @@
-package com.shangpin.iog.hermes.schedule;
+package com.shangpin.iog.dior.schedule;
 
-import com.shangpin.iog.hermes.service.FetchStockImpl;
-import com.shangpin.iog.hermes.service.UpdateStockImpl;
+import com.shangpin.iog.dior.service.FetchStockImpl;
+import com.shangpin.iog.dior.service.UpdateStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
