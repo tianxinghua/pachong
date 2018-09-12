@@ -1,4 +1,4 @@
-package com.shangpin.iog.hermes.schedule;
+package com.shangpin.iog.dior.schedule;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
