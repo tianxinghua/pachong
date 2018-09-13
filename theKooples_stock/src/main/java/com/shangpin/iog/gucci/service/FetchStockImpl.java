@@ -1,17 +1,15 @@
 package com.shangpin.iog.gucci.service;
 
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.shangpin.iog.gucci.dto.*;
-import com.shangpin.iog.utils.HttpResponse;
 import com.shangpin.iog.utils.HttpUtil45;
-import com.shangpin.iog.utils.HttpUtils;
 import com.shangpin.openapi.api.sdk.client.OutTimeConfig;
 import net.sf.json.JSONObject;
-import org.apache.commons.httpclient.Header;
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
@@ -24,21 +22,21 @@ import java.util.*;
  * Created by wanner on 2018/6/27
  */
 @Component("fetchStockImpl")
-public class FetchStockImpl  {
+public class FetchStockImpl {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",supplierNo = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
+    private static String supplierId = "", supplierNo = "", fetchSpProductInfosUrl = "", updateSpMarketPriceUrl = "", pageSize = "";
 
-    private static OutputStreamWriter  out= null;
+    private static OutputStreamWriter out = null;
     static String splitSign = ",";
     //库存csv 文件存放目录
-    private static String filePath="";
+    private static String filePath = "";
 
     //theKooples官网地址
-    private static String uri="";
+    private static String uri = "";
 
     //有库存
     private static final String IN_STOCK = "1";
@@ -49,10 +47,10 @@ public class FetchStockImpl  {
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
 
     //渠道
-    private static String channel="";
+    private static String channel = "";
 
     static {
-        if (null == bdl){
+        if (null == bdl) {
             bdl = ResourceBundle.getBundle("conf");
         }
         supplierId = bdl.getString("supplierId");
@@ -69,21 +67,21 @@ public class FetchStockImpl  {
 
         uri = bdl.getString("uri");
 
-        channel = bdl.getString("channel")
+        channel = bdl.getString("channel");
 
 
     }
 
-    private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
+    private static OutTimeConfig timeConfig = new OutTimeConfig(1000 * 60 * 30, 1000 * 60 * 30, 1000 * 60 * 30);
 
     /**
      * 拉取 BURBERRY网 商品库存数据
      */
-    public void fetchItlyProductStock(){
+    public void fetchItlyProductStock() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============拉取BURBERRY库存数据开始 "+startDateTime+"=========================");
-        logger.info("==============拉取BURBERRY库存数据开始 "+startDateTime+"=========================");
+        System.out.println("============拉取BURBERRY库存数据开始 " + startDateTime + "=========================");
+        logger.info("==============拉取BURBERRY库存数据开始 " + startDateTime + "=========================");
 
         //1. 请求需要更新库存商品 信息接口
         failedSpSkuNoList = new ArrayList<>();
@@ -91,11 +89,11 @@ public class FetchStockImpl  {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "burberry-qty-"+todayStr+".csv";
-        System.out.println("文件保存目录："+temFilePath);
-        logger.info("文件保存目录："+temFilePath);
+        String temFilePath = filePath + "burberry-qty-" + todayStr + ".csv";
+        System.out.println("文件保存目录：" + temFilePath);
+        logger.info("文件保存目录：" + temFilePath);
         try {
-            out = new OutputStreamWriter(new FileOutputStream(temFilePath, true),"gb2312");
+            out = new OutputStreamWriter(new FileOutputStream(temFilePath, true), "gb2312");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,30 +109,30 @@ public class FetchStockImpl  {
         }
 
         //定义所有需要的更新库存商品信息List
-        List<ProductDTO> productDTOAllList =  new LinkedList<>();
+        List<ProductDTO> productDTOAllList = new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam(supplierId,"The Kooples", 1, Integer.parseInt(pageSize),String channel);
+        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam(supplierId, "The Kooples", 1, Integer.parseInt(pageSize), channel);
         productDTOAllList.addAll(gucciPageContent.getZhiCaiResultList());
 
-        if(gucciPageContent == null) return;
+        if (gucciPageContent == null) return;
         //总记录数
         Integer total = gucciPageContent.getTotal();
         Integer pageNumber = getPageNumber(total, 20);
         for (int i = 2; i <= pageNumber; i++) {
-            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam(supplierId,"The Kooples", i, Integer.parseInt(pageSize),String channel);
-            if(temgucciPageContent!=null){
+            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam(supplierId, "The Kooples", i, Integer.parseInt(pageSize), channel);
+            if (temgucciPageContent != null) {
                 productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
-            }else{ //请求失败重新 再次请求
-                temgucciPageContent = getShangPinPageContentByParam(supplierId,"The Kooples", i, Integer.parseInt(pageSize),String channel);
-                if(temgucciPageContent!=null){
+            } else { //请求失败重新 再次请求
+                temgucciPageContent = getShangPinPageContentByParam(supplierId, "The Kooples", i, Integer.parseInt(pageSize), channel);
+                if (temgucciPageContent != null) {
                     productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
                 }
             }
         }
 
-        logger.info("=====需要更新The Kooples spProduct Size:"+productDTOAllList.size());
-        System.out.println("=====需要更新The Kooples spProduct Size:"+productDTOAllList.size());
+        logger.info("=====需要更新The Kooples spProduct Size:" + productDTOAllList.size());
+        System.out.println("=====需要更新The Kooples spProduct Size:" + productDTOAllList.size());
         //导出尚品库存数据
         exportQtyInfoForProductList(productDTOAllList);
 
@@ -142,25 +140,26 @@ public class FetchStockImpl  {
         ProductDTO productDTO = new ProductDTO();
         int failedSpSkuNoSize = failedSpSkuNoList.size();
         for (int i = 0; i < failedSpSkuNoSize; i++) {
-            repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i),productDTO);
+            repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i), productDTO);
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================拉取The Kooples库存数据结束 "+endtDateTime+"=========================");
-        System.out.println("=================拉取The Kooples库存数据结束 "+endtDateTime+"=========================");
+        logger.info("===================拉取The Kooples库存数据结束 " + endtDateTime + "=========================");
+        System.out.println("=================拉取The Kooples库存数据结束 " + endtDateTime + "=========================");
 
     }
 
     /**
      * 获取商品页数
-     * @param total 总记录数
+     *
+     * @param total    总记录数
      * @param pageSize 每页显示数
      * @return 页数
      */
-    public static Integer getPageNumber(Integer total,Integer pageSize){
-        Integer pageNumner = total/pageSize;
+    public static Integer getPageNumber(Integer total, Integer pageSize) {
+        Integer pageNumner = total / pageSize;
         //当余数大于0 的时候 页数加一
-        if(total%pageSize>0){
+        if (total % pageSize > 0) {
             pageNumner++;
         }
         return pageNumner;
@@ -168,41 +167,42 @@ public class FetchStockImpl  {
 
     /**
      * 获取需要更新库存商品 分页数据
+     *
      * @param brandName 供应商名称
      * @param pageIndex 页码
-     * @param pageSize 分页条数
+     * @param pageSize  分页条数
      * @return
      */
-    public static ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize,String channel){
+    public static ShangPinPageContent getShangPinPageContentByParam(String supplierId, String brandName, Integer pageIndex, Integer pageSize, String channel) {
         //String fetchSpProductInfosUrl = "http://192.168.20.176:8003/supplier-sku/get-product";
         //1. 请求需要更新库存商品 信息接口
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("supplierId",supplierId);
-        jsonObject.put("brandName",brandName);
-        jsonObject.put("pageIndex",pageIndex);
-        jsonObject.put("pageSize",pageSize);
-        jsonObject.put("channel",channel);
+        jsonObject.put("supplierId", supplierId);
+        jsonObject.put("brandName", brandName);
+        jsonObject.put("pageIndex", pageIndex);
+        jsonObject.put("pageSize", pageSize);
+        jsonObject.put("channel", channel);
 
         String jsonStr = jsonObject.toString();
 
         ShangPinPageContent shangPinPageContent = null;
         try {
-            String resultJsonStr = HttpUtil45.operateData("post","json",fetchSpProductInfosUrl,timeConfig,null,jsonStr,null,null);
+            String resultJsonStr = HttpUtil45.operateData("post", "json", fetchSpProductInfosUrl, timeConfig, null, jsonStr, null, null);
             //System.out.println("=======resultJsonStr:"+resultJsonStr);
             //logger.info("=======resultJsonStr:"+resultJsonStr);
             JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
-            Map<String,Class> keyMapConfig= new HashMap<>();
-            keyMapConfig.put("zhiCaiResultList",ProductDTO.class);
-            keyMapConfig.put("zhiCaiSkuResultList",SkuDTO.class);
-            keyMapConfig.put("content",ShangPinPageContent.class);
+            Map<String, Class> keyMapConfig = new HashMap<>();
+            keyMapConfig.put("zhiCaiResultList", ProductDTO.class);
+            keyMapConfig.put("zhiCaiSkuResultList", SkuDTO.class);
+            keyMapConfig.put("content", ShangPinPageContent.class);
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
 
-            if(apiResponseBody!=null){
+            if (apiResponseBody != null) {
                 shangPinPageContent = (ShangPinPageContent) apiResponseBody.getContent();
             }
             System.out.println();
-            System.out.println("获取第 "+pageIndex+"页成功 :"+resultJsonStr);
-            logger.info("获取第 "+pageIndex+"页成功 :"+resultJsonStr);
+            System.out.println("获取第 " + pageIndex + "页成功 :" + resultJsonStr);
+            logger.info("获取第 " + pageIndex + "页成功 :" + resultJsonStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -212,12 +212,13 @@ public class FetchStockImpl  {
 
     /**
      * 循环遍历 拉取商品库存信息
+     *
      * @param productDTOAllList 商品信息list
      */
-    public static void exportQtyInfoForProductList(List<ProductDTO> productDTOAllList){
-        for (ProductDTO productDTO:productDTOAllList) {
+    public static void exportQtyInfoForProductList(List<ProductDTO> productDTOAllList) {
+        for (ProductDTO productDTO : productDTOAllList) {
             boolean flag = solveProductQty(productDTO);
-            if(!flag){
+            if (!flag) {
                 repeatSolveFailProductQty(productDTO);
             }
         }
@@ -225,32 +226,35 @@ public class FetchStockImpl  {
 
     /**
      * 重复处理 spSkuNO qty 信息
+     *
      * @param spSkuNoDTO
      */
-    public static void repeatSolveFailedSpSkuNo(SpSkuNoDTO spSkuNoDTO,ProductDTO productDTO){
+    public static void repeatSolveFailedSpSkuNo(SpSkuNoDTO spSkuNoDTO, ProductDTO productDTO) {
         int count = 0;
-        while(count>4){
+        while (count > 4) {
             count++;
-            Map<String, String> checkProductInfo = getProductQtyInfo(spSkuNoDTO.getSpSkuNo(),productDTO);
+            Map<String, String> checkProductInfo = getProductQtyInfo(spSkuNoDTO.getSpSkuNo(), productDTO);
             String temQty = checkProductInfo.get("qty");
             if (temQty != null) {
-                exportSpSkunoAndQty(spSkuNoDTO.getSpSkuNo(),temQty);
+                exportSpSkunoAndQty(spSkuNoDTO.getSpSkuNo(), temQty);
                 return;
             }
         }
         //重复请求 失败 做商品 库存置零处理
-        exportSpSkunoAndQty(spSkuNoDTO.getSpSkuNo(),NO_STOCK);
+        exportSpSkunoAndQty(spSkuNoDTO.getSpSkuNo(), NO_STOCK);
     }
+
     /**
      * 重复请求 处理 商品库存信息 ，最后没有处理成功 直接将 库存置0 处理
+     *
      * @param productDTO
      */
     private static void repeatSolveFailProductQty(ProductDTO productDTO) {
         int count = 0;
-        while(count<4){
+        while (count < 4) {
             count++;
             boolean temFlag = solveProductQty(productDTO);
-            if(temFlag){
+            if (temFlag) {
                 return;
             }
         }
@@ -260,18 +264,19 @@ public class FetchStockImpl  {
 
     /**
      * 将商品所有 spSkuNO 置零 并导出到 csv
+     *
      * @param productDTO
      */
     private static void setQtyZeroForProduct(ProductDTO productDTO) {
-        if(productDTO!=null){
+        if (productDTO != null) {
             List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
-            if(zhiCaiSkuResultList!=null&&zhiCaiSkuResultList.size()>0){
+            if (zhiCaiSkuResultList != null && zhiCaiSkuResultList.size() > 0) {
                 int size = zhiCaiSkuResultList.size();
                 for (int i = 0; i < size; i++) {
                     SkuDTO skuDTO = zhiCaiSkuResultList.get(i);
                     String spSkuNo = skuDTO.getSpSkuNo();
-                    if(spSkuNo!=null){
-                        exportSpSkunoAndQty(spSkuNo,NO_STOCK);
+                    if (spSkuNo != null) {
+                        exportSpSkunoAndQty(spSkuNo, NO_STOCK);
                     }
                 }
             }
@@ -281,13 +286,14 @@ public class FetchStockImpl  {
 
     /**
      * 处理单个商品库存信息
+     *
      * @param productDTO 商品信息
      */
     private static boolean solveProductQty(ProductDTO productDTO) {
         String productUrl = productDTO.getProductUrl();
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
-        logger.info("货号："+productDTO.getSupplierSpuModel()+"；sku的数量："+zhiCaiSkuResultListSize);
+        logger.info("货号：" + productDTO.getSupplierSpuModel() + "；sku的数量：" + zhiCaiSkuResultListSize);
         /*SkuDTO skuDTO = new SkuDTO();
         Map<String,SkuDTO> skuMap = new HashMap<>();
         zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
@@ -307,107 +313,111 @@ public class FetchStockImpl  {
             //webClient.getOptions().setJavaScriptEnabled(false); // 取消 JavaScript支持 ✔
             List<String> sizeList = new ArrayList<>();
 
-            HtmlPage page = webClient.getPage(url); // 解析获取页面
+            HtmlPage page = webClient.getPage(productDTO.getProductUrl()); // 解析获取页面
+
+           if(page!=null&&!"".equals(page)){
+            SkuDTO skuDTO = new SkuDTO();
+
+            zhiCai:
+            for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
+                skuDTO = zhiCaiSkuResultList.get(i);
+                String spSkuNo = skuDTO.getSpSkuNo();
+                if (spSkuNo == null || "".equals(spSkuNo)) {
+                    continue zhiCai;
+                }
+                Map<String, String> sizeMap = new HashMap<>();
+                String sizeLine = "";
+                List<HtmlElement> spanList = page.getByXPath("//div[@class='select-size-clone-wrapper']/ul[@class='select-size-clone']/li");
+                //System.out.println("spanList:"+spanList);
+                System.out.println("spanList"+spanList);
+                if (spanList != null && spanList.size() > 0) {
+                    //System.out.println(temSizeElements);
+                    for (int j = 0; j < spanList.size(); j++) {
+
+                        String sizeOnLine = spanList.get(j).asText();
 
 
-
-
-                SkuDTO skuDTO = new SkuDTO();
-
-                zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
-                    skuDTO = zhiCaiSkuResultList.get(i);
-                    String spSkuNo = skuDTO.getSpSkuNo();
-                    if (spSkuNo == null || "".equals(spSkuNo)) {
-                        continue zhiCai;
-                    }
-
-                    List<HtmlElement> spanList=page.getByXPath("//div[@class='select-size-clone-wrapper']/ul[@class='select-size-clone']/li");
-                    //System.out.println("spanList:"+spanList);
-                    if (spanList != null && spanList.size() > 0) {
-                        //System.out.println(temSizeElements);
-                        for(String span : spanList) {
-                            span.("Épuisé")
-                            String size = skuDTO.getSize();
-                            System.out.println("本地库存尺码：" + size);
-                            if (sizeContent.equals(size)) {
-                                //如果<option> 标签上含有disabled" 为无库存
-                                if ("disabled".equals(disabled)) {
-                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
-                                } else if ("".equals(disabled)) {
-                                    //获取库存数据
-                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
-                                } else {
-
-                                    Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(), productDTO);
-                                    String temQty = checkProductInfo.get("qty");
-                                    if (temQty != null) {
-                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
-                                    } else {
-                                        //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
-                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
-                                        //加入到失败库存信息中
-                                        failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(), "-1"));
-                                    }
-
-                                }
-                                //Thread.sleep(500);
-                            }
-                        }
-                    } else if (temSizeElement2 != null && !"".equals(temSizeElement2)) {
-                        String text = temSizeElement2.text();
-                        System.out.println("库存描述：" + text);
-                        if (text.contains("免费次日达") || text.contains("免费标准送货服务")) {
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(), IN_STOCK);
+                        String qtyDesc = "";
+                        if (sizeOnLine.length() > 6) {
+                            sizeLine = sizeOnLine.trim().substring(0, sizeOnLine.length() - 6);
+                            qtyDesc = sizeOnLine.substring(sizeOnLine.length() - 6, sizeOnLine.length());
                         } else {
-                            //获取 pcode 参数value
-                            Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(), productDTO);
-                            String temQty = checkProductInfo.get("qty");
-                            if (temQty != null) {
-                                exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
-                            } else {
-                                //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
-                                exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
-                                //加入到失败库存信息中
-                                failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(), "-1"));
-                            }
+                            sizeLine = sizeOnLine.trim();
+                        }
+                        if (sizeOnLine.contains("Épuisé") || qtyDesc != null || !"".equals(qtyDesc)) {
+                            sizeMap.put(sizeLine, NO_STOCK);
+                        } else {
+                            sizeMap.put(sizeLine, IN_STOCK);
+                        }
+                        System.out.println("官网尺寸" + sizeLine);
 
+
+                        String size = skuDTO.getSize();
+                        System.out.println("本地库存尺码：" + size);
+                        for (Map.Entry<String, String> entry : sizeMap.entrySet()) {
+                            if (size.equals(entry.getKey())) {
+                                exportSpSkunoAndQty(skuDTO.getSpSkuNo(), entry.getValue());
+                            }
                         }
                     }
+                } else {
 
-                    Elements itemPriceElement = doc.select("#product-transactional-panel").select("div.price-container").select("span");
-                    if (itemPriceElement != null) {
-                        String price = itemPriceElement.attr("data-monogrammedTotal");
-                        float priceF = Float.parseFloat(price);
-                        System.out.println("官网价格" + price);
-                        String marketPrice = skuDTO.getMarketPrice();
-                        System.out.println("本地出售价格：" + marketPrice);
-                        if (marketPrice != null) {
-                            float marketPriceF = Float.parseFloat(marketPrice);
-
-                            if (marketPriceF != priceF) { //价格发生改变
-                                updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(), price);
-                                logger.info("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
-                                System.out.println("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
-                            }
-                        } else {
-                            loggerError.error("getMarketPrice 为空 ProductDTO:" + productDTO.toString());
-                        }
-
+                    //获取 pcode 参数value
+                    Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(), productDTO);
+                    String temQty = checkProductInfo.get("qty");
+                    if (temQty != null) {
+                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
                     } else {
-                        logger.error("获取商品价格异常=============productUrl:" + productUrl + "==============================");
-
+                        //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
+                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(), NO_STOCK);
+                        //加入到失败库存信息中
+                        failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(), "-1"));
                     }
                 }
-            }else{
-                logger.error("================请求商品地址失败===========================================");
-                logger.error(productDTO.toString());
-                logger.error("================请求商品地址失败===========================================");
-                return false;
+
+                List<HtmlElement> priceSpan = page.getByXPath("//*[@id=\"product_addtocart_form\"]/div[1]/div");
+                if (priceSpan != null && !"".equals(priceSpan)) {
+                    String price = "";
+                    for (int j = 0; j < spanList.size(); j++) {
+                        price = priceSpan.get(i).asText();
+                    }
+                    price = price.trim().substring(0,price.length()-1).replaceAll(",",".").trim();
+                    byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
+                    String UTFSpace = new String(bytes,"utf-8");
+                    price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","");
+                    System.out.println(price);
+                    float priceF = Float.parseFloat(price);
+
+                    System.out.println("官网价格" + price);
+                    String marketPrice = skuDTO.getMarketPrice();
+                    System.out.println("本地出售价格：" + marketPrice);
+                    if (marketPrice != null) {
+                        float marketPriceF = Float.parseFloat(marketPrice);
+
+                        if (marketPriceF != priceF) { //价格发生改变
+                            //updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(), price);
+                            logger.info("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
+                            System.out.println("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
+                        }
+                    } else {
+                        loggerError.error("getMarketPrice 为空 ProductDTO:" + productDTO.toString());
+                    }
+
+                } else {
+                    logger.error("获取商品价格异常=============productUrl:" + productUrl + "==============================");
+
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }else{
+            logger.error("================请求商品地址失败===========================================");
+            logger.error(productDTO.toString());
+            logger.error("================请求商品地址失败===========================================");
             return false;
         }
+       }catch(Exception e){
+        e.printStackTrace();
+        return false;
+    }
 
 
         //每一款商品休息2s
@@ -495,65 +505,56 @@ public class FetchStockImpl  {
 
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
-        Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
-        Header[] headers = new Header[1];
-        headers[0] = header;
+        WebClient webClient = new WebClient(BrowserVersion.CHROME);
+        //webClient.getOptions().setCssEnabled(false); // 取消 CSS 支持 ✔
+        //webClient.getOptions().setJavaScriptEnabled(false); // 取消 JavaScript支持 ✔
+        List<String> sizeList = new ArrayList<>();
 
-        HttpResponse response = HttpUtils.get(productDTO.getProductUrl(),headers);
-
-        if (response.getStatus()==200) {
-            String htmlContent = response.getResponse();
-            Document doc = Jsoup.parse(htmlContent);
+        HtmlPage page = webClient.getPage(productDTO.getProductUrl()); // 解析获取页面
 
 
 
-            SkuDTO skuDTO = new SkuDTO();
-            zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
-                skuDTO = zhiCaiSkuResultList.get(i);
-                String spSkuNo = skuDTO.getSpSkuNo();
-                if (spSkuNo == null || "".equals(spSkuNo)) {
-                    continue zhiCai;
-                }
 
+        SkuDTO skuDTO = new SkuDTO();
+
+        zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
+            skuDTO = zhiCaiSkuResultList.get(i);
+            String spSkuNo = skuDTO.getSpSkuNo();
+            if (spSkuNo == null || "".equals(spSkuNo)) {
+                continue zhiCai;
             }
+            Map<String,String> sizeMap = new HashMap<>();
+            List<HtmlElement> spanList=page.getByXPath("//div[@class='select-size-clone-wrapper']/ul[@class='select-size-clone']/li");
+            //System.out.println("spanList:"+spanList);
+            if (spanList != null && spanList.size() > 0) {
+                //System.out.println(temSizeElements);
+                for (int j = 0; j < spanList.size(); j++) {
 
-            Elements temSizeElements = doc.select("#size-picker-content").select("input");
-            Elements temSizeElement2 = doc.select("#transactional-panel-collapsible-data-content").select("div.delivery-message").select("p");
-            if(temSizeElements!=null&&temSizeElements.size()>0) {
-                System.out.println(temSizeElements);
-                for (Element sizeElement : temSizeElements) {
-                    String sizeContent = sizeElement.attr("data-text-value");
-                    String disabled = sizeElement.attr("disabled");
-                    System.out.println("尺码：" + sizeContent + ";" + "库存标记：" + disabled);
-
-                    String size = skuDTO.getSize();
-                    if(sizeContent.equals(size)) {
-                        //如果<option> 标签上含有disabled" 为无库存
-                        if ("disabled".equals(disabled)) {
-                            mapDate.put("qty",NO_STOCK);
-                            mapDate.put("qtyDesc","售罄");
-                            return;
-                        }else{
-                            mapDate.put("qty",IN_STOCK);
-                            mapDate.put("qtyDesc","有货");
-                        }
-                        //Thread.sleep(500);
+                    String sizeOnLine = spanList.get(j).asText();
+                    String sizeLine = "";
+                    String qtyDesc = "";
+                    if (sizeOnLine.length() > 6) {
+                        sizeLine = sizeOnLine.trim().substring(0, sizeOnLine.length() - 6);
+                        qtyDesc = sizeOnLine.substring(sizeOnLine.length() - 6, sizeOnLine.length());
+                    }else{
+                        sizeLine = sizeOnLine.trim();
+                    }
+                    if (sizeOnLine.contains("Épuisé") || qtyDesc != null || !"".equals(qtyDesc)) {
+                        sizeMap.put(sizeLine, NO_STOCK);
+                    } else {
+                        sizeMap.put(sizeLine, IN_STOCK);
                     }
                 }
-            }else if(temSizeElement2!=null && !"".equals(temSizeElement2)){
-                String text = temSizeElement2.text();
-                if(text.contains("免费次日达")||text.contains("免费标准送货服务")){
-                    mapDate.put("qty",IN_STOCK);
-                    mapDate.put("qtyDesc","有货");
-                }else{
-                    mapDate.put("qty",NO_STOCK);
-                    mapDate.put("qtyDesc","售罄");
-                }
-            }else{
-                mapDate.put("qty",NO_STOCK);
-                mapDate.put("qtyDesc","售罄");
-            }
+                String size = skuDTO.getSize();
+                System.out.println("本地库存尺码：" + size);
+                for (Map.Entry<String, String> entry : sizeMap.entrySet()) {
+                    if (size.equals(entry.getKey())) {
+                        mapDate.put("qty",entry.getValue());
 
+                        return;
+                    }
+                }
+            }
         }
     }
 
@@ -583,7 +584,7 @@ public class FetchStockImpl  {
 
 
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://uk.burberry.com/vintage-check-reversible-puffer-jacket-p80037841/?locale=zh_GB");
+        productDTO.setProductUrl("https://www.thekooples.com/fr/robe-longue-jupe-asymetrique-en-mousseline-de-soie-1559240.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
         skuDTO.setSpSkuNo("30968589002");
