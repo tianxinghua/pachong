@@ -396,6 +396,20 @@ public class PendingProductStreamListener {
     public void viettiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.viettiPendingProductStreamListen(message,headers);
     }
+
+
+    /**
+     * 供应商VIETTI待处理商品数据流通道监听者
+     * @param message 消息
+     * @param headers 消息头
+     */
+    @StreamListener(PendingProductSink.VIETTI2)
+    public void vietti2PendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+        adapter.vietti2PendingProductStreamListen(message,headers);
+    }
+
+
+
 	/**
 	 * 供应商ANIELLO待处理商品数据流通道监听者
 	 * @param message 消息
