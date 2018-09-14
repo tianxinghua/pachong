@@ -21,7 +21,7 @@ public class PictureRestController {
 
     @RequestMapping(value = "/{spSpuNo}")
     public List<String> selectHubSpuPic(@PathVariable String spSpuNo){
-            log.info("============获取图片路径==============");
+            log.info("============根据spSpuNo获取图片路径==============");
             if(null != spSpuNo && !spSpuNo.equals("")){
                List<String> picUrl = selectHubSpuPicService.selectHubSpuPic(spSpuNo);
                return picUrl;
