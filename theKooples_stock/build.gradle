@@ -1,6 +1,7 @@
 dependencies {
 
     compile('com.shangpin:openapi-api-sdk:4.7')
+    compile('net.sourceforge.htmlunit:htmlunit:2.31')
     compile('com.shangpin:openapi-api:4.7.14')
     compile('ZeroC:Ice:3.5.1')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.6'
