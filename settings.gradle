@@ -26,4 +26,6 @@ include 'burberry_stock'
 include 'product-stock'
 include 'vietti-stock'
 include 'gebnegozio-stock'
+include 'theKooples_stock'
+include 'hermesFR-stock'
 
