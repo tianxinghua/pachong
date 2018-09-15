@@ -133,8 +133,9 @@ public abstract class AtelierOrderHandler implements IOrderService {
 		try {
 			String spOrderId = null;
 			if(orderDTO.getPurchaseNo()!=null){
-				spOrderId = orderDTO.getPurchaseNo();
-				spOrderId = spOrderId.replace("CGDF","");
+//				spOrderId = orderDTO.getPurchaseNo();
+//				spOrderId = spOrderId.replace("CGDF","");
+                spOrderId = orderDTO.getSpOrderDetailNo();
 			}else{
 				spOrderId = orderDTO.getSpOrderId();
 			}
