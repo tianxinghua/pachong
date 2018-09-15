@@ -2,6 +2,7 @@ package com.shangpin.iog.gucci.service;
 
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -311,6 +312,12 @@ public class FetchStockImpl {
             WebClient webClient = new WebClient(BrowserVersion.CHROME);
             //webClient.getOptions().setCssEnabled(false); // 取消 CSS 支持 ✔
             //webClient.getOptions().setJavaScriptEnabled(false); // 取消 JavaScript支持 ✔
+            webClient.getOptions().setJavaScriptEnabled(true); // 启动JS
+            webClient.getOptions().setUseInsecureSSL(true);//忽略ssl认证
+            webClient.getOptions().setCssEnabled(true);//禁用Css，可避免自动二次请求CSS进行渲染
+            webClient.getOptions().setThrowExceptionOnScriptError(false);//运行错误时，不抛出异常
+            webClient.setAjaxController(new NicelyResynchronizingAjaxController());// 设置Ajax异步
+            webClient.getOptions().setTimeout(120000);
             List<String> sizeList = new ArrayList<>();
 
             HtmlPage page = webClient.getPage(productDTO.getProductUrl()); // 解析获取页面
@@ -327,31 +334,36 @@ public class FetchStockImpl {
                 }
                 Map<String, String> sizeMap = new HashMap<>();
                 String sizeLine = "";
-                List<HtmlElement> spanList = page.getByXPath("//div[@class='select-size-clone-wrapper']/ul[@class='select-size-clone']/li");
+
+                List<HtmlElement> spanList = page.getByXPath("//*[@id=\"page\"]/div/div[2]/div[1]/div[2]/div[3]/div[2]/div/div");
                 //System.out.println("spanList:"+spanList);
                 System.out.println("spanList"+spanList);
                 if (spanList != null && spanList.size() > 0) {
                     //System.out.println(temSizeElements);
                     for (int j = 0; j < spanList.size(); j++) {
+                        String sizeString =  spanList.get(j).asText();
+                            if(sizeString.contains("OUT OF STOCK")){
+                                sizeLine = sizeString.substring(0,sizeString.indexOf("OUT OF STOCK"));
+                                if(sizeLine.contains("½")){
+                                    sizeLine =sizeLine.substring(0,sizeLine.length()-1)+".5";
+                                    sizeMap.put(sizeLine,NO_STOCK);
+                                }else {
+                                    sizeMap.put(sizeLine,NO_STOCK);
+                                }
 
-                        String sizeOnLine = spanList.get(j).asText();
+                                System.out.println("无库存的尺寸："+sizeLine);
+                            }else if(sizeString.contains("In Stock")){
+                                sizeLine = sizeString.substring(0,sizeString.indexOf("In Stock"));
+                                if(sizeLine.contains("½")){
+                                    sizeLine =sizeLine.substring(0,sizeLine.length()-1)+".5";
+                                    sizeMap.put(sizeLine,IN_STOCK);
+                                }else {
+                                    sizeMap.put(sizeLine,IN_STOCK);
+                                }
 
-
-                        String qtyDesc = "";
-                        if (sizeOnLine.length() > 6) {
-                            sizeLine = sizeOnLine.trim().substring(0, sizeOnLine.length() - 6);
-                            qtyDesc = sizeOnLine.substring(sizeOnLine.length() - 6, sizeOnLine.length());
-                        } else {
-                            sizeLine = sizeOnLine.trim();
+                                System.out.println("有库存的尺寸："+sizeLine);
+                            }
                         }
-                        if (sizeOnLine.contains("Épuisé") || qtyDesc != null || !"".equals(qtyDesc)) {
-                            sizeMap.put(sizeLine, NO_STOCK);
-                        } else {
-                            sizeMap.put(sizeLine, IN_STOCK);
-                        }
-                        System.out.println("官网尺寸" + sizeLine);
-
-
                         String size = skuDTO.getSize();
                         System.out.println("本地库存尺码：" + size);
                         for (Map.Entry<String, String> entry : sizeMap.entrySet()) {
@@ -359,7 +371,6 @@ public class FetchStockImpl {
                                 exportSpSkunoAndQty(skuDTO.getSpSkuNo(), entry.getValue());
                             }
                         }
-                    }
                 } else {
 
                     //获取 pcode 参数value
@@ -508,9 +519,16 @@ public class FetchStockImpl {
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
         //webClient.getOptions().setCssEnabled(false); // 取消 CSS 支持 ✔
         //webClient.getOptions().setJavaScriptEnabled(false); // 取消 JavaScript支持 ✔
+        webClient.getOptions().setJavaScriptEnabled(true); // 启动JS
+        webClient.getOptions().setUseInsecureSSL(true);//忽略ssl认证
+        webClient.getOptions().setCssEnabled(true);//禁用Css，可避免自动二次请求CSS进行渲染
+        webClient.getOptions().setThrowExceptionOnScriptError(false);//运行错误时，不抛出异常
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());// 设置Ajax异步
+        webClient.getOptions().setTimeout(120000);
         List<String> sizeList = new ArrayList<>();
 
         HtmlPage page = webClient.getPage(productDTO.getProductUrl()); // 解析获取页面
+
 
 
 
@@ -524,27 +542,39 @@ public class FetchStockImpl {
                 continue zhiCai;
             }
             Map<String,String> sizeMap = new HashMap<>();
-            List<HtmlElement> spanList=page.getByXPath("//div[@class='select-size-clone-wrapper']/ul[@class='select-size-clone']/li");
+            List<HtmlElement> spanList = page.getByXPath("//*[@id=\"page\"]/div/div[2]/div[1]/div[2]/div[3]/div[2]/div/div");
             //System.out.println("spanList:"+spanList);
+            String sizeLine = "";
+            String qtyDesc = "";
+            System.out.println("spanList"+spanList);
             if (spanList != null && spanList.size() > 0) {
                 //System.out.println(temSizeElements);
                 for (int j = 0; j < spanList.size(); j++) {
+                    String sizeString =  spanList.get(j).asText();
+                    if(sizeString.contains("OUT OF STOCK")){
+                        sizeLine = sizeString.substring(0,sizeString.indexOf("OUT OF STOCK"));
+                        if(sizeLine.contains("½")){
+                            sizeLine =sizeLine.substring(0,sizeLine.length()-1)+".5";
+                            sizeMap.put(sizeLine,NO_STOCK);
+                        }else {
+                            sizeMap.put(sizeLine,NO_STOCK);
+                        }
 
-                    String sizeOnLine = spanList.get(j).asText();
-                    String sizeLine = "";
-                    String qtyDesc = "";
-                    if (sizeOnLine.length() > 6) {
-                        sizeLine = sizeOnLine.trim().substring(0, sizeOnLine.length() - 6);
-                        qtyDesc = sizeOnLine.substring(sizeOnLine.length() - 6, sizeOnLine.length());
-                    }else{
-                        sizeLine = sizeOnLine.trim();
-                    }
-                    if (sizeOnLine.contains("Épuisé") || qtyDesc != null || !"".equals(qtyDesc)) {
-                        sizeMap.put(sizeLine, NO_STOCK);
-                    } else {
-                        sizeMap.put(sizeLine, IN_STOCK);
+                        System.out.println("无库存的尺寸："+sizeLine);
+                    }else if(sizeString.contains("In Stock")){
+                        sizeLine = sizeString.substring(0,sizeString.indexOf("In Stock"));
+                        if(sizeLine.contains("½")){
+                            sizeLine =sizeLine.substring(0,sizeLine.length()-1)+".5";
+                            sizeMap.put(sizeLine,IN_STOCK);
+                        }else {
+                            sizeMap.put(sizeLine,IN_STOCK);
+                        }
+
+                        System.out.println("有库存的尺寸："+sizeLine);
                     }
                 }
+
+
                 String size = skuDTO.getSize();
                 System.out.println("本地库存尺码：" + size);
                 for (Map.Entry<String, String> entry : sizeMap.entrySet()) {
