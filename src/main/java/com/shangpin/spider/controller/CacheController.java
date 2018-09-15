@@ -1,4 +1,4 @@
-/*package com.shangpin.spider.controller;
+package com.shangpin.spider.controller;
 
 import java.util.List;
 
@@ -13,12 +13,12 @@ import com.shangpin.spider.entity.gather.RedisCache;
 import com.shangpin.spider.redis.RedisManager;
 
 
-*//** 
+/** 
  * @author  njt 
  * @date 创建时间：2017年12月8日 上午10:23:51 
  * @version 1.0 
  * @parameter  
- *//*
+ */
 @Controller
 @RequestMapping("cache")
 public class CacheController {
@@ -60,4 +60,3 @@ public class CacheController {
 	}
 	
 }
-*/

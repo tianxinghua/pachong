@@ -6,6 +6,8 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Transient;
 
+import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverClickPool;
+
 public class SpiderRules implements Serializable{
     /**
 	 * 
@@ -103,6 +105,14 @@ public class SpiderRules implements Serializable{
     private String measurementRules;
 
     private String measurementStrategy;
+    
+    private String qtyRules;
+
+    private String qtyStrategy;
+    
+    private String jsMenuRules;
+
+    private String jsMenuStrategy;
 
     private String supplierId;
 
@@ -117,11 +127,14 @@ public class SpiderRules implements Serializable{
     
     @Transient
     private String sppuHashRules;
-    
     @Transient
     private String whiteName;
     @Transient
     private String sourceUrl;
+    @Transient
+    private SpChromeDriverClickPool driverPool;
+    
+    
 	public Long getId() {
 		return id;
 	}
@@ -448,6 +461,36 @@ public class SpiderRules implements Serializable{
 	}
 	public void setChannelRules(String channelRules) {
 		this.channelRules = channelRules;
+	}
+	public String getQtyRules() {
+		return qtyRules;
+	}
+	public void setQtyRules(String qtyRules) {
+		this.qtyRules = qtyRules;
+	}
+	public String getQtyStrategy() {
+		return qtyStrategy;
+	}
+	public void setQtyStrategy(String qtyStrategy) {
+		this.qtyStrategy = qtyStrategy;
+	}
+	public String getJsMenuRules() {
+		return jsMenuRules;
+	}
+	public void setJsMenuRules(String jsMenuRules) {
+		this.jsMenuRules = jsMenuRules;
+	}
+	public String getJsMenuStrategy() {
+		return jsMenuStrategy;
+	}
+	public void setJsMenuStrategy(String jsMenuStrategy) {
+		this.jsMenuStrategy = jsMenuStrategy;
+	}
+	public SpChromeDriverClickPool getDriverPool() {
+		return driverPool;
+	}
+	public void setDriverPool(SpChromeDriverClickPool driverPool) {
+		this.driverPool = driverPool;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

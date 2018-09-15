@@ -25,6 +25,10 @@
     <result column="category_strategy" property="categoryStrategy" jdbcType="VARCHAR" />
     <result column="spu_rules" property="spuRules" jdbcType="VARCHAR" />
     <result column="spu_strategy" property="spuStrategy" jdbcType="VARCHAR" />
+    <result column="qty_rules" property="qtyRules" jdbcType="VARCHAR" />
+    <result column="qty_strategy" property="qtyStrategy" jdbcType="VARCHAR" />
+    <result column="js_menu_rules" property="jsMenuRules" jdbcType="VARCHAR" />
+    <result column="js_menu_strategy" property="jsMenuStrategy" jdbcType="VARCHAR" />
     <result column="season_rules" property="seasonRules" jdbcType="VARCHAR" />
     <result column="material_rules" property="materialRules" jdbcType="VARCHAR" />
     <result column="material_strategy" property="materialStrategy" jdbcType="VARCHAR" />
@@ -57,7 +61,8 @@
   <sql id="Base_Column_List" >
     id, white_id, thread_num, retry_num, sleep, max_page_gather, timeout, cookie, user_agent, lie_url_reg, 
     detail_url_reg, filter_url_reg, charset, ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
-    category_rules, category_strategy, spu_rules, spu_strategy, season_rules, material_rules, 
+    category_rules, category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
+    js_menu_rules, js_menu_strategy,season_rules, material_rules, 
     material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
     pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
     domestic_price_strategy, sale_price_rules, sale_price_strategy, made_rules, made_strategy, 
@@ -79,7 +84,8 @@
       lie_url_reg, detail_url_reg, filter_url_reg, 
       charset, ajax_flag, gather_first, gender_rules, 
       brand_rules, brand_strategy, category_rules, 
-      category_strategy, spu_rules, spu_strategy, 
+      category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
+      js_menu_rules, js_menu_strategy,
       season_rules, material_rules, material_strategy, 
       color_rules, color_strategy, size_rules, 
       size_strategy, pro_name_rules, pro_name_strategy, 
@@ -181,6 +187,18 @@
       </if>
       <if test="spuStrategy != null" >
         spu_strategy,
+      </if>
+      <if test="qtyRules != null" >
+        qty_rules,
+      </if>
+      <if test="qtyStrategy != null" >
+        qty_strategy,
+      </if>
+      <if test="jsMenuRules != null" >
+        js_menu_rules,
+      </if>
+      <if test="jsMenuStrategy != null" >
+        js_menu_strategy,
       </if>
       <if test="seasonRules != null" >
         season_rules,
@@ -489,6 +507,18 @@
       <if test="spuStrategy != null" >
         spu_strategy = #{spuStrategy,jdbcType=VARCHAR},
       </if>
+      <if test="qtyRules != null" >
+        qty_rules = #{qtyRules,jdbcType=VARCHAR},
+      </if>
+      <if test="qtyStrategy != null" >
+        qty_strategy = #{qtyStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="jsMenuRules != null" >
+        js_menu_rules = #{jsMenuRules,jdbcType=VARCHAR},
+      </if>
+      <if test="jsMenuStrategy != null" >
+        js_menu_strategy = #{jsMenuStrategy,jdbcType=VARCHAR},
+      </if>
       <if test="seasonRules != null" >
         season_rules = #{seasonRules,jdbcType=VARCHAR},
       </if>
@@ -600,6 +630,10 @@
       category_strategy = #{categoryStrategy,jdbcType=VARCHAR},
       spu_rules = #{spuRules,jdbcType=VARCHAR},
       spu_strategy = #{spuStrategy,jdbcType=VARCHAR},
+      qty_rules = #{qtyRules,jdbcType=VARCHAR},
+      qty_strategy = #{qtyStrategy,jdbcType=VARCHAR},
+      js_menu_rules = #{jsMenuRules,jdbcType=VARCHAR},
+      js_menu_strategy = #{jsMenuStrategy,jdbcType=VARCHAR},
       season_rules = #{seasonRules,jdbcType=VARCHAR},
       material_rules = #{materialRules,jdbcType=VARCHAR},
       material_strategy = #{materialStrategy,jdbcType=VARCHAR},

@@ -3,7 +3,7 @@ package com.shangpin.spider.entity.gather;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class CrawlResult {
+public class CrawlResult implements Cloneable{
     private Long id;
 
     private String gender;
@@ -295,5 +295,17 @@ public class CrawlResult {
 				+ ", channel=" + channel + ", whiteId=" + whiteId + ", createTime=" + createTime + ", updateTime="
 				+ updateTime + ", description=" + description + ", pics=" + pics + "]";
 	}
+	
+	//重写clone
+    @Override
+    public Object clone(){
+        Object o = null;
+        try {
+            o = super.clone();   //调用父类的clone
+        } catch (CloneNotSupportedException e) {    //异常捕获
+            e.printStackTrace();
+        }
+        return o;
+    }
     
 }

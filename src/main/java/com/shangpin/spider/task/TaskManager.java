@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.entity.gather.SpiderTaskInfo;
+import com.shangpin.spider.gather.downloader.WebDriverPool;
 import com.shangpin.spider.gather.downloader.YcmWebDriverPool;
 import com.shangpin.spider.gather.spider.CommonSpider.MySpider;
 import com.shangpin.spider.redis.RedisManager;
@@ -90,7 +91,7 @@ public class TaskManager {
 				log.info("-----关闭爬虫:"+uuid+" name:"+name);
 				spider.stop();
 				if (spider.getSpiderRuleInfo().getAjaxFlag()) {
-					YcmWebDriverPool pool = spider.getPool();
+					WebDriverPool pool = spider.getPool();
 					// 停止phantomjs
 					pool.shutdownEnd();
 				}
@@ -117,7 +118,7 @@ public class TaskManager {
 				log.info("-----强制关闭爬虫:"+uuid+" name:"+name);
 				spider.stop();
 				if (spider.getSpiderRuleInfo().getAjaxFlag()) {
-					YcmWebDriverPool pool = spider.getPool();
+					WebDriverPool pool = spider.getPool();
 					// 停止phantomjs
 					pool.shutdownEnd();
 				}

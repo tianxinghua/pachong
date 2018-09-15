@@ -1,24 +1,29 @@
 package com.shangpin.spider.gather.spider;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.eclipse.jetty.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.shangpin.spider.entity.gather.RedisCache;
 import com.shangpin.spider.entity.gather.SpiderRules;
+import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverClickPool;
+import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverPool;
+import com.shangpin.spider.gather.chromeDownloader.SpSeleniumDownloader;
+import com.shangpin.spider.gather.downloader.WebDriverPool;
 import com.shangpin.spider.gather.downloader.YcmSeleniumDownloader;
 import com.shangpin.spider.gather.downloader.YcmWebDriverPool;
 import com.shangpin.spider.gather.pipliner.MyPipeline;
 import com.shangpin.spider.gather.processor.MyPageProcessor;
 import com.shangpin.spider.gather.scheduler.MyRedisScheduler;
+import com.shangpin.spider.redis.RedisManager;
 import com.shangpin.spider.task.TaskManager;
 
 /*import com.xr.gather.gather.download.YcmSeleniumDownloader;
@@ -33,8 +38,6 @@ import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.proxy.Proxy;
-import us.codecraft.webmagic.proxy.SimpleProxyProvider;
 import us.codecraft.webmagic.scheduler.QueueScheduler;
 
 
@@ -54,19 +57,31 @@ public class CommonSpider{
 	private TaskManager taskManager;
 	@Autowired
 	private MyRedisScheduler myRedisScheduler;
+	@Autowired
+	private RedisManager redisManager;
 	@Value("${phantomjs_path}")
 	private String phantomjsPath;
+	@Value("${chrome_driver_path}")
+	private String chromeDriverPath;
 
 	public void start(SpiderRules spiderRuleInfo) {
 		MySpider spider = null;
 		if (spiderRuleInfo.getAjaxFlag()) {
-			// phantomjs加载
-			YcmWebDriverPool pool = new YcmWebDriverPool(
+//			phantomjs加载
+			/*YcmWebDriverPool pool = new YcmWebDriverPool(
 					spiderRuleInfo.getThreadNum(), phantomjsPath,
 					spiderRuleInfo);
 			spider = makeSpider(spiderRuleInfo, pool);
-			spider.setDownloader(new YcmSeleniumDownloader(spiderRuleInfo
-					.getSleep(), pool, spiderRuleInfo.getThreadNum(), spider));
+			spider.setDownloader(new YcmSeleniumDownloader(spiderRuleInfo, pool, spider));*/
+//	-------------------------------------------
+//			模拟点击使用的pool
+			SpChromeDriverClickPool driverClickPool = new SpChromeDriverClickPool(spiderRuleInfo.getThreadNum(),chromeDriverPath);
+			spiderRuleInfo.setDriverPool(driverClickPool);
+			SpChromeDriverPool pool = new SpChromeDriverPool(
+					spiderRuleInfo.getThreadNum(), chromeDriverPath,
+					spiderRuleInfo);
+			spider = makeSpider(spiderRuleInfo, pool);
+			spider.setDownloader(new SpSeleniumDownloader(spiderRuleInfo, pool, spider));
 			spider.setScheduler(myRedisScheduler);
 		} else {
 			spider = makeSpider(spiderRuleInfo);
@@ -80,11 +95,27 @@ public class CommonSpider{
 		    spider.setDownloader(httpClientDownloader);
 			spider.setScheduler(new QueueScheduler());
 		}
-		Request request = new Request(spiderRuleInfo.getSourceUrl());
-		Map<String, Object> extras = new HashMap<String,Object>();
-		extras.put("whiteId", spiderRuleInfo.getWhiteId());
-		request.setExtras(extras);
-		spider.addRequest(request);
+		
+		String whiteName = spiderRuleInfo.getWhiteName();
+		Integer taskCount = 0;
+		List<RedisCache> redisList = redisManager.getRedisList();
+		if(redisList!=null&&redisList.size()>0) {
+			for (RedisCache redisCache : redisList) {
+				String webName = redisCache.getWebName();
+				if(webName.contains(whiteName)) {
+					taskCount = redisCache.getTaskCount();
+					break;
+				}
+			}
+		}
+		if(taskCount==0) {
+			Request request = new Request(spiderRuleInfo.getSourceUrl());
+			Map<String, Object> extras = new HashMap<String,Object>();
+			extras.put("whiteId", spiderRuleInfo.getWhiteId());
+			request.setExtras(extras);
+			request.setMethod("get");
+			spider.addRequest(request);
+		}
 		// 设置pipeline,scheduler
 		spider.addPipeline(mypipeline);
 		spider.setExitWhenComplete(true);
@@ -114,7 +145,7 @@ public class CommonSpider{
 	 * @return
 	 */
 	private MySpider makeSpider(SpiderRules spiderRuleInfo,
-			YcmWebDriverPool pool) {
+			WebDriverPool pool) {
 		log.info("创建爬虫！");
 		MySpider spider = new MySpider(new MyPageProcessor(spiderRuleInfo),
 				spiderRuleInfo, pool);
@@ -130,7 +161,7 @@ public class CommonSpider{
 
 		private Logger log = LoggerFactory.getLogger(MySpider.class);
 		private final SpiderRules spiderRuleInfo;
-		private YcmWebDriverPool pool;
+		private WebDriverPool pool;
 		
 		public MySpider(PageProcessor pageProcessor,
 				SpiderRules spiderRuleInfo) {
@@ -139,7 +170,7 @@ public class CommonSpider{
 		}
 
 		public MySpider(PageProcessor pageProcessor,
-				SpiderRules spiderRuleInfo, YcmWebDriverPool pool) {
+				SpiderRules spiderRuleInfo, WebDriverPool pool) {
 			super(pageProcessor);
 			this.spiderRuleInfo = spiderRuleInfo;
 			this.pool = pool;
@@ -168,7 +199,8 @@ public class CommonSpider{
 				this.stop();
 				if (spiderRuleInfo.getAjaxFlag()) {
 					// 停止phantomjs
-					pool.shutdown();
+//					pool.shutdown();
+					pool.shutdownEnd();
 				}
 
 			}
@@ -195,11 +227,11 @@ public class CommonSpider{
 					.toHashCode();
 		}
 
-		public YcmWebDriverPool getPool() {
+		public WebDriverPool getPool() {
 			return pool;
 		}
 
-		public void setPool(YcmWebDriverPool pool) {
+		public void setPool(WebDriverPool pool) {
 			this.pool = pool;
 		}
 

@@ -1,8 +1,9 @@
 package com.shangpin.spider.gather.crawlData;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.utils.GatherUtil;
+import com.shangpin.spider.gather.utils.TwoClickUtil;
+
 import us.codecraft.webmagic.Page;
 
 /**
@@ -22,8 +25,13 @@ import us.codecraft.webmagic.Page;
 
 public class CommonCrawlData {
 	private static Logger LOG = LoggerFactory.getLogger(CommonCrawlData.class);
+	/**
+	 * 字段规则的标识
+	 */
+	private static final Integer FIELD_RULES_FLAG = 2;
 	
-	public static Map<String, Object> crawlData(Page page,SpiderRules spiderRuleInfo) {
+	public static void crawlData(Page page,SpiderRules spiderRuleInfo) {
+		String url = page.getUrl().get();
 		CrawlResult crawlResult = new CrawlResult();
 		String spu = "";
 		if (StringUtils.isNotBlank(spiderRuleInfo.getSpuStrategy())&&StringUtils.isNotBlank(spiderRuleInfo.getSpuRules())) {
@@ -42,7 +50,7 @@ public class CommonCrawlData {
 				resultField.setAccessible(true);
 				String typeName = resultField.getGenericType().toString();
 				String resultFieldName = resultField.getName();
-				if(filterField(resultFieldName)) 
+				if(GatherUtil.filterField(resultFieldName)||GatherUtil.filterNeedClick(resultFieldName)) 
 				{
 					continue;
 				}
@@ -63,10 +71,10 @@ public class CommonCrawlData {
 							i++;
 						}
 					}
-					if(i==2) {
+					if(i==FIELD_RULES_FLAG) {
 						rulesStr = GatherUtil.getValue(page, "", strategyStr, rulesStr,resultFieldName);
 					}
-					typeMap(typeName,rulesStr,resultFieldName,resultField,crawlResult);
+					ReflectTypeMap.typeMap(typeName,rulesStr,resultFieldName,resultField,crawlResult);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
@@ -77,82 +85,37 @@ public class CommonCrawlData {
 			StackTraceElement traceElement = e.getStackTrace()[0];
 			LOG.error("---解析网页数据出错" + e.getLocalizedMessage() + "---错误行数："+ traceElement.getLineNumber());
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
+		
+		List<CrawlResult> resultList = new ArrayList<CrawlResult>();
+		crawlResult.setDetailLink(url);
 		crawlResult.setWhiteId(spiderRuleInfo.getWhiteId());
 		if(StringUtils.isNotBlank(crawlResult.getSpu())) {
 			crawlResult.setProductModel(crawlResult.getSpu());
 		}
-		map.put("crawlResult", crawlResult);
-		return map;
-	}
-	
-	/**
-	 * 过滤无需传值的字段
-	 * @param resultFieldName
-	 * @return
-	 */
-	private static Boolean filterField(String resultFieldName) {
-		Boolean flag = false;
-		if("serialVersionUID".equals(resultFieldName)) {
-			flag = true;
-		}else if("id".equals(resultFieldName)) {
-			flag = true;
-		}else if("createTime".equals(resultFieldName)) {
-			flag = true;
-		}else if("updateTime".equals(resultFieldName)) {
-			flag = true;
+		
+		
+/*//		处理颜色和尺寸的关系
+		String colorArray = "";
+		colorArray = GatherUtil.getValue(page, colorArray, spiderRuleInfo.getColorStrategy(), spiderRuleInfo.getColorRules(), "color");
+		String sizeArray = "";
+		sizeArray = GatherUtil.getValue(page, sizeArray, spiderRuleInfo.getSizeStrategy(), spiderRuleInfo.getSizeRules(), "size");
+		String qtyArray = "";
+		qtyArray = GatherUtil.getValue(page, qtyArray, spiderRuleInfo.getQtyStrategy(), spiderRuleInfo.getQtyRules(), "qty");
+//		方法一：循环处理
+		System.err.println("----颜色的数组----"+colorArray);
+		System.err.println("----尺寸的数组----"+sizeArray);
+		System.err.println("----库存的数组----"+qtyArray);*/
+//		方法二：模拟点击
+//		规则表中取出需点击获取值的字段
+		String[] needClickField = {"color","size","qty","pics"};
+		if(needClickField.length>0) {
+			resultList = TwoClickUtil.crawlByClick(needClickField,spiderRuleInfo, url, crawlResult);
+		}else {
+			resultList.add(crawlResult);
 		}
-		return flag;
-	}
-	
-	/**
-	 * 处理类型转换异常
-	 * @param typeName
-	 * @param resultValue
-	 * @param resultFieldName
-	 * @param resultField
-	 * @param crawlResult
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 */
-	private static void typeMap(String typeName, String resultValue, String resultFieldName, Field resultField, CrawlResult crawlResult) throws IllegalArgumentException, IllegalAccessException {
-		String typeField = "";
-		if(typeName.contains("java.lang.")) {
-			typeField = typeName.replace("java.lang.", "");
-		}else if(typeName.contains("java.math.")) {
-			typeField = typeName.replace("java.math.", "");
-		}
-		if(typeField.contains("String")) {
-			resultField.set(crawlResult, resultValue);
-		}
-		if(typeField.contains("Long")) {
-			long parseLong = 0L;
-			try {
-				parseLong = Long.parseLong(resultValue);
-			} catch (Exception e) {
-				LOG.error("--{}的值-{}-类型转换异常",resultFieldName,typeField);
-			}
-			resultField.set(crawlResult, parseLong);
-			
-		}
-		if(typeField.contains("Integer")) {
-			Integer parseInt = 0;
-			try {
-				parseInt = Integer.parseInt(resultValue);
-			} catch (Exception e) {
-				LOG.error("--{}的值-{}-类型转换异常",resultFieldName,typeField);
-			}
-			resultField.set(crawlResult, parseInt);
-		}
-		if(typeField.contains("BigDecimal")) {
-			BigDecimal bigDecimal = BigDecimal.ZERO;
-			try {
-				bigDecimal = new BigDecimal(resultValue);
-			} catch (Exception e) {
-				LOG.error("--{}的值-{}-类型转换异常",resultFieldName,typeField);
-			}
-			resultField.set(crawlResult, bigDecimal);
-		}
+		page.putField("resultList", resultList);
 		
 	}
+	
+	
 }

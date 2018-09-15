@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 import org.jsoup.select.NodeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.shangpin.spider.entity.gather.SpiderRules;
 
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.selector.Html;
 
 /**
  * @author njt
@@ -190,8 +190,12 @@ public class GatherUtil {
 			Pattern detailPattern = Pattern.compile(spiderRuleInfo.getDetailUrlReg());
 			Matcher detailMatcger = detailPattern.matcher(url);
 			if(detailMatcger.find()) {
-				LOG.info("---详情页链接{}！",url);
-				flag = true;
+				String group = detailMatcger.group();
+				if(url.equals(group)) {
+					LOG.info("---详情页链接{}！",url);
+					flag = true;
+				}
+				
 			}
 		}else {
 			LOG.error("---源网站-{}-的详情链接正则规则为空！",spiderRuleInfo.getWhiteName());
@@ -210,8 +214,12 @@ public class GatherUtil {
 			Pattern liePattern = Pattern.compile(spiderRuleInfo.getLieUrlReg());
 			Matcher lieMatcger = liePattern.matcher(url);
 			if(lieMatcger.find()) {
-				LOG.info("---列表页链接{}！",url);
-				flag = true;
+				String group = lieMatcger.group();
+				if(url.equals(group)) {
+					LOG.info("---列表页链接{}！",url);
+					flag = true;
+				}
+				
 			}
 		}else {
 			LOG.error("---源网站-{}-的列表链接正则规则为空！",spiderRuleInfo.getWhiteName());
@@ -239,6 +247,70 @@ public class GatherUtil {
 		
 		return flag;
 	}
+	/**
+	 * 处理DE-C策略（针对多图片，多颜色，多尺寸）
+	 * @param gg 规则
+	 * @param i 下标
+	 * @param map 结果集
+	 * @return 
+	 */
+	private static Map<String, Object> handleDEC(String[] gg,int i,Map<String, Object> map) {
+		Page page = (Page) map.get("page");
+		Document document = page.getHtml().getDocument();
+		String specialValue = "";
+//		去除/n/t等空格
+		String detailRule = gg[i].trim();
+		if(i==gg.length-1) {
+			if(detailRule.contains("@|")){
+				String attrRule = detailRule.substring(detailRule.indexOf("@|")+2, detailRule.length());
+				detailRule = detailRule.substring(0,detailRule.indexOf("@|"));
+				if(map.containsKey("elements")) {
+					Elements elements = (Elements) map.get("elements");
+					Elements elements2 = elements.select(detailRule);
+					for (Element element : elements2) {
+						specialValue += element.attr(attrRule).toString()+"|";
+					}
+					if(specialValue.endsWith("|")) {
+						specialValue = specialValue.substring(0, specialValue.length()-1);
+					}
+				}else {
+					Elements elements = document.select(detailRule);
+					for (Element element : elements) {
+						specialValue += element.attr(attrRule).toString()+"|";
+					}
+					if(specialValue.endsWith("|")) {
+						specialValue = specialValue.substring(0, specialValue.length()-1);
+					}
+				}
+			}else {
+				if(map.containsKey("elements")) {
+					Elements elements = (Elements) map.get("elements");
+					specialValue = elements.select(detailRule).text();
+				}else {
+					specialValue = document.select(detailRule).text();
+				}
+				
+			}
+		}else {
+			Elements elements = null;
+			if(map.containsKey("elements")) {
+				elements = (Elements) map.get("elements");
+				elements = elements.select(detailRule);
+			}else {
+				elements = document.select(detailRule);
+			}
+			map.put("elements", elements);
+			i++;
+			map.put("specialValue", specialValue);
+			handleDEC(gg,i,map);
+			if(map.containsKey("specialValue")) {
+				specialValue = (String) map.get("specialValue");
+			}
+		}
+		map.put("specialValue", specialValue);
+		return map;
+	}
+	
 	
 	/**
 	 * 
@@ -249,9 +321,9 @@ public class GatherUtil {
 	 * @return result
 	 */
 	public static String getValue(Page page, String crawlValue, String strategyStr, String rulesStr, String fieldName) {
-		Html html = page.getHtml();
+		/*Html html = page.getHtml();
 		Document document = page.getHtml().getDocument();
-		System.out.println("--源码：--"+html);
+		System.out.println("--源码：--"+html);*/
 		if(StringUtils.isBlank(strategyStr)||StringUtils.isBlank(rulesStr)) {
 			LOG.error("---字段-{}-的取值正则规则为空！",fieldName);
 			return "";
@@ -265,7 +337,7 @@ public class GatherUtil {
 		}else {
 			gg = new String[]{rulesStr};
 		}
-//		对重复XPATH策略的处理
+//		对重复XPATH策略的处理(出发点针对图片路径)
 		if(strategyStr.contains("DE-X")) {
 			for (String g : gg) {
 				try {
@@ -279,6 +351,14 @@ public class GatherUtil {
 				crawlValue = crawlValue.substring(0, crawlValue.length()-1);
 			}
 			return crawlValue;
+		}
+//		针对颜色和尺寸的处理
+		if(strategyStr.contains("DE-C")) {
+			int i = 0;
+			Map<String,Object> map = new HashMap<String,Object>();
+			map.put("page", page);
+			map = handleDEC(gg,i,map);
+			return (String) map.get("specialValue");
 		}
 //		对填写默认值策略的处理
 		if(strategyStr.contains("DE-S")) {
@@ -312,16 +392,17 @@ public class GatherUtil {
 				return Integer.compare(o1, o2);
 			}
 		});
-		System.err.println("----"+fieldName+"--的策略顺序：");
+		System.err.println("\t\t<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+		System.err.println("抓取--"+fieldName+"-开始--的策略顺序：");
 //		第二步，确定策略间的关系
 		int i = 0;
 		for (Map.Entry<String,Integer> entry : list) {
 			String deStrategy = entry.getKey();
-            System.err.println("Key : " + deStrategy + " , Value : " + entry.getValue());
+            System.err.println("\tKey : " + deStrategy + " , Value : " + entry.getValue());
             resultMap = orAnd(page,resultMap,deStrategy,gg,i);
             i++;
         }
-		System.err.println("抓取--"+fieldName+"-结果----："+resultMap.get("crawlValue")+"-策略剩余：---"+resultMap.get("strategyStr"));
+		System.err.println("抓取--"+fieldName+"-结果----："+resultMap.get("crawlValue")+"\n----"+fieldName+"策略剩余：---"+resultMap.get("strategyStr"));
 		return crawlValue = resultMap.get("crawlValue");
 	}
 	
@@ -344,7 +425,7 @@ public class GatherUtil {
 		String strategyFilterStr = strategyStr.replace(deStrategy, "");
 		String detailRule = gg[i];
 		if(i==0) {
-			System.err.println("解析page开始："+gg[i]);
+			System.err.println("第一步："+gg[i]);
 			crawlValue = xpathStrategy(deStrategy,detailRule,i,crawlValue,page);
 			crawlValue = cssStrategy(deStrategy,detailRule,i,crawlValue,page);
 		}else {	
@@ -429,12 +510,36 @@ public class GatherUtil {
 					if(detailRule.contains("@;")) {
 						String[] detailRuleSplit = detailRule.split("@;");
 						String detailRuleSplitOne = detailRuleSplit[0].trim();
-						int oneLength = detailRuleSplitOne.length();
+						int oneLength = 0;
+						int indexOf = 0;
+//						若是截取包括前缀的，则以#T打头
+						Boolean flag = true;
+						if(detailRuleSplitOne.startsWith("#T")) {
+							detailRuleSplitOne = detailRuleSplitOne.replace("#T", "");
+						}else {
+							flag = false;
+							oneLength = detailRuleSplitOne.length();
+						}
+//						多种匹配按#OR的关系（符号易出错）
+						if(detailRuleSplitOne.contains("#OR")) {
+							String[] OneStr = detailRuleSplitOne.split("#OR");
+							for (String subDe : OneStr) {
+								if(crawlValue.indexOf(subDe)>0) {
+									indexOf = crawlValue.indexOf(subDe);
+									oneLength = subDe.length();
+									break;
+								}
+							}
+						}else {
+							indexOf = crawlValue.indexOf(detailRuleSplitOne);
+						}
+						if(flag) {
+							oneLength = 0;
+						}
 						String detailRuleSplitTwo = detailRuleSplit[1].trim();
 						if("length".equals(detailRuleSplitTwo)) {
-							crawlValue = crawlValue.substring(crawlValue.indexOf(detailRuleSplitOne)+oneLength, crawlValue.length());
+							crawlValue = crawlValue.substring(indexOf+oneLength, crawlValue.length());
 						}else {
-							int indexOf = crawlValue.indexOf(detailRuleSplitOne);
 							int indexOf2 = crawlValue.indexOf(detailRuleSplitTwo);
 							crawlValue = crawlValue.substring(indexOf+oneLength, indexOf2);
 						}
@@ -481,6 +586,50 @@ public class GatherUtil {
 			}
 		}
 		return crawlValue;
+	}
+	
+	/**
+	 * 过滤无需传值的字段
+	 * @param resultFieldName
+	 * @return
+	 */
+	public static Boolean filterField(String resultFieldName) {
+		Boolean flag = false;
+		switch(resultFieldName) {
+			case "serialVersionUID":
+				flag = true;
+			case "id":
+				flag = true;
+			case "createTime":
+				flag = true;	
+			case "updateTime":
+				flag = true;
+			case "color":
+				flag = true;
+			case "size":
+				flag = true;
+			case "detailLink":
+				flag = true;
+			default:;
+		}
+		return flag;
+	}
+	
+	/**
+	 * 过滤需要点击后获取的字段
+	 * @param resultFieldName
+	 * @return
+	 */
+	public static Boolean filterNeedClick(String resultFieldName) {
+		Boolean flag = false;
+		String[] needClickField = {"color","size","qty","pics"};
+		for (String field : needClickField) {
+			if(resultFieldName.equals(field)) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
 	}
 	
 }

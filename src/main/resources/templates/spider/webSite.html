@@ -206,6 +206,16 @@
 					</textarea></div>
 					<br/>
 					
+					<div>库存的策略：<input type="text" name="qtyStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					<button type="button" class="btn btn-default" name="categoryStrategyBtn">选择</button>
+					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">OR</button>
+					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">AND</button>
+					<br/>
+					库存的规则：<textarea name="qtyRules" rows="2" cols="100">
+						
+					</textarea></div>
+					<br/>
+					
 					<div>国外市场价格的策略：<input type="text" name="foreignPriceStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
 					<button type="button" class="btn btn-default" name="categoryStrategyBtn">选择</button>
 					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">OR</button>
@@ -265,6 +275,18 @@
 						
 					</textarea></div>
 					<br/>
+					
+					<font color="red">*XPATH或CSS即可</font>
+					<div>页面需点击按钮的策略：<input type="text" name="jsMenuStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					<button type="button" class="btn btn-default" name="categoryStrategyBtn">选择</button>
+					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">OR</button>
+					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">AND</button>
+					<br/>
+					页面需点击按钮的规则：<textarea name="jsMenuRules" rows="2" cols="100">
+						
+					</textarea></div>
+					<br/>
+					
 					
 					<!-- 正文css：<input type="text" name="contentCss"/><br/>
 					正文Xpath: <input type="text" name="contentXpath"/><br/>
@@ -554,6 +576,7 @@
 	        				$("[name='retryNum'] option[value='"+spiderRules.retryNum+"']").attr("selected","selected");
 	        				$("[name='sleep'] option[value='"+spiderRules.sleep+"']").attr("selected","selected");
 	        				$("[name='timeout'] option[value='"+spiderRules.timeout+"']").attr("selected","selected");
+	        				$("[name='genderRules'] option[value='"+spiderRules.genderRules+"']").attr("selected","selected");
 	        				$("[name='status'] option[value='"+spiderRules.status+"']").attr("selected","selected");
 	        				/**$("[name='language'] option[value='"+spiderRules.language+"']").attr("selected","selected");
 	        				$("[name='proxy'] option[value='"+spiderRules.proxyId+"']").attr("selected","selected");
@@ -570,7 +593,6 @@
 	                		$("[name='lieUrlReg']").val(spiderRules.lieUrlReg);
 	                		$("[name='detailUrlReg']").val(spiderRules.detailUrlReg);
 	                		$("[name='filterUrlReg']").val(spiderRules.filterUrlReg);
-	                		//$("[name='genderRules'] option[value='"+spiderRules.genderRules"']").attr("selected","selected");
 	                		$("[name='seasonRules']").val(spiderRules.seasonRules);
 	                		
 	                		$("[name='brandStrategy']").val(spiderRules.brandStrategy);
@@ -582,11 +604,17 @@
 	                		$("[name='categoryStrategy']").val(spiderRules.categoryStrategy);
 	                		$("[name='categoryRules']").val(spiderRules.categoryRules);
 	                		
-	                		$("[name='categoryStrategy']").val(spiderRules.brandStrategy);
+	                		$("[name='brandStrategy']").val(spiderRules.brandStrategy);
 	                		$("[name='brandRules']").val(spiderRules.brandRules);
 	                		
 	                		$("[name='spuStrategy']").val(spiderRules.spuStrategy);
 	                		$("[name='spuRules']").val(spiderRules.spuRules);
+	                		
+	                		$("[name='qtyStrategy']").val(spiderRules.qtyStrategy);
+	                		$("[name='qtyRules']").val(spiderRules.qtyRules);
+	                		
+	                		$("[name='jsMenuStrategy']").val(spiderRules.jsMenuStrategy);
+	                		$("[name='jsMenuRules']").val(spiderRules.jsMenuRules);
 	                		
 	                		$("[name='materialStrategy']").val(spiderRules.materialStrategy);
 	                		$("[name='materialRules']").val(spiderRules.materialRules);
@@ -658,6 +686,12 @@
         		var spuRules = $("[name='spuRules']").val();
         		var spuStrategy = $("[name='spuStrategy']").val();
         		
+        		var qtyRules = $("[name='qtyRules']").val();
+        		var qtyStrategy = $("[name='qtyStrategy']").val();
+        		
+        		var jsMenuRules = $("[name='jsMenuRules']").val();
+        		var jsMenuStrategy = $("[name='jsMenuStrategy']").val();
+        		
         		var materialRules = $("[name='materialRules']").val();
         		var materialStrategy = $("[name='materialStrategy']").val();
         		
@@ -716,6 +750,10 @@
         					categoryStrategy:categoryStrategy,
         					spuRules:spuRules,
         					spuStrategy:spuStrategy,
+        					qtyRules:qtyRules,
+        					qtyStrategy:qtyStrategy,
+        					jsMenuRules:jsMenuRules,
+        					jsMenuStrategy:jsMenuStrategy,
         					materialRules:materialRules,
         					materialStrategy:materialStrategy,
         					colorRules:colorRules,

@@ -1,9 +1,10 @@
 package com.shangpin.spider.gather.processor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
@@ -18,7 +19,11 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
-
+/**
+ * 处理数据
+ * @author njt
+ * 
+ */
 public class MyPageProcessor implements PageProcessor {
 	private static Logger LOG = LoggerFactory.getLogger(MyPageProcessor.class);
 	private Site site;
@@ -57,10 +62,15 @@ public class MyPageProcessor implements PageProcessor {
 	}
 	
 	private void processHandle(Page page, SpiderRules spiderRuleInfo) {
+		String url = page.getUrl().toString();
 		try {
-			String url = page.getUrl().toString();
-			LOG.warn("-processHandle--链接为{}---",url);
+			LOG.info("-processHandle--链接为{}---",url);
 			if(GatherUtil.isFilterUrl(url, spiderRuleInfo)) {
+				page.setSkip(true);
+				return;
+			}
+			if(page.getStatusCode()!=200) {
+				LOG.warn("-链接{}-的响应码{}，不成功，跳过！--",url,page.getStatusCode());
 				page.setSkip(true);
 				return;
 			}
@@ -81,10 +91,9 @@ public class MyPageProcessor implements PageProcessor {
 					page.setSkip(true);
 					return;
 				}
-				Map<String, Object> resultMap = CommonCrawlData.crawlData(page,spiderRuleInfo);
-				page.putField("resultMap", resultMap);
+				CommonCrawlData.crawlData(page,spiderRuleInfo);
 			}else if(GatherUtil.isLieUrl(url, spiderRuleInfo)) {
-				List<String> links = new ArrayList<String>();
+				Set<String> links = new HashSet<String>();
 				List<String> all = page.getHtml().links().all();
 				for (String link : all) {
 				    if (GatherUtil.isLieUrl(link, spiderRuleInfo)||GatherUtil.isDetailUrl(link, spiderRuleInfo)) {
@@ -107,16 +116,20 @@ public class MyPageProcessor implements PageProcessor {
 				        extras.put("whiteId", spiderRuleInfo.getWhiteId());
 				        request.setExtras(extras);
 				        // ----向下一个要抓取的队列中传参数---
+				        LOG.info("-进入队列的链接-{}",link);
 				        page.addTargetRequest(request);
 					}
 				}else{
 					LOG.warn("-链接{}---------无匹配的页面链接",url);
 				}
+			}else {
+				LOG.warn("-链接{}--既不是详情页也不是列表页！",url);
 			}
 			
 		} catch (Exception e) {
 			StackTraceElement traceElement = e.getStackTrace()[0];
-			LOG.error("处理网页出错{}，错误类{}，错误行数{}",e.getLocalizedMessage(),traceElement.getFileName(),traceElement.getLineNumber());
+			LOG.error("网页{}出错{}，错误类{}，错误行数{}",url,e.getLocalizedMessage(),traceElement.getFileName(),traceElement.getLineNumber());
+			return;
 		}
 		// 处理结束
 	}

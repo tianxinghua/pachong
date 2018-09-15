@@ -27,7 +27,7 @@ import com.shangpin.spider.entity.gather.SpiderRules;
  * @parameter
  */
 
-public class YcmWebDriverPool {
+public class YcmWebDriverPool extends WebDriverPool{
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(YcmWebDriverPool.class);
@@ -53,7 +53,11 @@ public class YcmWebDriverPool {
 		PHANTOMJS_PATH = "";
 		caps.setJavascriptEnabled(true);
 		caps.setCapability("takesScreenshot", false);
-		List<String> cmdList = new ArrayList<>();  
+		caps.setCapability("acceptSslCerts", true);
+		//css搜索支持
+		caps.setCapability("cssSelectorsEnabled", true);
+		
+		/*List<String> cmdList = new ArrayList<>();  
         // 禁用图片  
         cmdList.add("--load-images=false");  
         // 本地缓存  
@@ -63,7 +67,7 @@ public class YcmWebDriverPool {
         cmdList.add("--ignore-ssl-errors=true");
         
         
-		caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cmdList);
+		caps.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cmdList);*/
 		// caps.setCapability("load-images","no");
 		// caps.setCapability("disk-cache", "yes");
 		// caps.setCapability("ignore-ssl-errors", true);
@@ -99,7 +103,7 @@ public class YcmWebDriverPool {
 		innerQueue = new LinkedBlockingDeque<WebDriver>(poolsize);
 	}
 
-	public WebDriver get() throws InterruptedException {
+	public WebDriver get(){
 		int size = innerQueue.size();
 		logger.info("innerQueue.size()为："+innerQueue.size());
 		if(size>0){
@@ -150,7 +154,13 @@ public class YcmWebDriverPool {
 		}
 
 		flag = true;
-		return innerQueue.take();
+		WebDriver driver = null;
+		try {
+			driver = innerQueue.take();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return driver;
 	}
 
 	public void returnToPool(WebDriver webDriver) {
@@ -228,11 +238,11 @@ public class YcmWebDriverPool {
 	
 	private WebDriver setWebDriverTimeout(WebDriver mDriver){
 //		页面超时时间,避免phantomjs卡住
-		mDriver.manage().timeouts().pageLoadTimeout(180, TimeUnit.SECONDS);
+		mDriver.manage().timeouts().pageLoadTimeout(360, TimeUnit.SECONDS);
 //		脚本超时时间
-		mDriver.manage().timeouts().setScriptTimeout(180, TimeUnit.SECONDS);
+		mDriver.manage().timeouts().setScriptTimeout(240, TimeUnit.SECONDS);
 //		隐性等待，有BUG，暂不使用
-//		mDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		mDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		return mDriver;
 	}
 

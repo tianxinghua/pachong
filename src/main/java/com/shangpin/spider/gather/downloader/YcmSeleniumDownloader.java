@@ -4,12 +4,15 @@ package com.shangpin.spider.gather.downloader;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.shangpin.spider.entity.gather.SpiderRules;
+import com.shangpin.spider.gather.utils.GatherUtil;
+
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
-import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.downloader.Downloader;
@@ -32,18 +35,23 @@ public class YcmSeleniumDownloader implements Downloader {
 	private int sleepTime = 1000;
 	private YcmWebDriverPool webDriverPool = null;
 	private Spider spiderDown = null;
+	private SpiderRules spiderRuleInfo = null;
 	
 	public YcmSeleniumDownloader() {
 	}
 
-	public YcmSeleniumDownloader(int sleepTime, YcmWebDriverPool pool, int threadNum,
+	public YcmSeleniumDownloader(SpiderRules spiderRuleInfo, YcmWebDriverPool pool,
 			Spider spider) {
-		this.sleepTime = sleepTime;
+		if (spiderRuleInfo != null) {
+			this.spiderRuleInfo = spiderRuleInfo;
+			this.sleepTime = spiderRuleInfo.getSleep();
+		}
+		
 		if (pool != null) {
-			webDriverPool = pool;
+			this.webDriverPool = pool;
 		}
 		if (spider != null) {
-			spiderDown = spider;
+			this.spiderDown = spider;
 		}
 	}
 
@@ -66,9 +74,9 @@ public class YcmSeleniumDownloader implements Downloader {
 			log.info("当前线程下js个数为:" + innerSite);
 		}
 
-		WebDriver webDriver = null;
+		RemoteWebDriver webDriver = null;
 		try {
-			webDriver = getWebDriver(request, task);
+			webDriver = (RemoteWebDriver) getWebDriver(request, task);
 			log.info("webDriver为：" + webDriver);
 		} catch (Exception e) {
 			log.error("本次抓取异常结束，因某些原因导致获取webDriver错误！" + webDriver);
@@ -79,15 +87,9 @@ public class YcmSeleniumDownloader implements Downloader {
 			log.error("本次抓取提前结束，webDriver为空，导致失败！");
 			// return null;
 		}
-
+//		Actions actions = new Actions(webDriver);
 		
-		// 控制下拉条
-		/*
-		 * long height=(Long)((JavascriptExecutor)webDriver).executeScript(
-		 * "return document.body.scrollHeight;"); String
-		 * js="var q=document.documentElement.scrollTop=" +height;
-		 * ((JavascriptExecutor)webDriver).executeScript(js+";");
-		 */
+		 
 
 		// 持续点击加载更多/显示更多
 		// Page page = moreClick(pagexin,webDriver,request,task);
@@ -131,14 +133,7 @@ public class YcmSeleniumDownloader implements Downloader {
 	public WebDriver getWebDriver(Request request, Task task) {
 		log.info("获取webdriver----------开始");
 		WebDriver webDriver;
-		try {
-			webDriver = webDriverPool.get();
-			log.info("获取webdriver----------开始--1");
-		} catch (InterruptedException e) {
-			log.info("获取webDriver异常！");
-			e.printStackTrace();
-			return null;
-		}
+		webDriver = webDriverPool.get();
 		log.info("downloading page " + request.getUrl());
 		if (webDriver == null) {
 			log.info("获取webdriver----------null--1");
@@ -147,9 +142,9 @@ public class YcmSeleniumDownloader implements Downloader {
 		try {
 			webDriver.get(request.getUrl());
 //			Thread.sleep(sleepTime);
-			WebDriver.Options manage = webDriver.manage();
-			Site site = task.getSite();
-			log.info("task里 的site是什么： " + site);
+//			WebDriver.Options manage = webDriver.manage();
+//			Site site = task.getSite();
+//			log.info("task里 的site是什么： " + site);
 			/*if (site.getCookies() != null) {
 				for (Map.Entry<String, String> cookieEntry : site.getCookies()
 						.entrySet()) {
@@ -158,7 +153,7 @@ public class YcmSeleniumDownloader implements Downloader {
 					manage.addCookie(cookie);
 				}
 			}*/
-			manage.window().maximize();
+//			manage.window().maximize();
 		} catch (Exception e) {
 			e.printStackTrace();
 			webDriverPool.returnToPool(webDriver);
@@ -215,13 +210,38 @@ public class YcmSeleniumDownloader implements Downloader {
 	 * @param task
 	 * @return
 	 */
-	public Page getHtml(Page pagexin, WebDriver webDriver, Request request,
+	public Page getHtml(Page pagexin, RemoteWebDriver webDriver, Request request,
 			Task task) {
 //		切换网页frame捕捉相应元素时使用
 //		webDriver.switchTo().frame("").findElement(By.xpath("/html"));
+		String url = request.getUrl();
+		// 控制下拉条
+		if(GatherUtil.isLieUrl(url, spiderRuleInfo)) {
+			long height1=(Long)webDriver.executeScript("return document.body.scrollHeight;");
+			long height2=(Long)webDriver.executeScript("return document.documentElement.scrollHeight;");
+			long max = Math.max(height1, height2);
+			System.err.println("--执行前列表页"+url+"的--浏览器的高为："+max);
+//			max = 50000;
+//			String js="var q=document.documentElement.scrollTop=" +height;
+			String js="scroll(0,60000);";
+			for (int i = 0; i < 10; i++) {
+				webDriver.executeScript(js,new Object[]{});
+				try {
+					Thread.sleep(sleepTime);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			long heightAfter1=(Long)webDriver.executeScript("return document.body.scrollHeight;");
+			long heightAfter2=(Long)webDriver.executeScript("return document.documentElement.scrollHeight;");
+			long heightAfterMax = Math.max(heightAfter1, heightAfter2); 
+			System.err.println("--执行后列表页"+url+"的--浏览器的高为："+heightAfterMax);
+			
+		}
 		WebElement webElement = webDriver.findElement(By.xpath("/html"));
-//		String content = JavascriptExecutor.execute_script("return document.documentElement.outerHTML");
+//		String content = (String) JavascriptExecutor.executeScript("return document.documentElement.outerHTML");
 		String content = webElement.getAttribute("outerHTML");
+		System.err.println("--源码：---"+content);
 		Page page = new Page();
 		page.setRawText(content);
 		page.setHtml(new Html(content, webDriver.getCurrentUrl()));

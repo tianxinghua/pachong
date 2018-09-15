@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
-/*import com.xr.gather.gather.task.TaskManager;
-import com.xr.gather.model.SpiderTaskInfo;
-import com.xr.sys.shiro.util.ContentRole;*/
+import com.shangpin.spider.entity.gather.SpiderTaskInfo;
+import com.shangpin.spider.task.TaskManager;
+import com.shangpin.spider.utils.shiro.ContentRole;
 
 /** 
  * @author  njt 
@@ -23,7 +23,7 @@ import com.xr.sys.shiro.util.ContentRole;*/
  */
 @Controller
 @RequestMapping("task")
-public class TaskController {/*
+public class TaskController {
 	private Logger log = LoggerFactory.getLogger(TaskController.class);
 	@Autowired
 	private TaskManager taskManager;
@@ -90,4 +90,4 @@ public class TaskController {/*
 		
 	}
 	
-*/}
+}

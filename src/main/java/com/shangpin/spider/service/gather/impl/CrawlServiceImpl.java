@@ -21,7 +21,7 @@ public class CrawlServiceImpl implements CrawlService{
 	public Long insert(CrawlResult crawlResult) {
 		String tableName = crawlResult.getGender()+"_"+crawlResult.getBrand()+"_"+crawlResult.getCategory();
 		tableName = CreateTable.createTable(tableName);
-		LOG.info("------添加的表名为：{}",tableName);
+		LOG.info("----存入的表名为：{}",tableName);
 		crawlResultMapper.createTable(tableName);
 		return crawlResultMapper.insertByTableName(crawlResult,tableName);
 		
