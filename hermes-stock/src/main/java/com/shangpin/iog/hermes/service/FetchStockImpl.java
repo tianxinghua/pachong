@@ -135,7 +135,7 @@ public class FetchStockImpl  {
         //当商品数据
         if(total>Integer.parseInt(pageSize)){
             Integer pageNumber = getPageNumber(total, 20);
-            for (int i = 17; i <= pageNumber; i++) {
+            for (int i = 2; i <= pageNumber; i++) {
                 ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
                 if(temprpductPageContent!=null){
                     productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
