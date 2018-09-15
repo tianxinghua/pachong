@@ -70,7 +70,7 @@ public class UpdateStockImpl extends FetchStockImpl {
         //Date yesterDate = new Date();                              //推送今天的库存数据
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"hermes-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"hermesFR-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
