@@ -135,9 +135,9 @@ public class FetchStockImpl  {
         //总记录数
         Integer total = prpductPageContent.getTotal();
         //当商品数据
-        if(total>Integer.parseInt(pageSize)){
+       if(total>Integer.parseInt(pageSize)){
             Integer pageNumber = getPageNumber(total, 20);
-            for (int i = 17; i <= pageNumber; i++) {
+            for (int i = 2; i <= pageNumber; i++) {
                 ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize),channel);
                 if(temprpductPageContent!=null){
                     productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
@@ -378,10 +378,10 @@ public class FetchStockImpl  {
         //请求头
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("User-Agent", "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36)");
-        headerMap.put("Cookie", "_ga=GA1.2.1410775761.1531446626; cookiebanner=1; _gid=GA1.2.1246508835.1532678167; has_js=1; locale-country-data={\"country\":\"it\",\"locale\":\"en-he\",\"language\":\"en\"}; ECOM_SESS=3259abe9fab28706f7a9414a72c268c8; _gat_UA-72839523-2=1; _gat_UA-64545050-1=1");
+        headerMap.put("Cookie", "_ga=GA1.2.1410775761.1531446626; cookiebanner=1; _gid=GA1.2.1246508835.1532678167; has_js=1; locale-country-data={\"country\":\"fr\",\"locale\":\"en-he\",\"language\":\"en\"}; ECOM_SESS=3259abe9fab28706f7a9414a72c268c8; _gat_UA-72839523-2=1; _gat_UA-64545050-1=1");
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("locale","it_en");
+        jsonObject.put("locale","fr_fr");
         jsonObject.put("skus",skuList);
 
         String jsonStr = jsonObject.toString();
@@ -557,7 +557,7 @@ public class FetchStockImpl  {
         zhiCaiSkuResultList.add(skuDTO);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
 */
-        ShangPinPageContent hermes = fetchStock.getShangPinPageContentByParam("2018082802043", "HERMES", 1, 20, "https://www.hermes.com/");
+        ShangPinPageContent hermes = fetchStock.getShangPinPageContentByParam("2018082802043", "HERMES", 1, 20, "www.hermes.com");
         System.out.println(hermes);
     }
 
