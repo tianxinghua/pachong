@@ -6,14 +6,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.orderapiservice.impl.BagheeraOrderService;
-import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
-import com.shangpin.ep.order.module.orderapiservice.impl.WiseOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.*;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.baseblu.OrderResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.shangpin.ep.order.conf.mail.attach.AttachBean;
@@ -24,7 +23,7 @@ import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
 import com.shangpin.ep.order.module.orderapiservice.impl.WiseOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class EpOrderServiceApplicationTests {
  
@@ -90,7 +89,7 @@ public class EpOrderServiceApplicationTests {
 //		}
 //	}
 
-	@Autowired
+	/*@Autowired
 	private ShangpinMailSender sm;
 	
 	@Test
@@ -175,6 +174,15 @@ public class EpOrderServiceApplicationTests {
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}
-	}
+	}*/
+	@Autowired
+	GebnegozioServiceImpl gebnegozioServiceImpl;
 
+	@Test
+	public void testGeb(){
+		OrderDTO orderDTO = new OrderDTO();
+		orderDTO.setSpOrderId("001001");
+		orderDTO.setDetail("6000207392_33_01:1");
+		gebnegozioServiceImpl.handleSupplierOrder(orderDTO);
+	}
 }

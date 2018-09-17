@@ -142,5 +142,6 @@ public class SupplierProperties {
 	private Redi redi;
 
 	private TheStyleSide theStyleSide;
-	
+
+	private Gebnegozio gebnegozio;
 }

@@ -251,7 +251,11 @@ public class OrderHandleSearch {
 	@Autowired
 	@Qualifier("fashionTamersOrderImpl")
 	IOrderService fashionTamersOrderImpl;
-	
+
+	@Autowired
+	@Qualifier("gebnegozioOrderImpl")
+	IOrderService gebnegozioOrderImpl;
+
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -383,6 +387,8 @@ public class OrderHandleSearch {
 			return rediOrderService;
 		}else if("2018072602021".equals(supplierId)){
 			return fashionTamersOrderImpl;
+		}else if("2018061101883".equals(supplierId)){
+			return gebnegozioOrderImpl;
 		}else {
 			return null;
 		}
@@ -504,6 +510,8 @@ public class OrderHandleSearch {
 			return supplierProperties.getRedi();
 		}else if("2018072602021".equals(supplierId)){
 			return supplierProperties.getFashionTamersConf();
+		}else if("2018061101883".equals(supplierId)){
+			return supplierProperties.getGebnegozio();
 		}
 		else {
 			return null;

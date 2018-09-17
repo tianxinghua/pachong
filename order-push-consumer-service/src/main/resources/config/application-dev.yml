@@ -519,6 +519,9 @@ shangpin:
       theStyleSide:
                     usr: ECOMM
                     pwd: vendiamotutto
+      gebnegozio:
+              url: http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/
+              tokenUrl: http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/integration/customer/token
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 
