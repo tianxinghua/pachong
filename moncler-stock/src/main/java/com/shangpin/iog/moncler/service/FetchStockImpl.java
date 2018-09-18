@@ -1,6 +1,6 @@
-package com.shangpin.iog.gucci.service;
+package com.shangpin.iog.moncler.service;
 
-import com.shangpin.iog.gucci.dto.*;
+import com.shangpin.iog.moncler.dto.*;
 import com.shangpin.iog.utils.HttpResponse;
 import com.shangpin.iog.utils.HttpUtil45;
 import com.shangpin.iog.utils.HttpUtils;
@@ -24,7 +24,7 @@ import java.util.*;
  * Created by wanner on 2018/6/27
  */
 @Component("fetchStockImpl")
-public class FetchStockImpl  {
+public class FetchStockImpl {
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -37,13 +37,15 @@ public class FetchStockImpl  {
     //库存csv 文件存放目录
     private static String filePath="";
 
-    //GUCCI意大利官网地址
+    //MONCLER法国官网地址
     private static String uri="";
 
     //有库存
     private static final String IN_STOCK = "1";
     //无库存
     private static final String NO_STOCK = "0";
+    //渠道
+    private static final String CHANNEL = "store.moncler.com";
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
@@ -71,13 +73,13 @@ public class FetchStockImpl  {
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
     /**
-     * 拉取 意大利官网 商品库存数据
+     * 拉取 法国官网 商品库存数据
      */
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============拉取GUCCI库存数据开始 "+startDateTime+"=========================");
-        logger.info("==============拉取GUCCI库存数据开始 "+startDateTime+"=========================");
+        System.out.println("============拉取MONCLER库存数据开始 "+startDateTime+"=========================");
+        logger.info("==============拉取MONCLER库存数据开始 "+startDateTime+"=========================");
 
         //1. 请求需要更新库存商品 信息接口
         failedSpSkuNoList = new ArrayList<>();
@@ -85,7 +87,7 @@ public class FetchStockImpl  {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "gucci-qty-"+todayStr+".csv";
+        String temFilePath = filePath + "moncler-qty-"+todayStr+".csv";
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
         try {
@@ -108,27 +110,27 @@ public class FetchStockImpl  {
         List<ProductDTO> productDTOAllList =  new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam(supplierId,"GUCCI", 1, Integer.parseInt(pageSize));
-        productDTOAllList.addAll(gucciPageContent.getZhiCaiResultList());
+        ShangPinPageContent monclerPageContent = getShangPinPageContentByParam(supplierId,"",CHANNEL,1, Integer.parseInt(pageSize));
+        productDTOAllList.addAll(monclerPageContent.getZhiCaiResultList());
 
-        if(gucciPageContent == null) return;
+        if(monclerPageContent == null) return;
         //总记录数
-        Integer total = gucciPageContent.getTotal();
+        Integer total = monclerPageContent.getTotal();
         Integer pageNumber = getPageNumber(total, 20);
         for (int i = 2; i <= pageNumber; i++) {
-            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam(supplierId,"GUCCI", i, Integer.parseInt(pageSize));
-            if(temgucciPageContent!=null){
-                productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
+            ShangPinPageContent temmonclerPageContent = getShangPinPageContentByParam(supplierId,"",CHANNEL, i, Integer.parseInt(pageSize));
+            if(temmonclerPageContent!=null){
+                productDTOAllList.addAll(temmonclerPageContent.getZhiCaiResultList());
             }else{ //请求失败重新 再次请求
-                temgucciPageContent = getShangPinPageContentByParam(supplierId,"GUCCI", i, Integer.parseInt(pageSize));
-                if(temgucciPageContent!=null){
-                    productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
+                temmonclerPageContent = getShangPinPageContentByParam(supplierId,"",CHANNEL, i, Integer.parseInt(pageSize));
+                if(temmonclerPageContent!=null){
+                    productDTOAllList.addAll(temmonclerPageContent.getZhiCaiResultList());
                 }
             }
         }
 
-        logger.info("=====需要更新GUCCI spProduct Size:"+productDTOAllList.size());
-        System.out.println("=====需要更新GUCCI spProduct Size:"+productDTOAllList.size());
+        logger.info("=====需要更新MONCLER spProduct Size:"+productDTOAllList.size());
+        System.out.println("=====需要更新MONCLER spProduct Size:"+productDTOAllList.size());
         //导出尚品库存数据
         exportQtyInfoForProductList(productDTOAllList);
 
@@ -139,8 +141,8 @@ public class FetchStockImpl  {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================拉取GUCCI库存数据结束 "+endtDateTime+"=========================");
-        System.out.println("=================拉取GUCCI库存数据结束 "+endtDateTime+"=========================");
+        logger.info("===================拉取MONCLER库存数据结束 "+endtDateTime+"=========================");
+        System.out.println("=================拉取MONCLER库存数据结束 "+endtDateTime+"=========================");
 
     }
 
@@ -166,7 +168,7 @@ public class FetchStockImpl  {
      * @param pageSize 分页条数
      * @return
      */
-    public static ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize){
+    public static ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,String channel,Integer pageIndex,Integer pageSize){
         //String fetchSpProductInfosUrl = "http://192.168.20.176:8003/supplier-sku/get-product";
         //1. 请求需要更新库存商品 信息接口
         JSONObject jsonObject = new JSONObject();
@@ -174,7 +176,7 @@ public class FetchStockImpl  {
         jsonObject.put("brandName",brandName);
         jsonObject.put("pageIndex",pageIndex);
         jsonObject.put("pageSize",pageSize);
-
+        jsonObject.put("channel",channel);
         String jsonStr = jsonObject.toString();
 
         ShangPinPageContent shangPinPageContent = null;
@@ -185,7 +187,7 @@ public class FetchStockImpl  {
             JSONObject resultJsonObject = JSONObject.fromObject(resultJsonStr);
             Map<String,Class> keyMapConfig= new HashMap<>();
             keyMapConfig.put("zhiCaiResultList",ProductDTO.class);
-            keyMapConfig.put("zhiCaiSkuResultList",SkuDTO.class);
+            keyMapConfig.put("zhiCaiSkuResultList", SkuDTO.class);
             keyMapConfig.put("content",ShangPinPageContent.class);
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
 
@@ -281,138 +283,65 @@ public class FetchStockImpl  {
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
         try {
-            Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36)");
+            /*Header header = new Header("User-Agent", "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36)");
             Header[] headers = new Header[1];
             headers[0] = header;
 
-            HttpResponse response = HttpUtils.get(productUrl,headers);
-
+            HttpResponse response = HttpUtils.get(productUrl,headers);*/
+            HttpResponse response = HttpUtils.get(productUrl);
             if (response.getStatus()==200) {
                 String htmlContent = response.getResponse();
                 Document doc = Jsoup.parse(htmlContent);
 
+                //价格
+                String price = "";
+                Elements priceElements = doc.select("#container").select("div.hidden").select("span.value");
+                if(priceElements!=null&&priceElements.size()>0){
+                    price = priceElements.first().text();
+                    price = price.replace(",",".");
+                }
+                byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
+                String UTFSpace = new String(bytes,"utf-8");
+                price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","");
                 /**
                  *   处理商品 的尺码 以及 库存信息
-                 <form action="/it/it/cart/ajax/add" class="add-to-shopping-bag-form" id="product-detail-add-to-shopping-bag-form">
-                 <input name="sku" type="hidden" value="747804" />
-                 <input class="personalized" name="personalized" type="hidden" value="false" />
-                 <input class="monogramStyle" name="monogramStyle" type="hidden" value="" />
-                 <input class="monogram" name="monogram" type="hidden" value="" />
-                 <input name="position" type="hidden" value="1" />
-                 <input name="listName" type="hidden" value="PGEU4Cols" />
-                 <input name="categoryPath" type="hidden" value="Women/Womens-Ready-to-Wear/Coats" />
-                 <input class="CSRFToken" name="CSRFToken" type="hidden" value="fca2c19f-3364-4fe3-ba86-c32d8015b53f" />
-
-                 <div class="sizes">
-                 <div class="size-dropdown " data-module="productSizes" >
-                 <div class="content-select basic-content-select">
-                 <select name="size" class="custom size-select _disable-mobile "   aria-label="Taglia">
-                 <option value="-1" selected="selected">Taglia</option>
-                 <option value="808313659" data-copy="36" data-copy-device="36&nbsp;" data-available="true" class="" >
-                 36&nbsp;
-                 </option>
-                 <option value="808305674" data-copy="38" data-copy-device="38&nbsp;" data-available="true" class="" >
-                 38&nbsp;
-                 </option>
-                 <option value="808225409" data-copy="40" data-copy-device="40&nbsp;" data-available="true" class="" >
-                 40&nbsp;
-                 </option>
-                 <option value="808305927" data-copy="42" data-copy-device="42&nbsp;" data-available="true" class="" >
-                 42&nbsp;
-                 </option>
-                 <option value="808305928" data-copy="44" data-copy-device="44&nbsp;" data-available="true" class="" >
-                 44&nbsp;
-                 </option>
-                 <option value="808310044" data-copy="46" data-copy-device="46&nbsp;" data-available="true" class="" >
-                 46&nbsp;
-                 </option>
-                 <option value="808313400" data-copy="48" data-copy-device="48&nbsp;Ricerca nei negozi" data-available="false" class="sizes-item-value-disabled" >
-                 48&nbsp;
-                 </option>
-
-                 // 均码
-                 <option value="808252057" data-copy="U" data-copy-device="U&nbsp;" data-available="true" class="" selected="selected">U</option>
-
-                 </select>
-
                  */
                 //判断当前包页面有没有尺码信息  有分成多个 product 没有 尺码为均码
-                Elements temSizeElements = doc.select("select[name=size]");
+                Elements temSizeElements = doc.select("#container").select("div.itemColorSize_size").select("div.HTMLSelectSizeSelector").select("select option");
                 if(temSizeElements!=null&&temSizeElements.size()>0){
-                    Elements sizeElements =temSizeElements.first().select("option");
-                    /** 商品价格
-                     * <input type="hidden" class="gucciProductPrice" value="1690.0">
-                     */
-                    //获取商品市场价
-                    String itemPrice = "";
-                    Element itemPriceElement  = doc.select("input.gucciProductPrice").first();
-                    if(itemPriceElement!=null){
-                        itemPrice = itemPriceElement.attr("value"); //款式sku
-                    }else{
-                        logger.error("获取商品价格异常=============productUrl:"+productUrl+"==============================");
-                    }
-
-                    sizeElement:  for (Element sizeElement:sizeElements ) {
-                        //处理尺码信息
-                        String pcode = sizeElement.attr("value");
-                        String classValue = sizeElement.attr("class");
-                        String sizeContent = sizeElement.attr("data-copy");
-                        if (sizeContent != null && !"".equals(sizeContent)) {
-                            if (pcode == null || "-1".equals(pcode) || "Taglia".equals(sizeContent)) {  //跳过尺码提示语选项
+                    int spSkuSize = zhiCaiSkuResultList.size();
+                    int pageSize = temSizeElements.size();
+                    for (int j = 0; j <spSkuSize ; j++) {
+                        SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
+                        for (int i = 1; i <pageSize ; i++) {
+                            Element sizeElement = temSizeElements.get(i);
+                            //获取具体的尺码信息  第一个为请选择尺码故不要
+                            String temElementSizeName = sizeElement.attr("value").trim();
+                            String spSizeName = skuDTO.getSize();
+                            if(!temElementSizeName.equals(spSizeName)){
                                 continue;
                             }
-                            //处理特殊字符均码
-                            if (sizeContent.startsWith("U") && sizeContent.length() == 2) {
-                                sizeContent = "U";
+                            String sizeNameText=sizeElement.text();
+                            String temQty="";
+                            if(sizeNameText.contains("Sold out")){
+                                temQty = NO_STOCK;//0无 1
+                            }else{
+                                temQty = IN_STOCK;
                             }
-                        } else {
-                            continue;
-                        }
-                        // 校对 商品尺码信息
-                        zhiCai:for (int i = 0; i < zhiCaiSkuResultListSize; i++) {
-                            SkuDTO skuDTO = zhiCaiSkuResultList.get(i);
-                            String spSkuNo = skuDTO.getSpSkuNo();
-                            if(spSkuNo == null || "".equals(spSkuNo)){
-                                continue zhiCai;
-                            }
-                            /**
-                             * 校验价格信息
-                             */
                             String marketPrice = skuDTO.getMarketPrice();
                             if(marketPrice!=null){
-                                if(!marketPrice.equals(itemPrice)){ //价格发生改变
-                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),itemPrice);
-                                    logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+itemPrice);
-                                    System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+itemPrice);
+                                float temElementPrice = Float.parseFloat(price);
+                                float spMarketPrice = Float.parseFloat(marketPrice);
+                                if(temElementPrice!=spMarketPrice){ //价格发生改变
+                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price,CHANNEL);
+                                    logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
+                                    System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                 }
                             }else{
                                 loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
                             }
-
-                            String size = skuDTO.getSize();
-                            if(sizeContent.equals(size)){
-                                //如果<option> 标签上含有 class="sizes-item-value-disabled" 为无库存
-                                if ("sizes-item-value-disabled".equals(classValue)) {
-                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(),NO_STOCK);
-                                } else {
-                                    //获取库存数据
-                                    //获取 pcode 参数value
-                                    Map<String, String> checkProductInfo = getProductQtyInfo(skuDTO.getSpSkuNo(),pcode);
-                                    String temQty = checkProductInfo.get("qty");
-                                    if (temQty != null) {
-                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
-                                    } else {
-                                        //获取库存失败 将商品 spSkuNO pcode 保存起来 处理
-                                        exportSpSkunoAndQty(skuDTO.getSpSkuNo(),NO_STOCK);
-                                        //加入到失败库存信息中
-                                        failedSpSkuNoList.add(new SpSkuNoDTO(skuDTO.getSpSkuNo(),pcode));
-                                    }
-                                    /**
-                                     * 获取需要请求的都休息 0.5s
-                                     */
-                                    //Thread.sleep(500);
-                                }
-                            }
+                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+                            break;
                         }
                     }
                 }else{
@@ -430,7 +359,6 @@ public class FetchStockImpl  {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
         //每一款商品休息2s
 //        try {
@@ -446,12 +374,13 @@ public class FetchStockImpl  {
      * @param supplierSkuNo
      * @param marketPrice
      */
-    private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice) {
+    private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice,String channel) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("supplierId",supplierId);
         jsonObject.put("supplierNo",supplierNo);
         jsonObject.put("supplierSkuNo",supplierSkuNo);
         jsonObject.put("marketPrice",marketPrice);
+        jsonObject.put("channel",channel);
         String jsonStr = jsonObject.toString();
         System.out.println(" 推送价格入参json:"+jsonStr);
         logger.info(" 推送价格入参json:"+jsonStr);
@@ -532,7 +461,6 @@ public class FetchStockImpl  {
             Document doc = Jsoup.parse(responseHtml);
 
             String qtyStr = doc.select("p.title").first().text();
-            String qtyStrDesc = doc.select("div.subtitle").first().text();
             // DISPONIBILE SOLO PER PRE-ORDINE | DISPONIBILE  | DISPONIBILE IN 1-2 SETTIMANE
 
             if(qtyStr!=null){
@@ -540,13 +468,8 @@ public class FetchStockImpl  {
                     mapDate.put("qty",NO_STOCK);
                     mapDate.put("qtyDesc","预售");
                 }else if(qtyStr.contains("DISPONIBILE")){
-                    if(qtyStrDesc.contains("1-2")){
-                        mapDate.put("qty",IN_STOCK);
-                        mapDate.put("qtyDesc","有货");
-                    }else{
-                        mapDate.put("qty",NO_STOCK);
-                        mapDate.put("qtyDesc","发货时长超过两天");
-                    }
+                    mapDate.put("qty",IN_STOCK);
+                    mapDate.put("qtyDesc","有货");
                 }
             }else{
                 // 售罄
@@ -583,7 +506,7 @@ public class FetchStockImpl  {
 
     public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://www.gucci.com/it/it/pr/men/mens-ready-to-wear/mens-t-shirts-polos/oversize-t-shirt-with-amour-eye-p-493117X3I319169?position=14&listName=VariationOverlay");
+        productDTO.setProductUrl("https://store.moncler.com/fr-fr/blouson-aviateur_cod2243576767772724.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
         skuDTO.setSpSkuNo("30968589002");

@@ -1,33 +1,27 @@
-package com.shangpin.iog.gucci.service;
+package com.shangpin.iog.hermes.service;
 
-import com.shangpin.iog.gucci.dto.ApiResponseBody;
-import com.shangpin.iog.gucci.dto.SpSkuNoDTO;
-import com.shangpin.iog.gucci.dto.ZhiCaiSkuHttpDTO;
-import com.shangpin.iog.gucci.dto.ZhiCaiSkuStock;
-import com.shangpin.iog.ice.service.StockHandleService;
+import com.shangpin.iog.hermes.dto.SpSkuNoDTO;
+import com.shangpin.iog.hermes.dto.ApiResponseBody;
+import com.shangpin.iog.hermes.dto.ZhiCaiSkuHttpDTO;
+import com.shangpin.iog.hermes.dto.ZhiCaiSkuStock;
 import com.shangpin.iog.utils.DownloadAndReadCSV;
 import com.shangpin.iog.utils.HttpUtil45;
 import com.shangpin.openapi.api.sdk.client.OutTimeConfig;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by wanner on 2018/6/27
+ * Created by wanner on 2018/8/8
+ *
+ * 读取 hermes 库存 csx 文件 推送库存数据
+ *
  */
 @Component("updateStockImpl")
 public class UpdateStockImpl extends FetchStockImpl {
-
-
-    /*@Component("stockHandleService")
-    @Slf4j
-    public class StockHandleService {*/
-    @Autowired
-    private StockHandleService stockHandleService;
 
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
@@ -41,22 +35,9 @@ public class UpdateStockImpl extends FetchStockImpl {
     //库存csv 文件存放目录
     private static String filePath="";
 
-
     private static Integer batchSize = 200;
 
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
-
-
-
-    /**
-     * 推送库存 失败 重复推送请求 最大次数
-     */
-    private static Integer repeatRequestNum=4;
-    /**
-     * 推送过程中 推送失败的 库存信息
-     */
-    private static List<ZhiCaiSkuHttpDTO> failZhiCaiSkuHttpDTOList = null;
-
 
     static {
         if (null == bdl){
@@ -68,7 +49,6 @@ public class UpdateStockImpl extends FetchStockImpl {
 
         try{
             batchSize = Integer.parseInt(bdl.getString("batchSize"));
-            repeatRequestNum = Integer.parseInt(bdl.getString("repeatRequestNum"));
         }catch(Exception e) {
             batchSize = 200;
         }
@@ -79,23 +59,18 @@ public class UpdateStockImpl extends FetchStockImpl {
      */
     @Override
     public void fetchItlyProductStock(){
-        /**
-         * 初始化定义失败请求 ZhiCaiSkuHttpDTOLIst
-         */
-        failZhiCaiSkuHttpDTOList = new ArrayList<>();
-
-
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============更新GUCCI库存数据库开始 "+startDateTime+"=========================");
-        logger.info("==============更新GUCCI库存数据库开始 "+startDateTime+"=========================");
+        System.out.println("============更新库存数据库开始 "+startDateTime+"=========================");
+        logger.info("==============更新库存数据库开始 "+startDateTime+"=========================");
 
         //读取csv 数据信息
         long dayTime = 1000*3600*24l;
-        Date yesterDate = new Date(new Date().getTime() - dayTime);
+        Date yesterDate = new Date(new Date().getTime() - dayTime);  //推送昨天的 库存数据
+        //Date yesterDate = new Date();                              //推送今天的库存数据
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"gucci-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"hermesFR-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -103,13 +78,6 @@ public class UpdateStockImpl extends FetchStockImpl {
             }else{
                 System.out.println("获取csv spSkuNO size:0 调取csv文件数据失败 ");
                 loggerError.error("获取csv spSkuNO size:0 调取csv文件数据失败 ");
-            }
-            /**
-             * 处理推送失败的 商品 sku
-             */
-            int size = failZhiCaiSkuHttpDTOList.size();
-            for (int i = 0; i <size ; i++) {
-                updateZhiCaiSkuListPro(failZhiCaiSkuHttpDTOList.get(i));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,9 +107,8 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
     }
 
-
     /**
-     * 调用接口 批量更新 spSku 信息
+     * 批量更新 spSku 信息
      * @param spSkuNoDTOS
      */
     private  void batchUpdateSpSkuQtyBySpSkuNoDTOList(List<SpSkuNoDTO> spSkuNoDTOS) {
@@ -187,43 +154,20 @@ public class UpdateStockImpl extends FetchStockImpl {
             //最后遍历到最后的时候将最后的spSku 更新 防止 当skuStockList 的size 大小小于batchSize
             if(i == size-1){
                 zhiCaiSkuHttpDTO.setZhiCaiSkuStockList(skuStockList);
-                Boolean flag = updateZhiCaiSkuListPro(zhiCaiSkuHttpDTO);
-                if(!flag){
-                    failZhiCaiSkuHttpDTOList.add(zhiCaiSkuHttpDTO);
-                }
-
+                updateZhiCaiSkuList(zhiCaiSkuHttpDTO);
             }
         }
-        //Integer updateFailedNum = updateIceSpSkuByMap(spSkuMap);
+
         Integer updateFailedNum = spSkuNoDTOS.size();
         System.out.println(" 本次更新尚品库存个数："+updateFailedNum);
-        logger.info("本次更新尚品库存的个数："+updateFailedNum);
+        logger.info("本次更新尚品库存失败的个数："+updateFailedNum);
     }
-
-
-
-    /**
-     * 调用接口更新 spSku qty 信息
-     * @param zhiCaiSkuHttpDTO 库存信息DTO
-     */
-    private Boolean updateZhiCaiSkuListPro(ZhiCaiSkuHttpDTO zhiCaiSkuHttpDTO) {
-        int count = 0;
-        while(count<repeatRequestNum) {
-            count++;
-            boolean flag = updateZhiCaiSkuList(zhiCaiSkuHttpDTO);
-            if(flag){
-                return true;
-            }
-        }
-        return false;
-    }
-
 
     /**
      * 调用接口更新 spSku qty 信息
      * @param zhiCaiSkuHttpDTO
      */
-    private boolean updateZhiCaiSkuList(ZhiCaiSkuHttpDTO zhiCaiSkuHttpDTO) {
+    private void updateZhiCaiSkuList(ZhiCaiSkuHttpDTO zhiCaiSkuHttpDTO) {
         JSONObject jsonObject =JSONObject.fromObject(zhiCaiSkuHttpDTO);
         String jsonStr = jsonObject.toString();
         try {
@@ -234,22 +178,20 @@ public class UpdateStockImpl extends FetchStockImpl {
             ApiResponseBody apiResponseBody = (ApiResponseBody) JSONObject.toBean(resultJsonObject, ApiResponseBody.class, keyMapConfig);
             String code = apiResponseBody.getCode();
             if("0".equals(code)){
-                logger.info("==更新updateZhiCaiSkuList成功====resultJsonStr:"+resultJsonStr);
-                System.out.println("==更新updateZhiCaiSkuList成功====resultJsonStr:"+resultJsonStr);
-                return true;
+                logger.info("=============更新updateZhiCaiSkuList成功===============");
+                System.out.println("=============更新updateZhiCaiSkuList成功===============");
             }else{
-                loggerError.error("==更新updateZhiCaiSkuList失败===resultJsonStr:"+resultJsonStr);
-                System.err.println("==更新updateZhiCaiSkuList失败==resultJsonStr:"+resultJsonStr);
-                return false;
+                loggerError.error("=============更新updateZhiCaiSkuList成功===============");
+                System.err.println("=============更新updateZhiCaiSkuList成功===============");
             }
+
+            System.out.println("更新updateZhiCaiSkuList resultJsonStr:"+resultJsonStr);
+            logger.info("更新updateZhiCaiSkuList resultJsonStr:"+resultJsonStr);
         } catch (Exception e) {
-            loggerError.error("更新updateZhiCaiSkuList 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
-            System.out.println("更新updateZhiCaiSkuList 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
+            loggerError.error("更新updateSpMarketPrice 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
+            System.out.println("更新updateSpMarketPrice 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
             e.printStackTrace();
-            return false;
         }
-
     }
-
 
 }
