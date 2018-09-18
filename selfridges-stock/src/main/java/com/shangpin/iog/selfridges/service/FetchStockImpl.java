@@ -445,10 +445,10 @@ public class FetchStockImpl {
                     }else if(marketPrice!=null){
                         float temElementPrice = Float.parseFloat(price);
                         float spMarketPrice = Float.parseFloat(marketPrice);
-                        exportSpSkunoAndPrice(skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice);
+
                         if(temElementPrice!=spMarketPrice){ //价格发生改变
                             updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
-
+                            exportSpSkunoAndPrice(skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice);
                             logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                             System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                         }
