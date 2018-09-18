@@ -445,10 +445,10 @@ public class FetchStockImpl {
                     }else if(marketPrice!=null){
                         float temElementPrice = Float.parseFloat(price);
                         float spMarketPrice = Float.parseFloat(marketPrice);
-
+                        exportSpSkunoAndPrice(skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice);
                         if(temElementPrice!=spMarketPrice){ //价格发生改变
-                            //updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
-                            exportSpSkunoAndPrice(skuDTO.getSupplierSkuNo(),spMarketPrice,temElementPrice);
+                            updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
+
                             logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                             System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                         }
@@ -650,14 +650,14 @@ public class FetchStockImpl {
             Date yesterDate = new Date(new Date().getTime() - dayTime);
             String yesterdayDateStr = simpleDateFormat.format(yesterDate);
             message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"修改了价格的商品信息");
-            message.setFrom(new InternetAddress("tianxinghua93@163.com"));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress("1085024903@qq.com"));
-            /*//设置抄送人
-            message.setRecipient(Message.RecipientType.CC, new InternetAddress("用户名@163.com"));*/
+            message.setFrom(new InternetAddress("xinghua.tian@shangpin.com"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress("yuanwen.ma@shangpin.com"));
+            //设置抄送人
+            message.setRecipient(Message.RecipientType.CC, new InternetAddress("weidong.han@shangpin.com"));
             Multipart multipart = new MimeMultipart();
             //实例化一个bodypart用于封装内容
             BodyPart bodyPart = new MimeBodyPart();
-            bodyPart.setContent("<font color='red'>见附件</font>","text/html;charset=utf8");
+            bodyPart.setContent("<font color='red'>修改了价格的商品信息，见附件</font>","text/html;charset=utf8");
             //添加bodypart到multipart
             multipart.addBodyPart(bodyPart);
             //每一个部分实例化一个bodypart，故每个附件也需要实例化一个bodypart
@@ -673,7 +673,7 @@ public class FetchStockImpl {
             multipart.addBodyPart(bodyPart);
             message.setContent(multipart);
             Transport transport = session.getTransport("smtp");
-            transport.connect("smtp.163.com","tianxinghua93@163.com", "shangpin123");
+            transport.connect("smtp.shangpin.com","xinghua.tian@shangpin.com", "woaics123");
             transport.sendMessage(message, message.getAllRecipients());
             transport.close();
             logger.info("===================发送邮件成功 =========================");
@@ -685,11 +685,30 @@ public class FetchStockImpl {
             }
     }
 
-   /* public static void main(String[] args) {
-        long dayTime = 1000*3600*24l;
+  /* public static void main(String[] args) {
+       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+       String todayStr = simpleDateFormat.format(new Date());
+       long dayTime = 1000*3600*24l;
+       Date yesterDate = new Date(new Date().getTime() - dayTime);
+       SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+       String yesterdayDateStr = simpleDateFormat1.format(yesterDate);
+       String priceFilePath = filePath + "selfridges-price-"+yesterdayDateStr+".csv";
+       try {
+           OutputStreamWriter  priceOut = new OutputStreamWriter(new FileOutputStream(priceFilePath, true),"gb2312");
+           StringBuffer priceBuffer = new StringBuffer(
+                   "spSkuNO" + splitSign +
+                           "oldPrice" + splitSign +
+                           "newPrice" + splitSign
+           ).append("\r\n");
+               priceOut.write(priceBuffer.toString());
+               sendMail();
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+       *//*long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String yesterdayDateStr = simpleDateFormat.format(yesterDate);
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        String yesterdayDateStr = simpleDateFormat1.format(yesterDate);
         FetchStockImpl o=new FetchStockImpl();
         File file=new File(bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv");
         try {
@@ -705,7 +724,7 @@ public class FetchStockImpl {
             e.printStackTrace();
             loggerError.error(" ===================寻找csv文件失败=========================");
             System.out.println("===================寻找csv文件失败 =========================");
-        }
+        }*//*
         //o.sendMail();
     }*/
     protected void getFileToEmail(){
@@ -714,6 +733,7 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
         FetchStockImpl o=new FetchStockImpl();
+        String fileName=bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv";
         File file=new File(bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv");
         try {
             FileInputStream fis = new FileInputStream(file);
@@ -721,6 +741,7 @@ public class FetchStockImpl {
             if (fis.available()>0){
                 sendMail();
             }else {
+                deleteFile(fileName);
                 logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
                 System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
             }
@@ -728,6 +749,33 @@ public class FetchStockImpl {
             e.printStackTrace();
             loggerError.error(" ===================寻找csv文件失败=========================");
             System.out.println("===================寻找csv文件失败 =========================");
+        }
+    }
+
+    /*public static void main(String[] args) {
+        long dayTime = 1000*3600*24l;
+        Date yesterDate = new Date(new Date().getTime() - dayTime);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String todayStr = simpleDateFormat.format(new Date());
+        String yesterdayDateStr = simpleDateFormat.format(yesterDate);
+        String fileName=bdl.getString("csvFilePath")+"selfridges-price-"+todayStr+".csv";
+        System.out.println(fileName);
+        deleteFile(fileName);
+    }*/
+    public static boolean deleteFile(String fileName) {
+        File file = new File(fileName);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                System.out.println("删除单个文件" + fileName + "成功！");
+                return true;
+            } else {
+                System.out.println("删除单个文件" + fileName + "失败！");
+                return false;
+            }
+        } else {
+            System.out.println("删除单个文件失败：" + fileName + "不存在！");
+            return false;
         }
     }
    /* public static void main(String[] args) {
