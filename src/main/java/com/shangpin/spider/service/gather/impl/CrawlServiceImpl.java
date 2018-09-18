@@ -19,7 +19,8 @@ public class CrawlServiceImpl implements CrawlService{
 	
 	@Override
 	public Long insert(CrawlResult crawlResult) {
-		String tableName = crawlResult.getGender()+"_"+crawlResult.getBrand()+"_"+crawlResult.getCategory();
+		String tableName = crawlResult.getGender()+"_"+crawlResult.getBrand();
+//		+"_"+crawlResult.getCategory()
 		tableName = CreateTable.createTable(tableName);
 		LOG.info("----存入的表名为：{}",tableName);
 		crawlResultMapper.createTable(tableName);

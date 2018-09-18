@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -108,6 +110,15 @@ public class TwoClickUtil {
 							}
 						}	
 					}
+				}
+//				特殊处理，spu后拼接colorNum
+				String colorNum = map.get("colorNum");
+				crawlResultNew.setSpu(crawlResultNew.getSpu()+colorNum);
+				crawlResultNew.setProductModel(crawlResultNew.getSpu());
+				String detailLink = crawlResultNew.getDetailLink();
+				if(!detailLink.contains(colorNum)) {
+					detailLink = detailLink.substring(0, detailLink.indexOf("=")+1)+colorNum;
+					crawlResultNew.setDetailLink(detailLink);
 				}
 				crawlList.add(crawlResultNew);
 			}
@@ -239,6 +250,15 @@ public class TwoClickUtil {
 	private static synchronized List<Map<String, String>> clickCrawlDate(List<Map<String,String>> list,ChromeDriver driver) {
 		WebElement colorEle = driver.findElement(By.cssSelector("#product-content > div.product-variations > ul > li.attribute.color > div > ul > li.selected > a"));
 		String color = colorEle.getAttribute("title");
+		WebElement colorEleNum = driver.findElement(By.cssSelector("#product-content > div.product-variations > ul > li.attribute.color > div > ul > li.selected"));
+		String colorNumStr = colorEleNum.getAttribute("class").trim();
+		Pattern liePattern = Pattern.compile("\\d+");
+		Matcher lieMatcger = liePattern.matcher(colorNumStr);
+		String colorNum = "";
+		if(lieMatcger.find()) {
+			colorNum = lieMatcger.group();
+		}
+		
 		List<WebElement> imgElements = driver.findElements(By.cssSelector(".img-product"));
 		String pics = "";
 		for (WebElement imgEle : imgElements) {
@@ -254,13 +274,14 @@ public class TwoClickUtil {
 		}
 		String size = driver.findElement(By.cssSelector("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li.selected > a > div.defaultSize")).getText();
 		
-		System.err.println("\npics:"+pics+"\nqty:"+qty+"\tsize"+size+"\tcolor:"+color);
+		System.err.println("\npics:"+pics+"\nqty:"+qty+"\tsize"+size+"\tcolor:"+color+"\tcolorNum:"+colorNum);
 		System.err.println("----------");
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("color", color);
 		map.put("pics", pics);
 		map.put("qty", String.valueOf(qty));
 		map.put("size", size);
+		map.put("colorNum", colorNum);
 		list.add(map);
 		return list;
 	}
@@ -275,5 +296,21 @@ public class TwoClickUtil {
 		System.out.println("---result的值为：--"+result.getForeignPrice());
 		System.out.println("---result2的值为：--"+result2.getForeignPrice());
 		
+	}*/
+	/*public static void main(String[] args) {
+		String colorNumStr = "emptyswatch color0515";
+		Pattern liePattern = Pattern.compile("\\d+");
+		Matcher lieMatcger = liePattern.matcher(colorNumStr);
+		String colorNum = "";
+		if(lieMatcger.find()) {
+			colorNum = lieMatcger.group();
+		}
+		System.out.println(colorNum);
+		String detailLink = "https://fr.maje.com/fr/pret-a-porter/collection/blousons/basalt/E18BASALT.html?dwvar_E18BASALT_color=0067";
+		String colorNum = "0515";
+		if(!detailLink.contains(colorNum)) {
+			detailLink = detailLink.substring(0, detailLink.indexOf("=")+1)+colorNum;
+		}
+		System.out.println(detailLink);
 	}*/
 }
