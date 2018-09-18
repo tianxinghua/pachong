@@ -293,7 +293,6 @@ public class FetchStockImpl  {
 
                             for (int j = 0; j < skuSize; j++) {
                                 SkuDTO skuDTO = skuDTOs.get(j);
-                                String hubSize = skuDTO.getSize();
                                 String hubSupplierSkuNo = skuDTO.getSupplierSkuNo();
                                 String hubMarketPrice = skuDTO.getMarketPrice();
                                 if(hubSupplierSkuNo.equals(hermesSku)){
@@ -308,7 +307,7 @@ public class FetchStockImpl  {
                                             try {
                                                 logger.info("开始推送价格："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                                 System.out.println("开始推送价格："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
-                                                updateSpSkuMarketPrice(hubSupplierSkuNo,hubMarketPrice);
+                                                updateSpSkuMarketPrice(hubSupplierSkuNo,newMarketPrice);
                                                 logger.info("推送 价格成功："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                                 System.out.println("推送 价格成功："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                             } catch (Exception e) {
