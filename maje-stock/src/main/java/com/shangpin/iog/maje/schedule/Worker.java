@@ -1,6 +1,6 @@
 package com.shangpin.iog.maje.schedule;
 
-import com.shangpin.iog.LKBennett.service.FetchStockImpl;
+import com.shangpin.iog.maje.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 

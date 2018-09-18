@@ -1,7 +1,7 @@
 package com.shangpin.iog.maje.schedule;
 
-import com.shangpin.iog.LKBennett.service.FetchStockImpl;
-import com.shangpin.iog.LKBennett.service.UpdateStockImpl;
+import com.shangpin.iog.maje.service.FetchStockImpl;
+import com.shangpin.iog.maje.service.UpdateStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

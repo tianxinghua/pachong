@@ -325,7 +325,7 @@ public class FetchStockImpl {
                     for (int j = 0; j <spSkuSize ; j++) {
                         SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
                         for (int i = 0; i <pageSize ; i++) {
-                            String sizeValue=sizeElements.select("a").attr("title").toString();
+                            String sizeValue=sizeElements.get(i).select("a").attr("title").toString();
 
                             String temQty="";
                             try {
@@ -640,20 +640,13 @@ public class FetchStockImpl {
     }
    /* public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://www.lkbennett.com/product/AOANNEPOLYAMIDEMIXMultiNavy%20White~Anne-Blue-Stripe-Swimsuit-Navy%20White");
+        productDTO.setProductUrl("https://fr.maje.com/fr/nouveautes/categories/pret-a-porter/ravira/H18RAVIRA.html?dwvar_H18RAVIRA_color=0102");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
-        skuDTO.setSpSkuNo("30968589002");
-        skuDTO.setSize("S");
-        skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
-        skuDTO.setMarketPrice("49");
-        *//*SkuDTO skuDTO1=new SkuDTO();
-        skuDTO1.setSpSkuNo("555555");
-        skuDTO1.setSize("M");
-        skuDTO1.setMarketPrice("5355.00");
-        skuDTO1.setSupplierSkuNo("493117 X3I31 91693-53");*//*
+        skuDTO.setSize("2");
+        skuDTO.setMarketPrice("274");
+
         zhiCaiSkuResultList.add(skuDTO);
-        //zhiCaiSkuResultList.add(skuDTO1);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
         solveProductQty(productDTO);
 
