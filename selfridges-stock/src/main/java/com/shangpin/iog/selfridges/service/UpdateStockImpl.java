@@ -93,6 +93,8 @@ public class UpdateStockImpl extends FetchStockImpl {
         String endtDateTime = format.format(new Date());
         logger.info("===================更新selfridges库存数据库结束 "+endtDateTime+"=========================");
         System.out.println("=================更新selfridges库存数据库结束 "+endtDateTime+"=========================");
+        FetchStockImpl object=new  FetchStockImpl();
+        object.getFileToEmail();
     }
 
     public static void main(String[] args) {
@@ -201,8 +203,7 @@ public class UpdateStockImpl extends FetchStockImpl {
         Integer updateFailedNum = spSkuNoDTOS.size();
         System.out.println(" 本次更新尚品库存个数："+updateFailedNum);
         logger.info("本次更新尚品库存的个数："+updateFailedNum);
-        FetchStockImpl object=new  FetchStockImpl();
-        object.getFileToEmail();
+
     }
     /**
      * 调用接口更新 spSku qty 信息

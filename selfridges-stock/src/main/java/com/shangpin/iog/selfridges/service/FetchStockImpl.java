@@ -52,7 +52,7 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "1";
+    private static final String IN_STOCK = "5";
     //无库存
     private static final String NO_STOCK = "0";
 
@@ -112,9 +112,11 @@ public class FetchStockImpl {
                         "qty" + splitSign
         ).append("\r\n");
         StringBuffer priceBuffer = new StringBuffer(
-                "spSkuNO" + splitSign +
+                "supplierId" + splitSign +
+                        "spSkuNO" + splitSign +
                         "oldPrice" + splitSign +
-                        "newPrice" + splitSign
+                        "newPrice" + splitSign+
+                        "productUrl" + splitSign
         ).append("\r\n");
         try {
             out.write(buffer.toString());
@@ -448,7 +450,7 @@ public class FetchStockImpl {
 
                         if(temElementPrice!=spMarketPrice){ //价格发生改变
                             updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
-                            exportSpSkunoAndPrice(skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice);
+                            exportSpSkunoAndPrice("2018082802044",skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice,productUrl);
                             logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                             System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                         }
@@ -600,13 +602,15 @@ public class FetchStockImpl {
      * @param oldPrice 库中价格
      *  @param newPrice doc价格
      */
-    private static void exportSpSkunoAndPrice(String spSkuNo, Float oldPrice,Float newPrice) {
+    private static void exportSpSkunoAndPrice(String supplierId,String spSkuNo, Float oldPrice,Float newPrice,String productUrl) {
         //继续追加
         StringBuffer buffer = new StringBuffer();
         try {
+            buffer.append(supplierId).append(splitSign);
             buffer.append(spSkuNo).append(splitSign);
             buffer.append(oldPrice).append(splitSign);
             buffer.append(newPrice).append(splitSign);
+            buffer.append(productUrl).append(splitSign);
             buffer.append("\r\n");
             priceOut.write(buffer.toString());
             System.out.println("spSkuNo:"+spSkuNo+" newPrice:"+newPrice+"|");
@@ -614,6 +618,7 @@ public class FetchStockImpl {
             logger.info(buffer.toString());
             priceOut.flush();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     /**
@@ -651,9 +656,9 @@ public class FetchStockImpl {
             String yesterdayDateStr = simpleDateFormat.format(yesterDate);
             message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"修改了价格的商品信息");
             message.setFrom(new InternetAddress("xinghua.tian@shangpin.com"));
-            message.setRecipient(Message.RecipientType.TO, new InternetAddress("yuanwen.ma@shangpin.com"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress("sophia.huo@shangpin.com"));
             //设置抄送人
-            message.setRecipient(Message.RecipientType.CC, new InternetAddress("weidong.han@shangpin.com"));
+            message.setRecipient(Message.RecipientType.CC, new InternetAddress("xinghua.tian@shangpin.com"));
             Multipart multipart = new MimeMultipart();
             //实例化一个bodypart用于封装内容
             BodyPart bodyPart = new MimeBodyPart();
@@ -669,7 +674,7 @@ public class FetchStockImpl {
             DataHandler dataHandler = new DataHandler(dataSource);
             bodyPart.setDataHandler(dataHandler);
             //设置附件标题，使用MimeUtility进行名字转码，否则接收到的是乱码
-            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(yesterdayDateStr+"修改了价格的商品信息"));
+            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(yesterdayDateStr+"修改了价格的商品信息"+".csv"));
             multipart.addBodyPart(bodyPart);
             message.setContent(multipart);
             Transport transport = session.getTransport("smtp");
@@ -685,7 +690,7 @@ public class FetchStockImpl {
             }
     }
 
-  /* public static void main(String[] args) {
+   /*public static void main(String[] args) {
        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
        String todayStr = simpleDateFormat.format(new Date());
        long dayTime = 1000*3600*24l;
@@ -696,9 +701,11 @@ public class FetchStockImpl {
        try {
            OutputStreamWriter  priceOut = new OutputStreamWriter(new FileOutputStream(priceFilePath, true),"gb2312");
            StringBuffer priceBuffer = new StringBuffer(
+                   "supplierId" + splitSign +
                    "spSkuNO" + splitSign +
                            "oldPrice" + splitSign +
-                           "newPrice" + splitSign
+                           "newPrice" + splitSign+
+                           "productUrl" + splitSign
            ).append("\r\n");
                priceOut.write(priceBuffer.toString());
                sendMail();
@@ -724,20 +731,23 @@ public class FetchStockImpl {
             e.printStackTrace();
             loggerError.error(" ===================寻找csv文件失败=========================");
             System.out.println("===================寻找csv文件失败 =========================");
-        }*//*
-        //o.sendMail();
+        }
+        //o.sendMail();*//*
     }*/
+  /* public static void main(String[] args) {
+       FetchStockImpl p=new FetchStockImpl();
+       p.getFileToEmail();
+   }*/
     protected void getFileToEmail(){
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        FetchStockImpl o=new FetchStockImpl();
         String fileName=bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv";
         File file=new File(bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv");
         try {
             FileInputStream fis = new FileInputStream(file);
-            //System.out.println("文件的大小是："+fis.available()+"\n");
+            System.out.println("文件的大小是："+fis.available()+"\n");
             if (fis.available()>0){
                 sendMail();
             }else {
@@ -764,6 +774,7 @@ public class FetchStockImpl {
     }*/
     public static boolean deleteFile(String fileName) {
         File file = new File(fileName);
+        System.gc();
         // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
