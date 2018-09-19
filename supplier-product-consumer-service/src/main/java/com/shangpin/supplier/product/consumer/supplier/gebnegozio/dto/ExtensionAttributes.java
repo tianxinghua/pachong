@@ -14,6 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 public class ExtensionAttributes {
-    private ConfigurableProductOptions configurableProductOptions;
-    private List<Integer> configurableProductLinks = new ArrayList<Integer>();
+    private ConfigurableProductOptions configurable_product_options;
+    private List<Integer> configurable_product_links = new ArrayList<Integer>();
 }

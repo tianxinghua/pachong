@@ -361,22 +361,11 @@ public class GebnegozioServiceImpl implements IOrderService {
 
     /**
      * 设置支付方式
-     *  {
-         "code": "cashondelivery",  //货到付款
-         "title": "Cash On Delivery"
-         },
+     *
         {
          "code": "banktransfer",  //银行转帐
         "title": "Bank Transfer Payment"
-        },
-        {
-        "code": "purchaseorder", //采购订单
-        "title": "Purchase Order"
-         },
-        {
-        "code": "checkmo",  //支票/汇票
-        "title": "Check / Money order"
-         }
+        }
      */
     public PaymentMethod getPayMethod(){
 
@@ -391,7 +380,7 @@ public class GebnegozioServiceImpl implements IOrderService {
      * @return
      */
     public String selStock( String sku , String token ){
-        String qty = null;
+        String qty = "0";
         if ( null != sku && !sku.equals("") ){
             try {
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
@@ -399,7 +388,10 @@ public class GebnegozioServiceImpl implements IOrderService {
                 HashMap<String,String> stockJson = selMessage(token , stockUrl);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson.get("resBody") , StockDTO.class);
-                    qty = stockDTO.getQty();
+                    qty = stockDTO.getStockItem().getQty();
+                    if(null == qty && qty.equals("")){
+                        qty = "0";
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();

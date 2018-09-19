@@ -165,14 +165,14 @@ public class GebnegozioHandle implements ISupplierHandler {
             if(size==null){
                 size = "A";
             }
-            String price = selProductAttribute( item , token , "cost");
+            //String price = selProductAttribute( item , token , "cost");
             String supplierSkuNo = item.getSku();
             hubSku.setSupplierSkuNo(supplierSkuNo);
             hubSku.setSupplierSkuName(item.getName());
             hubSku.setSupplierBarcode(supplierSkuNo);
-            hubSku.setMarketPrice( new BigDecimal(StringUtil.verifyPrice(price)) );//市场价
-            hubSku.setSalesPrice( new BigDecimal(StringUtil.verifyPrice(price)) );//售价
-            hubSku.setSupplyPrice( new BigDecimal(StringUtil.verifyPrice(price)) );//供价
+            hubSku.setMarketPrice( item.getFinal_price() );//市场价
+            hubSku.setSalesPrice( item.getFinal_price() );//售价
+            hubSku.setSupplyPrice( item.getFinal_price() );//供价
             /*
             hubSku.setMarketPrice( item.getFinal_price() );
             hubSku.setSupplyPrice( item.getPrice() );
@@ -326,9 +326,9 @@ public class GebnegozioHandle implements ISupplierHandler {
             String sizeJson = selMessage(token , url);
             if (null != sizeJson && !sizeJson.equals("")){
                 GebnegozioDetailDTO gebnegozioDetailDTO = gson.fromJson(sizeJson , GebnegozioDetailDTO.class );
-                List<Values> sizeValues = gebnegozioDetailDTO.getExtension_attributes().getConfigurableProductOptions().getValues();
+                List<Values> sizeValues = gebnegozioDetailDTO.getExtension_attributes().getConfigurable_product_options().getValues();
                 for ( Values values : sizeValues ) {
-                    String sizeLable = selProductAttributeDetil( "size" , token , values.getValueIndex());
+                    String sizeLable = selProductAttributeDetil( "size" , token , values.getValue_index());
                     sizeList.add(sizeLable);
                 }
             }
@@ -341,7 +341,7 @@ public class GebnegozioHandle implements ISupplierHandler {
      * @return
      */
     public String selStock( String sku , String token ){
-        String qty = null;
+        String qty = "";
         if ( null != sku && !sku.equals("") ){
             try {
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
@@ -349,7 +349,10 @@ public class GebnegozioHandle implements ISupplierHandler {
                 String stockJson = selMessage(token , url);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
-                    qty = stockDTO.getQty();
+                    qty = stockDTO.getStock_item().getQty();
+                    if(null == qty && qty.equals("")){
+                        qty = "0";
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();

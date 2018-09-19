@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Created by zhaowenjun on 2018/9/12.
+ * Created by zhaowenjun on 2018/9/19.
  */
 @Getter
 @Setter
-public class StockDTO {
+public class StockItemDTO {
+    @SerializedName("item_id")
+    @Expose
+    private String itemId;
     @SerializedName("product_id")
     @Expose
     private String productId;
@@ -20,10 +23,7 @@ public class StockDTO {
     @SerializedName("qty")
     @Expose
     private String qty;
-    @SerializedName("stock_status")
+    @SerializedName("is_in_stock")
     @Expose
-    private String stockStatus;
-    @SerializedName("stock_item")
-    @Expose
-    private StockItemDTO stockItem;
+    private String isInStock;
 }
