@@ -117,7 +117,10 @@ public class ProductFetchUtil {
                 String stockJson = selMessage(token , url);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
-                    qty = stockDTO.getQty();
+                    qty = stockDTO.getStockItem().getQty();
+                    if(null == qty && qty.equals("")){
+                        qty = "0";
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
