@@ -3,12 +3,10 @@ package com.shangpin.ephub.product.business.service.pending;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shangpin.ephub.client.data.mysql.enumeration.SourceFromEnum;
 import com.shangpin.ephub.client.data.mysql.enumeration.SpuState;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSpuPendingDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.*;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuGateWay;
 import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSpuPendingGateWay;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.pending.body.spu.PendingSpu;
 
 import com.shangpin.ephub.client.product.business.hubpending.spu.result.HubPendingSpuCheckResult;
@@ -35,6 +33,9 @@ public class PendingCommonService {
     @Autowired
     HubSpuPendingGateWay spuPendingGateWay;
 
+    @Autowired
+    private HubSupplierSpuGateWay hubSupplierSpuGateWay;
+
 
     public HubSpuPendingDto getHandleWebSpiderdSpuPending(String brandNo,String spuModel){
         HubSpuPendingCriteriaDto criteria = new HubSpuPendingCriteriaDto();
@@ -45,6 +46,15 @@ public class PendingCommonService {
         return null;
     }
 
+
+    public HubSupplierSpuDto getHubSupplierSpuPO(Long supplierSpuId){
+        HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+        criteria.setFields("market_price , sale_price");
+        criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+        List<HubSupplierSpuDto> hubSupplierSpuDtos = hubSupplierSpuGateWay.selectByCriteria(criteria);
+        if(null!=hubSupplierSpuDtos&&hubSupplierSpuDtos.size()>0) return hubSupplierSpuDtos.get(0);
+        return null;
+    }
 
 
     /**

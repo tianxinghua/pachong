@@ -70,5 +70,9 @@ public class PendingProductDto extends HubSpuPendingDto {
 	 * 描述
 	 */
 	private String supplierSpuDesc;
+	/**
+	 * 价格
+	 */
+	private String price;
 
 }

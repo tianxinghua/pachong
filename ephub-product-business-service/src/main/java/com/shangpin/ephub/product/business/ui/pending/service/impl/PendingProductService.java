@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.shangpin.ephub.client.data.mysql.enumeration.*;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.product.business.service.model.BrandModelRuleBSService;
 import com.shangpin.ephub.product.business.service.pending.*;
 import com.shangpin.ephub.product.business.ui.pending.vo.*;
@@ -101,6 +102,8 @@ public class PendingProductService extends PendingSkuService{
 	@Autowired
 	WebSpiderService webSpiderService;
 
+
+
 	@Override
 	public PendingProducts findPendingProducts(PendingQuryDto pendingQuryDto,boolean flag){
 		log.info("findPendingProducts接收到的查询条件："+JsonUtil.serialize(pendingQuryDto));
@@ -154,6 +157,15 @@ public class PendingProductService extends PendingSkuService{
 						pendingProduct.setAuditDateStr(null != pendingSpu.getAuditDate() ? DateTimeUtil.getTime(pendingSpu.getAuditDate()) : "");
 						pendingProduct.setErrorReason(null != errorReasons ? errorReasons.get(pendingSpu.getSpuPendingId()) : "");
 						pendingProduct.setSupplierSpuDesc(null != pendingSpu.getSpuDesc() ? pendingSpu.getSpuDesc() : "");
+						//从hubSupplierSpu 中 获取价格
+						HubSupplierSpuDto supplierSpuDto = pendingCommonService.getHubSupplierSpuPO(pendingSpu.getSupplierSpuId());
+						if(null!=supplierSpuDto){
+							pendingProduct.setPrice((null!=supplierSpuDto.getMarketPrice()?supplierSpuDto.getMarketPrice().toString():"") + "|" +
+									(null!=supplierSpuDto.getSalePrice()?supplierSpuDto.getSalePrice().toString():""));
+						}else{
+							pendingProduct.setPrice("");
+						}
+
 						products.add(pendingProduct);
 					}
 					pendingProducts.setProduts(products);
