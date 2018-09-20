@@ -622,7 +622,7 @@ public class GatherUtil {
 	 */
 	public static Boolean filterNeedClick(String resultFieldName) {
 		Boolean flag = false;
-		String[] needClickField = {"color","size","qty","pics"};
+		String[] needClickField = {"color","size","qty","pics","foreignPrice","salePrice"};
 		for (String field : needClickField) {
 			if(resultFieldName.equals(field)) {
 				flag = true;

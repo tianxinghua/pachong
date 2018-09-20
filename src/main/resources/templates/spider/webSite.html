@@ -156,6 +156,10 @@
 					</textarea></div>
 					<br/>
 					
+					<div>supplierId：<input type="text" name="supplierId"/>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					
+					<div>supplierNo：<input type="text" name="supplierNo"/>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					
 					<div>类型的策略：<input type="text" name="categoryStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
 					<button type="button" class="btn btn-default" name="categoryStrategyBtn">选择</button>
 					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">OR</button>
@@ -645,7 +649,8 @@
 	                		
 	                		$("[name='measurementStrategy']").val(spiderRules.measurementStrategy);
 	                		$("[name='measurementRules']").val(spiderRules.measurementRules);
-	                		
+	                		$("[name='supplierId']").val(spiderRules.supplierId);
+	                		$("[name='supplierNo']").val(spiderRules.supplierNo);
             			}
         			},"json")
         		
@@ -723,7 +728,8 @@
         		var measurementStrategy = $("[name='measurementStrategy']").val();
         		
         		//alert("--"+brandRules+"---"+brandStrategy);
-        		
+        		var supplierId = $("[name='supplierId']").val();
+        		var supplierNo = $("[name='supplierNo']").val();
         		
         		
         		$.post("/spider/saveWebRule",
@@ -773,7 +779,9 @@
         					picsRules:picsRules,
         					picsStrategy:picsStrategy,
         					measurementRules:measurementRules,
-        					measurementStrategy:measurementStrategy
+        					measurementStrategy:measurementStrategy,
+        					supplierId:supplierId,
+        					supplierNo:supplierNo
         					
         				}
         				 ,function(msg){

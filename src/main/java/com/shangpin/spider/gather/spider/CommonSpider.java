@@ -1,5 +1,6 @@
 package com.shangpin.spider.gather.spider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,19 +103,39 @@ public class CommonSpider{
 		if(redisList!=null&&redisList.size()>0) {
 			for (RedisCache redisCache : redisList) {
 				String webName = redisCache.getWebName();
-				if(webName.contains(whiteName)) {
+				if(webName.equals(whiteName)) {
 					taskCount = redisCache.getTaskCount();
 					break;
 				}
 			}
 		}
 		if(taskCount==0) {
-			Request request = new Request(spiderRuleInfo.getSourceUrl());
-			Map<String, Object> extras = new HashMap<String,Object>();
-			extras.put("whiteId", spiderRuleInfo.getWhiteId());
-			request.setExtras(extras);
-			request.setMethod("get");
-			spider.addRequest(request);
+			String sourceUrl = spiderRuleInfo.getSourceUrl();
+			if(sourceUrl.contains("#OR")) {
+				List<Request> list = new ArrayList<Request>();
+				String[] sourceUrlArray = sourceUrl.split("#OR");
+				for (String sourceUrlStr : sourceUrlArray) {
+					Request request = new Request();
+					request.setUrl(sourceUrlStr);
+					Map<String, Object> extras = new HashMap<String,Object>();
+					extras.put("whiteId", spiderRuleInfo.getWhiteId());
+					request.setExtras(extras);
+					request.setMethod("get");
+					list.add(request);
+				}
+				spider.startRequest(list);
+			}else {
+				Request request = new Request();
+				request.setUrl(sourceUrl);
+				Map<String, Object> extras = new HashMap<String,Object>();
+				extras.put("whiteId", spiderRuleInfo.getWhiteId());
+				request.setExtras(extras);
+				request.setMethod("get");
+				spider.addRequest(request);
+			}
+			
+			
+			
 		}
 		// 设置pipeline,scheduler
 		spider.addPipeline(mypipeline);
@@ -149,6 +170,7 @@ public class CommonSpider{
 		log.info("创建爬虫！");
 		MySpider spider = new MySpider(new MyPageProcessor(spiderRuleInfo),
 				spiderRuleInfo, pool);
+		spider.setUUID(spiderRuleInfo.getWhiteId().toString());
 		return spider;
 	}
 

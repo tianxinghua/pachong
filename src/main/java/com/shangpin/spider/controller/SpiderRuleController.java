@@ -76,8 +76,8 @@ public class SpiderRuleController {
 	
 	@RequestMapping("saveWebRule")
 	@ResponseBody
-	public int saveWebRule(SpiderRules spiderRuleInfo,Long whiteInfoId,Long spiderRuleId){
-		int result = spiderRulesService.saveWebRule(spiderRuleInfo,whiteInfoId,spiderRuleId);
+	public int saveWebRule(SpiderRules spiderRuleInfo,Long spiderRuleId){
+		int result = spiderRulesService.saveWebRule(spiderRuleInfo,spiderRuleId);
 		return result;
 	}
 	

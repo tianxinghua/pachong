@@ -21,12 +21,12 @@ public class SpiderRulesServiceImpl implements SpiderRulesService{
 	private SpiderRulesMapper spiderRulesMapper;
 	
 	@Override
-	public int saveWebRule(SpiderRules spiderRuleInfo, Long whiteInfoId, Long spiderRuleId) {
+	public int saveWebRule(SpiderRules spiderRuleInfo, Long spiderRuleId) {
 		try {
 			if(spiderRuleId==0){
 				spiderRulesMapper.insertSelective(spiderRuleInfo);
 				Long spiderRuleId1 = spiderRuleInfo.getId();
-				spiderWhiteService.saveRuleId(whiteInfoId,spiderRuleId1);
+				spiderWhiteService.saveRuleId(spiderRuleInfo.getWhiteId(),spiderRuleId1);
 			}else{
 				spiderRuleInfo.setId(spiderRuleId);
 				spiderRulesMapper.updateByPrimaryKey(spiderRuleInfo);

@@ -156,7 +156,8 @@ public class RedisManager {
 			if(whiteInfoList!=null&&whiteInfoList.size()>0){
 				domainMap = new HashMap<String,String>();
 				for (SpiderWhiteInfo spiderWhiteInfo : whiteInfoList) {
-					String domain = GatherUtil.getFefferrerHost(spiderWhiteInfo.getUrl());
+//					String domain = GatherUtil.getFefferrerHost(spiderWhiteInfo.getUrl());
+					String domain = spiderWhiteInfo.getId().toString();
 					String name = spiderWhiteInfo.getName();
 					if(domainMap.containsKey(domain)){
 						String nameOld = domainMap.get(domain);

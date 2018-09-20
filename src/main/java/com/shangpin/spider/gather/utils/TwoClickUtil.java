@@ -1,6 +1,7 @@
 package com.shangpin.spider.gather.utils;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,8 +114,11 @@ public class TwoClickUtil {
 				}
 //				特殊处理，spu后拼接colorNum
 				String colorNum = map.get("colorNum");
+				BigDecimal foreignPrice = BigDecimal.valueOf(Double.parseDouble(map.get("foreignPrice")));
 				crawlResultNew.setSpu(crawlResultNew.getSpu()+colorNum);
 				crawlResultNew.setProductModel(crawlResultNew.getSpu());
+				crawlResultNew.setForeignPrice(foreignPrice);
+				crawlResultNew.setSalePrice(foreignPrice);
 				String detailLink = crawlResultNew.getDetailLink();
 				if(!detailLink.contains(colorNum)) {
 					detailLink = detailLink.substring(0, detailLink.indexOf("=")+1)+colorNum;
@@ -151,6 +155,8 @@ public class TwoClickUtil {
 			List<Map<String, String>> list = localList.get();
 			list = new ArrayList<Map<String, String>>();
 			resultList = simulationClick(list,driver,initI,initJ,recursionFlag,url);
+			initI = new AtomicInteger(0);
+			initJ = new AtomicInteger(0);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -161,9 +167,9 @@ public class TwoClickUtil {
 	
 	
 //	两层动态元素
-	private static synchronized List<Map<String,String>> simulationClick(List<Map<String,String>> list,ChromeDriver driver,AtomicInteger init_i,AtomicInteger init_j,Boolean recursionFlag, String url) {
-		int j = init_j.get();
-		int i = init_i.get();
+	private static synchronized List<Map<String,String>> simulationClick(List<Map<String,String>> list,ChromeDriver driver,AtomicInteger initI,AtomicInteger initJ,Boolean recursionFlag, String url) {
+		int j = initJ.get();
+		int i = initI.get();
 		
 //		第一步，模拟点击第一个动态元素
 		List<WebElement> elements1 = null;
@@ -179,8 +185,8 @@ public class TwoClickUtil {
 		System.err.println("----\t第一层此时的下标为："+i);
 		if(recursionFlag||(i==0&&j==0)) {
 			if(firstSize!=1) {
-				init_j = new AtomicInteger(0);
-				j = init_j.get();
+				initJ = new AtomicInteger(0);
+				j = initJ.get();
 				recursionFlag = false;
 				WebElement element = elements1.get(i);
 				try {
@@ -222,10 +228,10 @@ public class TwoClickUtil {
 		}
 		
 //		第二层下标加1
-		init_j.incrementAndGet();
-		if(init_j.get()>=sencondSize) {
+		initJ.incrementAndGet();
+		if(initJ.get()>=sencondSize) {
 			if(i!=firstSize-1) {
-				init_i.incrementAndGet();
+				initI.incrementAndGet();
 			}
 			recursionFlag = true;
 		}
@@ -233,11 +239,11 @@ public class TwoClickUtil {
 //			点击后获取的字段值，在此获取
 			list = clickCrawlDate(list,driver);
 //			递归			
-			simulationClick(list,driver,init_i,init_j,recursionFlag,url);
+			simulationClick(list,driver,initI,initJ,recursionFlag,url);
 		}
 //		确保最后一次入库
 		if(endInt.get()==0) {
-			if(init_j.get()==sencondSize&&i==firstSize-1){
+			if(initJ.get()==sencondSize&&i==firstSize-1){
 				LOG.error("{}链接最后一次点击入库！",url);
 				list = clickCrawlDate(list,driver);
 				endInt.incrementAndGet();
@@ -270,11 +276,12 @@ public class TwoClickUtil {
 		String qtyFlag = driver.findElement(By.cssSelector("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li.selected")).getAttribute("class");
 		int qty = 0;
 		if(!qtyFlag.contains("unselectable")) {
-			qty = 1;
+			qty = 5;
 		}
 		String size = driver.findElement(By.cssSelector("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li.selected > a > div.defaultSize")).getText();
+		String foreignPrice = driver.findElement(By.cssSelector("#pdpMain > div.wrapper-product-image-container.clearfix > div.product-col-2.product-detail > div.productPrices > div > span")).getAttribute("content").toString();
 		
-		System.err.println("\npics:"+pics+"\nqty:"+qty+"\tsize"+size+"\tcolor:"+color+"\tcolorNum:"+colorNum);
+		System.err.println("\npics:"+pics+"\nqty:"+qty+"\tsize"+size+"\tcolor:"+color+"\tcolorNum:"+colorNum+"\foreignPrice:"+foreignPrice);
 		System.err.println("----------");
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("color", color);
@@ -282,6 +289,7 @@ public class TwoClickUtil {
 		map.put("qty", String.valueOf(qty));
 		map.put("size", size);
 		map.put("colorNum", colorNum);
+		map.put("foreignPrice", foreignPrice);
 		list.add(map);
 		return list;
 	}
