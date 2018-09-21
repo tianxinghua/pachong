@@ -1,4 +1,4 @@
-package com.shangpin.iog.LKBennett;
+package com.shangpin.iog.maje;
 
 /**
  * Created by wanner on 2018/6/27
