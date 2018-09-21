@@ -381,7 +381,7 @@ public class FetchStockImpl  {
         jsonObject.put("skus",skuList);
 
         String jsonStr = jsonObject.toString();
-        String qtyUrl = "https://www.hermes.com/apps/ecom/stock";
+        String qtyUrl = "https://ecp.hermes.com/stock";
 
         //operateData(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,Map<String,String> headerMap,String username,String password)
         String resultJsonStr = HttpUtil45.operateData("post", "json", qtyUrl, timeConfig, null, jsonStr,headerMap, null, null);
