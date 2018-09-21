@@ -61,10 +61,8 @@ public class ProductFetchUtil {
                 String token = selToken();
                 if(null != token && !token.equals("")) {
                     String qty = selStock( sku , token );
-                    if( qty != null && qty.contains(".") ){
-                        qty = qty.split("\\.")[0];
-                    }else{
-                        qty="0";
+                    if( null == qty && qty.equals("") ){
+                        qty = "0";
                     }
                     spStockMap.put( sku , qty );
                 }
@@ -117,7 +115,10 @@ public class ProductFetchUtil {
                 String stockJson = selMessage(token , url);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
-                    qty = stockDTO.getQty();
+                    qty = stockDTO.getStockItem().getQty();
+                    if(null == qty && qty.equals("")){
+                        qty = "0";
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
