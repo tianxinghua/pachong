@@ -183,6 +183,10 @@ public class TwoClickUtil {
 		firstSize = elements1.size();
 		System.err.println("----\t第一层的元素个数为："+firstSize);
 		System.err.println("----\t第一层此时的下标为："+i);
+		if(i+1>firstSize) {
+			System.err.println("----\t第一层下标越界。");
+			return list;
+		}
 		if(recursionFlag||(i==0&&j==0)) {
 			if(firstSize!=1) {
 				initJ = new AtomicInteger(0);
@@ -212,6 +216,10 @@ public class TwoClickUtil {
 		Integer sencondSize = elements2.size();
 		System.err.println("----\t第二层的元素个数为："+sencondSize);
 		System.err.println("----\t第二层此时的下标为："+j);
+		if(j+1>sencondSize) {
+			System.err.println("----\t第二层下标越界。");
+			return list;
+		}
 		WebElement element2 = null;
 		if(j<=sencondSize-1) {
 			element2 = elements2.get(j);
@@ -281,7 +289,7 @@ public class TwoClickUtil {
 		String size = driver.findElement(By.cssSelector("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li.selected > a > div.defaultSize")).getText();
 		String foreignPrice = driver.findElement(By.cssSelector("#pdpMain > div.wrapper-product-image-container.clearfix > div.product-col-2.product-detail > div.productPrices > div > span")).getAttribute("content").toString();
 		
-		System.err.println("\npics:"+pics+"\nqty:"+qty+"\tsize"+size+"\tcolor:"+color+"\tcolorNum:"+colorNum+"\foreignPrice:"+foreignPrice);
+		System.err.println("\npics:"+pics+"\nqty:"+qty+"\tsize"+size+"\tcolor:"+color+"\tcolorNum:"+colorNum+"\tforeignPrice:"+foreignPrice);
 		System.err.println("----------");
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("color", color);

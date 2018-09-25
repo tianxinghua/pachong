@@ -74,7 +74,7 @@ public class SpChromeDriverPool extends WebDriverPool{
 	 * 取出driver
 	 * @return
 	 */
-	public WebDriver get() {
+	public synchronized WebDriver get() {
 		WebDriver driver = null;
 		int size = innerQueue.size();
 		LOG.info("-----innerQueue.size()为："+innerQueue.size());
@@ -124,7 +124,7 @@ public class SpChromeDriverPool extends WebDriverPool{
 	 * 返还driver
 	 * @param driver
 	 */
-	public void returnToPool(WebDriver driver) {
+	public synchronized void returnToPool(WebDriver driver) {
 		if(driver!=null) {
 			changeCount.incrementAndGet();
 			innerQueue.add(driver);

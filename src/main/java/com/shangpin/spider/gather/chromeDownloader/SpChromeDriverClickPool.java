@@ -109,7 +109,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	 * 返还driver
 	 * @param driver
 	 */
-	public void returnToPool(WebDriver driver) {
+	public synchronized void returnToPool(WebDriver driver) {
 		if(driver!=null) {
 			changeCount.incrementAndGet();
 			innerQueue.add(driver);
