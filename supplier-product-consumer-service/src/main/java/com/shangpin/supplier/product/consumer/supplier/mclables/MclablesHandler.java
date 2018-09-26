@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.shangpin.supplier.product.consumer.supplier.mclables.dto.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,6 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.mclables.dto.AttributeInfo;
-import com.shangpin.supplier.product.consumer.supplier.mclables.dto.ImageInfoSubmit;
-import com.shangpin.supplier.product.consumer.supplier.mclables.dto.Item;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,18 +41,17 @@ public class MclablesHandler implements ISupplierHandler {
 	public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
 		try {
 			if(!StringUtils.isEmpty(message.getData())){
-				Item item = JsonUtil.deserialize(message.getData(), Item.class);
+				ItemInfo item = JsonUtil.deserialize(message.getData(), ItemInfo.class);
 				String supplierId = message.getSupplierId();
-				
 				mongoService.save(supplierId, item.getSku(), item);
-				
+
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				boolean succ = convertSpu(supplierId,hubSpu,item);
 				List<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-				HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-				boolean success = convertSku(supplierId,hubSku,item);
-				if(success){
-					hubSkus.add(hubSku);
+				boolean success = convertSku(supplierId,hubSkus,item);
+				if (success == false){
+					log.error("sku异常");
+					return;
 				}
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, converImage(item));
 				if(succ){
@@ -74,14 +71,25 @@ public class MclablesHandler implements ISupplierHandler {
 	 * @param item
 	 * @return
 	 */
-	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,Item item){
+	private boolean convertSpu(String supplierId,HubSupplierSpuDto hubSpu,ItemInfo item){
 		if(null != item){
-			if("false".equals(item.getVariationInfo().getIsParent())){
+			//if("false".equals(item.getVariationInfo().getIsParent())){
 				hubSpu.setSupplierId(supplierId);
-				hubSpu.setSupplierSpuNo(item.getVariationInfo().getParentSku());
-				hubSpu.setSupplierSpuModel(item.getVariationInfo().getParentSku());
+				hubSpu.setSupplierSpuNo(item.getSku());
+				hubSpu.setSupplierSpuModel(item.getSku());
 				hubSpu.setSupplierSpuName(item.getTitle());
-				List<AttributeInfo> attributeInfolist = item.getAttributeList().getAttributeInfo();
+				hubSpu.setSupplierSpuColor(item.getColor());
+				hubSpu.setSupplierGender(item.getGender());
+				hubSpu.setSupplierCategoryname(item.getCategory());
+				hubSpu.setSupplierBrandname(item.getBrand());
+				hubSpu.setSupplierSeasonname(item.getSeason());
+				hubSpu.setSupplierMaterial(item.getMaterial().toString());
+				hubSpu.setSupplierOrigin("");
+				hubSpu.setSupplierSpuDesc(item.getDescription());
+				return true;
+			}
+		//}
+		/*List<AttributeInfo> attributeInfolist = item.getAttributeList().getAttributeInfo();
 				String color = "";
 				String gender = "";
 				String material = "";
@@ -99,35 +107,47 @@ public class MclablesHandler implements ISupplierHandler {
 					if("season".equals(attr.getName())){
 						season = attr.getValue();
 					}
-				}
-				hubSpu.setSupplierSpuColor(color);
-				hubSpu.setSupplierGender(gender);
-				hubSpu.setSupplierCategoryname(item.getClassification());
-				hubSpu.setSupplierBrandname(item.getBrand());
-				hubSpu.setSupplierSeasonname(season);
-				hubSpu.setSupplierMaterial(material);
-				hubSpu.setSupplierOrigin("");
-				hubSpu.setSupplierSpuDesc(item.getStoreInfo().getDescription());
-				return true;
-			}
-		}
+				}*/
 		return false;
 	}
 	/**
 	 * 
 	 * @param supplierId
-	 * @param hubSku
+	 * @param hubSkus
 	 * @param item
 	 * @return
 	 */
-	private boolean convertSku(String supplierId,HubSupplierSkuDto hubSku, Item item){
+	private boolean convertSku(String supplierId,List<HubSupplierSkuDto> hubSkus, ItemInfo item){
 		if(null != item){
-			if("false".equals(item.getVariationInfo().getIsParent())){
-				hubSku.setSupplierId(supplierId);
+			//if("false".equals(item.getVariationInfo().getIsParent())){
+			List<Variantinfo> variants = item.getVariants();
+			if (null != variants && variants.size() > 0){
+				variants.stream().forEach(t->{
+					HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+					hubSku.setSupplierId(supplierId);
+					hubSku.setSupplierSkuNo(t.getCode());
+					hubSku.setSupplierSkuName(item.getTitle());
+					hubSku.setSupplierBarcode(t.getCode());
+					hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getRetailPrice())));
+					hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getListPrice())));
+					hubSku.setSupplierSkuSize(t.getSize());
+					hubSku.setStock(StringUtil.verifyStock(t.getQuantity()));
+					hubSkus.add(hubSku);
+				});
+				return true;
+			}
+				/*
+				String size = "";
+					for(AttributeInfo attr:item.getAttributeList().getAttributeInfo()){
+						if("Brand_size".equals(attr.getName())){//size
+							size  = attr.getValue();
+							break;
+						}
+					}hubSku.setSupplierId(supplierId);
 				hubSku.setSupplierSkuNo(item.getSku());
 				hubSku.setSupplierSkuName(item.getTitle());
 				hubSku.setSupplierBarcode(item.getEAN());
-				hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getPriceInfo().getRetailPrice())));
+				hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getRetailPrice())));
 				hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getPriceInfo().getChannelPrice())));
 				String size = "";
 				for(AttributeInfo attr:item.getAttributeList().getAttributeInfo()){
@@ -137,21 +157,22 @@ public class MclablesHandler implements ISupplierHandler {
 					}
 				}
 				hubSku.setSupplierSkuSize(size);
-				hubSku.setStock(StringUtil.verifyStock(item.getDistributionCenterList().getDistributionCenterInfoSubmit().getQuantity()));
-				return true;
+				hubSku.setStock(StringUtil.verifyStock(item.getDistributionCenterList().getDistributionCenterInfoSubmit().getQuantity()));*/
 			}
-		}
+		//}
 		return false;
 	}
 	
-	private List<Image> converImage(Item item){
+	private List<Image> converImage(ItemInfo item){
 		List<Image> images = new ArrayList<Image>();
-		if(null != item && null != item.getImageList() && CollectionUtils.isNotEmpty(item.getImageList().getImageInfoSubmit())){
-			List<ImageInfoSubmit> listImages = item.getImageList().getImageInfoSubmit();
-			for(ImageInfoSubmit imageInfoSubmit:listImages){
-				Image image = new Image();
-				image.setUrl(imageInfoSubmit.getFilenameOrUrl());
-				images.add(image);
+		List<Map<String, String>> imagesList = item.getImages();
+		if(null != item && null != imagesList && CollectionUtils.isNotEmpty(imagesList)){
+			for (Map<String, String> map : imagesList) {
+				for (String str : map.keySet()) {
+					Image image = new Image();
+					image.setUrl(map.get(str));
+					images.add(image);
+				}
 			}
 		}
 		return images;
