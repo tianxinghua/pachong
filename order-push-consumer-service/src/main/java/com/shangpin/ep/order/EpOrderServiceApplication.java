@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * EP订单实时推送系统入口
  * <p>Title:EpOrderServiceApplication.java </p>
  * <p>Description: </p>
- * <p>Company: www.shangpin.com</p> 
+ * <p>Company: www.shangpin.com</p>
  * @author yanxiaobin
  * @date 2016年11月9日 上午11:06:26
  */

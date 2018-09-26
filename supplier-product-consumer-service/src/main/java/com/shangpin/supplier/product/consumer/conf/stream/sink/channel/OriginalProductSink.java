@@ -178,6 +178,7 @@ public interface OriginalProductSink {
 
 	public static final String  MAX1980 ="max1980OriginalProduct";
 
+	public static final String GEBNEGOZIO = "gebnegozioOriginalProduct";
 
 	//===============================
 	
@@ -705,5 +706,11 @@ public interface OriginalProductSink {
 	@Input(value = OriginalProductSink.YLATI)
 	public MessageChannel ylatiOriginalProduct();
 
+	/**
+	 * 供应商gebnegozio通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.GEBNEGOZIO)
+	public MessageChannel gebnegozioOriginalProduct();
 
 }

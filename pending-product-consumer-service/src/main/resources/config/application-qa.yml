@@ -514,6 +514,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        gebnegozioPendingProduct:
+                              destination: gebnegozio.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -989,6 +995,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             fashionTamersPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            gebnegozioPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

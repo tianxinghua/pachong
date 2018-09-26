@@ -821,4 +821,13 @@ public class OriginalProductStreamListener {
 		adapter.ylatiStreamListen(message,headers);
 	}
 
+	/**
+	 * 供应商gebnegozio原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.GEBNEGOZIO)
+	public void gebnegozioStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
+		adapter.gebnegozioStreamListen(message,headers);
+	}
 }
