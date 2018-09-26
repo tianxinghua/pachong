@@ -43,7 +43,7 @@ public class PictureProductStreamListener {
     public void brandPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		try {
 			if(brandSupplier.getBrandSupplierIds().contains(message.getSupplierId())){
-				Thread.sleep(1000*10);	
+				Thread.sleep(1000*1);
 			}else{
 				Thread.sleep(1000*1);
 			}
