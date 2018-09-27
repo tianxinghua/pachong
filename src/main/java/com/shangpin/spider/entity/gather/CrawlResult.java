@@ -3,51 +3,104 @@ package com.shangpin.spider.entity.gather;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shangpin.spider.config.FieldNotes;
+
 public class CrawlResult implements Cloneable{
     private Long id;
-
+    /**
+     * 性别
+     */
+    @FieldNotes(name="性别")
     private String gender;
-
+    /**
+     * 品牌
+     */
+    @FieldNotes(name="品牌")
     private String brand;
-
+    /**
+     * 类型
+     */
+    @FieldNotes(name="类型")
     private String category;
-
+    /**
+     * 编号
+     */
+    @FieldNotes(name="编号")
     private String spu;
-
+    /**
+     * 产品型号
+     */
+    @FieldNotes(name="产品型号")
     private String productModel;
-
+    /**
+     * 季节
+     */
+    @FieldNotes(name="季节")
     private String season;
-
+    /**
+     * 材质
+     */
+    @FieldNotes(name="材质")
     private String material;
-
+    /**
+     * 颜色
+     */
+    @FieldNotes(name="颜色")
     private String color;
-
+    /**
+     * 尺寸
+     */
+    @FieldNotes(name="尺寸")
     private String size;
-
+    /**
+     * 商品名称
+     */
+    @FieldNotes(name="商品名称")
     private String proName;
-
+    /**
+     * 国外市场价
+     */
+    @FieldNotes(name="国外市场价")
     private BigDecimal foreignPrice;
-
+    /**
+     * 国内市场价
+     */
+    @FieldNotes(name="国内市场价")
     private BigDecimal domesticPrice;
-
+    /**
+     * 售价
+     */
+    @FieldNotes(name="售价")
     private BigDecimal salePrice;
-
+    /**
+     * 库存标识
+     */
+    @FieldNotes(name="库存标识")
     private Integer qty;
-
+    /**
+     * 产地
+     */
+    @FieldNotes(name="产地")
     private String made;
-
+    /**
+     * 商品链接
+     */
+    @FieldNotes(name="商品链接")
     private String detailLink;
-
+    
     private Long sppuHash;
-
+    /**
+     * 尺寸详情
+     */
+    @FieldNotes(name="尺寸详情")
     private String measurement;
-
+    
     private String supplierId;
 
     private String supplierNo;
-
+    
     private String supplierSkuNo;
-
+    
     private String channel;
 
     private Long whiteId;
@@ -55,9 +108,15 @@ public class CrawlResult implements Cloneable{
     private Date createTime;
 
     private Date updateTime;
-    
+    /**
+     * 商品描述
+     */
+    @FieldNotes(name="商品描述")
     private String description;
-
+    /**
+     * 图片
+     */
+    @FieldNotes(name="图片")
     private String pics;
 
 	public Long getId() {

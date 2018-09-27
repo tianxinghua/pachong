@@ -54,6 +54,7 @@
     <result column="measurement_strategy" property="measurementStrategy" jdbcType="VARCHAR" />
     <result column="supplier_id" property="supplierId" jdbcType="VARCHAR" />
     <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR" />
+    <result column="click_field_str" property="clickFieldStr" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="BIT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
@@ -67,7 +68,7 @@
     pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
     domestic_price_strategy, sale_price_rules, sale_price_strategy, made_rules, made_strategy, 
     description_rules, description_strategy, pics_rules, pics_strategy, measurement_rules, measurement_strategy, 
-    supplier_id, supplier_no, status, create_time, update_time
+    supplier_id, supplier_no, click_field_str,status, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -94,7 +95,7 @@
       sale_price_rules, sale_price_strategy, made_rules, 
       made_strategy, description_rules, description_strategy, 
       pics_rules, pics_strategy, measurement_rules, 
-      measurement_strategy, supplier_id, supplier_no, 
+      measurement_strategy, supplier_id, supplier_no, click_field_str,
       status, create_time, update_time
       )
     values (#{whiteId,jdbcType=BIGINT}, #{channelRules,jdbcType=VARCHAR}, #{threadNum,jdbcType=INTEGER}, #{retryNum,jdbcType=INTEGER}, 
@@ -112,7 +113,8 @@
       #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR}, #{madeRules,jdbcType=VARCHAR}, 
       #{madeStrategy,jdbcType=VARCHAR}, #{descriptionRules,jdbcType=VARCHAR}, #{descriptionStrategy,jdbcType=VARCHAR}, 
       #{picsRules,jdbcType=LONGVARCHAR}, #{picsStrategy,jdbcType=VARCHAR}, #{measurementRules,jdbcType=VARCHAR}, 
-      #{measurementStrategy,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, 
+      #{measurementStrategy,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR},
+      #{clickFieldStr,jdbcType=VARCHAR} 
       #{status,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -275,6 +277,10 @@
       <if test="supplierNo != null" >
         supplier_no,
       </if>
+      <if test="clickFieldStr != null" >
+        click_field_str,
+      </if>
+      
       <if test="status != null" >
         status,
       </if>
@@ -364,8 +370,6 @@
       <if test="jsMenuStrategy != null" >
         #{jsMenuStrategy,jdbcType=VARCHAR},
       </if>
-      
-      
       <if test="seasonRules != null" >
         #{seasonRules,jdbcType=VARCHAR},
       </if>
@@ -440,6 +444,9 @@
       </if>
       <if test="supplierNo != null" >
         #{supplierNo,jdbcType=VARCHAR},
+      </if>
+      <if test="clickFieldStr != null" >
+        #{clickFieldStr,jdbcType=VARCHAR},
       </if>
       <if test="status != null" >
         #{status,jdbcType=BIT},
@@ -608,6 +615,10 @@
       <if test="supplierNo != null" >
         supplier_no = #{supplierNo,jdbcType=VARCHAR},
       </if>
+      <if test="clickFieldStr != null" >
+        click_field_str = #{clickFieldStr,jdbcType=VARCHAR},
+      </if>
+      
       <if test="status != null" >
         status = #{status,jdbcType=BIT},
       </if>
@@ -673,6 +684,7 @@
       measurement_strategy = #{measurementStrategy,jdbcType=VARCHAR},
       supplier_id = #{supplierId,jdbcType=VARCHAR},
       supplier_no = #{supplierNo,jdbcType=VARCHAR},
+      click_field_str = #{clickFieldStr,jdbcType=VARCHAR},
       status = #{status,jdbcType=BIT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

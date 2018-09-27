@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.service.gather.CrawlService;
 import us.codecraft.webmagic.ResultItems;
@@ -30,7 +32,7 @@ public class MyPipeline implements Pipeline{
 		for (Map.Entry<String, Object> entry : resultItems.getAll().entrySet()) {
 //			String str = entry.getValue()+"";
 //			Map<String,Object> map = (Map<String,Object>) entry.getValue();
-			if(entry.getKey().equals("resultList")) {
+			if(entry.getKey().equals(Constants.RESULTFLAG)) {
 				List<CrawlResult> resultList = (List<CrawlResult>)entry.getValue();
 				if(resultList!=null&&resultList.size()>0) {
 					for (CrawlResult crawlResult : resultList) {

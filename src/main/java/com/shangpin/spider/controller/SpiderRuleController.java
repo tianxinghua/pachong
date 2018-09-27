@@ -13,10 +13,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.entity.base.Result;
+import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.entity.gather.SpiderWhiteInfo;
 import com.shangpin.spider.service.gather.SpiderRulesService;
 import com.shangpin.spider.service.gather.SpiderWhiteService;
+import com.shangpin.spider.utils.common.ReflectUtil;
 import com.shangpin.spider.utils.shiro.ContentRole;
 
 
@@ -44,7 +46,9 @@ public class SpiderRuleController {
 	@RequestMapping("toWebSitePage")
 	public String toWebSitePage(Model model){
 		JSONArray roleArray = ContentRole.queryRole();
+		JSONArray fieldArray = ReflectUtil.getAllField(CrawlResult.class.getName());
 		model.addAttribute("roleArray", roleArray);
+		model.addAttribute("fieldArray", fieldArray);
 		return "spider/webSite";
 	}
 	

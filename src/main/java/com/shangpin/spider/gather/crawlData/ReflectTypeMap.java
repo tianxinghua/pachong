@@ -10,7 +10,7 @@ import com.shangpin.spider.entity.gather.CrawlResult;
 
 /**
  * 反射类型处理
- * @author Administrator
+ * @author njt
  *
  */
 public class ReflectTypeMap {

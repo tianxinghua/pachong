@@ -119,4 +119,19 @@ public class Constants {
 	public static final String SUCCESSCODE = "200";
 	public static final String ERRORCODE = "500";
 	public static final String NOCODE = "404";
+	
+	/**
+	 * 抓取结果集的键
+	 */
+	public static final String RESULTFLAG = "resultList";
+	/**
+	 * 字段策略的后缀
+	 */
+	public static final String FIELD_STRATEGY_SUFFIX = "Strategy";
+	/**
+	 * 字段规则的后缀
+	 */
+	public static final String FIELD_RULES_SUFFIX = "Rules";
+	
+	
 }

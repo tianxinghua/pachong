@@ -13,7 +13,10 @@
 <link href="/css/animate.min.css" rel="stylesheet" />
 <link href="/css/style.min862f.css" rel="stylesheet" />
 <link href="/css/jquery-ui.css" rel="stylesheet" />
-<!-- <link href="/css/datepicker3.css" rel="stylesheet"> -->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="../css/bootstrap-select/bootstrap-select.min.css"/>
+
+
 <script src="/js/jquery.min.js"></script>
 
 </head>
@@ -114,12 +117,12 @@
 							<option value="女">女</option>
 							<option value="women">women</option>
 					</select>
-					通道：<select name="channelId">
+					<!-- 通道：<select name="channelId">
 							<option value="1">1</option>
 							<option value="2">2</option>
 							<option value="3">3</option>
 							<option value="4">4</option>
-					</select>
+					</select> -->
 					
 					季节：<input type="text" name="seasonRules" placeholder="某年四季"/><br/>
 					
@@ -280,34 +283,28 @@
 					</textarea></div>
 					<br/>
 					
-					<font color="red">*XPATH或CSS即可</font>
+					<font color="red">*CSS即可</font>
 					<div>页面需点击按钮的策略：<input type="text" name="jsMenuStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
 					<button type="button" class="btn btn-default" name="categoryStrategyBtn">选择</button>
 					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">OR</button>
 					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">AND</button>
 					<br/>
 					页面需点击按钮的规则：<textarea name="jsMenuRules" rows="2" cols="100">
-						
 					</textarea></div>
 					<br/>
 					
+					页面需点击获取的字段：
+					<font color="red">*选入的字段获取策略仅限为C（css选择器）</font>
+					<div class="form-group">
+				        <!-- <label class="col-lg-1 control-label"></label> -->
+				        <div class="col-lg-6">
+				            <select id="clickFieldArray" class="selectpicker show-menu-arrow form-control" multiple="multiple">
+				            </select>
+				        </div>
+    				</div>
+
+					<br/>
 					
-					<!-- 正文css：<input type="text" name="contentCss"/><br/>
-					正文Xpath: <input type="text" name="contentXpath"/><br/>
-					标题关键词过滤：<input type="text" name="titleSkip"/><br/>
-					标题去除内容：<input type="text" name="titleFilter"/><br/>
-					标题css：<input type="text" name="titleCss"/><br/>
-					标题Xpath: <input type="text" name="titleXpath"/><br/>
-					分类css：<input type="text" name="categoryCss"/><br/>
-					分类Xpath: <input type="text" name="categoryXpath"/><br/>
-					作者css：<input type="text" name="authorCss" placeholder="CSS仅支持ID、CLASS属性"/><br/>
-					图片css：<input type="text" name="imgCss" placeholder="CSS仅支持ID、CLASS属性"/><br/>
-					视频css：<input type="text" name="videoCss"/><br/>
-					语言：<select name="language">
-							<option value='Chinese'>中文</option>
-							<option value='English'>英文</option>
-						</select>
-					 -->
 					模板状态：<select name="status">
 						<option value='1'>正常</option>
 						<option value='0'>禁止</option>
@@ -332,13 +329,27 @@
 		src="/js/h+/jqgrid/jquery.jqGrid.minffe4.js"></script>
 	<script type="text/javascript" src="/js/h+/content.min.js"></script>
 	<script type="text/javascript" src="/js/h+/bootstrap-datepicker.js"></script>
-
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="../js/bootstrap-select/bootstrap-select.js"></script>
+	<!-- (Optional) Latest compiled and minified JavaScript translation files -->
+	<script src="/js/bootstrap-select/i18n/defaults-zh_CN.min.js"></script>
 
 	<script th:inline="javascript">
 	/*<![CDATA[*/
         $(document).ready(function(){
         	$.jgrid.defaults.styleUI="Bootstrap";
         	var roleArray = [[${roleArray}]];
+        	var fieldArray = [[${fieldArray}]];
+        	for(var i in fieldArray){
+        		var obj = fieldArray[i];
+        		for(key in obj){
+        			var fieldName = key;
+            		var fieldNoteName = obj[key];
+            		$("#clickFieldArray").append("<option value='"+fieldName+"'>"+fieldNoteName+"</option>");
+        		}
+        		
+        	}
+        	
         	$("#datepicker").datepicker();
         	$("#table_list").jqGrid(
         			{
@@ -487,6 +498,13 @@
         });
         
         $(function(){
+        	$("#clickFieldArrayBtn").click(function(){
+    			$("#panel1").show();
+    		})
+    		$("#panel1Close").click(function(){
+    			$("#panel1").hide();
+    		})
+    		
         	$(".quartz").live("click",function(){
         		$("#ruleId").val("");
         		$("#quartzTime").val("");
@@ -575,6 +593,11 @@
                     	}
                     	**/
         				var spiderRules = obj.spiderRules;
+                    	var clickFieldStr = spiderRules.clickFieldStr;
+                    	var clickFieldArray = "";
+                    	if(clickFieldStr!=""){
+                    		clickFieldArray = clickFieldStr.split(",");
+                    	}
             			if(spiderRuleId!=0){
 	        				$("[name='threadNum'] option[value='"+spiderRules.threadNum+"']").attr("selected","selected");
 	        				$("[name='retryNum'] option[value='"+spiderRules.retryNum+"']").attr("selected","selected");
@@ -651,6 +674,7 @@
 	                		$("[name='measurementRules']").val(spiderRules.measurementRules);
 	                		$("[name='supplierId']").val(spiderRules.supplierId);
 	                		$("[name='supplierNo']").val(spiderRules.supplierNo);
+	                		$("#clickFieldArray").selectpicker('val', clickFieldArray);
             			}
         			},"json")
         		
@@ -730,7 +754,13 @@
         		//alert("--"+brandRules+"---"+brandStrategy);
         		var supplierId = $("[name='supplierId']").val();
         		var supplierNo = $("[name='supplierNo']").val();
-        		
+        		var clickFieldArray = $("#clickFieldArray").val();
+        		alert(clickFieldArray);
+        		var clickFieldStr = "";
+        		if(clickFieldArray.length>0) {
+       				clickFieldStr = clickFieldArray.join(",");
+        		}
+        		alert(clickFieldStr);
         		
         		$.post("/spider/saveWebRule",
         				{
@@ -781,8 +811,8 @@
         					measurementRules:measurementRules,
         					measurementStrategy:measurementStrategy,
         					supplierId:supplierId,
-        					supplierNo:supplierNo
-        					
+        					supplierNo:supplierNo,
+        					clickFieldStr:clickFieldStr
         				}
         				 ,function(msg){
         					//alert(msg);

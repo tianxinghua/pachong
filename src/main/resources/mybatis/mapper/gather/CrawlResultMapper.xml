@@ -51,7 +51,7 @@
   `foreign_price` decimal(10,2) NOT NULL COMMENT '国外市场价',
   `domestic_price` decimal(10,2) NOT NULL COMMENT '国内市场价',
   `sale_price` decimal(10,2) NOT NULL COMMENT '售价',
-  `qty` int(1) NOT NULL DEFAULT '1' COMMENT '1有货0无货',
+  `qty` int(1) NOT NULL DEFAULT '5' COMMENT '5有货0无货',
   `made` varchar(255) NOT NULL DEFAULT '' COMMENT '产地',
   `description` text NOT NULL COMMENT '描述',
   `pics` text NOT NULL COMMENT '图片链接',

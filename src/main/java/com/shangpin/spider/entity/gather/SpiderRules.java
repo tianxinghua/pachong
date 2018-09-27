@@ -117,6 +117,8 @@ public class SpiderRules implements Serializable{
     private String supplierId;
 
     private String supplierNo;
+    
+    private String clickFieldStr;
 
     private Boolean status;
 
@@ -419,6 +421,12 @@ public class SpiderRules implements Serializable{
 	}
 	public void setSupplierNo(String supplierNo) {
 		this.supplierNo = supplierNo;
+	}
+	public String getClickFieldStr() {
+		return clickFieldStr;
+	}
+	public void setClickFieldStr(String clickFieldStr) {
+		this.clickFieldStr = clickFieldStr;
 	}
 	public Boolean getStatus() {
 		return status;

@@ -2,13 +2,14 @@ package com.shangpin.spider.gather.crawlData;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.shangpin.spider.common.Constants;
+import com.shangpin.spider.common.StrategyConstants;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.utils.GatherUtil;
@@ -29,7 +30,6 @@ public class CommonCrawlData {
 	 * 字段规则的标识
 	 */
 	private static final Integer FIELD_RULES_FLAG = 2;
-	
 	public static void crawlData(Page page,SpiderRules spiderRuleInfo) {
 		String url = page.getUrl().get();
 		CrawlResult crawlResult = new CrawlResult();
@@ -38,7 +38,11 @@ public class CommonCrawlData {
 			spu = GatherUtil.getValue(page, spu, spiderRuleInfo.getSpuStrategy(), spiderRuleInfo.getSpuRules(), "spu");
 		}
 		spiderRuleInfo.setSppuHashRules(GatherUtil.longHashCode(spu).toString());
-		
+		String[] needClickField = {};
+		String clickFieldStr = spiderRuleInfo.getClickFieldStr();
+		if(clickFieldStr!="") {
+			needClickField = clickFieldStr.split(",");
+		}
 		try {
 			Class<?> ruleClass = Class.forName(SpiderRules.class.getName());
 			Class<?> resultClass = Class.forName(CrawlResult.class.getName());
@@ -50,7 +54,7 @@ public class CommonCrawlData {
 				resultField.setAccessible(true);
 				String typeName = resultField.getGenericType().toString();
 				String resultFieldName = resultField.getName();
-				if(GatherUtil.filterField(resultFieldName)||GatherUtil.filterNeedClick(resultFieldName)) 
+				if(GatherUtil.filterField(resultFieldName)||GatherUtil.filterNeedClick(resultFieldName,needClickField)) 
 				{
 					continue;
 				}
@@ -62,10 +66,10 @@ public class CommonCrawlData {
 						ruleField.setAccessible(true);
 						String ruleFieldName = ruleField.getName();
 						if(ruleFieldName.contains(resultFieldName)) {
-							if(ruleFieldName.contains("Strategy")) {
+							if(ruleFieldName.contains(Constants.FIELD_STRATEGY_SUFFIX)) {
 								strategyStr = (String) ruleField.get(spiderRuleInfo);
 							}
-							if(ruleFieldName.contains("Rules")) {
+							if(ruleFieldName.contains(Constants.FIELD_RULES_SUFFIX)) {
 								rulesStr = (String) ruleField.get(spiderRuleInfo);
 							}
 							i++;
@@ -109,13 +113,17 @@ public class CommonCrawlData {
 		System.err.println("----库存的数组----"+qtyArray);*/
 //		方法二：模拟点击
 //		规则表中取出需点击获取值的字段
-		String[] needClickField = {"color","size","qty","pics"};
+		
 		if(needClickField.length>0) {
-			resultList = TwoClickUtil.crawlByClick(needClickField,spiderRuleInfo, url, crawlResult);
+			if(StrategyConstants.TWO_CLICK.equals(spiderRuleInfo.getJsMenuStrategy())) {
+//				两层点击
+				resultList = TwoClickUtil.crawlByClick(needClickField,spiderRuleInfo, url, crawlResult);
+			}
+			
 		}else {
 			resultList.add(crawlResult);
 		}
-		page.putField("resultList", resultList);
+		page.putField(Constants.RESULTFLAG, resultList);
 		
 	}
 	
