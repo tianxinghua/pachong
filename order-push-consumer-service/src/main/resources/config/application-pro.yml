@@ -210,7 +210,7 @@ shangpin:
                   openApiKey:
                   openApiSecret:
           mengotti:
-                  url: http://93.39.241.194:8080/ws_sito_p15/ws_sito_p15.asmx/
+                  url: http://185.141.186.190:8080/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
                   setStatusInterface: SetStatusOrderMarketplace
                   getStatusInterface: GetStatusOrderMarketplace

@@ -48,7 +48,7 @@ public class SupplierProductPictureService {
 
 	private static final String USERNAME = "username";
 
-	private static final int TIMEOUT = 45*60*1000;
+	private static final int TIMEOUT = 10*1000;
 
 	private static final int CONNECT_TIMEOUT = 10*1000;
 	
@@ -73,8 +73,10 @@ public class SupplierProductPictureService {
 			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
 			for (HubSpuPendingPicDto picVO : picDtos) {
 				String picUrl = picVO.getPicUrl();
+				log.info("picUrl = " +picUrl);
 				HubSpuPendingPicDto picDto = supplierProductPictureManager.getSpuPendingPicDtoBySupplierIdAndPicUrl(picVO.getSupplierId(), picUrl);
 				if(null!=picDto){
+					log.info("pic  DataState = " +picDto.getDataState());
 					//如果连接存在 且状态为使用中 则不操作
 					if(DataState.NOT_DELETED.getIndex()==picDto.getDataState()){
                          continue;
@@ -174,6 +176,7 @@ public class SupplierProductPictureService {
 			httpUrlConnection.setReadTimeout(TIMEOUT);
 			httpUrlConnection.connect();
 			flag = httpUrlConnection.getResponseCode();
+			log.info("response code=" + flag);
 			if (flag == 404 || flag == 400) {
 				return flag;
 			}else if(flag == 301 || flag == 302){
