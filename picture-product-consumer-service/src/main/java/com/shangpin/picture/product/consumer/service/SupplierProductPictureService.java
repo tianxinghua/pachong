@@ -1,11 +1,7 @@
 package com.shangpin.picture.product.consumer.service;
 
-import java.io.InputStream;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -145,12 +141,18 @@ public class SupplierProductPictureService {
 		return authenticationInformation;
 	}
 	/**
-	 * 拉取图片并上传图片服务器
+	 * 拉取图片并上传图片服务器y
 	 * @param picUrl 图片原始地址
 	 * @param dto 数据传输对象
 	 * @param authenticationInformation 认证信息
 	 */
 	private int pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+		if (picUrl.contains("_")){
+			HubSpuPendingPicDto dto1 = new HubSpuPendingPicDto();
+			ImageDownload download = new ImageDownload();
+			AuthenticationInformation authenticationInformation1 = new AuthenticationInformation();
+			return download.downloadPicture(picUrl,dto1,authenticationInformation1);
+		}else {
 		InputStream inputStream = null;
 		HttpURLConnection httpUrlConnection = null;
 		int flag = 0;
@@ -163,6 +165,7 @@ public class SupplierProductPictureService {
 					}
 				});
 			}
+
 			URL url = new URL(picUrl.replaceAll(" +", "%20"));
 			URLConnection openConnection = url.openConnection();
 			httpUrlConnection  =  (HttpURLConnection) openConnection;
@@ -194,17 +197,20 @@ public class SupplierProductPictureService {
 			dto.setSpPicUrl(fdfsURL);
 			dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
 			dto.setMemo("图片拉取成功");
-			
-		}catch (Throwable e) {
-			log.error("系统拉取图片时发生异常,url ="+picUrl,e);
-			e.printStackTrace();
-			dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
-			dto.setMemo("图片拉取失败:"+flag);
+		}
+		catch (Throwable e) {
+				log.error("系统拉取图片时发生异常,url =" + picUrl, e);
+				e.printStackTrace();
+				dto.setPicHandleState(PicHandleState.HANDLE_ERROR.getIndex());
+				dto.setMemo("图片拉取失败:" + flag);
+
 		} finally {
 			close(inputStream, httpUrlConnection);
 		}
+
 		dto.setUpdateTime(new Date());
 		return flag;
+		}
 	}
 
 
@@ -215,7 +221,7 @@ public class SupplierProductPictureService {
 	 * @param authenticationInformation
 	 * @return
 	 */
-	private int pullFtpPicByBrownAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
+	private int pullFtpPicByBrownAndPushToPicServer(String picUrl,HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		InputStream inputStream = null;
 		FtpURLConnection httpUrlConnection = null;
 		int flag = 0;
@@ -528,6 +534,14 @@ public class SupplierProductPictureService {
 			}
 			supplierProductPictureManager.deleteImageAndSetNull(hubSpuPendingPicDto);
 		}
+	}
+
+	public static void main(String[] args) {
+		SupplierProductPictureService pictureService = new SupplierProductPictureService();
+		HubSpuPendingPicDto picDto = new HubSpuPendingPicDto();
+		AuthenticationInformation information = new AuthenticationInformation();
+		pictureService.pullPicAndPushToPicServer("https://img.mytheresa.com/1088/1088/66/jpeg/catalog/product/ee/P00273362.jpg",picDto,information);
+
 	}
 
 
