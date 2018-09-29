@@ -1,5 +1,7 @@
 package com.shangpin.spider.common;
-
+/**
+ * 策略常量
+ */
 public class StrategyConstants {
 	/**
 	 * 两层点击的策略标识
@@ -55,5 +57,20 @@ public class StrategyConstants {
 	 * 有字符需拼接的标识
 	 */
 	public static final String UNION = "UNION";
+	
+	/**
+	 * 下拉条的标识
+	 */
+	public static final String SCROLL = "scroll";
+	
+	/**
+	 * 点击下一页
+	 */
+	public static final String NEXT = "next";
+	
+	/**
+	 * 查看更多
+	 */
+	public static final String MORE = "more";
 	
 }

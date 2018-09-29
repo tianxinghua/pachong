@@ -20,7 +20,6 @@ import com.shangpin.spider.entity.base.Result;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.entity.gather.SpiderWhiteInfo;
 import com.shangpin.spider.gather.spider.CommonSpider;
-import com.shangpin.spider.gather.utils.GatherUtil;
 import com.shangpin.spider.gather.utils.PageUtil;
 import com.shangpin.spider.mapper.gather.SpiderRulesMapper;
 import com.shangpin.spider.mapper.gather.SpiderWhiteInfoMapper;
@@ -75,7 +74,9 @@ public class QuartzServiceImpl implements QuartzService{
 //		data.put("quartzServiceImpl", this);
 		String jobkeyName = String.valueOf("编号："+ruleInfo.getId()+"  名称："+whiteInfo.getName());
 		
-		String uuid = GatherUtil.getFefferrerHost(whiteInfo.getUrl());
+//		String uuid = GatherUtil.getFefferrerHost(whiteInfo.getUrl());
+//		UUID改为源网站对应的ID，为了区分调度中的键，针对同一网站不同分类的问题
+		String uuid = String.valueOf(whiteId);
 		try {
 			//开启任务时，先将redis中存在的源链接删除，否则爬虫不启动
 			redisService.delWhiteUrl(whiteInfo.getUrl(),uuid);

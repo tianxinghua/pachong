@@ -132,8 +132,8 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 		mDriver.manage().timeouts().pageLoadTimeout(360, TimeUnit.SECONDS);
 //		脚本超时时间
 		mDriver.manage().timeouts().setScriptTimeout(240, TimeUnit.SECONDS);
-//		隐性等待，有BUG，暂不使用
-		mDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+//		隐性等待，不推荐使用
+//		mDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 		return mDriver;
 	}
 	

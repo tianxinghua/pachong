@@ -1,7 +1,6 @@
 package com.shangpin.spider.gather.utils;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,18 +8,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.shangpin.spider.common.Constants;
+import com.shangpin.spider.common.SymbolConstants;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverClickPool;
@@ -57,9 +56,10 @@ public class TwoClickUtil {
 	
 	private static SpChromeDriverClickPool driverPool = null;
 	
-	private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+//	private static final ReentrantLock rtl = new ReentrantLock();
 	/**
 	 * 
+	 * @param clickFieldMap 
 	 * @param needClickField 
 	 * @param spiderRuleInfo
 	 * @param url
@@ -69,8 +69,9 @@ public class TwoClickUtil {
 	 * @param resultMap 
 	 * @return 
 	 */
-	public static List<CrawlResult> crawlByClick(String[] needClickField, SpiderRules spiderRuleInfo, String url, CrawlResult crawlResult) {
-		rwl.readLock().lock();
+	public static List<CrawlResult> crawlByClick(String[] needClickFieldAry, Map<String, Map<String, String>> clickFieldMap, SpiderRules spiderRuleInfo, String url, CrawlResult crawlResult) {
+//		rtl.lock();
+		clickFieldRulesMap = clickFieldMap;
 		endInt = new AtomicInteger(0);
 		firstSize = 0;
 		List<CrawlResult> crawlList = new ArrayList<CrawlResult>();
@@ -78,54 +79,14 @@ public class TwoClickUtil {
 			driverPool = spiderRuleInfo.getDriverPool();
 		}
 		try {
-			Class<?> ruleClass = Class.forName(SpiderRules.class.getName());
 			Class<?> resultClass = Class.forName(CrawlResult.class.getName());
-			Field[] ruleFields = ruleClass.getDeclaredFields();
 			Field[] resultFields = resultClass.getDeclaredFields();
-			clickFieldRulesMap = new ConcurrentHashMap<String,Map<String,String>>();
-			for (String clickfield : needClickField) {
-				for (Field ruleField : ruleFields) {
-					ruleField.setAccessible(true);
-					String ruleFieldName = ruleField.getName();
-					if(ruleFieldName.contains(clickfield)&&ruleFieldName.contains(Constants.FIELD_RULES_SUFFIX)) {
-						if(ruleFieldName.contains(Constants.FIELD_RULES_SUFFIX)) {
-							String rulesStr = (String) ruleField.get(spiderRuleInfo);
-							if(clickFieldRulesMap.containsKey(clickfield)) {
-								Map<String, String> map = clickFieldRulesMap.get(clickfield);
-								map.put("rulesStr", rulesStr);
-								clickFieldRulesMap.put(clickfield, map);
-							}else {
-								Map<String, String> map = new ConcurrentHashMap<String,String>();
-								map.put("rulesStr", rulesStr);
-								clickFieldRulesMap.put(clickfield, map);
-							}
-							
-							break;
-						}
-					}
-					if(ruleFieldName.contains(clickfield)&&ruleFieldName.contains(Constants.FIELD_STRATEGY_SUFFIX)) {
-						if(ruleFieldName.contains(Constants.FIELD_STRATEGY_SUFFIX)) {
-							String strategyStr = (String) ruleField.get(spiderRuleInfo);
-							if(clickFieldRulesMap.containsKey(clickfield)) {
-								Map<String, String> map = clickFieldRulesMap.get(clickfield);
-								map.put("strategyStr", strategyStr);
-								clickFieldRulesMap.put(clickfield, map);
-							}else {
-								Map<String, String> map = new ConcurrentHashMap<String,String>();
-								map.put("strategyStr", strategyStr);
-								clickFieldRulesMap.put(clickfield, map);
-							}
-							break;
-						}
-					}
-				}
-			}
 			
 			String jsMenuRules = spiderRuleInfo.getJsMenuRules();
 			String[] menuRuleArray = {};
 			if(StringUtils.isNotBlank(jsMenuRules)) {
-				if(jsMenuRules.contains("@,")) {
-					menuRuleArray = jsMenuRules.split("@,");
+				if(jsMenuRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) {
+					menuRuleArray = jsMenuRules.split(SymbolConstants.RULE_SPLIT_FLAG);
 				}else {
 					LOG.info("---源-{}-的两层点击规则填写有误，缺@,间隔符。",spiderRuleInfo.getWhiteId());
 				}
@@ -135,48 +96,63 @@ public class TwoClickUtil {
 			}
 			
 			List<Map<String, String>> resultList = handleClick(url,menuRuleArray);
-			for (Map<String, String> map : resultList) {
-				CrawlResult crawlResultNew = new CrawlResult();
-				crawlResultNew = (CrawlResult) crawlResult.clone();
-				for (String clickfield : needClickField) {
-					if(map.containsKey(clickfield)) {
-						String clickValue = map.get(clickfield);
-						for (Field resultField : resultFields) {
-							resultField.setAccessible(true);
-							String typeName = resultField.getGenericType().toString();
-							String resultFieldName = resultField.getName();
-							if(clickfield.equals(resultFieldName)) {
-								ReflectTypeMap.typeMap(typeName,clickValue,resultFieldName,resultField,crawlResultNew);
-								break;
-							}
-						}	
+			if(resultList!=null&&resultList.size()>0) {
+				for (Map<String, String> map : resultList) {
+					CrawlResult crawlResultNew = new CrawlResult();
+					crawlResultNew = (CrawlResult) crawlResult.clone();
+					for (String clickfield : needClickFieldAry) {
+						if(map.containsKey(clickfield)) {
+							String clickValue = map.get(clickfield);
+							for (Field resultField : resultFields) {
+								resultField.setAccessible(true);
+								String typeName = resultField.getGenericType().toString();
+								String resultFieldName = resultField.getName();
+								if(clickfield.equals(resultFieldName)) {
+									ReflectTypeMap.typeMap(typeName,clickValue,resultFieldName,resultField,crawlResultNew);
+									break;
+								}
+							}	
+						}
 					}
+//					特殊处理，spu后拼接colorNum
+					/*String colorNum = map.get("colorNum");
+					BigDecimal foreignPrice = BigDecimal.valueOf(Double.parseDouble(map.get("foreignPrice")));
+					crawlResultNew.setSpu(crawlResultNew.getSpu()+colorNum);
+					crawlResultNew.setProductModel(crawlResultNew.getSpu());
+					crawlResultNew.setForeignPrice(foreignPrice);
+					crawlResultNew.setSalePrice(foreignPrice);
+					String detailLink = crawlResultNew.getDetailLink();
+					if(!detailLink.contains(colorNum)) {
+						detailLink = detailLink.substring(0, detailLink.indexOf("=")+1)+colorNum;
+						crawlResultNew.setDetailLink(detailLink);
+					}*/
+					if(StringUtils.isNotBlank(crawlResultNew.getSpu())){
+//						以spu和size定唯一
+						crawlResultNew.setSppuHash(GatherUtil.longHashCode(crawlResultNew.getSpu()+crawlResultNew.getSize()));
+					}else {
+						crawlResultNew.setSppuHash(0L);
+					}
+					if (StringUtils.isNotBlank(crawlResultNew.getSpu())) {
+						crawlResultNew.setProductModel(crawlResultNew.getSpu());
+					}
+					crawlList.add(crawlResultNew);
 				}
-//				特殊处理，spu后拼接colorNum
-				String colorNum = map.get("colorNum");
-				BigDecimal foreignPrice = BigDecimal.valueOf(Double.parseDouble(map.get("foreignPrice")));
-				crawlResultNew.setSpu(crawlResultNew.getSpu()+colorNum);
-				crawlResultNew.setProductModel(crawlResultNew.getSpu());
-				crawlResultNew.setForeignPrice(foreignPrice);
-				crawlResultNew.setSalePrice(foreignPrice);
-				String detailLink = crawlResultNew.getDetailLink();
-				if(!detailLink.contains(colorNum)) {
-					detailLink = detailLink.substring(0, detailLink.indexOf("=")+1)+colorNum;
-					crawlResultNew.setDetailLink(detailLink);
-				}
-				crawlList.add(crawlResultNew);
+			}else {
+				LOG.info("链接{}点击后，数据为空！",url);
 			}
+			
 		} catch (IllegalArgumentException | IllegalAccessException e1 ) {
 			e1.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}finally {
-			rwl.readLock().unlock();
+//			rtl.unlock();
+			LOG.info("点击获取{}数据结束---！",url);
 		}
 		return crawlList;
 	}
 	
-	private static synchronized List<Map<String, String>> handleClick(String url, String[] menuRuleArray) {
+	private static List<Map<String, String>> handleClick(String url, String[] menuRuleArray) {
 //		从Pool里取出driver
 		ChromeDriver driver = null;
 		List<Map<String,String>> resultList = null;
@@ -186,7 +162,7 @@ public class TwoClickUtil {
 			}
 			driver.get(url);
 			AtomicInteger initI = init_i.get();
-			initI = new AtomicInteger(0);
+			initI = new AtomicInteger(0); 
 			AtomicInteger initJ = init_j.get();
 			initJ = new AtomicInteger(0);
 			ThreadLocal<Boolean> recursionLocalFlag = new ThreadLocal<Boolean>();
@@ -207,7 +183,7 @@ public class TwoClickUtil {
 	
 	
 //	两层动态元素
-	private static synchronized List<Map<String,String>> simulationClick(List<Map<String,String>> list,ChromeDriver driver,AtomicInteger initI,AtomicInteger initJ,Boolean recursionFlag, String url, String[] menuRuleArray) {
+	private static List<Map<String,String>> simulationClick(List<Map<String,String>> list,ChromeDriver driver,AtomicInteger initI,AtomicInteger initJ,Boolean recursionFlag, String url, String[] menuRuleArray) {
 		int j = initJ.get();
 		int i = initI.get();
 		
@@ -227,20 +203,23 @@ public class TwoClickUtil {
 			System.err.println("----\t第一层下标越界。");
 			return list;
 		}
+		WebElement element = null;
 		if(recursionFlag||(i==0&&j==0)) {
 			if(firstSize!=1) {
 				initJ = new AtomicInteger(0);
 				j = initJ.get();
 				recursionFlag = false;
-				WebElement element = elements1.get(i);
+				element = elements1.get(i);
 				try {
+//					WebDriverWait wait = new WebDriverWait(driver, 10);
+//					wait.until(ExpectedConditions.elementToBeClickable(element));
 					element.click();
 				} catch (Exception e) {
 					LOG.error("链接{}第一次点击事件有误！",url);
 				}
-				
+//				避免点击频繁，异步加载
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -264,12 +243,14 @@ public class TwoClickUtil {
 		if(j<=sencondSize-1) {
 			element2 = elements2.get(j);
 			try {
+				WebDriverWait wait = new WebDriverWait(driver, 30);
+				wait.until(ExpectedConditions.elementToBeClickable(element));
 				element2.click();
 			} catch (Exception e) {
-				LOG.error("链接{}第二次点击事件有误！",url);
+				LOG.error("链接{}第二次点击事件有误！--异常:{}",url,e.getMessage());
 			}
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -286,16 +267,16 @@ public class TwoClickUtil {
 		if((!recursionFlag)||(i!=firstSize-1)) {
 //			点击后获取的字段值，在此获取
 //			list = clickCrawlDate(list,driver);
-			list = handleClickFieldRulesMap(list,driver);
+			list = handleClickFieldRulesMap(url,list,driver);
 //			递归			
 			simulationClick(list,driver,initI,initJ,recursionFlag,url,menuRuleArray);
 		}
 //		确保最后一次入库
 		if(endInt.get()==0) {
 			if(initJ.get()==sencondSize&&i==firstSize-1){
-				LOG.error("{}链接最后一次点击入库！",url);
+				LOG.info("{}链接最后一次点击入库！",url);
 //				list = clickCrawlDate(list,driver);
-				list = handleClickFieldRulesMap(list,driver);
+				list = handleClickFieldRulesMap(url,list,driver);
 				endInt.incrementAndGet();
 			}
 		}
@@ -303,18 +284,18 @@ public class TwoClickUtil {
 		return list;
 	}
 	
-	private static synchronized List<Map<String, String>> handleClickFieldRulesMap(List<Map<String,String>> list,ChromeDriver driver) {
+	private static List<Map<String, String>> handleClickFieldRulesMap(String url, List<Map<String,String>> list,ChromeDriver driver) {
 		Set<Entry<String, Map<String, String>>> entrySet = clickFieldRulesMap.entrySet();
 		Iterator<Entry<String, Map<String, String>>> iterator = entrySet.iterator();
+		Map<String,String> map = new HashMap<String,String>();
 		while(iterator.hasNext()) {
-			Map<String,String> map = new HashMap<String,String>();
 			Entry<String, Map<String, String>> entry = iterator.next();
 			String clickfield = entry.getKey().toString();
-			Map<String, String> map2 = entry.getValue();
-			String clickfieldValue = GatherUtil.getFieldValue(clickfield, map2, driver);
+			Map<String, String> strategyAndRuleMap = entry.getValue();
+			String clickfieldValue = GatherUtil.getFieldValue(url, clickfield, strategyAndRuleMap, driver);
 			map.put(clickfield, clickfieldValue);
-			list.add(map);
 		}
+		list.add(map);
 		return list;
 	}
 	

@@ -20,9 +20,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.common.StrategyConstants;
 import com.shangpin.spider.common.SymbolConstants;
 import com.shangpin.spider.entity.gather.SpiderRules;
@@ -254,7 +257,7 @@ public class GatherUtil {
 		return flag;
 	}
 	/**
-	 * 处理DE-C策略（针对多图片，多颜色，多尺寸）
+	 * 处理DE-C策略（针对多图片，多颜色，多尺寸）,多层的规则
 	 * @param gg 规则
 	 * @param i 下标
 	 * @param map 结果集
@@ -322,21 +325,37 @@ public class GatherUtil {
 	/**
 	 * 
 	 * @param page 网页
-	 * @param driver 浏览器内核驱动
 	 * @param crawlValue 获取的值
 	 * @param strategyStr 抓取的策略字符串
 	 * @param rulesStr 抓取的规则字符串
 	 * @return result
 	 */
 	public static String getValue(Page page, String crawlValue, String strategyStr, String rulesStr, String fieldName) {
-		/*Html html = page.getHtml();
-		Document document = page.getHtml().getDocument();
-		System.out.println("--源码：--"+html);*/
+		if(strategyStr.contains(StrategyConstants.UNION)&&rulesStr.contains(SymbolConstants.UNION_FLAG)) {
+			String[] strategyAry = strategyStr.split(StrategyConstants.UNION);
+			String[] rulesAry = rulesStr.split(SymbolConstants.UNION_FLAG);
+			try {
+				for (int i = 0; i < strategyAry.length; i++) {
+					String strategyGroup = strategyAry[i];
+					String ruleGroup = rulesAry[i];
+					crawlValue += crawlValueByGroup(page,"",strategyGroup,ruleGroup,fieldName);
+				}
+			} catch (Exception e) {
+				LOG.error("--{}包含UNION的策略与规则不匹配！--",fieldName);
+			}
+			
+		}else {
+			crawlValue = crawlValueByGroup(page,crawlValue,strategyStr,rulesStr,fieldName);
+		}
+		return crawlValue;
+	}
+	
+	private static String crawlValueByGroup(Page page, String crawlValue, String strategyStr, String rulesStr, String fieldName) {
 		if(StringUtils.isBlank(strategyStr)||StringUtils.isBlank(rulesStr)) {
 			LOG.error("---字段-{}-的取值正则规则为空！",fieldName);
 			return "";
 		}
-		Map<String,String> resultMap = new HashMap<String,String>();
+		Map<String,Object> resultMap = new HashMap<String,Object>();
 		resultMap.put("strategyStr", strategyStr);
 		resultMap.put("crawlValue", crawlValue);
 		String[] gg = null;
@@ -415,7 +434,7 @@ public class GatherUtil {
             i++;
         }
 		System.err.println("抓取--"+fieldName+"-结果----："+resultMap.get("crawlValue")+"\n----"+fieldName+"策略剩余：---"+resultMap.get("strategyStr"));
-		return crawlValue = resultMap.get("crawlValue");
+		return crawlValue = resultMap.get("crawlValue").toString();
 	}
 	
 	private static <K, V> List<Entry<K, V>> rankMapByValue(Map<K, V> map,
@@ -431,22 +450,29 @@ public class GatherUtil {
         return list;
     }
 	
-	private static Map<String, String> orAnd(Page page,Map<String,String> resultMap,String deStrategy,String[] gg,int i) {
-		String strategyStr = resultMap.get("strategyStr");
-		String crawlValue = resultMap.get("crawlValue");
+	private static Map<String, Object> orAnd(Page page,Map<String,Object> resultMap,String deStrategy,String[] gg,int i) {
+		String strategyStr = resultMap.get("strategyStr").toString();
+		String crawlValue = resultMap.get("crawlValue").toString();
 		String strategyFilterStr = strategyStr.replace(deStrategy, "");
 		String detailRule = gg[i];
 		if(i==0) {
 			System.err.println("第一步："+gg[i]);
 			crawlValue = xpathStrategy(deStrategy,detailRule,i,crawlValue,page);
 			crawlValue = cssStrategy(deStrategy,detailRule,i,crawlValue,page);
+//			针对detailLink做的处理
+			if(StrategyConstants.DE_S.equals(deStrategy)) {
+				if(detailRule.contains(SymbolConstants.URL)) {
+					crawlValue = page.getUrl().toString();
+				}
+			}
 		}else {	
 			String symbol = strategyFilterStr.split("")[0];
 			strategyFilterStr = strategyFilterStr.substring(1, strategyFilterStr.length());
 			if(SymbolConstants.AND_FLAG.equals(symbol)) {
-				System.err.println("且---的规则"+gg[i]);
-				crawlValue = subStrategy(deStrategy,detailRule,i,crawlValue);
-				crawlValue = regStrategy(deStrategy,detailRule,i,crawlValue);
+					System.err.println("且---的规则"+gg[i]);
+					crawlValue = subStrategy(deStrategy,detailRule,i,crawlValue);
+					crawlValue = regStrategy(deStrategy,detailRule,i,crawlValue);
+				
 			}
 			if(SymbolConstants.SPLIT_FLAG.equals(symbol)) {
 				System.err.println("或---的规则"+gg[i]);
@@ -454,12 +480,37 @@ public class GatherUtil {
 					crawlValue = cssStrategy(deStrategy,detailRule,i,crawlValue,page);
 					crawlValue = subStrategy(deStrategy,detailRule,i,crawlValue);
 					crawlValue = regStrategy(deStrategy,detailRule,i,crawlValue);
+				
 				}
 			}
 		}
 		resultMap.put("strategyStr", strategyFilterStr);
 		resultMap.put("crawlValue", crawlValue);
 		return resultMap;
+	}
+	/**
+	 * 处理数据有拼接的情况
+	 * @param deStrategy
+	 * @param detailRule
+	 * @param i
+	 * @param crawlValue
+	 * @param page
+	 * @return
+	 */
+	@Deprecated
+	private static String handleUnion(String deStrategy,String detailRule,int i,String crawlValue,Page page) {
+		switch(deStrategy) {
+			case StrategyConstants.SUB:
+				crawlValue += subStrategy(deStrategy,detailRule,i,crawlValue);
+			case StrategyConstants.RG:
+				crawlValue += regStrategy(deStrategy,detailRule,i,crawlValue);
+			case StrategyConstants.C:
+				crawlValue += cssStrategy(deStrategy,detailRule,i,crawlValue,page);
+			case StrategyConstants.X:
+				crawlValue += xpathStrategy(deStrategy,detailRule,i,crawlValue,page);
+			default:;
+		}
+		return crawlValue;
 	}
 	/**
 	 * xpath的匹配
@@ -530,8 +581,22 @@ public class GatherUtil {
 			if(detailRule.contains(SymbolConstants.SUB_SPLIT_FLAG)) {
 				String[] detailRuleSplit = detailRule.split(SymbolConstants.SUB_SPLIT_FLAG);
 				String detailRuleSplitOne = detailRuleSplit[0].trim();
+				String detailRuleSplitTwo = detailRuleSplit[1].trim();
+				
+				if("0".equals(detailRuleSplitOne)) {
+					if(detailRuleSplitTwo.startsWith(SymbolConstants.SUB_SUFIX)) {
+						detailRuleSplitTwo = detailRuleSplitTwo.replace(SymbolConstants.SUB_SUFIX, "");
+						int indexOf2 = crawlValue.indexOf(detailRuleSplitTwo);
+						crawlValue = crawlValue.substring(0, indexOf2+detailRuleSplitTwo.length());
+					}else {
+						int indexOf2 = crawlValue.indexOf(detailRuleSplitTwo);
+						crawlValue = crawlValue.substring(0, indexOf2);
+					}
+					return crawlValue;
+				}
 				int oneLength = 0;
 				int indexOf = 0;
+				
 //				若是截取包括前缀的，则以#T打头
 				Boolean flag = true;
 				if(detailRuleSplitOne.startsWith(SymbolConstants.SUB_SUFIX)) {
@@ -556,10 +621,14 @@ public class GatherUtil {
 				if(flag) {
 					oneLength = 0;
 				}
-				String detailRuleSplitTwo = detailRuleSplit[1].trim();
+//				截取
 				if(SymbolConstants.SUB_LENGTH.equals(detailRuleSplitTwo)) {
 					crawlValue = crawlValue.substring(indexOf+oneLength, crawlValue.length());
-				}else {
+				}else if(detailRuleSplitTwo.startsWith(SymbolConstants.SUB_SUFIX)) {
+					detailRuleSplitTwo = detailRuleSplitTwo.replace(SymbolConstants.SUB_SUFIX, "");
+					int indexOf2 = crawlValue.indexOf(detailRuleSplitTwo);
+					crawlValue = crawlValue.substring(indexOf+oneLength, indexOf2+detailRuleSplitTwo.length());
+				}else{
 					int indexOf2 = crawlValue.indexOf(detailRuleSplitTwo);
 					crawlValue = crawlValue.substring(indexOf+oneLength, indexOf2);
 				}
@@ -643,61 +712,88 @@ public class GatherUtil {
 	/**
 	 * 用于driver获取数据
 	 * @param clickfield 
+	 * @param clickfield 
 	 * @param map2
 	 * @param driver
 	 * @return
 	 * @DES C&SUB&UNION&C&SUB策略按顺序来，没有多种结合，串联一种得结果。规则按@,间隔。U以@U间隔。CSS的属性用@|标识。截取按照{#T@OR@;}规则进行
 	 */
-	public static String getFieldValue(String clickfield, Map<String, String> map2, ChromeDriver driver) {
+	public static String getFieldValue(String url, String clickfield, Map<String, String> map2, ChromeDriver driver) {
 		String rulesStr = map2.get("rulesStr");
 		String strategyStr = map2.get("strategyStr");
-		if(StrategyConstants.SP_C.equals(strategyStr)) {
-			return handleDriverImg(driver, rulesStr);
+		String fieldValue = "";
+		if(StringUtils.isBlank(rulesStr)||StringUtils.isBlank(strategyStr)) {
+			LOG.info("----{}的抓取策略或抓取规则为空！",clickfield);
+			return fieldValue;
 		}
-		if(StrategyConstants.SP_QTY_C.equals(strategyStr)) {
-			return handleQty(null, driver, rulesStr);
+		try {
+			if(StrategyConstants.SP_C.equals(strategyStr)) {
+				return handleDriverImg(driver, rulesStr);
+			}
+			if(StrategyConstants.SP_QTY_C.equals(strategyStr)) {
+				return handleQty(null, driver, rulesStr);
+			}
+			if(strategyStr.contains(StrategyConstants.UNION)&&rulesStr.contains(SymbolConstants.UNION_FLAG)) {
+				String[] strategyAry = strategyStr.split(StrategyConstants.UNION);
+				String[] rulesAry = rulesStr.split(SymbolConstants.UNION_FLAG);
+				try {
+					for (int i = 0; i < strategyAry.length; i++) {
+						String strategyGroup = strategyAry[i];
+						String ruleGroup = rulesAry[i];
+						fieldValue += crawlValueByDriverGroup(url,ruleGroup,strategyGroup,driver,fieldValue,clickfield);
+					}
+				} catch (Exception e) {
+					LOG.error("--{}包含UNION的driver的策略与规则不匹配！--",clickfield);
+				}
+				
+			}else {
+				fieldValue = crawlValueByDriverGroup(url,rulesStr,strategyStr,driver,fieldValue,clickfield);
+			}
+		} catch (Exception e) {
+			LOG.error("---{}动态获取值有误！--异常{}",clickfield,e.getMessage());
 		}
+		
+		return fieldValue;
+	}
+	private static String crawlValueByDriverGroup(String url, String rulesStr, String strategyStr, WebDriver driver, String fieldValue, String clickfield) {
 		String[] rulesArray = rulesStr.split(SymbolConstants.RULE_SPLIT_FLAG);
 		String[] strategyArray = strategyStr.split(SymbolConstants.AND_FLAG);
-		String fieldValue = "";
-		Boolean unionFlag = false;
 		for (int i = 0; i < strategyArray.length; i++) {
 			String detailStrategy = strategyArray[i];
 			String detailRule = rulesArray[i];
 			if(StrategyConstants.C.equals(detailStrategy)) {
 				if(detailRule.contains(SymbolConstants.ATTR_FLAG)) {
-					String[] detailRuleArray = detailRule.split(SymbolConstants.ATTR_FLAG);
-					if(unionFlag) {
-						fieldValue += driver.findElement(By.cssSelector(detailRuleArray[0])).getAttribute(detailRuleArray[1]).toString();
-					}else {
-						fieldValue = driver.findElement(By.cssSelector(detailRuleArray[0])).getAttribute(detailRuleArray[1]).toString();
-					}
+					String deRuleStr = detailRule.substring(0, detailRule.indexOf(SymbolConstants.ATTR_FLAG));
+					String attrStr = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),detailRule.length());
+					fieldValue = driver.findElement(By.cssSelector(deRuleStr)).getAttribute(attrStr).toString();
 				}else {
-					if(unionFlag) {
-						fieldValue += driver.findElement(By.cssSelector(detailRule)).getText();
+//					WebDriverWait wait = new WebDriverWait(driver, 10);
+//					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
+					WebElement element = driver.findElement(By.cssSelector(detailRule));
+					if(element.isDisplayed()) {
+						fieldValue = element.getText();
 					}else {
-						fieldValue = driver.findElement(By.cssSelector(detailRule)).getText();
+						fieldValue = element.getAttribute("textContent");
 					}
-					
 				}
 			}
+			if(StrategyConstants.DE_S.equals(detailStrategy)) {
+				if(detailRule.contains(SymbolConstants.URL)) {
+					fieldValue = url;
+				}
+			}
+			
 			if(StrategyConstants.SUB.equals(detailStrategy)) {
 				if(fieldValue=="") {
 					LOG.error("----两层点击中，首次抓取"+clickfield+"策略C的值为空！");
 				}else {
-					if(unionFlag) {
-						fieldValue += subCore(detailRule,fieldValue);
-					}else {
-						fieldValue = subCore(detailRule,fieldValue);
-					}
+					fieldValue = subCore(detailRule,fieldValue);
 				}
-			}
-			if(StrategyConstants.UNION.equals(detailStrategy)) {
-				unionFlag = true;
 			}
 		}
 		return fieldValue;
 	}
+
 	/**
 	 * 处理qty，策略SP-QTY-C，规则中以@|标识属性，以@F标识判断是否有库存的字符，!放于字符前标识不包含该字符为有库存
 	 * @param page 
@@ -716,22 +812,30 @@ public class GatherUtil {
 		}
 		if(driver!=null) {
 			if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
-				String[] rulesArray = rulesStr.split(SymbolConstants.ATTR_FLAG);
-				qtyFlag = driver.findElement(By.cssSelector(rulesArray[0])).getAttribute(rulesArray[1]);
+				String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
+				String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
+				WebElement element = driver.findElement(By.cssSelector(deRuleStr));
+				qtyFlag = element.getAttribute(attrStr);
 			}else {
-				qtyFlag = driver.findElement(By.cssSelector(rulesStr)).getText();
+				WebElement element = driver.findElement(By.cssSelector(rulesStr));
+				if(element.isDisplayed()) {
+					qtyFlag = element.getText();
+				}else {
+					qtyFlag = element.getAttribute("textContent");
+				}
 			}
 		}
 		if(page!=null) {
 			if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
-				String[] rulesArray = rulesStr.split(SymbolConstants.ATTR_FLAG);
-				qtyFlag = page.getHtml().getDocument().select(rulesArray[0]).attr(rulesArray[1]);
+				String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
+				String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
+				qtyFlag = page.getHtml().getDocument().select(deRuleStr).attr(attrStr);
 			}else {
 				qtyFlag = page.getHtml().getDocument().select(rulesStr).text();
 			}
 		}
 		
-		int qty = 0;
+		int qty = Constants.QTY_NO;
 		Pattern pattern = Pattern.compile("\\d+");
 		Matcher matcher = pattern.matcher(qtyFlag);
 		if(matcher.find()) {
@@ -739,17 +843,17 @@ public class GatherUtil {
 			int i = Integer.parseInt(matcher.group());
 			int j = Integer.parseInt(qtyFlagValue);
 			if(i>j) {
-				qty = 5;
+				qty = Constants.QTY_YES;
 			}
 		}else {
 //			以字符判断
 			if(qtyFlagValue.contains(SymbolConstants.FALSE_MARK)) {
 				if(!qtyFlag.contains(qtyFlagValue)) {
-					qty = 5;
+					qty = Constants.QTY_YES;
 				}
 			}else {
 				if(qtyFlag.contains(qtyFlagValue)) {
-					qty = 5;
+					qty = Constants.QTY_YES;
 				}
 			}
 				
@@ -766,12 +870,14 @@ public class GatherUtil {
 	 */
 	private static String handleDriverImg(WebDriver driver, String rulesStr) {
 		List<WebElement> imgElements = driver.findElements(By.cssSelector(rulesStr));
+		WebDriverWait wait = new WebDriverWait(driver, 10);
+		wait.until(ExpectedConditions.visibilityOfAllElements(imgElements));
 		String pics = "";
 		for (WebElement imgEle : imgElements) {
 			pics += imgEle.getAttribute(SymbolConstants.SRC)+SymbolConstants.SPLIT_FLAG;
 		}
 		if(pics.contains(SymbolConstants.SPLIT_FLAG)) {
-			pics = pics.substring(0, pics.length()-1);
+			pics = pics.substring(0, pics.length()-SymbolConstants.SPLIT_FLAG.length());
 		}
 		return pics;
 	}

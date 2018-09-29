@@ -3,6 +3,7 @@ package com.shangpin.spider.gather.crawlData;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,32 +31,25 @@ public class CommonCrawlData {
 	 * 字段规则的标识
 	 */
 	private static final Integer FIELD_RULES_FLAG = 2;
-	public static void crawlData(Page page,SpiderRules spiderRuleInfo) {
+
+	public static List<CrawlResult> crawlData(Page page, SpiderRules spiderRuleInfo,
+			Map<String, Map<String, String>> clickFieldMap) {
 		String url = page.getUrl().get();
 		CrawlResult crawlResult = new CrawlResult();
-		String spu = "";
-		if (StringUtils.isNotBlank(spiderRuleInfo.getSpuStrategy())&&StringUtils.isNotBlank(spiderRuleInfo.getSpuRules())) {
-			spu = GatherUtil.getValue(page, spu, spiderRuleInfo.getSpuStrategy(), spiderRuleInfo.getSpuRules(), "spu");
-		}
-		spiderRuleInfo.setSppuHashRules(GatherUtil.longHashCode(spu).toString());
-		String[] needClickField = {};
-		String clickFieldStr = spiderRuleInfo.getClickFieldStr();
-		if(clickFieldStr!="") {
-			needClickField = clickFieldStr.split(",");
-		}
+		String[] needClickFieldAry = spiderRuleInfo.getNeedClickFieldAry();
 		try {
 			Class<?> ruleClass = Class.forName(SpiderRules.class.getName());
 			Class<?> resultClass = Class.forName(CrawlResult.class.getName());
-			
+
 			Field[] ruleFields = ruleClass.getDeclaredFields();
 			Field[] resultFields = resultClass.getDeclaredFields();
-			
+
 			for (Field resultField : resultFields) {
 				resultField.setAccessible(true);
 				String typeName = resultField.getGenericType().toString();
 				String resultFieldName = resultField.getName();
-				if(GatherUtil.filterField(resultFieldName)||GatherUtil.filterNeedClick(resultFieldName,needClickField)) 
-				{
+				if (GatherUtil.filterField(resultFieldName)
+						|| GatherUtil.filterNeedClick(resultFieldName, needClickFieldAry)) {
 					continue;
 				}
 				int i = 0;
@@ -65,20 +59,20 @@ public class CommonCrawlData {
 					for (Field ruleField : ruleFields) {
 						ruleField.setAccessible(true);
 						String ruleFieldName = ruleField.getName();
-						if(ruleFieldName.contains(resultFieldName)) {
-							if(ruleFieldName.contains(Constants.FIELD_STRATEGY_SUFFIX)) {
+						if (ruleFieldName.contains(resultFieldName)) {
+							if (ruleFieldName.contains(Constants.FIELD_STRATEGY_SUFFIX)) {
 								strategyStr = (String) ruleField.get(spiderRuleInfo);
 							}
-							if(ruleFieldName.contains(Constants.FIELD_RULES_SUFFIX)) {
+							if (ruleFieldName.contains(Constants.FIELD_RULES_SUFFIX)) {
 								rulesStr = (String) ruleField.get(spiderRuleInfo);
 							}
 							i++;
 						}
 					}
-					if(i==FIELD_RULES_FLAG) {
-						rulesStr = GatherUtil.getValue(page, "", strategyStr, rulesStr,resultFieldName);
+					if (i == FIELD_RULES_FLAG) {
+						rulesStr = GatherUtil.getValue(page, "", strategyStr, rulesStr, resultFieldName);
 					}
-					ReflectTypeMap.typeMap(typeName,rulesStr,resultFieldName,resultField,crawlResult);
+					ReflectTypeMap.typeMap(typeName, rulesStr, resultFieldName, resultField, crawlResult);
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (IllegalAccessException e) {
@@ -87,45 +81,29 @@ public class CommonCrawlData {
 			}
 		} catch (ClassNotFoundException e) {
 			StackTraceElement traceElement = e.getStackTrace()[0];
-			LOG.error("---解析网页数据出错" + e.getLocalizedMessage() + "---错误行数："+ traceElement.getLineNumber());
+			LOG.error("---解析网页数据出错" + e.getLocalizedMessage() + "---错误行数：" + traceElement.getLineNumber());
 		}
-		
+
 		List<CrawlResult> resultList = new ArrayList<CrawlResult>();
-		crawlResult.setDetailLink(url);
+//		crawlResult.setDetailLink(url);
 		crawlResult.setWhiteId(spiderRuleInfo.getWhiteId());
 		crawlResult.setSupplierId(spiderRuleInfo.getSupplierId());
 		crawlResult.setSupplierNo(spiderRuleInfo.getSupplierNo());
-		if(StringUtils.isNotBlank(crawlResult.getSpu())) {
-			crawlResult.setProductModel(crawlResult.getSpu());
-		}
-		
-		
-/*//		处理颜色和尺寸的关系
-		String colorArray = "";
-		colorArray = GatherUtil.getValue(page, colorArray, spiderRuleInfo.getColorStrategy(), spiderRuleInfo.getColorRules(), "color");
-		String sizeArray = "";
-		sizeArray = GatherUtil.getValue(page, sizeArray, spiderRuleInfo.getSizeStrategy(), spiderRuleInfo.getSizeRules(), "size");
-		String qtyArray = "";
-		qtyArray = GatherUtil.getValue(page, qtyArray, spiderRuleInfo.getQtyStrategy(), spiderRuleInfo.getQtyRules(), "qty");
-//		方法一：循环处理
-		System.err.println("----颜色的数组----"+colorArray);
-		System.err.println("----尺寸的数组----"+sizeArray);
-		System.err.println("----库存的数组----"+qtyArray);*/
-//		方法二：模拟点击
 //		规则表中取出需点击获取值的字段
-		
-		if(needClickField.length>0) {
-			if(StrategyConstants.TWO_CLICK.equals(spiderRuleInfo.getJsMenuStrategy())) {
-//				两层点击
-				resultList = TwoClickUtil.crawlByClick(needClickField,spiderRuleInfo, url, crawlResult);
+		if (needClickFieldAry.length > 0) {
+			if (clickFieldMap != null) {
+				if (StrategyConstants.TWO_CLICK.equals(spiderRuleInfo.getJsMenuStrategy())) {
+//					两层点击
+					resultList = TwoClickUtil.crawlByClick(needClickFieldAry, clickFieldMap, spiderRuleInfo, url, crawlResult);
+				}
+			} else {
+				LOG.error("--源{}，需点击字段的规则映射为NULL--", spiderRuleInfo.getWhiteId());
 			}
-			
-		}else {
+		} else {
 			resultList.add(crawlResult);
 		}
-		page.putField(Constants.RESULTFLAG, resultList);
-		
+		return resultList;
+
 	}
-	
-	
+
 }

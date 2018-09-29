@@ -132,6 +132,11 @@ public class Constants {
 	 * 字段规则的后缀
 	 */
 	public static final String FIELD_RULES_SUFFIX = "Rules";
+	/**
+	 * QTY的标识
+	 */
+	public static final Integer QTY_YES = 5;
+	public static final Integer QTY_NO = 0;
 	
 	
 }

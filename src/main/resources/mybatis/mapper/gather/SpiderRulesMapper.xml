@@ -18,6 +18,9 @@
     <result column="charset" property="charset" jdbcType="VARCHAR" />
     <result column="gather_first" property="gatherFirst" jdbcType="BIT" />
     <result column="ajax_flag" property="ajaxFlag" jdbcType="BIT" />
+    <result column="next_page_flag" property="nextPageFlag" jdbcType="VARCHAR" />
+    <result column="next_page_tag" property="nextPageTag" jdbcType="VARCHAR" />
+    <result column="first_ajax_flag" property="firstAjaxFlag" jdbcType="BIT" />
     <result column="gender_rules" property="genderRules" jdbcType="VARCHAR" />
     <result column="brand_rules" property="brandRules" jdbcType="VARCHAR" />
     <result column="brand_strategy" property="brandStrategy" jdbcType="VARCHAR" />
@@ -44,6 +47,8 @@
     <result column="domestic_price_strategy" property="domesticPriceStrategy" jdbcType="VARCHAR" />
     <result column="sale_price_rules" property="salePriceRules" jdbcType="VARCHAR" />
     <result column="sale_price_strategy" property="salePriceStrategy" jdbcType="VARCHAR" />
+    <result column="detail_link_rules" property="detailLinkRules" jdbcType="VARCHAR" />
+    <result column="detail_link_strategy" property="detailLinkStrategy" jdbcType="VARCHAR" />
     <result column="made_rules" property="madeRules" jdbcType="VARCHAR" />
     <result column="made_strategy" property="madeStrategy" jdbcType="VARCHAR" />
     <result column="description_rules" property="descriptionRules" jdbcType="VARCHAR" />
@@ -61,12 +66,13 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, white_id, thread_num, retry_num, sleep, max_page_gather, timeout, cookie, user_agent, lie_url_reg, 
-    detail_url_reg, filter_url_reg, charset, ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
+    detail_url_reg, filter_url_reg, charset, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
     category_rules, category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
     js_menu_rules, js_menu_strategy,season_rules, material_rules, 
     material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
     pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
-    domestic_price_strategy, sale_price_rules, sale_price_strategy, made_rules, made_strategy, 
+    domestic_price_strategy, sale_price_rules, sale_price_strategy, 
+    detail_link_rules, detail_link_strategy, made_rules, made_strategy, 
     description_rules, description_strategy, pics_rules, pics_strategy, measurement_rules, measurement_strategy, 
     supplier_id, supplier_no, click_field_str,status, create_time, update_time
   </sql>
@@ -83,7 +89,7 @@
     insert into spider_rules (white_id, channel_rules, thread_num, retry_num, 
       sleep, max_page_gather, timeout, cookie, user_agent
       lie_url_reg, detail_url_reg, filter_url_reg, 
-      charset, ajax_flag, gather_first, gender_rules, 
+      charset, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, 
       brand_rules, brand_strategy, category_rules, 
       category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
       js_menu_rules, js_menu_strategy,
@@ -92,7 +98,8 @@
       size_strategy, pro_name_rules, pro_name_strategy, 
       foreign_price_rules, foreign_price_strategy, 
       domestic_price_rules, domestic_price_strategy, 
-      sale_price_rules, sale_price_strategy, made_rules, 
+      sale_price_rules, sale_price_strategy, 
+      detail_link_rules,detail_link_strategy,made_rules, 
       made_strategy, description_rules, description_strategy, 
       pics_rules, pics_strategy, measurement_rules, 
       measurement_strategy, supplier_id, supplier_no, click_field_str,
@@ -102,7 +109,9 @@
       #{sleep,jdbcType=INTEGER}, #{maxPageGather,jdbcType=INTEGER}, #{timeout,jdbcType=INTEGER}, 
       #{cookie,jdbcType=LONGVARCHAR}, #{userAgent,jdbcType=VARCHAR}, 
       #{lieUrlReg,jdbcType=VARCHAR}, #{detailUrlReg,jdbcType=VARCHAR}, #{filterUrlReg,jdbcType=VARCHAR}, 
-      #{charset,jdbcType=VARCHAR}, #{ajaxFlag,jdbcType=BIT}, #{gatherFirst,jdbcType=BIT}, #{genderRules,jdbcType=VARCHAR}, 
+      #{charset,jdbcType=VARCHAR}, #{ajaxFlag,jdbcType=BIT}, 
+      #{nextPageFlag,jdbcType=VARCHAR},#{nextPageTag,jdbcType=VARCHAR},#{firstAjaxFlag,jdbcType=BIT}, 
+      #{gatherFirst,jdbcType=BIT}, #{genderRules,jdbcType=VARCHAR}, 
       #{brandRules,jdbcType=VARCHAR}, #{brandStrategy,jdbcType=VARCHAR}, #{categoryRules,jdbcType=VARCHAR}, 
       #{categoryStrategy,jdbcType=VARCHAR}, #{spuRules,jdbcType=VARCHAR}, #{spuStrategy,jdbcType=VARCHAR}, 
       #{seasonRules,jdbcType=VARCHAR}, #{materialRules,jdbcType=VARCHAR}, #{materialStrategy,jdbcType=VARCHAR}, 
@@ -110,7 +119,8 @@
       #{sizeStrategy,jdbcType=VARCHAR}, #{proNameRules,jdbcType=VARCHAR}, #{proNameStrategy,jdbcType=VARCHAR}, 
       #{foreignPriceRules,jdbcType=VARCHAR}, #{foreignPriceStrategy,jdbcType=VARCHAR}, 
       #{domesticPriceRules,jdbcType=VARCHAR}, #{domesticPriceStrategy,jdbcType=VARCHAR}, 
-      #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR}, #{madeRules,jdbcType=VARCHAR}, 
+      #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR}, 
+      #{detailLinkRules,jdbcType=VARCHAR}, #{detailLinkStrategy,jdbcType=VARCHAR}, #{madeRules,jdbcType=VARCHAR}, 
       #{madeStrategy,jdbcType=VARCHAR}, #{descriptionRules,jdbcType=VARCHAR}, #{descriptionStrategy,jdbcType=VARCHAR}, 
       #{picsRules,jdbcType=LONGVARCHAR}, #{picsStrategy,jdbcType=VARCHAR}, #{measurementRules,jdbcType=VARCHAR}, 
       #{measurementStrategy,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR},
@@ -165,6 +175,15 @@
       </if>
       <if test="ajaxFlag != null" >
         ajax_flag,
+      </if>
+      <if test="nextPageFlag != null" >
+        next_page_flag,
+      </if>
+      <if test="nextPageTag != null" >
+        next_page_tag,
+      </if>
+      <if test="firstAjaxFlag != null" >
+        first_ajax_flag,
       </if>
       <if test="gatherFirst != null" >
         gather_first,
@@ -246,6 +265,12 @@
       </if>
       <if test="salePriceStrategy != null" >
         sale_price_strategy,
+      </if>
+      <if test="detailLinkRules != null" >
+        detail_link_rules,
+      </if>
+      <if test="detailLinkStrategy != null" >
+        detail_link_strategy,
       </if>
       <if test="madeRules != null" >
         made_rules,
@@ -334,6 +359,15 @@
       <if test="ajaxFlag != null" >
         #{ajaxFlag,jdbcType=BIT},
       </if>
+      <if test="nextPageFlag != null" >
+        #{nxtPageFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="nextPageTag != null" >
+        #{nextPageTag,jdbcType=VARCHAR},
+      </if>
+      <if test="firstAjaxFlag != null" >
+        #{firstAjaxFlag,jdbcType=BIT},
+      </if>
       <if test="gatherFirst != null" >
         #{gatherFirst,jdbcType=BIT},
       </if>
@@ -414,6 +448,12 @@
       </if>
       <if test="salePriceStrategy != null" >
         #{salePriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLinkRules != null" >
+        #{detailLinkRules,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLinkStrategy != null" >
+        #{detailLinkStrategy,jdbcType=VARCHAR},
       </if>
       <if test="madeRules != null" >
         #{madeRules,jdbcType=VARCHAR},
@@ -504,6 +544,15 @@
       <if test="ajaxFlag != null" >
         ajax_flag = #{ajaxFlag,jdbcType=BIT},
       </if>
+      <if test="nextPageFlag != null" >
+        next_page_flag = #{nextPageFlag,jdbcType=VARCHAR},
+      </if>
+      <if test="nextPageTag != null" >
+        next_page_tag = #{nextPageTag,jdbcType=VARCHAR},
+      </if>
+      <if test="firstAjaxFlag != null" >
+        first_ajax_flag = #{firstAjaxFlag,jdbcType=BIT},
+      </if>
       <if test="gatherFirst != null" >
         gather_first = #{gatherFirst,jdbcType=BIT},
       </if>
@@ -585,6 +634,12 @@
       <if test="salePriceStrategy != null" >
         sale_price_strategy = #{salePriceStrategy,jdbcType=VARCHAR},
       </if>
+      <if test="detailLinkRules != null" >
+        detail_link_rules = #{detailLinkRules,jdbcType=VARCHAR},
+      </if>
+      <if test="detailLinkStrategy != null" >
+        detail_link_strategy = #{detailLinkStrategy,jdbcType=VARCHAR},
+      </if>
       <if test="madeRules != null" >
         made_rules = #{madeRules,jdbcType=VARCHAR},
       </if>
@@ -647,6 +702,9 @@
       filter_url_reg = #{filterUrlReg,jdbcType=VARCHAR},
       charset = #{charset,jdbcType=VARCHAR},
       ajax_flag = #{ajaxFlag,jdbcType=BIT},
+      next_page_flag = #{nextPageFlag,jdbcType=VARCHAR},
+      next_page_tag = #{nextPageTag,jdbcType=VARCHAR},
+      first_ajax_flag = #{firstAjaxFlag,jdbcType=BIT},
       gather_first = #{gatherFirst,jdbcType=BIT},
       gender_rules = #{genderRules,jdbcType=VARCHAR},
       brand_rules = #{brandRules,jdbcType=VARCHAR},
@@ -674,6 +732,8 @@
       domestic_price_strategy = #{domesticPriceStrategy,jdbcType=VARCHAR},
       sale_price_rules = #{salePriceRules,jdbcType=VARCHAR},
       sale_price_strategy = #{salePriceStrategy,jdbcType=VARCHAR},
+      detail_link_rules = #{detailLinkRules,jdbcType=VARCHAR},
+      detail_link_strategy = #{detailLinkStrategy,jdbcType=VARCHAR},
       made_rules = #{madeRules,jdbcType=VARCHAR},
       made_strategy = #{madeStrategy,jdbcType=VARCHAR},
       description_rules = #{descriptionRules,jdbcType=VARCHAR},

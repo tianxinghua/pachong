@@ -19,6 +19,8 @@ import com.shangpin.spider.gather.downloader.YcmWebDriverPool;
 import com.shangpin.spider.gather.spider.CommonSpider.MySpider;
 import com.shangpin.spider.redis.RedisManager;
 
+import us.codecraft.webmagic.thread.CountableThreadPool;
+
 
 
 /** 
@@ -50,6 +52,8 @@ public class TaskManager {
 	 */
 	public void deleteTask(String whiteName){
 		if(taskMap.containsKey(whiteName)){
+//			MySpider spider = taskMap.get(whiteName);
+//			spider.setScheduler(null);
 			taskMap.remove(whiteName);
 			log.info("-----删除爬虫任务:"+whiteName);
 		}
@@ -89,12 +93,8 @@ public class TaskManager {
 			int ordinal = spider.getStatus().ordinal();
 			if(ordinal == 1){
 				log.info("-----关闭爬虫:"+uuid+" name:"+name);
+				shutDown(spider);
 				spider.stop();
-				if (spider.getSpiderRuleInfo().getAjaxFlag()) {
-					WebDriverPool pool = spider.getPool();
-					// 停止phantomjs
-					pool.shutdownEnd();
-				}
 			}else if(ordinal == 2){
 				log.info("-----开启爬虫:"+uuid+" name:"+name);
 				//开启前清除redis中的源链接
@@ -114,14 +114,25 @@ public class TaskManager {
 	 */
 	public void forceQuit(String uuid,String name){
 		MySpider spider = taskMap.get(name);
+//		spider.setScheduler(null);
 		if(spider.getUUID().equals(uuid)){
 				log.info("-----强制关闭爬虫:"+uuid+" name:"+name);
+				shutDown(spider);
 				spider.stop();
-				if (spider.getSpiderRuleInfo().getAjaxFlag()) {
-					WebDriverPool pool = spider.getPool();
-					// 停止phantomjs
-					pool.shutdownEnd();
-				}
+				
+		}
+	}
+	
+	private void shutDown(MySpider spider) {
+		if (spider.getSpiderRuleInfo().getAjaxFlag()) {
+			WebDriverPool pool = spider.getPool();
+			WebDriverPool clickPool = spider.getClickPool();
+			CountableThreadPool threadPool = spider.getThreadPool();
+			// 停止phantomjs
+			threadPool.shutdown();
+			pool.shutdownEnd();
+			clickPool.shutdownEnd();
+			
 		}
 	}
 	

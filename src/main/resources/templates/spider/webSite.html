@@ -73,8 +73,9 @@
 						<option value='3'>3</option>
 						<option value='4'>4</option>
 						<option value='5'>5</option>
+						<option value='10'>10</option>
 					</select>
-					失败重试次数：<select name="retryNum">
+					失败重试次数（未开发）：<select name="retryNum">
 						<option value='1'>1</option>
 						<option value='2' selected="selected">2（推荐）</option>
 						<option value='3'>3</option>
@@ -94,7 +95,7 @@
 						<option value='30000' selected="selected">30秒（推荐）</option>
 					</select><br/>
 					最大抓取数量：<input type="text" name="maxPageGather" value="100"/>
-					网站代理：<select name="proxy">
+					网站代理（未开发）：<select name="proxy">
 					</select>
 					<!--默认分类：<select name="category">
 					</select>
@@ -105,6 +106,14 @@
 					-->
 					 是否为动态网页：<input type="radio" name="ajaxFlag" value="1" />Y&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="ajaxFlag" value="0" checked="checked"/>N
+					<br/>
+					翻页的策略：<input type="radio" name="nextPageFlag" value="scroll" />下拉条&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="nextPageFlag" value="next" checked="checked"/>点击下一页&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="nextPageFlag" value="more" checked="checked"/>查看更多
+					翻页的按钮CSS：<input type="text" name="nextPageTag"/>
+					<br/>
+					列表页加载策略：<input type="radio" name="firstAjaxFlag" value="1" />动态加载&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="firstAjaxFlag" value="0" checked="checked"/>静态加载（推荐）
 					<br/>
 					<a href="http://tool.oschina.net/regex" target="blank">在线正则工具</a>
 					列表页链接的正则：<input type="text" name="lieUrlReg"/>
@@ -145,6 +154,16 @@
 					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">AND</button>
 					<br/>
 					品牌的规则：<textarea name="brandRules" rows="2" cols="100">
+						
+					</textarea></div>
+					<br/>
+					
+					<div>网页链接的策略：<input type="text" name="detailLinkStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					<button type="button" class="btn btn-default" name="categoryStrategyBtn">选择</button>
+					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">OR</button>
+					<button type="button" class="btn btn-default btn-xs" name="categoryStrategyBtn">AND</button>
+					<br/>
+					网页链接的规则：<textarea name="detailLinkRules" rows="2" cols="100">
 						
 					</textarea></div>
 					<br/>
@@ -615,7 +634,14 @@
 	        				if(spiderRules.ajaxFlag){
 	        					ajaxInt = 1;
 	        				}
+	        				var firstAjaxInt = 0;
+	        				if(spiderRules.firstAjaxFlag){
+	        					firstAjaxInt = 1;
+	        				}
 	        				$("[name='ajaxFlag'][value='"+ajaxInt+"']").attr('checked','true');
+	        				$("[name='nextPageFlag'][value='"+spiderRules.nextPageFlag+"']").attr('checked','true');
+	        				$("[name='nextPageTag']").val(spiderRules.nextPageTag);
+	        				$("[name='firstAjaxFlag'][value='"+firstAjaxInt+"']").attr('checked','true');
 	                		$("[name='maxPageGather']").val(spiderRules.maxPageGather);
 	                		$("[name='lieUrlReg']").val(spiderRules.lieUrlReg);
 	                		$("[name='detailUrlReg']").val(spiderRules.detailUrlReg);
@@ -624,6 +650,9 @@
 	                		
 	                		$("[name='brandStrategy']").val(spiderRules.brandStrategy);
 	                		$("[name='brandRules']").val(spiderRules.brandRules);
+	                		
+	                		$("[name='detailLinkStrategy']").val(spiderRules.detailLinkStrategy);
+	                		$("[name='detailLinkRules']").val(spiderRules.detailLinkRules);
 	                		
 	                		$("[name='madeStrategy']").val(spiderRules.madeStrategy);
 	                		$("[name='madeRules']").val(spiderRules.madeRules);
@@ -694,6 +723,9 @@
         		//var categoryId = $("[name='category'] option:selected").val();
         		
         		var ajaxFlag = $("input[name='ajaxFlag']:checked").val();
+        		var nextPageFlag = $("input[name='nextPageFlag']:checked").val();
+        		var nextPageTag = $("[name='nextPageTag']").val();
+        		var firstAjaxFlag = $("input[name='firstAjaxFlag']:checked").val();
         		var maxPageGather = $("[name='maxPageGather']").val();
         		
         		var lieUrlReg = $("[name='lieUrlReg']").val();
@@ -705,6 +737,9 @@
 
         		var brandRules = $("[name='brandRules']").val();
         		var brandStrategy = $("[name='brandStrategy']").val();
+        		
+        		var detailLinkRules = $("[name='detailLinkRules']").val();
+        		var detailLinkStrategy = $("[name='detailLinkStrategy']").val();
         		
         		var madeRules = $("[name='madeRules']").val();
         		var madeStrategy = $("[name='madeStrategy']").val();
@@ -755,12 +790,12 @@
         		var supplierId = $("[name='supplierId']").val();
         		var supplierNo = $("[name='supplierNo']").val();
         		var clickFieldArray = $("#clickFieldArray").val();
-        		alert(clickFieldArray);
+        		//alert(clickFieldArray);
         		var clickFieldStr = "";
         		if(clickFieldArray.length>0) {
        				clickFieldStr = clickFieldArray.join(",");
         		}
-        		alert(clickFieldStr);
+        		//alert(clickFieldStr);
         		
         		$.post("/spider/saveWebRule",
         				{
@@ -772,6 +807,9 @@
         					timeout:timeout,
         					status:status,
         					'ajaxFlag':ajaxFlag,
+        					nextPageFlag:nextPageFlag,
+        					nextPageTag:nextPageTag,
+        					'firstAjaxFlag':firstAjaxFlag,
         					'maxPageGather':maxPageGather,
         					lieUrlReg:lieUrlReg,
         					detailUrlReg:detailUrlReg,
@@ -780,6 +818,8 @@
         					seasonRules:seasonRules,
         					brandRules:brandRules,
         					brandStrategy:brandStrategy,
+        					detailLinkRules:detailLinkRules,
+        					detailLinkStrategy:detailLinkStrategy,
         					madeRules:madeRules,
         					madeStrategy:madeStrategy,
         					categoryRules:categoryRules,

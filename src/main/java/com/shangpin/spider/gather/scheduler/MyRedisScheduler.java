@@ -2,20 +2,17 @@ package com.shangpin.spider.gather.scheduler;
 
 import java.util.Set;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.shangpin.spider.common.Constants;
 
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Task;
+import us.codecraft.webmagic.scheduler.Scheduler;
 
 /**
  * @author njt
@@ -24,7 +21,7 @@ import us.codecraft.webmagic.Task;
  * @parameter
  */
 @Service
-public class MyRedisScheduler extends RedisScheduler {
+public class MyRedisScheduler implements Scheduler {
 
 	private static Logger log = Logger.getLogger(MyRedisScheduler.class);
 
@@ -32,7 +29,7 @@ public class MyRedisScheduler extends RedisScheduler {
 	private StringRedisTemplate redisTemplate;
 	
 	@Override
-	protected void pushWhenNoDuplicate(Request request, Task task) {
+	public void push(Request request, Task task) {
 		try {
 			ZSetOperations<String, String> zoper = redisTemplate.opsForZSet();
 				String url = request.getUrl();
@@ -55,7 +52,7 @@ public class MyRedisScheduler extends RedisScheduler {
 				} else {
 					zoper.add(Constants.TASKUUID+uuid, url, request.getPriority());
 				}
-			setExtrasInItem(request, task);
+//			setExtrasInItem(request, task);
 		} finally {
 			log.info("redis priority scheduler:pushWhenNoDuplicate");
 		}
@@ -66,13 +63,15 @@ public class MyRedisScheduler extends RedisScheduler {
 		String url = "";
 		try {
 			url = getRequest(task);
-			if (StringUtils.isBlank(url)){
+			if(url==null) {
+				log.info("redis priority scheduler:poll null");
 				return null;
 			}
-//			return new Request(url);
-			return getExtrasInItem(url, task);
+			log.info("redis priority scheduler:poll success");
+			return new Request(url);
+//			return getExtrasInItem(url, task);
 		} finally {
-			log.info("redis priority scheduler:poll");
+			log.info("redis priority scheduler:poll finally");
 		}
 	}
 
@@ -93,7 +92,7 @@ public class MyRedisScheduler extends RedisScheduler {
 		return url;
 	}
 
-	@Override
+	/*@Deprecated
 	public void resetDuplicateCheck(Task task) {
 		try {
 			redisTemplate.delete(getSetKey(task));
@@ -101,7 +100,8 @@ public class MyRedisScheduler extends RedisScheduler {
 			log.info("redis priority scheduler:resetDuplicateCheck");
 		}
 	}
-
+	
+	@Deprecated
 	private void setExtrasInItem(Request request, Task task) {
 		if (request.getExtras() != null) {
 			String field = DigestUtils.shaHex(request.getUrl());
@@ -110,7 +110,7 @@ public class MyRedisScheduler extends RedisScheduler {
 			hoper.put(getItemKey(task), field, value);
 		}
 	}
-
+	@Deprecated
 	private Request getExtrasInItem(String url, Task task) {
 		String key = getItemKey(task);
 		String field = DigestUtils.shaHex(url);
@@ -120,6 +120,6 @@ public class MyRedisScheduler extends RedisScheduler {
 			return JSON.parseObject(obj.toString(), Request.class);
 		}
 		return new Request(url);
-	}
+	}*/
 
 }

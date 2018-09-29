@@ -65,7 +65,8 @@
   `white_id` bigint(20) NOT NULL COMMENT '对应源网站的ID',
   `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sppu_hash` (`sppu_hash`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='抓取结果表';
   </select>
   

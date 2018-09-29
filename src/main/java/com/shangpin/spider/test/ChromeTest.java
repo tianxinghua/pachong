@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -20,15 +21,30 @@ public class ChromeTest {
 		System.setProperty("webdriver.chrome.driver", "D:/software/driver/chromedriver.exe");
 		
 		ChromeOptions options = new ChromeOptions();
-		options.addArguments("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
+//		options.addArguments("User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36");
 		options.addArguments("Content-Type: text/plain;charset=UTF-8");
+		
+		options.addArguments("--headless");
 		
 		caps.setCapability("chromeOptions", options);
 		ChromeDriver driver = new ChromeDriver(caps);
-		String url = "https://www.endclothing.com/gb/givenchy-logo-polo-bm709b3006-420.html";
-//		List<String> list = tt();
+		String url = "";
+//		url = "https://www.endclothing.com/gb/givenchy-logo-polo-bm709b3006-420.html";
+		url = "https://fr.maje.com/fr/pret-a-porter/selection/robes-violettes/ravira/H18RAVIRA.html?dwvar_H18RAVIRA_color=0102";
+		driver.get(url);
+		String material = "";
+		WebElement element = driver.findElementByCssSelector("#pdpMain > div.product-list-images.clearfix > div.wrapper-tabs.hidden-small > div > div:nth-child(3)");
+		if(element.isDisplayed()) {
+			System.err.println("---显示----"+element.isDisplayed());
+			material = element.getText();
+		}else {
+			System.err.println("---不显示----"+element.isDisplayed());
+			material = element.getAttribute("textContent");
+		}
+		System.err.println("-------"+material);
+		//		List<String> list = tt();
 //		for (String url : list) {
-			try {
+			/*try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -42,7 +58,7 @@ public class ChromeTest {
 			}
 			String name = driver.findElement(By.cssSelector("#maincontent > div > div > div > section:nth-child(1) > div > div.page-title-wrapper.row.c-page-title.product > h1 > span")).getText();
 			String price = driver.findElement(By.cssSelector(".price-wrapper > .price")).getText();
-			System.err.println("---名称："+name+"\n---价格："+price);
+			System.err.println("---名称："+name+"\n---价格："+price);*/
 			
 //		}
 			
