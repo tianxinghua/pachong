@@ -430,6 +430,7 @@ public class FetchStockImpl  {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
         //每一款商品休息2s
 //        try {
@@ -531,6 +532,7 @@ public class FetchStockImpl  {
             Document doc = Jsoup.parse(responseHtml);
 
             String qtyStr = doc.select("p.title").first().text();
+            String qtyStrDesc = doc.select("div.subtitle").first().text();
             // DISPONIBILE SOLO PER PRE-ORDINE | DISPONIBILE  | DISPONIBILE IN 1-2 SETTIMANE
 
             if(qtyStr!=null){
@@ -538,8 +540,13 @@ public class FetchStockImpl  {
                     mapDate.put("qty",NO_STOCK);
                     mapDate.put("qtyDesc","预售");
                 }else if(qtyStr.contains("DISPONIBILE")){
-                    mapDate.put("qty",IN_STOCK);
-                    mapDate.put("qtyDesc","有货");
+                    if(qtyStrDesc.contains("1-2")){
+                        mapDate.put("qty",IN_STOCK);
+                        mapDate.put("qtyDesc","有货");
+                    }else{
+                        mapDate.put("qty",NO_STOCK);
+                        mapDate.put("qtyDesc","发货时长超过两天");
+                    }
                 }
             }else{
                 // 售罄

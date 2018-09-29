@@ -135,7 +135,7 @@ public class FetchStockImpl  {
         //当商品数据
         if(total>Integer.parseInt(pageSize)){
             Integer pageNumber = getPageNumber(total, 20);
-            for (int i = 17; i <= pageNumber; i++) {
+            for (int i = 2; i <= pageNumber; i++) {
                 ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
                 if(temprpductPageContent!=null){
                     productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
@@ -293,7 +293,6 @@ public class FetchStockImpl  {
 
                             for (int j = 0; j < skuSize; j++) {
                                 SkuDTO skuDTO = skuDTOs.get(j);
-                                String hubSize = skuDTO.getSize();
                                 String hubSupplierSkuNo = skuDTO.getSupplierSkuNo();
                                 String hubMarketPrice = skuDTO.getMarketPrice();
                                 if(hubSupplierSkuNo.equals(hermesSku)){
@@ -308,7 +307,7 @@ public class FetchStockImpl  {
                                             try {
                                                 logger.info("开始推送价格："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                                 System.out.println("开始推送价格："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
-                                                updateSpSkuMarketPrice(hubSupplierSkuNo,hubMarketPrice);
+                                                updateSpSkuMarketPrice(hubSupplierSkuNo,newMarketPrice);
                                                 logger.info("推送 价格成功："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                                 System.out.println("推送 价格成功："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                             } catch (Exception e) {
@@ -382,7 +381,7 @@ public class FetchStockImpl  {
         jsonObject.put("skus",skuList);
 
         String jsonStr = jsonObject.toString();
-        String qtyUrl = "https://www.hermes.com/apps/ecom/stock";
+        String qtyUrl = "https://ecp.hermes.com/stock";
 
         //operateData(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,Map<String,String> headerMap,String username,String password)
         String resultJsonStr = HttpUtil45.operateData("post", "json", qtyUrl, timeConfig, null, jsonStr,headerMap, null, null);

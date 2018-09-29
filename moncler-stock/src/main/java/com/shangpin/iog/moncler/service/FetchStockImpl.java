@@ -44,6 +44,8 @@ public class FetchStockImpl {
     private static final String IN_STOCK = "1";
     //无库存
     private static final String NO_STOCK = "0";
+    //渠道
+    private static final String CHANNEL = "store.moncler.com";
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
@@ -108,7 +110,7 @@ public class FetchStockImpl {
         List<ProductDTO> productDTOAllList =  new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent monclerPageContent = getShangPinPageContentByParam(supplierId,"","store.moncler.com",1, Integer.parseInt(pageSize));
+        ShangPinPageContent monclerPageContent = getShangPinPageContentByParam(supplierId,"",CHANNEL,1, Integer.parseInt(pageSize));
         productDTOAllList.addAll(monclerPageContent.getZhiCaiResultList());
 
         if(monclerPageContent == null) return;
@@ -116,11 +118,11 @@ public class FetchStockImpl {
         Integer total = monclerPageContent.getTotal();
         Integer pageNumber = getPageNumber(total, 20);
         for (int i = 2; i <= pageNumber; i++) {
-            ShangPinPageContent temmonclerPageContent = getShangPinPageContentByParam(supplierId,"","store.moncler.com", i, Integer.parseInt(pageSize));
+            ShangPinPageContent temmonclerPageContent = getShangPinPageContentByParam(supplierId,"",CHANNEL, i, Integer.parseInt(pageSize));
             if(temmonclerPageContent!=null){
                 productDTOAllList.addAll(temmonclerPageContent.getZhiCaiResultList());
             }else{ //请求失败重新 再次请求
-                temmonclerPageContent = getShangPinPageContentByParam(supplierId,"","store.moncler.com", i, Integer.parseInt(pageSize));
+                temmonclerPageContent = getShangPinPageContentByParam(supplierId,"",CHANNEL, i, Integer.parseInt(pageSize));
                 if(temmonclerPageContent!=null){
                     productDTOAllList.addAll(temmonclerPageContent.getZhiCaiResultList());
                 }
@@ -331,7 +333,7 @@ public class FetchStockImpl {
                                 float temElementPrice = Float.parseFloat(price);
                                 float spMarketPrice = Float.parseFloat(marketPrice);
                                 if(temElementPrice!=spMarketPrice){ //价格发生改变
-                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
+                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price,CHANNEL);
                                     logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                     System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                 }
@@ -372,12 +374,13 @@ public class FetchStockImpl {
      * @param supplierSkuNo
      * @param marketPrice
      */
-    private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice) {
+    private static void updateSpSkuMarketPrice(String supplierSkuNo, String marketPrice,String channel) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("supplierId",supplierId);
         jsonObject.put("supplierNo",supplierNo);
         jsonObject.put("supplierSkuNo",supplierSkuNo);
         jsonObject.put("marketPrice",marketPrice);
+        jsonObject.put("channel",channel);
         String jsonStr = jsonObject.toString();
         System.out.println(" 推送价格入参json:"+jsonStr);
         logger.info(" 推送价格入参json:"+jsonStr);

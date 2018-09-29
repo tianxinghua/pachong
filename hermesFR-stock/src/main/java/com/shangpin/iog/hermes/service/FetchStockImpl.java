@@ -36,7 +36,7 @@ public class FetchStockImpl  {
     private static Logger loggerError = Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",supplierNo = "",supplierName = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
+    private static String supplierId = "",supplierNo = "",supplierName = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="",channel="";
 
     private static OutputStreamWriter  out= null;
     static String splitSign = ",";
@@ -80,6 +80,8 @@ public class FetchStockImpl  {
         pageSize = bdl.getString("pageSize");
 
         filePath = bdl.getString("csvFilePath");
+
+        channel = bdl.getString("channel");
 
     }
 
@@ -125,7 +127,7 @@ public class FetchStockImpl  {
         List<ProductDTO> productDTOAllList =  new LinkedList<>();
 
         //获取第一页商品数据
-        ShangPinPageContent prpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, 1, Integer.parseInt(pageSize));
+        ShangPinPageContent prpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, 1, Integer.parseInt(pageSize),channel);
         if(prpductPageContent == null) return;
 
         productDTOAllList.addAll(prpductPageContent.getZhiCaiResultList());
@@ -133,14 +135,14 @@ public class FetchStockImpl  {
         //总记录数
         Integer total = prpductPageContent.getTotal();
         //当商品数据
-        if(total>Integer.parseInt(pageSize)){
+       if(total>Integer.parseInt(pageSize)){
             Integer pageNumber = getPageNumber(total, 20);
-            for (int i = 17; i <= pageNumber; i++) {
-                ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
+            for (int i = 2; i <= pageNumber; i++) {
+                ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize),channel);
                 if(temprpductPageContent!=null){
                     productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
                 }else{ //请求失败重新 再次请求
-                    temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
+                    temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize),channel);
                     if(temprpductPageContent!=null){
                         productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
                     }
@@ -198,7 +200,7 @@ public class FetchStockImpl  {
      * @param pageSize 分页条数
      * @return
      */
-    public  ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize){
+    public  ShangPinPageContent getShangPinPageContentByParam(String supplierId,String brandName,Integer pageIndex,Integer pageSize,String channel){
         //String fetchSpProductInfosUrl = "http://192.168.20.176:8003/supplier-sku/get-product";
         //1. 请求需要更新库存商品 信息接口
         JSONObject jsonObject = new JSONObject();
@@ -206,6 +208,7 @@ public class FetchStockImpl  {
         jsonObject.put("brandName",brandName);
         jsonObject.put("pageIndex",pageIndex);
         jsonObject.put("pageSize",pageSize);
+        jsonObject.put("channel",channel);
 
         String jsonStr = jsonObject.toString();
 
@@ -293,7 +296,6 @@ public class FetchStockImpl  {
 
                             for (int j = 0; j < skuSize; j++) {
                                 SkuDTO skuDTO = skuDTOs.get(j);
-                                String hubSize = skuDTO.getSize();
                                 String hubSupplierSkuNo = skuDTO.getSupplierSkuNo();
                                 String hubMarketPrice = skuDTO.getMarketPrice();
                                 if(hubSupplierSkuNo.equals(hermesSku)){
@@ -308,7 +310,7 @@ public class FetchStockImpl  {
                                             try {
                                                 logger.info("开始推送价格："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                                 System.out.println("开始推送价格："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
-                                                updateSpSkuMarketPrice(hubSupplierSkuNo,hubMarketPrice);
+                                                updateSpSkuMarketPrice(hubSupplierSkuNo,newMarketPrice);
                                                 logger.info("推送 价格成功："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                                 System.out.println("推送 价格成功："+ hubSupplierSkuNo+" 原价："+hubMarketPrice+" 新价:"+newMarketPrice);
                                             } catch (Exception e) {
@@ -375,14 +377,14 @@ public class FetchStockImpl  {
         //请求头
         Map<String, String> headerMap = new HashMap<>();
         headerMap.put("User-Agent", "Mozilla/5.0 (Windows NT 6.1)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36)");
-        headerMap.put("Cookie", "_ga=GA1.2.1410775761.1531446626; cookiebanner=1; _gid=GA1.2.1246508835.1532678167; has_js=1; locale-country-data={\"country\":\"it\",\"locale\":\"en-he\",\"language\":\"en\"}; ECOM_SESS=3259abe9fab28706f7a9414a72c268c8; _gat_UA-72839523-2=1; _gat_UA-64545050-1=1");
+        headerMap.put("Cookie", "_ga=GA1.2.1410775761.1531446626; cookiebanner=1; _gid=GA1.2.1246508835.1532678167; has_js=1; locale-country-data={\"country\":\"fr\",\"locale\":\"en-he\",\"language\":\"en\"}; ECOM_SESS=3259abe9fab28706f7a9414a72c268c8; _gat_UA-72839523-2=1; _gat_UA-64545050-1=1");
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("locale","it_en");
+        jsonObject.put("locale","fr_fr");
         jsonObject.put("skus",skuList);
 
         String jsonStr = jsonObject.toString();
-        String qtyUrl = "https://www.hermes.com/apps/ecom/stock";
+        String qtyUrl = "https://ecp.hermes.com/stock";
 
         //operateData(String operatorType,String transParaType ,String url,OutTimeConfig outTimeConf,Map<String,String> param,String jsonValue ,Map<String,String> headerMap,String username,String password)
         String resultJsonStr = HttpUtil45.operateData("post", "json", qtyUrl, timeConfig, null, jsonStr,headerMap, null, null);
@@ -544,7 +546,8 @@ public class FetchStockImpl  {
 
     public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://www.gucci.com/it/it/pr/gifts/gifts-for-women/rhyton-glitter-gucci-leather-sneaker-p-524990DRW009022?position=1&listName=VariationOverlay");
+        FetchStockImpl fetchStock = new FetchStockImpl();
+       /* productDTO.setProductUrl("https://www.gucci.com/it/it/pr/gifts/gifts-for-women/rhyton-glitter-gucci-leather-sneaker-p-524990DRW009022?position=1&listName=VariationOverlay");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
         skuDTO.setSpSkuNo("30970081005");
@@ -552,7 +555,9 @@ public class FetchStockImpl  {
         skuDTO.setSupplierSkuNo("37");
         zhiCaiSkuResultList.add(skuDTO);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
-
+*/
+        ShangPinPageContent hermes = fetchStock.getShangPinPageContentByParam("2018082802043", "HERMES", 1, 20, "www.hermes.com");
+        System.out.println(hermes);
     }
 
 }

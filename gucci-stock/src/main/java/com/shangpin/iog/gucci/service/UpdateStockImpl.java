@@ -41,11 +41,22 @@ public class UpdateStockImpl extends FetchStockImpl {
     //库存csv 文件存放目录
     private static String filePath="";
 
+
     private static Integer batchSize = 200;
 
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
-    private static List<Map<String, Integer>> filedIceStockMaps = null;
+
+
+    /**
+     * 推送库存 失败 重复推送请求 最大次数
+     */
+    private static Integer repeatRequestNum=4;
+    /**
+     * 推送过程中 推送失败的 库存信息
+     */
+    private static List<ZhiCaiSkuHttpDTO> failZhiCaiSkuHttpDTOList = null;
+
 
     static {
         if (null == bdl){
@@ -57,6 +68,7 @@ public class UpdateStockImpl extends FetchStockImpl {
 
         try{
             batchSize = Integer.parseInt(bdl.getString("batchSize"));
+            repeatRequestNum = Integer.parseInt(bdl.getString("repeatRequestNum"));
         }catch(Exception e) {
             batchSize = 200;
         }
@@ -67,6 +79,12 @@ public class UpdateStockImpl extends FetchStockImpl {
      */
     @Override
     public void fetchItlyProductStock(){
+        /**
+         * 初始化定义失败请求 ZhiCaiSkuHttpDTOLIst
+         */
+        failZhiCaiSkuHttpDTOList = new ArrayList<>();
+
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
         System.out.println("============更新GUCCI库存数据库开始 "+startDateTime+"=========================");
@@ -85,6 +103,13 @@ public class UpdateStockImpl extends FetchStockImpl {
             }else{
                 System.out.println("获取csv spSkuNO size:0 调取csv文件数据失败 ");
                 loggerError.error("获取csv spSkuNO size:0 调取csv文件数据失败 ");
+            }
+            /**
+             * 处理推送失败的 商品 sku
+             */
+            int size = failZhiCaiSkuHttpDTOList.size();
+            for (int i = 0; i <size ; i++) {
+                updateZhiCaiSkuListPro(failZhiCaiSkuHttpDTOList.get(i));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,38 +139,6 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
     }
 
-    /**
-     * 调用服务更新 spSku 信息
-     * @param spSkuNoDTO
-     */
-    private void updateSpSkuQtyByspSkuNoDTO(SpSkuNoDTO spSkuNoDTO) {
-        if(spSkuNoDTO==null) return;
-        String spSkuNo = spSkuNoDTO.getSpSkuNo();
-        String qty = spSkuNoDTO.getQty();
-        if(spSkuNo==null||qty==null||"".equals(spSkuNo)){
-            System.out.println(" 更新库存信息 spSkuNo:"+spSkuNo +" qty:"+qty);
-            loggerError.error(" 更新库存信息 spSkuNo:"+spSkuNo +" qty:"+qty);
-            return;
-        }
-        Integer qtyNumber =null;
-        try {
-            qtyNumber = Integer.parseInt(qty);
-        } catch (NumberFormatException e) {
-            //手动处理为 0
-            qtyNumber = 0;
-            System.out.println(" string castto Integer failed ======== qty:"+qty);
-            logger.info(" string castto Integer failed ======== qty:"+qty);
-            e.printStackTrace();
-        }
-
-        //updateIceStock(String supplier, Map<String, Integer> iceStock)
-        Map<String, Integer> iceStock = new HashMap<>();
-        iceStock.put(spSkuNoDTO.getSpSkuNo(),qtyNumber);
-        int updateFailedNum = updateIceSpSkuByMap(iceStock);
-        System.out.println(" 本次更新尚品库存失败的个数："+updateFailedNum);
-        loggerError.error("本次更新尚品库存失败的个数："+updateFailedNum);
-
-    }
 
     /**
      * 调用接口 批量更新 spSku 信息
@@ -194,7 +187,11 @@ public class UpdateStockImpl extends FetchStockImpl {
             //最后遍历到最后的时候将最后的spSku 更新 防止 当skuStockList 的size 大小小于batchSize
             if(i == size-1){
                 zhiCaiSkuHttpDTO.setZhiCaiSkuStockList(skuStockList);
-                updateZhiCaiSkuList(zhiCaiSkuHttpDTO);
+                Boolean flag = updateZhiCaiSkuListPro(zhiCaiSkuHttpDTO);
+                if(!flag){
+                    failZhiCaiSkuHttpDTOList.add(zhiCaiSkuHttpDTO);
+                }
+
             }
         }
         //Integer updateFailedNum = updateIceSpSkuByMap(spSkuMap);
@@ -203,11 +200,30 @@ public class UpdateStockImpl extends FetchStockImpl {
         logger.info("本次更新尚品库存的个数："+updateFailedNum);
     }
 
+
+
+    /**
+     * 调用接口更新 spSku qty 信息
+     * @param zhiCaiSkuHttpDTO 库存信息DTO
+     */
+    private Boolean updateZhiCaiSkuListPro(ZhiCaiSkuHttpDTO zhiCaiSkuHttpDTO) {
+        int count = 0;
+        while(count<repeatRequestNum) {
+            count++;
+            boolean flag = updateZhiCaiSkuList(zhiCaiSkuHttpDTO);
+            if(flag){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /**
      * 调用接口更新 spSku qty 信息
      * @param zhiCaiSkuHttpDTO
      */
-    private void updateZhiCaiSkuList(ZhiCaiSkuHttpDTO zhiCaiSkuHttpDTO) {
+    private boolean updateZhiCaiSkuList(ZhiCaiSkuHttpDTO zhiCaiSkuHttpDTO) {
         JSONObject jsonObject =JSONObject.fromObject(zhiCaiSkuHttpDTO);
         String jsonStr = jsonObject.toString();
         try {
@@ -220,34 +236,19 @@ public class UpdateStockImpl extends FetchStockImpl {
             if("0".equals(code)){
                 logger.info("==更新updateZhiCaiSkuList成功====resultJsonStr:"+resultJsonStr);
                 System.out.println("==更新updateZhiCaiSkuList成功====resultJsonStr:"+resultJsonStr);
+                return true;
             }else{
                 loggerError.error("==更新updateZhiCaiSkuList失败===resultJsonStr:"+resultJsonStr);
                 System.err.println("==更新updateZhiCaiSkuList失败==resultJsonStr:"+resultJsonStr);
+                return false;
             }
         } catch (Exception e) {
             loggerError.error("更新updateZhiCaiSkuList 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
             System.out.println("更新updateZhiCaiSkuList 失败   zhiCaiSkuHttpDTO:"+zhiCaiSkuHttpDTO.toString());
             e.printStackTrace();
+            return false;
         }
 
-    }
-
-    /**
-     * 批量更新 spSkuStock 信息
-     * @param iceStockMap 尚品skuMap 集合  key:spSkuNO value:qty
-     * @return
-     */
-    public Integer updateIceSpSkuByMap(Map<String, Integer> iceStockMap){
-        Integer updateFailedNum = null;
-        try {
-            updateFailedNum = stockHandleService.updateIceStock(supplierId, iceStockMap);
-            System.out.println(" updateFailedNum:"+updateFailedNum);
-        } catch (Exception e) {
-            System.out.println("----------更新库存 信息失败！！！ ");
-            loggerError.error("-----------更新库存 信息失败！！！！ ");
-            e.printStackTrace();
-        }
-        return updateFailedNum;
     }
 
 
