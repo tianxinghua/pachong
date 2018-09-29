@@ -104,6 +104,9 @@
 					是否只抓取首页：<input type="radio" name="gatherFirst" value="1"/>Y&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="gatherFirst" value="0" checked="checked"/>N
 					-->
+					 浏览器无头模式：<input type="radio" name="headless" value="1" />支持&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="headless" value="0" checked="checked"/>不支持
+					<br/>
 					 是否为动态网页：<input type="radio" name="ajaxFlag" value="1" />Y&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="ajaxFlag" value="0" checked="checked"/>N
 					<br/>
@@ -630,6 +633,10 @@
 	        				$("[name='gatherFirst'][value='"+spiderRules.gatherFirst+"']").attr('checked','true');
 	        				$("[name='nlpFlag'][value='"+spiderRules.nlpFlag+"']").attr('checked','true');
 	        				**/
+	        				var headlessInt = 0;
+	        				if(spiderRules.headless){
+	        					headlessInt = 1;
+	        				}
 	        				var ajaxInt = 0;
 	        				if(spiderRules.ajaxFlag){
 	        					ajaxInt = 1;
@@ -638,6 +645,7 @@
 	        				if(spiderRules.firstAjaxFlag){
 	        					firstAjaxInt = 1;
 	        				}
+	        				$("[name='headless'][value='"+headlessInt+"']").attr('checked','true');
 	        				$("[name='ajaxFlag'][value='"+ajaxInt+"']").attr('checked','true');
 	        				$("[name='nextPageFlag'][value='"+spiderRules.nextPageFlag+"']").attr('checked','true');
 	        				$("[name='nextPageTag']").val(spiderRules.nextPageTag);
@@ -721,7 +729,7 @@
         		
         		//var proxyId = $("[name='proxy'] option:selected").val();
         		//var categoryId = $("[name='category'] option:selected").val();
-        		
+        		var headless = $("input[name='headless']:checked").val();
         		var ajaxFlag = $("input[name='ajaxFlag']:checked").val();
         		var nextPageFlag = $("input[name='nextPageFlag']:checked").val();
         		var nextPageTag = $("[name='nextPageTag']").val();
@@ -806,6 +814,7 @@
         					sleep:sleep,
         					timeout:timeout,
         					status:status,
+        					'headless':headless,
         					'ajaxFlag':ajaxFlag,
         					nextPageFlag:nextPageFlag,
         					nextPageTag:nextPageTag,

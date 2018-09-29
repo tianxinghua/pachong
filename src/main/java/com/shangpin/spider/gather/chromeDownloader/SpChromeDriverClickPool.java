@@ -7,13 +7,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.downloader.WebDriverPool;
 
+/**
+ * 
+ * @author njt
+ * SpChromeDriverClickPool
+ */
 public class SpChromeDriverClickPool extends WebDriverPool{
 	private final static Logger LOG = LoggerFactory.getLogger(SpChromeDriverClickPool.class);
 	/**
@@ -25,6 +32,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	 */
 	private volatile int poolSize = 5;
 	private volatile BlockingDeque<WebDriver> innerQueue = null;
+	private SpiderRules spiderRuleInfo;
 	
 //	记录Pool中的driver的数量变化
 	private volatile AtomicInteger changeCount = new AtomicInteger(0);
@@ -33,17 +41,24 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	
 	private static DesiredCapabilities caps = DesiredCapabilities.chrome();
 	
-	public SpChromeDriverClickPool(int poolSize, String webDriverPath) {
+	public SpChromeDriverClickPool(int poolSize, String webDriverPath, SpiderRules spiderRuleInfo) {
 		super();
 		this.poolSize = poolSize;
 		this.innerQueue = new LinkedBlockingDeque<WebDriver>(poolSize);
 		this.webDriverPath = webDriverPath;
+		this.spiderRuleInfo = spiderRuleInfo;
 //		caps.setCapability(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,webDriverPath);
 		caps.setJavascriptEnabled(true);
 		caps.setCapability("takesScreenshot", false);
 		caps.setCapability("acceptSslCerts", true);
 		//css搜索支持
 		caps.setCapability("cssSelectorsEnabled", true);
+		if(spiderRuleInfo.getHeadless()) {
+			ChromeOptions options = new ChromeOptions();
+			options.addArguments("Content-Type: text/plain;charset=UTF-8");
+			options.addArguments("--headless");
+			caps.setCapability("chromeOptions", options);
+		}
 		
 	}
 	public int innerSite() {

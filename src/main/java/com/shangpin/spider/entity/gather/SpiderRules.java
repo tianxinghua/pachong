@@ -43,6 +43,8 @@ public class SpiderRules implements Serializable {
 	private String charset;
 
 	private Boolean gatherFirst;
+	
+	private Boolean headless;
 
 	private Boolean ajaxFlag;
 	
@@ -260,6 +262,14 @@ public class SpiderRules implements Serializable {
 
 	public void setGatherFirst(Boolean gatherFirst) {
 		this.gatherFirst = gatherFirst;
+	}
+	
+	public Boolean getHeadless() {
+		return headless;
+	}
+
+	public void setHeadless(Boolean headless) {
+		this.headless = headless;
 	}
 
 	public Boolean getAjaxFlag() {

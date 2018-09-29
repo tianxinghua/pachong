@@ -17,6 +17,7 @@
     <result column="filter_url_reg" property="filterUrlReg" jdbcType="VARCHAR" />
     <result column="charset" property="charset" jdbcType="VARCHAR" />
     <result column="gather_first" property="gatherFirst" jdbcType="BIT" />
+    <result column="headless" property="headless" jdbcType="BIT" />
     <result column="ajax_flag" property="ajaxFlag" jdbcType="BIT" />
     <result column="next_page_flag" property="nextPageFlag" jdbcType="VARCHAR" />
     <result column="next_page_tag" property="nextPageTag" jdbcType="VARCHAR" />
@@ -66,7 +67,7 @@
   </resultMap>
   <sql id="Base_Column_List" >
     id, white_id, thread_num, retry_num, sleep, max_page_gather, timeout, cookie, user_agent, lie_url_reg, 
-    detail_url_reg, filter_url_reg, charset, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
+    detail_url_reg, filter_url_reg, charset, headless, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
     category_rules, category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
     js_menu_rules, js_menu_strategy,season_rules, material_rules, 
     material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
@@ -89,7 +90,7 @@
     insert into spider_rules (white_id, channel_rules, thread_num, retry_num, 
       sleep, max_page_gather, timeout, cookie, user_agent
       lie_url_reg, detail_url_reg, filter_url_reg, 
-      charset, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, 
+      charset, headless, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, 
       brand_rules, brand_strategy, category_rules, 
       category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
       js_menu_rules, js_menu_strategy,
@@ -109,7 +110,7 @@
       #{sleep,jdbcType=INTEGER}, #{maxPageGather,jdbcType=INTEGER}, #{timeout,jdbcType=INTEGER}, 
       #{cookie,jdbcType=LONGVARCHAR}, #{userAgent,jdbcType=VARCHAR}, 
       #{lieUrlReg,jdbcType=VARCHAR}, #{detailUrlReg,jdbcType=VARCHAR}, #{filterUrlReg,jdbcType=VARCHAR}, 
-      #{charset,jdbcType=VARCHAR}, #{ajaxFlag,jdbcType=BIT}, 
+      #{charset,jdbcType=VARCHAR}, #{headless,jdbcType=BIT}, #{ajaxFlag,jdbcType=BIT}, 
       #{nextPageFlag,jdbcType=VARCHAR},#{nextPageTag,jdbcType=VARCHAR},#{firstAjaxFlag,jdbcType=BIT}, 
       #{gatherFirst,jdbcType=BIT}, #{genderRules,jdbcType=VARCHAR}, 
       #{brandRules,jdbcType=VARCHAR}, #{brandStrategy,jdbcType=VARCHAR}, #{categoryRules,jdbcType=VARCHAR}, 
@@ -172,6 +173,9 @@
       </if>
       <if test="charset != null" >
         charset,
+      </if>
+      <if test="headless != null" >
+        headless,
       </if>
       <if test="ajaxFlag != null" >
         ajax_flag,
@@ -355,6 +359,9 @@
       </if>
       <if test="charset != null" >
         #{charset,jdbcType=VARCHAR},
+      </if>
+      <if test="headless != null" >
+        #{headless,jdbcType=BIT},
       </if>
       <if test="ajaxFlag != null" >
         #{ajaxFlag,jdbcType=BIT},
@@ -541,6 +548,9 @@
       <if test="charset != null" >
         charset = #{charset,jdbcType=VARCHAR},
       </if>
+      <if test="headless != null" >
+        headless = #{headless,jdbcType=BIT},
+      </if>
       <if test="ajaxFlag != null" >
         ajax_flag = #{ajaxFlag,jdbcType=BIT},
       </if>
@@ -701,6 +711,7 @@
       detail_url_reg = #{detailUrlReg,jdbcType=VARCHAR},
       filter_url_reg = #{filterUrlReg,jdbcType=VARCHAR},
       charset = #{charset,jdbcType=VARCHAR},
+      headless = #{headless,jdbcType=BIT},
       ajax_flag = #{ajaxFlag,jdbcType=BIT},
       next_page_flag = #{nextPageFlag,jdbcType=VARCHAR},
       next_page_tag = #{nextPageTag,jdbcType=VARCHAR},

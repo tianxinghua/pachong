@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
@@ -14,7 +15,11 @@ import org.slf4j.LoggerFactory;
 
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.downloader.WebDriverPool;
-
+/**
+ * 
+ * @author njt
+ * SpChromeDriverPool
+ */
 public class SpChromeDriverPool extends WebDriverPool{
 	private final static Logger LOG = LoggerFactory.getLogger(SpChromeDriverPool.class);
 	/**
@@ -59,6 +64,12 @@ public class SpChromeDriverPool extends WebDriverPool{
 		caps.setCapability("acceptSslCerts", true);
 		//css搜索支持
 		caps.setCapability("cssSelectorsEnabled", true);
+		if(spiderRuleInfo.getHeadless()) {
+			ChromeOptions options = new ChromeOptions();
+			options.addArguments("Content-Type: text/plain;charset=UTF-8");
+			options.addArguments("--headless");
+			caps.setCapability("chromeOptions", options);
+		}
 		
 	}
 	public int innerSite() {

@@ -91,7 +91,7 @@ public class CommonSpider {
 //	-------------------------------------------
 //			模拟点击使用的pool
 			SpChromeDriverClickPool driverClickPool = new SpChromeDriverClickPool(spiderRuleInfo.getThreadNum(),
-					chromeDriverPath);
+					chromeDriverPath, spiderRuleInfo);
 			spiderRuleInfo.setDriverPool(driverClickPool);
 			SpChromeDriverPool pool = new SpChromeDriverPool(spiderRuleInfo.getThreadNum(), chromeDriverPath,
 					spiderRuleInfo);
