@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,8 @@ public class PriceService {
 	 * @throws Exception
 	 */
 	public void savePriceRecordAndSendConsumer(PriceDto priceDto) throws Exception{
+
+//		log.info("send  price  message ："+ JSONObject.toJSONString(priceDto));
 		HubSupplierSpuDto supplierSpuDto = priceDto.getHubSpu();
 		String supplierNo = priceDto.getSupplierNo();
 		
@@ -83,6 +86,8 @@ public class PriceService {
 		for(HubSupplierSkuDto skuDto : supplierSkus){
 			boolean supplyPriceChanged = supplierProductService.isSupplyPriceChanged(skuDto);
 			boolean marketPriceChanged = supplierProductService.isMarketPriceChanged(skuDto);
+		//	log.info(skuDto.getSupplierId() + ":" + skuDto.getSupplierSkuNo() + " supplyPriceChanged :" + supplyPriceChanged);
+		//	log.info(skuDto.getSupplierId() + ":" + skuDto.getSupplierSkuNo() + " marketPriceChanged :" + marketPriceChanged);
 			if(marketPriceChanged && supplyPriceChanged && newSeasons.containsKey(skuDto.getSupplierSkuNo())){
 				log.info("【推送供价记录："+skuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"市场价、供价、季节都发生了变化。 新市场价："+skuDto.getMarketPrice()+" 新供价："+skuDto.getSupplyPrice()+" 新季节："+supplierSpuDto.getSupplierSeasonname()+"】"); 
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.MARKET_SUPPLY_SEASON_CHANGED);
@@ -106,7 +111,9 @@ public class PriceService {
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SUPPLY_PRICE_CHANGED);
 			}
 		}
+
 		if(newSeasons.size() > 0){
+//			log.info( " newSeasons.size() :" + newSeasons.size());
 			for(HubSupplierSkuDto skuDto : newSeasons.values()){
 				log.info("【推送供价记录："+supplierSpuDto.getSupplierId()+" "+skuDto.getSupplierSkuNo()+" 尚品sku："+skuDto.getSpSkuNo()+"只有季节发生了变化。 新季节："+supplierSpuDto.getSupplierSeasonname()+"<====>老季节："+spuDtoSel.getSupplierSeasonname()+"供应商spu编号："+supplierSpuDto.getSupplierSpuNo()+"】");
 				savePriceRecordAndSendConsumer(supplierSpuDto, supplierNo, skuDto,PriceHandleType.SEASON_CHANGED);

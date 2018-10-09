@@ -86,16 +86,12 @@ public class PriceController {
 
 			if(hubSupplierSkuDtoList!=null&&hubSupplierSkuDtoList.size()>0) {
 				HubSupplierSkuDto hubSupplierSkuDto = hubSupplierSkuDtoList.get(0);
-				log.info("hubSupplierSkuDto："+JSONObject.toJSONString(hubSupplierSkuDto)); 
+				//log.info("hubSupplierSkuDto："+JSONObject.toJSONString(hubSupplierSkuDto));
 				if(hubSupplierSkuDto.getMarketPrice().compareTo(new BigDecimal(priceDto.getMarketPrice()))==0) {
 					return HubResponse.errorResp("价格与数据库市场价一致，不推送!");
 				}
 				hubSupplierSkuDto.setMarketPrice(new BigDecimal(priceDto.getMarketPrice()));
-				//更新数据库的SKU价格
-				HubSupplierSkuDto skuDtoTmp  = new HubSupplierSkuDto();
-				skuDtoTmp.setSupplierSkuId(hubSupplierSkuDto.getSupplierSkuId());
-				skuDtoTmp.setMarketPrice(new BigDecimal(priceDto.getMarketPrice()));
-				hubSupplierSkuGateWay.updateByPrimaryKeySelective(skuDtoTmp);
+
 
 				Long hubSupplierSpuId = hubSupplierSkuDto.getSupplierSpuId();
 				HubSupplierSpuDto hubSupplierSpuDto = hubSupplierSpuGateWay.selectByPrimaryKey(hubSupplierSpuId);
@@ -104,6 +100,12 @@ public class PriceController {
 				dto.setHubSpu(hubSupplierSpuDto);
 				dto.setSupplierNo(priceDto.getSupplierNo());
 				priceService.savePriceRecordAndSendConsumer(dto);
+
+				//更新数据库的SKU价格
+				HubSupplierSkuDto skuDtoTmp  = new HubSupplierSkuDto();
+				skuDtoTmp.setSupplierSkuId(hubSupplierSkuDto.getSupplierSkuId());
+				skuDtoTmp.setMarketPrice(new BigDecimal(priceDto.getMarketPrice()));
+				hubSupplierSkuGateWay.updateByPrimaryKeySelective(skuDtoTmp);
 			}
 		} catch (Exception e) {
 			log.info("变价失败 PriceDto:"+JSONObject.toJSONString(priceDto));
