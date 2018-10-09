@@ -1,5 +1,6 @@
 package com.shangpin.ephub.product.business.rest.sku.supplier.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +16,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ZhiCaiQuery {
 	
 	private int pageIndex;
@@ -22,6 +24,6 @@ public class ZhiCaiQuery {
     private String supplierId;
     private String brandName;
     private String brandNo;
-
+    private String channel;//渠道
     
 }

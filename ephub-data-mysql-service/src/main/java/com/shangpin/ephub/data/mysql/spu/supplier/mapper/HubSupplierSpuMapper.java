@@ -33,9 +33,7 @@ public interface HubSupplierSpuMapper {
 
     List<HubSupplierSpu> selectByExample(HubSupplierSpuCriteria example);
     
-    List<HubSupplierSpu> selectByBrand(HubSupplierSpuQureyDto dto);
-    
-    int count(HubSupplierSpuQureyDto dto);
+
 
     HubSupplierSpu selectByPrimaryKey(Long supplierSpuId);
 
@@ -46,4 +44,11 @@ public interface HubSupplierSpuMapper {
     int updateByPrimaryKeySelective(HubSupplierSpu record);
 
     int updateByPrimaryKey(HubSupplierSpu record);
+
+    //---------------------  自定义
+
+    List<HubSupplierSpu> selectByBrand(HubSupplierSpuQureyDto dto);
+
+    int count(HubSupplierSpuQureyDto dto);
+
 }

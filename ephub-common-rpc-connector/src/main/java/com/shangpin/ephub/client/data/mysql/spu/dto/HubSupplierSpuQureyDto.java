@@ -1,5 +1,6 @@
 package com.shangpin.ephub.client.data.mysql.spu.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 /**
@@ -12,6 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HubSupplierSpuQureyDto {
 
 	private Integer pageIndex;
@@ -19,5 +21,6 @@ public class HubSupplierSpuQureyDto {
     private String supplierId;
     private String brandName;
     private String brandNo;
+    private String channel;//渠道
     
 }

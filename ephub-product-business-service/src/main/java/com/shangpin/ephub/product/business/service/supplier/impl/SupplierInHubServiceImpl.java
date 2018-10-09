@@ -144,7 +144,12 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     public boolean isDirectHotboom(String supplierId) {
 
         String directSupplier = redisService.get(GlobalConstant.REDIS_SUPPLIER_HOTBOOM_DIRECT+"-"+ supplierId);
-        if(StringUtils.isBlank(directSupplier)){
+        if(StringUtils.isNotBlank(directSupplier)){
+            if("直发".equals(directSupplier)){
+                return true;
+            }
+
+        }else{
             HubSupplierValueMappingCriteriaDto criteriaDto  = new HubSupplierValueMappingCriteriaDto();
             criteriaDto.createCriteria().andHubValTypeEqualTo(SupplierValueMappingType.TYPE_BRAND_SUPPLIER.getIndex().byteValue())
                     .andSupplierIdEqualTo(supplierId);
@@ -156,10 +161,10 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
                     redisService.setex(GlobalConstant.REDIS_SUPPLIER_HOTBOOM_DIRECT+"-"+ supplierId,60 * 10,"直发");
 
                     return true;
+                }else{
+                    redisService.setex(GlobalConstant.REDIS_SUPPLIER_HOTBOOM_DIRECT+"-"+ supplierId,60 * 10,"非直发");
                 }
             }
-        }else{
-            return true;
         }
 
 

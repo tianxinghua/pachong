@@ -48,7 +48,7 @@ public class ZhiCaiStockController {
 		Integer updateFailedNum = null;
 		try {
 			if(supplierInHubService.isDirectHotboom(zhiCaiStock.getSupplierId())){//代购直发供货商
-				updateFailedNum = stockHandleService.updateIceStock(zhiCaiStock.getSupplierId(), map);
+				updateFailedNum = stockHandleService.updateIceDirectStock(zhiCaiStock.getSupplierId(), map);
 			}else{
 				updateFailedNum = stockHandleService.updateIceStock(zhiCaiStock.getSupplierId(), map);
 			}
