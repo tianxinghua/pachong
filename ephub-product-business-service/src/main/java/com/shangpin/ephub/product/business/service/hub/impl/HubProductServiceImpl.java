@@ -481,10 +481,11 @@ public class HubProductServiceImpl implements HubProductService {
     }
 
     private void setSpuSizeType(SpProductOrgInfoEntity spSpuInfo,String sizeType) {
+
         spSpuInfo.setSkuDyaAttr(1);
         if(StringUtils.isNotBlank(sizeType)) {
             if (sizeType.equals(GlobalConstant.REDIS_HUB_MEASURE_SIGN_KEY)) {
-                spSpuInfo.setSkuDyaAttr(0);
+                spSpuInfo.setSkuDyaAttr(2);
             }
         }
     }
