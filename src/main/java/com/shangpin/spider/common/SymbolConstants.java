@@ -75,7 +75,7 @@ public class SymbolConstants {
 	 */
 	public static final String SUB_SUFIX = "#T";
 	/**
-	 * 截取规则第一个的多种匹配标识
+	 * 截取规则第一个的多种匹配标识;多种点击策略对应的点击规则
 	 */
 	public static final String SUB_FIRSTOR = "#OR";
 	/**

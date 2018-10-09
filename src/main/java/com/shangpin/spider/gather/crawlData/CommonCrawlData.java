@@ -10,11 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shangpin.spider.common.Constants;
-import com.shangpin.spider.common.StrategyConstants;
+import com.shangpin.spider.common.MoreClickEnum;
+import com.shangpin.spider.common.SymbolConstants;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.utils.GatherUtil;
-import com.shangpin.spider.gather.utils.TwoClickUtil;
+import com.shangpin.spider.gather.utils.ClickUtils.CheckClickRulesUtil;
 
 import us.codecraft.webmagic.Page;
 
@@ -89,17 +90,78 @@ public class CommonCrawlData {
 		crawlResult.setWhiteId(spiderRuleInfo.getWhiteId());
 		crawlResult.setSupplierId(spiderRuleInfo.getSupplierId());
 		crawlResult.setSupplierNo(spiderRuleInfo.getSupplierNo());
+		boolean clickFlag = true;
 //		规则表中取出需点击获取值的字段
 		if (needClickFieldAry.length > 0) {
 			if (clickFieldMap != null) {
-				if (StrategyConstants.TWO_CLICK.equals(spiderRuleInfo.getJsMenuStrategy())) {
-//					两层点击
-					resultList = TwoClickUtil.crawlByClick(needClickFieldAry, clickFieldMap, spiderRuleInfo, url, crawlResult);
+//				最后执行哪种点击策略的标识
+				int sizeFlag = 1;
+//				多层点击
+//				resultList = MoreClickUtil.crawlByClick(needClickFieldAry, clickFieldMap, spiderRuleInfo, url, crawlResult);
+//				判断点击的策略
+				String jsMenuStrategy = spiderRuleInfo.getJsMenuStrategy();
+				String jsMenuRules = spiderRuleInfo.getJsMenuRules();
+				String[] menuRuleArray = null;
+				if(jsMenuStrategy.contains(SymbolConstants.SPLIT_FLAG)) {
+					if(jsMenuRules.contains(SymbolConstants.SUB_FIRSTOR)) {
+//						多种策略，检查每个策略的可行性，正确为止
+						String[] jsMenuStrategyArray = jsMenuStrategy.split(SymbolConstants.SPLIT_FLAG);
+						String[] jsMenuRuleArray = jsMenuRules.split(SymbolConstants.SUB_FIRSTOR);
+//						根据策略权重从大到小排序，待开发
+//						------
+						if(jsMenuStrategyArray.length==jsMenuRuleArray.length) {
+							Boolean checkFlag = false;
+							for (int j = 0; j < jsMenuStrategyArray.length; j++) {
+//								String menuDeStrategy = jsMenuStrategyArray[j];
+								String menuDeRules = jsMenuRuleArray[j];
+								
+								if(menuDeRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) {
+									menuRuleArray = menuDeRules.split(SymbolConstants.RULE_SPLIT_FLAG);
+									sizeFlag = menuRuleArray.length;
+									checkFlag = CheckClickRulesUtil.check(url, spiderRuleInfo, menuRuleArray[0], sizeFlag);
+								}else {
+									checkFlag = CheckClickRulesUtil.check(url, spiderRuleInfo, menuDeRules, sizeFlag);
+								}
+								if(checkFlag) {
+									break;
+								}
+							}
+						}else {
+							LOG.error("--源{}，点击策略与点击规则不匹配！--", spiderRuleInfo.getWhiteId());
+						}
+					}else {
+						clickFlag = false;
+						LOG.error("--源{}，点击策略与点击规则不匹配！--", spiderRuleInfo.getWhiteId());
+					}
+				}else {
+//					单个策略
+					if(jsMenuRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) {
+						menuRuleArray = jsMenuRules.split(SymbolConstants.RULE_SPLIT_FLAG);
+						sizeFlag = menuRuleArray.length;
+					}
+				}
+				Boolean invokeFlag = ReflectTypeMap.executeClick(MoreClickEnum.getName(sizeFlag),menuRuleArray, needClickFieldAry, clickFieldMap, spiderRuleInfo, url, crawlResult);
+				if(!invokeFlag) {
+					clickFlag = false;
+					LOG.error("--链接{}，多层点击的执行出错--", url);
 				}
 			} else {
+				clickFlag = false;
 				LOG.error("--源{}，需点击字段的规则映射为NULL--", spiderRuleInfo.getWhiteId());
 			}
 		} else {
+			clickFlag = false;
+		}
+		if(!clickFlag) {
+			if(StringUtils.isNotBlank(crawlResult.getSpu())){
+//				以spu和size定唯一
+				crawlResult.setSppuHash(GatherUtil.longHashCode(crawlResult.getSpu()+crawlResult.getSize()));
+			}else {
+				crawlResult.setSppuHash(0L);
+			}
+			if (StringUtils.isNotBlank(crawlResult.getSpu())) {
+				crawlResult.setProductModel(crawlResult.getSpu());
+			}
 			resultList.add(crawlResult);
 		}
 		return resultList;

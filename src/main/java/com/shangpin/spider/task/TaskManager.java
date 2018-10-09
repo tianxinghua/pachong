@@ -1,5 +1,8 @@
 package com.shangpin.spider.task;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,7 +34,7 @@ import us.codecraft.webmagic.thread.CountableThreadPool;
  */
 @Component
 public class TaskManager {
-	private Logger log = LoggerFactory.getLogger(TaskManager.class);
+	private static final Logger log = LoggerFactory.getLogger(TaskManager.class);
 	private Map<String, MySpider> taskMap = new LinkedHashMap<>();
 	
 	@Autowired

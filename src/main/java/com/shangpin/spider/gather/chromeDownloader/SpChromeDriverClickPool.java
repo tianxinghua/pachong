@@ -1,5 +1,7 @@
 package com.shangpin.spider.gather.chromeDownloader;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -31,11 +33,12 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	 * 默认队列容量5
 	 */
 	private volatile int poolSize = 5;
-	private volatile BlockingDeque<WebDriver> innerQueue = null;
+	private BlockingDeque<WebDriver> innerQueue = null;
+	private BlockingDeque<WebDriver> outQueue = null;
 	private SpiderRules spiderRuleInfo;
 	
 //	记录Pool中的driver的数量变化
-	private volatile AtomicInteger changeCount = new AtomicInteger(0);
+	private AtomicInteger changeCount = new AtomicInteger(0);
 	
 	private String webDriverPath;
 	
@@ -45,6 +48,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 		super();
 		this.poolSize = poolSize;
 		this.innerQueue = new LinkedBlockingDeque<WebDriver>(poolSize);
+		this.outQueue = new LinkedBlockingDeque<WebDriver>(poolSize);
 		this.webDriverPath = webDriverPath;
 		this.spiderRuleInfo = spiderRuleInfo;
 //		caps.setCapability(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,webDriverPath);
@@ -59,7 +63,12 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 			options.addArguments("--headless");
 			caps.setCapability("chromeOptions", options);
 		}
-		
+//		不加载图片
+		Map<String,Object> imgSettings = new HashMap<String, Object>();
+		imgSettings.put("images", 2);
+		Map<String,Object> imgCapsSettings = new HashMap<String, Object>();
+		imgCapsSettings.put("profile.default_content_settings", imgSettings);
+		caps.setCapability("chrome.prefs", imgCapsSettings);
 	}
 	public int innerSite() {
 		if (flag) {
@@ -74,7 +83,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	 * 取出driver
 	 * @return
 	 */
-	public synchronized WebDriver get() {
+	public WebDriver get() {
 		WebDriver driver = null;
 		int size = innerQueue.size();
 		LOG.info("-----innerQueue.size()为："+innerQueue.size());
@@ -87,6 +96,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 			}
 			if (driver != null) {
 				LOG.info("--Pool中取出一个driver--{}",driver);
+				outQueue.add(driver);
 				flag = true;
 				return driver;
 			}
@@ -117,6 +127,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 			e.printStackTrace();
 		}
 		changeCount.decrementAndGet();
+		outQueue.add(driver);
 		return driver;
 	}
 	
@@ -124,10 +135,12 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	 * 返还driver
 	 * @param driver
 	 */
-	public synchronized void returnToPool(WebDriver driver) {
+	public void returnToPool(WebDriver driver) {
 		if(driver!=null) {
 			changeCount.incrementAndGet();
 			innerQueue.add(driver);
+//			失败的话，不阻塞，会抛出异常
+//			outQueue.remove(driver);
 		}
 	}
 	
@@ -137,9 +150,14 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	public void shutdownEnd() {
 		for (WebDriver driver : innerQueue) {
 			driver.quit();
-			LOG.info("关闭所有driver------" + driver);
+			LOG.info("关闭innerQueue所有driver------" + driver);   
 		}
 		innerQueue.clear();
+		for (WebDriver driver : outQueue) {
+			driver.quit();
+			LOG.info("关闭outQueue中所有driver------" + driver);
+		}
+		outQueue.clear();
 	}
 	
 	private RemoteWebDriver setWebDriverTimeout(RemoteWebDriver mDriver){

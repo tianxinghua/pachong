@@ -138,5 +138,7 @@ public class Constants {
 	public static final Integer QTY_YES = 5;
 	public static final Integer QTY_NO = 0;
 	
+	public static final String CLICKMETHOD = "crawlByClick";
+	
 	
 }

@@ -1,12 +1,29 @@
 package com.shangpin.spider.common;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 策略常量
+ * 
+ * @author njt
+ * @date 2018年9月27日 上午11:17:12
+ * @desc StrategyConstants
  */
 public class StrategyConstants {
+	
+	/**
+	 * 一层点击的策略标识
+	 */
+	public static final String ONE_CLICK = "ONE-CLICK";
 	/**
 	 * 两层点击的策略标识
 	 */
 	public static final String TWO_CLICK = "TWO-CLICK";
+	/**
+	 * 三层点击的策略标识
+	 */
+	public static final String THREE_CLICK = "THREE-CLICK";
 	
 	/**
 	 * 对重复XPATH策略的处理(出发点针对图片路径)

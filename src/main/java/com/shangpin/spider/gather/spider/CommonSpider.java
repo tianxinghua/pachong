@@ -73,6 +73,7 @@ public class CommonSpider {
 	
 	public void start(SpiderRules spiderRuleInfo) {
 		MySpider spider = null;
+		spiderRuleInfo.setChromeDriverPath(chromeDriverPath);
 		if (threadPool == null || threadPool.isShutdown()) {
             if (executorService != null && !executorService.isShutdown()) {
                 threadPool = new CountableThreadPool(spiderRuleInfo.getThreadNum(), executorService);

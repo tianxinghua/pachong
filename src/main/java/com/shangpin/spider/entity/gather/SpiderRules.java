@@ -141,6 +141,8 @@ public class SpiderRules implements Serializable {
 	@Transient
 	private String sppuHashRules;
 	@Transient
+	private String chromeDriverPath;
+	@Transient
 	private String whiteName;
 	@Transient
 	private String sourceUrl;
@@ -614,6 +616,14 @@ public class SpiderRules implements Serializable {
 
 	public void setSppuHashRules(String sppuHashRules) {
 		this.sppuHashRules = sppuHashRules;
+	}
+	
+	public String getChromeDriverPath() {
+		return chromeDriverPath;
+	}
+
+	public void setChromeDriverPath(String chromeDriverPath) {
+		this.chromeDriverPath = chromeDriverPath;
 	}
 
 	public String getWhiteName() {

@@ -367,7 +367,7 @@
         #{ajaxFlag,jdbcType=BIT},
       </if>
       <if test="nextPageFlag != null" >
-        #{nxtPageFlag,jdbcType=VARCHAR},
+        #{nextPageFlag,jdbcType=VARCHAR},
       </if>
       <if test="nextPageTag != null" >
         #{nextPageTag,jdbcType=VARCHAR},

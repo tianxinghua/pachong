@@ -617,9 +617,12 @@
         				var spiderRules = obj.spiderRules;
                     	var clickFieldStr = spiderRules.clickFieldStr;
                     	var clickFieldArray = "";
-                    	if(clickFieldStr!=""){
-                    		clickFieldArray = clickFieldStr.split(",");
+                    	if(clickFieldStr!=null){
+                    		if(clickFieldStr!=""){
+                        		clickFieldArray = clickFieldStr.split(",");
+                        	}
                     	}
+                    	
             			if(spiderRuleId!=0){
 	        				$("[name='threadNum'] option[value='"+spiderRules.threadNum+"']").attr("selected","selected");
 	        				$("[name='retryNum'] option[value='"+spiderRules.retryNum+"']").attr("selected","selected");
@@ -800,9 +803,12 @@
         		var clickFieldArray = $("#clickFieldArray").val();
         		//alert(clickFieldArray);
         		var clickFieldStr = "";
-        		if(clickFieldArray.length>0) {
-       				clickFieldStr = clickFieldArray.join(",");
+        		if(clickFieldArray!=null){
+        			if(clickFieldArray.length>0) {
+           				clickFieldStr = clickFieldArray.join(",");
+            		}
         		}
+        		
         		//alert(clickFieldStr);
         		
         		$.post("/spider/saveWebRule",
