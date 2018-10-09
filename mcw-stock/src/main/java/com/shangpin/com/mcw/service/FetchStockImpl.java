@@ -49,9 +49,7 @@ public class FetchStockImpl extends AbsUpdateProductStock {
     public static void main(String[] args) {
         ProductFetchUtil productFetchUtil = new ProductFetchUtil();
         ArrayList<String> strings = new ArrayList<>();
-        strings.add("3376856_40");
-        Map<String, String> productStock = productFetchUtil.getProductStock(strings);
-        String qty = productStock.get("3376856_40");
-        System.out.println(qty);
+        strings.add("asd");
+        productFetchUtil.getProductStock(strings);
     }
 }

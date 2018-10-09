@@ -1,18 +1,16 @@
 package com.shangpin.com.mcw.service;
 
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.shangpin.com.mcw.dto.CsvDTO;
 import com.shangpin.com.mcw.dto.SkuDTO;
 import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by wangchao on 2017/10/26.
@@ -53,16 +51,29 @@ public class ProductFetchUtil {
 		try {
 
             for (String str : skuNos) {
-
-                Gson gson = new Gson();
-                SkuDTO skuDTO = gson.fromJson(data, SkuDTO.class);
-                String qty = skuDTO.getQty();
-                if(qty!=null&&qty.contains(".")){
-                    qty = qty.split("\\.")[0];
-                }else{
-                    qty="0";
-                }
-                spStockMap.put(str,qty);
+				logger.info("开始抓取");
+				List<CsvDTO> csvLists = new ArrayList<CsvDTO>();
+				try {
+					csvLists = DownloadAndReadCSV.readLocalCSV(CsvDTO.class, "\t");
+					logger.info("拉到的数据集合：" + csvLists);
+					logger.info("抓取结束");
+					if(csvLists!=null){
+						for (CsvDTO csvDTO : csvLists) {
+							String barcode = csvDTO.getBarcode();
+							System.out.println(barcode);
+							String skuId = csvDTO.getSkuId();
+							System.out.println(skuId);
+							SkuDTO skuDTO = new SkuDTO();
+							skuDTO.setProduct_sku(barcode);
+							skuDTO.setQty(skuId);
+							String product_sku=skuDTO.getProduct_sku();
+							String qty = skuDTO.getQty();
+							spStockMap.put(product_sku,qty);
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
             }
 		} catch (Exception e) {
 			e.printStackTrace();

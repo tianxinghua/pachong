@@ -1,8 +1,9 @@
 package com.shangpin.com.mcw.schedule;
 
+import com.shangpin.com.mcw.service.FetchStockImpl;
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.styleside.service.FetchStockImpl;
 import org.springframework.stereotype.Component;
+
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;

@@ -1,6 +1,7 @@
 package com.shangpin.com.mcw.schedule;
 
-import com.shangpin.iog.styleside.service.FetchStockImpl;
+
+import com.shangpin.com.mcw.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
