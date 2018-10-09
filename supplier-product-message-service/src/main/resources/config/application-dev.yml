@@ -221,7 +221,11 @@ spring:
                              content-type: application/json
                         zhicaiOriginalProduct:
                              destination: zhicai.original.product
-                             content-type: application/json                                                          
+                             content-type: application/json
+                        ilcuccioloOriginalProduct:
+                             destination: ilcucciolo.original.product
+                             content-type: application/json
+
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -433,7 +437,10 @@ spring:
                                            prefix: HA.
                             zhicaiOriginalProduct:
                                   producer:
-                                           prefix: HA.                                                                                      
+                                           prefix: HA.
+                            ilcuccioloOriginalProduct:
+                                  producer:
+                                           prefix: HA.
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 

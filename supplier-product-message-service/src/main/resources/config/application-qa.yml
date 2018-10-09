@@ -254,6 +254,10 @@ spring:
                         fashionTamersOriginalProduct:
                               destination: fashionTamers.original.product
                               content-type: application/json
+                        ilcuccioloOriginalProduct:
+                              destination: ilcucciolo.original.product
+                              content-type: application/json
+
 
               rabbit:
                       bindings:
@@ -501,6 +505,9 @@ spring:
                             max1980OriginalProduct:
                                   producer:
                                            prefix: HA.
+                            ilcuccioloOriginalProduct:
+                                  producer:
+                                            prefix: HA.
 
   jackson:
        date-format: yyyy-MM-dd HH:mm:ss
