@@ -92,9 +92,6 @@ spring:
                         divoOriginalProduct: 
                               destination: divo.original.product
                               content-type: application/json
-                        mengottiSncOriginalProduct:
-                               destination: mengottiSnc.original.product
-                               content-type: application/json
                         biondiniOriginalProduct: 
                               destination: biondini.original.product
                               content-type: application/json
@@ -239,6 +236,12 @@ spring:
                         rediOriginalProduct:
                              destination: redi.original.product
                              content-type: application/json
+                        obluOriginalProduct:
+                             destination: oblu.original.product
+                             content-type: application/json
+                        mengottiSncOriginalProduct:
+                             destination: mengottiSnc.original.product
+                             content-type: application/json
               rabbit:
                       bindings: 
                             coccolebimbiOriginalProduct:
@@ -259,9 +262,6 @@ spring:
                             ostoreOriginalProduct: 
                                   producer: 
                                            prefix: HA.
-                            mengottiSncOriginalProduct:
-                                  producer:
-                                            prefix: HA.
                             brunarossoOriginalProduct: 
                                   producer: 
                                            prefix: HA.
@@ -467,6 +467,12 @@ spring:
                                   producer: 
                                            prefix: HA.
                             rediOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            obluOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            mengottiSncOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
