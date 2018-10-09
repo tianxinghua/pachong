@@ -803,4 +803,15 @@ public class PendingProductStreamListener {
 		adapter.gebnegozioPendingProductStreamListen(message,headers);
 	}
 
+	/**
+	 * 供应商ilcucciolo待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.ILCUCCIOLO)
+	public void ilcuccioloPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.ilcuccioloPendingProductStreamListen(message,headers);
+	}
+
 }

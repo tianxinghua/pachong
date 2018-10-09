@@ -180,6 +180,8 @@ public interface OriginalProductSink {
 
 	public static final String GEBNEGOZIO = "gebnegozioOriginalProduct";
 
+    public static final String ILCUCCIOLO = "ilcuccioloOriginalProduct";
+
 	//===============================
 	
 	/**
@@ -713,4 +715,10 @@ public interface OriginalProductSink {
 	@Input(value = OriginalProductSink.GEBNEGOZIO)
 	public MessageChannel gebnegozioOriginalProduct();
 
+    /**
+     * 供应商ilcucciolo通道组件配置
+     * @return
+     */
+    @Input(value = OriginalProductSink.ILCUCCIOLO)
+    public MessageChannel ilcuccioloOriginalProduct();
 }

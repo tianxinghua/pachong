@@ -176,6 +176,8 @@ public interface PendingProductSink {
 	
 	public static final String GEBNEGOZIO = "gebnegozioPendingProduct";
 
+	public static final String ILCUCCIOLO = "ilcuccioloPendingProduct";
+
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -698,4 +700,11 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.GEBNEGOZIO)
 	public SubscribableChannel gebnegozioPendingProduct();
+
+	/**
+	 * 供应商ilcucciolo通道组件配置
+	 * @return 供货商ilcucciolo通道组件
+	 */
+	@Input(value = PendingProductSink.ILCUCCIOLO)
+	public SubscribableChannel ilcuccioloPendingProduct();
 }
