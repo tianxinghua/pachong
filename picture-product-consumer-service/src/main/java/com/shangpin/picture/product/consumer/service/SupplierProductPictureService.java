@@ -280,7 +280,7 @@ public class SupplierProductPictureService {
 		InputStream inputStream = null;
 		int flag = 0;
 		try {
-			String url = picUrl.substring(picUrl.indexOf("@")+1).trim();
+			String url = picUrl.substring(picUrl.lastIndexOf("@")+1).trim();
 			String ip = url.substring(0,url.indexOf("/"));
 			String remotePath =  url.substring(url.indexOf("/"),url.lastIndexOf("/")); 
 			String remoteFileName = picUrl.substring(picUrl.lastIndexOf("/")+1);

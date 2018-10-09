@@ -182,6 +182,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("gebnegozioHandler")
 	private ISupplierHandler gebnegozioHandler;
+
+    @Autowired
+    @Qualifier("ilcuccioloHandler")
+    private ISupplierHandler ilcuccioloHandler;
 	
 	/**
 	 * coccolebimbi供货商原始数据监听方法
@@ -923,4 +927,13 @@ public class OriginalProductStreamListenerAdapter {
 	public void gebnegozioStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		gebnegozioHandler.handleOriginalProduct(message, headers);
 	}
+
+    /**
+     * 供应商ilcucciolo处理原始数据
+     * @param message
+     * @param headers
+     */
+    public void ilcuccioloStreamListen(SupplierProduct message, Map<String, Object> headers) {
+        ilcuccioloHandler.handleOriginalProduct(message, headers);
+    }
 }

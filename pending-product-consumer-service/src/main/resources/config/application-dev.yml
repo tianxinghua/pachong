@@ -444,6 +444,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                       ilcuccioloPendingProduct:
+                             destination: ilcucciolo.pending.product
+                             group: one
+                             consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings: 
                             spinnakerPendingProduct: 
@@ -870,6 +876,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            ilcuccioloPendingProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
