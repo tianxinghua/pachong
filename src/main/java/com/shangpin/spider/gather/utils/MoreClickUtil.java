@@ -32,8 +32,8 @@ import com.shangpin.spider.gather.crawlData.ReflectTypeMap;
  * @version 1.0
  * @parameter
  */
-public class TwoClickUtil {
-	private static Logger LOG = LoggerFactory.getLogger(TwoClickUtil.class);
+public class MoreClickUtil {
+	private static Logger LOG = LoggerFactory.getLogger(MoreClickUtil.class);
 	
 //	计数器，第一层的下标
 	private static ThreadLocal<AtomicInteger> init_i = new ThreadLocal<AtomicInteger>();
@@ -244,7 +244,7 @@ public class TwoClickUtil {
 			element2 = elements2.get(j);
 			try {
 				WebDriverWait wait = new WebDriverWait(driver, 30);
-				wait.until(ExpectedConditions.elementToBeClickable(element));
+				wait.until(ExpectedConditions.elementToBeClickable(element2));
 				element2.click();
 			} catch (Exception e) {
 				LOG.error("链接{}第二次点击事件有误！--异常:{}",url,e.getMessage());
