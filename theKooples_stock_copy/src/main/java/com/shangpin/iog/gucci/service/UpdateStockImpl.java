@@ -1,9 +1,9 @@
-package com.shangpin.iog.moncler.service;
+package com.shangpin.iog.gucci.service;
 
-import com.shangpin.iog.moncler.dto.ApiResponseBody;
-import com.shangpin.iog.moncler.dto.SpSkuNoDTO;
-import com.shangpin.iog.moncler.dto.ZhiCaiSkuHttpDTO;
-import com.shangpin.iog.moncler.dto.ZhiCaiSkuStock;
+import com.shangpin.iog.gucci.dto.ApiResponseBody;
+import com.shangpin.iog.gucci.dto.SpSkuNoDTO;
+import com.shangpin.iog.gucci.dto.ZhiCaiSkuHttpDTO;
+import com.shangpin.iog.gucci.dto.ZhiCaiSkuStock;
 import com.shangpin.iog.ice.service.StockHandleService;
 import com.shangpin.iog.utils.DownloadAndReadCSV;
 import com.shangpin.iog.utils.HttpUtil45;
@@ -38,7 +38,6 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static String updateSpSkuUrl = "";
 
     static String splitSign = ",";
-
     //库存csv 文件存放目录
     private static String filePath="";
 
@@ -47,8 +46,6 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
     private static List<Map<String, Integer>> filedIceStockMaps = null;
-
-    FetchStockImpl object=new  FetchStockImpl();
 
     static {
         if (null == bdl){
@@ -66,21 +63,21 @@ public class UpdateStockImpl extends FetchStockImpl {
     }
 
     /**
-     * 更新 法国官网 商品库存数据
+     * 更新 意大利官网 商品库存数据
      */
     @Override
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============更新MONCLER库存数据库开始 "+startDateTime+"=========================");
-        logger.info("==============更新MONCLER库存数据库开始 "+startDateTime+"=========================");
+        System.out.println("============更新theKooples库存数据库开始 "+startDateTime+"=========================");
+        logger.info("==============更新theKooples库存数据库开始 "+startDateTime+"=========================");
 
         //读取csv 数据信息
-        long dayTime = 1000*3600*24l;
-        Date yesterDate = new Date(new Date().getTime() - dayTime);
+      /*  long dayTime = 1000*3600*24l;
+        Date yesterDate = new Date(new Date().getTime() - dayTime);*/
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"moncler-qty-"+ yesterdayDateStr+".csv";
+        String todayDateStr = simpleDateFormat.format(new Date());
+        String csvFilePath = filePath +"theKooples-qty-" + todayDateStr +"copy"+ ".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -94,11 +91,10 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================更新MONCLER库存数据库结束 "+endtDateTime+"=========================");
-        System.out.println("=================更新MONCLER库存数据库结束 "+endtDateTime+"=========================");
-
-        //调用发送邮件
-        object.getFileToEmail();
+        logger.info("===================更新theKooples库存数据库结束 "+endtDateTime+"=========================");
+        System.out.println("=================更新theKooples库存数据库结束 "+endtDateTime+"=========================");
+        FetchStockImpl fetchStock = new FetchStockImpl();
+        fetchStock.getFileToEmail();
     }
 
     public static void main(String[] args) {
