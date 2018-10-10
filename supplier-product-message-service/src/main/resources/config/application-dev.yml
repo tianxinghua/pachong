@@ -99,6 +99,9 @@ spring:
                         viettiOriginalProduct: 
                               destination: vietti.original.product
                               content-type: application/json
+                        vietti2OriginalProduct:
+                          destination: vietti2.original.product
+                          content-type: application/json
                         anielloOriginalProduct: 
                               destination: aniello.original.product
                               content-type: application/json
@@ -216,6 +219,9 @@ spring:
                         marinoOriginalProduct:
                              destination: marino.original.product
                              content-type: application/json
+                        zhicaiOriginalProduct:
+                             destination: zhicai.original.product
+                             content-type: application/json                                                          
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -308,6 +314,9 @@ spring:
                             viettiOriginalProduct: 
                                   producer: 
                                            prefix: HA.
+                            vietti2OriginalProduct:
+                              producer:
+                                prefix: HA.
                             anielloOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
@@ -422,6 +431,9 @@ spring:
                             marinoOriginalProduct:
                                   producer:
                                            prefix: HA.
+                            zhicaiOriginalProduct:
+                                  producer:
+                                           prefix: HA.                                                                                      
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 

@@ -122,9 +122,12 @@ spring:
                         paolofiorilloOriginalProduct: 
                               destination: paolofiorillo.original.product
                               content-type: application/json
-                        viettiOriginalProduct: 
+                        viettiOriginalProduct:
                               destination: vietti.original.product
                               content-type: application/json
+                        vietti2OriginalProduct:
+                                destination: vietti2.original.product
+                                content-type: application/json
                         anielloOriginalProduct: 
                               destination: aniello.original.product
                               content-type: application/json
@@ -254,8 +257,23 @@ spring:
                         mengottiSncOriginalProduct:
                              destination: mengottiSnc.original.product
                              content-type: application/json
+                        zhicaiOriginalProduct:
+                             destination: zhicai.original.product
+                             content-type: application/json
+                        ylatiOriginalProduct:
+                             destination: ylati.original.product
+                             content-type: application/json
+                        max1980OriginalProduct:
+                             destination: max1980.original.product
+                             content-type: application/json
+                        fashionTamersOriginalProduct:
+                              destination: fashionTamers.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
+                            fashionTamersOriginalProduct:
+                                  producer:
+                                           prefix: HA.
                             cocoroseLondonOriginalProduct:
                                   producer:
                                            prefix: HA.
@@ -373,6 +391,9 @@ spring:
                             viettiOriginalProduct: 
                                   producer: 
                                            prefix: HA.
+                            vietti2OriginalProduct:
+                                    producer:
+                                      prefix: HA.
                             anielloOriginalProduct: 
                                   producer: 
                                            prefix: HA. 
@@ -500,6 +521,15 @@ spring:
                                   producer:
                                            prefix: HA.
                             mengottiSncOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            zhicaiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            ylatiOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            max1980OriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

@@ -10,6 +10,9 @@ import org.springframework.messaging.MessageChannel;
  * @date 2016年12月5日 下午7:34:44
  */
 public interface OriginalProductSource {
+	
+	
+	public static final String fashionTamers = "fashionTamersOriginalProduct";
 	public static final String dolciTrame = "dolciTrameOriginalProduct";
 	public static final String cocoroseLondon = "cocoroseLondonOriginalProduct";
 	public static final String angeloMinetti = "angeloMinettiOriginalProduct";
@@ -164,8 +167,21 @@ public interface OriginalProductSource {
 	public static final String REDI ="rediOriginalProduct";
 
 	public static final String OBLU ="obluOriginalProduct";
-    
+	
+	public static final String ZHICAI ="zhicaiOriginalProduct";
+
+	public static final String YLATI ="ylatiOriginalProduct";
+
+	public static final String MAX1980 ="max1980OriginalProduct";
+
+    public static final String VIETTI2 = "vietti2OriginalProduct";
     /**
+     * 供货商fashionTamers通道组件配置
+     * @return 供货商fashionTamers通道组件
+     */
+    @Output(value = OriginalProductSource.fashionTamers)
+    public MessageChannel fashionTamers();
+	/**
      * 供货商angeloMinetti通道组件配置
      * @return 供货商angeloMinetti通道组件
      */
@@ -661,4 +677,20 @@ public interface OriginalProductSource {
 
 	@Output(value = OriginalProductSource.OBLU)
 	public MessageChannel oblu();
+	
+	@Output(value = OriginalProductSource.ZHICAI)
+	public MessageChannel zhicai();
+
+	@Output(value = OriginalProductSource.YLATI)
+	public MessageChannel ylati();
+
+	@Output(value = OriginalProductSource.MAX1980)
+	public MessageChannel max1980();
+
+    /**
+     * 供货商VIETTI通道组件配置
+     * @return 供货商通道组件
+     */
+    @Output(value = OriginalProductSource.VIETTI2)
+    public MessageChannel vietti2();
 }

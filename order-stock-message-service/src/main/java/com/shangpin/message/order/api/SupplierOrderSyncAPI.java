@@ -9,6 +9,7 @@ package com.shangpin.message.order.api;
 
 import java.util.List;
 
+import com.shangpin.message.order.dto.SupplierOrderDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +47,7 @@ public class SupplierOrderSyncAPI {
 	 * @return APIRsponse 响应数据
 	 */
 	@RequestMapping(value = "/order-sync")
-	public APIRsponse stockSync(@RequestBody SupplierOrderDTO dto){
+	public  APIRsponse stockSync(@RequestBody SupplierOrderDTO dto){
 		log.info("SCM消息系统OrderSync接口服务接收到调用方数据为======<<"+dto.toString()+">>======系统即将开始发送消息！");
 		long start = System.currentTimeMillis();
 		APIRsponse response = null;
@@ -78,4 +79,16 @@ public class SupplierOrderSyncAPI {
 		}
 		return response;
 	}
+
+    public static void main(String[] args) {
+        SupplierOrderSyncAPI SupplierOrderSyncAPI = new SupplierOrderSyncAPI();
+
+        SupplierOrderDTO dto = new SupplierOrderDTO();
+        dto.setMessageId("");
+        dto.setOrderNo("");
+        //dto.setSyncDetailDto();
+        dto.setSyncType("");
+        APIRsponse  response= SupplierOrderSyncAPI.stockSync(dto);
+        System.out.println(response);
+    }
 }

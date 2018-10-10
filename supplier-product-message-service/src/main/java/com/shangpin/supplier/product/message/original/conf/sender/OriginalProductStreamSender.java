@@ -21,6 +21,14 @@ public class OriginalProductStreamSender {
 	private OriginalProductSource originalProductSource;
 
 
+	/**
+	 * 发送供应商fashionTamers商品流数据
+	 * @param supplierProduct 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean fashionTamersStream(SupplierProduct supplierProduct) {
+		return originalProductSource.fashionTamers().send(MessageBuilder.withPayload(supplierProduct).build());
+	}
 
 	/**
 	 * 发送供应商angeloMinetti商品流数据
@@ -681,5 +689,25 @@ public class OriginalProductStreamSender {
     public boolean obluStream(SupplierProduct supplierProduct) {
         return originalProductSource.oblu().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+    
+    public boolean zhicaiStream(SupplierProduct supplierProduct) {
+        return originalProductSource.zhicai().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 
+    public boolean ylatiStream(SupplierProduct supplierProduct) {
+        return originalProductSource.ylati().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
+    public boolean max1980Stream(SupplierProduct supplierProduct) {
+        return originalProductSource.max1980().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
+
+    /**
+     * 发送供应商vietti商品流数据
+     * @param supplierProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean vietti2Stream(SupplierProduct supplierProduct) {
+        return originalProductSource.vietti2().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }
