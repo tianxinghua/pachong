@@ -484,6 +484,9 @@ public class GatherUtil {
 				}
 			}
 		}
+		if(crawlValue==null) {
+			crawlValue = "";
+		}
 		resultMap.put("strategyStr", strategyFilterStr);
 		resultMap.put("crawlValue", crawlValue);
 		return resultMap;
