@@ -1,15 +1,15 @@
 package com.shangpin.spider.common;
 /**
- * 多层点击的全限定名的枚举类
+ * 
  * @author njt
  * @date 2018年10月9日 下午4:46:28
- * @desc
+ * @desc 多层点击的全限定名的枚举类
  * MoreClickEnum
  */
 public enum MoreClickEnum {
-	ONE("com.shangpin.spider.gather.utils.OneClick",1),
-	TWO("com.shangpin.spider.gather.utils.TwoClick",2),
-	THREE("com.shangpin.spider.gather.utils.ThreeClick",3);
+	ONE("com.shangpin.spider.gather.utils.ClickUtils.OneClick",1),
+	TWO("com.shangpin.spider.gather.utils.ClickUtils.TwoClick",2),
+	THREE("com.shangpin.spider.gather.utils.ClickUtils.ThreeClick",3);
 	private String name;
 	private int index;
 	private MoreClickEnum(String name, int index) {
