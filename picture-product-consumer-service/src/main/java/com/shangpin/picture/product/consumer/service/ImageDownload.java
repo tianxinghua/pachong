@@ -5,9 +5,11 @@ import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.picture.product.consumer.bean.AuthenticationInformation;
 import com.shangpin.picture.product.consumer.e.PicHandleState;
 import com.shangpin.picture.product.consumer.manager.SupplierProductPictureManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
@@ -16,6 +18,8 @@ import java.net.*;
 /**
  * Created by 极客世界 on 2018/9/27.
  */
+@Component
+@Slf4j
 public class ImageDownload {
     @Autowired
     private SupplierProductPictureManager supplierProductPictureManager;
@@ -48,6 +52,8 @@ public class ImageDownload {
                     throw new RuntimeException("读取到的图片字节为空,无法获取图片");
                 }
                 String base64 = new BASE64Encoder().encode(byteArray);
+                log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+urlList+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
+
                 UploadPicDto uploadPicDto = new UploadPicDto();
                 uploadPicDto.setRequestId(String.valueOf(dto.getSpuPendingPicId()));
                 uploadPicDto.setBase64(base64);

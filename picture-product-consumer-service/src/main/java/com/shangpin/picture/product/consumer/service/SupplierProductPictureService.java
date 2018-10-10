@@ -65,6 +65,9 @@ public class SupplierProductPictureService {
 	@Autowired
 	private CertificateConf certificate;
 
+	@Autowired
+	private ImageDownload download;
+
 	/**
 	 * 处理供应商商品图片
 	 * @param picDtos
