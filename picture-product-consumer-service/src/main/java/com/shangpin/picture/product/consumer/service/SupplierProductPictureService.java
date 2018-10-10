@@ -151,10 +151,7 @@ public class SupplierProductPictureService {
 	 */
 	private int pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		if (picUrl.contains("_")){
-			ImageDownload download = new ImageDownload();
-			HubSpuPendingPicDto dto1 = new HubSpuPendingPicDto();
-			AuthenticationInformation information = new AuthenticationInformation();
-			return download.downloadPicture(picUrl,dto1,information);
+			return download.downloadPicture(picUrl,dto,authenticationInformation);
 		}else {
 			InputStream inputStream = null;
 			HttpURLConnection httpUrlConnection = null;
