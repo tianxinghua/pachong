@@ -5,8 +5,10 @@ import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.picture.product.consumer.bean.AuthenticationInformation;
 import com.shangpin.picture.product.consumer.e.PicHandleState;
 import com.shangpin.picture.product.consumer.manager.SupplierProductPictureManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
@@ -18,6 +20,8 @@ import java.net.URL;
 /**
  * Created by 极客世界 on 2018/9/27.
  */
+@Slf4j
+@Component
 public class ImageDownload {
     @Autowired
     private SupplierProductPictureManager supplierProductPictureManager;
@@ -27,7 +31,7 @@ public class ImageDownload {
     }*/
     //链接url下载图片
     public   int downloadPicture(String urlList,HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation) {
-        URL url = null;
+            URL url = null;
             int imageNumber = 0;
 
             try {
@@ -41,11 +45,11 @@ public class ImageDownload {
                 }
 
                 url = new URL(urlList);
-                urlList= urlList.replaceAll(" +", "%20").replaceFirst("http", "https");
+                urlList= urlList.replaceAll(" +", "%20");// .replaceFirst("http", "https")
                 DataInputStream dataInputStream = new DataInputStream(url.openStream());
                 //String imageName =  "D:\\test1.jpg";
                 byte[] buffer = new byte[1024*1000];
-            int length= dataInputStream.read(buffer);
+               int length= dataInputStream.read(buffer);
 
                 System.out.println(buffer);
                /* if (length==0){
@@ -62,6 +66,7 @@ public class ImageDownload {
             }
             byte[] context=output.toByteArray();
             fileOutputStream.write(output.toByteArray());*/
+            log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+urlList+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
             UploadPicDto uploadPicDto = new UploadPicDto();
             uploadPicDto.setRequestId(String.valueOf(dto.getSpuPendingPicId()));
             uploadPicDto.setBase64(base64);
@@ -74,6 +79,7 @@ public class ImageDownload {
             return 200;
 
         } catch (Exception e) {
+                log.error("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+urlList+" 上传失败");
             e.printStackTrace();
                 return 400;
         }

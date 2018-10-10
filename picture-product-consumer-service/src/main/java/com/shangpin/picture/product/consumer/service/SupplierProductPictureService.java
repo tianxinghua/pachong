@@ -64,6 +64,9 @@ public class SupplierProductPictureService {
 	
 	@Autowired
 	private CertificateConf certificate;
+
+	@Autowired
+	private ImageDownload download ;
 	/**
 	 * 处理供应商商品图片
 	 * @param picDtos
@@ -150,10 +153,7 @@ public class SupplierProductPictureService {
 	 */
 	private int pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		if (picUrl.contains("_")){
-			HubSpuPendingPicDto dto1 = new HubSpuPendingPicDto();
-			ImageDownload download = new ImageDownload();
-			AuthenticationInformation authenticationInformation1 = new AuthenticationInformation();
-			return download.downloadPicture(picUrl,dto1,authenticationInformation1);
+			return download.downloadPicture(picUrl,dto,authenticationInformation);
 		}else {
 			InputStream inputStream = null;
 			HttpURLConnection httpUrlConnection = null;
