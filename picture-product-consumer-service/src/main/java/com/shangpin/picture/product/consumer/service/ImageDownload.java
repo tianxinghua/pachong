@@ -41,11 +41,11 @@ public class ImageDownload {
                 }
 
                 url = new URL(urlList);
-                urlList= urlList.replaceAll(" +", "%20").replaceFirst("http", "https");
+                urlList= urlList.replaceAll(" +", "%20");//.replaceFirst("http", "https");
                 DataInputStream dataInputStream = new DataInputStream(url.openStream());
                 //String imageName =  "D:\\test1.jpg";
-                byte[] buffer = new byte[1024*1000];
-            int length= dataInputStream.read(buffer);
+                byte[] buffer = new byte[1024*10000];
+                int length= dataInputStream.read(buffer);
 
                 System.out.println(buffer);
                /* if (length==0){

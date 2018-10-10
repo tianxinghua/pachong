@@ -64,6 +64,8 @@ public class SupplierProductPictureService {
 	
 	@Autowired
 	private CertificateConf certificate;
+	@Autowired
+	private ImageDownload download;
 	/**
 	 * 处理供应商商品图片
 	 * @param picDtos
@@ -150,10 +152,7 @@ public class SupplierProductPictureService {
 	 */
 	private int pullPicAndPushToPicServer(String picUrl, HubSpuPendingPicDto dto, AuthenticationInformation authenticationInformation){
 		if (picUrl.contains("_")){
-			HubSpuPendingPicDto dto1 = new HubSpuPendingPicDto();
-			ImageDownload download = new ImageDownload();
-			AuthenticationInformation authenticationInformation1 = new AuthenticationInformation();
-			return download.downloadPicture(picUrl,dto1,authenticationInformation1);
+			return download.downloadPicture(picUrl,dto,authenticationInformation);
 		}else {
 			InputStream inputStream = null;
 			HttpURLConnection httpUrlConnection = null;
@@ -543,7 +542,7 @@ public class SupplierProductPictureService {
 		SupplierProductPictureService pictureService = new SupplierProductPictureService();
 		HubSpuPendingPicDto picDto = new HubSpuPendingPicDto();
 		AuthenticationInformation information = new AuthenticationInformation();
-		pictureService.pullPicAndPushToPicServer("https://img.mytheresa.com/1088/1088/66/jpeg/catalog/product/ee/P00273362.jpg",picDto,information);
+		pictureService.pullPicAndPushToPicServer("https://cache.mrporter.com/images/products/1082974/1082974_mrp_fr_l.jpg",picDto,information);
 
 	}
 
