@@ -32,6 +32,8 @@ public class CommonCrawlData {
 	 * 字段规则的标识
 	 */
 	private static final Integer FIELD_RULES_FLAG = 2;
+	
+	private static ThreadLocal<ArrayList<CrawlResult>> resultListLocal = new ThreadLocal<ArrayList<CrawlResult>>();
 
 	public static List<CrawlResult> crawlData(Page page, SpiderRules spiderRuleInfo,
 			Map<String, Map<String, String>> clickFieldMap) {
@@ -85,7 +87,8 @@ public class CommonCrawlData {
 			LOG.error("---解析网页数据出错" + e.getLocalizedMessage() + "---错误行数：" + traceElement.getLineNumber());
 		}
 
-		List<CrawlResult> resultList = new ArrayList<CrawlResult>();
+		List<CrawlResult> resultList = resultListLocal.get();
+		resultList = new ArrayList<CrawlResult>();
 //		crawlResult.setDetailLink(url);
 		crawlResult.setWhiteId(spiderRuleInfo.getWhiteId());
 		crawlResult.setSupplierId(spiderRuleInfo.getSupplierId());
@@ -114,14 +117,9 @@ public class CommonCrawlData {
 							for (int j = 0; j < jsMenuStrategyArray.length; j++) {
 //								String menuDeStrategy = jsMenuStrategyArray[j];
 								String menuDeRules = jsMenuRuleArray[j];
-								
-								if(menuDeRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) {
-									menuRuleArray = menuDeRules.split(SymbolConstants.RULE_SPLIT_FLAG);
-									sizeFlag = menuRuleArray.length;
-									checkFlag = CheckClickRulesUtil.check(url, spiderRuleInfo, menuRuleArray[0], sizeFlag);
-								}else {
-									checkFlag = CheckClickRulesUtil.check(url, spiderRuleInfo, menuDeRules, sizeFlag);
-								}
+								menuRuleArray = menuDeRules.split(SymbolConstants.RULE_SPLIT_FLAG);
+								sizeFlag = menuRuleArray.length;
+								checkFlag = CheckClickRulesUtil.check(url, spiderRuleInfo, menuRuleArray[0], sizeFlag);
 								if(checkFlag) {
 									break;
 								}
@@ -135,12 +133,10 @@ public class CommonCrawlData {
 					}
 				}else {
 //					单个策略
-					if(jsMenuRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) {
-						menuRuleArray = jsMenuRules.split(SymbolConstants.RULE_SPLIT_FLAG);
-						sizeFlag = menuRuleArray.length;
-					}
+					menuRuleArray = jsMenuRules.split(SymbolConstants.RULE_SPLIT_FLAG);
+					sizeFlag = menuRuleArray.length;
 				}
-				Boolean invokeFlag = ReflectTypeMap.executeClick(MoreClickEnum.getName(sizeFlag),menuRuleArray, needClickFieldAry, clickFieldMap, spiderRuleInfo, url, crawlResult);
+				Boolean invokeFlag = ReflectTypeMap.executeClick(MoreClickEnum.getName(sizeFlag), needClickFieldAry, menuRuleArray, clickFieldMap, spiderRuleInfo, url, crawlResult, resultList);
 				if(!invokeFlag) {
 					clickFlag = false;
 					LOG.error("--链接{}，多层点击的执行出错--", url);
@@ -167,5 +163,5 @@ public class CommonCrawlData {
 		return resultList;
 
 	}
-
+	
 }

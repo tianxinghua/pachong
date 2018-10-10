@@ -37,7 +37,7 @@ public class TwoClick extends MoreClickUtil {
 	private static Logger LOG = LoggerFactory.getLogger(TwoClick.class);
 
 	@Override
-	public void initClick() {
+	public void initClick(ChromeDriver driver) {
 		clickFieldRulesMap = super.clickFieldRulesMap;
 	}
 
@@ -54,10 +54,10 @@ public class TwoClick extends MoreClickUtil {
 		recursionFlag = false;
 		List<Map<String, String>> list = localList.get();
 		list = new ArrayList<Map<String, String>>();
-		List<Map<String, String>> resultList = twoClick(list, driver, initI, initJ, recursionFlag, url, menuRuleArray);
+		list = twoClick(list, driver, initI, initJ, recursionFlag, url, menuRuleArray);
 		initI = new AtomicInteger(0);
 		initJ = new AtomicInteger(0);
-		return resultList;
+		return list;
 	}
 
 //	两层动态元素

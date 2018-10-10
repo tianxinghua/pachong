@@ -18,7 +18,7 @@ public class ThreeClick extends MoreClickUtil{
 	private static Map<String, Map<String, String>> clickFieldRulesMap = null;
 	
 	@Override
-	public void initClick() {
+	public void initClick(ChromeDriver driver) {
 		clickFieldRulesMap = super.clickFieldRulesMap;
 	}
 	

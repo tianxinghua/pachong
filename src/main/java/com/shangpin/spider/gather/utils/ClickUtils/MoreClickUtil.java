@@ -32,7 +32,7 @@ public abstract class MoreClickUtil {
 	 */
 	protected Map<String, Map<String, String>> clickFieldRulesMap = null;
 
-	public static ThreadLocal<List<Map<String, String>>> localList = new ThreadLocal<List<Map<String, String>>>();
+	public static ThreadLocal<ArrayList<Map<String, String>>> localList = new ThreadLocal<ArrayList<Map<String, String>>>();
 
 	private static SpChromeDriverClickPool driverPool = null;
 
@@ -49,28 +49,18 @@ public abstract class MoreClickUtil {
 	 * @param resultMap
 	 * @return
 	 */
-	public List<CrawlResult> crawlByClick(String[] needClickFieldAry, String[] menuRuleArray,
+	public void crawlByClick(String[] needClickFieldAry, String[] menuRuleArray,
 			Map<String, Map<String, String>> clickFieldMap, SpiderRules spiderRuleInfo, String url,
-			CrawlResult crawlResult) {
+			CrawlResult crawlResult, List<CrawlResult> crawlList) {
 //		rtl.lock();
 		clickFieldRulesMap = clickFieldMap;
-		List<CrawlResult> crawlList = new ArrayList<CrawlResult>();
 		if (spiderRuleInfo.getDriverPool() != null) {
 			driverPool = spiderRuleInfo.getDriverPool();
 		}
 		try {
 			Class<?> resultClass = Class.forName(CrawlResult.class.getName());
 			Field[] resultFields = resultClass.getDeclaredFields();
-
-			/*
-			 * String jsMenuRules = spiderRuleInfo.getJsMenuRules(); String[] menuRuleArray
-			 * = {}; if(StringUtils.isNotBlank(jsMenuRules)) {
-			 * if(jsMenuRules.contains(SymbolConstants.RULE_SPLIT_FLAG)) { menuRuleArray =
-			 * jsMenuRules.split(SymbolConstants.RULE_SPLIT_FLAG); }else {
-			 * LOG.info("---源-{}-的两层点击规则填写有误，缺@,间隔符。",spiderRuleInfo.getWhiteId()); } }else
-			 * { LOG.info("---源-{}-的两层点击规则为空！",spiderRuleInfo.getWhiteId()); return null; }
-			 */
-
+//			处理点击
 			List<Map<String, String>> resultList = handleClick(url, menuRuleArray);
 
 			if (resultList != null && resultList.size() > 0) {
@@ -117,7 +107,6 @@ public abstract class MoreClickUtil {
 //			rtl.unlock();
 			LOG.info("点击获取{}数据结束---！", url);
 		}
-		return crawlList;
 	}
 
 	private List<Map<String, String>> handleClick(String url, String[] menuRuleArray) {
@@ -129,7 +118,8 @@ public abstract class MoreClickUtil {
 				driver = (ChromeDriver) driverPool.get();
 			}
 			driver.get(url);
-			initClick();
+			driver.manage().window().maximize();
+			initClick(driver);
 			resultList = executeClick(driver, url, menuRuleArray);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -139,7 +129,7 @@ public abstract class MoreClickUtil {
 		return resultList;
 	}
 
-	public abstract void initClick();
+	public abstract void initClick(ChromeDriver driver);
 
 	public abstract List<Map<String, String>> executeClick(ChromeDriver driver, String url, String[] menuRuleArray);
 }

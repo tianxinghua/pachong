@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.shangpin.spider.config.FieldNotes;
+import com.shangpin.spider.config.FilterNotes;
 
 public class CrawlResult implements Cloneable{
-    private Long id;
+	@FilterNotes
+	private Long id;
     /**
      * 性别
      */
@@ -87,26 +89,26 @@ public class CrawlResult implements Cloneable{
      */
     @FieldNotes(name="商品链接")
     private String detailLink;
-    
+    @FilterNotes
     private Long sppuHash;
     /**
      * 尺寸详情
      */
     @FieldNotes(name="尺寸详情")
     private String measurement;
-    
+    @FilterNotes
     private String supplierId;
-
+    @FilterNotes
     private String supplierNo;
-    
+    @FilterNotes
     private String supplierSkuNo;
     
     private String channel;
-
+    @FilterNotes
     private Long whiteId;
-
+    @FilterNotes
     private Date createTime;
-
+    @FilterNotes
     private Date updateTime;
     /**
      * 商品描述

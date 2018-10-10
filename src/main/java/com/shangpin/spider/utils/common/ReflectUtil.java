@@ -1,13 +1,16 @@
 package com.shangpin.spider.utils.common;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.config.FieldNotes;
+import com.shangpin.spider.config.FilterNotes;
 import com.shangpin.spider.entity.gather.SpiderRules;
 
 /**
@@ -21,6 +24,30 @@ public class ReflectUtil {
 	 * 字段规则的标识
 	 */
 	private static final Integer FIELD_RULES_FLAG = 2;
+	
+	/**
+	 * 根据过滤注解获取类型需过滤的字段
+	 * 
+	 * @return
+	 */
+	public static Set<String> getAllFilter(String className) {
+		Set<String> set = new HashSet<String>();
+		try {
+			Class<?> class1 = Class.forName(className);
+			Field[] fields = class1.getDeclaredFields();
+			for (Field field : fields) {
+				if (!field.isAnnotationPresent(FilterNotes.class)) {
+					continue;
+				}
+				String fieldName = field.getName();
+				set.add(fieldName);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return set;
+	}
+	
 	/**
 	 * 根据注解获取类型所有字段的信息
 	 * 
@@ -109,10 +136,5 @@ public class ReflectUtil {
 		}
 		return null;
 	}
-
-	/*
-	 * public static void main(String[] args) { JSONArray array =
-	 * getAllField(CrawlResult.class.getName()); System.out.println(array); }
-	 */
 
 }

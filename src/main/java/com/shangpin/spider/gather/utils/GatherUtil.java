@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +29,9 @@ import org.slf4j.LoggerFactory;
 import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.common.StrategyConstants;
 import com.shangpin.spider.common.SymbolConstants;
+import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
+import com.shangpin.spider.utils.common.ReflectUtil;
 
 import us.codecraft.webmagic.Page;
 
@@ -389,7 +392,13 @@ public class GatherUtil {
 		}
 //		对填写默认值策略的处理
 		if(strategyStr.contains(StrategyConstants.DE_S)) {
-			return rulesStr.trim();
+			rulesStr = rulesStr.trim();
+			if(rulesStr.equals(SymbolConstants.URL)) {
+				crawlValue = page.getUrl().toString();
+			}else {
+				crawlValue = rulesStr;
+			}
+			return crawlValue;
 		}
 //		对库存量的标识
 		if(StrategyConstants.SP_QTY_C.equals(strategyStr)) {
@@ -453,7 +462,7 @@ public class GatherUtil {
 	private static Map<String, Object> orAnd(Page page,Map<String,Object> resultMap,String deStrategy,String[] gg,int i) {
 		String strategyStr = resultMap.get("strategyStr").toString();
 		String crawlValue = resultMap.get("crawlValue").toString();
-		String strategyFilterStr = strategyStr.replace(deStrategy, "");
+		String strategyFilterStr = strategyStr.replaceFirst(deStrategy, "");
 		String detailRule = gg[i];
 		if(i==0) {
 			System.err.println("第一步："+gg[i]);
@@ -461,7 +470,7 @@ public class GatherUtil {
 			crawlValue = cssStrategy(deStrategy,detailRule,i,crawlValue,page);
 //			针对detailLink做的处理
 			if(StrategyConstants.DE_S.equals(deStrategy)) {
-				if(detailRule.contains(SymbolConstants.URL)) {
+				if(detailRule.equals(SymbolConstants.URL)) {
 					crawlValue = page.getUrl().toString();
 				}
 			}
@@ -477,6 +486,7 @@ public class GatherUtil {
 			if(SymbolConstants.SPLIT_FLAG.equals(symbol)) {
 				System.err.println("或---的规则"+gg[i]);
 				if(StringUtils.isBlank(crawlValue)) {
+					crawlValue = xpathStrategy(deStrategy,detailRule,i,crawlValue,page);
 					crawlValue = cssStrategy(deStrategy,detailRule,i,crawlValue,page);
 					crawlValue = subStrategy(deStrategy,detailRule,i,crawlValue);
 					crawlValue = regStrategy(deStrategy,detailRule,i,crawlValue);
@@ -546,7 +556,9 @@ public class GatherUtil {
 	private static String cssStrategy(String deStrategy,String detailRule,int i,String crawlValue,Page page) {
 		if(StrategyConstants.C.equals(deStrategy)) {
 			try {
-				if(detailRule.contains(SymbolConstants.ATTR_FLAG)){
+				if(detailRule.equals(SymbolConstants.URL)) {
+					crawlValue = page.getUrl().toString();
+				}else if(detailRule.contains(SymbolConstants.ATTR_FLAG)){
 					String attrRule = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), detailRule.length());
 					crawlValue = page.getHtml().getDocument().select(detailRule).attr(attrRule).toString();
 				}else {
@@ -577,7 +589,7 @@ public class GatherUtil {
 		}
 		return crawlValue;
 	}
-	public static String subCore(String detailRule,String crawlValue) {
+	private static String subCore(String detailRule,String crawlValue) {
 		if(detailRule.contains(SymbolConstants.LEFT_PART)&&detailRule.contains(SymbolConstants.RIGHT_PART)) {
 			detailRule = detailRule.replace(SymbolConstants.LEFT_PART, "");
 			detailRule = detailRule.replace(SymbolConstants.RIGHT_PART, "");
@@ -656,18 +668,21 @@ public class GatherUtil {
 		if(StrategyConstants.RG.equals(deStrategy)) {
 			try {
 				if(detailRule.startsWith(SymbolConstants.FALSE_MARK)) {
+					detailRule = detailRule.replace(SymbolConstants.FALSE_MARK, "");
 					Pattern compile = Pattern.compile(detailRule);
 					Matcher matcher = compile.matcher(crawlValue);
 					if(matcher.find()) {
 						String filterValue = matcher.group();
-						crawlValue.replaceAll(filterValue, "");
+						crawlValue = crawlValue.replaceAll(filterValue, "");
 					}
 				}else {
 					Pattern compile = Pattern.compile(detailRule);
 					Matcher matcher = compile.matcher(crawlValue);
-					if(matcher.find()) {
-						crawlValue = matcher.group();
+					String rgValue = "";
+					while(matcher.find()) {
+						 rgValue += matcher.group();
 					}
+					crawlValue = rgValue;
 				}
 			} catch (Exception e) {
 				LOG.error("---------REG解析方法异常{}",e.getMessage());
@@ -683,16 +698,9 @@ public class GatherUtil {
 	 */
 	public static Boolean filterField(String resultFieldName) {
 		Boolean flag = false;
-		switch(resultFieldName) {
-			case "serialVersionUID":
-				flag = true;
-			case "id":
-				flag = true;
-			case "createTime":
-				flag = true;	
-			case "updateTime":
-				flag = true;
-			default:;
+		Set<String> allFilter = ReflectUtil.getAllFilter(CrawlResult.class.getName());
+		if(allFilter.contains(resultFieldName)) {
+			flag = true;
 		}
 		return flag;
 	}
@@ -765,7 +773,9 @@ public class GatherUtil {
 			String detailStrategy = strategyArray[i];
 			String detailRule = rulesArray[i];
 			if(StrategyConstants.C.equals(detailStrategy)) {
-				if(detailRule.contains(SymbolConstants.ATTR_FLAG)) {
+				if(detailRule.equals(SymbolConstants.URL)) {
+					fieldValue = url;
+				}else if(detailRule.contains(SymbolConstants.ATTR_FLAG)) {
 					String deRuleStr = detailRule.substring(0, detailRule.indexOf(SymbolConstants.ATTR_FLAG));
 					String attrStr = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),detailRule.length());
 					fieldValue = driver.findElement(By.cssSelector(deRuleStr)).getAttribute(attrStr).toString();
@@ -781,17 +791,21 @@ public class GatherUtil {
 				}
 			}
 			if(StrategyConstants.DE_S.equals(detailStrategy)) {
-				if(detailRule.contains(SymbolConstants.URL)) {
+				if(detailRule.equals(SymbolConstants.URL)) {
 					fieldValue = url;
 				}
 			}
 			
 			if(StrategyConstants.SUB.equals(detailStrategy)) {
 				if(fieldValue=="") {
-					LOG.error("----两层点击中，首次抓取"+clickfield+"策略C的值为空！");
+					LOG.error("----多层点击中，抓取"+clickfield+"的值为空！");
 				}else {
 					fieldValue = subCore(detailRule,fieldValue);
 				}
+			}
+			
+			if(StrategyConstants.RG.equals(detailStrategy)) {
+				fieldValue = regStrategy(detailStrategy,detailRule,i,fieldValue);
 			}
 		}
 		return fieldValue;
@@ -837,20 +851,23 @@ public class GatherUtil {
 				qtyFlag = page.getHtml().getDocument().select(rulesStr).text();
 			}
 		}
-		
+		if(qtyFlag==null) {
+			qtyFlag = "";
+		}
 		int qty = Constants.QTY_NO;
-		Pattern pattern = Pattern.compile("\\d+");
-		Matcher matcher = pattern.matcher(qtyFlag);
-		if(matcher.find()) {
-//			以数据判断
-			int i = Integer.parseInt(matcher.group());
+//		Pattern pattern = Pattern.compile("\\d+");
+//		Matcher matcher = pattern.matcher(qtyFlag);
+		try {
 			int j = Integer.parseInt(qtyFlagValue);
+			int i = Integer.parseInt(qtyFlag);
 			if(i>j) {
 				qty = Constants.QTY_YES;
 			}
-		}else {
+		} catch (Exception e) {
+			LOG.info("库存标识为字符--");
 //			以字符判断
 			if(qtyFlagValue.contains(SymbolConstants.FALSE_MARK)) {
+				qtyFlagValue = qtyFlagValue.replace(SymbolConstants.FALSE_MARK, "");
 				if(!qtyFlag.contains(qtyFlagValue)) {
 					qty = Constants.QTY_YES;
 				}
@@ -859,7 +876,6 @@ public class GatherUtil {
 					qty = Constants.QTY_YES;
 				}
 			}
-				
 		}
 		return String.valueOf(qty);
 	}
@@ -872,12 +888,17 @@ public class GatherUtil {
 	 * @DES 如果图片为点击后获取，则图片的策略只能是SP-C
 	 */
 	private static String handleDriverImg(WebDriver driver, String rulesStr) {
+		String attrRule = SymbolConstants.SRC;
+		if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
+			attrRule = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), rulesStr.length());
+			rulesStr = rulesStr.substring(0,rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
+		}
 		List<WebElement> imgElements = driver.findElements(By.cssSelector(rulesStr));
 		WebDriverWait wait = new WebDriverWait(driver, 10);
 		wait.until(ExpectedConditions.visibilityOfAllElements(imgElements));
 		String pics = "";
 		for (WebElement imgEle : imgElements) {
-			pics += imgEle.getAttribute(SymbolConstants.SRC)+SymbolConstants.SPLIT_FLAG;
+			pics += imgEle.getAttribute(attrRule)+SymbolConstants.SPLIT_FLAG;
 		}
 		if(pics.contains(SymbolConstants.SPLIT_FLAG)) {
 			pics = pics.substring(0, pics.length()-SymbolConstants.SPLIT_FLAG.length());

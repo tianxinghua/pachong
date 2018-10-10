@@ -30,8 +30,19 @@ public class OneClick extends MoreClickUtil{
 	private static Logger LOG = LoggerFactory.getLogger(OneClick.class);
 	
 	@Override
-	public void initClick() {
+	public void initClick(ChromeDriver driver) {
 		clickFieldRulesMap = super.clickFieldRulesMap;
+//		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
+		WebElement element = null;
+		try {
+			element = driver.findElement(By.cssSelector(".close-btn-small"));
+			if(element!=null) {
+				element.click();
+			}
+		} catch (Exception e) {
+			LOG.error("点击前破解网站反爬有误！");
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -45,9 +56,9 @@ public class OneClick extends MoreClickUtil{
 		recursionFlag = false;
 		List<Map<String, String>> list = localList.get();
 		list = new ArrayList<Map<String, String>>();
-		oneClick(list, driver, initI, recursionFlag, url, menuRuleArray);
+		list = oneClick(list, driver, initI, recursionFlag, url, menuRuleArray);
 		initI = new AtomicInteger(0);
-		return null;
+		return list;
 	}
 	
 	private List<Map<String, String>> oneClick(List<Map<String, String>> list, ChromeDriver driver,
@@ -80,6 +91,7 @@ public class OneClick extends MoreClickUtil{
 					element.click();
 				} catch (Exception e) {
 					LOG.error("链接{}第一次点击事件有误！", url);
+					e.printStackTrace();
 				}
 //				避免点击频繁，异步加载
 				try {
