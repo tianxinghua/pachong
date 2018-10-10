@@ -159,7 +159,12 @@ public class FetchStockImpl {
         for (int i = 0; i < failedSpSkuNoSize; i++) {
             repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i));
         }
-
+        try {
+            out.close();
+            priceOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String endtDateTime = format.format(new Date());
         logger.info("===================拉取maje库存数据结束 "+endtDateTime+"=========================");
         System.out.println("=================拉取maje库存数据结束 "+endtDateTime+"=========================");
@@ -598,6 +603,11 @@ public class FetchStockImpl {
             System.out.println("===================发送邮件失败 =========================");
         }
     }
+
+    public static void main(String[] args) {
+        FetchStockImpl o=new FetchStockImpl();
+        o.getFileToEmail();
+    }
     protected void getFileToEmail(){
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
@@ -608,9 +618,11 @@ public class FetchStockImpl {
         try {
             FileInputStream fis = new FileInputStream(file);
             System.out.println("文件的大小是："+fis.available()+"\n");
-            if (fis.available()>0){
+            if (fis.available()>50){
                 sendMail();
+                fis.close();
             }else {
+                fis.close();
                 deleteFile(fileName);
                 logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
                 System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
