@@ -112,7 +112,7 @@ public class SupplierProductPictureService {
 					if(picUrl.toUpperCase().startsWith("HTTP")){
 						code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 					}else if(picUrl.toUpperCase().startsWith("FTP")){
-						if("2016110101955".equals(picVO.getSupplierId())){
+						if("2016110101955".equals(picVO.getSupplierId())||"2018091702058".equals(picVO.getSupplierId())){
 							code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
 						}else{
 							code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
@@ -502,7 +502,7 @@ public class SupplierProductPictureService {
 					code = pullPicAndPushToPicServer(picUrl, updateDto, information);
 				}else if(picUrl.toUpperCase().startsWith("FTP")){
 
-					if("2016110101955".equals(hubSpuPendingPicDto.getSupplierId())){
+					if("2016110101955".equals(hubSpuPendingPicDto.getSupplierId())||"2018091702058".equals(hubSpuPendingPicDto.getSupplierId())){
 						code = pullFtpPicByBrownAndPushToPicServer(picUrl, updateDto, information);
 					}else{
 						code = pullPicFromFtpAndPushToPicServer(picUrl, updateDto, information);
