@@ -51,7 +51,7 @@ public class SupplierController {
 
 
 	@RequestMapping(value="/supplierChannel",method=RequestMethod.GET)
-	public SupplierChannelDto getSupplierMsg(@RequestParam(name="supplierId",required=false,defaultValue = "") String  supplierId, @RequestParam(name="supplierNo",required=false,defaultValue = "") String supplierNo){
+	public String  getSupplierMsg(@RequestParam(name="supplierId",required=false,defaultValue = "") String  supplierId, @RequestParam(name="supplierNo",required=false,defaultValue = "") String supplierNo){
 		return supplierInHubService.getSupplierChannelByMap(supplierId,supplierNo);
 	}
 }

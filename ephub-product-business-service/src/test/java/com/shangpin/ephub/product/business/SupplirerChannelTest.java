@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SupplirerChannelTest {
@@ -18,7 +20,7 @@ public class SupplirerChannelTest {
 
     @Test
     public void supplierChannelTest(){
-        SupplierChannelDto scd =  supplierInHubService.getSupplierChannelByMap("111","");
-        System.out.println(JSONObject.toJSONString(scd));
+        String scd =  supplierInHubService.getSupplierChannelByMap("111","");
+        System.out.println(scd);
     }
 }

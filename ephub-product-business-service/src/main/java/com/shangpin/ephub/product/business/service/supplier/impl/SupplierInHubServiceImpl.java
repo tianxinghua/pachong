@@ -175,19 +175,28 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     }
 
     @Override
-    public SupplierChannelDto getSupplierChannelByMap(String supplierId, String supplierNo) {
+    public String  getSupplierChannelByMap(String supplierId, String supplierNo) {
         if(supplierId==null || "".equals(supplierId) ){
             if(supplierNo ==null || "".equals(supplierNo)){
                 return  null;
             }
         }
-       String re =   hubSupplierValueMappingGateWay.getSupplierChannelByMap(supplierId,supplierNo);
-        ReplyResult reply = JSONObject.parseObject(re,ReplyResult.class);
+        String re ="";
+        try {
+             re =   hubSupplierValueMappingGateWay.getSupplierChannelByMap(supplierId,supplierNo);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+/*        ReplyResult reply = JSONObject.parseObject(re,ReplyResult.class);
         if(reply.getCode()==200){
             SupplierChannelDto scd = JSONObject.parseObject(reply.getData(),SupplierChannelDto.class);
             return scd;
-        }
-        return null;
+        }*/
+        return re;
     }
 
 

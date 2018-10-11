@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,7 +26,7 @@ public class SupplierChannelController {
         Map<String ,String> map = new HashMap<String,String>();
         map.put("supplierNo",supplierNo);
         map.put("supplierId",supplierId);
-        SupplierChannelPic sc = supplierChannelService.getSupplierChannelPicByMap(map);
+        List<SupplierChannelPic> sc = supplierChannelService.getSupplierChannelPicByMap(map);
         reply.success();
         reply.setData(JSONObject.toJSONString(sc));
         return JSONObject.toJSONString(reply);

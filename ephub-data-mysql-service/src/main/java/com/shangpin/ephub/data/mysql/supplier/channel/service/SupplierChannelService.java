@@ -5,6 +5,7 @@ import com.shangpin.ephub.data.mysql.supplier.channel.mapper.SupplierChannelPicM
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,8 +19,8 @@ public class SupplierChannelService {
     @Autowired
     private SupplierChannelPicMapper supplierChannelPicMapper;
 
-    public SupplierChannelPic getSupplierChannelPicByMap(Map<String,String> map){
-        SupplierChannelPic sc = supplierChannelPicMapper.selectByMap(map);
+    public  List<SupplierChannelPic> getSupplierChannelPicByMap(Map<String,String> map){
+        List<SupplierChannelPic> sc = supplierChannelPicMapper.selectByMap(map);
          return sc;
     }
 }

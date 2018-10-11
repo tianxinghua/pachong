@@ -56,5 +56,5 @@ public interface SupplierInHubService {
      * @param supplierId
      * @return
      */
-    public SupplierChannelDto getSupplierChannelByMap(String supplierId,String supplierNo);
+    public String  getSupplierChannelByMap(String supplierId,String supplierNo);
 }

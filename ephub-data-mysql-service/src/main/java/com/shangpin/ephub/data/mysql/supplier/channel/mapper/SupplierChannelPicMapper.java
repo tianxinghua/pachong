@@ -35,5 +35,5 @@ public interface SupplierChannelPicMapper {
 
     int updateByPrimaryKey(SupplierChannelPic record);
 
-    SupplierChannelPic selectByMap(Map<String,String> map);
+    List<SupplierChannelPic> selectByMap(Map<String,String> map);
 }

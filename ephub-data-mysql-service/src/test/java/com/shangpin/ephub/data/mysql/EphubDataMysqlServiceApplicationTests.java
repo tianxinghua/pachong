@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -30,7 +31,7 @@ public class EphubDataMysqlServiceApplicationTests {
 		Map<String ,String> map = new HashMap<String,String>();
 		map.put("supplierNo","");
 		map.put("supplierId","111");
-		SupplierChannelPic sc = supplierChannelService.getSupplierChannelPicByMap(map);
+		List<SupplierChannelPic> sc = supplierChannelService.getSupplierChannelPicByMap(map);
 		System.out.println(sc.toString());
 	}
 
