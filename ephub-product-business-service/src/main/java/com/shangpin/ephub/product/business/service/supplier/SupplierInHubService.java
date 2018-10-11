@@ -2,6 +2,7 @@ package com.shangpin.ephub.product.business.service.supplier;
 
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
+import com.shangpin.ephub.product.business.service.supplier.dto.SupplierChannelDto;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
 
 import java.util.List;
@@ -50,5 +51,10 @@ public interface SupplierInHubService {
      */
     public boolean isDirectHotboom(String supplierId);
 
-
+    /**
+     * 获取供货商信息
+     * @param supplierId
+     * @return
+     */
+    public SupplierChannelDto getSupplierChannelByMap(String supplierId,String supplierNo);
 }

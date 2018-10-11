@@ -2,16 +2,10 @@ package com.shangpin.ephub.client.data.mysql.mapping.gateway;
 
 import java.util.List;
 
+import com.shangpin.ephub.client.data.mysql.mapping.dto.*;
 import org.springframework.cloud.netflix.feign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaWithRowBoundsDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
-import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingWithCriteriaDto;
 /**
  * <p>Title:HubSupplierValueMappingController.java </p>
  * <p>Description: </p>
@@ -57,4 +51,8 @@ public interface HubSupplierValueMappingGateWay {
 	
 	@RequestMapping(value = "/hub-supplier-value-mapping/update-by-primary-key", method = RequestMethod.POST,consumes = "application/json")
     public int updateByPrimaryKey(@RequestBody HubSupplierValueMappingDto hubSupplierValueMapping);
+
+
+    @RequestMapping(value = "/hub-supplier-channel-mapping/supplierChannel", method = RequestMethod.GET,consumes = "application/json")
+    public String getSupplierChannelByMap(@RequestParam(name="supplierId") String supplierId, @RequestParam(name="supplierNo") String supplierNo);
 }

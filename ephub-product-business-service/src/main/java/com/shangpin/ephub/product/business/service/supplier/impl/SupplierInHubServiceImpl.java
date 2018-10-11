@@ -1,14 +1,17 @@
 package com.shangpin.ephub.product.business.service.supplier.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
+import com.shangpin.ephub.product.business.common.ReplyResult;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
+import com.shangpin.ephub.product.business.service.supplier.dto.SupplierChannelDto;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -169,6 +172,22 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
 
 
         return false;
+    }
+
+    @Override
+    public SupplierChannelDto getSupplierChannelByMap(String supplierId, String supplierNo) {
+        if(supplierId==null || "".equals(supplierId) ){
+            if(supplierNo ==null || "".equals(supplierNo)){
+                return  null;
+            }
+        }
+       String re =   hubSupplierValueMappingGateWay.getSupplierChannelByMap(supplierId,supplierNo);
+        ReplyResult reply = JSONObject.parseObject(re,ReplyResult.class);
+        if(reply.getCode()==200){
+            SupplierChannelDto scd = JSONObject.parseObject(reply.getData(),SupplierChannelDto.class);
+            return scd;
+        }
+        return null;
     }
 
 
