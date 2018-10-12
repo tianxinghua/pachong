@@ -59,6 +59,7 @@ public class GebnegozioHandle implements ISupplierHandler {
 
         try {
             if (!StringUtils.isBlank(message.getData())){
+                System.out.println("看转换数据："+message.getData());
                 GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
                 String supplierId = message.getSupplierId();
                 gebnegozioDTO.setSpu(gebnegozioDTO.getId());
@@ -134,7 +135,7 @@ public class GebnegozioHandle implements ISupplierHandler {
             }
 
             hubSpu.setSupplierId(supplierId);
-            hubSpu.setSupplierSpuNo(item.getId());
+            hubSpu.setSupplierSpuNo( selProductAttribute( item , token , "modello") );
             hubSpu.setSupplierSpuColor( selProductAttribute( item , token , "color") );
             hubSpu.setSupplierSpuModel( selProductAttribute( item , token , "modello") );
             hubSpu.setSupplierSpuName(item.getName());
@@ -172,7 +173,7 @@ public class GebnegozioHandle implements ISupplierHandler {
             String supplierSkuNo = item.getSku();
             hubSku.setSupplierSkuNo(supplierSkuNo);
             hubSku.setSupplierSkuName(item.getName());
-            hubSku.setSupplierBarcode(supplierSkuNo);
+            hubSku.setSupplierBarcode(item.getBarcode());
             hubSku.setMarketPrice( item.getFinal_price() );//市场价
             hubSku.setSalesPrice( item.getFinal_price() );//售价
             hubSku.setSupplyPrice( item.getFinal_price() );//供价
