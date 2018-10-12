@@ -56,7 +56,6 @@ public class GebnegozioHandle implements ISupplierHandler {
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         String token = selToken();
         if ( null != token && !token.equals("") ){
-
         try {
             if (!StringUtils.isBlank(message.getData())){
                 System.out.println("看转换数据："+message.getData());
