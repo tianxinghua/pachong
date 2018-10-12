@@ -13,6 +13,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.shangpin.spider.gather.utils.CrackDspiderUtil;
+
 /**
  * 
  * @author njt
@@ -39,10 +41,12 @@ public class TwoClick extends MoreClickUtil {
 	@Override
 	public void initClick(ChromeDriver driver) {
 		clickFieldRulesMap = super.clickFieldRulesMap;
+//		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
+		CrackDspiderUtil.crackMask(driver, super.spiderRuleInfo);
 	}
 
 	@Override
-	public List<Map<String, String>> executeClick(ChromeDriver driver, String url, String[] menuRuleArray) {
+	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray) {
 		endInt = new AtomicInteger(0);
 		firstSize = 0;
 		AtomicInteger initI = init_i.get();
@@ -54,7 +58,7 @@ public class TwoClick extends MoreClickUtil {
 		recursionFlag = false;
 		List<Map<String, String>> list = localList.get();
 		list = new ArrayList<Map<String, String>>();
-		list = twoClick(list, driver, initI, initJ, recursionFlag, url, menuRuleArray);
+		list = twoClick(list, driver, initI, initJ, recursionFlag, menuRuleArray);
 		initI = new AtomicInteger(0);
 		initJ = new AtomicInteger(0);
 		return list;
@@ -62,7 +66,8 @@ public class TwoClick extends MoreClickUtil {
 
 //	两层动态元素
 	public List<Map<String, String>> twoClick(List<Map<String, String>> list, ChromeDriver driver, AtomicInteger initI,
-			AtomicInteger initJ, Boolean recursionFlag, String url, String[] menuRuleArray) {
+			AtomicInteger initJ, Boolean recursionFlag, String[] menuRuleArray) {
+		String url = driver.getCurrentUrl();
 		int j = initJ.get();
 		int i = initI.get();
 
@@ -122,7 +127,7 @@ public class TwoClick extends MoreClickUtil {
 		if (j <= sencondSize - 1) {
 			element2 = elements2.get(j);
 			try {
-				WebDriverWait wait = new WebDriverWait(driver, 30);
+				WebDriverWait wait = new WebDriverWait(driver, 10);
 				wait.until(ExpectedConditions.elementToBeClickable(element2));
 				element2.click();
 			} catch (Exception e) {
@@ -147,7 +152,7 @@ public class TwoClick extends MoreClickUtil {
 //			点击后获取的字段值，在此获取
 			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap);
 //			递归			
-			twoClick(list, driver, initI, initJ, recursionFlag, url, menuRuleArray);
+			twoClick(list, driver, initI, initJ, recursionFlag, menuRuleArray);
 		}
 //		确保最后一次入库
 		if (endInt.get() == 0) {

@@ -111,19 +111,21 @@ public class SpChromeDriverPool extends WebDriverPool{
 			}
 			if (driver != null) {
 				LOG.info("--Pool中取出一个driver--{}",driver);
-				outQueue.add(driver);
+//				outQueue.add(driver);
+				outQueue.offer(driver);
 				flag = true;
 				return driver;
 			}
 		}
 		if(!flag) {
-			if(changeCount.get() < poolSize) {
-				while(changeCount.get() < poolSize) {
-					synchronized (innerQueue) {
+			synchronized (innerQueue) {
+				if(changeCount.get() < poolSize) {
+					while(changeCount.get() < poolSize) {
 						System.setProperty("webdriver.chrome.driver", webDriverPath);
 						RemoteWebDriver remoteDriver = new ChromeDriver(caps);
 						remoteDriver = setWebDriverTimeout(remoteDriver);
 						innerQueue.add(remoteDriver);
+						LOG.error("Pool创建webDriver--{}",changeCount.get());
 						changeCount.incrementAndGet();
 					}
 				}
@@ -141,8 +143,9 @@ public class SpChromeDriverPool extends WebDriverPool{
 			LOG.error("Pool中取出driver阻塞异常--{}",e.getMessage());
 			e.printStackTrace();
 		}
-		changeCount.decrementAndGet();
-		outQueue.add(driver);
+//		changeCount.decrementAndGet();
+//		outQueue.add(driver);
+		outQueue.offer(driver);
 		return driver;
 	}
 	
@@ -152,7 +155,7 @@ public class SpChromeDriverPool extends WebDriverPool{
 	 */
 	public void returnToPool(WebDriver driver) {
 		if(driver!=null) {
-			changeCount.incrementAndGet();
+//			changeCount.incrementAndGet();
 			innerQueue.add(driver);
 //			失败的话，不阻塞，会抛出异常
 //			outQueue.remove(driver);

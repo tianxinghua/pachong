@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.shangpin.spider.common.StrategyConstants;
 import com.shangpin.spider.entity.gather.SpiderRules;
+import com.shangpin.spider.gather.utils.CrackDspiderUtil;
 import com.shangpin.spider.gather.utils.GatherUtil;
 
 import us.codecraft.webmagic.Page;
@@ -64,9 +65,8 @@ public class SpSeleniumDownloader implements Downloader{
 		}
 		RemoteWebDriver webDriver = null;
 		Boolean uniqueFlag = true;
-//		操作下拉
 		String url = request.getUrl();
-		// 控制下拉条
+		
 		
 		if(GatherUtil.isLieUrl(url, spiderRuleInfo)) {
 			try {
@@ -79,6 +79,10 @@ public class SpSeleniumDownloader implements Downloader{
 				LOG.info("---本次抓取提前结束，webDriver为空，导致失败！");
 				return page;
 			}
+//			测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
+			CrackDspiderUtil.crackMask(webDriver,spiderRuleInfo);
+			webDriver.manage().window().maximize();
+			// 控制下拉条
 			if(StrategyConstants.SCROLL.equals(spiderRuleInfo.getNextPageFlag())) {
 				Map<String,Long> map = new HashMap<String,Long>();
 				for (int i = 0; i < 100; i++) {

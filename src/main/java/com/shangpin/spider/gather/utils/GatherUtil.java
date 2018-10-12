@@ -772,17 +772,38 @@ public class GatherUtil {
 		for (int i = 0; i < strategyArray.length; i++) {
 			String detailStrategy = strategyArray[i];
 			String detailRule = rulesArray[i];
-			if(StrategyConstants.C.equals(detailStrategy)) {
+			if(StrategyConstants.C.equals(detailStrategy)||StrategyConstants.X.equals(detailStrategy)) {
 				if(detailRule.equals(SymbolConstants.URL)) {
-					fieldValue = url;
+					fieldValue = driver.getCurrentUrl();
 				}else if(detailRule.contains(SymbolConstants.ATTR_FLAG)) {
 					String deRuleStr = detailRule.substring(0, detailRule.indexOf(SymbolConstants.ATTR_FLAG));
 					String attrStr = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),detailRule.length());
-					fieldValue = driver.findElement(By.cssSelector(deRuleStr)).getAttribute(attrStr).toString();
+					if(StrategyConstants.C.equals(detailStrategy)) {
+						WebElement element = driver.findElement(By.cssSelector(deRuleStr));
+						WebDriverWait wait = new WebDriverWait(driver, 1);
+						wait.until(ExpectedConditions.visibilityOf(element));
+						fieldValue = element.getAttribute(attrStr).toString();
+					}
+					if(StrategyConstants.X.equals(detailStrategy)) {
+						WebElement element = driver.findElement(By.xpath(deRuleStr));
+						WebDriverWait wait = new WebDriverWait(driver, 1);
+						wait.until(ExpectedConditions.visibilityOf(element));
+						fieldValue = element.getAttribute(attrStr).toString();
+					}
 				}else {
 //					WebDriverWait wait = new WebDriverWait(driver, 10);
 //					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
-					WebElement element = driver.findElement(By.cssSelector(detailRule));
+					WebElement element = null;
+					if(StrategyConstants.C.equals(detailStrategy)) {
+						element = driver.findElement(By.cssSelector(detailRule));
+						WebDriverWait wait = new WebDriverWait(driver, 1);
+						wait.until(ExpectedConditions.visibilityOf(element));
+					}
+					if(StrategyConstants.X.equals(detailStrategy)) {
+						element = driver.findElement(By.xpath(detailRule));
+						WebDriverWait wait = new WebDriverWait(driver, 1);
+						wait.until(ExpectedConditions.visibilityOf(element));
+					}
 					if(element.isDisplayed()) {
 						fieldValue = element.getText();
 					}else {
@@ -791,8 +812,9 @@ public class GatherUtil {
 				}
 			}
 			if(StrategyConstants.DE_S.equals(detailStrategy)) {
+				detailRule = detailRule.trim();
 				if(detailRule.equals(SymbolConstants.URL)) {
-					fieldValue = url;
+					fieldValue = driver.getCurrentUrl();
 				}
 			}
 			
@@ -832,9 +854,13 @@ public class GatherUtil {
 				String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
 				String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
 				WebElement element = driver.findElement(By.cssSelector(deRuleStr));
+				WebDriverWait wait = new WebDriverWait(driver, 1);
+				wait.until(ExpectedConditions.visibilityOf(element));
 				qtyFlag = element.getAttribute(attrStr);
 			}else {
 				WebElement element = driver.findElement(By.cssSelector(rulesStr));
+				WebDriverWait wait = new WebDriverWait(driver, 1);
+				wait.until(ExpectedConditions.visibilityOf(element));
 				if(element.isDisplayed()) {
 					qtyFlag = element.getText();
 				}else {
@@ -894,7 +920,7 @@ public class GatherUtil {
 			rulesStr = rulesStr.substring(0,rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
 		}
 		List<WebElement> imgElements = driver.findElements(By.cssSelector(rulesStr));
-		WebDriverWait wait = new WebDriverWait(driver, 10);
+		WebDriverWait wait = new WebDriverWait(driver, 1);
 		wait.until(ExpectedConditions.visibilityOfAllElements(imgElements));
 		String pics = "";
 		for (WebElement imgEle : imgElements) {

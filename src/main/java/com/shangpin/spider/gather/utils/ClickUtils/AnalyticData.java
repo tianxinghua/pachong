@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.shangpin.spider.gather.utils.GatherUtil;
 
@@ -19,12 +21,14 @@ import com.shangpin.spider.gather.utils.GatherUtil;
  * AnalyticData
  */
 public class AnalyticData {
+	private static Logger LOG = LoggerFactory.getLogger(AnalyticData.class);
 	
 	public static List<Map<String, String>> handleClickFieldRulesMap(String url, List<Map<String, String>> list,
 			ChromeDriver driver, Map<String, Map<String, String>> clickFieldRulesMap) {
 		Set<Entry<String, Map<String, String>>> entrySet = clickFieldRulesMap.entrySet();
 		Iterator<Entry<String, Map<String, String>>> iterator = entrySet.iterator();
 		Map<String, String> map = new HashMap<String, String>();
+		LOG.info("开始动态解析{}网页数据-------：",url);
 		while (iterator.hasNext()) {
 			Entry<String, Map<String, String>> entry = iterator.next();
 			String clickfield = entry.getKey().toString();

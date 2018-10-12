@@ -64,11 +64,11 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 			caps.setCapability("chromeOptions", options);
 		}
 //		不加载图片
-		Map<String,Object> imgSettings = new HashMap<String, Object>();
+		/*Map<String,Object> imgSettings = new HashMap<String, Object>();
 		imgSettings.put("images", 2);
 		Map<String,Object> imgCapsSettings = new HashMap<String, Object>();
 		imgCapsSettings.put("profile.default_content_settings", imgSettings);
-		caps.setCapability("chrome.prefs", imgCapsSettings);
+		caps.setCapability("chrome.prefs", imgCapsSettings);*/
 	}
 	public int innerSite() {
 		if (flag) {
@@ -96,19 +96,21 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 			}
 			if (driver != null) {
 				LOG.info("--Pool中取出一个driver--{}",driver);
-				outQueue.add(driver);
+//				outQueue.add(driver);
+				outQueue.offer(driver);
 				flag = true;
 				return driver;
 			}
 		}
 		if(!flag) {
-			if(changeCount.get() < poolSize) {
-				while(changeCount.get() < poolSize) {
-					synchronized (innerQueue) {
+			synchronized (innerQueue) {
+				if(changeCount.get() < poolSize) {
+					while(changeCount.get() < poolSize) {
 						System.setProperty("webdriver.chrome.driver", webDriverPath);
 						RemoteWebDriver remoteDriver = new ChromeDriver(caps);
 						remoteDriver = setWebDriverTimeout(remoteDriver);
 						innerQueue.add(remoteDriver);
+						LOG.error("ClickPool创建webDriver--{}",changeCount.get());
 						changeCount.incrementAndGet();
 					}
 				}
@@ -126,8 +128,9 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 			LOG.error("Pool中取出driver阻塞异常--{}",e.getMessage());
 			e.printStackTrace();
 		}
-		changeCount.decrementAndGet();
-		outQueue.add(driver);
+//		changeCount.decrementAndGet();
+//		outQueue.add(driver);
+		outQueue.offer(driver);
 		return driver;
 	}
 	
@@ -137,7 +140,7 @@ public class SpChromeDriverClickPool extends WebDriverPool{
 	 */
 	public void returnToPool(WebDriver driver) {
 		if(driver!=null) {
-			changeCount.incrementAndGet();
+//			changeCount.incrementAndGet();
 			innerQueue.add(driver);
 //			失败的话，不阻塞，会抛出异常
 //			outQueue.remove(driver);

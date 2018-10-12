@@ -35,6 +35,8 @@ public abstract class MoreClickUtil {
 	public static ThreadLocal<ArrayList<Map<String, String>>> localList = new ThreadLocal<ArrayList<Map<String, String>>>();
 
 	private static SpChromeDriverClickPool driverPool = null;
+	
+	protected SpiderRules spiderRuleInfo;
 
 //	private static final ReentrantLock rtl = new ReentrantLock();
 	/**
@@ -54,6 +56,7 @@ public abstract class MoreClickUtil {
 			CrawlResult crawlResult, List<CrawlResult> crawlList) {
 //		rtl.lock();
 		clickFieldRulesMap = clickFieldMap;
+		this.spiderRuleInfo = spiderRuleInfo;
 		if (spiderRuleInfo.getDriverPool() != null) {
 			driverPool = spiderRuleInfo.getDriverPool();
 		}
@@ -61,7 +64,7 @@ public abstract class MoreClickUtil {
 			Class<?> resultClass = Class.forName(CrawlResult.class.getName());
 			Field[] resultFields = resultClass.getDeclaredFields();
 //			处理点击
-			List<Map<String, String>> resultList = handleClick(url, menuRuleArray);
+			List<Map<String, String>> resultList = handleClick(url, menuRuleArray, spiderRuleInfo);
 
 			if (resultList != null && resultList.size() > 0) {
 				for (Map<String, String> map : resultList) {
@@ -109,7 +112,7 @@ public abstract class MoreClickUtil {
 		}
 	}
 
-	private List<Map<String, String>> handleClick(String url, String[] menuRuleArray) {
+	private List<Map<String, String>> handleClick(String url, String[] menuRuleArray, SpiderRules spiderRuleInfo) {
 //		从Pool里取出driver
 		ChromeDriver driver = null;
 		List<Map<String, String>> resultList = null;
@@ -120,7 +123,7 @@ public abstract class MoreClickUtil {
 			driver.get(url);
 			driver.manage().window().maximize();
 			initClick(driver);
-			resultList = executeClick(driver, url, menuRuleArray);
+			resultList = executeClick(driver, menuRuleArray);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -131,5 +134,5 @@ public abstract class MoreClickUtil {
 
 	public abstract void initClick(ChromeDriver driver);
 
-	public abstract List<Map<String, String>> executeClick(ChromeDriver driver, String url, String[] menuRuleArray);
+	public abstract List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray);
 }

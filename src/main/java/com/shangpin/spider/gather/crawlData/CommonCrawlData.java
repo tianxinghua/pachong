@@ -105,10 +105,11 @@ public class CommonCrawlData {
 				String jsMenuStrategy = spiderRuleInfo.getJsMenuStrategy();
 				String jsMenuRules = spiderRuleInfo.getJsMenuRules();
 				String[] menuRuleArray = null;
-				if(jsMenuStrategy.contains(SymbolConstants.SPLIT_FLAG)) {
+//				点击的策略和规则都以#OR分割
+				if(jsMenuStrategy.contains(SymbolConstants.SUB_FIRSTOR)) {
 					if(jsMenuRules.contains(SymbolConstants.SUB_FIRSTOR)) {
 //						多种策略，检查每个策略的可行性，正确为止
-						String[] jsMenuStrategyArray = jsMenuStrategy.split(SymbolConstants.SPLIT_FLAG);
+						String[] jsMenuStrategyArray = jsMenuStrategy.split(SymbolConstants.SUB_FIRSTOR);
 						String[] jsMenuRuleArray = jsMenuRules.split(SymbolConstants.SUB_FIRSTOR);
 //						根据策略权重从大到小排序，待开发
 //						------

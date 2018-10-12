@@ -6,6 +6,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import com.shangpin.spider.gather.utils.CrackDspiderUtil;
+
 /**
  * 
  * @author njt
@@ -20,17 +22,19 @@ public class ThreeClick extends MoreClickUtil{
 	@Override
 	public void initClick(ChromeDriver driver) {
 		clickFieldRulesMap = super.clickFieldRulesMap;
+//		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
+		CrackDspiderUtil.crackMask(driver, super.spiderRuleInfo);
 	}
 	
 	@Override
-	public List<Map<String, String>> executeClick(ChromeDriver driver, String url, String[] menuRuleArray) {
+	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	private List<Map<String, String>> threeClick(List<Map<String, String>> list, ChromeDriver driver,
-			AtomicInteger initI, AtomicInteger initJ, Boolean recursionFlag, String url, String[] menuRuleArray) {
-		// TODO Auto-generated method stub
+			AtomicInteger initI, AtomicInteger initJ, Boolean recursionFlag, String[] menuRuleArray) {
+		String url = driver.getCurrentUrl();
 		return null;
 	}
 

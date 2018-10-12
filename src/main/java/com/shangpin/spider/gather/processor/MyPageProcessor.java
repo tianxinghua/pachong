@@ -70,13 +70,13 @@ public class MyPageProcessor implements PageProcessor {
 	private void processHandle(Page page, SpiderRules spiderRuleInfo, Map<String, Map<String, String>> clickFieldMap) {
 		String url = page.getUrl().toString();
 		try {
-			LOG.info("-processHandle--链接为{}---", url);
+			LOG.info("---processHandle--链接为{}---", url);
 			if (GatherUtil.isFilterUrl(url, spiderRuleInfo)) {
 				page.setSkip(true);
 				return;
 			}
 			if (page.getStatusCode() != 200) {
-				LOG.warn("-链接{}-的响应码{}，不成功，跳过！--", url, page.getStatusCode());
+				LOG.warn("---链接{}-的响应码{}，不成功，跳过！--", url, page.getStatusCode());
 				page.setSkip(true);
 				return;
 			}
@@ -114,16 +114,16 @@ public class MyPageProcessor implements PageProcessor {
             						System.err.println("----抓取结果为："+crawlResult.toString());
             						Long i = crawlService.insert(crawlResult);
             						if(i>0) {
-            							LOG.info("-商品spu为{}-存库成功！",crawlResult.getSpu());
+            							LOG.info("---商品spu为{}-存库成功！",crawlResult.getSpu());
             						}else {
-            							LOG.error("-商品spu为{}-存库失败！",crawlResult.getSpu());
+            							LOG.error("---商品spu为{}-存库失败！",crawlResult.getSpu());
             						}
             					}
             				}else {
-            					LOG.error("-{}获取到的商品列表为空！",url);
+            					LOG.error("---{}获取到的商品列表为空！",url);
             				}
                         } catch (Exception e) {
-                            LOG.error("--链接{},抓取数据出错！，异常：{}",url,e);
+                            LOG.error("---链接{},抓取数据出错！，异常：{}",url,e);
                         }
                     }
                 });
@@ -152,19 +152,19 @@ public class MyPageProcessor implements PageProcessor {
 						extras.put("whiteId", spiderRuleInfo.getWhiteId());
 						request.setExtras(extras);
 						// ----向下一个要抓取的队列中传参数---
-						LOG.info("-进入队列的链接-{}", link);
+						LOG.info("---进入队列的链接-{}", link);
 						page.addTargetRequest(request);
 					}
 				} else {
-					LOG.warn("-链接{}---------无匹配的页面链接", url);
+					LOG.warn("---链接{}--无匹配的页面链接", url);
 				}
 			} else {
-				LOG.warn("-链接{}--既不是详情页也不是列表页！", url);
+				LOG.warn("---链接{}--既不是详情页也不是列表页！", url);
 			}
 
 		} catch (Exception e) {
 			StackTraceElement traceElement = e.getStackTrace()[0];
-			LOG.error("网页{}出错{}，错误类{}，错误行数{}", url, e.getLocalizedMessage(), traceElement.getFileName(),
+			LOG.error("---网页{}出错{}，错误类{}，错误行数{}", url, e.getLocalizedMessage(), traceElement.getFileName(),
 					traceElement.getLineNumber());
 			return;
 		}

@@ -8,8 +8,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.shangpin.spider.gather.utils.CrackDspiderUtil;
 
 /**
  * 
@@ -32,21 +36,12 @@ public class OneClick extends MoreClickUtil{
 	@Override
 	public void initClick(ChromeDriver driver) {
 		clickFieldRulesMap = super.clickFieldRulesMap;
-//		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
-		WebElement element = null;
-		try {
-			element = driver.findElement(By.cssSelector(".close-btn-small"));
-			if(element!=null) {
-				element.click();
-			}
-		} catch (Exception e) {
-			LOG.error("点击前破解网站反爬有误！");
-			e.printStackTrace();
-		}
+		//		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
+		CrackDspiderUtil.crackMask(driver, super.spiderRuleInfo);
 	}
 	
 	@Override
-	public List<Map<String, String>> executeClick(ChromeDriver driver, String url, String[] menuRuleArray) {
+	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray) {
 		endInt = new AtomicInteger(0);
 		firstSize = 0;
 		AtomicInteger initI = init_i.get();
@@ -56,13 +51,15 @@ public class OneClick extends MoreClickUtil{
 		recursionFlag = false;
 		List<Map<String, String>> list = localList.get();
 		list = new ArrayList<Map<String, String>>();
-		list = oneClick(list, driver, initI, recursionFlag, url, menuRuleArray);
+		list = oneClick(list, driver, initI, recursionFlag, menuRuleArray);
 		initI = new AtomicInteger(0);
 		return list;
 	}
 	
 	private List<Map<String, String>> oneClick(List<Map<String, String>> list, ChromeDriver driver,
-			AtomicInteger initI, Boolean recursionFlag, String url, String[] menuRuleArray) {
+			AtomicInteger initI, Boolean recursionFlag, String[] menuRuleArray) {
+//		确保网页点击后链接发生改变。
+		String url = driver.getCurrentUrl();
 		int i = initI.get();
 //		第一步，模拟点击第一个动态元素
 		List<WebElement> elements1 = null;
@@ -86,8 +83,8 @@ public class OneClick extends MoreClickUtil{
 				recursionFlag = false;
 				element = elements1.get(i);
 				try {
-//					WebDriverWait wait = new WebDriverWait(driver, 10);
-//					wait.until(ExpectedConditions.elementToBeClickable(element));
+					WebDriverWait wait = new WebDriverWait(driver, 10);
+					wait.until(ExpectedConditions.elementToBeClickable(element));
 					element.click();
 				} catch (Exception e) {
 					LOG.error("链接{}第一次点击事件有误！", url);
@@ -95,7 +92,7 @@ public class OneClick extends MoreClickUtil{
 				}
 //				避免点击频繁，异步加载
 				try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -109,7 +106,7 @@ public class OneClick extends MoreClickUtil{
 //			点击后获取的字段值，在此获取
 			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap);
 //			递归			
-			oneClick(list, driver, initI, recursionFlag, url, menuRuleArray);
+			oneClick(list, driver, initI, recursionFlag, menuRuleArray);
 		}
 //		确保最后一次入库
 		if (endInt.get() == 0) {

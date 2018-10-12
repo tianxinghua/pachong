@@ -33,6 +33,7 @@ public class CheckClickRulesUtil {
 		options.addArguments("--headless");
 		caps.setCapability("chromeOptions", options);
 		System.setProperty("webdriver.chrome.driver", spiderRuleInfo.getChromeDriverPath());
+		System.err.println("检查多层点击策略的有效性--：");
 		ChromeDriver driver = new ChromeDriver(caps);
 		driver.get(url);
 		try {
@@ -40,14 +41,17 @@ public class CheckClickRulesUtil {
 			if(elements==null||elements.size()<=0) {
 				flag = false;
 			}
-			for (WebElement ele : elements) {
+			/*for (WebElement ele : elements) {
 				ele.click();
-			}
+			}*/
 		} catch (Exception e) {
 			flag = false;
-			LOG.error("--链接{}点击策略排除{}层--",url,size);
 		}finally{
 			driver.quit();
+			System.err.println("----退出--！");
+		}
+		if(!flag) {
+			LOG.info("--链接{}点击策略排除{}层--",url,size);
 		}
 		return flag;
 	}
