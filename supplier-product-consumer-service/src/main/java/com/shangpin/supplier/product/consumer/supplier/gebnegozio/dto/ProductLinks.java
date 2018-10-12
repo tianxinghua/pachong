@@ -15,9 +15,9 @@ import java.util.List;
 @Setter
 public class ProductLinks {
     private String sku;
-    private String linkType;
-    private String linkedProductSku;
-    private String linkedProductType;
+    private String link_type;
+    private String linked_product_sku;
+    private String linked_product_type;
     private String position;
-    private List<ExtensionAttributes> extensionAttributes = new ArrayList<ExtensionAttributes>();
+    private List<ExtensionAttributes> extension_attributes = new ArrayList<ExtensionAttributes>();
 }

@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Created by zhaowenjun on 2018/9/8.
+ * Created by zhaowenjun on 2018/9/19.
  */
 @Getter
 @Setter
-public class StockDTO {
+public class StockItemDTO {
+    private String item_id;
     private String product_id;
     private String stock_id;
     private String qty;
-    private String stock_status;
-    private StockItemDTO stock_item;
+    private String is_in_stock;
 }

@@ -1,7 +1,10 @@
 package com.shangpin.supplier.product.consumer.supplier.gebnegozio;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -13,7 +16,6 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
-import com.shangpin.supplier.product.consumer.supplier.frmoda.dto.ProductDTO;
 import com.shangpin.supplier.product.consumer.supplier.gebnegozio.dto.*;
 import com.shangpin.supplier.product.consumer.supplier.gebnegozio.util.HttpClientUtil;
 import com.shangpin.supplier.product.consumer.supplier.gebnegozio.util.HttpRequestMethedEnum;
@@ -23,10 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by zhaowenjun on 2018/9/7.
@@ -38,6 +39,7 @@ public class GebnegozioHandle implements ISupplierHandler {
     public static final String ATTRIBUTE_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/attributes/";
     public static final String STOCK_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/stockStatuses/";
     public static final String CATEGORY_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/categories/";
+    public static final String PRODUCT_DETAIL_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/";
     Gson gson = new Gson();
     @Autowired
     private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -104,30 +106,31 @@ public class GebnegozioHandle implements ISupplierHandler {
                 seasonName = "27S";//gebnegozio供应商的简单产品没有季节，先写死
             }
             //处理Meterial 和 Origin
+            List<String> meterialLists = new ArrayList<String>();
             String origin = "Italy";
             String meterial = "Cotton100 %";
-            String meterial1 = "";
-            String meterial2 = "";
             String meterialAndOrigin = selProductAttribute( item , token , "details");
             if( null != meterialAndOrigin && !meterialAndOrigin.equals("")){
-                String  str = meterialAndOrigin.replaceAll("\\s*|\r|\n", "").replaceAll("</?[^>]+>", ";");
-
-                if(null !=str && !str.equals("")){
-                    List<String> detailLists = Arrays.asList(str.split(";"));
-                    for ( String detailList : detailLists ) {
-                        if( detailList.startsWith("Made in ") ){
-                            int start = detailList.lastIndexOf("in ");
-                            origin = detailList.substring(start);
-                        }else if( detailList.startsWith("Exterior:") ){
-                            int start = detailList.lastIndexOf(":");
-                            meterial1 = detailList.substring(start);
-                        }else if( detailList.startsWith("Details:") ){
-                            int start = detailList.lastIndexOf(":");
-                            meterial2 = detailList.substring(start);
+                String  productDetail = meterialAndOrigin.replaceAll("\r\n", ";");
+                String productMaterial = productDetail.replaceAll("</?[^>]+>", "");
+                System.out.println("产品详情里面的信息，包括产地和材质：" + productDetail);
+                System.out.println("产品的材质：" + productMaterial);
+                log.info("产品详情里面的信息，包括产地和材质：" + productDetail);
+                log.info("产品的材质：" + productMaterial);
+                if(null !=productMaterial && !productMaterial.equals("")){
+                    meterialLists = Arrays.asList(productMaterial.split(";"));
+                    final CopyOnWriteArrayList<String> cowList = new CopyOnWriteArrayList<String>(meterialLists);
+                    for( String val : cowList ){
+                        if( val.startsWith("Made in ") ){
+                            int start = val.lastIndexOf("in ");
+                            origin = val.substring( start + 3 );
+                            cowList.remove(val);
+                            break;
                         }
+
                     }
-                    meterial = meterial1 +" "+ meterial2;
-                 }
+                    meterial = String.join("，", cowList);
+                }
             }
 
             hubSpu.setSupplierId(supplierId);
@@ -136,7 +139,7 @@ public class GebnegozioHandle implements ISupplierHandler {
             hubSpu.setSupplierSpuModel( selProductAttribute( item , token , "modello") );
             hubSpu.setSupplierSpuName(item.getName());
             hubSpu.setSupplierGender( selProductAttribute( item , token , "gender") );
-            hubSpu.setSupplierCategoryname( selProductAttribute( item , token , "category_ids") );
+            hubSpu.setSupplierCategoryname( selCate(item.getSku() , token) );
             hubSpu.setSupplierBrandname( selProductAttribute( item , token , "designer") );
             hubSpu.setSupplierSeasonname( seasonName );
             hubSpu.setSupplierMaterial(meterial);
@@ -165,14 +168,14 @@ public class GebnegozioHandle implements ISupplierHandler {
             if(size==null){
                 size = "A";
             }
-            String price = selProductAttribute( item , token , "cost");
+            //String price = selProductAttribute( item , token , "cost");
             String supplierSkuNo = item.getSku();
             hubSku.setSupplierSkuNo(supplierSkuNo);
             hubSku.setSupplierSkuName(item.getName());
             hubSku.setSupplierBarcode(supplierSkuNo);
-            hubSku.setMarketPrice( new BigDecimal(StringUtil.verifyPrice(price)) );//市场价
-            hubSku.setSalesPrice( new BigDecimal(StringUtil.verifyPrice(price)) );//售价
-            hubSku.setSupplyPrice( new BigDecimal(StringUtil.verifyPrice(price)) );//供价
+            hubSku.setMarketPrice( item.getFinal_price() );//市场价
+            hubSku.setSalesPrice( item.getFinal_price() );//售价
+            hubSku.setSupplyPrice( item.getFinal_price() );//供价
             /*
             hubSku.setMarketPrice( item.getFinal_price() );
             hubSku.setSupplyPrice( item.getPrice() );
@@ -249,7 +252,7 @@ public class GebnegozioHandle implements ISupplierHandler {
         if (null != customAttributesList && !customAttributesList.isEmpty()){
             for (CustomAttributes customAttributes : customAttributesList) {
                 if (customAttributes.getAttribute_code().equals(attributeCode)){
-                    attributeValue = customAttributes.getValue();//大类查询结果是字符串，需要测试能否正常拿到
+                    attributeValue = String.valueOf(customAttributes.getValue());//大类查询结果是字符串，需要测试能否正常拿到
                     break;
                 }
             }
@@ -291,21 +294,6 @@ public class GebnegozioHandle implements ISupplierHandler {
                     }
                 }
             }
-        }else if ( attributeCode.equals("category_ids") ){
-            List<String> cateNames = new ArrayList<String>();
-            if(null != attributeValue && !attributeValue.isEmpty()){
-                List<String> categoryIds = Arrays.asList( attributeValue.split(",") );
-                for ( String categoryId : categoryIds ) {
-                    String cateUrl = CATEGORY_URL + categoryId;
-                    String colorJson = selMessage(token , cateUrl);
-                    if (null != colorJson && !colorJson.equals("")){
-                        CategorieDTO categorieDTO = gson.fromJson( colorJson, CategorieDTO.class );
-                        String cateName = categorieDTO.getName();//取到大类名称
-                        cateNames.add( cateName );
-                    }
-                }
-                finalAttribute = cateNames.get(0);//先只取第一个大类名称
-            }
         }else/* if( returnValueAttr.contains(attributeCode) )*/{
             finalAttribute = attributeValue;
         }
@@ -326,9 +314,9 @@ public class GebnegozioHandle implements ISupplierHandler {
             String sizeJson = selMessage(token , url);
             if (null != sizeJson && !sizeJson.equals("")){
                 GebnegozioDetailDTO gebnegozioDetailDTO = gson.fromJson(sizeJson , GebnegozioDetailDTO.class );
-                List<Values> sizeValues = gebnegozioDetailDTO.getExtension_attributes().getConfigurableProductOptions().getValues();
+                List<Values> sizeValues = gebnegozioDetailDTO.getExtension_attributes().getConfigurable_product_options().getValues();
                 for ( Values values : sizeValues ) {
-                    String sizeLable = selProductAttributeDetil( "size" , token , values.getValueIndex());
+                    String sizeLable = selProductAttributeDetil( "size" , token , values.getValue_index());
                     sizeList.add(sizeLable);
                 }
             }
@@ -341,7 +329,7 @@ public class GebnegozioHandle implements ISupplierHandler {
      * @return
      */
     public String selStock( String sku , String token ){
-        String qty = null;
+        String qty = "";
         if ( null != sku && !sku.equals("") ){
             try {
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
@@ -349,7 +337,10 @@ public class GebnegozioHandle implements ISupplierHandler {
                 String stockJson = selMessage(token , url);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
-                    qty = stockDTO.getQty();
+                    qty = stockDTO.getStock_item().getQty();
+                    if(null == qty && qty.equals("")){
+                        qty = "0";
+                    }
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -357,4 +348,56 @@ public class GebnegozioHandle implements ISupplierHandler {
         }
         return  qty;
     }
+
+    /**
+     *  查大类
+     * @param sku
+     * @param token
+     * @return
+     */
+    public String selCate( String sku , String token ){
+        List<String> cateNames = new ArrayList<String>();
+        String categoryNames = null;
+        if ( null != sku && !sku.equals("") ) {
+            try {
+                String urlStr = URLEncoder.encode(sku, "UTF-8");
+                String url = PRODUCT_DETAIL_URL + urlStr;
+                String productDetailJson = selMessage(token, url);
+                List<String> cateLists = new ArrayList<String>();
+
+                if (null != productDetailJson && !productDetailJson.equals("")) {
+                    Map<String, Object> jsonMap = (Map<String, Object>)JSON.parseObject(productDetailJson, Map.class);
+                    for (Map.Entry<String, Object> entryGeb : jsonMap.entrySet()) {
+                        if (entryGeb.getKey().equals("custom_attributes")) {
+                            List<Map<String, Object>> customLists = (List<Map<String, Object>>) entryGeb.getValue();
+                            for (Map<String, Object> customMap : customLists) {
+                                if (customMap.get("value") instanceof JSONArray && customMap.get("attribute_code").equals("category_ids")){
+                                    JSONArray jsonArray = (JSONArray)customMap.get("value");
+                                    String str = JSONObject.toJSONString(jsonArray);
+                                    cateLists = JSONObject.parseArray(str,  String.class);
+                                    log.info("获取的大类Value：" + cateLists);
+                                    System.out.println("test:" + cateLists);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    for (String listValue : cateLists) {
+                        String cateUrl = CATEGORY_URL + listValue;
+                        String cateJson = selMessage(token, cateUrl);
+                        if (null != cateJson && !cateJson.equals("")) {
+                            CategorieDTO categorieDTO = gson.fromJson(cateJson, CategorieDTO.class);
+                            String cateName = categorieDTO.getName();//取到大类名称
+                            cateNames.add(cateName);
+                        }
+                    }
+                    categoryNames = String.join(",", cateNames);
+                }
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                return categoryNames;
+            }
 }

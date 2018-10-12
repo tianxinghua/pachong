@@ -11,5 +11,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Values {
-    private String valueIndex;
+    private String value_index;
 }

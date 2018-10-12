@@ -15,9 +15,9 @@ import java.util.List;
 @Setter
 public class ConfigurableProductOptions {
     private String id;
-    private String attributeId;
+    private String attribute_id;
     private String label;
     private String position;
     private List<Values> values = new ArrayList<Values>();
-    private String productId;
+    private String product_id;
 }
