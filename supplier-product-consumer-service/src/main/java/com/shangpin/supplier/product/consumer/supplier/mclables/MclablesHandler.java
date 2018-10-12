@@ -165,14 +165,12 @@ public class MclablesHandler implements ISupplierHandler {
 	
 	private List<Image> converImage(ItemInfo item){
 		List<Image> images = new ArrayList<Image>();
-		List<Map<String, String>> imagesList = item.getImages();
+		List<String> imagesList = item.getImages();
 		if(null != item && null != imagesList && CollectionUtils.isNotEmpty(imagesList)){
-			for (Map<String, String> map : imagesList) {
-				for (String str : map.keySet()) {
-					Image image = new Image();
-					image.setUrl(map.get(str));
-					images.add(image);
-				}
+			for (String str : imagesList) {
+				Image image = new Image();
+				image.setUrl(str);
+				images.add(image);
 			}
 		}
 		return images;
