@@ -1,19 +1,19 @@
 package com.shangpin.supplier.product.consumer.supplier.mclables.dto;
 
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
 public class ItemInfo {
     @SerializedName("Images")
     @Expose
-    private List<Map<String,String>> images;
+    private List<String> images;
     @SerializedName("Material")
     @Expose
     private List<String> material;

@@ -8,9 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Variantinfo {
-    @SerializedName("_id")
-    @Expose
-    private String id;
     @SerializedName("Code")
     @Expose
     private String code;
