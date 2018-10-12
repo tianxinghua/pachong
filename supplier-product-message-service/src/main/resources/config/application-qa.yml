@@ -257,6 +257,9 @@ spring:
         ilcuccioloOriginalProduct:
           destination: ilcucciolo.original.product
           content-type: application/json
+        gebnegozioOriginalProduct:
+          destination: gebnegozio.original.product
+          content-type: application/json
       rabbit:
         bindings:
           fashionTamersOriginalProduct:
@@ -504,6 +507,9 @@ spring:
             producer:
               prefix: HA.
           ilcuccioloOriginalProduct:
+            producer:
+              prefix: HA.
+          gebnegozioOriginalProduct:
             producer:
               prefix: HA.
   jackson:

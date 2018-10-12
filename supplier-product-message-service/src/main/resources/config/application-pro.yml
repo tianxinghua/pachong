@@ -128,7 +128,7 @@ spring:
                         vietti2OriginalProduct:
                                 destination: vietti2.original.product
                                 content-type: application/json
-                        anielloOriginalProduct: 
+                        anielloOriginalProduct:
                               destination: aniello.original.product
                               content-type: application/json
                         lindelepalaisOriginalProduct: 
@@ -272,6 +272,9 @@ spring:
                         ilcuccioloOriginalProduct:
                               destination: ilcucciolo.original.product
                               content-type: application/json
+                        gebnegozioOriginalProduct:
+                              destination: gebnegozio.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             fashionTamersOriginalProduct:
@@ -397,7 +400,7 @@ spring:
                             vietti2OriginalProduct:
                                     producer:
                                       prefix: HA.
-                            anielloOriginalProduct: 
+                            anielloOriginalProduct:
                                   producer: 
                                            prefix: HA. 
                             lindelepalaisOriginalProduct: 
@@ -536,6 +539,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             ilcuccioloOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            gebnegozioOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
