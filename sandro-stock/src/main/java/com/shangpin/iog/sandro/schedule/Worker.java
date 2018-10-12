@@ -1,6 +1,6 @@
-package com.shangpin.iog.maje.schedule;
+package com.shangpin.iog.sandro.schedule;
 
-import com.shangpin.iog.maje.service.FetchStockImpl;
+import com.shangpin.iog.sandro.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +29,9 @@ public class Worker implements Runnable{
 		try {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String startDateTime = format.format(new Date());
-            System.out.println("maje库存数据库开始 "+startDateTime);
+            System.out.println("MONCLER库存数据库开始 "+startDateTime);
 
-			logger.info("更新maje库存数据库开始 "+startDateTime);
+			logger.info("更新MONCLER库存数据库开始 "+startDateTime);
 			try {
 //				stockImp.setUseThread(true);
 //				stockImp.setSkuCount4Thread(500);
@@ -45,7 +45,7 @@ public class Worker implements Runnable{
 			logger.info("更新数据库结束 "+endtDateTime);
 			System.out.println("更新数据库结束 "+endtDateTime);
 		} catch (Exception e) {
-			logger.info("maje被取消了");
+			logger.info("MONCLER被取消了");
 		}
 	}
 	
