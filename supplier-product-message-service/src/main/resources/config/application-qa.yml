@@ -257,8 +257,6 @@ spring:
         ilcuccioloOriginalProduct:
           destination: ilcucciolo.original.product
           content-type: application/json
-
-
       rabbit:
         bindings:
           fashionTamersOriginalProduct:
@@ -508,7 +506,6 @@ spring:
           ilcuccioloOriginalProduct:
             producer:
               prefix: HA.
-
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
 banner:
