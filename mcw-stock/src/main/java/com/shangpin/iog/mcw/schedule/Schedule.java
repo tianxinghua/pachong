@@ -1,14 +1,16 @@
-package com.shangpin.com.mcw.schedule;
+package com.shangpin.iog.mcw.schedule;
 
+import java.util.Date;
+import java.util.ResourceBundle;
 
-import com.shangpin.com.mcw.service.FetchStockImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.mcw.service.FetchStockImpl;
 
 
 @Component
