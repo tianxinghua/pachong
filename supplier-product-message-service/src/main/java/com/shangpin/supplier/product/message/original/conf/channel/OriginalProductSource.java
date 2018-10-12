@@ -175,6 +175,8 @@ public interface OriginalProductSource {
 	public static final String MAX1980 ="max1980OriginalProduct";
 
     public static final String VIETTI2 = "vietti2OriginalProduct";
+
+    public static final String ILCUCCIOLO = "ilcuccioloOriginalProduct";
     /**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -693,4 +695,11 @@ public interface OriginalProductSource {
      */
     @Output(value = OriginalProductSource.VIETTI2)
     public MessageChannel vietti2();
+
+    /**
+     * 供货商ILCUCCIOLO通道组件配置
+     * @return 供货商通道组件
+     */
+    @Output(value = OriginalProductSource.ILCUCCIOLO)
+    public MessageChannel ilcucciolo();
 }
