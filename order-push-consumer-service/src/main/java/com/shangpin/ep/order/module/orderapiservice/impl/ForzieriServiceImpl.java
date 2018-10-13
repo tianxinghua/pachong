@@ -274,8 +274,10 @@ public class ForzieriServiceImpl implements IOrderService {
             //刷新Token,更改刷新后的数据库,
             // 存入map
             logger.info("accessToken过期");
+            TokenDTO TokenDTO1 = tokenService.findToken("2015103001637");
+            String Token1 =TokenDTO1.getAccessToken();
 //				PostMethod postMethod = new PostMethod("https://api.forzieri.com/test/oauth/token");//测试
-            String   tokenurl="https://api.forzieri.com/v2/oauth/token?grant_type=refresh_token&client_id=NTY0MjBmOWZiZjI3OTc5&client_secret=9470b9341606430e3b36871541732865e0f51979&refresh_token="+refreshToken+"";
+            String   tokenurl="https://api.forzieri.com/v2/oauth/token?grant_type=refresh_token&client_id=NTY0MjBmOWZiZjI3OTc5&client_secret=9470b9341606430e3b36871541732865e0f51979&refresh_token="+Token1+"";
             GetMethod tokenMethod = new GetMethod(tokenurl);
             logger.info("refreshToken的值是"+refreshToken);
             int tokenCode = httpClient.executeMethod(tokenMethod);
