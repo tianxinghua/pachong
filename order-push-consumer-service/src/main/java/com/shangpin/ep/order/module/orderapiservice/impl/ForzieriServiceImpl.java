@@ -274,26 +274,28 @@ public class ForzieriServiceImpl implements IOrderService {
             //刷新Token,更改刷新后的数据库,
             // 存入map
             logger.info("accessToken过期");
+            TokenDTO TokenDTO1 = tokenService.findToken("2015103001637");
+            String Token1 =TokenDTO1.getAccessToken();
 //				PostMethod postMethod = new PostMethod("https://api.forzieri.com/test/oauth/token");//测试
-            PostMethod postMethod = new PostMethod("https://api.forzieri.com/v2/oauth/token");
-            postMethod.addParameter("grant_type", "refresh_token");
-            postMethod.addParameter("client_id", "NTY0MjBmOWZiZjI3OTc5");
-            postMethod.addParameter("client_secret", "9470b9341606430e3b36871541732865e0f51979");
-            postMethod.addParameter("refresh_token", refreshToken);
-            int executeMethod = httpClient.executeMethod(postMethod);
-            if (executeMethod==200) {
+            String   tokenurl="https://api.forzieri.com/v2/oauth/token?grant_type=refresh_token&client_id=NTY0MjBmOWZiZjI3OTc5&client_secret=9470b9341606430e3b36871541732865e0f51979&refresh_token="+Token1+"";
+            GetMethod tokenMethod = new GetMethod(tokenurl);
+            logger.info("refreshToken的值是"+refreshToken);
+            int tokenCode = httpClient.executeMethod(tokenMethod);
+            logger.info("executeMethod的值是"+tokenCode);
+            if (tokenCode==200) {
 
-                NewAccessToken newAccessToken = gson.fromJson(postMethod.getResponseBodyAsString(), NewAccessToken.class);
-                accessToken = newAccessToken.getAccess_token();
-                refreshToken = newAccessToken.getRefresh_token();
-                tokenDTO.setAccessToken(accessToken);
-                tokenDTO.setRefreshToken(refreshToken);
+                NewAccessToken newAccessToken = gson.fromJson(tokenMethod.getResponseBodyAsString(), NewAccessToken.class);
+                String  accessToken1 = newAccessToken.getAccess_token();
+                String refreshToken1 = newAccessToken.getRefresh_token();
+                tokenDTO.setAccessToken(accessToken1);
+                tokenDTO.setRefreshToken(refreshToken1);
                 tokenDTO.setCreateDate(new Date());
                 tokenDTO.setExpireTime(newAccessToken.getExpires_in());
                 tokenService.refreshToken(tokenDTO);
-
+                TokenDTO TokenDTO2 = tokenService.findToken("2015103001637");
+                String accessToken2 =TokenDTO2.getAccessToken();
                 Map<String,String> headerMap = new HashMap<String,String>();
-                headerMap.put("Authorization","Bearer "+accessToken+"");
+                headerMap.put("Authorization","Bearer "+accessToken2+"");
                 s= HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap, null,null);
                 System.out.println(s);
                 if (httpCode==200) {
@@ -309,7 +311,7 @@ public class ForzieriServiceImpl implements IOrderService {
                 }
             }else{
                 loggerError.error(skuId+"刷新token错误"+getMethod.getResponseBodyAsString());
-                System.out.println(skuId+"刷新token错误"+executeMethod+getMethod.getResponseBodyAsString());
+                System.out.println(skuId+"刷新token错误"+getMethod+getMethod.getResponseBodyAsString());
             }
         }else{
             //服务器错误
