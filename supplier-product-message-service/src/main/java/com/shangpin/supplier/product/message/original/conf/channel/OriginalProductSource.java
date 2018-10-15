@@ -181,6 +181,8 @@ public interface OriginalProductSource {
 
 	public static final String GEBNEGOZIO = "gebnegozioOriginalProduct";
 
+    public static final String ERALDO = "eraldoOriginalProduct";
+
 	/**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -715,4 +717,11 @@ public interface OriginalProductSource {
 	 */
 	@Output(value = OriginalProductSource.GEBNEGOZIO)
 	public MessageChannel gebnegozio();
+
+	/**
+	 * 供货商eraldo通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.ERALDO)
+	public MessageChannel eraldo();
 }

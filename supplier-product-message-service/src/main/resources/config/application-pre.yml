@@ -206,7 +206,9 @@ spring:
                         ilcuccioloOriginalProduct:
                              destination: ilcucciolo.original.product
                              content-type: application/json
-
+                        eraldoOriginalProduct:
+                             destination: eraldo.original.product
+                             content-type: application/json
               rabbit: 
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -405,6 +407,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             ilcuccioloOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            eraldoOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
