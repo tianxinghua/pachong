@@ -180,6 +180,8 @@ public interface PendingProductSink {
 
 	public static final String ERALDO = "eraldoPendingProduct";
 
+	public static final String VIPGROUP = "vipgroupPendingProduct";
+
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -716,4 +718,11 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.ERALDO)
 	public SubscribableChannel eraldoPendingProduct();
+
+	/**
+	 * 供应商vipgroup通道组件配置
+	 * @return 供货商gebnegozio通道组件
+	 */
+	@Input(value = PendingProductSink.VIPGROUP)
+	public SubscribableChannel vipgroupPendingProduct();
 }

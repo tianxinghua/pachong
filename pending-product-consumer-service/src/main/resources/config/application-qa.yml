@@ -250,7 +250,7 @@ spring:
 
 
 
-                        anielloPendingProduct: 
+                        anielloPendingProduct:
                               destination: aniello.pending.product
                               group: one
                               consumer: 
@@ -527,6 +527,12 @@ spring:
                                         concurrency: 5
                                         maxAttempts: 1
 
+                        vipgroupPendingProduct:
+                              destination: vipgroup.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings:
                             forzieriPendingProduct: 
@@ -737,7 +743,7 @@ spring:
 
 
 
-                            anielloPendingProduct: 
+                            anielloPendingProduct:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -1014,6 +1020,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             ilcuccioloPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            vipgroupPendingProduct:
                                   consumer:
                                         prefix: HA.
                                         autoBindDlq: false

@@ -378,7 +378,7 @@ spring:
                         vietti2PendingProduct:
                               destination: vietti2.pending.product
                               content-type: application/json
-                        anielloOriginalProduct: 
+                        anielloOriginalProduct:
                               destination: aniello.original.product
                               group: one
                               consumer: 
@@ -807,7 +807,16 @@ spring:
                         eraldoPendingProduct:
                               destination: eraldo.pending.product
                               content-type: application/json
-              rabbit: 
+                        vipgroupOriginalProduct:
+                              destination: vipgroup.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 4
+                                       maxAttempts: 1
+                        vipgroupPendingProduct:
+                              destination: vipgroup.pending.product
+                              content-type: application/json
+              rabbit:
                         bindings: 
                               stefaniamodePictureProduct: 
                                     producer: 
@@ -1175,7 +1184,7 @@ spring:
                               vietti2PendingProduct:
                                     producer:
                                         prefix: HA.
-                              anielloOriginalProduct: 
+                              anielloOriginalProduct:
                                     consumer: 
                                          prefix: HA.
                                          autoBindDlq: false
@@ -1602,6 +1611,15 @@ spring:
                                       requeueRejected: true
                                       republishToDlq: false
                               eraldoPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              vipgroupOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              vipgroupPendingProduct:
                                     producer:
                                         prefix: HA.
         consul: 

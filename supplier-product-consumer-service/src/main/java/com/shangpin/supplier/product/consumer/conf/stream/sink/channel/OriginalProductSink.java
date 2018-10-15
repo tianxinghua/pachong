@@ -184,6 +184,7 @@ public interface OriginalProductSink {
 
 	public static final String ERALDO = "eraldoOriginalProduct";
 
+	public static final String VIPGROUP = "vipgroupOriginalProduct";
 	//===============================
 	
 	/**
@@ -730,5 +731,12 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.ERALDO)
 	public MessageChannel eraldoOriginalProduct();
+
+	/**
+	 * 供应商vipgroup通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.VIPGROUP)
+	public MessageChannel vipgroupOriginalProduct();
 
 }

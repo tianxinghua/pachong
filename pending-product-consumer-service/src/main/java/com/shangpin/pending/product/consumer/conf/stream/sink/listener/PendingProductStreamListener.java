@@ -823,4 +823,15 @@ public class PendingProductStreamListener {
 	public void eraldoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.eraldoPendingProductStreamListen(message,headers);
 	}
+	/**
+	* 供应商vipgroup待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.VIPGROUP)
+	public void vipgroupPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.vipgroupPendingProductStreamListen(message,headers);
+	}
+
 }

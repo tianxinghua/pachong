@@ -67,7 +67,7 @@ public class Address {
     private String vatId;
     @SerializedName("customer_id")
     @Expose
-    private String customerId;
+    private int customerId;
     @SerializedName("email")
     @Expose
     private String email;

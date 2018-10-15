@@ -2,7 +2,12 @@ package com.shangpin.ep.order;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * EP订单实时推送系统入口
@@ -14,6 +19,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableScheduling
+@EnableFeignClients(value = "com.shangpin.ephub")
+@ComponentScan(basePackages={"com.shangpin"})
 public class EpOrderServiceApplication {
 
 	public static void main(String[] args) {

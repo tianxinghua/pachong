@@ -210,7 +210,7 @@ spring:
 
 
 
-                        anielloPendingProduct: 
+                        anielloPendingProduct:
                               destination: aniello.pending.product
                               group: one
                               consumer: 
@@ -456,6 +456,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        vipgroupPendingProduct:
+                              destination: vipgroup.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings: 
                             spinnakerPendingProduct: 
@@ -648,7 +654,7 @@ spring:
 
 
 
-                            anielloPendingProduct: 
+                            anielloPendingProduct:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -894,6 +900,12 @@ spring:
                                     autoBindDlq: false
                                     requeueRejected: true
                                     republishToDlq: false
+                            vipgroupPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss

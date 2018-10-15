@@ -40,11 +40,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component("gebnegozioHandler")
 @Slf4j
 public class GebnegozioHandle implements ISupplierHandler {
-    public static final String POST_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/integration/customer/token";
-    public static final String ATTRIBUTE_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/attributes/";
-    public static final String STOCK_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/stockStatuses/";
-    public static final String CATEGORY_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/categories/";
-    public static final String PRODUCT_DETAIL_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/";
+    public static final String POST_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token";
+    public static final String ATTRIBUTE_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/attributes/";
+    public static final String STOCK_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/stockStatuses/";
+    public static final String CATEGORY_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/categories/";
+    public static final String PRODUCT_DETAIL_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/";
     Gson gson = new Gson();
     @Autowired
     private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -67,36 +67,36 @@ public class GebnegozioHandle implements ISupplierHandler {
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         String token = selToken();
         if ( null != token && !token.equals("") ){
-        try {
-            if (!StringUtils.isBlank(message.getData())){
-                System.out.println("看转换数据："+message.getData());
-                GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
-                String supplierId = message.getSupplierId();
-                gebnegozioDTO.setSpu(gebnegozioDTO.getId());
-                mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
+            try {
+                if (!StringUtils.isBlank(message.getData())){
+                    System.out.println("看转换数据："+message.getData());
+                    GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
+                    String supplierId = message.getSupplierId();
+                    gebnegozioDTO.setSpu(gebnegozioDTO.getId());
+                    mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
 
-                HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-                boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
+                    HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+                    boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
 
-                ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-                HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-                boolean skuSuccess = convertSku(supplierId,hubSpu.getSupplierSpuId(), gebnegozioDTO, hubSku , token);
-                if(skuSuccess){
-                    hubSkus.add(hubSku);
+                    ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+                    HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+                    boolean skuSuccess = convertSku(supplierId,hubSpu.getSupplierSpuId(), gebnegozioDTO, hubSku , token);
+                    if(skuSuccess){
+                        hubSkus.add(hubSku);
+                    }
+
+                    //处理图片
+                    SupplierPicture supplierPicture = null;
+                    supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage(supplierId, gebnegozioDTO , token ) );
+
+                    if(spuSuccess){
+                        supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
+                    }
+
                 }
-
-                //处理图片
-                SupplierPicture supplierPicture = null;
-                supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage(supplierId, gebnegozioDTO , token ) );
-
-                if(spuSuccess){
-                    supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
-                }
-
+            }catch (Exception e){
+                log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
             }
-        }catch (Exception e){
-            log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
-        }
         }
     }
 
@@ -186,11 +186,11 @@ public class GebnegozioHandle implements ISupplierHandler {
         if(null != item){
             hubSku.setSupplierSpuId(supplierSpuId);
             hubSku.setSupplierId(supplierId);
-            String size = null;
+            String size = "";
             size = selProductAttribute( item , token , "size");
-            if(size==null){
+            /*if(size==null){
                 size = "A";
-            }
+            }*/
             //String price = selProductAttribute( item , token , "cost");
             String supplierSkuNo = item.getSku();
             hubSku.setSupplierSkuNo(supplierSkuNo);
@@ -238,7 +238,8 @@ public class GebnegozioHandle implements ISupplierHandler {
             if(null!=pictResList&&pictResList.size()>0) {
                 pictResList.forEach(pictRes -> {
                     Image cofImg = new Image();
-                    cofImg.setUrl(picUrl + pictRes.getFile());
+                    String cofPicUrl = picUrl + pictRes.getFile();
+                    cofImg.setUrl(cofPicUrl);
                     images.add(cofImg);
                 });
             }
@@ -345,7 +346,7 @@ public class GebnegozioHandle implements ISupplierHandler {
         List<String> sizeList = null;
         if(null != sku && !sku.equals("") && null != token && !token.equals("")){
             String urlStr = URLEncoder.encode(sku , "UTF-8");
-            String urlOri = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/";
+            String urlOri = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/";
             String url = urlOri + urlStr;
 
             String sizeJson = selMessage(token , url);
@@ -431,10 +432,10 @@ public class GebnegozioHandle implements ISupplierHandler {
                     }
                     categoryNames = String.join(",", cateNames);
                 }
-                    } catch(Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                return categoryNames;
+            } catch(Exception e){
+                e.printStackTrace();
             }
+        }
+        return categoryNames;
+    }
 }

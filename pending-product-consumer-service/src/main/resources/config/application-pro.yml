@@ -555,6 +555,12 @@ spring:
                               consumer:
                                         concurrency: 5
                                         maxAttempts: 1
+                        vipgroupPendingProduct:
+                              destination: vipgroup.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings: 
                             angeloMinettiPendingProduct: 
@@ -1079,6 +1085,12 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
+                            vipgroupPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
                             ilcuccioloPendingProduct:
                                   consumer:
                                         prefix: HA.
@@ -1091,7 +1103,7 @@ spring:
                                         autoBindDlq: false
                                         requeueRejected: true
                                         republishToDlq: false
-  jackson: 
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
 #  mail:
@@ -1122,4 +1134,4 @@ shangpin:
              translateAll: true
              refresh: ${translateProperty.refresh:true}
    schedule:
-        brand: ${shangpin.schedule.brand:true}
+        brand: true

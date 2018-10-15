@@ -175,14 +175,8 @@ public class EpOrderServiceApplicationTests {
 			e.printStackTrace(); 
 		}
 	}*/
-	@Autowired
-	GebnegozioServiceImpl gebnegozioServiceImpl;
+	/*@Autowired
+	GebnegozioServiceImpl gebnegozioServiceImpl;*/
 
-	@Test
-	public void testGeb(){
-		OrderDTO orderDTO = new OrderDTO();
-		orderDTO.setSpOrderId("001001");
-		orderDTO.setDetail("6000207392_33_01:1");
-		gebnegozioServiceImpl.handleSupplierOrder(orderDTO);
-	}
+
 }

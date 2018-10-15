@@ -190,7 +190,11 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("eraldoHandler")
 	private ISupplierHandler eraldoHandler;
-	
+
+	@Autowired
+	@Qualifier("vipgroupHandler")
+	private ISupplierHandler vipgroupHandler;
+
 	/**
 	 * coccolebimbi供货商原始数据监听方法
 	 * @param message 消息体
@@ -948,5 +952,13 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void eraldoStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		eraldoHandler.handleOriginalProduct(message, headers);
+	}
+	/**
+	 * 供应商vipgroup处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void vipgroupStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		vipgroupHandler.handleOriginalProduct(message, headers);
 	}
 }
