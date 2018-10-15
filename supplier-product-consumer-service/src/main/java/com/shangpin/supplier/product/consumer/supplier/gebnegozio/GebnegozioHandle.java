@@ -40,11 +40,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component("gebnegozioHandler")
 @Slf4j
 public class GebnegozioHandle implements ISupplierHandler {
-    public static final String POST_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/integration/customer/token";
-    public static final String ATTRIBUTE_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/attributes/";
-    public static final String STOCK_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/stockStatuses/";
-    public static final String CATEGORY_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/categories/";
-    public static final String PRODUCT_DETAIL_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/";
+    public static final String POST_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token";
+    public static final String ATTRIBUTE_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/attributes/";
+    public static final String STOCK_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/stockStatuses/";
+    public static final String CATEGORY_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/categories/";
+    public static final String PRODUCT_DETAIL_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/";
     Gson gson = new Gson();
     @Autowired
     private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -346,7 +346,7 @@ public class GebnegozioHandle implements ISupplierHandler {
         List<String> sizeList = null;
         if(null != sku && !sku.equals("") && null != token && !token.equals("")){
             String urlStr = URLEncoder.encode(sku , "UTF-8");
-            String urlOri = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/";
+            String urlOri = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/";
             String url = urlOri + urlStr;
 
             String sizeJson = selMessage(token , url);
