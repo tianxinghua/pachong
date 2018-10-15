@@ -39,4 +39,5 @@ public class GebnegozioDTO implements Serializable{
     private List<String> tier_prices = new ArrayList<String>();
     private List<CustomAttributes> custom_attributes = new ArrayList<CustomAttributes>();
     private String barcode;
+    private List<PictRes> media_gallery_entries = new ArrayList<PictRes>();
 }

@@ -5,8 +5,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
+import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
+import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
+import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
+import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
@@ -50,42 +55,48 @@ public class GebnegozioHandle implements ISupplierHandler {
     @Autowired
     private SupplierProductMongoService mongoService;
 
+    @Autowired
+    private HubSupplierSpuGateWay spuGateWay;
+
+    @Autowired
+    private HubSpuPendingPicGateWay picGateWay;
+
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         String token = selToken();
         if ( null != token && !token.equals("") ){
-            try {
-                if (!StringUtils.isBlank(message.getData())){
-                    System.out.println("看转换数据："+message.getData());
-                    GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
-                    String supplierId = message.getSupplierId();
-                    gebnegozioDTO.setSpu(gebnegozioDTO.getId());
-                    mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
+        try {
+            if (!StringUtils.isBlank(message.getData())){
+                System.out.println("看转换数据："+message.getData());
+                GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
+                String supplierId = message.getSupplierId();
+                gebnegozioDTO.setSpu(gebnegozioDTO.getId());
+                mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
 
-                    HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-                    boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
+                HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+                boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
 
-                    ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-                    HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-                    boolean skuSuccess = convertSku(supplierId,hubSpu.getSupplierSpuId(), gebnegozioDTO, hubSku , token);
-                    if(skuSuccess){
-                        hubSkus.add(hubSku);
-                    }
-
-                    //处理图片
-                    SupplierPicture supplierPicture = null;
-                    supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage( gebnegozioDTO , token ) );
-
-                    if(spuSuccess){
-                        supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
-                    }
-
+                ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
+                HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+                boolean skuSuccess = convertSku(supplierId,hubSpu.getSupplierSpuId(), gebnegozioDTO, hubSku , token);
+                if(skuSuccess){
+                    hubSkus.add(hubSku);
                 }
-            }catch (Exception e){
-                log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
+
+                //处理图片
+                SupplierPicture supplierPicture = null;
+                supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage(supplierId, gebnegozioDTO , token ) );
+
+                if(spuSuccess){
+                    supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
+                }
+
             }
+        }catch (Exception e){
+            log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
+        }
         }
     }
 
@@ -98,8 +109,18 @@ public class GebnegozioHandle implements ISupplierHandler {
     public boolean convertSpu(String supplierId, GebnegozioDTO item, HubSupplierSpuDto hubSpu, String token ) throws EpHubSupplierProductConsumerRuntimeException {
         if(null != item){
             String seasonName = selProductAttribute( item , token , "season");
+            String supplierSpuNo =  selProductAttribute( item , token , "modello");
+            if(StringUtils.isBlank(supplierSpuNo)) return false;
+            HubSupplierSpuDto spuDb= null;
             if( null == seasonName ){
-                seasonName = "";//gebnegozio供应商的简单产品没有季节，先写死
+                HubSupplierSpuCriteriaDto spuCriteria = new HubSupplierSpuCriteriaDto();
+                spuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo.trim());
+                List<HubSupplierSpuDto> hubSupplierSpuDtos = spuGateWay.selectByCriteria(spuCriteria);
+                if(null!=hubSupplierSpuDtos&&hubSupplierSpuDtos.size()>0){
+                    spuDb =  hubSupplierSpuDtos.get(0);
+                }else{
+                    seasonName = "";
+                }
             }
             //处理Meterial 和 Origin
             List<String> meterialLists = new ArrayList<String>();
@@ -130,17 +151,23 @@ public class GebnegozioHandle implements ISupplierHandler {
             }
 
             hubSpu.setSupplierId(supplierId);
-            hubSpu.setSupplierSpuNo( selProductAttribute( item , token , "modello") );
+            hubSpu.setSupplierSpuNo( supplierSpuNo.trim() );
             hubSpu.setSupplierSpuColor( selProductAttribute( item , token , "color") );
             hubSpu.setSupplierSpuModel( selProductAttribute( item , token , "modello") );
             hubSpu.setSupplierSpuName(item.getName());
             hubSpu.setSupplierGender( selProductAttribute( item , token , "gender") );
             hubSpu.setSupplierCategoryname( selCate(item.getSku() , token) );
             hubSpu.setSupplierBrandname( selProductAttribute( item , token , "designer") );
-            hubSpu.setSupplierSeasonname( seasonName );
-            hubSpu.setSupplierMaterial(meterial);
-            hubSpu.setSupplierOrigin( origin );
             hubSpu.setSupplierSpuDesc( selProductAttribute( item , token , "description") );
+            hubSpu.setSupplierOrigin( origin );
+            hubSpu.setSupplierMaterial(meterial);
+            hubSpu.setSupplierSeasonname( seasonName );
+            if(null!=spuDb){
+                hubSpu.setSupplierOrigin( spuDb.getSupplierOrigin() );
+                hubSpu.setSupplierMaterial(spuDb.getSupplierMaterial());
+                hubSpu.setSupplierSeasonname( spuDb.getSupplierSeasonname() );
+                hubSpu.setSupplierCategoryname(spuDb.getSupplierCategoryname());
+            }
             return true;
         }else{
             return false;
@@ -189,49 +216,32 @@ public class GebnegozioHandle implements ISupplierHandler {
      * @param gebnegozioDTO,token
      * @return
      */
-    private List<Image> converImage(GebnegozioDTO gebnegozioDTO, String token){
+    private List<Image> converImage(String  supplierId,GebnegozioDTO gebnegozioDTO, String token){
         String picUrl = "https://www.gebnegozionline.com/media/catalog/product";
         List<Image> images = new ArrayList<Image>();
-        Image image = new Image();
-        Image smallImage = new Image();
-        Image thumbnail = new Image();
-        if(null != token && !token.isEmpty()){
-
-            String imageUrl = selProductAttribute( gebnegozioDTO , token , "image");
-            String smallImageUrl = selProductAttribute( gebnegozioDTO , token , "small_image");
-            String thumbnailUrl = selProductAttribute( gebnegozioDTO , token , "thumbnail");
-            if(null != imageUrl && !imageUrl.equals("")){
-                image.setUrl(picUrl + imageUrl);
-            }
-            if(null != smallImageUrl && !smallImageUrl.equals("")){
-                smallImage.setUrl(picUrl + smallImageUrl);
-            }
-            if(null != thumbnailUrl && !thumbnailUrl.equals("")){
-                thumbnail.setUrl(picUrl + thumbnailUrl);
+        //如果为简单对象 需要从图片表中查询复杂对象图片
+        if("simple".equals(gebnegozioDTO.getType_id())){
+            String supplierSpuNo =  selProductAttribute( gebnegozioDTO , token , "modello");
+            HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
+            criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo((byte)1);
+            List<HubSpuPendingPicDto> picDtoList = picGateWay.selectByCriteria(criteria);
+            if(null!=picDtoList&&picDtoList.size()>0){
+                picDtoList.forEach(pic ->{
+                    Image tmpImg = new Image();
+                    tmpImg.setUrl(pic.getPicUrl());
+                    images.add(tmpImg);
+                } );
             }
 
-            images.add(image);
-            images.add(smallImage);
-            images.add(thumbnail);
-
-        }else {
-            token = selToken();
-            String imageUrl = selProductAttribute( gebnegozioDTO , token , "image");
-            String smallImageUrl = selProductAttribute( gebnegozioDTO , token , "small_image");
-            String thumbnailUrl = selProductAttribute( gebnegozioDTO , token , "thumbnail");
-            if(null != imageUrl && !imageUrl.equals("")){
-                image.setUrl(picUrl + imageUrl);
+        }else{
+            List<PictRes> pictResList = gebnegozioDTO.getMedia_gallery_entries();
+            if(null!=pictResList&&pictResList.size()>0) {
+                pictResList.forEach(pictRes -> {
+                    Image cofImg = new Image();
+                    cofImg.setUrl(picUrl + pictRes.getFile());
+                    images.add(cofImg);
+                });
             }
-            if(null != smallImageUrl && !smallImageUrl.equals("")){
-                smallImage.setUrl(picUrl + smallImageUrl);
-            }
-            if(null != thumbnailUrl && !thumbnailUrl.equals("")){
-                thumbnail.setUrl(picUrl + thumbnailUrl);
-            }
-
-            images.add(image);
-            images.add(smallImage);
-            images.add(thumbnail);
         }
         return images;
     }
@@ -421,10 +431,10 @@ public class GebnegozioHandle implements ISupplierHandler {
                     }
                     categoryNames = String.join(",", cateNames);
                 }
-            } catch(Exception e){
-                e.printStackTrace();
+                    } catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                return categoryNames;
             }
-        }
-        return categoryNames;
-    }
 }
