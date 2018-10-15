@@ -135,7 +135,7 @@ public class Constants {
 	/**
 	 * QTY的标识
 	 */
-	public static final Integer QTY_YES = 5;
+	public static final Integer QTY_YES = 10;
 	public static final Integer QTY_NO = 0;
 	
 	public static final String CLICKMETHOD = "crawlByClick";
