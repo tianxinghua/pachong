@@ -810,4 +810,13 @@ public class PendingProductStreamListenerAdapter {
 	public void ilcuccioloPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
 	}
+
+	/**
+	 * 供应商 eraldo 待处理商品数据流监听
+	 * @param message
+	 * @param headers
+	 */
+	public void eraldoPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+		this.messageHandle(message, headers);
+	}
 }

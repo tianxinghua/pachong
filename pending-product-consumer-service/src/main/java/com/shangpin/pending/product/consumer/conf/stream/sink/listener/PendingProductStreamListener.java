@@ -813,5 +813,14 @@ public class PendingProductStreamListener {
 	public void ilcuccioloPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.ilcuccioloPendingProductStreamListen(message,headers);
 	}
-
+	/**
+	 * 供应商eraldo待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.ERALDO)
+	public void eraldoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.eraldoPendingProductStreamListen(message,headers);
+	}
 }
