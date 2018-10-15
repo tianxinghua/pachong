@@ -186,6 +186,10 @@ public class OriginalProductStreamListenerAdapter {
     @Autowired
     @Qualifier("ilcuccioloHandler")
     private ISupplierHandler ilcuccioloHandler;
+
+	@Autowired
+	@Qualifier("eraldoHandler")
+	private ISupplierHandler eraldoHandler;
 	
 	/**
 	 * coccolebimbi供货商原始数据监听方法
@@ -936,4 +940,13 @@ public class OriginalProductStreamListenerAdapter {
     public void ilcuccioloStreamListen(SupplierProduct message, Map<String, Object> headers) {
         ilcuccioloHandler.handleOriginalProduct(message, headers);
     }
+
+	/**
+	 * 供应商eraldo处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void eraldoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		eraldoHandler.handleOriginalProduct(message, headers);
+	}
 }

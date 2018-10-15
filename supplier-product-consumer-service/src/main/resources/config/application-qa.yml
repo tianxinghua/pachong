@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: localhost
+          host: 192.168.20.174
           port: 8500
           discovery: 
               register: false
@@ -800,6 +800,15 @@ spring:
                         ilcuccioloPendingProduct:
                                 destination: ilcucciolo.pending.product
                                 content-type: application/json
+                        eraldoOriginalProduct:
+                                destination: eraldo.original.product
+                                group: one
+                                consumer:
+                                  concurrency: 5
+                                  maxAttempts: 1
+                        eraldoPendingProduct:
+                                destination: eraldo.pending.product
+                                content-type: application/json
               rabbit:
                         bindings: 
                               stefaniamodePictureProduct: 
@@ -1586,6 +1595,15 @@ spring:
                                         requeueRejected: true
                                         republishToDlq: false
                               ilcuccioloPendingProduct:
+                                      producer:
+                                        prefix: HA.
+                              eraldoOriginalProduct:
+                                      consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                              eraldoPendingProduct:
                                       producer:
                                         prefix: HA.
 

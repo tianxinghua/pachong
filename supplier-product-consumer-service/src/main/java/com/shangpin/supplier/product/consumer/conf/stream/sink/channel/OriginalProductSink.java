@@ -182,6 +182,8 @@ public interface OriginalProductSink {
 
     public static final String ILCUCCIOLO = "ilcuccioloOriginalProduct";
 
+	public static final String ERALDO = "eraldoOriginalProduct";
+
 	//===============================
 	
 	/**
@@ -721,4 +723,12 @@ public interface OriginalProductSink {
      */
     @Input(value = OriginalProductSink.ILCUCCIOLO)
     public MessageChannel ilcuccioloOriginalProduct();
+
+	/**
+	 * 供应商eraldo通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.ERALDO)
+	public MessageChannel eraldoOriginalProduct();
+
 }

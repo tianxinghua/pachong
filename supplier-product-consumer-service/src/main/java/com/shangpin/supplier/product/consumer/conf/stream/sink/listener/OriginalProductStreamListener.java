@@ -840,4 +840,14 @@ public class OriginalProductStreamListener {
 	public void ilcuccioloStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
 		adapter.ilcuccioloStreamListen(message,headers);
 	}
+
+	/**
+	 * 供应商eraldo原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ERALDO)
+	public void eraldoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.eraldoStreamListen(message,headers);
+	}
 }

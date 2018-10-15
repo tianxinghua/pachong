@@ -738,4 +738,18 @@ public class PendingProductStreamSender {
         return pendingProductSource.ilcuccioloPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
 
     }
+
+	/**
+	 * 发送供应商eraldo商品流数据
+	 * @param pendingProduct 消息体
+	 * @param headers 消息头
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean eraldoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+		return pendingProductSource.eraldoPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+
+	}
+
+
+
 }

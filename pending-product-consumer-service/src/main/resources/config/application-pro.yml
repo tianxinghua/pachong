@@ -549,6 +549,12 @@ spring:
                               consumer:
                                         concurrency: 5
                                         maxAttempts: 1
+                        eraldoPendingProduct:
+                              destination: eraldo.pending.product
+                              group: one
+                              consumer:
+                                        concurrency: 5
+                                        maxAttempts: 1
               rabbit:
                       bindings: 
                             angeloMinettiPendingProduct: 
@@ -1074,6 +1080,12 @@ spring:
                                        requeueRejected: true
                                        republishToDlq: false
                             ilcuccioloPendingProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                            eraldoPendingProduct:
                                   consumer:
                                         prefix: HA.
                                         autoBindDlq: false
