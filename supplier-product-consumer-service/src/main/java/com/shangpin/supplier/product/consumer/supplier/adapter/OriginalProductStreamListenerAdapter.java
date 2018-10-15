@@ -177,6 +177,10 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("gebnegozioHandler")
 	private ISupplierHandler gebnegozioHandler;
+
+	@Autowired
+	@Qualifier("vipgroupHandler")
+	private ISupplierHandler vipgroupHandler;
 	
 	/**
 	 * coccolebimbi供货商原始数据监听方法
@@ -908,5 +912,13 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void gebnegozioStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		gebnegozioHandler.handleOriginalProduct(message, headers);
+	}
+	/**
+	 * 供应商vipgroup处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void vipgroupStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		vipgroupHandler.handleOriginalProduct(message, headers);
 	}
 }

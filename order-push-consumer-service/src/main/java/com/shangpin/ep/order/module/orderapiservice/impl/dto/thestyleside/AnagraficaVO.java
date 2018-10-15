@@ -12,9 +12,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>AnagraficaVO complex type的 Java 类。
+ * <p>AnagraficaVO complex type锟斤拷 Java 锟洁。
  * 
- * <p>以下模式片段指定包含在此类中的预期内容。
+ * <p>锟斤拷锟斤拷模式片锟斤拷指锟斤拷锟斤拷锟斤拷锟节达拷锟斤拷锟叫碉拷预锟斤拷锟斤拷锟捷★拷
  * 
  * <pre>
  * &lt;complexType name="AnagraficaVO">
@@ -138,7 +138,7 @@ public class AnagraficaVO {
     protected JAXBElement<String> email;
 
     /**
-     * 获取address属性的值。
+     * 锟斤拷取address锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -150,7 +150,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置address属性的值。
+     * 锟斤拷锟斤拷address锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -162,7 +162,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取area属性的值。
+     * 锟斤拷取area锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -174,7 +174,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置area属性的值。
+     * 锟斤拷锟斤拷area锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -186,7 +186,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取bloccoAmministrativo属性的值。
+     * 锟斤拷取bloccoAmministrativo锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -198,7 +198,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置bloccoAmministrativo属性的值。
+     * 锟斤拷锟斤拷bloccoAmministrativo锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -210,7 +210,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取bloccoCommerciale属性的值。
+     * 锟斤拷取bloccoCommerciale锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -222,7 +222,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置bloccoCommerciale属性的值。
+     * 锟斤拷锟斤拷bloccoCommerciale锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -234,7 +234,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取cFnumber属性的值。
+     * 锟斤拷取cFnumber锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -246,7 +246,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置cFnumber属性的值。
+     * 锟斤拷锟斤拷cFnumber锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -258,7 +258,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取city属性的值。
+     * 锟斤拷取city锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -270,7 +270,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置city属性的值。
+     * 锟斤拷锟斤拷city锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -282,7 +282,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取dataUltimaModifica属性的值。
+     * 锟斤拷取dataUltimaModifica锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -294,7 +294,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置dataUltimaModifica属性的值。
+     * 锟斤拷锟斤拷dataUltimaModifica锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -306,7 +306,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取deliveryAddress属性的值。
+     * 锟斤拷取deliveryAddress锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -318,7 +318,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置deliveryAddress属性的值。
+     * 锟斤拷锟斤拷deliveryAddress锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -330,7 +330,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取deliveryArea属性的值。
+     * 锟斤拷取deliveryArea锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -342,7 +342,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置deliveryArea属性的值。
+     * 锟斤拷锟斤拷deliveryArea锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -354,7 +354,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取deliveryCity属性的值。
+     * 锟斤拷取deliveryCity锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -366,7 +366,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置deliveryCity属性的值。
+     * 锟斤拷锟斤拷deliveryCity锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -378,7 +378,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取deliveryIDState属性的值。
+     * 锟斤拷取deliveryIDState锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -390,7 +390,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置deliveryIDState属性的值。
+     * 锟斤拷锟斤拷deliveryIDState锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -402,7 +402,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取deliveryName属性的值。
+     * 锟斤拷取deliveryName锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -414,7 +414,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置deliveryName属性的值。
+     * 锟斤拷锟斤拷deliveryName锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -426,7 +426,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取deliveryZIPCode属性的值。
+     * 锟斤拷取deliveryZIPCode锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -438,7 +438,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置deliveryZIPCode属性的值。
+     * 锟斤拷锟斤拷deliveryZIPCode锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -450,7 +450,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取fax属性的值。
+     * 锟斤拷取fax锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -462,7 +462,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置fax属性的值。
+     * 锟斤拷锟斤拷fax锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -474,7 +474,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取id属性的值。
+     * 锟斤拷取id锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -486,7 +486,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置id属性的值。
+     * 锟斤拷锟斤拷id锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -498,7 +498,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取idListinoCliente属性的值。
+     * 锟斤拷取idListinoCliente锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -510,7 +510,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置idListinoCliente属性的值。
+     * 锟斤拷锟斤拷idListinoCliente锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -522,7 +522,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取idState属性的值。
+     * 锟斤拷取idState锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -534,7 +534,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置idState属性的值。
+     * 锟斤拷锟斤拷idState锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -546,7 +546,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取name属性的值。
+     * 锟斤拷取name锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -558,7 +558,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置name属性的值。
+     * 锟斤拷锟斤拷name锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -570,7 +570,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取note属性的值。
+     * 锟斤拷取note锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -582,7 +582,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置note属性的值。
+     * 锟斤拷锟斤拷note锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -594,7 +594,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取recordCount属性的值。
+     * 锟斤拷取recordCount锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -606,7 +606,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置recordCount属性的值。
+     * 锟斤拷锟斤拷recordCount锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -618,7 +618,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取telephone属性的值。
+     * 锟斤拷取telephone锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -630,7 +630,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置telephone属性的值。
+     * 锟斤拷锟斤拷telephone锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -642,7 +642,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取tipoAnagrafica属性的值。
+     * 锟斤拷取tipoAnagrafica锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -654,7 +654,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置tipoAnagrafica属性的值。
+     * 锟斤拷锟斤拷tipoAnagrafica锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -666,7 +666,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取vatNumber属性的值。
+     * 锟斤拷取vatNumber锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -678,7 +678,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置vatNumber属性的值。
+     * 锟斤拷锟斤拷vatNumber锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -690,7 +690,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取zipCode属性的值。
+     * 锟斤拷取zipCode锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -702,7 +702,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置zipCode属性的值。
+     * 锟斤拷锟斤拷zipCode锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is
@@ -714,7 +714,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 获取email属性的值。
+     * 锟斤拷取email锟斤拷锟皆碉拷值锟斤拷
      * 
      * @return
      *     possible object is
@@ -726,7 +726,7 @@ public class AnagraficaVO {
     }
 
     /**
-     * 设置email属性的值。
+     * 锟斤拷锟斤拷email锟斤拷锟皆碉拷值锟斤拷
      * 
      * @param value
      *     allowed object is

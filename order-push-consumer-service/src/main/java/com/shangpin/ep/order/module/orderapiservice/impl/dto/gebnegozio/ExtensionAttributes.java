@@ -28,7 +28,7 @@ public class ExtensionAttributes {
     private BundleOptions bundleOptions;
     @SerializedName("configurable_item_options")
     @Expose
-    private ConfigurableItemOptions configurableItemOptions;
+    private List<ConfigurableItemOptions> configurableItemOptions = new ArrayList<ConfigurableItemOptions>();
     @SerializedName("downloadable_option")
     @Expose
     private DownloadableOption downloadableOption;

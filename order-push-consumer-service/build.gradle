@@ -37,6 +37,7 @@ repositories {
 group="com.shangpin.ep.order"
 
 dependencies {
+	compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.5.15-SNAPSHOT')
 	compile('commons-net:commons-net:3.3',
             'org.apache.axis:axis:1.4',
             'wsdl4j:wsdl4j:1.6.2',

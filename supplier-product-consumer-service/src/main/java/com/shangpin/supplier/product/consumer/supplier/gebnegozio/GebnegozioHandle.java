@@ -186,11 +186,11 @@ public class GebnegozioHandle implements ISupplierHandler {
         if(null != item){
             hubSku.setSupplierSpuId(supplierSpuId);
             hubSku.setSupplierId(supplierId);
-            String size = null;
+            String size = "";
             size = selProductAttribute( item , token , "size");
-            if(size==null){
+            /*if(size==null){
                 size = "A";
-            }
+            }*/
             //String price = selProductAttribute( item , token , "cost");
             String supplierSkuNo = item.getSku();
             hubSku.setSupplierSkuNo(supplierSkuNo);
