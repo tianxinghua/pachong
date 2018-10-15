@@ -81,6 +81,7 @@ public class CommonSpider {
                 threadPool = new CountableThreadPool(spiderRuleInfo.getThreadNum());
             }
         }
+		HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
 		if (spiderRuleInfo.getAjaxFlag()) {
 //			phantomjs加载
 			/*
@@ -97,12 +98,11 @@ public class CommonSpider {
 			SpChromeDriverPool pool = new SpChromeDriverPool(spiderRuleInfo.getThreadNum(), chromeDriverPath,
 					spiderRuleInfo);
 			spider = makeSpider(spiderRuleInfo, pool, driverClickPool);
-			spider.setDownloader(new SpSeleniumDownloader(spiderRuleInfo, pool, spider));
+			spider.setDownloader(new SpSeleniumDownloader(spiderRuleInfo, pool, spider, httpClientDownloader));
 			spider.setScheduler(myRedisScheduler);
 		} else {
 			spider = makeSpider(spiderRuleInfo,threadPool);
 			// 默认的httpclient加载
-			HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
 			/*
 			 * String proxyHost = spiderRuleInfo.getProxyHost(); int proxyPort =
 			 * spiderRuleInfo.getProxyPort(); if (StringUtils.isNotBlank(proxyHost) &&
