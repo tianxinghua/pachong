@@ -52,7 +52,7 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "5";
+    private static final String IN_STOCK = "10";
     //无库存
     private static final String NO_STOCK = "0";
 
