@@ -222,6 +222,9 @@ spring:
                         gebnegozioOriginalProduct:
                              destination: gebnegozio.original.product
                              content-type: application/json
+                        vipgroupOriginalProduct:
+                             destination: vipgroup.original.product
+                             content-type: application/json
 
               rabbit: 
                       bindings: 
@@ -433,6 +436,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             gebnegozioOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            vipgroupOriginalProduct:
                                   producer:
                                            prefix: HA.
 
