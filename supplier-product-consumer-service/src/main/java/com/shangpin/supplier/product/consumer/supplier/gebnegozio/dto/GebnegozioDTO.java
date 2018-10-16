@@ -34,10 +34,10 @@ public class GebnegozioDTO implements Serializable{
     private String created_at;
     private String updated_at;
     private String weight;
-    private List<ExtensionAttributes> extension_attributes = new ArrayList<ExtensionAttributes>();
-    private List<ProductLinks> product_links = new ArrayList<ProductLinks>();
-    private List<String> tier_prices = new ArrayList<String>();
-    private List<CustomAttributes> custom_attributes = new ArrayList<CustomAttributes>();
+    private List<ExtensionAttributes> extension_attributes;
+    private List<ProductLinks> product_links;
+    private List<String> tier_prices;
+    private List<CustomAttributes> custom_attributes;
     private String barcode;
-    private List<PictRes> media_gallery_entries = new ArrayList<PictRes>();
+    private List<PictRes> media_gallery_entries;
 }

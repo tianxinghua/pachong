@@ -15,6 +15,6 @@ import java.util.List;
 @Setter
 public class ResponseDTO {
     private List<GebnegozioDTO> items = new ArrayList<GebnegozioDTO>();//产品
-    private SearchCriteria searchCriteria;
-    private String totalCount;
+    private SearchCriteria search_criteria;
+    private String total_count;
 }

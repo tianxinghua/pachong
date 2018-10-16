@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
@@ -77,6 +78,9 @@ public class GebnegozioHandle implements ISupplierHandler {
             if (!StringUtils.isBlank(message.getData())){
                 System.out.println("看转换数据："+message.getData());
                 GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
+                if(gebnegozioDTO.getType_id().equals("simple")){
+                    return;
+                }
                 String supplierId = message.getSupplierId();
                 gebnegozioDTO.setSpu(gebnegozioDTO.getId());
                 mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
@@ -86,11 +90,28 @@ public class GebnegozioHandle implements ISupplierHandler {
 
                 ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
                 HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-                boolean skuSuccess = convertSku(supplierId,hubSpu.getSupplierSpuId(), gebnegozioDTO, hubSku , token);
-                if(skuSuccess){
-                    hubSkus.add(hubSku);
+                //转换SKU
+                String proSku = gebnegozioDTO.getSku();
+                if(proSku.contains("\\\\")) {
+                    proSku = proSku.replaceAll("\\\\\\\\", "\\\\");
                 }
+                try {
+                    proSku = URLEncoder.encode( proSku , "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    log.error("查询可配置产品的子产品的URL转换异常："+e.getMessage(),e);
+                }
+                String confChildUrl = EGB_URL + "configurable-products/"+ proSku +"/children";
 
+                String confChildResp = selMessage(token,confChildUrl);
+                List<GebnegozioDTO> gebnegozioDTOS = gson.fromJson(confChildResp,new TypeToken<List<GebnegozioDTO>>(){}.getType());
+                if(null!=gebnegozioDTOS&&gebnegozioDTOS.size()>0) {
+                    gebnegozioDTOS.forEach(gebDTO -> {
+                        boolean skuSuccess = convertSku(supplierId, hubSpu.getSupplierSpuId(), gebDTO, hubSku, token);
+                        if (skuSuccess) {
+                            hubSkus.add(hubSku);
+                        }
+                    });
+                }
                 //处理图片
                 SupplierPicture supplierPicture = null;
                 supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage(supplierId, gebnegozioDTO , token ) );
@@ -118,7 +139,7 @@ public class GebnegozioHandle implements ISupplierHandler {
             String supplierSpuNo =  selProductAttribute( item , token , "modello");
             if(StringUtils.isBlank(supplierSpuNo)) return false;
             HubSupplierSpuDto spuDb= null;
-            if( null == seasonName ){
+            /*if( null == seasonName ){
                 HubSupplierSpuCriteriaDto spuCriteria = new HubSupplierSpuCriteriaDto();
                 spuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo.trim());
                 List<HubSupplierSpuDto> hubSupplierSpuDtos = spuGateWay.selectByCriteria(spuCriteria);
@@ -127,7 +148,7 @@ public class GebnegozioHandle implements ISupplierHandler {
                 }else{
                     seasonName = "";
                 }
-            }
+            }*/
             //处理Meterial 和 Origin
             List<String> meterialLists = new ArrayList<String>();
             String origin = "";//Italy
@@ -189,15 +210,11 @@ public class GebnegozioHandle implements ISupplierHandler {
      * @return
      */
     public boolean convertSku(String supplierId, Long supplierSpuId, GebnegozioDTO item, HubSupplierSkuDto hubSku, String token) throws EpHubSupplierProductConsumerRuntimeException{
-        if(null != item){
+       if(null != item){
             hubSku.setSupplierSpuId(supplierSpuId);
             hubSku.setSupplierId(supplierId);
             String size = "";
             size = selProductAttribute( item , token , "size");
-            /*if(size==null){
-                size = "A";
-            }*/
-            //String price = selProductAttribute( item , token , "cost");
             String supplierSkuNo = item.getSku();
             hubSku.setSupplierSkuNo(supplierSkuNo);
             hubSku.setSupplierSkuName(item.getName());
@@ -205,10 +222,6 @@ public class GebnegozioHandle implements ISupplierHandler {
             hubSku.setMarketPrice( item.getFinal_price() );//市场价
             hubSku.setSalesPrice( item.getFinal_price() );//售价
             hubSku.setSupplyPrice( item.getFinal_price() );//供价
-            /*
-            hubSku.setMarketPrice( item.getFinal_price() );
-            hubSku.setSupplyPrice( item.getPrice() );
-            */
             hubSku.setSupplierSkuSize(size);
             hubSku.setStock(StringUtil.verifyStock(( selStock( item.getSku(), token ).toString() )));
             return true;
@@ -226,7 +239,7 @@ public class GebnegozioHandle implements ISupplierHandler {
         String picUrl = "https://www.gebnegozionline.com/media/catalog/product";
         List<Image> images = new ArrayList<Image>();
         //如果为简单对象 需要从图片表中查询复杂对象图片
-        if("simple".equals(gebnegozioDTO.getType_id())){
+       /* if("simple".equals(gebnegozioDTO.getType_id())){
             String supplierSpuNo =  selProductAttribute( gebnegozioDTO , token , "modello");
             HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
             criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo((byte)1);
@@ -239,7 +252,7 @@ public class GebnegozioHandle implements ISupplierHandler {
                 } );
             }
 
-        }else{
+        }else{*/
             List<PictRes> pictResList = gebnegozioDTO.getMedia_gallery_entries();
             if(null!=pictResList&&pictResList.size()>0) {
                 pictResList.forEach(pictRes -> {
@@ -249,7 +262,7 @@ public class GebnegozioHandle implements ISupplierHandler {
                     images.add(cofImg);
                 });
             }
-        }
+        //}
         return images;
     }
     /**
@@ -363,8 +376,8 @@ public class GebnegozioHandle implements ISupplierHandler {
                         for (ColorOptions colorOptions : colorOptionsList) {
                             if (colorOptions.getValue().equals(attributeValue)){
                                 finalAttribute = colorOptions.getLabel();
-                                attrMap.put(attributeValue,finalAttribute);
                             }
+                            attrMap.put(attributeValue,colorOptions.getLabel());
                         }
                     }
                 }
@@ -404,6 +417,9 @@ public class GebnegozioHandle implements ISupplierHandler {
         String qty = "";
         if ( null != sku && !sku.equals("") ){
             try {
+                if(sku.contains("\\\\")) {
+                    sku = sku.replaceAll("\\\\\\\\", "\\\\");
+                }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String url = STOCK_URL + urlStr;
                 String stockJson = selMessage(token , url);
