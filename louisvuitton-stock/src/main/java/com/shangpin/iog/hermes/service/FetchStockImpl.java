@@ -17,6 +17,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -44,7 +45,7 @@ public class FetchStockImpl  {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "1";
+    private static  String IN_STOCK = "10";
     //无库存
     private static final String NO_STOCK = "0";
 
@@ -76,6 +77,8 @@ public class FetchStockImpl  {
 
         uri = bdl.getString("uri");
 
+        IN_STOCK = bdl.getString("IN_STOCK");
+
     }
 
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
@@ -96,7 +99,14 @@ public class FetchStockImpl  {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "lv-qty-"+todayStr+".csv";
+        String temFilePath = filePath + "lv-qty-"+todayStr+"-1.csv";
+
+        File fristFile = new File(temFilePath);
+        if(fristFile.exists()){
+            temFilePath = filePath + "lv-qty-"+todayStr+"-2.csv";
+        }
+
+
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
         try {
@@ -443,29 +453,29 @@ public class FetchStockImpl  {
                     String backOrderStr = skuObject.get("backOrder").toString();
 
                     if("true".equals(backOrderStr)){ //预售
-                        resultMap.put("qty","0");
+                        resultMap.put("qty",NO_STOCK);
                         resultMap.put("qtyDesc","预售");
                     }else{
                         if("true".equals(inStockStr)){  //有货
-                            resultMap.put("qty","1");
+                            resultMap.put("qty",IN_STOCK);
                             resultMap.put("qtyDesc","有货");
 
                         }else{  //售罄
-                            resultMap.put("qty","0");
+                            resultMap.put("qty",NO_STOCK);
                             resultMap.put("qtyDesc","售罄");
                         }
                     }
                 }else{
-                    resultMap.put("qty","0"); // 加入到失败 商品skuNo
+                    resultMap.put("qty",NO_STOCK); // 加入到失败 商品skuNo
                     resultMap.put("qtyDesc","售罄");
                 }
             }else{
-                resultMap.put("qty","0"); // 加入到失败 商品skuNo
+                resultMap.put("qty",NO_STOCK); // 加入到失败 商品skuNo
                 resultMap.put("qtyDesc","售罄");
             }
         }else{
             System.out.println("请求库存数据接口失败"); // 加入到失败 商品skuNo
-            resultMap.put("qty","0");
+            resultMap.put("qty",NO_STOCK);
             resultMap.put("qtyDesc","售罄");
         }
         return resultMap;
