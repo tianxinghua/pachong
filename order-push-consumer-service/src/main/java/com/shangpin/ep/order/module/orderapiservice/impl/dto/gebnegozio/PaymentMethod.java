@@ -25,9 +25,9 @@ public class PaymentMethod {
 
     @SerializedName("additional_data")
     @Expose
-    private List<String> additionalData = new ArrayList<String>();
+    private List<String> additionalData;
 
-    @SerializedName("additional_data")
+    @SerializedName("extension_attributes")
     @Expose
     private ExtensionAttributes extensionAttributes;
 }

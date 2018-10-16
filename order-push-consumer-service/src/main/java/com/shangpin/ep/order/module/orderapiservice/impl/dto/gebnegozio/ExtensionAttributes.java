@@ -19,7 +19,7 @@ public class ExtensionAttributes {
     private NegotiableQuoteItem negotiableQuoteItem;
     @SerializedName("custom_options")
     @Expose
-    private List<CustomOptions> customOptions = new ArrayList<CustomOptions>();
+    private List<CustomOptions> customOptions;
     @SerializedName("file_info")
     @Expose
     private FileInfo fileInfo;
@@ -28,7 +28,7 @@ public class ExtensionAttributes {
     private BundleOptions bundleOptions;
     @SerializedName("configurable_item_options")
     @Expose
-    private List<ConfigurableItemOptions> configurableItemOptions = new ArrayList<ConfigurableItemOptions>();
+    private List<ConfigurableItemOptions> configurableItemOptions ;
     @SerializedName("downloadable_option")
     @Expose
     private DownloadableOption downloadableOption;
@@ -52,7 +52,7 @@ public class ExtensionAttributes {
     private String gwOrderId;
     @SerializedName("gw_item_ids")
     @Expose
-    private List<String> gwItemIds = new ArrayList<String>();
+    private List<String> gwItemIds ;
     @SerializedName("gw_allow_gift_receipt")
     @Expose
     private String gwAllowGiftReceipt;
@@ -139,5 +139,5 @@ public class ExtensionAttributes {
 
     @SerializedName("agreement_ids")
     @Expose
-    private List<String> agreement_ids = new ArrayList<String>();
+    private List<String> agreement_ids ;
 }

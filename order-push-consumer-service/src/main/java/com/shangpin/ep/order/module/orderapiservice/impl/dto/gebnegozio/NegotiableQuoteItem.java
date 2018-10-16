@@ -22,8 +22,5 @@ public class NegotiableQuoteItem {
     private String originalTaxAmount;
     @SerializedName("original_discount_amount")
     @Expose
-    private String originalDiscountAmount;
-    @SerializedName("original_discount_amount")
-    @Expose
     private ExtensionAttributes extensionAttributes;
 }
