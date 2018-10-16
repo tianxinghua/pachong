@@ -1,9 +1,9 @@
-package com.shangpin.iog.moncler.service;
+package com.shangpin.iog.harrods.service;
 
-import com.shangpin.iog.moncler.dto.ApiResponseBody;
-import com.shangpin.iog.moncler.dto.SpSkuNoDTO;
-import com.shangpin.iog.moncler.dto.ZhiCaiSkuHttpDTO;
-import com.shangpin.iog.moncler.dto.ZhiCaiSkuStock;
+import com.shangpin.iog.harrods.dto.ApiResponseBody;
+import com.shangpin.iog.harrods.dto.SpSkuNoDTO;
+import com.shangpin.iog.harrods.dto.ZhiCaiSkuHttpDTO;
+import com.shangpin.iog.harrods.dto.ZhiCaiSkuStock;
 import com.shangpin.iog.ice.service.StockHandleService;
 import com.shangpin.iog.utils.DownloadAndReadCSV;
 import com.shangpin.iog.utils.HttpUtil45;
@@ -38,7 +38,6 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static String updateSpSkuUrl = "";
 
     static String splitSign = ",";
-
     //库存csv 文件存放目录
     private static String filePath="";
 
@@ -48,7 +47,7 @@ public class UpdateStockImpl extends FetchStockImpl {
 
     private static List<Map<String, Integer>> filedIceStockMaps = null;
 
-    FetchStockImpl fobject=new  FetchStockImpl();
+    FetchStockImpl object=new  FetchStockImpl();
 
     static {
         if (null == bdl){
@@ -72,15 +71,15 @@ public class UpdateStockImpl extends FetchStockImpl {
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============更新MONCLER库存数据库开始 "+startDateTime+"=========================");
-        logger.info("==============更新MONCLER库存数据库开始 "+startDateTime+"=========================");
+        System.out.println("============更新HARRODS库存数据库开始 "+startDateTime+"=========================");
+        logger.info("==============更新HARRODS库存数据库开始 "+startDateTime+"=========================");
 
         //读取csv 数据信息
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"moncler-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"harrods-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -94,10 +93,11 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================更新MONCLER库存数据库结束 "+endtDateTime+"=========================");
-        System.out.println("=================更新MONCLER库存数据库结束 "+endtDateTime+"=========================");
+        logger.info("===================更新HARRODS库存数据库结束 "+endtDateTime+"=========================");
+        System.out.println("=================更新HARRODS库存数据库结束 "+endtDateTime+"=========================");
+
         //调用发送邮件
-        fobject.getFileToEmail();
+        object.getFileToEmail();
     }
 
     public static void main(String[] args) {
@@ -106,7 +106,7 @@ public class UpdateStockImpl extends FetchStockImpl {
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"gucci-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"harrods-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,",");
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
