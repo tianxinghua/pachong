@@ -35,7 +35,6 @@ import java.util.*;
  */
 @Component("fetchStockImpl")
 public class FetchStockImpl {
-
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
 
@@ -52,9 +51,9 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "5";
+    private static  String IN_STOCK ;
     //无库存
-    private static final String NO_STOCK = "0";
+    private static  String NO_STOCK;
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
@@ -74,7 +73,8 @@ public class FetchStockImpl {
         pageSize = bdl.getString("pageSize");
 
         filePath = bdl.getString("csvFilePath");
-
+        IN_STOCK=bdl.getString("IN_STOCK");
+        NO_STOCK=bdl.getString("NO_STOCK");
         uri = bdl.getString("uri");
 
     }
@@ -99,7 +99,7 @@ public class FetchStockImpl {
         String temFilePath = filePath + "selfridges-qty-"+todayStr+".csv";
         String priceFilePath = filePath + "selfridges-price-"+todayStr+".csv";
         System.out.println("文件保存目录："+temFilePath);
-        logger.info("文件保存目录："+temFilePath);
+        logger.info("price文件保存目录："+priceFilePath);
         try {
             out = new OutputStreamWriter(new FileOutputStream(temFilePath, true),"gb2312");
             priceOut = new OutputStreamWriter(new FileOutputStream(priceFilePath, true),"gb2312");
@@ -160,7 +160,12 @@ public class FetchStockImpl {
         for (int i = 0; i < failedSpSkuNoSize; i++) {
             repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i));
         }
-
+        try {
+            out.close();
+            priceOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String endtDateTime = format.format(new Date());
         logger.info("===================拉取selfridges库存数据结束 "+endtDateTime+"=========================");
         System.out.println("=================拉取selfridges库存数据结束 "+endtDateTime+"=========================");
@@ -443,7 +448,7 @@ public class FetchStockImpl {
                     price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","");
                     String marketPrice = skuDTO.getMarketPrice();
                     if (StringUtils.isEmpty(price)){
-                        temQty="0";
+                        temQty=NO_STOCK;
                     }else if(marketPrice!=null){
                         float temElementPrice = Float.parseFloat(price);
                         float spMarketPrice = Float.parseFloat(marketPrice);
@@ -657,6 +662,7 @@ public class FetchStockImpl {
             message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"修改了价格的商品信息");
             message.setFrom(new InternetAddress("xinghua.tian@shangpin.com"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress("sophia.huo@shangpin.com"));
+            //message.setRecipient(Message.RecipientType.TO, new InternetAddress("xinghua.tian@shangpin.com"));
             //设置抄送人
             message.setRecipient(Message.RecipientType.CC, new InternetAddress("xinghua.tian@shangpin.com"));
             Multipart multipart = new MimeMultipart();
@@ -685,60 +691,12 @@ public class FetchStockImpl {
             System.out.println("===================发送邮件成功 =========================");
         }catch(Exception e) {
             e.printStackTrace();
-            loggerError.error(" ===================发送邮件成功失败=========================");
-            System.out.println("===================发送邮件成功失败 =========================");
+            loggerError.error(" ===================发送邮件失败=========================");
+            System.out.println("===================发送邮件失败 =========================");
+            throw new RuntimeException();
             }
     }
-
-   /*public static void main(String[] args) {
-       SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-       String todayStr = simpleDateFormat.format(new Date());
-       long dayTime = 1000*3600*24l;
-       Date yesterDate = new Date(new Date().getTime() - dayTime);
-       SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-       String yesterdayDateStr = simpleDateFormat1.format(yesterDate);
-       String priceFilePath = filePath + "selfridges-price-"+yesterdayDateStr+".csv";
-       try {
-           OutputStreamWriter  priceOut = new OutputStreamWriter(new FileOutputStream(priceFilePath, true),"gb2312");
-           StringBuffer priceBuffer = new StringBuffer(
-                   "supplierId" + splitSign +
-                   "spSkuNO" + splitSign +
-                           "oldPrice" + splitSign +
-                           "newPrice" + splitSign+
-                           "productUrl" + splitSign
-           ).append("\r\n");
-               priceOut.write(priceBuffer.toString());
-               sendMail();
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-       *//*long dayTime = 1000*3600*24l;
-        Date yesterDate = new Date(new Date().getTime() - dayTime);
-        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
-        String yesterdayDateStr = simpleDateFormat1.format(yesterDate);
-        FetchStockImpl o=new FetchStockImpl();
-        File file=new File(bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv");
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            //System.out.println("文件的大小是："+fis.available()+"\n");
-            if (fis.available()>0){
-                sendMail();
-            }else {
-                logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
-                System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            loggerError.error(" ===================寻找csv文件失败=========================");
-            System.out.println("===================寻找csv文件失败 =========================");
-        }
-        //o.sendMail();*//*
-    }*/
-  /* public static void main(String[] args) {
-       FetchStockImpl p=new FetchStockImpl();
-       p.getFileToEmail();
-   }*/
-    protected void getFileToEmail(){
+    protected boolean getFileToEmail(){
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -746,19 +704,20 @@ public class FetchStockImpl {
         String fileName=bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv";
         File file=new File(bdl.getString("csvFilePath")+"selfridges-price-"+yesterdayDateStr+".csv");
         try {
-            FileInputStream fis = new FileInputStream(file);
-            System.out.println("文件的大小是："+fis.available()+"\n");
-            if (fis.available()>0){
+            System.out.println("文件的大小是："+file.length()+"\n");
+            if (file.length()>50){
                 sendMail();
             }else {
                 deleteFile(fileName);
                 logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
                 System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
             }
-        } catch (IOException e) {
+            return true;
+        } catch (Exception e) {
             e.printStackTrace();
             loggerError.error(" ===================寻找csv文件失败=========================");
             System.out.println("===================寻找csv文件失败 =========================");
+            return false;
         }
     }
 
@@ -779,17 +738,20 @@ public class FetchStockImpl {
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
                 System.out.println("删除单个文件" + fileName + "成功！");
+                logger.info("删除单个文件" + fileName + "成功！");
                 return true;
             } else {
                 System.out.println("删除单个文件" + fileName + "失败！");
+                logger.info("删除单个文件" + fileName + "失败！");
                 return false;
             }
         } else {
             System.out.println("删除单个文件失败：" + fileName + "不存在！");
+            logger.info("删除单个文件失败：" + fileName + "不存在！");
             return false;
         }
     }
-   /* public static void main(String[] args) {
+    public static void main(String[] args) {
 
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductUrl("http://www.selfridges.com/GB/zh/cat/bvlgari-b-zero1-18ct-white-gold-and-diamond-band-ring_709-10045-AN858378/?previewAttribute=");
@@ -806,5 +768,5 @@ public class FetchStockImpl {
         solveProductQty(productDTO);
 
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
-    }*/
+    }
 }
