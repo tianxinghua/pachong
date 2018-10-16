@@ -24,7 +24,7 @@ public class AnalyticData {
 	private static Logger LOG = LoggerFactory.getLogger(AnalyticData.class);
 	
 	public static List<Map<String, String>> handleClickFieldRulesMap(String url, List<Map<String, String>> list,
-			ChromeDriver driver, Map<String, Map<String, String>> clickFieldRulesMap) {
+			ChromeDriver driver, Map<String, Map<String, String>> clickFieldRulesMap, Integer i, Boolean moreClickFlag) {
 		Set<Entry<String, Map<String, String>>> entrySet = clickFieldRulesMap.entrySet();
 		Iterator<Entry<String, Map<String, String>>> iterator = entrySet.iterator();
 		Map<String, String> map = new HashMap<String, String>();
@@ -33,7 +33,7 @@ public class AnalyticData {
 			Entry<String, Map<String, String>> entry = iterator.next();
 			String clickfield = entry.getKey().toString();
 			Map<String, String> strategyAndRuleMap = entry.getValue();
-			String clickfieldValue = GatherUtil.getFieldValue(url, clickfield, strategyAndRuleMap, driver);
+			String clickfieldValue = GatherUtil.getFieldValue(url, clickfield, strategyAndRuleMap, driver, i, moreClickFlag);
 			map.put(clickfield, clickfieldValue);
 		}
 		list.add(map);

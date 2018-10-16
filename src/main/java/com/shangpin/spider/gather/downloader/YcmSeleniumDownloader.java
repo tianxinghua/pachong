@@ -170,6 +170,7 @@ public class YcmSeleniumDownloader implements Downloader {
 	 * @param task
 	 * @return
 	 */
+	@Deprecated
 	@SuppressWarnings("unused")
 	private Page moreClick(Page pagexin, WebDriver webDriver, Request request,
 			Task task) {

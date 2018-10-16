@@ -110,10 +110,11 @@
 					 是否为动态网页：<input type="radio" name="ajaxFlag" value="1" />Y&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="ajaxFlag" value="0" checked="checked"/>N
 					<br/>
-					翻页的策略：<input type="radio" name="nextPageFlag" value="scroll" />下拉条&nbsp;&nbsp;&nbsp;&nbsp;
+					翻页的策略：<!-- <input type="radio" name="nextPageFlag" value="scroll" />下拉条&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="nextPageFlag" value="next" checked="checked"/>点击下一页&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="radio" name="nextPageFlag" value="more" checked="checked"/>查看更多
-					翻页的按钮CSS：<input type="text" name="nextPageTag"/>
+						<input type="radio" name="nextPageFlag" value="more" checked="checked"/>查看更多 -->
+						<input type="text" name="nextPageFlag"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					翻页的按钮CSS：<input type="text" name="nextPageTag" placeholder="下拉条的为scroll"/>
 					<br/>
 					列表页加载策略：<input type="radio" name="firstAjaxFlag" value="1" />动态加载&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="firstAjaxFlag" value="0" checked="checked"/>静态加载（推荐）
@@ -314,6 +315,22 @@
 					页面需点击按钮的规则：<textarea name="jsMenuRules" rows="2" cols="100">
 					</textarea></div>
 					<br/>
+					
+					<div>第一次点击前的规则：<textarea name="firstClickFrontRules" rows="2" cols="100"></textarea></div>
+					<div>第二次点击前的规则：<textarea name="secondClickFrontRules" rows="2" cols="100"></textarea></div>
+					<div>第三次点击前的规则：<textarea name="threeClickFrontRules" rows="2" cols="100"></textarea></div>
+					
+					<font color="red">*针对多层点击</font>
+					第二层点击与否：<input type="radio" name="secondClickFlag" value="1" />点击&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="secondClickFlag" value="0" checked="checked"/>不点击
+					<br/>
+					
+					第三层点击与否：<input type="radio" name="threeClickFlag" value="1" />点击&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="threeClickFlag" value="0" checked="checked"/>不点击
+					<br/>
+					
+					
+					
 					
 					页面需点击获取的字段：
 					<font color="red">*选入的字段获取策略仅限为C（css选择器）</font>
@@ -648,9 +665,19 @@
 	        				if(spiderRules.firstAjaxFlag){
 	        					firstAjaxInt = 1;
 	        				}
+	        				var secondClickInt = 0;
+	        				if(spiderRules.secondClickFlag){
+	        					secondClickInt = 1;
+	        				}
+	        				var threeClickInt = 0;
+	        				if(spiderRules.threeClickFlag){
+	        					threeClickInt = 1;
+	        				}
+	        				
 	        				$("[name='headless'][value='"+headlessInt+"']").attr('checked','true');
 	        				$("[name='ajaxFlag'][value='"+ajaxInt+"']").attr('checked','true');
-	        				$("[name='nextPageFlag'][value='"+spiderRules.nextPageFlag+"']").attr('checked','true');
+	        				//$("[name='nextPageFlag'][value='"+spiderRules.nextPageFlag+"']").attr('checked','true');
+	        				$("[name='nextPageFlag']").val(spiderRules.nextPageFlag);
 	        				$("[name='nextPageTag']").val(spiderRules.nextPageTag);
 	        				$("[name='firstAjaxFlag'][value='"+firstAjaxInt+"']").attr('checked','true');
 	                		$("[name='maxPageGather']").val(spiderRules.maxPageGather);
@@ -682,6 +709,11 @@
 	                		
 	                		$("[name='jsMenuStrategy']").val(spiderRules.jsMenuStrategy);
 	                		$("[name='jsMenuRules']").val(spiderRules.jsMenuRules);
+	                		
+	                		$("[name='firstClickFrontRules']").val(spiderRules.firstClickFrontRules);
+	                		$("[name='secondClickFrontRules']").val(spiderRules.secondClickFrontRules);
+	                		$("[name='threeClickFrontRules']").val(spiderRules.threeClickFrontRules);
+	                		
 	                		
 	                		$("[name='materialStrategy']").val(spiderRules.materialStrategy);
 	                		$("[name='materialRules']").val(spiderRules.materialRules);
@@ -715,6 +747,8 @@
 	                		$("[name='supplierId']").val(spiderRules.supplierId);
 	                		$("[name='supplierNo']").val(spiderRules.supplierNo);
 	                		$("#clickFieldArray").selectpicker('val', clickFieldArray);
+	                		$("[name='secondClickFlag'][value='"+secondClickInt+"']").attr('checked','true');
+	                		$("[name='threeClickFlag'][value='"+threeClickInt+"']").attr('checked','true');
             			}
         			},"json")
         		
@@ -734,7 +768,8 @@
         		//var categoryId = $("[name='category'] option:selected").val();
         		var headless = $("input[name='headless']:checked").val();
         		var ajaxFlag = $("input[name='ajaxFlag']:checked").val();
-        		var nextPageFlag = $("input[name='nextPageFlag']:checked").val();
+        		//var nextPageFlag = $("input[name='nextPageFlag']:checked").val();
+        		var nextPageFlag = $("[name='nextPageFlag']").val();
         		var nextPageTag = $("[name='nextPageTag']").val();
         		var firstAjaxFlag = $("input[name='firstAjaxFlag']:checked").val();
         		var maxPageGather = $("[name='maxPageGather']").val();
@@ -766,6 +801,10 @@
         		
         		var jsMenuRules = $("[name='jsMenuRules']").val();
         		var jsMenuStrategy = $("[name='jsMenuStrategy']").val();
+        		
+        		var firstClickFrontRules = $("[name='firstClickFrontRules']").val();
+        		var secondClickFrontRules = $("[name='secondClickFrontRules']").val();
+        		var threeClickFrontRules = $("[name='threeClickFrontRules']").val();
         		
         		var materialRules = $("[name='materialRules']").val();
         		var materialStrategy = $("[name='materialStrategy']").val();
@@ -808,8 +847,10 @@
            				clickFieldStr = clickFieldArray.join(",");
             		}
         		}
-        		
         		//alert(clickFieldStr);
+        		secondClickFlag
+        		var secondClickFlag = $("input[name='secondClickFlag']:checked").val();
+        		var threeClickFlag = $("input[name='threeClickFlag']:checked").val();
         		
         		$.post("/spider/saveWebRule",
         				{
@@ -867,7 +908,12 @@
         					measurementStrategy:measurementStrategy,
         					supplierId:supplierId,
         					supplierNo:supplierNo,
-        					clickFieldStr:clickFieldStr
+        					clickFieldStr:clickFieldStr,
+        					firstClickFrontRules:firstClickFrontRules,
+        					secondClickFrontRules:secondClickFrontRules,
+        					threeClickFrontRules:threeClickFrontRules,
+        					'secondClickFlag':secondClickFlag,
+        					'threeClickFlag':threeClickFlag,
         				}
         				 ,function(msg){
         					//alert(msg);

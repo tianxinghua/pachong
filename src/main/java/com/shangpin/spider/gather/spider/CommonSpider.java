@@ -24,6 +24,7 @@ import com.shangpin.spider.gather.chromeDownloader.SpSeleniumDownloader;
 import com.shangpin.spider.gather.downloader.WebDriverPool;
 import com.shangpin.spider.gather.downloader.YcmSeleniumDownloader;
 import com.shangpin.spider.gather.downloader.YcmWebDriverPool;
+import com.shangpin.spider.gather.httpClientDownloader.SpHttpClientDownloader;
 import com.shangpin.spider.gather.pipliner.MyPipeline;
 import com.shangpin.spider.gather.processor.MyPageProcessor;
 import com.shangpin.spider.gather.scheduler.MyRedisScheduler;
@@ -81,7 +82,7 @@ public class CommonSpider {
                 threadPool = new CountableThreadPool(spiderRuleInfo.getThreadNum());
             }
         }
-		HttpClientDownloader httpClientDownloader = new HttpClientDownloader();
+		SpHttpClientDownloader httpClientDownloader = new SpHttpClientDownloader();
 		if (spiderRuleInfo.getAjaxFlag()) {
 //			phantomjs加载
 			/*

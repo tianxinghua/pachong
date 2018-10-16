@@ -27,15 +27,25 @@ public class CrackDspiderUtil {
 //		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
 //		CSS表达式从规则类中取出，待开发
 		WebElement element = null;
+		
 		try {
 			element = driver.findElement(By.cssSelector(".close-btn-small"));
 			if(element!=null) {
 				element.click();
 			}
 		} catch (Exception e) {
-			LOG.error("点击前破解网站反爬有误！{}",e.getMessage());
-//			e.printStackTrace();
+			LOG.error("点击前破解网站反爬有误1！{}",e.getMessage());
+			try {
+				element = driver.findElement(By.cssSelector(".mfp-close"));
+				if(element!=null) {
+					element.click();
+				}
+			} catch (Exception e2) {
+				LOG.error("点击前破解网站反爬有误2！{}",e2.getMessage());
+//					e.printStackTrace();
+			}
 		}
+		
 	}
 
 }

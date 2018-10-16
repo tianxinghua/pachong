@@ -133,6 +133,16 @@ public class SpiderRules implements Serializable {
 	private String clickFieldStr;
 
 	private Boolean status;
+	
+	private Boolean secondClickFlag;
+	
+	private Boolean threeClickFlag;
+	
+	private String firstClickFrontRules;
+	
+	private String secondClickFrontRules;
+	
+	private String threeClickFrontRules;
 
 	private Date createTime;
 
@@ -593,6 +603,22 @@ public class SpiderRules implements Serializable {
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
+	
+	public Boolean getSecondClickFlag() {
+		return secondClickFlag;
+	}
+
+	public void setSecondClickFlag(Boolean secondClickFlag) {
+		this.secondClickFlag = secondClickFlag;
+	}
+
+	public Boolean getThreeClickFlag() {
+		return threeClickFlag;
+	}
+
+	public void setThreeClickFlag(Boolean threeClickFlag) {
+		this.threeClickFlag = threeClickFlag;
+	}
 
 	public Date getCreateTime() {
 		return createTime;
@@ -696,6 +722,30 @@ public class SpiderRules implements Serializable {
 
 	public void setNeedClickFieldAry(String[] needClickFieldAry) {
 		this.needClickFieldAry = needClickFieldAry;
+	}
+	
+	public String getFirstClickFrontRules() {
+		return firstClickFrontRules;
+	}
+
+	public void setFirstClickFrontRules(String firstClickFrontRules) {
+		this.firstClickFrontRules = firstClickFrontRules;
+	}
+
+	public String getSecondClickFrontRules() {
+		return secondClickFrontRules;
+	}
+
+	public void setSecondClickFrontRules(String secondClickFrontRules) {
+		this.secondClickFrontRules = secondClickFrontRules;
+	}
+
+	public String getThreeClickFrontRules() {
+		return threeClickFrontRules;
+	}
+
+	public void setThreeClickFrontRules(String threeClickFrontRules) {
+		this.threeClickFrontRules = threeClickFrontRules;
 	}
 
 	public static long getSerialversionuid() {

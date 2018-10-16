@@ -117,6 +117,7 @@
                 </exclusion>
             </exclusions>
 		</dependency>
+		
 		<dependency>
 			  <groupId>us.codecraft</groupId>
 			  <artifactId>webmagic-selenium</artifactId>
@@ -128,6 +129,7 @@
   				</exclusion>
 			  </exclusions>
         </dependency>
+        
 		<dependency>
   			<groupId>com.codeborne</groupId>
   			<artifactId>phantomjsdriver</artifactId>

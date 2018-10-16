@@ -1,6 +1,7 @@
 package com.shangpin.spider.gather.chromeDownloader;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openqa.selenium.By;
@@ -8,11 +9,15 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.shangpin.spider.common.StrategyConstants;
+import com.shangpin.spider.common.SymbolConstants;
 import com.shangpin.spider.entity.gather.SpiderRules;
+import com.shangpin.spider.gather.httpClientDownloader.SpHttpClientDownloader;
 import com.shangpin.spider.gather.utils.CrackDspiderUtil;
 import com.shangpin.spider.gather.utils.GatherUtil;
 
@@ -33,13 +38,13 @@ public class SpSeleniumDownloader implements Downloader{
 	private SpChromeDriverPool webDriverPool = null;
 	private Spider spiderDown = null;
 	private SpiderRules spiderRuleInfo = null;
-	private HttpClientDownloader httpClientDownloader = null;
+	private SpHttpClientDownloader httpClientDownloader = null;
 	
 	
 	
 	
 	public SpSeleniumDownloader(SpiderRules spiderRuleInfo, SpChromeDriverPool webDriverPool
-			, Spider spiderDown) {
+			, Spider spiderDown, SpHttpClientDownloader httpClientDownloader) {
 		super();
 		if (spiderRuleInfo != null) {
 			this.sleepTime = spiderRuleInfo.getSleep();
@@ -50,6 +55,9 @@ public class SpSeleniumDownloader implements Downloader{
 		}
 		if(spiderDown!=null) {
 			this.spiderDown = spiderDown;
+		}
+		if(spiderDown!=null) {
+			this.httpClientDownloader = httpClientDownloader;
 		}
 	}
 	
@@ -82,39 +90,28 @@ public class SpSeleniumDownloader implements Downloader{
 //			测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
 			CrackDspiderUtil.crackMask(webDriver,spiderRuleInfo);
 			webDriver.manage().window().maximize();
-			// 控制下拉条
-			if(StrategyConstants.SCROLL.equals(spiderRuleInfo.getNextPageFlag())) {
-				Map<String,Long> map = new HashMap<String,Long>();
-				for (int i = 0; i < 100; i++) {
-					((JavascriptExecutor)webDriver).executeScript("window.scrollTo(0,document.body.scrollHeight)");
-					try {
-						Thread.sleep(3000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					long heightFlag=(Long)((JavascriptExecutor)webDriver).executeScript("return document.body.scrollHeight;");
-					System.err.println("--执行第"+i+"次的列表页"+url+"的--浏览器的高为："+heightFlag);
-					if(i>0) {
-						int j = i-1;
-						Long heightJudge = map.get(j+"");
-						if(heightFlag==heightJudge) {
-							System.err.println("滚动条被操作："+j+"次。");
-							break;
-						}
-					}
-					map.put(i+"", heightFlag);
+			
+			String[] nextPageFlagArray = spiderRuleInfo.getNextPageFlag().split(SymbolConstants.AND_FLAG);
+			String[] nextPageTagArray = spiderRuleInfo.getNextPageTag().split(SymbolConstants.RULE_SPLIT_FLAG);
+			for (int i = 0; i < nextPageFlagArray.length; i++) {
+				String nextPageFlagDe = nextPageFlagArray[i];
+				String nextPageTagDe = nextPageTagArray[i];
+//					控制下拉条
+				if(StrategyConstants.SCROLL.equals(nextPageFlagDe)) {
+					webDriver = handleScroll(url, webDriver);
+					continue;
 				}
-				
-				long heightEnd=(Long)((JavascriptExecutor)webDriver).executeScript("return document.body.scrollHeight;");
-				System.err.println("--执行后列表页"+url+"的--浏览器的高为："+heightEnd);
-				
-			}
-//			下一页
-			if(StrategyConstants.NEXT.equals(spiderRuleInfo.getNextPageFlag())) {
-				
-			}
-//			查看更多
-			if(StrategyConstants.MORE.equals(spiderRuleInfo.getNextPageFlag())) {
+//					下一页
+				if(StrategyConstants.NEXT.equals(nextPageFlagDe)) {
+					
+					continue;
+				}
+//					查看更多
+				if(StrategyConstants.MORE.equals(nextPageFlagDe)) {
+					List<WebElement> elements = webDriver.findElements(By.cssSelector(nextPageTagDe));
+					webDriver = handleMore(url, nextPageTagDe, webDriver, elements);
+					continue;
+				}
 				
 			}
 			page = getHtml(webDriver, request, task);
@@ -139,9 +136,6 @@ public class SpSeleniumDownloader implements Downloader{
 			webDriverPool.returnToPool(webDriver);
 		}else {
 //			第一层静态处理，获取动态数据在第二层操作
-			if(httpClientDownloader==null) {
-				httpClientDownloader = new HttpClientDownloader();
-			}
 			page = httpClientDownloader.download(request,task);
 		}
 		return page;
@@ -167,9 +161,87 @@ public class SpSeleniumDownloader implements Downloader{
 		driver.get(request.getUrl());
 		return driver;
 	}
-
-
-
+	
+	/**
+	 * 下拉条的处理
+	 * @param url
+	 * @param webDriver
+	 * @return
+	 */
+	private RemoteWebDriver handleScroll(String url, RemoteWebDriver webDriver) {
+		Map<String,Long> map = new HashMap<String,Long>();
+		for (int i = 0; i < 100; i++) {
+			((JavascriptExecutor)webDriver).executeScript("window.scrollTo(0,document.body.scrollHeight)");
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			long heightFlag=(Long)((JavascriptExecutor)webDriver).executeScript("return document.body.scrollHeight;");
+			System.err.println("--执行第"+i+"次的列表页"+url+"的--浏览器的高为："+heightFlag);
+			if(i>0) {
+				int j = i-1;
+				Long heightJudge = map.get(j+"");
+				if(heightFlag==heightJudge) {
+					System.err.println("滚动条被操作："+j+"次。");
+					break;
+				}
+			}
+			map.put(i+"", heightFlag);
+		}
+		
+		long heightEnd=(Long)((JavascriptExecutor)webDriver).executeScript("return document.body.scrollHeight;");
+		System.err.println("--执行后列表页"+url+"的--浏览器的高为："+heightEnd);
+		return webDriver;
+	}
+	/**
+	 * 点击更多的处理
+	 * @param url
+	 * @param webDriver
+	 * @return 
+	 */
+	private RemoteWebDriver handleMore(String url, String nextPageTagDe, RemoteWebDriver webDriver, List<WebElement> elements) {
+		try {
+			if(elements!=null&&elements.size()>0) {
+				WebElement ele = elements.get(0);
+				WebDriverWait wait = new WebDriverWait(webDriver, 1);
+				wait.until(ExpectedConditions.elementToBeClickable(ele));
+				ele.click();
+				elements = webDriver.findElements(By.cssSelector(nextPageTagDe));
+				webDriver = handleMore(url,nextPageTagDe,webDriver,elements);
+			}
+		} catch (Exception e) {
+			LOG.error("点击更多处理有误！"+e.getMessage());
+		}
+		
+		return webDriver;
+	}
+	
+	/*private static Integer handleMoret(String url, String nextPageTagDe, Integer t, Integer i, Integer j) {
+		if(i<5) {
+			t++;
+			j++;
+			i++;
+			t = handleMoret(url,nextPageTagDe,t,i,j);
+		}
+		
+		return t;
+	}
+	
+	public static void main(String[] args) {
+		Integer t = handleMoret("www","sss",0,0,0);
+		System.out.println(t);
+	}*/
+	
+	/**
+	 * 点击下一页的处理 
+	 * @return 
+	 */
+	private RemoteWebDriver handleNext(String url, RemoteWebDriver webDriver) {
+		
+		return webDriver;
+	}
+	
 	@Override
 	public void setThread(int threadNum) {
 		// TODO Auto-generated method stub

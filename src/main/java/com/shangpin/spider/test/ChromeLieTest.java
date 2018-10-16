@@ -40,13 +40,26 @@ public class ChromeLieTest {
 		
 		ChromeDriver driver = new ChromeDriver(caps);
 		String url = "";
-		url = "https://www.balenciaga.com/fr/homme/chaussures";
+//		url = "https://www.balenciaga.com/fr/homme/chaussures";
+//		url = "https://www.balenciaga.com/fr/femme/chaussures";
+		url = "https://www.balenciaga.com/fr/femme/chaussures#{%22ytosQuery%22:%22true%22,%22department%22:%22wmnccshs_micro%22,%22gender%22:%22D%22,%22season%22:%22A,P,E%22,%22yurirulename%22:%22searchwithdepartmentgallery%22,%22agerange%22:%22adult%22,%22page%22:%2230%22,%22productsPerPage%22:%2224%22,%22suggestion%22:%22false%22,%22facetsvalue%22:[],%22totalPages%22:%224%22,%22rsiUsed%22:%22false%22,%22totalItems%22:%2288%22,%22partialLoadedItems%22:%2224%22,%22itemsToLoadOnNextPage%22:%2224%22,%22departments%22:[{%22id%22:%22wmnccshs_micro%22,%22page%22:4}]}";
 		driver.get(url);
 		driver.manage().window().maximize();
 		CrackDspiderUtil.crackMask(driver, null);
 		handleScroll(url,driver);
 		List<WebElement> elements = driver.findElements(By.cssSelector(".viewmore-btn"));
 		handleMore(url, ".viewmore-btn", driver, elements,elements.size(),0);
+		
+		/*WebElement webElement = driver.findElement(By.xpath("/html"));
+		String content = webElement.getAttribute("outerHTML");
+		System.err.println("--源码：---"+content);
+		if(content.contains("cod11425886gf")) {
+			System.out.println("TRUE");
+		}else {
+			System.out.println("FALSE");
+		}*/
+		List<WebElement> list = driver.findElements(By.xpath("//a[@class='item-display-image-container item-link']"));
+		System.out.println("list的长度为："+list.size());
 		
 		System.out.println("完毕");
 		
@@ -112,6 +125,14 @@ public class ChromeLieTest {
 //				Action action = actions.clickAndHold(ele).release().build();
 //				action.perform();
 				((JavascriptExecutor)webDriver).executeScript("arguments[0].click()", ele);
+				WebElement webElement = webDriver.findElement(By.xpath("/html"));
+				String content = webElement.getAttribute("outerHTML");
+				System.err.println("--源码：---"+content);
+				if(content.contains("cod11425886gf")) {
+					System.out.println("TRUE");
+				}else {
+					System.out.println("FALSE");
+				}
 				i++;
 				webDriver = handleMore(url,nextPageTagDe,webDriver,elements,size,i);
 			}

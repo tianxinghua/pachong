@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -43,6 +44,7 @@ public class TwoClick extends MoreClickUtil {
 		clickFieldRulesMap = super.clickFieldRulesMap;
 //		测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
 		CrackDspiderUtil.crackMask(driver, super.spiderRuleInfo);
+		ClickFrontUtils.handle(driver, super.spiderRuleInfo);
 	}
 
 	@Override
@@ -74,6 +76,8 @@ public class TwoClick extends MoreClickUtil {
 //		第一步，模拟点击第一个动态元素
 		List<WebElement> elements1 = null;
 		try {
+			WebDriverWait wait = new WebDriverWait(driver, 1);
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[0])));
 			elements1 = driver.findElements(By.cssSelector(menuRuleArray[0]));
 		} catch (Exception e) {
 			LOG.error("链接{}模拟点击的第一层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
@@ -97,9 +101,11 @@ public class TwoClick extends MoreClickUtil {
 				try {
 //					WebDriverWait wait = new WebDriverWait(driver, 10);
 //					wait.until(ExpectedConditions.elementToBeClickable(element));
-					element.click();
+//					element.click();
+					((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+					
 				} catch (Exception e) {
-					LOG.error("链接{}第一次点击事件有误！", url);
+					LOG.error("链接{}第一次点击事件有误！{}", url,e.getMessage());
 				}
 //				避免点击频繁，异步加载
 				try {
@@ -111,6 +117,8 @@ public class TwoClick extends MoreClickUtil {
 		}
 		List<WebElement> elements2 = null;
 		try {
+			WebDriverWait wait = new WebDriverWait(driver, 1);
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[1])));
 			elements2 = driver.findElements(By.cssSelector(menuRuleArray[1]));
 		} catch (Exception e) {
 			LOG.error("链接{}模拟点击的第二层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
@@ -126,17 +134,20 @@ public class TwoClick extends MoreClickUtil {
 		WebElement element2 = null;
 		if (j <= sencondSize - 1) {
 			element2 = elements2.get(j);
-			try {
-				WebDriverWait wait = new WebDriverWait(driver, 10);
-				wait.until(ExpectedConditions.elementToBeClickable(element2));
-				element2.click();
-			} catch (Exception e) {
-				LOG.error("链接{}第二次点击事件有误！--异常:{}", url, e.getMessage());
-			}
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if(spiderRuleInfo.getSecondClickFlag()) {
+				try {
+//					WebDriverWait wait = new WebDriverWait(driver, 10);
+//					wait.until(ExpectedConditions.elementToBeClickable(element2));
+//					element2.click();
+					((JavascriptExecutor)driver).executeScript("arguments[0].click()", element2);
+				} catch (Exception e) {
+					LOG.error("链接{}第二次点击事件有误！--异常:{}", url, e.getMessage());
+				}
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -150,7 +161,7 @@ public class TwoClick extends MoreClickUtil {
 		}
 		if ((!recursionFlag) || (i != firstSize - 1)) {
 //			点击后获取的字段值，在此获取
-			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap);
+			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
 //			递归			
 			twoClick(list, driver, initI, initJ, recursionFlag, menuRuleArray);
 		}
@@ -158,7 +169,7 @@ public class TwoClick extends MoreClickUtil {
 		if (endInt.get() == 0) {
 			if (initJ.get() == sencondSize && i == firstSize - 1) {
 				LOG.info("{}链接最后一次点击入库！", url);
-				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap);
+				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
 				endInt.incrementAndGet();
 			}
 		}

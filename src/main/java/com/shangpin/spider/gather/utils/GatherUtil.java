@@ -402,7 +402,7 @@ public class GatherUtil {
 		}
 //		对库存量的标识
 		if(StrategyConstants.SP_QTY_C.equals(strategyStr)) {
-			return handleQty(page, null, rulesStr);
+			return handleQty(page, null, rulesStr, 0, false);
 		}
 		
 //		下标初始值100
@@ -726,10 +726,12 @@ public class GatherUtil {
 	 * @param clickfield 
 	 * @param map2
 	 * @param driver
+	 * @param moreClickFlag 
+	 * @param i2 
 	 * @return
 	 * @DES C&SUB&UNION&C&SUB策略按顺序来，没有多种结合，串联一种得结果。规则按@,间隔。U以@U间隔。CSS的属性用@|标识。截取按照{#T@OR@;}规则进行
 	 */
-	public static String getFieldValue(String url, String clickfield, Map<String, String> map2, ChromeDriver driver) {
+	public static String getFieldValue(String url, String clickfield, Map<String, String> map2, ChromeDriver driver, Integer elementIndex, Boolean moreClickFlag) {
 		String rulesStr = map2.get("rulesStr");
 		String strategyStr = map2.get("strategyStr");
 		String fieldValue = "";
@@ -742,7 +744,7 @@ public class GatherUtil {
 				return handleDriverImg(driver, rulesStr);
 			}
 			if(StrategyConstants.SP_QTY_C.equals(strategyStr)) {
-				return handleQty(null, driver, rulesStr);
+				return handleQty(null, driver, rulesStr, elementIndex, moreClickFlag);
 			}
 			if(strategyStr.contains(StrategyConstants.UNION)&&rulesStr.contains(SymbolConstants.UNION_FLAG)) {
 				String[] strategyAry = strategyStr.split(StrategyConstants.UNION);
@@ -751,14 +753,14 @@ public class GatherUtil {
 					for (int i = 0; i < strategyAry.length; i++) {
 						String strategyGroup = strategyAry[i];
 						String ruleGroup = rulesAry[i];
-						fieldValue += crawlValueByDriverGroup(url,ruleGroup,strategyGroup,driver,fieldValue,clickfield);
+						fieldValue += crawlValueByDriverGroup(url,ruleGroup,strategyGroup,driver,fieldValue,clickfield, elementIndex, moreClickFlag);
 					}
 				} catch (Exception e) {
 					LOG.error("--{}包含UNION的driver的策略与规则不匹配！--",clickfield);
 				}
 				
 			}else {
-				fieldValue = crawlValueByDriverGroup(url,rulesStr,strategyStr,driver,fieldValue,clickfield);
+				fieldValue = crawlValueByDriverGroup(url,rulesStr,strategyStr,driver,fieldValue,clickfield, elementIndex, moreClickFlag);
 			}
 		} catch (Exception e) {
 			LOG.error("---{}动态获取值有误！--异常{}",clickfield,e.getMessage());
@@ -766,7 +768,7 @@ public class GatherUtil {
 		
 		return fieldValue;
 	}
-	private static String crawlValueByDriverGroup(String url, String rulesStr, String strategyStr, WebDriver driver, String fieldValue, String clickfield) {
+	private static String crawlValueByDriverGroup(String url, String rulesStr, String strategyStr, WebDriver driver, String fieldValue, String clickfield, Integer elementIndex, Boolean moreClickFlag) {
 		String[] rulesArray = rulesStr.split(SymbolConstants.RULE_SPLIT_FLAG);
 		String[] strategyArray = strategyStr.split(SymbolConstants.AND_FLAG);
 		for (int i = 0; i < strategyArray.length; i++) {
@@ -779,15 +781,35 @@ public class GatherUtil {
 					String deRuleStr = detailRule.substring(0, detailRule.indexOf(SymbolConstants.ATTR_FLAG));
 					String attrStr = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),detailRule.length());
 					if(StrategyConstants.C.equals(detailStrategy)) {
-						WebElement element = driver.findElement(By.cssSelector(deRuleStr));
+						WebElement element = null;
 						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.visibilityOf(element));
+						wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(deRuleStr)));
+						if(moreClickFlag) {
+							element = driver.findElements(By.cssSelector(deRuleStr)).get(0);
+						}else {
+							List<WebElement> elements = driver.findElements(By.cssSelector(deRuleStr));
+							if(elements.size()>1) {
+								element = elements.get(elementIndex);
+							}else {
+								element = elements.get(0);
+							}
+						}
 						fieldValue = element.getAttribute(attrStr).toString();
 					}
 					if(StrategyConstants.X.equals(detailStrategy)) {
-						WebElement element = driver.findElement(By.xpath(deRuleStr));
+						WebElement element = null;
 						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.visibilityOf(element));
+						wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(deRuleStr)));
+						if(moreClickFlag) {
+							element = driver.findElements(By.xpath(deRuleStr)).get(0);
+						}else {
+							List<WebElement> elements = driver.findElements(By.xpath(deRuleStr));
+							if(elements.size()>1) {
+								element = elements.get(elementIndex);
+							}else {
+								element = elements.get(0);
+							}
+						}
 						fieldValue = element.getAttribute(attrStr).toString();
 					}
 				}else {
@@ -795,14 +817,32 @@ public class GatherUtil {
 //					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
 					WebElement element = null;
 					if(StrategyConstants.C.equals(detailStrategy)) {
-						element = driver.findElement(By.cssSelector(detailRule));
 						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.visibilityOf(element));
+						wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
+						if(moreClickFlag) {
+							element = driver.findElements(By.cssSelector(detailRule)).get(0);
+						}else {
+							List<WebElement> elements = driver.findElements(By.cssSelector(detailRule));
+							if(elements.size()>1) {
+								element = elements.get(elementIndex);
+							}else {
+								element = elements.get(0);
+							}
+						}
 					}
 					if(StrategyConstants.X.equals(detailStrategy)) {
-						element = driver.findElement(By.xpath(detailRule));
 						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.visibilityOf(element));
+						wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(detailRule)));
+						if(moreClickFlag) {
+							element = driver.findElements(By.xpath(detailRule)).get(0);
+						}else {
+							List<WebElement> elements = driver.findElements(By.xpath(detailRule));
+							if(elements.size()>1) {
+								element = elements.get(elementIndex);
+							}else {
+								element = elements.get(0);
+							}
+						}
 					}
 					if(element.isDisplayed()) {
 						fieldValue = element.getText();
@@ -838,9 +878,11 @@ public class GatherUtil {
 	 * @param page 
 	 * @param driver
 	 * @param rulesStr
+	 * @param moreClickFlag 
+	 * @param elementIndex 
 	 * @return
 	 */
-	private static String handleQty(Page page, ChromeDriver driver, String rulesStr) {
+	private static String handleQty(Page page, ChromeDriver driver, String rulesStr, Integer elementIndex, Boolean moreClickFlag) {
 		String qtyFlag = "";
 		String qtyFlagValue = "";
 		if(rulesStr.contains(SymbolConstants.QTY_FLAG)) {
@@ -853,14 +895,28 @@ public class GatherUtil {
 			if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
 				String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
 				String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
-				WebElement element = driver.findElement(By.cssSelector(deRuleStr));
+				WebElement element = null;
+				
 				WebDriverWait wait = new WebDriverWait(driver, 1);
-				wait.until(ExpectedConditions.visibilityOf(element));
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(deRuleStr)));
+				
+				if(moreClickFlag) {
+					element = driver.findElements(By.cssSelector(deRuleStr)).get(0);
+				}else {
+					element = driver.findElements(By.cssSelector(deRuleStr)).get(elementIndex);
+				}
 				qtyFlag = element.getAttribute(attrStr);
 			}else {
-				WebElement element = driver.findElement(By.cssSelector(rulesStr));
+				WebElement element = null;
 				WebDriverWait wait = new WebDriverWait(driver, 1);
-				wait.until(ExpectedConditions.visibilityOf(element));
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(rulesStr)));
+				
+				if(moreClickFlag) {
+					element = driver.findElements(By.cssSelector(rulesStr)).get(0);
+				}else {
+					element = driver.findElements(By.cssSelector(rulesStr)).get(elementIndex);
+				}
+				
 				if(element.isDisplayed()) {
 					qtyFlag = element.getText();
 				}else {
@@ -919,9 +975,12 @@ public class GatherUtil {
 			attrRule = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), rulesStr.length());
 			rulesStr = rulesStr.substring(0,rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
 		}
-		List<WebElement> imgElements = driver.findElements(By.cssSelector(rulesStr));
 		WebDriverWait wait = new WebDriverWait(driver, 1);
-		wait.until(ExpectedConditions.visibilityOfAllElements(imgElements));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(rulesStr)));
+		
+		List<WebElement> imgElements = driver.findElements(By.cssSelector(rulesStr));
+//		WebDriverWait wait = new WebDriverWait(driver, 1);
+//		wait.until(ExpectedConditions.visibilityOfAllElements(imgElements));
 		String pics = "";
 		for (WebElement imgEle : imgElements) {
 			pics += imgEle.getAttribute(attrRule)+SymbolConstants.SPLIT_FLAG;

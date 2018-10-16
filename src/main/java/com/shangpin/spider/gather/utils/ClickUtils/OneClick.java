@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -64,6 +65,8 @@ public class OneClick extends MoreClickUtil{
 //		第一步，模拟点击第一个动态元素
 		List<WebElement> elements1 = null;
 		try {
+			WebDriverWait wait = new WebDriverWait(driver, 1);
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[0])));
 			elements1 = driver.findElements(By.cssSelector(menuRuleArray[0]));
 		} catch (Exception e) {
 			LOG.error("链接{}模拟点击的第一层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
@@ -83,9 +86,10 @@ public class OneClick extends MoreClickUtil{
 				recursionFlag = false;
 				element = elements1.get(i);
 				try {
-					WebDriverWait wait = new WebDriverWait(driver, 10);
-					wait.until(ExpectedConditions.elementToBeClickable(element));
-					element.click();
+//					WebDriverWait wait = new WebDriverWait(driver, 2);
+//					wait.until(ExpectedConditions.elementToBeClickable(element));
+//					element.click();
+					((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
 				} catch (Exception e) {
 					LOG.error("链接{}第一次点击事件有误！", url);
 					e.printStackTrace();
@@ -104,7 +108,7 @@ public class OneClick extends MoreClickUtil{
 		recursionFlag = true;
 		if ((!recursionFlag) || (i != firstSize - 1)) {
 //			点击后获取的字段值，在此获取
-			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap);
+			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initI.incrementAndGet()-1, spiderRuleInfo.getSecondClickFlag());
 //			递归			
 			oneClick(list, driver, initI, recursionFlag, menuRuleArray);
 		}
@@ -112,7 +116,7 @@ public class OneClick extends MoreClickUtil{
 		if (endInt.get() == 0) {
 			if (i == firstSize - 1) {
 				LOG.info("{}链接最后一次点击入库！", url);
-				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap);
+				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initI.incrementAndGet()-1, spiderRuleInfo.getSecondClickFlag());
 				endInt.incrementAndGet();
 			}
 		}
