@@ -41,8 +41,8 @@ public class ChromeLieTest {
 		ChromeDriver driver = new ChromeDriver(caps);
 		String url = "";
 //		url = "https://www.balenciaga.com/fr/homme/chaussures";
-//		url = "https://www.balenciaga.com/fr/femme/chaussures";
-		url = "https://www.balenciaga.com/fr/femme/chaussures#{%22ytosQuery%22:%22true%22,%22department%22:%22wmnccshs_micro%22,%22gender%22:%22D%22,%22season%22:%22A,P,E%22,%22yurirulename%22:%22searchwithdepartmentgallery%22,%22agerange%22:%22adult%22,%22page%22:%2230%22,%22productsPerPage%22:%2224%22,%22suggestion%22:%22false%22,%22facetsvalue%22:[],%22totalPages%22:%224%22,%22rsiUsed%22:%22false%22,%22totalItems%22:%2288%22,%22partialLoadedItems%22:%2224%22,%22itemsToLoadOnNextPage%22:%2224%22,%22departments%22:[{%22id%22:%22wmnccshs_micro%22,%22page%22:4}]}";
+		url = "https://www.balenciaga.com/fr/femme/chaussures";
+//		url = "https://www.balenciaga.com/fr/femme/chaussures#{%22ytosQuery%22:%22true%22,%22department%22:%22wmnccshs_micro%22,%22gender%22:%22D%22,%22season%22:%22A,P,E%22,%22yurirulename%22:%22searchwithdepartmentgallery%22,%22agerange%22:%22adult%22,%22page%22:%2230%22,%22productsPerPage%22:%2224%22,%22suggestion%22:%22false%22,%22facetsvalue%22:[],%22totalPages%22:%224%22,%22rsiUsed%22:%22false%22,%22totalItems%22:%2288%22,%22partialLoadedItems%22:%2224%22,%22itemsToLoadOnNextPage%22:%2224%22,%22departments%22:[{%22id%22:%22wmnccshs_micro%22,%22page%22:4}]}";
 		driver.get(url);
 		driver.manage().window().maximize();
 		CrackDspiderUtil.crackMask(driver, null);
@@ -61,7 +61,7 @@ public class ChromeLieTest {
 		List<WebElement> list = driver.findElements(By.xpath("//a[@class='item-display-image-container item-link']"));
 		System.out.println("list的长度为："+list.size());
 		
-		System.out.println("完毕");
+		System.out.println("完毕"+driver.getCurrentUrl());
 		
 		
 	}

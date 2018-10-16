@@ -109,7 +109,7 @@ public class SpSeleniumDownloader implements Downloader{
 //					查看更多
 				if(StrategyConstants.MORE.equals(nextPageFlagDe)) {
 					List<WebElement> elements = webDriver.findElements(By.cssSelector(nextPageTagDe));
-					webDriver = handleMore(url, nextPageTagDe, webDriver, elements);
+					webDriver = handleMore(url, nextPageTagDe, webDriver, elements, elements.size(), 0);
 					continue;
 				}
 				
@@ -200,15 +200,19 @@ public class SpSeleniumDownloader implements Downloader{
 	 * @param webDriver
 	 * @return 
 	 */
-	private RemoteWebDriver handleMore(String url, String nextPageTagDe, RemoteWebDriver webDriver, List<WebElement> elements) {
+	private RemoteWebDriver handleMore(String url, String nextPageTagDe, RemoteWebDriver webDriver, List<WebElement> elements, int size, int i) {
 		try {
-			if(elements!=null&&elements.size()>0) {
-				WebElement ele = elements.get(0);
-				WebDriverWait wait = new WebDriverWait(webDriver, 1);
-				wait.until(ExpectedConditions.elementToBeClickable(ele));
-				ele.click();
-				elements = webDriver.findElements(By.cssSelector(nextPageTagDe));
-				webDriver = handleMore(url,nextPageTagDe,webDriver,elements);
+			if(i<size) {
+				try {
+					WebElement element = webDriver.findElement(By.cssSelector("#SearchboxReset > span.icn.icn-close"));
+					((JavascriptExecutor)webDriver).executeScript("arguments[0].click()", element);
+				} catch (Exception e) {
+					System.err.println("执行多余的X号！"+e.getMessage());
+				}
+				WebElement ele = elements.get(i);
+				((JavascriptExecutor)webDriver).executeScript("arguments[0].click()", ele);
+				i++;
+				webDriver = handleMore(url,nextPageTagDe,webDriver,elements,size,i);
 			}
 		} catch (Exception e) {
 			LOG.error("点击更多处理有误！"+e.getMessage());
