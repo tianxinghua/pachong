@@ -36,12 +36,13 @@ import java.util.*;
  */
 @Component("gebnegozioOrderImpl")
 public class GebnegozioServiceImpl implements IOrderService {
+    String url="https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/";
+    String tokenUrl = url + "integration/customer/token";
     Gson gson = new Gson();
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logger = Logger.getLogger("info");
     @Autowired
     LogCommon logCommon;
-
     @Autowired
     SupplierProperties supplierProperties;
     @Autowired
@@ -50,13 +51,13 @@ public class GebnegozioServiceImpl implements IOrderService {
     private HubSupplierSkuGateWay hubSupplierSkuGateWay;
     @Autowired
     private HubSupplierSpuGateWay hubSupplierSpuGateWay;
-   String url = null;
-    String tokenUrl = null;
+   //String url = null;
+    //String tokenUrl = null;
 
     @PostConstruct
     public void init(){
-        url = supplierProperties.getGebnegozio().getUrl();
-        tokenUrl = supplierProperties.getGebnegozio().getTokenUrl();
+        //url = supplierProperties.getGebnegozio().getUrl();
+        //tokenUrl = supplierProperties.getGebnegozio().getTokenUrl();
     }
 
     /**
@@ -79,6 +80,7 @@ public class GebnegozioServiceImpl implements IOrderService {
         int qty = 0;
         String detail = orderDTO.getDetail();
         skuId = detail.split(":")[0];
+        if(skuId.contains("\\\\")){skuId = skuId.replaceAll("\\\\\\\\", "\\\\");}
         qty = Integer.parseInt(detail.split(":")[1]);
         String reqQuoteUrl = url + "carts/mine";
 
@@ -91,11 +93,14 @@ public class GebnegozioServiceImpl implements IOrderService {
 
             //第二步：获取购物车ID quoteId
             HashMap<String,String> httpResponse1 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,reqQuoteUrl, null, header, null);
-            String quoteId = httpResponse1.get("resBody");
-
-            String stockData = selStock( skuId, token );
-            //如果库存大于0,则下单
-            if( Integer.valueOf(stockData)>0 ){
+            if( httpResponse1.get("code").equals("200")){
+                String quoteId = httpResponse1.get("resBody");
+                if(null != quoteId && !quoteId.equals("")){
+                    quoteId = quoteId.substring( 1, quoteId.length()-1 );//取到的值有引号，去掉引号
+                }
+                String stockData = selStock( skuId, token );
+                //如果库存大于0,则下单
+               if( Integer.valueOf(stockData)>0 ){
                 //第三步：添加商品到购物车 先不区分 simple 和 configurable
                 String addToCartUrl = url + "carts/mine/items";
                 //处理颜色和尺码
@@ -109,7 +114,7 @@ public class GebnegozioServiceImpl implements IOrderService {
                 String usrSelectSize = hubSupplierSkuDtos.get(0).getSupplierSkuSize();//用户选择的产品的尺码，根据sku去库里查对应的颜色
                 Long supplierSpuId = hubSupplierSkuDtos.get(0).getSupplierSpuId();
                 //根据sku查颜色--------------------------------------------------
-                HubSupplierSpuCriteriaDto spuCriteriaDto = new HubSupplierSpuCriteriaDto();
+               HubSupplierSpuCriteriaDto spuCriteriaDto = new HubSupplierSpuCriteriaDto();
                 HubSupplierSpuCriteriaDto.Criteria spuCriteria = spuCriteriaDto.createCriteria();
                 if(null != skuId && StringUtils.isNotBlank(skuId)){
                     spuCriteria.andSupplierSpuIdEqualTo(supplierSpuId).andSupplierIdEqualTo("2018061101883");
@@ -117,7 +122,7 @@ public class GebnegozioServiceImpl implements IOrderService {
                 List<HubSupplierSpuDto> hubSupplierSpuDtos = hubSupplierSpuGateWay.selectByCriteria(spuCriteriaDto);
                 String usrSelectColor = hubSupplierSpuDtos.get(0).getSupplierSpuColor();//用户选择的产品的颜色，根据sku去库里查对应的颜色
                 //封装请求参数
-                List<String> sizeOptList = selSizeAndColorOpt(usrSelectSize,"size",token);
+              List<String> sizeOptList = selSizeAndColorOpt(usrSelectSize,"size",token);
                 List<String> colorOptList = selSizeAndColorOpt(usrSelectColor,"color",token);
                 CartItem cartItem = new CartItem();//可配置产品
                 ProductOption productOption = new ProductOption();
@@ -130,6 +135,8 @@ public class GebnegozioServiceImpl implements IOrderService {
                 cartItem.setQty(qty);
                 cartItem.setQuoteId(quoteId);
 
+                /*configurableItemOptions1.setOptionId("178");
+                configurableItemOptions1.setOptionValue("8354");*/
                 configurableItemOptions1.setOptionId(sizeOptList.get(0));
                 configurableItemOptions1.setOptionValue(sizeOptList.get(1));
                 configurableItemOptions2.setOptionId(colorOptList.get(0));
@@ -139,71 +146,115 @@ public class GebnegozioServiceImpl implements IOrderService {
                 extensionAttributes.setConfigurableItemOptions(configurableItemOptions);
                 productOption.setExtensionAttributes(extensionAttributes);
                 cartItem.setProductOption(productOption);
-                String cartJson = gson.toJson(CartItem.class);
+                CartRequ cartRequ = new CartRequ();
+                cartRequ.setCartItem(cartItem);
+                String cartJson = gson.toJson(cartRequ);
                 //发送请求
                 HashMap<String,String> httpResponse2 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,addToCartUrl, null, header, cartJson);
-
+                if(httpResponse2.get("code").equals("200")){
                 //第四步：提供地址，估计运费
                 String estimateCostsUrl = url + "carts/mine/estimate-shipping-methods";
-                String addressJson = gson.toJson(getAddredd(quoteId));
+                AddressRequ addressRequ = new AddressRequ();
+                addressRequ.setAddress(getAddredd(quoteId));
+                String addressJson = gson.toJson(addressRequ);
                 HashMap<String,String> httpResponse3 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,estimateCostsUrl, null, header, addressJson);
+                if(httpResponse3.get("code").equals("200")) {
+                    //返回运输方式和运费
+                    String carrierJson = httpResponse3.get("resBody");
+                    List<CarrierDTO> carrierList = gson.fromJson(carrierJson, new TypeToken<List<CarrierDTO>>() {
+                    }.getType());
 
-                //返回运输方式和运费
-                String carrierJson = httpResponse3.get("resBody");
-                List<CarrierDTO> carrierList = gson.fromJson(carrierJson, new TypeToken<List<CarrierDTO>>() {}.getType());
+                    //第五步：设置发货和账单信息
+                    String shopInfoUrl = url + "carts/mine/shipping-information";
+                    AddressInfoRequ addressInfoRequ = new AddressInfoRequ();
+                    addressInfoRequ.setAddressInformation(getAddressInfo(quoteId, carrierList));
+                    String addressInfoJson = gson.toJson(addressInfoRequ);
+                    HashMap<String, String> httpResponse4 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost, shopInfoUrl, null, header, addressInfoJson);
+                    if(httpResponse4.get("code").equals("200")) {
+                        String paymentJson = httpResponse4.get("resBody");
+                        PaymentDTO paymentDTO = gson.fromJson(paymentJson, PaymentDTO.class);
 
-                //第五步：设置发货和账单信息
-                String shopInfoUrl = url + "carts/mine/shipping-information";
-                String addressInfoJson = gson.toJson( getAddressInfo( quoteId, carrierList ) );
-                HashMap<String,String> httpResponse4 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,estimateCostsUrl, null, header, addressJson);
-                String paymentJson = httpResponse4.get("resBody");
-                PaymentDTO paymentDTO = gson.fromJson( paymentJson,PaymentDTO.class );
+                        //第六步：发送支付信息
+                        String payInfoUrl = url + "carts/mine/payment-information";
+                        ReqOrder reqOrder = new ReqOrder();
+                        reqOrder.setBillingAddress(getAddredd(quoteId));
+                        reqOrder.setPaymentMethod(getPayMethod());
+                        String reqOrderJson = gson.toJson(reqOrder);
+                        HashMap<String, String> httpResponse5 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost, payInfoUrl, null, header, reqOrderJson);
+                        if(httpResponse5.get("code").equals("200")) {
+                            String orderId = httpResponse5.get("resBody");
+                            System.out.println("订单号："+ orderId);
+                            logger.info("订单号："+ orderId);
+                            if(null != orderId && !orderId.equals("")){orderId = orderId.substring( 1, orderId.length()-1 );}
+                            //第七步：确认订单-------------------------没权限呐、好无语，后面的可怎么整
+                            /*String reqUrl = url + "orders/" + orderId;
+                            HashMap<String, String> httpResponse = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet, reqUrl, null, header, null);
+                            String resBody = httpResponse.get("resBody");
+                            int code = Integer.valueOf(httpResponse.get("code"));
+                            String message = httpResponse.get("message");
+                            logger.info("responseCode：" + code);
+                            logger.info("responseMessage：" + message);
+                            logger.info("responseBody：" + resBody);
 
-                //第六步：发送支付信息
-                String payInfoUrl = url + "carts/mine/payment-information";
-                ReqOrder reqOrder = new ReqOrder();
-                reqOrder.setBillingAddress( getAddredd( quoteId ) );
-                reqOrder.setPaymentMethod( getPayMethod() );
-                String reqOrderJson = gson.toJson( reqOrder );
-                HashMap<String,String> httpResponse5 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,payInfoUrl, null, header, reqOrderJson);
-                String orderId = httpResponse5.get("resBody");
+                            ResponseObject obj = new Gson().fromJson(resBody, ResponseObject.class);*/
+                            orderDTO.setConfirmTime(new Date());
+                            orderDTO.setSupplierOrderNo(orderId);
 
-                //第七步：确认订单
-                String reqUrl = url+"orders/" + orderId;
-                HashMap<String,String> httpResponse = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,reqUrl, null, header, null);
+                            String resBody = httpResponse5.get("resBody");
+                            int code = Integer.valueOf(httpResponse5.get("code"));
+                            String message = httpResponse5.get("message");
+                            logger.info("responseCode：" + code);
+                            logger.info("responseMessage：" + message);
+                            logger.info("responseBody：" + resBody);
 
-                String resBody = httpResponse.get("resBody");
-                int code = Integer.valueOf( httpResponse.get("code") );
-                String message = httpResponse.get("message");
-                logger.info( "responseCode：" + code );
-                logger.info( "responseMessage：" + message );
-                logger.info( "responseBody：" + resBody );
+                            if (code == 200) {
+                                if (null != resBody&& !resBody.equals("")) {
+                                   // if ("processing".equals(obj.getStatus().toLowerCase())) {
+                                        orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+                                    //}
+                                }
+                            } else if (code == 400) {
+                                FailResult fail = new Gson().fromJson(message, FailResult.class);
+                                Errors error = fail.getMessages().getError().get(0);
+                                orderDTO.setDescription(error.getMessage());
+                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                                orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                            } else if (code == 500) {
+                                FailResult fail = new Gson().fromJson(message, FailResult.class);
+                                Errors error = fail.getMessages().getError().get(0);
+                                orderDTO.setDescription(error.getMessage());
+                                orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                            } else {
+                                orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                            }
 
-                ResponseObject obj = new Gson().fromJson(resBody, ResponseObject.class);
-                orderDTO.setConfirmTime(new Date());
-                orderDTO.setSupplierOrderNo( orderId );
-                if(code==200){
-                    if(obj!=null){
-                        if("processing".equals(obj.getStatus().toLowerCase())){
-                            orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+                        }else {
+                            logger.info("发送支付信息的时候发生异常：" + httpResponse5.get("message"));
+                            logger.info("详细错误信息："+httpResponse5.get("resBody"));
+                            System.out.println("发送支付信息的时候发生异常：" + httpResponse5.get("message"));
                         }
+                    }else {
+                        logger.info("设置发货和账单信息的时候发生异常：" + httpResponse4.get("message"));
+                        logger.info("详细错误信息："+httpResponse4.get("resBody"));
+                        System.out.println("设置发货和账单信息的时候发生异常：" + httpResponse4.get("message"));
                     }
-                }else if(code==400){
-                    FailResult fail = new Gson().fromJson(message, FailResult.class);
-                    Errors error = fail.getMessages().getError().get(0);
-                    orderDTO.setDescription(error.getMessage());
-                    orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                    orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                }else if(code==500){
-                    FailResult fail = new Gson().fromJson(message, FailResult.class);
-                    Errors error = fail.getMessages().getError().get(0);
-                    orderDTO.setDescription(error.getMessage());
-                    orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                    orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                }else{
-                    orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                    orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                }else {
+                    logger.info("提供地址，估计运费的时候发生异常：" + httpResponse3.get("message"));
+                    logger.info("详细错误信息："+httpResponse3.get("resBody"));
+                    System.out.println("提供地址，估计运费的时候发生异常：" + httpResponse3.get("message"));
                 }
+                }else {
+                    logger.info("添加商品到购物车的时候发生异常：" + httpResponse2.get("message"));
+                    logger.info("详细错误信息："+httpResponse2.get("resBody"));
+                    System.out.println("添加商品到购物车的时候发生异常：" + httpResponse2.get("message"));
+                }
+            }else{
+                logger.info("获取购物车ID的时候发生异常：" + httpResponse1.get("message"));
+                logger.info("详细错误信息："+httpResponse1.get("resBody"));
+                System.out.println("获取购物车ID的时候发生异常：" + httpResponse1.get("message"));
+            }
             }else{
                 orderDTO.setConfirmTime(new Date());
                 orderDTO.setPushStatus(PushStatus.NO_STOCK);
@@ -328,6 +379,7 @@ public class GebnegozioServiceImpl implements IOrderService {
      *  获取token
      */
     public String selToken(){
+        String token = "";
         // 存储相关的header值
         Map<String,String> header = new HashMap<String, String>();
         header.put("Content-Type", "application/json");
@@ -335,9 +387,15 @@ public class GebnegozioServiceImpl implements IOrderService {
         String json = "{\"username\":\"ming.liu@shangpin.com\",\"password\":\"Ex7n4AQ5\"}";
         //返回值响应对象
         HashMap<String,String> httpResponse = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,tokenUrl, null, header, json);
-        String response = httpResponse.get("resBody");
-        String token = response.substring( 1, response.length()-1 );
-        return token;
+        if(httpResponse.get("code").equals("200")){
+            String response = httpResponse.get("resBody");
+            token = response.substring( 1, response.length()-1 );
+            return token;
+        }else {
+            logger.info("获取token异常：" + httpResponse.get("message"));
+            selToken();
+            return token;
+        }
     }
     /**
      *  填充地址
@@ -395,6 +453,9 @@ public class GebnegozioServiceImpl implements IOrderService {
         String qty = "0";
         if ( null != sku && !sku.equals("") ){
             try {
+                if(sku.contains("\\\\")) {
+                    sku = sku.replaceAll("\\\\\\\\", "\\\\");
+                }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String stockUrl = url + "stockStatuses/" + urlStr;
                 HashMap<String,String> stockJson = selMessage(token , stockUrl);
@@ -465,7 +526,9 @@ public class GebnegozioServiceImpl implements IOrderService {
         orderDTO.setSpOrderId("181011");
         orderDTO.setDetail("1\\\\4\\\\3\\\\3586\\\\382465\\\\0:1");
         orderDTO.setSupplierId("2018061101883");
-        gebnegozioService.handleConfirmOrder(orderDTO);
+        orderDTO.setSupplierOrderNo("225");
+        //gebnegozioService.handleConfirmOrder(orderDTO);
+        gebnegozioService.handleRefundlOrder(orderDTO);
     }
 
 

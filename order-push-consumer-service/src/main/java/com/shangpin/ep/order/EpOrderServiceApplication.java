@@ -1,5 +1,6 @@
 package com.shangpin.ep.order;
 
+import com.shangpin.ep.order.conf.client.ClientConf;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
@@ -17,10 +18,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author yanxiaobin
  * @date 2016年11月9日 上午11:06:26
  */
-@SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
+@SpringBootApplication
+@EnableDiscoveryClient
+@EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)
 @EnableScheduling
-@EnableFeignClients(value = "com.shangpin.ephub")
-@ComponentScan(basePackages={"com.shangpin"})
 public class EpOrderServiceApplication {
 
 	public static void main(String[] args) {

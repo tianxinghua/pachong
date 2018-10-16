@@ -10,5 +10,5 @@ import lombok.Setter;
 @Setter
 public class CustomAttributes {
     private String attribute_code;
-    private String value;
+    private Object value;
 }

@@ -9,18 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by zhaowenjun on 2018/9/13.
+ * Created by zhaowenjun on 2018/9/29.
  */
 @Getter
 @Setter
-public class ResponseObject {
-    @SerializedName("state")
+public class OptionsConf {
+    @SerializedName("attribute_id")
     @Expose
-    private String state;
-    @SerializedName("status")
+    private String attributeId;
+    @SerializedName("options")
     @Expose
-    private String status;
-    @SerializedName("items")
-    @Expose
-    private List<GebItems> items ;
+    private List<Options> options = new ArrayList<Options>();
 }
