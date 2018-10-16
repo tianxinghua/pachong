@@ -40,11 +40,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component("gebnegozioHandler")
 @Slf4j
 public class GebnegozioHandle implements ISupplierHandler {
-    public static final String POST_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token";
-    public static final String ATTRIBUTE_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/attributes/";
-    public static final String STOCK_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/stockStatuses/";
-    public static final String CATEGORY_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/categories/";
-    public static final String PRODUCT_DETAIL_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/";
+    public static final String EGB_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/";
+    public static final String POST_URL = EGB_URL + "integration/customer/token";
+    public static final String ATTRIBUTE_URL = EGB_URL + "products/attributes/";
+    public static final String STOCK_URL = EGB_URL + "stockStatuses/";
+    public static final String CATEGORY_URL = EGB_URL + "categories/";
+    public static final String PRODUCT_DETAIL_URL = EGB_URL + "products/";
+    public static Map<String,String> sizeMap = new HashMap<String,String>();
+    public static Map<String,String> colorMap = new HashMap<String,String>();
+    public static Map<String,String> designerMap = new HashMap<String,String>();
+    public static Map<String,String> genderMap = new HashMap<String,String>();
+    public static Map<String,String> seasonMap = new HashMap<String,String>();
     Gson gson = new Gson();
     @Autowired
     private SupplierProductSaveAndSendToPending supplierProductSaveAndSendToPending;
@@ -304,37 +310,65 @@ public class GebnegozioHandle implements ISupplierHandler {
      *  //如果是 color 、size 、description 、 gender ，还要根据value 值去取真正的颜色；如果是 description ，直接返回 value 值
      */
     public String selProductAttributeDetil(String attributeCode , String token , String attributeValue){
+        String finalAttribute = null;
+        String url = ATTRIBUTE_URL + attributeCode;
         List<String> getValueAttr = new ArrayList<String>();
         getValueAttr.add("color");
         getValueAttr.add("size");
         getValueAttr.add("designer");
         getValueAttr.add("gender");
         getValueAttr.add("season");
-
-        List<String> returnValueAttr = new ArrayList<String>();
-        returnValueAttr.add("description");
-        returnValueAttr.add("image");
-        returnValueAttr.add("modello");
-
-        String finalAttribute = null;
-        String url = ATTRIBUTE_URL + attributeCode;
         if( getValueAttr.contains(attributeCode) ){
-            String colorJson = selMessage(token , url);
-            if (null != colorJson && !colorJson.equals("")){
-                ColorDTO colorDTO = gson.fromJson(colorJson , ColorDTO.class);
-                List<ColorOptions> colorOptionsList = colorDTO.getOptions();
-                if (null != colorOptionsList && !colorOptionsList.isEmpty()){
-                    for (ColorOptions colorOptions : colorOptionsList) {
-                        if (colorOptions.getValue().equals(attributeValue)){
-                            finalAttribute = colorOptions.getLabel();
-                            break;
+            switch (attributeCode){
+                case "color":
+                    finalAttribute = selAttrDetails(token,url,attributeValue,finalAttribute, colorMap);
+                    break;
+                case "size":
+                    finalAttribute = selAttrDetails(token,url,attributeValue,finalAttribute, sizeMap);
+                    break;
+                case "designer":
+                    finalAttribute = selAttrDetails(token,url,attributeValue,finalAttribute, designerMap);
+                    break;
+                case "gender":
+                    finalAttribute = selAttrDetails(token,url,attributeValue,finalAttribute, genderMap);
+                    break;
+                case "season":
+                    finalAttribute = selAttrDetails(token,url,attributeValue,finalAttribute, seasonMap);
+                    break;
+            }
+        }else{
+            finalAttribute = attributeValue;
+        }
+        return finalAttribute;
+    }
+
+    /**
+     *
+     * @param token
+     * @param url
+     * @param attributeValue
+     * @param finalAttribute
+     * @param attrMap
+     */
+    public String selAttrDetails(String token,String url,String attributeValue,String finalAttribute,Map<String,String> attrMap){
+
+            if(attrMap.containsKey(attributeValue)){
+                finalAttribute = attrMap.get(attributeValue);
+            }else {
+                String colorJson = selMessage(token , url);
+                if (null != colorJson && !colorJson.equals("")){
+                    ColorDTO colorDTO = gson.fromJson(colorJson , ColorDTO.class);
+                    List<ColorOptions> colorOptionsList = colorDTO.getOptions();
+                    if (null != colorOptionsList && !colorOptionsList.isEmpty()){
+                        for (ColorOptions colorOptions : colorOptionsList) {
+                            if (colorOptions.getValue().equals(attributeValue)){
+                                finalAttribute = colorOptions.getLabel();
+                                attrMap.put(attributeValue,finalAttribute);
+                            }
                         }
                     }
                 }
             }
-        }else/* if( returnValueAttr.contains(attributeCode) )*/{
-            finalAttribute = attributeValue;
-        }
         return finalAttribute;
     }
     /**
@@ -346,7 +380,7 @@ public class GebnegozioHandle implements ISupplierHandler {
         List<String> sizeList = null;
         if(null != sku && !sku.equals("") && null != token && !token.equals("")){
             String urlStr = URLEncoder.encode(sku , "UTF-8");
-            String urlOri = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/products/";
+            String urlOri = PRODUCT_DETAIL_URL;
             String url = urlOri + urlStr;
 
             String sizeJson = selMessage(token , url);
