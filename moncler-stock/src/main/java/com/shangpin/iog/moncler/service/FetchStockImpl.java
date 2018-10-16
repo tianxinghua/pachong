@@ -7,6 +7,7 @@ import com.shangpin.iog.utils.HttpUtils;
 import com.shangpin.openapi.api.sdk.client.OutTimeConfig;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.Header;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,9 +15,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,6 +40,7 @@ public class FetchStockImpl {
     private static String supplierId = "",supplierNo = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
 
     private static OutputStreamWriter  out= null;
+    private static OutputStreamWriter  priceOut= null;
     static String splitSign = ",";
     //库存csv 文件存放目录
     private static String filePath="";
@@ -41,7 +49,7 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "1";
+    private static final String IN_STOCK = "5";
     //无库存
     private static final String NO_STOCK = "0";
     //渠道
@@ -49,6 +57,8 @@ public class FetchStockImpl {
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
+
+    private boolean flag = true;
 
     static {
         if (null == bdl){
@@ -88,10 +98,12 @@ public class FetchStockImpl {
         String todayStr = simpleDateFormat.format(new Date());
 
         String temFilePath = filePath + "moncler-qty-"+todayStr+".csv";
+        String priceFilePath = filePath + "moncler-price-"+todayStr+".csv"; //发送价格变动邮件的文件
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
         try {
             out = new OutputStreamWriter(new FileOutputStream(temFilePath, true),"gb2312");
+            priceOut = new OutputStreamWriter(new FileOutputStream(priceFilePath, true),"gb2312");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,8 +112,17 @@ public class FetchStockImpl {
                 "spSkuNO" + splitSign +
                         "qty" + splitSign
         ).append("\r\n");
+        StringBuffer priceBuffer = new StringBuffer(
+                "supplierId" + splitSign +
+                        "spSkuNO" + splitSign +
+                        "oldPrice" + splitSign +
+                        "newPrice" + splitSign+
+                        "productUrl" + splitSign
+
+        ).append("\r\n");
         try {
             out.write(buffer.toString());
+            priceOut.write(priceBuffer.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,7 +160,13 @@ public class FetchStockImpl {
         for (int i = 0; i < failedSpSkuNoSize; i++) {
             repeatSolveFailedSpSkuNo(failedSpSkuNoList.get(i));
         }
-
+        //关流
+        try {
+            out.close();
+            priceOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String endtDateTime = format.format(new Date());
         logger.info("===================拉取MONCLER库存数据结束 "+endtDateTime+"=========================");
         System.out.println("=================拉取MONCLER库存数据结束 "+endtDateTime+"=========================");
@@ -210,10 +237,10 @@ public class FetchStockImpl {
      */
     public static void exportQtyInfoForProductList(List<ProductDTO> productDTOAllList){
         for (ProductDTO productDTO:productDTOAllList) {
-            boolean flag = solveProductQty(productDTO);
-            if(!flag){
-                repeatSolveFailProductQty(productDTO);
-            }
+                boolean flag = solveProductQty(productDTO);
+                if(!flag){
+                    repeatSolveFailProductQty(productDTO);
+                }
         }
     }
 
@@ -302,7 +329,7 @@ public class FetchStockImpl {
                 }
                 byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
                 String UTFSpace = new String(bytes,"utf-8");
-                price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","");
+                price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","").replace(" ","");
                 /**
                  *   处理商品 的尺码 以及 库存信息
                  */
@@ -317,13 +344,21 @@ public class FetchStockImpl {
                             Element sizeElement = temSizeElements.get(i);
                             //获取具体的尺码信息  第一个为请选择尺码故不要
                             String temElementSizeName = sizeElement.attr("value").trim();
+                            String disabledFlage = sizeElement.attr("class").trim(); //判断是否有无库存和是否可用
                             String spSizeName = skuDTO.getSize();
                             if(!temElementSizeName.equals(spSizeName)){
+                                if(i == pageSize -1 ){
+                                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(),NO_STOCK);
+                                    continue;
+                                }
                                 continue;
                             }
                             String sizeNameText=sizeElement.text();
                             String temQty="";
-                            if(sizeNameText.contains("Sold out")){
+                            //class中为空肯定是有库存的，class中有is-disabled和is-lastItem则视为无库存，class中为is-limitedAvailability是低库存也视为有库存
+                            if(StringUtils.isEmpty(disabledFlage)){
+                                temQty = IN_STOCK;
+                            }else if(disabledFlage.contains("is-disabled") || disabledFlage.contains("is-lastItem")){
                                 temQty = NO_STOCK;//0无 1
                             }else{
                                 temQty = IN_STOCK;
@@ -334,13 +369,15 @@ public class FetchStockImpl {
                                 float spMarketPrice = Float.parseFloat(marketPrice);
                                 if(temElementPrice!=spMarketPrice){ //价格发生改变
                                     updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price,CHANNEL);
+                                    //价格变动将信息写入csv用来发送邮件
+                                    exportSpSkunoAndPrice(supplierId,skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice,productUrl);
                                     logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                     System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                 }
                             }else{
                                 loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
                             }
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+                            //exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
                             break;
                         }
                     }
@@ -359,6 +396,7 @@ public class FetchStockImpl {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
         //每一款商品休息2s
 //        try {
@@ -482,6 +520,7 @@ public class FetchStockImpl {
         }
     }
 
+    //--------------------------------------------邮件相关  开始----------------------------------------
     /**
      * 导出 商品skuNo 和 qty 信息
      * @param spSkuNo 尚品skuNo
@@ -495,29 +534,166 @@ public class FetchStockImpl {
             buffer.append(qty).append(splitSign);
             buffer.append("\r\n");
             out.write(buffer.toString());
-            System.out.print("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
+            System.out.println("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
             logger.info("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
             logger.info(buffer.toString());
             out.flush();
         } catch (Exception e) {
         }
     }
+    /**
+     * 导出 商品skuNo 和 qty 信息
+     * @param spSkuNo 尚品skuNo
+     * @param oldPrice 库中价格
+     *  @param newPrice doc价格
+     */
+    private static void exportSpSkunoAndPrice(String supplierId,String spSkuNo, Float oldPrice,Float newPrice,String productUrl) {
+        //继续追加
+        StringBuffer buffer = new StringBuffer();
+        try {
+            buffer.append(supplierId).append(splitSign);
+            buffer.append(spSkuNo).append(splitSign);
+            buffer.append(oldPrice).append(splitSign);
+            buffer.append(newPrice).append(splitSign);
+            buffer.append(productUrl).append(splitSign);
+            buffer.append("\r\n");
+            priceOut.write(buffer.toString());
+            System.out.println("spSkuNo:"+spSkuNo+" newPrice:"+newPrice+"|");
+            logger.info("spSkuNo:"+spSkuNo+" newPrice:"+newPrice+"|");
+            logger.info(buffer.toString());
+            priceOut.flush();
+        } catch (Exception e) {
+        }
+    }
 
+    //发送邮件
+    public static void sendMail(){
+
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props);
+        Message message = new MimeMessage(session);
+        try
+        {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String todayStr = simpleDateFormat.format(new Date());
+            long dayTime = 1000*3600*24l;
+            Date yesterDate = new Date(new Date().getTime() - dayTime);
+            String yesterdayDateStr = simpleDateFormat.format(yesterDate);
+            message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"变动价格的商品信息");
+            message.setFrom(new InternetAddress("yuanwen.ma@shangpin.com"));
+            message.setRecipient(Message.RecipientType.TO, new InternetAddress("sophia.huo@shangpin.com"));
+            //设置抄送人
+            message.setRecipient(Message.RecipientType.CC, new InternetAddress("yuanwen.ma@shangpin.com"));
+            Multipart multipart = new MimeMultipart();
+            //实例化一个bodypart用于封装内容
+            BodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setContent("<font color='red'>价格变动的商品信息，见附件</font>","text/html;charset=utf8");
+            //添加bodypart到multipart
+            multipart.addBodyPart(bodyPart);
+            //每一个部分实例化一个bodypart，故每个附件也需要实例化一个bodypart
+            bodyPart = new MimeBodyPart();
+
+            //实例化DataSource(来自jaf)，参数为文件的地址
+            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"moncler-price-"+yesterdayDateStr+".csv");
+            //使用datasource实例化datahandler
+            DataHandler dataHandler = new DataHandler(dataSource);
+            bodyPart.setDataHandler(dataHandler);
+            //设置附件标题，使用MimeUtility进行名字转码，否则接收到的是乱码
+            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(yesterdayDateStr+"价格变动的商品信息.csv"));
+            multipart.addBodyPart(bodyPart);
+            message.setContent(multipart);
+            Transport transport = session.getTransport("smtp");
+            transport.connect("smtp.shangpin.com","yuanwen.ma@shangpin.com", "mayuanwen001");
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+            logger.info("===================发送邮件成功 =========================");
+            System.out.println("===================发送邮件成功 =========================");
+        }catch(Exception e) {
+            e.printStackTrace();
+            loggerError.error(" ===================发送邮件成功失败=========================");
+            System.out.println("===================发送邮件成功失败 =========================");
+        }
+    }
+
+    protected void getFileToEmail(){
+        if(flag) {
+            long dayTime = 1000 * 3600 * 24l;
+            Date yesterDate = new Date(new Date().getTime() - dayTime);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String yesterdayDateStr = simpleDateFormat.format(yesterDate);
+            String fileName = bdl.getString("csvFilePath") + "moncler-price-" + yesterdayDateStr + ".csv";
+            File file = new File(bdl.getString("csvFilePath") + "moncler-price-" + yesterdayDateStr + ".csv");
+            //生成的空文件只有列标题大小是50kb
+            if (file.length() > 50) {
+                sendMail();
+            } else {
+                deleteFile(fileName);
+                logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
+                System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
+            }
+            flag = false;
+        }
+    }
+
+    public static void deleteFile(String fileName) {
+        File file = new File(fileName);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                logger.info("删除临时文件成功,无价格变动不需要发送邮件通知！");
+                System.out.println("删除临时文件成功,无价格变动不需要发送邮件通知！");
+            } else {
+                logger.info("删除单个文件" + fileName + "失败！");
+                System.out.println("删除单个文件" + fileName + "失败！");
+            }
+        } else {
+            logger.info("删除单个文件失败：" + fileName + "不存在！");
+            System.out.println("删除单个文件失败：" + fileName + "不存在！");
+        }
+    }
+    //--------------------------------------------邮件相关  结束---------------------------------------
 
     public static void main(String[] args) {
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://store.moncler.com/fr-fr/blouson-aviateur_cod2243576767772724.html");
+        /*ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductUrl("https://store.moncler.com/fr-fr/bomber-jacket_cod7789028785197166.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
-        skuDTO.setSpSkuNo("30968589002");
-        skuDTO.setSize("U");
-        skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
-        skuDTO.setMarketPrice("350.0");
-        zhiCaiSkuResultList.add(skuDTO);
-        productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
-        solveProductQty(productDTO);
+        //skuDTO.setSpSkuNo("30968589002");
+        skuDTO.setSize("2");
+        //skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
+        skuDTO.setMarketPrice("1150.00");
 
+        zhiCaiSkuResultList.add(skuDTO);
+        //zhiCaiSkuResultList.add(skuDTO1);
+        productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
+        solveProductQty(productDTO);*/
+
+
+      /* try{
+        HttpResponse response = HttpUtils.get("https://store.moncler.com/fr-fr/coats_cod4146401443728061.html#dept=EU_teen-12-14-years-girl_AW");
+        if (response.getStatus()==200) {
+            String htmlContent = response.getResponse();
+            Document doc = Jsoup.parse(htmlContent);
+
+            //价格
+            String price = "";
+            Elements priceElements = doc.select("#container").select("div.hidden").select("span.value");
+            if(priceElements!=null&&priceElements.size()>0){
+                price = priceElements.first().text();
+                price = price.replace(",",".");
+            }
+            byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
+            String UTFSpace = new String(bytes,"utf-8");
+            price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","").replace(" ","");
+
+                System.out.println(price);
+
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
+
     }
 
 }

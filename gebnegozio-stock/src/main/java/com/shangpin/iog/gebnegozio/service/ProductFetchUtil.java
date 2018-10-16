@@ -21,8 +21,8 @@ import java.util.ResourceBundle;
  */
 @Component
 public class ProductFetchUtil {
-    public static final String STOCK_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/stockStatuses/";
-    public static final String POST_URL = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/integration/customer/token";
+    public static final String STOCK_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/stockStatuses/";
+    public static final String POST_URL = "https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token";
     private static Logger logger = Logger.getLogger("info");
     private static ResourceBundle bdl = null;
     private static String supplierId = "",usr="",pwd="",recordCount="",language="";
@@ -110,6 +110,9 @@ public class ProductFetchUtil {
         String qty = null;
         if ( null != sku && !sku.equals("") ){
             try {
+                if(sku.contains("\\\\")){
+                    sku = sku.replaceAll("\\\\\\\\","\\\\");
+                }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String url = STOCK_URL + urlStr;
                 String stockJson = selMessage(token , url);

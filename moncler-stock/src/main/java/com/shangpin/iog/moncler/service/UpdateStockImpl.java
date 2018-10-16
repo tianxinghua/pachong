@@ -38,6 +38,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static String updateSpSkuUrl = "";
 
     static String splitSign = ",";
+
     //库存csv 文件存放目录
     private static String filePath="";
 
@@ -46,6 +47,8 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
     private static List<Map<String, Integer>> filedIceStockMaps = null;
+
+    FetchStockImpl object=new  FetchStockImpl();
 
     static {
         if (null == bdl){
@@ -93,6 +96,9 @@ public class UpdateStockImpl extends FetchStockImpl {
         String endtDateTime = format.format(new Date());
         logger.info("===================更新MONCLER库存数据库结束 "+endtDateTime+"=========================");
         System.out.println("=================更新MONCLER库存数据库结束 "+endtDateTime+"=========================");
+
+        //调用发送邮件
+        object.getFileToEmail();
     }
 
     public static void main(String[] args) {
