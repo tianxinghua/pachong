@@ -1,23 +1,12 @@
 dependencies {
     compile(
-
+            "com.google.code.gson:gson:2.3.1",
             project(':project-common'),
             project(':openapi-ice'),
-            'dom4j:dom4j:1.6',
-            "enterprises.orbital:oauth:1.0.0",
-            "org.bouncycastle:bcprov-jdk15on:1.54",
+	        'dom4j:dom4j:1.6',
             "net.sourceforge.javacsv:javacsv:2.0",
-
-
+	    
     )
-    compile group: 'org.apache.xmlbeans', name: 'xmlbeans', version: '2.6.0'
-    compile group: 'org.apache.axis2', name: 'axis2-xmlbeans', version: '1.7.7'
-    compile('org.apache.axis2:axis2-kernel:1.7.4'){
-        exclude group: 'javax.servlet'
-    }
-    compile('org.apache.axis2:axis2-adb:1.7.2')
-    compile('org.apache.axis2:axis2-transport-local:1.7.2')
-    compile('org.apache.axis2:axis2-transport-http:1.7.2')
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
@@ -32,7 +21,11 @@ jar {
 //    }.join(' ')
 
     manifest {
-        attributes 'Main-Class': 'com.shangpin.iog.styleside.schedule.Startup'
+        attributes 'Main-Class': 'com.shangpin.iog.mcw.schedule.Startup'
 //       attributes 'Class-Path': '. ./conf/ ' +  manifestCp
     }
 }
+
+
+
+

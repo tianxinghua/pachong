@@ -237,10 +237,10 @@ public class FetchStockImpl {
      */
     public static void exportQtyInfoForProductList(List<ProductDTO> productDTOAllList){
         for (ProductDTO productDTO:productDTOAllList) {
-            boolean flag = solveProductQty(productDTO);
-            if(!flag){
-                repeatSolveFailProductQty(productDTO);
-            }
+                boolean flag = solveProductQty(productDTO);
+                if(!flag){
+                    repeatSolveFailProductQty(productDTO);
+                }
         }
     }
 
@@ -329,7 +329,7 @@ public class FetchStockImpl {
                 }
                 byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
                 String UTFSpace = new String(bytes,"utf-8");
-                price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","");
+                price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","").replace(" ","");
                 /**
                  *   处理商品 的尺码 以及 库存信息
                  */
@@ -377,7 +377,7 @@ public class FetchStockImpl {
                             }else{
                                 loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
                             }
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+                            //exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
                             break;
                         }
                     }
@@ -654,33 +654,46 @@ public class FetchStockImpl {
     //--------------------------------------------邮件相关  结束---------------------------------------
 
     public static void main(String[] args) {
-       /* ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductUrl("https://store.moncler.com/fr-fr/vestes_cod10045112022145303.html");
+        /*ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductUrl("https://store.moncler.com/fr-fr/bomber-jacket_cod7789028785197166.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
         //skuDTO.setSpSkuNo("30968589002");
-        skuDTO.setSize("11");
+        skuDTO.setSize("2");
         //skuDTO.setSupplierSkuNo("493117 X3I31 9169-U");
-        skuDTO.setMarketPrice("549");
+        skuDTO.setMarketPrice("1150.00");
 
         zhiCaiSkuResultList.add(skuDTO);
         //zhiCaiSkuResultList.add(skuDTO1);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
         solveProductQty(productDTO);*/
-       /*try{
-        HttpResponse response = HttpUtils.get("https://store.moncler.com/en-gb/outerwear_cod4230358016404633.html#dept=EU_kids-4-6-years-boy_AW");
+
+
+      /* try{
+        HttpResponse response = HttpUtils.get("https://store.moncler.com/fr-fr/coats_cod4146401443728061.html#dept=EU_teen-12-14-years-girl_AW");
         if (response.getStatus()==200) {
             String htmlContent = response.getResponse();
             Document doc = Jsoup.parse(htmlContent);
-            Elements temSizeElements = doc.select("#container").select("div.itemColorSize_size").select("div.HTMLSelectSizeSelector").select("select option");
 
-                System.out.println(temSizeElements);
+            //价格
+            String price = "";
+            Elements priceElements = doc.select("#container").select("div.hidden").select("span.value");
+            if(priceElements!=null&&priceElements.size()>0){
+                price = priceElements.first().text();
+                price = price.replace(",",".");
+            }
+            byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
+            String UTFSpace = new String(bytes,"utf-8");
+            price = price.replaceAll(UTFSpace, "&nbsp;").replaceAll("&nbsp;","").replace(" ","");
+
+                System.out.println(price);
 
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }*/
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
+
     }
 
 }

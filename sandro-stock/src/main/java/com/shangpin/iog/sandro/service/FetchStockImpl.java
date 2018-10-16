@@ -48,7 +48,7 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "5";
+    private static final String IN_STOCK = "10";
     //无库存
     private static final String NO_STOCK = "0";
 
@@ -316,24 +316,12 @@ public class FetchStockImpl {
                     if (price.contains("€")){
                         price= price.replace("€"," ");
                     }
-                    System.out.println("dsdadsada"+price);
                     //System.out.println("222222:"+price);
                     //price = price.replace(",",".");
                 }
 
 
-//                //sandro特价价格
-//                String price = "";
-//                Elements priceElements = doc.select("div.product-price").select("span.price-sales");
-//                if(priceElements!=null&&priceElements.size()>0){
-//                    price = priceElements.first().text();
-//                    if (price.contains("€")){
-//                        price= price.replace("€"," ");
-//                    }
 //
-//                    //System.out.println("222222:"+price);
-//                    //price = price.replace(",",".");
-//                }
 
 
                 byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
@@ -353,7 +341,6 @@ public class FetchStockImpl {
                         for (int i = 0; i <pageSize-1 ; i++) {
                             Element element = temSizeElements.get(i);
                             String temSizeName = element.text();
-                            //System.out.println("尺码："+temSizeName);
                             if(!spSizeName.equals(temSizeName)){
                                 continue;
                             }
@@ -365,30 +352,15 @@ public class FetchStockImpl {
                             }else if (s2.equals("remove-for-popin")){
                                 temQty = IN_STOCK;
                             }
-                            System.out.println("库存："+temQty);
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
-                            /*//获取具体的尺码信息  第一个为请选择尺码故不要
-                            String temElementSizeName = sizeElement.attr("value").trim();
-                            String spSizeName = skuDTO.getSize();
-                            if(!temElementSizeName.equals(spSizeName)){
-                                continue;
-                            }
-                            String sizeNameText=sizeElement.text();
-                            String temQty="";
-                            if(sizeNameText.contains("Sold out")){
-                                temQty = NO_STOCK;//0无 1
-                            }else{
-                                temQty = IN_STOCK;
-                            }*/
+                            //exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+
                             String marketPrice = skuDTO.getMarketPrice();
                             //System.out.println("33333:"+marketPrice);
                             if(marketPrice!=null){
                                 float temElementPrice = Float.parseFloat(price);
-                                //System.out.println("价格："+temElementPrice);
                                 float spMarketPrice = Float.parseFloat(marketPrice);
                                 if(temElementPrice!=spMarketPrice){ //价格发生改变
                                     updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
-                                    exportSpSkunoAndPrice("2018082802043",skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice,productUrl);
                                     logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                     System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                 }
@@ -396,6 +368,7 @@ public class FetchStockImpl {
                                 //logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
                                 loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
                             }
+                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
                             break;
                         }
                     }
@@ -573,7 +546,7 @@ public class FetchStockImpl {
             buffer.append(qty).append(splitSign);
             buffer.append("\r\n");
             out.write(buffer.toString());
-            System.out.print("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
+            System.out.println("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
             logger.info("spSkuNo:"+spSkuNo+" qty:"+qty+"|");
             logger.info(buffer.toString());
             out.flush();
@@ -701,5 +674,30 @@ public class FetchStockImpl {
 
 
     }
+    /*//获取具体的尺码信息  第一个为请选择尺码故不要
+                            String temElementSizeName = sizeElement.attr("value").trim();
+                            String spSizeName = skuDTO.getSize();
+                            if(!temElementSizeName.equals(spSizeName)){
+                                continue;
+                            }
+                            String sizeNameText=sizeElement.text();
+                            String temQty="";
+                            if(sizeNameText.contains("Sold out")){
+                                temQty = NO_STOCK;//0无 1
+                            }else{
+                                temQty = IN_STOCK;
+                            }*/
 
 }
+//sandro特价价格
+//                String price = "";
+//                Elements priceElements = doc.select("div.product-price").select("span.price-sales");
+//                if(priceElements!=null&&priceElements.size()>0){
+//                    price = priceElements.first().text();
+//                    if (price.contains("€")){
+//                        price= price.replace("€"," ");
+//                    }
+//
+//                    //System.out.println("222222:"+price);
+//                    //price = price.replace(",",".");
+//                }

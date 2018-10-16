@@ -49,10 +49,10 @@ public class FetchStockImpl extends AbsUpdateProductStock {
     public static void main(String[] args) {
         ProductFetchUtil productFetchUtil = new ProductFetchUtil();
         ArrayList<String> strings = new ArrayList<>();
-        strings.add("2000000031811");
-        strings.add("6000072976_600_01");
+        strings.add("1\\\\1\\\\1\\\\1\\\\274758\\\\0");
+        //strings.add("1\\1\\1\\1\\274758\\0");
         Map<String, String> productStock = productFetchUtil.getProductStock(strings);
-        String qty = productStock.get("2000000031811");
+        String qty = productStock.get("1\\\\1\\\\1\\\\1\\\\274758\\\\0");
         logger.info("库存为：" + qty);
         System.out.println("库存为：" + qty);
     }

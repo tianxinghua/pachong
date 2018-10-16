@@ -58,14 +58,5 @@ public class FetchStockSchedule {
 		t.start();
 	}
 
-
-	/**
-	 * 再次 推送商品库存信息 任务
-	 */
-	@SuppressWarnings("deprecation")
-	@Scheduled(cron="${secondUpdateJobsSchedule}")
-	public void secondUpdate(){
-		startUpdate();
-	}
 	
 }
