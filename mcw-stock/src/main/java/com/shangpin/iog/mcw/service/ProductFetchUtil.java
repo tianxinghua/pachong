@@ -1,20 +1,28 @@
-package com.shangpin.com.mcw.service;
+
+package com.shangpin.iog.mcw.service;
 
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.com.mcw.dto.CsvDTO;
-import com.shangpin.com.mcw.dto.SkuDTO;
-import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
 
+import com.shangpin.iog.mcw.dto.SkuDTO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shangpin.iog.common.utils.httpclient.OutTimeConfig;
+import com.shangpin.iog.mcw.dto.CsvDTO;
+
 
 /**
  * Created by wangchao on 2017/10/26.
  */
+
 @Component
 public class ProductFetchUtil {
 	private static Logger logger = Logger.getLogger("info");
@@ -35,7 +43,8 @@ public class ProductFetchUtil {
 	ObjectMapper mapper = new ObjectMapper();
 	OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
-	/**
+
+/**
 	 * 程序配置：
 	 * 拉取的时间、用户名、用户密码、fiter、每页拉取数、语言为配置文件控制
 	 * 时间配置 获取当前时间
@@ -43,6 +52,7 @@ public class ProductFetchUtil {
 	 * 程序的循环结束（while循环）标志：
 	 * 拉取的信息的 list size()为 0 的时候结束
 	 */
+
 	public  Map<String,String> getProductStock(Collection<String> skuNos) {
 		//定义供应商 skuNo （key） Quantita(value) Map集合
 		logger.info("===============Collection<String> skuNos size()================"+skuNos.size());
@@ -83,3 +93,4 @@ public class ProductFetchUtil {
 	}
 
 }
+

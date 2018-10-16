@@ -1,20 +1,25 @@
-package com.shangpin.com.mcw.service;
 
-import java.io.*;
+package com.shangpin.iog.mcw.service;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.csvreader.CsvReader;
 import org.apache.commons.lang.StringUtils;
+
+import com.csvreader.CsvReader;
+
 
 
 
 /**
  * Created by monkey on 2015/10/29.
  */
+
 public class DownloadAndReadCSV {
 
     public static <T> T fillDTO(T t,List<String> data){
@@ -29,17 +34,19 @@ public class DownloadAndReadCSV {
 		}
 		return t;
     }
-    /**
+
+/**
      * 填充csvDTO
      * @param clazz 要填充的类类型 
      * @param sep csv分隔符
      * @return 填充好的集合
      * @throws Exception
      */
+
     public static <T> List<T> readLocalCSV(Class<T> clazz,String sep) throws Exception {
         
 
-   		String realPaths="D://mcw.csv";
+   		String realPaths="/usr/local/appstock/mcw.csv";
    		//String realPaths="G:/test1.csv";
         String rowString = null;
 
@@ -68,3 +75,4 @@ public class DownloadAndReadCSV {
         return dtoList;
     }
 }
+

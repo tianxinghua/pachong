@@ -1,13 +1,17 @@
-package com.shangpin.com.mcw.schedule;
-
-import com.shangpin.com.mcw.service.FetchStockImpl;
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import org.springframework.stereotype.Component;
-
+package com.shangpin.iog.mcw.schedule;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.stereotype.Component;
+
+import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import com.shangpin.iog.mcw.service.FetchStockImpl;
 
 @Component
 public class Murder extends TimerTask{

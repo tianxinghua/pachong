@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -41,9 +42,9 @@ public class FetchStockImpl  {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "1";
+    private static  String IN_STOCK = "10";
     //无库存
-    private static final String NO_STOCK = "0";
+    private static  String NO_STOCK = "0";
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
@@ -65,6 +66,7 @@ public class FetchStockImpl  {
         filePath = bdl.getString("csvFilePath");
 
         uri = bdl.getString("uri");
+        IN_STOCK = bdl.getString("IN_STOCK");
 
     }
 
@@ -85,7 +87,13 @@ public class FetchStockImpl  {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "gucci-qty-"+todayStr+".csv";
+        String temFilePath = filePath + "gucci-qty-"+todayStr+"-1.csv";
+        File fristFile = new File(temFilePath);
+
+        if(fristFile.exists()){
+            temFilePath = filePath + "gucci-qty-"+todayStr+"-2.csv";
+        }
+
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
         try {
