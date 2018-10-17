@@ -93,7 +93,7 @@ public class ReflectTypeMap {
 	
 	private static String rgNum(String resultValue) {
 		resultValue = resultValue.replaceAll("\\s*", "");
-		Pattern compile = Pattern.compile("\\d*");
+		Pattern compile = Pattern.compile("\\d*[.]?\\d*");
 		Matcher matcher = compile.matcher(resultValue);
 		String rgValue = "";
 		while(matcher.find()) {
