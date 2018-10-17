@@ -10,9 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.shangpin.spider.common.Constants;
+import com.shangpin.spider.common.StrategyConstants;
 import com.shangpin.spider.config.SpringContextHolder;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
@@ -130,21 +129,33 @@ public class MyPageProcessor implements PageProcessor {
 				
 			} else if (GatherUtil.isLieUrl(url, spiderRuleInfo)) {
 				Set<String> links = new HashSet<String>();
-				List<String> all = page.getHtml().links().all();
-				for (String link : all) {
-					if (GatherUtil.isLieUrl(link, spiderRuleInfo) || GatherUtil.isDetailUrl(link, spiderRuleInfo)) {
+				List<String> all = null;
+				
+				if(StringUtils.isNotBlank(spiderRuleInfo.getDetailUrlStrategy())&&StringUtils.isNotBlank(spiderRuleInfo.getDetailUrlRules())){
+					if(spiderRuleInfo.getDetailUrlStrategy().equals(StrategyConstants.C)) {
+						all = page.getHtml().css(spiderRuleInfo.getDetailUrlRules()).links().all();
+					}else if(spiderRuleInfo.getDetailUrlStrategy().equals(StrategyConstants.X)) {
+						all = page.getHtml().xpath(spiderRuleInfo.getDetailUrlRules()).links().all();
+					}
+					for (String link : all) {
 						links.add(link);
 					}
-				}
-				// 如果页面包含iframe则也进行抽取
-				for (Element iframe : page.getHtml().getDocument().getElementsByTag("iframe")) {
-					final String src = iframe.attr("src");
-					// iframe抽取规则遵循设定的url正则
-					if (GatherUtil.isLieUrl(src, spiderRuleInfo) || GatherUtil.isDetailUrl(src, spiderRuleInfo)) {
-						links.add(src);
+				}else {
+					all = page.getHtml().links().all();
+					// 如果页面包含iframe则也进行抽取
+					for (Element iframe : page.getHtml().getDocument().getElementsByTag("iframe")) {
+						final String src = iframe.attr("src");
+						all.add(src);
+					}
+					for (String link : all) {
+						if (GatherUtil.isLieUrl(link, spiderRuleInfo) || GatherUtil.isDetailUrl(link, spiderRuleInfo)) {
+							links.add(link);
+						}
 					}
 				}
-				if (links != null && links.size() > 0) {
+				
+				
+				if (links != null && links.size() > 0) { 
 					for (String link : links) {
 						Request request = new Request(link);
 						request.setMethod("get");

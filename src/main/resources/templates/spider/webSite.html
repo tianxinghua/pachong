@@ -124,6 +124,10 @@
 					详情页链接的正则：<input type="text" name="detailUrlReg"/><br/>
 					过滤链接正则：<input type="text" name="filterUrlReg"/>
 					
+					<div>详情链接的策略：<input type="text" name="detailUrlStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					详情链接的规则：<textarea name="detailUrlRules" rows="2" cols="100">
+					</textarea></div>
+					
 					性别：<select name="genderRules">
 							<option value="男">男</option>
 							<option value="man">man</option>
@@ -689,6 +693,10 @@
 	                		$("[name='brandStrategy']").val(spiderRules.brandStrategy);
 	                		$("[name='brandRules']").val(spiderRules.brandRules);
 	                		
+	                		
+	                		$("[name='detailUrlStrategy']").val(spiderRules.detailUrlStrategy);
+	                		$("[name='detailUrlRules']").val(spiderRules.detailUrlRules);
+	                		
 	                		$("[name='detailLinkStrategy']").val(spiderRules.detailLinkStrategy);
 	                		$("[name='detailLinkRules']").val(spiderRules.detailLinkRules);
 	                		
@@ -784,6 +792,9 @@
         		var brandRules = $("[name='brandRules']").val();
         		var brandStrategy = $("[name='brandStrategy']").val();
         		
+        		var detailUrlRules = $("[name='detailUrlRules']").val();
+        		var detailUrlStrategy = $("[name='detailUrlStrategy']").val();
+        		
         		var detailLinkRules = $("[name='detailLinkRules']").val();
         		var detailLinkStrategy = $("[name='detailLinkStrategy']").val();
         		
@@ -874,6 +885,8 @@
         					seasonRules:seasonRules,
         					brandRules:brandRules,
         					brandStrategy:brandStrategy,
+        					detailUrlRules:detailUrlRules,
+        					detailUrlStrategy:detailUrlStrategy,
         					detailLinkRules:detailLinkRules,
         					detailLinkStrategy:detailLinkStrategy,
         					madeRules:madeRules,

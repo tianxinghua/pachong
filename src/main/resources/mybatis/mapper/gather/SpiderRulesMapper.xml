@@ -48,6 +48,8 @@
     <result column="domestic_price_strategy" property="domesticPriceStrategy" jdbcType="VARCHAR" />
     <result column="sale_price_rules" property="salePriceRules" jdbcType="VARCHAR" />
     <result column="sale_price_strategy" property="salePriceStrategy" jdbcType="VARCHAR" />
+    <result column="detail_url_rules" property="detailUrlRules" jdbcType="VARCHAR" />
+    <result column="detail_url_strategy" property="detailUrlStrategy" jdbcType="VARCHAR" />
     <result column="detail_link_rules" property="detailLinkRules" jdbcType="VARCHAR" />
     <result column="detail_link_strategy" property="detailLinkStrategy" jdbcType="VARCHAR" />
     <result column="made_rules" property="madeRules" jdbcType="VARCHAR" />
@@ -77,7 +79,8 @@
     js_menu_rules, js_menu_strategy,season_rules, material_rules, 
     material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
     pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
-    domestic_price_strategy, sale_price_rules, sale_price_strategy, 
+    domestic_price_strategy, sale_price_rules, sale_price_strategy,
+    detail_url_rules, detail_url_strategy, 
     detail_link_rules, detail_link_strategy, made_rules, made_strategy, 
     description_rules, description_strategy, pics_rules, pics_strategy, measurement_rules, measurement_strategy, 
     supplier_id, supplier_no, click_field_str,
@@ -106,7 +109,8 @@
       size_strategy, pro_name_rules, pro_name_strategy, 
       foreign_price_rules, foreign_price_strategy, 
       domestic_price_rules, domestic_price_strategy, 
-      sale_price_rules, sale_price_strategy, 
+      sale_price_rules, sale_price_strategy,
+      detail_url_rules, detail_url_strategy, 
       detail_link_rules,detail_link_strategy,made_rules, 
       made_strategy, description_rules, description_strategy, 
       pics_rules, pics_strategy, measurement_rules, 
@@ -128,7 +132,8 @@
       #{sizeStrategy,jdbcType=VARCHAR}, #{proNameRules,jdbcType=VARCHAR}, #{proNameStrategy,jdbcType=VARCHAR}, 
       #{foreignPriceRules,jdbcType=VARCHAR}, #{foreignPriceStrategy,jdbcType=VARCHAR}, 
       #{domesticPriceRules,jdbcType=VARCHAR}, #{domesticPriceStrategy,jdbcType=VARCHAR}, 
-      #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR}, 
+      #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR},
+      #{detailUrlRules,jdbcType=VARCHAR}, #{detailUrlStrategy,jdbcType=VARCHAR}, 
       #{detailLinkRules,jdbcType=VARCHAR}, #{detailLinkStrategy,jdbcType=VARCHAR}, #{madeRules,jdbcType=VARCHAR}, 
       #{madeStrategy,jdbcType=VARCHAR}, #{descriptionRules,jdbcType=VARCHAR}, #{descriptionStrategy,jdbcType=VARCHAR}, 
       #{picsRules,jdbcType=LONGVARCHAR}, #{picsStrategy,jdbcType=VARCHAR}, #{measurementRules,jdbcType=VARCHAR}, 
@@ -278,6 +283,12 @@
       </if>
       <if test="salePriceStrategy != null" >
         sale_price_strategy,
+      </if>
+      <if test="detailUrlRules != null" >
+        detail_url_rules,
+      </if>
+      <if test="detailUrlStrategy != null" >
+        detail_url_strategy,
       </if>
       <if test="detailLinkRules != null" >
         detail_link_rules,
@@ -481,6 +492,12 @@
       </if>
       <if test="salePriceStrategy != null" >
         #{salePriceStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="detailUrlRules != null" >
+        #{detailUrlRules,jdbcType=VARCHAR},
+      </if>
+      <if test="detailUrlStrategy != null" >
+        #{detailUrlStrategy,jdbcType=VARCHAR},
       </if>
       <if test="detailLinkRules != null" >
         #{detailLinkRules,jdbcType=VARCHAR},
@@ -687,6 +704,12 @@
       <if test="salePriceStrategy != null" >
         sale_price_strategy = #{salePriceStrategy,jdbcType=VARCHAR},
       </if>
+      <if test="detailUrlRules != null" >
+        detail_url_rules = #{detailUrlRules,jdbcType=VARCHAR},
+      </if>
+      <if test="detailUrlStrategy != null" >
+        detail_url_strategy = #{detailUrlStrategy,jdbcType=VARCHAR},
+      </if>
       <if test="detailLinkRules != null" >
         detail_link_rules = #{detailLinkRules,jdbcType=VARCHAR},
       </if>
@@ -802,6 +825,8 @@
       domestic_price_strategy = #{domesticPriceStrategy,jdbcType=VARCHAR},
       sale_price_rules = #{salePriceRules,jdbcType=VARCHAR},
       sale_price_strategy = #{salePriceStrategy,jdbcType=VARCHAR},
+      detail_url_rules = #{detailUrlRules,jdbcType=VARCHAR},
+      detail_url_strategy = #{detailUrlStrategy,jdbcType=VARCHAR},
       detail_link_rules = #{detailLinkRules,jdbcType=VARCHAR},
       detail_link_strategy = #{detailLinkStrategy,jdbcType=VARCHAR},
       made_rules = #{madeRules,jdbcType=VARCHAR},

@@ -97,6 +97,10 @@ public class SpiderRules implements Serializable {
 	private String salePriceRules;
 
 	private String salePriceStrategy;
+	
+	private String detailUrlRules;
+
+	private String detailUrlStrategy;
 
 	private String detailLinkRules;
 
@@ -490,6 +494,22 @@ public class SpiderRules implements Serializable {
 
 	public void setSalePriceStrategy(String salePriceStrategy) {
 		this.salePriceStrategy = salePriceStrategy;
+	}
+	
+	public String getDetailUrlRules() {
+		return detailUrlRules;
+	}
+
+	public void setDetailUrlRules(String detailUrlRules) {
+		this.detailUrlRules = detailUrlRules;
+	}
+
+	public String getDetailUrlStrategy() {
+		return detailUrlStrategy;
+	}
+
+	public void setDetailUrlStrategy(String detailUrlStrategy) {
+		this.detailUrlStrategy = detailUrlStrategy;
 	}
 
 	public String getDetailLinkRules() {

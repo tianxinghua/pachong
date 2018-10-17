@@ -782,8 +782,12 @@ public class GatherUtil {
 					String attrStr = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),detailRule.length());
 					if(StrategyConstants.C.equals(detailStrategy)) {
 						WebElement element = null;
-						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(deRuleStr)));
+						try {
+							WebDriverWait wait = new WebDriverWait(driver, 1);
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(deRuleStr)));
+						} catch (Exception e) {
+							LOG.error("{}的规则{}在页面不存在！",clickfield,detailRule);
+						}
 						if(moreClickFlag) {
 							element = driver.findElements(By.cssSelector(deRuleStr)).get(0);
 						}else {
@@ -798,8 +802,12 @@ public class GatherUtil {
 					}
 					if(StrategyConstants.X.equals(detailStrategy)) {
 						WebElement element = null;
-						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(deRuleStr)));
+						try {
+							WebDriverWait wait = new WebDriverWait(driver, 1);
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(deRuleStr)));
+						} catch (Exception e) {
+							LOG.error("{}的规则{}在页面不存在！",clickfield,detailRule);
+						}
 						if(moreClickFlag) {
 							element = driver.findElements(By.xpath(deRuleStr)).get(0);
 						}else {
@@ -817,8 +825,12 @@ public class GatherUtil {
 //					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
 					WebElement element = null;
 					if(StrategyConstants.C.equals(detailStrategy)) {
-						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
+						try {
+							WebDriverWait wait = new WebDriverWait(driver, 1);
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(detailRule)));
+						} catch (Exception e) {
+							LOG.error("{}的规则{}在页面不存在！",clickfield,detailRule);
+						}
 						if(moreClickFlag) {
 							element = driver.findElements(By.cssSelector(detailRule)).get(0);
 						}else {
@@ -831,8 +843,12 @@ public class GatherUtil {
 						}
 					}
 					if(StrategyConstants.X.equals(detailStrategy)) {
-						WebDriverWait wait = new WebDriverWait(driver, 1);
-						wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(detailRule)));
+						try {
+							WebDriverWait wait = new WebDriverWait(driver, 1);
+							wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(detailRule)));
+						} catch (Exception e) {
+							LOG.error("{}的规则{}在页面不存在！",clickfield,detailRule);
+						}
 						if(moreClickFlag) {
 							element = driver.findElements(By.xpath(detailRule)).get(0);
 						}else {
