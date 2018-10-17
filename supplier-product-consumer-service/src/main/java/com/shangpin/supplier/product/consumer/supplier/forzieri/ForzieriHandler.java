@@ -204,17 +204,19 @@ public class ForzieriHandler implements ISupplierHandler{
 			hubSku.setSupplierSpuId(supplierSpuId);
 			hubSku.setSupplierId(supplierId);
 			hubSku.setSupplierSkuNo(ob.getSku());
-			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getList_price())));
-			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSelling_price())));
-			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getCost_price())));
+			hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(ob.getList_price().trim())));
+			hubSku.setSalesPrice(new BigDecimal(StringUtil.verifyPrice(ob.getSelling_price().trim())));
+			hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(ob.getCost_price().trim())));
 			hubSku.setSupplierBarcode(ob.getSku());
-			if(!StringUtils.isEmpty(ob.getSize())){
+			/*if(!StringUtils.isEmpty(ob.getSize())){
 				String size = ob.getSize();
 				if(size.contains("(")){
 					size = size.substring(0,size.indexOf("(")).trim();
 				}
 				hubSku.setSupplierSkuSize(ob.getSize());
-			}
+			}else{*/
+                hubSku.setSupplierSkuSize(ob.getSize());
+            //}
 			
 			hubSku.setStock(StringUtil.verifyStock(ob.getQuantity()));
 //			String stock = ob.getString("availability");
