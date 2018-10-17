@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -54,7 +55,8 @@ public class HttpClientUtil {
      * @param header 请求头
      * @return 响应文本
      */
-    public static String sendHttp(HttpRequestMethedEnum requestMethod, String url, Map<String, Object> params, Map<String, String> header,String entity) {
+    public static HashMap<String,String> sendHttp(HttpRequestMethedEnum requestMethod, String url, Map<String, Object> params, Map<String, String> header, String entity) {
+        HashMap<String,String> responseMap = new HashMap<String,String>();
         //1、创建一个HttpClient对象;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse httpResponse = null;
@@ -89,6 +91,11 @@ public class HttpClientUtil {
             if (httpEntity != null) {
                 responseContent = EntityUtils.toString(httpEntity, "UTF-8");
             }
+            //返回内容
+            responseMap.put( "code" , String.valueOf(httpResponse.getStatusLine().getStatusCode()) );
+            responseMap.put( "message" , httpResponse.getStatusLine().getReasonPhrase() );
+            responseMap.put( "resBody" , responseContent );
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -105,6 +112,6 @@ public class HttpClientUtil {
                 e.printStackTrace();
             }
         }
-        return responseContent;
+        return responseMap;
     }
 }

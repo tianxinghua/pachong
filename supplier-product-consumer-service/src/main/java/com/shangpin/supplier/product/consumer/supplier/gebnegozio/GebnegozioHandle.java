@@ -270,7 +270,7 @@ public class GebnegozioHandle implements ISupplierHandler {
 
         //返回值是token
         HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,POST_URL, null, header, json);
-        if(response.get("code").equals("200") ){
+        if(null != response && response.size() > 0 && response.get("code").equals("200") ){
             token = response.get("resBody");
             token = token.substring( 1, token.length()-1 );
         }else {
@@ -291,7 +291,7 @@ public class GebnegozioHandle implements ISupplierHandler {
         header.put("Authorization", "Bearer " + token);
 
         HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
-        if(response.get("code").equals("200") ){
+        if(null != response && response.size() > 0 && response.get("code").equals("200") ){
             respValue = response.get("resBody");
         }else {
             log.info("请求异常，正在重新获取："+ response.get("message"));
@@ -383,7 +383,7 @@ public class GebnegozioHandle implements ISupplierHandler {
                             if (colorOptions.getValue().equals(attributeValue)){
                                 finalAttribute = colorOptions.getLabel();
                             }
-                            attrMap.put(attributeValue,colorOptions.getLabel());
+                            attrMap.put(colorOptions.getValue(),colorOptions.getLabel());
                         }
                     }
                 }
