@@ -139,16 +139,6 @@ public class GebnegozioHandle implements ISupplierHandler {
             String supplierSpuNo =  selProductAttribute( item , token , "modello");
             if(StringUtils.isBlank(supplierSpuNo)) return false;
             HubSupplierSpuDto spuDb= null;
-            /*if( null == seasonName ){
-                HubSupplierSpuCriteriaDto spuCriteria = new HubSupplierSpuCriteriaDto();
-                spuCriteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo.trim());
-                List<HubSupplierSpuDto> hubSupplierSpuDtos = spuGateWay.selectByCriteria(spuCriteria);
-                if(null!=hubSupplierSpuDtos&&hubSupplierSpuDtos.size()>0){
-                    spuDb =  hubSupplierSpuDtos.get(0);
-                }else{
-                    seasonName = "";
-                }
-            }*/
             //处理Meterial 和 Origin
             List<String> meterialLists = new ArrayList<String>();
             String origin = "";//Italy
@@ -238,37 +228,39 @@ public class GebnegozioHandle implements ISupplierHandler {
     private List<Image> converImage(String  supplierId,GebnegozioDTO gebnegozioDTO, String token){
         String picUrl = "https://www.gebnegozionline.com/media/catalog/product";
         List<Image> images = new ArrayList<Image>();
-        //如果为简单对象 需要从图片表中查询复杂对象图片
-       /* if("simple".equals(gebnegozioDTO.getType_id())){
-            String supplierSpuNo =  selProductAttribute( gebnegozioDTO , token , "modello");
-            HubSpuPendingPicCriteriaDto criteria = new HubSpuPendingPicCriteriaDto();
-            criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSpuNoEqualTo(supplierSpuNo).andDataStateEqualTo((byte)1);
-            List<HubSpuPendingPicDto> picDtoList = picGateWay.selectByCriteria(criteria);
-            if(null!=picDtoList&&picDtoList.size()>0){
-                picDtoList.forEach(pic ->{
-                    Image tmpImg = new Image();
-                    tmpImg.setUrl(pic.getPicUrl());
-                    images.add(tmpImg);
-                } );
+        String proSku = gebnegozioDTO.getSku();
+        if ( null != proSku && !proSku.equals("") ) {
+            try {
+                if (proSku.contains("\\\\")) {
+                    proSku = proSku.replaceAll("\\\\\\\\", "\\\\");
+                }
+                String urlStr = URLEncoder.encode(proSku, "UTF-8");
+                String urlAttr = PRODUCT_DETAIL_URL + urlStr;
+                String gebProDetailJson = selMessage(token,urlAttr);
+                if (null != gebProDetailJson && !gebProDetailJson.equals("")){
+                    GebProDetail gebProDetail = gson.fromJson(gebProDetailJson, GebProDetail.class);
+                    List<PictRes> pictResList = gebProDetail.getMedia_gallery_entries();
+                    if(null!=pictResList&&pictResList.size()>0) {
+                        pictResList.forEach(pictRes -> {
+                            Image cofImg = new Image();
+                            String cofPicUrl = picUrl + pictRes.getFile();
+                            cofImg.setUrl(cofPicUrl);
+                            images.add(cofImg);
+                        });
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                log.info("获取图片失败："+ e.getMessage());
+                System.out.println("获取图片失败："+ e.getMessage());
             }
-
-        }else{*/
-        List<PictRes> pictResList = gebnegozioDTO.getMedia_gallery_entries();
-        if(null!=pictResList&&pictResList.size()>0) {
-            pictResList.forEach(pictRes -> {
-                Image cofImg = new Image();
-                String cofPicUrl = picUrl + pictRes.getFile();
-                cofImg.setUrl(cofPicUrl);
-                images.add(cofImg);
-            });
         }
-        //}
         return images;
     }
     /**
      *  获取token
      */
     public String selToken(){
+        String token = "";
         // 存储相关的header值
         Map<String,String> header = new HashMap<String, String>();
         header.put("Content-Type", "application/json");
@@ -277,8 +269,14 @@ public class GebnegozioHandle implements ISupplierHandler {
         String json = "{\"username\":\"ming.liu@shangpin.com\",\"password\":\"Ex7n4AQ5\"}";
 
         //返回值是token
-        String response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,POST_URL, null, header, json);
-        String token = response.substring( 1, response.length()-1 );
+        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,POST_URL, null, header, json);
+        if(response.get("code").equals("200") ){
+            token = response.get("resBody");
+            token = token.substring( 1, token.length()-1 );
+        }else {
+            log.info("获取token异常，正在重新获取"+ response.get("message"));
+            selToken();
+        }
         return token;
     }
 
@@ -286,13 +284,21 @@ public class GebnegozioHandle implements ISupplierHandler {
      * 获取产品
      */
     public String selMessage(String token , String url){
+        String respValue = "";
         // 存储相关的header值
         Map<String,String> header = new HashMap<String, String>();
         header.put("Content-Type", "application/json");
         header.put("Authorization", "Bearer " + token);
 
-        String response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
-        return response;
+        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
+        if(response.get("code").equals("200") ){
+            respValue = response.get("resBody");
+        }else {
+            log.info("请求异常，正在重新获取："+ response.get("message"));
+            token = selToken();
+            selMessage( token ,  url);
+        }
+        return respValue;
     }
     /**
      * 查具体属性值：color 、 size 、description 、 gender
