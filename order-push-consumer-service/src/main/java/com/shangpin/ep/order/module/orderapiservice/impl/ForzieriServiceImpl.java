@@ -301,7 +301,7 @@ public class ForzieriServiceImpl implements IOrderService {
                 OrderResponse orderResponse= gson.fromJson(s, OrderResponse.class);
                 int httpCode1=Integer.parseInt(orderResponse.getErrorCode());
                 if (httpCode1==200) {
-                    logger.info("下单成功");
+                    logger.info("用新的token访问接口成功");
                 }else if (httpCode1==404){
                     // 产品未找到
                     logger.info(skuId+"产品未找到");
