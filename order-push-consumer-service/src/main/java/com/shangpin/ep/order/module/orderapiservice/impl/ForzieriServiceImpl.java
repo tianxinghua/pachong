@@ -275,7 +275,7 @@ public class ForzieriServiceImpl implements IOrderService {
             // 存入map
             logger.info("accessToken过期");
             TokenDTO TokenDTO1 = tokenService.findToken("2015103001637");
-            String Token1 =TokenDTO1.getAccessToken();
+            String Token1 =TokenDTO1.getRefreshToken();
 //				PostMethod postMethod = new PostMethod("https://api.forzieri.com/test/oauth/token");//测试
             String   tokenurl="https://api.forzieri.com/v2/oauth/token?grant_type=refresh_token&client_id=NTY0MjBmOWZiZjI3OTc5&client_secret=9470b9341606430e3b36871541732865e0f51979&refresh_token="+Token1+"";
             GetMethod tokenMethod = new GetMethod(tokenurl);
@@ -298,10 +298,11 @@ public class ForzieriServiceImpl implements IOrderService {
                 headerMap.put("Authorization","Bearer "+accessToken2+"");
                 s= HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap, null,null);
                 System.out.println(s);
-                if (httpCode==200) {
-                    String realSku2 = getMethod.getResponseBodyAsString();
-                    RealStock realStock2 = gson.fromJson(realSku2, RealStock.class);
-                }else if (httpCode==404){
+                OrderResponse orderResponse= gson.fromJson(s, OrderResponse.class);
+                int httpCode1=Integer.parseInt(orderResponse.getErrorCode());
+                if (httpCode1==200) {
+                    logger.info("用新的token访问接口成功");
+                }else if (httpCode1==404){
                     // 产品未找到
                     logger.info(skuId+"产品未找到");
                 }else{
