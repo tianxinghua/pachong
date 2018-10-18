@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.shangpin.ep.order.module.order.mapper.TokenMapper">
 
-	<resultMap id="tokenMap" type="iog_token">
+	<resultMap id="tokenMap" type="com.shangpin.ep.order.module.order.bean.TokenDTO">
         <result column="REFRESH_TOKEN" property="refreshToken" />
         <result column="ACCESS_TOKEN" property="accessToken" />
         <result column="CREATETIME" property="createDate" />
@@ -22,7 +22,7 @@
 <!--         PIC_URL,MATERIAL,PRODUCT_ORIGIN,CREATE_TIME,LAST_TIME -->
 <!-- 	</sql> -->
 
-    <insert id="save"  parameterType="iog_token" >
+    <insert id="save"  parameterType="com.shangpin.ep.order.module.order.bean.TokenDTO" >
 
 
         insert into TOKEN(ID ,
@@ -44,7 +44,7 @@
             </if>
         </where>
     </select>
-      <update id="updateToken" parameterType="iog_token" >
+      <update id="updateToken" parameterType="com.shangpin.ep.order.module.order.bean.TokenDTO" >
           update TOKEN
           <set>
               <if test="refreshToken != null"> REFRESH_TOKEN = #{refreshToken}, </if>

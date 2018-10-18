@@ -89,7 +89,7 @@ public class GebnegozioHandle implements ISupplierHandler {
                     boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
 
                     ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-                    HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+
                     //转换SKU
                     String proSku = gebnegozioDTO.getSku();
                     if(proSku.contains("\\\\")) {
@@ -106,6 +106,7 @@ public class GebnegozioHandle implements ISupplierHandler {
                     List<GebnegozioDTO> gebnegozioDTOS = gson.fromJson(confChildResp,new TypeToken<List<GebnegozioDTO>>(){}.getType());
                     if(null!=gebnegozioDTOS&&gebnegozioDTOS.size()>0) {
                         gebnegozioDTOS.forEach(gebDTO -> {
+                            HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
                             boolean skuSuccess = convertSku(supplierId, hubSpu.getSupplierSpuId(), gebDTO, hubSku, token);
                             if (skuSuccess) {
                                 hubSkus.add(hubSku);

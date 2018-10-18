@@ -784,7 +784,7 @@ spring:
                               destination: gebnegozio.original.product
                               group: one
                               consumer:
-                                       concurrency: 4
+                                       concurrency: 20
                                        maxAttempts: 1
                         gebnegozioPendingProduct:
                               destination: gebnegozio.pending.product

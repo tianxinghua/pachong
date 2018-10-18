@@ -46,10 +46,25 @@ public class HubFilterService {
 		supplierIds.add("2015081701440");
 		//上海欧蓝电子商务有限公司
 		supplierIds.add("2018040902001");
-		//直采品牌方供应商 Redigroup-mono brands
+
+        //直采品牌方供应商
 		supplierIds.add("2018070502014");
+
+		//直采品牌方供应商
+		supplierIds.add("2018082802044");
+		//直采品牌方供应商
+		supplierIds.add("2018082802043");
+		//直采品牌方供应商
+		supplierIds.add("2018082702041");
+		//直采品牌方供应商
+		supplierIds.add("2018090402046");
+		//直采品牌方供应商
+		supplierIds.add("2018091902059");
+
 		//creative99
 		supplierIds.add("2016030401795");
+		//smets
+		supplierIds.add("2018101102076");
 	}
 	@Autowired
 	IShangpinRedis shangpinRedis;
