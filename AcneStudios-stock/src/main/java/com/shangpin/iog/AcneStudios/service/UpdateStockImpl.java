@@ -1,9 +1,9 @@
-package com.shangpin.iog.selfridges.service;
+package com.shangpin.iog.AcneStudios.service;
 
-import com.shangpin.iog.selfridges.dto.ApiResponseBody;
-import com.shangpin.iog.selfridges.dto.SpSkuNoDTO;
-import com.shangpin.iog.selfridges.dto.ZhiCaiSkuHttpDTO;
-import com.shangpin.iog.selfridges.dto.ZhiCaiSkuStock;
+import com.shangpin.iog.AcneStudios.dto.ApiResponseBody;
+import com.shangpin.iog.AcneStudios.dto.SpSkuNoDTO;
+import com.shangpin.iog.AcneStudios.dto.ZhiCaiSkuHttpDTO;
+import com.shangpin.iog.AcneStudios.dto.ZhiCaiSkuStock;
 import com.shangpin.iog.ice.service.StockHandleService;
 import com.shangpin.iog.utils.DownloadAndReadCSV;
 import com.shangpin.iog.utils.HttpUtil45;
@@ -28,7 +28,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     public class StockHandleService {*/
     @Autowired
     private StockHandleService stockHandleService;
-
+    private boolean emailFlag=false;
     private static Logger logger = Logger.getLogger("info");
     private static Logger loggerError = Logger.getLogger("error");
 
@@ -46,7 +46,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
     private static List<Map<String, Integer>> filedIceStockMaps = null;
-    private boolean emailFlag=false;
+
     static {
         if (null == bdl){
             bdl = ResourceBundle.getBundle("conf");
@@ -69,15 +69,15 @@ public class UpdateStockImpl extends FetchStockImpl {
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============更新selfridges库存数据库开始 "+startDateTime+"=========================");
-        logger.info("==============更新selfridges库存数据库开始 "+startDateTime+"=========================");
+        System.out.println("============更新AcneStudios库存数据库开始 "+startDateTime+"=========================");
+        logger.info("==============更新AcneStudios库存数据库开始 "+startDateTime+"=========================");
 
         //读取csv 数据信息
         long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"selfridges-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"AcneStudios-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -91,17 +91,16 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================更新selfridges库存数据库结束 "+endtDateTime+"=========================");
-        System.out.println("=================更新selfridges库存数据库结束 "+endtDateTime+"=========================");
+        logger.info("===================更新AcneStudios库存数据库结束 "+endtDateTime+"=========================");
+        System.out.println("=================更新AcneStudios库存数据库结束 "+endtDateTime+"=========================");
         if (emailFlag==false){
             logger.info("===================准备发送邮件 =========================");
             System.out.println("===================准备发送邮件 =========================");
-                FetchStockImpl object=new  FetchStockImpl();
-                emailFlag=object.getFileToEmail();
+            FetchStockImpl object=new  FetchStockImpl();
+            emailFlag=object.getFileToEmail();
         }else {
             emailFlag=false;
         }
-
     }
 
     public static void main(String[] args) {
@@ -110,7 +109,7 @@ public class UpdateStockImpl extends FetchStockImpl {
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"selfridges-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"lkbennett-qty-"+ yesterdayDateStr+".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,",");
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -210,8 +209,8 @@ public class UpdateStockImpl extends FetchStockImpl {
         Integer updateFailedNum = spSkuNoDTOS.size();
         System.out.println(" 本次更新尚品库存个数："+updateFailedNum);
         logger.info("本次更新尚品库存的个数："+updateFailedNum);
-
     }
+
     /**
      * 调用接口更新 spSku qty 信息
      * @param zhiCaiSkuHttpDTO
