@@ -61,7 +61,7 @@ public class ProductFetchUtil {
                 String token = selToken();
                 if(null != token && !token.equals("")) {
                     String qty = selStock( sku , token );
-                    if( null == qty && qty.equals("") ){
+                    if( null == qty || qty.equals("") ){
                         qty = "0";
                     }
                     spStockMap.put( sku , qty );
@@ -93,7 +93,7 @@ public class ProductFetchUtil {
             token = token.substring( 1, token.length()-1 );
         }else {
             logger.info("获取token异常，正在重新获取"+ response.get("message"));
-            selToken();
+            token = selToken();
         }
         return token;
     }
@@ -126,11 +126,14 @@ public class ProductFetchUtil {
                 }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String url = STOCK_URL + urlStr;
+                logger.info("sku url = "+url);
+                logger.info("sku = " + sku);
                 String stockJson = selMessage(token , url);
+                logger.info("sku url response= "+stockJson);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
                     qty = stockDTO.getStockItem().getQty();
-                    if(null == qty && qty.equals("")){
+                    if(null == qty || qty.equals("")){
                         qty = "0";
                     }
                 }
