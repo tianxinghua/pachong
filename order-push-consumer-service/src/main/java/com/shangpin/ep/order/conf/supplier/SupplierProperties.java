@@ -144,4 +144,6 @@ public class SupplierProperties {
 	private TheStyleSide theStyleSide;
 
 	private Gebnegozio gebnegozio;
+
+	private Forzieri forzieri;
 }

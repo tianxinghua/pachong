@@ -256,6 +256,10 @@ public class OrderHandleSearch {
     @Qualifier("vietti2ServiceImpl")
     IOrderService vietti2ServiceImpl;
 
+    @Autowired
+	@Qualifier("forzieriServiceImpl")
+	IOrderService forzieriServiceImpl;
+
 
 	@Autowired
 	@Qualifier("gebnegozioOrderImpl")
@@ -286,9 +290,9 @@ public class OrderHandleSearch {
 		} else if ("2016030701799".equals(supplierId)) {
 			return russoCapriServiceImpl;
 		}
-//		else if ("2015111001657".equals(supplierId)) {
-//			return efashionOrderImpl;
-//		}
+		else if ("2015111001657".equals(supplierId)) {
+			return gebnegozioOrderImpl;
+		}
 		else if ("2015081701441".equals(supplierId)) {
 			return leamServiceImpl;
 		} else if ("2016072601910".equals(supplierId)) {
@@ -398,7 +402,10 @@ public class OrderHandleSearch {
             return vietti2ServiceImpl;
 		}else if("2018061101883".equals(supplierId)){
 			return gebnegozioOrderImpl;
-		}else {
+		}else if("2015103001637".equals(supplierId)){
+		    return forzieriServiceImpl;
+	    }
+		else {
 			return null;
 		}
 	}
@@ -426,9 +433,9 @@ public class OrderHandleSearch {
 		} else if ("2016030701799".equals(supplierId)) {
 			return supplierProperties.getRussoCapri();
 		}
-//		else if ("2015111001657".equals(supplierId)) {
-//			return supplierProperties.getEfashionConf();
-//		}
+		else if ("2015111001657".equals(supplierId)) {
+			return supplierProperties.getGebnegozio();
+		}
 		else if ("2015081701441".equals(supplierId)) {
 			return supplierProperties.getLeam();
 		} else if ("2015081701439".equals(supplierId)) {
@@ -527,6 +534,9 @@ public class OrderHandleSearch {
         else if("2018090602049".equals(supplierId)){
             return supplierProperties.getVietti2();
         }
+		else if("2015103001637".equals(supplierId)){
+			return supplierProperties.getForzieri();
+		}
 		else {
 			return null;
 		}

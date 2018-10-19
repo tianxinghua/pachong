@@ -645,6 +645,15 @@ shangpin:
           gebnegozio:
                   url: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/
                   tokenUrl: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
+          forzieri:
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
+                  purchaseOrderUrl:
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 
