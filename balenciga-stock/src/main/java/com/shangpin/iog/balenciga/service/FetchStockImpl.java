@@ -261,29 +261,8 @@ public class FetchStockImpl  {
         String productUrl = productDTO.getProductUrl();
         List<SkuDTO> skuDTOs = productDTO.getZhiCaiSkuResultList();
         try {
-//            BalenciagaProcessor balenciga = new BalenciagaProcessor();
-            SetGoods setGoods = new SetGoods();
-            List<GoodsEntity> goodsList = new ArrayList<>();
-            Spider spider = new Spider(new BalenciagaProcessor());
-            Request request = new Request();
-            request.setMethod("get");
-            request.setUrl(productUrl);
-            spider.addRequest(request);
-            //spider.addUrl(productUrl);
-            spider.thread(1);
-            spider.addPipeline(new Pipeline() {
-                @Override
-                public void process(ResultItems resultItems, Task task) {
-                    String[] sizes = resultItems.get("size").toString().split(",");
-                    String[] qtys = resultItems.get("qty").toString().split(",");
-                    for (int i = 0; i < sizes.length; i++) {
-                        GoodsEntity goods = setGoods.setgoods(resultItems, sizes, qtys, i);
-                        goodsList.add(goods);
-                    }
-                }
-            });
-            spider.run();
-            //List<GoodsEntity> goodsList = balenciga.updateInventorySpider(productUrl);
+            BalenciagaProcessor balenciga = new BalenciagaProcessor();
+            List<GoodsEntity> goodsList = balenciga.updateInventorySpider(productUrl);
             for (int i = 0; i < skuDTOs.size(); i++) {
                 SkuDTO skuDTO = skuDTOs.get(i);
                 String size = skuDTO.getSize();
