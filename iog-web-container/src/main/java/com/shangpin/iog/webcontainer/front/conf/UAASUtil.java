@@ -188,8 +188,8 @@ public class UAASUtil {
 	}
 
 	/**
-	 * @param string
-	 * @param string2
+	 * @param
+	 * @param
 	 * @return
 	 */
 	public static String login(String userName, String password) {

@@ -1,20 +1,18 @@
-package com.shangpin.iog.redi.schedule;
+package com.shangpin.iog.moncler.schedule;
+
+import com.shangpin.iog.moncler.service.FetchStockImpl;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.util.ResourceBundle;
 import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import com.shangpin.iog.redi.service.FetchStockImpl;
-import org.springframework.stereotype.Component;
-
-import com.shangpin.iog.common.utils.logger.LoggerUtil;
+import java.util.concurrent.*;
 
 @Component
 public class Murder extends TimerTask{
+	private static Logger logger = Logger.getLogger("info");
+	private static Logger loggerError = Logger.getLogger("error");
+
 	private static ResourceBundle bdl=null;
 	private static int time;
     static {
@@ -23,7 +21,7 @@ public class Murder extends TimerTask{
         time = Integer.valueOf(bdl.getString("time"));
     }
     
-	private static LoggerUtil logError = LoggerUtil.getLogger("error");
+
 	private FetchStockImpl stockImp;
 	public void setStockImp(FetchStockImpl stockImp) {
 		this.stockImp = stockImp;
@@ -39,13 +37,16 @@ public class Murder extends TimerTask{
 	@Override
 	public void run() {
 		System.out.println(Thread.currentThread().getName()+"执行murder");
+		logger.info(Thread.currentThread().getName()+"执行murder");
 		Thread t = new Thread(new Worker(stockImp));
 		Future<?> future = executor.submit(t);
 		try {
 			future.get(time, TimeUnit.MILLISECONDS);
+			System.out.println("执行完毕");
 		} catch (Exception e) {
 			future.cancel(true);
-			logError.error(Thread.currentThread().getName()+"超时销毁");
+			logger.info(Thread.currentThread().getName()+"超时销毁");
+			loggerError.error(Thread.currentThread().getName()+"超时销毁");
 			System.out.println(Thread.currentThread().getName()+"超时销毁");
 		}
 	}
