@@ -34,7 +34,7 @@ public class Worker implements Runnable{
 			try {
 //				stockImp.setUseThread(true);
 //				stockImp.setSkuCount4Thread(500);
-				stockImp.updateProductStock(supplierId, "2015-01-01 00:00", format.format(new Date()));
+				stockImp.updateProductStock(supplierId, "2018-01-01 00:00", format.format(new Date()));
 			} catch (Exception e) {
 				loggerError.error("更新库存数据库出错"+e.getMessage());
 				e.printStackTrace();
@@ -42,9 +42,9 @@ public class Worker implements Runnable{
 			logger.info("更新数据库结束");
 			System.out.println("结束");
 		} catch (Exception e) {
-			loggerError.error("theStyleSide 被取消了");
+			loggerError.error("gebnegozio 被取消了");
 			e.printStackTrace();
-			logger.info("theStyleSide被取消了");
+			logger.info("gebnegozio被取消了");
 		}
 	}
 	

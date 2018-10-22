@@ -61,7 +61,7 @@ public class ProductFetchUtil {
                 String token = selToken();
                 if(null != token && !token.equals("")) {
                     String qty = selStock( sku , token );
-                    if( null == qty && qty.equals("") ){
+                    if( null == qty || qty.equals("") ){
                         qty = "0";
                     }
                     spStockMap.put( sku , qty );
@@ -78,6 +78,7 @@ public class ProductFetchUtil {
      *  获取token
      */
     public String selToken(){
+        String token = "";
         // 存储相关的header值
         Map<String,String> header = new HashMap<String, String>();
         header.put("Content-Type", "application/json");
@@ -86,21 +87,31 @@ public class ProductFetchUtil {
         String json = "{\"username\":\"ming.liu@shangpin.com\",\"password\":\"Ex7n4AQ5\"}";
 
         //返回值是token
-        String response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,POST_URL, null, header, json);
-        String token = response.substring( 1, response.length()-1 );
+        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,POST_URL, null, header, json);
+        if(null != response && response.size() > 0 && response.get("code").equals("200") ){
+            token = response.get("resBody");
+            token = token.substring( 1, token.length()-1 );
+        }else {
+            logger.info("获取token异常，正在重新获取"+ response.get("message"));
+            token = selToken();
+        }
         return token;
     }
     /**
      * 携带token获取内容、get公用方法
      */
     public String selMessage(String token , String url){
+        String respValue = "";
         // 存储相关的header值
         Map<String,String> header = new HashMap<String, String>();
         header.put("Content-Type", "application/json");
         header.put("Authorization", "Bearer " + token);
 
-        String response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
-        return response;
+        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
+        if(null != response && response.size() > 0 && response.get("code").equals("200") ) {
+            respValue = response.get("resBody");
+        }
+        return respValue;
     }
     /**
      * 查库存
@@ -115,11 +126,14 @@ public class ProductFetchUtil {
                 }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String url = STOCK_URL + urlStr;
+                logger.info("sku url = "+url);
+                logger.info("sku = " + sku);
                 String stockJson = selMessage(token , url);
+                logger.info("sku url response= "+stockJson);
                 if ( null != stockJson && !stockJson.equals("") ){
                     StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
                     qty = stockDTO.getStockItem().getQty();
-                    if(null == qty && qty.equals("")){
+                    if(null == qty || qty.equals("")){
                         qty = "0";
                     }
                 }

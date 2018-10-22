@@ -46,7 +46,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
 
     private static List<Map<String, Integer>> filedIceStockMaps = null;
-
+    private boolean emailFlag=false;
     static {
         if (null == bdl){
             bdl = ResourceBundle.getBundle("conf");
@@ -93,8 +93,15 @@ public class UpdateStockImpl extends FetchStockImpl {
         String endtDateTime = format.format(new Date());
         logger.info("===================更新selfridges库存数据库结束 "+endtDateTime+"=========================");
         System.out.println("=================更新selfridges库存数据库结束 "+endtDateTime+"=========================");
-        FetchStockImpl object=new  FetchStockImpl();
-        object.getFileToEmail();
+        if (emailFlag==false){
+            logger.info("===================准备发送邮件 =========================");
+            System.out.println("===================准备发送邮件 =========================");
+                FetchStockImpl object=new  FetchStockImpl();
+                emailFlag=object.getFileToEmail();
+        }else {
+            emailFlag=false;
+        }
+
     }
 
     public static void main(String[] args) {
