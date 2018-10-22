@@ -8,10 +8,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.shangpin.iog.redi.service.FetchStockImpl;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.iog.common.utils.logger.LoggerUtil;
-import com.shangpin.iog.redi.service.FetchStockImpl;
 
 @Component
 public class Murder extends TimerTask{

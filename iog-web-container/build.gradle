@@ -8,7 +8,7 @@ buildscript {
   }
 
 apply plugin: 'war'
-apply plugin: 'jetty'
+//apply plugin: 'jetty'
 //apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.plugin'
 
 
