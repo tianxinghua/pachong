@@ -59,6 +59,12 @@ spring:
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
+                        mclablesPictureProduct:
+                              destination: supplier.product.picture
+                              group: one
+                              consumer:
+                                        concurrency: 1
+                                        maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -96,7 +102,13 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false           
+                                       republishToDlq: false
+                            mclablesPictureProduct:
+                                  consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
