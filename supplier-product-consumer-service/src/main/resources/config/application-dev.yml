@@ -22,7 +22,7 @@ spring:
                               destination: supplier.product.picture
                               content-type: application/json
                         mclablesPictureProduct:
-                              destination: supplier.product.picture
+                              destination: mclables.product.picture
                               content-type: application/json
                         refreshDicTask: 
                               destination: refresh.dic.task

@@ -16,7 +16,7 @@ spring:
                               destination: stefaniamode.product.picture
                               content-type: application/json
                         mclablesPictureProduct:
-                              destination: supplier.product.picture
+                              destination: mclables.product.picture
                               content-type: application/json
                         supplierPictureProduct: 
                               destination: supplier.product.picture
