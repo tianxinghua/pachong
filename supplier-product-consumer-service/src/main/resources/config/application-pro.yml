@@ -15,6 +15,9 @@ spring:
                         stefaniamodePictureProduct: 
                               destination: stefaniamode.product.picture
                               content-type: application/json
+                        mclablesPictureProduct:
+                              destination: supplier.product.picture
+                              content-type: application/json
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
@@ -820,6 +823,9 @@ spring:
                         bindings: 
                               stefaniamodePictureProduct: 
                                     producer: 
+                                         prefix: HA.
+                              mclablesPictureProduct:
+                                    producer:
                                          prefix: HA.
                               supplierPictureProduct: 
                                     producer: 
