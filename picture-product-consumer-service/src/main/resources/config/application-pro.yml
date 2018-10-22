@@ -56,7 +56,7 @@ spring:
                                        concurrency: 1
                                        maxAttempts: 1
                         mclablesPictureProduct:
-                              destination: supplier.product.picture
+                              destination: mclables.product.picture
                               group: one
                               consumer:
                                         concurrency: 1
