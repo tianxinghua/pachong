@@ -47,4 +47,39 @@ public class OrderService {
 			return null;
 		}
 	}
+
+	/**
+	 *  查询 SupplierSpuId
+	 * @param supplierId
+	 * @param supplierSkuNo
+	 * @return
+	 */
+	public Long findSupplierSpuId(String supplierId, String supplierSkuNo){
+		HubSupplierSkuCriteriaDto criteria = new HubSupplierSkuCriteriaDto();
+		criteria.setFields("supplier_spu_id");
+		criteria.createCriteria().andSupplierIdEqualTo(supplierId).andSupplierSkuNoEqualTo(supplierSkuNo);
+		List<HubSupplierSkuDto> list = supplierSkuGateWay.selectByCriteria(criteria );
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0).getSupplierSpuId();
+		}else{
+			return null;
+		}
+	}
+
+	/**
+	 *  从数据库查询供应商产品的颜色
+	 * @param supplierSpuId
+	 * @return
+	 */
+	public String findSupplierSpuColor(Long supplierSpuId){
+		HubSupplierSpuCriteriaDto criteria = new HubSupplierSpuCriteriaDto();
+		criteria.setFields("supplier_spu_color");
+		criteria.createCriteria().andSupplierSpuIdEqualTo(supplierSpuId);
+		List<HubSupplierSpuDto> list = supplierSpuGateWay.selectByCriteria(criteria );
+		if(CollectionUtils.isNotEmpty(list)){
+			return list.get(0).getSupplierSpuColor();
+		}else{
+			return null;
+		}
+	}
 }

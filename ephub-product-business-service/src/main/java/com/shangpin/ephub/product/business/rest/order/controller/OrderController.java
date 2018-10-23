@@ -56,4 +56,30 @@ public class OrderController {
 			return HubResponse.successResp(supplierSpuDto);
 		}
 	}
+	/**
+	 * 根据供应商门户编号和供应商原始sku编号查找SupplierSpuId
+	 * @return
+	 */
+	@RequestMapping(value = "/supplier-spu-id", method= RequestMethod.POST)
+	public HubResponse<?> findSupplierSpuId(@RequestBody SizeDto sizeDto){
+		Long supplierSpuId = orderService.findSupplierSpuId(sizeDto.getSupplierId(), sizeDto.getSupplierSkuNo());
+		if(StringUtils.isEmpty(supplierSpuId)){
+			return HubResponse.errorResp("查询失败");
+		}else{
+			return HubResponse.successResp(supplierSpuId);
+		}
+	}
+	/**
+	 * 根据SupplierSpuId查找供应商原始颜色
+	 * @return
+	 */
+	@RequestMapping(value = "/supplier-spu-color", method= RequestMethod.POST)
+	public HubResponse<?> findSupplierSpuColor(@RequestBody SizeDto sizeDto){
+		String supplierSpuColor = orderService.findSupplierSpuColor(sizeDto.getSupplierSpuId());
+		if(StringUtils.isEmpty(supplierSpuColor)){
+			return HubResponse.errorResp("查询失败");
+		}else{
+			return HubResponse.successResp(supplierSpuColor);
+		}
+	}
 }
