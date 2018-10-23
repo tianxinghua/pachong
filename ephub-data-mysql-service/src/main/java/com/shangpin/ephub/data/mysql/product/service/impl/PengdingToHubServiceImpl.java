@@ -645,10 +645,10 @@ public class PengdingToHubServiceImpl implements PengingToHubService {
 
     private List<HubSku> getSkuBySpuNoAndSizeAndSizeType(String spuNo,String size,String sizeType){
 
-        //如果size类型=尺寸 不需要查询尺寸
+        //如果size类型=尺寸 不需要查询尺寸  20181015 修改为要查询尺码
         HubSkuCriteria hubSkuCriteria =new HubSkuCriteria();
         if(PropertyConstant.SIZE_TYPE.equals(sizeType)){
-            hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeTypeEqualTo(sizeType);
+            hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeEqualTo(size).andSkuSizeTypeEqualTo(sizeType);
         }else{
             hubSkuCriteria.createCriteria().andSpuNoEqualTo(spuNo).andSkuSizeEqualTo(size).andSkuSizeTypeEqualTo(sizeType);
         }

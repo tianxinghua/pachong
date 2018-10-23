@@ -390,7 +390,11 @@ public class PriceService {
 		}
         HubSupplierPriceChangeRecordCriteriaDto criteriaDto = new HubSupplierPriceChangeRecordCriteriaDto();
         criteriaDto.setOrderByClause(" create_time desc ");
-        criteriaDto.createCriteria().andStateIn(list).andMarketSeasonIsNotNull().andCreateTimeGreaterThanOrEqualTo(start).andCreateTimeLessThanOrEqualTo(end); 
+		HubSupplierPriceChangeRecordCriteriaDto.Criteria criteria =criteriaDto.createCriteria();
+		if(!StringUtils.isEmpty(priceQueryDto.getSupplierId())){
+			criteria.andSupplierIdEqualTo(priceQueryDto.getSupplierId());
+		}
+		criteria.andStateIn(list).andMarketSeasonIsNotNull().andCreateTimeGreaterThanOrEqualTo(start).andCreateTimeLessThanOrEqualTo(end);
         criteriaDto.setPageNo(startRow);
         criteriaDto.setPageSize(100);
         List<HubSupplierPriceChangeRecordDto> hubSupplierPriceChangeRecordDtos = priceChangeRecordGateWay.selectByCriteria(criteriaDto);
