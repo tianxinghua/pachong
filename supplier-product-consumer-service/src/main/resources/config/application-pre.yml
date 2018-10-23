@@ -12,6 +12,9 @@ spring:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
+                        mclablesPictureProduct:
+                              destination: mclables.product.picture
+                              content-type: application/json
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               group: one
@@ -633,6 +636,9 @@ spring:
                               supplierPictureProduct: 
                                     producer: 
                                          prefix: HA.
+                              mclablesPictureProduct:
+                                    producer:
+                                        prefix: HA.
                               spinnakerOriginalProduct: 
                                       consumer: 
                                          prefix: HA.

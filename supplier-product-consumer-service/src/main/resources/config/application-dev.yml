@@ -21,6 +21,9 @@ spring:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
+                        mclablesPictureProduct:
+                              destination: mclables.product.picture
+                              content-type: application/json
                         refreshDicTask: 
                               destination: refresh.dic.task
                               group: one
@@ -701,6 +704,9 @@ spring:
                             supplierPictureProduct: 
                                   producer: 
                                        prefix: HA.
+                            mclablesPictureProduct:
+                                  producer:
+                                      prefix: HA.
                             refreshDicTask: 
                                   consumer: 
                                        prefix: HA.

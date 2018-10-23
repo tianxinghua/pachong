@@ -77,7 +77,8 @@ public class SupplierProductPictureService {
 			Long supplierSpuId = picDtos.get(0).getSupplierSpuId();
 			for (HubSpuPendingPicDto picVO : picDtos) {
 				String picUrl = picVO.getPicUrl();
-				log.info("picUrl = " +picUrl);
+				Long spuId = picVO.getSupplierSpuId();
+				log.info("picUrl = " +picUrl + ",spuId = "+spuId);
 				HubSpuPendingPicDto picDto = supplierProductPictureManager.getSpuPendingPicDtoBySupplierIdAndPicUrl(picVO.getSupplierId(), picUrl);
 				if(null!=picDto){
 					log.info("pic  DataState = " +picDto.getDataState());

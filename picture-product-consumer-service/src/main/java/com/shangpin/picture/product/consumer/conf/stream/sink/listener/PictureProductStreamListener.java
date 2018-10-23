@@ -57,5 +57,10 @@ public class PictureProductStreamListener {
 		}
 		
     }
+
+	@StreamListener(PictureProductSink.MCLABLES_PICTURE)
+	public void mclablesPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+	}
 	
 }
