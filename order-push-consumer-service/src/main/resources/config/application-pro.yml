@@ -635,6 +635,8 @@ shangpin:
                   productSpuUrl: http://api.ephub.spidc1.com/order/supplier-spu
                   stockSupplierMapping: 
                   orderSupplierMapping: S0000558:2015102201625,S0000631:2016030701799,S0000593:2015111001657,S0000372:2015081701441,S0000370:2015081701439
+                  getSupplierSpuIdFromEphubUrl: http://api.ephub.spidc1.com/order/supplier-spu-id
+                  getSupplierSpuColorFromEphubUrl: http://api.ephub.spidc1.com/order/supplier-spu-color
           theStyleSide:
                   usr: ECOMM
                   pwd: vendiamotutto
@@ -645,6 +647,7 @@ shangpin:
           gebnegozio:
                   url: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/
                   tokenUrl: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token
+                  supplierId: 2015111001657
                   isPurchaseExp:
                   openApiKey:
                   openApiSecret:
@@ -654,7 +657,7 @@ shangpin:
                   openApiKey:
                   openApiSecret:
                   purchaseOrderUrl:
-mybatis: 
+mybatis:
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 
        charset: UTF-8 # Banner file encoding.

@@ -16,5 +16,19 @@ public class CustomAttributes {
     private String attributeCode;
     @SerializedName("value")
     @Expose
-    private String value;
+    private Object value;
+
+    public CustomAttributes(String attributeCode, Object value){
+        this.attributeCode = attributeCode;
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomAttributes{" +
+                "attributeCode='" + attributeCode + '\'' +
+                ", value=" + value +
+                '}';
+    }
+
 }

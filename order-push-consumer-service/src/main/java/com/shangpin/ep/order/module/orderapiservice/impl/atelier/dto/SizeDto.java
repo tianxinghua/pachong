@@ -15,4 +15,8 @@ public class SizeDto {
 	 * 供应商sku编号
 	 */
 	private String supplierSkuNo;
+	/**
+	 *  supplierSpuId
+	 */
+	private Long supplierSpuId;
 }

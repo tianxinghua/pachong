@@ -43,7 +43,7 @@ public class CartItem {
     @Expose
     private ProductOption productOption;
 
-    @SerializedName("extension_attributes")
+    /*@SerializedName("extension_attributes")
     @Expose
-    private ExtensionAttributes extensionAttributes;
+    private ExtensionAttributes extensionAttributes;*/
 }

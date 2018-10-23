@@ -16,4 +16,5 @@ public class Gebnegozio extends SupplierCommon implements Serializable{
     private static final long serialVersionUID = -7820506502925304338L;
     private String url;
     private String tokenUrl;
+    private String supplierId;
 }

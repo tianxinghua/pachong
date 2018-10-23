@@ -14,7 +14,7 @@ public class Options {
     @SerializedName("value")
     @Expose
     private String value;
-    @SerializedName("value")
+    @SerializedName("label")
     @Expose
     private String label;
 }

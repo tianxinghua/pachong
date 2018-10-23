@@ -400,8 +400,6 @@ public class OrderHandleSearch {
 			return fashionTamersOrderImpl;
 		} else if("2018090602049".equals(supplierId)){
             return vietti2ServiceImpl;
-		}else if("2018061101883".equals(supplierId)){
-			return gebnegozioOrderImpl;
 		}else if("2015103001637".equals(supplierId)){
 		    return forzieriServiceImpl;
 	    }
