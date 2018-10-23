@@ -553,7 +553,7 @@ public class SupplierProductPictureService {
 		SupplierProductPictureService pictureService = new SupplierProductPictureService();
 		HubSpuPendingPicDto picDto = new HubSpuPendingPicDto();
 		AuthenticationInformation information = new AuthenticationInformation();
-		pictureService.pullPicAndPushToPicServer("https://cache.mrporter.com/images/products/1082974/1082974_mrp_fr_l.jpg",picDto,information);
+		pictureService.pullPicAndPushToPicServer("https://cache.net-a-porter.com/images/products/1085057/1085057_ou_xl.jpg",picDto,information);
 
 	}
 

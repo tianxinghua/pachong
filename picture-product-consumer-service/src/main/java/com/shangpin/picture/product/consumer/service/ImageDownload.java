@@ -1,5 +1,7 @@
 package com.shangpin.picture.product.consumer.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
 import com.shangpin.ephub.client.fdfs.dto.UploadPicDto;
 import com.shangpin.picture.product.consumer.bean.AuthenticationInformation;
@@ -21,6 +23,8 @@ import java.net.*;
 @Component
 @Slf4j
 public class ImageDownload {
+
+    private static int count=1;
     @Autowired
     private SupplierProductPictureManager supplierProductPictureManager;
   /*  public static void main(String[] args) {
@@ -47,11 +51,33 @@ public class ImageDownload {
                 url = new URL(urlList);
                 //DataInputStream dataInputStream = new DataInputStream(url.openStream());
                 URLConnection openConnection = url.openConnection();
+
                 InputStream inputStream = openConnection.getInputStream();
+
                 byte[] byteArray = IOUtils.toByteArray(inputStream);
+
                 if (byteArray == null || byteArray.length == 0) {
                     log.info("读取到的图片字节为空,无法获取图片");
-                    throw new RuntimeException("读取到的图片字节为空,无法获取图片");
+                    if(count>2){
+                        throw new RuntimeException("读取到的图片字节为空,无法获取图片");
+                    }else {
+                        HttpURLConnection httpUrlConnection = null;
+                        int flag = 0;
+                        httpUrlConnection = (HttpURLConnection) openConnection;
+                        httpUrlConnection.connect();
+                        flag = httpUrlConnection.getResponseCode();
+                        log.info("response code=" + flag);
+                        if (flag == 404 || flag == 400) {
+                            return flag;
+                        } else if (flag == 301 || flag == 302) {
+
+                            log.info("id=" + dto.getSpuPendingPicId() + "链接重定向第" + count + "次，原始url=" + urlList);
+                            count++;
+                            String newPicUrl = urlList.replaceFirst("http", "https");
+                            return downloadPicture(newPicUrl, dto, authenticationInformation);
+                        }
+                    }
+
                 }
                 String base64 = new BASE64Encoder().encode(byteArray);
                 log.info("id="+dto.getSpuPendingPicId()+"==第一步==>> "+"原始url="+urlList+"， 上传图片前拉取的数据为"+base64.substring(0, 100)+"，长度 为 "+base64.length()+"， 下一步调用上传图片服务上传图片到图片服务器");
@@ -86,4 +112,16 @@ public class ImageDownload {
             return null;
         }
     }
+
+
+
+    public static void main(String[] args) {
+        ImageDownload pictureService = new ImageDownload();
+        HubSpuPendingPicDto picDto = new HubSpuPendingPicDto();
+        AuthenticationInformation information = new AuthenticationInformation();
+        pictureService.downloadPicture("http://cache.net-a-porter.com/images/products/1007308/1007308_in_xl.jpg",picDto,information);
+
+    }
+
+
 }
