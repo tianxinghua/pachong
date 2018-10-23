@@ -1,18 +1,23 @@
 package com.shangpin.ep.order;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shangpin.ep.order.module.orderapiservice.IOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.*;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.baseblu.OrderResult;
+import com.shangpin.ep.order.module.orderapiservice.impl.util.HttpClientUtil;
+import com.shangpin.ep.order.module.orderapiservice.impl.util.HttpRequestMethedEnum;
+import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.logicalcobwebs.proxool.ProxoolFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.shangpin.ep.order.conf.mail.attach.AttachBean;
@@ -23,10 +28,11 @@ import com.shangpin.ep.order.module.orderapiservice.impl.BaseBluServiceImpl;
 import com.shangpin.ep.order.module.orderapiservice.impl.WiseOrderService;
 import com.shangpin.ep.order.module.orderapiservice.impl.atelier.CommonService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringBootTest
 public class EpOrderServiceApplicationTests {
- 
+	private String queryConfUrl;
+	Map<String,String> header = new HashMap<String, String>();
 //	public static void main(String[] args) {
 //		OutTimeConfig defaultConfig = new OutTimeConfig(1000 * 2, 1000 * 60*5, 1000 * 60*5);
 //		 Map<String, String> map =new HashMap<String, String>();
@@ -47,7 +53,7 @@ public class EpOrderServiceApplicationTests {
 //	private ShangpinMailSender shangpinMailSender;
 //	@Test
 //	public void contextLoads() throws Exception {
-//		
+//
 //		ShangpinMail shangpinMail = new ShangpinMail();
 //		shangpinMail.setFrom("chengxu@shangpin.com");
 //		shangpinMail.setSubject("这是一份测试邮件，请忽略");
@@ -60,8 +66,8 @@ public class EpOrderServiceApplicationTests {
 //		addTo.add("steven.ding@shangpin.com");
 //		shangpinMail.setAddTo(addTo );
 //		shangpinMailSender.sendShangpinMail(shangpinMail);
-//		
-//		
+//
+//
 //	}
 //	@Autowired
 //	@Qualifier("baseBluServiceImpl")
@@ -89,9 +95,9 @@ public class EpOrderServiceApplicationTests {
 //		}
 //	}
 
-	/*@Autowired
+	@Autowired
 	private ShangpinMailSender sm;
-	
+
 	@Test
 	public void sendMailTest(){
 		ShangpinMail shangpinMail = new ShangpinMail();
@@ -116,10 +122,10 @@ public class EpOrderServiceApplicationTests {
 		}
 		System.out.println("over");
 	}
-	
+
 	@Autowired
 	BaseBluServiceImpl baseBluServiceImpl;
-	
+
 	@Test
 	public void pushOrder(){
 		OrderDTO orderDTO = new OrderDTO();
@@ -128,7 +134,7 @@ public class EpOrderServiceApplicationTests {
 	}
 	@Autowired
 	WiseOrderService wise;
-	
+
 	@Test
 	public void wisePushOrder(){
 		OrderDTO orderDTO = new OrderDTO();
@@ -143,10 +149,10 @@ public class EpOrderServiceApplicationTests {
 		deleteOrder.setDetail("1163000-2013076855557:1,");
 		wise.handleRefundlOrder(deleteOrder );
 	}
-	
+
 	@Autowired
 	BagheeraOrderService bagheeraOrderService;
-	
+
 	@Test
 	public void bagheeraPushOrder(){
 		OrderDTO orderDTO = new OrderDTO();
@@ -162,21 +168,99 @@ public class EpOrderServiceApplicationTests {
 		deleteOrder.setSpOrderId("201709066014679");
 		bagheeraOrderService.handleRefundlOrder(deleteOrder );
 	}
-	
+
 	@Autowired
 	CommonService service;
+    @Autowired
+    GebnegozioServiceImpl gebnegozioService;
 
 	@Test
 	public void testSize(){
 		try {
-			String size = service.getSizeFromEphub("2016030701799", "7294507-2010629426790");
+			String size = service.getProductSize("2016030701799", "7294507-2010629426790");
 			System.out.println(size);
 		} catch (Exception e) {
-			e.printStackTrace(); 
+			e.printStackTrace();
 		}
-	}*/
-	/*@Autowired
-	GebnegozioServiceImpl gebnegozioServiceImpl;*/
+	}
+	@AfterClass
+	public   static   void  tearDown() {
+		ProxoolFacade.shutdown(0);
+	}
+    //测试-------------------------
+    @Test
+    public void gebTest() {
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setSpOrderId("181011");
+        orderDTO.setDetail("2000000031804:1");
+        orderDTO.setSupplierId("2015111001657");
+        orderDTO.setSupplierOrderNo("225");
+        gebnegozioService.handleConfirmOrder(orderDTO);
 
+       //测试调用ephub接口
+        //String supplierId = "2018061101883";
+		//String supplierSkuNo = "2000000031804";
+		//Long supplierSpuId = Long.valueOf(852204);
+		//gebnegozioService.getSizeFromEphub(supplierId,supplierSkuNo);
+		//gebnegozioService.getSupplierSpuIdFromEphub(supplierId,supplierSkuNo);
+		//gebnegozioService.getSupplierSpuColorFromEphub(supplierSpuId);
+    }
+    @Test
+	public void gebTestSql() {
+		/*OutTimeConfig outTimeConf = new OutTimeConfig();
+		String url="http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/products/";
+		String username="";
+		String password="";
+		Map<String,String> param = new HashMap<String,String>();
+		param.put("searchCriteria[currentPage]","1");
+		param.put("searchCriteria[pageSize]","5");
+		param.put("searchCriteria[filter_groups][0][filters][0][field]","modello");
+		param.put("searchCriteria[filter_groups][0][filters][0][value]","010006 CREAMBLACK");
+		param.put("searchCriteria[filter_groups][0][filters][0][condition_type]","eq");
+		param.put("searchCriteria[filter_groups][1][filters][0][field]","type_id");
+		param.put("searchCriteria[filter_groups][1][filters][0][value]","configurable");
+		param.put("searchCriteria[filter_groups][1][filters][0][condition_type]","eq");
+		param.put("fields","items[sku]");
+
+		Map<String,String> headMap = new HashMap<String,String>();
+		headMap.put("Content-Type", "application/json");
+		headMap.put("Authorization", "Bearer " + "h334xq799ibldmrjuencv9d54turnl3b");
+		try {
+			url = URLEncoder.encode( url , "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		gebnegozioService.gebTestSql(  url,  outTimeConf,  param,  headMap ,  username,  password);
+	*/
+
+
+		String url = "http://gebnegozio-qas.extranet.alpenite.com/rest/marketplace_shangpin/V1/";
+	/*String queryConfStr = "";
+	String modello = "010006 CREAMBLACK";
+		modello = URLEncoder.encode( modello );
+	queryConfStr = "products/?searchCriteria[currentPage]=1&searchCriteria[pageSize]=5&searchCriteria[filter_groups][0][filters][0][field]=modello&searchCriteria[filter_groups][0][filters][0][value]="+modello+"&searchCriteria[filter_groups][0][filters][0][condition_type]=eq&searchCriteria[filter_groups][1][filters][0][field]=type_id&searchCriteria[filter_groups][1][filters][0][value]=configurable&searchCriteria[filter_groups][1][filters][0][condition_type]=eq&fields=items[sku]";
+		queryConfUrl = url + queryConfStr;
+		header.put("Content-Type", "application/json");
+		header.put("Authorization", "Bearer " + "h334xq799ibldmrjuencv9d54turnl3b");
+		HashMap<String,String> queryConfResp = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,queryConfUrl, null, header, null);
+		String valuell = queryConfResp.get("resBody");
+	}*/
+		header.put("Content-Type", "application/json");
+		header.put("Authorization", "Bearer " + "akrtfhn7ub87iaqtnrtwft8e0ygs1rir");
+		String delCartProUrl = "";
+		String quoteId = "3356";
+		delCartProUrl = url + "carts/mine/items/" + quoteId;
+		HashMap<String, String> delCartProResp = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpDelete, delCartProUrl, null, header, null);
+		if(delCartProResp.get("code").equals("200")) {
+			String delflag = delCartProResp.get("resBody");
+			if (delflag.equals("true")){
+				System.out.println("购物车内容已经清空。");
+				//logger.info("购物车内容已经清空。");
+			}else {
+				System.out.println("购物车内容清空失败！");
+				//logger.info("购物车内容清空失败！");
+			}
+		}
+	}
 
 }

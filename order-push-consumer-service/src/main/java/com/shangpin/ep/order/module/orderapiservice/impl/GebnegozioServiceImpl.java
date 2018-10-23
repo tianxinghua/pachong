@@ -10,34 +10,29 @@ import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.dto.SizeDto;
+import com.shangpin.ep.order.module.orderapiservice.impl.atelier.response.HubResponse;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.gebnegozio.*;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.inviqa.Errors;
 import com.shangpin.ep.order.module.orderapiservice.impl.dto.inviqa.FailResult;
 import com.shangpin.ep.order.module.orderapiservice.impl.util.HttpClientUtil;
 import com.shangpin.ep.order.module.orderapiservice.impl.util.HttpRequestMethedEnum;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
-import com.shangpin.ephub.client.data.mysql.sku.gateway.HubSupplierSkuGateWay;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by zhaowenjun on 2018/9/12.
  */
 @Component("gebnegozioOrderImpl")
 public class GebnegozioServiceImpl implements IOrderService {
-    String url="https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/";
-    String tokenUrl = url + "integration/customer/token";
     Gson gson = new Gson();
     private static Logger loggerError = Logger.getLogger("error");
     private static Logger logger = Logger.getLogger("info");
@@ -48,16 +43,17 @@ public class GebnegozioServiceImpl implements IOrderService {
     @Autowired
     HandleException handleException;
     @Autowired
-    private HubSupplierSkuGateWay hubSupplierSkuGateWay;
-    @Autowired
-    private HubSupplierSpuGateWay hubSupplierSpuGateWay;
-   //String url = null;
-    //String tokenUrl = null;
+    private RestTemplate restTemplate;
+
+    String url = null;
+    String tokenUrl = null;
+    String supplierId = null;
 
     @PostConstruct
     public void init(){
-        //url = supplierProperties.getGebnegozio().getUrl();
-        //tokenUrl = supplierProperties.getGebnegozio().getTokenUrl();
+        url = supplierProperties.getGebnegozio().getUrl();
+        tokenUrl = supplierProperties.getGebnegozio().getTokenUrl();
+        supplierId = supplierProperties.getGebnegozio().getSupplierId();
     }
 
     /**
@@ -80,49 +76,79 @@ public class GebnegozioServiceImpl implements IOrderService {
         int qty = 0;
         String detail = orderDTO.getDetail();
         skuId = detail.split(":")[0];
-        if(skuId.contains("\\\\")){skuId = skuId.replaceAll("\\\\\\\\", "\\\\");}
         qty = Integer.parseInt(detail.split(":")[1]);
         String reqQuoteUrl = url + "carts/mine";
-
+        String skuRequId = "";
+        String delCartProUrl = "";
+        String delCartProJson = "";
+        String itemId = "";
         try{
+
             // 第一步：获取token
             String token = selToken();
             Map<String,String> header = new HashMap<String, String>();
             header.put("Content-Type", "application/json");
             header.put("Authorization", "Bearer " + token);
 
-            //第二步：获取购物车ID quoteId
-            HashMap<String,String> httpResponse1 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,reqQuoteUrl, null, header, null);
-            if( httpResponse1.get("code").equals("200")){
-                String quoteId = httpResponse1.get("resBody");
+            String stockData = selStock( skuId, token );
+            //如果库存大于0,则下单
+            if( Integer.valueOf(stockData)>0 ){
+                //第二步：获取购物车ID quoteId
+                String quoteId = postHttp(HttpRequestMethedEnum.HttpPost, token, reqQuoteUrl, null, null);
                 if(null != quoteId && !quoteId.equals("")){
                     quoteId = quoteId.substring( 1, quoteId.length()-1 );//取到的值有引号，去掉引号
                 }
-                String stockData = selStock( skuId, token );
-                //如果库存大于0,则下单
-               if( Integer.valueOf(stockData)>0 ){
-                //第三步：添加商品到购物车 先不区分 simple 和 configurable
+                logger.info("获取购物车ID：" + quoteId);
+                //第三步：添加商品到购物车 区分 simple 和 configurable
+                //3.1 ： 根据sku 查询产品是 simple 还是 configurable
+                String queryTypeIdUrl = url + "products/"+skuId+"?fields=sku,type_id,custom_attributes";
+                String typeIdJson = selMessage(token , queryTypeIdUrl);
+                logger.info("查询产品是简单产品还是可配置产品：" + typeIdJson);
+                ProDetail proDetail = gson.fromJson( typeIdJson, ProDetail.class);
+                String typeId = proDetail.getTypeId();
+                List<CustomAttributes> customAttributesList = proDetail.getCustomAttributesList();
+                Map<String, Object> customAttrMap = new HashMap<String, Object>();
+                String modello = "";
+                String queryConfUrl = "";
+                if( null != customAttributesList && customAttributesList.size()>0 ){
+                    // key = attributeCode, value - value
+                    customAttrMap = customAttributesList.stream().collect(Collectors.toMap(CustomAttributes::getAttributeCode,CustomAttributes::getValue));
+                }
+                if( customAttrMap.containsKey("modello") ){
+                    modello = String.valueOf(customAttrMap.get("modello"));
+                }
+                logger.info("Product TypeId：" + typeId);
+                logger.info("Product Modello：" + modello);
+                modello = URLEncoder.encode( modello );
+                if( typeId.equals("simple") ){
+                    queryConfUrl = url +  "products/?searchCriteria[currentPage]=1&searchCriteria[pageSize]=5&searchCriteria[filter_groups][0][filters][0][field]=modello&searchCriteria[filter_groups][0][filters][0][value]="+modello+"&searchCriteria[filter_groups][0][filters][0][condition_type]=eq&searchCriteria[filter_groups][1][filters][0][field]=type_id&searchCriteria[filter_groups][1][filters][0][value]=configurable&searchCriteria[filter_groups][1][filters][0][condition_type]=eq&fields=items[sku]";
+                    String queryConfJson = postHttp(HttpRequestMethedEnum.HttpGet , token, queryConfUrl , null, null);
+                    if(null != queryConfJson && !queryConfJson.equals("")) {
+                        ResponseDTO responseDTO = gson.fromJson(queryConfJson, ResponseDTO.class);
+                        skuRequId = responseDTO.getItems().get(0).getSku();
+                    }
+                    logger.info("当它是简单产品时，应该返回其父类的sku：" + skuRequId);
+                }else {
+                    skuRequId = skuId;
+                    logger.info("当它是可配置产品时，应该自身的sku：" + skuRequId);
+                }
                 String addToCartUrl = url + "carts/mine/items";
                 //处理颜色和尺码
                 //根据sku查尺码--------------------------------------------------
-                HubSupplierSkuCriteriaDto skuCriteriaDto = new HubSupplierSkuCriteriaDto();
-                HubSupplierSkuCriteriaDto.Criteria skuCriteria = skuCriteriaDto.createCriteria();
-                if(null != skuId && StringUtils.isNotBlank(skuId)){
-                    skuCriteria.andSupplierSkuNoEqualTo(skuId).andSupplierIdEqualTo("2018061101883");
-                }
-                List<HubSupplierSkuDto> hubSupplierSkuDtos =  hubSupplierSkuGateWay.selectByCriteria(skuCriteriaDto);
-                String usrSelectSize = hubSupplierSkuDtos.get(0).getSupplierSkuSize();//用户选择的产品的尺码，根据sku去库里查对应的颜色
-                Long supplierSpuId = hubSupplierSkuDtos.get(0).getSupplierSpuId();
+                String usrSelectSize = getSizeFromEphub( supplierId, skuId );
+                /*List<HubSupplierSku> hubSupplierSkuDtos =  hubSupplierSkuService.selBySuppSkuNo(skuId);
+                String usrSelectSize = hubSupplierSkuDtos.get(0).getSupplierSkuSize();//用户选择的产品的尺码，根据sku去库里查对应的颜色*/
+
+                Long supplierSpuId = getSupplierSpuIdFromEphub( supplierId, skuId );
+
                 //根据sku查颜色--------------------------------------------------
-               HubSupplierSpuCriteriaDto spuCriteriaDto = new HubSupplierSpuCriteriaDto();
-                HubSupplierSpuCriteriaDto.Criteria spuCriteria = spuCriteriaDto.createCriteria();
-                if(null != skuId && StringUtils.isNotBlank(skuId)){
-                    spuCriteria.andSupplierSpuIdEqualTo(supplierSpuId).andSupplierIdEqualTo("2018061101883");
-                }
-                List<HubSupplierSpuDto> hubSupplierSpuDtos = hubSupplierSpuGateWay.selectByCriteria(spuCriteriaDto);
-                String usrSelectColor = hubSupplierSpuDtos.get(0).getSupplierSpuColor();//用户选择的产品的颜色，根据sku去库里查对应的颜色
+                /*List<HubSupplierSpu> hubSupplierSpuDtos = hubSupplierSpuService.selBySuppSpuId(supplierSpuId);
+                String usrSelectColor = hubSupplierSpuDtos.get(0).getSupplierSpuColor();//用户选择的产品的颜色，根据sku去库里查对应的颜色*/
+                String usrSelectColor = getSupplierSpuColorFromEphub( supplierSpuId );
+                logger.info("简单产品sku的颜色：" + usrSelectColor);
+                logger.info("简单产品sku的尺码：" + usrSelectSize);
                 //封装请求参数
-              List<String> sizeOptList = selSizeAndColorOpt(usrSelectSize,"size",token);
+                List<String> sizeOptList = selSizeAndColorOpt(usrSelectSize,"size",token);
                 List<String> colorOptList = selSizeAndColorOpt(usrSelectColor,"color",token);
                 CartItem cartItem = new CartItem();//可配置产品
                 ProductOption productOption = new ProductOption();
@@ -131,12 +157,10 @@ public class GebnegozioServiceImpl implements IOrderService {
                 ConfigurableItemOptions configurableItemOptions1 = new ConfigurableItemOptions();
                 ConfigurableItemOptions configurableItemOptions2 = new ConfigurableItemOptions();
 
-                cartItem.setSku(skuId);
+                cartItem.setSku( skuRequId );//如果是简单产品，查询父类的sku
                 cartItem.setQty(qty);
                 cartItem.setQuoteId(quoteId);
 
-                /*configurableItemOptions1.setOptionId("178");
-                configurableItemOptions1.setOptionValue("8354");*/
                 configurableItemOptions1.setOptionId(sizeOptList.get(0));
                 configurableItemOptions1.setOptionValue(sizeOptList.get(1));
                 configurableItemOptions2.setOptionId(colorOptList.get(0));
@@ -149,112 +173,106 @@ public class GebnegozioServiceImpl implements IOrderService {
                 CartRequ cartRequ = new CartRequ();
                 cartRequ.setCartItem(cartItem);
                 String cartJson = gson.toJson(cartRequ);
-                //发送请求
-                HashMap<String,String> httpResponse2 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,addToCartUrl, null, header, cartJson);
-                if(httpResponse2.get("code").equals("200")){
+                logger.info("添加到购物车的请求参数（JSON类型）：" + cartJson);
+                //添加商品到购物车，发送请求
+                delCartProJson = postHttp(HttpRequestMethedEnum.HttpPost , token, addToCartUrl , null, cartJson);
+                if(null != delCartProJson && !delCartProJson.equals("")) {
+                    CartItem cartItem1 = gson.fromJson(delCartProJson, CartItem.class);
+                    itemId = cartItem1.getItemId();
+                }
                 //第四步：提供地址，估计运费
                 String estimateCostsUrl = url + "carts/mine/estimate-shipping-methods";
                 AddressRequ addressRequ = new AddressRequ();
                 addressRequ.setAddress(getAddredd(quoteId));
                 String addressJson = gson.toJson(addressRequ);
-                HashMap<String,String> httpResponse3 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,estimateCostsUrl, null, header, addressJson);
-                if(httpResponse3.get("code").equals("200")) {
+                String carrierJson = postHttp(HttpRequestMethedEnum.HttpPost , token, estimateCostsUrl , null, addressJson);
+                List<CarrierDTO> carrierList = new ArrayList<CarrierDTO>();
+                if(null != carrierJson && !carrierJson.equals("")){
                     //返回运输方式和运费
-                    String carrierJson = httpResponse3.get("resBody");
-                    List<CarrierDTO> carrierList = gson.fromJson(carrierJson, new TypeToken<List<CarrierDTO>>() {
+                    carrierList = gson.fromJson(carrierJson, new TypeToken<List<CarrierDTO>>() {
                     }.getType());
+                }
+                //第五步：设置发货和账单信息
+                String shopInfoUrl = url + "carts/mine/shipping-information";
+                AddressInfoRequ addressInfoRequ = new AddressInfoRequ();
+                addressInfoRequ.setAddressInformation(getAddressInfo(quoteId, carrierList));
+                String addressInfoJson = gson.toJson(addressInfoRequ);
+                String paymentJson = postHttp(HttpRequestMethedEnum.HttpPost , token, shopInfoUrl , null, addressInfoJson);
+                if (null != paymentJson && !paymentJson.equals("")){
+                    PaymentDTO paymentDTO = gson.fromJson(paymentJson, PaymentDTO.class);
+                }
+                //第六步：发送支付信息
+                String payInfoUrl = url + "carts/mine/payment-information";
+                ReqOrder reqOrder = new ReqOrder();
+                reqOrder.setBillingAddress(getAddredd(quoteId));
+                reqOrder.setPaymentMethod(getPayMethod());
+                String reqOrderJson = gson.toJson(reqOrder);
+                HashMap<String, String> httpResponse5 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost, payInfoUrl, null, header, reqOrderJson);
+                if(httpResponse5.get("code").equals("200")) {
+                    String orderId = httpResponse5.get("resBody");
+                    if(null != orderId && !orderId.equals("")){orderId = orderId.substring( 1, orderId.length()-1 );}
+                    System.out.println("订单号："+ orderId);
+                    logger.info("订单号："+ orderId);
+                    //第七步：确认订单-------------------------没权限呐、
+                    /*String reqUrl = url + "orders/" + orderId;
+                    HashMap<String, String> httpResponse = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet, reqUrl, null, header, null);
+                    String resBody = httpResponse.get("resBody");
+                    int code = Integer.valueOf(httpResponse.get("code"));
+                    String message = httpResponse.get("message");
+                    logger.info("responseCode：" + code);
+                    logger.info("responseMessage：" + message);
+                    logger.info("responseBody：" + resBody);
 
-                    //第五步：设置发货和账单信息
-                    String shopInfoUrl = url + "carts/mine/shipping-information";
-                    AddressInfoRequ addressInfoRequ = new AddressInfoRequ();
-                    addressInfoRequ.setAddressInformation(getAddressInfo(quoteId, carrierList));
-                    String addressInfoJson = gson.toJson(addressInfoRequ);
-                    HashMap<String, String> httpResponse4 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost, shopInfoUrl, null, header, addressInfoJson);
-                    if(httpResponse4.get("code").equals("200")) {
-                        String paymentJson = httpResponse4.get("resBody");
-                        PaymentDTO paymentDTO = gson.fromJson(paymentJson, PaymentDTO.class);
+                    ResponseObject obj = new Gson().fromJson(resBody, ResponseObject.class);*/
+                    orderDTO.setConfirmTime(new Date());
+                    orderDTO.setSupplierOrderNo(orderId);
 
-                        //第六步：发送支付信息
-                        String payInfoUrl = url + "carts/mine/payment-information";
-                        ReqOrder reqOrder = new ReqOrder();
-                        reqOrder.setBillingAddress(getAddredd(quoteId));
-                        reqOrder.setPaymentMethod(getPayMethod());
-                        String reqOrderJson = gson.toJson(reqOrder);
-                        HashMap<String, String> httpResponse5 = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost, payInfoUrl, null, header, reqOrderJson);
-                        if(httpResponse5.get("code").equals("200")) {
-                            String orderId = httpResponse5.get("resBody");
-                            System.out.println("订单号："+ orderId);
-                            logger.info("订单号："+ orderId);
-                            if(null != orderId && !orderId.equals("")){orderId = orderId.substring( 1, orderId.length()-1 );}
-                            //第七步：确认订单-------------------------没权限呐、好无语，后面的可怎么整
-                            /*String reqUrl = url + "orders/" + orderId;
-                            HashMap<String, String> httpResponse = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet, reqUrl, null, header, null);
-                            String resBody = httpResponse.get("resBody");
-                            int code = Integer.valueOf(httpResponse.get("code"));
-                            String message = httpResponse.get("message");
-                            logger.info("responseCode：" + code);
-                            logger.info("responseMessage：" + message);
-                            logger.info("responseBody：" + resBody);
+                    String resBody = httpResponse5.get("resBody");
+                    int code = Integer.valueOf(httpResponse5.get("code"));
+                    String message = httpResponse5.get("message");
+                    logger.info("responseCode：" + code);
+                    logger.info("responseMessage：" + message);
+                    logger.info("responseBody：" + resBody);
 
-                            ResponseObject obj = new Gson().fromJson(resBody, ResponseObject.class);*/
-                            orderDTO.setConfirmTime(new Date());
-                            orderDTO.setSupplierOrderNo(orderId);
-
-                            String resBody = httpResponse5.get("resBody");
-                            int code = Integer.valueOf(httpResponse5.get("code"));
-                            String message = httpResponse5.get("message");
-                            logger.info("responseCode：" + code);
-                            logger.info("responseMessage：" + message);
-                            logger.info("responseBody：" + resBody);
-
-                            if (code == 200) {
-                                if (null != resBody&& !resBody.equals("")) {
-                                   // if ("processing".equals(obj.getStatus().toLowerCase())) {
-                                        orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
-                                    //}
-                                }
-                            } else if (code == 400) {
-                                FailResult fail = new Gson().fromJson(message, FailResult.class);
-                                Errors error = fail.getMessages().getError().get(0);
-                                orderDTO.setDescription(error.getMessage());
-                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                                orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                            } else if (code == 500) {
-                                FailResult fail = new Gson().fromJson(message, FailResult.class);
-                                Errors error = fail.getMessages().getError().get(0);
-                                orderDTO.setDescription(error.getMessage());
-                                orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                            } else {
-                                orderDTO.setErrorType(ErrorStatus.API_ERROR);
-                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
-                            }
-
-                        }else {
-                            logger.info("发送支付信息的时候发生异常：" + httpResponse5.get("message"));
-                            logger.info("详细错误信息："+httpResponse5.get("resBody"));
-                            System.out.println("发送支付信息的时候发生异常：" + httpResponse5.get("message"));
+                    if (code == 200) {
+                        if (null != resBody&& !resBody.equals("")) {
+                           // if ("processing".equals(obj.getStatus().toLowerCase())) {
+                                orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED);
+                            //}
                         }
-                    }else {
-                        logger.info("设置发货和账单信息的时候发生异常：" + httpResponse4.get("message"));
-                        logger.info("详细错误信息："+httpResponse4.get("resBody"));
-                        System.out.println("设置发货和账单信息的时候发生异常：" + httpResponse4.get("message"));
+                    } else if (code == 400) {
+                        FailResult fail = new Gson().fromJson(message, FailResult.class);
+                        Errors error = fail.getMessages().getError().get(0);
+                        orderDTO.setDescription(error.getMessage());
+                        orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                        orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                    } else if (code == 500) {
+                        FailResult fail = new Gson().fromJson(message, FailResult.class);
+                        Errors error = fail.getMessages().getError().get(0);
+                        orderDTO.setDescription(error.getMessage());
+                        orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                        orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
+                    } else {
+                        orderDTO.setErrorType(ErrorStatus.API_ERROR);
+                        orderDTO.setPushStatus(PushStatus.ORDER_CONFIRMED_ERROR);
                     }
+
                 }else {
-                    logger.info("提供地址，估计运费的时候发生异常：" + httpResponse3.get("message"));
-                    logger.info("详细错误信息："+httpResponse3.get("resBody"));
-                    System.out.println("提供地址，估计运费的时候发生异常：" + httpResponse3.get("message"));
+                    logger.info("发送支付信息的时候发生异常：" + httpResponse5.get("message"));
+                    logger.info("详细错误信息："+httpResponse5.get("resBody"));
+                    logger.info("这里需要清空购物车----------");
+                    delCartProUrl = url + "carts/mine/items/" + itemId;
+                    HashMap<String, String> delCartProResp = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpDelete, delCartProUrl, null, header, null);
+                    if(delCartProResp.get("code").equals("200")) {
+                        String delflag = delCartProResp.get("resBody");
+                        if (delflag.equals("true")){
+                            logger.info("购物车内容已经清空。");
+                        }else {
+                            logger.info("购物车内容清空失败！");
+                        }
+                    }
+                    System.out.println("发送支付信息的时候发生异常：" + httpResponse5.get("message"));
                 }
-                }else {
-                    logger.info("添加商品到购物车的时候发生异常：" + httpResponse2.get("message"));
-                    logger.info("详细错误信息："+httpResponse2.get("resBody"));
-                    System.out.println("添加商品到购物车的时候发生异常：" + httpResponse2.get("message"));
-                }
-            }else{
-                logger.info("获取购物车ID的时候发生异常：" + httpResponse1.get("message"));
-                logger.info("详细错误信息："+httpResponse1.get("resBody"));
-                System.out.println("获取购物车ID的时候发生异常：" + httpResponse1.get("message"));
-            }
             }else{
                 orderDTO.setConfirmTime(new Date());
                 orderDTO.setPushStatus(PushStatus.NO_STOCK);
@@ -378,6 +396,7 @@ public class GebnegozioServiceImpl implements IOrderService {
     /**
      *  获取token
      */
+    int i = 0;
     public String selToken(){
         String token = "";
         // 存储相关的header值
@@ -387,13 +406,17 @@ public class GebnegozioServiceImpl implements IOrderService {
         String json = "{\"username\":\"ming.liu@shangpin.com\",\"password\":\"Ex7n4AQ5\"}";
         //返回值响应对象
         HashMap<String,String> httpResponse = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,tokenUrl, null, header, json);
-        if(httpResponse.get("code").equals("200")){
-            String response = httpResponse.get("resBody");
+        String response = httpResponse.get("resBody");
+        String code = httpResponse.get("code");
+        if(null != response && !response.equals("") && code.equals("200")){
             token = response.substring( 1, response.length()-1 );
             return token;
         }else {
-            logger.info("获取token异常：" + httpResponse.get("message"));
-            selToken();
+            for(;i<4;i++){
+                logger.info("获取token异常，重新获取，错误超过5次将不再获取：" + httpResponse.get("message"));
+                i++;
+                token = selToken();
+            }
             return token;
         }
     }
@@ -458,11 +481,11 @@ public class GebnegozioServiceImpl implements IOrderService {
                 }
                 String urlStr = URLEncoder.encode( sku , "UTF-8");
                 String stockUrl = url + "stockStatuses/" + urlStr;
-                HashMap<String,String> stockJson = selMessage(token , stockUrl);
+                String stockJson = selMessage(token , stockUrl);
                 if ( null != stockJson && !stockJson.equals("") ){
-                    StockDTO stockDTO = gson.fromJson( stockJson.get("resBody") , StockDTO.class);
+                    StockDTO stockDTO = gson.fromJson( stockJson , StockDTO.class);
                     qty = stockDTO.getStockItem().getQty();
-                    if(null == qty && qty.equals("")){
+                    if(null == qty || qty.equals("")){
                         qty = "0";
                     }
                 }
@@ -475,14 +498,29 @@ public class GebnegozioServiceImpl implements IOrderService {
     /**
      * 携带token获取内容、get公用方法
      */
-    public HashMap<String,String> selMessage(String token , String url){
-        // 存储相关的header值
-        Map<String,String> header = new HashMap<String, String>();
-        header.put("Content-Type", "application/json");
-        header.put("Authorization", "Bearer " + token);
+    public String selMessage(String token , String url){
+        String respValue = "";
+        try{
+            // 存储相关的header值
+            Map<String,String> header = new HashMap<String, String>();
+            header.put("Content-Type", "application/json");
+            header.put("Authorization", "Bearer " + token);
 
-        HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
-        return response;
+            HashMap<String,String> response = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, header,null);
+            if ( null != response && !response.equals("") ){
+                if( response.get("code").equals("200") ){
+                    respValue = response.get("resBody");
+                }else {
+                    logger.info("错误信息：" + response.get("message"));
+                }
+            }else {
+                token = selToken();
+                selMessage(token, url);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return respValue;
     }
 
     /**
@@ -518,18 +556,101 @@ public class GebnegozioServiceImpl implements IOrderService {
         return optResp;
     }
 
-
-    //测试-------------------------
-    public static void main(String[] args) {
-        GebnegozioServiceImpl gebnegozioService = new GebnegozioServiceImpl();
-        OrderDTO orderDTO = new OrderDTO();
-        orderDTO.setSpOrderId("181011");
-        orderDTO.setDetail("1\\\\4\\\\3\\\\3586\\\\382465\\\\0:1");
-        orderDTO.setSupplierId("2018061101883");
-        orderDTO.setSupplierOrderNo("225");
-        //gebnegozioService.handleConfirmOrder(orderDTO);
-        gebnegozioService.handleRefundlOrder(orderDTO);
+    /**
+     *  POST请求的公用方法
+     * @param token
+     * @param url
+     * @param params
+     * @param entity
+     *
+     * @return
+     */
+    int j = 0;
+    public String postHttp(HttpRequestMethedEnum requestMethod, String token,String url, Map<String, Object> params, String entity){
+        String respValue = "";
+        try {
+            // 存储相关的header值
+            Map<String, String> header = new HashMap<String, String>();
+            header.put("Content-Type", "application/json");
+            header.put("Authorization", "Bearer " + token);
+            HashMap<String, String> respMap = HttpClientUtil.sendHttp(requestMethod, url, params, header, entity);
+            String resBody = respMap.get("resBody");
+            String code = respMap.get("code");
+            String message = respMap.get("message");
+            if (null != resBody && !resBody.equals("")) {
+                if (code.equals("200")){
+                    respValue = resBody;
+                }else {
+                    logger.error("请求异常code：" + code );
+                    logger.error("请求异常resBody：" + resBody );
+                    logger.error("请求异常信息：" + message +"----------请求的url为：" + url );
+                }
+            } else {
+                logger.error("请求异常code：" + code );
+                logger.error("请求返回为空，重新获取一次：" + message );
+                token = selToken();
+                for(;j<1;j++) {
+                    j++;
+                    postHttp(requestMethod, token, url, params, entity);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("请求异常,url为：" + url );
+        }
+        return respValue;
     }
 
-
+    /**
+     *  从ephub 获取供应商 size
+     * @param supplierId
+     * @param supplierSkuNo
+     * @return
+     */
+    public String getSizeFromEphub(String supplierId, String supplierSkuNo){
+        SizeDto sizeDto = new SizeDto();
+        sizeDto.setSupplierId(supplierId);
+        sizeDto.setSupplierSkuNo(supplierSkuNo);
+        String getSizeFromEphubUrl = supplierProperties.getSupplier().getGetSizeFromEphubUrl();
+        HubResponse<String> response = restTemplate.postForObject(getSizeFromEphubUrl, sizeDto, HubResponse.class);
+        if("0".equals(response.getCode())){
+            return response.getContent();
+        }else{
+            return "";
+        }
+    }
+    /**
+     *  从ephub 获取 supplier_spu_id
+     * @param supplierId
+     * @param supplierSkuNo
+     * @return
+     */
+    public Long getSupplierSpuIdFromEphub(String supplierId, String supplierSkuNo){
+        SizeDto sizeDto = new SizeDto();
+        sizeDto.setSupplierId(supplierId);
+        sizeDto.setSupplierSkuNo(supplierSkuNo);
+        String getSupplierSpuIdFromEphubUrl = supplierProperties.getSupplier().getGetSupplierSpuIdFromEphubUrl();
+        HubResponse<Integer> response = restTemplate.postForObject(getSupplierSpuIdFromEphubUrl, sizeDto, HubResponse.class);
+        if("0".equals(response.getCode())){
+            return Long.valueOf(response.getContent());
+        }else{
+            return null;
+        }
+    }
+    /**
+     *  从ephub 获取供应商原始颜色
+     * @param supplierSpuId
+     * @return
+     */
+    public String getSupplierSpuColorFromEphub(Long supplierSpuId){
+        SizeDto sizeDto = new SizeDto();
+        sizeDto.setSupplierSpuId(supplierSpuId);
+        String getSupplierSpuColorFromEphubUrl = supplierProperties.getSupplier().getGetSupplierSpuColorFromEphubUrl();
+        HubResponse<String> response = restTemplate.postForObject(getSupplierSpuColorFromEphubUrl, sizeDto, HubResponse.class);
+        if("0".equals(response.getCode())){
+            return response.getContent();
+        }else{
+            return "";
+        }
+    }
 }

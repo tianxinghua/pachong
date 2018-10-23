@@ -49,4 +49,10 @@ public class Supplier extends SupplierCommon implements Serializable {
 	//从ephub获取供货商原始信息
 
 	private  String productSpuUrl;
+
+	//从ephub获取supplier_spu_id服务
+	private String getSupplierSpuIdFromEphubUrl;
+
+	//从ephub获取供应商原始颜色
+	private String getSupplierSpuColorFromEphubUrl;
 }

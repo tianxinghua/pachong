@@ -1,30 +1,30 @@
-spring: 
-  rabbitmq: 
+spring:
+  rabbitmq:
            host: 192.168.20.175
            port: 5672
            username: scm-message-service-qa
            password: scm-message-service-qa
            virtual-host: /scm-message-service-qa
-  cloud: 
-        stream: 
-              bindings: 
-                        orders: 
+  cloud:
+        stream:
+              bindings:
+                        orders:
                               destination: SupplierOrderSync
                               group: push-order
-                              consumer: 
+                              consumer:
                                        concurrency: 5
                                        maxAttempts: 1
-              rabbit: 
-                      bindings: 
-                        orders: 
-                              consumer: 
+              rabbit:
+                      bindings:
+                        orders:
+                              consumer:
                                        prefix: HA.
                                        autoBindDlq: true
                                        requeueRejected: false
                                        republishToDlq: true
-  jackson: 
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
-  mail: 
+  mail:
        default-recipient: lizhongren@shangpin.com
        default-sender: chengxu@shangpin.com
        default-encoding: UTF-8 # Default MimeMessage encoding.
@@ -35,10 +35,10 @@ spring:
        password: shangpin001 # Login password of the SMTP server.
        test-connection: true # Test that the mail server is available on startup.shangpin:
 shangpin:
-  hub: 
-    dataSource: 
-      clusters: 
-        - 
+  hub:
+    dataSource:
+      clusters:
+        -
             id: ep-order-service
             clustertype: READWRITE
             strategy: RANDOM
@@ -50,14 +50,14 @@ shangpin:
             houseKeepingTestSql: select 1 from dual
             simultaneousBuildThrottle: 100
             maximumActiveTime: 600000
-            nodes: 
-               - 
+            nodes:
+               -
                   id: shangpin-coupon-read-write-db-cluster-one
                   driver: com.mysql.jdbc.Driver
                   url: "jdbc:mysql://192.168.9.135:3306/iog?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true"
                   user: writer
                   password: wt@sp520
-                  trailnumber: 
+                  trailnumber:
     OpenApi:
       host: http://192.168.20.83:9090
       updatestock: /stock/updatestock
@@ -544,16 +544,19 @@ shangpin:
               productSpuUrl: http://192.168.20.176:8003/order/supplier-spu
               stockSupplierMapping:
               orderSupplierMapping: S0000779:2016102701834
+              getSupplierSpuIdFromEphubUrl: http://192.168.20.176:8003/order/supplier-spu-id
+              getSupplierSpuColorFromEphubUrl: http://192.168.20.176:8003/order/supplier-spu-color
       theStyleSide:
               usr: ECOMM
               pwd: vendiamotutto
       gebnegozio:
               url: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/
               tokenUrl: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token
+              supplierId: 2015111001657
 
-mybatis: 
+mybatis:
   configLocation: classpath:mybatis/mybatis-configuration.xml
-banner: 
+banner:
        charset: UTF-8 # Banner file encoding.
        location: classpath:banner/banner.txt # Banner file location.
        image:

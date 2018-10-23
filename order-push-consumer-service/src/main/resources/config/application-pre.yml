@@ -449,12 +449,15 @@ shangpin:
                   getSizeFromEphubUrl: http://192.168.20.176:8003/order/product-size
                   stockSupplierMapping: 
                   orderSupplierMapping: S0000779:2016102701834
+                  getSupplierSpuIdFromEphubUrl: http://192.168.20.176:8003/order/supplier-spu-id
+                  getSupplierSpuColorFromEphubUrl: http://192.168.20.176:8003/order/supplier-spu-color
           theStyleSide:
                         usr: ECOMM
                         pwd: vendiamotutto
           gebnegozio:
                   url: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/
                   tokenUrl: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token
+                  supplierId: 2015111001657
 mybatis: 
   configLocation: classpath:mybatis/mybatis-configuration.xml
 banner: 
