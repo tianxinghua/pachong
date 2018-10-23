@@ -42,13 +42,15 @@ public class ImageDownload {
                     });
                 }
 
-                url = new URL(urlList);
+
                 urlList= urlList.replaceAll(" +", "%20");//.replaceFirst("http", "https");
+                url = new URL(urlList);
                 //DataInputStream dataInputStream = new DataInputStream(url.openStream());
                 URLConnection openConnection = url.openConnection();
                 InputStream inputStream = openConnection.getInputStream();
                 byte[] byteArray = IOUtils.toByteArray(inputStream);
                 if (byteArray == null || byteArray.length == 0) {
+                    log.info("读取到的图片字节为空,无法获取图片");
                     throw new RuntimeException("读取到的图片字节为空,无法获取图片");
                 }
                 String base64 = new BASE64Encoder().encode(byteArray);
@@ -65,6 +67,7 @@ public class ImageDownload {
                 inputStream.close();
                 return 200;
         } catch (Exception e) {
+                log.info(" connect pic error :"+e.getMessage(),e);
             e.printStackTrace();
                 return 400;
         }

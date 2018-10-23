@@ -96,9 +96,17 @@ public class SupplierProductPictureService {
 
 						continue;
 					}
+				}else{
+					log.info(" not exist");
 				}
+				Long spuPendingPicId = null;
+				try{
 
-				Long spuPendingPicId = supplierProductPictureManager.save(picVO);//保存初始化数据
+					spuPendingPicId = supplierProductPictureManager.save(picVO);//保存初始化数据
+					log.info("spuPendingPicId = " + spuPendingPicId);
+				}catch (Exception e){
+					log.info("save  " + picUrl +" error"+ e.getMessage(),e);
+				}
 				HubSpuPendingPicDto updateDto = new HubSpuPendingPicDto();
 				updateDto.setSpuPendingPicId(spuPendingPicId);
 				updateDto.setSupplierSpuId(picVO.getSupplierSpuId());
@@ -121,7 +129,7 @@ public class SupplierProductPictureService {
 					}	
 				}
 				
-				
+				log.info("upload pic respone code" +code );
 				if (code == 404 || code == 400) {
 					supplierProductPictureManager.deleteById(spuPendingPicId);
 				} else {
