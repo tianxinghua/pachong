@@ -43,6 +43,6 @@ public interface PictureProductSink {
 	/**
 	 * @return mclables通用图片数据流通道组件
 	 */
-	@Output(value = PictureProductSink.MCLABLES_PICTURE)
+	@Input(value = PictureProductSink.MCLABLES_PICTURE)
 	public MessageChannel mclablesPictureProduct();
 }
