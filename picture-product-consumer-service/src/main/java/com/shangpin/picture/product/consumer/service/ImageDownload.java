@@ -59,6 +59,7 @@ public class ImageDownload {
                 if (byteArray == null || byteArray.length == 0) {
                     log.info("读取到的图片字节为空,无法获取图片");
                     if(count>2){
+                        count=1;
                         throw new RuntimeException("读取到的图片字节为空,无法获取图片");
                     }else {
                         HttpURLConnection httpUrlConnection = null;
@@ -91,6 +92,7 @@ public class ImageDownload {
                 dto.setPicHandleState(PicHandleState.HANDLED.getIndex());
                 dto.setMemo("图片拉取成功");
                 inputStream.close();
+                count=1;
                 return 200;
         } catch (Exception e) {
                 log.info(" connect pic error :"+e.getMessage(),e);
