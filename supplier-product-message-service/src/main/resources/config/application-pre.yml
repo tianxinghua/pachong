@@ -98,7 +98,7 @@ spring:
                         vietti2OriginalProduct:
                                 destination: vietti2.original.product
                                 content-type: application/json
-                        anielloOriginalProduct: 
+                        anielloOriginalProduct:
                               destination: aniello.original.product
                               content-type: application/json
                         lindelepalaisOriginalProduct: 
@@ -209,7 +209,10 @@ spring:
                         eraldoOriginalProduct:
                              destination: eraldo.original.product
                              content-type: application/json
-              rabbit: 
+                        vipgroupOriginalProduct:
+                             destination: vipgroup.original.product
+                             content-type: application/json
+              rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 
                                   producer: 
@@ -299,9 +302,9 @@ spring:
                                   producer: 
                                            prefix: HA.
                             vietti2OriginalProduct:
-                              producer:
-                                prefix: HA.
-                            anielloOriginalProduct: 
+                                    producer:
+                                          prefix: HA.
+                            anielloOriginalProduct:
                                   producer: 
                                            prefix: HA. 
                             lindelepalaisOriginalProduct: 
@@ -410,6 +413,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             eraldoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            vipgroupOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

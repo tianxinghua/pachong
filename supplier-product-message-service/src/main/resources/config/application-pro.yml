@@ -278,6 +278,9 @@ spring:
                         eraldoOriginalProduct:
                               destination: eraldo.original.product
                               content-type: application/json
+                        vipgroupOriginalProduct:
+                              destination: vipgroup.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             fashionTamersOriginalProduct:
@@ -402,7 +405,7 @@ spring:
                                            prefix: HA.
                             vietti2OriginalProduct:
                                     producer:
-                                      prefix: HA.
+                                           prefix: HA.
                             anielloOriginalProduct:
                                   producer: 
                                            prefix: HA. 
@@ -548,6 +551,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             eraldoOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            vipgroupOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

@@ -100,9 +100,9 @@ spring:
                               destination: vietti.original.product
                               content-type: application/json
                         vietti2OriginalProduct:
-                          destination: vietti2.original.product
-                          content-type: application/json
-                        anielloOriginalProduct: 
+                              destination: vietti2.original.product
+                              content-type: application/json
+                        anielloOriginalProduct:
                               destination: aniello.original.product
                               content-type: application/json
                         lindelepalaisOriginalProduct: 
@@ -225,11 +225,16 @@ spring:
                         ilcuccioloOriginalProduct:
                              destination: ilcucciolo.original.product
                              content-type: application/json
-
+                        vipgroupOriginalProduct:
+                             destination: vipgroup.original.product
+                             content-type: application/json
                         eraldoOriginalProduct:
                              destination: eraldo.original.product
                              content-type: application/json
-              rabbit: 
+                        gebnegozioOriginalProduct:
+                              destination: gebnegozio.original.product
+                              content-type: application/json
+              rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 
                                   producer: 
@@ -322,9 +327,9 @@ spring:
                                   producer: 
                                            prefix: HA.
                             vietti2OriginalProduct:
-                              producer:
-                                prefix: HA.
-                            anielloOriginalProduct: 
+                                  producer:
+                                           prefix: HA.
+                            anielloOriginalProduct:
                                   producer: 
                                            prefix: HA. 
                             lindelepalaisOriginalProduct: 
@@ -447,7 +452,13 @@ spring:
                             eraldoOriginalProduct:
                                   producer:
                                            prefix: HA.
-  jackson: 
+                            gebnegozioOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            vipgroupOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.
