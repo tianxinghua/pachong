@@ -36,7 +36,7 @@ public class SupplierProperties {
 	private Brunarosso brunarosso;
 	
 	private Vietti vietti;
-	
+    private Vietti2 vietti2;
 	private Zitafabiani zitafabiani;
 
 //	private MAX1980 max1980;
@@ -144,4 +144,6 @@ public class SupplierProperties {
 	private TheStyleSide theStyleSide;
 
 	private Gebnegozio gebnegozio;
+
+	private Forzieri forzieri;
 }

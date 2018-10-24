@@ -37,6 +37,18 @@ spring:
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
+                        mclablesPictureProduct:
+                              destination: mclables.product.picture
+                              group: one
+                              consumer:
+                                        concurrency: 1
+                                        maxAttempts: 1
+                        eraldoPictureProduct:
+                              destination: eraldo.product.picture
+                              group: one
+                              consumer:
+                                concurrency: 1
+                                maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -53,8 +65,20 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false                                       
-  jackson: 
+                                       republishToDlq: false
+                            mclablesPictureProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                            eraldoPictureProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
 banner: 
@@ -79,4 +103,7 @@ shangpin:
                       password: Atelier2015  
                   2015112001671: 
                       username: mosuftp
-                      password: inter2015£                  
+                      password: inter2015£
+                  2018091702058:
+                      username: account219383@dylog.it
+                      password: Account1111

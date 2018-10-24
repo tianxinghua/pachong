@@ -335,6 +335,15 @@ public class PendingProductStreamSender {
     public boolean viettiPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
     	return pendingProductSource.viettiPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
     }
+
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean vietti2PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers) {
+        return pendingProductSource.vietti2PendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
     /**
      * 发送供应商商品流数据
      * @param pendingProduct 消息体
@@ -704,7 +713,7 @@ public class PendingProductStreamSender {
 	 * @param headers 消息头
 	 * @return 如果发送成功返回true,否则返回false
 	 */
-	public boolean MAX1980PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+	public boolean max1980PendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
 		return pendingProductSource.max1980PendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
 	}
 
@@ -729,4 +738,29 @@ public class PendingProductStreamSender {
 		return pendingProductSource.vipgroupPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
 
 	}
+
+    /**
+     * 发送供应商商品流数据
+     * @param pendingProduct 消息体
+     * @param headers 消息头
+     * @return 如果发送成功返回true,否则返回false
+     */
+    public boolean ilcuccioloPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+        return pendingProductSource.ilcuccioloPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+
+    }
+
+	/**
+	 * 发送供应商eraldo商品流数据
+	 * @param pendingProduct 消息体
+	 * @param headers 消息头
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean eraldoPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+		return pendingProductSource.eraldoPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+
+	}
+
+
+
 }

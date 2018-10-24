@@ -125,7 +125,9 @@ public class ZhiCaiHandler implements ISupplierHandler{
 			hubSpu.setSupplierOrigin(ob.getMade());
 			hubSpu.setSupplierSpuDesc(ob.getDesc());
 			hubSpu.setProductUrl(ob.getDetailLink());
-			hubSpu.setMarketPrice(new BigDecimal(ob.getForeignMarketPrice()));
+			if(!StringUtils.isEmpty(ob.getForeignMarketPrice())){
+				hubSpu.setMarketPrice(new BigDecimal(ob.getForeignMarketPrice()));
+			}
 			if(!StringUtils.isEmpty(ob.getDomesticMarketPrice()))
 				hubSpu.setMarketPriceCn(new BigDecimal(ob.getDomesticMarketPrice()));
 			if(!StringUtils.isEmpty(ob.getSalePrice()))

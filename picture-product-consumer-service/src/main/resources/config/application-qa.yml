@@ -59,6 +59,18 @@ spring:
                               consumer: 
                                        concurrency: 1
                                        maxAttempts: 1
+                        mclablesPictureProduct:
+                              destination: mclables.product.picture
+                              group: one
+                              consumer:
+                                        concurrency: 1
+                                        maxAttempts: 1
+                        eraldoPictureProduct:
+                              destination: eraldo.product.picture
+                              group: one
+                              consumer:
+                                        concurrency: 1
+                                        maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -96,7 +108,19 @@ spring:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
-                                       republishToDlq: false           
+                                       republishToDlq: false
+                            mclablesPictureProduct:
+                                  consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
+                            eraldoPictureProduct:
+                                  consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
@@ -126,4 +150,7 @@ shangpin:
                   2016110101955:
                       username: Shangpin
                       password: Shangpin17!
+                  2018091702058:
+                      username: account219383@dylog.it
+                      password: Account1111
        brandSupplierIds: 2017031301866,2018062801885

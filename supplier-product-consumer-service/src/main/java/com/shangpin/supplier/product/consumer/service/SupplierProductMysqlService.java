@@ -79,7 +79,7 @@ public class SupplierProductMysqlService {
 	 */
 	public ProductStatus isHubSpuChanged(String supplierNo,HubSupplierSpuDto supplierSpu,HubSupplierSpuDto hubSpuSel,PendingSpu pendingSpu){
 		try {	
-			log.info("zhicai supplierSpu:"+JSONObject.toJSONString(supplierSpu));
+			log.info("supplierSpu:"+JSONObject.toJSONString(supplierSpu));
 //			hubSpu.setMemo("");//先在memo中不要保存数据了，避免超长报错
 //			HubSupplierSpuDto hubSpuSel = hasHadTheHubSpu(hubSpu);
 			if(null == hubSpuSel){

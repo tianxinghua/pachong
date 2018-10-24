@@ -401,13 +401,23 @@ public class OriginalProductStreamListener {
 		adapter.paolofiorilloStreamListen(message,headers);
     }
 	/**
-	 * 供应商VIETTI原始商品数据流通道监听者
-	 * @param message 消息
-	 * @param headers 消息头
-	 */
-	@StreamListener(OriginalProductSink.VIETTI)
+     * 供应商VIETTI原始商品数据流通道监听者
+     * @param message 消息
+     * @param headers 消息头
+     */
+    @StreamListener(OriginalProductSink.VIETTI)
     public void viettiStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
-		adapter.viettiStreamListen(message,headers);
+        adapter.viettiStreamListen(message,headers);
+    }
+
+    /**
+     * 供应商VIETTI2原始商品数据流通道监听者
+     * @param message 消息
+     * @param headers 消息头
+     */
+    @StreamListener(OriginalProductSink.VIETTI2)
+    public void vietti2StreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) throws Exception  {
+        adapter.vietti2StreamListen(message,headers);
     }
 	/**
 	 * 供应商ANIELLO原始商品数据流通道监听者
@@ -819,6 +829,26 @@ public class OriginalProductStreamListener {
 	@StreamListener(OriginalProductSink.GEBNEGOZIO)
 	public void gebnegozioStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
 		adapter.gebnegozioStreamListen(message,headers);
+	}
+
+	/**
+	 * 供应商ilcucciolo原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ILCUCCIOLO)
+	public void ilcuccioloStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
+		adapter.ilcuccioloStreamListen(message,headers);
+	}
+
+	/**
+	 * 供应商eraldo原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.ERALDO)
+	public void eraldoStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+		adapter.eraldoStreamListen(message,headers);
 	}
 
 	/**

@@ -396,6 +396,20 @@ public class PendingProductStreamListener {
     public void viettiPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.viettiPendingProductStreamListen(message,headers);
     }
+
+
+    /**
+     * 供应商VIETTI待处理商品数据流通道监听者
+     * @param message 消息
+     * @param headers 消息头
+     */
+    @StreamListener(PendingProductSink.VIETTI2)
+    public void vietti2PendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+        adapter.vietti2PendingProductStreamListen(message,headers);
+    }
+
+
+
 	/**
 	 * 供应商ANIELLO待处理商品数据流通道监听者
 	 * @param message 消息
@@ -789,6 +803,26 @@ public class PendingProductStreamListener {
 		adapter.gebnegozioPendingProductStreamListen(message,headers);
 	}
 
+	/**
+	 * 供应商ilcucciolo待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.ILCUCCIOLO)
+	public void ilcuccioloPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.ilcuccioloPendingProductStreamListen(message,headers);
+	}
+	/**
+	 * 供应商eraldo待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.ERALDO)
+	public void eraldoPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.eraldoPendingProductStreamListen(message,headers);
+	}
 	/**
 	* 供应商vipgroup待处理商品数据流通道监听者
 	 * @param message

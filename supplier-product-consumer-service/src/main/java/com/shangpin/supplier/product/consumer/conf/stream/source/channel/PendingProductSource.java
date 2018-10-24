@@ -75,11 +75,13 @@ public interface PendingProductSource {
 	
 	public static final String SANREMO = "sanremoPendingProduct";	 
 	
-	public static final String PAOLOFIORILLO = "paolofiorilloPendingProduct"; 
-	
-	public static final String VIETTI = "viettiPendingProduct"; 
-	
-	public static final String ANIELLO = "anielloPendingProduct"; 
+	public static final String PAOLOFIORILLO = "paolofiorilloPendingProduct";
+
+	public static final String VIETTI = "viettiPendingProduct";
+
+    public static final String VIETTI2 = "vietti2PendingProduct";
+
+    public static final String ANIELLO = "anielloPendingProduct";
 	
 	public static final String LINDELEPALAIS = "lindelepalaisPendingProduct"; 
 	
@@ -170,6 +172,11 @@ public interface PendingProductSource {
 	public static final String MAX1980 = "max1980PendingProduct";
 
 	public static final String GEBNEGOZIO = "gebnegozioPendingProduct";
+
+	public static final String ILCUCCIOLO = "ilcuccioloPendingProduct";
+
+
+	public static final String ERALDO = "eraldoPendingProduct";
 
 	public static final String VIPGROUP = "vipgroupPendingProduct";
 
@@ -409,6 +416,14 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.VIETTI)
     public MessageChannel viettiPendingProduct();
+
+
+    /**
+     * 供货商VIETTI2 通道组件配置
+     * @return 供货商VIETTI2 通道组件
+     */
+    @Output(value = PendingProductSource.VIETTI2)
+    public MessageChannel vietti2PendingProduct();
 	/**
 	 * 供货商 ANIELLO通道组件配置
 	 * @return 供货商ANIELLO 通道组件
@@ -688,6 +703,19 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.GEBNEGOZIO)
 	public MessageChannel gebnegozioPendingProduct();
+
+	/**
+	 *ilcucciolo 通道组件配置
+	 * @return 供货商ilcucciolo通道组件
+	 */
+	@Output(value = PendingProductSource.GEBNEGOZIO)
+	public MessageChannel ilcuccioloPendingProduct();
+	/**
+	 *ilcucciolo 通道组件配置
+	 * @return 供货商ilcucciolo通道组件
+	 */
+	@Output(value = PendingProductSource.ERALDO)
+	public MessageChannel eraldoPendingProduct();
 
 	/**
 	 *vipgroup 通道组件配置

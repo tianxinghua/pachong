@@ -121,7 +121,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Autowired
 	@Qualifier("emontiHandler")
 	private ISupplierHandler emontiHandler;
-	
+
+
+    @Autowired
+    @Qualifier("vietti2Handler")
+    private ISupplierHandler vietti2Handler;
+
 	@Autowired
 	@Qualifier("mclablesHandler") 
 	private ISupplierHandler mclablesHandler;
@@ -178,10 +183,18 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("gebnegozioHandler")
 	private ISupplierHandler gebnegozioHandler;
 
+    @Autowired
+    @Qualifier("ilcuccioloHandler")
+    private ISupplierHandler ilcuccioloHandler;
+
+	@Autowired
+	@Qualifier("eraldoHandler")
+	private ISupplierHandler eraldoHandler;
+
 	@Autowired
 	@Qualifier("vipgroupHandler")
 	private ISupplierHandler vipgroupHandler;
-	
+
 	/**
 	 * coccolebimbi供货商原始数据监听方法
 	 * @param message 消息体
@@ -501,6 +514,15 @@ public class OriginalProductStreamListenerAdapter {
 	public void viettiStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		atelierCommonHandler.handleOriginalProduct(message, headers);	
 	}
+
+    /**
+     * vietti2供货商原始数据监听方法
+     * @param message 消息体
+     * @param headers 消息头
+     */
+    public void vietti2StreamListen(SupplierProduct message, Map<String, Object> headers) {
+        vietti2Handler.handleOriginalProduct(message, headers);
+    }
 	/**
 	 * russocapri供货商原始数据监听方法
 	 * @param message 消息体
@@ -912,6 +934,24 @@ public class OriginalProductStreamListenerAdapter {
 	 */
 	public void gebnegozioStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		gebnegozioHandler.handleOriginalProduct(message, headers);
+	}
+
+    /**
+     * 供应商ilcucciolo处理原始数据
+     * @param message
+     * @param headers
+     */
+    public void ilcuccioloStreamListen(SupplierProduct message, Map<String, Object> headers) {
+        ilcuccioloHandler.handleOriginalProduct(message, headers);
+    }
+
+	/**
+	 * 供应商eraldo处理原始数据
+	 * @param message
+	 * @param headers
+	 */
+	public void eraldoStreamListen(SupplierProduct message, Map<String, Object> headers) {
+		eraldoHandler.handleOriginalProduct(message, headers);
 	}
 	/**
 	 * 供应商vipgroup处理原始数据

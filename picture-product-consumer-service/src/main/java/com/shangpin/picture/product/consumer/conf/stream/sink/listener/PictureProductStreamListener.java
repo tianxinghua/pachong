@@ -2,6 +2,7 @@ package com.shangpin.picture.product.consumer.conf.stream.sink.listener;
 
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
@@ -21,6 +22,7 @@ import com.shangpin.picture.product.consumer.conf.supplier.BrandSupplier;
  * @date 2016年12月12日 下午7:47:52
  */
 @EnableBinding({PictureProductSink.class})
+@Slf4j
 public class PictureProductStreamListener {
 	
 	@Autowired
@@ -43,15 +45,25 @@ public class PictureProductStreamListener {
     public void brandPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		try {
 			if(brandSupplier.getBrandSupplierIds().contains(message.getSupplierId())){
-				Thread.sleep(1000*10);	
+				Thread.sleep(1000*1);
 			}else{
 				Thread.sleep(1000*1);
 			}
+
 			pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
 		} catch (InterruptedException e) {
+			log.error(" brand picture error: " + e.getMessage(),e);
 			e.printStackTrace();
 		}
 		
     }
-	
+
+	@StreamListener(PictureProductSink.MCLABLES_PICTURE)
+	public void mclablesPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+	}
+	@StreamListener(PictureProductSink.ERALDO_PICTURE)
+	public void eraldoPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+	}
 }

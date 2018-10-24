@@ -79,9 +79,11 @@ public interface PendingProductSink {
 	
 	public static final String PAOLOFIORILLO = "paolofiorilloPendingProduct"; 
 	
-	public static final String VIETTI = "viettiPendingProduct"; 
-	
-	public static final String ANIELLO = "anielloPendingProduct"; 
+	public static final String VIETTI = "viettiPendingProduct";
+	public static final String VIETTI2= "vietti2PendingProduct";
+
+
+    public static final String ANIELLO = "anielloPendingProduct";
 	
 	public static final String LINDELEPALAIS = "lindelepalaisPendingProduct"; 
 	
@@ -173,6 +175,10 @@ public interface PendingProductSink {
 	public static final String MAX1980 = "max1980PendingProduct";
 	
 	public static final String GEBNEGOZIO = "gebnegozioPendingProduct";
+
+	public static final String ILCUCCIOLO = "ilcuccioloPendingProduct";
+
+	public static final String ERALDO = "eraldoPendingProduct";
 
 	public static final String VIPGROUP = "vipgroupPendingProduct";
 
@@ -423,6 +429,15 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.VIETTI)
     public SubscribableChannel viettiPendingProduct();
+
+    /**
+     * 供货商VIETTI通道组件配置
+     * @return 供货商VIETTI通道组件
+     */
+    @Input(value = PendingProductSink.VIETTI2)
+    public SubscribableChannel vietti2PendingProduct();
+
+
 	/**
 	 * 供货商ANIELLO通道组件配置
 	 * @return 供货商ANIELLO通道组件
@@ -689,6 +704,20 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.GEBNEGOZIO)
 	public SubscribableChannel gebnegozioPendingProduct();
+
+	/**
+	 * 供应商ilcucciolo通道组件配置
+	 * @return 供货商ilcucciolo通道组件
+	 */
+	@Input(value = PendingProductSink.ILCUCCIOLO)
+	public SubscribableChannel ilcuccioloPendingProduct();
+
+	/**
+	 * 供应商eraldo通道组件配置
+	 * @return 供货商ilcucciolo通道组件
+	 */
+	@Input(value = PendingProductSink.ERALDO)
+	public SubscribableChannel eraldoPendingProduct();
 
 	/**
 	 * 供应商vipgroup通道组件配置

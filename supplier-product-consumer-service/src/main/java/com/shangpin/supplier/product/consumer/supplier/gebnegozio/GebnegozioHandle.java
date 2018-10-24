@@ -74,56 +74,57 @@ public class GebnegozioHandle implements ISupplierHandler {
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         String token = selToken();
         if ( null != token && !token.equals("") ){
-        try {
-            if (!StringUtils.isBlank(message.getData())){
-                System.out.println("看转换数据："+message.getData());
-                GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
-                if(gebnegozioDTO.getType_id().equals("simple")){
-                    return;
-                }
-                String supplierId = message.getSupplierId();
-                gebnegozioDTO.setSpu(gebnegozioDTO.getId());
-                mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
+            try {
+                if (!StringUtils.isBlank(message.getData())){
+                    System.out.println("看转换数据："+message.getData());
+                    GebnegozioDTO gebnegozioDTO = mapper.readValue(message.getData(),GebnegozioDTO.class);
+                    if(gebnegozioDTO.getType_id().equals("simple")){
+                        return;
+                    }
+                    String supplierId = message.getSupplierId();
+                    gebnegozioDTO.setSpu(gebnegozioDTO.getId());
+                    mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
 
-                HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-                boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
+                    HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+                    boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
 
-                ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
-                HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-                //转换SKU
-                String proSku = gebnegozioDTO.getSku();
-                if(proSku.contains("\\\\")) {
-                    proSku = proSku.replaceAll("\\\\\\\\", "\\\\");
-                }
-                try {
-                    proSku = URLEncoder.encode( proSku , "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    log.error("查询可配置产品的子产品的URL转换异常："+e.getMessage(),e);
-                }
-                String confChildUrl = EGB_URL + "configurable-products/"+ proSku +"/children";
+                    ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
 
-                String confChildResp = selMessage(token,confChildUrl);
-                List<GebnegozioDTO> gebnegozioDTOS = gson.fromJson(confChildResp,new TypeToken<List<GebnegozioDTO>>(){}.getType());
-                if(null!=gebnegozioDTOS&&gebnegozioDTOS.size()>0) {
-                    gebnegozioDTOS.forEach(gebDTO -> {
-                        boolean skuSuccess = convertSku(supplierId, hubSpu.getSupplierSpuId(), gebDTO, hubSku, token);
-                        if (skuSuccess) {
-                            hubSkus.add(hubSku);
-                        }
-                    });
-                }
-                //处理图片
-                SupplierPicture supplierPicture = null;
-                supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage(supplierId, gebnegozioDTO , token ) );
+                    //转换SKU
+                    String proSku = gebnegozioDTO.getSku();
+                    if(proSku.contains("\\\\")) {
+                        proSku = proSku.replaceAll("\\\\\\\\", "\\\\");
+                    }
+                    try {
+                        proSku = URLEncoder.encode( proSku , "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        log.error("查询可配置产品的子产品的URL转换异常："+e.getMessage(),e);
+                    }
+                    String confChildUrl = EGB_URL + "configurable-products/"+ proSku +"/children";
 
-                if(spuSuccess){
-                    supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
-                }
+                    String confChildResp = selMessage(token,confChildUrl);
+                    List<GebnegozioDTO> gebnegozioDTOS = gson.fromJson(confChildResp,new TypeToken<List<GebnegozioDTO>>(){}.getType());
+                    if(null!=gebnegozioDTOS&&gebnegozioDTOS.size()>0) {
+                        gebnegozioDTOS.forEach(gebDTO -> {
+                            HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
+                            boolean skuSuccess = convertSku(supplierId, hubSpu.getSupplierSpuId(), gebDTO, hubSku, token);
+                            if (skuSuccess) {
+                                hubSkus.add(hubSku);
+                            }
+                        });
+                    }
+                    //处理图片
+                    SupplierPicture supplierPicture = null;
+                    supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage(supplierId, gebnegozioDTO , token ) );
 
+                    if(spuSuccess){
+                        supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
+                    }
+
+                }
+            }catch (Exception e){
+                log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
             }
-        }catch (Exception e){
-            log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
-        }
         }
     }
 
@@ -200,7 +201,7 @@ public class GebnegozioHandle implements ISupplierHandler {
      * @return
      */
     public boolean convertSku(String supplierId, Long supplierSpuId, GebnegozioDTO item, HubSupplierSkuDto hubSku, String token) throws EpHubSupplierProductConsumerRuntimeException{
-       if(null != item){
+        if(null != item){
             hubSku.setSupplierSpuId(supplierSpuId);
             hubSku.setSupplierId(supplierId);
             String size = "";
@@ -371,23 +372,23 @@ public class GebnegozioHandle implements ISupplierHandler {
      */
     public String selAttrDetails(String token,String url,String attributeValue,String finalAttribute,Map<String,String> attrMap){
 
-            if(attrMap.containsKey(attributeValue)){
-                finalAttribute = attrMap.get(attributeValue);
-            }else {
-                String colorJson = selMessage(token , url);
-                if (null != colorJson && !colorJson.equals("")){
-                    ColorDTO colorDTO = gson.fromJson(colorJson , ColorDTO.class);
-                    List<ColorOptions> colorOptionsList = colorDTO.getOptions();
-                    if (null != colorOptionsList && !colorOptionsList.isEmpty()){
-                        for (ColorOptions colorOptions : colorOptionsList) {
-                            if (colorOptions.getValue().equals(attributeValue)){
-                                finalAttribute = colorOptions.getLabel();
-                            }
-                            attrMap.put(colorOptions.getValue(),colorOptions.getLabel());
+        if(attrMap.containsKey(attributeValue)){
+            finalAttribute = attrMap.get(attributeValue);
+        }else {
+            String colorJson = selMessage(token , url);
+            if (null != colorJson && !colorJson.equals("")){
+                ColorDTO colorDTO = gson.fromJson(colorJson , ColorDTO.class);
+                List<ColorOptions> colorOptionsList = colorDTO.getOptions();
+                if (null != colorOptionsList && !colorOptionsList.isEmpty()){
+                    for (ColorOptions colorOptions : colorOptionsList) {
+                        if (colorOptions.getValue().equals(attributeValue)){
+                            finalAttribute = colorOptions.getLabel();
                         }
+                        attrMap.put(colorOptions.getValue(),colorOptions.getLabel());
                     }
                 }
             }
+        }
         return finalAttribute;
     }
     /**
@@ -488,10 +489,10 @@ public class GebnegozioHandle implements ISupplierHandler {
                     }
                     categoryNames = String.join(",", cateNames);
                 }
-                    } catch(Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                return categoryNames;
+            } catch(Exception e){
+                e.printStackTrace();
             }
+        }
+        return categoryNames;
+    }
 }

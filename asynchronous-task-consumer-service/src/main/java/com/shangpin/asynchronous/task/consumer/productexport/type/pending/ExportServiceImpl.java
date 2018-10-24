@@ -750,17 +750,17 @@ public class ExportServiceImpl {
 	}
 
 	public HSSFWorkbook exportExcel(List<HubWaitSelectResponseDto> list) throws Exception {
-		String[] headers = { "尚品Sku编号", "门户Sku编号", "供应商SKU", "商品名称", "品类", "品牌", "品牌中文", "品牌编号", "货号", "商品状态", "生效价格",
+		String[] headers = { "尚品Sku编号", "门户Sku编号", "供应商SKU", "商品名称", "品类", "品牌", "品牌中文", "品牌编号", "货号", "供应商货号", "商品状态", "生效价格",
 				"价格状态", "操作人", "供价*", "供价币种*", "阶段供价", "阶段供价生效时间", "阶段供价失效时间", "市场价", "市场价币种" };
 		String[] columns = { "spSkuNo", "skuNo", "supplierSkuNo", "spuName", "categoryName", "brandName", "brandChName",
-				"brandNo", "spuModel", "productState", "param1", "param1", "param1", "supplyPrice", "supplyCurry",
+				"brandNo", "spuModel", "supplierSpuModel", "productState", "param1", "param1", "param1", "supplyPrice", "supplyCurry",
 				"param1", "param1", "param1", "marketPrice", "marketCurry" };
 		
 		
-		String[] allHeaders = { "供应商supplierNo","供应商名称","尚品Sku编号", "门户Sku编号", "供应商SKU", "商品名称", "品类", "品牌", "品牌中文", "品牌编号","尺码类型","尺码","颜色","材质", "货号", "商品状态", "生效价格",
+		String[] allHeaders = { "供应商supplierNo","供应商名称","尚品Sku编号", "门户Sku编号", "供应商SKU", "商品名称", "品类", "品牌", "品牌中文", "品牌编号","尺码类型","尺码","颜色","材质", "货号", "供应商货号", "商品状态", "生效价格",
 				"价格状态", "操作人", "供价*", "供价币种*", "阶段供价", "阶段供价生效时间", "阶段供价失效时间", "市场价", "市场价币种" };
 		String[] allColumns = {"supplierNo","supplierName", "spSkuNo", "skuNo", "supplierSkuNo", "spuName", "categoryName", "brandName", "brandChName",
-				"brandNo","sizeType","size","color","material", "spuModel", "productState", "param1", "param1", "param1", "supplyPrice", "supplyCurry",
+				"brandNo","sizeType","size","color","material", "spuModel", "supplierSpuModel", "productState", "param1", "param1", "param1", "supplyPrice", "supplyCurry",
 				"param1", "param1", "param1", "marketPrice", "marketCurry" };
 
 		Map<String, String> map = null;
@@ -873,6 +873,7 @@ public class ExportServiceImpl {
 			map.put("spuName", response.getSpuName());
 			map.put("supplierSkuNo", response.getSupplierSkuNo());
 			map.put("spuModel", response.getSpuModel());
+			map.put("supplierSpuModel", response.getSupplierSpuModel());
 			map.put("categoryName", categoryName);
 			// map.put("color", response.getHubColor());
 			// map.put("material", response.getMaterial());

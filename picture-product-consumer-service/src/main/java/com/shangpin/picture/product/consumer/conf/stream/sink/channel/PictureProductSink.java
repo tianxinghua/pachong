@@ -1,6 +1,8 @@
 package com.shangpin.picture.product.consumer.conf.stream.sink.channel;
 
 import org.springframework.cloud.stream.annotation.Input;
+import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.SubscribableChannel;
 
 /**
@@ -17,6 +19,10 @@ public interface PictureProductSink {
 	public String BRAND_PICTURE = "brandPictureProduct";
 	
 	public String stefaniamode_picture = "stefaniamodePictureProduct";
+
+	public String MCLABLES_PICTURE = "mclablesPictureProduct";
+
+	public String ERALDO_PICTURE = "eraldoPictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
@@ -35,4 +41,16 @@ public interface PictureProductSink {
 	 */
 	@Input(value = PictureProductSink.stefaniamode_picture)
     public SubscribableChannel stefaniamodePictureProduct();
+
+	/**
+	 * @return mclables通用图片数据流通道组件
+	 */
+	@Input(value = PictureProductSink.MCLABLES_PICTURE)
+	public MessageChannel mclablesPictureProduct();
+
+	/**
+	 * @return mclables通用图片数据流通道组件
+	 */
+	@Input(value = PictureProductSink.ERALDO_PICTURE)
+	public MessageChannel eraldoPictureProduct();
 }

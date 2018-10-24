@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.174
+          host: 192.168.20.175
           port: 8500
           discovery: 
               register: false
@@ -16,6 +16,12 @@ spring:
               bindings: 
                         stefaniamodePictureProduct: 
                               destination: stefaniamode.product.picture
+                              content-type: application/json
+                        mclablesPictureProduct:
+                              destination: mclables.product.picture
+                              content-type: application/json
+                        eraldoPictureProduct:
+                              destination: eraldo.product.picture
                               content-type: application/json
                         supplierPictureProduct: 
                               destination: supplier.product.picture
@@ -362,7 +368,16 @@ spring:
                         viettiPendingProduct: 
                               destination: vietti.pending.product
                               content-type: application/json
-                        anielloOriginalProduct: 
+                        vietti2OriginalProduct:
+                              destination: vietti2.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        vietti2PendingProduct:
+                              destination: vietti2.pending.product
+                              content-type: application/json
+                        anielloOriginalProduct:
                               destination: aniello.original.product
                               group: one
                               consumer: 
@@ -782,14 +797,14 @@ spring:
                         gebnegozioPendingProduct:
                               destination: gebnegozio.pending.product
                               content-type: application/json
-                        vipgroupOriginalProduct:
-                              destination: vipgroup.original.product
+                        eraldoOriginalProduct:
+                              destination: eraldo.original.product
                               group: one
                               consumer:
-                                       concurrency: 4
-                                       maxAttempts: 1
-                        vipgroupPendingProduct:
-                              destination: vipgroup.pending.product
+                                concurrency: 5
+                                maxAttempts: 1
+                        eraldoPendingProduct:
+                              destination: eraldo.pending.product
                               content-type: application/json
               rabbit:
                         bindings: 
@@ -799,6 +814,12 @@ spring:
                               supplierPictureProduct: 
                                     producer: 
                                          prefix: HA.
+                              mclablesPictureProduct:
+                                    producer:
+                                      prefix: HA.
+                              eraldoPictureProduct:
+                                    producer:
+                                      prefix: HA.
                               brandPictureProduct: 
                                     producer: 
                                          prefix: HA.
@@ -1139,7 +1160,16 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               viettiPendingProduct: 
-                                    producer: 
+                                    producer:
+                                         prefix: HA.
+                              vietti2OriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              vietti2PendingProduct:
+                                    producer:
                                          prefix: HA.
                               anielloOriginalProduct: 
                                     consumer: 
@@ -1561,6 +1591,25 @@ spring:
                               gebnegozioPendingProduct:
                                     producer:
                                          prefix: HA.
+                              ilcuccioloOriginalProduct:
+                                      consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                              ilcuccioloPendingProduct:
+                                      producer:
+                                        prefix: HA.
+                              eraldoOriginalProduct:
+                                      consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                              eraldoPendingProduct:
+                                      producer:
+                                        prefix: HA.
+
                               vipgroupOriginalProduct:
                                     consumer:
                                          prefix: HA.

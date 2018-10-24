@@ -46,6 +46,7 @@ public class PictureProductService {
 	private HubSpuPendingPicGateWay picClient;
 	@Autowired
 	HubSupplierValueMappingGateWay mappingGateWay;
+
 	/**
 	 * 发送供应商图片到图片消息队列
 	 * @param supplierPicture
@@ -70,7 +71,11 @@ public class PictureProductService {
 					result = pictureProductStreamSender.brandPictureProductStream(supplierPicture, headers);	
 				}else if("2015092401528".equals(supplierPicture.getSupplierId())){
 					result = pictureProductStreamSender.stefaniamodePictureProductStream(supplierPicture, headers);
-				}else{
+				}else if("2016111101957".equals(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.mclablesPictureProductStream(supplierPicture,headers);
+				}else if("2018101602078".equals(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.eraldoPictureProductStream(supplierPicture,headers);
+				}else {
 					result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
 				}
 				

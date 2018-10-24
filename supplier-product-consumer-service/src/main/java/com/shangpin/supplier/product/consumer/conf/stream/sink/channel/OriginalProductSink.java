@@ -81,9 +81,10 @@ public interface OriginalProductSink {
 	
 	public static final String PAOLOFIORILLO = "paolofiorilloOriginalProduct"; 
 	
-	public static final String VIETTI = "viettiOriginalProduct"; 
-	
-	public static final String ANIELLO = "anielloOriginalProduct"; 
+	public static final String VIETTI = "viettiOriginalProduct";
+    public static final String VIETTI2 = "vietti2OriginalProduct";
+
+    public static final String ANIELLO = "anielloOriginalProduct";
 	
 	public static final String LINDELEPALAIS = "lindelepalaisOriginalProduct"; 
 	
@@ -178,6 +179,10 @@ public interface OriginalProductSink {
 	public static final String  MAX1980 ="max1980OriginalProduct";
 
 	public static final String GEBNEGOZIO = "gebnegozioOriginalProduct";
+
+    public static final String ILCUCCIOLO = "ilcuccioloOriginalProduct";
+
+	public static final String ERALDO = "eraldoOriginalProduct";
 
 	public static final String VIPGROUP = "vipgroupOriginalProduct";
 	//===============================
@@ -438,6 +443,14 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.VIETTI)
     public SubscribableChannel viettiOriginalProduct();
+
+
+    /**
+     * 供货商VIETTI2 通道组件配置
+     * @return  VIETTI2通道组件
+     */
+    @Input(value = OriginalProductSink.VIETTI2)
+    public SubscribableChannel vietti2OriginalProduct();
 	/**
 	 * 供货商ANIELLO 通道组件配置
 	 * @return  ANIELLO通道组件
@@ -704,6 +717,20 @@ public interface OriginalProductSink {
 	 */
 	@Input(value = OriginalProductSink.GEBNEGOZIO)
 	public MessageChannel gebnegozioOriginalProduct();
+
+    /**
+     * 供应商ilcucciolo通道组件配置
+     * @return
+     */
+    @Input(value = OriginalProductSink.ILCUCCIOLO)
+    public MessageChannel ilcuccioloOriginalProduct();
+
+	/**
+	 * 供应商eraldo通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.ERALDO)
+	public MessageChannel eraldoOriginalProduct();
 
 	/**
 	 * 供应商vipgroup通道组件配置

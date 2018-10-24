@@ -192,7 +192,18 @@ spring:
                               consumer: 
                                        concurrency: 5
                                        maxAttempts: 1
-                        anielloPendingProduct: 
+
+                        vietti2PendingProduct:
+                              destination: vietti2.pending.product
+                              group: one
+                              consumer:
+                                concurrency: 5
+                                maxAttempts: 1
+
+
+
+
+                        anielloPendingProduct:
                               destination: aniello.pending.product
                               group: one
                               consumer: 
@@ -396,6 +407,18 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        ilcuccioloPendingProduct:
+                              destination: ilcucciolo.pending.product
+                              group: one
+                              consumer:
+                                        concurrency: 5
+                                        maxAttempts: 1
+                        eraldoPendingProduct:
+                              destination: eraldo.pending.product
+                              group: one
+                              consumer:
+                                        concurrency: 5
+                                        maxAttempts: 1
                         vipgroupPendingProduct:
                               destination: vipgroup.pending.product
                               group: one
@@ -578,7 +601,18 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-                            anielloPendingProduct: 
+
+
+                             vietti2PendingProduct:
+                                  consumer:
+                                    prefix: HA.
+                                    autoBindDlq: false
+                                    requeueRejected: true
+                                    republishToDlq: false
+
+
+
+                            anielloPendingProduct:
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false
@@ -784,6 +818,18 @@ spring:
                                        republishToDlq: false
                             vipgroupPendingProduct:
                                   consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                           ilcuccioloPendingProduct:
+                                   consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                           eraldoPendingProduct:
+                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false
                                        requeueRejected: true
