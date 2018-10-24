@@ -18,7 +18,7 @@ spring:
                         mclablesPictureProduct:
                               destination: mclables.product.picture
                               content-type: application/json
-                        eraldoPictureProductPictureProduct:
+                        eraldoPictureProduct:
                               destination: eraldo.product.picture
                               content-type: application/json
                         supplierPictureProduct: 
