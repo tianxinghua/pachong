@@ -43,6 +43,12 @@ spring:
                               consumer:
                                         concurrency: 1
                                         maxAttempts: 1
+                        eraldoPictureProduct:
+                              destination: eraldo.product.picture
+                              group: one
+                              consumer:
+                                concurrency: 1
+                                maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -66,7 +72,13 @@ spring:
                                         autoBindDlq: false
                                         requeueRejected: true
                                         republishToDlq: false
-  jackson: 
+                            eraldoPictureProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
        time-zone: GMT+8       
 banner: 

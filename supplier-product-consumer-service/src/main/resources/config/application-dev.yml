@@ -24,6 +24,9 @@ spring:
                         mclablesPictureProduct:
                               destination: mclables.product.picture
                               content-type: application/json
+                        eraldoPictureProduct:
+                              destination: eraldo.product.picture
+                              content-type: application/json
                         refreshDicTask: 
                               destination: refresh.dic.task
                               group: one
@@ -707,6 +710,9 @@ spring:
                             mclablesPictureProduct:
                                   producer:
                                       prefix: HA.
+                            eraldoPictureProduct:
+                                  producer:
+                                    prefix: HA.
                             refreshDicTask: 
                                   consumer: 
                                        prefix: HA.
