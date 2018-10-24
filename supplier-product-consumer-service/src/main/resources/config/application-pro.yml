@@ -62,7 +62,7 @@ spring:
                                        maxAttempts: 1
                         angeloMinettiPendingProduct: 
                               destination: angeloMinetti.pending.product
-                              content-type: application/json 
+                              content-type: application/json
                         coccolebimbiOriginalProduct: 
                               destination: coccolebimbi.original.product
                               group: one
@@ -71,7 +71,16 @@ spring:
                                        maxAttempts: 1
                         coccolebimbiPendingProduct: 
                               destination: coccolebimbi.pending.product
-                              content-type: application/json 
+                              content-type: application/json
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        suitnegoziPendingProduct:
+                              destination: suitnegozi.pending.product
+                              content-type: application/json
                         portofinoOriginalProduct: 
                               destination: portofino.original.product
                               group: one
@@ -1536,6 +1545,15 @@ spring:
                               obluPendingProduct:
                                     producer:
                                          prefix: HA.
+                              suitnegoziOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              suitnegoziPendingProduct:
+                                    producer:
+                                    prefix: HA.
                               mengottiSncOriginalProduct:
                                     consumer:
                                          prefix: HA.

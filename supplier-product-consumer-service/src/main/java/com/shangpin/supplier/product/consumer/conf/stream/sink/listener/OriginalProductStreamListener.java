@@ -821,4 +821,8 @@ public class OriginalProductStreamListener {
 		adapter.ylatiStreamListen(message,headers);
 	}
 
+    @StreamListener(OriginalProductSink.SUITNEGOZI)
+    public void suitnegoziStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+        adapter.suitnegoziStreamListen(message,headers);
+    }
 }

@@ -170,7 +170,7 @@ public interface PendingProductSource {
 	public static final String ZHICAI = "zhicaiPendingProduct";
 	public static final String YLATI = "ylatiPendingProduct";
 	public static final String MAX1980 = "max1980PendingProduct";
-	
+    public static final String SUITNEGOZI = "suitnegoziPendingProduct";
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -688,4 +688,7 @@ public interface PendingProductSource {
 	@Output(value = PendingProductSource.MAX1980)
 	public MessageChannel max1980PendingProduct();
 
+
+    @Output(value = PendingProductSource.SUITNEGOZI)
+    public MessageChannel suitnegoziPendingProduct();
 }

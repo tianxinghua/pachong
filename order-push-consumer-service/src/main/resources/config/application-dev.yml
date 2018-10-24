@@ -373,7 +373,17 @@ shangpin:
               dBContext: Default
               isPurchaseExp:
               openApiKey: 
-              openApiSecret: 
+              openApiSecret:
+      suitnegoziParam:
+              setOrderUrl: http://net13server3.it/SuitApi/Myapi/Productslist/setOrder
+              queryOrderUrl: http://net13server3.it/SuitApi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+              cancelUrl: http://net13server3.it/SuitApi/Myapi/Productslist/CancelOrder
+              qtyUrl: http://net13server3.it/SuitApi/Myapi/Productslist/GetQuantityByBarcode
+              key: drFvzrgEGS
+              dBContext: Default
+              isPurchaseExp:
+              openApiKey:
+              openApiSecret:
       stefania: 
               authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
               channel: SHANGPIN

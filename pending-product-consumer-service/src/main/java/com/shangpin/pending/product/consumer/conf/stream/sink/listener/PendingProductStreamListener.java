@@ -793,4 +793,8 @@ public class PendingProductStreamListener {
 		adapter.max1980PendingProductStreamListen(message,headers);
 	}
 
+    @StreamListener(PendingProductSink.SUITNEGOZI)
+    public void suitnegoziPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+        adapter.suitnegoziPendingProductStreamListen(message,headers);
+    }
 }

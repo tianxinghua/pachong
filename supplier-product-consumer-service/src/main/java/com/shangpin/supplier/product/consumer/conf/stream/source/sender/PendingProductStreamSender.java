@@ -717,4 +717,7 @@ public class PendingProductStreamSender {
 		return pendingProductSource.max1980PendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
 	}
 
+    public boolean suitnegoziPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+        return pendingProductSource.suitnegoziPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
 }

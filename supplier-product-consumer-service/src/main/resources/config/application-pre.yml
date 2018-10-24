@@ -720,9 +720,15 @@ spring:
                                          autoBindDlq: false
                                          requeueRejected: true
                                          republishToDlq: false
-                              danielloPendingProduct: 
-                                    producer: 
+                              suitnegoziOriginalProduct:
+                                    consumer:
                                          prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              suitnegoziPendingProduct:
+                                    producer:
+                                    prefix: HA.
                               italianiOriginalProduct: 
                                     consumer: 
                                          prefix: HA.
@@ -858,20 +864,15 @@ spring:
                               viettiPendingProduct: 
                                     producer: 
                                          prefix: HA.
-
-
                               vietti2OriginalProduct:
                                     consumer:
-                                      prefix: HA.
-                                      autoBindDlq: false
-                                      requeueRejected: true
-                                      republishToDlq: false
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
                               vietti2PendingProduct:
-                                producer:
-                                  prefix: HA.
-
-
-
+                                    producer:
+                                    prefix: HA.
                               anielloOriginalProduct: 
                                     consumer: 
                                          prefix: HA.

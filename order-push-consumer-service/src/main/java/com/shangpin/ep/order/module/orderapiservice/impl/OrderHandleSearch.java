@@ -99,6 +99,10 @@ public class OrderHandleSearch {
 	@Qualifier("spinnakerOrderService")
 	IOrderService spinnakerOrderService;
 
+    @Autowired
+    @Qualifier("suitnegoziOrderService")
+    IOrderService suitnegoziOrderService;
+
 	@Autowired
 	@Qualifier("spinnakerPortofinoOrderService")
 	IOrderService spinnakerPortofinoOrderService;
@@ -111,9 +115,9 @@ public class OrderHandleSearch {
 	@Qualifier("tonyOrderImpl")
 	IOrderService tonyOrderImpl;
 
-	@Autowired
+/*	@Autowired
 	@Qualifier("studio69Serviceimpl")
-	IOrderService studio69Serviceimpl;
+	IOrderService studio69Serviceimpl;*/
 	@Autowired
 	@Qualifier("wiseServiceImpl")
 	IOrderService wiseServiceImpl;
@@ -290,7 +294,9 @@ public class OrderHandleSearch {
 			return spinnakerPortofinoOrderService;
 		}else if ("2015081701439".equals(supplierId)) {
 			return spinnakerOrderService;
-		} else if ("2015091801507".equals(supplierId)) {
+		}else if ("201710261111".equals(supplierId)) {
+            return suitnegoziOrderService;
+        } else if ("2015091801507".equals(supplierId)) {
 			return brunarossoServiceImpl;
 		} else if ("2016030401795".equals(supplierId)) {
 			return creative99ServiceImpl;
@@ -343,9 +349,9 @@ public class OrderHandleSearch {
 			return montiOrderService;
 		}else if ("2016012801758".equals(supplierId)) {
 			return inviqaOrderImpl;
-		}else if ("2016080901915".equals(supplierId)) {
+		}/*else if ("2016080901915".equals(supplierId)) {
 			return studio69Serviceimpl;
-		}else if ("2016080301912".equals(supplierId)) {
+		}*/else if ("2016080301912".equals(supplierId)) {
 			return lamborghiniOrderImpl;
 		}else if ("2016080301913".equals(supplierId)) {
 			return palomaBarceloOrderImpl;
@@ -422,7 +428,9 @@ public class OrderHandleSearch {
 			return supplierProperties.getLeam();
 		} else if ("2015081701439".equals(supplierId)) {
 			return supplierProperties.getSpinnakerParam();
-		} else if ("2015091801507".equals(supplierId)) {
+		} else if ("201710261111".equals(supplierId)) {
+            return supplierProperties.getSuitnegoziParam();
+        } else if ("2015091801507".equals(supplierId)) {
 			return supplierProperties.getBrunarosso();
 		} else if ("2016030401795".equals(supplierId)) {
 			return supplierProperties.getCreative99();
@@ -468,9 +476,9 @@ public class OrderHandleSearch {
 			return supplierProperties.getMontiParam();
 		}else if ("2016012801758".equals(supplierId)) {
 			return supplierProperties.getInviqaConf();
-		}else if ("2016080901915".equals(supplierId)) {
-			return supplierProperties.getStudio69();
-		}else if ("2016080301912".equals(supplierId)) {
+		}/*else if ("2016080901915".equals(supplierId)) {
+            return supplierProperties.getStudio69();
+		}*/else if ("2016080301912".equals(supplierId)) {
 			return supplierProperties.getLamborghiniConf();
 		}else if ("2016080301913".equals(supplierId)) {
 			return supplierProperties.getPalomaBarceloConf();

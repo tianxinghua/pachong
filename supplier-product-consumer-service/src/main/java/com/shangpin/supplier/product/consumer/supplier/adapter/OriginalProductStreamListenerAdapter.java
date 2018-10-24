@@ -179,9 +179,12 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("ylatiHandler")
 	private ISupplierHandler ylatiHandler;
 
-	
-	
-	/**
+    @Autowired
+    @Qualifier("suitnegoziHandler")
+    private ISupplierHandler suitnegoziHandler;
+
+
+    /**
 	 * coccolebimbi供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
@@ -912,6 +915,8 @@ public class OriginalProductStreamListenerAdapter {
 	public void ylatiStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		ylatiHandler.handleOriginalProduct(message, headers);
 	}
-	
 
+    public void suitnegoziStreamListen(SupplierProduct message, Map<String, Object> headers) {
+        suitnegoziHandler.handleOriginalProduct(message, headers);
+    }
 }

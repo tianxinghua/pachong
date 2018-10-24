@@ -793,6 +793,12 @@ public class PendingProductStreamListenerAdapter {
 
 	}
 
+    public void suitnegoziPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+        this.messageHandle(message, headers);
+
+    }
+
+
 
 
 }

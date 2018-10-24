@@ -16,8 +16,8 @@ spring:
             health-check-interval: 10s
             register: true
             register-health-check: true
-        stream: 
-              bindings: 
+        stream:
+              bindings:
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
@@ -605,7 +605,7 @@ spring:
                               group: one
                               consumer: 
                                        concurrency: 5
-                                       maxAttempts: 1  
+                                       maxAttempts: 1
                         dlrboutiquePendingProduct: 
                               destination: dlrboutique.pending.product
                               content-type: application/json    
@@ -632,6 +632,15 @@ spring:
                                        maxAttempts: 1
                         monnalisaPendingProduct:
                               destination: monnalisa.pending.product
+                              content-type: application/json
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 1
+                                       maxAttempts: 1
+                        suitnegoziPendingProduct:
+                              destination: suitnegozi.pending.product
                               content-type: application/json
                         julianFashionOriginalProduct:
                               destination: julianFashion.original.product
@@ -944,15 +953,15 @@ spring:
 
 
 
-                           vietti2OriginalProduct:
+                            vietti2OriginalProduct:
                                   consumer:
                                     prefix: HA.
                                     autoBindDlq: false
                                     requeueRejected: true
                                     republishToDlq: false
                             vietti2PendingProduct:
-                              producer:
-                                prefix: HA.
+                                  producer:
+                                  prefix: HA.
 
 
 
@@ -1275,6 +1284,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                             monnalisaPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                            suitnegoziOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                            suitnegoziPendingProduct:
                                     producer:
                                          prefix: HA.
                             julianFashionOriginalProduct:
