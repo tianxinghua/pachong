@@ -30,6 +30,10 @@ public class RedisCache implements Serializable {
 	 * 缓存中已处理链接的数量
 	 */
 	private Integer remTaskCount;
+	/**
+	 * 缓存中错误链接的数量
+	 */
+	private Integer errorTaskCount;
 
 	public String getUuid() {
 		return uuid;
@@ -63,4 +67,12 @@ public class RedisCache implements Serializable {
 		this.remTaskCount = remTaskCount;
 	}
 
+	public Integer getErrorTaskCount() {
+		return errorTaskCount;
+	}
+
+	public void setErrorTaskCount(Integer errorTaskCount) {
+		this.errorTaskCount = errorTaskCount;
+	}
+	
 }

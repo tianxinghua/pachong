@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.shangpin.spider.common.StrategyConstants;
 import com.shangpin.spider.config.SpringContextHolder;
@@ -17,6 +18,7 @@ import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.crawlData.CommonCrawlData;
 import com.shangpin.spider.gather.utils.GatherUtil;
+import com.shangpin.spider.redis.RedisManager;
 import com.shangpin.spider.service.gather.CrawlService;
 
 import us.codecraft.webmagic.Page;
@@ -38,6 +40,7 @@ public class MyPageProcessor implements PageProcessor {
 	private Map<String, Map<String, String>> clickFieldMap;
 	protected CountableThreadPool crawlThreadPool;
 	private CrawlService crawlService;
+//	private RedisManager redisManager;
 
 	public MyPageProcessor(SpiderRules spiderRuleInfo, Map<String, Map<String, String>> clickFieldMap, CountableThreadPool crawlThreadPool) {
 		// 域名
@@ -54,6 +57,7 @@ public class MyPageProcessor implements PageProcessor {
 		this.clickFieldMap = clickFieldMap;
 		this.crawlThreadPool = crawlThreadPool;
 		this.crawlService = SpringContextHolder.getBean(CrawlService.class);
+//		this.redisManager = SpringContextHolder.getBean(RedisManager.class);
 	}
 
 	@Override
@@ -68,6 +72,8 @@ public class MyPageProcessor implements PageProcessor {
 
 	private void processHandle(Page page, SpiderRules spiderRuleInfo, Map<String, Map<String, String>> clickFieldMap) {
 		String url = page.getUrl().toString();
+//		Long uuid = spiderRuleInfo.getWhiteId();
+		
 		try {
 			LOG.info("---processHandle--链接为{}---", url);
 			if (GatherUtil.isFilterUrl(url, spiderRuleInfo)) {
@@ -114,15 +120,28 @@ public class MyPageProcessor implements PageProcessor {
             						Long i = crawlService.insert(crawlResult);
             						if(i>0) {
             							LOG.info("---商品spu为{}-存库成功！",crawlResult.getSpu());
+//            							成功后将url放入REMTASKUUID键中
+//            							redisManager.successHandleRedis(uuid,url);
             						}else {
+//            							入库失败情况
             							LOG.error("---商品spu为{}-存库失败！",crawlResult.getSpu());
+//            							失败后进入错误队列，判断进入错误队列的次数是否达到错误重试的上限
+//            							针对一个URL对应多个尺寸的情况，
+//            							String urlAndSize = url+"#AND"+crawlResult.getSize();
+//            							redisManager.errorHandleRedis(uuid,urlAndSize,spiderRuleInfo.getRetryNum());
             						}
             					}
             				}else {
+//            					解析为空的情况
             					LOG.error("---{}获取到的商品列表为空！",url);
+//    							失败后进入错误队列，判断进入错误队列的次数是否达到错误重试的上限
+//            					redisManager.errorHandleRedis(uuid,url,spiderRuleInfo.getRetryNum());
             				}
                         } catch (Exception e) {
+//                        	解析异常的情况
                             LOG.error("---链接{},抓取数据出错！，异常：{}",url,e);
+//							失败后进入错误队列，判断进入错误队列的次数是否达到错误重试的上限
+//                            redisManager.errorHandleRedis(uuid,url,spiderRuleInfo.getRetryNum());
                         }
                     }
                 });

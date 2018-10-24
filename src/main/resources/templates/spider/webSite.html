@@ -69,10 +69,14 @@
 				<div class="modal-body">
 					线程数：<select name="threadNum">
 						<option value='1'>1</option>
-						<option value='2' selected="selected">2（推荐）</option>
-						<option value='3'>3</option>
+						<option value='2'>2</option>
+						<option value='3' selected="selected">3（推荐）</option>
 						<option value='4'>4</option>
 						<option value='5'>5</option>
+						<option value='6'>6</option>
+						<option value='7'>7</option>
+						<option value='8'>8</option>
+						<option value='9'>9</option>
 						<option value='10'>10</option>
 					</select>
 					失败重试次数（未开发）：<select name="retryNum">
@@ -133,6 +137,7 @@
 							<option value="man">man</option>
 							<option value="女">女</option>
 							<option value="women">women</option>
+							<option value="children">children</option>
 					</select>
 					<!-- 通道：<select name="channelId">
 							<option value="1">1</option>
@@ -323,6 +328,13 @@
 					<div>第一次点击前的规则：<textarea name="firstClickFrontRules" rows="2" cols="100"></textarea></div>
 					<div>第二次点击前的规则：<textarea name="secondClickFrontRules" rows="2" cols="100"></textarea></div>
 					<div>第三次点击前的规则：<textarea name="threeClickFrontRules" rows="2" cols="100"></textarea></div>
+					
+					<font color="red">*针对第一层被点击</font>
+					<div>第一层被点击标识的策略：<input type="text" name="oneClickedStrategy" placeholder="类同于SP-QTY-C"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					<br/>
+					第一层被点击标识的规则：<textarea name="oneClickedRules" rows="2" cols="100">
+					</textarea></div>
+					<br/>
 					
 					<font color="red">*针对多层点击</font>
 					第二层点击与否：<input type="radio" name="secondClickFlag" value="1" />点击&nbsp;&nbsp;&nbsp;&nbsp;
@@ -723,6 +735,10 @@
 	                		$("[name='threeClickFrontRules']").val(spiderRules.threeClickFrontRules);
 	                		
 	                		
+	                		$("[name='oneClickedStrategy']").val(spiderRules.oneClickedStrategy);
+	                		$("[name='oneClickedRules']").val(spiderRules.oneClickedRules);
+	                		
+	                		
 	                		$("[name='materialStrategy']").val(spiderRules.materialStrategy);
 	                		$("[name='materialRules']").val(spiderRules.materialRules);
 	                		
@@ -817,6 +833,10 @@
         		var secondClickFrontRules = $("[name='secondClickFrontRules']").val();
         		var threeClickFrontRules = $("[name='threeClickFrontRules']").val();
         		
+        		var oneClickedRules = $("[name='oneClickedRules']").val();
+        		var oneClickedStrategy = $("[name='oneClickedStrategy']").val();
+        		
+        		
         		var materialRules = $("[name='materialRules']").val();
         		var materialStrategy = $("[name='materialStrategy']").val();
         		
@@ -899,6 +919,8 @@
         					qtyStrategy:qtyStrategy,
         					jsMenuRules:jsMenuRules,
         					jsMenuStrategy:jsMenuStrategy,
+        					oneClickedRules:oneClickedRules,
+        					oneClickedStrategy:oneClickedStrategy,
         					materialRules:materialRules,
         					materialStrategy:materialStrategy,
         					colorRules:colorRules,

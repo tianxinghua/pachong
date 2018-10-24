@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.entity.gather.CrawlResult;
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverClickPool;
@@ -123,7 +124,7 @@ public abstract class MoreClickUtil {
 			driver.get(url);
 			driver.manage().window().maximize();
 			initClick(driver);
-			resultList = executeClick(driver, menuRuleArray);
+			resultList = executeClick(driver, menuRuleArray, spiderRuleInfo.getOneClickedRules(), spiderRuleInfo.getOneClickedStrategy());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -131,8 +132,26 @@ public abstract class MoreClickUtil {
 		}
 		return resultList;
 	}
-
+	/**
+	 * 
+	 * @param driver
+	 * @param oneClickedRules
+	 * @return 
+	 * @desc 判断第一层是否已经被点击，true为可点击
+	 */
+	public Boolean judgeOneClicked(ChromeDriver driver, String oneClickedRules) {
+		Boolean clickableFlag = true;
+		String flag = GatherUtil.handleQty(null, driver, oneClickedRules, 0, true);
+		int flagInt = Integer.parseInt(flag);
+		if(flagInt == Constants.QTY_YES) {
+			clickableFlag = true;
+		}else if(flagInt == Constants.QTY_NO) {
+			clickableFlag = false;
+		}
+		return clickableFlag;
+	}
+	
 	public abstract void initClick(ChromeDriver driver);
 
-	public abstract List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray);
+	public abstract List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray, String oneClickedRules, String oneClickedStrategy);
 }

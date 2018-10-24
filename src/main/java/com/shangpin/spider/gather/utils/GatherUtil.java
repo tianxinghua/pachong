@@ -44,6 +44,34 @@ import us.codecraft.webmagic.Page;
 
 public class GatherUtil {
 	private final static Logger LOG = LoggerFactory.getLogger(GatherUtil.class);
+	
+	/**
+	 * 处理图片链接缺少头的情况
+	 * @param url
+	 * @return
+	 */
+	public static String getHttpUrl(String url) {
+		String resultUrl = "";
+		if(url.contains(":")) {
+			String httpFlag = url.substring(0, url.indexOf(":"));
+			switch(httpFlag) {
+				case "http":
+					resultUrl = url;
+				case "HTTP":
+					resultUrl = url;
+				case "https":
+					resultUrl = url;
+				case "HTTPS":
+					resultUrl = url;
+				default :;
+			}
+				
+		}else {
+			resultUrl = "http:"+url;
+		}
+		return resultUrl;
+	}
+	
 	/**
 	 * 通过链接截取域名
 	 * 
@@ -332,6 +360,7 @@ public class GatherUtil {
 	 * @param strategyStr 抓取的策略字符串
 	 * @param rulesStr 抓取的规则字符串
 	 * @return result
+	 * @Desc 处理静态数据
 	 */
 	public static String getValue(Page page, String crawlValue, String strategyStr, String rulesStr, String fieldName) {
 		if(strategyStr.contains(StrategyConstants.UNION)&&rulesStr.contains(SymbolConstants.UNION_FLAG)) {
@@ -371,7 +400,9 @@ public class GatherUtil {
 		if(strategyStr.contains(StrategyConstants.DE_X)) {
 			for (String g : gg) {
 				try {
-					crawlValue += page.getHtml().xpath(g).get()+SymbolConstants.SPLIT_FLAG;
+					String imgUrl = page.getHtml().xpath(g).get();
+					imgUrl = getHttpUrl(imgUrl);
+					crawlValue += imgUrl+SymbolConstants.SPLIT_FLAG;
 				} catch (Exception e) {
 					LOG.error("--字段{}的-规则{}-取值为空！异常：{}",fieldName,"DE-X",e.getMessage());
 				}
@@ -875,7 +906,7 @@ public class GatherUtil {
 			}
 			
 			if(StrategyConstants.SUB.equals(detailStrategy)) {
-				if(fieldValue=="") {
+				if(fieldValue=="") { 
 					LOG.error("----多层点击中，抓取"+clickfield+"的值为空！");
 				}else {
 					fieldValue = subCore(detailRule,fieldValue);
@@ -898,83 +929,89 @@ public class GatherUtil {
 	 * @param elementIndex 
 	 * @return
 	 */
-	private static String handleQty(Page page, ChromeDriver driver, String rulesStr, Integer elementIndex, Boolean moreClickFlag) {
-		String qtyFlag = "";
-		String qtyFlagValue = "";
-		if(rulesStr.contains(SymbolConstants.QTY_FLAG)) {
-			qtyFlagValue = rulesStr.substring(rulesStr.indexOf(SymbolConstants.QTY_FLAG)+SymbolConstants.QTY_FLAG.length(),rulesStr.length());
-			rulesStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.QTY_FLAG));
-		}else {
-			qtyFlagValue = "0";
-		}
-		if(driver!=null) {
-			if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
-				String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
-				String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
-				WebElement element = null;
-				
-				WebDriverWait wait = new WebDriverWait(driver, 1);
-				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(deRuleStr)));
-				
-				if(moreClickFlag) {
-					element = driver.findElements(By.cssSelector(deRuleStr)).get(0);
-				}else {
-					element = driver.findElements(By.cssSelector(deRuleStr)).get(elementIndex);
-				}
-				qtyFlag = element.getAttribute(attrStr);
-			}else {
-				WebElement element = null;
-				WebDriverWait wait = new WebDriverWait(driver, 1);
-				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(rulesStr)));
-				
-				if(moreClickFlag) {
-					element = driver.findElements(By.cssSelector(rulesStr)).get(0);
-				}else {
-					element = driver.findElements(By.cssSelector(rulesStr)).get(elementIndex);
-				}
-				
-				if(element.isDisplayed()) {
-					qtyFlag = element.getText();
-				}else {
-					qtyFlag = element.getAttribute("textContent");
-				}
-			}
-		}
-		if(page!=null) {
-			if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
-				String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
-				String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
-				qtyFlag = page.getHtml().getDocument().select(deRuleStr).attr(attrStr);
-			}else {
-				qtyFlag = page.getHtml().getDocument().select(rulesStr).text();
-			}
-		}
-		if(qtyFlag==null) {
-			qtyFlag = "";
-		}
+	public static String handleQty(Page page, ChromeDriver driver, String rulesStr, Integer elementIndex, Boolean moreClickFlag) {
 		int qty = Constants.QTY_NO;
-//		Pattern pattern = Pattern.compile("\\d+");
-//		Matcher matcher = pattern.matcher(qtyFlag);
 		try {
-			int j = Integer.parseInt(qtyFlagValue);
-			int i = Integer.parseInt(qtyFlag);
-			if(i>j) {
-				qty = Constants.QTY_YES;
+			String qtyFlag = "";
+			String qtyFlagValue = "";
+			if(rulesStr.contains(SymbolConstants.QTY_FLAG)) {
+				qtyFlagValue = rulesStr.substring(rulesStr.indexOf(SymbolConstants.QTY_FLAG)+SymbolConstants.QTY_FLAG.length(),rulesStr.length());
+				rulesStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.QTY_FLAG));
+			}else {
+				qtyFlagValue = "0";
+			}
+			if(driver!=null) {
+				if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
+					String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
+					String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
+					WebElement element = null;
+					
+					WebDriverWait wait = new WebDriverWait(driver, 1);
+					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(deRuleStr)));
+					
+					if(moreClickFlag) {
+						element = driver.findElements(By.cssSelector(deRuleStr)).get(0);
+					}else {
+						element = driver.findElements(By.cssSelector(deRuleStr)).get(elementIndex);
+					}
+					qtyFlag = element.getAttribute(attrStr);
+				}else {
+					WebElement element = null;
+					WebDriverWait wait = new WebDriverWait(driver, 1);
+					wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(rulesStr)));
+					
+					if(moreClickFlag) {
+						element = driver.findElements(By.cssSelector(rulesStr)).get(0);
+					}else {
+						element = driver.findElements(By.cssSelector(rulesStr)).get(elementIndex);
+					}
+					
+					if(element.isDisplayed()) {
+						qtyFlag = element.getText();
+					}else {
+						qtyFlag = element.getAttribute("textContent");
+					}
+				}
+			}
+			if(page!=null) {
+				if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
+					String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
+					String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
+					qtyFlag = page.getHtml().getDocument().select(deRuleStr).attr(attrStr);
+				}else {
+					qtyFlag = page.getHtml().getDocument().select(rulesStr).text();
+				}
+			}
+			if(qtyFlag==null) {
+				qtyFlag = "";
+			}
+//			Pattern pattern = Pattern.compile("\\d+");
+//			Matcher matcher = pattern.matcher(qtyFlag);
+			try {
+				int j = Integer.parseInt(qtyFlagValue);
+				int i = Integer.parseInt(qtyFlag);
+				if(i>j) {
+					qty = Constants.QTY_YES;
+				}
+			} catch (Exception e) {
+				LOG.info("库存标识为字符--");
+//				以字符判断
+				if(qtyFlagValue.contains(SymbolConstants.FALSE_MARK)) {
+					qtyFlagValue = qtyFlagValue.replace(SymbolConstants.FALSE_MARK, "");
+					if(!qtyFlag.contains(qtyFlagValue)) {
+						qty = Constants.QTY_YES;
+					}
+				}else {
+					if(qtyFlag.contains(qtyFlagValue)) {
+						qty = Constants.QTY_YES;
+					}
+				}
 			}
 		} catch (Exception e) {
-			LOG.info("库存标识为字符--");
-//			以字符判断
-			if(qtyFlagValue.contains(SymbolConstants.FALSE_MARK)) {
-				qtyFlagValue = qtyFlagValue.replace(SymbolConstants.FALSE_MARK, "");
-				if(!qtyFlag.contains(qtyFlagValue)) {
-					qty = Constants.QTY_YES;
-				}
-			}else {
-				if(qtyFlag.contains(qtyFlagValue)) {
-					qty = Constants.QTY_YES;
-				}
-			}
+			qty = Constants.QTY_YES;
+			LOG.error("----动态解析QTY出错！默认为有库存（或可点击）{}"+e.getMessage());
 		}
+		
 		return String.valueOf(qty);
 	}
 
@@ -999,7 +1036,9 @@ public class GatherUtil {
 //		wait.until(ExpectedConditions.visibilityOfAllElements(imgElements));
 		String pics = "";
 		for (WebElement imgEle : imgElements) {
-			pics += imgEle.getAttribute(attrRule)+SymbolConstants.SPLIT_FLAG;
+			String imgUrl = imgEle.getAttribute(attrRule);
+			imgUrl = getHttpUrl(imgUrl);
+			pics += imgUrl+SymbolConstants.SPLIT_FLAG;
 		}
 		if(pics.contains(SymbolConstants.SPLIT_FLAG)) {
 			pics = pics.substring(0, pics.length()-SymbolConstants.SPLIT_FLAG.length());

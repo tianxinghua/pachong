@@ -27,7 +27,7 @@ public class ThreeClick extends MoreClickUtil{
 	}
 	
 	@Override
-	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray) {
+	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray, String oneClickedRules, String oneClickedStrategy) {
 		// TODO Auto-generated method stub
 		return null;
 	}

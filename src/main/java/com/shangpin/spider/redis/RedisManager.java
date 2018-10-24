@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.entity.gather.RedisCache;
 import com.shangpin.spider.entity.gather.SpiderWhiteInfo;
-import com.shangpin.spider.gather.utils.GatherUtil;
 import com.shangpin.spider.mapper.gather.SpiderWhiteInfoMapper;
 
 /**
@@ -133,10 +132,17 @@ public class RedisManager {
 				if(remTaskFlag){
 					remTaskCount = zoper.zCard(Constants.REMTASKUUID+uuid).intValue();
 				}
+				
+				Boolean errorTaskFlag = redisTemplate.hasKey(Constants.ERRORTASKUUID+uuid);
+				int errorTaskCount = 0;
+				if(errorTaskFlag){
+					errorTaskCount = zoper.zCard(Constants.ERRORTASKUUID+uuid).intValue();
+				}
 				redisCache.setUuid(uuid);
 				redisCache.setWebName(webName);
 				redisCache.setTaskCount(taskCount);
 				redisCache.setRemTaskCount(remTaskCount);
+				redisCache.setErrorTaskCount(errorTaskCount);
 				redisCacheList.add(redisCache);
 			}
 			
@@ -172,6 +178,50 @@ public class RedisManager {
 			log.info("获取域名和名字的map出错！"+e.getMessage());
 		}
 		return domainMap;
+	}
+	
+	/**
+	 * 链接抓取成功后的处理
+	 * @param uuid
+	 * @param url
+	 */
+	public void successHandleRedis(Long uuid, String url) {
+//		成功后将链接放入REMTASKUUID中，并删除ERRORTASKUUID中对应的链接
+		ZSetOperations<String, String> zoper = redisTemplate.opsForZSet();
+		Long rank = zoper.rank(Constants.ERRORTASKUUID+uuid, url);
+		Double score = Double.valueOf(0);
+		if(rank!=null) {
+			score = zoper.score(Constants.ERRORTASKUUID+uuid, url);
+			zoper.remove(Constants.ERRORTASKUUID+uuid, url);
+		}
+		zoper.add(Constants.REMTASKUUID+uuid, url, score);
+	}
+	
+	/**
+	 * 链接抓取失败后的处理
+	 * @param uuid
+	 * @param url
+	 * @param retryNum
+	 */
+	public void errorHandleRedis(Long uuid, String urlFlag, Integer retryNum) {
+//		链接失败后，判断失败次数（优先级即失败次数）
+		ZSetOperations<String, String> zoper = redisTemplate.opsForZSet();
+		Long rank = zoper.rank(Constants.ERRORTASKUUID+uuid, urlFlag);
+		Double score = Double.valueOf(0);
+		if(rank!=null) {
+			score = zoper.score(Constants.ERRORTASKUUID+uuid, urlFlag);
+		}
+//		zoper.incrementScore(Constants.ERRORTASKUUID+uuid, url, 1);
+		if(score<retryNum) {
+			zoper.remove(Constants.ERRORTASKUUID+uuid, urlFlag);
+			String url = urlFlag;
+			if(urlFlag.contains("#AND")) {
+				url = urlFlag.substring(0, urlFlag.indexOf("#AND"));
+			}
+			score++;
+			zoper.add(Constants.TASKUUID+uuid, url, score);
+			zoper.add(Constants.ERRORTASKUUID+uuid, urlFlag, score);
+		}
 	}
 	
 }

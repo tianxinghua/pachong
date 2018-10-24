@@ -47,12 +47,13 @@
 				rowNum:10,//每页展示条数
 				rowList:[5,10,20,30,50],
                 page: 1,
-                colNames:["UUID","相关网站","未处理链接数","已处理链接数（总）","清除缓存（未处理）"],
+                colNames:["UUID","相关网站","未处理链接数","已处理链接数（总）","错误数量","清除缓存（未处理）"],
                 colModel: [
                     { name:"uuid", index:"name",key: true,editable:false,autowidth:true,align:"center"},
                     { name:"webName",index:"webName",editable:false,autowidth:true,align:"center"},
                     { name:"taskCount",index:"taskCount",editable:false,autowidth:true,align:"center"},
                     { name:"remTaskCount",index:"remTaskCount",editable:false,autowidth:true,align:"center"},
+                    { name:"errorTaskCount",index:"errorTaskCount",editable:false,autowidth:true,align:"center"},
                     { name:"",index:"",editable:false,autowidth:true,align:"center",
                     	formatter: function (value, grid, rows, state) {
                     		return "<button class='btn btn-danger deleteCache' value='"+rows.uuid+"'>清除</button>"

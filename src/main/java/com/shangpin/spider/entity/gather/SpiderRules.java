@@ -129,6 +129,10 @@ public class SpiderRules implements Serializable {
 	private String jsMenuRules;
 
 	private String jsMenuStrategy;
+	
+	private String oneClickedRules;
+	
+	private String oneClickedStrategy;
 
 	private String supplierId;
 
@@ -726,6 +730,22 @@ public class SpiderRules implements Serializable {
 
 	public void setJsMenuStrategy(String jsMenuStrategy) {
 		this.jsMenuStrategy = jsMenuStrategy;
+	}
+	
+	public String getOneClickedRules() {
+		return oneClickedRules;
+	}
+
+	public void setOneClickedRules(String oneClickedRules) {
+		this.oneClickedRules = oneClickedRules;
+	}
+
+	public String getOneClickedStrategy() {
+		return oneClickedStrategy;
+	}
+
+	public void setOneClickedStrategy(String oneClickedStrategy) {
+		this.oneClickedStrategy = oneClickedStrategy;
 	}
 
 	public SpChromeDriverClickPool getDriverPool() {

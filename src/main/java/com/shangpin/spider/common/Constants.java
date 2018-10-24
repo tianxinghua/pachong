@@ -43,6 +43,11 @@ public class Constants {
 	 * 抓取链接储存的键
 	 */
 	public static final String TASKUUID = "TASKUUID";
+	
+	/**
+	 * 抓取链接出错后储存的键
+	 */
+	public static final String ERRORTASKUUID = "ERRORTASKUUID";
 
 	/**
 	 * 抓取网页无图片的前台标识

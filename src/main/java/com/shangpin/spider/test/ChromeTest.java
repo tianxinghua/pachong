@@ -11,6 +11,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.utils.CrackDspiderUtil;
@@ -48,10 +50,24 @@ public class ChromeTest {
 //		url = "https://www.thekooples.com/fr/veste-intemporelle-996470.html";
 //		url = "https://www.balenciaga.com/fr/track-shoes_cod11583827ra.html";
 //		url = "https://www.balenciaga.com/fr/femme/tout-pret-a-porter#{%22ytosQuery%22:%22true%22,%22department%22:%22viewallrtw_w%22,%22gender%22:%22D%22,%22season%22:%22A,P,E%22,%22yurirulename%22:%22searchwithdepartmentgallery%22,%22agerange%22:%22adult%22,%22page%22:%22184%22,%22productsPerPage%22:%2224%22,%22suggestion%22:%22false%22,%22facetsvalue%22:[],%22totalPages%22:%225%22,%22rsiUsed%22:%22false%22,%22totalItems%22:%22109%22,%22partialLoadedItems%22:%2224%22,%22itemsToLoadOnNextPage%22:%2224%22,%22departments%22:[{%22id%22:%22wmnjckts%22,%22page%22:1},{%22id%22:%22wmndnm%22,%22page%22:2},{%22id%22:%22wmncts%22,%22page%22:2},{%22id%22:%22wmntps%22,%22page%22:1},{%22id%22:%22wmnkntwr%22,%22page%22:1},{%22id%22:%22wmnshrts%22,%22page%22:1},{%22id%22:%22wmnjrs%22,%22page%22:2},{%22id%22:%22wmnskrtsdrsss%22,%22page%22:1},{%22id%22:%22wmnpnts%22,%22page%22:1},{%22id%22:%22rchtpwgllr%22,%22page%22:2}]}";
-		url = "https://www.balenciaga.com/fr/t-shirt-sweatshirts_cod12189857ja.html#/fr/femme/jersey";
+//		url = "https://www.balenciaga.com/fr/t-shirt-sweatshirts_cod12189857ja.html#/fr/femme/jersey";
+		url = "https://www.kenzo.com/eu/en/quilted-puffa-jacket/L86M42008F02.26.10A.html?cgid=Girls";
 		driver.get(url);
 		driver.manage().window().maximize();
-		CrackDspiderUtil.crackMask(driver, null);
+		WebElement element1 = driver.findElement(By.cssSelector(".productpage-fiche .control-group .sod_list"));
+		WebElement element = driver.findElement(By.cssSelector(".productpage-fiche .control-group .sod_list .selected span"));
+		WebDriverWait wait = new WebDriverWait(driver, 1);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".productpage-fiche .control-group .sod_list .selected span")));
+		String text = "";
+		if(element.isDisplayed()) {
+			text = element.getText();
+		}else {
+			text = element.getAttribute("textContent");
+		}
+		System.out.println("--------"+text);
+//		---------------------------------------------
+		
+		/*CrackDspiderUtil.crackMask(driver, null);
 		SpiderRules spiderRuleInfo = new SpiderRules();
 		spiderRuleInfo.setFirstClickFrontRules("#main > div > div.itempart.itemleading > div > div.itemleading-actions > div > section.accordionpanel.accordion-itemvariants-panel.color-panel.has-selection.is-collapsed > div.accordionpanel-header.accordionpanel-toggle");
 		spiderRuleInfo.setSecondClickFrontRules("");
@@ -67,7 +83,10 @@ public class ChromeTest {
 		}
 		
 		String currentUrl = driver.getCurrentUrl();
-		System.out.println("----链接:"+currentUrl);
+		System.out.println("----链接:"+currentUrl);*/
+		
+//		---------------------------------------------
+		
 		/*List<WebElement> elements = driver.findElements(By.cssSelector("#product-options-wrapper > div.product-colors-wrapper > div > ul li a"));
 		for (WebElement ele : elements) {
 			ele.click();

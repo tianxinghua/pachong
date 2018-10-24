@@ -24,7 +24,14 @@ public class CrawlServiceImpl implements CrawlService{
 		tableName = CreateTable.createTable(tableName);
 		LOG.info("----存入的表名为：{}",tableName);
 		crawlResultMapper.createTable(tableName);
-		return crawlResultMapper.insertByTableName(crawlResult,tableName);
+		Long insertFlag = 0L;
+		try {
+			insertFlag = crawlResultMapper.insertByTableName(crawlResult,tableName);
+		} catch (Exception e) {
+			LOG.error("入库失败：链接{}，编号{}，尺寸{}",crawlResult.getDetailLink(),crawlResult.getSpu(),crawlResult.getSize());
+			LOG.error("错误信息：{}",e.getMessage());
+		}
+		return insertFlag;
 		
 	}
 

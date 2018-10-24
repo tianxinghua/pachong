@@ -30,8 +30,8 @@ public class OneClick extends MoreClickUtil{
 	private static ThreadLocal<AtomicInteger> init_i = new ThreadLocal<AtomicInteger>();
 	private static ThreadLocal<AtomicInteger> endLocalInt = new ThreadLocal<AtomicInteger>();
 	private static AtomicInteger endInt = endLocalInt.get();
-	private static ThreadLocal<Integer> firstLocalSize = new ThreadLocal<Integer>();
-	private static Integer firstSize = firstLocalSize.get();
+	private static ThreadLocal<AtomicInteger> firstLocalSize = new ThreadLocal<AtomicInteger>();
+//	private static Integer firstSize = firstLocalSize.get();
 	private static Logger LOG = LoggerFactory.getLogger(OneClick.class);
 	
 	@Override
@@ -42,9 +42,10 @@ public class OneClick extends MoreClickUtil{
 	}
 	
 	@Override
-	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray) {
+	public List<Map<String, String>> executeClick(ChromeDriver driver, String[] menuRuleArray, String oneClickedRules, String oneClickedStrategy) {
 		endInt = new AtomicInteger(0);
-		firstSize = 0;
+		AtomicInteger firstSizeAtom = firstLocalSize.get();
+		firstSizeAtom = new AtomicInteger(0);
 		AtomicInteger initI = init_i.get();
 		initI = new AtomicInteger(0);
 		ThreadLocal<Boolean> recursionLocalFlag = new ThreadLocal<Boolean>();
@@ -52,16 +53,17 @@ public class OneClick extends MoreClickUtil{
 		recursionFlag = false;
 		List<Map<String, String>> list = localList.get();
 		list = new ArrayList<Map<String, String>>();
-		list = oneClick(list, driver, initI, recursionFlag, menuRuleArray);
+		list = oneClick(list, driver, initI, firstSizeAtom, recursionFlag, menuRuleArray, oneClickedRules);
 		initI = new AtomicInteger(0);
 		return list;
 	}
 	
 	private List<Map<String, String>> oneClick(List<Map<String, String>> list, ChromeDriver driver,
-			AtomicInteger initI, Boolean recursionFlag, String[] menuRuleArray) {
+			AtomicInteger initI, AtomicInteger firstSizeAtom, Boolean recursionFlag, String[] menuRuleArray, String oneClickedRules) {
 //		确保网页点击后链接发生改变。
 		String url = driver.getCurrentUrl();
 		int i = initI.get();
+		int firstSize = firstSizeAtom.get();
 //		第一步，模拟点击第一个动态元素
 		List<WebElement> elements1 = null;
 		try {
@@ -74,6 +76,7 @@ public class OneClick extends MoreClickUtil{
 
 //		第一层动态元素的个数（一般第一层元素个数是不变的，后面层级的元素是随着父级改变的）
 		firstSize = elements1.size();
+		System.err.println("----链接："+url);
 		System.err.println("----\t第一层的元素个数为：" + firstSize);
 		System.err.println("----\t第一层此时的下标为：" + i);
 		if (i + 1 > firstSize) {
@@ -89,7 +92,14 @@ public class OneClick extends MoreClickUtil{
 //					WebDriverWait wait = new WebDriverWait(driver, 2);
 //					wait.until(ExpectedConditions.elementToBeClickable(element));
 //					element.click();
-					((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+					if(i==0) {
+						if(judgeOneClicked(driver, oneClickedRules)) {
+							((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+						}
+					}else {
+						((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+					}
+					
 				} catch (Exception e) {
 					LOG.error("链接{}第一次点击事件有误！", url);
 					e.printStackTrace();
@@ -108,15 +118,16 @@ public class OneClick extends MoreClickUtil{
 		recursionFlag = true;
 		if ((!recursionFlag) || (i != firstSize - 1)) {
 //			点击后获取的字段值，在此获取
-			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initI.incrementAndGet()-1, spiderRuleInfo.getSecondClickFlag());
-//			递归			
-			oneClick(list, driver, initI, recursionFlag, menuRuleArray);
+			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, true);
+//			递归	
+			firstSizeAtom = new AtomicInteger(firstSize);
+			oneClick(list, driver, initI, firstSizeAtom, recursionFlag, menuRuleArray,  oneClickedRules);
 		}
 //		确保最后一次入库
 		if (endInt.get() == 0) {
 			if (i == firstSize - 1) {
 				LOG.info("{}链接最后一次点击入库！", url);
-				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initI.incrementAndGet()-1, spiderRuleInfo.getSecondClickFlag());
+				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, true);
 				endInt.incrementAndGet();
 			}
 		}

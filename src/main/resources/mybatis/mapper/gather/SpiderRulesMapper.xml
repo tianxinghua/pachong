@@ -33,6 +33,8 @@
     <result column="qty_strategy" property="qtyStrategy" jdbcType="VARCHAR" />
     <result column="js_menu_rules" property="jsMenuRules" jdbcType="VARCHAR" />
     <result column="js_menu_strategy" property="jsMenuStrategy" jdbcType="VARCHAR" />
+    <result column="one_clicked_rules" property="oneClickedRules" jdbcType="VARCHAR" />
+    <result column="one_clicked_strategy" property="oneClickedStrategy" jdbcType="VARCHAR" />
     <result column="season_rules" property="seasonRules" jdbcType="VARCHAR" />
     <result column="material_rules" property="materialRules" jdbcType="VARCHAR" />
     <result column="material_strategy" property="materialStrategy" jdbcType="VARCHAR" />
@@ -76,7 +78,8 @@
     id, white_id, thread_num, retry_num, sleep, max_page_gather, timeout, cookie, user_agent, lie_url_reg, 
     detail_url_reg, filter_url_reg, charset, headless, ajax_flag, next_page_flag, next_page_tag, first_ajax_flag, gather_first, gender_rules, brand_rules, brand_strategy, 
     category_rules, category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
-    js_menu_rules, js_menu_strategy,season_rules, material_rules, 
+    js_menu_rules, js_menu_strategy, season_rules, 
+    one_clicked_rules, one_clicked_strategy, material_rules, 
     material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
     pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
     domestic_price_strategy, sale_price_rules, sale_price_strategy,
@@ -104,6 +107,7 @@
       brand_rules, brand_strategy, category_rules, 
       category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
       js_menu_rules, js_menu_strategy,
+      one_clicked_rules, one_clicked_strategy,
       season_rules, material_rules, material_strategy, 
       color_rules, color_strategy, size_rules, 
       size_strategy, pro_name_rules, pro_name_strategy, 
@@ -238,6 +242,12 @@
       </if>
       <if test="jsMenuStrategy != null" >
         js_menu_strategy,
+      </if>
+      <if test="oneClickedRules != null" >
+        one_clicked_rules,
+      </if>
+      <if test="oneClickedStrategy != null" >
+        one_clicked_strategy,
       </if>
       <if test="seasonRules != null" >
         season_rules,
@@ -448,6 +458,12 @@
       <if test="jsMenuStrategy != null" >
         #{jsMenuStrategy,jdbcType=VARCHAR},
       </if>
+      <if test="oneClickedRules != null" >
+        #{oneClickedRules,jdbcType=VARCHAR},
+      </if>
+      <if test="oneClickedStrategy != null" >
+        #{oneClickedStrategy,jdbcType=VARCHAR},
+      </if>
       <if test="seasonRules != null" >
         #{seasonRules,jdbcType=VARCHAR},
       </if>
@@ -547,7 +563,6 @@
       <if test="threeClickFrontRules != null" >
         #{threeClickFrontRules,jdbcType=VARCHAR},
       </if>
-      
       <if test="status != null" >
         #{status,jdbcType=BIT},
       </if>
@@ -658,6 +673,12 @@
       </if>
       <if test="jsMenuStrategy != null" >
         js_menu_strategy = #{jsMenuStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="oneClickedRules != null" >
+        one_clicked_rules = #{oneClickedRules,jdbcType=VARCHAR},
+      </if>
+      <if test="oneClickedStrategy != null" >
+        one_clicked_strategy = #{oneClickedStrategy,jdbcType=VARCHAR},
       </if>
       <if test="seasonRules != null" >
         season_rules = #{seasonRules,jdbcType=VARCHAR},
@@ -770,7 +791,7 @@
         three_click_flag = #{threeClickFlag,jdbcType=BIT},
       </if>
       <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
+        create_time = now(),
       </if>
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
@@ -810,6 +831,8 @@
       qty_strategy = #{qtyStrategy,jdbcType=VARCHAR},
       js_menu_rules = #{jsMenuRules,jdbcType=VARCHAR},
       js_menu_strategy = #{jsMenuStrategy,jdbcType=VARCHAR},
+      one_clicked_rules = #{oneClickedRules,jdbcType=VARCHAR},
+      one_clicked_strategy = #{oneClickedStrategy,jdbcType=VARCHAR},
       season_rules = #{seasonRules,jdbcType=VARCHAR},
       material_rules = #{materialRules,jdbcType=VARCHAR},
       material_strategy = #{materialStrategy,jdbcType=VARCHAR},
