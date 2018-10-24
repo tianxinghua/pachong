@@ -8,6 +8,9 @@ spring:
   cloud:
         stream:
               bindings:
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              content-type: application/json
                         coccolebimbiOriginalProduct:
                               destination: coccolebimbi.original.product
                               content-type: application/json
@@ -258,6 +261,9 @@ spring:
               rabbit:
                       bindings:
                             fashionTamersOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            suitnegoziOriginalProduct:
                                   producer:
                                            prefix: HA.
                             coccolebimbiOriginalProduct:

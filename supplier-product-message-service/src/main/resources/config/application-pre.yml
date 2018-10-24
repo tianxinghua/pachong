@@ -11,6 +11,9 @@ spring:
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               content-type: application/json
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              content-type: application/json
                         ostoreOriginalProduct: 
                               destination: ostore.original.product
                               content-type: application/json
@@ -400,6 +403,11 @@ spring:
                             marinoOriginalProduct:
                                   producer:
                                            prefix: HA.
+                            suitnegoziOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+
+
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 

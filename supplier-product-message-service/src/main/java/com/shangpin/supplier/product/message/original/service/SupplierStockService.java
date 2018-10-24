@@ -8,6 +8,7 @@ import com.shangpin.supplier.product.message.original.conf.sender.OriginalProduc
 
 import lombok.extern.slf4j.Slf4j;
 /**
+ *
  * <p>Title: SupplierStockService</p>
  * <p>Description: 更新ephub库存的服务 </p>
  * <p>Company: </p> 

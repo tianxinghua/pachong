@@ -7,7 +7,10 @@ spring:
            virtual-host: /ephub-message-service
   cloud: 
         stream: 
-              bindings: 
+              bindings:
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              content-type: application/json
                         cocoroseLondonOriginalProduct:
                               destination: cocoroseLondon.original.product
                               content-type: application/json
@@ -530,6 +533,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             max1980OriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            suitnegoziOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 

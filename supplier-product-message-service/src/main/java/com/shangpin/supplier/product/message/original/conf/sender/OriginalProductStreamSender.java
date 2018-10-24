@@ -710,4 +710,10 @@ public class OriginalProductStreamSender {
     public boolean vietti2Stream(SupplierProduct supplierProduct) {
         return originalProductSource.vietti2().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+
+
+
+    public boolean suitnegoziStream(SupplierProduct supplierProduct) {
+        return originalProductSource.suitnegozi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }
