@@ -41,4 +41,9 @@ public class ReplyResult {
         this.message="";
     }
 
+    public void fail(int code,String message){
+        this.code=code;
+        this.message=message;
+    }
+
 }

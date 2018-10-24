@@ -54,6 +54,11 @@ public class SupplierTokenController {
             return JSONObject.toJSONString(reply);
         }
         SupplierToken sc =JSONObject.parseObject(supplierToken,SupplierToken.class) ;
+        SupplierToken sc2 = supplierTokenService.getSupplierTokenBySupplierId(sc.getSupplierId());
+        if(sc2!=null){
+            reply.fail(222,"该供应商已经存在！");
+            return JSONObject.toJSONString(reply);
+        }
         supplierTokenService.addSupplierTokenBySupplierId(sc);
         reply.success();
         //  reply.setData(JSONObject.toJSONString(sc));

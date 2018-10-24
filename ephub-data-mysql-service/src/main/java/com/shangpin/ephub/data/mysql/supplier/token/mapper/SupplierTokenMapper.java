@@ -2,11 +2,14 @@ package com.shangpin.ephub.data.mysql.supplier.token.mapper;
 
 import com.shangpin.ephub.data.mysql.supplier.token.bean.SupplierToken;
 import com.shangpin.ephub.data.mysql.supplier.token.bean.SupplierTokenCriteria;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
+import java.util.Map;
 
+@Mapper
 public interface SupplierTokenMapper {
     int countByExample(SupplierTokenCriteria example);
 
@@ -24,10 +27,10 @@ public interface SupplierTokenMapper {
 
     int updateByExample(@Param("record") SupplierToken record, @Param("example") SupplierTokenCriteria example);
 
-    SupplierToken selectBySupplierId(String supplierId);
+    SupplierToken selectBySupplierId( Map<String ,String> map);
 
 
     int updateBySupplierToken(SupplierToken record);
 
-    int deleteByPrimaryKey(String supplierId);
+    int deleteByPrimaryKey(Map<String ,String> map);
 }

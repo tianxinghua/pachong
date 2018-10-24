@@ -76,9 +76,7 @@
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.supplier.token.bean.SupplierTokenCriteria" >
     select
-    <if test="distinct" >
-      distinct
-    </if>
+
     <include refid="Base_Column_List" />
     from hub_supplier_token
     <if test="_parameter != null" >
@@ -103,7 +101,7 @@
     values (#{refreshToken,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, 
       #{expireTime,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.shangpin.product.data.mysql.po.SupplierToken" >
+  <insert id="insertSelective" parameterType="com.shangpin.ephub.data.mysql.supplier.token.bean.SupplierToken" >
     insert into hub_supplier_token
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="refreshToken != null" >
@@ -182,9 +180,7 @@
   </update>
   <select resultMap="BaseResultMap" parameterType="com.shangpin.ephub.data.mysql.supplier.token.bean.SupplierTokenCriteria" id="selectByExampleWithRowbounds" >
     select
-    <if test="distinct" >
-      distinct
-    </if>
+
     <include refid="Base_Column_List" />
     from hub_supplier_token
     <if test="_parameter != null" >
@@ -199,33 +195,31 @@
   </select>
 
 
-  <select resultMap="BaseResultMap" parameterType="java.lang.String" id="selectBySupplierId" >
+  <select resultMap="BaseResultMap" parameterType="java.util.Map"  id="selectBySupplierId" >
     select
-    <if test="distinct" >
-      distinct
-    </if>
+
     <include refid="Base_Column_List" />
     from hub_supplier_token
-  where supplier_id=#{0}
+  where supplier_id=#{supplierId}
   </select>
 
 
   <update id="updateBySupplierToken" parameterType="com.shangpin.ephub.data.mysql.supplier.token.bean.SupplierTokenCriteria" >
     update hub_supplier_token
     <set >
-      <if test="record.refreshToken != null" >
+      <if test="refreshToken != null" >
         refresh_token = #{refreshToken,jdbcType=VARCHAR},
       </if>
-      <if test="record.accessToken != null" >
+      <if test="accessToken != null" >
         access_token = #{accessToken,jdbcType=VARCHAR},
       </if>
-      <if test="record.createTime != null" >
+      <if test="createTime != null" >
         create_time = #{createTime,jdbcType=DATE},
       </if>
-      <if test="record.expireTime != null" >
+      <if test="expireTime != null" >
         expire_time = #{expireTime,jdbcType=VARCHAR},
       </if>
-      <if test="record.supplierId != null" >
+      <if test="supplierId != null" >
         supplier_id = #{supplierId,jdbcType=VARCHAR},
       </if>
     </set>
@@ -233,8 +227,8 @@
   </update>
 
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+  <delete id="deleteByPrimaryKey" parameterType="java.util.Map" >
     delete from hub_supplier_token
-    where supplier_id=#{0}
+    where supplier_id=#{supplierId}
   </delete>
 </mapper>

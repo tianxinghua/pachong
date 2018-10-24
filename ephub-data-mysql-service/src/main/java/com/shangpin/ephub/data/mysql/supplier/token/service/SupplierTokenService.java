@@ -7,6 +7,7 @@ import com.shangpin.ephub.data.mysql.supplier.token.mapper.SupplierTokenMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +23,9 @@ public class SupplierTokenService {
     private SupplierTokenMapper supplierTokenMapper;
 
     public SupplierToken getSupplierTokenBySupplierId(String supplierId){
-
-         return supplierTokenMapper.selectBySupplierId(supplierId);
+        Map<String ,String> map = new HashMap<String,String>();
+        map.put("supplierId",supplierId);
+         return supplierTokenMapper.selectBySupplierId(map);
     }
 
     public int addSupplierTokenBySupplierId(SupplierToken supplierToken){
@@ -37,7 +39,8 @@ public class SupplierTokenService {
     }
 
     public int delSupplierTokenBySupplierId(String supplierId){
-
-        return supplierTokenMapper.deleteByPrimaryKey(supplierId);
+        Map<String ,String> map = new HashMap<String,String>();
+        map.put("supplierId",supplierId);
+        return supplierTokenMapper.deleteByPrimaryKey(map);
     }
 }
