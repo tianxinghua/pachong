@@ -32,8 +32,8 @@ spring:
        host: smtp.263.net # SMTP server host. For instance `smtp.example.com`
        port: 25 # SMTP server port.
        protocol: smtp # Protocol used by the SMTP server.
-       username: lizhongren@shangpin.com # Login user of the SMTP server.
-       password: Hate-79 # Login password of the SMTP server.
+       username: chengxu@shangpin.com # Login user of the SMTP server.
+       password: shangpin001 # Login password of the SMTP server.
        test-connection: true # Test that the mail server is available on startup.
 shangpin: 
   hub: 
@@ -95,7 +95,7 @@ shangpin:
                   openApiKey: 
                   openApiSecret: 
           forzieri:
-                  host: https://api.forzieri.com/test/
+                  host:
                   client_id: NTkyZThjNGI2NGY2NTY1
                   client_secret: 3db7c25746f4a11bd8f877b1132dc4a5e739535e
                   access_token: 1568010f445ffc910f7b34757ceae04f809d4b91
@@ -648,11 +648,6 @@ shangpin:
                   url: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/
                   tokenUrl: https://www.gebnegozionline.com/rest/marketplace_shangpin/V1/integration/customer/token
                   supplierId: 2015111001657
-                  isPurchaseExp:
-                  openApiKey:
-                  openApiSecret:
-                  purchaseOrderUrl:
-          forzieri:
                   isPurchaseExp:
                   openApiKey:
                   openApiSecret:

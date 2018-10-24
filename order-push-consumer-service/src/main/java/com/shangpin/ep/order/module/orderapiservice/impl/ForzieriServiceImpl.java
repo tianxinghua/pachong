@@ -204,53 +204,35 @@ public class ForzieriServiceImpl implements IOrderService {
         shipping_address.setRegion("California");
         order.setShipping_address(shipping_address);
         Shopper shopper = new Shopper();
-        shopper.setEmail("username@example.com");
+        shopper.setEmail("chengxu@shangpin.com");
         order.setShopper(shopper);
         List<Item> items = new ArrayList<Item>();
         Item item = new Item();
-        item.setMerchant_sku("12222");
+        item.setMerchant_sku("");
         item.setQuantity("1");
-        item.setSku(orderDTO.getSupplierSkuNo());
+
+
+        String skuNo =  orderDTO.getDetail().split(":")[0];
+        item.setSku(skuNo);
         items.add(item);
         order.setItems(items);
 
         return order;
     }
 
-    //读取本地文件并转为字符串
-    private static String getJson(String fileName) {
-        String fullFileName = "E:/" + fileName + ".json";
-        File file = new File(fullFileName);
-        Scanner scanner = null;
-        StringBuilder buffer = new StringBuilder();
-        try {
-            scanner = new Scanner(file, "utf-8");
-            while (scanner.hasNextLine()) {
-                buffer.append(scanner.nextLine());
-            }
-        } catch (Exception e) {
-
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
-        }
-        System.out.println(buffer.toString());
-        return buffer.toString();
-    }
-
 
 
     public  String forzieriPost(String url,String method,String jsonValue,OrderDTO order) throws Exception{
         TokenDTO tokenDTO = tokenService.findToken("2015103001637");
-        String skuId  = order.getSpSkuNo();
+
+        String skuNo =  order.getDetail().split(":")[0];
         String accessToken = tokenDTO.getAccessToken();
         String refreshToken = tokenDTO.getRefreshToken();
 
         HttpClient httpClient = new HttpClient();
         Gson gson = new Gson();
         String  s="";
-        GetMethod getMethod = new GetMethod("https://api.forzieri.com/v3/products/"+skuId);
+        GetMethod getMethod = new GetMethod("https://api.forzieri.com/v3/products/"+skuNo);
         getMethod.setRequestHeader("Authorization", "Bearer "+accessToken);
 
         int httpCode = httpClient.executeMethod(getMethod);
@@ -267,7 +249,7 @@ public class ForzieriServiceImpl implements IOrderService {
             }
         }else if (httpCode==404){
             // 产品未找到
-            logger.info(skuId+"产品未找到");
+            logger.info(skuNo+"产品未找到");
 
         }else if (httpCode==401) {
             //access_token过期
@@ -304,28 +286,26 @@ public class ForzieriServiceImpl implements IOrderService {
                     logger.info("用新的token访问接口成功");
                 }else if (httpCode1==404){
                     // 产品未找到
-                    logger.info(skuId+"产品未找到");
+                    logger.info(skuNo+"产品未找到");
                 }else{
                     //服务器错误
-                    loggerError.error(skuId+"服务器错误");
-                    System.out.println(skuId+"服务器错误"+httpCode);
+                    loggerError.error(skuNo+"服务器错误");
+                    System.out.println(skuNo+"服务器错误"+httpCode);
                 }
             }else{
-                loggerError.error(skuId+"刷新token错误"+getMethod.getResponseBodyAsString());
-                System.out.println(skuId+"刷新token错误"+getMethod+getMethod.getResponseBodyAsString());
+                loggerError.error(skuNo+"刷新token错误"+getMethod.getResponseBodyAsString());
+                System.out.println(skuNo+"刷新token错误"+getMethod+getMethod.getResponseBodyAsString());
             }
         }else{
             //服务器错误
-            loggerError.error(skuId+"服务器错误");
-            System.out.println(skuId+"服务器错误"+httpCode);
+            loggerError.error(skuNo+"服务器错误");
+            System.out.println(skuNo+"服务器错误"+httpCode);
         }
         //  }
         return s;
     }
- /*  public String forzieriPost(String url,String method,String jsonValue,OrderDTO order) throws Exception{
-        Map<String,String> headerMap = new HashMap<String,String>();
-        headerMap.put("Authorization","Bearer 38ca9706b29a098c209c995e5390822e0c3a1432");
-        return HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap, null,null);
-    }
-*/
+
+
+
+
 }
