@@ -199,5 +199,81 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
         return re;
     }
 
+    @Override
+    public String getSupplierTokenBySupplierId(String supplierId) {
+        if(supplierId==null || "".equals(supplierId) ){
+                return  null;
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.getSupplierTokenBySupplierId(supplierId);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
+    @Override
+    public String updateSupplierTokenBySupplierId(String supplierToken) {
+        if(supplierToken==null || "".equals(supplierToken) ){
+            return  null;
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.updateSupplierTokenBySupplierId(supplierToken);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
+    @Override
+    public String addSupplierTokenBySupplierId(String supplierToken) {
+        if(supplierToken==null || "".equals(supplierToken) ){
+            return  null;
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.addSupplierTokenBySupplierId(supplierToken);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
+    @Override
+    public String delSupplierTokenBySupplierId(String supplierId) {
+        if(supplierId==null || "".equals(supplierId) ){
+            return  null;
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.delSupplierTokenBySupplierId(supplierId);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
 
 }

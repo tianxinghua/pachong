@@ -57,4 +57,16 @@ public interface SupplierInHubService {
      * @return
      */
     public String  getSupplierChannelByMap(String supplierId,String supplierNo);
+
+
+    /**
+     * 获取供货商token信息
+     * @param supplierId
+     * @return
+     */
+    public String  getSupplierTokenBySupplierId(String supplierId);
+    public String updateSupplierTokenBySupplierId(String supplierToken);
+    public String addSupplierTokenBySupplierId(String supplierToken);
+    public String delSupplierTokenBySupplierId(String supplierId);
+
 }

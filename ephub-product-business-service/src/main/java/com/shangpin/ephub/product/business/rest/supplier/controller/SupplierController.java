@@ -54,4 +54,28 @@ public class SupplierController {
 	public String  getSupplierMsg(@RequestParam(name="supplierId",required=false,defaultValue = "") String  supplierId, @RequestParam(name="supplierNo",required=false,defaultValue = "") String supplierNo){
 		return supplierInHubService.getSupplierChannelByMap(supplierId,supplierNo);
 	}
+
+
+	@RequestMapping(value = "/supplierToken", method = RequestMethod.GET)
+	public String getSupplierTokenBySupplierId(@RequestParam(name="supplierId",required=false,defaultValue = "") String supplierId){
+		return supplierInHubService.getSupplierTokenBySupplierId(supplierId);
+	}
+
+	@RequestMapping(value = "/supplierToken", method = RequestMethod.PUT)
+	public String updateSupplierTokenBySupplierId(@RequestParam(name="SupplierToken",required=false,defaultValue = "") String supplierToken){
+
+		return supplierInHubService.updateSupplierTokenBySupplierId(supplierToken);
+
+	}
+	@RequestMapping(value = "/supplierToken", method = RequestMethod.POST)
+	public String addSupplierTokenBySupplierId(@RequestParam(name="SupplierToken",required=false,defaultValue = "") String supplierToken){
+
+		return supplierInHubService.addSupplierTokenBySupplierId(supplierToken);
+
+	}
+	@RequestMapping(value = "supplierToken", method = RequestMethod.DELETE)
+	public String delSupplierTokenBySupplierId(@RequestParam(name="supplierId",required=false,defaultValue = "") String supplierId){
+		return supplierInHubService.delSupplierTokenBySupplierId(supplierId);
+
+	}
 }

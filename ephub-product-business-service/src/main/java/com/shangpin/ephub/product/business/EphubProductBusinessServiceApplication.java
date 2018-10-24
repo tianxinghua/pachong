@@ -14,6 +14,7 @@ import com.shangpin.ephub.product.business.conf.client.ClientConf;
 @EnableDiscoveryClient
 @EnableFeignClients(value = "com.shangpin.ephub", defaultConfiguration = ClientConf.class)
 @ComponentScan(basePackages={"com.shangpin"})
+
 public class EphubProductBusinessServiceApplication {
 
 	public static void main(String[] args) {
