@@ -113,8 +113,8 @@ public class ZhiCaiHandler implements ISupplierHandler{
 	public boolean convertSpu(String supplierId,CsvDTO ob,HubSupplierSpuDto hubSpu,String data){
 		if(null != ob && ob != null){
 			hubSpu.setSupplierId(supplierId);
-			hubSpu.setSupplierSpuNo(ob.getSpu());
-			hubSpu.setSupplierSpuModel(ob.getProductModel());
+			hubSpu.setSupplierSpuNo(ob.getSpu().replace("\t",""));
+			hubSpu.setSupplierSpuModel(ob.getProductModel().replace("\t",""));
 			hubSpu.setSupplierSpuName(ob.getProName());
 			hubSpu.setSupplierSpuColor(ob.getColor());
 			hubSpu.setSupplierGender(ob.getGender());

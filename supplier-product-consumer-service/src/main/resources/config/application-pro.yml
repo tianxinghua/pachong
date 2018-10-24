@@ -1588,7 +1588,7 @@ spring:
                                          republishToDlq: false
                               suitnegoziPendingProduct:
                                     producer:
-                                    prefix: HA.
+                                         prefix: HA.
                               mengottiSncOriginalProduct:
                                     consumer:
                                          prefix: HA.
