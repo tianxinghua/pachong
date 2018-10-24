@@ -180,6 +180,7 @@ public interface PendingProductSource {
 
 	public static final String VIPGROUP = "vipgroupPendingProduct";
 
+    public static final String SUITNEGOZI = "suitnegoziPendingProduct";
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -723,4 +724,7 @@ public interface PendingProductSource {
 	 */
 	@Output(value = PendingProductSource.VIPGROUP)
 	public MessageChannel vipgroupPendingProduct();
+
+    @Output(value = PendingProductSource.SUITNEGOZI)
+    public MessageChannel suitnegoziPendingProduct();
 }

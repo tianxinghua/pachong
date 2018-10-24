@@ -834,4 +834,8 @@ public class PendingProductStreamListener {
 		adapter.vipgroupPendingProductStreamListen(message,headers);
 	}
 
+    @StreamListener(PendingProductSink.SUITNEGOZI)
+    public void suitnegoziPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+        adapter.suitnegoziPendingProductStreamListen(message,headers);
+    }
 }

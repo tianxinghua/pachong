@@ -146,4 +146,9 @@ public class SupplierProperties {
 	private Gebnegozio gebnegozio;
 
 	private Forzieri forzieri;
+
+	private SuitnegoziParam  suitnegoziParam;
+
+
+
 }

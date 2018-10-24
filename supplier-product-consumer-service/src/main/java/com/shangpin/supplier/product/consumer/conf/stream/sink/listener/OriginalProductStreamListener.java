@@ -860,4 +860,8 @@ public class OriginalProductStreamListener {
 	public void vipgroupStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
 		adapter.vipgroupStreamListen(message,headers);
 	}
+    @StreamListener(OriginalProductSink.SUITNEGOZI)
+    public void suitnegoziStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers) {
+        adapter.suitnegoziStreamListen(message,headers);
+    }
 }

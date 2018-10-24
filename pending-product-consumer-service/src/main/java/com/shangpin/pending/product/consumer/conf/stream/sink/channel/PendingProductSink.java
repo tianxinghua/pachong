@@ -182,6 +182,8 @@ public interface PendingProductSink {
 
 	public static final String VIPGROUP = "vipgroupPendingProduct";
 
+    public static final String SUITNEGOZI = "suitnegoziPendingProduct";
+
 	/**
 	 * 供货商fashionTamers通道组件配置
 	 * @return 供货商fashionTamers通道组件
@@ -725,4 +727,7 @@ public interface PendingProductSink {
 	 */
 	@Input(value = PendingProductSink.VIPGROUP)
 	public SubscribableChannel vipgroupPendingProduct();
+
+    @Input(value = PendingProductSink.SUITNEGOZI)
+    public SubscribableChannel suitnegoziPendingProduct();
 }

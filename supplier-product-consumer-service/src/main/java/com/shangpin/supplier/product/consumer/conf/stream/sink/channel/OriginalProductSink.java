@@ -20,7 +20,7 @@ public interface OriginalProductSink {
 	public static final String fratinardi = "fratinardiOriginalProduct";
 	public static final String FORZIERI = "forzieriOriginalProduct";
 	public static final String SPINNAKER = "spinnakerOriginalProduct";
-	
+    public static final String SUITNEGOZI = "suitnegoziOriginalProduct";
 	public static final String OSTORE = "ostoreOriginalProduct";
 
 	public static final String MENGOTTISNC = "mengottiSncOriginalProduct";
@@ -739,4 +739,6 @@ public interface OriginalProductSink {
 	@Input(value = OriginalProductSink.VIPGROUP)
 	public MessageChannel vipgroupOriginalProduct();
 
+    @Input(value = OriginalProductSink.SUITNEGOZI)
+    public MessageChannel suitnegoziOriginalProduct();
 }

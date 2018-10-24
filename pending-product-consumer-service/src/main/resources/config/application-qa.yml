@@ -245,12 +245,15 @@ spring:
                               destination: vietti2.pending.product
                               group: one
                               consumer:
-                                concurrency: 5
-                                maxAttempts: 1
-
-
-
-                        anielloPendingProduct:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        suitnegoziPendingProduct:
+                              destination: suitnegozi.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
+                        anielloPendingProduct: 
                               destination: aniello.pending.product
                               group: one
                               consumer: 
@@ -733,17 +736,19 @@ spring:
                                        autoBindDlq: false
                                        requeueRejected: true
                                        republishToDlq: false
-
                             vietti2PendingProduct:
                                   consumer:
-                                    prefix: HA.
-                                    autoBindDlq: false
-                                    requeueRejected: true
-                                    republishToDlq: false
-
-
-
-                            anielloPendingProduct:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            suitnegoziPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            anielloPendingProduct: 
                                   consumer: 
                                        prefix: HA.
                                        autoBindDlq: false

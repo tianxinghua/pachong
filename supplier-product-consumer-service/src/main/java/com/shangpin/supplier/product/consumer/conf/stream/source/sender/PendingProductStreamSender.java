@@ -763,4 +763,7 @@ public class PendingProductStreamSender {
 
 
 
+    public boolean suitnegoziPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+        return pendingProductSource.suitnegoziPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+    }
 }

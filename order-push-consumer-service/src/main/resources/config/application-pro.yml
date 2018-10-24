@@ -480,6 +480,16 @@ shangpin:
                   isPurchaseExp:
                   openApiKey: 1565b68a14624eb2b5f940c334e01797
                   openApiSecret: 2d51003a48ee4fccb46cc6fd64e924d5
+          suitnegoziParam:
+                  setOrderUrl: http://net13server3.it/SuitApi/Myapi/Productslist/setOrder
+                  queryOrderUrl: http://net13server3.it/SuitApi/Myapi/Productslist/GetOrderByPoNumAndOrdNum
+                  cancelUrl: http://net13server3.it/SuitApi/Myapi/Productslist/CancelOrder
+                  qtyUrl: http://net13server3.it/SuitApi/Myapi/Productslist/GetQuantityByBarcode
+                  key: drFvzrgEGS
+                  dBContext: Default
+                  isPurchaseExp:
+                  openApiKey:
+                  openApiSecret:
           stefania:
                   authKey: "270Api002#3gU8zXs" #后期注意一下这个地方能否读取
                   channel: SHANGPIN

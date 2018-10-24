@@ -195,7 +195,13 @@ public class OriginalProductStreamListenerAdapter {
 	@Qualifier("vipgroupHandler")
 	private ISupplierHandler vipgroupHandler;
 
-	/**
+
+    @Autowired
+    @Qualifier("suitnegoziHandler")
+    private ISupplierHandler suitnegoziHandler;
+
+
+    /**
 	 * coccolebimbi供货商原始数据监听方法
 	 * @param message 消息体
 	 * @param headers 消息头
@@ -961,4 +967,7 @@ public class OriginalProductStreamListenerAdapter {
 	public void vipgroupStreamListen(SupplierProduct message, Map<String, Object> headers) {
 		vipgroupHandler.handleOriginalProduct(message, headers);
 	}
+    public void suitnegoziStreamListen(SupplierProduct message, Map<String, Object> headers) {
+        suitnegoziHandler.handleOriginalProduct(message, headers);
+    }
 }

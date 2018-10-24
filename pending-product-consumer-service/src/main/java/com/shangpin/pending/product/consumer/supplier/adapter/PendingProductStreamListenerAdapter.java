@@ -801,6 +801,12 @@ public class PendingProductStreamListenerAdapter {
 	public void gebnegozioPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
 		this.messageHandle(message, headers);
 	}
+    public void suitnegoziPendingProductStreamListen(PendingProduct message, Map<String, Object> headers) {
+        this.messageHandle(message, headers);
+
+    }
+
+
 
 	/**
 	 * 供应商 ilcucciolo 待处理商品数据流监听

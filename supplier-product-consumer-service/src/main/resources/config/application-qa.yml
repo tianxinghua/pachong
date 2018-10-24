@@ -13,7 +13,7 @@ spring:
           discovery: 
               register: false
         stream: 
-              bindings: 
+              bindings:
                         stefaniamodePictureProduct: 
                               destination: stefaniamode.product.picture
                               content-type: application/json
@@ -52,7 +52,16 @@ spring:
                                        maxAttempts: 1
                         coccolebimbiPendingProduct: 
                               destination: coccolebimbi.pending.product
-                              content-type: application/json 
+                              content-type: application/json
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              group: one
+                              consumer:
+                                       concurrency: 2
+                                       maxAttempts: 1
+                        suitnegoziPendingProduct:
+                              destination: suitnegozi.pending.product
+                              content-type: application/json
                         portofinoOriginalProduct: 
                               destination: portofino.original.product
                               group: one
@@ -1571,6 +1580,15 @@ spring:
                                          requeueRejected: true
                                          republishToDlq: false
                               ylatiPendingProduct:
+                                    producer:
+                                         prefix: HA.
+                              suitnegoziOriginalProduct:
+                                    consumer:
+                                         prefix: HA.
+                                         autoBindDlq: false
+                                         requeueRejected: true
+                                         republishToDlq: false
+                              suitnegoziPendingProduct:
                                     producer:
                                          prefix: HA.
                               max1980OriginalProduct:
