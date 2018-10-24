@@ -62,5 +62,8 @@ public class PictureProductStreamListener {
 	public void mclablesPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
 	}
-	
+	@StreamListener(PictureProductSink.ERALDO_PICTURE)
+	public void eraldoPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+	}
 }
