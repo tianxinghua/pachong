@@ -10,6 +10,7 @@ import com.shangpin.ep.order.module.order.bean.RealStock;
 import com.shangpin.ep.order.module.order.bean.TokenDTO;
 import com.shangpin.ep.order.module.order.mapper.TokenMapper;
 import com.shangpin.ep.order.module.order.service.TokenService;
+import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.*;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -35,12 +36,6 @@ import com.shangpin.ep.order.enumeration.LogTypeStatus;
 import com.shangpin.ep.order.enumeration.PushStatus;
 import com.shangpin.ep.order.module.order.bean.OrderDTO;
 import com.shangpin.ep.order.module.orderapiservice.IOrderService;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.BillingAddress;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.Item;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.OrderParam;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.OrderResponse;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.ShippingAddress;
-import com.shangpin.ep.order.module.orderapiservice.impl.dto.forzieri.Shopper;
 import com.shangpin.ep.order.util.httpclient.HttpUtil45;
 import com.shangpin.ep.order.util.httpclient.OutTimeConfig;
 @Component("forzieriServiceImpl")
@@ -107,15 +102,23 @@ public class ForzieriServiceImpl implements IOrderService {
         String s="";
         try {
             s = forzieriPost(placeOrderUrl, "post", jsonValue, orderDTO);
+            Gson gson1 = new Gson();
+            OrderResponse response1 = gson1.fromJson(s, OrderResponse.class);
+            if(s!=null&&"success".equals(response1.getStatus())){
+            orderDTO.setLockStockTime(new Date());
+            orderDTO.setPushStatus(PushStatus.LOCK_PLACED);
+            orderDTO.setLogContent("------锁库结束-------");
+            logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            orderDTO.setErrorType(ErrorStatus.OTHER_ERROR);
+            orderDTO.setDescription("查询对方接口失败,对方返回的信息是："+s);
+            orderDTO.setPushStatus(PushStatus.LOCK_PLACED_ERROR);
+            handleException.handleException(orderDTO,e);
+            orderDTO.setLogContent("推送订单返回结果："+s);
+            logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
         }
-        orderDTO.setLockStockTime(new Date());
-        orderDTO.setPushStatus(PushStatus.NO_LOCK_API);
-        orderDTO.setLogContent("------锁库结束-------");
-        orderDTO.setSpOrderId(s);
-        System.out.println("s的值是："+s);
-        logCommon.loggerOrder(orderDTO, LogTypeStatus.LOCK_LOG);
+
     }
 
     @Override
@@ -126,7 +129,7 @@ public class ForzieriServiceImpl implements IOrderService {
         try {
             JSONObject jsonValue = new JSONObject();
             jsonValue.put("status","approved");
-            returnData = forzieriPost(confirmOrderUrl, "post", jsonValue.toJSONString(), orderDTO);
+            returnData = confirmPost(confirmOrderUrl, "post", jsonValue.toJSONString(), orderDTO);
             System.out.println("=============================="+returnData);
             Gson gson = new Gson();
             OrderResponse response = gson.fromJson(returnData, OrderResponse.class);
@@ -206,48 +209,51 @@ public class ForzieriServiceImpl implements IOrderService {
         Shopper shopper = new Shopper();
         shopper.setEmail("username@example.com");
         order.setShopper(shopper);
-        List<Item> items = new ArrayList<Item>();
-        Item item = new Item();
+        List<Items> items1 = new ArrayList<Items>();
+        Items item = new Items();
         item.setMerchant_sku("");
         item.setQuantity("1");
-        item.setSku(orderDTO.getSupplierSkuNo());
-        items.add(item);
-        order.setItems(items);
-
+        String skuId  = "";
+        String detail = orderDTO.getDetail();
+        if (detail != null) {
+            skuId = detail.split(":")[0];
+        }
+        item.setSku(skuId);
+        items1.add(item);
+        order.setItems(items1);
         return order;
     }
 
-    //读取本地文件并转为字符串
-    private static String getJson(String fileName) {
-        String fullFileName = "E:/" + fileName + ".json";
-        File file = new File(fullFileName);
-        Scanner scanner = null;
-        StringBuilder buffer = new StringBuilder();
-        try {
-            scanner = new Scanner(file, "utf-8");
-            while (scanner.hasNextLine()) {
-                buffer.append(scanner.nextLine());
-            }
-        } catch (Exception e) {
 
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
-        }
-        System.out.println(buffer.toString());
-        return buffer.toString();
-    }
 
 
 
     public  String forzieriPost(String url,String method,String jsonValue,OrderDTO order) throws Exception{
         TokenDTO tokenDTO = tokenService.findToken("2015103001637");
-        String skuId  = order.getSpSkuNo();
         String accessToken = tokenDTO.getAccessToken();
-        String refreshToken = tokenDTO.getRefreshToken();
+        Gson gson = new Gson();
+        String  s="";
+        Map<String,String> headerMap1 = new HashMap<String,String>();
+        headerMap1.put("Authorization","Bearer "+accessToken+"");
+        s= HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap1, null,null);
+        System.out.println(s);
+        OrderResponse orderResponse= gson.fromJson(s, OrderResponse.class);
+        return s;
+    }
 
+
+
+
+
+    public  String confirmPost(String url,String method,String jsonValue,OrderDTO order) throws Exception{
+        TokenDTO tokenDTO = tokenService.findToken("2015103001637");
+        String skuId  = "";
+        String detail = order.getDetail();
+        if (detail != null) {
+            skuId = detail.split(":")[0];
+        }
         HttpClient httpClient = new HttpClient();
+        String accessToken = tokenDTO.getAccessToken();
         Gson gson = new Gson();
         String  s="";
         GetMethod getMethod = new GetMethod("https://api.forzieri.com/v3/products/"+skuId);
@@ -256,76 +262,17 @@ public class ForzieriServiceImpl implements IOrderService {
         int httpCode = httpClient.executeMethod(getMethod);
         //判断httpCode，404商品未找到...401 accessToken过期,200得到数据
         if (httpCode==200) {
-            String realSku = getMethod.getResponseBodyAsString();
-            RealStock realStock = gson.fromJson(realSku, RealStock.class);
+            String data = getMethod.getResponseBodyAsString();
+            RealStock realStock = gson.fromJson(data, RealStock.class);
             int  qty= realStock.getData().getQty() ;
-            if(qty>0){
-                Map<String,String> headerMap = new HashMap<String,String>();
-                headerMap.put("Authorization","Bearer "+accessToken+"");
-                s= HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap, null,null);
-                System.out.println(s);
-            }
-        }else if (httpCode==404){
-            // 产品未找到
-            logger.info(skuId+"产品未找到");
+            if(qty>0) {
+                Map<String, String> headerMap1 = new HashMap<String, String>();
+                headerMap1.put("Authorization", "Bearer " + accessToken + "");
+                s = HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000 * 60 * 1, 1000 * 60 * 1, 1000 * 60 * 1), null, jsonValue, headerMap1, null, null);
 
-        }else if (httpCode==401) {
-            //access_token过期
-            //刷新Token,更改刷新后的数据库,
-            // 存入map
-            logger.info("accessToken过期");
-            TokenDTO TokenDTO1 = tokenService.findToken("2015103001637");
-            String Token1 =TokenDTO1.getRefreshToken();
-//				PostMethod postMethod = new PostMethod("https://api.forzieri.com/test/oauth/token");//测试
-            String   tokenurl="https://api.forzieri.com/v2/oauth/token?grant_type=refresh_token&client_id=NTY0MjBmOWZiZjI3OTc5&client_secret=9470b9341606430e3b36871541732865e0f51979&refresh_token="+Token1+"";
-            GetMethod tokenMethod = new GetMethod(tokenurl);
-            logger.info("refreshToken的值是"+refreshToken);
-            int tokenCode = httpClient.executeMethod(tokenMethod);
-            logger.info("executeMethod的值是"+tokenCode);
-            if (tokenCode==200) {
+    }
 
-                NewAccessToken newAccessToken = gson.fromJson(tokenMethod.getResponseBodyAsString(), NewAccessToken.class);
-                String  accessToken1 = newAccessToken.getAccess_token();
-                String refreshToken1 = newAccessToken.getRefresh_token();
-                tokenDTO.setAccessToken(accessToken1);
-                tokenDTO.setRefreshToken(refreshToken1);
-                tokenDTO.setCreateDate(new Date());
-                tokenDTO.setExpireTime(newAccessToken.getExpires_in());
-                tokenService.refreshToken(tokenDTO);
-                TokenDTO TokenDTO2 = tokenService.findToken("2015103001637");
-                String accessToken2 =TokenDTO2.getAccessToken();
-                Map<String,String> headerMap = new HashMap<String,String>();
-                headerMap.put("Authorization","Bearer "+accessToken2+"");
-                s= HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap, null,null);
-                System.out.println(s);
-                OrderResponse orderResponse= gson.fromJson(s, OrderResponse.class);
-                int httpCode1=Integer.parseInt(orderResponse.getErrorCode());
-                if (httpCode1==200) {
-                    logger.info("用新的token访问接口成功");
-                }else if (httpCode1==404){
-                    // 产品未找到
-                    logger.info(skuId+"产品未找到");
-                }else{
-                    //服务器错误
-                    loggerError.error(skuId+"服务器错误");
-                    System.out.println(skuId+"服务器错误"+httpCode);
-                }
-            }else{
-                loggerError.error(skuId+"刷新token错误"+getMethod.getResponseBodyAsString());
-                System.out.println(skuId+"刷新token错误"+getMethod+getMethod.getResponseBodyAsString());
-            }
-        }else{
-            //服务器错误
-            loggerError.error(skuId+"服务器错误");
-            System.out.println(skuId+"服务器错误"+httpCode);
-        }
-        //  }
+}
         return s;
-    }
- /*  public String forzieriPost(String url,String method,String jsonValue,OrderDTO order) throws Exception{
-        Map<String,String> headerMap = new HashMap<String,String>();
-        headerMap.put("Authorization","Bearer 38ca9706b29a098c209c995e5390822e0c3a1432");
-        return HttpUtil45.operateData(method, "json", url, new OutTimeConfig(1000*60*1,1000*60*1,1000*60*1), null, jsonValue, headerMap, null,null);
-    }
-*/
+}
 }
