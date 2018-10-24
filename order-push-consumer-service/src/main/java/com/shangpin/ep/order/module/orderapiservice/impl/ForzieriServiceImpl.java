@@ -99,7 +99,7 @@ public class ForzieriServiceImpl implements IOrderService {
     @Override
     public void handleSupplierOrder(OrderDTO orderDTO) {
 
-        String placeOrderUrl = " https://api.forzieri.com/v3/orders";
+        String placeOrderUrl = "https://api.forzieri.com/v3/orders";
 
         Gson gson = new Gson();
         String jsonValue = gson.toJson(getOrderParam(orderDTO));
@@ -191,8 +191,8 @@ public class ForzieriServiceImpl implements IOrderService {
         billing_address.setPostal_code("90210");
         billing_address.setRegion("California");
         order.setBilling_address(billing_address);
-        String merchant_reference = orderDTO.getSpMasterOrderNo();
-        order.setMerchant_reference(merchant_reference);
+        /*String merchant_reference = orderDTO.getSpMasterOrderNo();
+        order.setMerchant_reference(merchant_reference);*/
         ShippingAddress shipping_address = new ShippingAddress();
         shipping_address.setAddress_line1("1");
         shipping_address.setAddress_line2("2");
@@ -208,7 +208,7 @@ public class ForzieriServiceImpl implements IOrderService {
         order.setShopper(shopper);
         List<Item> items = new ArrayList<Item>();
         Item item = new Item();
-        item.setMerchant_sku("12222");
+        item.setMerchant_sku("");
         item.setQuantity("1");
         item.setSku(orderDTO.getSupplierSkuNo());
         items.add(item);
