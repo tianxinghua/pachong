@@ -79,7 +79,7 @@ public class eraldoHandler  implements ISupplierHandler {
             //if("false".equals(item.getVariationInfo().getIsParent())){
             hubSpu.setSupplierId(supplierId);
             hubSpu.setSupplierSpuNo(item.getProduct_sku());
-            hubSpu.setSupplierSpuModel(item.getProduct_sku());
+            hubSpu.setSupplierSpuModel(item.getProduct_design_code());
             hubSpu.setSupplierSpuName(item.getProduct_name());
             hubSpu.setSupplierSpuColor(item.getProduct_color());
             hubSpu.setSupplierGender(item.getProduct_gender());
