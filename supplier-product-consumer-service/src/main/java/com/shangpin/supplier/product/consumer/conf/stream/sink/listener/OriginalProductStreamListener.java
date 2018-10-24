@@ -860,4 +860,14 @@ public class OriginalProductStreamListener {
 	public void vipgroupStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
 		adapter.vipgroupStreamListen(message,headers);
 	}
+
+	/**
+	 * 供应商tricot原始商品数据流通道监听者
+	 * @param message 消息
+	 * @param headers 消息头
+	 */
+	@StreamListener(OriginalProductSink.TRICOT)
+	public void tricotStreamListen(@Payload SupplierProduct message, @Headers Map<String,Object> headers){
+		adapter.tricotStreamListen(message,headers);
+	}
 }

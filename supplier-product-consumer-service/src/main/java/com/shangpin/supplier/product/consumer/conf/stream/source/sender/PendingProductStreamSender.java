@@ -761,6 +761,17 @@ public class PendingProductStreamSender {
 
 	}
 
+	/**
+	 * 发送供应商tricot商品流数据
+	 * @param pendingProduct 消息体
+	 * @param headers 消息头
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean tricotPendingProductStream(PendingProduct pendingProduct, Map<String, ?> headers){
+		return pendingProductSource.tricotPendingProduct().send(MessageBuilder.withPayload(pendingProduct).copyHeaders(headers).build());
+
+	}
+
 
 
 }

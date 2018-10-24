@@ -699,6 +699,15 @@ spring:
                         vipgroupPendingProduct:
                               destination: vipgroup.pending.product
                               content-type: application/json
+                        tricotOriginalProduct:
+                          destination: tricot.original.product
+                          group: one
+                          consumer:
+                            concurrency: 5
+                            maxAttempts: 1
+                        tricotPendingProduct:
+                          destination: tricot.pending.product
+                          content-type: application/json
               rabbit:
                       bindings: 
                             supplierPictureProduct: 
@@ -1382,6 +1391,15 @@ spring:
                             vipgroupPendingProduct:
                                     producer:
                                          prefix: HA.
+                            tricotOriginalProduct:
+                                    consumer:
+                                      prefix: HA.
+                                      autoBindDlq: false
+                                      requeueRejected: true
+                                      republishToDlq: false
+                            tricotPendingProduct:
+                                    producer:
+                                      prefix: HA.
 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss
