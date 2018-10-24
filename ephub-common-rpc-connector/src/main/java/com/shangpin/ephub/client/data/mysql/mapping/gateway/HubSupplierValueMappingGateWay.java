@@ -55,4 +55,17 @@ public interface HubSupplierValueMappingGateWay {
 
     @RequestMapping(value = "/hub-supplier-channel-mapping/supplierChannel", method = RequestMethod.GET,consumes = "application/json")
     public String getSupplierChannelByMap(@RequestParam(name="supplierId") String supplierId, @RequestParam(name="supplierNo") String supplierNo);
+
+    @RequestMapping(value = "/hub-supplier-token-mapping/supplierToken", method = RequestMethod.GET,consumes = "application/json")
+    public String getSupplierTokenBySupplierId(@RequestParam(name="supplierId") String supplierId);
+
+    @RequestMapping(value = "/hub-supplier-token-mapping/supplierToken", method = RequestMethod.PUT,consumes = "application/json")
+    public String updateSupplierTokenBySupplierId(@RequestParam(name="SupplierToken") String supplierToken);
+
+    @RequestMapping(value = "/hub-supplier-token-mapping/supplierToken", method = RequestMethod.POST,consumes = "application/json")
+    public String addSupplierTokenBySupplierId(@RequestParam(name="SupplierToken") String supplierToken);
+
+    @RequestMapping(value = "/hub-supplier-token-mapping/supplierToken", method = RequestMethod.DELETE,consumes = "application/json")
+    public String delSupplierTokenBySupplierId(@RequestParam(name="supplierId") String supplierId);
+
 }
