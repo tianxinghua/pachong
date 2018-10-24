@@ -18,6 +18,8 @@ public interface PictureProductSource {
 	public String stefaniamode_picture = "stefaniamodePictureProduct";
 
 	public String MCLABLES_PICTURE = "mclablesPictureProduct";
+
+	public String ERALDO_PICTURE = "eraldoPictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
@@ -42,4 +44,11 @@ public interface PictureProductSource {
 	 */
 	@Output(value = PictureProductSource.MCLABLES_PICTURE)
 	public MessageChannel mclablesPictureProduct();
+
+
+	/**
+	 * @return eraldo通用图片数据流通道组件
+	 */
+	@Output(value = PictureProductSource.ERALDO_PICTURE)
+	public MessageChannel eraldoPictureProduct();
 }

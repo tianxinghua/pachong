@@ -73,6 +73,8 @@ public class PictureProductService {
 					result = pictureProductStreamSender.stefaniamodePictureProductStream(supplierPicture, headers);
 				}else if("2016111101957".equals(supplierPicture.getSupplierId())){
 					result = pictureProductStreamSender.mclablesPictureProductStream(supplierPicture,headers);
+				}else if("2018101602078".equals(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.eraldoPictureProductStream(supplierPicture,headers);
 				}else {
 					result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
 				}

@@ -1,5 +1,6 @@
 package com.shangpin.supplier.product.consumer.supplier.eraldo;
 
+import com.google.gson.Gson;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
@@ -40,7 +41,9 @@ public class eraldoHandler  implements ISupplierHandler {
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         try {
             if(!StringUtils.isEmpty(message.getData())){
-                ItemInfo item = JsonUtil.deserialize(message.getData(), ItemInfo.class);
+                 Gson gson =  new Gson();
+                ItemInfo item = gson.fromJson(message.getData(), ItemInfo.class);
+                        //  ItemInfo item = JsonUtil.deserialize(message.getData(), ItemInfo.class);
                 String supplierId = message.getSupplierId();
                 mongoService.save(supplierId, item.getProduct_sku(), item);
 

@@ -54,10 +54,20 @@ public class PictureProductStreamSender {
 	/**
 	 * 发送mclabels图片流数据
 	 * @param headers
-	 * @param supplierProduct 消息体
+	 * @param supplierPicture 消息体
 	 * @return 如果发送成功返回true,否则返回false
 	 */
 	public boolean mclablesPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
 		return pictureProductSource.mclablesPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
+	}
+
+	/**
+	 * 发送eraldo图片流数据
+	 * @param headers
+	 * @param supplierPicture 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean eraldoPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
+		return pictureProductSource.eraldoPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
 	}
 }

@@ -8,7 +8,7 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.174
+          host: 192.168.20.175
           port: 8500
           discovery: 
               register: false
@@ -19,6 +19,9 @@ spring:
                               content-type: application/json
                         mclablesPictureProduct:
                               destination: mclables.product.picture
+                              content-type: application/json
+                        eraldoPictureProductPictureProduct:
+                              destination: eraldo.product.picture
                               content-type: application/json
                         supplierPictureProduct: 
                               destination: supplier.product.picture
@@ -794,6 +797,15 @@ spring:
                         gebnegozioPendingProduct:
                               destination: gebnegozio.pending.product
                               content-type: application/json
+                        eraldoOriginalProduct:
+                              destination: eraldo.original.product
+                              group: one
+                              consumer:
+                                concurrency: 5
+                                maxAttempts: 1
+                        eraldoPendingProduct:
+                              destination: eraldo.pending.product
+                              content-type: application/json
               rabbit:
                         bindings: 
                               stefaniamodePictureProduct: 
@@ -803,6 +815,9 @@ spring:
                                     producer: 
                                          prefix: HA.
                               mclablesPictureProduct:
+                                    producer:
+                                      prefix: HA.
+                              eraldoPictureProduct:
                                     producer:
                                       prefix: HA.
                               brandPictureProduct: 
