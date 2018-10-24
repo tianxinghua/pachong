@@ -62,7 +62,7 @@ spring:
                                         concurrency: 1
                                         maxAttempts: 1
                         eraldoPictureProduct:
-                              destination: mclables.product.picture
+                              destination: eraldo.product.picture
                               group: one
                               consumer:
                                         concurrency: 1
