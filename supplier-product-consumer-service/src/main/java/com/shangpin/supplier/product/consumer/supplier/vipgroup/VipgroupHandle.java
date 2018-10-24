@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -146,7 +147,8 @@ public class VipgroupHandle implements ISupplierHandler {
         Image image = new Image();
         String productId = product.getProductId();
         if( null != productId && !productId.equals("") && null != token && !token.equals("")) {
-            String picUrl = PRODUCT_URL + "image?uid=087&token=" + token + "&productId=" + product.getProductId();
+            productId = URLEncoder.encode(productId);
+            String picUrl = PRODUCT_URL + "image?uid=087&token=" + token + "&productId=" + productId;
             HashMap<String, String> picUrlResp = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet, picUrl, null, null, null);
             String picRespValue = picUrlResp.get("resBody");
             if (null != picUrlResp && picUrlResp.size()>0 &&picUrlResp.get("code").equals("200")) {
@@ -208,6 +210,7 @@ public class VipgroupHandle implements ISupplierHandler {
      */
     public Map<String,String> getAttr( String token , String productId ){
         Map<String,String> colorAndMaterial = new HashMap<String, String>();
+        productId = URLEncoder.encode(productId);
         String url = PRODUCT_URL + "productInfo?uid=087&pageNum=1&lang=0&productId=" + productId + "&token=" + token;
         HashMap<String,String> productsJSON = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpGet ,url  ,null, null,null);
         String produValue = productsJSON.get("resBody");
@@ -233,11 +236,9 @@ public class VipgroupHandle implements ISupplierHandler {
                         colorAndMaterial.put("size", proSize);
                     }
                 }else{
-                    log.info("获取属性失败，正在重新获取：" + productAttrResp.getErrorMessage());
-                    token = selAccessToken();
-                    getAttr(  token ,  productId );
+                        log.info("获取属性失败" + productAttrResp.getErrorMessage());
+                 }
                 }
-        }
         }
         return colorAndMaterial;
     }
