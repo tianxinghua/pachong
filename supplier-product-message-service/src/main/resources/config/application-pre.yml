@@ -11,7 +11,10 @@ spring:
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               content-type: application/json
-                        ostoreOriginalProduct: 
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              content-type: application/json
+                        ostoreOriginalProduct:
                               destination: ostore.original.product
                               content-type: application/json
                         brunarossoOriginalProduct: 
@@ -418,7 +421,12 @@ spring:
                             vipgroupOriginalProduct:
                                   producer:
                                            prefix: HA.
-  jackson: 
+                            suitnegoziOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+
+
+  jackson:
        date-format: yyyy-MM-dd HH:mm:ss
 banner: 
        charset: UTF-8 # Banner file encoding.

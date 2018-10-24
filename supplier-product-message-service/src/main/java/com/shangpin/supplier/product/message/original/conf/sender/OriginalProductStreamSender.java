@@ -745,4 +745,10 @@ public class OriginalProductStreamSender {
     public boolean vipgroupStream(SupplierProduct supplierProduct){
         return originalProductSource.vipgroup().send(MessageBuilder.withPayload(supplierProduct).build());
     }
+
+
+
+    public boolean suitnegoziStream(SupplierProduct supplierProduct) {
+        return originalProductSource.suitnegozi().send(MessageBuilder.withPayload(supplierProduct).build());
+    }
 }

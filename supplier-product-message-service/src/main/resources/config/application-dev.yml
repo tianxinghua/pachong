@@ -12,6 +12,9 @@ spring:
                         spinnakerOriginalProduct: 
                               destination: spinnaker.original.product
                               content-type: application/json
+                        suitnegoziOriginalProduct:
+                              destination: suitnegozi.original.product
+                              content-type: application/json
                         ostoreOriginalProduct: 
                               destination: ostore.original.product
                               content-type: application/json
@@ -238,6 +241,9 @@ spring:
                       bindings: 
                             spinnakerOriginalProduct: 
                                   producer: 
+                                           prefix: HA.
+                            suitnegoziOriginalProduct:
+                                  producer:
                                            prefix: HA.
                             ostoreOriginalProduct: 
                                   producer: 
