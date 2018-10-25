@@ -6,5 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Data {
-	private String message;
+	private String order_id;
+    private Item[] item;
 }

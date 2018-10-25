@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class Item {
 	private String sku;
-	private String quantity;
-	private String merchant_sku;
+	private int errorCode;
+	private String message;
 }
