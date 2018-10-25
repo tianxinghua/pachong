@@ -39,5 +39,10 @@ public class PriceQuery {
     private String startDate;
     private String endDate;
     private List<Byte> status;
+    /**
+     * 供应商渠道
+     */
+    private String channelName;
+
     
 }
