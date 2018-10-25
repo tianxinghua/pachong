@@ -65,6 +65,9 @@ public class HubFilterService {
 		supplierIds.add("2016030401795");
 		//smets
 		supplierIds.add("2018101102076");
+
+		//BAC
+		supplierIds.add("2018041302004");
 	}
 	@Autowired
 	IShangpinRedis shangpinRedis;
