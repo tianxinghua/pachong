@@ -34,7 +34,7 @@ public class SupplierTokenController {
         return JSONObject.toJSONString(reply);
     }
     @RequestMapping(value = "/supplierToken",method=RequestMethod.PUT)
-    public String updateSupplierTokenBySupplierId(@RequestParam(name="supplierToken")String supplierToken){
+    public String updateSupplierTokenBySupplierId(@RequestParam(name="SupplierToken")String supplierToken){
         ReplyResult reply = new ReplyResult();
         if(supplierToken==null || "".equals(supplierToken)){
 
@@ -48,7 +48,7 @@ public class SupplierTokenController {
         return JSONObject.toJSONString(reply);
     }
     @RequestMapping(value = "/supplierToken",method=RequestMethod.POST)
-    public String addSupplierTokenBySupplierId(@RequestParam(name="supplierToken")String supplierToken){
+    public String addSupplierTokenBySupplierId(@RequestParam(name="SupplierToken")String supplierToken){
         ReplyResult reply = new ReplyResult();
         if(supplierToken==null || "".equals(supplierToken)){
             reply.fail(400,"参数不能为空");
