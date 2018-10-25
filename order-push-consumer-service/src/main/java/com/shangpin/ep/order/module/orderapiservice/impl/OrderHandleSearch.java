@@ -265,6 +265,10 @@ public class OrderHandleSearch {
 	@Qualifier("gebnegozioOrderImpl")
 	IOrderService gebnegozioOrderImpl;
 
+	@Autowired
+	@Qualifier("tricotServiceImpl")
+	IOrderService tricotServiceImpl;
+
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -404,6 +408,8 @@ public class OrderHandleSearch {
 			return gebnegozioOrderImpl;
 		}else if("2015103001637".equals(supplierId)){
 		    return forzieriServiceImpl;
+	    }else if("2018102502082".equals(supplierId)){
+		    return tricotServiceImpl;
 	    }
 		else {
 			return null;
@@ -536,6 +542,9 @@ public class OrderHandleSearch {
         }
 		else if("2015103001637".equals(supplierId)){
 			return supplierProperties.getForzieri();
+		}
+		else if("2018102502082".equals(supplierId)){
+			return supplierProperties.getTricot();
 		}
 		else {
 			return null;

@@ -583,6 +583,17 @@ shangpin:
                   messageType: text/html;charset=utf-8
                   openApiKey: 71b18f9d51b0425fb81aa0f6f9c27ce8
                   openApiSecret: 066c25a42ee14a03b42b206df0068e9b
+          tricot:
+                  url:  http://46.44.223.103/ws_sito_P15/ws_sito_P15.asmx/
+                  createOrderInterface: NewOrderMarketPlace
+                  setStatusInterface: SetStatusOrderMarketplace
+                  getStatusInterface: GetStatusOrderMarketplace
+                  getItemStockInterface: GetItemStockBySizeMarketPlace
+                  user: shangpin
+                  password: shang2018
+                  messageType: text/html;charset=utf-8
+                  openApiKey:
+                  openApiSecret:
           bagheera: 
                   url: http://bagheera.gotdns.com/ws_sito_p15/ws_sito_p15.asmx/
                   createOrderInterface: NewOrderMarketPlace
