@@ -34,10 +34,11 @@ public class SupplierTokenController {
         return JSONObject.toJSONString(reply);
     }
     @RequestMapping(value = "/supplierToken",method=RequestMethod.PUT)
-    public String updateSupplierTokenBySupplierId(@RequestParam(name="SupplierToken")String supplierToken){
+    public String updateSupplierTokenBySupplierId(@RequestParam(name="supplierToken")String supplierToken){
         ReplyResult reply = new ReplyResult();
         if(supplierToken==null || "".equals(supplierToken)){
-            reply.success();
+
+            reply.fail(400,"参数不能为空");
             return JSONObject.toJSONString(reply);
         }
         SupplierToken sc =JSONObject.parseObject(supplierToken,SupplierToken.class) ;
@@ -47,10 +48,10 @@ public class SupplierTokenController {
         return JSONObject.toJSONString(reply);
     }
     @RequestMapping(value = "/supplierToken",method=RequestMethod.POST)
-    public String addSupplierTokenBySupplierId(@RequestParam(name="SupplierToken")String supplierToken){
+    public String addSupplierTokenBySupplierId(@RequestParam(name="supplierToken")String supplierToken){
         ReplyResult reply = new ReplyResult();
         if(supplierToken==null || "".equals(supplierToken)){
-            reply.success();
+            reply.fail(400,"参数不能为空");
             return JSONObject.toJSONString(reply);
         }
         SupplierToken sc =JSONObject.parseObject(supplierToken,SupplierToken.class) ;
@@ -69,7 +70,7 @@ public class SupplierTokenController {
     public String delSupplierTokenBySupplierId(@RequestParam(name="supplierId")String supplierId){
         ReplyResult reply = new ReplyResult();
         if(supplierId==null || "".equals(supplierId)){
-            reply.success();
+            reply.fail(400,"参数不能为空");
             return JSONObject.toJSONString(reply);
         }
         supplierTokenService.delSupplierTokenBySupplierId(supplierId);
