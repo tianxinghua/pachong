@@ -202,7 +202,11 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     @Override
     public String getSupplierTokenBySupplierId(String supplierId) {
         if(supplierId==null || "".equals(supplierId) ){
-                return  null;
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+                return  JSONObject.toJSONString(r);
         }
         String re ="";
         try {
@@ -221,7 +225,11 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     @Override
     public String updateSupplierTokenBySupplierId(String supplierToken) {
         if(supplierToken==null || "".equals(supplierToken) ){
-            return  null;
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+            return  JSONObject.toJSONString(r);
         }
         String re ="";
         try {
@@ -240,7 +248,11 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     @Override
     public String addSupplierTokenBySupplierId(String supplierToken) {
         if(supplierToken==null || "".equals(supplierToken) ){
-            return  null;
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+            return  JSONObject.toJSONString(r);
         }
         String re ="";
         try {
@@ -259,7 +271,11 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
     @Override
     public String delSupplierTokenBySupplierId(String supplierId) {
         if(supplierId==null || "".equals(supplierId) ){
-            return  null;
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+            return  JSONObject.toJSONString(r);
         }
         String re ="";
         try {

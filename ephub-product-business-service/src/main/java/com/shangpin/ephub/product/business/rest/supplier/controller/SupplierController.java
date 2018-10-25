@@ -62,13 +62,13 @@ public class SupplierController {
 	}
 
 	@RequestMapping(value = "/supplierToken", method = RequestMethod.PUT)
-	public String updateSupplierTokenBySupplierId(@RequestParam(name="SupplierToken",required=false,defaultValue = "") String supplierToken){
+	public String updateSupplierTokenBySupplierId(@RequestParam(name="supplierToken",required=false,defaultValue = "") String supplierToken){
 
 		return supplierInHubService.updateSupplierTokenBySupplierId(supplierToken);
 
 	}
 	@RequestMapping(value = "/supplierToken", method = RequestMethod.POST)
-	public String addSupplierTokenBySupplierId(@RequestParam(name="SupplierToken",required=false,defaultValue = "") String supplierToken){
+	public String addSupplierTokenBySupplierId(@RequestParam(name="supplierToken",required=false,defaultValue = "") String supplierToken){
 
 		return supplierInHubService.addSupplierTokenBySupplierId(supplierToken);
 
