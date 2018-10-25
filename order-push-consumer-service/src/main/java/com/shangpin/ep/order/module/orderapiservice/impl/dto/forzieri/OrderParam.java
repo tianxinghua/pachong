@@ -12,6 +12,6 @@ public class OrderParam {
 	private Shopper shopper;
 	private ShippingAddress shipping_address;
 	private BillingAddress billing_address;
-	private List<Item> items;
+	private List<Items> items;
 	private String merchant_reference;
 }
