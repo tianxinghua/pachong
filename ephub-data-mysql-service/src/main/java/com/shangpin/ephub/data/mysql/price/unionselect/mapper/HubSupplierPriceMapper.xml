@@ -21,7 +21,10 @@
     from hub_supplier_sku sku
     inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
     inner join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
-    <where>
+      <if test="channelName != null">
+          left join hub_supplier_channel_dic chan on spu.supplier_id = chan.supplier_id
+      </if>
+      <where>
     sku.sp_sku_no is not null and sku.sp_sku_no != "" and sku.market_price is not null and sku.market_price >10
     <if test="supplierId != null">
     	and sku.supplier_id = #{supplierId}
@@ -38,6 +41,9 @@
     <if test="marketYear != null">
     	and dic.hub_market_time = #{marketYear}
     </if>
+          <if test="channelName != null">
+              and chan.channel=#{channelName}
+          </if>
     ORDER BY sku.supplier_sku_no
     <if test="startRow != null" >
       limit #{startRow} , #{pageSize}
@@ -51,7 +57,10 @@
   	from hub_supplier_sku sku
     inner join hub_supplier_spu spu on sku.supplier_spu_id = spu.supplier_spu_id
     inner join hub_season_dic dic on spu.supplier_id = dic.supplierid and spu.supplier_seasonname = dic.supplier_season
-    <where>
+      <if test="channelName != null">
+          left join hub_supplier_channel_dic chan on spu.supplier_id = chan.supplier_id
+      </if>
+      <where>
     sku.sp_sku_no is not null and sku.sp_sku_no != "" and sku.market_price is not null and sku.market_price >10
     <if test="supplierId != null">
     	and sku.supplier_id = #{supplierId}
@@ -68,6 +77,9 @@
     <if test="marketYear != null">
     	and dic.hub_market_time = #{marketYear}
     </if>
+          <if test="channelName != null">
+              and chan.channel=#{channelName}
+          </if>
     </where>
   </select>
   

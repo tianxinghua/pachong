@@ -31,6 +31,11 @@ public class PriceQueryDto {
      * 尚品skuid
      */
     private List<String> spSkuIds;
+
+	/**
+	 * 供应商渠道
+	 */
+	private String channelName;
     
     public Integer getPageIndex() {
 		return pageIndex;
@@ -77,5 +82,11 @@ public class PriceQueryDto {
 		this.spSkuIds = spSkuIds;
 	}
 
+	public String getChannelName() {
+		return channelName;
+	}
 
+	public void setChannelName(String channelName) {
+		this.channelName = channelName;
+	}
 }

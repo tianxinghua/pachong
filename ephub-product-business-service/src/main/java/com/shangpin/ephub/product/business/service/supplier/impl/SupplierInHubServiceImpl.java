@@ -1,14 +1,17 @@
 package com.shangpin.ephub.product.business.service.supplier.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.shangpin.commons.redis.IShangpinRedis;
 import com.shangpin.ephub.client.business.supplier.dto.SupplierInHubDto;
 import com.shangpin.ephub.client.data.mysql.enumeration.SupplierValueMappingType;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.mapping.dto.HubSupplierValueMappingDto;
 import com.shangpin.ephub.client.data.mysql.mapping.gateway.HubSupplierValueMappingGateWay;
+import com.shangpin.ephub.product.business.common.ReplyResult;
 import com.shangpin.ephub.product.business.common.enumeration.GlobalConstant;
 import com.shangpin.ephub.product.business.service.ServiceConstant;
 import com.shangpin.ephub.product.business.service.supplier.SupplierInHubService;
+import com.shangpin.ephub.product.business.service.supplier.dto.SupplierChannelDto;
 import com.shangpin.ephub.product.business.service.supplier.dto.SupplierDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -169,6 +172,123 @@ public class SupplierInHubServiceImpl implements SupplierInHubService {
 
 
         return false;
+    }
+
+    @Override
+    public String  getSupplierChannelByMap(String supplierId, String supplierNo) {
+        if(supplierId==null || "".equals(supplierId) ){
+            if(supplierNo ==null || "".equals(supplierNo)){
+                return  null;
+            }
+        }
+        String re ="";
+        try {
+             re =   hubSupplierValueMappingGateWay.getSupplierChannelByMap(supplierId,supplierNo);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+/*        ReplyResult reply = JSONObject.parseObject(re,ReplyResult.class);
+        if(reply.getCode()==200){
+            SupplierChannelDto scd = JSONObject.parseObject(reply.getData(),SupplierChannelDto.class);
+            return scd;
+        }*/
+        return re;
+    }
+
+    @Override
+    public String getSupplierTokenBySupplierId(String supplierId) {
+        if(supplierId==null || "".equals(supplierId) ){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+                return  JSONObject.toJSONString(r);
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.getSupplierTokenBySupplierId(supplierId);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
+    @Override
+    public String updateSupplierTokenBySupplierId(String supplierToken) {
+        if(supplierToken==null || "".equals(supplierToken) ){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+            return  JSONObject.toJSONString(r);
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.updateSupplierTokenBySupplierId(supplierToken);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
+    @Override
+    public String addSupplierTokenBySupplierId(String supplierToken) {
+        if(supplierToken==null || "".equals(supplierToken) ){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+            return  JSONObject.toJSONString(r);
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.addSupplierTokenBySupplierId(supplierToken);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
+    }
+
+    @Override
+    public String delSupplierTokenBySupplierId(String supplierId) {
+        if(supplierId==null || "".equals(supplierId) ){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage("参数不能为空");
+
+            return  JSONObject.toJSONString(r);
+        }
+        String re ="";
+        try {
+            re =   hubSupplierValueMappingGateWay.delSupplierTokenBySupplierId(supplierId);
+        }catch (Exception e){
+            ReplyResult r = new ReplyResult();
+            r.fail();
+            r.setMessage(e.getMessage());
+            re = JSONObject.toJSONString(r);
+        }
+
+
+        return re;
     }
 
 

@@ -4,11 +4,17 @@ import com.shangpin.ephub.data.mysql.product.dto.SpuModelDto;
 import com.shangpin.ephub.data.mysql.product.service.PengingToHubService;
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.bean.SpuSupplierQueryDto;
 import com.shangpin.ephub.data.mysql.slot.spusupplierunion.service.SlotSupplierSearchService;
+import com.shangpin.ephub.data.mysql.supplier.channel.bean.SupplierChannelPic;
+import com.shangpin.ephub.data.mysql.supplier.channel.service.SupplierChannelService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -16,6 +22,20 @@ public class EphubDataMysqlServiceApplicationTests {
 
 	@Autowired
     SlotSupplierSearchService slotSupplierSearchService;
+
+	@Autowired
+	SupplierChannelService supplierChannelService;
+
+	@Test
+	public void getSupplierChannel(){
+		Map<String ,String> map = new HashMap<String,String>();
+		map.put("supplierNo","");
+		map.put("supplierId","111");
+		List<SupplierChannelPic> sc = supplierChannelService.getSupplierChannelPicByMap(map);
+		System.out.println(sc.toString());
+	}
+
+
 	@Test
 	public void contextLoads() {
 		SpuModelDto dto = new SpuModelDto();
