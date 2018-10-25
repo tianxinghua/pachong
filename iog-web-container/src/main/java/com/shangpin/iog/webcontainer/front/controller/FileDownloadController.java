@@ -113,7 +113,6 @@ public class FileDownloadController {
 		ModelAndView mv = new ModelAndView("iog");
 		List<SupplierDTO> supplierDTOList = supplierService.findAllWithAvailable();
 		List<String> bus = productService.findAllBus();
-
 		mv.addObject("supplierDTOList",supplierDTOList);
 		mv.addObject("BUs", bus);
 		return mv;
@@ -988,5 +987,7 @@ public class FileDownloadController {
 		List<ProductDTO> pList = productService.findPicName(supplier, startDate, endDate, pageIndex, pageSize);
 		return pList;
 	}
+
+
 
 }

@@ -37,7 +37,7 @@ public class FetchStockImpl {
     private static Logger loggerError = Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",supplierNo = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
+    private static String supplierId = "",supplierNo = "",IN_STOCK = "",NO_STOCK = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
 
     private static OutputStreamWriter  out= null;
     private static OutputStreamWriter  priceOut= null;
@@ -49,9 +49,9 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "5";
+    //private static final String IN_STOCK = "5";
     //无库存
-    private static final String NO_STOCK = "0";
+    //private static final String NO_STOCK = "0";
     //渠道
     private static final String CHANNEL = "store.moncler.com";
 
@@ -67,6 +67,10 @@ public class FetchStockImpl {
         supplierId = bdl.getString("supplierId");
 
         supplierNo = bdl.getString("supplierNo");
+
+        IN_STOCK = bdl.getString("IN_STOCK");
+
+        NO_STOCK = bdl.getString("NO_STOCK");
 
         fetchSpProductInfosUrl = bdl.getString("fetchSpProductInfosUrl");
 
@@ -97,8 +101,18 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "moncler-qty-"+todayStr+".csv";
-        String priceFilePath = filePath + "moncler-price-"+todayStr+".csv"; //发送价格变动邮件的文件
+        String temFilePath = filePath + "moncler-qty-"+todayStr+"-1.csv";
+        File fristFile = new File(temFilePath);
+        if(fristFile.exists()){
+            temFilePath = filePath + "moncler-qty-"+todayStr+"-2.csv";
+        }
+
+        String priceFilePath = filePath + "moncler-price-"+todayStr+"-1.csv"; //发送价格变动邮件的文件
+        File fristFileP = new File(priceFilePath);
+        if(fristFileP.exists()){
+            priceFilePath = filePath + "moncler-price-"+todayStr+"-2.csv";
+        }
+
         System.out.println("文件保存目录："+temFilePath);
         logger.info("文件保存目录："+temFilePath);
         try {
@@ -377,7 +391,7 @@ public class FetchStockImpl {
                             }else{
                                 loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
                             }
-                            //exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
                             break;
                         }
                     }
@@ -566,20 +580,41 @@ public class FetchStockImpl {
         }
     }
 
-    //发送邮件
-    public static void sendMail(){
+    protected void getFileToEmail(){
+        long dayTime = 1000 * 3600 * 24l;
+        Date yesterDate = new Date(new Date().getTime() - dayTime);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String todayStr = simpleDateFormat.format(new Date());
+        String yesterdayDateStr = simpleDateFormat.format(yesterDate);
+        String fileName = bdl.getString("csvFilePath") + "moncler-price-" + todayStr + "-1.csv";
+        File file = new File(fileName);
+        if(!file.exists()){
+            fileName = bdl.getString("csvFilePath") + "moncler-price-" + yesterdayDateStr + "-2.csv";
+            file = new File(fileName);
+            todayStr = yesterdayDateStr;
+            if(!file.exists()){
+                fileName = bdl.getString("csvFilePath") + "moncler-price-" + yesterdayDateStr + "-1.csv";
+            }
+        }
+        if (file.length() > 50) {
+            //生成的空文件只有列标题大小是50kb
+            sendMail(todayStr,fileName);
+        } else {
+            deleteFile(fileName);
+            logger.info("===================没有价格改变的商品，不需发送邮箱 =========================");
+            System.out.println("===================没有价格改变的商品，不需发送邮箱 =========================");
+        }
 
+    }
+
+    //发送邮件
+    public static void sendMail(String dateStr,String fileName){
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props);
         Message message = new MimeMessage(session);
         try
         {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String todayStr = simpleDateFormat.format(new Date());
-            long dayTime = 1000*3600*24l;
-            Date yesterDate = new Date(new Date().getTime() - dayTime);
-            String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-            message.setSubject(yesterdayDateStr+"-"+bdl.getString("uri")+"变动价格的商品信息");
+            message.setSubject(dateStr+"-"+bdl.getString("uri")+"变动价格的商品信息");
             message.setFrom(new InternetAddress("yuanwen.ma@shangpin.com"));
             message.setRecipient(Message.RecipientType.TO, new InternetAddress("sophia.huo@shangpin.com"));
             //设置抄送人
@@ -594,12 +629,12 @@ public class FetchStockImpl {
             bodyPart = new MimeBodyPart();
 
             //实例化DataSource(来自jaf)，参数为文件的地址
-            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"moncler-price-"+yesterdayDateStr+".csv");
+            DataSource dataSource = new FileDataSource(fileName);
             //使用datasource实例化datahandler
             DataHandler dataHandler = new DataHandler(dataSource);
             bodyPart.setDataHandler(dataHandler);
             //设置附件标题，使用MimeUtility进行名字转码，否则接收到的是乱码
-            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(yesterdayDateStr+"价格变动的商品信息.csv"));
+            bodyPart.setFileName(javax.mail.internet.MimeUtility.encodeText(dateStr+"价格变动的商品信息.csv"));
             multipart.addBodyPart(bodyPart);
             message.setContent(multipart);
             Transport transport = session.getTransport("smtp");
@@ -612,26 +647,6 @@ public class FetchStockImpl {
             e.printStackTrace();
             loggerError.error(" ===================发送邮件成功失败=========================");
             System.out.println("===================发送邮件成功失败 =========================");
-        }
-    }
-
-    protected void getFileToEmail(){
-        if(flag) {
-            long dayTime = 1000 * 3600 * 24l;
-            Date yesterDate = new Date(new Date().getTime() - dayTime);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-            String fileName = bdl.getString("csvFilePath") + "moncler-price-" + yesterdayDateStr + ".csv";
-            File file = new File(bdl.getString("csvFilePath") + "moncler-price-" + yesterdayDateStr + ".csv");
-            //生成的空文件只有列标题大小是50kb
-            if (file.length() > 50) {
-                sendMail();
-            } else {
-                deleteFile(fileName);
-                logger.info("===================没有价格改变的商品不需邮箱发送 =========================");
-                System.out.println("===================没有价格改变的商品不需邮箱发送 =========================");
-            }
-            flag = false;
         }
     }
 

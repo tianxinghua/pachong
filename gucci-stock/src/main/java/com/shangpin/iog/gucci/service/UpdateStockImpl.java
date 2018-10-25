@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -92,10 +93,22 @@ public class UpdateStockImpl extends FetchStockImpl {
 
         //读取csv 数据信息
         long dayTime = 1000*3600*24l;
+        Date todayDate = new Date();
         Date yesterDate = new Date(new Date().getTime() - dayTime);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String todayDateStr = simpleDateFormat.format(todayDate);
         String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"gucci-qty-"+ yesterdayDateStr+".csv";
+        String csvFilePath = filePath +"gucci-qty-"+ todayDateStr+"-2.csv";
+        if(!new File(csvFilePath).exists()){
+            csvFilePath = filePath +"gucci-qty-"+ todayDateStr+"-1.csv";
+            if(!new File(csvFilePath).exists()){
+                csvFilePath = filePath +"gucci-qty-"+ yesterdayDateStr+"-2.csv";
+                if(!new File(csvFilePath).exists()){
+                    csvFilePath = filePath +"gucci-qty-"+ yesterdayDateStr+"-1.csv";
+                }
+            }
+        }
+
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
