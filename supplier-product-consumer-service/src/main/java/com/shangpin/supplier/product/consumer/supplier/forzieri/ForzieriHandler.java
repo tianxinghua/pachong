@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -25,6 +26,8 @@ import com.shangpin.supplier.product.consumer.supplier.forzieri.dto.CategoryMap;
 import com.shangpin.supplier.product.consumer.supplier.forzieri.dto.CsvDTO;
 
 import lombok.extern.slf4j.Slf4j;
+
+import javax.xml.bind.SchemaOutputResolver;
 
 /**
  * <p>Title:StefaniaHandler.java </p>
@@ -51,7 +54,17 @@ public class ForzieriHandler implements ISupplierHandler{
 				CsvDTO jsonObject = JsonUtil.deserialize(message.getData(), CsvDTO.class);
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				List<Image> images = converImage(supplierId,jsonObject);
+				List<Image> images = null;
+                Image image = new Image();
+                image.setUrl(jsonObject.getVistaImagel0());
+                image.setUrl(jsonObject.getVistaImagel1());
+                image.setUrl(jsonObject.getVistaImagel2());
+                image.setUrl(jsonObject.getVistaImagel3());
+                image.setUrl(jsonObject.getVistaImagel4());
+                image.setUrl(jsonObject.getVistaImagel5());
+                images.add(image);
+
+                System.out.println("images:"+images);
 //				if(null == images){
 //					hubSpu.setIsexistpic(Isexistpic.NO.getIndex());
 //				}else{
@@ -69,6 +82,8 @@ public class ForzieriHandler implements ISupplierHandler{
 				}
 				//处理图片
 				SupplierPicture supplierPicture = pictureHandler.initSupplierPicture(message, hubSpu, images);
+                log.info("supplierPicture对象的值为==================================================："+supplierPicture);
+                System.out.println("supplierPicture对象的值为==================================================："+supplierPicture );
 				if(success){
 					supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus,supplierPicture);
 				}
@@ -81,11 +96,12 @@ public class ForzieriHandler implements ISupplierHandler{
 	
 	/**
 	 * stefania处理图片
-	 * @param stefPicture
+	/// * @param stefPicture
 	 * @return
 	 */
 	private List<Image> converImage(String supplierId,CsvDTO jsonObject){
 		String supplierSpuNo =jsonObject.getProduct_id();
+        System.out.println();
 		Map<String,String> existPics = pictureHandler.checkPicExistsOfSpu(supplierId, supplierSpuNo);
 		String picture0 = jsonObject.getVistaImagel0();
 		String picture1 = jsonObject.getVistaImagel1();
@@ -95,36 +111,37 @@ public class ForzieriHandler implements ISupplierHandler{
 		String picture5 = jsonObject.getVistaImagel5();
 		List<Image> images = new ArrayList<Image>();
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)&&!existPics.containsKey(picture0)){
-			log.info("forzieri "+picture0+" 将推送");
+			log.info("forzieri "+supplierSpuNo +"======" +picture0+" 将推送");
+            System.out.println("");
 			Image image = new Image();
 			image.setUrl(picture0);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX forzieri "+picture0+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX forzieri "+supplierSpuNo+"====="+picture0+" 已存在XXXXXXXXXXXX");
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture1)&&!existPics.containsKey(picture1)){
-			log.info("forzieri "+picture1+" 将推送");
+			log.info("forzieri "+ supplierSpuNo+"====="+picture1+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture1);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX forzieri "+picture1+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX forzieri "+supplierSpuNo+"====="+picture1+" 已存在XXXXXXXXXXXX");
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture2)&&!existPics.containsKey(picture2)){
-			log.info("forzieri "+picture2+" 将推送");
+			log.info("forzieri "+supplierSpuNo+"====="+picture2+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture2);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX forzieri "+picture2+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX forzieri "+supplierSpuNo+"====="+picture2+" 已存在XXXXXXXXXXXX");
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture3)&&!existPics.containsKey(picture3)){
-			log.info("forzieri "+picture3+" 将推送");
+			log.info("forzieri "+supplierSpuNo+"====="+picture3+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture3);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX forzieri "+picture3+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX forzieri "+supplierSpuNo+"====="+picture3+" 已存在XXXXXXXXXXXX");
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture4)&&!existPics.containsKey(picture4)){
 			log.info("forzieri "+picture4+" 将推送");
@@ -132,24 +149,24 @@ public class ForzieriHandler implements ISupplierHandler{
 			image.setUrl(picture4);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX forzieri "+picture4+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX forzieri "+supplierSpuNo+"====="+picture4+" 已存在XXXXXXXXXXXX");
 		}
 		if(org.apache.commons.lang.StringUtils.isNotBlank(picture5)&&!existPics.containsKey(picture5)){
-			log.info("forzieri "+picture5+" 将推送");
+			log.info("forzieri "+supplierSpuNo+"====="+picture5+" 将推送");
 			Image image = new Image();
 			image.setUrl(picture5);
 			images.add(image);
 		}else{
-			log.info("XXXXXXXXX forzieri "+picture5+" 已存在XXXXXXXXXXXX");
+			log.info("XXXXXXXXX forzieri "+supplierSpuNo+"====="+picture5+" 已存在XXXXXXXXXXXX");
 		}
 		return images;
 	}
-	
+
 	/**
 	 * 将stefania原始数据转换成hub spu
 	 * @param supplierId 供应商门户编号
-	 * @param stefProduct stef 原始dto
-	 * @param stefItem stef 原始dto
+	 //* @param  stefProduct stef 原始dto
+	 //* @param  stefItem stef 原始dto
 	 * @param hubSpu hub spu
 	 * @return
 	 */
@@ -195,7 +212,7 @@ public class ForzieriHandler implements ISupplierHandler{
 	 * 将stefania原始数据转换成hub sku
 	 * @param supplierId
 	 * @param supplierSpuId
-	 * @param stefItem
+	// * @param stefItem
 	 * @param hubSku
 	 * @return
 	 */
