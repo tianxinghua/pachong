@@ -55,14 +55,43 @@ public class ForzieriHandler implements ISupplierHandler{
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
 				List<Image> images = null;
-                Image image = new Image();
-                image.setUrl(jsonObject.getVistaImagel0());
-                image.setUrl(jsonObject.getVistaImagel1());
-                image.setUrl(jsonObject.getVistaImagel2());
-                image.setUrl(jsonObject.getVistaImagel3());
-                image.setUrl(jsonObject.getVistaImagel4());
-                image.setUrl(jsonObject.getVistaImagel5());
-                images.add(image);
+                Image image1 = new Image();
+                Image image2 = new Image();
+                Image image3 = new Image();
+                Image image4 = new Image();
+                Image image5 = new Image();
+                Image image6 = new Image();
+                String picture0 = jsonObject.getVistaImagel0();
+                String picture1 = jsonObject.getVistaImagel1();
+                String picture2 = jsonObject.getVistaImagel2();
+                String picture3 = jsonObject.getVistaImagel3();
+                String picture4 = jsonObject.getVistaImagel4();
+                String picture5 = jsonObject.getVistaImagel5();
+                if(org.apache.commons.lang.StringUtils.isNotBlank(picture0)) {
+                    image1.setUrl(picture0);
+                    images.add(image1);
+                }
+                if(org.apache.commons.lang.StringUtils.isNotBlank(picture1)) {
+                    image2.setUrl(picture1);
+                    images.add(image2);
+                }
+                if(org.apache.commons.lang.StringUtils.isNotBlank(picture2)) {
+                    image3.setUrl(picture2);
+                    images.add(image3);
+                }
+                if(org.apache.commons.lang.StringUtils.isNotBlank(picture3)) {
+                    image4.setUrl(picture3);
+                    images.add(image4);
+                }
+                if(org.apache.commons.lang.StringUtils.isNotBlank(picture4)) {
+                    image5.setUrl(picture4);
+                    images.add(image5);
+                }
+                if(org.apache.commons.lang.StringUtils.isNotBlank(picture5)) {
+                    image6.setUrl(picture5);
+                    images.add(image6);
+                }
+
 
                 System.out.println("images:"+images);
 //				if(null == images){
