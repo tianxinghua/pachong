@@ -67,7 +67,6 @@ public class GebnegozioHandle implements ISupplierHandler {
     @Override
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
         String token = "";
-        if ( null != token && !token.equals("") ){
             try {
                 if (!StringUtils.isBlank(message.getData())){
                     System.out.println("看转换数据："+message.getData());
@@ -122,7 +121,6 @@ public class GebnegozioHandle implements ISupplierHandler {
                 log.error("Gebnegozio转换商品 异常："+e.getMessage(),e);
             }
         }
-    }
 
     /**
      * 将geb原始dto转换成hub spu
