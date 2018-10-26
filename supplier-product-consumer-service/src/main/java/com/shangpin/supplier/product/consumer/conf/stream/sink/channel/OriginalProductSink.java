@@ -185,6 +185,8 @@ public interface OriginalProductSink {
 	public static final String ERALDO = "eraldoOriginalProduct";
 
 	public static final String VIPGROUP = "vipgroupOriginalProduct";
+
+	public static final String TRICOT = "tricotOriginalProduct";
 	//===============================
 	
 	/**
@@ -741,4 +743,11 @@ public interface OriginalProductSink {
 
     @Input(value = OriginalProductSink.SUITNEGOZI)
     public MessageChannel suitnegoziOriginalProduct();
+	/**
+	 * 供应商tricot通道组件配置
+	 * @return
+	 */
+	@Input(value = OriginalProductSink.TRICOT)
+	public MessageChannel tricotOriginalProduct();
+
 }

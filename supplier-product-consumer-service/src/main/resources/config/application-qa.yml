@@ -8,12 +8,12 @@ spring:
            virtual-host: /ephub-message-service-qa
   cloud: 
         consul: 
-          host: 192.168.20.175
+          host: 192.168.20.174
           port: 8500
           discovery: 
               register: false
         stream: 
-              bindings:
+              bindings: 
                         stefaniamodePictureProduct: 
                               destination: stefaniamode.product.picture
                               content-type: application/json
@@ -815,6 +815,15 @@ spring:
                         eraldoPendingProduct:
                               destination: eraldo.pending.product
                               content-type: application/json
+                        tricotOriginalProduct:
+                          destination: tricot.original.product
+                          group: one
+                          consumer:
+                            concurrency: 5
+                            maxAttempts: 1
+                        tricotPendingProduct:
+                          destination: tricot.pending.product
+                          content-type: application/json
               rabbit:
                         bindings: 
                               stefaniamodePictureProduct: 
@@ -829,7 +838,7 @@ spring:
                               eraldoPictureProduct:
                                     producer:
                                       prefix: HA.
-                              brandPictureProduct: 
+                              brandPictureProduct:
                                     producer: 
                                          prefix: HA.
                               refreshDicTask: 
@@ -1637,6 +1646,15 @@ spring:
                               vipgroupPendingProduct:
                                     producer:
                                          prefix: HA.
+                              tricotOriginalProduct:
+                                consumer:
+                                  prefix: HA.
+                                  autoBindDlq: false
+                                  requeueRejected: true
+                                  republishToDlq: false
+                              tricotPendingProduct:
+                                producer:
+                                  prefix: HA.
 
   jackson: 
        date-format: yyyy-MM-dd HH:mm:ss

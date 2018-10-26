@@ -468,6 +468,12 @@ spring:
                               consumer:
                                        concurrency: 5
                                        maxAttempts: 1
+                        tricotPendingProduct:
+                              destination: tricot.pending.product
+                              group: one
+                              consumer:
+                                       concurrency: 5
+                                       maxAttempts: 1
               rabbit:
                       bindings: 
                             spinnakerPendingProduct: 
@@ -913,6 +919,12 @@ spring:
                                     requeueRejected: true
                                     republishToDlq: false
                             vipgroupPendingProduct:
+                                  consumer:
+                                       prefix: HA.
+                                       autoBindDlq: false
+                                       requeueRejected: true
+                                       republishToDlq: false
+                            tricotPendingProduct:
                                   consumer:
                                        prefix: HA.
                                        autoBindDlq: false

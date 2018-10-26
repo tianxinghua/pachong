@@ -833,6 +833,16 @@ public class PendingProductStreamListener {
 	public void vipgroupPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
 		adapter.vipgroupPendingProductStreamListen(message,headers);
 	}
+	/**
+	* 供应商tricot待处理商品数据流通道监听者
+	 * @param message
+	 * @param headers
+	 * @throws Exception
+	 */
+	@StreamListener(PendingProductSink.TRICOT)
+	public void tricotPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
+		adapter.tricotPendingProductStreamListen(message,headers);
+	}
 
     @StreamListener(PendingProductSink.SUITNEGOZI)
     public void suitnegoziPendingProductStreamListen(@Payload PendingProduct message, @Headers Map<String,Object> headers) throws Exception  {
