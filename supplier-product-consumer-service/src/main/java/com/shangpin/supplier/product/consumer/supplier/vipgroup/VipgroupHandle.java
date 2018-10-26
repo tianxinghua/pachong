@@ -13,22 +13,20 @@ import com.shangpin.supplier.product.consumer.service.SupplierProductSaveAndSend
 import com.shangpin.supplier.product.consumer.supplier.ISupplierHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.picture.PictureHandler;
 import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
+import com.shangpin.supplier.product.consumer.supplier.gebnegozio.dto.SupplierToken;
 import com.shangpin.supplier.product.consumer.supplier.vipgroup.dto.PictureResp;
 import com.shangpin.supplier.product.consumer.supplier.vipgroup.dto.ProductAttrResp;
-import com.shangpin.supplier.product.consumer.supplier.vipgroup.util.HttpClientUtil;
-import com.shangpin.supplier.product.consumer.supplier.vipgroup.util.HttpRequestMethedEnum;
-import com.shangpin.supplier.product.consumer.supplier.vipgroup.dto.Product;
 import com.shangpin.supplier.product.consumer.supplier.vipgroup.dto.TokenResp;
+import com.shangpin.supplier.product.consumer.supplier.vipgroup.util.*;
+import com.shangpin.supplier.product.consumer.supplier.vipgroup.dto.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by zhaowenjun on 2018/10/12.
@@ -49,11 +47,11 @@ public class VipgroupHandle implements ISupplierHandler {
     ObjectMapper mapper = new ObjectMapper();
 
     public static final String PRODUCT_URL = "http://open.vipgroup.com.hk/api/";
-    String GET_TOKEN_URL=PRODUCT_URL + "token?_method=PUT";
-
+//    String GET_TOKEN_URL=PRODUCT_URL + "token?_method=PUT";
+    public static final String tokenUrl = "http://api.ephub.spidc1.com/supplier-in-hub/supplierToken";
     @Override
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
-        String token = selAccessToken();
+        String token = "";
         try {
             if (!StringUtils.isBlank(message.getData())) {
                 System.out.println("转换数据：" + message.getData());
@@ -61,6 +59,8 @@ public class VipgroupHandle implements ISupplierHandler {
                 String supplierId = message.getSupplierId();
                 mongoService.save(supplierId, product.getSpuId(), product);
                 HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
+                SupplierToken supplierToken = queryToken(supplierId);
+                if (null != supplierToken){token = supplierToken.getAccessToken();}
                 boolean spuSuccess = convertSpu(supplierId, product, hubSpu , token);
 
                 ArrayList<HubSupplierSkuDto> hubSkus = new ArrayList<HubSupplierSkuDto>();
@@ -72,7 +72,7 @@ public class VipgroupHandle implements ISupplierHandler {
 
                 //处理图片
                 SupplierPicture supplierPicture = null;
-                supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage( product , token ) );
+                supplierPicture = pictureHandler.initSupplierPicture( message, hubSpu, converImage( product , token , supplierId ) );
 
                 if(spuSuccess){
                     supplierProductSaveAndSendToPending.saveAndSendToPending(message.getSupplierNo(),supplierId, message.getSupplierName(), hubSpu, hubSkus, supplierPicture);
@@ -96,13 +96,13 @@ public class VipgroupHandle implements ISupplierHandler {
             hubSpu.setSupplierSpuColor( getAttr( token,product.getProductId() ).get("color") );
             hubSpu.setSupplierSpuModel( product.getSpuId() );
             hubSpu.setSupplierSpuName( product.getName() );
-            hubSpu.setSupplierGender( "" );//不知赋值
+            hubSpu.setSupplierGender( queryGender(product) );//name中包含则取name里的性别，不包含则为男
             hubSpu.setSupplierCategoryname( product.getCat() );
             hubSpu.setSupplierBrandname( product.getBrand() );
             hubSpu.setSupplierSeasonname( "四季" );//不知赋值
             hubSpu.setSupplierMaterial( getAttr( token,product.getProductId() ).get("material") );
             hubSpu.setSupplierOrigin( "" );//不知赋值
-            hubSpu.setSupplierSpuDesc( product.getDescription() );
+            hubSpu.setSupplierSpuDesc( getAttr(token,product.getProductId()).get("description") );
             hubSpu.setSupplierMeasurement(getAttr( token,product.getProductId() ).get("size"));//新加
             return true;
         }else{
@@ -142,7 +142,7 @@ public class VipgroupHandle implements ISupplierHandler {
      * @param product,token
      * @return
      */
-    private List<Image> converImage(Product product, String token){
+    private List<Image> converImage(Product product, String token , String supplierId){
         List<Image> imageList = new ArrayList<Image>();
         Image image = new Image();
         String productId = product.getProductId();
@@ -166,8 +166,10 @@ public class VipgroupHandle implements ISupplierHandler {
                     }
                 }else {
                     log.info("token过期，正在重查");
-                    token = selAccessToken();
-                    converImage( product,  token);
+                    SupplierToken supplierToken = queryToken(supplierId);
+                    if (null != supplierToken)
+                        token = supplierToken.getAccessToken();
+                    converImage( product,  token, supplierId);
                 }
             }
         }
@@ -177,7 +179,7 @@ public class VipgroupHandle implements ISupplierHandler {
      *  获取token
      * @return
      */
-    public String selAccessToken(){
+    /*public String selAccessToken(){
         String token = "";
         String entity = "{\"uid\":\"087\",\"username\":\"shangpin\",\"password\":\"10122han9p1n2018\"}";
         HashMap<String,String> productsJSON = HttpClientUtil.sendHttp(HttpRequestMethedEnum.HttpPost ,GET_TOKEN_URL  ,null, null,entity);
@@ -201,7 +203,7 @@ public class VipgroupHandle implements ISupplierHandler {
         }
 
         return token;
-    }
+    }*/
     /**
      *  查询颜色、尺码、材质
      * @param token
@@ -227,13 +229,14 @@ public class VipgroupHandle implements ISupplierHandler {
                             if (attr.contains("顏色")) {
                                 proColor = attr;
                             }
-                            if (attr.contains("材料")) {
+                            if (attr.contains("材料") || attr.contains("材质")) {
                                 proMaterial = attr;
                             }
                         }
                         colorAndMaterial.put("color", proColor);
                         colorAndMaterial.put("material", proMaterial);
                         colorAndMaterial.put("size", proSize);
+                        colorAndMaterial.put("description",String.join("；", attributes));
                     }
                 }else{
                         log.info("获取属性失败" + productAttrResp.getErrorMessage());
@@ -241,5 +244,59 @@ public class VipgroupHandle implements ISupplierHandler {
                 }
         }
         return colorAndMaterial;
+    }
+
+    /**
+     * 处理性别
+     * @param product
+     * @return
+     */
+    public String queryGender(Product product){
+        String gender = "男";
+        String name = product.getName();
+        if ( null != name && !name.equals("") ){
+            if ( name.contains("女") ){
+                gender = "女";
+            }
+        }
+        return gender;
+    }
+    /**
+     *  根据 supplierId 查token
+     * @param supplierId
+     * @return
+     */
+    public SupplierToken queryToken(String supplierId){
+        SupplierToken supplierTokenDTO = new SupplierToken();
+        TokenResp tokenResp = new TokenResp();
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("supplierId", supplierId);
+        try {
+            String result = HttpUtil45.operateData("get", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
+                    1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
+            System.out.println("根据 supplierId 查token：" + result);
+            log.info("根据 supplierId 查token：" + result);
+            tokenResp = gson.fromJson( result, TokenResp.class);
+            String data = tokenResp.getData();
+            if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
+                if( null != data && !data.equals("") ){
+                    supplierTokenDTO = gson.fromJson(data,SupplierToken.class);
+                    log.info("数据库存在supplierId为 "+supplierId+" 的token：" + data);
+                    System.out.println("数据库存在supplierId为 "+supplierId+" 的token：" + data);
+                }else {
+                    supplierTokenDTO = null;
+                    log.info("数据库不存在supplierId为 "+supplierId+" 的token：" + data);
+                    System.out.println("数据库不存在supplierId为 "+supplierId+" 的token：" + data);
+                }
+            }else {
+                supplierTokenDTO = null;
+                log.info("根据 supplierId 查token失败：" + tokenResp.getMessage());
+                System.out.println("根据 supplierId 查token失败：" + tokenResp.getMessage());
+            }
+        } catch (ServiceException e) {
+            log.error("根据 supplierId 查token异常：" + e.getMessage());
+            e.printStackTrace();
+        }
+        return supplierTokenDTO;
     }
 }
