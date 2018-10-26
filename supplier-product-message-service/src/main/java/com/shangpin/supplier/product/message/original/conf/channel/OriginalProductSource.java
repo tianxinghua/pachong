@@ -185,6 +185,8 @@ public interface OriginalProductSource {
 
 	public static final String VIPGROUP = "vipgroupOriginalProduct";
 
+	public static final String TRICOT = "tricotOriginalProduct";
+
 	/**
      * 供货商fashionTamers通道组件配置
      * @return 供货商fashionTamers通道组件
@@ -738,4 +740,11 @@ public interface OriginalProductSource {
     @Output(value = OriginalProductSource.SUITNEGOZI)
     public MessageChannel suitnegozi();
 
+
+	/**
+	 * 供货商tricot通道组件配置
+	 * @return 供货商通道组件
+	 */
+	@Output(value = OriginalProductSource.TRICOT)
+	public MessageChannel tricot();
 }

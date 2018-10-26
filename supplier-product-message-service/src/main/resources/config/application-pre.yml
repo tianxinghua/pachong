@@ -215,6 +215,9 @@ spring:
                         vipgroupOriginalProduct:
                              destination: vipgroup.original.product
                              content-type: application/json
+                        tricotOriginalProduct:
+                          destination: tricot.original.product
+                          content-type: application/json
               rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 

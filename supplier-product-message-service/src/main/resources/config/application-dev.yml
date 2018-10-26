@@ -237,6 +237,9 @@ spring:
                         gebnegozioOriginalProduct:
                               destination: gebnegozio.original.product
                               content-type: application/json
+                        tricotOriginalProduct:
+                              destination: tricot.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             spinnakerOriginalProduct: 
@@ -462,6 +465,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             vipgroupOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            tricotOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson:
