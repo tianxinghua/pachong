@@ -6,13 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicCriteriaDto;
-import com.shangpin.ephub.client.data.mysql.picture.dto.HubSpuPendingPicDto;
-import com.shangpin.ephub.client.data.mysql.picture.gateway.HubSpuPendingPicGateWay;
 import com.shangpin.ephub.client.data.mysql.sku.dto.HubSupplierSkuDto;
-import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuCriteriaDto;
 import com.shangpin.ephub.client.data.mysql.spu.dto.HubSupplierSpuDto;
-import com.shangpin.ephub.client.data.mysql.spu.gateway.HubSupplierSpuGateWay;
 import com.shangpin.ephub.client.message.original.body.SupplierProduct;
 import com.shangpin.ephub.client.message.picture.body.SupplierPicture;
 import com.shangpin.ephub.client.message.picture.image.Image;
@@ -25,6 +20,10 @@ import com.shangpin.supplier.product.consumer.supplier.common.util.StringUtil;
 import com.shangpin.supplier.product.consumer.supplier.gebnegozio.dto.*;
 import com.shangpin.supplier.product.consumer.supplier.gebnegozio.util.HttpClientUtil;
 import com.shangpin.supplier.product.consumer.supplier.gebnegozio.util.HttpRequestMethedEnum;
+import com.shangpin.supplier.product.consumer.supplier.vipgroup.dto.TokenResp;
+import com.shangpin.supplier.product.consumer.supplier.vipgroup.util.HttpUtil45;
+import com.shangpin.supplier.product.consumer.supplier.vipgroup.util.OutTimeConfig;
+import com.shangpin.supplier.product.consumer.supplier.vipgroup.util.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ public class GebnegozioHandle implements ISupplierHandler {
     public static final String STOCK_URL = EGB_URL + "stockStatuses/";
     public static final String CATEGORY_URL = EGB_URL + "categories/";
     public static final String PRODUCT_DETAIL_URL = EGB_URL + "products/";
+    public static final String tokenUrl = "http://api.ephub.spidc1.com/supplier-in-hub/supplierToken";
     public static Map<String,String> sizeMap = new HashMap<String,String>();
     public static Map<String,String> colorMap = new HashMap<String,String>();
     public static Map<String,String> designerMap = new HashMap<String,String>();
@@ -62,17 +62,11 @@ public class GebnegozioHandle implements ISupplierHandler {
     @Autowired
     private SupplierProductMongoService mongoService;
 
-    @Autowired
-    private HubSupplierSpuGateWay spuGateWay;
-
-    @Autowired
-    private HubSpuPendingPicGateWay picGateWay;
-
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void handleOriginalProduct(SupplierProduct message, Map<String, Object> headers) {
-        String token = selToken();
+        String token = "";
         if ( null != token && !token.equals("") ){
             try {
                 if (!StringUtils.isBlank(message.getData())){
@@ -84,7 +78,8 @@ public class GebnegozioHandle implements ISupplierHandler {
                     String supplierId = message.getSupplierId();
                     gebnegozioDTO.setSpu(gebnegozioDTO.getId());
                     mongoService.save(supplierId, gebnegozioDTO.getSpu(), gebnegozioDTO);
-
+                    SupplierToken supplierToken = queryToken(supplierId);
+                    if (null != supplierToken){token = supplierToken.getAccessToken();}
                     HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
                     boolean spuSuccess = convertSpu(supplierId, gebnegozioDTO, hubSpu , token);
 
@@ -105,9 +100,10 @@ public class GebnegozioHandle implements ISupplierHandler {
                     String confChildResp = selMessage(token,confChildUrl);
                     List<GebnegozioDTO> gebnegozioDTOS = gson.fromJson(confChildResp,new TypeToken<List<GebnegozioDTO>>(){}.getType());
                     if(null!=gebnegozioDTOS&&gebnegozioDTOS.size()>0) {
+                        String finalToken = token;
                         gebnegozioDTOS.forEach(gebDTO -> {
                             HubSupplierSkuDto hubSku = new HubSupplierSkuDto();
-                            boolean skuSuccess = convertSku(supplierId, hubSpu.getSupplierSpuId(), gebDTO, hubSku, token);
+                            boolean skuSuccess = convertSku(supplierId, hubSpu.getSupplierSpuId(), gebDTO, hubSku, finalToken);
                             if (skuSuccess) {
                                 hubSkus.add(hubSku);
                             }
@@ -260,7 +256,7 @@ public class GebnegozioHandle implements ISupplierHandler {
     /**
      *  获取token
      */
-    public String selToken(){
+   /* public String selToken(){
         String token = "";
         // 存储相关的header值
         Map<String,String> header = new HashMap<String, String>();
@@ -279,7 +275,7 @@ public class GebnegozioHandle implements ISupplierHandler {
             selToken();
         }
         return token;
-    }
+    }*/
 
     /**
      * 获取产品
@@ -296,8 +292,6 @@ public class GebnegozioHandle implements ISupplierHandler {
             respValue = response.get("resBody");
         }else {
             log.info("请求异常，正在重新获取："+ response.get("message"));
-            token = selToken();
-            selMessage( token ,  url);
         }
         return respValue;
     }
@@ -494,5 +488,43 @@ public class GebnegozioHandle implements ISupplierHandler {
             }
         }
         return categoryNames;
+    }
+    /**
+     *  根据 supplierId 查token
+     * @param supplierId
+     * @return
+     */
+    public SupplierToken queryToken(String supplierId){
+        SupplierToken supplierTokenDTO = new SupplierToken();
+        TokenResp tokenResp = new TokenResp();
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("supplierId", supplierId);
+        try {
+            String result = HttpUtil45.operateData("get", "", tokenUrl, new OutTimeConfig(1000 * 60 * 3,
+                    1000 * 60 * 30, 1000 * 60 * 30), param, "", "", "");
+            System.out.println("根据 supplierId 查token：" + result);
+            log.info("根据 supplierId 查token：" + result);
+            tokenResp = gson.fromJson( result, TokenResp.class);
+            String data = tokenResp.getData();
+            if (null != tokenResp && !tokenResp.equals("") && tokenResp.getCode().equals("200")){
+                if( null != data && !data.equals("") ){
+                    supplierTokenDTO = gson.fromJson(data,SupplierToken.class);
+                    log.info("数据库存在supplierId为 "+supplierId+" 的token：" + data);
+                    System.out.println("数据库存在supplierId为 "+supplierId+" 的token：" + data);
+                }else {
+                    supplierTokenDTO = null;
+                    log.info("数据库不存在supplierId为 "+supplierId+" 的token：" + data);
+                    System.out.println("数据库不存在supplierId为 "+supplierId+" 的token：" + data);
+                }
+            }else {
+                supplierTokenDTO = null;
+                log.info("根据 supplierId 查token失败：" + tokenResp.getMessage());
+                System.out.println("根据 supplierId 查token失败：" + tokenResp.getMessage());
+            }
+        } catch (ServiceException e) {
+            log.error("根据 supplierId 查token异常：" + e.getMessage());
+            e.printStackTrace();
+        }
+        return supplierTokenDTO;
     }
 }

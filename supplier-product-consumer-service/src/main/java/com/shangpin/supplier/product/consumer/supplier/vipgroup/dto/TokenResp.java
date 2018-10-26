@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TokenResp {
-    private String token;
-    private String errorCode;
-    private String errorMessage;
+    private String code;
+    private String data;
+    private String message;
 }
