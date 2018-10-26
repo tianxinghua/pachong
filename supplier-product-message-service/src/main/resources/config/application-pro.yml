@@ -285,8 +285,8 @@ spring:
                               destination: vipgroup.original.product
                               content-type: application/json
                         tricotOriginalProduct:
-                          destination: tricot.original.product
-                          content-type: application/json
+                              destination: tricot.original.product
+                              content-type: application/json
               rabbit:
                       bindings: 
                             fashionTamersOriginalProduct:
@@ -563,6 +563,9 @@ spring:
                                   producer:
                                            prefix: HA.
                             suitnegoziOriginalProduct:
+                                  producer:
+                                           prefix: HA.
+                            tricotOriginalProduct:
                                   producer:
                                            prefix: HA.
   jackson: 
