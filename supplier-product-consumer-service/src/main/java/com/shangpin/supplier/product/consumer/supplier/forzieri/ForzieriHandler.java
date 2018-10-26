@@ -54,7 +54,7 @@ public class ForzieriHandler implements ISupplierHandler{
 				CsvDTO jsonObject = JsonUtil.deserialize(message.getData(), CsvDTO.class);
 				String supplierId = message.getSupplierId();
 				HubSupplierSpuDto hubSpu = new HubSupplierSpuDto();
-				List<Image> images = null;
+				List<Image> images = new ArrayList<Image>();
                 Image image1 = new Image();
                 Image image2 = new Image();
                 Image image3 = new Image();
