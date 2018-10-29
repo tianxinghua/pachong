@@ -3,22 +3,21 @@ package com.shangpin.iog.forzieri.stock;
 import com.google.gson.Gson;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.ice.ice.AbsUpdateProductStock;
-import com.shangpin.iog.app.AppContext;
 import com.shangpin.iog.dto.TokenDTO;
-import com.shangpin.iog.forzieri.stock.dto.*;
+import com.shangpin.iog.forzieri.stock.dto.Product;
+import com.shangpin.iog.forzieri.stock.dto.ResponseToken;
+import com.shangpin.iog.forzieri.stock.schedule.AppContext;
 import com.shangpin.iog.service.TokenService;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -180,7 +179,9 @@ public class StockClientImp extends AbsUpdateProductStock {
         loadSpringContext();
         HttpClient httpClient = new HttpClient();
         //拉取数据
-        StockClientImp impl =(StockClientImp)factory.getBean("aa");
+
+       StockClientImp impl =(StockClientImp)factory.getBean("aa");
+       // StockClientImp impl = new StockClientImp();
         List<String> skuNo = new ArrayList<>();
         skuNo.add("00-10550072521");
         skuNo.add("0010620053311");
