@@ -80,11 +80,11 @@
 			}else{
 				$("#loginTip").hide();
 			}
-			// $("#loginBtn").click(function(){
-			// 	let pwd = $("input[name='password']").val();
-			// 	$("input[name='password']").val(utoa(pwd));
-			// 	$("#loginForm").submit();
-			// })
+			$("#loginBtn").click(function(){
+			 	let pwd = $("input[name='password']").val();
+			 	$("input[name='password']").val(utoa(pwd));
+			 	$("#loginForm").submit();
+			})
 		})
 	//回车键进行登录
         function enterlogin(){
