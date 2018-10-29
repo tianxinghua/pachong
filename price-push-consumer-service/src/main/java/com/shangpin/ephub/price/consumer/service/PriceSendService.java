@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.shangpin.ephub.price.consumer.service.dto.PriceParamDTO;
 import com.shangpin.iog.ice.service.PriceHandleService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class PriceSendService {
             long start = System.currentTimeMillis();
 
 
+
+
             List<ProductPriceDTO> productDTOList = new ArrayList<>();
             om.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
             productPriceDTO.setMemo(productPriceDTO.getSupplierPriceChangeRecordId().toString());
@@ -55,6 +58,7 @@ public class PriceSendService {
             productPriceDTO.setCreateUserName("openAPI");
             productDTOList.add(productPriceDTO);
             content = om.writeValueAsString(productDTOList);
+
 
             sendResult=openapiPriceHandleService.pushMarketPriceMessage(productPriceDTO.getSopUserNo(),content);
             log.info("call api result of marker price = " +sendResult);
