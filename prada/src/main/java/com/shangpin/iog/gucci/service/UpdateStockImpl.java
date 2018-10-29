@@ -69,15 +69,15 @@ public class UpdateStockImpl extends FetchStockImpl {
     public void fetchItlyProductStock(){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============更新net-a-porter库存数据库开始 "+startDateTime+"=========================");
-        logger.info("==============更新net-a-porter库存数据库开始 "+startDateTime+"=========================");
+        System.out.println("============更新prada库存数据库开始 "+startDateTime+"=========================");
+        logger.info("==============更新prada库存数据库开始 "+startDateTime+"=========================");
 
         //读取csv 数据信息
       /*  long dayTime = 1000*3600*24l;
         Date yesterDate = new Date(new Date().getTime() - dayTime);*/
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayDateStr = simpleDateFormat.format(new Date());
-        String csvFilePath = filePath +"net-a-porter-qty-" + todayDateStr + ".csv";
+        String csvFilePath = filePath +"prada-qty-" + todayDateStr + ".csv";
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -91,8 +91,8 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================更新net-a-porter库存数据库结束 "+endtDateTime+"=========================");
-        System.out.println("=================更新net-a-porter库存数据库结束 "+endtDateTime+"=========================");
+        logger.info("===================更新prada库存数据库结束 "+endtDateTime+"=========================");
+        System.out.println("=================更新prada库存数据库结束 "+endtDateTime+"=========================");
         FetchStockImpl fetchStock = new FetchStockImpl();
         fetchStock.getFileToEmail();
     }

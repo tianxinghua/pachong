@@ -101,8 +101,8 @@ public class FetchStockImpl {
     public void fetchItlyProductStock() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============拉取net-a-porter库存数据开始 " + startDateTime + "=========================");
-        logger.info("==============拉取net-a-porter库存数据开始 " + startDateTime + "=========================");
+        System.out.println("============拉取prada库存数据开始 " + startDateTime + "=========================");
+        logger.info("==============拉取prada库存数据开始 " + startDateTime + "=========================");
 
         //1. 请求需要更新库存商品 信息接口
         failedSpSkuNoList = new ArrayList<>();
@@ -110,8 +110,8 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "net-a-porter-qty-" + todayStr + ".csv";
-        String priceFilePath = filePath + "net-a-porter-price-"+todayStr+".csv";
+        String temFilePath = filePath + "prada-qty-" + todayStr + ".csv";
+        String priceFilePath = filePath + "prada-price-"+todayStr+".csv";
         System.out.println("文件保存目录：" + temFilePath);
         logger.info("文件保存目录：" + temFilePath);
         try {
@@ -144,7 +144,7 @@ public class FetchStockImpl {
 
         //获取第一页商品数据
         //"2018090402046","The Kooples",1,20,"www.thekooples.com"
-        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam(supplierId, "The Kooples", 1, Integer.parseInt(pageSize), channel);
+        ShangPinPageContent gucciPageContent = getShangPinPageContentByParam(supplierId, "prada", 1, Integer.parseInt(pageSize), channel);
 
         //ShangPinPageContent gucciPageContent = getShangPinPageContentByParam("2018090402046","The Kooples",1,20,"www.thekooples.com");
         productDTOAllList.addAll(gucciPageContent.getZhiCaiResultList());
@@ -154,19 +154,19 @@ public class FetchStockImpl {
         Integer total = gucciPageContent.getTotal();
         Integer pageNumber = getPageNumber(total, 20);
         for (int i = 2; i <= pageNumber; i++) {
-            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam(supplierId, "The Kooples", i, Integer.parseInt(pageSize), channel);
+            ShangPinPageContent temgucciPageContent = getShangPinPageContentByParam(supplierId, "prada", i, Integer.parseInt(pageSize), channel);
             if (temgucciPageContent != null) {
                 productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
             } else { //请求失败重新 再次请求
-                temgucciPageContent = getShangPinPageContentByParam(supplierId, "The Kooples", i, Integer.parseInt(pageSize), channel);
+                temgucciPageContent = getShangPinPageContentByParam(supplierId, "prada", i, Integer.parseInt(pageSize), channel);
                 if (temgucciPageContent != null) {
                     productDTOAllList.addAll(temgucciPageContent.getZhiCaiResultList());
                 }
             }
         }
 
-        logger.info("=====需要更新net-a-porter spProduct Size:" + productDTOAllList.size());
-        System.out.println("=====需要更新net-a-porter spProduct Size:" + productDTOAllList.size());
+        logger.info("=====需要更新prada spProduct Size:" + productDTOAllList.size());
+        System.out.println("=====需要更新prada spProduct Size:" + productDTOAllList.size());
         //导出尚品库存数据
         exportQtyInfoForProductList(productDTOAllList);
 
@@ -178,8 +178,8 @@ public class FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================拉取net-a-porter库存数据结束 " + endtDateTime + "=========================");
-        System.out.println("=================拉取net-a-porter库存数据结束 " + endtDateTime + "=========================");
+        logger.info("===================拉取prada库存数据结束 " + endtDateTime + "=========================");
+        System.out.println("=================拉取prada库存数据结束 " + endtDateTime + "=========================");
 
     }
 
@@ -695,7 +695,7 @@ public class FetchStockImpl {
             bodyPart = new MimeBodyPart();
 
             //实例化DataSource(来自jaf)，参数为文件的地址
-            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"net-a-porter-price-"+todayStr+".csv");
+            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"prada-price-"+todayStr+".csv");
             //使用datasource实例化datahandler
             DataHandler dataHandler = new DataHandler(dataSource);
             bodyPart.setDataHandler(dataHandler);
@@ -723,8 +723,8 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayDateStr = simpleDateFormat.format(new Date());
         FetchStockImpl o=new FetchStockImpl();
-        String fileName=bdl.getString("csvFilePath")+"net-a-porter-price-"+todayDateStr+".csv";
-        File file=new File(bdl.getString("csvFilePath")+"net-a-porter-price-"+todayDateStr+".csv");
+        String fileName=bdl.getString("csvFilePath")+"prada-price-"+todayDateStr+".csv";
+        File file=new File(bdl.getString("csvFilePath")+"prada-price-"+todayDateStr+".csv");
         try {
             FileInputStream fis = new FileInputStream(file);
             //System.out.println("文件的大小是："+fis.available()+"\n");
