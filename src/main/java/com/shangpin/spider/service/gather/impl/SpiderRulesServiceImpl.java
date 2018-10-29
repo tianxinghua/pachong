@@ -29,7 +29,7 @@ public class SpiderRulesServiceImpl implements SpiderRulesService{
 				spiderWhiteService.saveRuleId(spiderRuleInfo.getWhiteId(),spiderRuleId1);
 			}else{
 				spiderRuleInfo.setId(spiderRuleId);
-				spiderRulesMapper.updateByPrimaryKey(spiderRuleInfo);
+				spiderRulesMapper.updateByPrimaryKeySelective(spiderRuleInfo);
 			}
 			return 1;
 		} catch (Exception e) {

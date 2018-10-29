@@ -100,7 +100,6 @@ public class CommonSpider {
 					spiderRuleInfo);
 			spider = makeSpider(spiderRuleInfo, pool, driverClickPool);
 			spider.setDownloader(new SpSeleniumDownloader(spiderRuleInfo, pool, spider, httpClientDownloader));
-			spider.setScheduler(myRedisScheduler);
 		} else {
 			spider = makeSpider(spiderRuleInfo,threadPool);
 			// 默认的httpclient加载
@@ -112,9 +111,10 @@ public class CommonSpider {
 			 * Proxy(proxyHost,proxyPort))); }
 			 */
 			spider.setDownloader(httpClientDownloader);
-			spider.setScheduler(new QueueScheduler());
+//			spider.setScheduler(new QueueScheduler());
 		}
-
+		spider.setScheduler(myRedisScheduler);
+		spider.setUUID(spiderRuleInfo.getWhiteId().toString());
 		String whiteName = spiderRuleInfo.getWhiteName();
 		Integer taskCount = 0;
 		List<RedisCache> redisList = redisManager.getRedisList();
@@ -201,10 +201,8 @@ public class CommonSpider {
 			spiderRuleInfo.setNeedClickFieldAry(needClickFieldAry);
 			Map<String, Map<String, String>> clickFieldMap = ReflectUtil.getClickFieldMap(spiderRuleInfo);
 			spider = new MySpider(new MyPageProcessor(spiderRuleInfo, clickFieldMap, threadPool), spiderRuleInfo, pool, clickPool, threadPool);
-			spider.setUUID(spiderRuleInfo.getWhiteId().toString());
 		} else {
 			spider = new MySpider(new MyPageProcessor(spiderRuleInfo, null, threadPool), spiderRuleInfo, pool, clickPool, threadPool);
-			spider.setUUID(spiderRuleInfo.getWhiteId().toString());
 		}
 		return spider;
 	}

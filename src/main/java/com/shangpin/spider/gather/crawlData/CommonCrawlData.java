@@ -94,7 +94,7 @@ public class CommonCrawlData {
 		crawlResult.setSupplierNo(spiderRuleInfo.getSupplierNo());
 		boolean clickFlag = true;
 //		规则表中取出需点击获取值的字段
-		if (needClickFieldAry.length > 0) {
+		if (needClickFieldAry!=null&&needClickFieldAry.length > 0) {
 			if (clickFieldMap != null) {
 //				最后执行哪种点击策略的标识
 				int sizeFlag = 1;

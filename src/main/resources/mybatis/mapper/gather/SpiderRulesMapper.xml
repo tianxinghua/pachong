@@ -814,12 +814,6 @@
       <if test="threeClickFlag != null" >
         three_click_flag = #{threeClickFlag,jdbcType=BIT},
       </if>
-      <if test="createTime != null" >
-        create_time = now(),
-      </if>
-      <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -895,8 +889,6 @@
       status = #{status,jdbcType=BIT},
       second_click_flag = #{secondClickFlag,jdbcType=BIT},
       three_click_flag = #{threeClickFlag,jdbcType=BIT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   

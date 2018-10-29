@@ -743,10 +743,12 @@ public class GatherUtil {
 	 */
 	public static Boolean filterNeedClick(String resultFieldName,String[] needClickField) {
 		Boolean flag = false;
-		for (String field : needClickField) {
-			if(resultFieldName.equals(field)) {
-				flag = true;
-				break;
+		if(needClickField!=null&&needClickField.length>0) {
+			for (String field : needClickField) {
+				if(resultFieldName.equals(field)) {
+					flag = true;
+					break;
+				}
 			}
 		}
 		return flag;
