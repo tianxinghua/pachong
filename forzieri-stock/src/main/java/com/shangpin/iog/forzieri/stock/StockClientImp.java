@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -167,14 +168,15 @@ public class StockClientImp extends AbsUpdateProductStock {
     	//加载spring
         loadSpringContext();
         //拉取数据
-        StockClientImp impl =(StockClientImp)factory.getBean("forzieristock");
+       StockClientImp impl =(StockClientImp)factory.getBean("forzieristock");
+         //   StockClientImp impl = new  StockClientImp();
       List<String> skuNo = new ArrayList<>();
-      skuNo.add("dq090318-003-00");
+            skuNo.add("dq090318-003-00");
             skuNo.add("dp300018-008-01");
             skuNo.add("dq430318-013-02");
             skuNo.add("dq430318-013-03");
-      //skuNo.add("fz580415-005-00");
-      skuNo.add("dq090318-003-01");
+            //skuNo.add("fz580415-005-00");
+            skuNo.add("dq090318-003-01");
       Map returnMap = impl.grabStock(skuNo);
       System.out.println("test return size is "+returnMap.keySet().size());
       for(Object key: returnMap.keySet()) {
