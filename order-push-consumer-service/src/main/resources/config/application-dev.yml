@@ -261,6 +261,17 @@ shangpin:
               isPurchaseExp:
               openApiKey: 3f898445714a486687277b6a51151e0e
               openApiSecret: d57ff5e3733c43b4a9f4cd878bfa2f61
+      tricot:
+              url:  http://46.44.223.103/ws_sito_P15/ws_sito_P15.asmx/
+              createOrderInterface: NewOrderMarketPlace
+              setStatusInterface: SetStatusOrderMarketplace
+              getStatusInterface: GetStatusOrderMarketplace
+              getItemStockInterface: GetItemStockBySizeMarketPlace
+              user: shangpin
+              password: shang2018
+              messageType: text/html;charset=utf-8
+              openApiKey:
+              openApiSecret:
       linde: 
               url: http://2.229.66.138/ws_sito_p15/WS_Sito_p15.asmx/
               createOrderInterface: NewOrderMarketPlace

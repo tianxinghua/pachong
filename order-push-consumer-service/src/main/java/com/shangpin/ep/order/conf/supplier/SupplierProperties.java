@@ -149,6 +149,5 @@ public class SupplierProperties {
 
 	private SuitnegoziParam  suitnegoziParam;
 
-
-
+	private Tricot tricot;
 }
