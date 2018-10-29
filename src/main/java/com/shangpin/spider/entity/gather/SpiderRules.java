@@ -81,6 +81,10 @@ public class SpiderRules implements Serializable {
 	private String sizeRules;
 
 	private String sizeStrategy;
+	
+	private String crackDspiderRules;
+
+	private String crackDspiderStrategy;
 
 	private String proNameRules;
 
@@ -434,6 +438,22 @@ public class SpiderRules implements Serializable {
 
 	public void setSizeStrategy(String sizeStrategy) {
 		this.sizeStrategy = sizeStrategy;
+	}
+	
+	public String getCrackDspiderRules() {
+		return crackDspiderRules;
+	}
+
+	public void setCrackDspiderRules(String crackDspiderRules) {
+		this.crackDspiderRules = crackDspiderRules;
+	}
+
+	public String getCrackDspiderStrategy() {
+		return crackDspiderStrategy;
+	}
+
+	public void setCrackDspiderStrategy(String crackDspiderStrategy) {
+		this.crackDspiderStrategy = crackDspiderStrategy;
 	}
 
 	public String getProNameRules() {

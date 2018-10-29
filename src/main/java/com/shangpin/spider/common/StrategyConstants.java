@@ -1,8 +1,5 @@
 package com.shangpin.spider.common;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 策略常量
  * 
@@ -89,5 +86,10 @@ public class StrategyConstants {
 	 * 查看更多
 	 */
 	public static final String MORE = "more";
+	
+	/**
+	 * 破解反爬虫的策略，关闭遮罩
+	 */
+	public static final String CLICK_X = "CLICK-X";
 	
 }

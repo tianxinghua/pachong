@@ -89,7 +89,6 @@ public class CommonCrawlData {
 
 		List<CrawlResult> resultList = resultListLocal.get();
 		resultList = new ArrayList<CrawlResult>();
-//		crawlResult.setDetailLink(url);
 		crawlResult.setWhiteId(spiderRuleInfo.getWhiteId());
 		crawlResult.setSupplierId(spiderRuleInfo.getSupplierId());
 		crawlResult.setSupplierNo(spiderRuleInfo.getSupplierNo());

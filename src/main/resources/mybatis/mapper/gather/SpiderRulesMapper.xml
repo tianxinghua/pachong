@@ -42,6 +42,8 @@
     <result column="color_strategy" property="colorStrategy" jdbcType="VARCHAR" />
     <result column="size_rules" property="sizeRules" jdbcType="VARCHAR" />
     <result column="size_strategy" property="sizeStrategy" jdbcType="VARCHAR" />
+    <result column="crack_dspider_rules" property="crackDspiderRules" jdbcType="VARCHAR" />
+    <result column="crack_dspider_strategy" property="crackDspiderStrategy" jdbcType="VARCHAR" />
     <result column="pro_name_rules" property="proNameRules" jdbcType="VARCHAR" />
     <result column="pro_name_strategy" property="proNameStrategy" jdbcType="VARCHAR" />
     <result column="foreign_price_rules" property="foreignPriceRules" jdbcType="VARCHAR" />
@@ -80,7 +82,8 @@
     category_rules, category_strategy, spu_rules, spu_strategy,qty_rules, qty_strategy, 
     js_menu_rules, js_menu_strategy, season_rules, 
     one_clicked_rules, one_clicked_strategy, material_rules, 
-    material_strategy, color_rules, color_strategy, size_rules, size_strategy, pro_name_rules, 
+    material_strategy, color_rules, color_strategy, size_rules, size_strategy, 
+    crack_dspider_rules, crack_dspider_strategy, pro_name_rules, 
     pro_name_strategy, foreign_price_rules, foreign_price_strategy, domestic_price_rules, 
     domestic_price_strategy, sale_price_rules, sale_price_strategy,
     detail_url_rules, detail_url_strategy, 
@@ -110,7 +113,8 @@
       one_clicked_rules, one_clicked_strategy,
       season_rules, material_rules, material_strategy, 
       color_rules, color_strategy, size_rules, 
-      size_strategy, pro_name_rules, pro_name_strategy, 
+      size_strategy, crack_dspider_rules, crack_dspider_strategy,
+      pro_name_rules, pro_name_strategy, 
       foreign_price_rules, foreign_price_strategy, 
       domestic_price_rules, domestic_price_strategy, 
       sale_price_rules, sale_price_strategy,
@@ -133,7 +137,8 @@
       #{categoryStrategy,jdbcType=VARCHAR}, #{spuRules,jdbcType=VARCHAR}, #{spuStrategy,jdbcType=VARCHAR}, 
       #{seasonRules,jdbcType=VARCHAR}, #{materialRules,jdbcType=VARCHAR}, #{materialStrategy,jdbcType=VARCHAR}, 
       #{colorRules,jdbcType=VARCHAR}, #{colorStrategy,jdbcType=VARCHAR}, #{sizeRules,jdbcType=VARCHAR}, 
-      #{sizeStrategy,jdbcType=VARCHAR}, #{proNameRules,jdbcType=VARCHAR}, #{proNameStrategy,jdbcType=VARCHAR}, 
+      #{sizeStrategy,jdbcType=VARCHAR}, #{crackDspiderRules,jdbcType=VARCHAR}, #{crackDspiderStrategy,jdbcType=VARCHAR}, 
+      #{proNameRules,jdbcType=VARCHAR}, #{proNameStrategy,jdbcType=VARCHAR}, 
       #{foreignPriceRules,jdbcType=VARCHAR}, #{foreignPriceStrategy,jdbcType=VARCHAR}, 
       #{domesticPriceRules,jdbcType=VARCHAR}, #{domesticPriceStrategy,jdbcType=VARCHAR}, 
       #{salePriceRules,jdbcType=VARCHAR}, #{salePriceStrategy,jdbcType=VARCHAR},
@@ -269,6 +274,13 @@
       </if>
       <if test="sizeStrategy != null" >
         size_strategy,
+      </if>
+      
+      <if test="crackDspiderRules != null" >
+        crack_dspider_rules,
+      </if>
+      <if test="crackDspiderStrategy != null" >
+        crack_dspider_strategy,
       </if>
       <if test="proNameRules != null" >
         pro_name_rules,
@@ -484,6 +496,12 @@
       </if>
       <if test="sizeStrategy != null" >
         #{sizeStrategy,jdbcType=VARCHAR},
+      </if>
+      <if test="crackDspiderRules != null" >
+        #{crackDspiderRules,jdbcType=VARCHAR},
+      </if>
+      <if test="crackDspiderStrategy != null" >
+        #{crackDspiderStrategy,jdbcType=VARCHAR},
       </if>
       <if test="proNameRules != null" >
         #{proNameRules,jdbcType=VARCHAR},
@@ -701,6 +719,12 @@
       <if test="sizeStrategy != null" >
         size_strategy = #{sizeStrategy,jdbcType=VARCHAR},
       </if>
+      <if test="crackDspiderRules != null" >
+        crack_dspider_rules = #{crackDspiderRules,jdbcType=VARCHAR},
+      </if>
+      <if test="crackDspiderStrategy != null" >
+        crack_dspider_strategy = #{crackDspiderStrategy,jdbcType=VARCHAR},
+      </if>
       <if test="proNameRules != null" >
         pro_name_rules = #{proNameRules,jdbcType=VARCHAR},
       </if>
@@ -840,6 +864,8 @@
       color_strategy = #{colorStrategy,jdbcType=VARCHAR},
       size_rules = #{sizeRules,jdbcType=VARCHAR},
       size_strategy = #{sizeStrategy,jdbcType=VARCHAR},
+      crack_dspider_rules = #{crackDspiderRules,jdbcType=VARCHAR},
+      crack_dspider_strategy = #{crackDspiderStrategy,jdbcType=VARCHAR},
       pro_name_rules = #{proNameRules,jdbcType=VARCHAR},
       pro_name_strategy = #{proNameStrategy,jdbcType=VARCHAR},
       foreign_price_rules = #{foreignPriceRules,jdbcType=VARCHAR},

@@ -118,7 +118,7 @@
 						<input type="radio" name="nextPageFlag" value="next" checked="checked"/>点击下一页&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="nextPageFlag" value="more" checked="checked"/>查看更多 -->
 						<input type="text" name="nextPageFlag"/>&nbsp;&nbsp;&nbsp;&nbsp;
-					翻页的按钮CSS：<input type="text" name="nextPageTag" placeholder="下拉条的为scroll"/>
+					翻页的按钮CSS：<input type="text" name="nextPageTag" placeholder="提示：下拉条的为scroll"/>
 					<br/>
 					列表页加载策略：<input type="radio" name="firstAjaxFlag" value="1" />动态加载&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="firstAjaxFlag" value="0" checked="checked"/>静态加载（推荐）
@@ -146,7 +146,18 @@
 							<option value="4">4</option>
 					</select> -->
 					
-					季节：<input type="text" name="seasonRules" placeholder="某年四季"/><br/>
+					季节：<input type="text" name="seasonRules" placeholder="提示：某年四季"/><br/>
+					
+					<div>破解反爬的策略：<input type="text" name="crackDspiderStrategy"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					<button type="button" class="btn btn-default" name="crackDspiderStrategyBtn">选择</button>
+					<button type="button" class="btn btn-default btn-xs" name="crackDspiderStrategyBtn">OR</button>
+					<button type="button" class="btn btn-default btn-xs" name="crackDspiderStrategyBtn">AND</button>
+					<br/>
+					破解反爬的规则：<textarea name="crackDspiderRules" rows="2" cols="100">
+						
+					</textarea></div>
+					<br/>
+					
 					
 					<font color="red">*多规则以英文@,间隔</font>
 					<br/>
@@ -330,7 +341,7 @@
 					<div>第三次点击前的规则：<textarea name="threeClickFrontRules" rows="2" cols="100"></textarea></div>
 					
 					<font color="red">*针对第一层被点击</font>
-					<div>第一层被点击标识的策略：<input type="text" name="oneClickedStrategy" placeholder="类同于SP-QTY-C"/>&nbsp;&nbsp;&nbsp;&nbsp;
+					<div>第一层被点击标识的策略：<input type="text" name="oneClickedStrategy" placeholder="提示：类同于SP-QTY-C"/>&nbsp;&nbsp;&nbsp;&nbsp;
 					<br/>
 					第一层被点击标识的规则：<textarea name="oneClickedRules" rows="2" cols="100">
 					</textarea></div>
@@ -345,9 +356,6 @@
 						<input type="radio" name="threeClickFlag" value="0" checked="checked"/>不点击
 					<br/>
 					
-					
-					
-					
 					页面需点击获取的字段：
 					<font color="red">*选入的字段获取策略仅限为C（css选择器）</font>
 					<div class="form-group">
@@ -360,7 +368,7 @@
 
 					<br/>
 					
-					模板状态：<select name="status">
+					规则设置状态：<select name="status">
 						<option value='1'>正常</option>
 						<option value='0'>禁止</option>
 					</select>
@@ -748,6 +756,9 @@
 	                		$("[name='sizeStrategy']").val(spiderRules.sizeStrategy);
 	                		$("[name='sizeRules']").val(spiderRules.sizeRules);
 	                		
+	                		$("[name='crackDspiderStrategy']").val(spiderRules.crackDspiderStrategy);
+	                		$("[name='crackDspiderRules']").val(spiderRules.crackDspiderRules);
+	                		
 	                		$("[name='proNameStrategy']").val(spiderRules.proNameStrategy);
 	                		$("[name='proNameRules']").val(spiderRules.proNameRules);
 	                		
@@ -846,6 +857,10 @@
         		var sizeRules = $("[name='sizeRules']").val();
         		var sizeStrategy = $("[name='sizeStrategy']").val();
         		
+        		
+        		var crackDspiderRules = $("[name='crackDspiderRules']").val();
+        		var crackDspiderStrategy = $("[name='crackDspiderStrategy']").val();
+        		
         		var proNameRules = $("[name='proNameRules']").val();
         		var proNameStrategy = $("[name='proNameStrategy']").val();
         		
@@ -927,6 +942,8 @@
         					colorStrategy:colorStrategy,
         					sizeRules:sizeRules,
         					sizeStrategy:sizeStrategy,
+        					crackDspiderRules:crackDspiderRules,
+        					crackDspiderStrategy:crackDspiderStrategy,
         					proNameRules:proNameRules,
         					proNameStrategy:proNameStrategy,
         					foreignPriceRules:foreignPriceRules,
