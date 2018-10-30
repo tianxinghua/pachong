@@ -149,16 +149,54 @@ public class CommonCrawlData {
 			clickFlag = false;
 		}
 		if(!clickFlag) {
-			if(StringUtils.isNotBlank(crawlResult.getSpu())){
-//				以spu和size定唯一
-				crawlResult.setSppuHash(GatherUtil.longHashCode(crawlResult.getSpu()+crawlResult.getSize()));
+			if (!spiderRuleInfo.getAjaxFlag()) {
+//				静态for循环生成颜色，尺寸，库存的组合数据（不准确，不推荐）
+				String colorArrayStr = crawlResult.getColor();
+				colorArrayStr = colorArrayStr.replace(SymbolConstants.SPLIT_FLAG, SymbolConstants.COMMA);
+				String sizeArrayStr = crawlResult.getSize();
+				sizeArrayStr = sizeArrayStr.replace(SymbolConstants.SPLIT_FLAG, SymbolConstants.COMMA);
+				String qtyArrayStr = crawlResult.getQty();
+				String[] colorArray = colorArrayStr.split(SymbolConstants.COMMA);
+				String[] sizeArray = sizeArrayStr.split(SymbolConstants.COMMA);
+				String[] qtyArray = qtyArrayStr.split(SymbolConstants.COMMA);
+				if(sizeArray.length!=qtyArray.length) {
+					LOG.error("--源{}，静态获取数据，尺寸与库存不匹配！--", spiderRuleInfo.getWhiteId());
+				}else {
+					for (String colorStr : colorArray) {
+						for (int i = 0; i < sizeArray.length; i++) {
+							String sizeStr = sizeArray[i];
+							String qtyStr = qtyArray[i];
+							CrawlResult crawlResultNew = new CrawlResult();
+							crawlResultNew = (CrawlResult) crawlResult.clone();
+							crawlResultNew.setColor(colorStr);
+							crawlResultNew.setSize(sizeStr);
+							crawlResultNew.setQty(qtyStr);
+							if (StringUtils.isNotBlank(crawlResultNew.getSpu())) {
+								crawlResultNew.setSpu(crawlResultNew.getSpu()+colorStr);
+								crawlResultNew.setProductModel(crawlResultNew.getSpu()+colorStr);
+							}
+							if(StringUtils.isNotBlank(crawlResultNew.getSpu())){
+//								以spu和size定唯一
+								crawlResultNew.setSppuHash(GatherUtil.longHashCode(crawlResultNew.getSpu()+crawlResultNew.getSize()));
+							}else {
+								crawlResultNew.setSppuHash(0L);
+							}
+							resultList.add(crawlResultNew);
+						}
+					}
+				}
 			}else {
-				crawlResult.setSppuHash(0L);
+				if (StringUtils.isNotBlank(crawlResult.getSpu())) {
+					crawlResult.setProductModel(crawlResult.getSpu());
+				}
+				if(StringUtils.isNotBlank(crawlResult.getSpu())){
+//					以spu和size定唯一
+					crawlResult.setSppuHash(GatherUtil.longHashCode(crawlResult.getSpu()+crawlResult.getSize()));
+				}else {
+					crawlResult.setSppuHash(0L);
+				}
+				resultList.add(crawlResult);
 			}
-			if (StringUtils.isNotBlank(crawlResult.getSpu())) {
-				crawlResult.setProductModel(crawlResult.getSpu());
-			}
-			resultList.add(crawlResult);
 		}
 		return resultList;
 

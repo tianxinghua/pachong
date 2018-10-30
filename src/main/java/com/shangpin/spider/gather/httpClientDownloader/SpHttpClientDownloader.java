@@ -5,8 +5,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.shangpin.spider.entity.gather.SpiderRules;
+import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverPool;
+import com.shangpin.spider.gather.utils.DownloaderUtils;
+import com.shangpin.spider.gather.utils.GatherUtil;
+
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Site;
@@ -45,8 +52,18 @@ public class SpHttpClientDownloader extends AbstractDownloader {
     private ProxyProvider proxyProvider;
 
     private boolean responseHeader = true;
+    
+    private SpiderRules spiderRuleInfo;
+    
+    private SpChromeDriverPool pool;
+    
+    public SpHttpClientDownloader(SpiderRules spiderRuleInfo, SpChromeDriverPool pool) {
+		super();
+		this.spiderRuleInfo = spiderRuleInfo;
+		this.pool = pool;
+	}
 
-    public void setHttpUriRequestConverter(HttpUriRequestConverter httpUriRequestConverter) {
+	public void setHttpUriRequestConverter(HttpUriRequestConverter httpUriRequestConverter) {
         this.httpUriRequestConverter = httpUriRequestConverter;
     }
 
@@ -74,6 +91,16 @@ public class SpHttpClientDownloader extends AbstractDownloader {
 
     @Override
     public Page download(Request request, Task task) {
+    	
+    	String url = request.getUrl();
+		if (GatherUtil.isLieUrl(url, spiderRuleInfo)&&spiderRuleInfo.getLieAjaxFlag()) {
+			Page page = null;
+	    	RemoteWebDriver webDriver = null;
+			Boolean uniqueFlag = true;
+			return DownloaderUtils.driverNextPage(url, webDriver, spiderRuleInfo, page, request, task, uniqueFlag, pool);
+		}
+    	
+    	
         if (task == null || task.getSite() == null) {
             throw new NullPointerException("task or site can not be null");
         }

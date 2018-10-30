@@ -1,8 +1,5 @@
 package com.shangpin.spider.task;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Component;
 import com.shangpin.spider.common.Constants;
 import com.shangpin.spider.entity.gather.SpiderTaskInfo;
 import com.shangpin.spider.gather.downloader.WebDriverPool;
-import com.shangpin.spider.gather.downloader.YcmWebDriverPool;
 import com.shangpin.spider.gather.spider.CommonSpider.MySpider;
 import com.shangpin.spider.redis.RedisManager;
 
@@ -127,15 +123,20 @@ public class TaskManager {
 	}
 	
 	private void shutDown(MySpider spider) {
-		if (spider.getSpiderRuleInfo().getAjaxFlag()) {
-			WebDriverPool pool = spider.getPool();
-			WebDriverPool clickPool = spider.getClickPool();
-			CountableThreadPool threadPool = spider.getThreadPool();
-			// 停止phantomjs
+		CountableThreadPool threadPool = spider.getThreadPool();
+		if(threadPool!=null) {
 			threadPool.shutdown();
+		}
+		WebDriverPool pool = spider.getPool();
+		if(pool!=null) {
 			pool.shutdownEnd();
-			clickPool.shutdownEnd();
-			
+		}
+		if (spider.getSpiderRuleInfo().getAjaxFlag()) {
+			WebDriverPool clickPool = spider.getClickPool();
+			// 停止clickchromedriver
+			if(clickPool!=null) {
+				clickPool.shutdownEnd();
+			}
 		}
 	}
 	

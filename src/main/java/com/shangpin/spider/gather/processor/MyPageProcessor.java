@@ -104,6 +104,31 @@ public class MyPageProcessor implements PageProcessor {
 					page.setSkip(true);
 					return;
 				}
+//				从详情页中再获取深层的详情页链接
+				try {
+					if(StringUtils.isNotBlank(spiderRuleInfo.getXdetailUrlStrategy())&&StringUtils.isNotBlank(spiderRuleInfo.getXdetailUrlRules())){
+						Set<String> links = new HashSet<String>();
+						List<String> all = null;
+						if(spiderRuleInfo.getXdetailUrlStrategy().equals(StrategyConstants.C)) {
+							all = page.getHtml().css(spiderRuleInfo.getXdetailUrlRules()).links().all();
+						}else if(spiderRuleInfo.getXdetailUrlStrategy().equals(StrategyConstants.X)) {
+							all = page.getHtml().xpath(spiderRuleInfo.getXdetailUrlRules()).links().all();
+						}
+						for (String link : all) {
+							if(link.equals(url)) {
+								continue;
+							}
+							links.add(link);
+						}
+						if (links != null && links.size() > 0) { 
+							addTargetLinks(links,spiderRuleInfo.getWhiteId(),page);
+						}
+					}
+				} catch (Exception e) {
+					LOG.error("---从详情页获取详情链接出错！{}",e.getMessage());
+				}
+				
+				
 //				添加线程池，异步
 				crawlThreadPool.execute(new Runnable() {
                     @Override
@@ -175,16 +200,7 @@ public class MyPageProcessor implements PageProcessor {
 				
 				
 				if (links != null && links.size() > 0) { 
-					for (String link : links) {
-						Request request = new Request(link);
-						request.setMethod("get");
-						Map<String, Object> extras = new HashMap<String, Object>();
-						extras.put("whiteId", spiderRuleInfo.getWhiteId());
-						request.setExtras(extras);
-						// ----向下一个要抓取的队列中传参数---
-						LOG.info("---进入队列的链接-{}", link);
-						page.addTargetRequest(request);
-					}
+					addTargetLinks(links,spiderRuleInfo.getWhiteId(),page);
 				} else {
 					LOG.warn("---链接{}--无匹配的页面链接", url);
 				}
@@ -201,5 +217,18 @@ public class MyPageProcessor implements PageProcessor {
 		// 处理结束
 	}
 	
+//	push链接
+	private void addTargetLinks(Set<String> links,Long whiteId,Page page) {
+		for (String link : links) {
+			Request request = new Request(link);
+			request.setMethod("get");
+			Map<String, Object> extras = new HashMap<String, Object>();
+			extras.put("whiteId", whiteId);
+			request.setExtras(extras);
+			// ----向下一个要抓取的队列中传参数---
+			LOG.info("---进入队列的链接-{}", link);
+			page.addTargetRequest(request);
+		}
+	}
 
 }

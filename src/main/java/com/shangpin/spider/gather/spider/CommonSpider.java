@@ -22,8 +22,6 @@ import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverClickPool;
 import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverPool;
 import com.shangpin.spider.gather.chromeDownloader.SpSeleniumDownloader;
 import com.shangpin.spider.gather.downloader.WebDriverPool;
-import com.shangpin.spider.gather.downloader.YcmSeleniumDownloader;
-import com.shangpin.spider.gather.downloader.YcmWebDriverPool;
 import com.shangpin.spider.gather.httpClientDownloader.SpHttpClientDownloader;
 import com.shangpin.spider.gather.pipliner.MyPipeline;
 import com.shangpin.spider.gather.processor.MyPageProcessor;
@@ -42,9 +40,9 @@ import com.xr.gather.model.SpiderRuleInfo;*/
 
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.HttpClientDownloader;
+//import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.scheduler.QueueScheduler;
+//import us.codecraft.webmagic.scheduler.QueueScheduler;
 import us.codecraft.webmagic.thread.CountableThreadPool;
 
 /**
@@ -82,7 +80,9 @@ public class CommonSpider {
                 threadPool = new CountableThreadPool(spiderRuleInfo.getThreadNum());
             }
         }
-		SpHttpClientDownloader httpClientDownloader = new SpHttpClientDownloader();
+		SpChromeDriverPool pool = new SpChromeDriverPool(spiderRuleInfo.getThreadNum(), chromeDriverPath,
+				spiderRuleInfo);
+		SpHttpClientDownloader httpClientDownloader = new SpHttpClientDownloader(spiderRuleInfo,pool);
 		if (spiderRuleInfo.getAjaxFlag()) {
 //			phantomjs加载
 			/*
@@ -96,12 +96,9 @@ public class CommonSpider {
 			SpChromeDriverClickPool driverClickPool = new SpChromeDriverClickPool(spiderRuleInfo.getThreadNum(),
 					chromeDriverPath, spiderRuleInfo);
 			spiderRuleInfo.setDriverPool(driverClickPool);
-			SpChromeDriverPool pool = new SpChromeDriverPool(spiderRuleInfo.getThreadNum(), chromeDriverPath,
-					spiderRuleInfo);
 			spider = makeSpider(spiderRuleInfo, pool, driverClickPool);
 			spider.setDownloader(new SpSeleniumDownloader(spiderRuleInfo, pool, spider, httpClientDownloader));
 		} else {
-			spider = makeSpider(spiderRuleInfo,threadPool);
 			// 默认的httpclient加载
 			/*
 			 * String proxyHost = spiderRuleInfo.getProxyHost(); int proxyPort =
@@ -110,6 +107,7 @@ public class CommonSpider {
 			 * httpClientDownloader.setProxyProvider(SimpleProxyProvider.from(new
 			 * Proxy(proxyHost,proxyPort))); }
 			 */
+			spider = makeSpider(spiderRuleInfo,pool);
 			spider.setDownloader(httpClientDownloader);
 //			spider.setScheduler(new QueueScheduler());
 		}
@@ -167,10 +165,11 @@ public class CommonSpider {
 	 * 创建爬虫（静态页）
 	 * 
 	 * @param spiderRuleInfo
+	 * @param pool 
 	 * @param threadPool2 
 	 * @return
 	 */
-	private MySpider makeSpider(SpiderRules spiderRuleInfo, CountableThreadPool threadPool2) {
+	private MySpider makeSpider(SpiderRules spiderRuleInfo, SpChromeDriverPool pool) {
 		log.info("创建爬虫！");
 		MySpider spider = null;
 //		获取需要点击的字段规则
@@ -178,9 +177,9 @@ public class CommonSpider {
 			String[] needClickFieldAry = spiderRuleInfo.getClickFieldStr().split(",");
 			spiderRuleInfo.setNeedClickFieldAry(needClickFieldAry);
 			Map<String, Map<String, String>> clickFieldMap = ReflectUtil.getClickFieldMap(spiderRuleInfo);
-			spider = new MySpider(new MyPageProcessor(spiderRuleInfo, clickFieldMap, threadPool), spiderRuleInfo, threadPool);
+			spider = new MySpider(new MyPageProcessor(spiderRuleInfo, clickFieldMap, threadPool), spiderRuleInfo, pool, threadPool);
 		} else {
-			spider = new MySpider(new MyPageProcessor(spiderRuleInfo, null, threadPool), spiderRuleInfo, threadPool);
+			spider = new MySpider(new MyPageProcessor(spiderRuleInfo, null, threadPool), spiderRuleInfo, pool, threadPool);
 		}
 		return spider;
 	}
@@ -221,9 +220,10 @@ public class CommonSpider {
 		private WebDriverPool clickPool;
 		private CountableThreadPool threadPool;
 
-		public MySpider(PageProcessor pageProcessor, SpiderRules spiderRuleInfo, CountableThreadPool threadPool) {
+		public MySpider(PageProcessor pageProcessor, SpiderRules spiderRuleInfo, WebDriverPool pool, CountableThreadPool threadPool) {
 			super(pageProcessor);
 			this.spiderRuleInfo = spiderRuleInfo;
+			this.pool = pool;
 			this.threadPool = threadPool;
 		}
 

@@ -34,6 +34,7 @@ import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.utils.common.ReflectUtil;
 
 import us.codecraft.webmagic.Page;
+import us.codecraft.webmagic.selector.Html;
 
 /**
  * @author njt
@@ -302,35 +303,27 @@ public class GatherUtil {
 //		去除/n/t等空格
 		String detailRule = gg[i].trim();
 		if(i==gg.length-1) {
+			String attrRule = "";
 			if(detailRule.contains(SymbolConstants.ATTR_FLAG)){
-				String attrRule = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), detailRule.length());
+				attrRule = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), detailRule.length());
 				detailRule = detailRule.substring(0,detailRule.indexOf(SymbolConstants.ATTR_FLAG));
-				if(map.containsKey("elements")) {
-					Elements elements = (Elements) map.get("elements");
-					Elements elements2 = elements.select(detailRule);
-					for (Element element : elements2) {
-						specialValue += element.attr(attrRule).toString()+SymbolConstants.SPLIT_FLAG;
-					}
-					if(specialValue.endsWith(SymbolConstants.SPLIT_FLAG)) {
-						specialValue = specialValue.substring(0, specialValue.length()-SymbolConstants.SPLIT_FLAG.length());
-					}
-				}else {
-					Elements elements = document.select(detailRule);
-					for (Element element : elements) {
-						specialValue += element.attr(attrRule).toString()+SymbolConstants.SPLIT_FLAG;
-					}
-					if(specialValue.endsWith(SymbolConstants.SPLIT_FLAG)) {
-						specialValue = specialValue.substring(0, specialValue.length()-SymbolConstants.SPLIT_FLAG.length());
-					}
-				}
+			}
+			Elements elements2 = null;
+			if(map.containsKey("elements")) {
+				Elements elements = (Elements) map.get("elements");
+				elements2 = elements.select(detailRule);
 			}else {
-				if(map.containsKey("elements")) {
-					Elements elements = (Elements) map.get("elements");
-					specialValue = elements.select(detailRule).text();
+				elements2 = document.select(detailRule);
+			}
+			for (Element element : elements2) {
+				if(StringUtils.isNotBlank(attrRule)) {
+					specialValue += element.attr(attrRule).toString()+SymbolConstants.SPLIT_FLAG;
 				}else {
-					specialValue = document.select(detailRule).text();
+					specialValue += element.text().toString()+SymbolConstants.SPLIT_FLAG;
 				}
-				
+			}
+			if(specialValue.endsWith(SymbolConstants.SPLIT_FLAG)) {
+				specialValue = specialValue.substring(0, specialValue.length()-SymbolConstants.SPLIT_FLAG.length());
 			}
 		}else {
 			Elements elements = null;
@@ -591,6 +584,7 @@ public class GatherUtil {
 					crawlValue = page.getUrl().toString();
 				}else if(detailRule.contains(SymbolConstants.ATTR_FLAG)){
 					String attrRule = detailRule.substring(detailRule.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(), detailRule.length());
+					detailRule = detailRule.substring(0, detailRule.indexOf(SymbolConstants.ATTR_FLAG));
 					crawlValue = page.getHtml().getDocument().select(detailRule).attr(attrRule).toString();
 				}else {
 					crawlValue = page.getHtml().getDocument().select(detailRule).text();
@@ -976,12 +970,24 @@ public class GatherUtil {
 				}
 			}
 			if(page!=null) {
+				String deRuleStr = "";
+				String attrStr = "";
 				if(rulesStr.contains(SymbolConstants.ATTR_FLAG)) {
-					String deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
-					String attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
-					qtyFlag = page.getHtml().getDocument().select(deRuleStr).attr(attrStr);
+					deRuleStr = rulesStr.substring(0, rulesStr.indexOf(SymbolConstants.ATTR_FLAG));
+					attrStr = rulesStr.substring(rulesStr.indexOf(SymbolConstants.ATTR_FLAG)+SymbolConstants.ATTR_FLAG.length(),rulesStr.length());
 				}else {
-					qtyFlag = page.getHtml().getDocument().select(rulesStr).text();
+					deRuleStr = rulesStr;
+				}
+				Elements elements = page.getHtml().getDocument().select(deRuleStr);
+				for (Element element : elements) {
+					if(StringUtils.isNotBlank(attrStr)) {
+						qtyFlag += element.attr(attrStr)+SymbolConstants.COMMA;
+					}else {
+						qtyFlag += element.text()+SymbolConstants.COMMA;
+					}
+				}
+				if(qtyFlag.endsWith(SymbolConstants.COMMA)) {
+					qtyFlag = qtyFlag.substring(0, qtyFlag.length()-SymbolConstants.COMMA.length());
 				}
 			}
 			if(qtyFlag==null) {
@@ -989,26 +995,8 @@ public class GatherUtil {
 			}
 //			Pattern pattern = Pattern.compile("\\d+");
 //			Matcher matcher = pattern.matcher(qtyFlag);
-			try {
-				int j = Integer.parseInt(qtyFlagValue);
-				int i = Integer.parseInt(qtyFlag);
-				if(i>j) {
-					qty = Constants.QTY_YES;
-				}
-			} catch (Exception e) {
-				LOG.info("库存标识为字符--");
-//				以字符判断
-				if(qtyFlagValue.contains(SymbolConstants.FALSE_MARK)) {
-					qtyFlagValue = qtyFlagValue.replace(SymbolConstants.FALSE_MARK, "");
-					if(!qtyFlag.contains(qtyFlagValue)) {
-						qty = Constants.QTY_YES;
-					}
-				}else {
-					if(qtyFlag.contains(qtyFlagValue)) {
-						qty = Constants.QTY_YES;
-					}
-				}
-			}
+			String qtyArray = handleQtrFor(qtyFlagValue,qtyFlag,qty);
+			return qtyArray;
 		} catch (Exception e) {
 			qty = Constants.QTY_YES;
 			LOG.error("----动态解析QTY出错！默认为有库存（或可点击）{}"+e.getMessage());
@@ -1016,6 +1004,46 @@ public class GatherUtil {
 		
 		return String.valueOf(qty);
 	}
+	
+	private static String handleQtrFor(String qtyFlagValue,String qtyFlag,int qty) {
+		String qtyArray = "";
+		if(StringUtils.isNotBlank(qtyFlag)) {
+			String[] qtyFlagArray = qtyFlag.split(SymbolConstants.COMMA);
+			for (String qtyStr : qtyFlagArray) {
+				try {
+					int j = Integer.parseInt(qtyFlagValue);
+					int i = Integer.parseInt(qtyStr);
+					if(i>j) {
+						qtyArray += String.valueOf(Constants.QTY_YES)+SymbolConstants.COMMA;
+					}
+				} catch (Exception e) {
+					LOG.info("库存标识为字符--");
+//					以字符判断
+					if(qtyFlagValue.contains(SymbolConstants.FALSE_MARK)) {
+						String qtyFlagValueNew = qtyFlagValue.replace(SymbolConstants.FALSE_MARK, "");
+						if(!qtyStr.contains(qtyFlagValueNew)) {
+							qtyArray += String.valueOf(Constants.QTY_YES)+SymbolConstants.COMMA;
+						}else {
+							qtyArray += String.valueOf(Constants.QTY_NO)+SymbolConstants.COMMA;
+						}
+					}else {
+						if(qtyStr.contains(qtyFlagValue)) {
+							qtyArray += String.valueOf(Constants.QTY_YES)+SymbolConstants.COMMA;
+						}else {
+							qtyArray += String.valueOf(Constants.QTY_NO)+SymbolConstants.COMMA;
+						}
+					}
+				}
+			}
+			if(qtyArray.endsWith(SymbolConstants.COMMA)) {
+				qtyArray = qtyArray.substring(0, qtyArray.length()-SymbolConstants.COMMA.length());
+			}
+		}else {
+			qtyArray = String.valueOf(qty);
+		}
+		return qtyArray;
+	}
+	
 
 	/**
 	 * SP-C策略，针对driver中获取多张图片

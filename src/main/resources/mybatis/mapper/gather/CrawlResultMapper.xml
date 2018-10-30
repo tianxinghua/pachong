@@ -16,7 +16,7 @@
     <result column="foreign_price" property="foreignPrice" jdbcType="DECIMAL" />
     <result column="domestic_price" property="domesticPrice" jdbcType="DECIMAL" />
     <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
-    <result column="qty" property="qty" jdbcType="INTEGER" />
+    <result column="qty" property="qty" jdbcType="VARCHAR" />
     <result column="made" property="made" jdbcType="VARCHAR" />
     <result column="detail_link" property="detailLink" jdbcType="VARCHAR" />
     <result column="sppu_hash" property="sppuHash" jdbcType="BIGINT" />
@@ -46,12 +46,12 @@
   `season` varchar(50) NOT NULL DEFAULT '' COMMENT '季节',
   `material` varchar(255) NOT NULL DEFAULT '' COMMENT '材质',
   `color` varchar(255) NOT NULL DEFAULT '' COMMENT '颜色',
-  `size` varchar(50) NOT NULL DEFAULT '' COMMENT '尺寸',
+  `size` varchar(255) NOT NULL DEFAULT '' COMMENT '尺寸',
   `pro_name` varchar(255) NOT NULL DEFAULT '' COMMENT '商品名称',
   `foreign_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '国外市场价',
   `domestic_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '国内市场价',
   `sale_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '售价',
-  `qty` int(1) NOT NULL DEFAULT '10' COMMENT '10有货0无货',
+  `qty` varchar(255) NOT NULL DEFAULT '10' COMMENT '10有货0无货',
   `made` varchar(255) NOT NULL DEFAULT '' COMMENT '产地',
   `description` text COMMENT '描述',
   `pics` text COMMENT '图片链接',
@@ -197,7 +197,7 @@
         #{crawlResult.salePrice,jdbcType=DECIMAL},
       </if>
       <if test="crawlResult.qty != null" >
-        #{crawlResult.qty,jdbcType=INTEGER},
+        #{crawlResult.qty,jdbcType=VARCHAR},
       </if>
       <if test="crawlResult.made != null" >
         #{crawlResult.made,jdbcType=VARCHAR},
@@ -296,7 +296,7 @@
       #{spu,jdbcType=VARCHAR}, #{productModel,jdbcType=VARCHAR}, #{season,jdbcType=VARCHAR}, 
       #{material,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR}, #{size,jdbcType=VARCHAR}, 
       #{proName,jdbcType=VARCHAR}, #{foreignPrice,jdbcType=DECIMAL}, #{domesticPrice,jdbcType=DECIMAL}, 
-      #{salePrice,jdbcType=DECIMAL}, #{qty,jdbcType=INTEGER}, #{made,jdbcType=VARCHAR}, 
+      #{salePrice,jdbcType=DECIMAL}, #{qty,jdbcType=VARCHAR}, #{made,jdbcType=VARCHAR}, 
       #{detailLink,jdbcType=VARCHAR}, #{sppuHash,jdbcType=BIGINT}, #{measurement,jdbcType=VARCHAR}, 
       #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR}, #{supplierSkuNo,jdbcType=VARCHAR}, 
       #{channel,jdbcType=VARCHAR}, #{whiteId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
@@ -432,7 +432,7 @@
         #{salePrice,jdbcType=DECIMAL},
       </if>
       <if test="qty != null" >
-        #{qty,jdbcType=INTEGER},
+        #{qty,jdbcType=VARCHAR},
       </if>
       <if test="made != null" >
         #{made,jdbcType=VARCHAR},
@@ -518,7 +518,7 @@
         sale_price = #{salePrice,jdbcType=DECIMAL},
       </if>
       <if test="qty != null" >
-        qty = #{qty,jdbcType=INTEGER},
+        qty = #{qty,jdbcType=VARCHAR},
       </if>
       <if test="made != null" >
         made = #{made,jdbcType=VARCHAR},
@@ -577,7 +577,7 @@
       foreign_price = #{foreignPrice,jdbcType=DECIMAL},
       domestic_price = #{domesticPrice,jdbcType=DECIMAL},
       sale_price = #{salePrice,jdbcType=DECIMAL},
-      qty = #{qty,jdbcType=INTEGER},
+      qty = #{qty,jdbcType=VARCHAR},
       made = #{made,jdbcType=VARCHAR},
       detail_link = #{detailLink,jdbcType=VARCHAR},
       sppu_hash = #{sppuHash,jdbcType=BIGINT},

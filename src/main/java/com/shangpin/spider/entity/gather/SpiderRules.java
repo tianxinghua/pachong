@@ -52,6 +52,8 @@ public class SpiderRules implements Serializable {
 	
 	private String nextPageTag;
 	
+	private Boolean lieAjaxFlag;
+	
 	private Boolean firstAjaxFlag;
 
 	private String genderRules;
@@ -105,6 +107,10 @@ public class SpiderRules implements Serializable {
 	private String detailUrlRules;
 
 	private String detailUrlStrategy;
+	
+	private String xdetailUrlRules;
+
+	private String xdetailUrlStrategy;
 
 	private String detailLinkRules;
 
@@ -319,6 +325,14 @@ public class SpiderRules implements Serializable {
 	public void setNextPageTag(String nextPageTag) {
 		this.nextPageTag = nextPageTag;
 	}
+	
+	public Boolean getLieAjaxFlag() {
+		return lieAjaxFlag;
+	}
+
+	public void setLieAjaxFlag(Boolean lieAjaxFlag) {
+		this.lieAjaxFlag = lieAjaxFlag;
+	}
 
 	public Boolean getFirstAjaxFlag() {
 		return firstAjaxFlag;
@@ -520,6 +534,22 @@ public class SpiderRules implements Serializable {
 		this.salePriceStrategy = salePriceStrategy;
 	}
 	
+	public String getXdetailUrlRules() {
+		return xdetailUrlRules;
+	}
+
+	public void setXdetailUrlRules(String xdetailUrlRules) {
+		this.xdetailUrlRules = xdetailUrlRules;
+	}
+
+	public String getXdetailUrlStrategy() {
+		return xdetailUrlStrategy;
+	}
+
+	public void setXdetailUrlStrategy(String xdetailUrlStrategy) {
+		this.xdetailUrlStrategy = xdetailUrlStrategy;
+	}
+
 	public String getDetailUrlRules() {
 		return detailUrlRules;
 	}

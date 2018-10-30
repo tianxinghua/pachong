@@ -97,6 +97,10 @@ public class SymbolConstants {
 	/**
 	 * 针对网页链接
 	 */
-	public static final CharSequence URL = "URL";
+	public static final String URL = "URL";
+	/**
+	 * 针对静态抓取库存时的分隔符
+	 */
+	public static final String COMMA= ",";
 
 }

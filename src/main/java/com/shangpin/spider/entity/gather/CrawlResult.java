@@ -78,7 +78,7 @@ public class CrawlResult implements Cloneable{
      * 库存标识
      */
     @FieldNotes(name="库存标识")
-    private Integer qty;
+    private String qty;
     /**
      * 产地
      */
@@ -233,11 +233,11 @@ public class CrawlResult implements Cloneable{
 		this.salePrice = salePrice;
 	}
 
-	public Integer getQty() {
+	public String getQty() {
 		return qty;
 	}
 
-	public void setQty(Integer qty) {
+	public void setQty(String qty) {
 		this.qty = qty;
 	}
 
@@ -344,6 +344,10 @@ public class CrawlResult implements Cloneable{
 	public void setPics(String pics) {
 		this.pics = pics;
 	}
+	
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
 
 	@Override
 	public String toString() {
@@ -356,7 +360,7 @@ public class CrawlResult implements Cloneable{
 				+ ", channel=" + channel + ", whiteId=" + whiteId + ", createTime=" + createTime + ", updateTime="
 				+ updateTime + ", description=" + description + ", pics=" + pics + "]";
 	}
-	
+
 	//重写clone
     @Override
     public Object clone(){
