@@ -1,4 +1,4 @@
-package com.shangpin.iog.forzieri.stock.schedule;
+package com.shangpin.iog.vipgroup.stock.schedule;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

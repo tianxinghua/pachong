@@ -31,6 +31,8 @@ include 'hermesFR-stock'
 include 'iog-web-container'
 include 'mcw-stock'
 include 'smets'
+include 'vipgroup-stock'
+include 'refreshtoken'
 
 
 
