@@ -96,6 +96,7 @@ public class PriceSendService {
                     priceparam.setMarketPrice(spu.getMarketPrice());
                     BigDecimal saleprice = spu.getSalePrice();
                     priceparam.setSpecialMarketPrice(saleprice==null?"0":saleprice.toString());
+                    priceparam.setChannelName(spu.getChannel());
                 }else{
                     log.info("供应商："+supplierId+"spuId:"+sku.getSupplierSpuId()+"不存在！");
                 }
