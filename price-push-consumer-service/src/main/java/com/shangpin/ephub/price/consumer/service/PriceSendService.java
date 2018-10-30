@@ -70,7 +70,7 @@ public class PriceSendService {
         String content ="";
         try {
             long start = System.currentTimeMillis();
-
+            productPriceDTO.setMemo(productPriceDTO.getSupplierPriceChangeRecordId().toString());
             String supplierId=productPriceDTO.getSopUserNo();
             String skuNo=productPriceDTO.getSupplierSkuNo();
             PriceParamDTO priceparam = copyValue(productPriceDTO);

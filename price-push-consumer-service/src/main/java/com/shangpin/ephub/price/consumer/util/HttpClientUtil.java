@@ -41,9 +41,10 @@ public class HttpClientUtil {
         HttpEntity httpEntity = null;
       //  FileOutputStream fos = null;
         try{
-            StringEntity stringEntity = new StringEntity(param);
+            StringEntity stringEntity = new StringEntity(param,"utf-8");
 
-            stringEntity.setContentType("application/json; charset=utf-8");
+            stringEntity.setContentType("application/json");
+            stringEntity.setContentEncoding("UTF-8");
             httpPost.setEntity(stringEntity);
             CloseableHttpResponse response = httpClient.execute(httpPost);
             httpEntity = response.getEntity();
