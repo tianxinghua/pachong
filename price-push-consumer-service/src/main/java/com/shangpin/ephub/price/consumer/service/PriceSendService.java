@@ -109,7 +109,10 @@ public class PriceSendService {
             if(sendResult!=null){
                 ResMessage r = JSONObject.parseObject(sendResult,ResMessage.class);
                 if(!r.IsSuccess){
+                    log.info("Product/ModifyProductMarketPrice failed! content:"+content+",msg:"+r.MessageRes);
                     retryPriceStreamSender.supplierPictureProductStream(productPriceDTO,null);
+                }else{
+                    log.info("Product/ModifyProductMarketPrice sucess! content:"+content);
                 }
             }
 
