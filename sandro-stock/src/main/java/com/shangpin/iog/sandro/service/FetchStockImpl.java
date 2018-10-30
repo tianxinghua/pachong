@@ -36,7 +36,7 @@ public class FetchStockImpl {
     private static Logger loggerError = Logger.getLogger("error");
 
     private static ResourceBundle bdl = null;
-    private static String supplierId = "",supplierNo = "",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
+    private static String supplierId = "",supplierNo = "",IN_STOCK="",NO_STOCK="",fetchSpProductInfosUrl ="",updateSpMarketPriceUrl="",pageSize="";
 
     private static OutputStreamWriter  out= null;
     private static OutputStreamWriter  priceOut= null;
@@ -48,9 +48,9 @@ public class FetchStockImpl {
     private static String uri="";
 
     //有库存
-    private static final String IN_STOCK = "10";
+    //private static final String IN_STOCK = "10";
     //无库存
-    private static final String NO_STOCK = "0";
+    //private static final String NO_STOCK = "0";
 
     // 请求失败的尚品 skuNo 集合
     private static List<SpSkuNoDTO> failedSpSkuNoList = null;
@@ -73,6 +73,9 @@ public class FetchStockImpl {
 
         uri = bdl.getString("uri");
 
+        NO_STOCK=bdl.getString("NO_STOCK");
+
+        IN_STOCK=bdl.getString("IN_STOCK");
     }
 
     private static OutTimeConfig timeConfig = new OutTimeConfig(1000*60*30,1000*60*30,1000*60*30);
