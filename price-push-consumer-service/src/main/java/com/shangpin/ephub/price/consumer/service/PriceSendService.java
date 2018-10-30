@@ -89,18 +89,24 @@ public class PriceSendService {
             }else{
                 log.info("供应商："+supplierId+"skuNo:"+skuNo+"不存在！");
             }
+            HubSupplierSpuDto spu= null;
+            if(sku!=null){
+                spu= hubSupplierSpuGateWay.selectByPrimaryKey(sku.getSupplierSpuId());
+            }
+
             if(getSupplierMapping(supplierId)!=null){//爬虫
             //如果是爬虫，市场价跟特价在spu里面拿
-                HubSupplierSpuDto spu= hubSupplierSpuGateWay.selectByPrimaryKey(sku.getSupplierSpuId());
                 if(spu!=null){
                     priceparam.setMarketPrice(spu.getMarketPrice());
                     BigDecimal saleprice = spu.getSalePrice();
                     priceparam.setSpecialMarketPrice(saleprice==null?"0":saleprice.toString());
-                    priceparam.setChannelName(spu.getChannel());
                 }else{
                     log.info("供应商："+supplierId+"spuId:"+sku.getSupplierSpuId()+"不存在！");
                 }
 
+            }
+            if(spu!=null) {
+                priceparam.setChannelName(spu.getChannel());
             }
             productDTOList.add(priceparam);
             om.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));

@@ -1,5 +1,6 @@
 package com.shangpin.ephub.price.consumer;
 
+import com.shangpin.ephub.price.consumer.service.PriceSendService;
 import com.shangpin.ephub.price.consumer.service.SupplierPriceService;
 import com.shangpin.ephub.price.consumer.service.SupplierService;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class PictureProductConsumerServiceApplicationTests {
     @Autowired
-	SupplierService supplierService;
+	com.shangpin.ephub.price.consumer.service.PriceSendService priceSendService;
 
     @Autowired
 	SupplierPriceService supplierPriceService;
@@ -20,7 +21,7 @@ public class PictureProductConsumerServiceApplicationTests {
 	@Test
 	public void contextLoads() {
 		try {
-			supplierPriceService.getSupplierMsg("S0000394");
+			priceSendService.sendMarketPriceMsgToScm(null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
