@@ -438,7 +438,7 @@
         				rowNum:10,//每页展示条数
         				rowList:[5,10,20,30,50],
         				page: 1,
-        				colNames:["序号","网站名称","链接","创建时间","开关","设置规则","定时任务"],
+        				colNames:["序号","网站名称","链接","创建时间","开关","设置规则","定时任务","导出"],
         				colModel:[
         				          {name:"id",index:"id",autowidth:true,align:"center",search:true
         				        	  ,sopt:['eq','ne','lt','le','gt','ge'],defval:0,editable: true
@@ -485,6 +485,18 @@
 	        				        			  return "无权限"
 	        				        		  }
         				        		}
+        				          },
+        				          {name:"",index:"",autowidth:true,align:"center",search:true
+        				        	  ,sopt:['eq','ne','nu','nn'],
+        				        	  formatter: function (value, grid, rows, state) {
+        				        		  if(roleArray.indexOf("super_admin")>-1||roleArray.indexOf("admin")>-1){	
+        				        			  var disabledFlag = rows.valid=1?"":"disabled=disabled"
+                   				        		  return "<button class='btn btn-primary export' value='"+rows.id+"' "+disabledFlag+">导出</button>"
+                   										+ "<input type='hidden' value='"+rows.name+"'/>"
+        				        		  }else{
+        				        			  return "无权限"
+        				        		  }
+           				        	  }
         				          },
         				         ],
         				pager:"#pager_list",
@@ -634,6 +646,15 @@
         		}
         		
         	})
+        	
+        	//导出
+        	$(".export").live("click",function(){
+        		var whiteId = $(this).val();
+        		$("#whiteId").val(whiteId);
+        		var whiteName = $(this).next().val();
+        		location.href = "../spider/export?whiteName="+whiteName;
+        	})
+        	
         	
         	
         	//判断有无规则

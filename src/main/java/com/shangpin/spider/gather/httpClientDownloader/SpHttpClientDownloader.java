@@ -5,6 +5,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +16,7 @@ import com.shangpin.spider.entity.gather.SpiderRules;
 import com.shangpin.spider.gather.chromeDownloader.SpChromeDriverPool;
 import com.shangpin.spider.gather.utils.DownloaderUtils;
 import com.shangpin.spider.gather.utils.GatherUtil;
+import com.shangpin.spider.gather.utils.UserAgentUtil;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
@@ -23,6 +27,7 @@ import us.codecraft.webmagic.downloader.HttpClientRequestContext;
 import us.codecraft.webmagic.downloader.HttpUriRequestConverter;
 import us.codecraft.webmagic.proxy.Proxy;
 import us.codecraft.webmagic.proxy.ProxyProvider;
+import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.utils.CharsetUtils;
 import us.codecraft.webmagic.utils.HttpClientUtils;
@@ -93,13 +98,14 @@ public class SpHttpClientDownloader extends AbstractDownloader {
     public Page download(Request request, Task task) {
     	
     	String url = request.getUrl();
-		if (GatherUtil.isLieUrl(url, spiderRuleInfo)&&spiderRuleInfo.getLieAjaxFlag()) {
-			Page page = null;
-	    	RemoteWebDriver webDriver = null;
-			Boolean uniqueFlag = true;
-			return DownloaderUtils.driverNextPage(url, webDriver, spiderRuleInfo, page, request, task, uniqueFlag, pool);
-		}
-    	
+    	if(spiderRuleInfo!=null) {
+    		if (GatherUtil.isLieUrl(url, spiderRuleInfo)&&spiderRuleInfo.getLieAjaxFlag()) {
+    			Page page = null;
+    	    	RemoteWebDriver webDriver = null;
+    			Boolean uniqueFlag = true;
+    			return DownloaderUtils.driverNextPage(url, webDriver, spiderRuleInfo, page, request, task, uniqueFlag, pool);
+    		}
+    	}
     	
         if (task == null || task.getSite() == null) {
             throw new NullPointerException("task or site can not be null");
@@ -116,8 +122,8 @@ public class SpHttpClientDownloader extends AbstractDownloader {
             logger.info("downloading page success {}", request.getUrl());
             return page;
         } catch (IOException e) {
-            logger.warn("download page {} error", request.getUrl(), e);
-            onError(request);
+            logger.warn("download page {} error,--转jsoup请求！", request.getUrl(), e);
+            page = handleByJsoup(url, task.getSite(), request);
             return page;
         } finally {
             if (httpResponse != null) {
@@ -129,6 +135,28 @@ public class SpHttpClientDownloader extends AbstractDownloader {
             }
         }
     }
+    
+    private Page handleByJsoup(String url, Site site, Request request) {
+    	Connection connect = Jsoup.connect(url);
+    	connect.timeout(site.getTimeOut());
+    	connect.userAgent(UserAgentUtil.getUserAgent());
+    	try {
+			Document document = connect.get();
+			String content = document.html().toString();
+			Page page = new Page();
+			page.setRawText(content);
+			page.setHtml(new Html(content, url));
+			page.setUrl(new PlainText(url));
+			page.setRequest(request);
+			page.setDownloadSuccess(true);
+			return page;
+		} catch (IOException e) {
+			logger.warn("---jsoup download page {} error", url, e);
+			onError(request);
+		}
+    	return null;
+    }
+    
 
     @Override
     public void setThread(int thread) {
