@@ -315,7 +315,7 @@ public class OrderHandleSearch {
 			return spinnakerPortofinoOrderService;
 		}else if ("2015081701439".equals(supplierId)) {
 			return spinnakerOrderService;
-		}else if ("201710261111".equals(supplierId)) {
+		}else if ("2018092702071".equals(supplierId)) {
             return suitnegoziOrderService;
         } else if ("2015091801507".equals(supplierId)) {
 			return brunarossoServiceImpl;
@@ -454,7 +454,7 @@ public class OrderHandleSearch {
 			return supplierProperties.getLeam();
 		} else if ("2015081701439".equals(supplierId)) {
 			return supplierProperties.getSpinnakerParam();
-		} else if ("201710261111".equals(supplierId)) {
+		} else if ("2018092702071".equals(supplierId)) {
             return supplierProperties.getSuitnegoziParam();
         } else if ("2015091801507".equals(supplierId)) {
 			return supplierProperties.getBrunarosso();

@@ -133,6 +133,17 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 				}
 			}
 
+            String[] SUITNEGOZI={"ABITO", "Camicia", "CAPPOTTO", "Felpa", "GIACCA", "Gonna", "MAGLIA", "Pantaloni", "Top", "T-Shirt"
+            };
+            if(supplierId.equals("201710261111")){
+                for(int i=0;i<SPINNAKER.length;i++){
+                    if (hubSpu.getSupplierSpuName().toUpperCase().contains(SUITNEGOZI[i].toUpperCase())){
+
+                        hubSpu.setSupplierCategoryname(SPINNAKER[i]);
+
+                    }
+                }
+            }
 
 
 
@@ -141,7 +152,8 @@ public class SpinnakerCommonHandler extends ISpinnakerHandler {
 
 
 
-			hubSpu.setSupplierBrandname(spu.getProducer_id());
+
+            hubSpu.setSupplierBrandname(spu.getProducer_id());
 			hubSpu.setSupplierSeasonname(spu.getSeason());
 			hubSpu.setSupplierMaterial(spu.getProduct_detail());
 			hubSpu.setSupplierOrigin(spu.getProduct_MadeIn());
