@@ -1,7 +1,6 @@
 package com.shangpin.spider.entity.gather;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /** 
  * @author  njt 
@@ -40,7 +39,7 @@ public class SpiderTaskInfo implements Serializable{
 	/**
 	 * 开始时间
 	 */
-	private Date startTime;
+	private String startTime;
 	
 	public String getId() {
 		return id;
@@ -66,10 +65,10 @@ public class SpiderTaskInfo implements Serializable{
 	public void setState(String state) {
 		this.state = state;
 	}
-	public Date getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
-	public void setStartTime(Date startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 	public Integer getOrdinal() {

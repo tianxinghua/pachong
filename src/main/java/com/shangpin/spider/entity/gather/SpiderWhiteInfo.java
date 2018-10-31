@@ -13,7 +13,7 @@ public class SpiderWhiteInfo {
 
     private Long spiderRuleId;
 
-    private Date createTime;
+    private String createTime;
 
     private Date updateTime;
 
@@ -57,15 +57,15 @@ public class SpiderWhiteInfo {
         this.spiderRuleId = spiderRuleId;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+    public String getCreateTime() {
+		return createTime;
+	}
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
 
-    public Date getUpdateTime() {
+	public Date getUpdateTime() {
         return updateTime;
     }
 

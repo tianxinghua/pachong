@@ -7,7 +7,7 @@
     <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="valid" property="valid" jdbcType="INTEGER" />
     <result column="spider_rule_id" property="spiderRuleId" jdbcType="BIGINT" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="VARCHAR" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
@@ -123,6 +123,7 @@
 	</select>
 	<select id="getWebSiteList" resultMap="BaseResultMap">
 		select
+		<!-- id, name, url, valid, spider_rule_id, DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') create_time, update_time -->
 		<include refid="Base_Column_List" />
 		from spider_white_info limit ${index},${rowInt}
 	</select>

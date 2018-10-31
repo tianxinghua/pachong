@@ -31,6 +31,7 @@ import us.codecraft.webmagic.selector.Html;
 import us.codecraft.webmagic.selector.PlainText;
 import us.codecraft.webmagic.utils.CharsetUtils;
 import us.codecraft.webmagic.utils.HttpClientUtils;
+import us.codecraft.webmagic.utils.HttpConstant;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -101,14 +102,13 @@ public class SpHttpClientDownloader extends AbstractDownloader {
     	
     	String url = request.getUrl();
     	if(spiderRuleInfo!=null) {
-    		if (GatherUtil.isLieUrl(url, spiderRuleInfo)&&spiderRuleInfo.getLieAjaxFlag()) {
-    			Page page = null;
-    	    	RemoteWebDriver webDriver = null;
-    			Boolean uniqueFlag = true;
-    			return DownloaderUtils.driverNextPage(url, webDriver, spiderRuleInfo, page, request, task, uniqueFlag, pool);
-    		}
+			if (GatherUtil.isLieUrl(url, spiderRuleInfo)&&spiderRuleInfo.getLieAjaxFlag()) {
+				Page page = null;
+		    	RemoteWebDriver webDriver = null;
+				Boolean uniqueFlag = true;
+				return DownloaderUtils.driverNextPage(url, webDriver, spiderRuleInfo, page, request, task, uniqueFlag, pool);
+			}
     	}
-    	
     	if(!clientFlag) {
 //    		jsoup的处理，默认失败重试3次
     		Page page = handleByJsoup(url, task.getSite(), request);
@@ -141,6 +141,7 @@ public class SpHttpClientDownloader extends AbstractDownloader {
             return page;
         } catch (IOException e) {
         	clientFlag = false;
+        	page = handleByJsoup(url, task.getSite(), request);
         	logger.warn("download page {} error", request.getUrl(), e);
         	onError(request);
         } finally {
@@ -175,7 +176,6 @@ public class SpHttpClientDownloader extends AbstractDownloader {
     	return page;
     }
     
-
     @Override
     public void setThread(int thread) {
         httpClientGenerator.setPoolSize(thread);

@@ -1,5 +1,6 @@
 package com.shangpin.spider.task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,6 +66,7 @@ public class TaskManager {
 		log.info("-----爬虫列表");
 		List<SpiderTaskInfo> spiderTaskList = new ArrayList<SpiderTaskInfo>();
 		Set<String> keySet = taskMap.keySet();
+		SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
 		if(keySet.size()>0){
 			for (String key : keySet) {
 				MySpider spider = taskMap.get(key);
@@ -75,7 +77,7 @@ public class TaskManager {
 				spiderTaskInfo.setName(key);
 				spiderTaskInfo.setCount(spider.getPageCount());
 				spiderTaskInfo.setState(Constants.taskStateMap.get(ordinal));
-				spiderTaskInfo.setStartTime(spider.getStartTime());
+				spiderTaskInfo.setStartTime(format.format(spider.getStartTime()));
 				spiderTaskInfo.setOrdinal(ordinal);
 				spiderTaskList.add(spiderTaskInfo);
 			}
