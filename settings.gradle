@@ -35,4 +35,6 @@ include 'vipgroup-stock'
 include 'refreshtoken'
 
 
+include 'clarks_stock'
+include 'doler-stock'
 
