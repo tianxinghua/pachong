@@ -1,5 +1,7 @@
 package com.shangpin.spider.mapper.gather;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import com.shangpin.spider.entity.gather.CrawlResult;
 
@@ -19,4 +21,6 @@ public interface CrawlResultMapper {
 	void createTable(@Param("tableName")String tableName);
 
 	Long insertByTableName(@Param("crawlResult")CrawlResult crawlResult, @Param("tableName")String tableName);
+
+	List<CrawlResult> selectAll(@Param("tableName")String tableName);
 }

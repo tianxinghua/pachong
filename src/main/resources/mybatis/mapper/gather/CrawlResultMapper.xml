@@ -272,12 +272,19 @@
     foreign_price, domestic_price, sale_price, qty, made, detail_link, sppu_hash, measurement, 
     supplier_id, supplier_no, supplier_sku_no, channel, white_id, create_time, update_time,description, pics
   </sql>
+  <select id="selectAll" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ${tableName}
+  </select>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
     from crawl_result
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
   <insert id="insert" parameterType="com.shangpin.spider.entity.gather.CrawlResult" >
     <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER" >
       SELECT LAST_INSERT_ID()

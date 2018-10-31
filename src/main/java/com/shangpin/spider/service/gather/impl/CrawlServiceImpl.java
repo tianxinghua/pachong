@@ -1,5 +1,7 @@
 package com.shangpin.spider.service.gather.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,11 @@ public class CrawlServiceImpl implements CrawlService{
 		}
 		return insertFlag;
 		
+	}
+
+	@Override
+	public List<CrawlResult> selectAll(String tableName) {
+		return crawlResultMapper.selectAll(tableName);
 	}
 
 }
