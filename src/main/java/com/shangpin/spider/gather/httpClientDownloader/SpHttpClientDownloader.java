@@ -62,6 +62,8 @@ public class SpHttpClientDownloader extends AbstractDownloader {
     
     private SpChromeDriverPool pool;
     
+    private static volatile Boolean clientFlag = true;
+    
     public SpHttpClientDownloader(SpiderRules spiderRuleInfo, SpChromeDriverPool pool) {
 		super();
 		this.spiderRuleInfo = spiderRuleInfo;
@@ -107,6 +109,22 @@ public class SpHttpClientDownloader extends AbstractDownloader {
     		}
     	}
     	
+    	if(!clientFlag) {
+//    		jsoup的处理，默认失败重试3次
+    		Page page = handleByJsoup(url, task.getSite(), request);
+    		if(page.getStatusCode()==404) {
+    			int i = 1;
+    			while(i<3) {
+    				page = handleByJsoup(url, task.getSite(), request);
+    				i++;
+    				if(page.getStatusCode()==200) {
+    					break;
+    				}
+    			}
+    		}
+    		return page;
+    	}
+    	
         if (task == null || task.getSite() == null) {
             throw new NullPointerException("task or site can not be null");
         }
@@ -122,9 +140,9 @@ public class SpHttpClientDownloader extends AbstractDownloader {
             logger.info("downloading page success {}", request.getUrl());
             return page;
         } catch (IOException e) {
-            logger.warn("download page {} error,--转jsoup请求！", request.getUrl(), e);
-            page = handleByJsoup(url, task.getSite(), request);
-            return page;
+        	clientFlag = false;
+        	logger.warn("download page {} error", request.getUrl(), e);
+        	onError(request);
         } finally {
             if (httpResponse != null) {
                 //ensure the connection is released back to pool
@@ -134,27 +152,27 @@ public class SpHttpClientDownloader extends AbstractDownloader {
                 proxyProvider.returnProxy(proxy, page, task);
             }
         }
+        return page;
     }
     
     private Page handleByJsoup(String url, Site site, Request request) {
     	Connection connect = Jsoup.connect(url);
     	connect.timeout(site.getTimeOut());
     	connect.userAgent(UserAgentUtil.getUserAgent());
+    	Page page = new Page();
+    	page.setUrl(new PlainText(url));
     	try {
 			Document document = connect.get();
 			String content = document.html().toString();
-			Page page = new Page();
 			page.setRawText(content);
 			page.setHtml(new Html(content, url));
-			page.setUrl(new PlainText(url));
 			page.setRequest(request);
 			page.setDownloadSuccess(true);
-			return page;
 		} catch (IOException e) {
+			page.setStatusCode(404);
 			logger.warn("---jsoup download page {} error", url, e);
-			onError(request);
 		}
-    	return null;
+    	return page;
     }
     
 
