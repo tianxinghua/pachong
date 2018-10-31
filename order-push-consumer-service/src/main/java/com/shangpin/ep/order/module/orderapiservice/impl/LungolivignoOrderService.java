@@ -450,7 +450,8 @@ public class LungolivignoOrderService implements IOrderService{
 	private String getImportType(String orderNo) {
 		try {
 			DefaultHttpClient client = new DefaultHttpClient();
-	        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();       //定义键值对列表，用于存放向url发送post请求的																		数据。
+	        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();       //定义键值对列表，用于存放向url发送post请求的数据。
+			log.info("{SupplierOrderNo:"+orderNo+"}");
 	        params.add(new BasicNameValuePair("jsonMsg", "{SupplierOrderNo:"+orderNo+"}"));
 	        HttpPost post = new HttpPost("http://erporderapi.spidc1.com/OrderCenter/GetImportType");                                            //定义HttpPost对象并初始化它    
 	        HttpEntity reqEntity = new UrlEncodedFormEntity(params);                                    //用UrlEncodedFormEntity对象包装请求体数据                                           

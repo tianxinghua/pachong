@@ -273,6 +273,12 @@ public class OrderHandleSearch {
 	@Qualifier("tricotServiceImpl")
 	IOrderService tricotServiceImpl;
 
+	@Autowired
+	@Qualifier("studio69Serviceimpl")
+	IOrderService studio69Serviceimpl;
+
+
+
 	public IOrderService getHander(String supplierId) {
 		//tonySub暂停
 //		if ("2015092201518".equals(supplierId)) {
@@ -364,9 +370,11 @@ public class OrderHandleSearch {
 			return montiOrderService;
 		}else if ("2016012801758".equals(supplierId)) {
 			return inviqaOrderImpl;
-		}/*else if ("2016080901915".equals(supplierId)) {
+		}
+		else if ("2016080901915".equals(supplierId)) {
 			return studio69Serviceimpl;
-		}*/else if ("2016080301912".equals(supplierId)) {
+		}
+		else if ("2016080301912".equals(supplierId)) {
 			return lamborghiniOrderImpl;
 		}else if ("2016080301913".equals(supplierId)) {
 			return palomaBarceloOrderImpl;
@@ -494,9 +502,9 @@ public class OrderHandleSearch {
 			return supplierProperties.getMontiParam();
 		}else if ("2016012801758".equals(supplierId)) {
 			return supplierProperties.getInviqaConf();
-		}/*else if ("2016080901915".equals(supplierId)) {
+		}else if ("2016080901915".equals(supplierId)) {
             return supplierProperties.getStudio69();
-		}*/else if ("2016080301912".equals(supplierId)) {
+		}else if ("2016080301912".equals(supplierId)) {
 			return supplierProperties.getLamborghiniConf();
 		}else if ("2016080301913".equals(supplierId)) {
 			return supplierProperties.getPalomaBarceloConf();
