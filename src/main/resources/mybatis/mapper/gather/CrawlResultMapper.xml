@@ -55,7 +55,7 @@
   `made` varchar(255) NOT NULL DEFAULT '' COMMENT '产地',
   `description` text COMMENT '描述',
   `pics` text COMMENT '图片链接',
-  `detail_link` varchar(255) NOT NULL DEFAULT '' COMMENT '商品链接',
+  `detail_link` varchar(1000) NOT NULL DEFAULT '' COMMENT '商品链接',
   `sppu_hash` bigint(20) NOT NULL COMMENT '商品spu的hash值',
   `measurement` varchar(255) NOT NULL DEFAULT '' COMMENT '尺寸详情',
   `supplier_id` varchar(255) DEFAULT '' COMMENT '供应商ID',
