@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.spider.common.Constants;
+import com.shangpin.spider.entity.base.Result;
 import com.shangpin.spider.entity.gather.SpiderTaskInfo;
 import com.shangpin.spider.gather.downloader.WebDriverPool;
 import com.shangpin.spider.gather.spider.CommonSpider.MySpider;
+import com.shangpin.spider.gather.utils.PageUtil;
 import com.shangpin.spider.redis.RedisManager;
 
 import us.codecraft.webmagic.thread.CountableThreadPool;
@@ -62,8 +64,9 @@ public class TaskManager {
 	 * 爬虫列表
 	 * @return
 	 */
-	public List<SpiderTaskInfo> taskList(){
+	public Result<SpiderTaskInfo> taskList(Integer page, Integer rows){
 		log.info("-----爬虫列表");
+		Result<SpiderTaskInfo> result = new Result<SpiderTaskInfo>();
 		List<SpiderTaskInfo> spiderTaskList = new ArrayList<SpiderTaskInfo>();
 		Set<String> keySet = taskMap.keySet();
 		SimpleDateFormat format = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
@@ -82,7 +85,38 @@ public class TaskManager {
 				spiderTaskList.add(spiderTaskInfo);
 			}
 		}
-		return spiderTaskList;
+		Long totalCount = (long) spiderTaskList.size();
+	    Long totalPages = PageUtil.getPage(totalCount, rows);
+		
+	    List<SpiderTaskInfo> redisCacheListByPage = new ArrayList<SpiderTaskInfo>();
+	    
+	    int startIndex = (page-1)*rows;
+	    int endIndex = page*rows-1;
+	    for (int i = 0; i < spiderTaskList.size(); i++) {
+			if(startIndex<=i&&i<=endIndex) {
+				redisCacheListByPage.add(spiderTaskList.get(i));
+			}
+		}
+	    
+	    if(spiderTaskList!=null&&spiderTaskList.size()>0){
+	    	result.setDataList(redisCacheListByPage);
+			result.setCurrentPage(page);
+			result.setTotalCount(totalCount);
+			result.setTotalPages(totalPages);
+			result.setStatus(Constants.SUCCESSCODE);
+			result.setMsg(Constants.SUCCESS);
+	    }else {
+	    	result.setDataList(null);
+			result.setCurrentPage(1);
+			result.setTotalCount(0L);
+			result.setTotalPages(0L);
+			result.setStatus(Constants.ERRORCODE);
+			result.setMsg(Constants.FAIL);
+	    }
+	    
+		return result;
+		
+		
 	}
 	/**
 	 * 开启或关闭爬虫

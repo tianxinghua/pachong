@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -54,29 +55,31 @@ public class DownloaderUtils {
 //			测试--网站有弹窗的情况，用X的CSS捕获到，解除反爬
 		CrackDspiderUtil.crackMask(webDriver, spiderRuleInfo);
 		webDriver.manage().window().maximize();
-
-		String[] nextPageFlagArray = spiderRuleInfo.getNextPageFlag().split(SymbolConstants.AND_FLAG);
-		String[] nextPageTagArray = spiderRuleInfo.getNextPageTag().split(SymbolConstants.RULE_SPLIT_FLAG);
-		for (int i = 0; i < nextPageFlagArray.length; i++) {
-			String nextPageFlagDe = nextPageFlagArray[i];
-			String nextPageTagDe = nextPageTagArray[i];
-//					控制下拉条
-			if (StrategyConstants.SCROLL.equals(nextPageFlagDe)) {
-				webDriver = handleScroll(url, webDriver);
-				continue;
+		
+		if(StringUtils.isNotBlank(spiderRuleInfo.getNextPageFlag().trim())&&StringUtils.isNotBlank(spiderRuleInfo.getNextPageTag().trim())) {
+			String[] nextPageFlagArray = spiderRuleInfo.getNextPageFlag().split(SymbolConstants.AND_FLAG);
+			String[] nextPageTagArray = spiderRuleInfo.getNextPageTag().split(SymbolConstants.RULE_SPLIT_FLAG);
+			for (int i = 0; i < nextPageFlagArray.length; i++) {
+				String nextPageFlagDe = nextPageFlagArray[i];
+				String nextPageTagDe = nextPageTagArray[i];
+	//					控制下拉条
+				if (StrategyConstants.SCROLL.equals(nextPageFlagDe)) {
+					webDriver = handleScroll(url, webDriver);
+					continue;
+				}
+	//					下一页，待开发
+				if (StrategyConstants.NEXT.equals(nextPageFlagDe)) {
+	
+					continue;
+				}
+	//					查看更多
+				if (StrategyConstants.MORE.equals(nextPageFlagDe)) {
+					List<WebElement> elements = webDriver.findElements(By.cssSelector(nextPageTagDe));
+					webDriver = handleMore(url, nextPageTagDe, webDriver, elements, elements.size(), 0);
+					continue;
+				}
+	
 			}
-//					下一页，待开发
-			if (StrategyConstants.NEXT.equals(nextPageFlagDe)) {
-
-				continue;
-			}
-//					查看更多
-			if (StrategyConstants.MORE.equals(nextPageFlagDe)) {
-				List<WebElement> elements = webDriver.findElements(By.cssSelector(nextPageTagDe));
-				webDriver = handleMore(url, nextPageTagDe, webDriver, elements, elements.size(), 0);
-				continue;
-			}
-
 		}
 		page = getHtml(webDriver, request, task);
 		webDriverPool.returnToPool(webDriver);
