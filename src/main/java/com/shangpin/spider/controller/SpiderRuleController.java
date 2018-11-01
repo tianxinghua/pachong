@@ -1,6 +1,8 @@
 package com.shangpin.spider.controller;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -140,7 +142,7 @@ public class SpiderRuleController {
 	
 	@RequestMapping(value = "export",method = RequestMethod.GET)
 	public void export(@RequestParam(name = "whiteName")String whiteName,
-			HttpServletResponse response){
+			HttpServletResponse response) throws IOException{
 		LOG.info("-----导出数据--网站（表名）："+whiteName);
 		SimpleDateFormat format = new SimpleDateFormat(formatDateStr);
 		String nowDate = format.format(new Date());
@@ -154,7 +156,19 @@ public class SpiderRuleController {
         //定义表的内容
         List<Object[]> dataList = new ArrayList<Object[]>();
         Object[] objs = null;
-        List<CrawlResult> list = crawlService.selectAll(whiteName);
+        List<CrawlResult> list = null;
+        try {
+        	list = crawlService.selectAll(whiteName);
+		} catch (Exception e) {
+            //让浏览器用utf8来解析返回的数据
+			response.setHeader("Content-type", "text/html;charset=UTF-8");
+			//用UTF-8转码，而不是用默认的ISO8859
+			response.setCharacterEncoding("UTF-8");
+			PrintWriter writer = response.getWriter();
+	        writer.print("暂无数据！");
+	        writer.close();
+		}
+        
         
 //      List<GreatBenefitsInfo> list = loanInvestorRecordService.getGreatBenefitsRecord(columnStr,searchText,startTime,endTime);
         for (int i = 0; i < list.size(); i++) {

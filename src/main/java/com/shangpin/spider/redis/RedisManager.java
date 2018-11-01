@@ -17,8 +17,10 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.spider.common.Constants;
+import com.shangpin.spider.entity.base.Result;
 import com.shangpin.spider.entity.gather.RedisCache;
 import com.shangpin.spider.entity.gather.SpiderWhiteInfo;
+import com.shangpin.spider.gather.utils.PageUtil;
 import com.shangpin.spider.mapper.gather.SpiderWhiteInfoMapper;
 
 /**
@@ -98,6 +100,89 @@ public class RedisManager {
 	 * 获取所有redis中包括TASKUUID和REMTASKUUID的键及其数据信息
 	 * @return 
 	 */
+	public Result<RedisCache> getRedisList(Integer page, Integer rows){
+		Result<RedisCache> result = new Result<RedisCache>();
+		List<RedisCache> redisCacheList = new ArrayList<RedisCache>();
+		String reg = Constants.TASKUUID+"*";
+		String regRem = Constants.REMTASKUUID+"*";
+		Set<String> keys = redisTemplate.keys(reg);
+		Set<String> remKeys = redisTemplate.keys(regRem);
+		Set<String> uuidSet = new HashSet<String>();
+		for (String key : keys) {
+			String uuid = key.replace(Constants.TASKUUID, "");
+			uuidSet.add(uuid);
+		}
+		for (String remKey : remKeys) {
+			String uuid = remKey.replace(Constants.REMTASKUUID, "");
+			uuidSet.add(uuid);
+		}
+		if(uuidSet.size()>0){
+			Map<String, String> domainMap = getDomainMap();
+			ZSetOperations<String, String> zoper = redisTemplate.opsForZSet();
+			for (String uuid : uuidSet) {
+				RedisCache redisCache = new RedisCache();
+				String webName = "无";
+				if(domainMap!=null&&domainMap.size()>0){
+					webName = domainMap.get(uuid);
+				}
+				Boolean taskFlag = redisTemplate.hasKey(Constants.TASKUUID+uuid);
+				int taskCount = 0;
+				if(taskFlag){
+					taskCount = zoper.zCard(Constants.TASKUUID+uuid).intValue();
+				}
+				Boolean remTaskFlag = redisTemplate.hasKey(Constants.REMTASKUUID+uuid);
+				int remTaskCount = 0;
+				if(remTaskFlag){
+					remTaskCount = zoper.zCard(Constants.REMTASKUUID+uuid).intValue();
+				}
+				
+				Boolean errorTaskFlag = redisTemplate.hasKey(Constants.ERRORTASKUUID+uuid);
+				int errorTaskCount = 0;
+				if(errorTaskFlag){
+					errorTaskCount = zoper.zCard(Constants.ERRORTASKUUID+uuid).intValue();
+				}
+				redisCache.setUuid(uuid);
+				redisCache.setWebName(webName);
+				redisCache.setTaskCount(taskCount);
+				redisCache.setRemTaskCount(remTaskCount);
+				redisCache.setErrorTaskCount(errorTaskCount);
+				redisCacheList.add(redisCache);
+			}
+			
+		}
+		Long totalCount = (long) redisCacheList.size();
+	    Long totalPages = PageUtil.getPage(totalCount, rows);
+		
+	    List<RedisCache> redisCacheListByPage = new ArrayList<RedisCache>();
+	    
+	    int startIndex = (page-1)*rows;
+	    int endIndex = page*rows-1;
+	    for (int i = 0; i < redisCacheList.size(); i++) {
+			if(startIndex<=i&&i<=endIndex) {
+				redisCacheListByPage.add(redisCacheList.get(i));
+			}
+		}
+	    
+	    if(redisCacheList!=null&&redisCacheList.size()>0){
+	    	result.setDataList(redisCacheListByPage);
+			result.setCurrentPage(page);
+			result.setTotalCount(totalCount);
+			result.setTotalPages(totalPages);
+			result.setStatus(Constants.SUCCESSCODE);
+			result.setMsg(Constants.SUCCESS);
+	    }else {
+	    	result.setDataList(null);
+			result.setCurrentPage(1);
+			result.setTotalCount(0L);
+			result.setTotalPages(0L);
+			result.setStatus(Constants.ERRORCODE);
+			result.setMsg(Constants.FAIL);
+	    }
+	    
+		return result;
+	}
+	
+	
 	public List<RedisCache> getRedisList(){
 		List<RedisCache> redisCacheList = new ArrayList<RedisCache>();
 		String reg = Constants.TASKUUID+"*";

@@ -1,7 +1,5 @@
 package com.shangpin.spider.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.shangpin.spider.entity.base.Result;
 import com.shangpin.spider.entity.gather.RedisCache;
 import com.shangpin.spider.redis.RedisManager;
 
@@ -34,15 +33,15 @@ public class CacheController {
 	
 	@RequestMapping("getCacheList")
 	@ResponseBody
-	public List<RedisCache> getCacheList(){
+	public Result<RedisCache> getCacheList(Integer page, Integer rows){
 		log.info("----获取缓存信息列表");
-		List<RedisCache> redisCacheList = null;
+		Result<RedisCache> result = null;
 		try {
-			redisCacheList = redisManager.getRedisList();
+			result = redisManager.getRedisList(page, rows);
 		} catch (Exception e) {
 			log.error("----获取缓存信息列表出错！"+e.getMessage());
 		}
-		return redisCacheList;
+		return result;
 	}
 	
 	@RequestMapping("delTaskuuid")

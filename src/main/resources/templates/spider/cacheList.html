@@ -49,7 +49,7 @@
                 page: 1,
                 colNames:["UUID","相关网站","未处理链接数","已处理链接数（总）","错误数量","清除缓存（未处理）"],
                 colModel: [
-                    { name:"uuid", index:"name",key: true,editable:false,autowidth:true,align:"center"},
+                    { name:"uuid", index:"uuid",key: true,editable:false,autowidth:true,align:"center"},
                     { name:"webName",index:"webName",editable:false,autowidth:true,align:"center"},
                     { name:"taskCount",index:"taskCount",editable:false,autowidth:true,align:"center"},
                     { name:"remTaskCount",index:"remTaskCount",editable:false,autowidth:true,align:"center"},
@@ -61,6 +61,10 @@
                     },
                 ],
                 pager: "#pager_list",
+                jsonReader: {  
+    				root:"dataList", page:"currentPage", total:"totalPages", //   很重要 定义了 后台分页参数的名字。
+    				records:"totalCount", repeatitems:false, id : "uuid"
+				},
                 viewrecords: true,
                 loadComplete:function(xhr){  
                     //查询为空的处理方式  

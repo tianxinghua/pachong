@@ -1,7 +1,5 @@
 package com.shangpin.spider.controller;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
+import com.shangpin.spider.entity.base.Result;
 import com.shangpin.spider.entity.gather.SpiderTaskInfo;
 import com.shangpin.spider.task.TaskManager;
 import com.shangpin.spider.utils.shiro.ContentRole;
@@ -37,15 +36,15 @@ public class TaskController {
 	
 	@RequestMapping("getTaskList")
 	@ResponseBody
-	public List<SpiderTaskInfo> getTaskList(){
+	public Result<SpiderTaskInfo> getTaskList(Integer page, Integer rows){
 		log.info("----获取爬虫列表");
-		List<SpiderTaskInfo> taskList = null;
+		Result<SpiderTaskInfo> result = null;
 		try {
-			taskList = taskManager.taskList();
+			result = taskManager.taskList(page, rows);
 		} catch (Exception e) {
 			log.info("----获取爬虫列表出错！"+e.getMessage());
 		}
-		return taskList;
+		return result;
 	}
 	
 	@RequestMapping("deleteTask")

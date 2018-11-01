@@ -78,6 +78,10 @@
                     },
                 ],
                 pager: "#pager_list",
+                jsonReader: {  
+    				root:"dataList", page:"currentPage", total:"totalPages", //   很重要 定义了 后台分页参数的名字。
+    				records:"totalCount", repeatitems:false, id : "id"
+				},
                 viewrecords: true,
                 loadComplete:function(xhr){  
                     //查询为空的处理方式  
