@@ -239,7 +239,7 @@ public class GatherUtil {
 				
 			}
 		}else {
-			LOG.error("---源网站-{}-的详情链接正则规则为空！",spiderRuleInfo.getWhiteName());
+			LOG.warn("---源网站-{}-的详情链接正则规则为空！",spiderRuleInfo.getWhiteName());
 		}
 		return flag;
 	}
@@ -263,7 +263,7 @@ public class GatherUtil {
 				
 			}
 		}else {
-			LOG.error("---源网站-{}-的列表链接正则规则为空！",spiderRuleInfo.getWhiteName());
+			LOG.warn("---源网站-{}-的列表链接正则规则为空！",spiderRuleInfo.getWhiteName());
 		}
 		return flag;
 	}
@@ -283,7 +283,7 @@ public class GatherUtil {
 				flag = true;
 			}
 		}else {
-			LOG.error("---源网站-{}-的过滤链接正则规则为空！",spiderRuleInfo.getWhiteName());
+			LOG.warn("---源网站-{}-的过滤链接正则规则为空！",spiderRuleInfo.getWhiteName());
 		}
 		
 		return flag;
@@ -377,7 +377,7 @@ public class GatherUtil {
 	
 	private static String crawlValueByGroup(Page page, String crawlValue, String strategyStr, String rulesStr, String fieldName) {
 		if(StringUtils.isBlank(strategyStr)||StringUtils.isBlank(rulesStr)) {
-			LOG.error("---字段-{}-的取值正则规则为空！",fieldName);
+			LOG.warn("---字段-{}-的取值正则规则为空！",fieldName);
 			return "";
 		}
 		Map<String,Object> resultMap = new HashMap<String,Object>();
