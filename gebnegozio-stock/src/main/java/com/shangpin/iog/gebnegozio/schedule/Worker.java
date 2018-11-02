@@ -32,8 +32,8 @@ public class Worker implements Runnable{
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			logger.info("更新数据库开始");
 			try {
-//				stockImp.setUseThread(true);
-//				stockImp.setSkuCount4Thread(500);
+				stockImp.setUseThread(true);
+				stockImp.setSkuCount4Thread(500);
 				stockImp.updateProductStock(supplierId, "2018-01-01 00:00", format.format(new Date()));
 			} catch (Exception e) {
 				loggerError.error("更新库存数据库出错"+e.getMessage());
