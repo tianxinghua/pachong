@@ -6,11 +6,14 @@ import com.google.gson.JsonParser;
 import com.shangpin.framework.ServiceException;
 import com.shangpin.iog.dior.dto.*;
 import com.shangpin.iog.spider.DiorProcessor;
+import com.shangpin.iog.spider.GoodsEntity;
 import com.shangpin.iog.utils.HttpUtil45;
 import com.shangpin.openapi.api.sdk.client.OutTimeConfig;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -127,7 +130,7 @@ public class FetchStockImpl  {
         //当商品数据
         if(total>Integer.parseInt(pageSize)){
             Integer pageNumber = getPageNumber(total, 20);
-            for (int i = 17; i <= pageNumber; i++) {
+            for (int i = 2; i <= pageNumber; i++) {
                 ShangPinPageContent temprpductPageContent = getShangPinPageContentByParam(supplierId,supplierName, i, Integer.parseInt(pageSize));
                 if(temprpductPageContent!=null){
                     productDTOAllList.addAll(temprpductPageContent.getZhiCaiResultList());
@@ -247,27 +250,31 @@ public class FetchStockImpl  {
         List<SkuDTO> skuDTOs = productDTO.getZhiCaiSkuResultList();
         try {
             DiorProcessor dior = new DiorProcessor();
-            List<com.alibaba.fastjson.JSONObject> goodsList = dior.spider(productUrl);
+            List<GoodsEntity> goodsList = dior.updateInventorySpider(productUrl);
             for (int i = 0; i < skuDTOs.size(); i++) {
                 SkuDTO skuDTO = skuDTOs.get(i);
                 String size = skuDTO.getSize();
                 double marketPrice = Double.parseDouble(skuDTO.getMarketPrice());
+                boolean goodsUpdateState = false;
                 for (int j = 0; j < goodsList.size(); j++) {
-                    double foreignPrice = Double.parseDouble(goodsList.get(j).getString("foreignPrice"));
-                    com.alibaba.fastjson.JSONObject json = goodsList.get(j);
+                    double foreignPrice = Double.parseDouble(goodsList.get(j).getForeignPrice());
                     //判断尺码一致
-                    if (size.equals(json.getString("size"))) {
+                    if (size.equals(goodsList.get(j).getSize())) {
                         if (marketPrice != foreignPrice) {
                             //更新价格和库存
-                            //updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),String.valueOf(foreignPrice));
+                            updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),String.valueOf(foreignPrice));
                             logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+foreignPrice);
                             System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+foreignPrice);
                         }
-                        String qty = goodsList.get(j).getString("qty");
+                        String qty = goodsList.get(j).getQty();
                         if (qty != null) {
-                            //exportSpSkunoAndQty(skuDTO.getSpSkuNo(),qty);
+                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),qty);
                         }
+                        goodsUpdateState = true;
                     }
+                }
+                if (!goodsUpdateState) {
+                    exportSpSkunoAndQty(skuDTO.getSpSkuNo(),"0");
                 }
             }
 
