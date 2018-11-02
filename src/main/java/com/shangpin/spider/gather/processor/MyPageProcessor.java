@@ -225,6 +225,12 @@ public class MyPageProcessor implements PageProcessor {
 			Map<String, Object> extras = new HashMap<String, Object>();
 			extras.put("whiteId", whiteId);
 			request.setExtras(extras);
+			if (GatherUtil.isLieUrl(link, spiderRuleInfo)) {
+				request.setPriority(2L);
+			}
+			if(GatherUtil.isDetailUrl(link, spiderRuleInfo)) {
+				request.setPriority(1L);
+			}
 			// ----向下一个要抓取的队列中传参数---
 			LOG.info("---进入队列的链接-{}", link);
 			page.addTargetRequest(request);
