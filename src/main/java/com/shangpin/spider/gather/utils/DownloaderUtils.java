@@ -152,10 +152,10 @@ public class DownloaderUtils {
 		try {
 			if (i < size) {
 				try {
-					WebElement element = webDriver.findElement(By.cssSelector("#SearchboxReset > span.icn.icn-close"));
+					WebElement element = webDriver.findElement(By.cssSelector(nextPageTagDe));
 					((JavascriptExecutor) webDriver).executeScript("arguments[0].click()", element);
 				} catch (Exception e) {
-					System.err.println("执行多余的X号！" + e.getMessage());
+					System.err.println("点击更多加载网页！" + e.getMessage());
 				}
 				WebElement ele = elements.get(i);
 				((JavascriptExecutor) webDriver).executeScript("arguments[0].click()", ele);
