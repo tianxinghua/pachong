@@ -77,7 +77,8 @@ public class SupplierStockService {
 		HubSupplierSkuDto hubSupplierSku = new HubSupplierSkuDto();
 		hubSupplierSku.setStock(supplierStock.getStock());
 //		hubSupplierSku.setUpdateTime(new Date());  // BI统计可能用的此致 不做修改
-//		hubSupplierSku.setMemo("OPENAPI更新库存"); // BI统计可能用的此致 不做修改
+		hubSupplierSku.setLastPullTime(new Date());
+		hubSupplierSku.setMemo("OPENAPI更新库存"); //
 		withCriteria.setHubSupplierSku(hubSupplierSku );
 		return hubSupplierSkuGateWay.updateByCriteriaSelective(withCriteria );
 	}
