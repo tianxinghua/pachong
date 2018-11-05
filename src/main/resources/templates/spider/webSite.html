@@ -358,6 +358,10 @@
 					<br/>
 					
 					<font color="red">*针对多层点击</font>
+					第一层点击与否：<input type="radio" name="firstClickFlag" value="1" />点击&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="radio" name="firstClickFlag" value="0" checked="checked"/>不点击
+					<br/>
+					
 					第二层点击与否：<input type="radio" name="secondClickFlag" value="1" />点击&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="radio" name="secondClickFlag" value="0" checked="checked"/>不点击
 					<br/>
@@ -726,6 +730,10 @@
 	        				}
 	        				
 	        				
+	        				var firstClickInt = 0;
+	        				if(spiderRules.firstClickFlag){
+	        					firstClickInt = 1;
+	        				}
 	        				var secondClickInt = 0;
 	        				if(spiderRules.secondClickFlag){
 	        					secondClickInt = 1;
@@ -824,6 +832,8 @@
 	                		$("[name='supplierId']").val(spiderRules.supplierId);
 	                		$("[name='supplierNo']").val(spiderRules.supplierNo);
 	                		$("#clickFieldArray").selectpicker('val', clickFieldArray);
+	                		
+	                		$("[name='firstClickFlag'][value='"+firstClickInt+"']").attr('checked','true');
 	                		$("[name='secondClickFlag'][value='"+secondClickInt+"']").attr('checked','true');
 	                		$("[name='threeClickFlag'][value='"+threeClickInt+"']").attr('checked','true');
             			}
@@ -940,7 +950,7 @@
             		}
         		}
         		//alert(clickFieldStr);
-        		secondClickFlag
+        		var firstClickFlag = $("input[name='firstClickFlag']:checked").val();
         		var secondClickFlag = $("input[name='secondClickFlag']:checked").val();
         		var threeClickFlag = $("input[name='threeClickFlag']:checked").val();
         		
@@ -1013,6 +1023,7 @@
         					firstClickFrontRules:firstClickFrontRules.trim(),
         					secondClickFrontRules:secondClickFrontRules.trim(),
         					threeClickFrontRules:threeClickFrontRules.trim(),
+        					'firstClickFlag':firstClickFlag.trim(),
         					'secondClickFlag':secondClickFlag.trim(),
         					'threeClickFlag':threeClickFlag.trim(),
         				}

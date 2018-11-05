@@ -74,6 +74,7 @@
     <result column="second_click_front_rules" property="secondClickFrontRules" jdbcType="VARCHAR" />
     <result column="three_click_front_rules" property="threeClickFrontRules" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="BIT" />
+    <result column="first_click_flag" property="firstClickFlag" jdbcType="BIT" />
     <result column="second_click_flag" property="secondClickFlag" jdbcType="BIT" />
     <result column="three_click_flag" property="threeClickFlag" jdbcType="BIT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -97,7 +98,7 @@
     description_rules, description_strategy, pics_rules, pics_strategy, measurement_rules, measurement_strategy, 
     supplier_id, supplier_no, click_field_str,
     first_click_front_rules,second_click_front_rules,three_click_front_rules,
-    status, second_click_flag, three_click_flag, create_time, update_time
+    status, first_click_flag, second_click_flag, three_click_flag, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -133,7 +134,7 @@
       pics_rules, pics_strategy, measurement_rules, 
       measurement_strategy, supplier_id, supplier_no, click_field_str,
       first_click_front_rules,second_click_front_rules,three_click_front_rules,
-      status, second_click_flag, three_click_flag, create_time, update_time
+      status, first_click_flag, second_click_flag, three_click_flag, create_time, update_time
       )
     values (#{whiteId,jdbcType=BIGINT}, #{channelRules,jdbcType=VARCHAR}, #{threadNum,jdbcType=INTEGER}, #{retryNum,jdbcType=INTEGER}, 
       #{sleep,jdbcType=INTEGER}, #{maxPageGather,jdbcType=INTEGER}, #{timeout,jdbcType=INTEGER}, 
@@ -160,7 +161,9 @@
       #{measurementStrategy,jdbcType=VARCHAR}, #{supplierId,jdbcType=VARCHAR}, #{supplierNo,jdbcType=VARCHAR},
       #{clickFieldStr,jdbcType=VARCHAR},
       #{firstClickFrontRules,jdbcType=VARCHAR},#{secondClickFrontRules,jdbcType=VARCHAR},#{threeClickFrontRules,jdbcType=VARCHAR}, 
-      #{status,jdbcType=BIT}, #{second_click_flag,jdbcType=BIT}, #{three_click_flag,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      #{status,jdbcType=BIT}, #{first_click_flag,jdbcType=BIT},
+      #{second_click_flag,jdbcType=BIT}, #{three_click_flag,jdbcType=BIT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.shangpin.spider.entity.gather.SpiderRules" >
@@ -382,6 +385,10 @@
       </if>
       <if test="status != null" >
         status,
+      </if>
+      
+      <if test="firstClickFlag != null" >
+        first_click_flag,
       </if>
       
       <if test="secondClickFlag != null" >
@@ -612,6 +619,9 @@
       </if>
       <if test="status != null" >
         #{status,jdbcType=BIT},
+      </if>
+      <if test="firstClickFlag != null" >
+        #{firstClickFlag,jdbcType=BIT},
       </if>
       <if test="secondClickFlag != null" >
         #{secondClickFlag,jdbcType=BIT},
@@ -845,6 +855,9 @@
       <if test="status != null" >
         status = #{status,jdbcType=BIT},
       </if>
+       <if test="firstClickFlag != null" >
+        first_click_flag = #{firstClickFlag,jdbcType=BIT},
+      </if>
       <if test="secondClickFlag != null" >
         second_click_flag = #{secondClickFlag,jdbcType=BIT},
       </if>
@@ -927,6 +940,7 @@
       second_click_front_rules = #{secondClickFrontRules,jdbcType=VARCHAR},
       three_click_front_rules = #{threeClickFrontRules,jdbcType=VARCHAR},
       status = #{status,jdbcType=BIT},
+      first_click_flag = #{firstClickFlag,jdbcType=BIT},
       second_click_flag = #{secondClickFlag,jdbcType=BIT},
       three_click_flag = #{threeClickFlag,jdbcType=BIT},
     where id = #{id,jdbcType=BIGINT}

@@ -118,7 +118,7 @@ public class OneClick extends MoreClickUtil{
 		recursionFlag = true;
 		if ((!recursionFlag) || (i != firstSize - 1)) {
 //			点击后获取的字段值，在此获取
-			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, true);
+			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, spiderRuleInfo.getFirstClickFlag());
 //			递归	
 			firstSizeAtom = new AtomicInteger(firstSize);
 			oneClick(list, driver, initI, firstSizeAtom, recursionFlag, menuRuleArray,  oneClickedRules);
@@ -127,7 +127,7 @@ public class OneClick extends MoreClickUtil{
 		if (endInt.get() == 0) {
 			if (i == firstSize - 1) {
 				LOG.info("{}链接最后一次点击入库！", url);
-				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, true);
+				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, spiderRuleInfo.getFirstClickFlag());
 				endInt.incrementAndGet();
 			}
 		}

@@ -152,6 +152,8 @@ public class SpiderRules implements Serializable {
 
 	private Boolean status;
 	
+	private Boolean firstClickFlag;
+	
 	private Boolean secondClickFlag;
 	
 	private Boolean threeClickFlag;
@@ -678,6 +680,14 @@ public class SpiderRules implements Serializable {
 		this.status = status;
 	}
 	
+	public Boolean getFirstClickFlag() {
+		return firstClickFlag;
+	}
+
+	public void setFirstClickFlag(Boolean firstClickFlag) {
+		this.firstClickFlag = firstClickFlag;
+	}
+
 	public Boolean getSecondClickFlag() {
 		return secondClickFlag;
 	}
