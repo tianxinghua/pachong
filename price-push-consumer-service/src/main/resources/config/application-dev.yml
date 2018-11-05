@@ -88,4 +88,6 @@ shangpin:
                       password: Atelier2015
                   2016012101751:                                     
                       username: shangpin
-                      password: Atelier2015                    
+                      password: Atelier2015
+marketprice:
+    priceurl: http://qa.sopoutapi.shangpin.com/Product/ModifyProductMarketPrice
