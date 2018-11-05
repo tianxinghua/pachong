@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import com.shangpin.spider.common.Constants;
+import com.shangpin.spider.common.SymbolConstants;
 import com.shangpin.spider.entity.base.Result;
 import com.shangpin.spider.entity.gather.RedisCache;
 import com.shangpin.spider.entity.gather.SpiderWhiteInfo;
@@ -44,16 +45,22 @@ public class RedisManager {
 	 */
 	public void delWhiteUrl(String url, String uuid) {
 		Boolean flag = redisTemplate.hasKey(Constants.TASKUUID+uuid);
-		ZSetOperations<String, String> zoper = redisTemplate.opsForZSet();
-		if (flag) {
-			zoper.remove(Constants.TASKUUID+uuid, url);
-			log.info("---删除TASKUUID中的源链接：" + url);
-		}
 		Boolean flag2 = redisTemplate.hasKey(Constants.REMTASKUUID+uuid);
-		if (flag2) {
-			zoper.remove(Constants.REMTASKUUID+uuid, url);
-			log.info("---删除REMTASKUUID中的源链接：" + url);
+		ZSetOperations<String, String> zoper = redisTemplate.opsForZSet();
+		if(url.contains(SymbolConstants.SUB_FIRSTOR)) {
+			String[] urlArray = url.split(SymbolConstants.SUB_FIRSTOR);
+			for (String urlStr : urlArray) {
+				if (flag) {
+					zoper.remove(Constants.TASKUUID+uuid, urlStr);
+					log.info("---删除TASKUUID中的源链接：" + urlStr);
+				}
+				if (flag2) {
+					zoper.remove(Constants.REMTASKUUID+uuid, urlStr);
+					log.info("---删除REMTASKUUID中的源链接：" + urlStr);
+				}
+			}
 		}
+		
 	}
 	
 	/**
