@@ -59,6 +59,15 @@ public class RedisManager {
 					log.info("---删除REMTASKUUID中的源链接：" + urlStr);
 				}
 			}
+		}else {
+			if (flag) {
+				zoper.remove(Constants.TASKUUID+uuid, url);
+				log.info("---删除TASKUUID中的源链接：" + url);
+			}
+			if (flag2) {
+				zoper.remove(Constants.REMTASKUUID+uuid, url);
+				log.info("---删除REMTASKUUID中的源链接：" + url);
+			}
 		}
 		
 	}
