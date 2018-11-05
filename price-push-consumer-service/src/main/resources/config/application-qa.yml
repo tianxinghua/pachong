@@ -89,3 +89,5 @@ shangpin:
              scmsSupplierInfoUrl: http://qa.scm.shangpin.com/scms/Supplier/GetSupplierInfoListByNo?supplierNo=
              sopSkuListBySupplierSkuNoUrl: http://qa.sopoutapi.shangpin.com/Product/GetSopSkuListBySupplierSkuNo
 
+marketprice:
+  priceurl: http://qa.sopoutapi.shangpin.com/Product/ModifyProductMarketPrice

@@ -38,7 +38,7 @@ dependencies {
     compile('com.shangpin:openapi-api-sdk:4.7')
     compile('com.shangpin:openapi-api:4.7.13')
     compile('ZeroC:Ice:3.5.1')
-    compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:0.14.17-dev-SNAPSHOT')
+    compile('com.shangpin.ephub.common.rpc:ephub-common-rpc-connector:2.6.5-SNAPSHOT')
     compile('com.shangpin.common:commons-redis:1.0.2.RELEASE')
     compile('commons-codec:commons-codec:1.10')
     compile('commons-io:commons-io:2.5')
@@ -50,6 +50,7 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
     compile('org.springframework.boot:spring-boot-starter-mail')
     compile('org.apache.velocity:velocity:1.7')
+    compile group: 'org.glassfish', name: 'javax.mail', version: '10.0-b28'
     runtime('org.springframework.boot:spring-boot-devtools')
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')
