@@ -89,4 +89,4 @@ shangpin:
               sopSkuListBySupplierSkuNoUrl: http://sopoutapi.spidc1.com/Product/GetSopSkuListBySupplierSkuNo
 
 marketprice:
-  priceurl: http://qa.sopoutapi.shangpin.com/Product/ModifyProductMarketPrice
+  priceurl: http://sopoutapi.spidc1.com/Product/ModifyProductMarketPrice
