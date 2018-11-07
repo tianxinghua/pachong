@@ -29,6 +29,12 @@ include 'gebnegozio-stock'
 include 'theKooples_stock'
 include 'hermesFR-stock'
 include 'iog-web-container'
+include 'mcw-stock'
+include 'smets'
+include 'vipgroup-stock'
+include 'refreshtoken'
 
 
+include 'clarks_stock'
+include 'doler-stock'
 
