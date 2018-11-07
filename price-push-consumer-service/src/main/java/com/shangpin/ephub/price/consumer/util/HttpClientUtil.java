@@ -60,7 +60,7 @@ public class HttpClientUtil {
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
-            log.info(e.getMessage());
+            log.info("Product/ModifyProductMarketPrice err:"+e.getMessage());
         }finally{
            try {
                 EntityUtils.consume(httpEntity);

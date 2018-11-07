@@ -113,6 +113,7 @@ public class PriceSendService {
             content = om.writeValueAsString(productDTOList);
 
             sendResult =   httpClientUtil.sendRequest(content);
+            log.info("Product/ModifyProductMarketPrice response:"+sendResult);
             if(sendResult!=null){
                 ResMessage r = JSONObject.parseObject(sendResult,ResMessage.class);
                 if(!r.IsSuccess){
