@@ -330,7 +330,7 @@ public class FetchStockImpl {
                     for (int j = 0; j <spSkuSize ; j++) {
                         SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
                         for (int i = 0; i <pageSize ; i++) {
-                            String sizeValue=sizeElements.get(i).select("a").attr("title").toString();
+                            String sizeValue=sizeElements.get(i).select(".defaultSize").text().toString();
 
                             String temQty="";
                             try {
@@ -339,7 +339,7 @@ public class FetchStockImpl {
                                 if(!sizeValue.equals(jdbcSize)){
                                     continue;
                                 }
-                                temQty=sizeElements.attr("class").toString();
+                                temQty=sizeElements.get(i).attr("class").toString();
                                 if (temQty.contains("unselectable")){
                                     temQty=NO_STOCK;
                                 }
