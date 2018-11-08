@@ -11,6 +11,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class UpdateStockImpl extends FetchStockImpl {
     }
 
     /**
-     * 更新 意大利官网 商品库存数据
+     * 更新 英国官网 商品库存数据
      */
     @Override
     public void fetchItlyProductStock(){
@@ -65,12 +66,12 @@ public class UpdateStockImpl extends FetchStockImpl {
         logger.info("==============更新库存数据库开始 "+startDateTime+"=========================");
 
         //读取csv 数据信息
-        long dayTime = 1000*3600*24l;
-        Date yesterDate = new Date(new Date().getTime() - dayTime);  //推送昨天的 库存数据
-        //Date yesterDate = new Date();                              //推送今天的库存数据
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String yesterdayDateStr = simpleDateFormat.format(yesterDate);
-        String csvFilePath = filePath +"dior-qty-"+ yesterdayDateStr+".csv";
+        String todayDateStr = simpleDateFormat.format(new Date());
+
+        String csvFilePath = filePath +"dior-qty-"+ todayDateStr +".csv";
+        System.out.println(csvFilePath);
+
         try {
             List<SpSkuNoDTO> spSkuNoDTOS = DownloadAndReadCSV.readLocalCSV(csvFilePath, SpSkuNoDTO.class,splitSign);
             if(spSkuNoDTOS!=null&&spSkuNoDTOS.size()>0){
@@ -84,8 +85,8 @@ public class UpdateStockImpl extends FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================更新GUCCI库存数据库结束 "+endtDateTime+"=========================");
-        System.out.println("=================更新GUCCI库存数据库结束 "+endtDateTime+"=========================");
+        logger.info("===================更新Dior库存数据库结束 "+endtDateTime+"=========================");
+        System.out.println("=================更新Dior库存数据库结束 "+endtDateTime+"=========================");
     }
 
     public static void main(String[] args) {

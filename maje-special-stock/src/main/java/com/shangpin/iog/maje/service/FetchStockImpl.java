@@ -305,6 +305,7 @@ public class FetchStockImpl {
      */
     private static boolean solveProductQty(ProductDTO productDTO) {
         String productUrl = productDTO.getProductUrl();
+
         List<SkuDTO> zhiCaiSkuResultList = productDTO.getZhiCaiSkuResultList();
         int zhiCaiSkuResultListSize = zhiCaiSkuResultList.size();
         try {
@@ -312,9 +313,9 @@ public class FetchStockImpl {
             Header[] headers = new Header[1];
             headers[0] = header;
 
-            HttpResponse response = HttpUtils.get(productUrl,headers);
+            HttpResponse response = HttpUtils.get(productUrl, headers);
             //HttpResponse response = HttpUtils.get(productUrl);
-            if (response.getStatus()==200) {
+            if (response.getStatus() == 200) {
                 String htmlContent = response.getResponse();
                 Document doc = Jsoup.parse(htmlContent);
 
@@ -323,64 +324,63 @@ public class FetchStockImpl {
                  *   处理商品 的尺码 以及 库存信息
                  */
                 //判断当前包页面有没有尺码信息  有分成多个 product 没有 尺码为均码
-                Elements sizeElements=doc.select("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li");
-                if(sizeElements!=null&&sizeElements.size()>0){
+                Elements sizeElements = doc.select("#product-content > div.product-variations > ul > li.attribute.size > div > ul > li");
+                if (sizeElements != null && sizeElements.size() > 0) {
                     int spSkuSize = zhiCaiSkuResultList.size();
-                    int pageSize=sizeElements.size();
-                    for (int j = 0; j <spSkuSize ; j++) {
+                    int pageSize = sizeElements.size();
+                    for (int j = 0; j < spSkuSize; j++) {
                         SkuDTO skuDTO = zhiCaiSkuResultList.get(j);
-                        for (int i = 0; i <pageSize ; i++) {
-                            String sizeValue=sizeElements.get(i).select("a").attr("title").toString();
+                        for (int i = 0; i < pageSize; i++) {
+                            String sizeValue = sizeElements.get(i).select(".defaultSize").text().toString();
 
-                            String temQty="";
+                            String temQty = "";
                             try {
 
-                                String jdbcSize=skuDTO.getSize();
-                                if(!sizeValue.equals(jdbcSize)){
+                                String jdbcSize = skuDTO.getSize();
+                                if (!sizeValue.equals(jdbcSize)) {
                                     continue;
                                 }
-                                temQty=sizeElements.attr("class").toString();
-                                if (temQty.contains("unselectable")){
-                                    temQty=NO_STOCK;
-                                }
-                                else{
-                                    temQty=IN_STOCK;
+                                temQty = sizeElements.get(i).attr("class").toString();
+                                if (temQty.contains("unselectable")) {
+                                    temQty = NO_STOCK;
+                                } else {
+                                    temQty = IN_STOCK;
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                temQty=NO_STOCK;
+                                temQty = NO_STOCK;
                             }
                             //
-                            String  price=doc.select("#pdpMain > div.wrapper-product-image-container.clearfix > div.product-col-2.product-detail > div.productPrices > div > span").attr("content").toString();
+                            String price = doc.select("#pdpMain > div.wrapper-product-image-container.clearfix > div.product-col-2.product-detail > div.productPrices > div > span").attr("content").toString();
 
-                            byte bytes[] = {(byte) 0xC2,(byte) 0xA0};
-                            String UTFSpace = new String(bytes,"utf-8");
+                            byte bytes[] = {(byte) 0xC2, (byte) 0xA0};
+                            String UTFSpace = new String(bytes, "utf-8");
                             price = price.replaceAll(UTFSpace, "&nbsp;");
                             String marketPrice = skuDTO.getMarketPrice();
-                            if(marketPrice!=null){
+                            if (marketPrice != null) {
                                 float temElementPrice = Float.parseFloat(price);
                                 float spMarketPrice = Float.parseFloat(marketPrice);
-                                if(temElementPrice!=spMarketPrice){ //价格发生改变
-                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(),price);
-                                    exportSpSkunoAndPrice(supplierId,skuDTO.getSpSkuNo(),spMarketPrice,temElementPrice,productUrl);
-                                    logger.info("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
-                                    System.out.println("推送 价格成功："+ skuDTO.getSupplierSkuNo()+" 原价："+marketPrice+" 新价:"+price);
+                                if (temElementPrice != spMarketPrice) { //价格发生改变
+                                    updateSpSkuMarketPrice(skuDTO.getSupplierSkuNo(), price);
+                                    exportSpSkunoAndPrice(supplierId, skuDTO.getSpSkuNo(), spMarketPrice, temElementPrice, productUrl);
+                                    logger.info("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
+                                    System.out.println("推送 价格成功：" + skuDTO.getSupplierSkuNo() + " 原价：" + marketPrice + " 新价:" + price);
                                 }
-                            }else{
-                                loggerError.error("getMarketPrice 为空 ProductDTO:"+productDTO.toString());
+                            } else {
+                                loggerError.error("getMarketPrice 为空 ProductDTO:" + productDTO.toString());
                             }
-                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(),temQty);
+                            exportSpSkunoAndQty(skuDTO.getSpSkuNo(), temQty);
                             break;
                         }
                     }
-                }else{
+                } else {
                     logger.error("===请求商品地址解析 商品尺码失败===========================================");
                     logger.error(productDTO.toString());
                     logger.error("===请求商品地址解析 商品尺码失败===========================================");
                     // 商品页面中没有获取到尺码信息重新请求
                     return false;
                 }
-            }else{
+            } else {
                 logger.error("================请求商品地址失败===========================================");
                 logger.error(productDTO.toString());
                 logger.error("================请求商品地址失败===========================================");
@@ -390,6 +390,7 @@ public class FetchStockImpl {
             e.printStackTrace();
             return false;
         }
+
         //每一款商品休息2s
 //        try {
 //            Thread.sleep(1000);

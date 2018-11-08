@@ -18,18 +18,18 @@ public class Schedule {
 
 	@Autowired
 	FetchStockImpl stockImp;
-	
-	
+
+
 	@SuppressWarnings("deprecation")
 	@Scheduled(cron="${jobsSchedule}")
 	public void start(){
 		logger.info(new Date().toLocaleString()+"开始更新");
 		System.out.println(new Date().toLocaleString()+"开始更新");
-    	Murder mur = Murder.getMur();
-    	mur.setStockImp(stockImp);
-    	Thread t = new Thread(mur);
-    	t.start();
+		Murder mur = Murder.getMur();
+		mur.setStockImp(stockImp);
+		Thread t = new Thread(mur);
+		t.start();
 	}
-	
-	
+
+
 }
