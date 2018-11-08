@@ -63,25 +63,25 @@ spring:
                               destination: mclables.product.picture
                               group: one
                               consumer:
-                                        concurrency: 1
+                                        concurrency: 3
                                         maxAttempts: 1
                         eraldoPictureProduct:
                               destination: eraldo.product.picture
                               group: one
                               consumer:
-                                        concurrency: 1
+                                        concurrency: 3
                                         maxAttempts: 1
                         frmodaPictureProduct:
                               destination: frmoda.product.picture
                               group: one
                               consumer:
-                                        concurrency: 1
+                                        concurrency: 3
                                         maxAttempts: 1
                         reebonzPictureProduct:
                               destination: reebonz.product.picture
                               group: one
                               consumer:
-                                        concurrency: 1
+                                        concurrency: 3
                                         maxAttempts: 1
               rabbit: 
                       bindings: 
