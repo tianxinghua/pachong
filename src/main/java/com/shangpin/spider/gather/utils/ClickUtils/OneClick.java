@@ -66,70 +66,81 @@ public class OneClick extends MoreClickUtil{
 		int firstSize = firstSizeAtom.get();
 //		第一步，模拟点击第一个动态元素
 		List<WebElement> elements1 = null;
-		try {
-			WebDriverWait wait = new WebDriverWait(driver, 1);
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[0])));
-			elements1 = driver.findElements(By.cssSelector(menuRuleArray[0]));
-		} catch (Exception e) {
-			LOG.error("链接{}模拟点击的第一层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
+		for (int reInt = 0; reInt < 3; reInt++){
+			try {
+				WebDriverWait wait = new WebDriverWait(driver, 1);
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[0])));
+				elements1 = driver.findElements(By.cssSelector(menuRuleArray[0]));
+			} catch (Exception e) {
+				LOG.error("链接{}模拟点击的第一层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
+			}
+			if(elements1!=null) {
+				break;
+			}
 		}
-
-//		第一层动态元素的个数（一般第一层元素个数是不变的，后面层级的元素是随着父级改变的）
-		firstSize = elements1.size();
-		System.err.println("----链接："+url);
-		System.err.println("----\t第一层的元素个数为：" + firstSize);
-		System.err.println("----\t第一层此时的下标为：" + i);
-		if (i + 1 > firstSize) {
-			System.err.println("----\t第一层下标越界。");
-			return list;
-		}
-		WebElement element = null;
-		if (recursionFlag || (i == 0)) {
-			if (firstSize != 1) {
-				recursionFlag = false;
-				element = elements1.get(i);
-				try {
-//					WebDriverWait wait = new WebDriverWait(driver, 2);
-//					wait.until(ExpectedConditions.elementToBeClickable(element));
-//					element.click();
-					if(i==0) {
-						if(judgeOneClicked(driver, oneClickedRules)) {
-							((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+		
+		
+		if(elements1!=null) {
+	//		第一层动态元素的个数（一般第一层元素个数是不变的，后面层级的元素是随着父级改变的）
+			firstSize = elements1.size();
+			System.err.println("----链接："+url);
+			System.err.println("----\t第一层的元素个数为：" + firstSize);
+			System.err.println("----\t第一层此时的下标为：" + i);
+			if (i + 1 > firstSize) {
+				System.err.println("----\t第一层下标越界。");
+				return list;
+			}
+			WebElement element = null;
+			if (recursionFlag || (i == 0)) {
+				if (firstSize != 1) {
+					recursionFlag = false;
+					element = elements1.get(i);
+					try {
+	//					WebDriverWait wait = new WebDriverWait(driver, 2);
+	//					wait.until(ExpectedConditions.elementToBeClickable(element));
+	//					element.click();
+						if(spiderRuleInfo.getFirstClickFlag()) {
+							if(i==0) {
+								if(judgeOneClicked(driver, oneClickedRules)) {
+									((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+								}
+							}else {
+								((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+							}
 						}
-					}else {
-						((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+					} catch (Exception e) {
+						LOG.error("链接{}第一次点击事件有误！", url);
+						e.printStackTrace();
 					}
-					
-				} catch (Exception e) {
-					LOG.error("链接{}第一次点击事件有误！", url);
-					e.printStackTrace();
-				}
-//				避免点击频繁，异步加载
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+	//				避免点击频繁，异步加载
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
-		}
-		if (i != firstSize - 1) {
-			initI.incrementAndGet();
-		}
-		recursionFlag = true;
-		if ((!recursionFlag) || (i != firstSize - 1)) {
-//			点击后获取的字段值，在此获取
-			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, spiderRuleInfo.getFirstClickFlag());
-//			递归	
-			firstSizeAtom = new AtomicInteger(firstSize);
-			oneClick(list, driver, initI, firstSizeAtom, recursionFlag, menuRuleArray,  oneClickedRules);
-		}
-//		确保最后一次入库
-		if (endInt.get() == 0) {
-			if (i == firstSize - 1) {
-				LOG.info("{}链接最后一次点击入库！", url);
+			if (i != firstSize - 1) {
+				initI.incrementAndGet();
+			}
+			recursionFlag = true;
+			if ((!recursionFlag) || (i != firstSize - 1)) {
+	//			点击后获取的字段值，在此获取
 				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, spiderRuleInfo.getFirstClickFlag());
-				endInt.incrementAndGet();
+	//			递归	
+				firstSizeAtom = new AtomicInteger(firstSize);
+				oneClick(list, driver, initI, firstSizeAtom, recursionFlag, menuRuleArray,  oneClickedRules);
 			}
+	//		确保最后一次入库
+			if (endInt.get() == 0) {
+				if (i == firstSize - 1) {
+					LOG.info("{}链接最后一次点击入库！", url);
+					list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, spiderRuleInfo.getFirstClickFlag());
+					endInt.incrementAndGet();
+				}
+			}
+		}else {
+			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, i, spiderRuleInfo.getFirstClickFlag());
 		}
 
 		return list;

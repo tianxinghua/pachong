@@ -83,107 +83,115 @@ public class TwoClick extends MoreClickUtil {
 		} catch (Exception e) {
 			LOG.error("链接{}模拟点击的第一层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
 		}
-
-//		第一层动态元素的个数（一般第一层元素个数是不变的，后面层级的元素是随着父级改变的）
-		firstSize = elements1.size();
-		/*if(firstSize>1) {
-			System.out.println("测试两层点击逻辑："+firstSize);
-		}*/
-		System.err.println("----链接："+url);
- 		System.err.println("----\t第一层的元素个数为：" + firstSize);
-		System.err.println("----\t第一层此时的下标为：" + i);
-		if (i + 1 > firstSize) {
-			System.err.println("----\t第一层下标越界。");
-			return list;
-		}
-		WebElement element = null;
-		if (recursionFlag || (i == 0 && j == 0)) {
-			if (firstSize != 1) {
-				initJ = new AtomicInteger(0);
-				j = initJ.get();
-				recursionFlag = false;
-				element = elements1.get(i);
-				try {
-//					WebDriverWait wait = new WebDriverWait(driver, 10);
-//					wait.until(ExpectedConditions.elementToBeClickable(element));
-//					element.click();
-					if(i==0) {
-						if(judgeOneClicked(driver, oneClickedRules)) {
+		
+			if(elements1!=null) {
+	//		第一层动态元素的个数（一般第一层元素个数是不变的，后面层级的元素是随着父级改变的）
+			firstSize = elements1.size();
+			/*if(firstSize>1) {
+				System.out.println("测试两层点击逻辑："+firstSize);
+			}*/
+			System.err.println("----链接："+url);
+	 		System.err.println("----\t第一层的元素个数为：" + firstSize);
+			System.err.println("----\t第一层此时的下标为：" + i);
+			if (i + 1 > firstSize) {
+				System.err.println("----\t第一层下标越界。");
+				return list;
+			}
+			WebElement element = null;
+			if (recursionFlag || (i == 0 && j == 0)) {
+				if (firstSize != 1) {
+					initJ = new AtomicInteger(0);
+					j = initJ.get();
+					recursionFlag = false;
+					element = elements1.get(i);
+					try {
+	//					WebDriverWait wait = new WebDriverWait(driver, 10);
+	//					wait.until(ExpectedConditions.elementToBeClickable(element));
+	//					element.click();
+						if(i==0) {
+							if(judgeOneClicked(driver, oneClickedRules)) {
+								((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+							}
+						}else {
 							((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
 						}
-					}else {
-						((JavascriptExecutor)driver).executeScript("arguments[0].click()", element);
+						
+					} catch (Exception e) {
+						LOG.error("链接{}第一次点击事件有误！{}", url,e.getMessage());
 					}
-					
-				} catch (Exception e) {
-					LOG.error("链接{}第一次点击事件有误！{}", url,e.getMessage());
-				}
-//				避免点击频繁，异步加载
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+	//				避免点击频繁，异步加载
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
-		}
-		List<WebElement> elements2 = null;
-		try {
-			WebDriverWait wait = new WebDriverWait(driver, 1);
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[1])));
-			elements2 = driver.findElements(By.cssSelector(menuRuleArray[1]));
-		} catch (Exception e) {
-			LOG.error("链接{}模拟点击的第二层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
-		}
-
-		Integer sencondSize = elements2.size();
-		System.err.println("----\t第二层的元素个数为：" + sencondSize);
-		System.err.println("----\t第二层此时的下标为：" + j);
-		if (j + 1 > sencondSize) {
-			System.err.println("----\t第二层下标越界。");
-			return list;
-		}
-		WebElement element2 = null;
-		if (j <= sencondSize - 1) {
-			element2 = elements2.get(j);
-			if(spiderRuleInfo.getSecondClickFlag()) {
-				try {
-//					WebDriverWait wait = new WebDriverWait(driver, 10);
-//					wait.until(ExpectedConditions.elementToBeClickable(element2));
-//					element2.click();
-					((JavascriptExecutor)driver).executeScript("arguments[0].click()", element2);
-				} catch (Exception e) {
-					LOG.error("链接{}第二次点击事件有误！--异常:{}", url, e.getMessage());
-				}
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			List<WebElement> elements2 = null;
+			try {
+				WebDriverWait wait = new WebDriverWait(driver, 1);
+				wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(menuRuleArray[1])));
+				elements2 = driver.findElements(By.cssSelector(menuRuleArray[1]));
+			} catch (Exception e) {
+				LOG.error("链接{}模拟点击的第二层元素NO SUCH ELEMENT,错误信息：{}", url, e.getMessage());
 			}
-		}
-
-//		第二层下标加1
-		initJ.incrementAndGet();
-		if (initJ.get() >= sencondSize) {
-			if (i != firstSize - 1) {
-				initI.incrementAndGet();
-			}
-			recursionFlag = true;
-		}
-		if ((!recursionFlag) || (i != firstSize - 1)) {
-//			点击后获取的字段值，在此获取
-			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
-//			递归	
-			firstSizeAtom = new AtomicInteger(firstSize);
-			twoClick(list, driver, initI, initJ, firstSizeAtom, recursionFlag, menuRuleArray, oneClickedRules);
-		}
-//		确保最后一次入库
-		if (endInt.get() == 0) {
-			if (initJ.get() == sencondSize && i == firstSize - 1) {
-				LOG.info("{}链接最后一次点击入库！", url);
+			
+			if(elements2!=null) {
+				Integer sencondSize = elements2.size();
+				System.err.println("----\t第二层的元素个数为：" + sencondSize);
+				System.err.println("----\t第二层此时的下标为：" + j);
+				if (j + 1 > sencondSize) {
+					System.err.println("----\t第二层下标越界。");
+					return list;
+				}
+				WebElement element2 = null;
+				if (j <= sencondSize - 1) {
+					element2 = elements2.get(j);
+					if(spiderRuleInfo.getSecondClickFlag()) {
+						try {
+		//					WebDriverWait wait = new WebDriverWait(driver, 10);
+		//					wait.until(ExpectedConditions.elementToBeClickable(element2));
+		//					element2.click();
+							((JavascriptExecutor)driver).executeScript("arguments[0].click()", element2);
+						} catch (Exception e) {
+							LOG.error("链接{}第二次点击事件有误！--异常:{}", url, e.getMessage());
+						}
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+		
+		//		第二层下标加1
+				initJ.incrementAndGet();
+				if (initJ.get() >= sencondSize) {
+					if (i != firstSize - 1) {
+						initI.incrementAndGet();
+					}
+					recursionFlag = true;
+				}
+				if ((!recursionFlag) || (i != firstSize - 1)) {
+		//			点击后获取的字段值，在此获取
+					list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
+		//			递归	
+					firstSizeAtom = new AtomicInteger(firstSize);
+					twoClick(list, driver, initI, initJ, firstSizeAtom, recursionFlag, menuRuleArray, oneClickedRules);
+				}
+		//		确保最后一次入库
+				if (endInt.get() == 0) {
+					if (initJ.get() == sencondSize && i == firstSize - 1) {
+						LOG.info("{}链接最后一次点击入库！", url);
+						list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
+						endInt.incrementAndGet();
+					}
+				}
+			}else {
 				list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
-				endInt.incrementAndGet();
 			}
+		}else {
+			list = AnalyticData.handleClickFieldRulesMap(url, list, driver, clickFieldRulesMap, initJ.get()-1, spiderRuleInfo.getSecondClickFlag());
 		}
 
 		return list;
