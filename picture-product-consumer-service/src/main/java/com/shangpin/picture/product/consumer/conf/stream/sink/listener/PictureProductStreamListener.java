@@ -66,4 +66,13 @@ public class PictureProductStreamListener {
 	public void eraldoPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
 		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
 	}
+
+	@StreamListener(PictureProductSink.FRMODA_PICTURE)
+	public void frmodaPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+	}
+	@StreamListener(PictureProductSink.REEBONZ_PICTURE)
+	public void reebonzPictureProductStreamListen(@Payload SupplierPicture message, @Headers Map<String,Object> headers) throws Exception  {
+		pictureProductStreamListenerAdapter.supplierPictureProductStreamListen(message,headers);
+	}
 }

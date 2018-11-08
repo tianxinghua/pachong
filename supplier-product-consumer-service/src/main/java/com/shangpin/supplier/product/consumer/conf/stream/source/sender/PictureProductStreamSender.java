@@ -70,4 +70,26 @@ public class PictureProductStreamSender {
 	public boolean eraldoPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
 		return pictureProductSource.eraldoPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
 	}
+
+
+	/**
+	 * 发送frmoda图片流数据
+	 * @param headers
+	 * @param supplierPicture 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean frmodaPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
+		return pictureProductSource.frmodaPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
+	}
+
+
+	/**
+	 * 发送frmoda图片流数据
+	 * @param headers
+	 * @param supplierPicture 消息体
+	 * @return 如果发送成功返回true,否则返回false
+	 */
+	public boolean reebonzPictureProductStream(SupplierPicture supplierPicture, Map<String, ?> headers) {
+		return pictureProductSource.reebonzPictureProduct().send(MessageBuilder.withPayload(supplierPicture).copyHeaders(headers).build());
+	}
 }

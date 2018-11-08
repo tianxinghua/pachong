@@ -119,6 +119,8 @@ public class SupplierStockService {
 				}else{
 					dto.setStockState(StockState.NOSTOCK.getIndex());
 				}
+			}else{
+				dto.setStockState(StockState.NOSTOCK.getIndex());
 			}
 			result = hubSpuPendingGateWay.updateByPrimaryKeySelective(dto );
 	    }

@@ -118,7 +118,10 @@ public class eraldoHandler  implements ISupplierHandler {
                     hubSku.setSupplierSkuName(t.getItem_sku());
                    // hubSku.setSupplierBarcode(t.getCode());
                     hubSku.setMarketPrice(new BigDecimal(StringUtil.verifyPrice(item.getProduct_market_price())));
-                    hubSku.setSupplyPrice(new BigDecimal(StringUtil.verifyPrice(item.getProduct_purchase_price())));
+                    BigDecimal supplyPrice = new BigDecimal(StringUtil.verifyPrice(item.getProduct_purchase_price()));
+                    BigDecimal v =  new BigDecimal(1.22);
+                    supplyPrice =supplyPrice.divide(v,2,BigDecimal.ROUND_HALF_UP);
+                    hubSku.setSupplyPrice(supplyPrice);
                     hubSku.setSupplierSkuSize(t.getItem_size_value());
                     hubSku.setStock(StringUtil.verifyStock(t.getItem_stock()));
                     hubSkus.add(hubSku);
@@ -142,4 +145,6 @@ public class eraldoHandler  implements ISupplierHandler {
         }
         return images;
     }
+
+
 }

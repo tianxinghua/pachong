@@ -23,6 +23,10 @@ public interface PictureProductSink {
 	public String MCLABLES_PICTURE = "mclablesPictureProduct";
 
 	public String ERALDO_PICTURE = "eraldoPictureProduct";
+
+	public String FRMODA_PICTURE = "frmodaPictureProduct";
+
+	public String REEBONZ_PICTURE = "reebonzPictureProduct";
 	
 	/**
 	 * @return 供应商商品通用图片数据流通道组件
@@ -53,4 +57,16 @@ public interface PictureProductSink {
 	 */
 	@Input(value = PictureProductSink.ERALDO_PICTURE)
 	public MessageChannel eraldoPictureProduct();
+
+	/**
+	 * @return mclables通用图片数据流通道组件
+	 */
+	@Input(value = PictureProductSink.FRMODA_PICTURE)
+	public MessageChannel frmodaPictureProduct();
+
+	/**
+	 * @return mclables通用图片数据流通道组件
+	 */
+	@Input(value = PictureProductSink.REEBONZ_PICTURE)
+	public MessageChannel reebonzPictureProduct();
 }

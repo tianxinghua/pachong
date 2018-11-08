@@ -21,6 +21,12 @@ spring:
                         eraldoPictureProduct:
                               destination: eraldo.product.picture
                               content-type: application/json
+                        frmodaPictureProduct:
+                              destination: frmoda.product.picture
+                              content-type: application/json
+                        reebonzPictureProduct:
+                              destination: reebonz.product.picture
+                              content-type: application/json
                         supplierPictureProduct: 
                               destination: supplier.product.picture
                               content-type: application/json
@@ -851,6 +857,12 @@ spring:
                               eraldoPictureProduct:
                                     producer:
                                       prefix: HA.
+                              frmodaPictureProduct:
+                                    producer:
+                                       prefix: HA.
+                              reebonzPictureProduct:
+                                    producer:
+                                        prefix: HA.
                               supplierPictureProduct: 
                                     producer: 
                                          prefix: HA.

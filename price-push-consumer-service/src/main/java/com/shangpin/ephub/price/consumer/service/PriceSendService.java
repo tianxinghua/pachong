@@ -69,6 +69,7 @@ public class PriceSendService {
         String   sendResult ="";
         String content ="";
         try {
+
             long start = System.currentTimeMillis();
             productPriceDTO.setMemo(productPriceDTO.getSupplierPriceChangeRecordId().toString());
             String supplierId=productPriceDTO.getSopUserNo();
@@ -111,8 +112,9 @@ public class PriceSendService {
             productDTOList.add(priceparam);
             om.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
             content = om.writeValueAsString(productDTOList);
-
+            log.info("ModifyProductMarketPrice content:"+content);
             sendResult =   httpClientUtil.sendRequest(content);
+            log.info("Product/ModifyProductMarketPrice response:"+sendResult);
             if(sendResult!=null){
                 ResMessage r = JSONObject.parseObject(sendResult,ResMessage.class);
                 if(!r.IsSuccess){
