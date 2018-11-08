@@ -67,6 +67,18 @@ spring:
                               consumer:
                                         concurrency: 1
                                         maxAttempts: 1
+                        frmodaPictureProduct:
+                              destination: frmoda.product.picture
+                              group: one
+                              consumer:
+                                concurrency: 1
+                                maxAttempts: 1
+                        reebonzPictureProduct:
+                              destination: reebonz.product.picture
+                              group: one
+                              consumer:
+                                concurrency: 1
+                                maxAttempts: 1
               rabbit: 
                       bindings: 
                             supplierRetryPictureProduct: 
@@ -109,6 +121,18 @@ spring:
                                         requeueRejected: true
                                         republishToDlq: false
                             eraldoPictureProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                            frmodaPictureProduct:
+                                  consumer:
+                                        prefix: HA.
+                                        autoBindDlq: false
+                                        requeueRejected: true
+                                        republishToDlq: false
+                            reebonzPictureProduct:
                                   consumer:
                                         prefix: HA.
                                         autoBindDlq: false

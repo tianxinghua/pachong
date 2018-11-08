@@ -75,6 +75,10 @@ public class PictureProductService {
 					result = pictureProductStreamSender.mclablesPictureProductStream(supplierPicture,headers);
 				}else if("2018101602078".equals(supplierPicture.getSupplierId())){
 					result = pictureProductStreamSender.eraldoPictureProductStream(supplierPicture,headers);
+				}else if("2015101501616".equals(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.frmodaPictureProductStream(supplierPicture,headers);
+				}else if("2016051001890".equals(supplierPicture.getSupplierId())){
+					result = pictureProductStreamSender.reebonzPictureProductStream(supplierPicture,headers);
 				}else {
 					result = pictureProductStreamSender.supplierPictureProductStream(supplierPicture, headers);
 				}
