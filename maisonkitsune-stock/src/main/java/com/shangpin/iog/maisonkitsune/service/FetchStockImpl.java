@@ -689,7 +689,7 @@ public class FetchStockImpl {
             return false;
         }
     }
-   public static void main(String[] args) {
+   /*public static void main(String[] args) {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductUrl("https://maisonkitsune.com/fr_en/tee-shirt-code-white-5b9a2643ae858.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
@@ -703,6 +703,6 @@ public class FetchStockImpl {
        solveProductQty(productDTO);
        pool.shutdownEnd();
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
-    }
+    }*/
 
 }
