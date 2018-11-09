@@ -118,8 +118,8 @@ public class FetchStockImpl {
     public void fetchItlyProductStock() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String startDateTime = format.format(new Date());
-        System.out.println("============拉取prada库存数据开始 " + startDateTime + "=========================");
-        logger.info("==============拉取prada库存数据开始 " + startDateTime + "=========================");
+        System.out.println("============拉取bulgari库存数据开始 " + startDateTime + "=========================");
+        logger.info("==============拉取bulgari库存数据开始 " + startDateTime + "=========================");
 
         //1. 请求需要更新库存商品 信息接口
         failedSpSkuNoList = new ArrayList<>();
@@ -127,8 +127,8 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayStr = simpleDateFormat.format(new Date());
 
-        String temFilePath = filePath + "prada-qty-" + todayStr + ".csv";
-        String priceFilePath = filePath + "prada-price-"+todayStr+".csv";
+        String temFilePath = filePath + "bulgari-qty-" + todayStr + ".csv";
+        String priceFilePath = filePath + "bulgari-price-"+todayStr+".csv";
         System.out.println("文件保存目录：" + temFilePath);
         logger.info("文件保存目录：" + temFilePath);
         try {
@@ -195,8 +195,8 @@ public class FetchStockImpl {
         }
 
         String endtDateTime = format.format(new Date());
-        logger.info("===================拉取prada库存数据结束 " + endtDateTime + "=========================");
-        System.out.println("=================拉取prada库存数据结束 " + endtDateTime + "=========================");
+        logger.info("===================拉取bulgari库存数据结束 " + endtDateTime + "=========================");
+        System.out.println("=================拉取bulgari库存数据结束 " + endtDateTime + "=========================");
 
     }
 
@@ -865,7 +865,7 @@ public class FetchStockImpl {
             bodyPart = new MimeBodyPart();
 
             //实例化DataSource(来自jaf)，参数为文件的地址
-            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"prada-price-"+todayStr+".csv");
+            DataSource dataSource = new FileDataSource(bdl.getString("csvFilePath")+"bulgari-price-"+todayStr+".csv");
             //使用datasource实例化datahandler
             DataHandler dataHandler = new DataHandler(dataSource);
             bodyPart.setDataHandler(dataHandler);
@@ -893,8 +893,8 @@ public class FetchStockImpl {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String todayDateStr = simpleDateFormat.format(new Date());
         FetchStockImpl o=new FetchStockImpl();
-        String fileName=bdl.getString("csvFilePath")+"prada-price-"+todayDateStr+".csv";
-        File file=new File(bdl.getString("csvFilePath")+"prada-price-"+todayDateStr+".csv");
+        String fileName=bdl.getString("csvFilePath")+"bulgari-price-"+todayDateStr+".csv";
+        File file=new File(bdl.getString("csvFilePath")+"bulgari-price-"+todayDateStr+".csv");
         try {
             FileInputStream fis = new FileInputStream(file);
             //System.out.println("文件的大小是："+fis.available()+"\n");
@@ -935,7 +935,7 @@ public class FetchStockImpl {
     public static void main(String[] args) {
 
 
-       ProductDTO productDTO = new ProductDTO();
+       /*ProductDTO productDTO = new ProductDTO();
         productDTO.setProductUrl("https://www.prada.com/fr/en/women/shoes/products.patent_leather_sandals.1X109L_93W_F0J7K_F_D110.html");
         List<SkuDTO> zhiCaiSkuResultList = new ArrayList<>();
         SkuDTO skuDTO = new SkuDTO();
@@ -945,11 +945,11 @@ public class FetchStockImpl {
         skuDTO.setMarketPrice("350.0");
         zhiCaiSkuResultList.add(skuDTO);
         productDTO.setZhiCaiSkuResultList(zhiCaiSkuResultList);
-        solveProductQty(productDTO);
+        solveProductQty(productDTO);*/
 
         //updateSpSkuMarketPrice("454070 A7M0T 5909-U","550");
-      // FetchStockImpl fetchStock = new FetchStockImpl();
-       // fetchStock.getShangPinPageContentByParam("2018090402046","moncler ",1,20,"www.prada.com");
+        FetchStockImpl fetchStock = new FetchStockImpl();
+        fetchStock.getShangPinPageContentByParam("2018082702041","moncler ",1,20,"www.prada.com");
         //getShangPinPageContentByParam(String supplierId, String brandName, Integer pageIndex, Integer pageSize, String channel) {
 
        /* FetchStockImpl fetchStock = new FetchStockImpl();
